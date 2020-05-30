@@ -1,7 +1,8 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server.vmService;
 
 import com.google.common.base.Charsets;
+import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
@@ -12,9 +13,12 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.ui.InputValidator;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -41,6 +45,8 @@ import com.jetbrains.lang.dart.ide.runner.server.OpenDartObservatoryUrlAction;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceEvaluator;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceStackFrame;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceSuspendContext;
+import com.jetbrains.lang.dart.ide.runner.server.webdev.DartDaemonParserUtil;
+import com.jetbrains.lang.dart.util.DartBazelFileUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import gnu.trove.THashMap;
@@ -59,14 +65,14 @@ import java.util.*;
 public class DartVmServiceDebugProcess extends XDebugProcess {
   private static final Logger LOG = Logger.getInstance(DartVmServiceDebugProcess.class.getName());
 
+  private static final String ORG_DARTLANG_APP_PREFIX = "org-dartlang-app://";
+
   @Nullable private final ExecutionResult myExecutionResult;
   @NotNull private final DartUrlResolver myDartUrlResolver;
-  @NotNull private final String myDebuggingHost;
-  private final int myObservatoryPort;
 
   private boolean myVmConnected = false;
 
-  @NotNull private final XBreakpointHandler[] myBreakpointHandlers;
+  private final XBreakpointHandler @NotNull [] myBreakpointHandlers;
   private final IsolatesInfo myIsolatesInfo;
   private VmServiceWrapper myVmServiceWrapper;
 
@@ -78,29 +84,46 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     new THashMap<>();
 
   @Nullable private final String myDASExecutionContextId;
-  private final boolean myRemoteDebug;
+  @NotNull private final DebugType myDebugType;
   private final int myTimeout;
   @Nullable private final VirtualFile myCurrentWorkingDirectory;
   @Nullable protected String myRemoteProjectRootUri;
+  @Nullable private String myBazelWorkspacePath;
 
   @NotNull private final OpenDartObservatoryUrlAction myOpenObservatoryAction =
     new OpenDartObservatoryUrlAction(null, () -> myVmConnected && !getSession().isStopped());
 
+  public enum DebugType {
+    CLI, REMOTE, WEBDEV
+  }
+
+  /**
+   * @deprecated use another constructor
+   */
+  @Deprecated
   public DartVmServiceDebugProcess(@NotNull final XDebugSession session,
                                    @NotNull final String debuggingHost,
                                    final int observatoryPort,
                                    @Nullable final ExecutionResult executionResult,
                                    @NotNull final DartUrlResolver dartUrlResolver,
                                    @Nullable final String dasExecutionContextId,
-                                   final boolean remoteDebug,
+                                   @NotNull final DebugType debugType,
+                                   final int timeout,
+                                   @Nullable final VirtualFile currentWorkingDirectory) {
+    this(session, executionResult, dartUrlResolver, dasExecutionContextId, debugType, timeout, currentWorkingDirectory);
+  }
+
+  public DartVmServiceDebugProcess(@NotNull final XDebugSession session,
+                                   @Nullable final ExecutionResult executionResult,
+                                   @NotNull final DartUrlResolver dartUrlResolver,
+                                   @Nullable final String dasExecutionContextId,
+                                   @NotNull final DebugType debugType,
                                    final int timeout,
                                    @Nullable final VirtualFile currentWorkingDirectory) {
     super(session);
-    myDebuggingHost = debuggingHost;
-    myObservatoryPort = observatoryPort;
     myExecutionResult = executionResult;
     myDartUrlResolver = dartUrlResolver;
-    myRemoteDebug = remoteDebug;
+    myDebugType = debugType;
     myTimeout = timeout;
     myCurrentWorkingDirectory = currentWorkingDirectory;
 
@@ -111,9 +134,23 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
       new DartExceptionBreakpointHandler(this)
     };
 
+    myDASExecutionContextId = dasExecutionContextId;
+
+    if (DebugType.REMOTE == debugType) {
+      LOG.assertTrue(myExecutionResult == null && myDASExecutionContextId == null, myExecutionResult);
+    }
+    else if (DebugType.CLI == debugType) {
+      LOG.assertTrue(myExecutionResult != null && myDASExecutionContextId != null, myDASExecutionContextId + myExecutionResult);
+    }
+    else if (DebugType.WEBDEV == debugType) {
+      LOG.assertTrue(myExecutionResult != null && myDASExecutionContextId == null, myExecutionResult);
+    }
+  }
+
+  public void start() throws ExecutionException {
     setLogger();
 
-    session.addSessionListener(new XDebugSessionListener() {
+    getSession().addSessionListener(new XDebugSessionListener() {
       @Override
       public void sessionPaused() {
         stackFrameChanged();
@@ -127,13 +164,69 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
       }
     });
 
-    myDASExecutionContextId = dasExecutionContextId;
+    if (DebugType.REMOTE == myDebugType) {
+      // Accepted inputs:
+      // - http://127.0.0.1:<port>/
+      // - http://127.0.0.1:<port>/<auth-code>
+      // - https://127.0.0.1:<port>/<auth-code>
+      // - ws://127.0.0.1:<port>/<auth-code>/ws
+      // - vm@ws://127.0.0.1:<port>/<auth-code>/ws
+      //
+      // All of the above are then parsed/ morphed into the form "ws://127.0.0.1:<port>/<auth-code>/ws"
+      String debugUrl = Messages.showInputDialog(getSession().getProject(),
+                                                 DartBundle.message("enter.url.to.running.dart.app"),
+                                                 DartBundle.message("connect.to.running.app.title"),
+                                                 null,
+                                                 "http://127.0.0.1:12345/AUTH_CODE=/",
+                                                 new InputValidator() {
+                                                   @Override
+                                                   public boolean checkInput(String inputString) {
+                                                     inputString = inputString.trim();
+                                                     return inputString.startsWith("http://") ||
+                                                            inputString.startsWith("https://") ||
+                                                            inputString.startsWith("ws://") && inputString.endsWith("/ws") ||
+                                                            inputString.startsWith("vm@ws://") && inputString.endsWith("/ws");
+                                                   }
 
-    if (remoteDebug) {
-      // TODO won't work since Dart SDK 1.22 because auth token in URL is required
-      scheduleConnect(getObservatoryUrl("ws", "/ws"));
+                                                   @Override
+                                                   public boolean canClose(String inputString) {
+                                                     return true;
+                                                   }
+                                                 }, null, DartBundle.message("connect.to.running.app.comment"));
+
+      if (debugUrl == null) {
+        // Cancel button pressed
+        throw new ExecutionException("Cancelled");
+      }
+
+      debugUrl = debugUrl.trim();
+
+      final String wsToConnect;
+      if (debugUrl.startsWith("http://")) {
+        // Convert the dialog entry of some "http://127.0.0.1:PORT/AUTH_CODE=" to "ws://127.0.0.1:PORT/AUTH_CODE=/ws"
+        // The end of the URL may or may not have a slash, but multiple slashes won't be connected to:
+        wsToConnect = "ws" + StringUtil.trimStart(debugUrl, "http") + (debugUrl.endsWith("/") ? "" : "/") + "ws";
+      }
+      else if (debugUrl.startsWith("https://")) {
+        // Convert the dialog entry of some "https://127.0.0.1:PORT/AUTH_CODE=" to "ws://127.0.0.1:PORT/AUTH_CODE=/ws"
+        // The end of the URL may or may not have a slash, but multiple slashes won't be connected to:
+        wsToConnect = "ws" + StringUtil.trimStart(debugUrl, "https") + (debugUrl.endsWith("/") ? "" : "/") + "ws";
+      }
+      else if (debugUrl.startsWith("vm@ws://")) {
+        // Convert the dialog entry of some "vm@ws://127.0.0.1:PORT/AUTH_CODE=/ws" to "ws://127.0.0.1:PORT/AUTH_CODE=/ws"
+        // This is included as this is the format printed at the top of the Observatory page.
+        wsToConnect = StringUtil.trimStart(debugUrl, "vm@");
+      }
+      else {
+        // This is the debugUrl.startsWith("ws://") case,
+        // don't modify the dialog entry if it appears like "ws://127.0.0.1:PORT/AUTH_CODE=/ws"
+        wsToConnect = debugUrl;
+      }
+
+      scheduleConnect(wsToConnect);
+      myOpenObservatoryAction.setUrl(debugUrl);
     }
-    else {
+    else if (DebugType.CLI == myDebugType) {
       getProcessHandler().addProcessListener(new ProcessAdapter() {
         @Override
         public void onTextAvailable(@NotNull final ProcessEvent event, @NotNull final Key outputType) {
@@ -148,12 +241,22 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
         }
       });
     }
-
-    if (remoteDebug) {
-      LOG.assertTrue(myExecutionResult == null && myDASExecutionContextId == null, myDASExecutionContextId + myExecutionResult);
-    }
-    else {
-      LOG.assertTrue(myExecutionResult != null && myDASExecutionContextId != null, myDASExecutionContextId + myExecutionResult);
+    else if (DebugType.WEBDEV == myDebugType) {
+      getProcessHandler().addProcessListener(new ProcessAdapter() {
+        @Override
+        public void onTextAvailable(@NotNull final ProcessEvent event, @NotNull final Key outputType) {
+          try {
+            String wsUri = DartDaemonParserUtil.getWsUri(event.getText().trim());
+            if (wsUri != null) {
+              getProcessHandler().removeProcessListener(this);
+              scheduleConnect(wsUri);
+            }
+          }
+          catch (Exception e) {
+            LOG.debug(e);
+          }
+        }
+      });
     }
   }
 
@@ -210,17 +313,17 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
   protected void scheduleConnect(@NotNull final String url) {
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
-      long timeout = (long)myTimeout;
       long startTime = System.currentTimeMillis();
 
       try {
         while (true) {
           try {
             connect(url);
+            getSession().rebuildViews(); // to update status text to 'Connected'
             break;
           }
           catch (IOException e) {
-            if (System.currentTimeMillis() > startTime + timeout) {
+            if (System.currentTimeMillis() > startTime + myTimeout) {
               throw e;
             }
             else {
@@ -230,17 +333,17 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
         }
       }
       catch (IOException e) {
-        String message = "Failed to connect to the VM observatory service: " + e.toString() + "\n";
+        StringBuilder message = new StringBuilder("Failed to connect to the VM observatory service: " + e.toString() + "\n");
         Throwable cause = e.getCause();
         while (cause != null) {
-          message += "Caused by: " + cause.toString() + "\n";
+          message.append("Caused by: ").append(cause.toString()).append("\n");
           final Throwable cause1 = cause.getCause();
           if (cause1 != cause) {
             cause = cause1;
           }
         }
 
-        getSession().getConsoleView().print(message, ConsoleViewContentType.ERROR_OUTPUT);
+        getSession().getConsoleView().print(message.toString(), ConsoleViewContentType.ERROR_OUTPUT);
         getSession().stop();
       }
     });
@@ -258,12 +361,6 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     myVmServiceWrapper.handleDebuggerConnected();
 
     myVmConnected = true;
-  }
-
-  @NotNull
-  @Deprecated // returns incorrect URL for Dart SDK 1.22+ because returned URL doesn't contain auth token
-  private String getObservatoryUrl(@NotNull final String scheme, @Nullable final String path) {
-    return scheme + "://" + myDebuggingHost + ":" + myObservatoryPort + StringUtil.notNullize(path);
   }
 
   @Override
@@ -284,13 +381,16 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   }
 
   @Override
-  @NotNull
-  public XBreakpointHandler<?>[] getBreakpointHandlers() {
+  public XBreakpointHandler<?> @NotNull [] getBreakpointHandlers() {
     return myBreakpointHandlers;
   }
 
   public boolean isRemoteDebug() {
-    return myRemoteDebug;
+    return DebugType.REMOTE == myDebugType;
+  }
+
+  public boolean isWebdevDebug() {
+    return DebugType.WEBDEV == myDebugType;
   }
 
   public void guessRemoteProjectRoot(@NotNull final ElementList<LibraryRef> libraries) {
@@ -437,7 +537,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
            ? XDebuggerBundle.message("debugger.state.message.disconnected")
            : myVmConnected
              ? XDebuggerBundle.message("debugger.state.message.connected")
-             : DartBundle.message("debugger.trying.to.connect.vm.at.0", getObservatoryUrl("ws", "/ws"));
+             : DartBundle.message("debugger.trying.to.connect");
   }
 
   @Override
@@ -461,22 +561,21 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
       return result;
     }
 
+    final String filePath = file.getPath();
+
     // file:
     if (uriByIde.startsWith(DartUrlResolver.FILE_PREFIX)) {
       result.add(threeSlashize(uriByIde));
     }
     else {
       result.add(uriByIde);
-      result.add(threeSlashize(new File(file.getPath()).toURI().toString()));
+      result.add(threeSlashize(new File(filePath).toURI().toString()));
     }
-
-    // straight path - used by some VM embedders
-    result.add(file.getPath());
 
     // package: (if applicable)
     if (myDASExecutionContextId != null) {
       final String uriByServer =
-        DartAnalysisServerService.getInstance(getSession().getProject()).execution_mapUri(myDASExecutionContextId, file.getPath(), null);
+        DartAnalysisServerService.getInstance(getSession().getProject()).execution_mapUri(myDASExecutionContextId, filePath, null);
       if (uriByServer != null) {
         result.add(uriByServer);
       }
@@ -487,7 +586,6 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
       final VirtualFile pubspec = myDartUrlResolver.getPubspecYamlFile();
       if (pubspec != null) {
         final String projectPath = pubspec.getParent().getPath();
-        final String filePath = file.getPath();
         if (filePath.startsWith(projectPath)) {
           result.add(myRemoteProjectRootUri + filePath.substring(projectPath.length()));
         }
@@ -495,13 +593,29 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
       else if (myCurrentWorkingDirectory != null) {
         // Handle projects with no pubspecs.
         final String projectPath = myCurrentWorkingDirectory.getPath();
-        final String filePath = file.getPath();
         if (filePath.startsWith(projectPath)) {
           result.add(myRemoteProjectRootUri + filePath.substring(projectPath.length()));
         }
       }
     }
 
+    // Bazel / "dart.projects.without.pubspec" case
+    if (Registry.is("dart.projects.without.pubspec", false)) {
+      if (myBazelWorkspacePath == null || !filePath.startsWith(myBazelWorkspacePath)) {
+        final VirtualFile workspaceVFile = DartBazelFileUtil.getBazelWorkspace(file);
+        if (workspaceVFile != null) {
+          myBazelWorkspacePath = workspaceVFile.getPath();
+        }
+      }
+      if (myBazelWorkspacePath != null) {
+        final int libIndex = filePath.lastIndexOf("lib/");
+        if (libIndex != -1) {
+          result.add(DartUrlResolver.PACKAGE_PREFIX +
+                     filePath.substring(myBazelWorkspacePath.length() + 1, libIndex - 1).replace("/", ".") +
+                     "/" + filePath.substring(libIndex + "lib/".length()));
+        }
+      }
+    }
     return result;
   }
 
@@ -526,6 +640,21 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
         uri = localRootUri + uri.substring(myRemoteProjectRootUri.length());
       }
 
+      if (uri.startsWith(ORG_DARTLANG_APP_PREFIX) && myCurrentWorkingDirectory != null) {
+        final String relativeFromCWD = uri.substring(ORG_DARTLANG_APP_PREFIX.length());
+        return LocalFileSystem.getInstance().findFileByPath(myCurrentWorkingDirectory.getPath() + relativeFromCWD);
+      }
+
+      if (Registry.is("dart.projects.without.pubspec", false) &&
+          myBazelWorkspacePath != null &&
+          uri.startsWith(DartUrlResolver.PACKAGE_PREFIX)) {
+        final int slashIndex = uri.indexOf('/');
+        if (slashIndex != -1) {
+          final String packageName = uri.substring(DartUrlResolver.PACKAGE_PREFIX.length(), slashIndex).replace('.', '/');
+          return LocalFileSystem.getInstance()
+            .findFileByPath(myBazelWorkspacePath + "/" + packageName + "/lib" + uri.substring(slashIndex));
+        }
+      }
       return myDartUrlResolver.findFileByDartUrl(uri);
     });
 
@@ -554,12 +683,16 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     }
 
     if (tokenPosToLineAndColumn == null) {
-      tokenPosToLineAndColumn = createTokenPosToLineAndColumnMap(script.getTokenPosTable());
-      myScriptIdToLinesAndColumnsMap.put(scriptRef.getId(), tokenPosToLineAndColumn);
+      List<List<Integer>> table = script.getTokenPosTable();
+      if (table != null) {
+        tokenPosToLineAndColumn = createTokenPosToLineAndColumnMap(table);
+        myScriptIdToLinesAndColumnsMap.put(scriptRef.getId(), tokenPosToLineAndColumn);
+      }
     }
 
-    final Pair<Integer, Integer> lineAndColumn = tokenPosToLineAndColumn.get(tokenPos);
+    final Pair<Integer, Integer> lineAndColumn = tokenPosToLineAndColumn != null ? tokenPosToLineAndColumn.get(tokenPos) : null;
     if (lineAndColumn == null) return XDebuggerUtil.getInstance().createPositionByOffset(file, 0);
+
     return XDebuggerUtil.getInstance().createPosition(file, lineAndColumn.first, lineAndColumn.second);
   }
 

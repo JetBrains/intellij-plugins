@@ -9,8 +9,7 @@ public interface PostCssNest extends CssAtRule, CssRuleset {
   PostCssNest[] EMPTY_ARRAY = new PostCssNest[0];
 
   @Override
-  @NotNull
-  CssSelector[] getSelectors();
+  CssSelector @NotNull [] getSelectors();
 
   @Override
   @Nullable
@@ -21,13 +20,10 @@ public interface PostCssNest extends CssAtRule, CssRuleset {
   CssBlock getBlock();
 
   @Override
-  @NotNull
-  CssRuleset[] getNestedRulesets();
+  CssRuleset @NotNull [] getNestedRulesets();
 
-  @NotNull
-  CssDeclaration[] getNestedDeclarations();
+  CssDeclaration @NotNull [] getNestedDeclarations();
 
-  @NotNull
-  PostCssNest[] getNestedNests();
+  PostCssNest @NotNull [] getNestedNests();
 
 }

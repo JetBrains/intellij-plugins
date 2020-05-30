@@ -1,39 +1,31 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.groovy;
 
-import com.intellij.openapi.module.JavaModuleType;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.impl.file.PsiDirectoryFactory;
-import com.intellij.util.PathUtil;
-import com.intellij.util.containers.ContainerUtil;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.indexing.FileBasedIndex;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.BDDFrameworkType;
 import org.jetbrains.plugins.cucumber.StepDefinitionCreator;
 import org.jetbrains.plugins.cucumber.groovy.steps.GrStepDefinition;
 import org.jetbrains.plugins.cucumber.groovy.steps.GrStepDefinitionCreator;
-import org.jetbrains.plugins.cucumber.psi.GherkinFile;
+import org.jetbrains.plugins.cucumber.java.AbstractCucumberJavaExtension;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
-import org.jetbrains.plugins.cucumber.steps.NotIndexedCucumberExtension;
 import org.jetbrains.plugins.groovy.GroovyFileType;
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile;
-import org.jetbrains.plugins.groovy.lang.psi.api.statements.GrStatement;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * @author Max Medvedev
- */
-public class GrCucumberExtension extends NotIndexedCucumberExtension {
+public class GrCucumberExtension extends AbstractCucumberJavaExtension {
   @Override
   public boolean isStepLikeFile(@NotNull PsiElement child, @NotNull PsiElement parent) {
     return child instanceof GroovyFile && ((GroovyFile)child).getName().endsWith(".groovy");
@@ -56,81 +48,30 @@ public class GrCucumberExtension extends NotIndexedCucumberExtension {
     return new GrStepDefinitionCreator();
   }
 
-  @Nullable
-  private String getGlue(PsiElement stepDefinition) {
-    if (stepDefinition instanceof GrMethodCall) {
-      GroovyFile groovyFile = (GroovyFile)stepDefinition.getContainingFile();
-      VirtualFile vfile = groovyFile.getVirtualFile();
-      if (vfile != null) {
-        VirtualFile parentDir = vfile.getParent();
-        return PathUtil.getLocalPath(parentDir);
-      }
-    }
-    return null;
-  }
-
-  @NotNull
   @Override
-  public Collection<String> getGlues(@NotNull GherkinFile file, Set<String> gluesFromOtherFiles) {
-    if (gluesFromOtherFiles == null) {
-      gluesFromOtherFiles = new HashSet<>();
-    }
-    final Set<String> glues = gluesFromOtherFiles;
+  public List<AbstractStepDefinition> loadStepsFor(@Nullable PsiFile featureFile, @NotNull Module module) {
+    final List<AbstractStepDefinition> result = new ArrayList<>();
+    final FileBasedIndex fileBasedIndex = FileBasedIndex.getInstance();
+    GlobalSearchScope scope = featureFile != null ? featureFile.getResolveScope() : module.getModuleWithDependenciesAndLibrariesScope(true);
 
-    for (AbstractStepDefinition stepDefinition : getAllStepDefinitions(file.getProject())) {
-      final PsiElement stepDefinitionElement = stepDefinition.getElement();
-      final String glue = getGlue(stepDefinitionElement);
-      if (glue != null) {
-        glues.add(glue);
-      }
-    }
+    Project project = module.getProject();
+    fileBasedIndex.processValues(GrCucumberStepIndex.INDEX_ID, true, null,
+                                 (file, value) -> {
+                                   PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
+                                   if (psiFile == null) {
+                                     return true;
+                                   }
 
-    return glues;
-  }
-
-  @Override
-  protected void loadStepDefinitionRootsFromLibraries(Module module, List<PsiDirectory> roots, Set<String> directories) {
-
-  }
-
-  @NotNull
-  @Override
-  public List<AbstractStepDefinition> getStepDefinitions(@NotNull PsiFile psiFile) {
-    final List<AbstractStepDefinition> newDefs = new ArrayList<>();
-    if (psiFile instanceof GroovyFile) {
-      GrStatement[] statements = ((GroovyFile)psiFile).getStatements();
-      for (GrStatement statement : statements) {
-        if (GrCucumberUtil.isStepDefinition(statement)) {
-          newDefs.add(GrStepDefinition.getStepDefinition((GrMethodCall)statement));
-        }
-      }
-    }
-    return newDefs;
-  }
-
-  @Override
-  protected void collectAllStepDefsProviders(@NotNull List<VirtualFile> providers, @NotNull Project project) {
-    final Module[] modules = ModuleManager.getInstance(project).getModules();
-    for (Module module : modules) {
-      if (ModuleType.get(module) instanceof JavaModuleType) {
-        final VirtualFile[] roots = ModuleRootManager.getInstance(module).getContentRoots();
-        ContainerUtil.addAll(providers, roots);
-      }
-    }
-  }
-
-
-  @Override
-  public void findRelatedStepDefsRoots(@NotNull final Module module, @NotNull final PsiFile featureFile,
-                                       List<PsiDirectory> newStepDefinitionsRoots, Set<String> processedStepDirectories) {
-    // ToDo: check if inside test folder
-    for (VirtualFile sfDirectory : ModuleRootManager.getInstance(module).getSourceRoots()) {
-      if (sfDirectory.isDirectory()) {
-        PsiDirectory sourceRoot = PsiDirectoryFactory.getInstance(module.getProject()).createDirectory(sfDirectory);
-        if (!processedStepDirectories.contains(sourceRoot.getVirtualFile().getPath())) {
-          newStepDefinitionsRoots.add(sourceRoot);
-        }
-      }
-    }
+                                   for (Integer offset : value) {
+                                     PsiElement element = psiFile.findElementAt(offset + 1);
+                                     GrMethodCall methodCallExpression = PsiTreeUtil.getParentOfType(element, GrMethodCall.class);
+                                     if (methodCallExpression != null &&
+                                         GrCucumberUtil.getStepDefinitionPattern(methodCallExpression) != null) {
+                                       result.add(GrStepDefinition.getStepDefinition(methodCallExpression));
+                                     }
+                                   }
+                                   return true;
+                                 }, scope);
+    return result;
   }
 }

@@ -57,9 +57,8 @@ public class DartPackagePathReferenceProvider extends PsiReferenceProvider {
            ("img".equalsIgnoreCase(tagName) && "src".equalsIgnoreCase(attrName));
   }
 
-  @NotNull
   @Override
-  public PsiReference[] getReferencesByElement(@NotNull PsiElement psiElement, @NotNull ProcessingContext context) {
+  public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement psiElement, @NotNull ProcessingContext context) {
     if (!(psiElement instanceof XmlAttributeValue) || !HtmlUtil.isHtmlFile(psiElement.getContainingFile())) return PsiReference.EMPTY_ARRAY;
 
     final PsiElement parent = psiElement.getParent();
@@ -81,7 +80,7 @@ public class DartPackagePathReferenceProvider extends PsiReferenceProvider {
   private static FileReference[] getDartPackageReferences(@NotNull final PsiElement psiElement,
                                                           @NotNull final DartUrlResolver dartResolver) {
     final TextRange textRange = ElementManipulators.getValueTextRange(psiElement);
-    final String referenceText = psiElement.getText().substring(textRange.getStartOffset(), textRange.getEndOffset());
+    final String referenceText = textRange.substring(psiElement.getText());
 
     if (!referenceText.trim().startsWith(PACKAGES_FOLDER_NAME + "/") && !referenceText.contains("/" + PACKAGES_FOLDER_NAME + "/")) {
       return FileReference.EMPTY;

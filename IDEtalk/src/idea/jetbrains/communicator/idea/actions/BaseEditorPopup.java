@@ -40,8 +40,7 @@ public abstract class BaseEditorPopup extends ActionGroup implements DumbAware {
   }
 
   @Override
-  @NotNull
-  public AnAction[] getChildren(AnActionEvent e) {
+  public AnAction @NotNull [] getChildren(AnActionEvent e) {
 
     if (e == null) return EMPTY_ARRAY;
 
@@ -85,8 +84,7 @@ public abstract class BaseEditorPopup extends ActionGroup implements DumbAware {
 
     return new ActionGroup(group, true) {
       @Override
-      @NotNull
-      public AnAction[] getChildren(AnActionEvent e) {
+      public AnAction @NotNull [] getChildren(AnActionEvent e) {
         return actions;
       }
     };

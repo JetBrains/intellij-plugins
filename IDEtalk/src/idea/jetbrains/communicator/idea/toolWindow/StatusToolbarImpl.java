@@ -1,10 +1,9 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package jetbrains.communicator.idea.toolWindow;
 
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.util.ArrayUtil;
 import jetbrains.communicator.core.commands.NamedUserCommand;
 import jetbrains.communicator.ide.StatusToolbar;
 import jetbrains.communicator.idea.actions.BaseAction;
@@ -16,11 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-/**
- * @author Kir
- */
-public class StatusToolbarImpl implements StatusToolbar {
-
+public final class StatusToolbarImpl implements StatusToolbar {
   private final List<Class<? extends NamedUserCommand>> myToolbarCommands = new ArrayList<>();
   private final Map<JPanel, Object> myPanels = new WeakHashMap<>();
 
@@ -49,18 +44,11 @@ public class StatusToolbarImpl implements StatusToolbar {
 
   private Component createBottomPanel() {
     DefaultActionGroup actions = new DefaultActionGroup();
-    for (Class<? extends NamedUserCommand> toolbarAction : getToolbarActions()) {
-      actions.add(new BaseAction(toolbarAction));
+    for (Class<? extends NamedUserCommand> toolbarAction : myToolbarCommands) {
+      actions.add(new BaseAction<>(toolbarAction));
     }
     final ActionToolbar actionToolbar = ActionManager.getInstance().createActionToolbar("BottomToolbar", actions, true);
     actionToolbar.setLayoutPolicy(ActionToolbar.NOWRAP_LAYOUT_POLICY);
     return actionToolbar.getComponent();
   }
-
-  Class<? extends NamedUserCommand>[] getToolbarActions() {
-    //noinspection unchecked
-    return myToolbarCommands.toArray(ArrayUtil.EMPTY_CLASS_ARRAY);
-  }
-
-
 }

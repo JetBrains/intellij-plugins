@@ -101,13 +101,6 @@ public class CfmlReferenceInspection extends CfmlInspectionBase {
   }
 
   @Override
-  @Nls
-  @NotNull
-  public String getDisplayName() {
-    return CfmlBundle.message("cfml.references.inspection");
-  }
-
-  @Override
   @NonNls
   @NotNull
   public String getShortName() {

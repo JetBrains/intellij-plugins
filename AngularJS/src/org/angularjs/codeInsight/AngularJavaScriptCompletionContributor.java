@@ -41,7 +41,8 @@ public class AngularJavaScriptCompletionContributor extends CompletionContributo
 
         final Collection<String> keys = instance.getAllKeys(AngularUiRouterViewsIndex.UI_ROUTER_VIEWS_CACHE_INDEX, project);
         addCompletionVariants(result, keys, " (angular-ui-router ui-view)");
-      } else {
+      }
+      else {
         originalPosition = originalPosition instanceof LeafPsiElement &&
                            ((LeafPsiElement)originalPosition).getElementType() == JSTokenTypes.STRING_LITERAL ?
                            originalPosition.getParent() : originalPosition;
@@ -54,7 +55,7 @@ public class AngularJavaScriptCompletionContributor extends CompletionContributo
     }
   }
 
-  static void addCompletionVariants(@NotNull CompletionResultSet result, Collection<String> keys, @Nullable final String comment) {
+  static void addCompletionVariants(@NotNull CompletionResultSet result, Collection<String> keys, final @Nullable String comment) {
     for (String key : keys) {
       if (StringUtil.isEmptyOrSpaces(key)) {
         continue;

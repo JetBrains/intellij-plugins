@@ -80,6 +80,19 @@ public class Angular2DecoratorInspectionsTest extends Angular2CodeInsightFixture
            "not-module-same-line-other-file.b.ts");
   }
 
+  public void testInspectionsNonAngular() {
+    myFixture.enableInspections(AngularIncorrectTemplateDefinitionInspection.class,
+                                AngularInvalidSelectorInspection.class,
+                                AngularMissingOrInvalidDeclarationInModuleInspection.class,
+                                AngularInvalidImportedOrDeclaredSymbolInspection.class,
+                                AngularRecursiveModuleImportExportInspection.class,
+                                AngularUndefinedModuleExportInspection.class,
+                                AngularInvalidEntryComponentInspection.class,
+                                AngularInvalidImportedOrDeclaredSymbolInspection.class);
+    myFixture.configureByFiles("non-angular.a.ts", "non-angular.b.ts", "package.json");
+    myFixture.checkHighlighting();
+  }
+
   private void doTest(@NotNull Class<? extends LocalInspectionTool> inspection,
                       String... files) {
     doTest(1, null, null, inspection, files);

@@ -26,7 +26,7 @@ public class FlexExtractInterfaceDialog extends FlexExtractSuperBaseDialog {
     super(sourceClass, JSMemberInfo.selectMembers(sourceClass, selectedElement, member ->
             member instanceof JSClass ||
             member instanceof JSFunction && !JSPsiImplUtils.hasModifier(member, JSAttributeList.ModifierType.STATIC)),
-          JSExtractInterfaceHandler.REFACTORING_NAME);
+          JSExtractInterfaceHandler.getRefactoringName());
     init();
   }
 

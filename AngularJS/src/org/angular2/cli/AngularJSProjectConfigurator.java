@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 public class AngularJSProjectConfigurator implements DirectoryProjectConfigurator {
 
   @Override
-  public void configureProject(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull Ref<Module> moduleRef) {
+  public void configureProject(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull Ref<Module> moduleRef, boolean newProject) {
     Module module = moduleRef.get();
     if (module != null) {
       final VirtualFile cliJson = AngularCliUtil.findCliJson(baseDir);

@@ -1,6 +1,7 @@
 package com.intellij.aws.cloudformation.tests
 
 import com.intellij.aws.cloudformation.references.CloudFormationEntityReference
+import java.io.File
 
 class EntityResolveTests : ResolveTestsBase(CloudFormationEntityReference::class.java) {
   fun testDependsOnSingle() {
@@ -63,7 +64,6 @@ class EntityResolveTests : ResolveTestsBase(CloudFormationEntityReference::class
     assertEntityResolve("conditionInIf.template", "CreateProdResources")
   }
 
-  override fun getTestDataPath(): String {
-    return TestUtil.getTestDataPath("resolve")
-  }
+  override val testDataRoot: File
+    get() = TestUtil.getTestDataFile("resolve")
 }

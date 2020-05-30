@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.completion;
 
 import com.intellij.codeInsight.CodeInsightSettings;
@@ -19,7 +19,9 @@ import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeImpl;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.projectRoots.impl.ProjectJdkTableImpl;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.LightProjectDescriptor;
@@ -32,6 +34,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Arrays;
+import java.util.stream.Stream;
 
 public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   protected static final String BASE_PATH = "/js2_completion/";
@@ -164,6 +167,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     checkWeHaveInCompletion(lookupElements, "true", "null", "new");
   }
 
+  @JSTestOptions(selectLookupItem = 0)
   public void testKeywordsInContext4() {
     defaultTest();
   }
@@ -340,16 +344,16 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
 
   public final void testInsertImportAmbiguous1() {
     final LookupElement[] items = doTest("");
-    assertQNames(items, "bar.ClassA", "foo.ClassA");
-    myFixture.getLookup().setCurrentItem(items[0]);
+    assertQNames(items, "foo.ClassA", "bar.ClassA");
+    myFixture.getLookup().setCurrentItem(items[1]);
     myFixture.type('\n');
     myFixture.checkResultByFile(getTestName(false) + "_after2.js2");
   }
 
   public final void testInsertImportAmbiguous2() {
     final LookupElement[] items = doTest("");
-    assertQNames(items, "bar.ClassA", "foo.ClassA");
-    myFixture.getLookup().setCurrentItem(items[0]);
+    assertQNames(items, "foo.ClassA", "bar.ClassA");
+    myFixture.getLookup().setCurrentItem(items[1]);
     myFixture.type('\n');
     myFixture.checkResultByFile(getTestName(false) + "_after2.js2");
   }
@@ -666,10 +670,10 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     doTest("");
     assertNotNull(myFixture.getLookupElements());
     assertEquals(2, myFixture.getLookupElements().length);
-    assertLookupElement(myFixture.getLookupElements()[0], "ClassA", " (com.bar)", "CompleteAmbiguousClass.js2");
-    assertLookupElement(myFixture.getLookupElements()[1], "ClassA", " (com.foo)", "CompleteAmbiguousClass.js2");
+    assertLookupElement(myFixture.getLookupElements()[0], "ClassA", " (com.foo)", "CompleteAmbiguousClass.js2");
+    assertLookupElement(myFixture.getLookupElements()[1], "ClassA", " (com.bar)", "CompleteAmbiguousClass.js2");
 
-    myFixture.getLookup().setCurrentItem(myFixture.getLookupElements()[1]);
+    myFixture.getLookup().setCurrentItem(myFixture.getLookupElements()[0]);
     myFixture.type('\n');
     myFixture.checkResultByFile(getTestName(false) + "_2_after.js2");
   }
@@ -1244,6 +1248,10 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     new TestZZ("1", sdk45.getName()).run();
     new TestZZ("2", sdk46.getName()).run();
     new TestZZ("1", sdk45.getName()).run();
+
+    // Avoid jdk leak in new project model
+    ProjectJdkTableImpl jdkTable = (ProjectJdkTableImpl) ProjectJdkTable.getInstance();
+    Stream.of(jdkTable.getAllJdks()).forEach(jdkTable::removeTestJdk);
   }
 
   public void testSameParameterName() {
@@ -1298,5 +1306,13 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   public void testObjectVariants() {
     final LookupElement[] elements = defaultTest();
     checkWeHaveInCompletion(elements, "hasOwnProperty", "length", "isPrototypeOf", "toString");
+  }
+
+  public void testRestartOnTypingIfOverflow() {
+    LookupElement[] lookupElements = defaultTest();
+    checkNoCompletion(lookupElements, "Array"); // there are so many local classes that there's no place for Array within the limit
+    myFixture.type('r');
+    lookupElements = myFixture.getLookupElements();
+    checkWeHaveInCompletion(lookupElements, "Array");
   }
 }

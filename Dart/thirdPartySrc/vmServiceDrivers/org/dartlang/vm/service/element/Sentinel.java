@@ -21,7 +21,7 @@ import com.google.gson.JsonObject;
 /**
  * A {@link Sentinel} is used to indicate that the normal response is not available.
  */
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class Sentinel extends Response {
 
   public Sentinel(JsonObject json) {
@@ -32,7 +32,7 @@ public class Sentinel extends Response {
    * What kind of sentinel is this?
    */
   public SentinelKind getKind() {
-    JsonElement value = json.get("kind");
+    final JsonElement value = json.get("kind");
     try {
       return value == null ? SentinelKind.Unknown : SentinelKind.valueOf(value.getAsString());
     } catch (IllegalArgumentException e) {
@@ -44,6 +44,6 @@ public class Sentinel extends Response {
    * A reasonable string representation of this sentinel.
    */
   public String getValueAsString() {
-    return json.get("valueAsString").getAsString();
+    return getAsString("valueAsString");
   }
 }

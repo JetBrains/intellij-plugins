@@ -1,7 +1,7 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.karma;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -145,7 +146,7 @@ public class KarmaConfig {
     JsonElement browsersElement = obj.get(BROWSERS);
     if (browsersElement != null && browsersElement.isJsonArray()) {
       JsonArray browsersArray = browsersElement.getAsJsonArray();
-      List<String> browsers = Lists.newArrayList();
+      List<String> browsers = new ArrayList<>();
       for (JsonElement browserElement : browsersArray) {
         String browser = JsonUtil.getString(browserElement);
         if (browser != null) {

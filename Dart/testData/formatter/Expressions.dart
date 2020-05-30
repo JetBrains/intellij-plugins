@@ -6,7 +6,6 @@ m() {
     < int > [ ] ;
    < int , int > { } ;
   -  ~  !  foo;
-  x &&
-  y;
+  x &&y;
   throw new FormatException("This is a long exception message.");;;
 }

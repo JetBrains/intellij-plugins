@@ -3,7 +3,7 @@ package com.intellij.lang.javascript.uml;
 import com.intellij.diagram.*;
 import com.intellij.diagram.actions.DiagramCreateNewElementAction;
 import com.intellij.diagram.actions.DiagramCreateNewNodeElementAction;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
@@ -99,12 +99,12 @@ public class FlashUmlProvider extends DiagramProvider<Object> {
     return myExtras;
   }
 
-  public static final DiagramCreateNewElementAction[] ELEMENT_ACTIONS = {
+  private final DiagramCreateNewElementAction[] myElementActions = {
     new NewActionScriptClassUmlAction(),
     new NewFlexComponentUmlAction()
   };
 
-  public static final DiagramCreateNewNodeElementAction[] NODE_ACTIONS = {
+  private final DiagramCreateNewNodeElementAction[] myNodeActions = {
     new FlexCreateFieldFromDiagramAction(),
     new FlexCreateMethodFromDiagramAction(),
     new FlexCreateConstructorFromDiagramAction()
@@ -113,18 +113,18 @@ public class FlashUmlProvider extends DiagramProvider<Object> {
   @Override
   public DiagramCreateNewElementAction<Object, ?>[] getCreateNewActions() {
     //noinspection unchecked
-    return ELEMENT_ACTIONS;
+    return myElementActions;
   }
 
   @Override
   public DiagramCreateNewNodeElementAction<Object, ?>[] getCreateNewNodeElementActions() {
     //noinspection unchecked
-    return NODE_ACTIONS;
+    return myNodeActions;
   }
 
   @Override
   public String getPresentableName() {
-    return JSBundle.message("js.uml.presentable.name");
+    return JavaScriptBundle.message("js.uml.presentable.name");
   }
 
   @Override

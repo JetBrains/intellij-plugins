@@ -16,13 +16,15 @@ package org.dartlang.vm.service.element;
 // This is a generated file.
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
 /**
  * The {@link SourceReportRange} class represents a range of executable code (function, method,
  * constructor, etc) in the running program. It is part of a SourceReport.
  */
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class SourceReportRange extends Element {
 
   public SourceReportRange(JsonObject json) {
@@ -33,7 +35,7 @@ public class SourceReportRange extends Element {
    * Has this range been compiled by the Dart VM?
    */
   public boolean getCompiled() {
-    return json.get("compiled").getAsBoolean();
+    return getAsBoolean("compiled");
   }
 
   /**
@@ -42,15 +44,23 @@ public class SourceReportRange extends Element {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public SourceReportCoverage getCoverage() {
-    return json.get("coverage") == null ? null : new SourceReportCoverage((JsonObject) json.get("coverage"));
+    JsonObject obj = (JsonObject) json.get("coverage");
+    if (obj == null) return null;
+    final String type = json.get("type").getAsString();
+    if ("Instance".equals(type) || "@Instance".equals(type)) {
+      final String kind = json.get("kind").getAsString();
+      if ("Null".equals(kind)) return null;
+    }
+    return new SourceReportCoverage(obj);
   }
 
   /**
    * The token position at which this range ends.  Inclusive.
    */
   public int getEndPos() {
-    return json.get("endPos") == null ? -1 : json.get("endPos").getAsInt();
+    return getAsInt("endPos");
   }
 
   /**
@@ -59,8 +69,16 @@ public class SourceReportRange extends Element {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public ErrorRef getError() {
-    return json.get("error") == null ? null : new ErrorRef((JsonObject) json.get("error"));
+    JsonObject obj = (JsonObject) json.get("error");
+    if (obj == null) return null;
+    final String type = json.get("type").getAsString();
+    if ("Instance".equals(type) || "@Instance".equals(type)) {
+      final String kind = json.get("kind").getAsString();
+      if ("Null".equals(kind)) return null;
+    }
+    return new ErrorRef(obj);
   }
 
   /**
@@ -70,6 +88,7 @@ public class SourceReportRange extends Element {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public List<Integer> getPossibleBreakpoints() {
     return getListInt("possibleBreakpoints");
   }
@@ -79,13 +98,13 @@ public class SourceReportRange extends Element {
    * range of code.
    */
   public int getScriptIndex() {
-    return json.get("scriptIndex") == null ? -1 : json.get("scriptIndex").getAsInt();
+    return getAsInt("scriptIndex");
   }
 
   /**
    * The token position at which this range begins.
    */
   public int getStartPos() {
-    return json.get("startPos") == null ? -1 : json.get("startPos").getAsInt();
+    return getAsInt("startPos");
   }
 }

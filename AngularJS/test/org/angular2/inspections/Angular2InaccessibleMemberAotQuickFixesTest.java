@@ -2,8 +2,10 @@
 package org.angular2.inspections;
 
 import com.intellij.codeInsight.intention.IntentionAction;
+import com.intellij.codeInsight.intention.IntentionActionDelegate;
 import com.intellij.util.containers.ContainerUtil;
 import org.angular2.Angular2MultiFileFixtureTestCase;
+import org.angular2.inspections.quickfixes.AngularMakePublicQuickFix;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,14 +46,24 @@ public class Angular2InaccessibleMemberAotQuickFixesTest extends Angular2MultiFi
     doMultiFileTest("private.ts", "private<caret>Field");
   }
 
+  public void testPrivateConstructorDecoratedFieldFix() {
+    doMultiFileTest("private.ts", "private<caret>Field");
+  }
+
+  public void testPrivateConstructorDecoratedFieldFix2() {
+    doMultiFileTest("private.html", "private<caret>Field");
+  }
+
   private void doMultiFileTest(String fileName, @NotNull String signature) {
     doTest((rootDir, rootAfter) -> {
       myFixture.enableInspections(AngularInaccessibleComponentMemberInAotModeInspection.class);
       myFixture.configureFromTempProjectFile(fileName);
       myFixture.setCaresAboutInjection(false);
       AngularTestUtil.moveToOffsetBySignature(signature, myFixture);
-      IntentionAction intentionAction = ContainerUtil.find(myFixture.filterAvailableIntentions("Make 'public'"),
-                                                           intention -> intention.toString().contains("AngularMakePublicQuickFix"));
+      IntentionAction intentionAction = ContainerUtil.find(
+        myFixture.filterAvailableIntentions("Make 'public'"),
+        intention -> IntentionActionDelegate.unwrap(intention) instanceof AngularMakePublicQuickFix
+      );
       assert intentionAction != null;
       myFixture.launchAction(intentionAction);
     });

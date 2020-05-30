@@ -47,8 +47,7 @@ public class CordovaBasedExecutor {
   }
 
 
-  @NotNull
-  public String[] createNewProjectCommands(@NotNull String name, @Nullable String[] options) {
+  public String @NotNull [] createNewProjectCommands(@NotNull String name, String @Nullable [] options) {
     String[] commands = getNewProjectCommands(name);
     if (options == null) {
       return commands;
@@ -58,35 +57,29 @@ public class CordovaBasedExecutor {
     }
   }
 
-  @NotNull
-  public String[] getPlatformAddCommands(@NotNull String platform) {
+  public String @NotNull [] getPlatformAddCommands(@NotNull String platform) {
     return new String[]{myPath, "platform", "add", platform};
   }
 
-  @NotNull
-  public String[] getPluginAddCommands(@NotNull String fqn) {
+  public String @NotNull [] getPluginAddCommands(@NotNull String fqn) {
     return new String[]{myPath, "plugin", "add", fqn};
   }
 
-  @NotNull
-  public String[] getPluginRemoveCommands(@NotNull String fqn) {
+  public String @NotNull [] getPluginRemoveCommands(@NotNull String fqn) {
     return new String[]{myPath, "plugin", "remove", fqn};
   }
 
-  @NotNull
-  public String[] getPluginListCommands() {
+  public String @NotNull [] getPluginListCommands() {
     return new String[]{myPath, "plugin", "list"};
   }
 
-  @NotNull
-  private String[] getServeCommands(String extraArgs) {
+  private String @NotNull [] getServeCommands(String extraArgs) {
     return appendParsedArguments(newArrayList(myPath, "serve"), extraArgs);
   }
 
-  @NotNull
-  public String[] getEmulateCommand(@NotNull String platform,
-                                    @Nullable String target,
-                                    @Nullable String extraArg) {
+  public String @NotNull [] getEmulateCommand(@NotNull String platform,
+                                              @Nullable String target,
+                                              @Nullable String extraArg) {
 
     if (!StringUtil.isEmpty(target)) {
       target = target.trim();
@@ -97,26 +90,23 @@ public class CordovaBasedExecutor {
     return appendParsedArguments(new String[]{myPath, "run", "--emulator", platform}, extraArg);
   }
 
-  @NotNull
-  private String[] getRunCommands(@NotNull String platform,
-                                  @Nullable String target,
-                                  @Nullable String extraArg) {
+  private String @NotNull [] getRunCommands(@NotNull String platform,
+                                            @Nullable String target,
+                                            @Nullable String extraArg) {
     return getStandardCommands(platform, target, extraArg, COMMAND_RUN);
   }
 
 
-  @NotNull
-  private String[] getPrepareCommands(@NotNull String platform,
-                                      @Nullable String target,
-                                      @Nullable String extraArg) {
+  private String @NotNull [] getPrepareCommands(@NotNull String platform,
+                                                @Nullable String target,
+                                                @Nullable String extraArg) {
     return getStandardCommands(platform, target, extraArg, COMMAND_PREPARE);
   }
 
-  @NotNull
-  protected String[] getStandardCommands(@NotNull String platform,
-                                         @Nullable String target,
-                                         @Nullable String extraArg,
-                                         @NotNull String commandToExecute) {
+  protected String @NotNull [] getStandardCommands(@NotNull String platform,
+                                                   @Nullable String target,
+                                                   @Nullable String extraArg,
+                                                   @NotNull String commandToExecute) {
     String[] command;
     if (!StringUtil.isEmpty(target)) {
       command = new String[]{myPath, commandToExecute, "--target=" + target.trim(), platform};
@@ -127,18 +117,15 @@ public class CordovaBasedExecutor {
     return appendParsedArguments(command, extraArg);
   }
 
-  @NotNull
-  protected final String[] appendParsedArguments(@NotNull Collection<String> commands, @Nullable String extraArgs) {
+  protected final String @NotNull [] appendParsedArguments(@NotNull Collection<String> commands, @Nullable String extraArgs) {
     return ArrayUtil.mergeCollections(commands, parseArgs(extraArgs), String[]::new);
   }
 
-  @NotNull
-  protected final String[] appendParsedArguments(@NotNull String[] commands, @Nullable String extraArgs) {
+  protected final String @NotNull [] appendParsedArguments(String @NotNull [] commands, @Nullable String extraArgs) {
     return ArrayUtil.mergeArrayAndCollection(commands, parseArgs(extraArgs), String[]::new);
   }
 
-  @NotNull
-  protected String[] getNewProjectCommands(@NotNull String name) {
+  protected String @NotNull [] getNewProjectCommands(@NotNull String name) {
     return new String[]{myPath, "create", name};
   }
 

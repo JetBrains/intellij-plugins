@@ -24,8 +24,12 @@
  */
 package org.osmorc.impl;
 
+import com.intellij.facet.Facet;
+import com.intellij.facet.FacetManagerAdapter;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleServiceManager;
+import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManagerListener;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -33,6 +37,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
+import org.osmorc.facet.OsmorcFacetType;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -49,7 +54,7 @@ import java.util.Set;
  */
 public final class AdditionalJARContentsWatcherManager {
   public static AdditionalJARContentsWatcherManager getInstance(@NotNull Module module) {
-    return ModuleServiceManager.getService(module, AdditionalJARContentsWatcherManager.class);
+    return module.getService(AdditionalJARContentsWatcherManager.class);
   }
 
   private final Module myModule;
@@ -63,7 +68,7 @@ public final class AdditionalJARContentsWatcherManager {
     updateWatcherSetup();
   }
 
-  public void updateWatcherSetup() {
+  void updateWatcherSetup() {
     OsmorcFacet osmorcFacet = OsmorcFacet.getInstance(myModule);
     LocalFileSystem fileSystem = LocalFileSystem.getInstance();
     if (osmorcFacet != null) {
@@ -109,9 +114,36 @@ public final class AdditionalJARContentsWatcherManager {
     }
   }
 
-  public void cleanup() {
+  void cleanup() {
     LocalFileSystem.getInstance().removeWatchedRoots(myWatchRequests);
     myWatchRequests.clear();
     myAdditionalBundleJARContents.clear();
+  }
+
+  public static class FacetListener extends FacetManagerAdapter {
+    @Override
+    public void facetAdded(@NotNull Facet facet) {
+      handleFacetChange(facet);
+    }
+
+    @Override
+    public void facetConfigurationChanged(@NotNull Facet facet) {
+      handleFacetChange(facet);
+    }
+
+    private static void handleFacetChange(Facet<?> facet) {
+      if (facet.getTypeId() == OsmorcFacetType.ID) {
+        getInstance(facet.getModule()).updateWatcherSetup();
+      }
+    }
+  }
+
+  public static class ProjectListener implements ProjectManagerListener {
+    @Override
+    public void projectClosing(@NotNull Project project) {
+      for (Module module : ModuleManager.getInstance(project).getModules()) {
+        getInstance(module).cleanup();
+      }
+    }
   }
 }

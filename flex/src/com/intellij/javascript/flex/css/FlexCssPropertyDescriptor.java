@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.css;
 
 import com.intellij.codeInsight.documentation.DocumentationManager;
@@ -299,7 +299,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
         }
       }
     }
-    Collections.sort(docElements, (e1, e2) -> Comparing.compare(e1.header, e2.header));
+    docElements.sort((e1, e2) -> Comparing.compare(e1.header, e2.header));
     StringBuilder builder = new StringBuilder();
     for (int i = 0, n = docElements.size(); i < n; i++) {
       DocumentationElement docElement = docElements.get(i);
@@ -413,9 +413,8 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     }
   }
 
-  @NotNull
   @Override
-  public PsiElement[] getDeclarations(@NotNull PsiElement context) {
+  public PsiElement @NotNull [] getDeclarations(@NotNull PsiElement context) {
     Map<PsiElement, PairInfo> navElement2pairInfo = new HashMap<>();
     final Project project = context.getProject();
 
@@ -443,16 +442,16 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
       }
     }
 
-    Set<PsiElement> navPairs = navElement2pairInfo.keySet();
     Map<String, PsiElement> qName2ResultElement = new HashMap<>();
-    for (PsiElement navPair : navPairs) {
-      PairInfo pairInfo = navElement2pairInfo.get(navPair);
+    for (Map.Entry<PsiElement, PairInfo> entry : navElement2pairInfo.entrySet()) {
+      PsiElement navElement = entry.getKey();
+      PairInfo pairInfo = entry.getValue();
       String jsClassQName = pairInfo.myJsClassQName;
       PsiElement navPairInOtherClassWithSameQName = jsClassQName != null ? qName2ResultElement.get(jsClassQName) : null;
       if (navPairInOtherClassWithSameQName == null ||
-          navPairInOtherClassWithSameQName == navElement2pairInfo.get(navPairInOtherClassWithSameQName) &&
-          pairInfo.myPair != navPair) {
-        qName2ResultElement.put(jsClassQName, navPair);
+          navPairInOtherClassWithSameQName == navElement2pairInfo.get(navPairInOtherClassWithSameQName).myPair &&
+          pairInfo.myPair != navElement) {
+        qName2ResultElement.put(jsClassQName, navElement);
       }
     }
     Collection<PsiElement> result = qName2ResultElement.values();

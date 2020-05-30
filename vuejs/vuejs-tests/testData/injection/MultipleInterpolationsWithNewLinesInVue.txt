@@ -1,0 +1,44 @@
+HtmlFile:MultipleInterpolationsWithNewLinesInVue.vue
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    HtmlTag:template
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('template')
+      XmlToken:XML_TAG_END('>')
+      XmlText
+        PsiWhiteSpace('\n')
+        XmlToken:XML_DATA_CHARACTERS('This')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('is')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('{{interpolation')
+        PsiWhiteSpace('\n\n')
+        XmlToken:XML_DATA_CHARACTERS('}}')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('in')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('text,')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('and')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('{{')
+        PsiWhiteSpace('\n')
+        XmlToken:XML_DATA_CHARACTERS('another}}{{two}}')
+        JSFile:MultipleInterpolationsWithNewLinesInVue.vue.int
+          VueJSEmbeddedExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('interpolation')
+          PsiWhiteSpace('\n\n')
+        JSFile:MultipleInterpolationsWithNewLinesInVue.vue.int
+          PsiWhiteSpace('\n')
+          VueJSEmbeddedExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('another')
+        JSFile:MultipleInterpolationsWithNewLinesInVue.vue.int
+          VueJSEmbeddedExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('two')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('template')
+      XmlToken:XML_TAG_END('>')

@@ -43,28 +43,24 @@ public class CfmlComponentImpl extends CfmlCompositeElement implements CfmlCompo
   }
 
   @Override
-  @NotNull
-  public CfmlFunction[] getFunctions() {
+  public CfmlFunction @NotNull [] getFunctions() {
     CfmlFunction[] childrenOfType = PsiTreeUtil.getChildrenOfType(this, CfmlFunction.class);
     return childrenOfType == null ? CfmlFunction.EMPTY_ARRAY : childrenOfType;
   }
 
-  @NotNull
   @Override
-  public CfmlFunction[] getFunctionsWithSupers(boolean isSuperPriority) {
+  public CfmlFunction @NotNull [] getFunctionsWithSupers(boolean isSuperPriority) {
     return CfmlPsiUtil.getFunctionsWithSupers(this, isSuperPriority);
   }
 
-  @NotNull
   @Override
-  public CfmlProperty[] getProperties() {
+  public CfmlProperty @NotNull [] getProperties() {
     CfmlProperty[] childrenOfType = PsiTreeUtil.getChildrenOfType(this, CfmlProperty.class);
     return childrenOfType == null ? CfmlProperty.EMPTY_ARRAY : childrenOfType;
   }
 
-  @NotNull
   @Override
-  public CfmlProperty[] getPropertiesWithSupers(boolean isSuperPriority) {
+  public CfmlProperty @NotNull [] getPropertiesWithSupers(boolean isSuperPriority) {
     return CfmlPsiUtil.getPropertiesWithSupers(this, isSuperPriority);
   }
 
@@ -150,9 +146,8 @@ public class CfmlComponentImpl extends CfmlCompositeElement implements CfmlCompo
     return super.toString()/*getNode().getElementType().toString()*/;
   }
 
-  @NotNull
   @Override
-  public PsiReference[] getReferences() {
+  public PsiReference @NotNull [] getReferences() {
     return CfmlPsiUtil.getComponentReferencesFromAttributes(this);
   }
 

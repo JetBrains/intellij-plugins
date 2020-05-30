@@ -32,17 +32,15 @@ public class Angular2HtmlTemplateBindingsImpl extends Angular2HtmlBoundAttribute
     }
   }
 
-  @NotNull
   @Override
-  public Angular2TemplateBindings getBindings() {
+  public @NotNull Angular2TemplateBindings getBindings() {
     return ObjectUtils.notNull(
       ContainerUtil.getFirstItem(PsiTreeUtil.findChildrenOfType(this, Angular2TemplateBindings.class)),
       () -> new Angular2EmptyTemplateBindings(this, getTemplateName()));
   }
 
-  @NotNull
   @Override
-  public String getTemplateName() {
+  public @NotNull String getTemplateName() {
     return getAttributeInfo().name;
   }
 }

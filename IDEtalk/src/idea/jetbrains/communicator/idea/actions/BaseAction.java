@@ -5,12 +5,12 @@ import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.commands.NamedUserCommand;
 import jetbrains.communicator.core.commands.UserCommand;
 import jetbrains.communicator.idea.IDEtalkContainerRegistry;
-import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.picocontainer.MutablePicoContainer;
@@ -21,7 +21,7 @@ import java.awt.*;
  * @author Kir Maximov
  */
 public class BaseAction<T extends UserCommand> extends AnAction {
-  private static final Logger LOG = Logger.getLogger(BaseAction.class);
+  private static final Logger LOG = Logger.getInstance(BaseAction.class);
   private final Class<? extends T> myCommandClass;
 
   public BaseAction(Class<? extends T> commandClass) {

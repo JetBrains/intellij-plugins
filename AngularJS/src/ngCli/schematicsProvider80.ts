@@ -4,14 +4,18 @@ import {SchematicsProvider} from "./schematicsProvider";
 import {SchematicCommand} from "@angular/cli/models/schematic-command";
 import {getWorkspace} from "@angular/cli/utilities/config"
 
-let command = new (SchematicCommand as any)({workspace: getWorkspace()}, null, null);
+let workspace = getWorkspace() as any
+if (!workspace || !workspace.root) throw new Error("Try 9.0 provider")
 
-const schematicsProvider: SchematicsProvider = {
+let command = new (SchematicCommand as any)({workspace}, null, null);
+let engineHost = command.createWorkflow({interactive: false}).engineHost;
+
+const schematicsProvider: Promise<SchematicsProvider> = Promise.resolve({
   getCollection(collectionName: string): Collection<any, any> {
     return command.getCollection(collectionName);
   },
-  getEngineHost() {
-    return command.createWorkflow({interactive: false}).engineHost;
+  listSchematics(collection): string[] {
+    return engineHost.listSchematics(collection)
   },
   getSchematic(collection: Collection<any, any>, schematicName: string, allowPrivate?: boolean): Schematic<any, any> {
     return command.getSchematic(collection, schematicName, allowPrivate);
@@ -19,6 +23,6 @@ const schematicsProvider: SchematicsProvider = {
   getDefaultSchematicCollection() {
     return command.getDefaultSchematicCollection();
   }
-}
+})
 
 export = schematicsProvider;

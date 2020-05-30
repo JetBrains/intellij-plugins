@@ -43,5 +43,7 @@
     <orderEntry type="module" module-name="intellij.flex.jps" scope="RUNTIME" />
     <orderEntry type="library" name="protobuf" level="project" />
     <orderEntry type="library" name="NanoXML" level="project" />
+    <orderEntry type="library" name="StreamEx" level="project" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
   </component>
 </module>

@@ -3,6 +3,8 @@ package org.angular2.codeInsight;
 
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil;
 import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil;
+import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
+import com.intellij.lang.javascript.modules.NodeModuleUtil;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField;
@@ -12,17 +14,19 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.context.JSApplyCallElement;
 import com.intellij.lang.javascript.psi.resolve.context.JSApplyContextElement;
 import com.intellij.lang.javascript.psi.types.JSAnyType;
-import com.intellij.lang.javascript.psi.types.JSCompositeTypeImpl;
+import com.intellij.lang.javascript.psi.types.JSCompositeTypeFactory;
 import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.ArrayUtil;
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.entities.Angular2DirectiveProperty;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Entity;
+import org.angular2.entities.ivy.Angular2IvyDirective;
 import org.angular2.entities.metadata.psi.Angular2MetadataDirectiveBase;
 import org.angular2.entities.metadata.psi.Angular2MetadataDirectiveProperty;
 import org.angular2.entities.metadata.psi.Angular2MetadataNodeModule;
@@ -42,7 +46,7 @@ import static com.intellij.psi.util.CachedValueProvider.Result.create;
 import static com.intellij.psi.util.CachedValuesManager.getCachedValue;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.ObjectUtils.tryCast;
-import static org.angular2.lang.html.psi.impl.Angular2HtmlReferenceVariableImpl.ANGULAR_CORE_PACKAGE;
+import static org.angular2.lang.Angular2LangUtil.ANGULAR_CORE_PACKAGE;
 
 /**
  * This class is intended to be a single point of origin for any hack to support a badly written library.
@@ -60,8 +64,7 @@ public class Angular2LibrariesHacks {
   /**
    * Hack for WEB-37879
    */
-  @Nullable
-  public static JSType hackNgModelChangeType(@Nullable JSType type, @NotNull String propertyName) {
+  public static @Nullable JSType hackNgModelChangeType(@Nullable JSType type, @NotNull String propertyName) {
     if (type != null
         // Workaround issue with ngModelChange field.
         // The workaround won't execute once Angular source is corrected.
@@ -76,7 +79,7 @@ public class Angular2LibrariesHacks {
   /**
    * Hack for WEB-37838
    */
-  public static void hackIonicComponentOutputs(@NotNull Angular2MetadataDirectiveBase directive, @NotNull Map<String, String> outputs) {
+  public static void hackIonicComponentOutputs(@NotNull Angular2Directive directive, @NotNull Map<String, String> outputs) {
     if (!isIonicDirective(directive)) {
       return;
     }
@@ -103,8 +106,7 @@ public class Angular2LibrariesHacks {
   /**
    * Hack for WEB-39722
    */
-  @Nullable
-  public static Function<Angular2DirectiveProperty, Angular2AttributeDescriptor> hackIonicComponentAttributeNames(
+  public static @Nullable Function<Angular2DirectiveProperty, Angular2AttributeDescriptor> hackIonicComponentAttributeNames(
     @NotNull Angular2Directive directive,
     BiFunction<? super Angular2DirectiveProperty, ? super String, Angular2AttributeDescriptor> oneTimeBindingCreator) {
     if (!isIonicDirective(directive)) {
@@ -116,6 +118,15 @@ public class Angular2LibrariesHacks {
   }
 
   private static boolean isIonicDirective(Angular2Directive directive) {
+    if (directive instanceof Angular2IvyDirective) {
+      return directive.getName().startsWith("Ion") //NON-NLS
+             && Optional.ofNullable(directive.getTypeScriptClass())
+               .map(PsiUtilCore::getVirtualFile)
+               .map(vf -> PackageJsonUtil.findUpPackageJson(vf))
+               .map(NodeModuleUtil::inferNodeModulePackageName)
+               .map(name -> name.equals(IONIC_ANGULAR_PACKAGE))
+               .orElse(false);
+    }
     return Optional.ofNullable(tryCast(directive, Angular2MetadataDirectiveBase.class))
       .map(Angular2MetadataDirectiveBase::getNodeModule)
       .map(Angular2MetadataNodeModule::getName)
@@ -162,9 +173,8 @@ public class Angular2LibrariesHacks {
   /**
    * Hack for WEB-38825. Make ngForOf accept QueryList in addition to NgIterable
    */
-  @Nullable
-  public static JSType hackQueryListTypeInNgForOf(@Nullable JSType type,
-                                                  @NotNull Angular2MetadataDirectiveProperty property) {
+  public static @Nullable JSType hackQueryListTypeInNgForOf(@Nullable JSType type,
+                                                            @NotNull Angular2MetadataDirectiveProperty property) {
     TypeScriptClass clazz;
     JSType queryListType;
     if (type instanceof JSGenericTypeImpl
@@ -172,15 +182,14 @@ public class Angular2LibrariesHacks {
         && (clazz = PsiTreeUtil.getContextOfType(property.getSourceElement(), TypeScriptClass.class)) != null
         && type.getTypeText().contains(NG_ITERABLE)
         && (queryListType = getQueryListType(clazz)) != null) {
-      return new JSCompositeTypeImpl(type.getSource(), type,
-                                     new JSGenericTypeImpl(type.getSource(), queryListType,
-                                                           ((JSGenericTypeImpl)type).getArguments()));
+      return JSCompositeTypeFactory.createUnionType(type.getSource(), type,
+                                                    new JSGenericTypeImpl(type.getSource(), queryListType,
+                                                                          ((JSGenericTypeImpl)type).getArguments()));
     }
     return type;
   }
 
-  @Nullable
-  private static JSType getQueryListType(@NotNull PsiElement scope) {
+  private static @Nullable JSType getQueryListType(@NotNull PsiElement scope) {
     return doIfNotNull(getCachedValue(scope, () -> {
       for (PsiElement module : JSFileReferencesUtil.resolveModuleReference(scope, ANGULAR_CORE_PACKAGE)) {
         if (!(module instanceof JSElement)) continue;

@@ -1,0 +1,15 @@
+!breadcrumbs#null#101
+!cartIsLoaded#false#101
+!cartItems#any[]#101
+!cartItemsHash#""#101
+!cartServerLastSyncDate#0#101
+!cartServerLastTotalsSyncDate#0#101
+!cartServerToken#""#101
+!connectBypassCount#0#101
+!isAddingToCart#false#101
+!isMicrocartOpen#false#101
+!itemsAfterPlatformTotals#null#101
+!payment#any[]#101
+!platformTotalSegments#null#101
+!platformTotals#null#101
+!shipping#any[]#101

@@ -26,9 +26,9 @@ import com.intellij.psi.PsiReferenceRegistrar;
 abstract class StrutsJQueryTaglibReferenceContributorBase extends StrutsTaglibReferenceContributorBase {
 
   protected void installCSS(final PsiReferenceRegistrar registrar, final String... tagNames) {
-    registerTags(CSS_CLASS_PROVIDER, "cssClass", registrar, tagNames);
-    registerTags(CSS_CLASS_PROVIDER, "cssErrorClass", registrar, tagNames);
-    registerTags(CSS_CLASS_PROVIDER, "tooltipCssClass", registrar, tagNames);
+    registerTags(Holder.CSS_CLASS_PROVIDER, "cssClass", registrar, tagNames);
+    registerTags(Holder.CSS_CLASS_PROVIDER, "cssErrorClass", registrar, tagNames);
+    registerTags(Holder.CSS_CLASS_PROVIDER, "tooltipCssClass", registrar, tagNames);
   }
 
   protected void installDraggable(final PsiReferenceRegistrar registrar, final String... tagNames) {
@@ -53,7 +53,7 @@ abstract class StrutsJQueryTaglibReferenceContributorBase extends StrutsTaglibRe
   }
 
   protected void installDroppable(final PsiReferenceRegistrar registrar, final String... tagNames) {
-    registerTags(CSS_CLASS_PROVIDER, "droppableHoverClass", registrar, tagNames);
+    registerTags(Holder.CSS_CLASS_PROVIDER, "droppableHoverClass", registrar, tagNames);
     registerTags(new StaticStringValuesReferenceProvider(false, "fit", "intersect", "pointer", "touch"),
                  "droppableTolerance", registrar, tagNames);
   }
@@ -64,7 +64,7 @@ abstract class StrutsJQueryTaglibReferenceContributorBase extends StrutsTaglibRe
   }
 
   protected void installErrorElementId(final PsiReferenceRegistrar registrar, final String... tagNames) {
-    registerTags(HTML_ID_REFERENCE_PROVIDER, "errorElementId", registrar, tagNames);
+    registerTags(Holder.HTML_ID_REFERENCE_PROVIDER, "errorElementId", registrar, tagNames);
   }
 
   protected void installEvents(final PsiReferenceRegistrar registrar, final String... tagNames) {
@@ -73,7 +73,7 @@ abstract class StrutsJQueryTaglibReferenceContributorBase extends StrutsTaglibRe
   }
 
   protected void installIndicator(final PsiReferenceRegistrar registrar, final String... tagNames) {
-    registerTags(HTML_ID_REFERENCE_PROVIDER, "indicator", registrar, tagNames);
+    registerTags(Holder.HTML_ID_REFERENCE_PROVIDER, "indicator", registrar, tagNames);
   }
 
   protected void installLabelposition(final PsiReferenceRegistrar registrar, final String... tagNames) {
@@ -95,7 +95,7 @@ abstract class StrutsJQueryTaglibReferenceContributorBase extends StrutsTaglibRe
     registerBoolean("resizableAutoHide", registrar, tagNames);
     registerTags(new HtmlIdWithAdditionalVariantsReferenceProvider("document", "parent"),
                  "resizableContainment", registrar, tagNames);
-    registerTags(CSS_CLASS_PROVIDER, "resizableHelper", registrar, tagNames);
+    registerTags(Holder.CSS_CLASS_PROVIDER, "resizableHelper", registrar, tagNames);
   }
 
   protected void installSelectable(final PsiReferenceRegistrar registrar, final String... tagNames) {
@@ -113,7 +113,7 @@ abstract class StrutsJQueryTaglibReferenceContributorBase extends StrutsTaglibRe
     registerBoolean("sortableDropOnEmpty", registrar, tagNames);
     registerBoolean("sortableForceHelperSize", registrar, tagNames);
     registerBoolean("sortableForcePlaceholderSize", registrar, tagNames);
-    registerTags(CSS_CLASS_PROVIDER, "sortablePlaceholder", registrar, tagNames);
+    registerTags(Holder.CSS_CLASS_PROVIDER, "sortablePlaceholder", registrar, tagNames);
     registerBoolean("sortableRevert", registrar, tagNames);
     registerBoolean("sortableScroll", registrar, tagNames);
     registerTags(new StaticStringValuesReferenceProvider(false, "intersect", "pointer"),
@@ -122,7 +122,7 @@ abstract class StrutsJQueryTaglibReferenceContributorBase extends StrutsTaglibRe
 
   protected void installTargets(final PsiReferenceRegistrar registrar, final String... tagNames) {
     // TODO allow multiple comma-separated
-    registerTags(HTML_ID_REFERENCE_PROVIDER, "targets", registrar, tagNames);
+    registerTags(Holder.HTML_ID_REFERENCE_PROVIDER, "targets", registrar, tagNames);
   }
 
 }

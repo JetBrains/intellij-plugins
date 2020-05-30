@@ -32,7 +32,7 @@ public class Angular2TemplateInspectionsTest extends Angular2CodeInsightFixtureT
   }
 
   public void testBindingToEvent2() {
-    doTest(2, "[on<caret>foo]", "Remove '[onfoo]' attribute", AngularInsecureBindingToEventInspection.class,
+    doTest(2, "[on<caret>foo]", "Remove attribute [onfoo]", AngularInsecureBindingToEventInspection.class,
            "binding-to-event.html", "component.ts");
   }
 
@@ -47,7 +47,7 @@ public class Angular2TemplateInspectionsTest extends Angular2CodeInsightFixtureT
   }
 
   public void testMultipleTemplateBindings() {
-    doTest(1, "*some<caret>thing", "Remove '*something' attribute", AngularMultipleStructuralDirectivesInspection.class,
+    doTest(1, "*some<caret>thing", "Remove attribute *something", AngularMultipleStructuralDirectivesInspection.class,
            "multiple-template-bindings.html");
   }
 
@@ -62,13 +62,13 @@ public class Angular2TemplateInspectionsTest extends Angular2CodeInsightFixtureT
   }
 
   public void testTemplateReferenceVariable() {
-    doTest(1, "#a<caret>bc=\"foo\"", "Remove '#abc' attribute", AngularInvalidTemplateReferenceVariableInspection.class,
+    doTest(1, "#a<caret>bc=\"foo\"", "Remove attribute #abc", AngularInvalidTemplateReferenceVariableInspection.class,
            "template-reference-variable.html", "component.ts");
   }
 
   public void testTemplateReferenceVariableWithModule() {
-    doTest(1, "#a<caret>bc=\"foo\"", "Remove '#abc' attribute", AngularInvalidTemplateReferenceVariableInspection.class,
-           "template-reference-variable-with-module.html", "component.ts", "template-reference-variable-module.ts");
+    doTest(1, "#a<caret>bc=\"foo\"", "Remove attribute #abc", AngularInvalidTemplateReferenceVariableInspection.class,
+           "template-reference-variable-with-module.html", "component.ts", "template-reference-variable-module.ts", "forms.d.ts");
   }
 
   public void testMatchingComponents() {
@@ -108,6 +108,26 @@ public class Angular2TemplateInspectionsTest extends Angular2CodeInsightFixtureT
   public void testNgContentSelector() {
     doTest(AngularInvalidSelectorInspection.class,
            "ng-content-selector.html");
+  }
+
+  public void testI18n1() {
+    doTest(1, "i18n<caret>-\n", "Rename attribute to 'i18n-bar'", AngularInvalidI18nAttributeInspection.class,
+           "i18n.html");
+  }
+
+  public void testI18n2() {
+    doTest(2, "i18n-<caret>boo", "Create 'boo' attribute", AngularInvalidI18nAttributeInspection.class,
+           "i18n.html");
+  }
+
+  public void testI18n3() {
+    doTest(3, "i18n-<caret>b:boo", "Rename attribute to 'i18n-c:boo'", AngularInvalidI18nAttributeInspection.class,
+           "i18n.html");
+  }
+
+  public void testHammerJS() {
+    myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
+    doTest(AngularUndefinedBindingInspection.class, "hammerJs.html");
   }
 
   private void doTest(@NotNull Class<? extends LocalInspectionTool> inspection,

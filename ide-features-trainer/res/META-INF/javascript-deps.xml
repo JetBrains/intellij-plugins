@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<idea-plugin>
+  <extensions defaultExtensionNs="training">
+    <TrainingLangExtension language="JavaScript" implementationClass="training.lang.JavaScriptLangSupport"/>
+
+    <TrainingModules language="JavaScript">
+      <module path="modules/javascript/EditorBasics.xml"/>
+      <module path="modules/javascript/WebStormDebugger.xml"/>
+      <module path="modules/javascript/WebStormTesting.xml"/>
+    </TrainingModules>
+  </extensions>
+</idea-plugin>

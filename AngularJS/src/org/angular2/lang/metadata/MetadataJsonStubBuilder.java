@@ -20,9 +20,8 @@ public class MetadataJsonStubBuilder implements BinaryFileStubBuilder {
     return file.getFileType() instanceof MetadataJsonFileType;
   }
 
-  @Nullable
   @Override
-  public Stub buildStubTree(@NotNull FileContent fileContent) {
+  public @Nullable Stub buildStubTree(@NotNull FileContent fileContent) {
     MetadataJsonFileType fileType = (MetadataJsonFileType)fileContent.getFileType();
 
     CharSequence text = LoadTextUtil.getTextByBinaryPresentation(
@@ -41,6 +40,6 @@ public class MetadataJsonStubBuilder implements BinaryFileStubBuilder {
 
   @Override
   public int getStubVersion() {
-    return 20;
+    return 22;
   }
 }

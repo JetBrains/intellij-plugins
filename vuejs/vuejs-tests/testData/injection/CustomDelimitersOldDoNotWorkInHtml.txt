@@ -1,0 +1,143 @@
+HtmlFile:CustomDelimitersOldDoNotWorkInHtml.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      PsiElement(XML_DOCTYPE)
+        XmlToken:XML_DOCTYPE_START('<!DOCTYPE')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_NAME('html')
+        XmlToken:XML_DOCTYPE_END('>')
+      PsiWhiteSpace('\n')
+    HtmlTag:html
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('html')
+      XmlToken:XML_TAG_END('>')
+      XmlText
+        PsiWhiteSpace('\n  ')
+      HtmlTag:head
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_NAME('head')
+        XmlToken:XML_TAG_END('>')
+        XmlText
+          PsiWhiteSpace('\n    ')
+        HtmlTag:meta
+          XmlToken:XML_START_TAG_START('<')
+          XmlToken:XML_NAME('meta')
+          PsiWhiteSpace(' ')
+          PsiElement(XML_ATTRIBUTE)
+            XmlToken:XML_NAME('charset')
+            XmlToken:XML_EQ('=')
+            PsiElement(XML_ATTRIBUTE_VALUE)
+              XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
+              XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('utf-8')
+              XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
+          XmlToken:XML_TAG_END('>')
+        XmlText
+          PsiWhiteSpace('\n    ')
+        HtmlTag:title
+          XmlToken:XML_START_TAG_START('<')
+          XmlToken:XML_NAME('title')
+          XmlToken:XML_TAG_END('>')
+          XmlText
+            XmlToken:XML_DATA_CHARACTERS('vue-app-gen')
+          XmlToken:XML_END_TAG_START('</')
+          XmlToken:XML_NAME('title')
+          XmlToken:XML_TAG_END('>')
+        XmlText
+          PsiWhiteSpace('\n  ')
+        XmlToken:XML_END_TAG_START('</')
+        XmlToken:XML_NAME('head')
+        XmlToken:XML_TAG_END('>')
+      XmlText
+        PsiWhiteSpace('\n  ')
+      HtmlTag:body
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_NAME('body')
+        XmlToken:XML_TAG_END('>')
+        XmlText
+          PsiWhiteSpace('\n    ')
+        HtmlTag:div
+          XmlToken:XML_START_TAG_START('<')
+          XmlToken:XML_NAME('div')
+          XmlToken:XML_TAG_END('>')
+          XmlText
+            PsiWhiteSpace('\n      ')
+            XmlToken:XML_DATA_CHARACTERS('$')
+            PsiWhiteSpace(' ')
+            XmlToken:XML_DATA_CHARACTERS('1')
+            PsiWhiteSpace(' ')
+            XmlToken:XML_DATA_CHARACTERS('+')
+            PsiWhiteSpace(' ')
+            XmlToken:XML_DATA_CHARACTERS('2')
+            PsiWhiteSpace(' ')
+            XmlToken:XML_DATA_CHARACTERS('$')
+            PsiWhiteSpace('\n      ')
+            XmlToken:XML_DATA_CHARACTERS('{{3')
+            PsiWhiteSpace(' ')
+            XmlToken:XML_DATA_CHARACTERS('+')
+            PsiWhiteSpace(' ')
+            XmlToken:XML_DATA_CHARACTERS('4}}')
+            PsiWhiteSpace('\n    ')
+            JSFile:CustomDelimitersOldDoNotWorkInHtml.html.int
+              PsiWhiteSpace(' ')
+              VueJSEmbeddedExpression
+                JSBinaryExpression
+                  JSLiteralExpression
+                    PsiElement(JS:NUMERIC_LITERAL)('1')
+                  PsiWhiteSpace(' ')
+                  PsiElement(JS:PLUS)('+')
+                  PsiWhiteSpace(' ')
+                  JSLiteralExpression
+                    PsiElement(JS:NUMERIC_LITERAL)('2')
+              PsiWhiteSpace(' ')
+          XmlToken:XML_END_TAG_START('</')
+          XmlToken:XML_NAME('div')
+          XmlToken:XML_TAG_END('>')
+        XmlText
+          PsiWhiteSpace('\n  ')
+        XmlToken:XML_END_TAG_START('</')
+        XmlToken:XML_NAME('body')
+        XmlToken:XML_TAG_END('>')
+      XmlText
+        PsiWhiteSpace('\n')
+      HtmlTag:script
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_NAME('script')
+        XmlToken:XML_TAG_END('>')
+        JSEmbeddedContent:MOD_ES6_EMBEDDED_CONTENT
+          PsiWhiteSpace('\n')
+          JSExpressionStatement
+            JSNewExpression
+              PsiElement(JS:NEW_KEYWORD)('new')
+              PsiWhiteSpace(' ')
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('Vue')
+              JSArgumentList
+                PsiElement(JS:LPAR)('(')
+                JSObjectLiteralExpression
+                  PsiElement(JS:LBRACE)('{')
+                  PsiWhiteSpace('\n  ')
+                  JSProperty
+                    PsiElement(JS:IDENTIFIER)('delimiters')
+                    PsiElement(JS:COLON)(':')
+                    PsiWhiteSpace(' ')
+                    JSArrayLiteralExpression
+                      PsiElement(JS:LBRACKET)('[')
+                      JSLiteralExpression
+                        PsiElement(JS:STRING_LITERAL)(''$'')
+                      PsiElement(JS:COMMA)(',')
+                      PsiWhiteSpace(' ')
+                      JSLiteralExpression
+                        PsiElement(JS:STRING_LITERAL)(''$'')
+                      PsiElement(JS:RBRACKET)(']')
+                  PsiWhiteSpace('\n')
+                  PsiElement(JS:RBRACE)('}')
+                PsiElement(JS:RPAR)(')')
+          PsiWhiteSpace('\n')
+        XmlToken:XML_END_TAG_START('</')
+        XmlToken:XML_NAME('script')
+        XmlToken:XML_TAG_END('>')
+      XmlText
+        PsiWhiteSpace('\n')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('html')
+      XmlToken:XML_TAG_END('>')

@@ -1,0 +1,14 @@
+cacheProducts#null
+changeRouterFilterParameters#null
+configureProducts#null
+findCategories#null
+loadAvailableFiltersFrom#null
+loadCategories#null
+loadCategory#null
+loadCategoryBreadcrumbs#null
+loadCategoryFilters#null
+loadCategoryProducts#null
+loadMoreCategoryProducts#null
+processCategoryProducts#null
+registerCategoryProductsMapping#null
+switchSearchFilters#null

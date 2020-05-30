@@ -7,12 +7,10 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.projectImport.ProjectFormatPanel;
@@ -204,11 +202,9 @@ public class SelectDirWithFlashBuilderProjectsStep extends ProjectImportWizardSt
                                   ? myProjectLocationComponent.getComponent().getText().trim()
                                   : myExtractPathComponent.getComponent().getText().trim());
         if (dir.isDirectory() && Objects.requireNonNull(dir.list()).length > 0) {
-          final String title = StringUtil.capitalizeWords(
-            ProjectBundle.message("project.new.wizard.import.title", getWizardContext().getPresentationName()), true);
+          final String title = FlexBundle.message("dialog.title.import.from.flash.builder", getWizardContext().getPresentationName());
           if (Messages.YES !=
-              Messages
-                .showYesNoDialog(myMainPanel, FlexBundle.message("folder.not.empty", dir.getPath()), title, Messages.getWarningIcon())) {
+              Messages.showYesNoDialog(myMainPanel, FlexBundle.message("folder.not.empty", dir.getPath()), title, Messages.getWarningIcon())) {
             return false;
           }
         }

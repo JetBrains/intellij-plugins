@@ -17,6 +17,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.navigation.Place;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class DeclareConditionalCompilerDefinitionFix extends FixAndIntentionAction {
 
@@ -35,13 +36,13 @@ public class DeclareConditionalCompilerDefinitionFix extends FixAndIntentionActi
   }
 
   @Override
-  protected void applyFix(final Project project, final PsiElement psiElement, final PsiFile file, final Editor editor) {
+  protected void applyFix(final Project project, final PsiElement psiElement, @NotNull final PsiFile file, @Nullable final Editor editor) {
     final ProjectStructureConfigurable configurable = ProjectStructureConfigurable.getInstance(project);
 
     ShowSettingsUtil.getInstance().editConfigurable(project, configurable, () -> {
       final FlexBuildConfiguration bc = FlexBuildConfigurationManager.getInstance(myModule).getActiveConfiguration();
       final Place place = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getPlaceFor(myModule, bc.getName())
-        .putPath(CompositeConfigurable.TAB_NAME, CompilerOptionsConfigurable.TAB_NAME)
+        .putPath(CompositeConfigurable.TAB_NAME, CompilerOptionsConfigurable.getTabName())
         .putPath(FlexBCConfigurable.LOCATION_ON_TAB, CompilerOptionsConfigurable.Location.ConditionalCompilerDefinition)
         .putPath(CompilerOptionsConfigurable.CONDITIONAL_COMPILER_DEFINITION_NAME, myConditionalCompilerDefinitionName);
     configurable.navigateTo(place, true);

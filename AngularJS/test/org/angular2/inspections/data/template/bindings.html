@@ -28,5 +28,7 @@
 <ng-template *ngFor="t"></ng-template>
 
 <div [innerHTML]="s" (click)="s" onclick=""></div>
+<div innerHtml="{{s}}" <warning descr="Attribute inner is not allowed here">inner</warning>="{{s}}"></div>
+<div innerHTML="{{s}}"></div>
 
 <div ref-a #b></div>

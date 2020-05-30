@@ -34,8 +34,7 @@ public class Angular2PropertyImpl extends JSPropertyImpl {
   }
 
   @Override
-  @NotNull
-  public PsiReference[] getReferences() {
+  public PsiReference @NotNull [] getReferences() {
     return CachedValuesManager.getManager(getProject()).getParameterizedCachedValue(this, REFERENCES_KEY, REFERENCES_PROVIDER, false, this);
   }
 

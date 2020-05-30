@@ -2,6 +2,8 @@
 package org.angular2.codeInsight.attributes;
 
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.xml.XmlTag;
+import com.intellij.xml.util.HtmlUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -9,9 +11,12 @@ import java.util.*;
 
 public class DomElementSchemaRegistry {
 
-  @NotNull
-  public static Set<String> getElementProperties(@NotNull String tagName) {
-    return SCHEMA.getOrDefault(StringUtil.toLowerCase(tagName), DEFAULT_ELEMENT_PROPERTIES);
+  public static @NotNull Set<String> getElementProperties(@NotNull XmlTag tag) {
+    String tagName = StringUtil.toLowerCase(tag.getLocalName());
+    if (tag.getNamespace().equals(HtmlUtil.SVG_NAMESPACE)) {
+      tagName = ":svg:" + tagName; //NON-NLS
+    }
+    return SCHEMA.getOrDefault(tagName, DEFAULT_ELEMENT_PROPERTIES);
   }
 
   @NonNls private static final String[] SCHEMA_DEF = new String[]{

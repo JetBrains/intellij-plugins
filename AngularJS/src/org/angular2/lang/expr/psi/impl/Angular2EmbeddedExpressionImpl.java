@@ -4,22 +4,28 @@ package org.angular2.lang.expr.psi.impl;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.psi.JSElementVisitor;
 import com.intellij.lang.javascript.psi.JSSuppressionHolder;
+import com.intellij.lang.javascript.psi.controlflow.JSControlFlowService;
 import com.intellij.lang.javascript.psi.impl.JSElementImpl;
+import com.intellij.lang.javascript.psi.impl.JSEmbeddedContentImpl;
+import com.intellij.psi.HintedReferenceHost;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.PsiReferenceService;
 import com.intellij.psi.tree.IElementType;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.expr.psi.Angular2EmbeddedExpression;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class Angular2EmbeddedExpressionImpl extends JSElementImpl implements JSSuppressionHolder, Angular2EmbeddedExpression {
+public class Angular2EmbeddedExpressionImpl extends JSElementImpl
+  implements JSSuppressionHolder, Angular2EmbeddedExpression, HintedReferenceHost {
 
   public Angular2EmbeddedExpressionImpl(IElementType elementType) {
     super(elementType);
   }
 
-  @NotNull
   @Override
-  public Language getLanguage() {
+  public @NotNull Language getLanguage() {
     return Angular2Language.INSTANCE;
   }
 
@@ -34,7 +40,28 @@ public class Angular2EmbeddedExpressionImpl extends JSElementImpl implements JSS
   }
 
   @Override
+  public void subtreeChanged() {
+    super.subtreeChanged();
+    JSControlFlowService.getService(getProject()).resetFlow(this);
+  }
+
+  @Override
   public boolean allowTopLevelThis() {
     return true;
+  }
+
+  @Override
+  public @Nullable Character getQuoteChar() {
+    return JSEmbeddedContentImpl.getQuoteChar(this);
+  }
+
+  @Override
+  public PsiReference @NotNull [] getReferences(@NotNull PsiReferenceService.Hints hints) {
+    return PsiReference.EMPTY_ARRAY;
+  }
+
+  @Override
+  public boolean shouldAskParentForReferences(@NotNull PsiReferenceService.Hints hints) {
+    return false;
   }
 }

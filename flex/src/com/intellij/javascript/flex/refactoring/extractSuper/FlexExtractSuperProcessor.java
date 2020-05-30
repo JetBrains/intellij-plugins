@@ -1,8 +1,8 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.refactoring.extractSuper;
 
 import com.intellij.javascript.flex.refactoring.RenameMoveUtils;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.flex.ECMAScriptImportOptimizer;
@@ -51,6 +51,8 @@ import com.intellij.usageView.UsageInfo;
 import com.intellij.usageView.UsageViewDescriptor;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.MultiMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMaps;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -96,13 +98,12 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
 
   @NotNull
   @Override
-  protected UsageViewDescriptor createUsageViewDescriptor(@NotNull UsageInfo[] usages) {
+  protected UsageViewDescriptor createUsageViewDescriptor(UsageInfo @NotNull [] usages) {
     return new JSExtractInterfaceUsageViewDescriptor();
   }
 
-  @NotNull
   @Override
-  protected UsageInfo[] findUsages() {
+  protected UsageInfo @NotNull [] findUsages() {
     if (myMode == JSExtractSuperMode.ExtractSuper) {
       return UsageInfo.EMPTY_ARRAY; // user doesn't want to update usages
     }
@@ -146,7 +147,7 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
 
 
   @Override
-  protected void refreshElements(@NotNull PsiElement[] elements) {
+  protected void refreshElements(PsiElement @NotNull [] elements) {
   }
 
   @Override
@@ -161,13 +162,7 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
       return JSPullUpConflictsUtil.checkConflicts(myMembersToMove, mySourceClass, createFakeClass(), v, JSVisibilityUtil.DEFAULT_OPTIONS);
     }
     else {
-      MultiMap<PsiElement, String> conflicts = new MultiMap<PsiElement, String>() {
-        @NotNull
-        @Override
-        protected Map<PsiElement, Collection<String>> createMap() {
-          return Collections.synchronizedMap(super.createMap());
-        }
-
+      MultiMap<PsiElement, String> conflicts = new MultiMap<PsiElement, String>(Object2ObjectMaps.synchronize(new Object2ObjectOpenHashMap<>())) {
         @NotNull
         @Override
         protected Collection<String> createCollection() {
@@ -277,7 +272,7 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
   }
 
   @Override
-  protected void performRefactoring(@NotNull UsageInfo[] usages) {
+  protected void performRefactoring(UsageInfo @NotNull [] usages) {
     List<FormatFixer> formatters = new ArrayList<>();
     if (myMode == JSExtractSuperMode.ExtractSuper) {
       createSuperClassifier(formatters);
@@ -304,7 +299,7 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
     JSRefactoringUtil.format(formatters);
   }
 
-  private void rebindReferencesToTarget(@NotNull UsageInfo[] usages, List<FormatFixer> formatters) {
+  private void rebindReferencesToTarget(UsageInfo @NotNull [] usages, List<FormatFixer> formatters) {
     bindRefsToTarget(usages, formatters);
     Collection<UsageInfo> usagesInMovedMembers = new ArrayList<>();
     Map<PsiElement, JSConvertReferencesToSuperUtil.Status> variablesResults = new HashMap<>();
@@ -512,8 +507,8 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
   @Override
   protected String getCommandName() {
     if (myMode == JSExtractSuperMode.RenameImplementation) {
-      return JSBundle.message("extract.subclass.command.name", StringUtil.getQualifiedName(myTargetPackage, myTargetName),
-                              new JSNamedElementPresenter(mySourceClass).describeWithShortName());
+      return JavaScriptBundle.message("extract.subclass.command.name", StringUtil.getQualifiedName(myTargetPackage, myTargetName),
+                                      new JSNamedElementPresenter(mySourceClass).describeWithShortName());
     }
     else {
       return RefactoringBundle.message(myClassNotInterface ? "extract.superclass.command.name" : "extract.interface.command.name",
@@ -539,8 +534,7 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
 
   private class JSExtractInterfaceUsageViewDescriptor extends UsageViewDescriptorAdapter {
     @Override
-    @NotNull
-    public PsiElement[] getElements() {
+    public PsiElement @NotNull [] getElements() {
       return new PsiElement[]{mySourceClass};
     }
 

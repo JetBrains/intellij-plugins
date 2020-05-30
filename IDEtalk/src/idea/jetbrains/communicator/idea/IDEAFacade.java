@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package jetbrains.communicator.idea;
 
 import com.intellij.openapi.actionSystem.ActionGroup;
@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -17,9 +18,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.ex.WindowManagerEx;
-import com.intellij.openapi.wm.impl.IdeFrameImpl;
+import com.intellij.openapi.wm.impl.ProjectFrameHelper;
 import com.intellij.ui.PopupHandler;
 import com.intellij.ui.TreeSpeedSearch;
 import com.intellij.util.ArrayUtilRt;
@@ -44,8 +44,6 @@ import jetbrains.communicator.idea.history.ShowHistoryDialog;
 import jetbrains.communicator.idea.sendMessage.IncomingLocalMessage;
 import jetbrains.communicator.idea.sendMessage.IncomingStacktraceMessage;
 import jetbrains.communicator.idea.viewFiles.ViewFilesDialog;
-import org.apache.log4j.Logger;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,7 +59,7 @@ import java.util.concurrent.Future;
  * @author Kir Maximov
  */
 public class IDEAFacade implements IDEFacade {
-  private static final Logger LOG = Logger.getLogger(IDEAFacade.class);
+  private static final Logger LOG = Logger.getInstance(IDEAFacade.class);
 
   private ViewFilesDialog myViewFilesDialog;
 
@@ -90,7 +88,7 @@ public class IDEAFacade implements IDEFacade {
 
   @Override
   public File getConfigDir() {
-    @NonNls File file = new File(PathManager.getConfigPath(), "ideTalk");
+    File file = PathManager.getConfigDir().resolve("ideTalk").toFile();
     file.mkdir();
     return file;
   }
@@ -144,7 +142,7 @@ public class IDEAFacade implements IDEFacade {
           else {
             progressIndicator.pushState();
             try {
-              process.run(new jetbrains.communicator.ide.ProgressIndicator() {
+              process.run(new TalkProgressIndicator() {
                 @Override
                 public void setIndefinite(boolean indefinite) {
                   progressIndicator.setIndeterminate(indefinite);
@@ -208,7 +206,7 @@ public class IDEAFacade implements IDEFacade {
       try {
         new ProjectsDataFiller(result).fillProjectsData();
       } catch (Throwable e) {
-        LOG.info(e, e);
+        LOG.info(e.getMessage(), e);
       }
     });
 
@@ -371,11 +369,9 @@ public class IDEAFacade implements IDEFacade {
       res = (Project) getData(component, CommonDataKeys.PROJECT.getName());
     }
     else {
-      IdeFrame[] frames = WindowManagerEx.getInstanceEx().getAllProjectFrames();
-      for (IdeFrame frame : frames) {
-        final IdeFrameImpl eachFrame = (IdeFrameImpl)frame;
-        if (eachFrame.isActive()) {
-          res = eachFrame.getProject();
+      for (ProjectFrameHelper frameHelper : WindowManagerEx.getInstanceEx().getProjectFrameHelpers()) {
+        if (frameHelper.getFrame().isActive()) {
+          res = frameHelper.getProject();
           if (res != null) break;
         }
       }

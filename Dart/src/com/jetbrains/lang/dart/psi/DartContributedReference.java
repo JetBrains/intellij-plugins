@@ -29,7 +29,7 @@ class DartContributedReference implements PsiPolyVariantReference {
     myElement = element;
     myNavigationRegion = navigationRegion;
     myRefRange = TextRange.from(navigationRegion.getOffset() - elementStartOffsetInHost, navigationRegion.getLength());
-    myRefText = element.getText().substring(myRefRange.getStartOffset(), myRefRange.getEndOffset());
+    myRefText = myRefRange.substring(element.getText());
   }
 
   @NotNull
@@ -53,14 +53,12 @@ class DartContributedReference implements PsiPolyVariantReference {
   public PsiElement resolve() {
     final ResolveResult[] resolveResults = multiResolve(true);
 
-    return resolveResults.length == 0 ||
-           resolveResults.length > 1 ||
+    return resolveResults.length != 1 ||
            !resolveResults[0].isValidResult() ? null : resolveResults[0].getElement();
   }
 
-  @NotNull
   @Override
-  public ResolveResult[] multiResolve(boolean incompleteCode) {
+  public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
     final List<? extends PsiElement> elements =
       ResolveCache.getInstance(myElement.getProject()).resolveWithCaching(this, RESOLVER, true, incompleteCode);
     return DartResolveUtil.toCandidateInfoArray(elements);

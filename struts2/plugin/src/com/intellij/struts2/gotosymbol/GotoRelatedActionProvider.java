@@ -29,8 +29,8 @@ import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.action.Result;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
-import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
+import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -40,12 +40,10 @@ import java.util.*;
  *
  * @author Yann C&eacute;bron
  */
-public class GotoRelatedActionProvider extends GotoRelatedProvider {
-
+final class GotoRelatedActionProvider extends GotoRelatedProvider {
   // TODO restrict to "realistic" results
-  private static final Set<String> SUPPORTED_EXTENSIONS = ContainerUtil.newTroveSet(FileUtil.PATH_HASHING_STRATEGY,
-    "ftl", "htm", "html", "jsp", "jspx", "txt", "vm"
-  );
+  private static final Set<String> SUPPORTED_EXTENSIONS =
+    new THashSet<>(Arrays.asList("ftl", "htm", "html", "jsp", "jspx", "txt", "vm"), FileUtil.PATH_HASHING_STRATEGY);
 
   @NotNull
   @Override

@@ -14,46 +14,46 @@ import com.intellij.lang.ognl.OgnlTypes;
 
 %{
   public _OgnlLexer(){
-      this((java.io.Reader)null);
+    this((java.io.Reader)null);
+  }
+
+  private static final class State {
+    final int lBraceCount;
+    final int state;
+
+    private State(int state, int lBraceCount) {
+        this.state = state;
+        this.lBraceCount = lBraceCount;
     }
 
-    private static final class State {
-      final int lBraceCount;
-      final int state;
-
-      private State(int state, int lBraceCount) {
-          this.state = state;
-          this.lBraceCount = lBraceCount;
-      }
-
-      @Override
-      public String toString() {
-          return "yystate = " + state + (lBraceCount == 0 ? "" : "lBraceCount = " + lBraceCount);
-      }
+    @Override
+    public String toString() {
+        return "yystate = " + state + (lBraceCount == 0 ? "" : "lBraceCount = " + lBraceCount);
     }
+  }
 
-    private final Stack<State> myStateStack = new Stack<>();
-    private int myLeftBraceCount;
+  private final Stack<State> myStateStack = new Stack<>();
+  private int myLeftBraceCount;
 
-    protected void resetInternal() {
-      myLeftBraceCount = 0;
-      myStateStack.clear();
-    }
+  protected void resetInternal() {
+    myLeftBraceCount = 0;
+    myStateStack.clear();
+  }
 
-    private void pushState(int newState) {
-      myStateStack.push(new State(yystate(), myLeftBraceCount));
-      myLeftBraceCount = 0;
-      yybegin(newState);
-    }
+  private void pushState(int newState) {
+    myStateStack.push(new State(yystate(), myLeftBraceCount));
+    myLeftBraceCount = 0;
+    yybegin(newState);
+  }
 
-    private void popState() {
-      if (myStateStack.empty()) return;
+  private void popState() {
+    if (myStateStack.empty()) return;
 
-      State state = myStateStack.pop();
-      myLeftBraceCount = state.lBraceCount;
-      yybegin(state.state);
-    }
-  %}
+    State state = myStateStack.pop();
+    myLeftBraceCount = state.lBraceCount;
+    yybegin(state.state);
+  }
+%}
 
 %unicode
 %class _OgnlLexer

@@ -20,7 +20,7 @@ import com.google.gson.JsonObject;
 /**
  * {@link LibraryRef} is a reference to a {@link Library}.
  */
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class LibraryRef extends ObjRef {
 
   public LibraryRef(JsonObject json) {
@@ -31,13 +31,13 @@ public class LibraryRef extends ObjRef {
    * The name of this library.
    */
   public String getName() {
-    return json.get("name").getAsString();
+    return getAsString("name");
   }
 
   /**
    * The uri of this library.
    */
   public String getUri() {
-    return json.get("uri").getAsString();
+    return getAsString("uri");
   }
 }

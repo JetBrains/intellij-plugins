@@ -25,6 +25,6 @@ for(var i:int;<warning>i</warning> <fooValue2;<warning>i</warning>++) {
 var arr:Array = [];
 var <warning descr="Unused variable index">index</warning>:int = 0
 var o:Object
-while((o = arr[i++]) != null) trace(o);
+while((o = arr[<warning descr="Variable might not have been initialized">i</warning>++]) != null) trace(o);
 
 function trace(v:*) {}

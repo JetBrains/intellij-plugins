@@ -46,7 +46,7 @@ public class CfmlFile extends PsiFileBase {
       final Map<String, CfmlImplicitVariable> result = new THashMap<>();
       this.accept(new PsiRecursiveElementVisitor() {
         @Override
-        public void visitComment(final PsiComment comment) {
+        public void visitComment(@NotNull final PsiComment comment) {
           final String text = comment.getText();
           final String[] nameAndType = findVariableNameAndType(text);
           if (nameAndType == null) {
@@ -102,8 +102,7 @@ public class CfmlFile extends PsiFileBase {
     return true;
   }
 
-  @Nullable
-  private static String[] findVariableNameAndType(String text) {
+  private static String @Nullable [] findVariableNameAndType(String text) {
     Matcher matcher = IMPLICIT_VAR_DECL_PATTERN_TEMP.matcher(text);
     Matcher javaLoaderMatcher = LOADER_DECL_PATTERN_TEMP.matcher(text);
     if (!matcher.matches()) {
@@ -135,7 +134,7 @@ public class CfmlFile extends PsiFileBase {
       }
 
       @Override
-      public void visitElement(PsiElement element) {
+      public void visitElement(@NotNull PsiElement element) {
         if (element instanceof CfmlFile || element instanceof CfmlTag) {
           super.visitElement(element);
         }
@@ -165,7 +164,7 @@ public class CfmlFile extends PsiFileBase {
       }
 
       @Override
-      public void visitElement(PsiElement element) {
+      public void visitElement(@NotNull PsiElement element) {
         if (element instanceof CfmlFile || element instanceof CfmlTagScriptImpl) {
           super.visitElement(element);
         }

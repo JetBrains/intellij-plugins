@@ -11,8 +11,8 @@ import java.io.IOException;
 
 public class MetadataElementType<Stub extends MetadataElementStub<?>> extends IStubElementType<Stub, MetadataElement<Stub>> {
 
-  @NotNull private final MetadataStubConstructor<? extends Stub> myStubConstructor;
-  @NotNull private final MetadataElementConstructor<Stub> myPsiConstructor;
+  private final @NotNull MetadataStubConstructor<? extends Stub> myStubConstructor;
+  private final @NotNull MetadataElementConstructor<Stub> myPsiConstructor;
 
   public MetadataElementType(@NotNull String debugName,
                              Language language,
@@ -28,9 +28,8 @@ public class MetadataElementType<Stub extends MetadataElementStub<?>> extends IS
     return myPsiConstructor.construct(stub);
   }
 
-  @NotNull
   @Override
-  public Stub createStub(@NotNull MetadataElement psi, StubElement parentStub) {
+  public @NotNull Stub createStub(@NotNull MetadataElement psi, StubElement parentStub) {
     throw new UnsupportedOperationException();
   }
 
@@ -40,9 +39,8 @@ public class MetadataElementType<Stub extends MetadataElementStub<?>> extends IS
     return "METADATA_JSON:" + super.toString();
   }
 
-  @NotNull
   @Override
-  public String getExternalId() {
+  public @NotNull String getExternalId() {
     return toString();
   }
 
@@ -51,9 +49,8 @@ public class MetadataElementType<Stub extends MetadataElementStub<?>> extends IS
     stub.serialize(dataStream);
   }
 
-  @NotNull
   @Override
-  public Stub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+  public @NotNull Stub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
     return myStubConstructor.construct(dataStream, parentStub);
   }
 

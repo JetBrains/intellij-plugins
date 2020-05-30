@@ -15,7 +15,7 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
-import com.intellij.ide.actions.ShowFilePathAction;
+import com.intellij.ide.actions.RevealFileAction;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.actions.airpackage.AirPackageUtil;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitConnection;
@@ -24,7 +24,6 @@ import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.flexunit.SwfPolicyFileConnection;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
@@ -40,13 +39,10 @@ import com.intellij.xdebugger.DefaultDebugProcessHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 
 public class FlexRunner extends FlexBaseRunner {
-
   @Override
   protected RunContentDescriptor launchFlexConfig(final Module module,
                                                   final FlexBuildConfiguration bc,
@@ -121,7 +117,7 @@ public class FlexRunner extends FlexBaseRunner {
                   .notifyByBalloon(ToolWindowId.RUN, MessageType.INFO, message, null, new HyperlinkAdapter() {
                     @Override
                     protected void hyperlinkActivated(final HyperlinkEvent e) {
-                      ShowFilePathAction.openFile(new File(outputFolder + "/" + ipaName));
+                      RevealFileAction.openFile(new File(outputFolder + "/" + ipaName));
                     }
                   });
               }
@@ -249,21 +245,7 @@ public class FlexRunner extends FlexBaseRunner {
 
     @Override
     public void onData(final String line) {
-      Runnable runnable = () -> myProcessHandler.notifyTextAvailable(line + "\n", ProcessOutputTypes.STDOUT);
-      if (ApplicationManager.getApplication().isUnitTestMode()) {
-        try {
-          SwingUtilities.invokeAndWait(runnable);
-        }
-        catch (InterruptedException e) {
-          throw new RuntimeException(e);
-        }
-        catch (InvocationTargetException e) {
-          throw new RuntimeException(e);
-        }
-      }
-      else {
-        runnable.run();
-      }
+      myProcessHandler.notifyTextAvailable(line + "\n", ProcessOutputTypes.STDOUT);
     }
 
     @Override

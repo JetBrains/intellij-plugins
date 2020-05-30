@@ -18,7 +18,7 @@ public class Angular2BracesInterpolationTypedHandler extends TypedHandlerDelegat
   private final JSInjectionBracesUtil.InterpolationBracesCompleter myBracesCompleter;
 
   public Angular2BracesInterpolationTypedHandler() {
-    myBracesCompleter = new JSInjectionBracesUtil.InterpolationBracesCompleter(Angular2Injector.BRACES_FACTORY) {
+    myBracesCompleter = new JSInjectionBracesUtil.InterpolationBracesCompleter(Angular2Injector.Holder.BRACES_FACTORY) {
       @Override
       protected boolean checkTypingContext(@NotNull Editor editor, @NotNull PsiFile file) {
         PsiElement atCaret = getContextElement(editor, file);
@@ -29,15 +29,14 @@ public class Angular2BracesInterpolationTypedHandler extends TypedHandlerDelegat
     };
   }
 
-  @NotNull
   @Override
-  public Result beforeCharTyped(char c,
-                                @NotNull Project project,
-                                @NotNull Editor editor,
-                                @NotNull PsiFile file,
-                                @NotNull FileType fileType) {
+  public @NotNull Result beforeCharTyped(char c,
+                                         @NotNull Project project,
+                                         @NotNull Editor editor,
+                                         @NotNull PsiFile file,
+                                         @NotNull FileType fileType) {
     final Language language = file.getLanguage();
-    if (Angular2HtmlLanguage.INSTANCE.equals(language)) {
+    if (language.isKindOf(Angular2HtmlLanguage.INSTANCE)) {
       return myBracesCompleter.beforeCharTyped(c, project, editor, file);
     }
     return Result.CONTINUE;

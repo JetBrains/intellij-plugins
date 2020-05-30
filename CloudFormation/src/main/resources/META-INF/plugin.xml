@@ -29,15 +29,6 @@
   <depends>com.intellij.modules.lang</depends>
   <depends>org.jetbrains.plugins.yaml</depends>
 
-  <application-components>
-    <component>
-      <implementation-class>com.intellij.aws.cloudformation.CloudFormationUpdateComponent</implementation-class>
-    </component>
-  </application-components>
-
-  <project-components>
-  </project-components>
-
   <actions>
     <action id="NewJsonCloudFormationFile" class="com.intellij.aws.cloudformation.CreateJsonTemplateFileAction">
       <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewDir"/>
@@ -49,26 +40,35 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <documentationProvider implementation="com.intellij.aws.cloudformation.CloudFormationDocumentationProvider"/>
-    <fileTypeFactory implementation="com.intellij.aws.cloudformation.CloudFormationFileTypeFactory"/>
+
+    <fileTypeDetector implementation="com.intellij.aws.cloudformation.CloudFormationFileTypeDetector" />
+
+    <fileType name="AWSCloudFormation (JSON)" implementationClass="com.intellij.aws.cloudformation.JsonCloudFormationFileType" fieldName="INSTANCE" />
+    <fileType name="AWSCloudFormation (YAML)" implementationClass="com.intellij.aws.cloudformation.YamlCloudFormationFileType" fieldName="INSTANCE" />
+    <lang.substitutor language="TEXT" implementationClass="com.intellij.aws.cloudformation.CloudFormationLanguageSubstitutor" />
 
     <psi.referenceContributor implementation="com.intellij.aws.cloudformation.CloudFormationReferenceContributor"/>
 
-    <localInspection language="JSON" bundle="com.intellij.aws.cloudformation.CloudFormationBundle"
+    <localInspection language="JSON" bundle="messages.CloudFormationBundle"
                      key="aws.cloudformation.inspections.formatViolation"
                      groupKey="aws.cloudformation.inspections.group.name" enabledByDefault="true" level="ERROR"
+                     hasStaticDescription="true"
                      implementationClass="com.intellij.aws.cloudformation.inspections.JsonFormatViolationInspection"/>
-    <localInspection language="JSON" bundle="com.intellij.aws.cloudformation.CloudFormationBundle"
+    <localInspection language="JSON" bundle="messages.CloudFormationBundle"
                      key="aws.cloudformation.inspections.unresolvedReference"
                      groupKey="aws.cloudformation.inspections.group.name" enabledByDefault="true" level="ERROR"
+                     hasStaticDescription="true"
                      implementationClass="com.intellij.aws.cloudformation.inspections.JsonUnresolvedReferencesInspection"/>
 
-    <localInspection language="yaml" bundle="com.intellij.aws.cloudformation.CloudFormationBundle"
+    <localInspection language="yaml" bundle="messages.CloudFormationBundle"
                      key="aws.cloudformation.inspections.formatViolation"
                      groupKey="aws.cloudformation.inspections.group.name" enabledByDefault="true" level="ERROR"
+                     hasStaticDescription="true"
                      implementationClass="com.intellij.aws.cloudformation.inspections.YamlFormatViolationInspection"/>
-    <localInspection language="yaml" bundle="com.intellij.aws.cloudformation.CloudFormationBundle"
+    <localInspection language="yaml" bundle="messages.CloudFormationBundle"
                      key="aws.cloudformation.inspections.unresolvedReference"
                      groupKey="aws.cloudformation.inspections.group.name" enabledByDefault="true" level="ERROR"
+                     hasStaticDescription="true"
                      implementationClass="com.intellij.aws.cloudformation.inspections.YamlUnresolvedReferencesInspection"/>
 
     <completion.contributor language="JSON" order="first" implementationClass="com.intellij.aws.cloudformation.JsonCloudFormationCompletionContributor"/>
@@ -79,8 +79,11 @@
 
     <liveTemplateContext implementation="com.intellij.aws.cloudformation.JsonCloudFormationCodeContextType"/>
     <liveTemplateContext implementation="com.intellij.aws.cloudformation.YamlCloudFormationCodeContextType"/>
-    <defaultLiveTemplatesProvider implementation="com.intellij.aws.cloudformation.CloudFormationDefaultLiveTemplateProvider"/>
+    <defaultLiveTemplates file="liveTemplates/cloudformation_json.xml"/>
+    <defaultLiveTemplates file="liveTemplates/cloudformation_yaml.xml"/>
 
     <json.catalog.exclusion implementation="com.intellij.aws.cloudformation.CloudFormationJsonCatalogExclusion" />
+
+    <fileTypeStatisticProvider implementation="com.intellij.aws.cloudformation.CloudFormationFileTypeStatisticProvider"/>
   </extensions>
 </idea-plugin>

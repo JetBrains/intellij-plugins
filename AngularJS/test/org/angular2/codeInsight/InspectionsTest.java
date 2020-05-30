@@ -2,10 +2,7 @@
 package org.angular2.codeInsight;
 
 import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection;
-import com.intellij.lang.javascript.inspections.JSMethodCanBeStaticInspection;
-import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
-import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
-import com.intellij.lang.javascript.inspections.UnterminatedStatementJSInspection;
+import com.intellij.lang.javascript.inspections.*;
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection;
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
@@ -35,7 +32,9 @@ public class InspectionsTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testMethodCanBeStatic() {
-    myFixture.enableInspections(JSMethodCanBeStaticInspection.class);
+    JSMethodCanBeStaticInspection canBeStaticInspection = new JSMethodCanBeStaticInspection();
+    canBeStaticInspection.myOnlyPrivate = false;
+    myFixture.enableInspections(canBeStaticInspection);
     myFixture.configureByFiles("methodCanBeStatic.ts", "methodCanBeStatic.html", "package.json");
     myFixture.checkHighlighting();
   }
@@ -91,4 +90,21 @@ public class InspectionsTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.checkHighlighting();
   }
 
+  public void testDuplicateDeclarationOff() {
+    myFixture.enableInspections(new JSDuplicatedDeclarationInspection());
+    myFixture.configureByFiles("duplicateDeclarationOff.html", "duplicateDeclarationOff.ts", "package.json");
+    myFixture.checkHighlighting();
+  }
+
+  public void testDuplicateDeclarationOffTemplate() {
+    myFixture.enableInspections(new JSDuplicatedDeclarationInspection());
+    myFixture.configureByFiles("duplicateDeclarationOffLocalTemplate.ts", "package.json");
+    myFixture.checkHighlighting();
+  }
+
+  public void testNestedComponentClasses() {
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.configureByFiles("nested-classes.html", "nested-classes.ts","package.json");
+    myFixture.checkHighlighting();
+  }
 }

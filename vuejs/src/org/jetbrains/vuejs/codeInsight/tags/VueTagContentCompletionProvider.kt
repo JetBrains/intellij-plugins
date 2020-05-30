@@ -5,17 +5,17 @@ import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionProvider
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.lookup.LookupElementBuilder
-import com.intellij.psi.impl.source.html.HtmlTagImpl
+import com.intellij.psi.html.HtmlTag
 import com.intellij.util.ProcessingContext
 import icons.VuejsIcons
 import org.jetbrains.vuejs.codeInsight.completion.vuetify.VuetifyIcons
-import org.jetbrains.vuejs.index.isVueContext
+import org.jetbrains.vuejs.context.isVueContext
 
 class VueTagContentCompletionProvider : CompletionProvider<CompletionParameters>() {
 
   override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
     if (!isVueContext(parameters.position)) return
-    if (parameters.position.parent.parent is HtmlTagImpl && (parameters.position.parent.parent as HtmlTagImpl).name.contains("v-icon")) {
+    if ((parameters.position.parent.parent as? HtmlTag)?.name?.contains("v-icon") == true) {
       VuetifyIcons.materialAndFontAwesome.forEach {
         result.addElement(LookupElementBuilder.create(it).withIcon(VuejsIcons.Vue))
       }

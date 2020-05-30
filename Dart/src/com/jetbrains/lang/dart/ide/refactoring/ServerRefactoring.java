@@ -18,12 +18,13 @@ package com.jetbrains.lang.dart.ide.refactoring;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.Uninterruptibles;
 import com.google.dart.server.GetRefactoringConsumer;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.refactoring.status.RefactoringStatus;
 import com.jetbrains.lang.dart.ide.refactoring.status.RefactoringStatusEntry;
@@ -89,7 +90,7 @@ public abstract class ServerRefactoring {
     ProgressManager.getInstance().run(new Task.Modal(null, refactoringName, true) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
-        indicator.setText("Validating the specified parameters.");
+        indicator.setText(DartBundle.message("progress.text.validating.the.specified.parameters"));
         indicator.setIndeterminate(true);
         setOptions(false, indicator);
       }
@@ -111,7 +112,7 @@ public abstract class ServerRefactoring {
     ProgressManager.getInstance().run(new Task.Modal(null, refactoringName, true) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
-        indicator.setText("Checking availability at the selection.");
+        indicator.setText(DartBundle.message("progress.text.checking.availability.at.the.selection"));
         indicator.setIndeterminate(true);
         setOptions(true, indicator);
       }
@@ -202,9 +203,7 @@ public abstract class ServerRefactoring {
     // wait for completion
     if (indicator != null) {
       while (true) {
-        if (indicator.isCanceled()) {
-          throw new ProcessCanceledException();
-        }
+        ProgressIndicatorUtils.checkCancelledEvenWithPCEDisabled(indicator);
         boolean done = Uninterruptibles.awaitUninterruptibly(latch, 10, TimeUnit.MILLISECONDS);
         if (done) {
           return;

@@ -22,6 +22,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.PathUtil;
+import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -570,6 +571,12 @@ public class AirPackageUtil {
                                               command.add("-package");
                                               command.add(apkPath);
                                             }
+
+                                            @Override
+                                            protected boolean checkMessages() {
+                                              return myMessages.isEmpty() ||
+                                                     StreamEx.of(myMessages).anyMatch(s -> StringUtil.containsIgnoreCase(s, "success"));
+                                            }
                                           }, FlexBundle.message("installing.0", apkPath.substring(apkPath.lastIndexOf('/') + 1)),
                                           FlexBundle.message("install.android.application.title"));
     }
@@ -592,7 +599,8 @@ public class AirPackageUtil {
 
                                             @Override
                                             protected boolean checkMessages() {
-                                              return myMessages.isEmpty() || StringUtil.containsIgnoreCase(myMessages.get(0), "success");
+                                              return myMessages.isEmpty() ||
+                                                     StreamEx.of(myMessages).anyMatch(s -> StringUtil.containsIgnoreCase(s, "success"));
                                             }
                                           }, FlexBundle.message("installing.0", apkPath.substring(apkPath.lastIndexOf('/') + 1)),
                                           FlexBundle.message("install.android.application.title"));
@@ -635,24 +643,24 @@ public class AirPackageUtil {
                                            final FlashRunnerParameters runnerParameters,
                                            final String ipaPath) {
     return ExternalTask.runWithProgress(new AdtTask(project, flexSdk) {
-      @Override
-      protected void appendAdtOptions(final List<String> command) {
-        command.add("-installApp");
-        command.add("-platform");
-        command.add("ios");
-        //command.add("-platformsdk");
-        //command.add(iOSSdkPath);
+                                          @Override
+                                          protected void appendAdtOptions(final List<String> command) {
+                                            command.add("-installApp");
+                                            command.add("-platform");
+                                            command.add("ios");
+                                            //command.add("-platformsdk");
+                                            //command.add(iOSSdkPath);
 
-        final DeviceInfo device = runnerParameters.getDeviceInfo();
-        if (device != null) {
-          command.add("-device");
-          command.add(String.valueOf(device.IOS_HANDLE));
-        }
+                                            final DeviceInfo device = runnerParameters.getDeviceInfo();
+                                            if (device != null) {
+                                              command.add("-device");
+                                              command.add(String.valueOf(device.IOS_HANDLE));
+                                            }
 
-        command.add("-package");
-        command.add(ipaPath);
-      }
-    }, FlexBundle.message("installing.0", ipaPath.substring(ipaPath.lastIndexOf('/') + 1)),
+                                            command.add("-package");
+                                            command.add(ipaPath);
+                                          }
+                                        }, FlexBundle.message("installing.0", ipaPath.substring(ipaPath.lastIndexOf('/') + 1)),
                                         FlexBundle.message("install.ios.app.title"));
   }
 

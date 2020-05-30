@@ -2,12 +2,9 @@
 package org.angular2.lang.expr;
 
 import com.intellij.lang.DependentLanguage;
-import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.javascript.DialectOptionHolder;
 import com.intellij.lang.javascript.JSLanguageDialect;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.parsing.JavaScriptParser;
-import org.angular2.lang.expr.parser.Angular2Parser;
 import org.jetbrains.annotations.NotNull;
 
 public class Angular2Language extends JSLanguageDialect implements DependentLanguage {
@@ -18,17 +15,7 @@ public class Angular2Language extends JSLanguageDialect implements DependentLang
   }
 
   @Override
-  public String getFileExtension() {
-    return "js";
-  }
-
-  @Override
   public boolean isAtLeast(@NotNull JSLanguageDialect other) {
     return super.isAtLeast(other) || JavaScriptSupportLoader.TYPESCRIPT.isAtLeast(other);
-  }
-
-  @Override
-  public JavaScriptParser<?, ?, ?, ?> createParser(@NotNull PsiBuilder builder) {
-    return new Angular2Parser(builder);
   }
 }

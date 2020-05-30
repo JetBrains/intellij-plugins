@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 The authors
+ * Copyright 2020 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,7 +15,6 @@
 package com.intellij.struts2;
 
 import com.intellij.facet.FacetManager;
-import com.intellij.facet.FacetTypeRegistry;
 import com.intellij.facet.impl.FacetUtil;
 import com.intellij.javaee.DeploymentDescriptorsConstants;
 import com.intellij.javaee.web.facet.WebFacet;
@@ -91,16 +90,16 @@ public final class Struts2ProjectDescriptorBuilder extends DefaultLightProjectDe
 
   @Override
   public Sdk getSdk() {
-    Sdk sdk = IdeaTestUtil.getMockJdk18();
-    if (addWebFacet) {
-      sdk = IdeaTestUtil.addWebJarsTo(sdk);
-    }
-    return sdk;
+    return IdeaTestUtil.getMockJdk18();
   }
 
   @Override
   public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @NotNull ContentEntry contentEntry) {
     super.configureModule(module, model, contentEntry);
+
+    if (addWebFacet) {
+      IdeaTestUtil.addWebJarsToModule(model);
+    }
 
     if (addStrutsLibrary) {
       BasicLightHighlightingTestCase.addStrutsJars(module, model);
@@ -120,15 +119,14 @@ public final class Struts2ProjectDescriptorBuilder extends DefaultLightProjectDe
     }
 
     if (addWebFacet) {
-      final WebFacet facet = FacetUtil.addFacet(module, FacetTypeRegistry.getInstance().findFacetType(WebFacet.ID));
       final String sourceRootUrl = model.getSourceRootUrls()[0];
-      facet.addWebRoot(sourceRootUrl, "/");
+      webFacet.addWebRoot(sourceRootUrl, "/");
 
-      final ConfigFileInfoSet descriptors = facet.getDescriptorsContainer().getConfiguration();
+      final ConfigFileInfoSet descriptors = webFacet.getDescriptorsContainer().getConfiguration();
       descriptors.addConfigFile(DeploymentDescriptorsConstants.WEB_XML_META_DATA, sourceRootUrl + "/WEB-INF/web.xml");
 
       for (String url : ModuleRootManager.getInstance(module).getSourceRootUrls()) {
-        facet.addWebSourceRoot(url);
+        webFacet.addWebSourceRoot(url);
       }
     }
 

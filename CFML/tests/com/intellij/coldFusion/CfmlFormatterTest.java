@@ -15,6 +15,7 @@
  */
 package com.intellij.coldFusion;
 
+import com.intellij.application.options.CodeStyle;
 import com.intellij.coldFusion.model.CfmlLanguage;
 import com.intellij.coldFusion.model.files.CfmlFileType;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -187,7 +188,7 @@ public class CfmlFormatterTest extends CfmlCodeInsightFixtureTestCase {
     Project project = getProject();
     CodeStyleSettings currSettings = CodeStyleSettingsManager.getSettings(project);
     Assert.assertNotNull(currSettings);
-    CodeStyleSettings tempSettings = currSettings.clone();
+    CodeStyleSettings tempSettings = CodeStyle.createTestSettings(currSettings);
     CommonCodeStyleSettings.IndentOptions indentOptions = tempSettings.getIndentOptions(CfmlFileType.INSTANCE);
     Assert.assertNotNull(indentOptions);
     defineStyleSettings(tempSettings);

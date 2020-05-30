@@ -107,7 +107,10 @@ public class CucumberStepRenameProcessor extends RenamePsiElementProcessor {
     return result;
   }
 
-  private static String getNewStepName(final String oldStepName, final Pattern oldStepDefPattern, final List<String> newStaticTexts) {
+  @NotNull
+  private static String getNewStepName(@NotNull String oldStepName,
+                                       @NotNull Pattern oldStepDefPattern,
+                                       @NotNull List<String> newStaticTexts) {
     final Matcher matcher = oldStepDefPattern.matcher(oldStepName);
     if (matcher.find()) {
       final ArrayList<String> values = new ArrayList<>();
@@ -124,12 +127,12 @@ public class CucumberStepRenameProcessor extends RenamePsiElementProcessor {
       result.append(newStaticTexts.get(newStaticTexts.size() - 1));
       return result.toString();
     } else  {
-      return null;
+      return oldStepName;
     }
   }
 
   @Override
-  public void renameElement(@NotNull PsiElement element, @NotNull String newName, @NotNull UsageInfo[] usages, @Nullable RefactoringElementListener listener)
+  public void renameElement(@NotNull PsiElement element, @NotNull String newName, UsageInfo @NotNull [] usages, @Nullable RefactoringElementListener listener)
     throws IncorrectOperationException {
 
     final CucumberStepReference reference = getCucumberStepReference(element);
@@ -146,7 +149,7 @@ public class CucumberStepRenameProcessor extends RenamePsiElementProcessor {
           for (UsageInfo usage : usages) {
             final PsiElement possibleStep = usage.getElement();
             if (possibleStep instanceof GherkinStep) {
-              final String oldStepName = ((GherkinStep)possibleStep).getStepName();
+              final String oldStepName = ((GherkinStep)possibleStep).getName();
               final String newStepName = getNewStepName(oldStepName, oldStepDefPattern, newStaticTexts);
               ((GherkinStep)possibleStep).setName(newStepName);
             }

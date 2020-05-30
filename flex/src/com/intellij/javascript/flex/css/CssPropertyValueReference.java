@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.css;
 
 import com.intellij.openapi.util.TextRange;
@@ -37,9 +38,8 @@ public class CssPropertyValueReference extends PsiPolyVariantCachingReference im
     return CssBundle.message("invalid.css.property.name.message");
   }
 
-  @NotNull
   @Override
-  protected ResolveResult[] resolveInner(boolean incompleteCode, @NotNull PsiFile containingFile) {
+  protected ResolveResult @NotNull [] resolveInner(boolean incompleteCode, @NotNull PsiFile containingFile) {
     String value = myElement.getText();
     if (FlexCssUtil.inQuotes(value)) {
       FlexCssElementDescriptorProvider provider =
@@ -78,9 +78,7 @@ public class CssPropertyValueReference extends PsiPolyVariantCachingReference im
 
   @Override
   public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
-    final ElementManipulator<PsiElement> manipulator = ElementManipulators.getManipulator(myElement);
-    assert manipulator != null;
-    return manipulator.handleContentChange(myElement, getRangeInElement(), newElementName);
+    return ElementManipulators.handleContentChange(myElement, getRangeInElement(), newElementName);
   }
 
   @Override
@@ -90,8 +88,7 @@ public class CssPropertyValueReference extends PsiPolyVariantCachingReference im
   }
 
   @Override
-  @NotNull
-  public Object[] getVariants() {
+  public Object @NotNull [] getVariants() {
     FlexCssElementDescriptorProvider flexDescriptorProvider = CssElementDescriptorProvider.EP_NAME.findExtension(FlexCssElementDescriptorProvider.class);
     return extractDescriptorsIdsAsArray(flexDescriptorProvider.getAllPropertyDescriptors(myElement));
   }

@@ -1,56 +1,51 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.inspections;
 
-import com.intellij.codeInspection.*;
-import com.intellij.ide.util.PsiNavigationSupport;
+import com.intellij.codeInspection.LocalInspectionTool;
+import com.intellij.codeInspection.LocalInspectionToolSession;
+import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.DialectDetector;
-import com.intellij.lang.javascript.intentions.TypeScriptPublicModifierIntention;
+import com.intellij.lang.javascript.presentable.JSFormatUtil;
 import com.intellij.lang.javascript.presentable.JSNamedElementPresenter;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.refactoring.JSVisibilityUtil;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.AstLoadingFilter;
-import com.intellij.util.IncorrectOperationException;
-import com.intellij.util.containers.hash.HashSet;
 import org.angular2.entities.Angular2Component;
 import org.angular2.entities.Angular2EntitiesProvider;
+import org.angular2.inspections.quickfixes.AngularMakePublicQuickFix;
 import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.Angular2LangUtil;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.expr.psi.Angular2ElementVisitor;
 import org.angular2.lang.html.Angular2HtmlLanguage;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.intellij.lang.javascript.presentable.JSFormatUtil.ANONYMOUS_ELEMENT_PRESENTATION;
 import static com.intellij.lang.javascript.refactoring.JSVisibilityUtil.getPresentableAccessModifier;
 import static com.intellij.openapi.util.text.StringUtil.capitalize;
 import static com.intellij.util.ObjectUtils.notNull;
 
 public class AngularInaccessibleComponentMemberInAotModeInspection extends LocalInspectionTool {
 
-  @NotNull
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder,
-                                        boolean isOnTheFly,
-                                        @NotNull LocalInspectionToolSession session) {
+  public @NotNull PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder,
+                                                 boolean isOnTheFly,
+                                                 @NotNull LocalInspectionToolSession session) {
     Language fileLang = holder.getFile().getLanguage();
-    if (Angular2HtmlLanguage.INSTANCE.is(fileLang)
+    if (fileLang.isKindOf(Angular2HtmlLanguage.INSTANCE)
         || Angular2Language.INSTANCE.is(fileLang)) {
       return new Angular2ElementVisitor() {
         @Override
@@ -62,7 +57,7 @@ public class AngularInaccessibleComponentMemberInAotModeInspection extends Local
             if (clazz != null && resolved instanceof JSElement && accept(resolved)) {
               holder.registerProblem(
                 notNull(node.getReferenceNameElement(), node),
-                capitalize(Angular2Bundle.message("angular.inspection.template.aot.inaccessible.symbol",
+                capitalize(Angular2Bundle.message("angular.inspection.aot-inaccessible-member.message.template-symbol",
                                                   getAccessModifier((JSElement)resolved), getKind(resolved), getName(resolved))),
 
                 new AngularMakePublicQuickFix());
@@ -88,9 +83,10 @@ public class AngularInaccessibleComponentMemberInAotModeInspection extends Local
           retainReferenced(template, candidates);
           for (JSElement member : candidates) {
             holder.registerProblem(
-              notNull(member instanceof PsiNameIdentifierOwner ? ((PsiNameIdentifierOwner)member).getNameIdentifier()
-                                                               : null, member),
-              capitalize(Angular2Bundle.message("angular.inspection.component.aot.inaccessible.member",
+              notNull(member instanceof PsiNameIdentifierOwner
+                      ? ((PsiNameIdentifierOwner)member).getNameIdentifier()
+                      : null, member),
+              capitalize(Angular2Bundle.message("angular.inspection.aot-inaccessible-member.message.member",
                                                 getAccessModifier(member), getKind(member), getName(member))),
               new AngularMakePublicQuickFix());
           }
@@ -100,7 +96,7 @@ public class AngularInaccessibleComponentMemberInAotModeInspection extends Local
     return PsiElementVisitor.EMPTY_VISITOR;
   }
 
-  private static boolean accept(@Nullable PsiElement member) {
+  public static boolean accept(@Nullable PsiElement member) {
     if (member instanceof JSAttributeListOwner
         && !(member instanceof JSFunction && ((JSFunction)member).isConstructor())) {
       JSAttributeList attributes = ((JSAttributeListOwner)member).getAttributeList();
@@ -117,17 +113,15 @@ public class AngularInaccessibleComponentMemberInAotModeInspection extends Local
     return new JSNamedElementPresenter(member).describeElementKind();
   }
 
-  @NotNull
-  private static String getAccessModifier(@NotNull JSElement member) {
+  private static @NotNull String getAccessModifier(@NotNull JSElement member) {
     return Optional.ofNullable(getPresentableAccessModifier(member))
       .map(JSVisibilityUtil.PresentableAccessModifier::getText)
       .orElse("");
   }
 
-  @NotNull
-  private static String getName(@NotNull PsiElement member) {
+  private static @NotNull String getName(@NotNull PsiElement member) {
     return notNull(member instanceof PsiNamedElement ? ((PsiNamedElement)member).getName() : null,
-                   ANONYMOUS_ELEMENT_PRESENTATION);
+                   JSFormatUtil.getAnonymousElementPresentation());
   }
 
   private static void retainReferenced(@NotNull PsiFile template, @NotNull Set<? extends PsiElement> candidates) {
@@ -142,66 +136,5 @@ public class AngularInaccessibleComponentMemberInAotModeInspection extends Local
         }
       }
     );
-  }
-
-  private static class AngularMakePublicQuickFix extends TypeScriptPublicModifierIntention implements LocalQuickFix {
-
-    @Nls(capitalization = Nls.Capitalization.Sentence)
-    @NotNull
-    @Override
-    public String getName() {
-      return getText();
-    }
-
-    @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
-      return accept(locateMemberToEdit(element));
-    }
-
-    @Override
-    public void invoke(@NotNull Project project, Editor editor, @NotNull PsiElement element) throws IncorrectOperationException {
-      PsiElement member = locateMemberToEdit(element);
-      if (!accept(member)) {
-        return;
-      }
-      if (editor != null) {
-        PsiNavigationSupport.getInstance().createNavigatable(
-          project, member.getContainingFile().getVirtualFile(),
-          member.getTextRange().getStartOffset() + 1
-        ).navigate(true);
-      }
-      super.invoke(project, editor, member instanceof TypeScriptFunction
-                                    || member instanceof JSParameter ? member.getFirstChild()
-                                                                     : member);
-    }
-
-    @Nullable
-    private PsiElement locateMemberToEdit(@NotNull PsiElement element) {
-      if (element.getParent() instanceof JSReferenceExpression) {
-        element = element.getParent();
-      }
-      if (element instanceof JSReferenceExpression) {
-        element = ((JSReferenceExpression)element).resolve();
-      }
-      if (element == null) {
-        return null;
-      }
-      PsiElement member = getField(element);
-      if (member == null) {
-        member = element instanceof JSFunction ? element : getFunction(element);
-      }
-      return member;
-    }
-
-    @Override
-    public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-      invoke(project, null, descriptor.getPsiElement());
-    }
-
-    @NotNull
-    @Override
-    public Priority getPriority() {
-      return Priority.HIGH;
-    }
   }
 }

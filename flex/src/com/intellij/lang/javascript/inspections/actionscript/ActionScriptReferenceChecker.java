@@ -178,7 +178,7 @@ public class ActionScriptReferenceChecker extends TypedJSReferenceChecker {
   @Override
   protected void addCreateFromUsageFixesForCall(@NotNull JSReferenceExpression methodExpression,
                                                 boolean isNewExpression,
-                                                @NotNull ResolveResult[] resolveResults,
+                                                ResolveResult @NotNull [] resolveResults,
                                                 @NotNull List<LocalQuickFix> quickFixes) {
     if (canHaveImportTo(resolveResults)) {
       quickFixes.add(new AddImportECMAScriptClassOrFunctionAction(null, methodExpression));
@@ -265,10 +265,5 @@ public class ActionScriptReferenceChecker extends TypedJSReferenceChecker {
     }
 
     return JSResolveUtil.getExpressionJSType(qualifier);
-  }
-
-  @Override
-  protected boolean isConstAssignable(@NotNull JSReferenceExpression lExpr, PsiElement resolved) {
-    return false;
   }
 }

@@ -288,7 +288,7 @@ public class DartSdkLibUtil {
   }
 
   public static void enableDartSdkForSpecifiedModulesAndDisableForOthers(@NotNull final Project project,
-                                                                         @NotNull final Module[] modulesWithDart) {
+                                                                         final Module @NotNull [] modulesWithDart) {
     final List<ModifiableRootModel> modelsToCommit = new SmartList<>();
 
     for (final Module module : ModuleManager.getInstance(project).getModules()) {

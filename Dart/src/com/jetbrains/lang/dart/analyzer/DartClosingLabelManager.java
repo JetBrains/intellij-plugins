@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.analyzer;
 
 import com.intellij.openapi.Disposable;
@@ -9,7 +10,6 @@ import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.colors.FontPreferences;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.editor.impl.ComplementaryFontsRegistry;
-import com.intellij.openapi.editor.impl.EditorImpl;
 import com.intellij.openapi.editor.impl.FontInfo;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -21,7 +21,6 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.EventDispatcher;
-import com.intellij.util.ui.UIUtil;
 import com.jetbrains.lang.dart.ide.codeInsight.DartCodeInsightSettings;
 import org.dartlang.analysis.server.protocol.ClosingLabel;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DartClosingLabelManager {
+public class DartClosingLabelManager implements @NotNull Disposable {
   private final EventDispatcher<PreferenceChangeListener> myEventDispatcher = EventDispatcher.create(PreferenceChangeListener.class);
 
   interface PreferenceChangeListener extends EventListener {
@@ -44,11 +43,11 @@ public class DartClosingLabelManager {
                   @Override
                   public void closingLabelPreferenceChanged() {
                     if (!getShowClosingLabels()) {
-                      UIUtil.invokeLaterIfNeeded(() -> clearAllInlays());
+                      clearAllInlays();
                     }
                   }
                 },
-                ApplicationManager.getApplication());
+                this);
   }
 
   public static DartClosingLabelManager getInstance() {
@@ -67,7 +66,7 @@ public class DartClosingLabelManager {
     return DartCodeInsightSettings.getInstance().SHOW_CLOSING_LABELS;
   }
 
-  public void addListener(@NotNull PreferenceChangeListener listener, @NotNull Disposable parentDisposable) {
+  void addListener(@NotNull PreferenceChangeListener listener, @NotNull Disposable parentDisposable) {
     myEventDispatcher.addListener(listener, parentDisposable);
   }
 
@@ -128,7 +127,8 @@ public class DartClosingLabelManager {
       }
     };
 
-    ApplicationManager.getApplication().invokeLater(runnable, ModalityState.NON_MODAL, project.getDisposed());
+    ApplicationManager.getApplication()
+      .invokeLater(runnable, ModalityState.NON_MODAL, DartAnalysisServerService.getInstance(project).getDisposedCondition());
   }
 
   private static void clearEditorInlays(@NotNull Editor editor) {
@@ -148,6 +148,11 @@ public class DartClosingLabelManager {
         }
       }
     }
+  }
+
+  @Override
+  public void dispose() {
+    clearAllInlays();
   }
 }
 
@@ -185,13 +190,7 @@ class TextLabelCustomElementRenderer implements EditorCustomElementRenderer {
     if (fgColor == null) return;
     g.setColor(fgColor);
     FontInfo fontInfo = getFontInfo(editor);
-    int ascent;
-    if (editor instanceof EditorImpl) {
-      ascent = ((EditorImpl)editor).getAscent();
-    }
-    else {
-      ascent = fontInfo.fontMetrics().getAscent();
-    }
+    int ascent = editor.getAscent();
     g.setFont(fontInfo.getFont());
     g.drawString(label, r.x, r.y + ascent);
   }

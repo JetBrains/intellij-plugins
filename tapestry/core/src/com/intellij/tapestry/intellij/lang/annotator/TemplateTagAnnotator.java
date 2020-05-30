@@ -2,6 +2,7 @@ package com.intellij.tapestry.intellij.lang.annotator;
 
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
+import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
@@ -117,26 +118,26 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
     if (holder != null &&
         !TypeCoercionValidator
           .canCoerce(tapestryProject, resolvedValue.getType(), AbstractValueResolver.getCleanValue(attribute.getValue()), parameterType)) {
-      holder.createErrorAnnotation(value, "Can't coerce a " +
-                                          resolvedValue.getType().getName() +
-                                          " to a " +
-                                          (parameterType != null ? parameterType.getName() : "undefined"));
+      holder.newAnnotation(HighlightSeverity.ERROR, "Can't coerce a " +
+                                                    resolvedValue.getType().getName() +
+                                                    " to a " +
+                                                    (parameterType != null ? parameterType.getName() : "undefined")).range(value).create();
     }
   }
 
   private void annotateTapestryTag(XmlTag tag) {
     final AnnotationHolder holder = annotationHolder;
     if (holder == null) return;
-    holder.createInfoAnnotation(IdeaUtils.getNameElement(tag), null).setTextAttributes(TemplateColorSettingsPage.TAG_NAME);
+    holder.newSilentAnnotation(HighlightSeverity.INFORMATION).range(IdeaUtils.getNameElement(tag)).textAttributes(TemplateColorSettingsPage.TAG_NAME).create();
     if (!tag.isEmpty()) {
-      holder.createInfoAnnotation(IdeaUtils.getNameElementClosing(tag), null).setTextAttributes(TemplateColorSettingsPage.TAG_NAME);
+      holder.newSilentAnnotation(HighlightSeverity.INFORMATION).range(IdeaUtils.getNameElementClosing(tag)).textAttributes(TemplateColorSettingsPage.TAG_NAME).create();
     }
   }
 
   private void annotateTapestryAttribute(XmlAttribute attribute) {
     final AnnotationHolder holder = annotationHolder;
     if (holder != null) {
-      holder.createInfoAnnotation(attribute.getFirstChild(), null).setTextAttributes(TemplateColorSettingsPage.ATTR_NAME);
+      holder.newSilentAnnotation(HighlightSeverity.INFORMATION).range(attribute.getFirstChild()).textAttributes(TemplateColorSettingsPage.ATTR_NAME).create();
     }
   }
 

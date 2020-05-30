@@ -34,7 +34,7 @@ public class PhoneGapPluginsView {
     myPanel = new PhoneGapInstalledPluginsPanel(project, packagesNotificationPanel);
     myPanel.setPreferredSize(JBUI.size(400, 400));
     JPanel wrapper = new JPanel(new BorderLayout());
-    wrapper.setBorder(IdeBorderFactory.createTitledBorder("Plugins", false));
+    wrapper.setBorder(IdeBorderFactory.createTitledBorder(PhoneGapBundle.message("phonegap.plugins"), false));
     wrapper.add(FormBuilder.createFormBuilder().addComponent(myPanel).addComponent(packagesNotificationPanel.getComponent()).getPanel());
     myComponent = wrapper;
   }

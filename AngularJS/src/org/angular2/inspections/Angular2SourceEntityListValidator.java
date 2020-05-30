@@ -14,13 +14,13 @@ import com.intellij.util.AstLoadingFilter;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.containers.TreeTraversal;
-import com.intellij.util.containers.hash.HashSet;
 import org.angular2.entities.Angular2Entity;
 import org.angular2.entities.source.Angular2SourceEntityListProcessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import static java.util.Collections.singletonList;
@@ -64,8 +64,7 @@ abstract class Angular2SourceEntityListValidator<T extends Angular2Entity, E ext
     });
   }
 
-  @NotNull
-  protected PsiElement locateProblemElement() {
+  protected @NotNull PsiElement locateProblemElement() {
     final PsiFile file = myDecorator.getContainingFile().getOriginalFile();
     for (PsiElement el : ContainerUtil.concat(singletonList(myIterator.current()),
                                               myIterator.backtrace())) {
@@ -102,14 +101,12 @@ abstract class Angular2SourceEntityListValidator<T extends Angular2Entity, E ext
     @NotNull
     ProblemHighlightType getSeverity();
 
-    @Nullable
-    LocalQuickFix[] getFixes();
+    LocalQuickFix @Nullable [] getFixes();
   }
 
   public static class ValidationResults<T extends Enum> {
 
-    @NotNull
-    public static <T extends Enum> ValidationResults<T> empty() {
+    public static @NotNull <T extends Enum> ValidationResults<T> empty() {
       //noinspection unchecked
       return (ValidationResults<T>)EMPTY;
     }
@@ -134,21 +131,17 @@ abstract class Angular2SourceEntityListValidator<T extends Angular2Entity, E ext
                                  @NotNull ProblemHighlightType severity,
                                  LocalQuickFix... quickFixes) {
       results.putValue(type, new ValidationProblem() {
-        @NotNull
         @Override
-        public String getMessage() {return message;}
+        public @NotNull String getMessage() {return message;}
 
-        @NotNull
         @Override
-        public PsiElement getLocation() {return element;}
+        public @NotNull PsiElement getLocation() {return element;}
 
-        @NotNull
         @Override
-        public ProblemHighlightType getSeverity() {return severity;}
+        public @NotNull ProblemHighlightType getSeverity() {return severity;}
 
-        @Nullable
         @Override
-        public LocalQuickFix[] getFixes() {return quickFixes;}
+        public LocalQuickFix @Nullable [] getFixes() {return quickFixes;}
       });
     }
   }

@@ -218,7 +218,7 @@ public abstract class ExternalTask {
         message += "\n\nADT command line:\n" + task.getCommandLine();
       }
       Messages
-        .showIdeaMessageDialog(task.myProject, message, frameTitle, new String[]{Messages.OK_BUTTON}, 0, Messages.getErrorIcon(), null);
+        .showIdeaMessageDialog(task.myProject, message, frameTitle, new String[]{Messages.getOkButton()}, 0, Messages.getErrorIcon(), null);
     }
     return false;
   }

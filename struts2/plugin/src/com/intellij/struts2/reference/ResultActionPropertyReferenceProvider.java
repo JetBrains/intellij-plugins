@@ -37,10 +37,9 @@ public class ResultActionPropertyReferenceProvider extends PsiReferenceProvider 
   private static final String EXPRESSION_START = "${";
   private static final String EXPRESSION_END = "}";
 
-  @NotNull
   @Override
-  public PsiReference[] getReferencesByElement(@NotNull final PsiElement psiElement,
-                                               @NotNull final ProcessingContext processingContext) {
+  public PsiReference @NotNull [] getReferencesByElement(@NotNull final PsiElement psiElement,
+                                                         @NotNull final ProcessingContext processingContext) {
     final Result result = (Result)DomUtil.getDomElement(psiElement);
     assert result != null : psiElement.getText();
     final Action action = result.getParentOfType(Action.class, true);

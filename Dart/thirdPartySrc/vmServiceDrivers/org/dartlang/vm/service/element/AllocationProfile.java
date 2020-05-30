@@ -17,18 +17,42 @@ package org.dartlang.vm.service.element;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.Nullable;
 
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class AllocationProfile extends Response {
 
   public AllocationProfile(JsonObject json) {
     super(json);
   }
 
-  public String getDateLastServiceGC() {
-    return json.get("dateLastServiceGC").getAsString();
+  /**
+   * The timestamp of the last accumulator reset.
+   *
+   * If the accumulators have not been reset, this field is not present.
+   *
+   * Can return <code>null</code>.
+   */
+  @Nullable
+  public int getDateLastAccumulatorReset() {
+    return getAsInt("dateLastAccumulatorReset");
   }
 
+  /**
+   * The timestamp of the last manually triggered GC.
+   *
+   * If a GC has not been triggered manually, this field is not present.
+   *
+   * Can return <code>null</code>.
+   */
+  @Nullable
+  public int getDateLastServiceGC() {
+    return getAsInt("dateLastServiceGC");
+  }
+
+  /**
+   * Allocation information for all class types.
+   */
   public ElementList<ClassHeapStats> getMembers() {
     return new ElementList<ClassHeapStats>(json.get("members").getAsJsonArray()) {
       @Override
@@ -36,5 +60,12 @@ public class AllocationProfile extends Response {
         return new ClassHeapStats(array.get(index).getAsJsonObject());
       }
     };
+  }
+
+  /**
+   * Information about memory usage for the isolate.
+   */
+  public MemoryUsage getMemoryUsage() {
+    return new MemoryUsage((JsonObject) json.get("memoryUsage"));
   }
 }

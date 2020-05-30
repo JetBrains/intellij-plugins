@@ -7,24 +7,25 @@ let command = new (SchematicCommand as any)({}, null);
 
 let defaultCollectionName;
 try {
-    defaultCollectionName = require('@angular/cli/utilities/config').getDefaultSchematicCollection();
+  defaultCollectionName = require('@angular/cli/utilities/config').getDefaultSchematicCollection();
 } catch (e) {
-    defaultCollectionName = require('@angular/cli/models/config').CliConfig.getValue('defaults.schematics.collection');
+  defaultCollectionName = require('@angular/cli/models/config').CliConfig.getValue('defaults.schematics.collection');
 }
+let engineHost = command.getEngineHost();
 
-const schematicsProvider: SchematicsProvider = {
-    getCollection(collectionName: string): Collection<any, any> {
-        return command.getCollection(collectionName);
-    },
-    getEngineHost() {
-        return command.getEngineHost();
-    },
-    getSchematic(collection: Collection<any, any>, schematicName: string, allowPrivate?: boolean): Schematic<any, any> {
-        return command.getSchematic(collection, schematicName, allowPrivate);
-    },
-    getDefaultSchematicCollection() {
-        return defaultCollectionName;
-    }
-}
+const schematicsProvider: Promise<SchematicsProvider> = Promise.resolve({
+  getCollection(collectionName: string): Collection<any, any> {
+    return command.getCollection(collectionName);
+  },
+  listSchematics(collection): string[] {
+    return engineHost.listSchematics(collection)
+  },
+  getSchematic(collection: Collection<any, any>, schematicName: string, allowPrivate?: boolean): Schematic<any, any> {
+    return command.getSchematic(collection, schematicName, allowPrivate);
+  },
+  getDefaultSchematicCollection() {
+    return defaultCollectionName;
+  }
+})
 
 export = schematicsProvider;

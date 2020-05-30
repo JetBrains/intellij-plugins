@@ -42,7 +42,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
-import com.intellij.testFramework.PlatformTestCase;
+import com.intellij.testFramework.HeavyPlatformTestCase;
 import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.util.PathUtil;
 import gnu.trove.THashMap;
@@ -58,7 +58,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FlexCompilerConfigTest extends PlatformTestCase {
+public class FlexCompilerConfigTest extends HeavyPlatformTestCase {
 
   private static final String[] SDK_3_ROOTS = new String[]{
     "/frameworks/libs/player/9/playerglobal.swc",
@@ -274,8 +274,7 @@ public class FlexCompilerConfigTest extends PlatformTestCase {
       public RootProvider getRootProvider() {
         return new RootProviderBaseImpl() {
           @Override
-          @NotNull
-          public String[] getUrls(@NotNull final OrderRootType rootType) {
+          public String @NotNull [] getUrls(@NotNull final OrderRootType rootType) {
             final String[] relPaths = sdkVersion.startsWith("AIR SDK ")
                                       ? AIR_SDK_ROOTS
                                       : sdkVersion.startsWith("4.6")
@@ -293,8 +292,7 @@ public class FlexCompilerConfigTest extends PlatformTestCase {
           }
 
           @Override
-          @NotNull
-          public VirtualFile[] getFiles(@NotNull final OrderRootType rootType) {
+          public VirtualFile @NotNull [] getFiles(@NotNull final OrderRootType rootType) {
             return VirtualFile.EMPTY_ARRAY;
           }
         };
@@ -303,7 +301,7 @@ public class FlexCompilerConfigTest extends PlatformTestCase {
       @Override
       @NotNull
       public SdkModificator getSdkModificator() {
-        return null;
+        throw new UnsupportedOperationException();
       }
 
       @Override

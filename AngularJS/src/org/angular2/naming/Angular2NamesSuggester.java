@@ -13,7 +13,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 
-@SuppressWarnings("HardCodedStringLiteral")
 public class Angular2NamesSuggester implements JSNamesSuggester {
   private static final HashMap<String, String> AngularDecoratorEntityMap = new HashMap<>();
 
@@ -25,15 +24,13 @@ public class Angular2NamesSuggester implements JSNamesSuggester {
     AngularDecoratorEntityMap.put("Pipe", "Pipe");
   }
 
-  @Nullable
   @Override
-  public String suggestFileName(@NotNull JSNamedElement namedElement, @NotNull String newElementName) {
+  public @Nullable String suggestFileName(@NotNull JSNamedElement namedElement, @NotNull String newElementName) {
     if (!(namedElement instanceof JSClass)) return null;
     return getAngularSpecificFileName((JSClass)namedElement, newElementName);
   }
 
-  @Nullable
-  private static String getAngularSpecificFileName(@NotNull JSClass jsClass, @NotNull String newElementName) {
+  private static @Nullable String getAngularSpecificFileName(@NotNull JSClass jsClass, @NotNull String newElementName) {
     ES6Decorator[] decorators = PsiTreeUtil.getChildrenOfType(jsClass.getAttributeList(), ES6Decorator.class);
     if (decorators == null) {
       return null;

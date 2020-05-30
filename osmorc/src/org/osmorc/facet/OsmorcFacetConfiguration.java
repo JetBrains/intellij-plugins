@@ -35,7 +35,6 @@ import com.intellij.notification.NotificationType;
 import com.intellij.openapi.compiler.CompilerPaths;
 import com.intellij.openapi.components.PathMacroManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.module.ModuleServiceManager;
 import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.WriteExternalException;
@@ -47,11 +46,11 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.osgi.jps.model.ManifestGenerationMode;
 import org.jetbrains.osgi.jps.model.OutputPathType;
 import org.jetbrains.osgi.jps.util.OrderedProperties;
-import org.osmorc.OsmorcProjectComponent;
 import org.osmorc.facet.ui.OsmorcFacetGeneralEditorTab;
 import org.osmorc.facet.ui.OsmorcFacetJAREditorTab;
 import org.osmorc.facet.ui.OsmorcFacetManifestGenerationEditorTab;
 import org.osmorc.settings.ProjectSettings;
+import org.osmorc.util.OsgiUiUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -70,7 +69,7 @@ import static aQute.bnd.osgi.Constants.INCLUDE_RESOURCE;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
-public class OsmorcFacetConfiguration implements FacetConfiguration, ModificationTracker {
+public final class OsmorcFacetConfiguration implements FacetConfiguration, ModificationTracker {
   private static final Logger LOG = Logger.getInstance(OsmorcFacetConfiguration.class);
 
   private static final String MANIFEST_GENERATION_MODE = "manifestGenerationMode";
@@ -151,7 +150,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration, Modificatio
       }
       else {
         String message = "The configuration at least one OSGi facet is invalid and has been reset. Please check your facet settings!";
-        OsmorcProjectComponent.IMPORTANT_NOTIFICATIONS.createNotification(message, NotificationType.WARNING).notify(myFacet.getModule().getProject());
+        OsgiUiUtil.IMPORTANT_NOTIFICATIONS.createNotification(message, NotificationType.WARNING).notify(myFacet.getModule().getProject());
       }
     }
     else {
@@ -337,7 +336,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration, Modificatio
           return nullSafeLocation;
         }
       case OsgiOutputPath:
-        ProjectSettings projectSettings = ModuleServiceManager.getService(myFacet.getModule(), ProjectSettings.class);
+        ProjectSettings projectSettings = ProjectSettings.getInstance(myFacet.getModule().getProject());
         if (projectSettings != null) {
           String bundlesOutputPath = projectSettings.getBundlesOutputPath();
           if (bundlesOutputPath != null && bundlesOutputPath.trim().length() != 0) {

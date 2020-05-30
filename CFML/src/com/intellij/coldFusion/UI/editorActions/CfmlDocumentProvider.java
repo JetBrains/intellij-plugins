@@ -6,7 +6,7 @@ import com.intellij.coldFusion.model.psi.CfmlTag;
 import com.intellij.coldFusion.model.psi.impl.CfmlAttributeImpl;
 import com.intellij.coldFusion.model.psi.impl.CfmlAttributeNameImpl;
 import com.intellij.coldFusion.model.psi.impl.CfmlTagImpl;
-import com.intellij.lang.documentation.DocumentationProviderEx;
+import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Created by Lera Nikolaenko
  */
-public class CfmlDocumentProvider extends DocumentationProviderEx {
+public class CfmlDocumentProvider implements DocumentationProvider {
 
   @Override
   public String generateDoc(PsiElement element, PsiElement originalElement) {
@@ -41,14 +41,15 @@ public class CfmlDocumentProvider extends DocumentationProviderEx {
   @Override
   public PsiElement getCustomDocumentationElement(@NotNull Editor editor,
                                                   @NotNull PsiFile file,
-                                                  @Nullable PsiElement contextElement) {
+                                                  @Nullable PsiElement contextElement,
+                                                  int targetOffset) {
     if (contextElement == null) return null;
     if (contextElement.getParent() instanceof CfmlTagImpl) return contextElement.getParent();
     if (contextElement.getParent() instanceof CfmlAttributeImpl) {
       return contextElement.getParent();
     }
     else {
-      return super.getCustomDocumentationElement(editor, file, contextElement);
+      return null;
     }
   }
 }

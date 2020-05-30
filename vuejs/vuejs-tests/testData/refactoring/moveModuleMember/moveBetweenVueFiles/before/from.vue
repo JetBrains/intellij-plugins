@@ -3,13 +3,13 @@
 </template>
 
 <script>
-  export default {
-    name: "from.vue"
-  }
+export default {
+  name: "from.vue"
+}
 
-  export function foo() {
+export function foo() {
 
-  }
+}
 
 </script>
 

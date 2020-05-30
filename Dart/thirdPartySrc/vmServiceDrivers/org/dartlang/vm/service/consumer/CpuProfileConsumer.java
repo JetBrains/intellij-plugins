@@ -17,8 +17,8 @@ package org.dartlang.vm.service.consumer;
 
 import org.dartlang.vm.service.element.CpuProfile;
 
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public interface CpuProfileConsumer extends Consumer {
 
-  public void received(CpuProfile response);
+  void received(CpuProfile response);
 }

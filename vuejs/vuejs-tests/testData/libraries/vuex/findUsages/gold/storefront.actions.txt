@@ -1,0 +1,10 @@
+<actions.ts:(4525,4545):(6,19)>	'cart/configureItem'
+<storefront-component.ts:(3148,3168):(6,19)>	['cart/configureItem']
+<storefront-component.ts:(3227,3247):(6,19)>	('cart/configureItem')
+<storefront-component.ts:(3293,3313):(6,19)>	type: 'cart/configureItem'
+<storefront-component.ts:(3387,3402):(1,14)>	('configureItem')
+<storefront-component.ts:(3448,3463):(1,14)>	type: 'configureItem'
+<storefront-decorated-component.ts:(496,516):(6,19)>	('cart/configureItem')
+<storefront-namespaced-component.ts:(1165,1180):(1,14)>	['breadcrumbs/set', 'configureItem']
+<storefront-namespaced-component.ts:(1239,1254):(1,14)>	('configureItem')
+<storefront-namespaced-component.ts:(1300,1315):(1,14)>	type: 'configureItem'

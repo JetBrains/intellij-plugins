@@ -18,17 +18,13 @@ public class ConvertToEventQuickFix implements LocalQuickFix {
     myEventName = eventName;
   }
 
-  @Nls
-  @NotNull
   @Override
-  public String getName() {
+  public @Nls @NotNull String getName() {
     return Angular2Bundle.message("angular.quickfix.template.bind-to-event.name", myEventName);
   }
 
-  @Nls
-  @NotNull
   @Override
-  public String getFamilyName() {
+  public @Nls @NotNull String getFamilyName() {
     return Angular2Bundle.message("angular.quickfix.template.bind-to-event.family");
   }
 

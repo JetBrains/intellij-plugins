@@ -1,17 +1,17 @@
 package garbuz.mmo.wardrobe
 {
-        public class TestExtractMethod
+    public class TestExtractMethod
+    {
+        public function TestExtractMethod()
         {
-                public function TestExtractMethod()
-                {
-                        var x:Number = 10;
+            var x:Number = 10;
 
-                        //extract next line to a method
-                        created(x);
-                }
-
-            public static function created(x2:*):void {
-                var sin:Number = Math.sin(x2);
-            }
+            //extract next line to a method
+            created(x);
         }
+
+        public static function created(x2:*):void {
+            var sin:Number = Math.sin(x2);
+        }
+    }
 }

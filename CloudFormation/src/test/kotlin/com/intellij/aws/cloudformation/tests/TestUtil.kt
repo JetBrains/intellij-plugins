@@ -23,17 +23,27 @@ object TestUtil {
     return File(testDataRoot, relativePath)
   }
 
-  private val testDataRoot: File
-    get() = File("testData").absoluteFile
+  val testDataRoot by lazy {
+    val lookupDirectories = listOf(
+      File(PathManager.getHomePath()),
+      File(PathManager.getHomePath()).parentFile,
+      File(System.getProperty("user.dir"))
+    )
 
-  fun getTestDataPathRelativeToIdeaHome(relativePath: String): String {
-    val homePath = File(PathManager.getHomePath())
-    val testDir = File(testDataRoot, relativePath)
+    val lookupMarker = listOf(
+      "intellij-plugins/CloudFormation/testData/cloudFormationTestData.marker",
+      "contrib/CloudFormation/testData/cloudFormationTestData.marker",
+      "testData/cloudFormationTestData.marker"
+    )
 
-    val relativePathToIdeaHome = FileUtil.getRelativePath(homePath, testDir) ?:
-        throw RuntimeException("getTestDataPathRelativeToIdeaHome: FileUtil.getRelativePath('$homePath', '$testDir') returned null")
+    for (directory in lookupDirectories) {
+      for (marker in lookupMarker) {
+        val file = File(directory, marker)
+        if (file.exists()) return@lazy file.parentFile
+      }
+    }
 
-    return relativePathToIdeaHome
+    error("Could not find CloudFormation plugin testData")
   }
 
   fun nodeToString(node: CfnNode): String = MyToStringStyle.toString(node, arrayOf("allTopLevelProperties", "functionId"))

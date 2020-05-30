@@ -113,8 +113,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
   @NotNull
   protected abstract String getTitle(@NotNull final Project project, @NotNull final VirtualFile pubspecYamlFile);
 
-  @Nullable
-  protected abstract String[] calculatePubParameters(@NotNull final Project project, @NotNull final VirtualFile pubspecYamlFile);
+  protected abstract String @Nullable [] calculatePubParameters(@NotNull final Project project, @NotNull final VirtualFile pubspecYamlFile);
 
   @Override
   public void actionPerformed(@NotNull final AnActionEvent e) {
@@ -318,7 +317,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
 
     final AnAction closeContentAction = new CloseActiveTabAction();
     closeContentAction.getTemplatePresentation().setIcon(AllIcons.Actions.Cancel);
-    closeContentAction.getTemplatePresentation().setText(UIBundle.message("tabbed.pane.close.tab.action.name"));
+    closeContentAction.getTemplatePresentation().setText(UIBundle.messagePointer("tabbed.pane.close.tab.action.name"));
     actionGroup.add(closeContentAction);
 
     final ActionToolbar toolbar = ActionManager.getInstance().createActionToolbar("DartPubAction", actionGroup, false);

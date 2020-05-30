@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.dart.analysisServer;
 
 import com.intellij.psi.PsiFile;
@@ -29,8 +29,7 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
            "\n" +
            "<p>   doc4</p>\n" +
            "\n" +
-           "<pre><code>    code\n" +
-           "</code></pre>",
+           "<pre><code>    code</code></pre>",
 
            "/** 1 */\n" +
            "/**\n" +
@@ -91,8 +90,60 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
            "class <caret>A{}");
   }
 
-  public void testConstructorSig() {
-    doTest("<code><b>test.dart</b><br>Z Z()<br><br><b>Containing class:</b> Z<br><br></code>", "class Z { <caret>Z(); }");
+  public void testConstructorSig1() {
+    // unnamed constructor at declaration
+    doTest("<code><b>test.dart</b><br>A A(int one,<br>&nbsp;&nbsp;&nbsp;&nbsp;int two)<br><br><b>Containing class:</b> A<br><br></code>\n" +
+           "<p>constructor comment</p>",
+
+           "class A { /** constructor comment */ A<caret>(int one, int two); }");
+  }
+
+  public void testConstructorSig2() {
+    // named constructor at declaration
+    doTest(
+      "<code><b>test.dart</b><br>A A.name(int one,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int two)<br><br><b>Containing class:</b> A<br><br></code>\n" +
+      "<p>constructor comment</p>",
+
+      "class A { /** constructor comment */ A.name<caret>(int one, int two); }");
+  }
+
+  public void testConstructorSig3() {
+    // unnamed constructor at instantiation
+    doTest("<code><b>test.dart</b><br>A A(int one,<br>&nbsp;&nbsp;&nbsp;&nbsp;int two)<br><br><b>Containing class:</b> A<br><br></code>\n" +
+           "<p>constructor comment</p>",
+
+           "class A { /** constructor comment */ A(int one, int two);}" +
+           "void m() { var a = new A<caret>(1,2); }");
+  }
+
+  public void testConstructorSig4() {
+    // named constructor at instantiation
+    doTest(
+      "<code><b>test.dart</b><br>A A.name(int one,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int two)<br><br><b>Containing class:</b> A<br><br></code>\n" +
+      "<p>constructor comment</p>",
+
+      "class A { /** constructor comment */ A.name(int one, int two); }" +
+      "void m() { var a = new A.name<caret>(1,2); }");
+  }
+
+  public void testConstructorSig5() {
+    // unnamed constructor at instantiation, implicit new
+    doTest(
+      "<code><b>test.dart</b><br>(new) A A(int one,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int two)<br><br><b>Containing class:</b> A<br><br></code>\n" +
+      "<p>constructor comment</p>",
+
+      "class A { /** constructor comment */ A(int one, int two); }" +
+      "void m() { var a = A<caret>(1,2); }");
+  }
+
+  public void testConstructorSig6() {
+    // named constructor at instantiation, implicit new
+    doTest(
+      "<code><b>test.dart</b><br>(new) A A.name(int one,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int two)<br><br><b>Containing class:</b> A<br><br></code>\n" +
+      "<p>constructor comment</p>",
+
+      "class A { /** constructor comment */ A.name(int one, int two); }" +
+      "void m() { var a = A.name<caret>(1,2); }");
   }
 
   public void testEnumSig() {
@@ -110,21 +161,18 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
   }
 
   public void testFunctionDoc1() {
-    doTest("<code><b>test.dart</b><br>void foo(int x)<br><br></code>\n<p>A function on [x]s.</p>",
+    doTest("<code><b>test.dart</b><br>void foo(int x)<br><br></code>\n<p>A function on <code>x</code>s.</p>",
            "/// A function on [x]s.\nvoid <caret>foo(int x) { }");
   }
 
   public void testFunctionDoc2() {
-    doTest("<code><b>test.dart</b><br>void foo(int x)<br><br></code>\n<p>Good for:</p>\n" +
-           "\n" +
-           "<ul>\n" +
-           "<li>this</li>\n" +
-           "<li>that</li>\n" +
-           "</ul>", "/** Good for:\n\n" +
-                    " * * this\n" +
-                    " * * that\n" +
-                    "*/\n" +
-                    "\nvoid <caret>foo(int x) { }");
+    doTest("<code><b>test.dart</b><br>void foo(int x)<br><br></code>\n<p>Good for:</p>\n\n" +
+           "<ul><li>this</li>\n" +
+           "<li>that</li></ul>", "/** Good for:\n\n" +
+                                 " * * this\n" +
+                                 " * * that\n" +
+                                 "*/\n" +
+                                 "\nvoid <caret>foo(int x) { }");
   }
 
   public void testFunctionSig1() {
@@ -231,8 +279,7 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
            "\n" +
            "<p>   doc4</p>\n" +
            "\n" +
-           "<pre><code>    code\n" +
-           "</code></pre>",
+           "<pre><code>    code</code></pre>",
 
            "class A{\n" +
            "/** 1 */\n" +
@@ -285,11 +332,13 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
   }
 
   public void testParamClassSig2() {
-    doTest("<code><b>test.dart</b><br>class Foo&lt;T, Z&gt;<br><br></code>", "class <caret>Foo<T,Z>{ }");
+    doTest("<code><b>test.dart</b><br>class Foo&lt;T, Z&gt;<br><br></code>",
+           "class <caret>Foo<T,Z>{ }");
   }
 
   public void testParamClassSig3() {
-    doTest("<code><b>test.dart</b><br>class Foo implements Bar<br><br></code>", "class <caret>Foo implements Bar { }<br/>class Bar { }");
+    doTest("<code><b>test.dart</b><br>class Foo implements Bar<br><br></code>",
+           "class <caret>Foo implements Bar { }<br/>class Bar { }");
   }
 
   public void testParamClassSig4() {

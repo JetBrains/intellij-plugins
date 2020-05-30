@@ -31,8 +31,10 @@ public class MxmlLanguageInjector implements MultiHostInjector, JSTargetedInject
   public static final String PRIVATE_TAG_NAME = "Private";
   private static final String FUNCTION_CALL_PREFIX = "(function (... _){}) (";
   private static final String FUNCTION_CALL_SUFFIX = ");";
-  private static final Language regexpLanguage = Language.findLanguageByID("RegExp");
-  private static final Language cssLanguage = Language.findLanguageByID("CSS");
+  private static class Holder {
+    private static final Language regexpLanguage = Language.findLanguageByID("RegExp");
+    private static final Language cssLanguage = Language.findLanguageByID("CSS");
+  }
 
   @Override
   public void getLanguagesToInject(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement host) {
@@ -70,7 +72,7 @@ public class MxmlLanguageInjector implements MultiHostInjector, JSTargetedInject
         }
         else if (attrName.equals("expression") &&
                  "RegExpValidator".equals(((XmlTag)tag).getLocalName()) &&
-                 regexpLanguage != null
+                 Holder.regexpLanguage != null
           ) {
           String hostText = host.getText();
           int startPos = hostText.indexOf('/');
@@ -79,7 +81,7 @@ public class MxmlLanguageInjector implements MultiHostInjector, JSTargetedInject
           if (startPos != -1) {
             if (endPos > startPos) {
               TextRange range = new TextRange(startPos + 1, endPos);
-              registrar.startInjecting(regexpLanguage)
+              registrar.startInjecting(Holder.regexpLanguage)
                 .addPlace(null, null, (PsiLanguageInjectionHost)host, range)
                 .doneInjecting();
             }
@@ -109,8 +111,8 @@ public class MxmlLanguageInjector implements MultiHostInjector, JSTargetedInject
             tag.getAttributeValue("source") == null) {
           JSInXmlLanguagesInjector.injectToXmlText(registrar, host, JavaScriptSupportLoader.ECMA_SCRIPT_L4, null, null);
         }
-        else if (FlexPredefinedTagNames.STYLE.equals(localName) && FlexUtils.isMxmlNs(tag.getNamespace()) && cssLanguage != null) {
-          JSInXmlLanguagesInjector.injectToXmlText(registrar, host, cssLanguage, null, null);
+        else if (FlexPredefinedTagNames.STYLE.equals(localName) && FlexUtils.isMxmlNs(tag.getNamespace()) && Holder.cssLanguage != null) {
+          JSInXmlLanguagesInjector.injectToXmlText(registrar, host, Holder.cssLanguage, null, null);
         }
         else if (tag.getSubTags().length == 0) {
           injectInMxmlFile(registrar, host, tag.getDescriptor(), tag);

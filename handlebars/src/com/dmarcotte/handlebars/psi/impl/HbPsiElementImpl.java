@@ -20,9 +20,8 @@ public class HbPsiElementImpl extends ASTWrapperPsiElement implements HbPsiEleme
   }
 
 
-  @NotNull
   @Override
-  public PsiReference[] getReferences() {
+  public PsiReference @NotNull [] getReferences() {
     return ReferenceProvidersRegistry.getReferencesFromProviders(this);
   }
 }

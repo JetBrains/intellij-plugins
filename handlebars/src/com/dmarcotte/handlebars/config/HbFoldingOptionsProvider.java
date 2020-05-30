@@ -17,7 +17,7 @@ public class HbFoldingOptionsProvider
   }
 
   public HbFoldingOptionsProvider() {
-    super(new HbCodeFoldingOptionsBean());
+    super(new HbCodeFoldingOptionsBean(), "Handlebars/Mustache");
     HbCodeFoldingOptionsBean settings = getInstance();
     checkBox(HbBundle.message("hb.pages.folding.auto.collapse.blocks"), settings::isAutoCollapseBlocks, settings::setAutoCollapseBlocks);
   }

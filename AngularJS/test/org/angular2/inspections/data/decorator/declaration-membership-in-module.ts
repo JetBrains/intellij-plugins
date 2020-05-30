@@ -13,6 +13,14 @@ class Component2 {
 class <error descr="Component3 is not declared in any Angular module">Component3</error> {
 }
 
+@Component()
+class <error descr="MyComponent is not declared in any Angular module">MyComponent</error> {
+}
+
+@Component()
+abstract class MyComponentAbstract {
+}
+
 @Directive({})
 class <error descr="Directive1 is declared in multiple Angular modules: Module1 and Module2">Directive1</error> {
 }
@@ -25,6 +33,14 @@ class Directive2 {
 class <error descr="Directive3 is not declared in any Angular module">Directive3</error> {
 }
 
+@Directive()
+abstract class MyDirectiveAbstract {
+}
+
+@Directive()
+class MyDirective {
+}
+
 @Pipe({})
 class <error descr="Pipe1 is declared in multiple Angular modules: Module1 and Module2">Pipe1</error> {
 }
@@ -35,6 +51,14 @@ class Pipe2 {
 
 @Pipe({})
 class <error descr="Pipe3 is not declared in any Angular module">Pipe3</error> {
+}
+
+@Pipe()
+class <error descr="MyPipe is not declared in any Angular module">MyPipe</error> {
+}
+
+@Pipe()
+abstract class MyPipeAbstract {
 }
 
 @NgModule({

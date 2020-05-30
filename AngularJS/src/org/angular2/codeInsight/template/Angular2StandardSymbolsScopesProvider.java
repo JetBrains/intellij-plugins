@@ -13,10 +13,10 @@ import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.SmartList;
 import com.intellij.xml.XmlAttributeDescriptor;
-import org.angular2.codeInsight.Angular2TypeEvaluator;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.angular2.lang.html.parser.Angular2AttributeType;
 import org.angular2.lang.html.psi.Angular2HtmlEvent;
+import org.angular2.lang.types.Angular2EventType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,7 +33,7 @@ public class Angular2StandardSymbolsScopesProvider extends Angular2TemplateScope
   @NonNls public static final String $EVENT = "$event";
 
   @Override
-  public List<? extends Angular2TemplateScope> getScopes(@NotNull PsiElement element, @Nullable PsiElement hostElement) {
+  public @NotNull List<? extends Angular2TemplateScope> getScopes(@NotNull PsiElement element, @Nullable PsiElement hostElement) {
     SmartList<Angular2TemplateScope> result = new SmartList<>(new Angular2$AnyScope(element.getContainingFile()));
     if (hostElement != null) {
       PsiElement attribute = hostElement;
@@ -71,7 +71,6 @@ public class Angular2StandardSymbolsScopesProvider extends Angular2TemplateScope
 
     private Angular2$AnyScope(@NotNull PsiElement context) {
       super(null);
-      //noinspection HardCodedStringLiteral
       $any = new JSImplicitElementImpl.Builder($ANY, context)
         .setTypeString("*")
         .setParameters(Collections.singletonList(
@@ -108,10 +107,10 @@ public class Angular2StandardSymbolsScopesProvider extends Angular2TemplateScope
   }
 
   private static class Angular2EventImplicitElement extends JSLocalImplicitElementImpl {
-    @Nullable private final Collection<PsiElement> myDeclarations;
+    private final @Nullable Collection<PsiElement> myDeclarations;
 
     private Angular2EventImplicitElement(@NotNull XmlAttribute attribute) {
-      super($EVENT, Angular2TypeEvaluator.resolveEventType(attribute), attribute, JSImplicitElement.Type.Variable);
+      super($EVENT, new Angular2EventType(attribute), attribute, JSImplicitElement.Type.Variable);
       XmlAttributeDescriptor descriptor = attribute.getDescriptor();
       myDeclarations = descriptor != null ? descriptor.getDeclarations() : Collections.emptyList();
     }

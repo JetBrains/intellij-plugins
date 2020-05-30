@@ -92,7 +92,7 @@ public class KarmaUtil {
     return isStartingPartMatched(filename, STARTING_PARTS);
   }
 
-  private static boolean isStartingPartMatched(@NotNull CharSequence filename, @NotNull String[] startingParts) {
+  private static boolean isStartingPartMatched(@NotNull CharSequence filename, String @NotNull [] startingParts) {
     for (String startingPart : startingParts) {
       if (startingPart.length() < filename.length() && CharArrayUtil.regionMatches(filename, 0, startingPart)) {
         if (NAME_PART_DELIMITERS.indexOf(filename.charAt(startingPart.length())) >= 0) {

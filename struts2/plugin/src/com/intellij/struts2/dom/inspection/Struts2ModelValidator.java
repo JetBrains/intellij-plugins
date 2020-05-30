@@ -45,7 +45,7 @@ import java.util.Set;
 public class Struts2ModelValidator extends ValidatorBase {
 
   public Struts2ModelValidator() {
-    super(StrutsBundle.message("inspections.struts2.model.validator"),
+    super("Struts 2 Model Validator", StrutsBundle.message("inspections.struts2.model.validator"),
           StrutsBundle.message("inspections.struts2.model.validator.progress"));
   }
 
@@ -80,9 +80,8 @@ public class Struts2ModelValidator extends ValidatorBase {
   }
 
   @SuppressWarnings("unchecked")
-  @NotNull
   @Override
-  public Class<? extends LocalInspectionTool>[] getInspectionToolClasses(CompileContext context) {
+  public Class<? extends LocalInspectionTool> @NotNull [] getInspectionToolClasses(CompileContext context) {
     return new Class[]{Struts2ModelInspection.class};
   }
 }

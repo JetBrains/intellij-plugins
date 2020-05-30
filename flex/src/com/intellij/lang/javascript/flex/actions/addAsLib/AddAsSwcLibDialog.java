@@ -243,7 +243,7 @@ public class AddAsSwcLibDialog extends DialogWrapper {
       ShowSettingsUtil.getInstance().editConfigurable(myProject, configurable, () -> {
         final Place place = FlexBuildConfigurationsExtension.getInstance().getConfigurator()
           .getPlaceFor(module, bc.getName())
-          .putPath(CompositeConfigurable.TAB_NAME, DependenciesConfigurable.TAB_NAME);
+          .putPath(CompositeConfigurable.TAB_NAME, DependenciesConfigurable.getTabName());
         configurable.navigateTo(place, true);
       });
     });

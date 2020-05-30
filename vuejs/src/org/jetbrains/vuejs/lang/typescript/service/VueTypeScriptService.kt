@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang.typescript.service
 
 import com.intellij.lang.javascript.DialectDetector
@@ -8,7 +8,6 @@ import com.intellij.lang.javascript.service.JSLanguageServiceFileCommandCache
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceObject
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceProtocol
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceSimpleCommand
-import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceAnnotationResult
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
 import com.intellij.lang.typescript.compiler.languageService.codeFixes.TypeScriptLanguageServiceFixSet
@@ -16,6 +15,7 @@ import com.intellij.lang.typescript.compiler.languageService.protocol.TypeScript
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.ConfigureRequest
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.ConfigureRequestArguments
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.FileExtensionInfo
+import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptOpenEditorCommand
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
 import com.intellij.openapi.application.ReadAction
@@ -27,8 +27,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.util.Consumer
+import org.jetbrains.vuejs.context.enableVueTSService
 import org.jetbrains.vuejs.index.findModule
-import org.jetbrains.vuejs.index.hasVue
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.typescript.service.protocol.VueTypeScriptServiceProtocol
 
@@ -69,9 +69,7 @@ fun getModifiedVueDocumentText(project: Project, document: Document): String? {
   return result
 }
 
-class VueTypeScriptService(project: Project, settings: TypeScriptCompilerSettings) :
-  TypeScriptServerServiceImpl(project, settings, "Vue Console") {
-
+class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(project, "Vue Console") {
   override fun isAcceptableNonTsFile(project: Project, service: TypeScriptConfigService, virtualFile: VirtualFile): Boolean {
     if (super.isAcceptableNonTsFile(project, service, virtualFile)) return true
     if (!isVueFile(virtualFile)) return false
@@ -117,7 +115,7 @@ class VueTypeScriptService(project: Project, settings: TypeScriptCompilerSetting
     return VueTypeScriptServiceProtocol(myProject, mySettings, readyConsumer, createEventConsumer(), tsServicePath)
   }
 
-  private fun isVueServiceEnabled(): Boolean = hasVue(myProject)
+  private fun isVueServiceEnabled(): Boolean = enableVueTSService(myProject)
 
   override fun getInitialCommands(): Map<JSLanguageServiceSimpleCommand, Consumer<JSLanguageServiceObject>> {
     //commands
@@ -175,4 +173,15 @@ class VueTypeScriptService(project: Project, settings: TypeScriptCompilerSetting
 
   private fun isVueFile(virtualFile: VirtualFile) = virtualFile.fileType == VueFileType.INSTANCE
 
+
+  override fun createOpenCommand(file: VirtualFile,
+                                 timestamp: Long,
+                                 contentLength: Long,
+                                 lineCount: Int,
+                                 lastLineStartOffset: Int,
+                                 content: CharSequence?,
+                                 projectFileName: String?): TypeScriptOpenEditorCommand {
+    return VueTypeScriptServiceCache.createOpenCommand(myProject, file, timestamp, contentLength, lineCount, lastLineStartOffset, content,
+                                                       projectFileName)
+  }
 }

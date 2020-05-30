@@ -12,6 +12,7 @@ class Contributions {
   @get:JsonProperty("html")
   @set:JsonProperty("html")
   var html: Html? = null
+
   @JsonIgnore
   private val additionalProperties = HashMap<String, Any>()
 

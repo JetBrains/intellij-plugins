@@ -1,17 +1,17 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 /* Initialize access to schematics registry */
-let provider: SchematicsProvider;
+let providerPromise: Promise<SchematicsProvider>;
 
 //find appropriate support
-for (let version of ["60", "62", "70", "80"]) {
+for (let version of ["60", "62", "70", "80", "90"]) {
   try {
-    provider = require("./schematicsProvider" + version);
+    providerPromise = require("./schematicsProvider" + version);
     break;
   } catch (e) {
     //ignore
   }
 }
-if (!provider) {
+if (!providerPromise) {
   console.info("No schematics")
   process.exit(0)
 }
@@ -41,26 +41,30 @@ interface SchematicsInfo {
   hidden?: boolean;
 }
 
-const engineHost = provider.getEngineHost();
-
 const includeHidden = process.argv[2] === "--includeHidden";
 
-const defaultCollectionName = provider.getDefaultSchematicCollection();
+(async function () {
+  let provider = await providerPromise;
 
-const collections = getAvailableSchematicCollections();
-if (collections.indexOf(defaultCollectionName) < 0) {
-  collections.push(defaultCollectionName);
-}
+  const defaultCollectionName = provider.getDefaultSchematicCollection();
 
-const allSchematics = collections
-// Update schematics should be executed only with `ng update`
-  .filter(c => c !== "@schematics/update")
-  .map(getCollectionSchematics)
-  .reduce((a, b) => a.concat(...b));
+  const collections = getAvailableSchematicCollections(provider);
+  if (collections.indexOf(defaultCollectionName) < 0) {
+    collections.push(defaultCollectionName);
+  }
 
-console.info(JSON.stringify(allSchematics, null, 2))
+  const allSchematics = collections
+    // Update schematics should be executed only with `ng update`
+    .filter(c => c !== "@schematics/update")
+    .map(c => getCollectionSchematics(c, provider, defaultCollectionName))
+    .reduce((a, b) => a.concat(...b));
 
-function getAvailableSchematicCollections() {
+  console.info(JSON.stringify(allSchematics, null, 2))
+
+})().catch(err => console.error(err.stack || err))
+
+
+function getAvailableSchematicCollections(provider: SchematicsProvider) {
   let result: string[] = [];
   let packages: string[] = [];
   fs.readdirSync(path.resolve(process.cwd(), "node_modules")).forEach(dir => {
@@ -85,14 +89,14 @@ function getAvailableSchematicCollections() {
   return result;
 }
 
-function getCollectionSchematics(collectionName: string): SchematicsInfo[] {
+function getCollectionSchematics(collectionName: string, provider: SchematicsProvider, defaultCollectionName: string): SchematicsInfo[] {
   let schematicNames: string[];
   let collection: any;
   try {
     collection = provider.getCollection(collectionName);
     schematicNames = includeHidden
       ? listAllSchematics(collection)
-      : engineHost.listSchematics(collection);
+      : provider.listSchematics(collection);
   } catch (e) {
     return [{
       name: collectionName,

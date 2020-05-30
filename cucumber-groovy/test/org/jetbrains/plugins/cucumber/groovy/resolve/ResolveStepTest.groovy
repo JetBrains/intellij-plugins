@@ -1,14 +1,17 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.groovy.resolve
-import org.jetbrains.plugins.cucumber.groovy.GrCucumberLightTestCase
-import org.jetbrains.plugins.cucumber.groovy.TestUtils
-import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex
-/**
- * @author Max Medvedev
- */
-class ResolveStepTest extends GrCucumberLightTestCase {
-  final String basePath = TestUtils.absoluteTestDataPath + 'resolve'
 
-  void testTable() {
+import com.intellij.psi.PsiReference
+import groovy.transform.CompileStatic
+import org.jetbrains.plugins.cucumber.groovy.GrCucumberLightTestCase
+import org.jetbrains.plugins.groovy.util.ResolveTest
+import org.junit.Test
+
+@CompileStatic
+class ResolveStepTest extends GrCucumberLightTestCase implements ResolveTest {
+
+  @Test
+  void table() {
     doTest('''\
 Feature: Shopping
 
@@ -49,7 +52,8 @@ public static class Grocery {
 ''')
   }
 
-  void testSimple() {
+  @Test
+  void simple() {
     doTest('''\
 # language: en
 Feature: Division
@@ -86,18 +90,18 @@ Given(~'I have entered (\\\\d+) into (.*) calculator') { int number, String igno
 Given(~'^(\\\\d+) into the$') {->
     throw new RuntimeException("should never get here since we're running with --guess")
 }
-}
 ''')
   }
 
-  void testMethodWithTimeoutParameter() {
+  @Test
+  void methodWithTimeoutParameter() {
     doTest(
-'''
+      '''
 Feature: Division
   Scenario: More numbers
     Given calcula<caret>tor
 ''',
-'''
+      '''
 package calc
 
 import cucumber.runtime.PendingException
@@ -108,21 +112,13 @@ this.metaClass.mixin(cucumber.runtime.groovy.EN)
 Given(~'calculator', 1000) {->
     calc.push number
 }
-
 '''
     )
   }
 
   void doTest(String feature, String stepDef) {
-    myFixture.with {
-      CucumberStepsIndex.getInstance(project).reset()
-      configureByText('test.feature', feature)
-      addFileToProject('steps.groovy', stepDef)
-
-      def ref = file.findReferenceAt(editor.caretModel.offset)
-      assertNotNull(ref)
-      def resolved = ref.resolve()
-      assertNotNull(resolved)
-    }
+    fixture.configureByText('test.feature', feature)
+    fixture.addFileToProject('steps.groovy', stepDef)
+    assert referenceUnderCaret(PsiReference).resolve()
   }
 }

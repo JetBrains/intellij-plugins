@@ -5,7 +5,7 @@ import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;
 import com.intellij.ide.wizard.CommitStepException;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.refactoring.util.ActionScriptRefactoringUtil;
@@ -29,7 +29,7 @@ public class FlexMainStep extends MainStep {
                       final String packageName,
                       final String templateName) {
     super(model, context.getProject(), className, true, packageName, null, true, templateName, context,
-          JSBundle.message("choose.base.component.title"), () -> CreateFlexComponentFix.computeApplicableTemplates(context));
+          JavaScriptBundle.message("choose.base.component.title"), () -> CreateFlexComponentFix.computeApplicableTemplates(context));
     myModel = model;
     setSuperclassLabelText(FlexBundle.message("parent.component.label.text"));
   }

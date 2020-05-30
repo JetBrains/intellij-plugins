@@ -8,6 +8,7 @@ import com.intellij.javascript.karma.scope.KarmaScopeView;
 import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterField;
 import com.intellij.javascript.nodejs.util.NodePackageField;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
@@ -53,7 +54,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
   private final Map<KarmaScopeKind, KarmaScopeView> myScopeKindViewMap = new HashMap<>();
   private final JPanel mySelectedScopeKindPanel;
   private final JPanel myRootComponent;
-  private final int myLongestLabelWidth = new JLabel("Environment variables:").getPreferredSize().width;
+  private final int myLongestLabelWidth = new JLabel(UIUtil.removeMnemonic(KarmaBundle.message("runConfiguration.environment.label"))).getPreferredSize().width;
 
   public KarmaRunConfigurationEditor(@NotNull Project project) {
     myProject = project;
@@ -71,10 +72,10 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
       .addLabeledComponent(KarmaBundle.message("runConfiguration.config_file.label"), myConfigPathField)
       .addLabeledComponent(KarmaBundle.message("runConfiguration.karmaOptions.label"), myKarmaOptionsEditor)
       .addComponent(new JSeparator(), 8)
-      .addLabeledComponent(KarmaBundle.message("runConfiguration.node_interpreter.label"), myNodeInterpreterField, 8)
-      .addLabeledComponent("Node o&ptions:", myNodeOptionsEditor)
+      .addLabeledComponent(NodeJsInterpreterField.getLabelTextForComponent(), myNodeInterpreterField, 8)
+      .addLabeledComponent(JavaScriptBundle.message("rc.nodeOptions.label"), myNodeOptionsEditor)
       .addLabeledComponent(KarmaBundle.message("runConfiguration.karma_package_dir.label"), myKarmaPackageField)
-      .addLabeledComponent("Working directory:", myWorkingDirComponent)
+      .addLabeledComponent(JavaScriptBundle.message("rc.workingDirectory.label"), myWorkingDirComponent)
       .addLabeledComponent(KarmaBundle.message("runConfiguration.environment.label"), myEnvVarsComponent)
       .addSeparator(8)
       .addComponent(scopeKindPanel)
@@ -101,7 +102,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     SwingHelper.installFileCompletionAndBrowseDialog(
       project,
       textFieldWithBrowseButton,
-      "Select Working Directory",
+      JavaScriptBundle.message("rc.workingDirectory.browseDialogTitle"),
       FileChooserDescriptorFactory.createSingleFolderDescriptor()
     );
     PathShortener.enablePathShortening(textFieldWithBrowseButton.getTextField(), null);

@@ -16,11 +16,11 @@ import com.intellij.util.containers.MultiMap;
 import one.util.streamex.IntStreamEx;
 import one.util.streamex.StreamEx;
 import org.angular2.codeInsight.Angular2DeclarationsScope;
+import org.angular2.entities.Angular2ComponentLocator;
 import org.angular2.entities.Angular2Declaration;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Module;
 import org.angular2.entities.metadata.psi.Angular2MetadataModule;
-import org.angular2.index.Angular2IndexingHandler;
 import org.angular2.inspections.quickfixes.Angular2FixesFactory;
 import org.angular2.inspections.quickfixes.Angular2FixesPsiUtil;
 import org.angular2.lang.Angular2Bundle;
@@ -28,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.function.Function;
 
 import static com.intellij.openapi.util.Pair.pair;
 import static org.angular2.Angular2DecoratorUtil.IMPORTS_PROP;
@@ -45,8 +44,7 @@ public class NgModuleImportAction extends Angular2NgModuleSelectAction {
   }
 
   @Override
-  @NotNull
-  public List<JSElement> getCandidates() {
+  public @NotNull List<JSElement> getCandidates() {
     if (myContext == null) {
       return Collections.emptyList();
     }
@@ -62,11 +60,10 @@ public class NgModuleImportAction extends Angular2NgModuleSelectAction {
 
     MultiMap<Angular2Module, Integer> distancesToDirectives = new MultiMap<>();
     StreamEx.of(candidates.get(Angular2DeclarationsScope.DeclarationProximity.EXPORTED_BY_PUBLIC_MODULE))
-      .map(declaration ->
-             StreamEx.of(scope.getPublicModulesExporting(declaration))
-               .distinct()
-               .map(module -> pair(module, distanceCalculator.get(module, declaration))))
-      .flatMap(Function.identity())
+      .flatMap(declaration ->
+                 StreamEx.of(scope.getPublicModulesExporting(declaration))
+                   .distinct()
+                   .map(module -> pair(module, distanceCalculator.get(module, declaration))))
       .forEach(pair -> distancesToDirectives.putValue(pair.first, pair.second));
 
     Map<Angular2Module, Double> averageDistances = new HashMap<>();
@@ -80,17 +77,16 @@ public class NgModuleImportAction extends Angular2NgModuleSelectAction {
       .toList();
   }
 
-  @NotNull
   @Override
-  protected List<JSElement> getFinalElements(@NotNull Project project,
-                                             @NotNull PsiFile file,
-                                             @NotNull List<JSElement> candidates,
-                                             @NotNull Collection<JSElement> elementsFromLibraries,
-                                             @NotNull Map<PsiElement, JSModuleNameInfo> renderedTexts) {
+  protected @NotNull List<JSElement> getFinalElements(@NotNull Project project,
+                                                      @NotNull PsiFile file,
+                                                      @NotNull List<JSElement> candidates,
+                                                      @NotNull Collection<JSElement> elementsFromLibraries,
+                                                      @NotNull Map<PsiElement, JSModuleNameInfo> renderedTexts) {
     if (!file.isValid() || project.isDisposed() || !project.isOpen()) {
       return ContainerUtil.emptyList();
     }
-    TypeScriptClass component = Angular2IndexingHandler.findComponentClass(file);
+    TypeScriptClass component = Angular2ComponentLocator.findComponentClass(file);
     if (component != null) {
       file = component.getContainingFile();
     }

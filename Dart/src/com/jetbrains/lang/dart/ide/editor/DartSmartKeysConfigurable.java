@@ -17,27 +17,16 @@ package com.jetbrains.lang.dart.ide.editor;
 
 
 import com.intellij.application.options.CodeCompletionOptionsCustomSection;
-import com.intellij.openapi.options.BeanConfigurable;
-import com.intellij.ui.IdeBorderFactory;
+import com.intellij.openapi.options.ConfigurableBuilder;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.codeInsight.DartCodeInsightSettings;
 
-import javax.swing.*;
-
-public class DartSmartKeysConfigurable extends BeanConfigurable<DartCodeInsightSettings> implements CodeCompletionOptionsCustomSection {
+public class DartSmartKeysConfigurable extends ConfigurableBuilder implements CodeCompletionOptionsCustomSection {
   public DartSmartKeysConfigurable() {
-    super(DartCodeInsightSettings.getInstance());
-    DartCodeInsightSettings settings = getInstance();
+    super("Dart");
+    DartCodeInsightSettings settings = DartCodeInsightSettings.getInstance();
 
     checkBox(DartBundle.message("dart.smartKeys.insertDefaultArgValues.text"), () -> settings.INSERT_DEFAULT_ARG_VALUES,
              v -> settings.INSERT_DEFAULT_ARG_VALUES = v);
-  }
-
-  @Override
-  public JComponent createComponent() {
-    JComponent result = super.createComponent();
-    assert result != null;
-    result.setBorder(IdeBorderFactory.createTitledBorder("Dart")); //$NON-NLS-1$
-    return result;
   }
 }

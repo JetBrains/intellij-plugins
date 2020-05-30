@@ -77,9 +77,8 @@ public class OsgiCoreLibraryType extends DownloadableLibraryType {
     return OsmorcIdeaIcons.Osgi;
   }
 
-  @NotNull
   @Override
-  protected String[] getDetectionClassNames() {
+  protected String @NotNull [] getDetectionClassNames() {
     Logger.getInstance(getClass()).error(new AssertionError("shouldn't be called"));
     return ArrayUtilRt.EMPTY_STRING_ARRAY;
   }

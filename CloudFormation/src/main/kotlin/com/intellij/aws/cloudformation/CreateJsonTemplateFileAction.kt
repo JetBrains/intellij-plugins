@@ -8,20 +8,20 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
 
 class CreateJsonTemplateFileAction : CreateFileFromTemplateAction(
-    CloudFormationBundle.getString("aws.cloudformation.new.json.file.action"),
-    CloudFormationBundle.getString("aws.cloudformation.new.json.file.action.description"),
+    CloudFormationBundle.message("aws.cloudformation.new.json.file.action"),
+    CloudFormationBundle.message("aws.cloudformation.new.json.file.action.description"),
     JsonFileType.INSTANCE.icon), DumbAware {
 
   override fun getDefaultTemplateProperty(): String? = "DefaultJsonCloudFormationTemplate"
 
   override fun buildDialog(project: Project, directory: PsiDirectory, builder: CreateFileFromTemplateDialog.Builder) {
     builder
-        .setTitle(CloudFormationBundle.getString("aws.cloudformation.new.json.file.action"))
-        .addKind(CloudFormationBundle.getString("aws.cloudformation.new.json.file.action"),
+        .setTitle(CloudFormationBundle.message("aws.cloudformation.new.json.file.action"))
+        .addKind(CloudFormationBundle.message("aws.cloudformation.new.json.file.action"),
             JsonFileType.INSTANCE.icon, "AWS CloudFormation Template (JSON)")
   }
 
   override fun getActionName(directory: PsiDirectory, newName: String, templateName: String): String {
-    return CloudFormationBundle.getString("aws.cloudformation.new.json.file.action")
+    return CloudFormationBundle.message("aws.cloudformation.new.json.file.action")
   }
 }

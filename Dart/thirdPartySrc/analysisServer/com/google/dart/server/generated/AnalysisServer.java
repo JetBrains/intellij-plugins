@@ -493,12 +493,23 @@ public interface AnalysisServer {
    * @param includedFixes A list of names indicating which fixes should be applied. If a name is
    *         specified that does not match the name of a known fix, an error of type UNKNOWN_FIX will
    *         be generated.
+   * @param includePedanticFixes A flag indicating that "pedantic" fixes should be applied.
    * @param includeRequiredFixes A flag indicating that "required" fixes should be applied.
    * @param excludedFixes A list of names indicating which fixes should not be applied. If a name is
    *         specified that does not match the name of a known fix, an error of type UNKNOWN_FIX will
    *         be generated.
+   * @param outputDir The absolute and normalized path to a directory to which non-nullability
+   *         migration output will be written. The output is only produced if the non-nullable fix is
+   *         included. Files in the directory might be overwritten, but no previously existing files
+   *         will be deleted.
    */
-  public void edit_dartfix(List<String> included, List<String> includedFixes, boolean includeRequiredFixes, List<String> excludedFixes, DartfixConsumer consumer);
+  public void edit_dartfix(List<String> included,
+                           List<String> includedFixes,
+                           boolean includePedanticFixes,
+                           boolean includeRequiredFixes,
+                           List<String> excludedFixes,
+                           String outputDir,
+                           DartfixConsumer consumer);
 
   /**
    * {@code edit.format}
@@ -596,7 +607,13 @@ public interface AnalysisServer {
    *         omitted if the refactoring does not require any options or if the values of those
    *         options are not known.
    */
-  public void edit_getRefactoring(String kind, String file, int offset, int length, boolean validateOnly, RefactoringOptions options, GetRefactoringConsumer consumer);
+  public void edit_getRefactoring(String kind,
+                                  String file,
+                                  int offset,
+                                  int length,
+                                  boolean validateOnly,
+                                  RefactoringOptions options,
+                                  GetRefactoringConsumer consumer);
 
   /**
    * {@code edit.getStatementCompletion}
@@ -733,7 +750,13 @@ public interface AnalysisServer {
    *         interesting sub-expressions in the given code. The client may provide an empty list, in
    *         this case the server will return completion suggestions.
    */
-  public void execution_getSuggestions(String code, int offset, String contextFile, int contextOffset, List<RuntimeCompletionVariable> variables, List<RuntimeCompletionExpression> expressions, GetRuntimeCompletionConsumer consumer);
+  public void execution_getSuggestions(String code,
+                                       int offset,
+                                       String contextFile,
+                                       int contextOffset,
+                                       List<RuntimeCompletionVariable> variables,
+                                       List<RuntimeCompletionExpression> expressions,
+                                       GetRuntimeCompletionConsumer consumer);
 
   /**
    * {@code execution.mapUri}
@@ -779,15 +802,17 @@ public interface AnalysisServer {
   public void execution_setSubscriptions(List<String> subscriptions);
 
   /**
-   * {@code flutter.getChangeAddForDesignTimeConstructor}
+   * {@code flutter.getWidgetDescription}
    *
-   * Return the change that adds the forDesignTime() constructor for the widget class at the given
-   * offset.
+   * Return the description of the widget instance at the given location.
    *
-   * @param file The file containing the code of the class.
-   * @param offset The offset of the class in the code.
+   * If the location does not have a support widget, an error of type
+   * FLUTTER_GET_WIDGET_DESCRIPTION_NO_WIDGET will be generated.
+   *
+   * @param file The file where the widget instance is created.
+   * @param offset The offset in the file where the widget instance is created.
    */
-  public void flutter_getChangeAddForDesignTimeConstructor(String file, int offset, GetChangeAddForDesignTimeConstructorConsumer consumer);
+  public void flutter_getWidgetDescription(String file, int offset, GetWidgetDescriptionConsumer consumer);
 
   /**
    * {@code flutter.setSubscriptions}
@@ -817,6 +842,26 @@ public interface AnalysisServer {
    *         service.
    */
   public void flutter_setSubscriptions(Map<String, List<String>> subscriptions);
+
+  /**
+   * {@code flutter.setWidgetPropertyValue}
+   *
+   * Set the value of a property, or remove it.
+   *
+   * The server will generate a change that the client should apply to the project to get the value
+   * of the property set to the new value. The complexity of the change might be from updating a
+   * single literal value in the code, to updating multiple files to get libraries imported, and new
+   * intermediate widgets instantiated.
+   *
+   * @param id The identifier of the property, previously returned as a part of a
+   *         FlutterWidgetProperty. An error of type FLUTTER_SET_WIDGET_PROPERTY_VALUE_INVALID_ID is
+   *         generated if the identifier is not valid.
+   * @param value The new value to set for the property. If absent, indicates that the property
+   *         should be removed. If the property corresponds to an optional parameter, the
+   *         corresponding named argument is removed. If the property isRequired is true,
+   *         FLUTTER_SET_WIDGET_PROPERTY_VALUE_IS_REQUIRED error is generated.
+   */
+  public void flutter_setWidgetPropertyValue(int id, FlutterWidgetPropertyValue value, SetWidgetPropertyValueConsumer consumer);
 
   /**
    * Return {@code true} if the socket is open.

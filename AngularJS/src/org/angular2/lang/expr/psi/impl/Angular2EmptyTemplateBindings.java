@@ -20,15 +20,13 @@ public class Angular2EmptyTemplateBindings extends FakePsiElement implements Ang
     myTemplateName = templateName;
   }
 
-  @NotNull
   @Override
-  public String getTemplateName() {
+  public @NotNull String getTemplateName() {
     return myTemplateName;
   }
 
-  @NotNull
   @Override
-  public Angular2TemplateBinding[] getBindings() {
+  public Angular2TemplateBinding @NotNull [] getBindings() {
     return Angular2TemplateBinding.EMPTY_ARRAY;
   }
 
@@ -37,9 +35,8 @@ public class Angular2EmptyTemplateBindings extends FakePsiElement implements Ang
     return Angular2ElementTypes.TEMPLATE_BINDINGS_STATEMENT;
   }
 
-  @Nullable
   @Override
-  public PsiElement getParent() {
+  public @Nullable PsiElement getParent() {
     return myParent;
   }
 }

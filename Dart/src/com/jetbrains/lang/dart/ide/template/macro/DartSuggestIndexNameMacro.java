@@ -28,7 +28,7 @@ public class DartSuggestIndexNameMacro extends Macro {
   }
 
   @Override
-  public Result calculateResult(@NotNull Expression[] params, ExpressionContext context) {
+  public Result calculateResult(Expression @NotNull [] params, ExpressionContext context) {
     final PsiElement at = context.getPsiElementAtStartOffset();
     final Set<String> names = DartRefactoringUtil.collectUsedNames(at);
     for (char i = 'i'; i < 'z'; ++i) {

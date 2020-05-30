@@ -1,28 +1,16 @@
 package com.intellij.lang.javascript.linter.tslint.codestyle.rules
 
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
-import com.intellij.openapi.project.Project
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings
 
 
-abstract class TsLintSimpleRule<T>(val optionId: String) : TsLintRule {
-  override fun isAvailable(project: Project,
-                           languageSettings: CommonCodeStyleSettings,
-                           codeStyleSettings: JSCodeStyleSettings,
-                           config: TsLintConfigWrapper): Boolean {
-    val option = config.getOption(optionId)
-    if (option == null || !option.isEnabled()) return false
-
+abstract class TsLintSimpleRule<T>(override val optionId: String) : TsLintRule {
+  override fun isAvailable(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings, option: TslintJsonOption): Boolean {
     val configValue = getConfigValue(option)
     return configValue != null && getSettingsValue(languageSettings, codeStyleSettings) != configValue
   }
 
-  override fun apply(project: Project,
-                     languageSettings: CommonCodeStyleSettings,
-                     codeStyleSettings: JSCodeStyleSettings,
-                     config: TsLintConfigWrapper) {
-    val option = config.getOption(optionId)
-    if (option == null) return
+  override fun apply(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings, option: TslintJsonOption) {
     val value = getConfigValue(option) ?: return
 
     setValue(languageSettings, codeStyleSettings, value)
@@ -30,7 +18,7 @@ abstract class TsLintSimpleRule<T>(val optionId: String) : TsLintRule {
 
   protected abstract fun getConfigValue(option: TslintJsonOption): T?
 
-  abstract fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): T
+  protected abstract fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): T
 
-  abstract fun setValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings, value: T)
+  protected abstract fun setValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings, value: T)
 }

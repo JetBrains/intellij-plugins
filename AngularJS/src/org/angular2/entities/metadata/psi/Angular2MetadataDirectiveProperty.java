@@ -30,15 +30,13 @@ public class Angular2MetadataDirectiveProperty implements Angular2DirectivePrope
     this.myName = name;
   }
 
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     return myName;
   }
 
-  @Nullable
   @Override
-  public JSType getType() {
+  public @Nullable JSType getType() {
     return doIfNotNull(mySignatureSupplier.get(),
                        signature -> Angular2LibrariesHacks.hackQueryListTypeInNgForOf(signature.getJSType(), this));
   }
@@ -48,9 +46,8 @@ public class Angular2MetadataDirectiveProperty implements Angular2DirectivePrope
     return mySignatureSupplier.get() == null;
   }
 
-  @NotNull
   @Override
-  public PsiElement getSourceElement() {
+  public @NotNull PsiElement getSourceElement() {
     return Optional.ofNullable(mySignatureSupplier.get())
       .map(sig -> sig.getMemberSource().getSingleElement())
       .orElse(mySourceSupplier.compute());

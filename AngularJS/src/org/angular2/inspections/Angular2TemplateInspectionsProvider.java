@@ -2,6 +2,7 @@
 package org.angular2.inspections;
 
 import com.intellij.codeInspection.InspectionToolProvider;
+import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
 import com.intellij.lang.javascript.inspections.JSUnresolvedFunctionInspection;
@@ -13,9 +14,9 @@ import com.sixrr.inspectjs.validity.ThisExpressionReferencesGlobalObjectJSInspec
 import org.jetbrains.annotations.NotNull;
 
 public class Angular2TemplateInspectionsProvider implements InspectionToolProvider {
-  @NotNull
   @Override
-  public Class[] getInspectionClasses() {
+  public Class<? extends LocalInspectionTool> @NotNull [] getInspectionClasses() {
+    //noinspection unchecked
     return new Class[]{
       AngularIncorrectTemplateDefinitionInspection.class,
       AngularInsecureBindingToEventInspection.class,
@@ -27,6 +28,7 @@ public class Angular2TemplateInspectionsProvider implements InspectionToolProvid
       AngularNonEmptyNgContentInspection.class,
       AngularUndefinedBindingInspection.class,
       AngularUndefinedTagInspection.class,
+      AngularAmbiguousComponentTagInspection.class,
 
       TypeScriptUnresolvedVariableInspection.class,
       TypeScriptUnresolvedFunctionInspection.class,

@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.dmarcotte.handlebars.editor.actions;
 
 import com.dmarcotte.handlebars.config.HbConfig;
@@ -5,13 +6,11 @@ import com.dmarcotte.handlebars.format.FormatterTestSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 
-
 /**
  * These tests are based on other children of {@link BasePlatformTestCase},
  * in particular {@code com.intellij.application.options.codeInsight.editor.quotes.SelectionQuotingTypedHandlerTest}
  */
 public class HbTypedHandlerTest extends HbActionHandlerTest {
-
   private boolean myPrevAutoCloseSetting;
   private FormatterTestSettings formatterTestSettings;
 
@@ -30,7 +29,9 @@ public class HbTypedHandlerTest extends HbActionHandlerTest {
   protected void tearDown() throws Exception {
     try {
       HbConfig.setAutoGenerateCloseTagEnabled(myPrevAutoCloseSetting);
-      formatterTestSettings.tearDown();
+      if (formatterTestSettings != null) {
+        formatterTestSettings.tearDown();
+      }
     }
     catch (Throwable e) {
       addSuppressedException(e);

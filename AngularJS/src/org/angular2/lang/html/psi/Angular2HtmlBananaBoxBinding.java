@@ -14,8 +14,7 @@ public interface Angular2HtmlBananaBoxBinding extends Angular2HtmlBoundAttribute
   @Nullable
   Angular2Binding getBinding();
 
-  @NotNull
-  Angular2Interpolation[] getInterpolations();
+  Angular2Interpolation @NotNull [] getInterpolations();
 
   @NotNull
   PropertyBindingType getBindingType();

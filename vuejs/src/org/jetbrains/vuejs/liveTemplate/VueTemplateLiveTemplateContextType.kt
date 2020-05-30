@@ -3,10 +3,12 @@ package org.jetbrains.vuejs.liveTemplate
 
 import com.intellij.codeInsight.template.TemplateContextType
 import com.intellij.psi.PsiFile
+import org.jetbrains.vuejs.VueBundle
 
 private const val CONTEXT_TYPE = "VUE_TEMPLATE"
 
-class VueTemplateLiveTemplateContextType : TemplateContextType(CONTEXT_TYPE, "Vue template", VueBaseLiveTemplateContextType::class.java) {
+class VueTemplateLiveTemplateContextType : TemplateContextType(CONTEXT_TYPE, VueBundle.message("vue.live.template.context.template"),
+                                                               VueBaseLiveTemplateContextType::class.java) {
   override fun isInContext(file: PsiFile, offset: Int): Boolean {
     return VueBaseLiveTemplateContextType.evaluateContext(file, offset, forTagInsert = true)
   }

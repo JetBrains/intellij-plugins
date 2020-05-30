@@ -54,8 +54,20 @@ public final class ActionScriptClassResolver extends JSClassResolver {
     return findClassByQNameStatic(link, context);
   }
 
+  @Nullable
+  private PsiElement findClassByQName(@NotNull final String link,
+                                      final GlobalSearchScope searchScope,
+                                      @NotNull DialectOptionHolder dialect) {
+    if (searchScope instanceof JSResolveUtil.AllowFileLocalSymbols) {
+      return doFindClassByQName(link, searchScope, true);
+    }
+
+    return doFindClassByQName(link, searchScope, false);
+  }
+
+
   public static PsiElement findClassByQNameStatic(@NotNull String link, @NotNull PsiElement context) {
-    return getInstance().findClassByQName(link, JavaScriptIndex.getInstance(context.getProject()), JSResolveUtil.getResolveScope(context),
+    return getInstance().findClassByQName(link, JSResolveUtil.getResolveScope(context),
                                           DialectOptionHolder.ECMA_4);
   }
 
@@ -65,7 +77,7 @@ public final class ActionScriptClassResolver extends JSClassResolver {
       searchScope =
         module != null ? GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module) : GlobalSearchScope.allScope(index.getProject());
     }
-    return getInstance().findClassByQName(link, index, searchScope, DialectOptionHolder.ECMA_4);
+    return getInstance().findClassByQName(link, searchScope, DialectOptionHolder.ECMA_4);
   }
 
   @Nullable
@@ -75,7 +87,7 @@ public final class ActionScriptClassResolver extends JSClassResolver {
   }
 
   public static PsiElement findClassByQNameStatic(@NotNull final String link, @NotNull GlobalSearchScope scope) {
-    return getInstance().findClassByQName(link, JavaScriptIndex.getInstance(scope.getProject()), scope, DialectOptionHolder.ECMA_4);
+    return getInstance().findClassByQName(link, scope, DialectOptionHolder.ECMA_4);
   }
 
   public static boolean isParentClass(JSClass clazz, String className) {
@@ -90,9 +102,9 @@ public final class ActionScriptClassResolver extends JSClassResolver {
   }
 
   @Override
-  protected PsiElement doFindClassByQName(@NotNull String link, final JavaScriptIndex index, GlobalSearchScope searchScope,
-                                          boolean allowFileLocalSymbols, @NotNull DialectOptionHolder dialect) {
-    Project project = index.getProject();
+  protected PsiElement doFindClassByQName(@NotNull String link, GlobalSearchScope searchScope,
+                                          boolean allowFileLocalSymbols) {
+    Project project = searchScope.getProject();
     boolean clazzShouldBeTakenFromOurLibrary = OBJECT_CLASS_NAME.equals(link) || "Arguments".equals(link);
     if (clazzShouldBeTakenFromOurLibrary && !(searchScope instanceof AdditionalIndexedRootsScope)) {
       // object from swf do not contain necessary members!

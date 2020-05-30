@@ -28,11 +28,11 @@ public class CfmlEnterHandler extends EnterHandlerDelegateAdapter {
       return Result.Continue;
     }
     if (file instanceof CfmlFile && isBetweenCfmlTags(file, editor, caretOffset.get())) {
-      originalHandler.execute(editor, dataContext);
+      originalHandler.execute(editor, editor.getCaretModel().getCurrentCaret(), dataContext);
       return Result.DefaultForceIndent;
     }
     else if (isAfterAndBeforeCurlyBracket(editor, caretOffset.get())) {
-      originalHandler.execute(editor, dataContext);
+      originalHandler.execute(editor, editor.getCaretModel().getCurrentCaret(), dataContext);
       return Result.DefaultForceIndent;
     }
     return Result.Continue;

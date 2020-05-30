@@ -2,6 +2,8 @@
 <idea-plugin url="https://github.com/dmarcotte/idea-handlebars">
   <id>com.dmarcotte.handlebars</id>
   <name>Handlebars/Mustache</name>
+  <category>Template Languages</category>
+  <vendor>JetBrains</vendor>
 
   <description><![CDATA[
 <p>Support for <a href="http://handlebarsjs.com/">Handlebars</a> and <a href="http://mustache.github.io/">Mustache</a> template languages</p>
@@ -13,13 +15,12 @@
 <li>Automatic indentation when typing</li>
 </ul>]]>
   </description>
-  <category>HTML/JavaScript Development</category>
+
   <depends>com.intellij.modules.lang</depends>
   <depends optional="true" config-file="javascript-ex.xml">JavaScript</depends>
-  <vendor url="https://github.com/dmarcotte">dmarcotte, JetBrains</vendor>
 
   <extensions defaultExtensionNs="com.intellij">
-    <fileTypeFactory implementation="com.dmarcotte.handlebars.file.HbFileTypeFactory"/>
+    <fileType name="Handlebars/Mustache" implementationClass="com.dmarcotte.handlebars.file.HbFileType" fieldName="INSTANCE" language="Handlebars" extensions="handlebars;hbs;mustache"/>
     <html.scriptContentProvider language="Handlebars" implementationClass="com.dmarcotte.handlebars.HbScriptContentProvider"/>
     <lang.parserDefinition language="Handlebars" implementationClass="com.dmarcotte.handlebars.parsing.HbParseDefinition"/>
     <lang.formatter language="Handlebars" implementationClass="com.dmarcotte.handlebars.format.HbFormattingModelBuilder"/>
@@ -43,9 +44,9 @@
     <lang.substitutor language="HTML" implementationClass="com.dmarcotte.handlebars.file.HbLanguageSubstitutor"/>
 
     <liveTemplateContext implementation="com.dmarcotte.handlebars.editor.templates.HbTemplateContextType"/>
-    <defaultLiveTemplatesProvider implementation="com.dmarcotte.handlebars.editor.templates.HbsLiveTemplatesProvider"/>
+    <defaultLiveTemplates file="liveTemplates/Handlebars"/>
     
-    <lang.syntaxHighlighterFactory language="Handlebars" implementationClass="com.dmarcotte.handlebars.HbHighlighterFactory"/>
+    <lang.syntaxHighlighter language="Handlebars" implementationClass="com.dmarcotte.handlebars.HbHighlighter"/>
 
     <localInspection bundle="messages.HbBundle"
                      key="handlebars.inspections.helpers.empty"
@@ -57,6 +58,7 @@
                      implementationClass="com.dmarcotte.handlebars.inspections.HbEmptyBlockInspection"/>
     <highlightErrorFilter implementation="com.dmarcotte.handlebars.inspections.HbErrorFilter"/>
     <fileIndentOptionsProvider implementation="com.dmarcotte.handlebars.format.HbFileIndentOptionsProvider"/>
+    <editorHighlighterProvider filetype="Handlebars/Mustache" implementationClass="com.dmarcotte.handlebars.file.HbHighlighterProvider"/>
   </extensions>
 
 </idea-plugin>

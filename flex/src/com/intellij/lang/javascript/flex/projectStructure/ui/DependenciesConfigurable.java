@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -23,9 +24,7 @@ import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModel;
 import com.intellij.openapi.projectRoots.SdkType;
@@ -58,6 +57,7 @@ import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.wm.IdeFocusManager;
+import com.intellij.projectModel.ProjectModelBundle;
 import com.intellij.ui.*;
 import com.intellij.ui.components.editors.JBComboBoxTableCellEditorComponent;
 import com.intellij.ui.navigation.Place;
@@ -91,8 +91,6 @@ import java.util.*;
 public class DependenciesConfigurable extends NamedConfigurable<Dependencies> implements Place.Navigator {
 
   private static final Logger LOG = Logger.getInstance(DependenciesConfigurable.class.getName());
-
-  public static final String TAB_NAME = FlexBundle.message("bc.tab.dependencies.display.name");
 
   private static final Icon MISSING_BC_ICON = null;
 
@@ -170,7 +168,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   private JComboBox<LinkageType> myFrameworkLinkageCombo;
   private JLabel myWarning;
   private JPanel myTablePanel;
-  private JButton myNewButton;
   private JButton myEditButton;
   private JLabel mySdkLabel;
   private final EditableTreeTable<MyTableItem> myTable;
@@ -451,9 +448,9 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     private final Project project;
 
     SharedLibraryItem(@NotNull String libraryName,
-                             @NotNull String libraryLevel,
-                             @Nullable Library liveLibrary,
-                             @NotNull Project project) {
+                      @NotNull String libraryLevel,
+                      @Nullable Library liveLibrary,
+                      @NotNull Project project) {
       this.libraryName = libraryName;
       this.libraryLevel = libraryLevel;
       this.liveLibrary = liveLibrary;
@@ -529,7 +526,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       ModifiableSharedLibraryEntry libraryEntry = (ModifiableSharedLibraryEntry)entry;
       Library liveLibrary = findLiveLibrary();
       if (liveLibrary != null) {
-        if (!liveLibrary.getName().equals(libraryEntry.getLibraryName())) return true;
+        if (!libraryEntry.getLibraryName().equals(liveLibrary.getName())) return true;
         if (!liveLibrary.getTable().getTableLevel().equals(libraryEntry.getLibraryLevel())) return true;
       }
       else {
@@ -773,9 +770,8 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     sdksModel.addListener(listener);
     Disposer.register(myDisposable, () -> sdksModel.removeListener(listener));
 
-    mySdkCombo.setSetupButton(myNewButton, myProject, sdksModel, new JdkComboBox.NoneJdkComboBoxItem(), null,
-                              FlexBundle.message("set.up.sdk.title"));
-    mySdkCombo.setEditButton(myEditButton, myProject, (NullableComputable<Sdk>)() -> mySdkCombo.getSelectedJdk());
+    mySdkCombo.showNoneSdkItem();
+    mySdkCombo.setEditButton(myEditButton, myProject, () -> mySdkCombo.getSelectedJdk());
 
     mySdkLabel.setLabelFor(mySdkCombo);
 
@@ -862,7 +858,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
     new DoubleClickListener() {
       @Override
-      protected boolean onDoubleClick(MouseEvent e) {
+      protected boolean onDoubleClick(@NotNull MouseEvent e) {
         if (myTable.getSelectedRowCount() == 1) {
           myTable.getItemAt(myTable.getSelectedRow()).onDoubleClick();
           return true;
@@ -943,7 +939,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       for (Module module : modules) {
         for (CompositeConfigurable configurable : configurator.getBCConfigurables(module)) {
           FlexBCConfigurable flexBCConfigurable = FlexBCConfigurable.unwrap(configurable);
-          if (flexBCConfigurable.isParentFor(DependenciesConfigurable.this)) {
+          if (flexBCConfigurable.isParentFor(this)) {
             resetTable(myDependencies.getSdkEntry(), true);
           }
         }
@@ -966,7 +962,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     JdkComboBox.NoneJdkComboBoxItem noneSdkItem = new JdkComboBox.NoneJdkComboBoxItem();
     myFreeze = true;
     try {
-      mySdkCombo.reloadModel(noneSdkItem, myProject);
+      mySdkCombo.reloadModel();
     }
     finally {
       myFreeze = false;
@@ -976,7 +972,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       mySdkCombo.setSelectedItem(noneSdkItem);
     }
     else {
-      String selectedSdkName = selectedItem.getSdkName();
+      String selectedSdkName = selectedItem != null ? selectedItem.getSdkName() : null;
       if (selectedSdkName != null) {
         Sdk sdk = mySkdsModel.findSdk(selectedSdkName);
         if (sdk != null) {
@@ -991,7 +987,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       }
     }
 
-    if (mySdkCombo.getSelectedJdk() != selectedItem.getJdk()) {
+    if (selectedItem != null && mySdkCombo.getSelectedJdk() != selectedItem.getJdk()) {
       updateOnSelectedSdkChange();
     }
     mySdkChangeDispatcher.getMulticaster().stateChanged(new ChangeEvent(this));
@@ -1058,7 +1054,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       @NotNull
       @Override
       public String getDescription() {
-        return ProjectBundle.message("libraries.node.text.module");
+        return ProjectModelBundle.message("libraries.node.text.module");
       }
 
       @NotNull
@@ -1149,38 +1145,10 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
   }
 
-  private void moveSelection(int delta) {
-    // TODO check the case when SDK item is expanded!
-    int[] selectedRows = myTable.getSelectedRows();
-    Arrays.sort(selectedRows);
-    DefaultMutableTreeNode root = myTable.getRoot();
-
-    if (delta < 0) {
-      for (int row : selectedRows) {
-        DefaultMutableTreeNode child = (DefaultMutableTreeNode)root.getChildAt(row);
-        root.remove(row);
-        root.insert(child, row + delta);
-      }
-    }
-    else {
-      for (int i = selectedRows.length - 1; i >= 0; i--) {
-        int row = selectedRows[i];
-        DefaultMutableTreeNode child = (DefaultMutableTreeNode)root.getChildAt(row);
-        root.remove(row);
-        root.insert(child, row + delta);
-      }
-    }
-    myTable.refresh();
-    myTable.clearSelection();
-    for (int selectedRow : selectedRows) {
-      myTable.getSelectionModel().addSelectionInterval(selectedRow + delta, selectedRow + delta);
-    }
-  }
-
   @Override
   @Nls
   public String getDisplayName() {
-    return TAB_NAME;
+    return getTabName();
   }
 
   @Override
@@ -1210,7 +1178,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   @Override
   public boolean isModified() {
     final JdkComboBox.JdkComboBoxItem selectedItem = mySdkCombo.getSelectedItem();
-    String currentSdkName = selectedItem.getSdkName();
+    String currentSdkName = selectedItem == null ? null : selectedItem.getSdkName();
     SdkEntry sdkEntry = myDependencies.getSdkEntry();
     if (currentSdkName != null) {
       if (sdkEntry == null) {
@@ -1245,7 +1213,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   }
 
   @Override
-  public void apply() throws ConfigurationException {
+  public void apply() {
     final Object targetPlayer = myTargetPlayerCombo.getSelectedItem();
     if (myTargetPlayerCombo.isVisible() && targetPlayer != null) {
       myDependencies.setTargetPlayer((String)targetPlayer);
@@ -1289,7 +1257,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     SdkEntry sdkEntry = myDependencies.getSdkEntry();
     myFreeze = true;
     try {
-      mySdkCombo.reloadModel(new JdkComboBox.NoneJdkComboBoxItem(), myProject);
+      mySdkCombo.reloadModel();
 
       if (sdkEntry != null) {
         final Sdk sdk = mySkdsModel.findSdk(sdkEntry.getName());
@@ -1482,7 +1450,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     Condition<Sdk> sdkCondition =
       JdkComboBox.getSdkFilter(sdkTypeFilter);
 
-    mySdkCombo = new JdkComboBox(mySkdsModel, sdkTypeFilter, sdkCondition, Conditions.is(FlexSdkType2.getInstance()), false);
+    mySdkCombo = new JdkComboBox(myProject, mySkdsModel, sdkTypeFilter, sdkCondition, Conditions.is(FlexSdkType2.getInstance()), null);
   }
 
   private void initPopupActions() {
@@ -1792,8 +1760,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
 
     @Override
-    @NotNull
-    public Library[] getLibraries() {
+    public Library @NotNull [] getLibraries() {
       List<Library> filtered = ContainerUtil.filter(myDelegate.getLibraries(), myLibraryFilter);
       return filtered.toArray(Library.EMPTY_ARRAY);
     }
@@ -1805,13 +1772,13 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
     @NotNull
     @Override
-    public Library createLibrary(String name, @Nullable PersistentLibraryKind kind) {
+    public Library createLibrary(String name, @Nullable PersistentLibraryKind<?> kind) {
       return myDelegate.createLibrary(name, kind);
     }
 
     @NotNull
     @Override
-    public Library createLibrary(String name, @Nullable PersistentLibraryKind type, @Nullable ProjectModelExternalSource externalSource) {
+    public Library createLibrary(String name, @Nullable PersistentLibraryKind<?> type, @Nullable ProjectModelExternalSource externalSource) {
       return myDelegate.createLibrary(name, type, externalSource);
     }
 
@@ -1843,8 +1810,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
 
     @Override
-    @NotNull
-    protected Library[] getLibraries(@NotNull final LibraryTable table) {
+    protected Library @NotNull [] getLibraries(@NotNull final LibraryTable table) {
       final StructureConfigurableContext context = ProjectStructureConfigurable.getInstance(myProject).getContext();
       final Library[] libraries = context.createModifiableModelProvider(table.getTableLevel()).getModifiableModel().getLibraries();
       final List<Library> filtered = ContainerUtil.mapNotNull(libraries, library -> {
@@ -1869,5 +1835,9 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       }
     }
     return Pair.create("?", "?");
+  }
+
+  public static String getTabName() {
+    return FlexBundle.message("bc.tab.dependencies.display.name");
   }
 }

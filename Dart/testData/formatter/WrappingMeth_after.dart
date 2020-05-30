@@ -1,23 +1,16 @@
 class Foo {
   // function fBar (x,y);
-  fOne(
-      argA, argB, argC,
-      argD, argE, argF, argG, argH
-      ) {
+  fOne(argA, argB, argC,
+      argD, argE, argF, argG, argH) {
     Array<string> numbers = ['one', 'two', 'three', 'four', 'five', 'six'];
-    var x = (
-        "" + argA
-    ) +
+    var x = ("" + argA) +
         argB + argC + argD +
         argE + argF + argG + argH;
     try {
       this.fTwo(
           argA, argB, argC, this.fThree(
-          "", argE, argF, argG, argH
-      )
-      );
-    }
-    catch (e, s) {}
+          "", argE, argF, argG, argH));
+    } catch (e, s) {}
     var z =
     argA == 'Some string' ?
     'yes' : 'no';
@@ -26,16 +19,12 @@ class Foo {
       var colorString = numbers[ colorIndex];
     }
     do {
-      colors.pop(
-      );
-    }
-    while (colors.length > 0);
+      colors.pop();
+    } while (colors.length > 0);
   }
 
-  fTwo(
-      strA,
-      strB, strC, strD
-      ) {
+  fTwo(strA,
+      strB, strC, strD) {
     if
     (true)
       return strC;
@@ -47,9 +36,7 @@ class Foo {
     throw strD;
   }
 
-  fThree(
-      strA, strB, strC, strD, strE
-      ) {
+  fThree(strA, strB, strC, strD, strE) {
     return strA + strB + strC + strD + strE;
   }
 }

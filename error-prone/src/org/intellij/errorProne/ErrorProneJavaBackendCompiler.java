@@ -12,9 +12,6 @@ import org.jetbrains.jps.model.java.compiler.CompilerOptions;
 import java.util.Collections;
 import java.util.Set;
 
-/**
- * @author nik
- */
 public class ErrorProneJavaBackendCompiler implements BackendCompiler {
   public static final String COMPILER_ID = "error-prone";//duplicates ErrorProneJavaCompilingTool.COMPILER_ID from JPS part
   private final Project myProject;

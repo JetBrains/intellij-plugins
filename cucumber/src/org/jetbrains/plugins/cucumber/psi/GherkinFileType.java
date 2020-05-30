@@ -1,6 +1,7 @@
 package org.jetbrains.plugins.cucumber.psi;
 
 import com.intellij.openapi.fileTypes.LanguageFileType;
+import icons.CucumberIcons;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -35,6 +36,6 @@ public class GherkinFileType extends LanguageFileType {
 
   @Override
   public Icon getIcon() {
-    return icons.CucumberIcons.Cucumber;
+    return CucumberIcons.Cucumber;
   }
 }

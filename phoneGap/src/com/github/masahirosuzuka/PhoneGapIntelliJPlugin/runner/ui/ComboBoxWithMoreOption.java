@@ -1,6 +1,7 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui;
 
 
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.ui.ComboBox;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +24,7 @@ public class ComboBoxWithMoreOption extends ComboBox {
     super();
     this.myStartItems = startItems;
     myExtendedItems = extendedItems;
-    myMoreItem = "More options...";
+    myMoreItem = PhoneGapBundle.message("phonegap.run.more.options");
     initItems();
   }
 

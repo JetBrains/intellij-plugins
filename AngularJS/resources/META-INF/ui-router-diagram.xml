@@ -1,10 +1,12 @@
 <idea-plugin>
   <actions>
     <action class="org.angularjs.codeInsight.router.ShowUiRouterStatesNewDiagramAction" id="AngularJS.Show.Ui.Router.States.Diagram.Action"
-            text="Show AngularJS ui-router State Diagram"/>
+            text="Show AngularJS UI-Router State Diagram">
+      <add-to-group group-id="UML.EditorGroup" />
+    </action>
+    
   </actions>
   <extensions defaultExtensionNs="com.intellij">
-    <postStartupActivity implementation="org.angularjs.codeInsight.router.AngularUiRouterInitializer"/>
     <projectService serviceImplementation="org.angularjs.codeInsight.router.AngularUiRouterProviderContext"/>
   </extensions>
 </idea-plugin>

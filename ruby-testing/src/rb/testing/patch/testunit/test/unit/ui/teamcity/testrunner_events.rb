@@ -120,10 +120,11 @@ module Test
           #################### TestSuite events ####################
           # Test suite started
           def suite_started(suite_name)
+            @running_suite = suite_name
             debug_log("Test suite started: #{suite_name}...")
             unless ignore_suite?(suite_name)
               log(@message_factory.create_suite_started(suite_name,
-                                                        location_from_ruby_qualified_name(suite_name)))
+                                                        location_from_ruby_qualified_name(suite_name), '0', suite_name))
             end
           end
 
@@ -134,41 +135,42 @@ module Test
             # We should ignore root suite, because it usually fake and contains only
             # information about test's collector - etc 'rake_test_loader' script or 'ruby-debug-ide' script
             unless ignore_suite?(suite_name)
-              log(@message_factory.create_suite_finished(suite_name))
+              log(@message_factory.create_suite_finished(suite_name, suite_name))
             end
           end
 
           ########################### Tests events #######################
+          def get_test_name_and_fqn(test_name)
+            test_name_before_converting = test_name
+            test_name = convert_test_name_according_framework(test_name)
+
+            if test_name == test_name_before_converting
+              test_name_und_fqn(test_name)
+            else
+              # we would use BDD test name as qualified name
+              [test_name, test_name]
+            end
+          end
 
           # Test case started
           # Test::Unit provides uniq name - as suite name with test name
           def test_started(test_name)
-            # save message name before patching
-            test_name_before_converting = test_name
-            test_name = convert_test_name_according_framework(test_name)
-
-            qualified_test_name =
-                if test_name == test_name_before_converting
-                  convert_ruby_test_name_to_qualified(test_name)
-                else
-                  # we would use BDD test name as qualified name
-                  test_name
-                end
+            test_name, qualified_test_name = get_test_name_and_fqn(test_name)
 
             debug_log("Test started #{test_name}...[#{qualified_test_name}]")
 
-            @my_running_test_name = qualified_test_name
+            @my_running_test_name = test_name
             @my_running_test_name_runner_original = test_name
             @my_running_test_start_time = get_current_time_in_ms
             log(@message_factory.create_test_started(@my_running_test_name,
-                                                     location_from_ruby_qualified_name(qualified_test_name)))
+                                                     location_from_ruby_qualified_name(qualified_test_name), @running_suite, qualified_test_name))
             #capture output
             test_output_capturer_start()
           end
 
           # Test case finished
           def test_finished(test_name)
-            test_name = convert_test_name_according_framework(test_name)
+            test_name, qualified_test_name = get_test_name_and_fqn(test_name)
 
             # stop capturing
             test_output_capturer_stop()
@@ -180,7 +182,7 @@ module Test
             #close_test_block
             if @my_running_test_name
               duration_ms = get_current_time_in_ms - @my_running_test_start_time
-              log(@message_factory.create_test_finished(@my_running_test_name, duration_ms))
+              log(@message_factory.create_test_finished(@my_running_test_name, duration_ms, nil, qualified_test_name))
               @my_running_test_name = nil
               @my_running_test_name_runner_original = nil
             end
@@ -189,11 +191,12 @@ module Test
           # Test fault
           def add_fault(fault)
             # test_spec framework : attached and loaded
+            test_name, qualified_test_name = get_test_name_and_fqn(@my_running_test_name)
             if Rake::TeamCity.is_framework_used(:test_spec) && (defined? Test::Spec) &&
                  (Test::Spec::Disabled === fault || Test::Spec::Empty === fault)
               # test_name = fault.short_display
               #  assert_test_valid(test_name) #"short_display" doesn't contains suite name, we cant check test name =/
-              log(@message_factory.create_test_ignored(@my_running_test_name, fault.long_display))
+              log(@message_factory.create_test_ignored(@my_running_test_name, fault.long_display, nil, qualified_test_name))
 
             elsif Test::Unit::Failure === fault || omission?(fault)
               omission = omission?(fault)
@@ -204,14 +207,14 @@ module Test
                 backtrace = fault.location.to_s
               end
               message = fault.message.to_s
-              test_name = convert_test_name_according_framework(fault.test_name)
+
               debug_log("Add #{omission ? "omission" : "failure"} for #{test_name}, \n    Backtrace:    \n#{backtrace}")
 
               assert_test_valid(test_name)
               if omission
-                log(@message_factory.create_test_ignored(@my_running_test_name, "#{fault.label}: Test #{message.split("\n")[0]}", backtrace))
+                log(@message_factory.create_test_ignored(@my_running_test_name, "#{fault.label}: Test #{message.split("\n")[0]}", backtrace, qualified_test_name))
               else
-                log(@message_factory.create_test_failed(@my_running_test_name, message, backtrace))
+                log(@message_factory.create_test_failed(@my_running_test_name, message, backtrace, qualified_test_name))
               end
 
             elsif Test::Unit::Error === fault
@@ -227,7 +230,7 @@ module Test
               else
                 # test error
                 assert_test_valid(test_name)
-                log(@message_factory.create_test_error(@my_running_test_name, message, backtrace))
+                log(@message_factory.create_test_error(@my_running_test_name, message, backtrace, qualified_test_name))
               end
             elsif (defined? Test::Unit::Notification) && ( Test::Unit::Notification === fault)
               if ::Rake::TeamCity.is_in_idea_mode
@@ -249,7 +252,7 @@ module Test
               debug_log("Add unknown fault #{test_name}, \n    Backtrace:    \n#{backtrace}")
 
               assert_test_valid(test_name)
-              log(@message_factory.create_test_error(@my_running_test_name, message, backtrace))
+              log(@message_factory.create_test_error(@my_running_test_name, message, backtrace, qualified_test_name))
             end
           end
 
@@ -273,7 +276,7 @@ module Test
 
           def assert_test_valid(test_name)
             if test_name != @my_running_test_name_runner_original
-              qualified_test_name = convert_ruby_test_name_to_qualified(test_name)
+              test_name, qualified_test_name = get_test_name_and_fqn(test_name)
               msg = "Finished test '#{test_name}'[#{qualified_test_name}] doesn't correspond to current running test '#{@my_running_test_name_runner_original}'[#{@my_running_test_name}]!"
               debug_log(msg)
               raise Rake::TeamCity::InnerException, msg, caller

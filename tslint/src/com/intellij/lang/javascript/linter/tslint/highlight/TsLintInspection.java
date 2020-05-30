@@ -2,14 +2,12 @@ package com.intellij.lang.javascript.linter.tslint.highlight;
 
 import com.intellij.codeInspection.SuppressQuickFix;
 import com.intellij.lang.annotation.HighlightSeverity;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.linter.JSLinterInspection;
-import com.intellij.lang.javascript.linter.tslint.TsLintBundle;
 import com.intellij.lang.javascript.linter.tslint.service.TslintLanguageServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.ContainerUtil;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,30 +43,22 @@ public final class TsLintInspection extends JSLinterInspection {
     TslintLanguageServiceManager.getInstance(project).terminateServices();
   }
 
-  @NotNull
   @Override
-  public SuppressQuickFix[] getBatchSuppressActions(@Nullable PsiElement element) {
+  public SuppressQuickFix @NotNull [] getBatchSuppressActions(@Nullable PsiElement element) {
     return SuppressQuickFix.EMPTY_ARRAY;
-  }
-
-  @Nls
-  @NotNull
-  @Override
-  public String getDisplayName() {
-    return TsLintBundle.message("tslint.framework.title");
   }
 
   @NotNull
   @Override
   public String getGroupDisplayName() {
-    return JSBundle.message("typescript.inspection.group.name");
+    return JavaScriptBundle.message("typescript.inspection.group.name");
   }
 
   @NotNull
   @Override
   protected List<String> getSettingsPath() {
     return ContainerUtil.newArrayList(
-      JSBundle.message("typescript.compiler.configurable.name"),
+      JavaScriptBundle.message("typescript.compiler.configurable.name"),
       getDisplayName()
     );
   }

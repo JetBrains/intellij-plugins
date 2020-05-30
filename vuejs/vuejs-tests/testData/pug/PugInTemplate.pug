@@ -1,0 +1,9 @@
+<template lang="pug">
+    ul<fold text='...'>#users
+        each user, name in users
+            // expands to if (user.isA == 'ferret')
+            if user.isA == 'ferret'
+                li(class='user-' + name) #{name} is just a ferret
+            else
+                li(class='user-' + name) #{name} #{user.email}</fold>
+</template>

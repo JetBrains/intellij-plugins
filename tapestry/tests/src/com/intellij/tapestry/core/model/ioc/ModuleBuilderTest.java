@@ -1,7 +1,6 @@
 package com.intellij.tapestry.core.model.ioc;
 
 import com.intellij.tapestry.core.java.IJavaMethod;
-import com.intellij.tapestry.core.java.IMethodParameter;
 import com.intellij.tapestry.core.mocks.JavaAnnotationMock;
 import com.intellij.tapestry.core.mocks.JavaClassTypeMock;
 import com.intellij.tapestry.core.resource.IResource;

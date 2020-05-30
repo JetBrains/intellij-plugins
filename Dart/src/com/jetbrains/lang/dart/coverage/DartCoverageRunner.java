@@ -29,6 +29,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.rt.coverage.data.ClassData;
 import com.intellij.rt.coverage.data.LineData;
 import com.intellij.rt.coverage.data.ProjectData;
+import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -56,7 +57,7 @@ public class DartCoverageRunner extends CoverageRunner {
 
       ProgressManager.getInstance().runProcessWithProgressSynchronously(
         () -> projectDataRef.set(doLoadCoverageData(sessionDataFile, (DartCoverageSuite)baseCoverageSuite)),
-        "Loading Coverage Data...", true, baseCoverageSuite.getProject());
+        DartBundle.message("progress.title.loading.coverage.data"), true, baseCoverageSuite.getProject());
 
       return projectDataRef.get();
     }

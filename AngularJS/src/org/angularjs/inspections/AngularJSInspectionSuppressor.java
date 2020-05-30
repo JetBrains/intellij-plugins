@@ -16,9 +16,8 @@ public class AngularJSInspectionSuppressor implements InspectionSuppressor {
     return false;
   }
 
-  @NotNull
   @Override
-  public SuppressQuickFix[] getSuppressActions(@Nullable PsiElement element, @NotNull String toolId) {
+  public SuppressQuickFix @NotNull [] getSuppressActions(@Nullable PsiElement element, @NotNull String toolId) {
     // AngularJS expressions do not allow for comments, so no per-expression suppression is possible
     return SuppressQuickFix.EMPTY_ARRAY;
   }

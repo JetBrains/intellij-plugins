@@ -21,7 +21,8 @@ import java.awt.*;
 public class FlexExtractSuperClassDialog extends FlexExtractSuperBaseDialog {
 
   public FlexExtractSuperClassDialog(@NotNull JSClass sourceClass, @Nullable JSElement selectedElement) {
-    super(sourceClass, JSMemberInfo.selectMembers(sourceClass, selectedElement, new MemberInfoBase.EmptyFilter<>()), JSExtractSuperClassHandler.REFACTORING_NAME);
+    super(sourceClass, JSMemberInfo.selectMembers(sourceClass, selectedElement, new MemberInfoBase.EmptyFilter<>()),
+          JSExtractSuperClassHandler.getRefactoringName());
     init();
   }
 

@@ -1,7 +1,6 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.html.parser;
 
-import com.intellij.codeInsight.daemon.XmlErrorMessages;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.html.HtmlParsing;
 import com.intellij.psi.tree.ICustomParsingType;
@@ -11,6 +10,7 @@ import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.xml.XmlElementType;
 import com.intellij.psi.xml.XmlTokenType;
 import com.intellij.util.containers.Stack;
+import com.intellij.xml.psi.XmlPsiBundle;
 import com.intellij.xml.util.XmlUtil;
 import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeInfo;
@@ -64,7 +64,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
         xmlText = startText(xmlText);
         final PsiBuilder.Marker error = mark();
         advance();
-        error.error(XmlErrorMessages.message("unescaped.ampersand.or.nonterminated.character.entity.reference"));
+        error.error(XmlPsiBundle.message("unescaped.ampersand.or.nonterminated.character.entity.reference"));
       }
       else if (tt == XmlTokenType.XML_END_TAG_START) {
         final PsiBuilder.Marker tagEndError = mark();
@@ -77,7 +77,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
           }
         }
 
-        tagEndError.error(XmlErrorMessages.message("xml.parsing.closing.tag.matches.nothing"));
+        tagEndError.error(XmlPsiBundle.message("xml.parsing.closing.tag.matches.nothing"));
       }
       else if (tt instanceof ICustomParsingType || tt instanceof ILazyParseableElementType) {
         xmlText = terminateText(xmlText);
@@ -196,7 +196,12 @@ public class Angular2HtmlParsing extends HtmlParsing {
     else if (attributeInfo.type == Angular2AttributeType.REFERENCE) {
       PsiBuilder.Marker attrName = mark();
       advance();
-      attrName.collapse(Angular2HtmlReferenceTokenType.INSTANCE);
+      attrName.collapse(Angular2HtmlVarAttrTokenType.REFERENCE);
+    }
+    else if (attributeInfo.type == Angular2AttributeType.LET) {
+      PsiBuilder.Marker attrName = mark();
+      advance();
+      attrName.collapse(Angular2HtmlVarAttrTokenType.LET);
     }
     else {
       advance();
@@ -231,7 +236,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
         if (tt == XmlTokenType.XML_BAD_CHARACTER) {
           final PsiBuilder.Marker error = mark();
           advance();
-          error.error(XmlErrorMessages.message("unescaped.ampersand.or.nonterminated.character.entity.reference"));
+          error.error(XmlPsiBundle.message("unescaped.ampersand.or.nonterminated.character.entity.reference"));
         }
         else if (tt == XmlTokenType.XML_ENTITY_REF_TOKEN) {
           parseReference();
@@ -252,7 +257,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
         advance();
       }
       else {
-        error(XmlErrorMessages.message("xml.parsing.unclosed.attribute.value"));
+        error(XmlPsiBundle.message("xml.parsing.unclosed.attribute.value"));
       }
     }
     else {
@@ -260,7 +265,12 @@ public class Angular2HtmlParsing extends HtmlParsing {
         if (contentType != null) {
           final PsiBuilder.Marker contentStart = mark();
           advance();
-          contentStart.collapse(contentType);
+          if (contentType == NG_CONTENT_SELECTOR) {
+            contentStart.done(contentType);
+          }
+          else {
+            contentStart.collapse(contentType);
+          }
         }
         else {
           advance(); // Single token att value
@@ -285,7 +295,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
     if (type == NG_CONTENT_SELECTOR) {
       return NG_CONTENT_SELECTOR;
     }
-    if (type == REFERENCE || type == VARIABLE || type == XML_ATTRIBUTE) {
+    if (type == REFERENCE || type == LET || type == XML_ATTRIBUTE) {
       return null;
     }
     throw new IllegalStateException("Unsupported element type: " + type);

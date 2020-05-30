@@ -49,7 +49,7 @@ public abstract class PsiTestCase extends LightIdeaTestCase {
     return assertInstanceOf(expression, OgnlExpression.class);
   }
 
-  private static PsiElement doParse(@Language(value = OgnlLanguage.ID,
+  private PsiElement doParse(@Language(value = OgnlLanguage.ID,
                                               prefix = OgnlLanguage.EXPRESSION_PREFIX,
                                               suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String text) {
     final OgnlFile ognlFile = createFile(OgnlTestUtils.createExpression(text));
@@ -71,7 +71,7 @@ public abstract class PsiTestCase extends LightIdeaTestCase {
     assertEquals(expectedType, expression.getNode().getElementType());
   }
 
-  private static OgnlFile createFile(final String text) throws IncorrectOperationException {
+  private OgnlFile createFile(final String text) throws IncorrectOperationException {
     return (OgnlFile)PsiFileFactory.getInstance(getProject())
       .createFileFromText("test.ognl", OgnlLanguage.INSTANCE, text);
   }

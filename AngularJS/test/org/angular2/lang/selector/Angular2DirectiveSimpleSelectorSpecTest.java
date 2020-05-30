@@ -40,7 +40,7 @@ public class Angular2DirectiveSimpleSelectorSpecTest {
   }
 
 
-  private static Angular2DirectiveSimpleSelector getSelectorFor(@NotNull Pair<String, String>... attrs) {
+  private static Angular2DirectiveSimpleSelector getSelectorFor(Pair<String, String> @NotNull ... attrs) {
     return getSelectorFor("", "", attrs);
   }
 
@@ -49,13 +49,13 @@ public class Angular2DirectiveSimpleSelectorSpecTest {
   }
 
   private static Angular2DirectiveSimpleSelector getSelectorFor(@NotNull String tag,
-                                                                @NotNull Pair<String, String>... attrs) {
+                                                                Pair<String, String> @NotNull ... attrs) {
     return getSelectorFor(tag, "", attrs);
   }
 
   private static Angular2DirectiveSimpleSelector getSelectorFor(@NotNull String tag,
                                                                 @NotNull String classes,
-                                                                @NotNull Pair<String, String>... attrs) {
+                                                                Pair<String, String> @NotNull ... attrs) {
     Angular2DirectiveSimpleSelector selector = new Angular2DirectiveSimpleSelector();
     selector.setElement(tag);
 

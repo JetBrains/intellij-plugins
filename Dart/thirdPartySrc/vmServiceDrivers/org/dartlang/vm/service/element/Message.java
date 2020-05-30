@@ -16,12 +16,13 @@ package org.dartlang.vm.service.element;
 // This is a generated file.
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A {@link Message} provides information about a pending isolate message and the function that
  * will be invoked to handle it.
  */
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class Message extends Response {
 
   public Message(JsonObject json) {
@@ -33,8 +34,16 @@ public class Message extends Response {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public FuncRef getHandler() {
-    return json.get("handler") == null ? null : new FuncRef((JsonObject) json.get("handler"));
+    JsonObject obj = (JsonObject) json.get("handler");
+    if (obj == null) return null;
+    final String type = json.get("type").getAsString();
+    if ("Instance".equals(type) || "@Instance".equals(type)) {
+      final String kind = json.get("kind").getAsString();
+      if ("Null".equals(kind)) return null;
+    }
+    return new FuncRef(obj);
   }
 
   /**
@@ -42,7 +51,7 @@ public class Message extends Response {
    * processed.
    */
   public int getIndex() {
-    return json.get("index") == null ? -1 : json.get("index").getAsInt();
+    return getAsInt("index");
   }
 
   /**
@@ -50,8 +59,16 @@ public class Message extends Response {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public SourceLocation getLocation() {
-    return json.get("location") == null ? null : new SourceLocation((JsonObject) json.get("location"));
+    JsonObject obj = (JsonObject) json.get("location");
+    if (obj == null) return null;
+    final String type = json.get("type").getAsString();
+    if ("Instance".equals(type) || "@Instance".equals(type)) {
+      final String kind = json.get("kind").getAsString();
+      if ("Null".equals(kind)) return null;
+    }
+    return new SourceLocation(obj);
   }
 
   /**
@@ -59,20 +76,20 @@ public class Message extends Response {
    * getObject or evaluate.
    */
   public String getMessageObjectId() {
-    return json.get("messageObjectId").getAsString();
+    return getAsString("messageObjectId");
   }
 
   /**
    * An advisory name describing this message.
    */
   public String getName() {
-    return json.get("name").getAsString();
+    return getAsString("name");
   }
 
   /**
    * The size (bytes) of the encoded message.
    */
   public int getSize() {
-    return json.get("size") == null ? -1 : json.get("size").getAsInt();
+    return getAsInt("size");
   }
 }

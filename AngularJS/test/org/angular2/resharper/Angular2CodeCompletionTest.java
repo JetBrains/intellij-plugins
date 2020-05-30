@@ -4,12 +4,7 @@ package org.angular2.resharper;
 import com.intellij.codeInsight.completion.PrioritizedLookupElement;
 import com.intellij.codeInsight.completion.impl.CamelHumpMatcher;
 import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.lang.resharper.ReSharperTestUtil;
-import com.intellij.openapi.application.WriteAction;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.testFramework.TestDataPath;
 import com.intellij.util.containers.ContainerUtil;
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
@@ -17,6 +12,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Set;
+
+import static org.angular2.modules.Angular2TestModule.*;
+import static org.angular2.modules.Angular2TestModule.configureLink;
 
 @TestDataPath("$R#_COMPLETION_TEST_ROOT/Angular2")
 public class Angular2CodeCompletionTest extends Angular2ReSharperCompletionTestBase {
@@ -33,14 +31,6 @@ public class Angular2CodeCompletionTest extends Angular2ReSharperCompletionTestB
     "external/test002",
     "external/test006"
   );
-
-  @NotNull
-  private VirtualFile getNodeModules() {
-    VirtualFile nodeModules = ReSharperTestUtil.fetchVirtualFile(
-      getTestDataPath(), getBasePath() + "/external/node_modules", getTestRootDisposable());
-    assert nodeModules != null;
-    return nodeModules;
-  }
 
   @Override
   protected boolean shouldSkipItem(@NotNull LookupElement element) {
@@ -69,14 +59,17 @@ public class Angular2CodeCompletionTest extends Angular2ReSharperCompletionTestB
   @Override
   protected void doSingleTest(@NotNull String testFile, @NotNull String path) throws Exception {
     if (getName().startsWith("external")) {
-      WriteAction.runAndWait(() -> {
-        VirtualFile nodeModules = getNodeModules();
-        PsiTestUtil.addContentRoot(getModule(), nodeModules);
-        Disposer.register(myFixture.getTestRootDisposable(),
-                          () -> PsiTestUtil.removeContentEntry(getModule(), nodeModules));
-      });
+      configureLink(
+        myFixture,
+        ANGULAR_COMMON_4_0_0,
+        ANGULAR_CORE_4_0_0,
+        ANGULAR_PLATFORM_BROWSER_4_0_0,
+        ANGULAR_ROUTER_4_0_0,
+        ANGULAR_FORMS_4_0_0,
+        IONIC_ANGULAR_3_0_1);
+    } else {
+      configureLink(myFixture);
     }
-    myFixture.copyFileToProject("../../package.json", "package.json");
     super.doSingleTest(testFile, path);
   }
 

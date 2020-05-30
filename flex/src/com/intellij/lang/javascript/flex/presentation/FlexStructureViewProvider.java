@@ -54,8 +54,7 @@ public class FlexStructureViewProvider implements XmlStructureViewBuilderProvide
       public StructureViewModel createStructureViewModel(@Nullable Editor editor) {
         return new XmlStructureViewTreeModel(file, editor) {
           @Override
-          @NotNull
-          public Sorter[] getSorters() {
+          public Sorter @NotNull [] getSorters() {
             return Sorter.EMPTY_ARRAY;
           }
         };

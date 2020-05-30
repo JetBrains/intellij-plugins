@@ -3,6 +3,7 @@ package org.angular2.lang.html.psi;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWalkingState;
+import org.jetbrains.annotations.NotNull;
 
 public class Angular2HtmlRecursiveElementWalkingVisitor extends Angular2HtmlElementVisitor {
 
@@ -10,7 +11,7 @@ public class Angular2HtmlRecursiveElementWalkingVisitor extends Angular2HtmlElem
   };
 
   @Override
-  public void visitElement(final PsiElement element) {
+  public void visitElement(final @NotNull PsiElement element) {
     myWalkingState.elementStarted(element);
   }
 

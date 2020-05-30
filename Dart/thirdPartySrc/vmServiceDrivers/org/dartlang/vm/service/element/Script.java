@@ -16,16 +16,26 @@ package org.dartlang.vm.service.element;
 // This is a generated file.
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
 /**
  * A {@link Script} provides information about a Dart language script.
  */
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class Script extends Obj {
 
   public Script(JsonObject json) {
     super(json);
+  }
+
+  /**
+   * Can return <code>null</code>.
+   */
+  @Nullable
+  public int getColumnOffset() {
+    return getAsInt("columnOffset");
   }
 
   /**
@@ -36,17 +46,30 @@ public class Script extends Obj {
   }
 
   /**
+   * Can return <code>null</code>.
+   */
+  @Nullable
+  public int getLineOffset() {
+    return getAsInt("lineOffset");
+  }
+
+  /**
    * The source code for this script. This can be null for certain built-in scripts.
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public String getSource() {
-    return json.get("source") == null ? null : json.get("source").getAsString();
+    return getAsString("source");
   }
 
   /**
-   * A table encoding a mapping from token position to line and column.
+   * A table encoding a mapping from token position to line and column. This field is null if
+   * sources aren't available.
+   *
+   * Can return <code>null</code>.
    */
+  @Nullable
   public List<List<Integer>> getTokenPosTable() {
     return getListListInt("tokenPosTable");
   }
@@ -55,6 +78,6 @@ public class Script extends Obj {
    * The uri from which this script was loaded.
    */
   public String getUri() {
-    return json.get("uri").getAsString();
+    return getAsString("uri");
   }
 }

@@ -2,39 +2,55 @@
 package org.angular2.css.refs;
 
 import com.intellij.lang.javascript.frameworks.webpack.WebpackCssFileReferenceHelper;
+import com.intellij.lang.typescript.tsconfig.TypeScriptConfig;
+import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.SmartList;
-import org.angular2.cli.AngularCliConfigLoader;
+import one.util.streamex.StreamEx;
+import org.angular2.cli.config.AngularConfigProvider;
+import org.angular2.cli.config.AngularProject;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Collections;
 
 public class Angular2CssFileReferenceHelper extends WebpackCssFileReferenceHelper {
-  @NotNull
   @Override
-  public Collection<PsiFileSystemItem> getContexts(@NotNull final Project project, @NotNull final VirtualFile file) {
+  public @NotNull Collection<PsiFileSystemItem> getContexts(final @NotNull Project project, final @NotNull VirtualFile file) {
     final Collection<PsiFileSystemItem> result = new SmartList<>(new AngularCliAwareCssFileReferenceResolver(project, file));
-    for (VirtualFile dir : AngularCliConfigLoader.load(project, file).getStylePreprocessorIncludeDirs()) {
-      final PsiDirectory psiDir = PsiManager.getInstance(project).findDirectory(dir);
-      if (psiDir != null) {
-        result.add(psiDir);
-      }
-    }
+    StreamEx.ofNullable(AngularConfigProvider.getAngularProject(project, file))
+      .flatCollection(AngularProject::getStylePreprocessorIncludeDirs)
+      .map(dir -> PsiManager.getInstance(project).findDirectory(dir))
+      .nonNull()
+      .into(result);
     return result;
   }
 
   private static class AngularCliAwareCssFileReferenceResolver extends WebpackTildeFileReferenceResolver {
-    AngularCliAwareCssFileReferenceResolver(@NotNull final Project project, @NotNull final VirtualFile contextFile) {
+    AngularCliAwareCssFileReferenceResolver(final @NotNull Project project, final @NotNull VirtualFile contextFile) {
       super(project, contextFile);
     }
 
     @Override
-    protected Collection<VirtualFile> findRootDirectories(@NotNull final VirtualFile context, @NotNull final Project project) {
-      return AngularCliConfigLoader.load(project, context).getRootDirs();
+    protected Collection<VirtualFile> findRootDirectories(final @NotNull VirtualFile context, final @NotNull Project project) {
+      AngularProject ngProject = AngularConfigProvider.getAngularProject(project, context);
+      if (ngProject != null) {
+        TypeScriptConfig tsConfig = TypeScriptConfigService.Provider.parseConfigFile(project, ngProject.getTsConfigFile());
+        if (tsConfig != null) {
+          VirtualFile baseUrl = tsConfig.getBaseUrl();
+          if (baseUrl != null) {
+            return Collections.singletonList(baseUrl);
+          }
+        }
+        VirtualFile cssResolveDir = ngProject.getCssResolveRootDir();
+        if (cssResolveDir != null) {
+          return Collections.singletonList(cssResolveDir);
+        }
+      }
+      return Collections.emptyList();
     }
   }
 }

@@ -14,23 +14,20 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface AngularJSElementTypes {
   IElementType REPEAT_EXPRESSION = new AngularJSElementType("REPEAT_EXPRESSION") {
-    @NotNull
     @Override
-    public ASTNode createCompositeNode() {
+    public @NotNull ASTNode createCompositeNode() {
       return new AngularJSRepeatExpression(this);
     }
   };
   IElementType FOR_EXPRESSION = new AngularJSElementType("REPEAT_EXPRESSION") {
-    @NotNull
     @Override
-    public ASTNode createCompositeNode() {
+    public @NotNull ASTNode createCompositeNode() {
       return new AngularJSRepeatExpression(this);
     }
   };
   IElementType FILTER_EXPRESSION = new AngularJSElementType("FILTER_EXPRESSION") {
-    @NotNull
     @Override
-    public ASTNode createCompositeNode() {
+    public @NotNull ASTNode createCompositeNode() {
       return new AngularJSFilterExpression(this);
     }
   };
@@ -38,9 +35,8 @@ public interface AngularJSElementTypes {
 
   IElementType MESSAGE_FORMAT_EXPRESSION_NAME = new IElementType("MESSAGE_FORMAT_EXPRESSION_NAME", AngularJSLanguage.INSTANCE);
   IElementType MESSAGE_FORMAT_EXPRESSION = new AngularJSElementType("MESSAGE_FORMAT_EXPRESSION") {
-    @NotNull
     @Override
-    public ASTNode createCompositeNode() {
+    public @NotNull ASTNode createCompositeNode() {
       return new AngularJSMessageFormatExpression(this);
     }
   };
@@ -51,8 +47,7 @@ public interface AngularJSElementTypes {
   abstract class AngularJSElementType extends IElementType implements ICompositeElementType {
 
     public AngularJSElementType(@NotNull String debugName) {
-      super(debugName,  AngularJSLanguage.INSTANCE);
+      super(debugName, AngularJSLanguage.INSTANCE);
     }
-    
   }
 }

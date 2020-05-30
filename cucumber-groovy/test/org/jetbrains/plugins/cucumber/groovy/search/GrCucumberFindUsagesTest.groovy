@@ -1,50 +1,37 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.groovy.search
 
 import com.intellij.codeInsight.TargetElementUtil
 import com.intellij.psi.PsiElement
 import com.intellij.usageView.UsageInfo
+import groovy.transform.CompileStatic
 import org.jetbrains.plugins.cucumber.groovy.GrCucumberLightTestCase
-import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex
-/**
- * @author Max Medvedev
- */
+import org.junit.Test
+
+import static org.junit.Assert.assertEquals
+
+@CompileStatic
 class GrCucumberFindUsagesTest extends GrCucumberLightTestCase {
 
-  protected void doTest(Map args) {
-    CucumberStepsIndex.getInstance(project).reset()
-
-    def features = args.feature
-    if (features instanceof String) features = [features]
-
-    def groovys = args.groovy
-    if (groovys instanceof String) groovys = [groovys]
-
-    def current = args.current
-    assert current instanceof Map<String, String>
-
-    def count = args.count
-
-    groovys.eachWithIndex { String text, int i ->
-      myFixture.addFileToProject("steps${i}.groovy", text)
+  protected void doTest(String text, String ext, String additional = null, String additionalExt = null, int count = 1) {
+    if (additional && additionalExt) {
+      fixture.addFileToProject("steps.$additionalExt", additional)
     }
 
-    features.eachWithIndex { String text, int i ->
-      myFixture.addFileToProject("feature${i}.feature", text)
-    }
-
-    myFixture.configureByText("current.${current.ext}", current.text)
+    fixture.configureByText("current.$ext", text)
 
     def flags = TargetElementUtil.ELEMENT_NAME_ACCEPTED | TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED
-    final PsiElement targetElement = TargetElementUtil.findTargetElement(myFixture.editor, flags)
-    assert targetElement != null : "Cannot find referenced element"
+    final PsiElement targetElement = TargetElementUtil.findTargetElement(fixture.editor, flags)
+    assert targetElement != null: "Cannot find referenced element"
 
-    Collection<UsageInfo> usages = myFixture.findUsages(targetElement)
+    Collection<UsageInfo> usages = fixture.findUsages(targetElement)
     assertEquals(count, usages.size())
   }
 
-  void testStep() {
+  @Test
+  void step() {
     doTest(
-            current: [ext:'feature', text:'''\
+      '''\
 # language: en
 Feature: Division
   In order to avoid silly mistakes
@@ -61,8 +48,8 @@ Feature: Division
     And I move the mow
     And I move the mow1
     Then the mower should be in 5,0 facing east
-'''],
-            groovy: '''
+''', 'feature',
+      '''
 this.metaClass.mixin(cucumber.runtime.groovy.Hooks)
 this.metaClass.mixin(cucumber.runtime.groovy.EN)
 
@@ -74,13 +61,12 @@ When(~'^I pivot the mower to the right$') {->
     // Express the Regexp above with the code you wish you had
     throw new PendingException()
 }
-''',
-            count: 1)
+''', 'groovy')
   }
 
-  void testScenarioOutlineStep() {
-    doTest(
-            current: [ext:'feature', text:'''\
+  @Test
+  void scenarioOutlineStep() {
+    doTest('''\
 # language: en
 Feature: Division
   In order to avoid silly mistakes
@@ -95,29 +81,29 @@ Scenario Outline: eating
     | start | eat | left |
     | 12    | 5   | 7    |
     | 20    | 5   | 15   |
-'''],
-            groovy: '''
+''', 'feature',
+           '''
 this.metaClass.mixin(cucumber.runtime.groovy.Hooks)
 this.metaClass.mixin(cucumber.runtime.groovy.EN)
 
 Given(~'^there are (\\\\d+) cucumbers$') {int number ->
     throw new PendingException()
 }
-''',
-            count: 1)
+''', 'groovy')
   }
 
-  void testStepDefinition() {
+  @Test
+  void stepDefinition() {
     doTest(
-            current: [ext: 'groovy', text: '''\
+      '''\
 this.metaClass.mixin(cucumber.runtime.groovy.Hooks)
 this.metaClass.mixin(cucumber.runtime.groovy.EN)
 
 Given(~'^there a<caret>re (\\\\d+) cucumbers$') {int number ->
     throw new PendingException()
 }
-'''],
-            feature: '''\
+''', 'groovy',
+      '''\
 # language: en
 Feature: Division
   In order to avoid silly mistakes
@@ -132,29 +118,22 @@ Scenario Outline: eating
     | start | eat | left |
     | 12    | 5   | 7    |
     | 20    | 5   | 15   |
-''',
-            count: 1
-    )
+''', 'feature')
   }
 
-
-  void testStepDefinition2() {
-    doTest(
-      current: [ext: 'groovy', text: '''\
+  @Test
+  void stepDefinition2() {
+    doTest('''\
 import cucumber.runtime.PendingException
-/**
- * Created by maxmedvedev on 7/6/13.
- */
 
 this.metaClass.mixin(cucumber.runtime.groovy.Hooks)
 this.metaClass.mixin(cucumber.runtime.groovy.EN)
 
-
 Given(~'^a mow<caret>er in (\\\\d+),(\\\\d+) facing north_java$') { int arg1, int arg2 ->
     // Express the Regexp above with the code you wish you had
     throw new PendingException()
-}'''],
-      feature: '''\
+}''', 'groovy',
+           '''\
 # language: en
 Feature: Division_other
   In order to avoid silly mistakes
@@ -165,10 +144,6 @@ Feature: Division_other
     When I pivot the mower to the right_java
     Given a commit 'fix'_java
     Given a commit3 'fix'    _java
-''',
-      count: 1
-    )
+''', 'feature')
   }
-
-
 }

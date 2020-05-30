@@ -1,13 +1,13 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package jetbrains.communicator.idea.toolWindow;
 
+import com.intellij.openapi.diagnostic.Logger;
 import jetbrains.communicator.commands.SendMessageCommand;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.users.UserModel;
 import jetbrains.communicator.idea.actions.BaseAction;
 import jetbrains.communicator.util.TreeUtils;
-import org.apache.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
  * @author Kir
  */
 public class UserTreeTransferHandler extends TransferHandler {
-  private static final Logger LOG = Logger.getLogger(UserTreeTransferHandler.class);
+  private static final Logger LOG = Logger.getInstance(UserTreeTransferHandler.class);
   public static final Pattern EXCEPTION_PATTERN = Pattern.compile("\\s+at ");
   private final UserModel myUserModel;
 

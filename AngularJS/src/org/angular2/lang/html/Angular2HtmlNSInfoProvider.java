@@ -7,14 +7,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class Angular2HtmlNSInfoProvider implements XmlFileNSInfoProvider {
-  @Nullable
   @Override
-  public String[][] getDefaultNamespaces(@NotNull XmlFile file) {
+  public String[] @Nullable [] getDefaultNamespaces(@NotNull XmlFile file) {
     return null;
   }
 
   @Override
   public boolean overrideNamespaceFromDocType(@NotNull XmlFile file) {
-    return file.getFileType() == Angular2HtmlFileType.INSTANCE;
+    return file.getFileType() instanceof Angular2HtmlFileType;
   }
 }

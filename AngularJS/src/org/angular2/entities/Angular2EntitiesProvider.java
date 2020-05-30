@@ -1,7 +1,6 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.entities;
 
-import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
@@ -10,131 +9,119 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
 import com.intellij.psi.stubs.StubIndexKey;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.ObjectUtils;
-import com.intellij.util.Processor;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import one.util.streamex.StreamEx;
-import org.angular2.entities.metadata.psi.*;
-import org.angular2.entities.source.Angular2SourceComponent;
-import org.angular2.entities.source.Angular2SourceDirective;
-import org.angular2.entities.source.Angular2SourceModule;
-import org.angular2.entities.source.Angular2SourcePipe;
+import org.angular2.entities.ivy.Angular2IvyUtil;
+import org.angular2.entities.metadata.Angular2MetadataUtil;
+import org.angular2.entities.metadata.psi.Angular2MetadataDirectiveBase;
+import org.angular2.entities.metadata.psi.Angular2MetadataEntity;
+import org.angular2.entities.metadata.psi.Angular2MetadataModule;
+import org.angular2.entities.metadata.psi.Angular2MetadataPipe;
+import org.angular2.entities.source.*;
 import org.angular2.index.*;
-import org.angular2.lang.Angular2LangUtil;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static com.intellij.psi.util.CachedValueProvider.Result.create;
+import static com.intellij.util.ObjectUtils.tryCast;
 import static java.util.stream.Collectors.toMap;
 import static org.angular2.Angular2DecoratorUtil.*;
 import static org.angular2.entities.Angular2EntityUtils.*;
-import static org.angular2.index.Angular2IndexingHandler.NG_MODULE_INDEX_NAME;
+import static org.angular2.entities.ivy.Angular2IvyUtil.getIvyEntity;
+import static org.angular2.entities.ivy.Angular2IvyUtil.hasIvyMetadata;
+import static org.angular2.index.Angular2IndexingHandler.*;
+import static org.angular2.lang.Angular2LangUtil.isAngular2Context;
 
 public class Angular2EntitiesProvider {
 
   static final String TRANSFORM_METHOD = "transform";
 
-  @Nullable
   public static Angular2Entity getEntity(@Nullable PsiElement element) {
-    Angular2Declaration result = getDeclaration(element);
-    return result != null ? result : getModule(element);
+    if (element == null) {
+      return null;
+    }
+    Angular2Entity result = getSourceEntity(element);
+    if (result != null) {
+      return result;
+    }
+    return Angular2EntitiesProvider.<Angular2Entity, PsiElement>withJsonMetadataFallback(
+      element, Angular2IvyUtil::getIvyEntity, Angular2MetadataUtil::getMetadataEntity);
   }
 
-  @Nullable
-  public static Angular2Declaration getDeclaration(@Nullable PsiElement element) {
-    Angular2Directive result = getDirective(element);
-    return result != null ? result : getPipe(element);
+  public static <R, E extends PsiElement> @Nullable R withJsonMetadataFallback(E element,
+                                                                               Function<E, R> ivy,
+                                                                               Function<TypeScriptClass, R> jsonFallback) {
+    R result = ivy.apply(element);
+    if (result == null
+        && element instanceof TypeScriptClass
+        && !hasIvyMetadata(element)
+        && isAngular2Context(element)) {
+      return jsonFallback.apply((TypeScriptClass)element);
+    }
+    return result;
   }
 
-  @Nullable
-  public static Angular2Component getComponent(@Nullable PsiElement element) {
-    return ObjectUtils.tryCast(getDirective(element), Angular2Component.class);
+  public static @Nullable Angular2Declaration getDeclaration(@Nullable PsiElement element) {
+    return tryCast(getEntity(element), Angular2Declaration.class);
   }
 
-  @Nullable
-  public static Angular2Directive getDirective(@Nullable PsiElement element) {
-    return DIRECTIVE_GETTER.get(element);
+  public static @Nullable Angular2Component getComponent(@Nullable PsiElement element) {
+    return tryCast(getEntity(element), Angular2Component.class);
   }
 
-  @Nullable
-  public static Angular2Pipe getPipe(@Nullable PsiElement element) {
+  public static @Nullable Angular2Directive getDirective(@Nullable PsiElement element) {
+    return tryCast(getEntity(element), Angular2Directive.class);
+  }
+
+  public static @Nullable Angular2Pipe getPipe(@Nullable PsiElement element) {
     if (element instanceof TypeScriptFunction
         && TRANSFORM_METHOD.equals(((TypeScriptFunction)element).getName())
         && element.getContext() instanceof TypeScriptClass) {
       element = element.getContext();
     }
-    return PIPE_GETTER.get(element);
+    return tryCast(getEntity(element), Angular2Pipe.class);
   }
 
-  @Nullable
-  public static Angular2MetadataFunction findMetadataFunction(@NotNull JSFunction function) {
-    TypeScriptClass parent = ObjectUtils.tryCast(function.getContext(), TypeScriptClass.class);
-    if (function.getName() == null || parent == null) {
-      return null;
-    }
-    Ref<Angular2MetadataFunction> result = new Ref<>();
-    StubIndex.getInstance().processElements(
-      Angular2MetadataFunctionIndex.KEY, function.getName(), function.getProject(),
-      GlobalSearchScope.allScope(function.getProject()),
-      Angular2MetadataFunction.class, (f) -> {
-        Angular2MetadataClassBase parentClass = ObjectUtils.tryCast(f.getContext(), Angular2MetadataClassBase.class);
-        if (parentClass != null && parent.equals(parentClass.getTypeScriptClass())) {
-          result.set(f);
-          return false;
-        }
-        return true;
-      });
-    return result.get();
+  public static @Nullable Angular2Module getModule(@Nullable PsiElement element) {
+    return tryCast(getEntity(element), Angular2Module.class);
   }
 
-  @Nullable
-  public static Angular2Module getModule(@Nullable PsiElement element) {
-    return MODULE_GETTER.get(element);
-  }
-
-  @NotNull
-  public static List<Angular2Directive> findElementDirectivesCandidates(@NotNull Project project, @NotNull String elementName) {
+  public static @NotNull List<Angular2Directive> findElementDirectivesCandidates(@NotNull Project project, @NotNull String elementName) {
     return findDirectivesCandidates(project, getElementDirectiveIndexName(elementName));
   }
 
-  @NotNull
-  public static List<Angular2Directive> findAttributeDirectivesCandidates(@NotNull Project project, @NotNull String attributeName) {
+  public static @NotNull List<Angular2Directive> findAttributeDirectivesCandidates(@NotNull Project project,
+                                                                                   @NotNull String attributeName) {
     return findDirectivesCandidates(project, getAttributeDirectiveIndexName(attributeName));
   }
 
-  @NotNull
-  public static List<Angular2Pipe> findPipes(@NotNull Project project, @NotNull String name) {
+  public static @NotNull List<Angular2Pipe> findPipes(@NotNull Project project, @NotNull String name) {
     List<Angular2Pipe> result = new SmartList<>();
     AngularIndexUtil.multiResolve(
       project, Angular2SourcePipeIndex.KEY, name, pipe -> {
-        ContainerUtil.addIfNotNull(result, getPipe(pipe));
+        ContainerUtil.addIfNotNull(result, tryCast(getSourceEntity(pipe), Angular2Pipe.class));
         return true;
       });
-    processMetadataEntities(project, name, Angular2MetadataPipe.class, Angular2MetadataPipeIndex.KEY, p -> {
-      result.add(p);
-      return true;
-    });
+    processIvyEntities(project, name, Angular2IvyPipeIndex.KEY, Angular2Pipe.class, result::add);
+    processMetadataEntities(project, name, Angular2MetadataPipe.class, Angular2MetadataPipeIndex.KEY, result::add);
     return result;
   }
 
-  @NotNull
-  public static List<Angular2Directive> findDirectives(@NotNull Angular2DirectiveSelectorPsiElement selector) {
+  public static @NotNull List<Angular2Directive> findDirectives(@NotNull Angular2DirectiveSelectorPsiElement selector) {
     if (selector.isElementSelector()) {
       return findElementDirectivesCandidates(selector.getProject(), selector.getName());
     }
@@ -144,16 +131,15 @@ public class Angular2EntitiesProvider {
     return Collections.emptyList();
   }
 
-  @Nullable
-  public static Angular2Component findComponent(@NotNull Angular2DirectiveSelectorPsiElement selector) {
+  public static @Nullable Angular2Component findComponent(@NotNull Angular2DirectiveSelectorPsiElement selector) {
     return (Angular2Component)ContainerUtil.find(findDirectives(selector), Angular2Directive::isComponent);
   }
 
-  @NotNull
-  public static Map<String, List<Angular2Directive>> getAllElementDirectives(@NotNull Project project) {
+  public static @NotNull Map<String, List<Angular2Directive>> getAllElementDirectives(@NotNull Project project) {
     return CachedValuesManager.getManager(project).getCachedValue(project, () -> create(
       StreamEx.of(AngularIndexUtil.getAllKeys(Angular2SourceDirectiveIndex.KEY, project))
         .append(AngularIndexUtil.getAllKeys(Angular2MetadataDirectiveIndex.KEY, project))
+        .append(AngularIndexUtil.getAllKeys(Angular2IvyDirectiveIndex.KEY, project))
         .map(name -> isElementDirectiveIndexName(name) ? getElementName(name) : null)
         .nonNull()
         .distinct()
@@ -164,11 +150,11 @@ public class Angular2EntitiesProvider {
     );
   }
 
-  @NotNull
-  public static Map<String, List<Angular2Pipe>> getAllPipes(@NotNull Project project) {
+  public static @NotNull Map<String, List<Angular2Pipe>> getAllPipes(@NotNull Project project) {
     return CachedValuesManager.getManager(project).getCachedValue(project, () -> create(
       StreamEx.of(AngularIndexUtil.getAllKeys(Angular2SourcePipeIndex.KEY, project))
         .append(AngularIndexUtil.getAllKeys(Angular2MetadataPipeIndex.KEY, project))
+        .append(AngularIndexUtil.getAllKeys(Angular2IvyPipeIndex.KEY, project))
         .distinct()
         .collect(toMap(Function.identity(),
                        name -> findPipes(project, name))),
@@ -208,21 +194,72 @@ public class Angular2EntitiesProvider {
       StubIndex.getInstance().processElements(Angular2SourceModuleIndex.KEY, NG_MODULE_INDEX_NAME,
                                               project, GlobalSearchScope.allScope(project),
                                               JSImplicitElementProvider.class, (module) -> {
-          ContainerUtil.addIfNotNull(result, getModule(module));
+          if (module.isValid()) {
+            ContainerUtil.addIfNotNull(result, tryCast(getSourceEntity(module), Angular2Module.class));
+          }
           return true;
         });
-      StubIndex.getInstance().processElements(Angular2MetadataModuleIndex.KEY, NG_MODULE_INDEX_NAME,
-                                              project, GlobalSearchScope.allScope(project),
-                                              Angular2MetadataModule.class, (module) -> {
-          result.add(module);
-          return true;
-        });
+      processIvyEntities(project, NG_MODULE_INDEX_NAME, Angular2IvyModuleIndex.KEY, Angular2Module.class, result::add);
+      processMetadataEntities(project, NG_MODULE_INDEX_NAME, Angular2MetadataModule.class,
+                              Angular2MetadataModuleIndex.KEY, result::add);
       return create(result, PsiModificationTracker.MODIFICATION_COUNT);
     });
   }
 
-  @NotNull
-  private static List<Angular2Directive> findDirectivesCandidates(@NotNull Project project, @NotNull String indexLookupName) {
+  public static Angular2SourceEntity getSourceEntity(@NotNull PsiElement element) {
+    if (element instanceof JSImplicitElement) {
+      if (!isEntityImplicitElement((JSImplicitElement)element)) {
+        return null;
+      }
+      element = element.getContext();
+    }
+    if (element instanceof TypeScriptClass) {
+      element = findDecorator((TypeScriptClass)element, PIPE_DEC, COMPONENT_DEC, MODULE_DEC, DIRECTIVE_DEC);
+      if (element == null) {
+        return null;
+      }
+    }
+    else if (!(element instanceof ES6Decorator)
+             || !isAngularEntityDecorator((ES6Decorator)element, PIPE_DEC, COMPONENT_DEC, MODULE_DEC, DIRECTIVE_DEC)) {
+      return null;
+    }
+    ES6Decorator dec = (ES6Decorator)element;
+    return CachedValuesManager.getCachedValue(dec, () -> {
+      JSImplicitElement entityElement = null;
+      if (dec.getIndexingData() != null) {
+        entityElement = ContainerUtil.find(ObjectUtils.notNull(dec.getIndexingData().getImplicitElements(),
+                                                               Collections::emptyList),
+                                           Angular2EntitiesProvider::isEntityImplicitElement);
+      }
+      String decoratorName = dec.getDecoratorName();
+      Angular2SourceEntity entity = null;
+      if (entityElement != null && decoratorName != null) {
+        if (decoratorName.equals(COMPONENT_DEC)) {
+          entity = new Angular2SourceComponent(dec, entityElement);
+        }
+        else if (decoratorName.equals(DIRECTIVE_DEC)) {
+          entity = new Angular2SourceDirective(dec, entityElement);
+        }
+        else if (decoratorName.equals(MODULE_DEC)) {
+          entity = new Angular2SourceModule(dec, entityElement);
+        }
+        else if (decoratorName.equals(PIPE_DEC)) {
+          entity = new Angular2SourcePipe(dec, entityElement);
+        }
+      }
+      return create(entity, dec);
+    });
+  }
+
+  public static boolean isDeclaredClass(@NotNull TypeScriptClass typeScriptClass) {
+    return Objects.requireNonNull(typeScriptClass.getAttributeList()).hasModifier(JSAttributeList.ModifierType.DECLARE);
+  }
+
+  private static boolean isEntityImplicitElement(JSImplicitElement element) {
+    return isDirective(element) || isPipe(element) || isModule(element);
+  }
+
+  private static @NotNull List<Angular2Directive> findDirectivesCandidates(@NotNull Project project, @NotNull String indexLookupName) {
     List<Angular2Directive> result = new ArrayList<>();
     StubIndex.getInstance().processElements(
       Angular2SourceDirectiveIndex.KEY, indexLookupName, project, GlobalSearchScope.allScope(project), JSImplicitElementProvider.class,
@@ -233,7 +270,7 @@ public class Angular2EntitiesProvider {
           if (elements != null) {
             for (JSImplicitElement element : elements) {
               if (element.isValid()) {
-                Angular2Directive directive = getDirective(element);
+                Angular2Directive directive = tryCast(getSourceEntity(element), Angular2Directive.class);
                 if (directive != null) {
                   result.add(directive);
                   return true;
@@ -245,110 +282,38 @@ public class Angular2EntitiesProvider {
         return true;
       }
     );
-    processMetadataEntities(project, indexLookupName, Angular2MetadataDirectiveBase.class, Angular2MetadataDirectiveIndex.KEY, el -> {
-      result.add(el);
-      return true;
-    });
+    processIvyEntities(project, indexLookupName, Angular2IvyDirectiveIndex.KEY, Angular2Directive.class, result::add);
+    processMetadataEntities(project, indexLookupName, Angular2MetadataDirectiveBase.class,
+                            Angular2MetadataDirectiveIndex.KEY, result::add);
     return result;
   }
 
-  private static <T extends Angular2MetadataEntity> void processMetadataEntities(@NotNull Project project,
-                                                                                 @NotNull String name,
-                                                                                 @NotNull Class<T> entityClass,
-                                                                                 @NotNull StubIndexKey<String, T> key,
-                                                                                 @NotNull Processor<? super T> processor) {
+  private static <T extends Angular2MetadataEntity<?>> void processMetadataEntities(@NotNull Project project,
+                                                                                    @NotNull String name,
+                                                                                    @NotNull Class<T> entityClass,
+                                                                                    @NotNull StubIndexKey<String, T> key,
+                                                                                    @NotNull Consumer<T> consumer) {
     StubIndex.getInstance().processElements(key, name, project, GlobalSearchScope.allScope(project), entityClass, el -> {
-      if (el.isValid()) {
-        return processor.process(el);
+      if (el.isValid() && !hasIvyMetadata(el)) {
+        consumer.accept(el);
       }
       return true;
     });
   }
 
-  private static final EntityGetter<Angular2Directive> DIRECTIVE_GETTER = new EntityGetter<>(
-    Angular2Directive.class, Angular2IndexingHandler::isDirective,
-    (dec, el) -> DIRECTIVE_DEC.equals(dec.getDecoratorName())
-                 ? new Angular2SourceDirective(dec, el)
-                 : new Angular2SourceComponent(dec, el),
-    DIRECTIVE_DEC, COMPONENT_DEC);
-
-  private static final EntityGetter<Angular2Pipe> PIPE_GETTER = new EntityGetter<>(
-    Angular2Pipe.class, Angular2IndexingHandler::isPipe, Angular2SourcePipe::new, PIPE_DEC);
-
-  private static final EntityGetter<Angular2Module> MODULE_GETTER = new EntityGetter<>(
-    Angular2Module.class, Angular2IndexingHandler::isModule, Angular2SourceModule::new, MODULE_DEC);
-
-  private static class EntityGetter<T extends Angular2Entity> {
-
-    private final Class<T> myEntityClass;
-    private final Condition<? super JSImplicitElement> myImplicitElementTester;
-    private final BiFunction<? super ES6Decorator, ? super JSImplicitElement, ? extends T> myEntityConstructor;
-    private final String[] myDecoratorNames;
-
-    private EntityGetter(@NotNull Class<T> aClass,
-                         @NotNull Condition<? super JSImplicitElement> tester,
-                         @NotNull BiFunction<? super ES6Decorator, ? super JSImplicitElement, ? extends T> constructor,
-                         @NotNull String... names) {
-      myEntityClass = aClass;
-      myImplicitElementTester = tester;
-      myEntityConstructor = constructor;
-      myDecoratorNames = names;
-    }
-
-    public T get(@Nullable PsiElement element) {
-      if (element instanceof JSImplicitElement) {
-        if (!myImplicitElementTester.value((JSImplicitElement)element)) {
-          return null;
-        }
-        element = element.getContext();
-      }
-      if (element instanceof TypeScriptClass
-          && Angular2LangUtil.isAngular2Context(element)) {
-        ES6Decorator decorator = findDecorator((TypeScriptClass)element, myDecoratorNames);
-        if (decorator != null) {
-          element = decorator;
-        }
-        else {
-          TypeScriptClass typeScriptClass = (TypeScriptClass)element;
-          String className = typeScriptClass.getName();
-          if (className == null
-              ////performance check
-              //|| !className.endsWith("Pipe")
-              //check classes only from d.ts files
-              || !Objects.requireNonNull(typeScriptClass.getAttributeList()).hasModifier(JSAttributeList.ModifierType.DECLARE)) {
-            return null;
-          }
-          Ref<T> result = new Ref<>();
-          StubIndex.getInstance().processElements(
-            Angular2MetadataEntityClassNameIndex.KEY, className, typeScriptClass.getProject(),
-            GlobalSearchScope.allScope(typeScriptClass.getProject()), Angular2MetadataEntity.class,
-            e -> {
-              if (e.isValid() && myEntityClass.isInstance(e) && e.getTypeScriptClass() == typeScriptClass) {
-                //noinspection unchecked
-                result.set((T)e);
-                return false;
-              }
-              return true;
-            });
-          return result.get();
+  private static <T extends Angular2Entity> void processIvyEntities(@NotNull Project project,
+                                                                    @NotNull String name,
+                                                                    @NotNull StubIndexKey<String, TypeScriptClass> key,
+                                                                    @NotNull Class<T> entityClass,
+                                                                    @NotNull Consumer<T> consumer) {
+    StubIndex.getInstance().processElements(key, name, project, GlobalSearchScope.allScope(project), TypeScriptClass.class, el -> {
+      if (el.isValid()) {
+        T entity = tryCast(getIvyEntity(el), entityClass);
+        if (entity != null) {
+          consumer.accept(entity);
         }
       }
-      if (element instanceof ES6Decorator) {
-        ES6Decorator dec = (ES6Decorator)element;
-        if (!ArrayUtil.contains(dec.getDecoratorName(), myDecoratorNames)
-            || !Angular2LangUtil.isAngular2Context(element)) {
-          return null;
-        }
-        return CachedValuesManager.getCachedValue(dec, () -> {
-          JSImplicitElement entityElement = null;
-          if (dec.getIndexingData() != null) {
-            entityElement = ContainerUtil.find(ObjectUtils.notNull(dec.getIndexingData().getImplicitElements(), Collections::emptyList),
-                                               myImplicitElementTester);
-          }
-          return create(entityElement != null ? myEntityConstructor.apply(dec, entityElement) : null, dec);
-        });
-      }
-      return null;
-    }
+      return true;
+    });
   }
 }

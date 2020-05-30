@@ -45,9 +45,8 @@ import java.util.List;
  */
 public class ResultParamNameCustomConverter extends ParamNameConverter.ParamNameCustomConverter {
 
-  @NotNull
   @Override
-  public PsiReference[] getCustomReferences(XmlAttributeValue nameAttributeValue, DomElement paramsElement) {
+  public PsiReference @NotNull [] getCustomReferences(XmlAttributeValue nameAttributeValue, DomElement paramsElement) {
     if (!(paramsElement instanceof Result)) {
       return PsiReference.EMPTY_ARRAY;
     }
@@ -71,7 +70,7 @@ public class ResultParamNameCustomConverter extends ParamNameConverter.ParamName
      * @param paramsElements First element will be used for quickfixes.
      */
     private MergingBeanPropertyPathReference(@NotNull XmlAttributeValue element,
-                                             @NotNull ParamsElement... paramsElements) {
+                                             ParamsElement @NotNull ... paramsElements) {
       super(element, true);
 
       for (ParamsElement paramsElement : paramsElements) {
@@ -98,9 +97,8 @@ public class ResultParamNameCustomConverter extends ParamNameConverter.ParamName
       return null;
     }
 
-    @NotNull
     @Override
-    public Object[] getVariants() {
+    public Object @NotNull [] getVariants() {
       List<Object> variants = new SmartList<>();
       for (BeanPropertyPathReference[] reference : allReferences) {
         for (BeanPropertyPathReference pathReference : reference) {
@@ -116,9 +114,8 @@ public class ResultParamNameCustomConverter extends ParamNameConverter.ParamName
       return "Cannot resolve property '" + getValue() + "'";
     }
 
-    @Nullable
     @Override
-    public LocalQuickFix[] getQuickFixes() {
+    public LocalQuickFix @Nullable [] getQuickFixes() {
       List<LocalQuickFix> quickFixes = new SmartList<>();
       for (BeanPropertyPathReference[] reference : allReferences) {
         for (BeanPropertyPathReference pathReference : reference) {

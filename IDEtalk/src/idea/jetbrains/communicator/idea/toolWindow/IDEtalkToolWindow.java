@@ -31,14 +31,14 @@ import org.picocontainer.MutablePicoContainer;
 import javax.swing.*;
 import java.awt.*;
 
-public class IDEtalkToolWindow extends BaseToolWindow implements SettingsSavingComponent {
+public final class IDEtalkToolWindow extends BaseToolWindow implements SettingsSavingComponent {
   @NonNls public static final String PLACE_TOOLBAR = "TOOLBAR";
   @NonNls private static final String TOOL_WINDOW_ID = "IDEtalk";
 
-  private UserListComponentImpl myUserListComponent;
+  private final UserListComponentImpl myUserListComponent;
   private final MutablePicoContainer myContainer;
 
-  private JPanel myTopPanel;
+  private final JPanel myTopPanel;
 
   public IDEtalkToolWindow(ToolWindowManager toolWindowManager,
                            ActionManager actionManager, Project project,
@@ -46,10 +46,7 @@ public class IDEtalkToolWindow extends BaseToolWindow implements SettingsSavingC
     super(toolWindowManager, actionManager, project);
 
     myContainer = containerRegistry.getContainer();
-  }
 
-  @Override
-  public void initComponent() {
     myContainer.registerComponentImplementation(UserListComponentImpl.class);
     myContainer.registerComponentImplementation(StatusToolbarImpl.class);
 
@@ -59,7 +56,7 @@ public class IDEtalkToolWindow extends BaseToolWindow implements SettingsSavingC
     myTopPanel.setLayout(new BoxLayout(myTopPanel, BoxLayout.Y_AXIS));
   }
 
-  protected Component getComponent() {
+  private Component getComponent() {
     return myUserListComponent.getComponent();
   }
 

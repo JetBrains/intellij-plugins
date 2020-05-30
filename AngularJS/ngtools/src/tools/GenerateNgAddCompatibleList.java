@@ -17,20 +17,19 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
-import com.intellij.idea.IdeaTestApplication;
+import com.intellij.javascript.nodejs.npm.registry.NpmRegistryService;
+import com.intellij.javascript.nodejs.npm.registry.NpmRegistryServiceImpl;
 import com.intellij.javascript.nodejs.packageJson.NodePackageBasicInfo;
-import com.intellij.javascript.nodejs.packageJson.NpmRegistryService;
-import com.intellij.javascript.nodejs.packageJson.NpmRegistryServiceImpl;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.application.impl.ApplicationImpl;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.testFramework.PlatformTestCase;
+import com.intellij.testFramework.HeavyPlatformTestCase;
+import com.intellij.testFramework.TestApplicationManager;
 import com.intellij.util.Consumer;
 import com.intellij.util.ReflectionUtil;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.HttpRequests;
 import org.angular2.cli.AngularCliSchematicsRegistryServiceImpl;
 import org.apache.commons.compress.archivers.ArchiveEntry;
@@ -45,6 +44,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -70,7 +70,7 @@ public class GenerateNgAddCompatibleList {
   }
 
   public static void generate() throws Exception {
-    Map<String, NodePackageBasicInfo> angularPkgs = ContainerUtil.newConcurrentMap();
+    Map<String, NodePackageBasicInfo> angularPkgs = new ConcurrentHashMap<>();
     NpmRegistryService service = new NpmRegistryServiceImpl();
 
     ApplicationImpl app = (ApplicationImpl)ApplicationManager.getApplication();
@@ -195,7 +195,7 @@ public class GenerateNgAddCompatibleList {
 
   private static void setUpApplication() {
     try {
-      String[] candidates = ReflectionUtil.getField(PlatformTestCase.class, null, String[].class, "PREFIX_CANDIDATES");
+      String[] candidates = ReflectionUtil.getField(HeavyPlatformTestCase.class, null, String[].class, "PREFIX_CANDIDATES");
       if (candidates != null) {
         candidates[0] = "WebStorm";
       }
@@ -204,7 +204,7 @@ public class GenerateNgAddCompatibleList {
       System.setProperty(PathManager.PROPERTY_PLUGINS_PATH, tmpPath.toString() + "/plugins");
       System.setProperty(PathManager.PROPERTY_SYSTEM_PATH, tmpPath.toString() + "/system");
       System.setProperty(PathManager.PROPERTY_CONFIG_PATH, tmpPath.toString() + "/config");
-      IdeaTestApplication.getInstance();
+      TestApplicationManager.getInstance();
     }
     catch (Throwable t) {
       //ignore

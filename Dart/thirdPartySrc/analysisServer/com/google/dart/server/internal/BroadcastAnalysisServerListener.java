@@ -20,6 +20,7 @@ import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,7 +32,7 @@ import java.util.Set;
  * @coverage dart.server
  */
 public class BroadcastAnalysisServerListener implements AnalysisServerListener {
-  private final List<AnalysisServerListener> listeners = Lists.newArrayList();
+  private final List<AnalysisServerListener> listeners = new ArrayList<>();
 
   /**
    * Add the given listener to the list of listeners that will receive notification when new

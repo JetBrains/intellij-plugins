@@ -3,31 +3,27 @@ package org.jetbrains.vuejs.lang.html
 
 import com.intellij.openapi.fileTypes.LanguageFileType
 import icons.VuejsIcons
-import org.jetbrains.annotations.ApiStatus
+import org.jetbrains.vuejs.VueBundle
 import javax.swing.Icon
 
-class VueFileType: org.jetbrains.vuejs.VueFileType() {
+class VueFileType : LanguageFileType(VueLanguage.INSTANCE) {
   companion object {
+    @JvmField
     val INSTANCE: VueFileType = VueFileType()
-  }
-}
 
-// This class is the original `VueFileType` class,
-// but it's renamed to allow instanceof check through deprecated class from 'vuejs' package
-@Deprecated("Public for internal purpose only!")
-@ApiStatus.ScheduledForRemoval(inVersion = "2019.3")
-open class _VueFileType : LanguageFileType(VueLanguage.INSTANCE) {
+    const val VUE_EXTENSION = "vue"
+  }
 
   override fun getName(): String {
     return "Vue.js"
   }
 
   override fun getDescription(): String {
-    return "Vue.js template"
+    return VueBundle.message("vue.file.type.description")
   }
 
   override fun getDefaultExtension(): String {
-    return "vue"
+    return VUE_EXTENSION
   }
 
   override fun getIcon(): Icon? {

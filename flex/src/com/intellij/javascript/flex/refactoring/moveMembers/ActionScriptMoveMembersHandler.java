@@ -14,7 +14,7 @@
 package com.intellij.javascript.flex.refactoring.moveMembers;
 
 import com.intellij.lang.Language;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.JSFunction;
@@ -40,12 +40,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ActionScriptMoveMembersHandler extends MoveHandlerDelegate {
-  public static final String REFACTORING_NAME = JSBundle.message("move.members.refactoring.name");
-
   @Override
   public boolean tryToMove(PsiElement element, Project project, DataContext dataContext, @Nullable PsiReference reference, Editor editor) {
     if (JSClassUtils.isStaticMethodOrField(element)) {
-      if (!JSRefactoringUtil.checkReadOnlyStatus(element, editor, REFACTORING_NAME)) return true;
+      if (!JSRefactoringUtil.checkReadOnlyStatus(element, editor, getRefactoringName())) return true;
       doMove(project, new PsiElement[]{element}, null, null);
       return true;
     }
@@ -68,7 +66,7 @@ public class ActionScriptMoveMembersHandler extends MoveHandlerDelegate {
       if (element instanceof JSFunction && !sourceClass.equals(JSUtils.getMemberContainingClass(element))) {
         String message =
           RefactoringBundle.getCannotRefactorMessage(RefactoringBundle.message("members.to.be.moved.should.belong.to.the.same.class"));
-        CommonRefactoringUtil.showErrorMessage(REFACTORING_NAME, message, null, project);
+        CommonRefactoringUtil.showErrorMessage(getRefactoringName(), message, null, project);
         return;
       }
 
@@ -76,8 +74,8 @@ public class ActionScriptMoveMembersHandler extends MoveHandlerDelegate {
         JSVariable field = (JSVariable)element;
         if (field.getAttributeList() == null || !field.getAttributeList().hasModifier(JSAttributeList.ModifierType.STATIC)) {
           String fieldName = field.getName();
-          String message = RefactoringBundle.message("field.0.is.not.static", fieldName, REFACTORING_NAME);
-          CommonRefactoringUtil.showErrorMessage(REFACTORING_NAME, message, null, project);
+          String message = RefactoringBundle.message("field.0.is.not.static", fieldName, getRefactoringName());
+          CommonRefactoringUtil.showErrorMessage(getRefactoringName(), message, null, project);
           return;
         }
         preselectMembers.add(field);
@@ -86,20 +84,20 @@ public class ActionScriptMoveMembersHandler extends MoveHandlerDelegate {
         JSFunction method = (JSFunction)element;
         String methodName = method.getName();
         if (method.isConstructor()) {
-          String message = RefactoringBundle.message("0.refactoring.cannot.be.applied.to.constructors", REFACTORING_NAME);
-          CommonRefactoringUtil.showErrorMessage(REFACTORING_NAME, message, null, project);
+          String message = RefactoringBundle.message("0.refactoring.cannot.be.applied.to.constructors", getRefactoringName());
+          CommonRefactoringUtil.showErrorMessage(getRefactoringName(), message, null, project);
           return;
         }
         if (method.getAttributeList() == null || !method.getAttributeList().hasModifier(JSAttributeList.ModifierType.STATIC)) {
-          String message = RefactoringBundle.message("method.0.is.not.static", methodName, REFACTORING_NAME);
-          CommonRefactoringUtil.showErrorMessage(REFACTORING_NAME, message, null, project);
+          String message = RefactoringBundle.message("method.0.is.not.static", methodName, getRefactoringName());
+          CommonRefactoringUtil.showErrorMessage(getRefactoringName(), message, null, project);
           return;
         }
         preselectMembers.add(method);
       }
     }
 
-    if (!JSRefactoringUtil.checkReadOnlyStatus(sourceClass, null, REFACTORING_NAME)) return;
+    if (!JSRefactoringUtil.checkReadOnlyStatus(sourceClass, null, getRefactoringName())) return;
 
     final JSClass initialTargetClass = targetContainer instanceof JSClass ? (JSClass)targetContainer : null;
     ActionScriptMoveMembersDialog
@@ -123,5 +121,9 @@ public class ActionScriptMoveMembersHandler extends MoveHandlerDelegate {
   @Override
   public boolean supportsLanguage(@NotNull Language language) {
     return language.isKindOf(JavascriptLanguage.INSTANCE);
+  }
+
+  public static String getRefactoringName() {
+    return JavaScriptBundle.message("move.members.refactoring.name");
   }
 }

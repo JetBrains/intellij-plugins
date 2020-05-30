@@ -1,0 +1,14 @@
+class Fred
+  def initialize(v)
+    @val = v
+  end
+  # Set it and get it.
+  def set(v)
+    <caret>@val = v
+    p "The value was set"
+  end
+
+  def get
+    @val
+  end
+end

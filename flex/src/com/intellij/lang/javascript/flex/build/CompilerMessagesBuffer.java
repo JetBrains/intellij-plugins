@@ -92,7 +92,7 @@ public class CompilerMessagesBuffer {
     }
     synchronized (messages) {
       for (final CompilerMessage message : messages) {
-        if (message.message.indexOf(OUT_OF_MEMORY) != -1) {
+        if (message.message.contains(OUT_OF_MEMORY)) {
           return true;
         }
       }

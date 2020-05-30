@@ -40,13 +40,6 @@ public abstract class AbstractCucumberJavaExtension extends AbstractCucumberExte
     return false;
   }
 
-  // ToDo: remove
-  @NotNull
-  @Override
-  public Collection<String> getGlues(@NotNull GherkinFile file, Set<String> gluesFromOtherFiles) {
-    return Collections.emptyList();
-  }
-
   @Override
   public Collection<? extends PsiFile> getStepDefinitionContainers(@NotNull GherkinFile featureFile) {
     final Module module = ModuleUtilCore.findModuleForPsiElement(featureFile);

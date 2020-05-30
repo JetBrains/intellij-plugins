@@ -31,7 +31,7 @@ public class OgnlHighlightingLexerTest extends LightPlatformTestCase {
   }
 
   public void testCharacterLiteralStringEscapeToken() {
-    EditorHighlighter highlighter = createHighlighter("\'\\u2008\'");
+    EditorHighlighter highlighter = createHighlighter("'\\u2008'");
 
     HighlighterIterator it = highlighter.createIterator(1);
     assertEquals(StringEscapesTokenTypes.VALID_STRING_ESCAPE_TOKEN, it.getTokenType());

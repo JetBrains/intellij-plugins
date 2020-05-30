@@ -23,7 +23,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.resolve.JavaMethodCandidateInfo;
 import com.intellij.psi.resolve.JavaMethodResolveHelper;
-import com.intellij.psi.scope.JavaScopeProcessorEvent;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,6 +40,7 @@ public abstract class CfmlVariantsProcessor<T> implements PsiScopeProcessor {
     }
 
     public static final CfmlProcessorEvent SET_INITIAL_CLASS = new CfmlProcessorEvent();
+    public static final CfmlProcessorEvent START_STATIC = new CfmlProcessorEvent();
   }
 
   private final Set<T> myResult = new LinkedHashSet<>();
@@ -76,7 +76,7 @@ public abstract class CfmlVariantsProcessor<T> implements PsiScopeProcessor {
 
   @Override
   public void handleEvent(@NotNull Event event, Object associated) {
-    if (event == JavaScopeProcessorEvent.START_STATIC) {
+    if (event == CfmlProcessorEvent.START_STATIC) {
       myStaticScopeFlag = true;
     }
     else if (event == CfmlProcessorEvent.SET_INITIAL_CLASS && associated instanceof PsiClass) {

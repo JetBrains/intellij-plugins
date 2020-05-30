@@ -18,8 +18,7 @@ import java.util.Objects;
 public class Angular2MetadataStringStub extends Angular2MetadataElementStub<Angular2MetadataString> {
 
 
-  @NotNull
-  private final StringRef myValue;
+  private final @NotNull StringRef myValue;
 
   public Angular2MetadataStringStub(@Nullable String memberName,
                                     @NotNull JsonValue source,
@@ -39,8 +38,7 @@ public class Angular2MetadataStringStub extends Angular2MetadataElementStub<Angu
     writeString(myValue, stream);
   }
 
-  @NotNull
-  public String getValue() {
+  public @NotNull String getValue() {
     return myValue.getString();
   }
 }

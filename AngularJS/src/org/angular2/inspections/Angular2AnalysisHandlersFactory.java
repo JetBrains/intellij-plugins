@@ -22,7 +22,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.*;
-import org.angular2.index.Angular2IndexingHandler;
+import org.angular2.entities.Angular2ComponentLocator;
 import org.angular2.inspections.quickfixes.Angular2FixesFactory;
 import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression;
@@ -35,20 +35,18 @@ import static com.intellij.util.ObjectUtils.notNull;
 
 public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersFactory {
 
-  @NotNull
   @Override
-  public InspectionSuppressor getInspectionSuppressor() {
+  public @NotNull InspectionSuppressor getInspectionSuppressor() {
     return Angular2InspectionSuppressor.INSTANCE;
   }
 
-  @NotNull
   @Override
-  public JSReferenceChecker getReferenceChecker(@NotNull JSReferenceInspectionProblemReporter reporter) {
+  public @NotNull JSReferenceChecker getReferenceChecker(@NotNull JSReferenceInspectionProblemReporter reporter) {
     return new TypeScriptReferenceChecker(reporter) {
       @Override
       protected void addCreateFromUsageFixesForCall(@NotNull JSReferenceExpression methodExpression,
                                                     boolean isNewExpression,
-                                                    @NotNull ResolveResult[] resolveResults,
+                                                    ResolveResult @NotNull [] resolveResults,
                                                     @NotNull List<LocalQuickFix> quickFixes) {
         if (methodExpression instanceof Angular2PipeReferenceExpression) {
           // TODO Create pipe from usage
@@ -56,7 +54,7 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
         }
         JSExpression qualifier = methodExpression.getQualifier();
         if (qualifier == null || qualifier instanceof JSThisExpression) {
-          JSClass componentClass = Angular2IndexingHandler.findComponentClass(methodExpression);
+          JSClass componentClass = Angular2ComponentLocator.findComponentClass(methodExpression);
           if (componentClass != null && methodExpression.getReferenceName() != null) {
             quickFixes.add(new CreateComponentMethodIntentionAction(methodExpression));
           }
@@ -68,21 +66,22 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
       @Override
       protected Ref<String> createUnresolvedCallReferenceMessage(JSReferenceExpression methodExpression, boolean isNewExpression) {
         if (methodExpression instanceof Angular2PipeReferenceExpression) {
-          return Ref.create(Angular2Bundle.message("angular.inspection.template.unresolved-pipe", methodExpression.getReferenceName()));
+          return Ref.create(Angular2Bundle.message("angular.inspection.unresolved-pipe.message", methodExpression.getReferenceName()));
         }
         return super.createUnresolvedCallReferenceMessage(methodExpression, isNewExpression);
       }
 
       @Override
-      protected void reportUnresolvedReference(@NotNull ResolveResult[] resolveResults,
+      protected void reportUnresolvedReference(ResolveResult @NotNull [] resolveResults,
                                                @NotNull JSReferenceExpression referenceExpression,
                                                @NotNull List<LocalQuickFix> quickFixes,
                                                @NotNull Ref<String> message,
-                                               boolean isFunction) {
+                                               boolean isFunction,
+                                               boolean inTypeContext) {
         if (referenceExpression instanceof Angular2PipeReferenceExpression) {
           Angular2FixesFactory.addUnresolvedDeclarationFixes(referenceExpression, quickFixes);
         }
-        super.reportUnresolvedReference(resolveResults, referenceExpression, quickFixes, message, isFunction);
+        super.reportUnresolvedReference(resolveResults, referenceExpression, quickFixes, message, isFunction, inTypeContext);
       }
 
       @Override
@@ -93,7 +92,7 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
                                                 boolean ecma) {
         JSExpression qualifier = referenceExpression.getQualifier();
         if (qualifier == null || qualifier instanceof JSThisExpression) {
-          JSClass componentClass = Angular2IndexingHandler.findComponentClass(referenceExpression);
+          JSClass componentClass = Angular2ComponentLocator.findComponentClass(referenceExpression);
           if (componentClass != null
               && referenceExpression.getReferenceName() != null) {
             quickFixes.add(new CreateComponentFieldIntentionAction(referenceExpression));
@@ -108,18 +107,15 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
   private static void addClassMemberModifiers(Template template, boolean staticContext, @NotNull JSClass targetClass) {
     if (DialectDetector.isTypeScript(targetClass)) {
       if (TypeScriptCodeStyleSettings.getTypeScriptSettings(targetClass).USE_PUBLIC_MODIFIER) {
-        //noinspection HardCodedStringLiteral
         template.addTextSegment("public ");
       }
       if (staticContext) {
-        //noinspection HardCodedStringLiteral
         template.addTextSegment("static ");
       }
     }
   }
 
-  @NotNull
-  private static SmartPsiElementPointer<JSReferenceExpression> createPointerFor(@NotNull JSReferenceExpression methodExpression) {
+  private static @NotNull SmartPsiElementPointer<JSReferenceExpression> createPointerFor(@NotNull JSReferenceExpression methodExpression) {
     return SmartPointerManager.getInstance(methodExpression.getProject()).createSmartPsiElementPointer(methodExpression);
   }
 
@@ -133,8 +129,8 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
     }
 
     @Override
-    protected void applyFix(Project project, PsiElement psiElement, PsiFile file, Editor editor) {
-      JSClass componentClass = Angular2IndexingHandler.findComponentClass(psiElement);
+    protected void applyFix(Project project, PsiElement psiElement, @NotNull PsiFile file, @Nullable Editor editor) {
+      JSClass componentClass = Angular2ComponentLocator.findComponentClass(psiElement);
       assert componentClass != null;
       doApplyFix(project, componentClass, componentClass.getContainingFile(), null);
     }
@@ -147,9 +143,13 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
       return referenceExpression;
     }
 
-    @NotNull
     @Override
-    protected Pair<JSReferenceExpression, PsiElement> calculateAnchors(PsiElement psiElement) {
+    protected boolean skipParentIfClass() {
+      return false;
+    }
+
+    @Override
+    protected @NotNull Pair<JSReferenceExpression, PsiElement> calculateAnchors(PsiElement psiElement) {
       return Pair.create(myRefExpressionPointer.getElement(), psiElement.getLastChild());
     }
 
@@ -171,8 +171,8 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
     }
 
     @Override
-    protected void applyFix(Project project, PsiElement psiElement, PsiFile file, Editor editor) {
-      JSClass componentClass = Angular2IndexingHandler.findComponentClass(psiElement);
+    protected void applyFix(Project project, PsiElement psiElement, @NotNull PsiFile file, @Nullable Editor editor) {
+      JSClass componentClass = Angular2ComponentLocator.findComponentClass(psiElement);
       assert componentClass != null;
       doApplyFix(project, componentClass, componentClass.getContainingFile(), null);
     }
@@ -185,9 +185,13 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
       return referenceExpression;
     }
 
-    @NotNull
     @Override
-    protected Pair<JSReferenceExpression, PsiElement> calculateAnchors(PsiElement psiElement) {
+    protected boolean skipParentIfClass() {
+      return false;
+    }
+
+    @Override
+    protected @NotNull Pair<JSReferenceExpression, PsiElement> calculateAnchors(PsiElement psiElement) {
       return Pair.create(myRefExpressionPointer.getElement(), psiElement.getLastChild());
     }
 

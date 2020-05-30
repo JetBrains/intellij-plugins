@@ -1,6 +1,6 @@
 package com.intellij.tapestry.psi;
 
-import com.intellij.lang.StdLanguages;
+import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.text.StringUtil;
@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Alexey Chmutov
@@ -36,7 +37,7 @@ public class TapestryAccessorMethod extends LightElement implements PsiMethod {
   private final PsiModifierList myModifierList;
 
   protected TapestryAccessorMethod(PsiField property, boolean getterNotSetter, @NotNull String name) {
-    super(property.getManager(), StdLanguages.JAVA);
+    super(property.getManager(), JavaLanguage.INSTANCE);
     myProperty = property;
     myGetterNotSetter = getterNotSetter;
     myName = name;
@@ -89,8 +90,7 @@ public class TapestryAccessorMethod extends LightElement implements PsiMethod {
   }
 
   @Override
-  @NotNull
-  public PsiTypeParameter[] getTypeParameters() {
+  public PsiTypeParameter @NotNull [] getTypeParameters() {
     return PsiTypeParameter.EMPTY_ARRAY;
   }
 
@@ -178,20 +178,17 @@ public class TapestryAccessorMethod extends LightElement implements PsiMethod {
   }
 
   @Override
-  @NotNull
-  public PsiMethod[] findSuperMethods() {
+  public PsiMethod @NotNull [] findSuperMethods() {
     return PsiMethod.EMPTY_ARRAY;
   }
 
   @Override
-  @NotNull
-  public PsiMethod[] findSuperMethods(boolean checkAccess) {
+  public PsiMethod @NotNull [] findSuperMethods(boolean checkAccess) {
     return PsiMethod.EMPTY_ARRAY;
   }
 
   @Override
-  @NotNull
-  public PsiMethod[] findSuperMethods(PsiClass parentClass) {
+  public PsiMethod @NotNull [] findSuperMethods(PsiClass parentClass) {
     return PsiMethod.EMPTY_ARRAY;
   }
 
@@ -202,8 +199,7 @@ public class TapestryAccessorMethod extends LightElement implements PsiMethod {
   }
 
   @Override
-  @NotNull
-  public PsiMethod[] findDeepestSuperMethods() {
+  public PsiMethod @NotNull [] findDeepestSuperMethods() {
     return PsiMethod.EMPTY_ARRAY;
   }
 
@@ -263,12 +259,27 @@ public class TapestryAccessorMethod extends LightElement implements PsiMethod {
     }
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof TapestryAccessorMethod)) return false;
+    TapestryAccessorMethod method = (TapestryAccessorMethod)o;
+    return myGetterNotSetter == method.myGetterNotSetter &&
+           myProperty.equals(method.myProperty) &&
+           myName.equals(method.myName);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(myProperty, myGetterNotSetter, myName);
+  }
+
   public static class LightParameterList extends LightElement implements PsiParameterList {
     private final Computable<LightParameter[]> myParametersComputation;
     private LightParameter[] myParameters = null;
 
     protected LightParameterList(PsiManager manager, Computable<LightParameter[]> parametersComputation) {
-      super(manager, StdLanguages.JAVA);
+      super(manager, JavaLanguage.INSTANCE);
       myParametersComputation = parametersComputation;
     }
 
@@ -280,8 +291,7 @@ public class TapestryAccessorMethod extends LightElement implements PsiMethod {
     }
 
     @Override
-    @NotNull
-    public PsiParameter[] getParameters() {
+    public PsiParameter @NotNull [] getParameters() {
       if (myParameters == null) {
         myParameters = myParametersComputation.compute();
       }

@@ -33,8 +33,7 @@ class DartPackageAwareFileReference extends FileReference {
   }
 
   @Override
-  @NotNull
-  protected ResolveResult[] innerResolve(final boolean caseSensitive, @NotNull final PsiFile containingFile) {
+  protected ResolveResult @NotNull [] innerResolve(final boolean caseSensitive, @NotNull final PsiFile containingFile) {
     if (PACKAGES_FOLDER_NAME.equals(getText())) {
       final VirtualFile pubspecYamlFile = myDartResolver.getPubspecYamlFile();
       final VirtualFile packagesDir = pubspecYamlFile == null ? null : pubspecYamlFile.getParent().findChild(PACKAGES_FOLDER_NAME);
@@ -69,8 +68,7 @@ class DartPackageAwareFileReference extends FileReference {
   }
 
   @Override
-  @NotNull
-  public Object[] getVariants() {
+  public Object @NotNull [] getVariants() {
     final Object[] superVariants = super.getVariants();
 
     if (getIndex() == 0) {

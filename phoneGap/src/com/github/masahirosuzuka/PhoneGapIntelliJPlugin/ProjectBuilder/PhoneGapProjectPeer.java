@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectBuilder;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle;
@@ -16,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class PhoneGapProjectPeer implements WebProjectGenerator.GeneratorPeer<PhoneGapProjectTemplateGenerator.PhoneGapProjectSettings> {
@@ -23,14 +25,13 @@ public class PhoneGapProjectPeer implements WebProjectGenerator.GeneratorPeer<Ph
   private final List<WebProjectGenerator.SettingsStateListener> myStateListeners = ContainerUtil.createLockFreeCopyOnWriteList();
   private TextFieldWithHistoryWithBrowseButton myExecutablePathField;
 
-  private final ConcurrentMap<String, Boolean> myValidateCache = ContainerUtil.newConcurrentMap();
+  private final ConcurrentMap<String, Boolean> myValidateCache = new ConcurrentHashMap<>();
 
   PhoneGapProjectPeer() {
   }
 
-  @NotNull
   @Override
-  public JComponent getComponent() {
+  public @NotNull JComponent getComponent() {
     setFields();
     JPanel panel = FormBuilder.createFormBuilder()
       .addLabeledComponent(PhoneGapBundle.message("phonegap.project.builder.label"), myExecutablePathField)
@@ -46,9 +47,8 @@ public class PhoneGapProjectPeer implements WebProjectGenerator.GeneratorPeer<Ph
     settingsStep.addSettingsField(PhoneGapBundle.message("phonegap.project.builder.label"), myExecutablePathField);
   }
 
-  @NotNull
   @Override
-  public PhoneGapProjectTemplateGenerator.PhoneGapProjectSettings getSettings() {
+  public @NotNull PhoneGapProjectTemplateGenerator.PhoneGapProjectSettings getSettings() {
     PhoneGapProjectTemplateGenerator.PhoneGapProjectSettings settings = new PhoneGapProjectTemplateGenerator.PhoneGapProjectSettings();
     settings.setExecutable(myExecutablePathField.getText());
 
@@ -59,9 +59,8 @@ public class PhoneGapProjectPeer implements WebProjectGenerator.GeneratorPeer<Ph
     myExecutablePathField = PhoneGapUtil.createPhoneGapExecutableTextField(null);
   }
 
-  @Nullable
   @Override
-  public ValidationInfo validate() {
+  public @Nullable ValidationInfo validate() {
     String path = myExecutablePathField.getText();
 
     boolean error;

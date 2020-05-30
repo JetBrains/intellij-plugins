@@ -11,11 +11,11 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
-import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.validation.ActionScriptImplementedMethodProcessor;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,7 +30,7 @@ public class ActionScriptMethodsCompletionContributor extends CompletionContribu
                                            @NotNull ProcessingContext context,
                                            @NotNull CompletionResultSet result) {
                final PsiElement position = parameters.getPosition();
-               final PsiElement prev = JSPsiImplUtils.getPrevSiblingIgnoreWhitespace(position);
+               final PsiElement prev = PsiTreeUtil.skipWhitespacesAndCommentsBackward(position);
                final PsiElement parent = position.getParent();
                assert parent instanceof JSQualifiedNamedElement : "must be filtered in JSPatternBasedCompletionContributor";
 

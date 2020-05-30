@@ -48,7 +48,7 @@ public class MxmlEnterHandler extends EnterHandlerDelegateAdapter {
         indent = buffer.subSequence(lineStart, current).toString();
       }
       editor.getDocument().insertString(offset, "\n" + indent + "-->");
-      originalHandler.execute(editor, dataContext);
+      originalHandler.execute(editor, editor.getCaretModel().getCurrentCaret(), dataContext);
 
       return Result.Stop;
     }

@@ -1,7 +1,9 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight;
 
+import com.intellij.lang.Language;
 import com.intellij.lang.css.CSSLanguage;
+import com.intellij.lang.html.HTMLLanguage;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JSLanguageDialect;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -18,9 +20,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.roots.ExcludeFolder;
 import com.intellij.openapi.roots.ModuleRootModificationUtil;
 import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.roots.ex.ProjectRootManagerEx;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.EmptyRunnable;
 import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiDocumentManager;
@@ -28,8 +28,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.ui.UIUtil;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angular2.lang.Angular2ContextProvider;
+import org.angular2.lang.Angular2LangUtil;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.html.Angular2HtmlLanguage;
 import org.angular2.lang.html.psi.Angular2HtmlTemplateBindings;
@@ -41,6 +43,7 @@ import static com.intellij.openapi.util.Pair.pair;
 import static com.intellij.util.containers.ContainerUtil.prepend;
 import static com.intellij.util.containers.ContainerUtil.sorted;
 import static java.util.Arrays.asList;
+import static org.angular2.modules.Angular2TestModule.*;
 import static org.angularjs.AngularTestUtil.findOffsetBySignature;
 
 public class InjectionsTest extends Angular2CodeInsightFixtureTestCase {
@@ -90,6 +93,22 @@ public class InjectionsTest extends Angular2CodeInsightFixtureTestCase {
     for (Pair<String, ? extends JSLanguageDialect> signature : ContainerUtil.newArrayList(
       Pair.create("eve<caret>nt", Angular2Language.INSTANCE),
       Pair.create("bind<caret>ing", Angular2Language.INSTANCE),
+      Pair.create("at<caret>tribute", JavaScriptSupportLoader.TYPESCRIPT))) {
+      final int offset = findOffsetBySignature(signature.first, myFixture.getFile());
+      PsiElement element = InjectedLanguageManager.getInstance(getProject()).findInjectedElementAt(myFixture.getFile(), offset);
+      if (element == null) {
+        element = myFixture.getFile().findElementAt(offset);
+      }
+      assertEquals(signature.first, signature.second, element.getContainingFile().getLanguage());
+    }
+  }
+
+  public void testNonAngular() {
+    myFixture.configureByFiles("nonAngularComponent.ts", "package.json");
+    for (Pair<String, ? extends Language> signature : ContainerUtil.newArrayList(
+      Pair.create("<foo><caret></foo>", HTMLLanguage.INSTANCE),
+      Pair.create("eve<caret>nt", JavaScriptSupportLoader.TYPESCRIPT),
+      Pair.create("bind<caret>ing", JavaScriptSupportLoader.TYPESCRIPT),
       Pair.create("at<caret>tribute", JavaScriptSupportLoader.TYPESCRIPT))) {
       final int offset = findOffsetBySignature(signature.first, myFixture.getFile());
       PsiElement element = InjectedLanguageManager.getInstance(getProject()).findInjectedElementAt(myFixture.getFile(), offset);
@@ -150,8 +169,9 @@ public class InjectionsTest extends Angular2CodeInsightFixtureTestCase {
   public void testPrivateMembersOrder() {
     myFixture.configureByFiles("event_private.html", "event_private.ts", "package.json");
     myFixture.completeBasic();
-    assertEquals("Private members should be sorted after public ones", myFixture.getLookupElementStrings(),
-                 ContainerUtil.newArrayList("callSecuredApi", "callZ", "_callApi", "callA", "callAnonymousApi"));
+    assertEquals("Private members should be sorted after public ones",
+                 ContainerUtil.newArrayList("callSecuredApi", "callZ", "_callApi", "callA", "callAnonymousApi"),
+                 myFixture.getLookupElementStrings());
   }
 
   public void testResolutionWithDifferentTemplateName() {
@@ -186,6 +206,8 @@ public class InjectionsTest extends Angular2CodeInsightFixtureTestCase {
   public void testAngularCliLibrary() {
     myFixture.copyDirectoryToProject("angular-cli-lib", ".");
 
+    configureCopy(myFixture, ANGULAR_L10N_4_2_0);
+
     // Add "dist" folder to excludes
     ModuleRootModificationUtil.updateModel(getModule(), model -> {
       ExcludeFolder folder = model.getContentEntries()[0].addExcludeFolder(
@@ -215,16 +237,16 @@ public class InjectionsTest extends Angular2CodeInsightFixtureTestCase {
   public void testCustomContextProvider() {
     Disposable disposable = Disposer.newDisposable();
     Angular2ContextProvider.ANGULAR_CONTEXT_PROVIDER_EP
-      .getPoint(null)
+      .getPoint()
       .registerExtension(psiDir -> CachedValueProvider.Result.create(true, ModificationTracker.EVER_CHANGED),
                          disposable);
     myFixture.configureByFiles("inner/event.html", "inner/package.json", "inner/event.ts");
     checkVariableResolve("callAnonymous<caret>Api()", "callAnonymousApi", TypeScriptFunction.class);
     Disposer.dispose(disposable);
 
-    // TODO consider firing this when a change in Angular context state is detected
-    WriteAction.runAndWait(() -> ProjectRootManagerEx.getInstanceEx(getProject())
-      .makeRootsChange(EmptyRunnable.getInstance(), false, true));
+    // Force reload of roots
+    Angular2LangUtil.isAngular2Context(myFixture.getFile());
+    UIUtil.dispatchAllInvocationEvents();
 
     int offsetBySignature = findOffsetBySignature("callAnonymous<caret>Api()", myFixture.getFile());
     assertNull(myFixture.getFile().findReferenceAt(offsetBySignature));
@@ -249,8 +271,8 @@ public class InjectionsTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testCompletionOnTemplateReferenceVariable() {
-    myFixture.copyDirectoryToProject("node_modules", "./node_modules");
-    myFixture.configureByFiles("ref-var.html", "ref-var.ts", "package.json");
+    configureCopy(myFixture, ANGULAR_CORE_4_0_0);
+    myFixture.configureByFiles("ref-var.html", "ref-var.ts");
     List<String> defaultProps = asList("constructor", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable",
                                        "toLocaleString", "toString", "valueOf");
     for (Pair<String, List<String>> check : asList(

@@ -1,7 +1,7 @@
 package com.intellij.lang.javascript.uml.actions;
 
 import com.intellij.diagram.DiagramDataModel;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.actions.newfile.CreateFlexComponentFix;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 public class NewFlexComponentUmlAction extends NewJSClassUmlActionBase {
 
   public NewFlexComponentUmlAction() {
-    super(FlexBundle.message("new.flex.component.uml.action.text"), FlexBundle.message("new.flex.component.action.description"),
+    super(FlexBundle.messagePointer("new.flex.component.uml.action.text"), FlexBundle.messagePointer("new.flex.component.action.description"),
           JavaScriptPsiIcons.Classes.XmlBackedClass);
   }
 
@@ -55,7 +55,7 @@ public class NewFlexComponentUmlAction extends NewJSClassUmlActionBase {
       catch (Exception e) {
         throw new IncorrectOperationException(e);
       }
-    }, JSBundle.message(FlexBundle.message("new.flex.component.command.name")), null);
+    }, JavaScriptBundle.message(FlexBundle.message("new.flex.component.command.name")), null);
     return clazz.get();
   }
 }

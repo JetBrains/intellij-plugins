@@ -24,9 +24,8 @@ public class Angular2TemplateBindingKeyImpl extends JSExpressionImpl implements 
     }
   }
 
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     return getText();
   }
 }

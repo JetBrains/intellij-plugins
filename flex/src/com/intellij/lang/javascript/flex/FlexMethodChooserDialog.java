@@ -7,6 +7,7 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Condition;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBList;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -39,7 +40,7 @@ public class FlexMethodChooserDialog extends DialogWrapper {
     myList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     new DoubleClickListener() {
       @Override
-      protected boolean onDoubleClick(MouseEvent e) {
+      protected boolean onDoubleClick(@NotNull MouseEvent e) {
         FlexMethodChooserDialog.this.close(OK_EXIT_CODE);
         return true;
       }

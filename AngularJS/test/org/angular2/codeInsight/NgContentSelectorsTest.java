@@ -6,6 +6,7 @@ import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.html.HtmlTag;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
+import org.angular2.inspections.AngularUndefinedBindingInspection;
 import org.angularjs.AngularTestUtil;
 
 import java.util.Arrays;
@@ -20,14 +21,37 @@ public class NgContentSelectorsTest extends Angular2CodeInsightFixtureTestCase {
     return AngularTestUtil.getBaseTestDataPath(getClass()) + "ngContentSelectors";
   }
 
-  public void testHighlighting() {
-    myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
-                                HtmlUnknownTagInspection.class);
+  public void testHighlightingSource() {
     myFixture.configureByFiles("highlighting.html", "component.ts", "package.json");
+    doTestHighlighting();
+  }
+
+  public void testHighlightingPureIvy() {
+    myFixture.copyDirectoryToProject("node_modules/ivy-lib", "node_modules/ivy-lib");
+    myFixture.configureByFiles("highlighting.html", "package.json");
+    doTestHighlighting();
+  }
+
+  public void testHighlightingMixedIvy() {
+    myFixture.copyDirectoryToProject("node_modules/mixed-lib", "node_modules/mixed-lib");
+    myFixture.configureByFiles("highlighting.html", "package.json");
+    doTestHighlighting();
+  }
+
+  public void testHighlightingMetadata() {
+    myFixture.copyDirectoryToProject("node_modules/metadata-lib", "node_modules/metadata-lib");
+    myFixture.configureByFiles("highlighting.html", "package.json");
+    doTestHighlighting();
+  }
+
+  private void doTestHighlighting() {
+    myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
+                                HtmlUnknownTagInspection.class,
+                                AngularUndefinedBindingInspection.class);
     myFixture.checkHighlighting();
   }
 
-  public void testResolution() {
+  public void testResolutionSource() {
     myFixture.configureByFiles("resolution.html", "component.ts", "package.json");
     for (Pair<String, String> test : Arrays.asList(
       pair("<fo<caret>o b>", "foo,[bar]"),
@@ -35,7 +59,7 @@ public class NgContentSelectorsTest extends Angular2CodeInsightFixtureTestCase {
       pair("<div b<caret>ar", "foo,[bar]"),
       pair("<bar f<caret>oo", "bar[foo]"),
       pair("<span g<caret>oo", ":not([goo])")
-      )) {
+    )) {
       try {
         assertEquals(test.second, resolveReference(test.first, myFixture).getParent().getText());
       }

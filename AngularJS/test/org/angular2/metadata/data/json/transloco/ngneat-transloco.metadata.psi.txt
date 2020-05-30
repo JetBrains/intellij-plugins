@@ -1,0 +1,74 @@
+MetadataFile:ngneat-transloco.metadata.json
+  @ngneat/transloco <metadata node module>
+    translate <metadata function>('')
+    TranslocoService <metadata class>('')
+    TranslocoDirective <metadata directive/template>: selector=[transloco]; inputs=[translocoRead, translocoScope, translocoLoadingTpl, translocoLang, translocoParams, transloco]; outputs=[]; inOuts=[]('')
+    transloco <metadata pipe>('')
+    TranslocoModule <metadata module>: imports=[]; declarations=[TranslocoDirective, transloco, ɵc]; exports=[TranslocoDirective, transloco]; scopeFullyResolved=true; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        TranslocoDirective <metadata reference>('')
+        TranslocoPipe <metadata reference>('')
+        ɵc <metadata reference>('')
+      ___dec.exports <metadata array>
+        TranslocoDirective <metadata reference>('')
+        TranslocoPipe <metadata reference>('')
+    defaultProviders <metadata array>
+      <metadata object>
+        provide: TRANSLOCO_TRANSPILER <metadata reference>('')
+        useClass: DefaultTranspiler <metadata reference>('')
+      <metadata object>
+        provide: TRANSLOCO_MISSING_HANDLER <metadata reference>('')
+        useClass: ɵb <metadata reference>('')
+      <metadata object>
+        provide: TRANSLOCO_INTERCEPTOR <metadata reference>('')
+        useClass: ɵa <metadata reference>('')
+      <metadata object>
+        provide: TRANSLOCO_FALLBACK_STRATEGY <metadata reference>('')
+        useClass: DefaultFallbackStrategy <metadata reference>('')
+        deps <metadata array>
+          TRANSLOCO_CONFIG <metadata reference>('')
+    defaultConfig <metadata object>
+      defaultLang: en <metadata string>('')
+      availableLangs <metadata array>('')
+      missingHandler <metadata object>('')
+      flatten <metadata object>('')
+    DefaultTranspiler <metadata class>('')
+    TestingLoader <metadata class>('')
+    TranslocoTestingModule <metadata module>: imports=[]; declarations=[]; exports=[TranslocoModule]; scopeFullyResolved=true; exportsFullyResolved=true
+      withLangs <metadata function>
+        #value <metadata object>
+          ngModule: TranslocoTestingModule <metadata reference>('')
+          providers <metadata array>
+            <metadata object>
+              provide: translocoLangs <metadata string>('')
+              useValue: langs <metadata reference>('')
+            <metadata object>
+              provide: TRANSLOCO_LOADER <metadata reference>('')
+              useClass: TestingLoader <metadata reference>('')
+            defaultProviders <metadata reference>('')
+            <metadata object>
+              provide: TRANSLOCO_CONFIG <metadata reference>('')
+              useValue <metadata object>('')
+      ___dec.exports <metadata array>
+        TranslocoModule <metadata reference>('')
+    TemplateHandler <metadata class>('')
+    ɵa <metadata class>('')
+    DefaultFallbackStrategy <metadata class>('')
+    ɵb <metadata class>('')
+    isEmpty <metadata function>('')
+    isFunction <metadata function>('')
+    isString <metadata function>('')
+    isNumber <metadata function>('')
+    isObject <metadata function>('')
+    coerceArray <metadata function>('')
+    toCamelCase <metadata function>
+      #value: <metadata call>('')
+    isBrowser <metadata function>('')
+    isNil <metadata function>('')
+    isDefined <metadata function>('')
+    isScopeObject <metadata function>('')
+    hasInlineLoader <metadata function>('')
+    unflatten <metadata function>
+      #value: <metadata call>('')
+    flatten <metadata function>('')
+    ɵc <metadata component>: selector=<null>; inputs=[html]; outputs=[]; inOuts=[]('')

@@ -47,15 +47,13 @@ public class TapestryProjectTreeStructure extends SimpleTreeStructure {
     public NodeDescriptor createDescriptor(@NotNull Object element, NodeDescriptor parentDescriptor) {
         if (!(element instanceof NodeDescriptor)) {
             return new SimpleNode() {
-                @NotNull
                 @Override
-                public SimpleNode[] getChildren() {
+                public SimpleNode @NotNull [] getChildren() {
                     return new SimpleNode[0];
                 }
 
                 @Override
-                @NotNull
-                public Object[] getEqualityObjects() {
+                public Object @NotNull [] getEqualityObjects() {
                     return new Object[]{EMPTY_DESCRIPTOR};
                 }
             };

@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.UI.runner;
 
 import com.intellij.coldFusion.CfmlBundle;
@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 
-public class CfmlRunner extends GenericProgramRunner {
+final class CfmlRunner extends GenericProgramRunner {
   @Override
   protected RunContentDescriptor doExecute(@NotNull RunProfileState state, @NotNull ExecutionEnvironment env) {
     final RunProfile runProfileRaw = env.getRunProfile();
@@ -33,7 +33,8 @@ public class CfmlRunner extends GenericProgramRunner {
       //check if CfmlRunConfiguration generated from default server http://localhost:8500/
       if (runProfile.isFromDefaultHost()) {
         showDefaultRunConfigWarn(env, runProfile);
-      } else {
+      }
+      else {
         final CfmlRunnerParameters params = runProfile.getRunnerParameters();
         BrowserLauncher.getInstance().browse(params.getUrl(), params.getCustomBrowser(), env.getProject());
       }

@@ -1,0 +1,1 @@
+<cart.js:(1371,1390):(1,18)>	('pushProductToCart', { id: product.id })

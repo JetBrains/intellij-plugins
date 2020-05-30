@@ -17,8 +17,7 @@ public class Angular2NgContentDescriptor extends Angular2TagDescriptor {
   }
 
   @Override
-  @NotNull
-  public XmlAttributeDescriptor[] getAttributesDescriptors(@Nullable XmlTag context) {
+  public XmlAttributeDescriptor @NotNull [] getAttributesDescriptors(@Nullable XmlTag context) {
     return context != null
            ? new XmlAttributeDescriptor[]{Angular2AttributeDescriptor.create(context, ATTR_SELECT)}
            : XmlAttributeDescriptor.EMPTY;

@@ -16,10 +16,10 @@ class YamlParserTest : LightPlatformCodeInsightTestCase() {
 
   fun runTest(name: String) {
     configureByFile("$name.yaml")
-    val parsed = CloudFormationParser.parse(myFile)
+    val parsed = CloudFormationParser.parse(file)
     TestUtil.checkContent(
         File(testDataPath, "$name.expected"),
-        TestUtil.renderProblems(myFile, parsed.problems) + SystemUtils.LINE_SEPARATOR + TestUtil.nodeToString(parsed.root)
+        TestUtil.renderProblems(file, parsed.problems) + SystemUtils.LINE_SEPARATOR + TestUtil.nodeToString(parsed.root)
     )
   }
 

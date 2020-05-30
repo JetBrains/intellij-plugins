@@ -1,10 +1,10 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang
 
+import com.intellij.lang.javascript.JSTestOptions
 import com.intellij.lang.javascript.JavaScriptFormatterTest
 import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
-import com.intellij.lang.javascript.modules.ES6ModulesDependenciesInspection
 import com.intellij.lang.javascript.modules.JSImportHighlightingAndCompletionLightTestBase
 import com.intellij.lang.typescript.intentions.TypeScriptAddImportStatementFix
 import com.intellij.util.Consumer
@@ -16,13 +16,7 @@ class VueModuleImportTest : JSImportHighlightingAndCompletionLightTestBase() {
   override fun getBasePath(): String = BASE_PATH
   override fun getExtension(): String = "vue"
   override fun getTestDataPath(): String = getVueTestDataPath() + basePath
-
-  override fun setUp() {
-    super.setUp()
-
-    myFixture.enableInspections(ES6ModulesDependenciesInspection())
-  }
-
+  
   fun testTypesModule() {
     doTestWithCopyDirectory()
   }
@@ -65,6 +59,17 @@ class VueModuleImportTest : JSImportHighlightingAndCompletionLightTestBase() {
 
   fun testSimpleVarFromES6() {
     doTestWithCopyDirectory()
+    checkAfterFile(extension)
+  }
+
+  fun testSimpleJSConfig() {
+    doTestWithCopyDirectory()
+    checkAfterFile(extension)
+  }
+
+  @JSTestOptions(selectLookupItem = 0)
+  fun testEnumImport() {
+    doTestWithCopyDirectory(1, true, extension)
     checkAfterFile(extension)
   }
 }

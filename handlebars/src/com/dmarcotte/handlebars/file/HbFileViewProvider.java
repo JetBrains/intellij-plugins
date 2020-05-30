@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.dmarcotte.handlebars.file;
 
 import com.dmarcotte.handlebars.HbLanguage;
@@ -15,12 +16,12 @@ import com.intellij.psi.impl.source.PsiFileImpl;
 import com.intellij.psi.templateLanguages.ConfigurableTemplateLanguageFileViewProvider;
 import com.intellij.psi.templateLanguages.TemplateDataElementType;
 import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.util.containers.ContainerUtil;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import static com.dmarcotte.handlebars.parsing.HbTokenTypes.CONTENT;
@@ -32,7 +33,7 @@ public class HbFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvi
   private final Language myBaseLanguage;
   private final Language myTemplateLanguage;
 
-  private static final ConcurrentMap<String, TemplateDataElementType> TEMPLATE_DATA_TO_LANG = ContainerUtil.newConcurrentMap();
+  private static final ConcurrentMap<String, TemplateDataElementType> TEMPLATE_DATA_TO_LANG = new ConcurrentHashMap<>();
 
   private static TemplateDataElementType getTemplateDataElementType(Language lang) {
     TemplateDataElementType result = TEMPLATE_DATA_TO_LANG.get(lang.getID());
@@ -74,14 +75,13 @@ public class HbFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvi
     return false;
   }
 
-  @NotNull
-  private static Language getTemplateDataLanguage(PsiManager manager, VirtualFile file) {
+  private static @NotNull Language getTemplateDataLanguage(PsiManager manager, VirtualFile file) {
     Language dataLang = TemplateDataLanguageMappings.getInstance(manager.getProject()).getMapping(file);
     if (dataLang == null) {
       dataLang = HbLanguage.getDefaultTemplateLang().getLanguage();
     }
 
-    Language substituteLang = LanguageSubstitutors.INSTANCE.substituteLanguage(dataLang, file, manager.getProject());
+    Language substituteLang = LanguageSubstitutors.getInstance().substituteLanguage(dataLang, file, manager.getProject());
 
     // only use a substituted language if it's templateable
     if (TemplateDataLanguageMappings.getTemplateableLanguages().contains(substituteLang)) {
@@ -91,27 +91,23 @@ public class HbFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvi
     return dataLang;
   }
 
-  @NotNull
   @Override
-  public Language getBaseLanguage() {
+  public @NotNull Language getBaseLanguage() {
     return myBaseLanguage;
   }
 
-  @NotNull
   @Override
-  public Language getTemplateDataLanguage() {
+  public @NotNull Language getTemplateDataLanguage() {
     return myTemplateLanguage;
   }
 
-  @NotNull
   @Override
-  public Set<Language> getLanguages() {
-    return new THashSet<>(Arrays.asList(myBaseLanguage, getTemplateDataLanguage()));
+  public @NotNull Set<Language> getLanguages() {
+    return ContainerUtil.set(myBaseLanguage, getTemplateDataLanguage());
   }
 
-  @NotNull
   @Override
-  protected MultiplePsiFilesPerDocumentFileViewProvider cloneInner(@NotNull VirtualFile virtualFile) {
+  protected @NotNull MultiplePsiFilesPerDocumentFileViewProvider cloneInner(@NotNull VirtualFile virtualFile) {
     return new HbFileViewProvider(getManager(), virtualFile, false, myBaseLanguage, myTemplateLanguage);
   }
 
@@ -123,23 +119,33 @@ public class HbFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvi
     }
 
     if (lang.is(getTemplateDataLanguage())) {
-      PsiFileImpl file = (PsiFileImpl)parserDefinition.createFile(this);
-      file.setContentElementType(getTemplateDataElementType(getBaseLanguage()));
+      PsiFile file = parserDefinition.createFile(this);
+      IElementType type = getContentElementType(lang);
+      if (type != null) {
+        ((PsiFileImpl)file).setContentElementType(type);
+      }
       return file;
     }
     else if (lang.isKindOf(getBaseLanguage())) {
       return parserDefinition.createFile(this);
     }
-    else {
-      return null;
+    return null;
+  }
+
+  @Override
+  public IElementType getContentElementType(@NotNull Language language) {
+    if (language.is(getTemplateDataLanguage())) {
+      return getTemplateDataElementType(getBaseLanguage());
     }
+    return null;
   }
 
   private ParserDefinition getDefinition(Language lang) {
     ParserDefinition parserDefinition;
     if (lang.isKindOf(getBaseLanguage())) {
       parserDefinition = LanguageParserDefinitions.INSTANCE.forLanguage(lang.is(getBaseLanguage()) ? lang : getBaseLanguage());
-    } else {
+    }
+    else {
       parserDefinition = LanguageParserDefinitions.INSTANCE.forLanguage(lang);
     }
     return parserDefinition;

@@ -23,7 +23,7 @@ public class AngularNonEmptyNgContentInspection extends AngularHtmlLikeTemplateL
                                             || !el.getText().trim().isEmpty()) != null) {
         holder.registerProblem(tag, new TextRange(content[0].getTextRangeInParent().getStartOffset(),
                                                   content[content.length - 1].getTextRangeInParent().getEndOffset()),
-                               Angular2Bundle.message("angular.inspection.template.ng-content-with-content"),
+                               Angular2Bundle.message("angular.inspection.ng-content-with-content.message"),
                                new RemoveTagContentQuickFix()
         );
       }

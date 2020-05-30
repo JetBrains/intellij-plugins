@@ -18,7 +18,7 @@ public class DartMethodNameMacro extends DartMacroBase {
   }
 
   @Override
-  public Result calculateResult(@NotNull Expression[] params, final ExpressionContext context) {
+  public Result calculateResult(Expression @NotNull [] params, final ExpressionContext context) {
     final String containingFunctionName = getContainingFunctionName(context.getPsiElementAtStartOffset());
     return containingFunctionName == null ? null : new TextResult(containingFunctionName);
   }

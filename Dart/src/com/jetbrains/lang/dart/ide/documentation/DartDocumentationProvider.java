@@ -86,19 +86,19 @@ public class DartDocumentationProvider implements DocumentationProvider {
 
   @NotNull
   public static String buildHoverTextServer(@NotNull final HoverInformation hover) {
-    final String elementDescription = hover.getElementDescription();
+    final String elementDescription = StringUtil.trim(hover.getElementDescription());
     final String staticType = elementDescription == null || elementDescription.equals(hover.getStaticType()) ? null : hover.getStaticType();
-    final String containingLibraryName = hover.getContainingLibraryName();
+    final String containingLibraryName = StringUtil.trim(hover.getContainingLibraryName());
     return DartDocUtil.generateDoc(elementDescription, false, null, containingLibraryName, null, staticType, true);
   }
 
   @NotNull
   public static String generateDocServer(@NotNull final HoverInformation hover) {
-    final String elementDescription = hover.getElementDescription();
-    final String containingLibraryName = hover.getContainingLibraryName();
-    final String containingClassDescription = hover.getContainingClassDescription();
-    final String staticType = hover.getStaticType();
-    final String docText = hover.getDartdoc();
+    final String elementDescription = StringUtil.trim(hover.getElementDescription());
+    final String containingLibraryName = StringUtil.trim(hover.getContainingLibraryName());
+    final String containingClassDescription = StringUtil.trim(hover.getContainingClassDescription());
+    final String staticType = StringUtil.trim(hover.getStaticType());
+    final String docText = StringUtil.trim(hover.getDartdoc());
     return DartDocUtil
       .generateDoc(elementDescription, false, docText, containingLibraryName, containingClassDescription, staticType, false);
   }
@@ -176,8 +176,8 @@ public class DartDocumentationProvider implements DocumentationProvider {
 
   @Nullable
   private static HoverInformation getSingleHover(final PsiElement element) {
-    if (element != null) {
-      final PsiFile psiFile = element.getContainingFile();
+    final PsiFile psiFile = element == null ? null : element.getContainingFile();
+    if (psiFile != null) {
       final int offset = element.getTextOffset();
       return getSingleHover(psiFile, offset);
     }

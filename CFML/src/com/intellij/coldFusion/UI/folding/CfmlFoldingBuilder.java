@@ -45,8 +45,7 @@ import java.util.List;
  */
 public class CfmlFoldingBuilder implements FoldingBuilder, DumbAware {
   @Override
-  @NotNull
-  public FoldingDescriptor[] buildFoldRegions(@NotNull ASTNode node, @NotNull Document document) {
+  public FoldingDescriptor @NotNull [] buildFoldRegions(@NotNull ASTNode node, @NotNull Document document) {
     final PsiElement element = node.getPsi();
     if (element instanceof CfmlFile) {
       final CfmlFile file = (CfmlFile)element;

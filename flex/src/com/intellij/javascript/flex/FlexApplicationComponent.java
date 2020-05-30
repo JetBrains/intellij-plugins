@@ -2,7 +2,6 @@
 package com.intellij.javascript.flex;
 
 import com.intellij.flex.FlexCommonUtils;
-import com.intellij.icons.AllIcons;
 import com.intellij.javaee.ResourceRegistrar;
 import com.intellij.javaee.StandardResourceProvider;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
@@ -12,10 +11,7 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.MxmlFileType;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeImpl;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.fileTypes.FileTypeConsumer;
-import com.intellij.openapi.fileTypes.FileTypeFactory;
 import com.intellij.openapi.fileTypes.LanguageFileType;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.filters.position.NamespaceFilter;
 import com.intellij.psi.filters.position.RootTagFilter;
 import com.intellij.psi.meta.MetaDataContributor;
@@ -23,54 +19,14 @@ import com.intellij.psi.meta.MetaDataRegistrar;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-
 // In fact it is not an application component any more.
-public final class FlexApplicationComponent extends FileTypeFactory implements MetaDataContributor, StandardResourceProvider {
-  public static final FileType SWF_FILE_TYPE = new FileType() {
-    @Override
-    @NotNull
-    public String getName() {
-      return "SWF";
-    }
-
-    @Override
-    @NotNull
-    public String getDescription() {
-      return "Adobe Flash animation";
-    }
-
-    @Override
-    @NotNull
-    public String getDefaultExtension() {
-      return "swf";
-    }
-
-    @Override
-    public Icon getIcon() {
-      return AllIcons.FileTypes.JavaClass;
-    }
-
-    @Override
-    public boolean isBinary() {
-      return true;
-    }
-
-    @Override
-    public boolean isReadOnly() {
-      return true;
-    }
-
-    @Override
-    public String getCharset(@NotNull final VirtualFile file, @NotNull final byte[] content) {
-      return null;
-    }
-  };
+public final class FlexApplicationComponent implements MetaDataContributor, StandardResourceProvider {
+  public static final FileType SWF_FILE_TYPE = SwfFileType.SWF_FILE_TYPE;
 
   public static final Language DECOMPILED_SWF = new Language(JavaScriptSupportLoader.ECMA_SCRIPT_L4, "Decompiled SWF") {
   };
 
-  public static final LanguageFileType MXML = new MxmlFileType();
+  public static final LanguageFileType MXML = MxmlFileType.MXML;
 
   @NonNls public static final String HTTP_WWW_ADOBE_COM_2006_FLEX_CONFIG = "http://www.adobe.com/2006/flex-config";
 
@@ -86,13 +42,6 @@ public final class FlexApplicationComponent extends FileTypeFactory implements M
       FlexMxmlNSDescriptor.class
     );
   }
-
-  @Override
-  public void createFileTypes(final @NotNull FileTypeConsumer consumer) {
-    consumer.consume(SWF_FILE_TYPE, "swf");
-    consumer.consume(MXML, "mxml;fxg");
-  }
-
 
   @Override
   public void registerResources(ResourceRegistrar registrar) {

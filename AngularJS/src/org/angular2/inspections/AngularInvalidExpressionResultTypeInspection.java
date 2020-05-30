@@ -9,18 +9,17 @@ import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.types.JSTypeComparingContextService;
-import com.intellij.lang.typescript.resolve.TypeScriptGenericTypesEvaluator;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.util.ArrayUtil;
-import org.angular2.codeInsight.Angular2TypeEvaluator;
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
 import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.expr.psi.Angular2Binding;
 import org.angular2.lang.expr.psi.Angular2ElementVisitor;
 import org.angular2.lang.expr.psi.Angular2TemplateBinding;
 import org.angular2.lang.html.parser.Angular2AttributeType;
+import org.angular2.lang.types.Angular2PropertyBindingType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,14 +32,13 @@ import static com.intellij.util.ObjectUtils.tryCast;
 
 public class AngularInvalidExpressionResultTypeInspection extends LocalInspectionTool {
 
-  @NotNull
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
+  public @NotNull PsiElementVisitor buildVisitor(final @NotNull ProblemsHolder holder, boolean isOnTheFly) {
     return new Angular2ElementVisitor() {
       @Override
       public void visitAngular2Binding(Angular2Binding binding) {
         validateBinding(binding,
-                        (b, attribute) -> pair(b.getExpression(), Angular2TypeEvaluator.resolvePropertyType(attribute)),
+                        (b, attribute) -> pair(b.getExpression(), new Angular2PropertyBindingType(attribute)),
                         Angular2AttributeType.PROPERTY_BINDING,
                         Angular2AttributeType.BANANA_BOX_BINDING);
       }
@@ -55,7 +53,7 @@ public class AngularInvalidExpressionResultTypeInspection extends LocalInspectio
       private <T extends JSElement> void validateBinding(@Nullable T binding,
                                                          @NotNull BiFunction<T, XmlAttribute, Pair<JSExpression, JSType>>
                                                            getTypeAndExpression,
-                                                         @NotNull Angular2AttributeType... supportedTypes) {
+                                                         Angular2AttributeType @NotNull ... supportedTypes) {
         if (binding == null) {
           return;
         }
@@ -85,7 +83,7 @@ public class AngularInvalidExpressionResultTypeInspection extends LocalInspectio
         JSType actualType = JSResolveUtil.getElementJSType(expression, true);
         if (actualType != null
             && !expectedType.isDirectlyAssignableType(actualType, JSTypeComparingContextService.getProcessingContextWithCache(binding))) {
-          holder.registerProblem(expression, Angular2Bundle.message("angular.inspection.template.type-not-assignable",
+          holder.registerProblem(expression, Angular2Bundle.message("angular.inspection.invalid-expr-result-type.message",
                                                                     actualType.getTypeText(JSType.TypeTextFormat.PRESENTABLE),
                                                                     expectedType.getTypeText(JSType.TypeTextFormat.PRESENTABLE)));
         }

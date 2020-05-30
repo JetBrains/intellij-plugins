@@ -1,0 +1,4 @@
+<storefront-component.ts:(1764,1789):(8,25)>	(state, getters) => getters.getShippingMethod
+<storefront-component.ts:(1846,1871):(8,25)>	return getters.getShippingMethod
+<storefront-namespaced-component.ts:(1068,1093):(8,25)>	return getters.getShippingMethod
+<storefront-namespaced-component.ts:(986,1011):(8,25)>	(state, getters) => getters.getShippingMethod

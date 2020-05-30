@@ -57,13 +57,6 @@ public class DartPathPackageReferenceInspection extends LocalInspectionTool {
     return DartBundle.message("inspections.group.name");
   }
 
-  @Override
-  @Nls
-  @NotNull
-  public String getDisplayName() {
-    return DartBundle.message("path.package.reference.inspection.name");
-  }
-
   @NotNull
   @Override
   public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
@@ -77,7 +70,7 @@ public class DartPathPackageReferenceInspection extends LocalInspectionTool {
 
     return new PsiElementVisitor() {
       @Override
-      public void visitElement(final PsiElement element) {
+      public void visitElement(@NotNull final PsiElement element) {
         ProgressIndicatorProvider.checkCanceled();
 
         if (!(element instanceof YAMLKeyValue) ||

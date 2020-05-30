@@ -74,10 +74,9 @@ public class ExtendableClassConverterImpl extends ExtendableClassConverter {
   }
 
   @Override
-  @NotNull
-  public PsiReference[] createReferences(final GenericDomValue<PsiClass> psiClassGenericDomValue,
-                                         final PsiElement element,
-                                         final ConvertContext context) {
+  public PsiReference @NotNull [] createReferences(final GenericDomValue<PsiClass> psiClassGenericDomValue,
+                                                   final PsiElement element,
+                                                   final ConvertContext context) {
     final ExtendClass extendClass = getExtendsAnnotation(psiClassGenericDomValue);
 
     // 1. "normal" JAVA classes

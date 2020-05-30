@@ -8,7 +8,6 @@ import com.intellij.patterns.PsiElementPattern;
 import com.intellij.psi.*;
 import com.intellij.psi.filters.ElementFilter;
 import com.intellij.psi.filters.position.FilterPattern;
-import com.intellij.util.ObjectUtils;
 import com.intellij.util.ProcessingContext;
 import org.angular2.lang.Angular2LangUtil;
 import org.angular2.lang.html.psi.Angular2HtmlNgContentSelector;
@@ -16,6 +15,9 @@ import org.angularjs.codeInsight.refs.AngularJSTemplateReferencesProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
+
+import static com.intellij.util.ObjectUtils.tryCast;
 import static org.angular2.Angular2DecoratorUtil.*;
 
 public class Angular2ReferencesContributor extends PsiReferenceContributor {
@@ -23,9 +25,8 @@ public class Angular2ReferencesContributor extends PsiReferenceContributor {
   @Override
   public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
     registrar.registerReferenceProvider(STYLE_PATTERN, new PsiReferenceProvider() {
-      @NotNull
       @Override
-      public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+      public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
         return new AngularJSTemplateReferencesProvider.Angular2SoftFileReferenceSet(element).getAllReferences();
       }
     });
@@ -45,19 +46,13 @@ public class Angular2ReferencesContributor extends PsiReferenceContributor {
     PlatformPatterns.psiElement(JSLiteralExpression.class).and(new FilterPattern(new ElementFilter() {
       @Override
       public boolean isAcceptable(Object element, @Nullable PsiElement context) {
-        if (element instanceof JSLiteralExpression) {
-          final JSLiteralExpression literal = (JSLiteralExpression)element;
-          if (literal.isQuotedLiteral() && literal.getParent() instanceof JSArgumentList) {
-            final JSCallExpression call = ObjectUtils.tryCast(literal.getParent().getParent(), JSCallExpression.class);
-            if (call != null && call.getParent() instanceof ES6Decorator) {
-              JSReferenceExpression ref = ObjectUtils.tryCast(call.getMethodExpression(), JSReferenceExpression.class);
-              return ref != null
-                     && VIEW_CHILD_DEC.equals(ref.getReferenceName())
-                     && Angular2LangUtil.isAngular2Context(literal);
-            }
-          }
-        }
-        return false;
+        return Optional.ofNullable(tryCast(element, JSLiteralExpression.class))
+          .filter(literal -> literal.isQuotedLiteral())
+          .map(literal -> tryCast(literal.getParent(), JSArgumentList.class))
+          .map(list -> tryCast(list.getParent(), JSCallExpression.class))
+          .map(call -> tryCast(call.getParent(), ES6Decorator.class))
+          .map(decorator -> isAngularEntityDecorator(decorator, VIEW_CHILD_DEC, VIEW_CHILDREN_DEC))
+          .orElse(false);
       }
 
       @Override
@@ -73,7 +68,7 @@ public class Angular2ReferencesContributor extends PsiReferenceContributor {
           final JSLiteralExpression literal = (JSLiteralExpression)element;
           if (literal.isQuotedLiteral()) {
             if ((literal.getParent() instanceof JSArrayLiteralExpression)) {
-              final JSProperty property = ObjectUtils.tryCast(literal.getParent().getParent(), JSProperty.class);
+              final JSProperty property = tryCast(literal.getParent().getParent(), JSProperty.class);
               if (property != null && STYLE_URLS_PROP.equals((property).getName())) {
                 return Angular2LangUtil.isAngular2Context(literal);
               }
@@ -95,8 +90,7 @@ public class Angular2ReferencesContributor extends PsiReferenceContributor {
       @Override
       public boolean isAcceptable(Object element, @Nullable PsiElement context) {
         return element instanceof PsiElement
-               && isLiteralInNgDecorator((PsiElement)element, propertyName, decoratorNames)
-               && Angular2LangUtil.isAngular2Context((PsiElement)element);
+               && isLiteralInNgDecorator((PsiElement)element, propertyName, decoratorNames);
       }
 
       @Override

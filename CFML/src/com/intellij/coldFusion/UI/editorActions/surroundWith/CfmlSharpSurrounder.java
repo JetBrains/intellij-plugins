@@ -30,12 +30,12 @@ public class CfmlSharpSurrounder implements Surrounder {
   }
 
   @Override
-  public boolean isApplicable(@NotNull final PsiElement[] elements) {
+  public boolean isApplicable(final PsiElement @NotNull [] elements) {
     return true;
   }
 
   @Override
-  public TextRange surroundElements(@NotNull Project project, @NotNull Editor editor, @NotNull PsiElement[] elements) {
+  public TextRange surroundElements(@NotNull Project project, @NotNull Editor editor, PsiElement @NotNull [] elements) {
     return surroundSelection(editor);
   }
 

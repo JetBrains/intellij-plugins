@@ -157,7 +157,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
             PsiElement grandParent = parent2 instanceof JSVarStatement ? parent2.getParent() : null;
             if (grandParent instanceof JSForInStatement &&
                 ((JSForInStatement)grandParent).isForEach() &&
-                parent2 == ((JSForInStatement)grandParent).getDeclarationStatement()
+                parent2 == ((JSForInStatement)grandParent).getVarDeclaration()
               ) {
               JSExpression expression = ((JSForInStatement)grandParent).getCollectionExpression();
               if (expression != null) {

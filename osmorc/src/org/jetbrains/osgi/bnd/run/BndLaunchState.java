@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.osgi.bnd.run;
 
 import aQute.bnd.build.ProjectLauncher;
@@ -26,8 +26,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileAttributes;
 import com.intellij.openapi.util.io.FileSystemUtil;
 import com.intellij.task.ProjectTaskContext;
-import com.intellij.task.ProjectTaskResult;
-import com.intellij.util.messages.MessageBusConnection;
+import com.intellij.util.messages.SimpleMessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -101,7 +100,7 @@ public class BndLaunchState extends JavaCommandLineState implements CompilationS
   protected OSProcessHandler startProcess() throws ExecutionException {
     OSProcessHandler handler = super.startProcess();
 
-    MessageBusConnection connection = myProject.getMessageBus().connect();
+    SimpleMessageBusConnection connection = myProject.getMessageBus().simpleConnect();
     connection.subscribe(CompilerTopics.COMPILATION_STATUS, this);
 
     HotSwapUI hotSwapManager = HotSwapUI.getInstance(myProject);
@@ -151,7 +150,7 @@ public class BndLaunchState extends JavaCommandLineState implements CompilationS
   public void fileGenerated(@NotNull String outputRoot, @NotNull String relativePath) { }
 
   @Override
-  public boolean shouldHotSwap(@NotNull ProjectTaskContext context, @NotNull ProjectTaskResult finishedTasksResult) {
+  public boolean shouldHotSwap(@NotNull ProjectTaskContext context) {
     return false;
   }
 }

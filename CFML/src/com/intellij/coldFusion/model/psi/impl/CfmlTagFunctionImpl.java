@@ -31,8 +31,7 @@ public class CfmlTagFunctionImpl extends CfmlNamedTagImpl implements CfmlFunctio
   }
 
   @Override
-  @NotNull
-  public CfmlParameter[] getParameters() {
+  public CfmlParameter @NotNull [] getParameters() {
     return findChildrenByClass(CfmlParameter.class);
   }
 

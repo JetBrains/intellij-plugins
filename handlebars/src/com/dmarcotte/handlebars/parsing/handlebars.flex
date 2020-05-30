@@ -23,15 +23,15 @@ import com.intellij.util.containers.Stack;
 %{
     private Stack<Integer> stack = new Stack<>();
 
-        public void yypushState(int newState) {
-          stack.push(yystate());
-          yybegin(newState);
-        }
+    public void yypushState(int newState) {
+      stack.push(yystate());
+      yybegin(newState);
+    }
 
-        public void yypopState() {
-          yybegin(stack.pop());
-        }
-    %}
+    public void yypopState() {
+      yybegin(stack.pop());
+    }
+%}
 
 LineTerminator = \r|\n|\r\n
 WhiteSpace = {LineTerminator} | [ \t\f]

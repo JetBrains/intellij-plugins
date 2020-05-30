@@ -1,1 +1,0 @@
-<template>This is {{interpolation}} in text, and {{another}}{{two}}</template>

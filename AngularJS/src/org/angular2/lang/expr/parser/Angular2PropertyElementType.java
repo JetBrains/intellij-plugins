@@ -30,15 +30,13 @@ public class Angular2PropertyElementType extends JSPropertyElementType {
     return new Angular2PropertyImpl(node);
   }
 
-  @NotNull
   @Override
-  public JSPropertyStub createStub(@NotNull JSProperty psi, StubElement parentStub) {
+  public @NotNull JSPropertyStub createStub(@NotNull JSProperty psi, StubElement parentStub) {
     return new Angular2PropertyStubImpl(psi, parentStub, this);
   }
 
-  @NotNull
   @Override
-  public JSPropertyStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+  public @NotNull JSPropertyStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
     return new Angular2PropertyStubImpl(dataStream, parentStub, this);
   }
 

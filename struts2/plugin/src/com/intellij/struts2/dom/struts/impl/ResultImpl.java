@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 The authors
+ * Copyright 2019 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -45,5 +45,11 @@ public abstract class ResultImpl implements Result {
 
     final StrutsPackage strutsPackage = getParentOfType(StrutsPackage.class, true);
     return strutsPackage != null ? strutsPackage.searchDefaultResultType() : null;
+  }
+
+  @Override
+  public String getNameOrDefault() {
+    final String resultName = getName().getStringValue();
+    return resultName != null ? resultName : Result.DEFAULT_NAME;
   }
 }

@@ -51,9 +51,8 @@ public class ActionScriptReferenceContributor extends PsiReferenceContributor {
         return true;
       }
     })), new PsiReferenceProvider() {
-      @NotNull
       @Override
-      public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+      public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
         String value = element.getText();
         if (FlexCssUtil.inQuotes(value)) {
           return new PsiReference[]{new CssPropertyValueReference(element)};
@@ -87,9 +86,8 @@ public class ActionScriptReferenceContributor extends PsiReferenceContributor {
         return true;
       }
     })), new PsiReferenceProvider() {
-      @NotNull
       @Override
-      public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+      public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
         String value = element.getText();
         if (FlexCssUtil.inQuotes(value)) {
           return new PsiReference[]{new CssClassValueReference(element)};
@@ -126,9 +124,8 @@ public class ActionScriptReferenceContributor extends PsiReferenceContributor {
         return true;
       }
     })), new PsiReferenceProvider() {
-      @NotNull
       @Override
-      public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+      public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
         String value = element.getText();
         if (FlexCssUtil.inQuotes(value)) {
           return new PsiReference[]{new CssClassValueReference(element)};

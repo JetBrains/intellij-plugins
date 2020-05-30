@@ -59,6 +59,7 @@ public class Angular2MetadataModuleExportStub extends Angular2MetadataElementStu
       })
       .nonNull()
       .mapToEntry(p -> p.first, p -> p.second)
+      .distinct()
       .toImmutableMap();
   }
 
@@ -80,13 +81,11 @@ public class Angular2MetadataModuleExportStub extends Angular2MetadataElementStu
     }
   }
 
-  @Nullable
-  public String getFrom() {
+  public @Nullable String getFrom() {
     return StringRef.toString(myFrom);
   }
 
-  @NotNull
-  public Map<String, String> getExportMappings() {
+  public @NotNull Map<String, String> getExportMappings() {
     return myExportMappings;
   }
 

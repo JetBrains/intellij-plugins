@@ -6,13 +6,11 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiJavaFile;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaCodeInsightTestCase;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
-import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 
 import java.util.List;
 
 public class CucumberGotoRelatedFileTest extends CucumberJavaCodeInsightTestCase {
   public void testGotoRelated() {
-    CucumberStepsIndex.getInstance(getProject()).reset();
     myFixture.copyDirectoryToProject("gotoRelated", "");
     myFixture.configureByFile("gotoRelated/test.feature");
     List<GotoRelatedItem> items = GotoRelatedSymbolAction.getItems(myFixture.getFile(), myFixture.getEditor(), null);

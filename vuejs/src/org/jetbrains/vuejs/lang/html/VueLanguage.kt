@@ -2,17 +2,14 @@
 package org.jetbrains.vuejs.lang.html
 
 import com.intellij.lang.html.HTMLLanguage
-import com.intellij.lang.xml.XMLLanguage
-import org.jetbrains.annotations.ApiStatus
+import com.intellij.openapi.fileTypes.LanguageFileType
 
-class VueLanguage : org.jetbrains.vuejs.VueLanguage() {
+class VueLanguage : HTMLLanguage(HTMLLanguage.INSTANCE, "Vue") {
   companion object {
     val INSTANCE: VueLanguage = VueLanguage()
   }
-}
 
-// This class is the original `VueLanguage` class,
-// but it's renamed to allow instanceof check through deprecated class from 'vuejs' package
-@Deprecated("Public for internal purpose only!")
-@ApiStatus.ScheduledForRemoval(inVersion = "2019.3")
-open class _VueLanguage : XMLLanguage(HTMLLanguage.INSTANCE, "Vue")
+  override fun getAssociatedFileType(): LanguageFileType? {
+    return VueFileType.INSTANCE
+  }
+}

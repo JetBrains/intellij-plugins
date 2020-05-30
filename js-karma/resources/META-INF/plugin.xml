@@ -10,7 +10,7 @@
   Integration with <a href="http://karma-runner.github.io/">Karma</a>, a spectacular test runner for JavaScript
   ]]></description>
   <vendor>JetBrains</vendor>
-  <category>HTML/JavaScript Development</category>
+  <category>JavaScript Frameworks and Tools</category>
 
   <depends>com.intellij.modules.lang</depends>
   <depends>JavaScript</depends>
@@ -23,12 +23,14 @@
     <configurationType implementation="com.intellij.javascript.karma.execution.KarmaConfigurationType"/>
     <programRunner implementation="com.intellij.javascript.karma.execution.KarmaRunProgramRunner"/>
     <psi.referenceContributor language="JavaScript" implementation="com.intellij.javascript.karma.config.KarmaConfigReferenceContributor"/>
-    <localInspection groupPath="JavaScript"
-                     groupName="Unit testing"
-                     displayName="Karma configuration file"
+    <localInspection groupPath="JavaScript and TypeScript"
+                     groupBundle="messages.JavaScriptBundle" groupKey="js.testing.inspection.group.name"
+                     key="inspection.karma.config"
+                     bundle="messages.KarmaBundle"
                      shortName="KarmaConfigFile"
                      enabledByDefault="true"
                      level="WARNING"
+                     language="JavaScript"
                      implementationClass="com.intellij.javascript.karma.config.KarmaConfigFileInspection"
     />
     <runConfigurationProducer implementation="com.intellij.javascript.karma.execution.KarmaRunConfigurationProducer"/>
@@ -38,5 +40,4 @@
   <extensions defaultExtensionNs="JavaScript">
     <runConfigurationBuilder implementation="com.intellij.javascript.karma.execution.KarmaRunConfigurationBuilder"/>
   </extensions>
-
 </idea-plugin>

@@ -1,6 +1,5 @@
 package com.intellij.javascript.flex.mxml;
 
-import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.icons.AllIcons;
@@ -26,12 +25,12 @@ import java.util.List;
 public class XmlBackedClassLineMarkerProvider implements LineMarkerProvider {
 
   @Override
-  public LineMarkerInfo getLineMarkerInfo(@NotNull PsiElement element) {
+  public LineMarkerInfo<?> getLineMarkerInfo(@NotNull PsiElement element) {
     return null;
   }
 
   @Override
-  public void collectSlowLineMarkers(@NotNull List<PsiElement> elements, @NotNull Collection<LineMarkerInfo> result) {
+  public void collectSlowLineMarkers(@NotNull List<? extends PsiElement> elements, @NotNull Collection<? super LineMarkerInfo<?>> result) {
     for (PsiElement element : elements) {
       ProgressManager.checkCanceled();
       PsiElement parent = element.getParent();
@@ -46,7 +45,6 @@ public class XmlBackedClassLineMarkerProvider implements LineMarkerProvider {
         XmlToken nameElement = XmlTagUtil.getStartTagNameElement((XmlTag)parent);
         if (classQuery.findFirst() != null && nameElement != null) {
           result.add(new LineMarkerInfo<>(element, nameElement.getTextRange(), AllIcons.Gutter.OverridenMethod,
-                                          Pass.LINE_MARKERS,
                                           JavaScriptLineMarkerProvider.ourClassInheritorsTooltipProvider,
                                           JavaScriptLineMarkerProvider.ourClassInheritorsNavHandler, GutterIconRenderer.Alignment.RIGHT));
         }

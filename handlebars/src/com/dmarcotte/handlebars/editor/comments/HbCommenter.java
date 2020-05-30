@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.dmarcotte.handlebars.editor.comments;
 
 import com.dmarcotte.handlebars.HbLanguage;
@@ -47,10 +48,7 @@ public class HbCommenter implements Commenter {
 
   private static Commenter getCommenter() {
     Language commenterLanguage = HbConfig.getCommenterLanguage();
-    if (commenterLanguage == null) {
-      commenterLanguage = HbLanguage.getDefaultTemplateLang().getLanguage();
-    }
-    else if (commenterLanguage.isKindOf(HbLanguage.INSTANCE)) {
+    if (commenterLanguage.isKindOf(HbLanguage.INSTANCE)) {
       return ourHandlebarsCommenter;
     }
 

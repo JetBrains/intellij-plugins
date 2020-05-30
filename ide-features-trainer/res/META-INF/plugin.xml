@@ -1,0 +1,87 @@
+<idea-plugin>
+  <id>training</id>
+  <name>IDE Features Trainer</name>
+  <vendor>JetBrains</vendor>
+
+  <description><![CDATA[
+        <p>Learn basic shortcuts and essential features interactively — right inside the IDE. No need to read long manuals or look for screencasts. Just install this plugin, open the IDE, and go to the Learn tool window to start training.</p>
+
+        <p>Found a bug or have a feature to suggest? Welcome to the tracker: <a href="https://youtrack.jetbrains.com/newIssue?project=IFT&description=**Description%3A**%20_Write%20description%20here_%0A%0A**Plugin%20version%3A**%20_Write%20plugin%20version%20here_">https://youtrack.jetbrains.com/issues/IFT</a></p>
+    ]]></description>
+
+  <depends optional="true" config-file="java-deps.xml">com.intellij.modules.java</depends>
+  <depends optional="true" config-file="ruby-deps.xml">com.intellij.modules.ruby</depends>
+  <depends optional="true" config-file="python-deps.xml">com.intellij.modules.python</depends>
+  <depends optional="true" config-file="swift-deps.xml">com.intellij.modules.cidr.lang</depends>
+  <depends optional="true" config-file="javascript-deps.xml">JavaScript</depends>
+
+  <projectListeners>
+    <listener class="training.editor.LearnProjectFileEditorListener"
+              topic="com.intellij.openapi.fileEditor.FileEditorManagerListener"/>
+  </projectListeners>
+
+  <extensionPoints>
+    <extensionPoint name="TrainingLangExtension"
+                    beanClass="com.intellij.lang.LanguageExtensionPoint" dynamic="true">
+      <with attribute="implementationClass" implements="training.lang.LangSupport"/>
+    </extensionPoint>
+
+    <extensionPoint name="TrainingModules" beanClass="training.learn.TrainingModules" dynamic="true"/>
+  </extensionPoints>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <actionPromoter implementation="training.editor.actions.LearnActionPromoter"/>
+    <!-- groupId should be same to StatisticBase.GROUP_ID and version to StatisticBase.VERSION -->
+    <statistics.counterUsagesCollector groupId="ideFeaturesTrainer" version="4"/>
+    <statistics.validation.customWhiteListRule
+      implementation="training.statistic.IdeFeaturesTrainerRuleValidator"/>
+    <statistics.validation.customWhiteListRule
+      implementation="training.statistic.IdeFeaturesTrainerModuleRuleValidator"/>
+    <applicationService serviceImplementation="training.ui.welcomeScreen.recentProjects.IFTRecentProjectListActionProvider"/>
+    <welcomeFrameProvider implementation="training.ui.welcomeScreen.recentProjects.IFTFlatWelcomeFrameProvider" order="first"/>
+    <applicationService
+      serviceImplementation="training.learn.CourseManager"/>
+    <applicationService
+      serviceImplementation="training.lang.LangManager"/>
+    <applicationService
+      serviceImplementation="training.ui.welcomeScreen.recentProjects.actionGroups.GroupManager"/>
+    <applicationService
+      serviceImplementation="training.ui.UISettings"/>
+    <applicationService
+      serviceImplementation="training.learn.lesson.LessonStateBase"/>
+    <applicationService
+      serviceImplementation="training.statistic.StatisticBase"/>
+    <toolWindow id="Learn" icon="FeaturesTrainerIcons.FeatureTrainerToolWindow" factoryClass="training.ui.LearnToolWindowFactory"/>
+
+    <editorNotificationProvider implementation="training.ui.IncorrectLearningStateNotificationProvider"/>
+
+    <registryKey key="ideFeaturesTrainer.welcomeScreen.tutorialsTree" defaultValue="FALSE" restartRequired="true"
+                 description="When this option is enabled, welcome screen shows Tutorials along the Projects in the recent projects list, additional action link Learn IDE is disabled"/>
+
+    <applicationConfigurable groupId="tools" bundle="messages.LearnBundle" key="learn.options.panel.name" id="FeaturesTrainerSettingsPanel"
+                             instance="training.ui.FeaturesTrainerSettingsPanel"/>
+
+  </extensions>
+
+  <actions>
+    <action id="learn.next.lesson" class="training.actions.NextLessonAction" text="Next Lesson">
+      <keyboard-shortcut first-keystroke="alt shift RIGHT" keymap="$default"/>
+      <keyboard-shortcut first-keystroke="control shift RIGHT" keymap="Mac OS X 10.5+"/>
+      <keyboard-shortcut first-keystroke="control shift RIGHT" keymap="Mac OS X"/>
+    </action>
+    <!--TODO: REMOVE THIS ACTION BEFORE RELEASE-->
+    <action id="learn.open.chooseLang" text="Choose Lang" class="training.actions.ShowChooseLangPanelAction"/>
+
+    <!-- Help -->
+    <action id="ShowLearnPanel" class="training.actions.OpenLearnPanel" text="IDE Interactive Guide" icon="FeaturesTrainerIcons.FeatureTrainerToolWindow">
+      <add-to-group group-id="HelpMenu"/>
+    </action>
+  </actions>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <registryKey key="ide.features.trainer.mode"
+                 description="This is internal option to use different development modes"
+                 defaultValue="normal"
+                 restartRequired="false"/>
+  </extensions>
+</idea-plugin>

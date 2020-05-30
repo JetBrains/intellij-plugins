@@ -102,7 +102,7 @@
               <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text resource-bundle="com/intellij/lang/javascript/flex/FlexBundle" key="run.trusted"/>
+              <text resource-bundle="messages/FlexBundle" key="run.trusted"/>
             </properties>
           </component>
           <component id="9869d" class="com.intellij.ui.RawCommandLineEditor" binding="myEmulatorAdlOptionsEditor">

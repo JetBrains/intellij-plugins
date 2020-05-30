@@ -1,45 +1,26 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang
 
-import com.intellij.codeInsight.daemon.impl.analysis.XmlUnboundNsPrefixInspection
-import com.intellij.codeInspection.htmlInspections.*
-import com.intellij.htmltools.codeInspection.htmlInspections.HtmlDeprecatedAttributeInspection
-import com.intellij.htmltools.codeInspection.htmlInspections.HtmlDeprecatedTagInspection
-import com.intellij.lang.javascript.JSBundle
 import com.intellij.lang.javascript.JSTestUtils.testWithinLanguageLevel
+import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
-import com.intellij.lang.javascript.inspections.*
-import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection
+import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection
 import com.intellij.openapi.application.PathManager
+import com.intellij.psi.css.inspections.invalid.CssInvalidPseudoSelectorInspection
 import com.intellij.spellchecker.inspections.SpellCheckingInspection
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.util.ThrowableRunnable
-import com.intellij.xml.util.CheckEmptyTagInspection
-import com.sixrr.inspectjs.validity.ThisExpressionReferencesGlobalObjectJSInspection
+import com.intellij.xml.util.CheckTagEmptyBodyInspection
 import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.html.VueFileType
 
 class VueHighlightingTest : BasePlatformTestCase() {
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/"
+  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/highlighting"
 
   override fun setUp() {
     super.setUp()
-    myFixture.enableInspections(HtmlDeprecatedAttributeInspection(),
-                                HtmlDeprecatedTagInspection(),
-                                HtmlUnknownBooleanAttributeInspectionBase(),
-                                HtmlUnknownAttributeInspection(),
-                                HtmlUnknownTagInspection(),
-                                RequiredAttributesInspection(),
-                                JSUnusedLocalSymbolsInspection(),
-                                JSAnnotatorInspection(),
-                                JSUnresolvedVariableInspection(),
-                                JSUnresolvedFunctionInspection(),
-                                ThisExpressionReferencesGlobalObjectJSInspection(),
-                                JSValidateTypesInspection(),
-                                TypeScriptValidateTypesInspection(),
-                                XmlUnboundNsPrefixInspection(),
-                                CheckEmptyTagInspection())
+    myFixture.enableInspections(VueInspectionsProvider())
   }
 
   fun testDirectivesWithoutParameters() {
@@ -239,6 +220,7 @@ const props = {seeMe: {}}
   }
 
   fun testCompRequiredAttributesTest() {
+    createPackageJsonWithVueDependency(myFixture)
     myFixture.configureByText("CompRequiredAttributesTest.vue", """
 <template>
     <div id="app">
@@ -276,6 +258,48 @@ const props = {seeMe: {}}
     myFixture.checkHighlighting()
   }
 
+  fun testCompRequiredAttributesTestTS() {
+    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureByText("CompRequiredAttributesTest.vue", """
+<template>
+    <div id="app">
+        <<warning descr="Element camelCase doesn't have required attribute one"><warning descr="Element camelCase doesn't have required attribute three"><warning descr="Element camelCase doesn't have required attribute two"><warning descr="Element camelCase doesn't have required attribute with-camel-case">camelCase</warning></warning></warning></warning> v-bind='<weak_warning descr="Unresolved variable or type incorrect">incorrect</weak_warning>'></<warning descr="Element camelCase doesn't have required attribute one"><warning descr="Element camelCase doesn't have required attribute three"><warning descr="Element camelCase doesn't have required attribute two"><warning descr="Element camelCase doesn't have required attribute with-camel-case">camelCase</warning></warning></warning></warning>>
+        <<warning descr="Element camelCase doesn't have required attribute three"><warning descr="Element camelCase doesn't have required attribute two"><warning descr="Element camelCase doesn't have required attribute with-camel-case">camelCase</warning></warning></warning> :one="5"></<warning descr="Element camelCase doesn't have required attribute three"><warning descr="Element camelCase doesn't have required attribute two"><warning descr="Element camelCase doesn't have required attribute with-camel-case">camelCase</warning></warning></warning>>
+        <camelCase one="test" two="2" three=3 with-camel-case="1" four=1></camelCase>
+        <camelCase one="test" v-bind:two="2" :three=3 withCamelCase="1"></camelCase>
+        <<warning descr="Element camelCase doesn't have required attribute three">camelCase</warning> v-bind:incorrect='0' v-bind='input'></<warning descr="Element camelCase doesn't have required attribute three">camelCase</warning>>
+        <camelCase v-bind:three='3' v-bind='input'></camelCase>
+        <camelCase one="test" v-bind:two="2" :three=3 withCamelCase="1" not-required=11></camelCase>
+        <<warning descr="Element camelCase doesn't have required attribute with-camel-case">camelCase</warning> one="test" v-bind:two="2" :three=3></<warning descr="Element camelCase doesn't have required attribute with-camel-case">camelCase</warning>>
+    </div>
+</template>
+<script lang='ts'>
+    import {Component, Prop} from "vue-property-decorator" 
+    
+    interface Foo {
+      one: string,
+      two: string,
+      withCamelCase: boolean
+    }
+    @Component({
+      name: 'camelCase',
+      props: {
+        one: {required:true},
+        withCamelCase: {required:true},
+      }
+    })
+    export default class MyComponent {
+      input: Foo
+
+      @Prop({required: true}) two
+      @Prop({required: true}) three
+      @Prop({required: false}) notRequired
+      
+    }
+</script>""")
+    myFixture.checkHighlighting()
+  }
+
   fun testRequiredAttributeWithModifierTest() {
     myFixture.configureByText("Definition.vue", """
 <script>
@@ -295,6 +319,49 @@ const props = {seeMe: {}}
   import Definition from './Definition';
   export default {
     components: { Definition },
+    data: function() {
+      return {
+        smtg() {}
+      };
+    }
+  }
+</script>
+""")
+    myFixture.checkHighlighting()
+  }
+
+  fun testRequiredAttributeWithVModel() {
+    myFixture.configureByText("Definition.vue", """
+<script>
+  export default {
+    props: {
+      propC: { type: String, required: true }
+    },
+    model: {
+      prop: "propC"
+    }
+  }
+</script>""")
+    myFixture.configureByText("Definition2.vue", """
+<script>
+  export default {
+    props: {
+      value: { type: String, required: true }
+    }
+  }
+</script>""")
+    myFixture.configureByText("RequiredAttributeWithModifierTest.vue", """
+<template>
+  <<warning descr="Element Definition doesn't have required attribute prop-c">Definition</warning>/>
+  <Definition v-model="smtg"/>
+  <<warning descr="Element Definition2 doesn't have required attribute value">Definition2</warning>/>
+  <Definition2 v-model="smtg"/>
+</template>
+<script>
+  import Definition from './Definition';
+  import Definition2 from './Definition2';
+  export default {
+    components: { Definition, Definition2 },
     data: function() {
       return {
         smtg() {}
@@ -576,8 +643,10 @@ Vue.component('global-comp-literal', {
   fun testVBindVOnHighlighting() {
     myFixture.configureByText("VBindHighlighting.vue", """
 <template>
-    <for-v-bind :class="2" v-bind:style="" :test-prop.camel="1" v-on:click="callMe" @copy="onCopy" ></for-v-bind>
+    <for-v-bind :class="2" v-bind:style="<error descr="expression expected">"</error> :test-prop.camel="1" v-on:click="callMe" @copy="onCopy" ></for-v-bind>
     <for-v-bind class="" style="" v-on:submit.prevent></for-v-bind>
+    <div <warning descr="Attribute @ is not allowed here">@</warning>="<weak_warning descr="Unresolved variable or type foo">foo</weak_warning>"></div>
+    <div <warning descr="Attribute : is not allowed here">:</warning>="<weak_warning descr="Unresolved variable or type foo">foo</weak_warning>"></div>
 </template>
 
 <script>
@@ -629,7 +698,8 @@ Vue.component('global-comp-literal', {
   }
 
   fun testCustomDirectives() {
-    directivesTestCase(myFixture)
+    myFixture.copyDirectoryToProject("../common/customDirectives", ".")
+    myFixture.configureFromTempProjectFile("CustomDirectives.vue")
     myFixture.checkHighlighting(true, false, true)
   }
 
@@ -648,7 +718,7 @@ Vue.component('global-comp-literal', {
 </template>
 """)
     val intentions = myFixture.filterAvailableIntentions(
-      JSBundle.message("javascript.create.variable.intention.name", "someNonExistingReference2389"))
+      JavaScriptBundle.message("javascript.create.variable.intention.name", "someNonExistingReference2389"))
     TestCase.assertTrue(intentions.isEmpty())
   }
 
@@ -658,7 +728,8 @@ Vue.component('global-comp-literal', {
 <div @click="<caret>notExistingF()"></div>
 </template>
 """)
-    val intentions = myFixture.filterAvailableIntentions(JSBundle.message("javascript.create.function.intention.name", "notExistingF"))
+    val intentions = myFixture.filterAvailableIntentions(
+      JavaScriptBundle.message("javascript.create.function.intention.name", "notExistingF"))
     TestCase.assertTrue(intentions.isEmpty())
   }
 
@@ -668,7 +739,8 @@ Vue.component('global-comp-literal', {
 <div @click="new <caret>NotExistingClass().a()"></div>
 </template>
 """)
-    val intentions = myFixture.filterAvailableIntentions(JSBundle.message("javascript.create.class.intention.name", "NotExistingClass"))
+    val intentions = myFixture.filterAvailableIntentions(
+      JavaScriptBundle.message("javascript.create.class.intention.name", "NotExistingClass"))
     TestCase.assertTrue(intentions.isEmpty())
   }
 
@@ -698,8 +770,8 @@ Vue.component('global-comp-literal', {
   <test-empty-tags/>
   <test-empty-tags></test-empty-tags>
 
-  <warning descr="Empty tag doesn't work in some browsers"><div/></warning>
-  <warning descr="Empty tag doesn't work in some browsers"><h1/></warning>
+  <div/>
+  <h1/>
   <img src="aaa.jpg"/>
 </template>
 
@@ -713,8 +785,7 @@ Vue.component('global-comp-literal', {
   }
 
   fun testBuiltinTagsHighlighting() {
-    createPackageJsonWithVueDependency(myFixture, "")
-    myFixture.copyDirectoryToProject("./types/node_modules", "./node_modules")
+    myFixture.configureDependencies(VueTestModule.VUE_2_5_3)
     myFixture.configureByText("BuiltinTagsHighlighting.vue", """
 <template>
     <transition-group>
@@ -806,13 +877,14 @@ Vue.component('global-comp-literal', {
   }
 
   fun testClassComponentAnnotationWithLocalComponent() {
+    createPackageJsonWithVueDependency(myFixture)
     createTwoClassComponents(myFixture)
     myFixture.configureByText("ClassComponentAnnotationWithLocalComponent.vue",
                               """
 <template>
   <LongVue/>
   <ShortComponent/>
-  <warning descr="Empty tag doesn't work in some browsers"><<warning descr="Unknown html tag UnknownComponent">UnknownComponent</warning>/></warning>
+  <<warning descr="Unknown html tag UnknownComponent">UnknownComponent</warning>/>
   <UsageComponent/>
 </template>
 <script>
@@ -834,6 +906,7 @@ export default class UsageComponent extends Vue {
   }
 
   fun testClassComponentAnnotationWithLocalComponentTs() {
+    createPackageJsonWithVueDependency(myFixture)
     myFixture.configureByText("vue.d.ts", "export interface Vue {};export class Vue {}")
     createTwoClassComponents(myFixture, true)
     myFixture.configureByText("ClassComponentAnnotationWithLocalComponentTs.vue",
@@ -841,7 +914,7 @@ export default class UsageComponent extends Vue {
   <template>
     <LongVue/>
     <ShortComponent/>
-    <warning descr="Empty tag doesn't work in some browsers"><<warning descr="Unknown html tag UnknownComponent">UnknownComponent</warning>/></warning>
+    <<warning descr="Unknown html tag UnknownComponent">UnknownComponent</warning>/>
     <UsageComponent/>
   </template>
   <script lang="ts">
@@ -933,7 +1006,7 @@ export default class UsageComponent extends Vue {
     myFixture.configureByText("LocalComponentExtendsInClassSyntax.vue", """
 <template>
     <<warning descr="Element CompForClass doesn't have required attribute prop-from-a2">CompForClass</warning> />
-    <warning descr="Empty tag doesn't work in some browsers"><<warning descr="Unknown html tag OtherCompForClass">OtherCompForClass</warning>/></warning>
+    <<warning descr="Unknown html tag OtherCompForClass">OtherCompForClass</warning>/>
 </template>
 
 <script>
@@ -1127,7 +1200,6 @@ import BComponent from 'b-component'
   }
 
   fun testEndTagNotForbidden() {
-    myFixture.enableInspections(HtmlExtraClosingTagInspection::class.java)
     myFixture.addFileToProject("input.vue", "<script>export default {name: 'Input'}</script>")
     myFixture.configureByText("foo.vue", """<template> <Input> </Input> </template>
       <script>
@@ -1138,7 +1210,6 @@ import BComponent from 'b-component'
   }
 
   fun testColonInEventName() {
-    myFixture.enableInspections(XmlUnboundNsPrefixInspection::class.java)
     myFixture.configureByText("foo.vue", """
       |<template>
       |  <div @update:property=''></div>
@@ -1157,30 +1228,64 @@ import BComponent from 'b-component'
     myFixture.configureByText("c-component.vue", """
 <script lang="ts">
 namespace <info descr="moduleName">space</info> {
-    export class <info descr="class">SpaceInterface</info> {
+    export class <info descr="exported class">SpaceInterface</info> {
     }
-    var <info descr="static field">i</info>:<info descr="class">SpaceInterface</info>;
+    var <info descr="static field">i</info>:<info descr="exported class">SpaceInterface</info>;
 }
-import <info descr="class">SpaceInterface</info> = <info descr="moduleName">space</info>.<info descr="class">SpaceInterface</info>;
-var <info descr="local variable">i</info>:<info descr="class">SpaceInterface</info>;
+import <info descr="exported class">SpaceInterface</info> = <info descr="moduleName">space</info>.<info descr="exported class">SpaceInterface</info>;
+var <info descr="global variable">i</info>:<info descr="exported class">SpaceInterface</info>;
 </script>
 """)
     myFixture.checkHighlighting(false, true, true)
   }
 
   fun testVSlotSyntax() {
+    // TODO add special inspection for unused slot scope parameters - WEB-43893
     myFixture.configureByText("c-component.vue", """
 <template>
   <div>
-    <div v-slot:name="propName"></div>
+    <div v-slot:name="propName">
+        {{ propName + <weak_warning descr="Unresolved variable or type wrongName">wrongName</weak_warning> }}
+    </div>
+    <div v-slot:name="{prop1, prop2}">
+        {{ prop1 + <weak_warning descr="Unresolved variable or type wrongName">wrongName</weak_warning>}}
+    </div>
     <div v-slot:name></div>
     <div v-slot="propName"></div>
     <div v-slot></div>
+    
+    <div #name="propName"></div>
+    <div #name></div>
     
     <div <warning descr="Attribute v-slots:name is not allowed here">v-slots:name</warning>="<weak_warning descr="Unresolved variable or type propName">propName</weak_warning>"></div>
     <div <warning descr="Attribute v-slots:name is not allowed here">v-slots:name</warning>></div>
     <div <warning descr="Attribute v-slots is not allowed here">v-slots</warning>="<weak_warning descr="Unresolved variable or type propName">propName</weak_warning>"></div>
     <div <warning descr="Attribute v-slots is not allowed here">v-slots</warning>></div>
+    
+    <div <warning descr="Attribute # is not allowed here">#</warning>="propName"></div>
+    <div <warning descr="Attribute # is not allowed here">#</warning>></div>
+  </div>
+</template>
+    """)
+    myFixture.checkHighlighting()
+  }
+
+  fun testSlotSyntax() {
+    // TODO add special inspection for unused slot scope parameters - WEB-43893
+    myFixture.configureByText("c-component.vue", """
+<template>
+  <div>
+    <div slot="name" slot-scope="propName">
+        {{ propName + <weak_warning descr="Unresolved variable or type wrongName">wrongName</weak_warning> }}
+    </div>
+    <div slot="name" slot-scope="{prop1, prop2}">
+        {{ prop1 }}
+    </div>
+    <div slot="name"></div>
+    <div slot-scope="propName"></div>
+    <div slot <warning descr="Wrong attribute value">slot-scope</warning>></div>
+    <div <warning descr="Attribute scope is not allowed here">scope</warning>="foo"></div>
+    <template scope="foo"></template>
   </div>
 </template>
     """)
@@ -1188,12 +1293,12 @@ var <info descr="local variable">i</info>:<info descr="class">SpaceInterface</in
   }
 
   fun testVueExtendSyntax() {
-    myFixture.copyDirectoryToProject("./types/node_modules", "./node_modules")
+    myFixture.configureDependencies(VueTestModule.VUE_2_5_3)
     myFixture.configureByText("a-component.vue", """<script>export default Vue.extend({props:{msg: String}})</script>""")
     myFixture.configureByText("b-component.vue", """
       <template>
         <HW msg="foo"/>
-        <warning descr="Empty tag doesn't work in some browsers"><<warning descr="Unknown html tag HW2">HW2</warning> msg="foo"/></warning>
+        <<warning descr="Unknown html tag HW2">HW2</warning> msg="foo"/>
       </template>
       <script>
         import HW from './a-component.vue'
@@ -1211,8 +1316,7 @@ var <info descr="local variable">i</info>:<info descr="class">SpaceInterface</in
   }
 
   fun testBootstrapVue() {
-    createPackageJsonWithVueDependency(myFixture, "\"bootstrap-vue\": \"latest\"")
-    myFixture.copyDirectoryToProject("libs/bootstrap-vue/node_modules", "./node_modules")
+    myFixture.configureDependencies(VueTestModule.BOOTSTRAP_VUE_2_0_0_RC_11)
     myFixture.configureByText("b-component.vue", """
       <template>
         <b-alert show>Foo</b-alert>
@@ -1254,8 +1358,8 @@ var <info descr="local variable">i</info>:<info descr="class">SpaceInterface</in
                   <li v-for="({name, price}, i) in list"> {{ i }}:{{ name }} - {{ price }}</li>
                   <li v-for="{name, price} in list"> {{ 111 }}:{{ name }} - {{ price }}</li>
                   <li v-for="(x, k, i) in list"> {{ k + i }}:{{ x.name }} - {{ x.price }}</li>
-                  <li v-for="(x, k, i<error descr="closing parenthesis expected"> </error>in list"> {{ k + i }}:{{ x.name }} - {{ x.price }}</li>
-                  <li v-for="(x, k, i<error descr="closing parenthesis expected">,</error> j) in list"> {{ k + i }}:{{ x.name }} - {{ x.price }}</li>
+                  <li v-for="(x, k, i<error descr=") expected"> </error>in list"> {{ k + i }}:{{ x.name }} - {{ x.price }}</li>
+                  <li v-for="(x, k, i<error descr=") expected">,</error> j) in list"> {{ k + i }}:{{ x.name }} - {{ x.price }}</li>
               </ul>
           </div>
       </template> 
@@ -1281,11 +1385,11 @@ var <info descr="local variable">i</info>:<info descr="class">SpaceInterface</in
   }
 
   fun testDirectivesWithParameters() {
-    myFixture.configureByText("a-component.vue","""
+    myFixture.configureByText("a-component.vue", """
       <template>
           <div>
               <a href="#" 
-                 v-clipboard:copy='code'
+                 v-clipboard:copy='<weak_warning descr="Unresolved variable or type code">code</weak_warning>'
                  <warning descr="Attribute v-unknown:foo is not allowed here">v-unknown:foo</warning>='<weak_warning descr="Unresolved variable or type bar">bar</weak_warning>'
                  <warning descr="Attribute foo:bar is not allowed here"><error descr="Namespace 'foo' is not bound">foo</error>:bar</warning>="test">
               </a>
@@ -1304,8 +1408,7 @@ var <info descr="local variable">i</info>:<info descr="class">SpaceInterface</in
   }
 
   fun testDirectiveWithModifiers() {
-    createPackageJsonWithVueDependency(myFixture, "\"bootstrap-vue\": \"latest\"")
-    myFixture.copyDirectoryToProject("libs/bootstrap-vue/node_modules", "./node_modules")
+    myFixture.configureDependencies(VueTestModule.BOOTSTRAP_VUE_2_0_0_RC_11)
     myFixture.configureByText("a-component.vue", """
       <template>
         <div>
@@ -1328,6 +1431,100 @@ var <info descr="local variable">i</info>:<info descr="class">SpaceInterface</in
     """)
     myFixture.checkHighlighting()
   }
+
+  fun testPropsWithOptions() {
+    myFixture.configureByFiles("propsWithOptions/usage.vue", "propsWithOptions/component.vue")
+    myFixture.checkHighlighting()
+  }
+
+  fun testFilters() {
+    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureByFile("filters.vue")
+    myFixture.checkHighlighting()
+  }
+
+  fun testEmptyTags() {
+    createPackageJsonWithVueDependency(myFixture)
+    myFixture.enableInspections(CheckTagEmptyBodyInspection())
+    myFixture.copyDirectoryToProject("emptyTags", ".")
+    for (file in listOf("test.vue", "test-html.html", "test-reg.html")) {
+      myFixture.configureFromTempProjectFile(file)
+      myFixture.checkHighlighting()
+    }
+  }
+
+  fun testComputedPropType() {
+    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureByFile("computedPropType.vue")
+    myFixture.checkHighlighting()
+  }
+
+  fun testPseudoSelectors() {
+    myFixture.enableInspections(CssInvalidPseudoSelectorInspection::class.java)
+    myFixture.configureByText("foo.vue", """
+      |<style lang="scss">
+      |    div::v-deep::<error descr="Unknown pseudo selector 'v-incorrect'">v-incorrect</error> {}
+      |</style  >""".trimMargin())
+    myFixture.checkHighlighting()
+  }
+
+  fun testPrivateMembersHighlighting() {
+    myFixture.enableInspections(JSUnusedGlobalSymbolsInspection::class.java)
+    myFixture.configureByFile("privateFields.vue")
+    myFixture.checkHighlighting()
+  }
+
+  fun testMultipleScriptTagsInHTML() {
+    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureByFile("htmlMultipleScripts.html")
+    myFixture.checkHighlighting()
+  }
+
+  fun testMultipleScriptTagsInVue() {
+    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureByFile("vueMultipleScripts.vue")
+    myFixture.checkHighlighting()
+  }
+
+  fun testCompositionApiBasic() {
+    myFixture.configureDependencies(VueTestModule.COMPOSITION_API_0_4_0)
+    myFixture.configureByFile("compositeComponent1.vue")
+    myFixture.checkHighlighting()
+    myFixture.configureByFile("compositeComponent2.vue")
+    myFixture.checkHighlighting()
+  }
+
+  fun testSimpleVueHtml() {
+    for (suffix in listOf("cdn", "cdn2", "cdn3", "cdn.js", "cdn@", "js", "deep")) {
+      myFixture.configureByFile("simple-vue/simple-vue-${suffix}.html")
+      myFixture.checkHighlighting(true, false, true)
+    }
+  }
+
+  fun testCommonJSSupport() {
+    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureByFile("module-exports.vue")
+    myFixture.checkHighlighting()
+  }
+
+  fun testComputedTypeTS() {
+    myFixture.configureDependencies(VueTestModule.VUE_2_6_10)
+    myFixture.configureByFile("computedTypeTS.vue")
+    myFixture.checkHighlighting()
+  }
+
+  fun testComputedTypeJS() {
+    myFixture.configureDependencies(VueTestModule.VUE_2_6_10)
+    myFixture.configureByFile("computedTypeJS.vue")
+    myFixture.checkHighlighting()
+  }
+
+  fun testDataTypeTS() {
+    myFixture.configureDependencies(VueTestModule.VUE_2_6_10)
+    myFixture.configureByFile("dataTypeTS.vue")
+    myFixture.checkHighlighting()
+  }
+
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {

@@ -35,15 +35,13 @@ public final class Angular2MetadataFileType extends MetadataJsonFileType {
     return false;
   }
 
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     return "Angular Metadata JSON";
   }
 
-  @NotNull
   @Override
-  public String getDescription() {
+  public @NotNull String getDescription() {
     return Angular2Bundle.message("angular.description.angular-metadata-json");
   }
 

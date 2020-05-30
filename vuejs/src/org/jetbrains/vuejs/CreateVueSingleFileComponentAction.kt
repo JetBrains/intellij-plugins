@@ -3,14 +3,13 @@ package org.jetbrains.vuejs
 
 import com.intellij.ide.actions.CreateFileFromTemplateAction
 import com.intellij.ide.actions.CreateFileFromTemplateDialog
-import com.intellij.lang.javascript.JavaScriptSupportLoader
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
 import icons.VuejsIcons
-import org.jetbrains.vuejs.index.hasVue
+import org.jetbrains.vuejs.context.isVueContext
 
 class CreateVueSingleFileComponentAction : CreateFileFromTemplateAction(VueBundle.message("vue.create.single.file.component.action.text"),
                                                                         VueBundle.message(
@@ -22,13 +21,14 @@ class CreateVueSingleFileComponentAction : CreateFileFromTemplateAction(VueBundl
   }
 
   override fun isAvailable(dataContext: DataContext): Boolean {
-    return super.isAvailable(dataContext) && hasVue(PlatformDataKeys.PROJECT.getData(dataContext) ?: return false)
+    return super.isAvailable(dataContext) && isVueContext(
+      PlatformDataKeys.PSI_ELEMENT.getData(dataContext) ?: return false)
   }
 
   override fun buildDialog(project: Project?, directory: PsiDirectory?, builder: CreateFileFromTemplateDialog.Builder?) {
     builder!!
       .setTitle("New $name")
-      .addKind(name, JavaScriptSupportLoader.JAVASCRIPT.icon, VUE_TEMPLATE_NAME)
+      .addKind(name, VuejsIcons.Vue, VUE_TEMPLATE_NAME)
   }
 
   override fun getActionName(directory: PsiDirectory?, newName: String, templateName: String?): String = "Create $name $newName"

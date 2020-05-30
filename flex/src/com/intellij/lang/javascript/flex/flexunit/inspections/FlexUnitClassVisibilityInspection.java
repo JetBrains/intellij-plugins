@@ -14,13 +14,6 @@ import org.jetbrains.annotations.NotNull;
 public class FlexUnitClassVisibilityInspection extends FlexUnitClassInspectionBase {
 
   @Override
-  @Nls
-  @NotNull
-  public String getDisplayName() {
-    return FlexBundle.message("flexunit.inspection.testclassvisibility.displayname");
-  }
-
-  @Override
   @NotNull
   public String getShortName() {
     return "FlexUnitClassVisibilityInspection";

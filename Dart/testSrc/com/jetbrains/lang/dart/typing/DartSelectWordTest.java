@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class DartSelectWordTest extends BasePlatformTestCase {
 
-  private void doTest(@NotNull final String before, @NotNull final String... after) {
+  private void doTest(@NotNull final String before, final String @NotNull ... after) {
     myFixture.configureByText("file.dart", before);
     final DataContext dataContext = DataManager.getInstance().getDataContext(myFixture.getEditor().getComponent());
     final SelectWordHandler handler = new SelectWordHandler(null);

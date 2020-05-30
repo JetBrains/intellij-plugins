@@ -1,0 +1,3 @@
+<getters.ts:(1626,1647):(8,21)>	getters.getCategories.find
+<getters.ts:(1870,1891):(8,21)>	getters.getCategories.find
+<storefront-component.ts:(604,619):(1,14)>	getCategories: 'getCategories'

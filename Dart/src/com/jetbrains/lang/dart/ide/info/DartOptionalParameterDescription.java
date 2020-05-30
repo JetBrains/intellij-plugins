@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.info;
 
 import com.intellij.psi.PsiElement;
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class DartOptionalParameterDescription {
+  @NotNull
   private final String myText;
   @Nullable
   private final String myValue;
@@ -54,6 +56,11 @@ public class DartOptionalParameterDescription {
 
     final PsiElement firstChild = formalParameters.getFirstChild();
     return firstChild != null && "[".equals(firstChild.getText());
+  }
+
+  @NotNull
+  public String getText() {
+    return myText;
   }
 
   @Override

@@ -17,10 +17,9 @@ import java.util.List;
  * @author Irina.Chernushina on 2/12/2016.
  */
 public class AngularJSUiRouterStatesReferencesProvider extends PsiReferenceProvider {
-  @NotNull
   @Override
-  public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
-    return new PsiReference[] {new AngularJSUiRouterStateReference(((XmlAttributeValue)element))};
+  public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+    return new PsiReference[]{new AngularJSUiRouterStateReference(((XmlAttributeValue)element))};
   }
 
   private static class AngularJSUiRouterStateReference extends CachingPolyReferenceBase<XmlAttributeValue> {
@@ -35,9 +34,8 @@ public class AngularJSUiRouterStatesReferencesProvider extends PsiReferenceProvi
       return text;
     }
 
-    @NotNull
     @Override
-    protected ResolveResult[] resolveInner() {
+    protected ResolveResult @NotNull [] resolveInner() {
       final String id = getStateName();
       if (StringUtil.isEmptyOrSpaces(id)) {
         return ResolveResult.EMPTY_ARRAY;

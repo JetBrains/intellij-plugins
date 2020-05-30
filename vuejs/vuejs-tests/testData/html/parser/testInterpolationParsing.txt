@@ -1,0 +1,82 @@
+HtmlFile:test.{{.}}.#@injected@#.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    PsiElement(VUE:INTERPOLATION_START)('{{')
+    ASTWrapperPsiElement(VueJS:INTERPOLATION_EXPR)
+      VueJSEmbeddedExpression
+        JSReferenceExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('foo')
+          PsiElement(JS:DOT)('.')
+          PsiElement(JS:IDENTIFIER)('bar')
+    PsiElement(VUE:INTERPOLATION_END)('}}')
+    PsiWhiteSpace('\n')
+    HtmlTag:div
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('div')
+      PsiWhiteSpace(' ')
+      PsiElement(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('v-bind:foo')
+        XmlToken:XML_EQ('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
+          ASTWrapperPsiElement(VueJS:EMBEDDED_EXPR)
+            VueJSEmbeddedExpression
+              JSObjectLiteralExpression
+                PsiElement(JS:LBRACE)('{')
+                PsiErrorElement:identifier or string literal or numeric literal expected
+                  <empty list>
+              JSObjectLiteralExpression
+                PsiElement(JS:LBRACE)('{')
+                ES6Property
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('bar')
+                PsiElement(JS:RBRACE)('}')
+              PsiErrorElement:Expected end of expression
+                <empty list>
+              PsiElement(JS:RBRACE)('}')
+          XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
+      PsiWhiteSpace(' ')
+      PsiElement(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('foo')
+        XmlToken:XML_EQ('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
+          PsiElement(VUE:INTERPOLATION_START)('{{')
+          ASTWrapperPsiElement(VueJS:INTERPOLATION_EXPR)
+            VueJSEmbeddedExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('bar')
+          PsiElement(VUE:INTERPOLATION_END)('}}')
+          XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
+      PsiWhiteSpace(' ')
+      PsiElement(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('foo2')
+        XmlToken:XML_EQ('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
+          PsiElement(VUE:INTERPOLATION_START)('{{')
+          ASTWrapperPsiElement(VueJS:INTERPOLATION_EXPR)
+            VueJSEmbeddedExpression
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('bar')
+          PsiElement(VUE:INTERPOLATION_END)('}}')
+          XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER(''')
+      XmlToken:XML_TAG_END('>')
+      XmlText
+        PsiWhiteSpace('\n  ')
+      PsiElement(VUE:INTERPOLATION_START)('{{')
+      ASTWrapperPsiElement(VueJS:INTERPOLATION_EXPR)
+        VueJSEmbeddedExpression
+          JSReferenceExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('foo')
+            PsiElement(JS:DOT)('.')
+            PsiElement(JS:IDENTIFIER)('bar')
+      PsiElement(VUE:INTERPOLATION_END)('}}')
+      XmlText
+        PsiWhiteSpace('\n')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('div')
+      XmlToken:XML_TAG_END('>')

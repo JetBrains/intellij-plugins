@@ -21,6 +21,7 @@ import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceHelper;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -85,7 +86,7 @@ public class FlexFileReferenceHelper extends FileReferenceHelper {
     }
 
     @Override
-    protected void applyFix(final Project project, final PsiElement psiElement, final PsiFile file, final Editor editor) {
+    protected void applyFix(final Project project, final PsiElement psiElement, @NotNull final PsiFile file, @Nullable final Editor editor) {
       final ASTNode oldValueNode = ((JSAttributeNameValuePair)psiElement).getValueNode();
       final String oldText = oldValueNode.getText();
       char quoteChar = oldText.length() > 0 ? oldText.charAt(0) : '"';

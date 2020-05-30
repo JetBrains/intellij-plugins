@@ -25,7 +25,7 @@ import com.intellij.util.xml.*;
  *
  * @author Yann C&eacute;bron
  */
-@Presentation(typeName = "Bean", icon = "AllIcons.Nodes.Ejb")
+@Presentation(typeName = "Bean", icon = "JavaUltimateIcons.Javaee.Ejb")
 public interface Bean extends DomElement {
 
   @NameValue(unique = false)
@@ -51,5 +51,4 @@ public interface Bean extends DomElement {
 
   @Attribute(value = "optional")
   GenericAttributeValue<Boolean> getOptional();
-
 }

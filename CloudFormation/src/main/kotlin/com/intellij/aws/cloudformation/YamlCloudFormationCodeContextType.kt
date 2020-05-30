@@ -5,7 +5,7 @@ import com.intellij.psi.PsiFile
 
 class YamlCloudFormationCodeContextType : TemplateContextType(
     "AWS_CLOUD_FORMATION_YAML",
-    CloudFormationBundle.getString("aws.cloudformation.template.context.type.yaml")) {
+    CloudFormationBundle.message("aws.cloudformation.template.context.type.yaml")) {
 
   override fun isInContext(file: PsiFile, offset: Int): Boolean {
     val fileType = file.viewProvider.fileType

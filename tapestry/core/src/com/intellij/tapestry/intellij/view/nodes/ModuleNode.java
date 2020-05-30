@@ -27,9 +27,8 @@ public class ModuleNode extends AbstractModuleNode {
     /**
      * {@inheritDoc}
      */
-    @NotNull
     @Override
-    public SimpleNode[] getChildren() {
+    public SimpleNode @NotNull [] getChildren() {
         final TreeSet<TapestryNode> children = new TreeSet<>(PackageNodesComparator.getInstance());
 
         final ModuleFileIndex moduleFileIndex = ModuleRootManager.getInstance((Module) getElement()).getFileIndex();

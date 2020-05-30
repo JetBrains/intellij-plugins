@@ -62,7 +62,7 @@ public class ActionScriptHighlightingInTextFieldTest extends JSDaemonAnalyzerTes
     myEditor = editorTextField.getEditor();
 
     try {
-      checkHighlighting(new ExpectedHighlightingData(editorTextField.getDocument(), true, true, true, myFile));
+      checkHighlighting(new ExpectedHighlightingData(editorTextField.getDocument(), true, true, true));
     }
     finally {
       editorTextField.removeNotify();

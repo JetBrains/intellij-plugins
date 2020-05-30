@@ -6,7 +6,6 @@ import com.intellij.psi.impl.source.tree.CompositeElement;
 import com.intellij.psi.stubs.*;
 import com.intellij.psi.tree.ICompositeElementType;
 import org.angular2.lang.html.Angular2HtmlLanguage;
-import org.angular2.lang.html.parser.Angular2HtmlStubElementTypes;
 import org.angular2.lang.html.psi.Angular2HtmlNgContentSelector;
 import org.angular2.lang.html.psi.impl.Angular2HtmlNgContentSelectorImpl;
 import org.angular2.lang.html.stub.impl.Angular2HtmlNgContentSelectorStubImpl;
@@ -24,9 +23,8 @@ public class Angular2HtmlNgContentSelectorElementType
   }
 
   @NonNls
-  @NotNull
   @Override
-  public String getExternalId() {
+  public @NotNull String getExternalId() {
     return "NG-HTML:" + super.toString();
   }
 
@@ -35,9 +33,9 @@ public class Angular2HtmlNgContentSelectorElementType
     ((Angular2HtmlNgContentSelectorStubImpl)stub).serialize(dataStream);
   }
 
-  @NotNull
   @Override
-  public Angular2HtmlNgContentSelectorStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+  public @NotNull Angular2HtmlNgContentSelectorStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub)
+    throws IOException {
     return new Angular2HtmlNgContentSelectorStubImpl(parentStub, dataStream);
   }
 
@@ -51,20 +49,17 @@ public class Angular2HtmlNgContentSelectorElementType
     return ((Angular2HtmlNgContentSelectorStubImpl)stub).createPsi();
   }
 
-  @NotNull
   @Override
-  public Angular2HtmlNgContentSelectorStub createStub(@NotNull Angular2HtmlNgContentSelector psi, StubElement parentStub) {
+  public @NotNull Angular2HtmlNgContentSelectorStub createStub(@NotNull Angular2HtmlNgContentSelector psi, StubElement parentStub) {
     return new Angular2HtmlNgContentSelectorStubImpl(psi, parentStub);
   }
 
-  @NotNull
   @Override
-  public ASTNode createCompositeNode() {
+  public @NotNull ASTNode createCompositeNode() {
     return new CompositeElement(Angular2HtmlStubElementTypes.NG_CONTENT_SELECTOR);
   }
 
-  @NotNull
-  public Angular2HtmlNgContentSelector createPsi(ASTNode node) {
+  public @NotNull Angular2HtmlNgContentSelector createPsi(ASTNode node) {
     return new Angular2HtmlNgContentSelectorImpl(node);
   }
 }

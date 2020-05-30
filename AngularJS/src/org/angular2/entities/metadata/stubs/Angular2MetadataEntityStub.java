@@ -3,11 +3,9 @@ package org.angular2.entities.metadata.stubs;
 
 import com.intellij.json.psi.JsonObject;
 import com.intellij.json.psi.JsonProperty;
-import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import org.angular2.entities.metadata.psi.Angular2MetadataEntity;
-import org.angular2.index.Angular2MetadataEntityClassNameIndex;
 import org.angular2.lang.metadata.psi.MetadataElementType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -32,15 +30,7 @@ public class Angular2MetadataEntityStub<Psi extends Angular2MetadataEntity> exte
     super(stream, parent, elementType);
   }
 
-  @Override
-  public void index(@NotNull IndexSink sink) {
-    super.index(sink);
-    if (getClassName() != null) {
-      sink.occurrence(Angular2MetadataEntityClassNameIndex.KEY, getClassName());
-    }
-  }
-
-  protected void stubDecoratorFields(@NotNull JsonObject initializer, @NotNull String... fields) {
+  protected void stubDecoratorFields(@NotNull JsonObject initializer, String @NotNull ... fields) {
     for (String name : fields) {
       JsonProperty property = initializer.findProperty(name);
       if (property != null) {

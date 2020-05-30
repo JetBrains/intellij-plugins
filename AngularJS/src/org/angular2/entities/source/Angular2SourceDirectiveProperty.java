@@ -22,15 +22,13 @@ public class Angular2SourceDirectiveProperty implements Angular2DirectivePropert
     assert mySignature.getMemberSource().getSingleElement() != null;
   }
 
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     return myName;
   }
 
-  @Nullable
   @Override
-  public JSType getType() {
+  public @Nullable JSType getType() {
     return mySignature.getJSType();
   }
 
@@ -39,9 +37,8 @@ public class Angular2SourceDirectiveProperty implements Angular2DirectivePropert
     return false;
   }
 
-  @NotNull
   @Override
-  public JSElement getSourceElement() {
+  public @NotNull JSElement getSourceElement() {
     return Objects.requireNonNull((JSElement)mySignature.getMemberSource().getSingleElement());
   }
 

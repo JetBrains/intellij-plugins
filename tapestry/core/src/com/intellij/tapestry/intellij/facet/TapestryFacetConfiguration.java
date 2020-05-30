@@ -34,8 +34,7 @@ public class TapestryFacetConfiguration implements FacetConfiguration {
     return new FacetEditorTab[]{new FacetEditor((TapestryFacet)editorContext.getFacet(), this)};
   }
 
-  @NotNull
-  public static LibraryInfo[] getLibraryInfos(@NotNull String versionId) {
+  public static LibraryInfo @NotNull [] getLibraryInfos(@NotNull String versionId) {
     final Artifact version = LibrariesDownloadAssistant.findVersion(versionId, getUrl());
 
     if (version != null) {

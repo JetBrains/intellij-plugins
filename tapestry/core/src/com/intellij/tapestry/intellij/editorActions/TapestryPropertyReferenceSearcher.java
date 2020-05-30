@@ -25,7 +25,6 @@ public class TapestryPropertyReferenceSearcher extends QueryExecutorBase<PsiRefe
     final PsiElement refElement = queryParameters.getElementToSearch();
     if (!(refElement instanceof PsiField)) return;
     final String name = ((PsiField)refElement).getName();
-    if (name == null) return;
     SearchScope searchScope = queryParameters.getEffectiveSearchScope();
     if (searchScope instanceof GlobalSearchScope) {
       searchScope = GlobalSearchScope.getScopeRestrictedByFileTypes((GlobalSearchScope)searchScope, TmlFileType.INSTANCE);

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.sdk;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
@@ -49,11 +49,14 @@ import java.util.Enumeration;
 
 public class DartConfigurable implements SearchableConfigurable, NoScroll {
 
-  private static final int WEBDEV_PORT_DEFAULT = 53322;
+  public static final int WEBDEV_PORT_DEFAULT = 53322;
   private static final String WEBDEV_PORT_PROPERTY_NAME = "dart.webdev.port";
 
   private static final String DART_SETTINGS_PAGE_ID = "dart.settings";
-  private static final String DART_SETTINGS_PAGE_NAME = DartBundle.message("dart.title");
+
+  private static final boolean ML_CODE_COMPLETION_DEFAULT_VALUE = false;
+  private static final String ML_CODE_COMPLETION_PROPERTY_NAME = "dart.analysis.ml.code.completion";
+  public static final String ML_CODE_COMPLETION_MIN_DART_SDK_VERSION = "2.5";
 
   private JPanel myMainPanel;
   private JBCheckBox myEnableDartSupportCheckBox;
@@ -66,6 +69,11 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
   private JBCheckBox myCheckSdkUpdateCheckBoxFake;
   private ComboBox<DartSdkUpdateOption> mySdkUpdateChannelCombo;
   private JButton myCheckSdkUpdateButton;
+
+  //private JBCheckBox myMLCodeCompletionCheckBox;
+  // disabled and unchecked, shown in UI instead of myMLCodeCompletionCheckBox if selected Dart SDK is older than 2.5
+  //private JBCheckBox myMLCodeCompletionCheckBoxFake;
+
   private PortField myPortField;
 
   private JBLabel myModulesPanelLabel;
@@ -136,8 +144,8 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
     myCheckSdkUpdateButton.addActionListener(e -> {
       final Runnable runnable = this::checkSdkUpdate;
       ApplicationManagerEx.getApplicationEx()
-        .runProcessWithProgressSynchronously(runnable, DartBundle.message("checking.dart.sdk.update"), true, myProject,
-                                             myMainPanel);
+        .runProcessWithProgressSynchronously(runnable, DartBundle.message("checking.dart.sdk.update"), true, true, myProject,
+                                             myMainPanel, null);
     });
   }
 
@@ -206,7 +214,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
   @Override
   @Nls
   public String getDisplayName() {
-    return DART_SETTINGS_PAGE_NAME;
+    return getDartSettingsPageName();
   }
 
   @Override
@@ -242,6 +250,10 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
                                                   : DartSdkUpdateOption.DoNotCheck;
       if (sdkUpdateOption != DartSdkUpdateOption.getDartSdkUpdateOption()) return true;
     }
+
+    //if (isMLCompletionApplicable()) {
+    //  if (myMLCodeCompletionCheckBox.isSelected() != isMLCodeCompletionEnabled(myProject)) return true;
+    //}
 
     if (myPortField.getNumber() != getWebdevPort(myProject)) return true;
 
@@ -288,6 +300,9 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
     final DartSdkUpdateOption sdkUpdateOption = DartSdkUpdateOption.getDartSdkUpdateOption();
     myCheckSdkUpdateCheckBox.setSelected(sdkUpdateOption != DartSdkUpdateOption.DoNotCheck);
     mySdkUpdateChannelCombo.setSelectedItem(sdkUpdateOption);
+
+    // No isMLCompletionApplicable() check here is intentional.
+    //myMLCodeCompletionCheckBox.setSelected(isMLCodeCompletionEnabled(myProject));
 
     myPortField.setNumber(getWebdevPort(myProject));
 
@@ -350,6 +365,10 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
           DartSdkUpdateOption.setDartSdkUpdateOption(sdkUpdateOption);
         }
 
+        //if (isMLCompletionApplicable()) {
+        //  setMLCodeCompletionEnabled(myProject, myMLCodeCompletionCheckBox.isSelected());
+        //}
+
         setWebdevPort(myProject, myPortField.getNumber());
       }
       else {
@@ -383,7 +402,20 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
 
     myCheckSdkUpdateCheckBoxFake.setVisible(flutter);
     myCheckSdkUpdateCheckBoxFake.setEnabled(false);
+
+    //boolean mlCompletionApplicable = isMLCompletionApplicable();
+    //myMLCodeCompletionCheckBox.setVisible(mlCompletionApplicable);
+    //myMLCodeCompletionCheckBoxFake.setVisible(!mlCompletionApplicable);
+    //myMLCodeCompletionCheckBoxFake.setEnabled(false);
   }
+
+  //private boolean isMLCompletionApplicable() {
+  //  // TODO(jwren) Square this code with DartAnalysisServerService.computeDoEnableMLBasedCodeCompletion() which also checks the Dart SDK
+  //  //  version!
+  //  String sdkHomePath = getTextFromCombo(mySdkPathComboWithBrowse);
+  //  String version = sdkHomePath.isEmpty() ? null : DartSdkUtil.getSdkVersion(sdkHomePath);
+  //  return version != null && StringUtil.compareVersionNumbers(version, ML_CODE_COMPLETION_MIN_DART_SDK_VERSION) >= 0;
+  //}
 
   private void updateErrorLabel() {
     final String message = getErrorMessage();
@@ -476,5 +508,17 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
 
   private static void setWebdevPort(@NotNull Project project, int port) {
     PropertiesComponent.getInstance(project).setValue(WEBDEV_PORT_PROPERTY_NAME, port, WEBDEV_PORT_DEFAULT);
+  }
+
+  public static boolean isMLCodeCompletionEnabled(@NotNull Project project) {
+    return PropertiesComponent.getInstance(project).getBoolean(ML_CODE_COMPLETION_PROPERTY_NAME, ML_CODE_COMPLETION_DEFAULT_VALUE);
+  }
+
+  private static void setMLCodeCompletionEnabled(@NotNull Project project, boolean enabled) {
+    PropertiesComponent.getInstance(project).setValue(ML_CODE_COMPLETION_PROPERTY_NAME, enabled, ML_CODE_COMPLETION_DEFAULT_VALUE);
+  }
+
+  private static String getDartSettingsPageName() {
+    return DartBundle.message("dart.title");
   }
 }

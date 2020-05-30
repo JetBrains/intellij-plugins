@@ -1,5 +1,6 @@
 package com.intellij.javascript.karma.coverage;
 
+import com.intellij.coverage.CoverageBundle;
 import com.intellij.coverage.CoverageDataManager;
 import com.intellij.coverage.CoverageSuitesBundle;
 import com.intellij.coverage.SimpleCoverageAnnotator;
@@ -65,10 +66,10 @@ public class KarmaCoverageAnnotator extends SimpleCoverageAnnotator {
       return null;
     }
     if (info.coveredLineCount == 0) {
-      return "not covered";
+      return CoverageBundle.message("lines.covered.info.not.covered");
     }
     else {
-      return calcCoveragePercentage(info) + "% lines covered";
+      return calcCoveragePercentage(info) + CoverageBundle.message("lines.covered.info.percent.lines.covered");
     }
   }
 

@@ -4,7 +4,7 @@ import com.intellij.codeInsight.daemon.quickFix.LightQuickFixTestCase;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.flex.util.ActionScriptDaemonAnalyzerTestCase;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.flex.FlexModuleType;
@@ -107,7 +107,7 @@ public class ActionScriptStubsTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @Override
-  protected VirtualFile configureByFiles(final File projectRoot, @NotNull final VirtualFile[] vFiles) throws IOException {
+  protected VirtualFile configureByFiles(final File projectRoot, final VirtualFile @NotNull [] vFiles) throws IOException {
     VirtualFile result = super.configureByFiles(projectRoot, vFiles);
     for (VirtualFile vFile : vFiles) {
       // to have new instance of PsiFile created that will replace original that was parsed in order
@@ -130,7 +130,7 @@ public class ActionScriptStubsTest extends ActionScriptDaemonAnalyzerTestCase {
     doTest(() -> {
       final IntentionAction action =
         LightQuickFixTestCase
-          .findActionWithText(LightQuickFixTestCase.getAvailableActions(myEditor, myFile), JSBundle
+          .findActionWithText(LightQuickFixTestCase.getAvailableActions(myEditor, myFile), JavaScriptBundle
             .message("javascript.create.field.intention.name", "myfield"));
       CommandProcessor.getInstance().executeCommand(getProject(), () -> action.invoke(myProject, myEditor, myFile), "Create field", null);
       checkResultByFile(getBasePath() + "/" + getTestName(false) + "_after.as");

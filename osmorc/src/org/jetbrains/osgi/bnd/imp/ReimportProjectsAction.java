@@ -33,7 +33,7 @@ public class ReimportProjectsAction extends AnAction {
     }
   }
 
-  private static Collection<String> getProjectDirs(@Nullable VirtualFile[] files) {
+  private static Collection<String> getProjectDirs(VirtualFile @Nullable [] files) {
     if (files == null || files.length <= 0) {
       return Collections.emptyList();
     }

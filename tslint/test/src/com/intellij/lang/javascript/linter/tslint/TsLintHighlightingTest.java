@@ -1,8 +1,7 @@
 package com.intellij.lang.javascript.linter.tslint;
 
-import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.InspectionProfileEntry;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.linter.AutodetectLinterPackage;
 import com.intellij.lang.javascript.linter.LinterHighlightingTest;
@@ -31,7 +30,7 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
   @NotNull
   @Override
   protected String getPackageName() {
-    return "tslint";
+    return TslintUtil.PACKAGE_NAME;
   }
 
   public void testOne() {
@@ -126,32 +125,26 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
   }
 
   public void testSuppressRuleForLine() {
-    doFixTest("main", JSBundle.message("javascript.linter.suppress.rules.for.line.description", "'quotemark'"));
+    doFixTest("main", JavaScriptBundle.message("javascript.linter.suppress.rules.for.line.description", "'quotemark'"));
   }
 
   public void testSuppressRuleForLineAddsToExistingComment() {
-    doFixTest("main", JSBundle.message("javascript.linter.suppress.rules.for.line.description", "'quotemark'"));
+    doFixTest("main", JavaScriptBundle.message("javascript.linter.suppress.rules.for.line.description", "'quotemark'"));
   }
 
   public void testSuppressRuleForFileAddsToExistingComment() {
-    doFixTest("main", JSBundle.message("javascript.linter.suppress.rules.for.file.description", "'quotemark'"));
+    doFixTest("main", JavaScriptBundle.message("javascript.linter.suppress.rules.for.file.description", "'quotemark'"));
   }
 
   public void testSuppressAllRulesForLine() {
-    doFixTest("main", JSBundle.message("javascript.linter.suppress.rules.for.line.description", "all TSLint rules"));
+    doFixTest("main", JavaScriptBundle.message("javascript.linter.suppress.rules.for.line.description", "all TSLint rules"));
   }
 
   public void testSuppressAllRulesForLineOverwritesExistingSuppressionForRule() {
-    doFixTest("main", JSBundle.message("javascript.linter.suppress.rules.for.line.description", "all TSLint rules"));
+    doFixTest("main", JavaScriptBundle.message("javascript.linter.suppress.rules.for.line.description", "all TSLint rules"));
   }
 
   private void doFixTest(String mainFileName, String intentionDescription) {
-    String testDir = getTestName(false);
-    doEditorHighlightingTest(mainFileName + ".ts");
-
-    IntentionAction intention = myFixture.getAvailableIntention(intentionDescription);
-    assertNotNull(String.format("Expected intention with description %s to be available", intentionDescription), intention);
-    myFixture.launchAction(intention);
-    myFixture.checkResultByFile(testDir + "/" + mainFileName + "_after.ts");
+    doFixTestForDirectory(mainFileName, ".ts", intentionDescription);
   }
 }

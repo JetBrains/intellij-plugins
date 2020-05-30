@@ -30,9 +30,8 @@ import java.util.function.BiPredicate;
 
 public class Angular2ViewChildReferencesProvider extends PsiReferenceProvider {
 
-  @NotNull
   @Override
-  public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+  public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
     return new PsiReference[]{new Angular2ViewChildReference((JSLiteralExpression)element)};
   }
 
@@ -48,9 +47,8 @@ public class Angular2ViewChildReferencesProvider extends PsiReferenceProvider {
       return false;
     }
 
-    @Nullable
     @Override
-    public PsiElement resolveInner() {
+    public @Nullable PsiElement resolveInner() {
       Ref<PsiElement> result = new Ref<>();
       final String refName = myElement.getStringValue();
       if (refName != null) {
@@ -65,9 +63,8 @@ public class Angular2ViewChildReferencesProvider extends PsiReferenceProvider {
       return result.get();
     }
 
-    @NotNull
     @Override
-    public Object[] getVariants() {
+    public Object @NotNull [] getVariants() {
       final List<PsiElement> result = new ArrayList<>();
       final Set<String> names = new HashSet<>();
       processVariables((name, psi) -> {
@@ -80,7 +77,7 @@ public class Angular2ViewChildReferencesProvider extends PsiReferenceProvider {
     private void processVariables(BiPredicate<? super String, ? super PsiElement> processor) {
       final PsiFile template = getTemplate();
       if (template != null) {
-        if (template.getLanguage().is(Angular2HtmlLanguage.INSTANCE)) {
+        if (template.getLanguage().isKindOf(Angular2HtmlLanguage.INSTANCE)) {
           template.accept(new Angular2HtmlRecursiveElementWalkingVisitor() {
             @Override
             public void visitReference(Angular2HtmlReference reference) {
@@ -108,8 +105,7 @@ public class Angular2ViewChildReferencesProvider extends PsiReferenceProvider {
       }
     }
 
-    @Nullable
-    private PsiFile getTemplate() {
+    private @Nullable PsiFile getTemplate() {
       final TypeScriptClass cls = PsiTreeUtil.getContextOfType(getElement(), TypeScriptClass.class);
       if (cls != null) {
         Angular2Component component = Angular2EntitiesProvider.getComponent(cls);

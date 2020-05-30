@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.html.parser;
 
 import com.intellij.html.HtmlParsingTest;
@@ -7,7 +7,6 @@ import com.intellij.javascript.JSScriptContentProvider;
 import com.intellij.lang.LanguageASTFactory;
 import com.intellij.lang.LanguageHtmlInlineScriptTokenTypesProvider;
 import com.intellij.lang.LanguageHtmlScriptContentProvider;
-import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.lang.css.CSSLanguage;
 import com.intellij.lang.css.CSSParserDefinition;
 import com.intellij.lang.javascript.JavascriptLanguage;
@@ -16,7 +15,6 @@ import com.intellij.lang.javascript.dialects.ECMA6ParserDefinition;
 import com.intellij.lang.javascript.dialects.JSLanguageLevel;
 import com.intellij.lexer.EmbeddedTokenTypesProvider;
 import com.intellij.openapi.progress.EmptyProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.pom.tree.events.TreeChangeEvent;
 import com.intellij.psi.PsiFile;
@@ -34,6 +32,7 @@ import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 public class Angular2HtmlParsingTest extends HtmlParsingTest {
 
@@ -52,19 +51,17 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
                          new HtmlInlineJSScriptTokenTypesProvider());
     addExplicitExtension(LanguageHtmlScriptContentProvider.INSTANCE, JavascriptLanguage.INSTANCE,
                          new JSScriptContentProvider());
-    registerExtensionPoint(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, EmbeddedTokenTypesProvider.class);
-    registerExtension(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, new CssEmbeddedTokenTypesProvider());
-    registerExtension(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, new CssRulesetBlockEmbeddedTokenTypesProvider());
+    registerExtensions(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, EmbeddedTokenTypesProvider.class, Arrays.asList(new CssEmbeddedTokenTypesProvider(), new CssRulesetBlockEmbeddedTokenTypesProvider()));
 
     addExplicitExtension(LanguageASTFactory.INSTANCE, CSSLanguage.INSTANCE, new CssTreeElementFactory());
     registerExtensionPoint(CssElementDescriptorProvider.EP_NAME, CssElementDescriptorProvider.class);
     registerExtension(CssElementDescriptorProvider.EP_NAME, new CssElementDescriptorProviderImpl());
-    registerApplicationService(CssElementDescriptorFactory2.class,
-                               new CssElementDescriptorFactory2(ProgressManager.getInstance(), "css-parsing-tests.xml"));
+    getApplication().registerService(CssElementDescriptorFactory2.class,
+                                     new CssElementDescriptorFactory2("css-parsing-tests.xml"));
 
     // Update parser definition if version is changed
     assert JSLanguageLevel.DEFAULT == JSLanguageLevel.ES6;
-    addExplicitExtension(LanguageParserDefinitions.INSTANCE, JSLanguageLevel.ES6.getDialect(), new ECMA6ParserDefinition());
+    registerParserDefinition(new ECMA6ParserDefinition());
   }
 
   @Override
@@ -76,7 +73,7 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
   private static void ensureReparsingConsistent(@NotNull PsiFile file) {
     DebugUtil.performPsiModification("ensureReparsingConsistent", () -> {
       final String fileText = file.getText();
-      final DiffLog diffLog = new BlockSupportImpl(file.getProject()).reparseRange(
+      final DiffLog diffLog = new BlockSupportImpl().reparseRange(
         file, file.getNode(), TextRange.allOf(fileText), fileText, new EmptyProgressIndicator(), fileText);
       TreeChangeEvent event = diffLog.performActualPsiChange(file);
       assertEmpty(event.getChangedElements());
@@ -343,4 +340,12 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
   public void testNgNonBindable4() throws Exception {
     doTestHtml("<p ngNonBindable>{{foo}}<p>{{bar}}");
   }
+
+  public void testNgNonQuotedAttrs() throws Exception {
+    doTestHtml("<div (click)=doIt()></div>\n" +
+               "<div [id]=foo></div>\n" +
+               "<div #foo=bar></div>\n" +
+               "<ng-content select=[header-content]></ng-content>\n");
+  }
+
 }

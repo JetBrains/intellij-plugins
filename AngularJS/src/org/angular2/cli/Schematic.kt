@@ -10,18 +10,23 @@ class Schematic {
   @SerializedName("name")
   @Expose
   var name: String? = null
+
   @SerializedName("description")
   @Expose
   var description: String? = null
+
   @SerializedName("options")
   @Expose
   var options: List<Option> = ArrayList()
+
   @SerializedName("arguments")
   @Expose
   var arguments: List<Option> = ArrayList()
+
   @SerializedName("error")
   @Expose
   var error: String? = null
+
   @SerializedName("hidden")
   @Expose
   var hidden: Boolean = false
@@ -45,24 +50,31 @@ class Option {
   @SerializedName("name")
   @Expose
   var name: String? = null
+
   @SerializedName("default")
   @Expose
   var default: Any? = null
+
   @SerializedName("description")
   @Expose
   var description: String? = null
+
   @SerializedName("type")
   @Expose
   var type: String? = null
+
   @SerializedName("required")
   @Expose
   var isRequired: Boolean = false
+
   @SerializedName("visible")
   @Expose
   var isVisible: Boolean = true
+
   @SerializedName("enum")
   @Expose
   var enum: List<String> = ArrayList()
+
   @SerializedName("format")
   @Expose
   var format: String? = null

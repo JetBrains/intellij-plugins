@@ -13,7 +13,9 @@
 // limitations under the License.
 package org.jetbrains.vuejs.lang
 
-import com.intellij.lang.javascript.JSBundle
+import com.intellij.lang.javascript.JavaScriptBundle
+import com.intellij.lang.javascript.JSTestUtils
+import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
@@ -29,7 +31,7 @@ class VueIntentionsTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/intentions"
 
   fun testComputeConstant() {
-    doIntentionTest(JSIntentionBundle.message("constant.constant-expression.display-name"))
+    doIntentionTest(JSIntentionBundle.message("string.join-concatenated-string-literals.display-name"))
   }
 
   fun testFlipConditional() {
@@ -37,15 +39,27 @@ class VueIntentionsTest : BasePlatformTestCase() {
   }
 
   fun testPropagateToDestructuring() {
-    doIntentionTest(JSBundle.message("refactoring.destructuring.vars.intention.propagate"))
+    doIntentionTest(JavaScriptBundle.message("refactoring.destructuring.vars.intention.propagate"))
   }
 
   fun testPropagateToDestructuringWhenWithIndexer() {
-    doIntentionTest(JSBundle.message("refactoring.destructuring.vars.intention.propagate"))
+    doIntentionTest(JavaScriptBundle.message("refactoring.destructuring.vars.intention.propagate"))
   }
 
   fun testDepropagateFromDestructuring() {
-    doIntentionTest(JSBundle.message("refactoring.destructuring.vars.intention.depropagate"))
+    doIntentionTest(JavaScriptBundle.message("refactoring.destructuring.vars.intention.depropagate"))
+  }
+
+  fun testReplaceIfElseWithElvis() {
+    doIntentionTest("Replace if-else with ?:")
+  }
+
+  fun testReplaceWithIndexerAccess() {
+    JSTestUtils.testWithTempCodeStyleSettings<RuntimeException>(project) { settings ->
+      val custom = settings.getCustomSettings(JSCodeStyleSettings::class.java)
+      custom.USE_DOUBLE_QUOTES = true
+      doIntentionTest("Replace with indexer access")
+    }
   }
 
   private fun doIntentionTest(name: String) {

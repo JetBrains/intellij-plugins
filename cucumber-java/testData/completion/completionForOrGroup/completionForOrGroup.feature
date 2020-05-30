@@ -3,4 +3,6 @@ Feature: test completion for step containing non-capturing groups
     Given <caret>
 ---
 BASIC 1 INCLUDES
-prefix <param>
+prefix value1
+prefix value2
+prefix value3

@@ -18,7 +18,7 @@
  */
 package com.intellij.javascript.flex.refactoring.moveMembers;
 
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.presentable.JSNamedElementPresenter;
@@ -69,7 +69,7 @@ public class ActionScriptMoveMembersProcessor extends BaseRefactoringProcessor {
   private final MoveCallback myMoveCallback;
   private final JSClass mySourceClass;
   @Nullable private final String myNewVisibility; // "null" means "as is"
-  private String myCommandName = JSBundle.message("move.members.refactoring.name");
+  private String myCommandName = JavaScriptBundle.message("move.members.refactoring.name");
 
   public ActionScriptMoveMembersProcessor(Project project,
                                           MoveCallback moveCallback,
@@ -100,7 +100,7 @@ public class ActionScriptMoveMembersProcessor extends BaseRefactoringProcessor {
 
   private void setCommandName(JSClass sourceClass, final PsiElement[] members) {
     StringBuilder commandName = new StringBuilder();
-    commandName.append(MoveHandler.REFACTORING_NAME);
+    commandName.append(MoveHandler.getRefactoringName());
     commandName.append(" ");
     boolean first = true;
     for (PsiElement member : members) {
@@ -122,18 +122,17 @@ public class ActionScriptMoveMembersProcessor extends BaseRefactoringProcessor {
 
   @Override
   @NotNull
-  protected UsageViewDescriptor createUsageViewDescriptor(@NotNull UsageInfo[] usages) {
+  protected UsageViewDescriptor createUsageViewDescriptor(UsageInfo @NotNull [] usages) {
     return new MoveMemberViewDescriptor(PsiUtilCore.toPsiElementArray(myMembersToMove));
   }
 
   @Override
-  @NotNull
-  protected UsageInfo[] findUsages() {
+  protected UsageInfo @NotNull [] findUsages() {
     return JSRefactoringUtil.getUsages(myMembersToMove, myTargetClass);
   }
 
   @Override
-  protected void refreshElements(@NotNull PsiElement[] elements) {
+  protected void refreshElements(PsiElement @NotNull [] elements) {
     LOG.assertTrue(myMembersToMove.size() == elements.length);
     myMembersToMove.clear();
     for (PsiElement element : elements) {
@@ -142,7 +141,7 @@ public class ActionScriptMoveMembersProcessor extends BaseRefactoringProcessor {
   }
 
   @Override
-  protected void performRefactoring(@NotNull final UsageInfo[] usages) {
+  protected void performRefactoring(final UsageInfo @NotNull [] usages) {
     try {
       final Collection<PsiFile> filesWithUsages = ActionScriptRefactoringUtil.qualifyIncomingReferences(usages);
 
@@ -230,7 +229,7 @@ public class ActionScriptMoveMembersProcessor extends BaseRefactoringProcessor {
   public void doRun() {
     if (myMembersToMove.isEmpty()) {
       String message = RefactoringBundle.message("no.members.selected");
-      CommonRefactoringUtil.showErrorMessage(JSBundle.message("move.members.refactoring.name"), message, null, myProject);
+      CommonRefactoringUtil.showErrorMessage(JavaScriptBundle.message("move.members.refactoring.name"), message, null, myProject);
       return;
     }
     super.doRun();

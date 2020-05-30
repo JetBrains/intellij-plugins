@@ -3,6 +3,7 @@ package org.angularjs.lang.parser;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.javascript.JSElementTypes;
 import com.intellij.lang.javascript.JSTokenTypes;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.parsing.ExpressionParser;
 import com.intellij.psi.tree.IElementType;
 import org.angularjs.codeInsight.AngularJSPluralCategories;
@@ -12,6 +13,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
+import static org.angularjs.AngularJSBundle.message;
 
 /**
  * @author Irina.Chernushina on 11/30/2015.
@@ -28,7 +31,7 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
     if (myInsideSelectExpression) return false;
 
     final PsiBuilder.Marker expr = builder.mark();
-    if (! isIdentifierToken(builder.getTokenType())) {
+    if (!isIdentifierToken(builder.getTokenType())) {
       return rollback(expr);
     }
     final PsiBuilder.Marker refMark = builder.mark();
@@ -38,7 +41,8 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
       if (!myJavaScriptParser.getExpressionParser().parseUnaryExpression()) {
         return rollback(expr);
       }
-    } finally {
+    }
+    finally {
       myInsideSelectExpression = false;
     }
     //}
@@ -59,7 +63,8 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
     builder.advanceLexer();
     if (ExtensionType.select.name().equals(extensionText)) {
       parseOptionsTail();
-    } else {
+    }
+    else {
       parsePluralTail();
     }
     expr.done(AngularJSElementTypes.MESSAGE_FORMAT_EXPRESSION);
@@ -81,23 +86,24 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
             builder.advanceLexer();
             builder.advanceLexer();
             myJavaScriptParser.getExpressionParser().parseExpression();
-            if (! expectDoubleRBrace(true)) {
+            if (!expectDoubleRBrace(true)) {
               mark.drop();
               return false;
             }
           }
           else {
-            builder.error("expected {{");
+            builder.error(message("angularjs.parser.message.expected.double.lbrace"));
             mark.drop();
             return false;
           }
         }
-        else if (JSTokenTypes.RBRACE == type) {
+        else {
           mark.done(AngularJSElementTypes.MESSAGE_FORMAT_MESSAGE);
           builder.advanceLexer();
           return true;
         }
-      } else {
+      }
+      else {
         if (stringLiteralMark == null) stringLiteralMark = builder.mark();
         builder.advanceLexer();
       }
@@ -109,7 +115,7 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
 
   private boolean expectDoubleRBrace(boolean advance) {
     if (!isRBraceOrNull(builder.getTokenType()) || !isRBraceOrNull(builder.lookAhead(1))) {
-      builder.error("expected }}");
+      builder.error(message("angularjs.parser.message.expected.double.rbrace"));
       return false;
     }
     if (advance) {
@@ -132,14 +138,14 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
     if (isIdentifierToken(builder.getTokenType()) && OFFSET_OPTION.equals(builder.getTokenText())) {
       if (builder.lookAhead(1) != JSTokenTypes.COLON) {
         builder.advanceLexer();
-        builder.error("expected colon");
+        builder.error(JavaScriptBundle.message("javascript.parser.message.expected.colon"));
         return false;
       }
       final IElementType value = builder.lookAhead(2);
       if (!JSTokenTypes.LITERALS.contains(value) && JSTokenTypes.IDENTIFIER != value) {
         builder.advanceLexer();
         builder.advanceLexer();
-        builder.error("expected offset option value");
+        builder.error(message("angularjs.parser.message.expected.offset.option"));
         return false;
       }
       final PsiBuilder.Marker mark = builder.mark();
@@ -159,10 +165,12 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
         if (JSTokenTypes.RBRACE == type) {
           expectDoubleRBrace(false);
           return;
-        } else if (JSTokenTypes.LBRACE == type) {
-          builder.error("expected selection keyword");
+        }
+        else if (JSTokenTypes.LBRACE == type) {
+          builder.error(message("angularjs.parser.message.expected.selection.keyword"));
           return;
-        } else {
+        }
+        else {
           final PsiBuilder.Marker mark = builder.mark();
           // = can be only in the beginning, like =0
           while (!JSTokenTypes.PARSER_WHITE_SPACE_TOKENS.contains(builder.rawLookup(0)) && builder.rawLookup(0) != null) {
@@ -171,13 +179,15 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
           mark.collapse(AngularJSElementTypes.MESSAGE_FORMAT_SELECTION_KEYWORD);
           key = false;
         }
-      } else {
+      }
+      else {
         if (JSTokenTypes.LBRACE == type) {
           builder.advanceLexer();
           if (!parseInnerMessage()) return;  //+-
           key = true;
-        } else {
-          builder.error("expected message in {} delimiters");
+        }
+        else {
+          builder.error(message("angularjs.parser.message.expected.message.in.brace.delimiters"));
           return;
         }
       }
@@ -207,14 +217,14 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
     ExtensionType(String... keywords) {
       if (keywords.length == 0) {
         myRequiredSelectionKeywords = null;
-      } else {
+      }
+      else {
         myRequiredSelectionKeywords = new HashSet<>();
         Collections.addAll(myRequiredSelectionKeywords, keywords);
       }
     }
 
-    @NotNull
-    public Set<String> getRequiredSelectionKeywords() {
+    public @NotNull Set<String> getRequiredSelectionKeywords() {
       return myRequiredSelectionKeywords == null ? Collections.emptySet() : myRequiredSelectionKeywords;
     }
   }

@@ -19,9 +19,8 @@ public class Angular2HtmlPropertyBindingImpl extends Angular2HtmlPropertyBinding
     super(type);
   }
 
-  @NotNull
   @Override
-  public PsiReference[] getReferences(@NotNull PsiReferenceService.Hints hints) {
+  public PsiReference @NotNull [] getReferences(@NotNull PsiReferenceService.Hints hints) {
     if (getBindingType() == PropertyBindingType.CLASS) {
       if (hints.offsetInElement != null) {
         XmlElement nameElement = getNameElement();

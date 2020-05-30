@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.resharper;
 
 import com.intellij.codeInsight.TargetElementUtil;
@@ -102,7 +102,7 @@ public class Angular2EntitiesRenameTest extends ReSharperParameterizedTestCase {
     renameProcessor.run();
 
     WriteCommandAction
-      .runWriteCommandAction(getProject(), () -> getProject().getComponent(PostprocessReformattingAspect.class).doPostponedFormatting());
+      .runWriteCommandAction(getProject(), () -> PostprocessReformattingAspect.getInstance(getProject()).doPostponedFormatting());
 
     FileDocumentManager.getInstance().saveAllDocuments();
 

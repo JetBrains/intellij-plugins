@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.groovy.resolve.noncode;
 
 import com.intellij.psi.*;
@@ -7,46 +8,30 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.UsageSearchContext;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.PsiTreeUtil;
 import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.groovy.GrCucumberCommonClassNames;
-import org.jetbrains.plugins.cucumber.groovy.GrCucumberUtil;
+import org.jetbrains.plugins.cucumber.groovy.resolve.CustomWorldType;
 import org.jetbrains.plugins.groovy.GroovyFileType;
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.GrStatement;
-import org.jetbrains.plugins.groovy.lang.psi.api.statements.arguments.GrArgumentList;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.blocks.GrClosableBlock;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrExpression;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrReferenceExpression;
-import org.jetbrains.plugins.groovy.lang.psi.api.statements.typedef.members.GrMember;
-import org.jetbrains.plugins.groovy.lang.psi.util.GroovyCommonClassNames;
 import org.jetbrains.plugins.groovy.lang.resolve.NonCodeMembersContributor;
 import org.jetbrains.plugins.groovy.lang.resolve.ResolveUtil;
 
 public class CustomWorldContributor extends NonCodeMembersContributor {
+
   @Override
   public void processDynamicElements(@NotNull PsiType qualifierType,
                                      @NotNull PsiScopeProcessor processor,
                                      @NotNull PsiElement place,
                                      @NotNull ResolveState state) {
-    if (place instanceof GrReferenceExpression &&
-        ((GrReferenceExpression)place).getQualifier() == null &&
-        qualifierType.equalsToText(GroovyCommonClassNames.GROOVY_LANG_CLOSURE)) {
-
-      final GrClosableBlock closureContainer = PsiTreeUtil.getParentOfType(place, GrClosableBlock.class, true, GrMember.class);
-      if (closureContainer != null) {
-        PsiElement parent = closureContainer.getParent();
-        if (parent instanceof GrArgumentList && isLastArg((GrArgumentList)parent, closureContainer)) {
-          parent = parent.getParent();
-        }
-
-        if (parent instanceof GrMethodCall && (GrCucumberUtil.isStepDefinition(parent) || GrCucumberUtil.isHook((GrMethodCall)parent))) {
-          doProcessDynamicMethods(processor, place, state, parent.getContainingFile());
-        }
-      }
+    if (qualifierType instanceof CustomWorldType) {
+      doProcessDynamicMethods(processor, place, state, ((CustomWorldType)qualifierType).getStepFile());
     }
   }
 
@@ -62,7 +47,7 @@ public class CustomWorldContributor extends NonCodeMembersContributor {
       else {
         GlobalSearchScope scope = GlobalSearchScope.getScopeRestrictedByFileTypes(stepFile.getResolveScope(),
                                                                                   GroovyFileType.getGroovyEnabledFileTypes());
-        PsiFile[] files = CacheManager.SERVICE.getInstance(place.getProject()).getFilesWithWord("World", UsageSearchContext.IN_CODE, scope, true);
+        PsiFile[] files = CacheManager.getInstance(place.getProject()).getFilesWithWord("World", UsageSearchContext.IN_CODE, scope, true);
         for (PsiFile file : files) {
           if (file instanceof GroovyFile) {
             final PsiType type = getWorldType((GroovyFile)file);
@@ -115,10 +100,5 @@ public class CustomWorldContributor extends NonCodeMembersContributor {
     }
 
     return false;
-  }
-
-  private static boolean isLastArg(@NotNull GrArgumentList list, @NotNull GrClosableBlock block) {
-    final GrExpression[] exprs = list.getExpressionArguments();
-    return exprs.length > 0 && exprs[exprs.length - 1] == block;
   }
 }

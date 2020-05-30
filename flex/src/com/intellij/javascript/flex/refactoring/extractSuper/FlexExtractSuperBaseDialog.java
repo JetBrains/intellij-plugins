@@ -2,7 +2,7 @@
 package com.intellij.javascript.flex.refactoring.extractSuper;
 
 import com.intellij.ide.util.PlatformPackageUtil;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.refactoring.extractSuper.JSExtractSuperMode;
@@ -43,7 +43,7 @@ public abstract class FlexExtractSuperBaseDialog extends ExtractSuperBaseDialog<
 
   @Override
   protected void customizeRadiobuttons(Box box, ButtonGroup buttonGroup) {
-    myExtractAndTurnRefsRB = new JRadioButton(JSBundle.message("extract.0.turn.refs", StringUtil.decapitalize(getEntityName())));
+    myExtractAndTurnRefsRB = new JRadioButton(JavaScriptBundle.message("extract.0.turn.refs", StringUtil.decapitalize(getEntityName())));
     buttonGroup.add(myExtractAndTurnRefsRB);
     box.add(myExtractAndTurnRefsRB, 1);
     myExtractAndTurnRefsRB.addItemListener(new ItemListener() {
@@ -80,7 +80,7 @@ public abstract class FlexExtractSuperBaseDialog extends ExtractSuperBaseDialog<
       return RefactoringBundle.message("no.destination.class.specified");
     }
     if (!ActionScriptRefactoringUtil.isValidClassName(name, false)) {
-      return JSBundle.message("0.is.not.a.legal.name", name);
+      return JavaScriptBundle.message("0.is.not.a.legal.name", name);
     }
     return null;
   }
@@ -138,7 +138,7 @@ public abstract class FlexExtractSuperBaseDialog extends ExtractSuperBaseDialog<
 
   @Override
   protected String getDocCommentPanelName() {
-    return JSBundle.message("asdoc");
+    return JavaScriptBundle.message("asdoc");
   }
 
   @Override

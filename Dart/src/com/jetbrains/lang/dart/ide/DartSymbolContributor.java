@@ -18,13 +18,13 @@ import static com.jetbrains.lang.dart.ide.index.DartSymbolIndex.DART_SYMBOL_INDE
 
 public class DartSymbolContributor implements ChooseByNameContributorEx {
   @Override
-  public void processNames(@NotNull Processor<String> processor, @NotNull GlobalSearchScope scope, @Nullable IdFilter filter) {
+  public void processNames(@NotNull Processor<? super String> processor, @NotNull GlobalSearchScope scope, @Nullable IdFilter filter) {
     FileBasedIndex.getInstance().processAllKeys(DART_SYMBOL_INDEX, processor, scope, null);
   }
 
   @Override
   public void processElementsWithName(@NotNull String name,
-                                      @NotNull Processor<NavigationItem> processor,
+                                      @NotNull Processor<? super NavigationItem> processor,
                                       @NotNull FindSymbolParameters parameters) {
     DartClassContributor.doProcessElements(DART_SYMBOL_INDEX, DartSymbolContributor::getComponents,
                                            name, processor, parameters);

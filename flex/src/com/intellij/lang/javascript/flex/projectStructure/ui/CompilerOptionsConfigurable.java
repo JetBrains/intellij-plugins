@@ -72,7 +72,6 @@ import java.util.*;
 import static com.intellij.lang.javascript.flex.projectStructure.model.CompilerOptions.ResourceFilesMode;
 
 public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptions> implements Place.Navigator {
-  public static final String TAB_NAME = FlexBundle.message("bc.tab.compiler.options.display.name");
   public static final String CONDITIONAL_COMPILER_DEFINITION_NAME = "FlexCompilerOptions.ConditionalCompilerDefinitionName";
 
   public enum Location {
@@ -169,7 +168,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     myNature = nature;
     myDependenciesConfigurable = dependenciesConfigurable;
     myName = myMode == Mode.BC
-             ? TAB_NAME
+             ? getTabName()
              : myMode == Mode.Module
                ? FlexBundle.message("default.compiler.options.for.module.title", module.getName())
                : FlexBundle.message("default.compiler.options.for.project.title", project.getName());
@@ -860,7 +859,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
       for (final CompilerOptionInfo childInfo : info.getChildOptionInfos()) {
         if (myMode != Mode.BC || childInfo.isApplicable(getSdkVersion(), myNature)) {
           final ValueSource childSource = getValueAndSource(childInfo).second;
-          if (childSource.ordinal() > groupValueSource.ordinal()) {
+          if (childSource.compareTo(groupValueSource) >0) {
             groupValueSource = childSource;
           }
         }
@@ -959,7 +958,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
   }
 
   static class ExtensionAwareFileChooserDescriptor extends FileChooserDescriptor {
-    private @Nullable String[] myAllowedExtensions;
+    private String @Nullable [] myAllowedExtensions;
 
     ExtensionAwareFileChooserDescriptor() {
       super(true, false, true, true, false, false);
@@ -981,7 +980,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
       return false;
     }
 
-    public void setAllowedExtensions(final @Nullable String... allowedExtensions) {
+    public void setAllowedExtensions(final String @Nullable ... allowedExtensions) {
       myAllowedExtensions = allowedExtensions;
     }
   }
@@ -1057,6 +1056,10 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
       }
     }
     return ActionCallback.DONE;
+  }
+
+  public static String getTabName() {
+    return FlexBundle.message("bc.tab.compiler.options.display.name");
   }
 }
 

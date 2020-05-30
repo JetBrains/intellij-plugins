@@ -26,7 +26,7 @@ public abstract class DartCallHierarchyTreeStructure extends HierarchyTreeStruct
   private final String myScopeType;
 
   public DartCallHierarchyTreeStructure(Project project, PsiElement element, String currentScopeType) {
-    super(project, new DartHierarchyNodeDescriptor(null, element, true));
+    super(project, new DartCallHierarchyNodeDescriptor(null, element, true));
     myScopeType = currentScopeType;
   }
 
@@ -51,12 +51,11 @@ public abstract class DartCallHierarchyTreeStructure extends HierarchyTreeStruct
   @NotNull
   protected abstract List<PsiElement> getChildren(@NotNull PsiElement element);
 
-  @NotNull
   @Override
-  protected Object[] buildChildren(@NotNull HierarchyNodeDescriptor descriptor) {
-    final List<DartHierarchyNodeDescriptor> descriptors = new ArrayList<>();
-    if (descriptor instanceof DartHierarchyNodeDescriptor) {
-      final DartHierarchyNodeDescriptor dartDescriptor = (DartHierarchyNodeDescriptor)descriptor;
+  protected Object @NotNull [] buildChildren(@NotNull HierarchyNodeDescriptor descriptor) {
+    final List<DartCallHierarchyNodeDescriptor> descriptors = new ArrayList<>();
+    if (descriptor instanceof DartCallHierarchyNodeDescriptor) {
+      final DartCallHierarchyNodeDescriptor dartDescriptor = (DartCallHierarchyNodeDescriptor)descriptor;
       PsiElement element = dartDescriptor.getPsiElement();
       if (element == null) {
         return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
@@ -72,14 +71,14 @@ public abstract class DartCallHierarchyTreeStructure extends HierarchyTreeStruct
       }
 
       final List<PsiElement> children = getChildren(name);
-      final HashMap<PsiElement, DartHierarchyNodeDescriptor> callerToDescriptorMap = new HashMap<>();
+      final HashMap<PsiElement, DartCallHierarchyNodeDescriptor> callerToDescriptorMap = new HashMap<>();
       PsiElement baseClass = element instanceof DartMethodDeclaration ? PsiTreeUtil.getParentOfType(name, DartClass.class) : null;
 
       for (PsiElement caller : children) {
         if (isInScope(baseClass, caller, myScopeType)) {
-          DartHierarchyNodeDescriptor callerDescriptor = callerToDescriptorMap.get(caller);
+          DartCallHierarchyNodeDescriptor callerDescriptor = callerToDescriptorMap.get(caller);
           if (callerDescriptor == null) {
-            callerDescriptor = new DartHierarchyNodeDescriptor(descriptor, caller, false);
+            callerDescriptor = new DartCallHierarchyNodeDescriptor(descriptor, caller, false);
             callerToDescriptorMap.put(caller, callerDescriptor);
             descriptors.add(callerDescriptor);
           }
@@ -91,10 +90,10 @@ public abstract class DartCallHierarchyTreeStructure extends HierarchyTreeStruct
 
   @NotNull
   protected GlobalSearchScope getScope() {
-    if (HierarchyBrowserBaseEx.SCOPE_CLASS.equals(myScopeType)) {
+    if (HierarchyBrowserBaseEx.getScopeClass().equals(myScopeType)) {
       Object root = getRootElement();
-      if (root instanceof DartHierarchyNodeDescriptor) {
-        DartHierarchyNodeDescriptor rootElement = (DartHierarchyNodeDescriptor)root;
+      if (root instanceof DartCallHierarchyNodeDescriptor) {
+        DartCallHierarchyNodeDescriptor rootElement = (DartCallHierarchyNodeDescriptor)root;
         PsiElement element = rootElement.getPsiElement();
         DartFile file = PsiTreeUtil.getParentOfType(element, DartFile.class);
         if (file != null) {
@@ -103,13 +102,13 @@ public abstract class DartCallHierarchyTreeStructure extends HierarchyTreeStruct
       }
       return GlobalSearchScope.projectScope(myProject);
     }
-    else if (HierarchyBrowserBaseEx.SCOPE_PROJECT.equals(myScopeType)) {
+    else if (HierarchyBrowserBaseEx.getScopeProject().equals(myScopeType)) {
       return GlobalSearchScope.projectScope(myProject);
     }
-    else if (HierarchyBrowserBaseEx.SCOPE_TEST.equals(myScopeType)) {
+    else if (HierarchyBrowserBaseEx.getScopeTest().equals(myScopeType)) {
       return GlobalSearchScope.projectScope(myProject); // We do not have a module to get its test scope.
     }
-    else if (HierarchyBrowserBaseEx.SCOPE_ALL.equals(myScopeType)) {
+    else if (HierarchyBrowserBaseEx.getScopeAll().equals(myScopeType)) {
       return GlobalSearchScope.allScope(myProject);
     }
     return GlobalSearchScope.projectScope(myProject);

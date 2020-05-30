@@ -33,7 +33,7 @@ public class Angular2HtmlElementVisitor extends XmlElementVisitor {
     visitXmlAttribute(reference);
   }
 
-  public void visitVariable(Angular2HtmlVariable variable) {
+  public void visitLet(Angular2HtmlLet variable) {
     visitXmlAttribute(variable);
   }
 

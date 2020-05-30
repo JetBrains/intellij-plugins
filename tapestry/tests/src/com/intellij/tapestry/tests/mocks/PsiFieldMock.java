@@ -36,7 +36,7 @@ public class PsiFieldMock implements PsiField {
     @Override
     @NotNull
     public PsiIdentifier getNameIdentifier() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
 
@@ -59,13 +59,13 @@ public class PsiFieldMock implements PsiField {
     @Override
     @NotNull
     public Project getProject() throws PsiInvalidElementAccessException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     @NotNull
     public Language getLanguage() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -74,8 +74,7 @@ public class PsiFieldMock implements PsiField {
     }
 
     @Override
-    @NotNull
-    public PsiElement[] getChildren() {
+    public PsiElement @NotNull [] getChildren() {
         return PsiElement.EMPTY_ARRAY;
     }
 
@@ -152,15 +151,14 @@ public class PsiFieldMock implements PsiField {
     }
 
     @Override
-    @NotNull
-    public char[] textToCharArray() {
+    public char @NotNull [] textToCharArray() {
         return new char[0];
     }
 
     @NotNull
     @Override
     public PsiElement getNavigationElement() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -270,8 +268,7 @@ public class PsiFieldMock implements PsiField {
     }
 
     @Override
-    @NotNull
-    public PsiReference[] getReferences() {
+    public PsiReference @NotNull [] getReferences() {
         return PsiReference.EMPTY_ARRAY;
     }
 
@@ -304,13 +301,13 @@ public class PsiFieldMock implements PsiField {
     @Override
     @NotNull
     public GlobalSearchScope getResolveScope() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     @NotNull
     public SearchScope getUseScope() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -339,12 +336,12 @@ public class PsiFieldMock implements PsiField {
     }
 
     @Override
-    @Nullable
+    @NotNull
     public String getName() {
         return _name;
     }
 
-    public PsiFieldMock setMockName(String name) {
+    public PsiFieldMock setMockName(@NotNull String name) {
         _name = name;
 
         return this;

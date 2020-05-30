@@ -25,7 +25,6 @@ import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlText;
 import gnu.trove.THashMap;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -154,12 +153,5 @@ public class JSFieldCanBeLocalInspection extends JSInspection {
       final LocalQuickFix[] fixes = new LocalQuickFix[]{new ConvertToLocalFix(field, functionToReferences)};
       myHolder.registerProblem(element, FlexBundle.message("js.field.can.be.converted.to.local"), fixes);
     }
-  }
-
-  @Nls
-  @NotNull
-  @Override
-  public String getDisplayName() {
-    return FlexBundle.message("js.field.can.be.local.name");
   }
 }

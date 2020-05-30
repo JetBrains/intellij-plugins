@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.highlighting;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
@@ -8,7 +8,6 @@ import com.intellij.codeInsight.daemon.impl.HighlightInfoFilter;
 import com.intellij.codeInsight.daemon.impl.analysis.XmlPathReferenceInspection;
 import com.intellij.codeInsight.daemon.impl.analysis.XmlUnusedNamespaceInspection;
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.codeInsight.navigation.ImplementationSearcher;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.OutputType;
@@ -48,9 +47,6 @@ import com.intellij.lang.javascript.psi.ecmal4.JSUseNamespaceDirective;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
-import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.lang.javascript.search.JSFunctionsSearch;
 import com.intellij.lang.properties.PropertiesBundle;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.application.ApplicationManager;
@@ -87,7 +83,6 @@ import com.intellij.psi.css.inspections.invalid.CssInvalidFunctionInspection;
 import com.intellij.psi.css.inspections.invalid.CssInvalidHtmlTagReferenceInspection;
 import com.intellij.psi.css.inspections.invalid.CssInvalidPropertyValueInspection;
 import com.intellij.psi.css.inspections.invalid.CssUnknownTargetInspection;
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -98,7 +93,7 @@ import com.intellij.refactoring.rename.RenameProcessor;
 import com.intellij.spellchecker.inspections.SpellCheckingInspection;
 import com.intellij.spellchecker.quickfixes.RenameTo;
 import com.intellij.testFramework.ExpectedHighlightingData;
-import com.intellij.testFramework.PlatformTestUtil;
+import com.intellij.testFramework.ExtensionTestUtil;
 import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
@@ -165,7 +160,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   private void suppressXmlNSAnnotator() {
     HighlightInfoFilter filter = (info, file) -> info.forcedTextAttributesKey != XmlHighlighterColors.XML_NS_PREFIX;
-    PlatformTestUtil.maskExtensions(EXTENSION_POINT_NAME, Collections.singletonList(filter), getTestRootDisposable());
+    ExtensionTestUtil.maskExtensions(EXTENSION_POINT_NAME, Collections.singletonList(filter), getTestRootDisposable());
   }
 
   @Override
@@ -282,7 +277,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     enableInspectionTool(new CssInvalidPropertyValueInspection());
     enableInspectionTool(new CssUnknownPropertyInspection());
     try {
-      CssDialectMappings.getInstance(getProject()).setMapping(null, CssDialect.CLASSIC);
+      CssDialectMappings.getInstance(getProject()).setMapping(null, CssDialect.CLASSIC.getName());
       doTestFor(true, getTestName(false) + ".css");
     }
     finally {
@@ -294,7 +289,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   public void testSwitchToFlexCssQuickFix1() throws Exception {
     enableInspectionTool(new CssInvalidHtmlTagReferenceInspection());
     try {
-      CssDialectMappings.getInstance(getProject()).setMapping(null, CssDialect.CLASSIC);
+      CssDialectMappings.getInstance(getProject()).setMapping(null, CssDialect.CLASSIC.getName());
       doHighlightingWithInvokeFixAndCheckResult(
         CssBundle.message("switch.to.css.dialect.quickfix.name", FlexCSSDialect.getInstance().getDisplayName()), "css");
     }
@@ -306,7 +301,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
   public void testSwitchToFlexCssQuickFix2() throws Exception {
     try {
-      CssDialectMappings.getInstance(getProject()).setMapping(null, CssDialect.CLASSIC);
+      CssDialectMappings.getInstance(getProject()).setMapping(null, CssDialect.CLASSIC.getName());
       enableInspectionTool(new CssUnknownPropertyInspection());
       doHighlightingWithInvokeFixAndCheckResult(
         CssBundle.message("switch.to.css.dialect.quickfix.name", FlexCSSDialect.getInstance().getDisplayName()), "css");
@@ -320,7 +315,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   public void testSwitchToFlexCssQuickFix3() throws Exception {
     enableInspectionTool(new CssInvalidHtmlTagReferenceInspection());
     try {
-      CssDialectMappings.getInstance(getProject()).setMapping(null, CssDialect.CLASSIC);
+      CssDialectMappings.getInstance(getProject()).setMapping(null, CssDialect.CLASSIC.getName());
 
       configureByFile(BASE_PATH + '/' + getTestName(false) + '.' + "html");
       doHighlighting();
@@ -522,12 +517,6 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions(
-    {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet, JSTestOption.WithLineMarkers})
-  public void testFlexWithMockFlexWithLineMarkers() {
-    defaultTest();
-  }
-
-  @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
   public void testFlexWithMockFlex2() {
     final String testName = getTestName(false);
@@ -543,7 +532,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
       });
 
       try {
-        final String actionName = JSBundle.message("javascript.create.method.intention.name", "bar");
+        final String actionName = JavaScriptBundle.message("javascript.create.method.intention.name", "bar");
         findAndInvokeIntentionAction(highlightInfos, actionName, myEditor, myFile);
         assertNull(findIntentionAction(doHighlighting(), actionName, myEditor, myFile));
       }
@@ -657,7 +646,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   private void doImplementsTest(final String testName) throws Exception {
     final Collection<HighlightInfo> infoCollection = doTestFor(false, testName + ".mxml", "I" + getTestName(false) + ".as");
-    findAndInvokeIntentionAction(infoCollection, JSBundle.message("javascript.fix.implement.methods"), myEditor, myFile);
+    findAndInvokeIntentionAction(infoCollection, JavaScriptBundle.message("javascript.fix.implement.methods"), myEditor, myFile);
     checkResultByFile(BASE_PATH + "/" + testName + "_after.mxml");
     JSTestUtils.initJSIndexes(getProject());
 
@@ -844,7 +833,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   private void checkNavigatableSymbols(String s) {
     JavaScriptIndex scriptIndex = JavaScriptIndex.getInstance(myProject);
-    String[] strings = scriptIndex.getSymbolNames();
+    String[] strings = JSIndexTest.getSymbolNames(myProject);
     Arrays.sort(strings);
 
     assertTrue(Arrays.binarySearch(strings, s) >= 0);
@@ -974,13 +963,6 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     defaultTest();
   }
 
-  @JSTestOptions({JSTestOption.WithLineMarkers, JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
-  public void testOverridingMarkers() throws Exception {
-    final String testName = getTestName(false);
-    doTestFor(true, (Runnable)null, testName + ".mxml", testName + "_2.mxml");
-    invokeNamedActionWithExpectedFileCheck(testName, "OverrideMethods", "mxml");
-  }
-
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
   public void testOverridingMethods() throws Exception {
     overrideMethodTest(getTestName(false) + "_2");
@@ -1011,11 +993,6 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     invokeNamedActionWithExpectedFileCheck(testName, "ImplementMethods", "mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithLineMarkers, JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
-  public void testHighlightStaticInstanceMembers() {
-    defaultTest();
-  }
-
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk, JSTestOption.WithUnusedImports})
   public void testOptimizeImports() throws Exception {
     enableInspectionTool(new JSUnusedLocalSymbolsInspection());
@@ -1040,9 +1017,9 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
   public void testGenerateGetterAndSetterIntentions() throws Exception {
     final String name = getTestName(false);
-    doTestIntention(name + "Getter", "as", JSBundle.message("javascript.intention.create.getter", "foo"));
-    doTestIntention(name + "Setter", "mxml", JSBundle.message("javascript.intention.create.setter", "foo"));
-    doTestIntention(name + "GetterAndSetter", "as", JSBundle.message("javascript.intention.create.getter.setter", "foo"));
+    doTestIntention(name + "Getter", "as", JavaScriptBundle.message("javascript.intention.create.getter", "foo"));
+    doTestIntention(name + "Setter", "mxml", JavaScriptBundle.message("javascript.intention.create.setter", "foo"));
+    doTestIntention(name + "GetterAndSetter", "as", JavaScriptBundle.message("javascript.intention.create.getter.setter", "foo"));
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
@@ -1127,10 +1104,10 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   public void testSpellChecker() throws Exception {
     enableInspectionTool(new SpellCheckingInspection());
     configureByFile(getBasePath() + "/" + getTestName(false) + ".mxml");
-    ExpectedHighlightingData expectedHighlightingData = new ExpectedHighlightingData(myEditor.getDocument(), true, true, false, myFile);
+    ExpectedHighlightingData expectedHighlightingData = new ExpectedHighlightingData(myEditor.getDocument(), true, true, false);
     Collection<HighlightInfo> infoCollection = checkHighlighting(expectedHighlightingData);
     assertEquals(1, countNonInformationHighlights(infoCollection));
-    findAndInvokeActionWithExpectedCheck(RenameTo.FIX_NAME, "mxml", infoCollection);
+    findAndInvokeActionWithExpectedCheck(RenameTo.getFixName(), "mxml", infoCollection);
   }
 
   @NeedsJavaModule
@@ -1210,51 +1187,6 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     }
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk, JSTestOption.WithLineMarkers})
-  public void testOverridingMarkersXmlBacked() {
-    doTestFor(true, getTestName(false) + "_B.mxml", getTestName(false) + "_A.mxml", getTestName(false) + "_C.mxml",
-              getTestName(false) + "_D.as", getTestName(false) + "_MyInterface.as");
-    int offset = myEditor.getCaretModel().getOffset();
-    PsiElement source = InjectedLanguageUtil.findElementAtNoCommit(myFile, offset);
-    source = PsiTreeUtil.getParentOfType(source, JSFunction.class);
-    PsiElement[] functions = new ImplementationSearcher().searchImplementations(source, myEditor, true, true);
-    assertEquals(3, functions.length);
-    Collection<String> classNames = new ArrayList<>();
-    for (PsiElement function : functions) {
-      assertEquals("foo", ((JSFunction)function).getName());
-      PsiElement clazz = function.getParent();
-      if (clazz instanceof JSFile) {
-        clazz = JSResolveUtil.getXmlBackedClass((JSFile)clazz);
-      }
-      classNames.add(((JSClass)clazz).getName());
-    }
-    assertTrue(classNames.contains(getTestName(false) + "_B"));
-    assertTrue(classNames.contains(getTestName(false) + "_C"));
-    assertTrue(classNames.contains(getTestName(false) + "_D"));
-  }
-
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk, JSTestOption.WithLineMarkers})
-  public void testOverridingMarkersXmlBacked2() {
-    doTestFor(true, getTestName(false) + "_MyInterface.as", getTestName(false) + "_A.mxml", getTestName(false) + "_B.mxml");
-    int offset = myEditor.getCaretModel().getOffset();
-    PsiElement source = myFile.findElementAt(offset);
-    source = PsiTreeUtil.getParentOfType(source, JSFunction.class);
-    PsiElement[] functions = new ImplementationSearcher().searchImplementations(source, myEditor, true, true);
-    assertEquals(2, functions.length);
-    //assertEquals(3, functions.length); IDEADEV-34319
-    Collection<String> classNames = new ArrayList<>();
-    for (PsiElement function : functions) {
-      assertEquals("bar", ((JSFunction)function).getName());
-      PsiElement clazz = function.getParent();
-      if (clazz instanceof JSFile) {
-        clazz = JSResolveUtil.getXmlBackedClass((JSFile)clazz);
-      }
-      classNames.add(((JSClass)clazz).getName());
-    }
-    assertTrue(classNames.contains(getTestName(false) + "_MyInterface"));
-    assertTrue(classNames.contains(getTestName(false) + "_A"));
-    //assertTrue(classNames.contains(getTestName(false) +"_B")); IDEADEV-34319
-  }
 
   //@JSTestOptions({WithJsSupportLoader})
   //public void testImportScopeOverriddenByBaseClass() throws Exception {
@@ -1312,21 +1244,6 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   public void testPredefinedFunReference() {
     enableInspectionTool(new JSUnusedLocalSymbolsInspection());
     doTestFor(true, getTestName(false) + ".mxml", "getFoo.swc");
-  }
-
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk, JSTestOption.WithLineMarkers})
-  public void testOverridingMarkersInlineComponents() {
-    doTestFor(true, getTestName(false) + ".mxml");
-
-    int offset = myEditor.getCaretModel().getOffset();
-    PsiElement source = InjectedLanguageUtil.findElementAtNoCommit(myFile, offset);
-    source = PsiTreeUtil.getParentOfType(source, JSFunction.class);
-    Collection<JSClass> classes = JSInheritanceUtil.findDeclaringClasses((JSFunction)source);
-    assertEquals(1, classes.size());
-    assertEquals("mx.core.UIComponent", classes.iterator().next().getQualifiedName());
-    JSFunction baseFunction = classes.iterator().next().findFunctionByName(((JSFunction)source).getName());
-    Collection<JSFunction> implementations = JSFunctionsSearch.searchOverridingFunctions(baseFunction, true).findAll();
-    assertEquals(2, implementations.size());
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
@@ -1418,16 +1335,6 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithLineMarkers})
-  public void testOverriddenMarkersInMxml1() {
-    doTestFor(true, getTestName(false) + ".mxml", getTestName(false) + "_2.as");
-  }
-
-  @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithLineMarkers})
-  public void testOverriddenMarkersInMxml2() {
-    doTestFor(true, getTestName(false) + ".mxml", getTestName(false) + "_2.as");
-  }
-
   @JSTestOptions({JSTestOption.WithFlexSdk})
   public void testHttpService() {
     doTestFor(true, getTestName(false) + ".mxml");
@@ -1501,13 +1408,9 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithLineMarkers})
-  public void testImplicitImplementMarker() {
-    doTestFor(true, getTestName(false) + "Interface.as", getTestName(false) + "Base.mxml", getTestName(false) + ".mxml");
-  }
-
   public void testIntroduceFieldAmbiguous() throws Exception {
-    doHighlightingWithInvokeFixAndCheckResult(JSBundle.message("javascript.create.field.intention.name", "v"), "as", getTestName(false) + ".as", getTestName(false) + "_2.as");
+    doHighlightingWithInvokeFixAndCheckResult(JavaScriptBundle.message("javascript.create.field.intention.name", "v"), "as",
+                                              getTestName(false) + ".as", getTestName(false) + "_2.as");
   }
 
   public void testAddTypeToDeclarationAmbiguous() throws Exception {
@@ -1516,11 +1419,13 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   public void testCreateFunctionAmbiguous() throws Exception {
-    doHighlightingWithInvokeFixAndCheckResult(JSBundle.message("javascript.create.method.intention.name", "foo"), "as", getTestName(false) + ".as", getTestName(false) + "_2.as");
+    doHighlightingWithInvokeFixAndCheckResult(JavaScriptBundle.message("javascript.create.method.intention.name", "foo"), "as",
+                                              getTestName(false) + ".as", getTestName(false) + "_2.as");
   }
 
   public void testImplementMethodsAmbiguous() throws Exception {
-    doHighlightingWithInvokeFixAndCheckResult(JSBundle.message("javascript.fix.implement.methods"), "as", getTestName(false) + ".as", getTestName(false) + "_2.as",
+    doHighlightingWithInvokeFixAndCheckResult(JavaScriptBundle.message("javascript.fix.implement.methods"), "as", getTestName(false) + ".as",
+                                              getTestName(false) + "_2.as",
                                               getTestName(false) + "_3.as");
   }
 
@@ -1856,7 +1761,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   public void testCreateClassByAttributeValue() throws Exception {
     JSTestUtils.disableFileHeadersInTemplates(getProject());
     final String testName = getTestName(false);
-    doHighlightingWithInvokeFixAndCheckResult(JSBundle.message("javascript.create.class.intention.name", "Foo"), "mxml");
+    doHighlightingWithInvokeFixAndCheckResult(JavaScriptBundle.message("javascript.create.class.intention.name", "Foo"), "mxml");
     final VirtualFile verificationFile =
       LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + "_Foo.as");
     final VirtualFile createdFile =
@@ -2053,7 +1958,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   public void testBindingType() throws Exception {
     final String testName = getTestName(false);
     Collection<HighlightInfo> highlightInfos = doTestFor(true, (Runnable)null, testName + ".mxml");
-    findAndInvokeIntentionAction(highlightInfos, JSBundle.message("javascript.create.method.intention.name", "getMsg"), myEditor, myFile);
+    findAndInvokeIntentionAction(highlightInfos, JavaScriptBundle.message("javascript.create.method.intention.name", "getMsg"), myEditor, myFile);
     checkResultByFile(BASE_PATH + "/" + testName + "_after.mxml");
   }
 
@@ -2061,7 +1966,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   public void testBindingType2() throws Exception {
     final String testName = getTestName(false);
     Collection<HighlightInfo> highlightInfos = doTestFor(true, (Runnable)null, testName + ".mxml");
-    findAndInvokeIntentionAction(highlightInfos, JSBundle.message("javascript.create.field.intention.name", "label"), myEditor, myFile);
+    findAndInvokeIntentionAction(highlightInfos, JavaScriptBundle.message("javascript.create.field.intention.name", "label"), myEditor, myFile);
     checkResultByFile(BASE_PATH + "/" + testName + "_after.mxml");
   }
 
@@ -2069,7 +1974,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   public void testCreateClassFromMetadataAttr() throws Exception {
     JSTestUtils.disableFileHeadersInTemplates(getProject());
     final String testName = getTestName(false);
-    findAndInvokeIntentionAction(doTestFor(true, testName + ".as"), JSBundle.message("javascript.create.class.intention.name", "Baz"), myEditor, myFile);
+    findAndInvokeIntentionAction(doTestFor(true, testName + ".as"), JavaScriptBundle.message("javascript.create.class.intention.name", "Baz"), myEditor, myFile);
     assertEmpty(filterUnwantedInfos(doHighlighting(), this));
     final VirtualFile createdFile = VfsUtilCore.findRelativeFile("foo/Baz.as", myFile.getVirtualFile().getParent());
     myEditor = FileEditorManager.getInstance(myProject).openTextEditor(new OpenFileDescriptor(myProject, createdFile), true);
@@ -2082,7 +1987,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     JSTestUtils.disableFileHeadersInTemplates(getProject());
     final String testName = getTestName(false);
     findAndInvokeIntentionAction(doTestFor(true, testName + ".as"),
-                                 JSBundle.message("javascript.create.class.intention.name", "MyEvent"), myEditor, myFile);
+                                 JavaScriptBundle.message("javascript.create.class.intention.name", "MyEvent"), myEditor, myFile);
     assertEmpty(filterUnwantedInfos(doHighlighting(), this));
     final VirtualFile createdFile = VfsUtilCore.findRelativeFile("foo/MyEvent.as", myFile.getVirtualFile().getParent());
     myEditor = FileEditorManager.getInstance(myProject).openTextEditor(new OpenFileDescriptor(myProject, createdFile), true);
@@ -2138,22 +2043,22 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
   public void testCreateFieldByMxmlAttribute() throws Exception {
-    doTestQuickFixForRedMxmlAttribute(JSBundle.message("javascript.create.field.intention.name", "foo"), "as");
+    doTestQuickFixForRedMxmlAttribute(JavaScriptBundle.message("javascript.create.field.intention.name", "foo"), "as");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
   public void testCreateFieldByMxmlAttribute2() throws Exception {
-    doTestQuickFixForRedMxmlAttribute(JSBundle.message("javascript.create.field.intention.name", "foo"), "mxml");
+    doTestQuickFixForRedMxmlAttribute(JavaScriptBundle.message("javascript.create.field.intention.name", "foo"), "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
   public void testCreateSetterByMxmlAttribute() throws Exception {
-    doTestQuickFixForRedMxmlAttribute(JSBundle.message("javascript.create.set.property.intention.name", "foo"), "as");
+    doTestQuickFixForRedMxmlAttribute(JavaScriptBundle.message("javascript.create.set.property.intention.name", "foo"), "as");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
   public void testCreateSetterByMxmlAttribute2() throws Exception {
-    doTestQuickFixForRedMxmlAttribute(JSBundle.message("javascript.create.set.property.intention.name", "foo"), "mxml");
+    doTestQuickFixForRedMxmlAttribute(JavaScriptBundle.message("javascript.create.set.property.intention.name", "foo"), "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
@@ -2242,7 +2147,9 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @JSTestOptions(JSTestOption.WithFlexFacet)
   public void testMakeMethodStatic() throws Exception {
-    enableInspectionTool(new JSMethodCanBeStaticInspection());
+    JSMethodCanBeStaticInspection inspection = new JSMethodCanBeStaticInspection();
+    inspection.myOnlyPrivate = false;
+    enableInspectionTool(inspection);
     doHighlightingWithInvokeFixAndCheckResult("Make 'static'", "mxml", getTestName(false) + ".mxml");
   }
 
@@ -2327,7 +2234,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     enableInspectionTool(new CssInvalidElementInspection());
     JSTestUtils.disableFileHeadersInTemplates(getProject());
     final String testName = getTestName(false);
-    doHighlightingWithInvokeFixAndCheckResult(JSBundle.message("javascript.create.class.intention.name", "MyZuperClass"), "mxml");
+    doHighlightingWithInvokeFixAndCheckResult(JavaScriptBundle.message("javascript.create.class.intention.name", "MyZuperClass"), "mxml");
 
     final VirtualFile expectedFile =
       LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + "_2.as");
@@ -2408,10 +2315,6 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   public void testCreateMethodAfterCallExpression() throws Exception {
-    doHighlightingWithInvokeFixAndCheckResult(JSBundle.message("javascript.create.method.intention.name", "bar"), "as");
-  }
-
-  private static class F {
-    String myField = "f";
+    doHighlightingWithInvokeFixAndCheckResult(JavaScriptBundle.message("javascript.create.method.intention.name", "bar"), "as");
   }
 }

@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion;
 
 import com.intellij.coldFusion.UI.runner.CfmlRunConfiguration;
@@ -18,6 +18,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.UsefulTestCase;
+import com.intellij.util.containers.ContainerUtil;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,7 +28,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -51,23 +51,23 @@ public class CfmlRunConfigurationTest extends CfmlCodeInsightFixtureTestCase {
   }
 
   public CfmlRunConfiguration getDefaultCfmlRunConfiguration() {
-    final Project project = myFixture.getProject();
-    final Editor editor = openCfmFileInEditor(indexCfm);
-    final Presentation presentation = getPresentationForRunAction();
+    Project project = myFixture.getProject();
+    Editor editor = openCfmFileInEditor(indexCfm);
+    Presentation presentation = getPresentationForRunAction();
     assert editor != null;
-    final DataContext dataContext = DataManager.getInstance().getDataContext(editor.getComponent());
+    DataContext dataContext = DataManager.getInstance().getDataContext(editor.getComponent());
 
-
-    TestCase.assertEquals("Run 'index.cfm'", presentation.getText());
-    final ConfigurationContext configurationContext = ConfigurationContext.getFromContext(dataContext);
-    final List<RunConfigurationProducer<?>> producers = RunConfigurationProducer.getProducers(project);
+    assertThat(presentation.getText()).isEqualTo("Run 'index.cfm'");
+    ConfigurationContext configurationContext = ConfigurationContext.getFromContext(dataContext);
     List<ConfigurationFromContext> configs = new ArrayList<>();
-    for (RunConfigurationProducer<?> producer : producers) {
-      final ConfigurationFromContext configurationFromContext = producer.createConfigurationFromContext(configurationContext);
-      if (configurationFromContext != null) configs.add(configurationFromContext);
+    for (RunConfigurationProducer<?> producer : RunConfigurationProducer.getProducers(project)) {
+      ConfigurationFromContext configurationFromContext = producer.createConfigurationFromContext(configurationContext);
+      if (configurationFromContext != null) {
+        configs.add(configurationFromContext);
+      }
     }
-    List<ConfigurationFromContext> cfmlRunContextConfigurations =
-      configs.stream().filter(context -> context.getConfiguration() instanceof CfmlRunConfiguration).collect(Collectors.toList());
+
+    List<ConfigurationFromContext> cfmlRunContextConfigurations = ContainerUtil.filter(configs, context -> context.getConfiguration() instanceof CfmlRunConfiguration);
     assertThat(cfmlRunContextConfigurations).hasSize(1);
     final RunConfiguration configuration = cfmlRunContextConfigurations.get(0).getConfiguration();
     TestCase.assertNotNull(configuration);
@@ -76,8 +76,7 @@ public class CfmlRunConfigurationTest extends CfmlCodeInsightFixtureTestCase {
   }
 
   public void generateNonDefaultRunConfiguration() {
-    final CfmlRunConfiguration defaultCfmlRunConfiguration = getDefaultCfmlRunConfiguration();
-    final CfmlRunConfiguration clonedConfiguration = (CfmlRunConfiguration) defaultCfmlRunConfiguration.clone();
+    CfmlRunConfiguration clonedConfiguration = (CfmlRunConfiguration)getDefaultCfmlRunConfiguration().clone();
     clonedConfiguration.getRunnerParameters().setUrl("http://4.4.4.4/src/index.cfm");
     RunManager runManager = RunManager.getInstance(getProject());
     RunnerAndConfigurationSettings runnerAndConfigurationSettings = runManager.createConfiguration(clonedConfiguration, CfmlRunConfigurationType.getInstance().getConfigurationFactories()[0]);
@@ -85,10 +84,10 @@ public class CfmlRunConfigurationTest extends CfmlCodeInsightFixtureTestCase {
   }
 
   private static CfmlRunConfiguration getContextRunConfiguration(Editor editor){
-    final DataContext dataContext = DataManager.getInstance().getDataContext(editor.getComponent());
-    final ConfigurationContext configurationContext = ConfigurationContext.getFromContext(dataContext);
+    DataContext dataContext = DataManager.getInstance().getDataContext(editor.getComponent());
+    ConfigurationContext configurationContext = ConfigurationContext.getFromContext(dataContext);
 
-    //this block emulates RunContextAction.perform()
+    // this block emulates RunContextAction.perform()
     RunnerAndConfigurationSettings configuration = configurationContext.findExisting();
     if (configuration == null) {
       configuration = configurationContext.getConfiguration();
@@ -103,8 +102,8 @@ public class CfmlRunConfigurationTest extends CfmlCodeInsightFixtureTestCase {
 
   public void testNonDefaultRunConfiguration() {
     generateNonDefaultRunConfiguration();
-    final Editor editor = myFixture.getEditor();
-    final CfmlRunConfiguration cfmlConfig = getContextRunConfiguration(editor);
+    Editor editor = myFixture.getEditor();
+    CfmlRunConfiguration cfmlConfig = getContextRunConfiguration(editor);
     assert cfmlConfig != null;
     cfmlConfig.getRunnerParameters().getUrl();
     assertEquals("http://4.4.4.4/src/index.cfm", cfmlConfig.getRunnerParameters().getUrl());
@@ -143,9 +142,8 @@ public class CfmlRunConfigurationTest extends CfmlCodeInsightFixtureTestCase {
   }
 
   public Presentation getPresentationForRunAction() {
-    final AnAction runAction = ExecutorAction.getActionList().get(0);
-    AnActionEvent e = AnActionEvent.createFromDataContext(ActionPlaces.EDITOR_POPUP, null, DataManager
-      .getInstance().getDataContext(myFixture.getEditor().getComponent()));
+    AnAction runAction = ExecutorAction.getActionList().get(0);
+    AnActionEvent e = AnActionEvent.createFromDataContext(ActionPlaces.EDITOR_POPUP, null, DataManager.getInstance().getDataContext(myFixture.getEditor().getComponent()));
     runAction.update(e);
     return e.getPresentation();
   }

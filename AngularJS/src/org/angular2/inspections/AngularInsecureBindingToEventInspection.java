@@ -1,13 +1,13 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.inspections;
 
+import com.intellij.codeInsight.daemon.impl.analysis.RemoveAttributeIntentionFix;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.util.containers.ContainerUtil;
 import org.angular2.codeInsight.Angular2DeclarationsScope;
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
 import org.angular2.inspections.quickfixes.ConvertToEventQuickFix;
-import org.angular2.inspections.quickfixes.RemoveAttributeQuickFix;
 import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeInfo;
@@ -29,17 +29,17 @@ public class AngularInsecureBindingToEventInspection extends AngularHtmlLikeTemp
         switch (((Angular2AttributeNameParser.PropertyBindingInfo)info).bindingType) {
           case ATTRIBUTE:
             holder.registerProblem(attribute.getNameElement(),
-                                   Angular2Bundle.message("angular.inspection.template.binding-to-event-attribute", propertyName),
+                                   Angular2Bundle.message("angular.inspection.insecure-binding-to-event.message.attribute", propertyName),
                                    new ConvertToEventQuickFix(propertyName.substring(2)),
-                                   new RemoveAttributeQuickFix(attribute.getName()));
+                                   new RemoveAttributeIntentionFix(attribute.getName()));
             break;
           case PROPERTY:
             Angular2DeclarationsScope scope = new Angular2DeclarationsScope(attribute);
             if (ContainerUtil.find(descriptor.getSourceDirectives(), scope::contains) == null) {
               holder.registerProblem(attribute.getNameElement(),
-                                     Angular2Bundle.message("angular.inspection.template.binding-to-event-property", propertyName),
+                                     Angular2Bundle.message("angular.inspection.insecure-binding-to-event.message.property", propertyName),
                                      new ConvertToEventQuickFix(propertyName.substring(2)),
-                                     new RemoveAttributeQuickFix(attribute.getName()));
+                                     new RemoveAttributeIntentionFix(attribute.getName()));
             }
             break;
           default:

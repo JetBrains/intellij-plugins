@@ -14,6 +14,7 @@
 package com.intellij.lang.javascript.linter.tslint;
 
 import com.intellij.lang.javascript.linter.JSLinterConfigFileUtil;
+import com.intellij.lang.javascript.linter.tslint.config.TsLintConfigDetector;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -61,7 +62,11 @@ public class TslintUtil {
   }
 
   @Nullable
-  public static VirtualFile getConfig(@NotNull TsLintState state, @NotNull VirtualFile virtualFile) {
+  public static VirtualFile getConfig(@NotNull TsLintState state, @NotNull Project project, @NotNull VirtualFile virtualFile) {
+    return doGetConfig(state, project, virtualFile);
+  }
+
+  private static VirtualFile doGetConfig(@NotNull TsLintState state, @NotNull Project project, @NotNull VirtualFile virtualFile) {
     if (state.isCustomConfigFileUsed()) {
       final String configFilePath = state.getCustomConfigFilePath();
       if (StringUtil.isEmptyOrSpaces(configFilePath)) {
@@ -71,11 +76,17 @@ public class TslintUtil {
       return VfsUtil.findFileByIoFile(configFile, false);
     }
 
-    return lookupConfig(virtualFile);
+    return lookupConfig(project, virtualFile);
   }
 
   @Nullable
-  public static VirtualFile lookupConfig(@NotNull VirtualFile virtualFile) {
-    return JSLinterConfigFileUtil.findFileUpToFileSystemRoot(virtualFile, CONFIG_FILE_NAMES);
+  public static VirtualFile lookupConfig(@NotNull Project project, @NotNull VirtualFile virtualFile) {
+    for (TsLintConfigDetector detector : TsLintConfigDetector.TS_LINT_CONFIG_DETECTOR_EP.getExtensionList()) {
+      TsLintConfigDetector.TsLintConfigs setup = detector.detectConfigs(project, virtualFile);
+      if (setup != null) {
+        return setup.getTsLintConfig();
+      }
+    }
+    return null;
   }
 }

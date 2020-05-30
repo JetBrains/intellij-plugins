@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.actions;
 
 import com.intellij.codeInsight.hint.HintManager;
@@ -40,9 +40,6 @@ import java.util.List;
  * or a group of selected Dart files.
  */
 public abstract class AbstractDartFileProcessingAction extends AnAction implements DumbAware {
-  public AbstractDartFileProcessingAction(@Nullable String text, @Nullable String description, @Nullable Icon icon) {
-    super(text, description, icon);
-  }
 
   @Override
   public void actionPerformed(@NotNull final AnActionEvent event) {
@@ -128,7 +125,7 @@ public abstract class AbstractDartFileProcessingAction extends AnAction implemen
 
   @NotNull
   private static List<VirtualFile> getApplicableVirtualFiles(@NotNull final Project project,
-                                                             @NotNull final VirtualFile[] filesAndDirs) {
+                                                             final VirtualFile @NotNull [] filesAndDirs) {
     final List<VirtualFile> result = new SmartList<>();
 
     GlobalSearchScope dirScope = null;
@@ -171,7 +168,7 @@ public abstract class AbstractDartFileProcessingAction extends AnAction implemen
   }
 
   private static boolean mayHaveApplicableDartFiles(@NotNull final Project project,
-                                                    @NotNull final VirtualFile[] files) {
+                                                    final VirtualFile @NotNull [] files) {
     for (VirtualFile fileOrDir : files) {
       if (!fileOrDir.isDirectory() && isApplicableFile(project, fileOrDir)) {
         return true;

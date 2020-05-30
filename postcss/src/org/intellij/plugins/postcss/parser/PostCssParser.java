@@ -103,7 +103,7 @@ public class PostCssParser extends CssParser2 {
   protected void parsePropertyOfDeclaration() {
     if (getTokenType() == CssElementTypes.CSS_IDENT && rawLookup(1) == PostCssTokenTypes.POST_CSS_SIMPLE_VARIABLE_TOKEN) {
       addToken();
-      addToken();
+      parseSimpleVariable();
     }
     else {
       super.parsePropertyOfDeclaration();

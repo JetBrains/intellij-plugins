@@ -24,9 +24,8 @@ public class Angular2FindUsagesHandlerFactory extends FindUsagesHandlerFactory {
     return element instanceof Angular2DirectiveSelectorPsiElement;
   }
 
-  @Nullable
   @Override
-  public FindUsagesHandler createFindUsagesHandler(@NotNull PsiElement element, boolean forHighlightUsages) {
+  public @Nullable FindUsagesHandler createFindUsagesHandler(@NotNull PsiElement element, boolean forHighlightUsages) {
     if (element instanceof Angular2DirectiveSelectorPsiElement) {
       return new DirectiveSelectorFindUsagesHandler((Angular2DirectiveSelectorPsiElement)element);
     }
@@ -41,7 +40,7 @@ public class Angular2FindUsagesHandlerFactory extends FindUsagesHandlerFactory {
 
     @Override
     public boolean processElementUsages(@NotNull PsiElement element,
-                                        @NotNull Processor<UsageInfo> processor,
+                                        @NotNull Processor<? super UsageInfo> processor,
                                         @NotNull FindUsagesOptions options) {
       if (options.isUsages) {
         Collection<String> stringToSearch = ReadAction.compute(() -> getStringsToSearch(element));

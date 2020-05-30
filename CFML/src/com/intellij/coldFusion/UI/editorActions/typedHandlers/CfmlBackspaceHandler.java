@@ -7,6 +7,7 @@ import com.intellij.coldFusion.model.CfmlLanguage;
 import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 
 /**
@@ -27,12 +28,15 @@ public class CfmlBackspaceHandler extends BackspaceHandlerDelegate {
         }
       }
     }
-    else if (c == '{' && file.findElementAt(editor.getCaretModel().getOffset()) == CfscriptTokenTypes.L_CURLYBRACKET) {
-      final int offset = editor.getCaretModel().getOffset();
-      final Document doc = editor.getDocument();
-      char charAtOffset = DocumentUtils.getCharAt(doc, offset);
-      if (charAtOffset == '}') {
-        doc.deleteString(offset, offset + 1);
+    else if (c == '{') {
+      PsiElement element = file.findElementAt(editor.getCaretModel().getOffset());
+      if (element != null && element.getNode().getElementType() == CfscriptTokenTypes.L_CURLYBRACKET) {
+        final int offset = editor.getCaretModel().getOffset();
+        final Document doc = editor.getDocument();
+        char charAtOffset = DocumentUtils.getCharAt(doc, offset);
+        if (charAtOffset == '}') {
+          doc.deleteString(offset, offset + 1);
+        }
       }
     }
   }

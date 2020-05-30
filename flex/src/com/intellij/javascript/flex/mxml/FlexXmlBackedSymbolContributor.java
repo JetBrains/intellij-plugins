@@ -40,7 +40,7 @@ import java.util.Collections;
 
 public class FlexXmlBackedSymbolContributor implements ChooseByNameContributorEx {
   @Override
-  public void processNames(@NotNull Processor<String> processor, @NotNull GlobalSearchScope scope, @Nullable IdFilter filter) {
+  public void processNames(@NotNull Processor<? super String> processor, @NotNull GlobalSearchScope scope, @Nullable IdFilter filter) {
     if (!FileBasedIndex.getInstance().processAllKeys(FlexXmlBackedMembersIndex.NAME, processor, scope, filter)) return;
     FileType type = JavaScriptSupportLoader.getMxmlFileType();
     if (type != null) {
@@ -50,7 +50,7 @@ public class FlexXmlBackedSymbolContributor implements ChooseByNameContributorEx
 
   @Override
   public void processElementsWithName(@NotNull String name,
-                                      @NotNull Processor<NavigationItem> processor,
+                                      @NotNull Processor<? super NavigationItem> processor,
                                       @NotNull FindSymbolParameters parameters) {
     boolean[] result = {true};
     PsiManager psiManager = PsiManager.getInstance(parameters.getProject());

@@ -41,20 +41,20 @@ import static com.intellij.patterns.XmlPatterns.xmlTag;
  * @author Yann C&eacute;bron
  */
 public class TaglibCssInlineStyleInjector implements MultiHostInjector, DumbAware {
-
-  private static final ElementPattern<XmlAttributeValue> CSS_ELEMENT_PATTERN =
-    xmlAttributeValue()
-      .withSuperParent(2, xmlTag().withNamespace(StrutsConstants.TAGLIB_STRUTS_UI_URI,
-                                                 StrutsConstants.TAGLIB_JQUERY_PLUGIN_URI,
-                                                 StrutsConstants.TAGLIB_JQUERY_RICHTEXT_PLUGIN_URI,
-                                                 StrutsConstants.TAGLIB_JQUERY_CHART_PLUGIN_URI,
-                                                 StrutsConstants.TAGLIB_JQUERY_TREE_PLUGIN_URI,
-                                                 StrutsConstants.TAGLIB_JQUERY_GRID_PLUGIN_URI,
-                                                 StrutsConstants.TAGLIB_JQUERY_MOBILE_PLUGIN_URI,
-                                                 StrutsConstants.TAGLIB_BOOTSTRAP_PLUGIN_URI
-      ))
-      .withLocalName(StrutsConstants.TAGLIB_STRUTS_UI_CSS_ATTRIBUTES);
-
+  private static class Holder {
+    private static final ElementPattern<XmlAttributeValue> CSS_ELEMENT_PATTERN =
+      xmlAttributeValue()
+        .withSuperParent(2, xmlTag().withNamespace(StrutsConstants.TAGLIB_STRUTS_UI_URI,
+                                                   StrutsConstants.TAGLIB_JQUERY_PLUGIN_URI,
+                                                   StrutsConstants.TAGLIB_JQUERY_RICHTEXT_PLUGIN_URI,
+                                                   StrutsConstants.TAGLIB_JQUERY_CHART_PLUGIN_URI,
+                                                   StrutsConstants.TAGLIB_JQUERY_TREE_PLUGIN_URI,
+                                                   StrutsConstants.TAGLIB_JQUERY_GRID_PLUGIN_URI,
+                                                   StrutsConstants.TAGLIB_JQUERY_MOBILE_PLUGIN_URI,
+                                                   StrutsConstants.TAGLIB_BOOTSTRAP_PLUGIN_URI
+        ))
+        .withLocalName(StrutsConstants.TAGLIB_STRUTS_UI_CSS_ATTRIBUTES);
+  }
   @Override
   public void getLanguagesToInject(@NotNull final MultiHostRegistrar registrar, @NotNull final PsiElement context) {
     final FileType fileType = context.getContainingFile().getFileType();
@@ -62,7 +62,7 @@ public class TaglibCssInlineStyleInjector implements MultiHostInjector, DumbAwar
       return;
     }
 
-    if (CSS_ELEMENT_PATTERN.accepts(context)) {
+    if (Holder.CSS_ELEMENT_PATTERN.accepts(context)) {
       final TextRange range = new TextRange(1, context.getTextLength() - 1);
       registrar.startInjecting(CssFileType.INSTANCE.getLanguage())
         .addPlace("inline.style {", "}", (PsiLanguageInjectionHost)context, range)

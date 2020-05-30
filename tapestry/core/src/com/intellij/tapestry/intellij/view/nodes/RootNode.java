@@ -41,9 +41,8 @@ public class RootNode extends SimpleNode {
     /**
      * {@inheritDoc}
      */
-    @NotNull
     @Override
-    public SimpleNode[] getChildren() {
+    public SimpleNode @NotNull [] getChildren() {
         if (_treeBuilder == null) {
             return EMPTY_LIST;
         }
@@ -62,8 +61,7 @@ public class RootNode extends SimpleNode {
      * {@inheritDoc}
      */
     @Override
-    @NotNull
-    public Object[] getEqualityObjects() {
+    public Object @NotNull [] getEqualityObjects() {
         return new Object[]{_myElement};
     }
 }

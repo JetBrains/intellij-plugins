@@ -89,6 +89,7 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
                        rootUrl + "/dir1/packages/project1",
                        rootUrl + "/dir1/web/packages",
                        rootUrl + "/dir2/.pub",
+                       rootUrl + "/dir2/.dart_tool",
                        rootUrl + "/dir2/build",
                        rootUrl + "/dir2/someFolder",
                        rootUrl + "/dir2/lib/someFolder",
@@ -102,10 +103,12 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
                        rootUrl + "/dir1/packages/project1",
                        rootUrl + "/dir1/web/packages",
                        rootUrl + "/dir2/.pub",
+                       rootUrl + "/dir2/.dart_tool",
                        rootUrl + "/dir2/build",
                        rootUrl + "/dir2/someFolder",
                        rootUrl + "/dir2/lib/someFolder",
                        rootUrl + "/dir2/example/.pub",
+                       rootUrl + "/dir2/example/.dart_tool",
                        rootUrl + "/dir2/example/build"
     );
   }

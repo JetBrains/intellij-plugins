@@ -20,7 +20,7 @@ import com.google.gson.JsonObject;
 /**
  * An {@link FuncRef} is a reference to a {@link Func}.
  */
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class FuncRef extends ObjRef {
 
   public FuncRef(JsonObject json) {
@@ -31,7 +31,7 @@ public class FuncRef extends ObjRef {
    * The name of this function.
    */
   public String getName() {
-    return json.get("name").getAsString();
+    return getAsString("name");
   }
 
   /**
@@ -40,7 +40,7 @@ public class FuncRef extends ObjRef {
    * @return one of <code>LibraryRef</code>, <code>ClassRef</code> or <code>FuncRef</code>
    */
   public Object getOwner() {
-    JsonObject elem = (JsonObject)json.get("owner");
+    final JsonObject elem = (JsonObject)json.get("owner");
     if (elem == null) return null;
 
     if (elem.get("type").getAsString().equals("@Library")) return new LibraryRef(elem);
@@ -53,13 +53,13 @@ public class FuncRef extends ObjRef {
    * Is this function const?
    */
   public boolean isConst() {
-    return json.get("const").getAsBoolean();
+    return getAsBoolean("const");
   }
 
   /**
    * Is this function static?
    */
   public boolean isStatic() {
-    return json.get("static").getAsBoolean();
+    return getAsBoolean("static");
   }
 }

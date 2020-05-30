@@ -80,8 +80,7 @@ public class VirtualFileMock extends VirtualFile {
     }
 
     @Override
-    @NotNull
-    public byte[] contentsToByteArray() {
+    public byte @NotNull [] contentsToByteArray() {
         return new byte[0];
     }
 

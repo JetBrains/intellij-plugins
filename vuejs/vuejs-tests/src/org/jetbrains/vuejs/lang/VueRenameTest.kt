@@ -53,6 +53,10 @@ class VueRenameTest : BasePlatformTestCase() {
     doTest("newName")
   }
 
+  fun testSlotProps() {
+    doTest("newName")
+  }
+
   fun testComponentNameFromDeclaration() {
     val testFile1 = getTestName(true) + "1.vue"
     val testFile2 = getTestName(true) + "2.vue"

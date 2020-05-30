@@ -79,7 +79,7 @@ public final class DartCommandLineRuntimeConfigurationProducer extends LazyRunCo
     return psiFile instanceof DartFile && virtualFile != null ? virtualFile : null;
   }
 
-  private static boolean hasImport(final @NotNull DartFile psiFile, final @NotNull String... importTexts) {
+  private static boolean hasImport(final @NotNull DartFile psiFile, final String @NotNull ... importTexts) {
     final DartImportStatement[] importStatements = PsiTreeUtil.getChildrenOfType(psiFile, DartImportStatement.class);
     if (importStatements == null) return false;
 

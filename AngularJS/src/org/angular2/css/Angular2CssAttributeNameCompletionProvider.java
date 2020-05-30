@@ -72,8 +72,8 @@ public class Angular2CssAttributeNameCompletionProvider extends CompletionProvid
     }
   }
 
-  private static void processHtmlCssReference(@NotNull final CompletionParameters parameters,
-                                              @NotNull final CompletionResultSet result,
+  private static void processHtmlCssReference(final @NotNull CompletionParameters parameters,
+                                              final @NotNull CompletionResultSet result,
                                               @NotNull HtmlCssClassOrIdReference reference) {
     reference.addCompletions(parameters, result.getPrefixMatcher(), element -> {
       if (element instanceof PrioritizedLookupElement) {

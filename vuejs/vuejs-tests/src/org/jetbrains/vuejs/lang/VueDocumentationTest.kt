@@ -1,6 +1,7 @@
 package org.jetbrains.vuejs.lang
 
 import com.intellij.codeInsight.documentation.DocumentationManager
+import com.intellij.lang.documentation.ExternalDocumentationProvider
 import com.intellij.openapi.application.PathManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
@@ -9,8 +10,7 @@ class VueDocumentationTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/"
 
   fun testDocumentationFromDefinitions() {
-    createPackageJsonWithVueDependency(myFixture, "")
-    myFixture.copyDirectoryToProject("./types/node_modules", "./node_modules")
+    myFixture.configureDependencies(VueTestModule.VUE_2_5_3)
     myFixture.configureByText("testDocumentationFromDefinitions.vue", """
 <script>
   export default {
@@ -25,4 +25,22 @@ class VueDocumentationTest : BasePlatformTestCase() {
     TestCase.assertNotNull(inlineDoc)
     TestCase.assertTrue(inlineDoc!!.trim().contains("Fictive mixins comment"))
   }
+
+  fun testTSLibraryElement() {
+    createPackageJsonWithVueDependency(myFixture, "")
+    myFixture.configureByText("testDocumentationFromDefinitions.vue", """
+<script>
+  const foo: Promise
+  foo.th<caret>en()
+</script>
+""")
+    val element = myFixture.file.findElementAt(myFixture.caretOffset)
+    val elementAtCaret = myFixture.elementAtCaret
+    val documentationProvider = DocumentationManager.getProviderFromElement(elementAtCaret, element)
+    documentationProvider as ExternalDocumentationProvider
+    val urls = documentationProvider.getUrlFor(elementAtCaret, element)
+    TestCase.assertNotNull(urls)
+    TestCase.assertNull("$urls", documentationProvider.fetchExternalDocumentation(project, elementAtCaret, urls, false))
+  }
+
 }

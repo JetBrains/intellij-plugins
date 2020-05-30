@@ -5,11 +5,13 @@ import com.intellij.codeInsight.template.TemplateContextType
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
+import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.lang.html.VueFileType
 
 private const val CONTEXT_TYPE = "VUE_TOP_LEVEL"
 
-class VueTopLevelLiveTemplateContextType : TemplateContextType(CONTEXT_TYPE, "Vue top-level", VueBaseLiveTemplateContextType::class.java) {
+class VueTopLevelLiveTemplateContextType : TemplateContextType(CONTEXT_TYPE, VueBundle.message("vue.live.template.context.top.level"),
+                                                               VueBaseLiveTemplateContextType::class.java) {
   override fun isInContext(file: PsiFile, offset: Int): Boolean {
     if (VueFileType.INSTANCE == file.fileType) {
       val element = file.findElementAt(offset) ?: return true

@@ -1,0 +1,2 @@
+<simpleStore.js:(387,398):(8,11)>	('foo', getters.bar)
+<simpleStore.vue:(119,124):(1,4)>	this.$store.getters['bar']

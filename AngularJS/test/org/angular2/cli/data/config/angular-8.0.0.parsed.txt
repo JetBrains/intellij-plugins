@@ -1,9 +1,0 @@
-AngularCliJsonFileConfig[
-  myAngularCliJson=temp:///src/angular.json
-  myRootPaths=[]
-  myStylePreprocessorIncludePaths=[]
-  myKarmaConfigPath=karma.conf.js
-  myProtractorConfigPath=e2e/protractor.conf.js
-  myIndexHtmlPath=src/index.html
-  myStyles=[foo, src/styles.scss]
-]

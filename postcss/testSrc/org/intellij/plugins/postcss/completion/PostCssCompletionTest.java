@@ -30,7 +30,7 @@ public abstract class PostCssCompletionTest extends PostCssFixtureTestCase {
     }
   }
 
-  protected void doTestPreferredNotStrict(@NotNull final Pair<String, String>... expectedItems) {
+  protected void doTestPreferredNotStrict(final Pair<String, String> @NotNull ... expectedItems) {
     myFixture.configureByFile(getTestName(true) + ".pcss");
     final LookupElement[] lookupElements = myFixture.completeBasic();
     final LookupElementPresentation presentation = new LookupElementPresentation();

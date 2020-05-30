@@ -45,7 +45,7 @@ public class StrutsJQueryTreeTaglibReferenceContributor extends StrutsJQueryTagl
     registerBoolean("openAllOnLoad", registrar, TREE);
     registerTags(new StaticStringValuesReferenceProvider("default", "apple"),
                  "jstreetheme", registrar, TREE);
-    registerTags(HTML_ID_REFERENCE_PROVIDER, "nodeTargets", registrar, TREE);
+    registerTags(Holder.HTML_ID_REFERENCE_PROVIDER, "nodeTargets", registrar, TREE);
 
     // <treeItem>
     registerBoolean("button", registrar, TREE_ITEM);

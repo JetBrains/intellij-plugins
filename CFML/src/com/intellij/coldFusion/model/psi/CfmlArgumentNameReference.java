@@ -59,8 +59,7 @@ public class CfmlArgumentNameReference extends CfmlReferenceExpression implement
     return null;
   }
 
-  @Nullable
-  private CfmlParameter[] getFunctionParameters() {
+  private CfmlParameter @Nullable [] getFunctionParameters() {
     CfmlFunction cfmlFunction = resolveToFunction();
     if (cfmlFunction != null) {
       return cfmlFunction.getParameters();
@@ -68,9 +67,8 @@ public class CfmlArgumentNameReference extends CfmlReferenceExpression implement
     return null;
   }
 
-  @NotNull
   @Override
-  protected ResolveResult[] resolveInner() {
+  protected ResolveResult @NotNull [] resolveInner() {
     PsiElement nextSibling = getNextSibling();
     while (nextSibling instanceof PsiWhiteSpace) {
       nextSibling = nextSibling.getNextSibling();
@@ -118,9 +116,8 @@ public class CfmlArgumentNameReference extends CfmlReferenceExpression implement
     return findChildByType(CfscriptTokenTypes.IDENTIFIER);
   }
 
-  @NotNull
   @Override
-  public Object[] getVariants() {
+  public Object @NotNull [] getVariants() {
     Collection<LookupElement> result = new LinkedList<>();
     Object[] superResult = ArrayUtilRt.EMPTY_OBJECT_ARRAY;
 

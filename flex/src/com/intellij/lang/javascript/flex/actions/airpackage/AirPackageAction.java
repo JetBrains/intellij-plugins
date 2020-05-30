@@ -1,8 +1,9 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.actions.airpackage;
 
 import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.TargetPlatform;
-import com.intellij.ide.actions.ShowFilePathAction;
+import com.intellij.ide.actions.RevealFileAction;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.actions.ExternalTask;
@@ -200,7 +201,7 @@ public class AirPackageAction extends DumbAwareAction {
             if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
               notification.expire();
               final String packagePath = event.getDescription();
-              ShowFilePathAction.openFile(new File(packagePath));
+              RevealFileAction.openFile(new File(packagePath));
             }
           }
         };
@@ -219,12 +220,12 @@ public class AirPackageAction extends DumbAwareAction {
         protected void hyperlinkActivated(@NotNull Notification notification, @NotNull HyperlinkEvent e) {
           if ("full.error.message".equals(e.getDescription())) {
             Messages.showIdeaMessageDialog(project, reason, "Error Message",
-                                           new String[]{Messages.OK_BUTTON}, 0, null, null);
+                                           new String[]{Messages.getOkButton()}, 0, null, null);
           }
 
           if ("adt.command.line".equals(e.getDescription())) {
             Messages.showIdeaMessageDialog(project, task.getCommandLine(), "ADT Command Line",
-                                           new String[]{Messages.OK_BUTTON}, 0, null, null);
+                                           new String[]{Messages.getOkButton()}, 0, null, null);
           }
         }
       };

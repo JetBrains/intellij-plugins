@@ -13,13 +13,6 @@ import org.jetbrains.annotations.NotNull;
 public class FlexUnitMixedAPIInspection extends FlexUnitMethodInspectionBase {
 
   @Override
-  @Nls
-  @NotNull
-  public String getDisplayName() {
-    return FlexBundle.message("flexunit.inspection.mixedapi.displayname");
-  }
-
-  @Override
   @NotNull
   public String getShortName() {
     return "FlexUnitMixedAPIInspection";

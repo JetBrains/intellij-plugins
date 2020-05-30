@@ -3,11 +3,11 @@
 </template>
 
 <script>
-  export default {
-    name: "from.vue"
-  }
+export default {
+  name: "from.vue"
+}
 
-  </script>
+</script>
 
 <style scoped>
 

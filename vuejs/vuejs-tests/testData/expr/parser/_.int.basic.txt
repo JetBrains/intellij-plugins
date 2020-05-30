@@ -1,0 +1,174 @@
+JSFile:test.js._.int
+  VueJSEmbeddedExpression
+    JSLiteralExpression
+      PsiElement(JS:NUMERIC_LITERAL)('12')
+------
+JSFile:test.js._.int
+  VueJSEmbeddedExpression
+    JSBinaryExpression
+      JSBinaryExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('a')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:PLUS)('+')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('b')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:MINUS)('-')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('c')
+------
+JSFile:test.js._.int
+  VueJSEmbeddedExpression
+    JSBinaryExpression
+      JSLiteralExpression
+        PsiElement(JS:TRUE_KEYWORD)('true')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:ANDAND)('&&')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('b')
+------
+JSFile:test.js._.int
+  VueJSEmbeddedExpression
+    <empty list>
+------
+JSFile:test.js._.int
+  VueJSEmbeddedExpression
+    JSBinaryExpression
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('b')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:OROR)('||')
+      PsiWhiteSpace(' ')
+      JSLiteralExpression
+        PsiElement(JS:TRUE_KEYWORD)('true')
+------
+JSFile:test.js._.int
+  VueJSEmbeddedExpression
+    JSBinaryExpression
+      JSParenthesizedExpression
+        PsiElement(JS:LPAR)('(')
+        JSBinaryExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('12')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:PLUS)('+')
+          PsiWhiteSpace(' ')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('13')
+        PsiElement(JS:RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:MINUS)('-')
+      PsiWhiteSpace(' ')
+      JSLiteralExpression
+        PsiElement(JS:NUMERIC_LITERAL)('2')
+------
+JSFile:test.js._.int
+  VueJSEmbeddedExpression
+    JSCommaExpression
+      JSCommaExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('12')
+        PsiElement(JS:COMMA)(',')
+        PsiWhiteSpace(' ')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('14')
+      PsiElement(JS:COMMA)(',')
+      PsiWhiteSpace(' ')
+      JSLiteralExpression
+        PsiElement(JS:NUMERIC_LITERAL)('15')
+------
+JSFile:test.js._.int
+  VueJSEmbeddedExpression
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('a')
+    PsiErrorElement:Statements are not allowed in Vue expressions
+      PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('b')
+    PsiErrorElement:Statements are not allowed in Vue expressions
+      PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('c')
+------
+JSFile:test.js._.int
+  VueJSEmbeddedExpression
+    JSObjectLiteralExpression
+      PsiElement(JS:LBRACE)('{')
+      JSProperty
+        PsiElement(JS:IDENTIFIER)('a')
+        PsiElement(JS:COLON)(':')
+        PsiWhiteSpace(' ')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('12')
+      PsiElement(JS:COMMA)(',')
+      PsiWhiteSpace(' ')
+      JSProperty
+        PsiElement(JS:IDENTIFIER)('b')
+        PsiElement(JS:COLON)(':')
+        PsiWhiteSpace(' ')
+        JSLiteralExpression
+          PsiElement(JS:TRUE_KEYWORD)('true')
+      PsiElement(JS:COMMA)(',')
+      PsiWhiteSpace(' ')
+      JSProperty
+        PsiElement(JS:IDENTIFIER)('c')
+        PsiElement(JS:COLON)(':')
+        PsiErrorElement:expression expected
+          <empty list>
+      PsiWhiteSpace(' ')
+      ES6Property
+        JSReferenceExpression
+          PsiElement(JS:IN_KEYWORD)('in')
+      PsiElement(JS:RBRACE)('}')
+    PsiErrorElement:Expected end of expression
+      <empty list>
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('foo')
+------
+JSFile:test.js._.int
+  VueJSEmbeddedExpression
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('a')
+    PsiErrorElement:Expected end of expression
+      <empty list>
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('b')
+    PsiErrorElement:Expected end of expression
+      <empty list>
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('c')
+    PsiErrorElement:Statements are not allowed in Vue expressions
+      PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('d')
+------
+JSFile:test.js._.int
+  VueJSEmbeddedExpression
+    PsiErrorElement:expression expected
+      PsiElement(JS:SHARP)('#')
+------
+JSFile:test.js._.int
+  VueJSEmbeddedExpression
+    PsiErrorElement:expression expected
+      PsiElement(JS:SHARP)('#')
+    PsiErrorElement:expression expected
+      PsiElement(JS:SHARP)('#')
+------
+JSFile:test.js._.int
+  VueJSEmbeddedExpression
+    PsiErrorElement:expression expected
+      PsiElement(JS:SHARP)('#')
+    PsiErrorElement:expression expected
+      PsiElement(JS:SHARP)('#')
+    PsiErrorElement:expression expected
+      PsiElement(JS:SHARP)('#')

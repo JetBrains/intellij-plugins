@@ -15,21 +15,25 @@ import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
+import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlAttributeDescriptorsProvider;
+import com.intellij.xml.XmlElementDescriptor;
 import org.angular2.entities.Angular2Directive;
+import org.angular2.entities.Angular2DirectiveKind;
 import org.angular2.entities.Angular2DirectiveProperty;
 import org.angular2.entities.Angular2DirectiveSelector.SimpleSelectorWithPsi;
 import org.angular2.entities.Angular2DirectiveSelectorPsiElement;
 import org.angular2.lang.Angular2LangUtil;
+import org.angular2.lang.expr.psi.Angular2Interpolation;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor;
+import org.angular2.lang.html.psi.Angular2HtmlLet;
 import org.angular2.lang.html.psi.Angular2HtmlReference;
-import org.angular2.lang.html.psi.Angular2HtmlVariable;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -50,20 +54,32 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
 
   @NonNls public static final String EVENT_ATTR_PREFIX = "on";
   @NonNls public static final String NG_NON_BINDABLE_ATTR = "ngNonBindable";
+  @NonNls public static final String I18N_ATTR = "i18n";
 
-  public static XmlAttributeDescriptor getAttributeDescriptor(@Nullable final String attrName, @Nullable XmlTag xmlTag,
+  private static final ThreadLocal<Boolean> gettingDescriptors = new ThreadLocal<>();
+
+  public static XmlAttributeDescriptor getAttributeDescriptor(final @Nullable String attrName, @Nullable XmlTag xmlTag,
                                                               @NotNull BiFunction<? super XmlTag, ? super Predicate<String>, XmlAttributeDescriptor[]> attrDescrProvider) {
     if (attrName == null || xmlTag == null || DumbService.isDumb(xmlTag.getProject())) {
       return null;
     }
     Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(attrName, xmlTag);
+    if (info.type == REGULAR) {
+      XmlAttribute attribute = xmlTag.getAttribute(attrName);
+      if (attribute != null && Angular2Interpolation.get(attribute).length > 0) {
+        info = Angular2AttributeNameParser.parseBound(attrName);
+      }
+    }
+
     Predicate<String> shouldIncludeOneTimeBinding = info.type == REGULAR ? name -> name.equals(attrName)
                                                                          : name -> false;
     for (XmlAttributeDescriptor d : attrDescrProvider.apply(xmlTag, shouldIncludeOneTimeBinding)) {
       if (d instanceof Angular2AttributeDescriptor) {
-        if (attrName.equals(d.getName())
-            || info.isEquivalent(((Angular2AttributeDescriptor)d).getInfo())) {
+        if (attrName.equals(d.getName())) {
           return d;
+        }
+        else if (info.isEquivalent(((Angular2AttributeDescriptor)d).getInfo())) {
+          return ((Angular2AttributeDescriptor)d).cloneWithName(attrName);
         }
       }
       else if (attrName.equalsIgnoreCase(d.getName())) {
@@ -85,13 +101,22 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
   }
 
   @NonNls private static final List<String> CUSTOM_NG_ATTRS =
-    ContainerUtil.immutableList("i18n", NG_NON_BINDABLE_ATTR, "ngProjectAs");
+    ContainerUtil.immutableList(I18N_ATTR, NG_NON_BINDABLE_ATTR, "ngProjectAs");
   @NonNls private static final Key<CachedValue<List<XmlAttributeDescriptor>>> STANDARD_PROPERTIES_KEY =
     new Key<>("angular.standard.properties");
 
   @Override
   public XmlAttributeDescriptor[] getAttributeDescriptors(@Nullable XmlTag xmlTag) {
-    return getAttributeDescriptors(xmlTag, a -> true);
+    if (gettingDescriptors.get() == Boolean.TRUE) return XmlAttributeDescriptor.EMPTY;
+    // Required to avoid infinite recursion in case Angular2NonHtmlWrappedDescriptor wraps descriptor provider,
+    // which in getAttributeDescriptors calls RelaxedHtmlFromSchemaElementDescriptor.addAttrDescriptorsForFacelets()
+    gettingDescriptors.set(true);
+    try {
+      return getAttributeDescriptors(xmlTag, a -> true);
+    }
+    finally {
+      gettingDescriptors.set(false);
+    }
   }
 
   private static XmlAttributeDescriptor[] getAttributeDescriptors(@Nullable XmlTag xmlTag,
@@ -125,17 +150,15 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
     return result.values().toArray(XmlAttributeDescriptor.EMPTY);
   }
 
-  @Nullable
   @Override
-  public XmlAttributeDescriptor getAttributeDescriptor(@Nullable final String attrName, @Nullable XmlTag xmlTag) {
+  public @Nullable XmlAttributeDescriptor getAttributeDescriptor(final @Nullable String attrName, @Nullable XmlTag xmlTag) {
     return xmlTag != null && Angular2LangUtil.isAngular2Context(xmlTag)
            ? getAttributeDescriptor(attrName, xmlTag, Angular2AttributeDescriptorsProvider::getAttributeDescriptors)
            : null;
   }
 
-  @NotNull
-  private static Collection<XmlAttributeDescriptor> getDirectiveDescriptors(@NotNull XmlTag xmlTag,
-                                                                            @NotNull Predicate<String> shouldIncludeOneTimeBinding) {
+  private static @NotNull Collection<XmlAttributeDescriptor> getDirectiveDescriptors(@NotNull XmlTag xmlTag,
+                                                                                     @NotNull Predicate<String> shouldIncludeOneTimeBinding) {
     Angular2ApplicableDirectivesProvider applicableDirectives = new Angular2ApplicableDirectivesProvider(xmlTag);
 
     List<XmlAttributeDescriptor> result = new ArrayList<>();
@@ -164,7 +187,8 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
         }
       };
       fillNamesAndProperties(inputs, candidate.getInputs(), p -> p);
-      if (!isTemplateTag && candidate.isStructuralDirective()) {
+      Angular2DirectiveKind kind = candidate.getDirectiveKind();
+      if (!isTemplateTag && kind.isStructural()) {
         List<SimpleSelectorWithPsi> selectors = candidate.getSelector().getSimpleSelectorsWithPsi();
         for (SimpleSelectorWithPsi selector : selectors) {
           List<Angular2DirectiveSelectorPsiElement> attributeCandidates = selector.getAttributes();
@@ -185,7 +209,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
           }
         }
       }
-      if (isTemplateTag || candidate.isRegularDirective()) {
+      if (isTemplateTag || kind.isRegular()) {
         fillNamesAndProperties(outputs, candidate.getOutputs(), p -> p);
         fillNamesAndProperties(inOuts, candidate.getInOuts(), p -> p.first);
         attributes.clear();
@@ -242,8 +266,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
     }
   }
 
-  @NotNull
-  public static List<String> getStandardTagEventAttributeNames(@NotNull XmlTag xmlTag) {
+  public static @NotNull List<String> getStandardTagEventAttributeNames(@NotNull XmlTag xmlTag) {
     return ContainerUtil.mapNotNull(getDefaultAttributeDescriptors(xmlTag), attrDescriptor -> {
       String name = attrDescriptor.getName();
       if (name.startsWith(EVENT_ATTR_PREFIX)) {
@@ -253,10 +276,9 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
     });
   }
 
-  @NotNull
-  private static Collection<XmlAttributeDescriptor> getStandardPropertyAndEventDescriptors(@NotNull XmlTag xmlTag) {
+  private static @NotNull Collection<XmlAttributeDescriptor> getStandardPropertyAndEventDescriptors(@NotNull XmlTag xmlTag) {
     return CachedValuesManager.getCachedValue(xmlTag, STANDARD_PROPERTIES_KEY, () -> {
-      Set<String> allowedElementProperties = new HashSet<>(DomElementSchemaRegistry.getElementProperties(xmlTag.getName()));
+      Set<String> allowedElementProperties = new HashSet<>(DomElementSchemaRegistry.getElementProperties(xmlTag));
       allowedElementProperties.addAll(ContainerUtil.map(
         getStandardTagEventAttributeNames(xmlTag), eventName -> EVENT.buildName(eventName.substring(2))));
       JSType tagClass = getHtmlElementClassType(xmlTag, xmlTag.getName());
@@ -287,12 +309,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
         }
       }
       for (String name : allowedElementProperties) {
-        if (name.startsWith("(")) {
-          result.add(new Angular2EventHandlerDescriptor(xmlTag, name, emptyList(), true));
-        }
-        else {
-          result.add(new Angular2AttributeDescriptor(xmlTag, name, emptyList(), true));
-        }
+        result.add(new Angular2AttributeDescriptor(xmlTag, name, emptyList(), true));
       }
       if (dependencies.isEmpty()) {
         dependencies = Collections.singleton(PsiModificationTracker.MODIFICATION_COUNT);
@@ -305,12 +322,11 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
     });
   }
 
-  @NotNull
-  private static List<XmlAttributeDescriptor> getExistingVarsAndRefsDescriptors(@NotNull XmlTag xmlTag) {
+  private static @NotNull List<XmlAttributeDescriptor> getExistingVarsAndRefsDescriptors(@NotNull XmlTag xmlTag) {
     List<XmlAttributeDescriptor> result = new ArrayList<>();
     xmlTag.acceptChildren(new Angular2HtmlElementVisitor() {
       @Override
-      public void visitVariable(Angular2HtmlVariable variable) {
+      public void visitLet(Angular2HtmlLet variable) {
         result.add(new Angular2AttributeDescriptor(xmlTag, variable.getName(),
                                                    singletonList(variable.getNameElement()),
                                                    true));
@@ -326,15 +342,15 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
     return result;
   }
 
-  @NotNull
-  public static XmlAttributeDescriptor[] getDefaultAttributeDescriptors(@NotNull XmlTag tag) {
-    HtmlElementDescriptorImpl descriptor = ObjectUtils.tryCast(tag.getDescriptor(), HtmlElementDescriptorImpl.class);
-    if (descriptor == null) {
+  public static XmlAttributeDescriptor @NotNull [] getDefaultAttributeDescriptors(@NotNull XmlTag tag) {
+    XmlElementDescriptor descriptor = tag.getDescriptor();
+    if (!(descriptor instanceof HtmlElementDescriptorImpl)) {
       descriptor = ObjectUtils.tryCast(HtmlNSDescriptorImpl.guessTagForCommonAttributes(tag), HtmlElementDescriptorImpl.class);
       if (descriptor == null) {
         return XmlAttributeDescriptor.EMPTY;
       }
     }
-    return ObjectUtils.notNull(descriptor.getDefaultAttributeDescriptors(tag), XmlAttributeDescriptor.EMPTY);
+    return ObjectUtils.notNull(((HtmlElementDescriptorImpl)descriptor).getDefaultAttributeDescriptors(tag),
+                               XmlAttributeDescriptor.EMPTY);
   }
 }

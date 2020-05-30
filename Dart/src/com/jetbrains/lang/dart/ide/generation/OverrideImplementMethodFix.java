@@ -1,8 +1,8 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.generation;
 
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.TemplateManager;
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.psi.*;
@@ -28,9 +28,7 @@ public class OverrideImplementMethodFix extends BaseCreateMethodsFix<DartCompone
   protected Template buildFunctionsText(TemplateManager templateManager, DartComponent element) {
     final Template template = templateManager.createTemplate(getClass().getName(), DART_TEMPLATE_GROUP);
     template.setToReformat(true);
-    if (CodeStyleSettingsManager.getSettings(element.getProject()).INSERT_OVERRIDE_ANNOTATION) {
-      template.addTextSegment("@override\n");
-    }
+    template.addTextSegment("@override\n");
     final boolean isField = element instanceof DartVarAccessDeclaration || element instanceof DartVarDeclarationListPart;
     if (isField && element.isFinal()) {
       template.addTextSegment("final");

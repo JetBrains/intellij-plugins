@@ -1,7 +1,7 @@
 AWS CloudFormation plugin for IntelliJ-based IDEs  
 (IntelliJ IDEA, RubyMine, WebStorm, PhpStorm, PyCharm, AppCode, Android Studio, DataGrip, CLion)
 
-[![Travis Build Status](https://travis-ci.org/shalupov/idea-cloudformation.svg?branch=master)](https://travis-ci.org/shalupov/idea-cloudformation)
+This plugin was originally developed there: https://github.com/shalupov/idea-cloudformation
 
 Latest stable version
 ---------------------
@@ -10,14 +10,6 @@ Install plugin from IDE: File -> Settings -> Plugins -> Browse Repositories -> s
 
 See IntelliJ IDEA plugin repository:
 https://plugins.jetbrains.com/plugin/7371
-
-Old Versions
-------------
-
-"master" branch is compatible with IntelliJ-based IDEs 2017.1+
-Plugin sources for older IDE versions are in other branches.
-
-See versions history at https://plugins.jetbrains.com/plugin/7371
 
 Quick Start
 -----------
@@ -37,22 +29,3 @@ Note: you need IDEA 2017.1 or later for YAML support
   * Ctrl-Click on any reference to jump to its definition
   * Quick Documentation for resource types and properties
   * Format file
-
-Builds from trunk
------------------
-
-https://teamcity.jetbrains.com/project.html?projectId=IdeaAwsCloudFormation_Master&guest=1
-
-Build and Test locally
-----------------------
-
- * "gradlew assemble" to build plugin in build/distributions
- * "gradlew test" to run tests
- * "gradlew runIde" to run IntelliJ IDEA with CloudFormation plugin
-
-Make a release
---------------
-
- * Pin and tag build with 'release' on https://teamcity.jetbrains.com/viewType.html?buildTypeId=IdeaAwsCloudFormation_Master_Build
- * Add release to https://github.com/shalupov/idea-cloudformation/releases
- * Upload zip from https://teamcity.jetbrains.com/viewType.html?buildTypeId=IdeaAwsCloudFormation_Master_Build to https://plugins.jetbrains.com/plugin/7371-aws-cloudformation

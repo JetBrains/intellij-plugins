@@ -16,8 +16,7 @@ public abstract class AngularCliSchematicsRegistryService {
   /**
    * Fast method to get list of all packages that supports ng-add.
    */
-  @NotNull
-  public abstract List<NodePackageBasicInfo> getPackagesSupportingNgAdd(long timeout);
+  public abstract @NotNull List<NodePackageBasicInfo> getPackagesSupportingNgAdd(long timeout);
 
   /**
    * Fast method to determine whether any version of the package supports ng-add.
@@ -46,9 +45,8 @@ public abstract class AngularCliSchematicsRegistryService {
    * Loads schematics available in a particular location. The results are cached
    * and recalculated on every change of package.json in any node_modules directory.
    */
-  @NotNull
-  public Collection<Schematic> getSchematics(@NotNull Project project,
-                                             @NotNull VirtualFile cliFolder) {
+  public @NotNull Collection<Schematic> getSchematics(@NotNull Project project,
+                                                      @NotNull VirtualFile cliFolder) {
     return getSchematics(project, cliFolder, false, true);
   }
 
@@ -56,19 +54,17 @@ public abstract class AngularCliSchematicsRegistryService {
    * Loads schematics available in a particular location. The results are cached
    * and recalculated on every change of package.json in any node_modules directory.
    */
-  @NotNull
-  public abstract Collection<Schematic> getSchematics(@NotNull Project project,
-                                                      @NotNull VirtualFile cliFolder,
-                                                      boolean includeHidden,
-                                                      boolean logErrors);
+  public abstract @NotNull Collection<Schematic> getSchematics(@NotNull Project project,
+                                                               @NotNull VirtualFile cliFolder,
+                                                               boolean includeHidden,
+                                                               boolean logErrors);
 
   /**
    * Clears cache for getSchematics method
    */
   public abstract void clearProjectSchematicsCache();
 
-  @NotNull
-  public static AngularCliSchematicsRegistryService getInstance() {
+  public static @NotNull AngularCliSchematicsRegistryService getInstance() {
     return ServiceManager.getService(AngularCliSchematicsRegistryService.class);
   }
 }

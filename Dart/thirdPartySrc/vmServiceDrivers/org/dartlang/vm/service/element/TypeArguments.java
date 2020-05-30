@@ -22,7 +22,7 @@ import com.google.gson.JsonObject;
  * A {@link TypeArguments} object represents the type argument vector for some instantiated generic
  * type.
  */
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class TypeArguments extends Obj {
 
   public TypeArguments(JsonObject json) {
@@ -33,7 +33,7 @@ public class TypeArguments extends Obj {
    * A name for this type argument list.
    */
   public String getName() {
-    return json.get("name").getAsString();
+    return getAsString("name");
   }
 
   /**

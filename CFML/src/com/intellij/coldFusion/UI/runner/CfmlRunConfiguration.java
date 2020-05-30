@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.UI.runner;
 
 import com.intellij.execution.Executor;
@@ -7,7 +7,6 @@ import com.intellij.execution.configurations.*;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.util.text.StringUtil;
@@ -19,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Objects;
 
 public class CfmlRunConfiguration extends RunConfigurationBase<Element> implements LocatableConfiguration{
   private CfmlRunnerParameters myRunnerParameters = new CfmlRunnerParameters();
@@ -90,7 +90,7 @@ public class CfmlRunConfiguration extends RunConfigurationBase<Element> implemen
 
   @Override
   public boolean isGeneratedName() {
-    return Comparing.equal(getName(), suggestedName());
+    return Objects.equals(getName(), suggestedName());
   }
 
   @Nullable

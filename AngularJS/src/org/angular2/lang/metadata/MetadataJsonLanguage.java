@@ -9,7 +9,6 @@ public final class MetadataJsonLanguage extends Language implements DependentLan
   public static final MetadataJsonLanguage INSTANCE = new MetadataJsonLanguage();
 
   private MetadataJsonLanguage() {
-    //noinspection HardCodedStringLiteral
     super("Metadata JSON", "application/json");
   }
 }

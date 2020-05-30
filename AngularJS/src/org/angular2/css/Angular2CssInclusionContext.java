@@ -21,12 +21,12 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.AstLoadingFilter;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
-import org.angular2.cli.AngularCliConfig;
-import org.angular2.cli.AngularCliConfigLoader;
 import org.angular2.cli.AngularCliUtil;
+import org.angular2.cli.config.AngularConfigProvider;
+import org.angular2.cli.config.AngularProject;
 import org.angular2.entities.Angular2Component;
+import org.angular2.entities.Angular2ComponentLocator;
 import org.angular2.entities.Angular2EntitiesProvider;
-import org.angular2.index.Angular2IndexingHandler;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,9 +42,8 @@ public class Angular2CssInclusionContext extends CssInclusionContext {
   @NonNls private static final Key<CachedValue<ComponentCssContext>> COMPONENT_CONTEXT_KEY =
     new Key<>("ng.component.context");
 
-  @NotNull
   @Override
-  public PsiFile[] getContextFiles(@NotNull PsiFile current) {
+  public PsiFile @NotNull [] getContextFiles(@NotNull PsiFile current) {
     ComponentCssContext componentContext = getComponentContext(current);
     if (componentContext != null) {
       return componentContext.getCssFiles();
@@ -59,11 +58,10 @@ public class Angular2CssInclusionContext extends CssInclusionContext {
            && !componentContext.isAngularCli();
   }
 
-  @NotNull
   @Override
-  public PsiFile[] getLocalUseScope(@NotNull PsiFile file) {
+  public PsiFile @NotNull [] getLocalUseScope(@NotNull PsiFile file) {
     if (file instanceof StylesheetFile) {
-      Angular2Component component = Angular2EntitiesProvider.getComponent(Angular2IndexingHandler.findComponentClass(file));
+      Angular2Component component = Angular2EntitiesProvider.getComponent(Angular2ComponentLocator.findComponentClass(file));
       if (component != null) {
         List<PsiFile> files = new ArrayList<>(component.getCssFiles());
         doIfNotNull(component.getTemplateFile(), files::add);
@@ -73,11 +71,10 @@ public class Angular2CssInclusionContext extends CssInclusionContext {
     return PsiFile.EMPTY_ARRAY;
   }
 
-  @Nullable
-  private static ComponentCssContext getComponentContext(@NotNull PsiElement context) {
+  private static @Nullable ComponentCssContext getComponentContext(@NotNull PsiElement context) {
     PsiFile file = context.getContainingFile();
     return CachedValuesManager.getCachedValue(file, COMPONENT_CONTEXT_KEY, () -> {
-      Angular2Component component = Angular2EntitiesProvider.getComponent(Angular2IndexingHandler.findComponentClass(file));
+      Angular2Component component = Angular2EntitiesProvider.getComponent(Angular2ComponentLocator.findComponentClass(file));
       if (component != null) {
         ComponentCssContext componentCssContext = new ComponentCssContext(component, file);
         return CachedValueProvider.Result.create(componentCssContext, componentCssContext.getDependencies());
@@ -115,17 +112,18 @@ public class Angular2CssInclusionContext extends CssInclusionContext {
     public PsiFile[] getCssFiles() {
       final Project project = myComponent.getSourceElement().getProject();
       final List<PsiFile> cssFilesList = new ArrayList<>(myComponent.getCssFiles());
-      if (myAngularCliJson != null) {
-        AngularCliConfig config = AngularCliConfigLoader.load(project, myAngularCliJson);
+      AngularProject ngProject;
+      if (myAngularCliJson != null
+          && (ngProject = AngularConfigProvider.getAngularProject(project, myAngularCliJson)) != null) {
         PsiManager psiManager = PsiManager.getInstance(project);
-        PsiFile html = doIfNotNull(config.getIndexHtmlFile(), psiManager::findFile);
+        PsiFile html = doIfNotNull(ngProject.getIndexHtmlFile(), psiManager::findFile);
         if (html instanceof XmlFile) {
           AstLoadingFilter.forceAllowTreeLoading(html, () ->
             cssFilesList.addAll(asList(CssResolveManager.getInstance().getNewResolver()
                                          .resolveStyleSheets((XmlFile)html, null))));
         }
         cssFilesList.addAll(ContainerUtil.mapNotNull(
-          config.getGlobalStyleSheets(), file -> ObjectUtils.tryCast(psiManager.findFile(file), StylesheetFile.class)));
+          ngProject.getGlobalStyleSheets(), file -> ObjectUtils.tryCast(psiManager.findFile(file), StylesheetFile.class)));
       }
       return cssFilesList.toArray(PsiFile.EMPTY_ARRAY);
     }

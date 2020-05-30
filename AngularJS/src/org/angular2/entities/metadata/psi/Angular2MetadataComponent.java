@@ -5,6 +5,7 @@ import com.intellij.openapi.util.AtomicNotNullLazyValue;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.html.HtmlFileImpl;
 import org.angular2.entities.Angular2Component;
+import org.angular2.entities.Angular2DirectiveKind;
 import org.angular2.entities.Angular2DirectiveSelector;
 import org.angular2.entities.Angular2DirectiveSelectorImpl;
 import org.angular2.entities.metadata.stubs.Angular2MetadataComponentStub;
@@ -29,31 +30,23 @@ public class Angular2MetadataComponent extends Angular2MetadataDirectiveBase<Ang
     super(element);
   }
 
-  @Nullable
   @Override
-  public HtmlFileImpl getTemplateFile() {
+  public @Nullable HtmlFileImpl getTemplateFile() {
     return null;
   }
 
-  @NotNull
   @Override
-  public List<PsiFile> getCssFiles() {
+  public @NotNull List<PsiFile> getCssFiles() {
     return Collections.emptyList();
   }
 
-  @NotNull
   @Override
-  public List<Angular2DirectiveSelector> getNgContentSelectors() {
+  public @NotNull List<Angular2DirectiveSelector> getNgContentSelectors() {
     return myNgContentSelectors.getValue();
   }
 
   @Override
-  public boolean isStructuralDirective() {
-    return false;
-  }
-
-  @Override
-  public boolean isRegularDirective() {
-    return true;
+  public @NotNull Angular2DirectiveKind getDirectiveKind() {
+    return Angular2DirectiveKind.REGULAR;
   }
 }

@@ -23,12 +23,15 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.*
 import com.intellij.ui.components.JBList
+import com.intellij.ui.scale.JBUIScale
 import com.intellij.ui.speedSearch.ListWithFilter
 import com.intellij.util.Function
 import com.intellij.util.ui.EmptyIcon
+import com.intellij.util.ui.JBScalableIcon
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import org.angular2.cli.*
+import org.angular2.lang.Angular2LangUtil.ANGULAR_CLI_PACKAGE
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Dimension
@@ -41,6 +44,9 @@ import javax.swing.JList
 import javax.swing.JPanel
 
 class AngularCliGenerateAction : DumbAwareAction() {
+
+  var reloadingList: Boolean = false
+
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     val file = e.getData(PlatformDataKeys.VIRTUAL_FILE) ?: return
@@ -70,7 +76,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
         if (!selected && index % 2 == 0) {
           background = UIUtil.getDecoratedRowColor()
         }
-        icon = JBUI.scale(EmptyIcon.create(5))
+        icon = JBUIScale.scaleIcon(EmptyIcon.create(5) as JBScalableIcon)
         if (value.error != null) {
           append(value.name!!, SimpleTextAttributes.ERROR_ATTRIBUTES, true)
           append(" - Error: " + value.error!!.decapitalize(), SimpleTextAttributes.GRAY_ATTRIBUTES, false)
@@ -93,6 +99,10 @@ class AngularCliGenerateAction : DumbAwareAction() {
       override fun actionPerformed(e: AnActionEvent) {
         AngularCliSchematicsRegistryService.getInstance().clearProjectSchematicsCache()
         updateList(list, model, project, cli)
+      }
+
+      override fun update(e: AnActionEvent) {
+        e.presentation.isEnabled = !reloadingList
       }
     }
     refresh.registerCustomShortcutSet(refresh.shortcutSet, list)
@@ -137,7 +147,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
       }
     })
     object : DoubleClickListener() {
-      override fun onDoubleClick(event: MouseEvent?): Boolean {
+      override fun onDoubleClick(event: MouseEvent): Boolean {
         if (list.selectedValue == null) return true
         askOptions(project, popup, list.selectedValue as Schematic, cli, workingDir(editor, file))
         return true
@@ -156,13 +166,16 @@ class AngularCliGenerateAction : DumbAwareAction() {
 
   private fun updateList(list: JBList<Schematic>, model: SortedListModel<Schematic>, project: Project, cli: VirtualFile) {
     list.setPaintBusy(true)
+    reloadingList = true
     model.clear()
     ApplicationManager.getApplication().executeOnPooledThread {
       val schematics = AngularCliSchematicsRegistryService.getInstance().getSchematics(project, cli)
       ApplicationManager.getApplication().invokeLater {
+        model.clear()
         schematics.forEach {
           model.add(it)
         }
+        reloadingList = false
         list.setPaintBusy(false)
       }
     }
@@ -224,7 +237,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
     val interpreter = NodeJsInterpreterManager.getInstance(project).interpreter ?: return
 
     val modules: MutableList<CompletionModuleInfo> = mutableListOf()
-    NodeModuleSearchUtil.findModulesWithName(modules, AngularCliProjectGenerator.PACKAGE_NAME, cli, null)
+    NodeModuleSearchUtil.findModulesWithName(modules, ANGULAR_CLI_PACKAGE, cli, null)
 
     val module = modules.firstOrNull() ?: return
 

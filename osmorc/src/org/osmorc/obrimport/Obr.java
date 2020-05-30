@@ -56,9 +56,8 @@ public interface Obr {
    * @return a list of results. If nothing is found an empty array is returned.
    * @throws IOException if the connection to the bundle repository failed.
    */
-  @NotNull
-  ObrMavenResult[] queryForMavenArtifact(@NotNull String queryString,
-                                         @NotNull ProgressIndicator progressIndicator) throws
+  ObrMavenResult @NotNull [] queryForMavenArtifact(@NotNull String queryString,
+                                                   @NotNull ProgressIndicator progressIndicator) throws
                                                                                        IOException;
 
   /**
@@ -66,6 +65,5 @@ public interface Obr {
    *
    * @return a list of repositories or an empty array if this obr does not support maven.
    */
-  @NotNull
-  MavenRepository[] getMavenRepositories();
+  MavenRepository @NotNull [] getMavenRepositories();
 }

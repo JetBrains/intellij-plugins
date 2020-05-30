@@ -288,7 +288,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor().withTitle(OsmorcBundle.message("facet.editor.select.bundle.dir.title"));
     FileChooser.chooseFile(descriptor, myEditorContext.getProject(), toSelect, file -> {
       if (moduleOutputDir != null && VfsUtilCore.isAncestor(moduleOutputDir, file, false)) {
-        Messages.showErrorDialog(myRoot, OsmorcBundle.message("facet.editor.jar.cannot.be.in.output.path"), CommonBundle.message("title.error"));
+        Messages.showErrorDialog(myRoot, OsmorcBundle.message("facet.editor.jar.cannot.be.in.output.path"), CommonBundle.getErrorTitle());
         myJarOutputPathChooser.setText("");
       }
       else {
@@ -300,7 +300,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
   @Nls
   @Override
   public String getDisplayName() {
-    return "Bundle .jar";
+    return OsmorcBundle.message("configurable.OsmorcFacetJAREditorTab.display.name");
   }
 
   @NotNull

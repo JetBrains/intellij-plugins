@@ -73,9 +73,8 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
   // GUI helpers
   private final SimpleTreeBuilder myBuilder;
   private final SimpleNode myRootNode = new SimpleNode() {
-    @NotNull
     @Override
-    public SimpleNode[] getChildren() {
+    public SimpleNode @NotNull [] getChildren() {
       final List<SimpleNode> nodes = new ArrayList<>(myBuffer.size());
       for (final StrutsFileSet entry : myBuffer) {
         if (!entry.isRemoved()) {
@@ -207,7 +206,8 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
         })
         .addExtraAction(AnActionButton.fromAction(actionManager.createExpandAllAction(myTreeExpander, myTree)))
         .addExtraAction(AnActionButton.fromAction(actionManager.createCollapseAllAction(myTreeExpander, myTree)))
-        .addExtraAction(new AnActionButton("Open Struts 2 Plugin Documentation", AllIcons.Actions.Help) {
+        .addExtraAction(new AnActionButton(StrutsBundle.messagePointer("action.AnActionButton.text.open.struts.2.plugin.documentation"),
+                                           AllIcons.Actions.Help) {
           @Override
           public void actionPerformed(@NotNull AnActionEvent e) {
             BrowserUtil.browse("https://confluence.jetbrains.com/pages/viewpage.action?pageId=35367");
@@ -372,9 +372,8 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
       }
     }
 
-    @NotNull
     @Override
-    public SimpleNode[] getChildren() {
+    public SimpleNode @NotNull [] getChildren() {
       final List<SimpleNode> nodes = new ArrayList<>();
 
       for (final VirtualFilePointer file : mySet.getFiles()) {
@@ -389,8 +388,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
     }
 
     @Override
-    @NotNull
-    public Object[] getEqualityObjects() {
+    public Object @NotNull [] getEqualityObjects() {
       return new Object[]{mySet, mySet.getName(), mySet.getFiles()};
     }
   }
@@ -434,9 +432,8 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
       }
     }
 
-    @NotNull
     @Override
-    public SimpleNode[] getChildren() {
+    public SimpleNode @NotNull [] getChildren() {
       return NO_CHILDREN;
     }
   }

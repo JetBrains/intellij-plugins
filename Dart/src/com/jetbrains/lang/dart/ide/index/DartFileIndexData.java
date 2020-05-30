@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.index;
 
 import gnu.trove.THashMap;
@@ -12,7 +13,7 @@ public class DartFileIndexData {
   private final List<String> myClassNames = new ArrayList<>();
   private final List<DartImportOrExportInfo> myImportAndExportInfos = new ArrayList<>();
   private final Map<String, DartComponentInfo> myComponentInfoMap = new THashMap<>();
-  private String myLibraryName;
+  @Nullable private String myLibraryName;
   private final List<String> myPartUris = new ArrayList<>();
   private final List<String> mySymbols = new ArrayList<>();
   private boolean myIsPart;
@@ -45,12 +46,12 @@ public class DartFileIndexData {
     myImportAndExportInfos.add(importInfo);
   }
 
-  @NotNull
+  @Nullable
   public String getLibraryName() {
     return myLibraryName;
   }
 
-  public void setLibraryName(@NotNull String libraryName) {
+  public void setLibraryName(@Nullable String libraryName) {
     myLibraryName = libraryName;
   }
 

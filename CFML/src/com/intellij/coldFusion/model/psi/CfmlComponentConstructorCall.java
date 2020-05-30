@@ -49,9 +49,8 @@ public class CfmlComponentConstructorCall extends CfmlFunctionCallExpression imp
       ASTNode node = childByType.getNode();
       if (node != null) {
         return new CfmlComponentReference(node, this) {
-          @NotNull
           @Override
-          public ResolveResult[] multiResolve(boolean incompleteCode) {
+          public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
             ResolveResult[] resolveResults = super.multiResolve(incompleteCode);
             List<CfmlFunction> result = new LinkedList<>();
             for (ResolveResult resolveResult : resolveResults) {

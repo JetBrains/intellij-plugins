@@ -51,8 +51,9 @@ public class ValidatorModelValidator extends ValidatorBase {
   private static final String FILENAME_EXTENSION_VALIDATION_XML = "-validation.xml";
 
   public ValidatorModelValidator() {
-    super(StrutsBundle.message("inspections.validator.model.validator"),
-          StrutsBundle.message("inspections.validator.model.validator.progress"));
+    super("Struts 2 Validation Model Validator", StrutsBundle.message("inspections.validator.model.validator"),
+          StrutsBundle.message("inspections.validator.model.validator.progress")
+    );
   }
 
   @Override
@@ -98,9 +99,8 @@ public class ValidatorModelValidator extends ValidatorBase {
   }
 
   @SuppressWarnings("unchecked")
-  @NotNull
   @Override
-  public Class<? extends LocalInspectionTool>[] getInspectionToolClasses(CompileContext context) {
+  public Class<? extends LocalInspectionTool> @NotNull [] getInspectionToolClasses(CompileContext context) {
     return new Class[]{ValidatorModelInspection.class, ValidatorConfigModelInspection.class};
   }
 }

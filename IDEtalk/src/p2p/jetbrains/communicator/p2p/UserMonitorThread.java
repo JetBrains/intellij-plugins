@@ -6,7 +6,7 @@ import gnu.trove.THashSet;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.users.UserPresence;
-import jetbrains.communicator.ide.ProgressIndicator;
+import jetbrains.communicator.ide.TalkProgressIndicator;
 import jetbrains.communicator.util.CommunicatorStrings;
 import jetbrains.communicator.util.WaitFor;
 import org.apache.log4j.Logger;
@@ -248,7 +248,7 @@ public class UserMonitorThread extends Thread {
     return myWaitUserResponsesTimeout;
   }
 
-  public void findNow(ProgressIndicator progressIndicator) {
+  public void findNow(TalkProgressIndicator progressIndicator) {
     if (!isRunning()) return;
 
     triggerFindNow();
@@ -282,7 +282,7 @@ public class UserMonitorThread extends Thread {
     }
   }
 
-  private void setIndicatorText(ProgressIndicator progressIndicator) {
+  private void setIndicatorText(TalkProgressIndicator progressIndicator) {
     int size = myAvailableUsers.size();
     progressIndicator.setText(
       CommunicatorStrings.getMsg("p2p.finder.progressText", String.valueOf(size), CommunicatorStrings.getText("user", size)));

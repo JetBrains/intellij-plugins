@@ -86,6 +86,7 @@ public interface DartTokenTypesSets {
                                                   COVARIANT,
                                                   DEFERRED,
                                                   EXPORT,
+                                                  EXTENSION,
                                                   EXTERNAL,
                                                   FACTORY,
                                                   GET,

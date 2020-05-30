@@ -37,6 +37,7 @@ import org.junit.runner.RunWith;
 import org.osmorc.HeavyOsgiFixtureTestCase;
 import org.osmorc.SwingRunner;
 
+import java.io.IOException;
 import java.util.Collections;
 
 import static org.junit.Assert.*;
@@ -48,7 +49,7 @@ import static org.junit.Assert.*;
 @RunWith(SwingRunner.class)
 public class FacetDetectionTest extends HeavyOsgiFixtureTestCase {
   @Test
-  public void testDetectFacet() {
+  public void testDetectFacet() throws IOException {
     Module t0 = ModuleManager.getInstance(myFixture.getProject()).findModuleByName("t0");
     assertNotNull(t0);
 
@@ -74,7 +75,7 @@ public class FacetDetectionTest extends HeavyOsgiFixtureTestCase {
   }
 
   @Test
-  public void testDetectBundlorFacet() {
+  public void testDetectBundlorFacet() throws IOException {
     ModuleManager moduleManager = ModuleManager.getInstance(myFixture.getProject());
     Module t2 = moduleManager.findModuleByName("t2");
     assertNotNull(t2);
@@ -103,7 +104,7 @@ public class FacetDetectionTest extends HeavyOsgiFixtureTestCase {
   }
 
   @Test
-  public void testDetectNoFacet() {
+  public void testDetectNoFacet() throws IOException {
     ElementPattern<FileContent> filter = new OsmorcFrameworkDetector().createSuitableFilePattern();
     VirtualFile manifestFile = myTempDirFixture.getFile("t1/src/META-INF/MANIFEST.MF");
     assertFalse(filter.accepts(FileContentImpl.createByFile(manifestFile)));

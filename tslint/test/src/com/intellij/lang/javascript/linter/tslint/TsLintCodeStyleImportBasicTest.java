@@ -17,14 +17,18 @@ import com.intellij.application.options.CodeStyle;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.linter.tslint.codestyle.rules.TsLintConfigWrapper;
+import com.intellij.lang.javascript.linter.tslint.codestyle.rules.TsLintRule;
 import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.intellij.util.Consumer;
+import com.intellij.util.EmptyConsumer;
 import org.intellij.lang.annotations.Language;
 import org.junit.Assert;
+
+import java.util.Collection;
 
 public class TsLintCodeStyleImportBasicTest extends BasePlatformTestCase {
   public void testSimpleStringValue() {
@@ -248,20 +252,98 @@ public class TsLintCodeStyleImportBasicTest extends BasePlatformTestCase {
     });
   }
 
+  public void testIndentWithTabs() {
+    int indentBefore = 7;
+    doTestJson("{\n" +
+               "  \"rules\": {\n" +
+               "    \"indent\": [true, \"tabs\"]\n" +
+               "  }\n" +
+               "}", (settings) -> {
+                 CommonCodeStyleSettings tsSettings = settings.getCommonSettings(JavaScriptSupportLoader.TYPESCRIPT);
+                 CommonCodeStyleSettings.IndentOptions indentOptions = tsSettings.getIndentOptions();
+                 indentOptions.INDENT_SIZE = indentBefore;
+                 indentOptions.CONTINUATION_INDENT_SIZE = indentBefore;
+                 indentOptions.TAB_SIZE = indentBefore;
+               },
+               settings -> {
+                 CommonCodeStyleSettings tsSettings = settings.getCommonSettings(JavaScriptSupportLoader.TYPESCRIPT);
+                 CommonCodeStyleSettings.IndentOptions indentOptions = tsSettings.getIndentOptions();
+                 assertTrue(indentOptions.USE_TAB_CHARACTER);
+                 assertEquals(indentBefore, indentOptions.INDENT_SIZE);
+                 assertEquals(indentBefore, indentOptions.CONTINUATION_INDENT_SIZE);
+                 assertEquals(indentBefore, indentOptions.TAB_SIZE);
+               });
+  }
+
+  public void testIndentWithTabsInOptions() {
+    doTestJson("{\n" +
+               "  \"rules\": {\n" +
+               "    \"indent\": {\n" +
+               "      \"options\": \"tabs\"\n" +
+               "    }\n" +
+               "  }\n" +
+               "}", settings -> {
+      CommonCodeStyleSettings.IndentOptions indentOptions =
+        settings.getCommonSettings(JavaScriptSupportLoader.TYPESCRIPT).getIndentOptions();
+      assertTrue(indentOptions.USE_TAB_CHARACTER);
+    });
+  }
+
+  public void testIndentWithSize() {
+    doTestJson("{\n" +
+               "  \"rules\": {\n" +
+               "    \"indent\": [true, \"spaces\", 2]\n" +
+               "  }\n" +
+               "}", settings -> {
+      CommonCodeStyleSettings.IndentOptions indentOptions = settings.getCommonSettings(JavaScriptSupportLoader.TYPESCRIPT).getIndentOptions();
+      assertFalse(indentOptions.USE_TAB_CHARACTER);
+      assertEquals(2, indentOptions.INDENT_SIZE);
+      assertEquals(2, indentOptions.CONTINUATION_INDENT_SIZE);
+    });
+  }
+
+  public void testIndentWithSizeInOptions() {
+    doTestJson("{\n" +
+               "  \"rules\": {\n" +
+               "    \"indent\": {\n" +
+               "      \"options\": [\"spaces\", 2]\n" +
+               "    }\n" +
+               "  }\n" +
+               "}", settings -> {
+      CommonCodeStyleSettings.IndentOptions indentOptions =
+        settings.getCommonSettings(JavaScriptSupportLoader.TYPESCRIPT).getIndentOptions();
+      assertFalse(indentOptions.USE_TAB_CHARACTER);
+      assertEquals(2, indentOptions.INDENT_SIZE);
+      assertEquals(2, indentOptions.CONTINUATION_INDENT_SIZE);
+    });
+  }
+
   private void doTestJson(@Language("JSON") String configText, Consumer<CodeStyleSettings> test) {
-    doTest("tslint.json", configText, test);
+    doTestJson(configText, EmptyConsumer.getInstance(), test);
+  }
+
+  private void doTestJson(@Language("JSON") String configText, Consumer<CodeStyleSettings> setup, Consumer<CodeStyleSettings> test) {
+    doTest("tslint.json", configText, setup, test);
   }
 
   private void doTestYaml(@Language("YAML") String configText, Consumer<CodeStyleSettings> test) {
-    doTest("tslint.yaml", configText, test);
+    doTest("tslint.yaml", configText, EmptyConsumer.getInstance(), test);
   }
 
-  private void doTest(String configFileName, String configText, Consumer<CodeStyleSettings> test) {
+  private void doTest(String configFileName,
+                      String configText,
+                      Consumer<CodeStyleSettings> setup, Consumer<CodeStyleSettings> test) {
     JSTestUtils.testWithTempCodeStyleSettings(getProject(), settings -> {
+
+      CodeStyleSettings codeStyleSettings = CodeStyle.getSettings(myFixture.getProject());
+      setup.consume(codeStyleSettings);
+
       PsiFile configFile = myFixture.configureByText(configFileName, configText);
       TsLintConfigWrapper config = TsLintConfigWrapper.Companion.getConfigForFile(configFile);
-      config.applyRules(getProject(), config.getRulesToApply(getProject()));
-      test.consume(CodeStyle.getSettings(configFile));
+      Collection<TsLintRule> rulesToApply = config.getRulesToApply(getProject());
+      config.applyRules(getProject(), rulesToApply);
+      
+      test.consume(codeStyleSettings);
     });
   }
 }

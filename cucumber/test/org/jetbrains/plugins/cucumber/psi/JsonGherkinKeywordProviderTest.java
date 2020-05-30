@@ -1,11 +1,8 @@
 package org.jetbrains.plugins.cucumber.psi;
 
-import org.jetbrains.plugins.cucumber.CucumberTestUtil;
 import org.jetbrains.plugins.cucumber.i18n.AbstractGherkinKeywordProviderTest;
 import org.jetbrains.plugins.cucumber.psi.i18n.JsonGherkinKeywordProvider;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 
 public class JsonGherkinKeywordProviderTest extends AbstractGherkinKeywordProviderTest {

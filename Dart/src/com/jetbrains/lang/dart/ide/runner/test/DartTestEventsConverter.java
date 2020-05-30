@@ -379,7 +379,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     mySuiteData.clear();
     mySuitCount = 0;
 
-    return doProcessServiceMessages(new ServiceMessageBuilder("enteredTheMatrix").toString());
+    return doProcessServiceMessages(ServiceMessageBuilder.testsStarted().toString());
   }
 
   private boolean handleDone(JsonObject obj) throws ParseException {

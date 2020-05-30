@@ -30,7 +30,7 @@ Prerequisites:
      - `git clone https://github.com/JetBrains/intellij-plugins`
      - `git clone https://github.com/JetBrains/intellij-community`
      
-   Run getPlugins.sh (getPlugins.bat on Win) from `intellij-community/`. If that fails because the
+   Run `getPlugins.sh` (`getPlugins.bat` on Win) from `intellij-community/`. If that fails because the
    repos have already been cloned you can just update both of them using `git pull`.
 
 2. Start IntelliJ IDEA Ultimate, on Welcome screen click Configure | Project Defaults | Project Structure | SDKs,
@@ -68,12 +68,35 @@ Prerequisites:
    visible after restarting.
 
 9. Enjoy! All tests should pass. All functionality (except debugging in browser) should work.
-   Zero mandatory local changes in intellij-plugins repository.
-   There should be 3 locally changed files in intellij-community repository, each having exactly one added line,
+   Zero mandatory local changes in `intellij-plugins` repository.
+   There should be 3 locally changed files in `intellij-community` repository, each having exactly one added line,
    just keep these files in a separate '~never commit' changelist and do not worry about them:
      - intellij-community/intellij.idea.community.main.iml (line `<orderEntry type="module" module-name="Dart-community" />`)
      - intellij-community/.idea/modules.xml (line `<module fileurl="file://$PROJECT_DIR$/../intellij-plugins/Dart/Dart-community.iml" ... />`)
      - intellij-community/.idea/vcs.xml (line `<mapping directory="$PROJECT_DIR$/../intellij-plugins" vcs="Git" />`)
+   
+   To run the `analysisServer` tests add `-Ddart.sdk=/absolute/path/to/dart-sdk` to the `VM options` field in the launch configuration.
+   Dart SDK versions can be downloaded from the [Dart SDK Archive](https://dart.dev/tools/sdk/archive).
+
+### Contributing to the Dart Plugin
+
+All contributed PRs should:
+
+  - be formatted with the Java formatter (Code -> Reformat Code)
+  - not introduce new warnings reported by the IDE
+  - not break any of the tests mentioned above
+  - if possible, additional tests for the change in functionality should be included
+
+### How to open the Dart Analysis Server with Observatory and Dart DevTools
+
+1. Open the Registry... dialog by opening Find Action, `Ctrl + Shift + A` and typing `Registry...`
+2. Find the key `dart.server.vm.options` and include the flags: `--disable-service-auth-codes --observe=8888`
+3. Restart the Dart Analysis Server by clicking on the `Restart Dart Analysis Server` button in the Analysis window
+4. Open a [Observatory](https://dart-lang.github.io/observatory/) browser at [`http://localhost:8888/`](http://localhost:8888/)
+5. To open [Dart Devtools](https://flutter.dev/docs/development/tools/devtools/overview), copy the `ws://localhost:8888/ws` portion of
+   `vm@ws://localhost:8888/ws` out of the `name` field at the top of Observatory.
+6. If you haven't already install DevTools with `pub global activate devtools`, the Dart SDK must be `2.3.0` or higher
+7. Launch DevTools with `devtools`, when prompted paste in the `ws://localhost:8888/ws` contents
 
 ---
 
@@ -105,6 +128,7 @@ repositories...', find plugins and install them. Restart IDE.
   4.2. Rename Plugin SDK to 'IDEA Ultimate'.
 
   4.3. Add some jars to the Plugin SDK Classpath:
+  
     - [IDEA Installation]/plugins/coverage/lib/\*.jar
     - [IDEA Installation]/plugins/copyright/lib/\*.jar
     - [IDEA Installation]/plugins/JavaScriptDebugger/lib/\*.jar

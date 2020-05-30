@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.css;
 
 import com.intellij.codeInsight.documentation.DocumentationManager;
@@ -157,8 +157,8 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     }
 
     if (vFile != null) {
-      CssDialect dialect = CssDialectMappings.getInstance(context.getProject()).getMapping(vFile);
-      return dialect == null || dialect == FlexCSSDialect.getInstance();
+      String dialectName = CssDialectMappings.getInstance(context.getProject()).getMapping(vFile);
+      return dialectName == null || dialectName.equals(FlexCSSDialect.getInstance().getName());
     }
 
     return true;
@@ -421,8 +421,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
   }
 
   @Override
-  @NotNull
-  public String[] getSimpleSelectors(@NotNull PsiElement context) {
+  public String @NotNull [] getSimpleSelectors(@NotNull PsiElement context) {
     Module module = findModuleForPsiElement(context);
     if (module == null) {
       return ArrayUtilRt.EMPTY_STRING_ARRAY;
@@ -470,8 +469,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
   }
 
   @Override
-  @NotNull
-  public PsiElement[] getDeclarationsForSimpleSelector(@NotNull CssSimpleSelector selector) {
+  public PsiElement @NotNull [] getDeclarationsForSimpleSelector(@NotNull CssSimpleSelector selector) {
     // flex 4
     Module module = findModuleForPsiElement(selector);
     // only for project files, due to unknown code context otherwise
@@ -503,8 +501,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     return element;
   }
 
-  @NotNull
-  private static PsiElement[] getDeclarationsForSimpleSelector(@NotNull String className, @Nullable PsiElement context) {
+  private static PsiElement @NotNull [] getDeclarationsForSimpleSelector(@NotNull String className, @Nullable PsiElement context) {
     Collection<JSQualifiedNamedElement> elements = getClasses(className, context);
     if (elements != null && elements.size() > 0) {
       List<PsiElement> result = new ArrayList<>();
@@ -602,9 +599,8 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     return term.getTermType() == CssTermTypes.NUMBER;
   }
 
-  @NotNull
   @Override
-  public LocalQuickFix[] getQuickFixesForUnknownProperty(@NotNull String propertyName, @NotNull PsiElement context, boolean isOnTheFly) {
+  public LocalQuickFix @NotNull [] getQuickFixesForUnknownProperty(@NotNull String propertyName, @NotNull PsiElement context, boolean isOnTheFly) {
     if (!isOnTheFly) {
       return LocalQuickFix.EMPTY_ARRAY;
     }
@@ -614,8 +610,8 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
       return LocalQuickFix.EMPTY_ARRAY;
     }
 
-    final CssDialect dialect = CssDialectMappings.getInstance(context.getProject()).getMapping(vFile);
-    if (dialect == CssDialect.CLASSIC) {
+    final String dialectName = CssDialectMappings.getInstance(context.getProject()).getMapping(vFile);
+    if (CssDialect.CLASSIC.getName().equals(dialectName)) {
       final Collection<? extends CssPropertyDescriptor> flexDescriptor = findPropertyDescriptors(propertyName, context);
       if (!flexDescriptor.isEmpty()) {
         return new LocalQuickFix[]{new SwitchToCssDialectQuickFix(FlexCSSDialect.getInstance())};
@@ -635,11 +631,10 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     return LocalQuickFix.EMPTY_ARRAY;
   }
 
-  @NotNull
   @Override
-  public LocalQuickFix[] getQuickFixesForUnknownSimpleSelector(@NotNull String selectorName,
-                                                               @NotNull PsiElement context,
-                                                               boolean isOnTheFly) {
+  public LocalQuickFix @NotNull [] getQuickFixesForUnknownSimpleSelector(@NotNull String selectorName,
+                                                                         @NotNull PsiElement context,
+                                                                         boolean isOnTheFly) {
     if (!isOnTheFly) {
       return LocalQuickFix.EMPTY_ARRAY;
     }
@@ -649,8 +644,8 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
       return LocalQuickFix.EMPTY_ARRAY;
     }
 
-    final CssDialect dialect = CssDialectMappings.getInstance(context.getProject()).getMapping(vFile);
-    if (dialect == CssDialect.CLASSIC) {
+    final String dialectName = CssDialectMappings.getInstance(context.getProject()).getMapping(vFile);
+    if (CssDialect.CLASSIC.getName().equals(dialectName)) {
       if (isPossibleSelector(selectorName, context)) {
         return new LocalQuickFix[]{new SwitchToCssDialectQuickFix(FlexCSSDialect.getInstance())};
       }

@@ -19,23 +19,18 @@ import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.hash.HashMap;
 import org.angular2.lang.Angular2LangUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 
 import static com.intellij.lang.typescript.modules.TypeScriptModuleFileReferenceSet.addParentPathContexts;
 
 public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
-  @NotNull
   @Override
-  public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+  public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
     return ArrayUtil.mergeArrays(new Angular2SoftFileReferenceSet(element).getAllReferences(),
                                  new PsiReference[]{new AngularJSTemplateCacheReference((JSLiteralExpression)element)});
   }
@@ -78,9 +73,8 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
       super(element);
     }
 
-    @NotNull
     @Override
-    public Collection<PsiFileSystemItem> computeDefaultContexts() {
+    public @NotNull Collection<PsiFileSystemItem> computeDefaultContexts() {
       final PsiElement element = getElement();
       if (Angular2LangUtil.isAngular2Context(element)) {
         final PsiFile file = element.getContainingFile().getOriginalFile();
@@ -113,8 +107,7 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
       }
     }
 
-    @Nullable
-    private Angular2TemplateReferenceData encodeTemplateReferenceData() {
+    private @Nullable Angular2TemplateReferenceData encodeTemplateReferenceData() {
       final PsiFile file = getElement().getContainingFile().getOriginalFile();
       String pathString = StringUtil.trimStart(getPathString(), "./");
       Collection<PsiFileSystemItem> contexts = new LinkedHashSet<>();
@@ -190,13 +183,11 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
       this.contexts = contexts != null ? ContainerUtil.map(contexts, PsiFileSystemItem::getVirtualFile) : null;
     }
 
-    @Nullable
-    private PsiFileSystemItem getTargetFile(@NotNull PsiManager manager) {
+    private @Nullable PsiFileSystemItem getTargetFile(@NotNull PsiManager manager) {
       return FileReferenceHelper.getPsiFileSystemItem(manager, targetFile);
     }
 
-    @Nullable
-    private Collection<PsiFileSystemItem> getContexts(@NotNull PsiManager manager) {
+    private @Nullable Collection<PsiFileSystemItem> getContexts(@NotNull PsiManager manager) {
       return contexts != null
              ? ContainerUtil.mapNotNull(contexts, item -> FileReferenceHelper.getPsiFileSystemItem(manager, item))
              : null;

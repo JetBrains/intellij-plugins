@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
@@ -356,7 +357,7 @@ class FlexValue extends XValue {
       final boolean doubleQuoted = fullValue.charAt(0) == '\"' && fullValue.charAt(fullValue.length() - 1) == '\"';
 
       if (value.length() > XValueNode.MAX_VALUE_LENGTH) {
-        final String ending = doubleQuoted ? "\" " : quoted ? "\' " : " ";
+        final String ending = doubleQuoted ? "\" " : quoted ? "' " : " ";
         value = value.substring(0, XValueNode.MAX_VALUE_LENGTH).concat(ending);
       }
       value = value.trim();
@@ -664,7 +665,7 @@ class FlexValue extends XValue {
       }
     }
 
-    Collections.sort(elementsOfCollection, ourArrayElementsComparator);
+    elementsOfCollection.sort(ourArrayElementsComparator);
 
     XValueChildrenList inheritedNodeSingletonList = XValueChildrenList.EMPTY;
     if (inheritedStaticFields.size() + inheritedStaticProperties.size() + inheritedFields.size() + inheritedProperties.size() > 0) {

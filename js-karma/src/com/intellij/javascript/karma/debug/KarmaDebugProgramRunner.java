@@ -134,7 +134,7 @@ public class KarmaDebugProgramRunner extends AsyncProgramRunner {
             SingleAlarm alarm = new SingleAlarm(resumeTestRunning, 5000);
             alarm.request();
             debugProcess.getConnection().executeOnStart((vm) -> {
-              if (Registry.is("js.debugger.break.on.first.statement")) {
+              if (Registry.is("js.debugger.break.on.first.statement.karma")) {
                 vm.getBreakpointManager().setBreakOnFirstStatement();
               }
               alarm.cancelAllRequests();
@@ -207,7 +207,7 @@ public class KarmaDebugProgramRunner extends AsyncProgramRunner {
         mappings.put(karmaServer.formatUrlWithoutUrlRoot("/absolute"), roots[0]);
       }
     }
-    return new RemoteDebuggingFileFinder(mappings, null);
+    return new RemoteDebuggingFileFinder(mappings, (DebuggableFileFinder)null);
   }
 
   private static void resumeTestRunning(@NotNull OSProcessHandler processHandler) {

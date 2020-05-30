@@ -24,7 +24,7 @@ class D {
     private function <error>bar</error>():int {}
 }
 
-function foo(e:int) {
+function foo(<warning descr="Duplicate declaration">e</warning>:int) {
     var <warning>e</warning> = e;
 }
 

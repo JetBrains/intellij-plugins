@@ -20,7 +20,7 @@ import com.google.gson.JsonObject;
 /**
  * A {@link Null} object represents the Dart language value null.
  */
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class Null extends Instance {
 
   public Null(JsonObject json) {
@@ -30,7 +30,8 @@ public class Null extends Instance {
   /**
    * Always 'null'.
    */
+  @Override
   public String getValueAsString() {
-    return json.get("valueAsString").getAsString();
+    return getAsString("valueAsString");
   }
 }

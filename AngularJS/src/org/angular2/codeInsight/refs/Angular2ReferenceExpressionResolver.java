@@ -37,9 +37,8 @@ public class Angular2ReferenceExpressionResolver extends TypeScriptReferenceExpr
     super(expression, ignorePerformanceLimits);
   }
 
-  @NotNull
   @Override
-  public ResolveResult[] resolve(@NotNull JSReferenceExpressionImpl expression, boolean incompleteCode) {
+  public ResolveResult @NotNull [] resolve(@NotNull JSReferenceExpressionImpl expression, boolean incompleteCode) {
     if (myReferencedName == null) return ResolveResult.EMPTY_ARRAY;
     if (myRef instanceof Angular2PipeReferenceExpression) {
       return resolvePipeNameReference(expression, incompleteCode);
@@ -50,8 +49,12 @@ public class Angular2ReferenceExpressionResolver extends TypeScriptReferenceExpr
     return super.resolve(expression, incompleteCode);
   }
 
-  @NotNull
-  private ResolveResult[] resolvePipeNameReference(@NotNull JSReferenceExpressionImpl expression, boolean incompleteCode) {
+  @Override
+  protected ResolveResult[] postProcessIndexResults(ResolveResult[] results) {
+    return results;
+  }
+
+  private ResolveResult @NotNull [] resolvePipeNameReference(@NotNull JSReferenceExpressionImpl expression, boolean incompleteCode) {
     if (!incompleteCode) {
       ResolveResult[] results = expression.multiResolve(true);
       //expected type evaluator uses incomplete = true results so we have to cache it and reuse inside incomplete = false
@@ -72,8 +75,7 @@ public class Angular2ReferenceExpressionResolver extends TypeScriptReferenceExpr
     return new ResolveResult[]{new JSResolveResult(ObjectUtils.notNull(pipe.getTypeScriptClass(), pipe.getSourceElement()))};
   }
 
-  @NotNull
-  private ResolveResult[] resolveTemplateVariable(@NotNull JSReferenceExpressionImpl expression) {
+  private ResolveResult @NotNull [] resolveTemplateVariable(@NotNull JSReferenceExpressionImpl expression) {
     assert myReferencedName != null;
     ReadWriteAccessDetector.Access access = JSReadWriteAccessDetector.ourInstance
       .getExpressionAccess(expression);

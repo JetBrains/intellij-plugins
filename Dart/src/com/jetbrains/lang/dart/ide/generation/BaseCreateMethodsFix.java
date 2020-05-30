@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.generation;
 
 import com.intellij.codeInsight.FileModificationService;
@@ -142,7 +143,7 @@ abstract public class BaseCreateMethodsFix<T extends DartComponent> {
 
       if (currentContainingFile != containingFile) {
         if (containingFile != null) {
-          Collections.sort(objectsFromSameFile, tComparator);
+          objectsFromSameFile.sort(tComparator);
           result.addAll(objectsFromSameFile);
           objectsFromSameFile.clear();
         }
@@ -152,7 +153,7 @@ abstract public class BaseCreateMethodsFix<T extends DartComponent> {
       objectsFromSameFile.add(object);
     }
 
-    Collections.sort(objectsFromSameFile, tComparator);
+    objectsFromSameFile.sort(tComparator);
     result.addAll(objectsFromSameFile);
 
     elementsToProcess.clear();

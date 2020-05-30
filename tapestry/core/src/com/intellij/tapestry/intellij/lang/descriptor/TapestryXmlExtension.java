@@ -13,24 +13,23 @@ import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
 import com.intellij.tapestry.psi.TmlFile;
 import com.intellij.util.ArrayUtilRt;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.DefaultXmlExtension;
 import com.intellij.xml.XmlNSDescriptor;
 import com.intellij.xml.impl.dtd.XmlNSDescriptorImpl;
 import com.intellij.xml.util.XmlUtil;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
 import java.util.Set;
 
 /**
  * @author Alexey Chmutov
  */
 public class TapestryXmlExtension extends DefaultXmlExtension {
-  private static final Set<String> ourTapestryTemplateNamespaces = new THashSet<>(Arrays.asList(
+  private static final Set<String> ourTapestryTemplateNamespaces = ContainerUtil.set(
     TapestryConstants.TEMPLATE_NAMESPACE, TapestryConstants.TEMPLATE_NAMESPACE2, TapestryConstants.TEMPLATE_NAMESPACE3,
-    TapestryConstants.TEMPLATE_NAMESPACE4));
+    TapestryConstants.TEMPLATE_NAMESPACE4);
 
   public static boolean isTapestryTemplateNamespace(String namespace) {
     return namespace != null && ourTapestryTemplateNamespaces.contains(namespace);
@@ -53,9 +52,8 @@ public class TapestryXmlExtension extends DefaultXmlExtension {
 
   }
 
-  @Nullable
   @Override
-  public String[][] getNamespacesFromDocument(final XmlDocument parent, boolean declarationsExist) {
+  public String[] @Nullable [] getNamespacesFromDocument(final XmlDocument parent, boolean declarationsExist) {
     String[][] namespaces = {
       {"", XmlUtil.XHTML_URI},
       {"t", TapestryConstants.TEMPLATE_NAMESPACE},

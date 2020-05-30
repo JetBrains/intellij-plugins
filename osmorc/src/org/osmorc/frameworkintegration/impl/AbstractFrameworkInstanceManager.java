@@ -61,7 +61,7 @@ public abstract class AbstractFrameworkInstanceManager implements FrameworkInsta
   @NotNull
   protected Collection<SelectedBundle> collectBundles(@NotNull FrameworkInstanceDefinition instance,
                                                       @NotNull FrameworkBundleType type,
-                                                      @NotNull String[] bundleDirs,
+                                                      String @NotNull [] bundleDirs,
                                                       @NotNull Pattern sysNamePattern,
                                                       @Nullable String sysControlClass,
                                                       int sysExpected,

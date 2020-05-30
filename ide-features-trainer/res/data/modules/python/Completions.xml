@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="Code Completion" lessonsPath="Completions/" version="0.3" id="python.completions" fileType="SCRATCH" description="Basic, statement, smart type and other completion types">
+  <lesson-kt implementationClass="training.learn.lesson.python.completion.PythonBasicCompletionLesson"/>
+  <lesson-kt implementationClass="training.learn.lesson.python.completion.PythonTabCompletionLesson"/>
+  <lesson-kt implementationClass="training.learn.lesson.python.completion.PythonPostfixCompletionLesson"/>
+  <lesson-kt implementationClass="training.learn.lesson.python.completion.PythonSmartCompletionLesson"/>
+</module>

@@ -30,12 +30,11 @@ public class AngularCliAddDependencyInspection extends LocalInspectionTool {
 
   private static final long TIMEOUT = 2000;
 
-  @NotNull
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
+  public @NotNull PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
     return new JsonElementVisitor() {
       @Override
-      public void visitFile(PsiFile file) {
+      public void visitFile(@NotNull PsiFile file) {
         if (PackageJsonUtil.isPackageJsonFile(file)
             && AngularCliUtil.findCliJson(file.getVirtualFile().getParent()) != null) {
           annotate((JsonFile)file, holder);
@@ -65,7 +64,8 @@ public class AngularCliAddDependencyInspection extends LocalInspectionTool {
 
       if ((pkgVersion != null && AngularCliSchematicsRegistryService.getInstance().supportsNgAdd(pkgVersion))
           || (pkgVersion == null && AngularCliSchematicsRegistryService.getInstance().supportsNgAdd(packageName, TIMEOUT))) {
-        String message = Angular2Bundle.message("angular.inspection.json.install-with-ng-add", StringUtil.wrapWithDoubleQuote(packageName));
+        String message = Angular2Bundle.message("angular.inspection.install-with-ng-add.message",
+                                                StringUtil.wrapWithDoubleQuote(packageName));
         LocalQuickFix quickFix = new AngularCliAddQuickFix(packageJson, packageName, version, pkgVersion != null);
         if (versionLiteral != null) {
           if (pkgVersion == null) {
@@ -82,8 +82,7 @@ public class AngularCliAddDependencyInspection extends LocalInspectionTool {
     }
   }
 
-  @NotNull
-  private static TextRange getTextRange(@NotNull JsonValue element) {
+  private static @NotNull TextRange getTextRange(@NotNull JsonValue element) {
     TextRange range = element.getTextRange();
     if (element instanceof JsonStringLiteral && range.getLength() > 2 &&
         StringUtil.isQuotedString(element.getText())) {

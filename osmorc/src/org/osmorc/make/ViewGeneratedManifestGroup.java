@@ -31,7 +31,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.PathUtil;
-import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.facet.OsmorcFacet;
@@ -61,9 +61,8 @@ public class ViewGeneratedManifestGroup extends ActionGroup {
     e.getPresentation().setVisible(enabled);
   }
 
-  @NotNull
   @Override
-  public AnAction[] getChildren(@Nullable AnActionEvent e) {
+  public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e) {
     if (e != null) {
       Project project = e.getProject();
       if (project != null) {
@@ -76,7 +75,7 @@ public class ViewGeneratedManifestGroup extends ActionGroup {
             if (!jarFilePath.isEmpty()) {
               String title = "[" + module.getName() + "] " + PathUtil.getFileName(jarFilePath);
               ViewManifestAction action = new ViewManifestAction(title, jarFilePath);
-              if (actions == null) actions = ContainerUtil.newSmartList();
+              if (actions == null) actions = new SmartList<>();
               actions.add(action);
             }
           }

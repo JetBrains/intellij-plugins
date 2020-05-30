@@ -63,9 +63,8 @@ public class BeanPropertyPathReferenceSet extends ReferenceSetBase<BeanPropertyP
     return new BeanPropertyPathReference(this, range, index);
   }
 
-  @NotNull
   @Override
-  public BeanPropertyPathReference[] getPsiReferences() {
+  public BeanPropertyPathReference @NotNull [] getPsiReferences() {
     return getReferences().toArray(new BeanPropertyPathReference[0]);
   }
 

@@ -22,6 +22,7 @@ import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,14 +49,10 @@ public class BundleManifestCache {
   }
 
   private final Project myProject;
-  private final ProjectFileIndex myIndex;
-  private final CachedValuesManager myManager;
   private final Map<Object, CachedValue<BundleManifest>> myCache;
 
-  public BundleManifestCache(@NotNull Project project, @NotNull ProjectFileIndex index, @NotNull CachedValuesManager manager) {
+  public BundleManifestCache(@NotNull Project project) {
     myProject = project;
-    myIndex = index;
-    myManager = manager;
     myCache = Collections.synchronizedMap(ContainerUtil.createSoftMap());
   }
 
@@ -69,17 +66,18 @@ public class BundleManifestCache {
   public BundleManifest getManifest(@NotNull PsiFileSystemItem item) {
     VirtualFile file = item.getVirtualFile();
     if (file != null) {
-      List<OrderEntry> entries = myIndex.getOrderEntriesForFile(file);
+      ProjectFileIndex index = ProjectFileIndex.getInstance(myProject);
+      List<OrderEntry> entries = index.getOrderEntriesForFile(file);
       if (entries.size() == 1 && entries.get(0) instanceof JdkOrderEntry) {
         return new JdkBundleManifest();
       }
 
-      Module module = myIndex.getModuleForFile(file);
+      Module module = index.getModuleForFile(file);
       if (module != null) {
         return getManifest(module);
       }
 
-      VirtualFile libRoot = myIndex.getClassRootForFile(file);
+      VirtualFile libRoot = index.getClassRootForFile(file);
       if (libRoot != null) {
         return getManifest(libRoot);
       }
@@ -93,10 +91,10 @@ public class BundleManifestCache {
     OsmorcFacet facet = OsmorcFacet.getInstance(module);
     if (facet == null) return null;
 
-    CachedValue<BundleManifest> value = myCache.computeIfAbsent(facet, k -> myManager.createCachedValue(() -> {
+    CachedValue<BundleManifest> value = myCache.computeIfAbsent(facet, k -> CachedValuesManager.getManager(myProject).createCachedValue(() -> {
       OsmorcFacetConfiguration configuration = facet.getConfiguration();
       BundleManifest manifest = null;
-      List<Object> dependencies = ContainerUtil.newSmartList(configuration);
+      List<Object> dependencies = new SmartList<>(configuration);
 
       switch (configuration.getManifestGenerationMode()) {
         case Manually: {
@@ -144,7 +142,7 @@ public class BundleManifestCache {
 
   @Nullable
   public BundleManifest getManifest(@NotNull VirtualFile libRoot) {
-    CachedValue<BundleManifest> value = myCache.computeIfAbsent(libRoot, k -> myManager.createCachedValue(() -> {
+    CachedValue<BundleManifest> value = myCache.computeIfAbsent(libRoot, k -> CachedValuesManager.getManager(myProject).createCachedValue(() -> {
       VirtualFile manifestFile = libRoot.findFileByRelativePath(JarFile.MANIFEST_NAME);
       PsiFile psiFile = manifestFile != null ? PsiManager.getInstance(myProject).findFile(manifestFile) : null;
       BundleManifest manifest = psiFile instanceof ManifestFile ? readManifest((ManifestFile)psiFile) : null;

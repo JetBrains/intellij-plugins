@@ -11,8 +11,7 @@ import java.util.Map;
  * @author Irina.Chernushina on 3/8/2016.
  */
 public class Template {
-  @NotNull
-  private final String myPath;
+  private final @NotNull String myPath;
   private final SmartPsiElementPointer<PsiElement> myPointer;
   private Map<String, SmartPsiElementPointer<PsiElement>> myViewPlaceholders;
   private Map<String, UiRouterState> myStateLinks;
@@ -22,8 +21,7 @@ public class Template {
     myPointer = file;
   }
 
-  @NotNull
-  public String getPath() {
+  public @NotNull String getPath() {
     return myPath;
   }
 

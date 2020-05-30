@@ -20,7 +20,7 @@ import com.google.gson.JsonObject;
 /**
  * {@link VMRef} is a reference to a {@link VM} object.
  */
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class VMRef extends Response {
 
   public VMRef(JsonObject json) {
@@ -31,6 +31,6 @@ public class VMRef extends Response {
    * A name identifying this vm. Not guaranteed to be unique.
    */
   public String getName() {
-    return json.get("name").getAsString();
+    return getAsString("name");
   }
 }

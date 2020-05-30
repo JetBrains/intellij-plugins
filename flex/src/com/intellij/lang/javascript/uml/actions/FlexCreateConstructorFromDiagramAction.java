@@ -1,6 +1,6 @@
 package com.intellij.lang.javascript.uml.actions;
 
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSFunctionImpl;
@@ -12,7 +12,8 @@ import com.intellij.lang.javascript.refactoring.JSVisibilityUtil;
  */
 public class FlexCreateConstructorFromDiagramAction extends JSCreateMethodActionBase {
   public FlexCreateConstructorFromDiagramAction() {
-    super(JSBundle.message("new.constructor.action.text"), JSBundle.message("new.constructor.action.description"),
+    super(JavaScriptBundle.messagePointer("new.constructor.action.text"), JavaScriptBundle
+            .messagePointer("new.constructor.action.description"),
           JSFunctionImpl.CONSTRUCTOR_ICON);
   }
 
@@ -36,6 +37,6 @@ public class FlexCreateConstructorFromDiagramAction extends JSCreateMethodAction
 
   @Override
   public String getActionName() {
-    return JSBundle.message("new.constructor.action.description");
+    return JavaScriptBundle.message("new.constructor.action.description");
   }
 }

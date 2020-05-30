@@ -140,7 +140,7 @@ class VueTypedHandlerTest : BasePlatformTestCase() {
     doInterpolationBracesCompleterTest("{{", "}}", '{', false)
     myFixture.checkResult("""
 <template></template>
-<script>{{<caret></script>
+<script>{{<caret>}</script>
 """)
   }
 
@@ -156,6 +156,22 @@ export default
 <template></template>
 <script>{{<caret>}
 export default
+</script>
+""")
+  }
+
+  fun testBracesCompletionInsideVueScriptContents() {
+    myFixture.configureByText(VueFileType.INSTANCE, """
+<template></template>
+<script>
+export default <caret>
+</script>
+""")
+    doInterpolationBracesCompleterTest("{{", "}}", '{', false)
+    myFixture.checkResult("""
+<template></template>
+<script>
+export default {<caret>}
 </script>
 """)
   }

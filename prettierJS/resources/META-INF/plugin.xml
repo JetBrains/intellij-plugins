@@ -12,22 +12,17 @@ To use it:
     Action” popup (Cmd/Ctrl-Shift-A)
   </li>
 </ul>
-<br/>To run Prettier on save, please configure and use 
-  <a href="https://prettier.io/docs/en/webstorm.html#running-prettier-on-save-using-file-watcher">File Watchers</a>.
-<br/>
-<br/>
-This plugin is compatible with the IDE versions starting from 2018.1.
+<br/>To run Prettier on save, tick the "Run on save for files" option in Preferences/Settings | Languages \& Frameworks | JavaScript | Prettier.
 <br/>
 <br/>
 Please report any issues in the <a href="https://youtrack.jetbrains.com/issues/WEB">issue tracker</a>.
 ]]></description>
   <vendor>JetBrains</vendor>
+  <category>JavaScript Frameworks and Tools</category>
 
   <depends>JavaScript</depends>
   <depends>com.intellij.modules.platform</depends>
-  <depends optional="true" config-file="file-watcher.xml">com.intellij.plugins.watcher</depends>
-  <resource-bundle>PrettierBundle</resource-bundle>
-
+  <resource-bundle>messages.PrettierBundle</resource-bundle>
 
   <extensions defaultExtensionNs="com.intellij">
     <projectService serviceInterface="com.intellij.prettierjs.PrettierLanguageService"
@@ -36,30 +31,27 @@ Please report any issues in the <a href="https://youtrack.jetbrains.com/issues/W
     <projectConfigurable
         parentId="Settings.JavaScript"
         id="settings.javascript.prettier"
-        displayName="Prettier"
-        instance="com.intellij.prettierjs.PrettierConfigurable"
-        provider="com.intellij.prettierjs.PrettierConfigurable$Provider"/>
+        bundle="messages.PrettierBundle"
+        key="configurable.PrettierConfigurable.display.name"
+        instance="com.intellij.prettierjs.PrettierConfigurable"/>
 
-    <fileTypeFactory implementation="com.intellij.prettierjs.config.PrettierConfigFileTypeFactory"/>
+    <fileType name="JSON" language="JSON" fileNames=".prettierrc"/>
     <lang.substitutor language="JSON" implementationClass="com.intellij.prettierjs.config.PrettierConfigLanguageSubstitutor"/>
     <iconProvider implementation="com.intellij.prettierjs.config.PrettierConfigIconProvider"/>
     <editorNotificationProvider implementation="com.intellij.prettierjs.PrettierCodeStyleEditorNotificationProvider"/>
     <directoryProjectConfigurator implementation="com.intellij.prettierjs.PrettierCompatibleCodeStyleInstaller"/>
-    <directoryProjectConfigurator implementation="com.intellij.prettierjs.PrettierConfiguration$ProjectConfigurator"/>
     <javascript.json.schema.provider implementation="com.intellij.prettierjs.config.PrettierConfigJsonSchemaInJsProvider"/>
+    <postFormatProcessor implementation="com.intellij.prettierjs.PrettierPostFormatProcessor"/>
   </extensions>
   <actions>
-    <action id="ReformatWithPrettierAction"
-            class="com.intellij.prettierjs.ReformatWithPrettierAction" text="Reformat with Prettier"
-            description="Reformat with Prettier">
+    <action id="ReformatWithPrettierAction" class="com.intellij.prettierjs.ReformatWithPrettierAction">
       <add-to-group group-id="EditorPopupMenu" anchor="last"/>
       <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
       <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt shift P"/>
       <keyboard-shortcut keymap="Mac OS X" first-keystroke="meta alt shift P" />
       <keyboard-shortcut keymap="Mac OS X 10.5+" first-keystroke="meta alt shift P"/>
     </action>
-    <action id="PrettierImportCodeStyleAction" class="com.intellij.prettierjs.PrettierImportCodeStyleAction"
-            text="Apply Prettier Code Style Rules">
+    <action id="PrettierImportCodeStyleAction" class="com.intellij.prettierjs.PrettierImportCodeStyleAction">
       <add-to-group group-id="EditorPopupMenu" anchor="last"/>
       <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
     </action>
@@ -69,6 +61,9 @@ Please report any issues in the <a href="https://youtrack.jetbrains.com/issues/W
   </extensions>
   <extensions defaultExtensionNs="com.intellij.json">
     <jsonSchemaEnabler implementation="com.intellij.prettierjs.config.PrettierJsonSchemaInJsEnabler"/>
+  </extensions>
+  <extensions defaultExtensionNs="JavaScript">
+    <linterSaveAction implementation="com.intellij.prettierjs.PrettierSaveAction"/>
   </extensions>
 
 </idea-plugin>

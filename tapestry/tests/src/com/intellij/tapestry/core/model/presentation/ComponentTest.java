@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import static org.easymock.EasyMock.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 /**
  * @author <a href="mailto:hugo.palma@logical-software.com">Hugo Palma</a>
@@ -55,14 +57,14 @@ public class ComponentTest {
         expect(_resourceFinderMock.findLocalizedClasspathResource("com/app/components/SomeClass.tml", true)).andReturn(new ArrayList<>()).anyTimes();
         replay(_resourceFinderMock);
 
-        assert new TapestryComponent(_libraryMock, _classInRootComponentsPackageMock, _tapestryProjectMock).getTemplate().length == 0;
+        assertEquals(new TapestryComponent(_libraryMock, _classInRootComponentsPackageMock, _tapestryProjectMock).getTemplate().length, 0);
 
         reset(_resourceFinderMock);
         expect(_resourceFinderMock.findLocalizedClasspathResource("com/app/components/SomeClass.tml", true)).andReturn(new ArrayList<>()).anyTimes();
         expect(_resourceFinderMock.findLocalizedContextResource("SomeClass.tml")).andReturn(new ArrayList<>()).anyTimes();
         replay(_resourceFinderMock);
 
-        assert new TapestryComponent(_libraryMock, _classInRootComponentsPackageMock, _tapestryProjectMock).getTemplate().length == 0;
+        assertEquals(new TapestryComponent(_libraryMock, _classInRootComponentsPackageMock, _tapestryProjectMock).getTemplate().length, 0);
     }
 
     @Test
@@ -76,11 +78,13 @@ public class ComponentTest {
         expect(_resourceFinderMock.findLocalizedContextResource("SomeClass.tml")).andReturn(templates).anyTimes();
         replay(_resourceFinderMock);
 
-        assert new TapestryComponent(_libraryMock, _classInRootComponentsPackageMock, _tapestryProjectMock).getTemplate()[0].getName().equals("SomeClass.tml");
+        assertEquals(
+          new TapestryComponent(_libraryMock, _classInRootComponentsPackageMock, _tapestryProjectMock).getTemplate()[0].getName(),
+          "SomeClass.tml");
     }
 
     @Test
     public void allowsTemplate() {
-        assert new TapestryComponent(_libraryMock, _classInRootComponentsPackageMock, _tapestryProjectMock).allowsTemplate();
+        assertTrue(new TapestryComponent(_libraryMock, _classInRootComponentsPackageMock, _tapestryProjectMock).allowsTemplate());
     }
 }

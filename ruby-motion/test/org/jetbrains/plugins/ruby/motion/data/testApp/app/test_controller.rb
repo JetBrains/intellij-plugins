@@ -1,3 +1,0 @@
-class TestController < UIViewController
-
-end

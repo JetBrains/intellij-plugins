@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.flexunit.execution;
 
 import com.intellij.codeInsight.JavaCodeInsightTestCase;
@@ -205,7 +205,7 @@ public abstract class FlexUnitExecutionTest extends JavaCodeInsightTestCase impl
   }
 
   @Override
-  protected VirtualFile configureByFiles(final File projectRoot, @NotNull final VirtualFile[] vFiles) {
+  protected VirtualFile configureByFiles(final File projectRoot, final VirtualFile @NotNull [] vFiles) {
     final Ref<VirtualFile> result = new Ref<>();
     UIUtil.invokeAndWaitIfNeeded((Runnable)() -> {
       try {
@@ -310,10 +310,6 @@ public abstract class FlexUnitExecutionTest extends JavaCodeInsightTestCase impl
       }
 
       @Override
-      public void processWillTerminate(@NotNull ProcessEvent event, boolean willBeDestroyed) {
-      }
-
-      @Override
       public void onTextAvailable(@NotNull ProcessEvent event, @NotNull Key outputType) {
         System.out.println("FlexUnit: " + event.getText());
       }
@@ -322,7 +318,7 @@ public abstract class FlexUnitExecutionTest extends JavaCodeInsightTestCase impl
     final Ref<ExecutionConsole> executionConsole = new Ref<>();
     ApplicationManager.getApplication().invokeLater(() -> {
       try {
-        runner.execute(env, new ProgramRunner.Callback() {
+        env.setCallback(new ProgramRunner.Callback() {
           @Override
           public void processStarted(RunContentDescriptor descriptor) {
             compilation.up();
@@ -331,6 +327,7 @@ public abstract class FlexUnitExecutionTest extends JavaCodeInsightTestCase impl
             executionConsole.set(descriptor.getExecutionConsole());
           }
         });
+        runner.execute(env);
       }
       catch (Throwable t) {
         t.printStackTrace();
@@ -419,21 +416,13 @@ public abstract class FlexUnitExecutionTest extends JavaCodeInsightTestCase impl
 
   private static void checkOutput(AbstractTestProxy testProxy, @Nullable FlexUnitRunnerParameters.OutputLogLevel logLevel) {
     final StringBuilder stdout = new StringBuilder();
-    final StringBuilder stderr = new StringBuilder();
-    final StringBuilder system = new StringBuilder();
     testProxy.printOn(new Printer() {
       @Override
       public void print(String text, ConsoleViewContentType contentType) {
         if (contentType == ConsoleViewContentType.NORMAL_OUTPUT) {
           stdout.append(text);
         }
-        else if (contentType == ConsoleViewContentType.ERROR_OUTPUT) {
-          stderr.append(text);
-        }
-        else if (contentType == ConsoleViewContentType.SYSTEM_OUTPUT) {
-          system.append(text);
-        }
-        else {
+        else if (contentType != ConsoleViewContentType.ERROR_OUTPUT && contentType != ConsoleViewContentType.SYSTEM_OUTPUT) {
           assert false;
         }
       }
@@ -452,22 +441,19 @@ public abstract class FlexUnitExecutionTest extends JavaCodeInsightTestCase impl
       }
     });
 
-    //Assert.assertTrue("Test error output should be empty but was '" + stderr + "'", stderr.length() == 0);
-    //Assert.assertTrue("Test system output should be empty but was '" + system + "'", system.length() == 0);
-
     if (logLevel == null) {
-      Assert.assertTrue("Test std output should be empty but was '" + stdout + "'", stdout.length() == 0);
+      Assert.assertEquals("Test std output should be empty but was '" + stdout + "'", 0, stdout.length());
     }
     else {
       for (FlexUnitRunnerParameters.OutputLogLevel level : FlexUnitRunnerParameters.OutputLogLevel.values()) {
         String message = LOG_MESSAGES.get(level);
         if (message != null) {
-          if (level.ordinal() <= logLevel.ordinal()) {
+          if (level.compareTo(logLevel) <= 0) {
             Assert.assertTrue("Expected message '" + message + "' was not found in test output '" + stdout + "'",
                               stdout.indexOf(message) != -1);
           }
           else {
-            Assert.assertTrue("Message '" + message + "' was not expected in test output '" + stdout + "'", stdout.indexOf(message) == -1);
+            Assert.assertEquals("Message '" + message + "' was not expected in test output '" + stdout + "'", stdout.indexOf(message), -1);
           }
         }
       }

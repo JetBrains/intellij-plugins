@@ -21,10 +21,9 @@ import java.util.Collection;
  * @author Dennis.Ushakov
  */
 public class AngularJSControllerReferencesProvider extends PsiReferenceProvider {
-  @NotNull
   @Override
-  public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
-    return new PsiReference[] { new AngularJSControllerReference((JSLiteralExpression)element) };
+  public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+    return new PsiReference[]{new AngularJSControllerReference((JSLiteralExpression)element)};
   }
 
   public static class AngularJSControllerReference extends AngularJSReferenceBase<JSLiteralExpression> {
@@ -32,9 +31,8 @@ public class AngularJSControllerReferencesProvider extends PsiReferenceProvider 
       super(element, ElementManipulators.getValueTextRange(element));
     }
 
-    @NotNull
     @Override
-    public String getCanonicalText() {
+    public @NotNull String getCanonicalText() {
       final String text = super.getCanonicalText();
       final int idx = text.indexOf(AngularJSIndexingHandler.AS_CONNECTOR_WITH_SPACES);
       if (idx > 0) {
@@ -43,15 +41,13 @@ public class AngularJSControllerReferencesProvider extends PsiReferenceProvider 
       return text;
     }
 
-    @Nullable
     @Override
-    public PsiElement resolveInner() {
+    public @Nullable PsiElement resolveInner() {
       return AngularIndexUtil.resolve(getElement().getProject(), AngularControllerIndex.KEY, getCanonicalText());
     }
 
-    @NotNull
     @Override
-    public Object[] getVariants() {
+    public Object @NotNull [] getVariants() {
       final Collection<String> controllers = AngularIndexUtil.getAllKeys(AngularControllerIndex.KEY, getElement().getProject());
       final LookupElement[] result = new LookupElement[controllers.size()];
       int i = 0;

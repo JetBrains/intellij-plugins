@@ -20,7 +20,7 @@ import com.intellij.ui.DoubleClickListener;
 import com.intellij.ui.PopupHandler;
 import com.intellij.ui.treeStructure.actions.CollapseAllAction;
 import com.intellij.ui.treeStructure.actions.ExpandAllAction;
-import com.intellij.util.ui.UIUtil;
+import icons.JavaUltimateIcons;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -61,7 +61,7 @@ public class DependenciesTab {
             Object selectedObject = selectedNode.getUserObject();
 
             if (selectedObject instanceof InjectedElement || selectedObject instanceof PresentationLibraryElement || selectedObject instanceof IResource) {
-              DefaultActionGroup actions = new DefaultActionGroup("NavigateToGroup", true);
+              DefaultActionGroup actions = DefaultActionGroup.createPopupGroup(() -> "NavigateToGroup");
 
               actions.add(_navigateToElementAction);
               actions.add(_navigateToUsageAction);
@@ -78,7 +78,7 @@ public class DependenciesTab {
 
           // When object it's not selected
           if (selected == null) {
-            DefaultActionGroup actions = new DefaultActionGroup("NavigateToGroup", true);
+            DefaultActionGroup actions = DefaultActionGroup.createPopupGroup(() -> "NavigateToGroup");
 
             actions.add(new CollapseAllAction(_dependenciesTree));
             actions.add(new ExpandAllAction(_dependenciesTree));
@@ -91,7 +91,7 @@ public class DependenciesTab {
 
       new DoubleClickListener() {
         @Override
-        protected boolean onDoubleClick(MouseEvent e) {
+        protected boolean onDoubleClick(@NotNull MouseEvent e) {
           TreePath selected = _dependenciesTree.getSelectionPath();
 
           // When is double click
@@ -277,7 +277,7 @@ public class DependenciesTab {
     private class NavigateToUsageAction extends AnAction {
 
         NavigateToUsageAction() {
-            super("Navigate to Usage", "Navigate to part of code where the selected element is used", AllIcons.Nodes.EjbReference);
+            super("Navigate to Usage", "Navigate to part of code where the selected element is used", JavaUltimateIcons.Javaee.EjbReference);
         }
 
         /**

@@ -5,18 +5,14 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.sql.dialects.SqlDialectMappings;
-import com.intellij.sql.editor.SqlSyntaxHighlighter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CfmlSyntaxHighlighterFactory extends SyntaxHighlighterFactory {
 
   @Override
   @NotNull
-  public SyntaxHighlighter getSyntaxHighlighter(final Project project, final VirtualFile virtualFile) {
-    if (project != null && virtualFile != null) {
-      return new CfmlHighlighter.CfmlFileHighlighter(project);
-    }
-    return new SqlSyntaxHighlighter(SqlDialectMappings.getDefaultSqlDialect(), project);
+  public SyntaxHighlighter getSyntaxHighlighter(@Nullable Project project, @Nullable VirtualFile virtualFile) {
+    return new CfmlHighlighter.CfmlFileHighlighter(project);
   }
 }

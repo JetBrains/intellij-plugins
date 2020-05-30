@@ -19,15 +19,14 @@ public class ExternalLibraryNode extends TapestryNode {
     public ExternalLibraryNode(TapestryLibrary library, Module module, AbstractTreeBuilder treeBuilder) {
         super(module, treeBuilder);
 
-        init(library, new PresentationData(library.getId(), library.getId(), AllIcons.Modules.Library, null));
+        init(library, new PresentationData(library.getId(), library.getId(), AllIcons.Nodes.PpLib, null));
     }
 
     /**
      * {@inheritDoc}
      */
-    @NotNull
     @Override
-    public SimpleNode[] getChildren() {
+    public SimpleNode @NotNull [] getChildren() {
         List<TapestryNode> children = new ArrayList<>();
 
         TapestryLibrary library = ((TapestryLibrary) getElement());

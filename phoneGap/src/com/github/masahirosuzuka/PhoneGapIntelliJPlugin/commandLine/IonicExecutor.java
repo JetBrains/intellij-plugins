@@ -11,9 +11,8 @@ public class IonicExecutor extends CordovaBasedExecutor {
     super(path, version);
   }
 
-  @NotNull
   @Override
-  protected String[] getNewProjectCommands(@NotNull String name) {
+  protected String @NotNull [] getNewProjectCommands(@NotNull String name) {
     if (!isIonic3AndLater()) {
       return new String[]{myPath, "start", name};
     }
@@ -28,12 +27,11 @@ public class IonicExecutor extends CordovaBasedExecutor {
     return "Ionic";
   }
 
-  @NotNull
   @Override
-  protected String[] getStandardCommands(@NotNull String platform,
-                                         @Nullable String target,
-                                         @Nullable String extraArg,
-                                         @NotNull String commandToExecute) {
+  protected String @NotNull [] getStandardCommands(@NotNull String platform,
+                                                   @Nullable String target,
+                                                   @Nullable String extraArg,
+                                                   @NotNull String commandToExecute) {
     if (!isIonic3AndLater()) {
       return super.getStandardCommands(platform, target, extraArg, commandToExecute);
     }
@@ -49,10 +47,9 @@ public class IonicExecutor extends CordovaBasedExecutor {
   }
 
   @Override
-  @NotNull
-  public String[] getEmulateCommand(@NotNull String platform,
-                                    @Nullable String target,
-                                    @Nullable String extraArg) {
+  public String @NotNull [] getEmulateCommand(@NotNull String platform,
+                                              @Nullable String target,
+                                              @Nullable String extraArg) {
     if (!isIonic3AndLater()) {
       return super.getEmulateCommand(platform, target, extraArg);
     }
@@ -67,8 +64,7 @@ public class IonicExecutor extends CordovaBasedExecutor {
   }
 
   @Override
-  @NotNull
-  public String[] getPlatformAddCommands(@NotNull String platform) {
+  public String @NotNull [] getPlatformAddCommands(@NotNull String platform) {
     if (!isIonic3AndLater()) {
       return super.getPlatformAddCommands(platform);
     }
@@ -77,8 +73,7 @@ public class IonicExecutor extends CordovaBasedExecutor {
   }
 
   @Override
-  @NotNull
-  public String[] getPluginAddCommands(@NotNull String fqn) {
+  public String @NotNull [] getPluginAddCommands(@NotNull String fqn) {
     if (!isIonic3AndLater()) {
       return super.getPluginAddCommands(fqn);
     }
@@ -87,8 +82,7 @@ public class IonicExecutor extends CordovaBasedExecutor {
   }
 
   @Override
-  @NotNull
-  public String[] getPluginRemoveCommands(@NotNull String fqn) {
+  public String @NotNull [] getPluginRemoveCommands(@NotNull String fqn) {
     if (!isIonic3AndLater()) {
       return super.getPluginRemoveCommands(fqn);
     }
@@ -97,8 +91,7 @@ public class IonicExecutor extends CordovaBasedExecutor {
   }
 
   @Override
-  @NotNull
-  public String[] getPluginListCommands() {
+  public String @NotNull [] getPluginListCommands() {
     if (!isIonic3AndLater()) {
       return super.getPluginListCommands();
     }

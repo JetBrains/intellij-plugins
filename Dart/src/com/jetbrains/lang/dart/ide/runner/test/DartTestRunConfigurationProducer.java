@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.test;
 
 import com.intellij.execution.actions.ConfigurationContext;
@@ -23,6 +23,7 @@ import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Objects;
 
 public final class DartTestRunConfigurationProducer extends LazyRunConfigurationProducer<DartTestRunConfiguration> {
   @NotNull
@@ -67,10 +68,10 @@ public final class DartTestRunConfigurationProducer extends LazyRunConfiguration
       if (testElement == null || !setupRunnerParametersForFile(paramsFromContext, testElement)) return false;
     }
 
-    return Comparing.equal(existingParams.getFilePath(), paramsFromContext.getFilePath()) &&
+    return Objects.equals(existingParams.getFilePath(), paramsFromContext.getFilePath()) &&
            Comparing.equal(existingParams.getScope(), paramsFromContext.getScope()) &&
            (existingParams.getScope() != DartTestRunnerParameters.Scope.GROUP_OR_TEST_BY_NAME ||
-            Comparing.equal(existingParams.getTestName(), paramsFromContext.getTestName()));
+            Objects.equals(existingParams.getTestName(), paramsFromContext.getTestName()));
   }
 
   private static boolean setupRunnerParametersForFolderIfApplicable(@NotNull final Project project,

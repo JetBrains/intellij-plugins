@@ -22,9 +22,8 @@ public class PostCssStructureViewElementsProvider extends CssStructureViewElemen
     return PostCssLanguage.INSTANCE.is(CssPsiUtil.getStylesheetLanguage(element));
   }
 
-  @NotNull
   @Override
-  public Class[] getSuitableClasses() {
+  public Class @NotNull [] getSuitableClasses() {
     return POST_CSS_SUITABLE_CLASSES;
   }
 

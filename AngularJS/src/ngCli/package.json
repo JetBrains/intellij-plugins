@@ -2,7 +2,11 @@
   "name": "ng-cli",
   "version": "1.0.0",
   "dependencies": {
-    "@angular/cli": "7.0.2",
-    "@types/node": "10.3.1"
+    "@angular/cli": "9.0.0-next.19",
+    "@types/node": "~12.12.5",
+    "typescript": "~3.6.4"
+  },
+  "scripts": {
+    "build": "tsc"
   }
 }

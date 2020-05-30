@@ -1,21 +1,13 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
 <idea-plugin>
   <id>cucumber-java</id>
   <name>Cucumber for Java</name>
+  <category>Test Tools</category>
   <description>
       <![CDATA[
-      Enables <a href="http://cukes.info/">Cucumber</a> support with step definitions written in Java.
-        The following coding assistance features are available:
+  Adds support for <a href="http://cukes.info/">Cucumber</a> testing tools with step definitions written in Java.
         <ul>
-          <li>Error and syntax highlighting.</li>
-          <li>Indentation.</li>
-          <li>Intention actions.</li>
-          <li>Viewing code structure.</li>
-          <li>Navigation in the source code.</li>
-          <li>Integrated documentation.</li>
-          <li>Code completion.</li>
-          <li>Search for usages.</li>
-          <li>Commenting and uncommenting lines.</li>
+<li>Provides coding assistance for step definitions</li>
+<li>Adds a dedicated run/debug configuration type</li>
         </ul>
       ]]>
    </description>
@@ -34,16 +26,17 @@
     <implicitUsageProvider implementation="org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaImplicitUsageProvider"/>
 
     <localInspection language="JAVA" shortName="CucumberJavaStepDefClassIsPublic" displayName="Step definition class is not public"
-                     groupBundle="org.jetbrains.plugins.cucumber.CucumberBundle" groupKey="cucumber.inspection.group.name" enabledByDefault="true"
+                     groupBundle="messages.CucumberBundle" groupKey="cucumber.inspection.group.name" enabledByDefault="true"
                      level="WARNING" implementationClass="org.jetbrains.plugins.cucumber.java.inspections.CucumberJavaStepDefClassIsPublicInspections"/>
     <localInspection language="JAVA" shortName="CucumberJavaStepDefClassInDefaultPackage" displayName="Step definition class is in default package"
-                     groupBundle="org.jetbrains.plugins.cucumber.CucumberBundle" groupKey="cucumber.inspection.group.name" enabledByDefault="true"
+                     groupBundle="messages.CucumberBundle" groupKey="cucumber.inspection.group.name" enabledByDefault="true"
                      level="WARNING" implementationClass="org.jetbrains.plugins.cucumber.java.inspections.CucumberJavaStepDefClassInDefaultPackageInspection"/>
 
     <multiHostInjector implementation="org.jetbrains.plugins.cucumber.java.CucumberJavaInjector"/>
-    <psi.referenceContributor implementation="org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaReferenceContributor"/>
+    <psi.referenceContributor implementation="org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaReferenceContributor" language="JAVA"/>
     <pom.declarationSearcher implementation="org.jetbrains.plugins.cucumber.java.steps.search.CucumberJavaPomDeclarationSearcher"/>
     <fileBasedIndex implementation="org.jetbrains.plugins.cucumber.java.CucumberJava8StepIndex"/>
+    <runConfigurationExtension implementation="org.jetbrains.plugins.cucumber.java.run.CucumberJUnitRunConfigurationExtension"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.plugins.cucumber.steps">

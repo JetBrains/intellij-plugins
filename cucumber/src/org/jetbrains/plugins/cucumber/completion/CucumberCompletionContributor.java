@@ -27,7 +27,7 @@ import org.jetbrains.plugins.cucumber.psi.i18n.JsonGherkinKeywordProvider;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinExamplesBlockImpl;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinScenarioOutlineImpl;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
-import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
+import org.jetbrains.plugins.cucumber.steps.CucumberStepHelper;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -54,7 +54,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
     GROUP_TYPE_MAP.put("(\\d+)", "<number>");
     GROUP_TYPE_MAP.put("(-?\\d*[.,]?\\d+)", "<float>");
     GROUP_TYPE_MAP.put("(\\.[\\d]+)", "<float>");
-    GROUP_TYPE_MAP.put("(\"[^\"\\\\]*(?:\\\\.[^\"\\\\]**)\"|'[^'\\\\]*(?:\\\\.[^'\\\\]**)')", "<string>");
+    GROUP_TYPE_MAP.put("(\"(?:[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*)\"|'(?:[^'\\\\]*(?:\\\\.[^'\\\\]*)*)')", "<string>");
     PARAMETERS_MAP.put("\\([^|]*\\|[^|]*(?:\\|[^|]*)*\\)", "<param>");
     PARAMETERS_MAP.put("#\\{[^\\}]*\\}", "<param>");
   }
@@ -63,7 +63,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
   private static final int SCENARIO_OUTLINE_KEYWORD_PRIORITY = 60;
   public static final Pattern POSSIBLE_GROUP_PATTERN = Pattern.compile("\\(([^)]*)\\)");
   public static final Pattern QUESTION_MARK_PATTERN = Pattern.compile("([^\\\\])\\?:?");
-  public static final Pattern ARGS_INTO_BRACKETS_PATTERN = Pattern.compile("\\(\\?:[^)]*\\)");
+  public static final Pattern ARGS_INTO_BRACKETS_PATTERN = Pattern.compile("\\((?:\\?[!:])?([^)]*\\|[^)]*)\\)");
   public static final Pattern PARAMETERS_PATTERN = Pattern.compile("<string>|<number>|<param>|<word>|<float>|<any>|\\{[^}]+}");
   public static final String INTELLIJ_IDEA_RULEZZZ = "IntellijIdeaRulezzz";
 
@@ -82,7 +82,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
         final PsiFile psiFile = parameters.getOriginalFile();
         if (psiFile instanceof GherkinFile) {
           Module module = findModuleForPsiElement(psiFile);
-          boolean gherkin6Enabled = module != null && CucumberStepsIndex.getInstance(psiFile.getProject()).isGherkin6Supported(module);
+          boolean gherkin6Enabled = module != null && CucumberStepHelper.isGherkin6Supported(module);
           GherkinKeywordProvider keywordProvider = JsonGherkinKeywordProvider.getKeywordProvider(gherkin6Enabled);
           final String language = GherkinUtil.getFeatureLanguage((GherkinFile)psiFile);
           GherkinKeywordTable gherkinKeywordTable = keywordProvider.getKeywordsTable(language);
@@ -236,7 +236,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
 
 
   private static void addStepDefinitions(@NotNull CompletionResultSet result, @NotNull PsiFile file) {
-    final List<AbstractStepDefinition> definitions = CucumberStepsIndex.getInstance(file.getProject()).getAllStepDefinitions(file);
+    final List<AbstractStepDefinition> definitions = CucumberStepHelper.getAllStepDefinitions(file);
     for (AbstractStepDefinition definition : definitions) {
       String expression = definition.getExpression();
       if (expression == null) {
@@ -295,9 +295,12 @@ public class CucumberCompletionContributor extends CompletionContributor {
       String mainSample = cucumberRegex;
       int k = 0;
       while (m.find()) {
-        String key = "@key=" + k++ + "@";
-        mainSample = mainSample.replace(m.group(), key);
-        insertions.add(Pair.create(key, Arrays.asList(cucumberRegex.substring(m.start() + 3, m.end() - 1).split("\\|"))));
+        String values = cucumberRegex.substring(m.start(1), m.end(1));
+        if (values.chars().allMatch(c -> Character.isLetterOrDigit(c) || c == '|')) {
+          String key = "@key=" + k++ + "@";
+          mainSample = mainSample.replace(m.group(), key);
+          insertions.add(Pair.create(key, Arrays.asList(values.split("\\|"))));
+        }
       }
 
       // Example: @sampleCounts = [2, 3] when @combinations = [1, 1], [1, 2], [1, 3], [2, 1], [2, 2], [2, 3]

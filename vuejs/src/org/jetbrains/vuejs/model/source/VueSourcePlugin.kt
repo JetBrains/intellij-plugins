@@ -2,57 +2,74 @@
 package org.jetbrains.vuejs.model.source
 
 import com.intellij.javascript.nodejs.library.NodeModulesDirectoryManager
-import com.intellij.lang.javascript.modules.NodeModuleUtil
-import com.intellij.lang.javascript.ui.NodeModuleNamesUtil.PACKAGE_JSON
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.UserDataHolderBase
+import com.intellij.openapi.vfs.VFileProperty
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScopesCore
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import one.util.streamex.EntryStream
-import org.jetbrains.vuejs.index.BOOTSTRAP_VUE
-import org.jetbrains.vuejs.index.SHARDS_VUE
-import org.jetbrains.vuejs.index.VUETIFY
+import com.intellij.psi.util.PsiModificationTracker
+import org.jetbrains.vuejs.index.BOOTSTRAP_VUE_MODULE
+import org.jetbrains.vuejs.index.SHARDS_VUE_MODULE
+import org.jetbrains.vuejs.index.VUETIFY_MODULE
 import org.jetbrains.vuejs.model.*
 
-class VueSourcePlugin private constructor(override val components: Map<String, VueComponent>,
-                                          override val source: PsiElement,
-                                          override val moduleName: String?) : VuePlugin {
+class VueSourcePlugin constructor(private val project: Project,
+                                  private val packageJsonFile: VirtualFile) : UserDataHolderBase(), VuePlugin {
+
+  override val moduleName: String? = null
   override val parents: List<VueEntitiesContainer> = emptyList()
 
   override val directives: Map<String, VueDirective> = emptyMap()
   override val filters: Map<String, VueFilter> = emptyMap()
   override val mixins: List<VueMixin> = emptyList()
 
-  companion object {
-    private val PACKAGES_WITH_GLOBAL_COMPONENTS = arrayOf(VUETIFY, BOOTSTRAP_VUE, SHARDS_VUE)
+  override val source: PsiDirectory?
+    get() = PsiManager.getInstance(project).findFile(packageJsonFile)?.parent
 
-    fun create(project: Project, packageJsonFile: VirtualFile): VueSourcePlugin? {
-      val packageJson = PsiManager.getInstance(project).findFile(packageJsonFile)
-      return packageJson?.parent?.let { psiDirectory ->
-        CachedValuesManager.getCachedValue(psiDirectory) {
-          val directoryFile = psiDirectory.virtualFile
-          val scope = GlobalSearchScopesCore.directoryScope(psiDirectory.project, directoryFile, true)
-          val globalize = PACKAGES_WITH_GLOBAL_COMPONENTS.contains(psiDirectory.name)
-
-          val result: MutableMap<String, VueComponent> = EntryStream
-            .of(VueComponentsCalculation.calculateScopeComponents(scope, globalize).map)
-            .mapValues { VueModelManager.getComponent(it.first) }
-            .nonNullValues()
-            // TODO properly support multiple components with the same name
-            .distinctKeys()
-            .into(mutableMapOf())
-
-          CachedValueProvider.Result(if (result.isEmpty()) null
-                                     else VueSourcePlugin(result, psiDirectory,
-                                                          directoryFile.findChild(PACKAGE_JSON)
-                                                            ?.let { NodeModuleUtil.inferNodeModulePackageName(it)}),
-                                     NodeModulesDirectoryManager.getInstance(psiDirectory.project).nodeModulesDirChangeTracker,
-                                     psiDirectory)
-        }
+  override val components: Map<String, VueComponent>
+    get() = CachedValuesManager.getManager(project).getCachedValue(this) {
+      val dependencies = mutableListOf<Any>(NodeModulesDirectoryManager.getInstance(project).nodeModulesDirChangeTracker,
+                                            packageJsonFile)
+      val psiDirectory = source
+      val components: Map<String, VueComponent>
+      if (psiDirectory == null) {
+        components = emptyMap()
+        dependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
       }
-    }
+      else {
+        val directoryFile = psiDirectory.virtualFile
+        val scope = GlobalSearchScopesCore.directoryScope(psiDirectory.project, directoryFile, true)
+        val globalize = PACKAGES_WITH_GLOBAL_COMPONENTS.contains(psiDirectory.name)
+
+        if (directoryFile.`is`(VFileProperty.SYMLINK)) {
+          // Track modifications in plugins ASTs only if they are possibly local
+          dependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
+        }
+
+        components = VueComponentsCalculation.calculateScopeComponents(scope, globalize).map.asSequence()
+          .mapNotNull { VueModelManager.getComponent(it.value.first)?.let { component -> Pair(it.key, component) } }
+          .distinctBy { it.first }
+          .toMap()
+      }
+      CachedValueProvider.Result(components, *dependencies.toTypedArray())
+    } ?: emptyMap()
+
+  override fun equals(other: Any?): Boolean {
+    return (other as? VueSourcePlugin)?.packageJsonFile == packageJsonFile
+           && other.project == project
+  }
+
+  override fun hashCode(): Int {
+    var result = project.hashCode()
+    result = 31 * result + packageJsonFile.hashCode()
+    return result
+  }
+
+  companion object {
+    private val PACKAGES_WITH_GLOBAL_COMPONENTS = arrayOf(VUETIFY_MODULE, BOOTSTRAP_VUE_MODULE, SHARDS_VUE_MODULE)
   }
 }

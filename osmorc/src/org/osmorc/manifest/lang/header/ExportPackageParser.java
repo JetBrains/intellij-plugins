@@ -24,15 +24,17 @@
  */
 package org.osmorc.manifest.lang.header;
 
-import com.intellij.codeInsight.daemon.JavaErrorMessages;
+import com.intellij.codeInsight.daemon.JavaErrorBundle;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.tree.TokenSet;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.lang.manifest.ManifestBundle;
@@ -54,9 +56,8 @@ public class ExportPackageParser extends BasePackageParser {
 
   private static final TokenSet TOKEN_FILTER = TokenSet.create(ManifestTokenType.HEADER_VALUE_PART);
 
-  @NotNull
   @Override
-  public PsiReference[] getReferences(@NotNull HeaderValuePart headerValuePart) {
+  public PsiReference @NotNull [] getReferences(@NotNull HeaderValuePart headerValuePart) {
     PsiElement parent = headerValuePart.getParent();
     if (parent instanceof Clause) {
       PsiElement element = headerValuePart.getOriginalElement().getPrevSibling();
@@ -68,7 +69,7 @@ public class ExportPackageParser extends BasePackageParser {
     else if (parent instanceof Attribute) {
       Attribute attribute = (Attribute)parent;
       if (Constants.USES_DIRECTIVE.equals(attribute.getName())) {
-        List<PsiReference> references = ContainerUtil.newSmartList();
+        List<PsiReference> references = new SmartList<>();
         for (ASTNode astNode : headerValuePart.getNode().getChildren(TOKEN_FILTER)) {
           if (astNode instanceof ManifestToken) {
             ManifestToken manifestToken = (ManifestToken)astNode;
@@ -111,7 +112,7 @@ public class ExportPackageParser extends BasePackageParser {
 
               if (StringUtil.isEmptyOrSpaces(packageName)) {
                 TextRange highlight = range.shiftRight(offset);
-                holder.createErrorAnnotation(highlight, ManifestBundle.message("header.reference.invalid"));
+                holder.newAnnotation(HighlightSeverity.ERROR, ManifestBundle.message("header.reference.invalid")).range(highlight).create();
                 annotated = true;
                 continue;
               }
@@ -119,7 +120,7 @@ public class ExportPackageParser extends BasePackageParser {
               PsiDirectory[] directories = OsgiPsiUtil.resolvePackage(header, packageName);
               if (directories.length == 0) {
                 TextRange highlight = adjust(range, text).shiftRight(offset);
-                holder.createErrorAnnotation(highlight, JavaErrorMessages.message("cannot.resolve.package", packageName));
+                holder.newAnnotation(HighlightSeverity.ERROR, JavaErrorBundle.message("cannot.resolve.package", packageName)).range(highlight).create();
                 annotated = true;
               }
             }

@@ -3,6 +3,9 @@
     li(ref="someRef")
     li(slot="someSlot")
     li(slot-scope="someSlot")
+    li(scope="someSlotScope")
+    li
+      template(scope="someSlotScope")
 
     li(v-text="someText")
     li(v-html="someHtml")
@@ -15,6 +18,9 @@
     li(v-pre="somePre")
     li(v-cloak="someCloak")
     li(v-once="someOnce")
+
+    li(v-slot:header="{test}")
+    li(#header="{test}")
 
     li(v-on:click="someOn")
     li(v-on:click.ctrl.capture="someOn")

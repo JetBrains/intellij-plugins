@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.IOException;
 
 public abstract class DartHierarchyTestBase extends CodeInsightFixtureTestCase {
-  private final HierarchyViewTestFixture myHierarchyViewTestFixture = new HierarchyViewTestFixture();
 
   @Override
   public void setUp() throws Exception {
@@ -36,7 +35,7 @@ public abstract class DartHierarchyTestBase extends CodeInsightFixtureTestCase {
       FileUtil.writeToFile(file, HierarchyViewTestFixture.dump(structure, null, 0));
       throw new IllegalStateException("File: " + file.getPath() + " doesn't exist. A new file created.");
     }
-    myHierarchyViewTestFixture.doHierarchyTest(structure, FileUtil.loadFile(file));
+    HierarchyViewTestFixture.doHierarchyTest(structure, file);
   }
 
   private void ensureNavigationInfoAvailable(PsiFile[] files) {

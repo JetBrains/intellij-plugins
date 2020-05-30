@@ -12,6 +12,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
+import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.lang.html.VueFileType
 
 class DataFunctionInspection : LocalInspectionTool() {
@@ -26,7 +27,8 @@ class DataFunctionInspection : LocalInspectionTool() {
             if (node.value is JSObjectLiteralExpression)
               arrayOf(WrapWithFunctionFix(node.value!!))
             else emptyArray()
-          holder.registerProblem(node.nameIdentifier!!, "Data property should be a function", *quickFixes)
+          holder.registerProblem(node.nameIdentifier!!, VueBundle.message("vue.inspection.message.data.property.should.be.function"),
+                                 *quickFixes)
         }
       }
 
@@ -43,7 +45,7 @@ class DataFunctionInspection : LocalInspectionTool() {
 }
 
 class WrapWithFunctionFix(psiElement: PsiElement) : LocalQuickFixOnPsiElement(psiElement) {
-  override fun getText(): String = "Wrap data object in function"
+  override fun getText(): String = VueBundle.message("vue.quickfix.wrap.with.function.text")
 
   override fun invoke(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement) {
     val expression = startElement as JSObjectLiteralExpression
@@ -54,6 +56,6 @@ class WrapWithFunctionFix(psiElement: PsiElement) : LocalQuickFixOnPsiElement(ps
     property.replace(newProperty)
   }
 
-  override fun getFamilyName(): String = "Wrap object"
+  override fun getFamilyName(): String = VueBundle.message("vue.quickfix.wrap.with.function.family")
 
 }

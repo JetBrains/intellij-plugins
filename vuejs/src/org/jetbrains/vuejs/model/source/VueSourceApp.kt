@@ -2,7 +2,8 @@
 package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import org.jetbrains.vuejs.model.VueApp
 
-class VueSourceApp(declaration: JSObjectLiteralExpression)
-  : VueSourceContainer(declaration, declaration), VueApp
+class VueSourceApp(source: JSImplicitElement, declaration: JSObjectLiteralExpression)
+  : VueSourceContainer(source, null, declaration), VueApp

@@ -14,14 +14,14 @@ import java.util.Map;
  * @author Irina.Chernushina on 3/23/2016.
  */
 public class DiagramObject {
-  @NotNull private Type myType;
-  @NotNull private final String myName;
-  @Nullable private String myTooltip;
-  @Nullable private final SmartPsiElementPointer myNavigationTarget;
+  private @NotNull Type myType;
+  private final @NotNull String myName;
+  private @Nullable String myTooltip;
+  private final @Nullable SmartPsiElementPointer myNavigationTarget;
   private boolean myIsValid = true;  //invalid = created by reference from other place, but not defined
-  @NotNull private final List<String> myNotes;
-  @NotNull private final List<String> myWarnings;
-  @NotNull private final List<String> myErrors;
+  private final @NotNull List<String> myNotes;
+  private final @NotNull List<String> myWarnings;
+  private final @NotNull List<String> myErrors;
   private final Map<String, DiagramObject> myChildren;
   private final List<String> myChildOrder;
   private AngularUiRouterNode myContainer;
@@ -38,7 +38,7 @@ public class DiagramObject {
     myChildOrder = new ArrayList<>();
   }
 
-  public void addChild(@NotNull final DiagramObject child, AngularUiRouterNode parent) {
+  public void addChild(final @NotNull DiagramObject child, AngularUiRouterNode parent) {
     myChildren.put(child.getName(), child);
     child.myContainer = parent;
     myChildOrder.add(child.getName());
@@ -56,32 +56,29 @@ public class DiagramObject {
     return myContainer;
   }
 
-  @NotNull
-  public Type getType() {
+  public @NotNull Type getType() {
     return myType;
   }
 
-  @NotNull
-  public String getName() {
+  public @NotNull String getName() {
     return myName;
   }
 
-  @Nullable
-  public SmartPsiElementPointer getNavigationTarget() {
+  public @Nullable SmartPsiElementPointer getNavigationTarget() {
     return myNavigationTarget;
   }
 
-  public void addError(@NotNull final String error) {
+  public void addError(final @NotNull String error) {
     myErrors.add(error);
     myIsValid = false;
   }
 
-  public void addWarning(@NotNull final String warning) {
+  public void addWarning(final @NotNull String warning) {
     myWarnings.add(warning);
     myIsValid = false;
   }
 
-  public void addNote(@NotNull final String note) {
+  public void addNote(final @NotNull String note) {
     myNotes.add(note);
   }
 
@@ -89,23 +86,19 @@ public class DiagramObject {
     return myIsValid;
   }
 
-  @NotNull
-  public List<String> getErrors() {
+  public @NotNull List<String> getErrors() {
     return myErrors;
   }
 
-  @NotNull
-  public List<String> getWarnings() {
+  public @NotNull List<String> getWarnings() {
     return myWarnings;
   }
 
-  @NotNull
-  public List<String> getNotes() {
+  public @NotNull List<String> getNotes() {
     return myNotes;
   }
 
-  @Nullable
-  public String getTooltip() {
+  public @Nullable String getTooltip() {
     return myTooltip == null ? myName : myTooltip;
   }
 
@@ -135,8 +128,9 @@ public class DiagramObject {
     if (myType != object.myType) return false;
     if (!myName.equals(object.myName)) return false;
     if (myTooltip != null ? !myTooltip.equals(object.myTooltip) : object.myTooltip != null) return false;
-    if (myNavigationTarget != null ? !myNavigationTarget.equals(object.myNavigationTarget) : object.myNavigationTarget != null)
+    if (myNavigationTarget != null ? !myNavigationTarget.equals(object.myNavigationTarget) : object.myNavigationTarget != null) {
       return false;
+    }
     if (myContainer != null ? !myContainer.equals(object.myContainer) : object.myContainer != null) return false;
 
     return true;

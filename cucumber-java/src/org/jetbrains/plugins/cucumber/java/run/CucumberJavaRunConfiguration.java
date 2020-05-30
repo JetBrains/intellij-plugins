@@ -17,6 +17,7 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.util.JavaParametersUtil;
 import com.intellij.junit4.ExpectedPatterns;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.options.SettingsEditorGroup;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -27,8 +28,10 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.PathUtil;
 import com.intellij.util.text.VersionComparatorUtil;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jps.model.serialization.PathMacroUtil;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaBundle;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
@@ -40,9 +43,11 @@ import java.util.function.Consumer;
 
 public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
   private volatile CucumberGlueProvider myCucumberGlueProvider = null;
+  private final static Logger LOG = Logger.getInstance(CucumberJavaRunConfiguration.class);
 
   protected CucumberJavaRunConfiguration(String name, Project project, ConfigurationFactory factory) {
     super(name, project, factory);
+    setWorkingDirectory(PathMacroUtil.MODULE_WORKING_DIR);
   }
 
   @NotNull
@@ -106,8 +111,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
 
       @NotNull
       private ConsoleView createConsole(@NotNull final Executor executor, ProcessHandler processHandler) throws ExecutionException {
-        // console view
-        final String testFrameworkName = "cucumber";
+        @NonNls  String testFrameworkName = "cucumber";
         final CucumberJavaRunConfiguration runConfiguration = CucumberJavaRunConfiguration.this;
         final SMTRunnerConsoleProperties consoleProperties = new SMTRunnerConsoleProperties(runConfiguration, testFrameworkName, executor) {
           @NotNull
@@ -121,7 +125,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
 
       @NotNull
       @Override
-      public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
+      public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner<?> runner) throws ExecutionException {
         final ProcessHandler processHandler = startProcess();
         final ConsoleView console = createConsole(executor, processHandler);
         myConsoleFilters.forEach((filter) -> console.addMessageFilter(filter));
@@ -141,12 +145,13 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
     String rtClassPath = PathUtil.getJarPathForClass(ExpectedPatterns.class);
     result.add(rtClassPath);
 
-    String cucumberJvmFormatterClassPath = PathUtil.getJarPathForClass(CucumberJvmSMFormatter.class);
+    @NonNls String cucumberJvmFormatterClassPath = PathUtil.getJarPathForClass(CucumberJvmSMFormatter.class);
     result.add(cucumberJvmFormatterClassPath);
 
     // Attach SM formatter's folder/jar for Cucumber v3/v4
     String cucumberCoreVersion = getCucumberCoreVersion();
-    for (int i = 4; i >= 3; i--) {
+    LOG.info("detected cucumber-java version: " + cucumberCoreVersion);
+    for (int i = 5; i >= 3; i--) {
       if (VersionComparatorUtil.compare(cucumberCoreVersion, String.valueOf(i)) >= 0) {
         if (cucumberJvmFormatterClassPath.endsWith(".jar")) {
           result.add(cucumberJvmFormatterClassPath.replace(".jar", i + ".jar"));
@@ -167,7 +172,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
       throw new RuntimeConfigurationException(CucumberBundle.message("cucumber.run.error.specify.file"));
     }
 
-    String programParameters = getProgramParameters();
+    @NonNls String programParameters = getProgramParameters();
     if (programParameters != null && programParameters.contains("--glue")) {
       throw new RuntimeConfigurationException(CucumberJavaBundle.message("cucumber.java.run.configuration.glue.in.program.parameters"));
     }

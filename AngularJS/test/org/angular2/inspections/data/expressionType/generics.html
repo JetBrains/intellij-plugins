@@ -1,10 +1,10 @@
 <div gen [input1]="12" [input2]="20" [input3]="'foo'" (output1)="useNumber($event)" (output3)="useString($event)"></div>
-<div gen [input1]="<warning descr="Type true is not assignable to type string & boolean">true</warning>" [input2]="<warning descr="Type \"20\" is not assignable to type string & boolean">'20'</warning>" [input3]="12" (output1)="useNumber(<error descr="Argument type string & boolean is not assignable to parameter type number">$event</error>)" (output3)="useString(<error descr="Argument type number is not assignable to parameter type string">$event</error>)"></div>
-<div gen [input1]="<warning descr="Type 12 is not assignable to type string & number">12</warning>" [input2]="<warning descr="Type \"20\" is not assignable to type string & number">'20'</warning>" [input3]="'bar'" (output1)="useNumber($event)" (output3)="useString($event)"></div>
+<div gen [input1]="<warning descr="Type true is not assignable to type never">true</warning>" [input2]="<warning descr="Type \"20\" is not assignable to type never">'20'</warning>" [input3]="12" (output1)="useNumber($event)" (output3)="useString(<error descr="Argument type number is not assignable to parameter type string">$event</error>)"></div>
+<div gen [input1]="<warning descr="Type 12 is not assignable to type never">12</warning>" [input2]="<warning descr="Type \"20\" is not assignable to type never">'20'</warning>" [input3]="'bar'" (output1)="useNumber($event)" (output3)="useString($event)"></div>
 <div gen [input1]="[1,2,3]" [input2]="[4,5]" (output1)="useNumber($event[0])"></div>
-<div gen [input1]="[1,2,3]" [input2]="[4,5]" (output1)="useNumber(<error descr="Argument type [4, 5] & [1, 2, 3] is not assignable to parameter type number">$event</error>)"></div>
+<div gen [input1]="[1,2,3]" [input2]="[4,5]" (output1)="useNumber(<error descr="Argument type [4, 5] & [1, 2, 3] is not assignable to parameter type number...&nbsp;&nbsp;Type [1, 2, 3] is not assignable to type number&nbsp;&nbsp;&nbsp;&nbsp;Type (1 | 2 | 3)[] is not assignable to type number">$event</error>)"></div>
 
-<div gen gen2 [input1]="12" [input2]="<warning descr="Type 12 is not assignable to type number & string">12</warning>"></div>
-<div gen gen2 [input1]="<warning descr="Type \"foo\" is not assignable to type number & string">'foo'</warning>" [input2]="<warning descr="Type 12 is not assignable to type number & string">12</warning>"></div>
-<div gen gen2 [input1]="<warning descr="Type 12 is not assignable to type string & number">12</warning>" [input2]="<warning descr="Type \"foo\" is not assignable to type string & number">'foo'</warning>"></div>
+<div gen gen2 [input1]="12" [input2]="<warning descr="Type 12 is not assignable to type never">12</warning>"></div>
+<div gen gen2 [input1]="<warning descr="Type \"foo\" is not assignable to type never">'foo'</warning>" [input2]="<warning descr="Type 12 is not assignable to type never">12</warning>"></div>
+<div gen gen2 [input1]="<warning descr="Type 12 is not assignable to type never">12</warning>" [input2]="<warning descr="Type \"foo\" is not assignable to type never">'foo'</warning>"></div>
 <div gen gen2 [input1]="'foo'" [input2]="'foo'"></div>

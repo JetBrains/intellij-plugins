@@ -1,2 +1,0 @@
-<template lang="jade">
-</template>

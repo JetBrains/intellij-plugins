@@ -1,0 +1,91 @@
+<idea-plugin>
+  <id>intellij.clion.embedded.platformio</id>
+  <name>PlatformIO for CLion</name>
+  <vendor>JetBrains</vendor>
+  <category>Embedded Development</category>
+
+  <description><![CDATA[
+<b>EXPERIMENTAL</b>
+<a href="https://platformio.org/">PlatformIO.org</a> plugin for CLion integration
+<br>
+<p>A new generation toolset for embedded C/C++ development</p>
+<p>PlatformIO is a new generation ecosystem for embedded development.</p>
+<br>
+<p><b>!!! PLEASE <a href="https://docs.platformio.org/en/latest/ide/clion.html">READ DOCUMENTATION</a> BEFORE STARTING !!!</b></p>
+
+<ul>
+  <li>Open source, maximum permissive Apache 2.0 license</li>
+  <li>Cross-platform IDE and Unified Debugger</li>
+  <li>Static Code Analyzer and Remote Unit Testing</li>
+  <li>Multi-platform and Multi-architecture Build System</li>
+</ul>
+<p><b>Platforms:</b> Atmel AVR, Atmel SAM, Espressif 32, Espressif 8266, Freescale Kinetis, Infineon XMC, Intel ARC32, Intel MCS-51 (8051),
+  Kendryte K210, Lattice iCE40, Maxim 32, Microchip PIC32, Nordic nRF51, Nordic nRF52, NXP LPC, RISC-V, Samsung ARTIK, Silicon Labs EFM32,
+  ST STM32, ST STM8, Teensy, TI MSP430, TI Tiva, WIZNet W7500</p>
+<p><b>Frameworks:</b> Arduino, ARTIK SDK, CMSIS, ESP-IDF, ESP8266 RTOS SDK, Freedom E SDK, Kendryte Standalone SDK, Kendryte FreeRTOS SDK,
+  libOpenCM3, mbed, PULP OS, Pumbaa, Simba, SPL, STM32Cube, Tizen RT, WiringPi</p>
+<h3> Features</h3>
+
+<ul>
+  <li>Cross-platform code builder without external dependencies to a system software:</li>
+  <li>700+ embedded boards</li>
+  <li>30+ development platforms</li>
+  <li>20+ frameworks</li>
+  <li>PIO Unified Debugger</li>
+  <li>PIO Unit Testing</li>
+  <li>PIO Remote</li>
+  <li>C/C++ Intelligent Code Completion</li>
+  <li>C/C++ Smart Code Linter for rapid professional development</li>
+  <li>Library Manager for the thousands of popular libraries</li>
+</ul>
+<h3>How it works</h3>
+<a href="https://docs.platformio.org/en/latest/ide/clion.html">Documentation</a>]]>
+  </description>
+
+  <depends>com.intellij.modules.clion</depends>
+  <depends>com.intellij.modules.clion.cmake</depends>
+  <depends>com.intellij.clion.embedded</depends>
+  <depends>com.jetbrains.plugins.ini4idea</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <configurationType order="last" id="platformio"
+                       implementation="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioConfigurationType"/>
+    <fileType id="platformio" name="platformio" fileNames="platformio.ini" fieldName="INSTANCE" language="Ini"
+              implementationClass="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioFileType"/>
+    <stepsBeforeRunProvider
+      implementation="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioCleanBeforeRunTaskProvider"/>
+    <directoryProjectGenerator implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectGenerator"
+                               id="jetbrains.cidr.platformio" order="after jetbrains.cidr.stm32cubemx"/>
+    <notificationWhitelist groupIds="PlatformIO plugin;org.platformio"/>
+    <directoryIndexExcludePolicy implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioExcludePolicy"/>
+    <vfs.asyncListener implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioListener"/>
+    <postStartupActivity implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioListener"/>
+  </extensions>
+
+  <actions>
+    <group id="platformio-group" popup="true" icon="ClionEmbeddedPlatformioIcons.Platformio">
+      <action class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioBuildProductionAction"/>
+      <action class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioBuildAction"/>
+      <action class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioCleanAction"/>
+      <action class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioCheckAction"/>
+      <separator/>
+      <action class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioReInitAction"/>
+      <action class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioUpdateAllAction"/>
+      <separator/>
+      <action class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioMonitorAction"/>
+      <action class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioHomeAction"/>
+      <add-to-group group-id="ToolsMenu" anchor="last"/>
+    </group>
+    <group id="platformio-group-file-popup"
+           class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionGroup" popup="true">
+      <add-to-group group-id="ProjectViewPopupMenuRunGroup"/>
+    </group>
+  </actions>
+  <project-components>
+    <component>
+      <implementation-class>com.jetbrains.cidr.cpp.embedded.platformio.PlatformioSvdWindowState</implementation-class>
+    </component>
+  </project-components>
+
+  <resource-bundle>messages.ClionEmbeddedPlatformioBundle</resource-bundle>
+</idea-plugin>

@@ -22,7 +22,7 @@ public class Angular2SuppressionsTest extends Angular2CodeInsightFixtureTestCase
 
     for (String location : asList("test1", "bar1", "pipe1")) {
       try {
-        AngularTestUtil.moveToOffsetBySignature(location.substring(0, 1) + "<caret>" + location.substring(1), myFixture);
+        AngularTestUtil.moveToOffsetBySignature(location.charAt(0) + "<caret>" + location.substring(1), myFixture);
         myFixture.launchAction(myFixture.findSingleIntention("Suppress for expression"));
       }
       catch (AssertionError err) {
@@ -32,7 +32,7 @@ public class Angular2SuppressionsTest extends Angular2CodeInsightFixtureTestCase
 
     for (String location : asList("foo1", "var1")) {
       try {
-        AngularTestUtil.moveToOffsetBySignature(location.substring(0, 1) + "<caret>" + location.substring(1), myFixture);
+        AngularTestUtil.moveToOffsetBySignature(location.charAt(0) + "<caret>" + location.substring(1), myFixture);
         assertEmpty(myFixture.filterAvailableIntentions("Suppress for expression"));
         myFixture.launchAction(myFixture.findSingleIntention("Suppress for tag"));
       }
@@ -43,7 +43,7 @@ public class Angular2SuppressionsTest extends Angular2CodeInsightFixtureTestCase
 
     PsiFile after = myFixture.getPsiManager().findFile(myFixture.getTempDirFixture().getFile("template.after.html"));
     ExpectedHighlightingData data = new ExpectedHighlightingData(
-      myFixture.getDocument(after), true, true, false, after);
+      myFixture.getDocument(after), true, true, false);
     data.init();
     ((CodeInsightTestFixtureImpl)myFixture).collectAndCheckHighlighting(data);
   }

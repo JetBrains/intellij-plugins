@@ -1,0 +1,1 @@
+<simpleStore.js:(380,385):(1,4)>	('foo', getters.bar)

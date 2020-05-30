@@ -527,7 +527,7 @@ public class FlashBuilderModuleImporter {
     final Ref<Boolean> nonTestClassesFound = Ref.create(false);
 
     if (srcDir != null && !"src".equals(srcDir.getName())) {
-      VfsUtilCore.visitChildrenRecursively(srcDir, new VirtualFileVisitor() {
+      VfsUtilCore.visitChildrenRecursively(srcDir, new VirtualFileVisitor<Void>() {
         @Override
         @NotNull
         public Result visitFileEx(@NotNull final VirtualFile file) {

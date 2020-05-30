@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package jetbrains.communicator.idea.config;
 
+import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.ShowSettingsUtil;
@@ -70,7 +71,7 @@ public class IDEtalkConfiguration implements Configurable {
     });
   }
 
-  private void setTimoutModel(JSpinner spinner, String option, int defaultValue) {
+  private void setTimeoutModel(JSpinner spinner, String option, int defaultValue) {
     double value = myOptions.getNumber(option, defaultValue);
     spinner.setModel(new SpinnerNumberModel(value, 0.0, 9999, 1.0));
   }
@@ -121,14 +122,13 @@ public class IDEtalkConfiguration implements Configurable {
       option.getFirst().setSelected(option.getSecond().isSet());
     }
 
-    setTimoutModel(myTimeoutAway, IDEtalkOptions.TIMEOUT_AWAY_MIN, UserActivityMonitor.AWAY_MINS);
-    setTimoutModel(myTimeoutXA, IDEtalkOptions.TIMEOUT_XA_MIN, UserActivityMonitor.EXTENDED_AWAY_MINS);
+    setTimeoutModel(myTimeoutAway, IDEtalkOptions.TIMEOUT_AWAY_MIN, UserActivityMonitor.AWAY_MINS);
+    setTimeoutModel(myTimeoutXA, IDEtalkOptions.TIMEOUT_XA_MIN, UserActivityMonitor.EXTENDED_AWAY_MINS);
   }
 
   @Override
   public String getDisplayName() {
-    //noinspection HardCodedStringLiteral
-    return "IDEtalk Options";
+    return IdeBundle.message("configurable.IDEtalkConfiguration.display.name");
   }
 
 

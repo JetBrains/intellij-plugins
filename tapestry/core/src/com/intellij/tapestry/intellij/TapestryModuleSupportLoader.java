@@ -3,7 +3,6 @@ package com.intellij.tapestry.intellij;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleServiceManager;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -31,7 +30,7 @@ public class TapestryModuleSupportLoader
   }
 
   public static TapestryModuleSupportLoader getInstance(Module module) {
-    return ModuleServiceManager.getService(module, TapestryModuleSupportLoader.class);
+    return module.getService(TapestryModuleSupportLoader.class);
   }
 
   @Nullable

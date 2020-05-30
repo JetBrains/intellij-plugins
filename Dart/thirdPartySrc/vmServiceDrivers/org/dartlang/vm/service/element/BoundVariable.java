@@ -21,8 +21,8 @@ import com.google.gson.JsonObject;
  * A {@link BoundVariable} represents a local variable bound to a particular value in a {@link
  * Frame}.
  */
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
-public class BoundVariable extends Element {
+@SuppressWarnings({"WeakerAccess", "unused"})
+public class BoundVariable extends Response {
 
   public BoundVariable(JsonObject json) {
     super(json);
@@ -32,25 +32,25 @@ public class BoundVariable extends Element {
    * The token position where this variable was declared.
    */
   public int getDeclarationTokenPos() {
-    return json.get("declarationTokenPos") == null ? -1 : json.get("declarationTokenPos").getAsInt();
+    return getAsInt("declarationTokenPos");
   }
 
   public String getName() {
-    return json.get("name").getAsString();
+    return getAsString("name");
   }
 
   /**
    * The last token position where this variable is visible to the scope.
    */
   public int getScopeEndTokenPos() {
-    return json.get("scopeEndTokenPos") == null ? -1 : json.get("scopeEndTokenPos").getAsInt();
+    return getAsInt("scopeEndTokenPos");
   }
 
   /**
    * The first token position where this variable is visible to the scope.
    */
   public int getScopeStartTokenPos() {
-    return json.get("scopeStartTokenPos") == null ? -1 : json.get("scopeStartTokenPos").getAsInt();
+    return getAsInt("scopeStartTokenPos");
   }
 
   /**
@@ -58,7 +58,7 @@ public class BoundVariable extends Element {
    * <code>Sentinel</code>
    */
   public Object getValue() {
-    JsonObject elem = (JsonObject)json.get("value");
+    final JsonObject elem = (JsonObject)json.get("value");
     if (elem == null) return null;
 
     if (elem.get("type").getAsString().equals("@Instance")) return new InstanceRef(elem);

@@ -15,9 +15,11 @@
  */
 package com.jetbrains.lang.dart.coverage;
 
+import com.intellij.coverage.CoverageBundle;
 import com.intellij.coverage.SimpleCoverageAnnotator;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
+import com.jetbrains.lang.dart.DartBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,9 +45,11 @@ public class DartCoverageAnnotator extends SimpleCoverageAnnotator {
   @Override
   protected String getLinesCoverageInformationString(@NotNull final FileCoverageInfo info) {
     if (info.totalLineCount == 0) return null;
-    if (info.coveredLineCount == 0) return info instanceof DirCoverageInfo ? null : "no lines covered";
-    if (info.coveredLineCount * 100 < info.totalLineCount) return "<1% lines covered";
-    return (int)((double)info.coveredLineCount * 100. / (double)info.totalLineCount) + "% lines covered";
+    if (info.coveredLineCount == 0) return info instanceof DirCoverageInfo ? null :
+                                           CoverageBundle.message("lines.covered.info.no.lines.covered");
+    if (info.coveredLineCount * 100 < info.totalLineCount) return CoverageBundle.message("lines.covered.info.less.than.one.percent");
+    return (int)((double)info.coveredLineCount * 100. / (double)info.totalLineCount) +
+           CoverageBundle.message("lines.covered.info.percent.lines.covered");
     //return super.getLinesCoverageInformationString(info); // "15% lines covered"
   }
 
@@ -53,8 +57,10 @@ public class DartCoverageAnnotator extends SimpleCoverageAnnotator {
   @Override
   protected String getFilesCoverageInformationString(@NotNull final DirCoverageInfo info) {
     if (info.totalFilesCount == 0) return null;
-    if (info.coveredFilesCount == 0) return info.coveredFilesCount + " of " + info.totalFilesCount + " files covered";
-    return info.coveredFilesCount + " of " + info.totalFilesCount + " files";
+    if (info.coveredFilesCount == 0) {
+      return DartBundle.message("coverage.string.0.of.1.files.covered", info.coveredFilesCount, info.totalFilesCount);
+    }
+    return DartBundle.message("coverage.string.0.of.1.files", info.coveredFilesCount, info.totalFilesCount);
     //return super.getFilesCoverageInformationString(info); // "15% files"
   }
 }

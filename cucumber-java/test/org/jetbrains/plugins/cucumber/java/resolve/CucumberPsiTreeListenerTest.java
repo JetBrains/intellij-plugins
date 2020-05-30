@@ -1,12 +1,10 @@
 package org.jetbrains.plugins.cucumber.java.resolve;
 
-import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 
 public class CucumberPsiTreeListenerTest extends BaseCucumberJavaResolveTest {
   public void testCreationOfStepDefinition() {
@@ -61,7 +59,6 @@ public class CucumberPsiTreeListenerTest extends BaseCucumberJavaResolveTest {
 
     checkReference(step, null);
     final String stepDefinitionName = createStepDefinition(stepDefinitionContent);
-    CucumberStepsIndex.getInstance(getProject()).flush();
     checkReference(step, stepDefinitionName);
   }
 
@@ -70,7 +67,6 @@ public class CucumberPsiTreeListenerTest extends BaseCucumberJavaResolveTest {
 
     checkReference(step, stepDefinitionName);
     deleteStepDefinition(stepDefinitionName);
-    CucumberStepsIndex.getInstance(getProject()).flush();
     checkReference(step, null);
   }
 }

@@ -28,7 +28,9 @@ import static org.angular2.entities.Angular2EntitiesProvider.getDirective;
 public class Angular2GotoSymbolContributor implements ChooseByNameContributorEx {
 
   @Override
-  public void processNames(@NotNull Processor<String> processor, @NotNull GlobalSearchScope scope, @Nullable IdFilter filter) {
+  public void processNames(@NotNull Processor<? super String> processor,
+                           @NotNull GlobalSearchScope scope,
+                           @Nullable IdFilter filter) {
     StubIndex.getInstance().processAllKeys(Angular2SourceDirectiveIndex.KEY, key -> {
       if (Angular2EntityUtils.isElementDirectiveIndexName(key)) {
         key = Angular2EntityUtils.getElementName(key);
@@ -48,7 +50,7 @@ public class Angular2GotoSymbolContributor implements ChooseByNameContributorEx 
 
   @Override
   public void processElementsWithName(@NotNull String name,
-                                      @NotNull Processor<NavigationItem> processor,
+                                      @NotNull Processor<? super NavigationItem> processor,
                                       @NotNull FindSymbolParameters parameters) {
     Stream.of(Angular2EntityUtils.getAttributeDirectiveIndexName(name),
               Angular2EntityUtils.getElementDirectiveIndexName(name))
@@ -64,8 +66,7 @@ public class Angular2GotoSymbolContributor implements ChooseByNameContributorEx 
                   if (element.isValid()) {
                     Angular2Directive directive = getDirective(element);
                     if (directive != null) {
-                      if (!processor.process(directive.getTypeScriptClass())
-                          || !processSelectors(name, directive.getSelector().getSimpleSelectorsWithPsi(), processor)) {
+                      if (!processSelectors(name, directive.getSelector().getSimpleSelectorsWithPsi(), processor)) {
                         return false;
                       }
                       return true;

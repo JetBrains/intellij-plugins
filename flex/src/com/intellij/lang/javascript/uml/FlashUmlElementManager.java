@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.lang.javascript.uml;
 
@@ -6,7 +6,7 @@ import com.intellij.diagram.AbstractDiagramElementManager;
 import com.intellij.diagram.presentation.DiagramState;
 import com.intellij.javascript.flex.resolve.FlexResolveHelper;
 import com.intellij.lang.javascript.DialectDetector;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.presentable.JSFormatUtil;
@@ -43,7 +43,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -153,11 +152,11 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
       if (elements.isEmpty()) {
         return PsiElement.EMPTY_ARRAY;
       }
-      else if (!(clazz instanceof ActionScriptClassImpl) || clazz.getStub() == null) {
+      else if (!(clazz instanceof ActionScriptClassImpl) || ((ActionScriptClassImpl)clazz).getStub() == null) {
         // this sort causes parsing in order to get ast node offset but
         // when we have class on stub our fields / functions already in natural order
         // TODO once we have stubs for xmlbackedclass we should update the code
-        Collections.sort(elements, Comparator.comparingInt(PsiElement::getTextOffset));
+        elements.sort(Comparator.comparingInt(PsiElement::getTextOffset));
       }
       return PsiUtilCore.toPsiElementArray(elements);
     }
@@ -233,7 +232,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
   }
 
   private static String getPackageDisplayName(String s) {
-    return s.length() > 0 ? s : JSBundle.message("top.level");
+    return s.length() > 0 ? s : JavaScriptBundle.message("top.level");
   }
 
   private static SimpleColoredText decorate(String name) {

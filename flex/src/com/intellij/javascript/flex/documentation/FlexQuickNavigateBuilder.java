@@ -3,9 +3,7 @@ package com.intellij.javascript.flex.documentation;
 import com.intellij.lang.actionscript.psi.impl.ActionScriptFunctionImpl;
 import com.intellij.lang.actionscript.psi.impl.ActionScriptVariableImpl;
 import com.intellij.lang.javascript.documentation.JSQuickNavigateBuilder;
-import com.intellij.lang.javascript.psi.JSFile;
-import com.intellij.lang.javascript.psi.JSFunction;
-import com.intellij.lang.javascript.psi.JSQualifiedName;
+import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
@@ -21,7 +19,9 @@ import org.jetbrains.annotations.Nullable;
 class FlexQuickNavigateBuilder extends JSQuickNavigateBuilder {
 
   @Override
-  protected String getQuickNavigateInfoForNavigationElement(@NotNull PsiElement element, @NotNull PsiElement originalElement) {
+  public String getQuickNavigateInfoForNavigationElement(@NotNull PsiElement element,
+                                                         @NotNull PsiElement originalElement,
+                                                         boolean jsDoc) {
     if (element instanceof JSNamespaceDeclaration) {
       return createQuickNavigateForNamespace((JSNamespaceDeclaration)element);
     }
@@ -29,7 +29,7 @@ class FlexQuickNavigateBuilder extends JSQuickNavigateBuilder {
       return createQuickNavigateForAnnotationDerived(element, originalElement);
     }
 
-    return super.getQuickNavigateInfoForNavigationElement(element, originalElement);
+    return super.getQuickNavigateInfoForNavigationElement(element, originalElement, jsDoc);
   }
 
   @Nullable
@@ -132,8 +132,19 @@ class FlexQuickNavigateBuilder extends JSQuickNavigateBuilder {
     return true;
   }
 
+  @Nullable
   @Override
-  protected boolean shouldAppendFunctionKeyword(@NotNull JSFunction function, @Nullable PsiElement parent) {
+  protected  JSType getJSElementType(@NotNull JSElement element, @NotNull PsiElement originalElement) {
+    return null;
+  }
+
+  @Override
+  protected boolean shouldAppendFunctionKeyword(@NotNull JSFunctionItem function, @Nullable PsiElement parent) {
     return parent instanceof JSClass || super.shouldAppendFunctionKeyword(function, parent);
+  }
+
+  @Override
+  protected JSType getVariableOrFieldType(@NotNull JSTypeDeclarationOwner variable) {
+    return variable.getJSType();
   }
 }

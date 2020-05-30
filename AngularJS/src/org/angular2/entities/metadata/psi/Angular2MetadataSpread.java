@@ -14,8 +14,7 @@ public class Angular2MetadataSpread extends Angular2MetadataElement<Angular2Meta
     super(element);
   }
 
-  @Nullable
-  public Angular2MetadataElement getExpression() {
+  public @Nullable Angular2MetadataElement getExpression() {
     return doIfNotNull(getStub().getSpreadExpression(), Angular2MetadataElementStub::getPsi);
   }
 

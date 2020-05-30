@@ -1,0 +1,1 @@
+<simpleStore.vue:(77,86):(1,8)>	('action1', {}

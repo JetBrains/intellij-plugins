@@ -104,8 +104,7 @@ public class FlexMxmlNSDescriptor implements XmlNSDescriptor, Validator<XmlDocum
   }
 
   @Override
-  @NotNull
-  public XmlElementDescriptor[] getRootElementsDescriptors(@Nullable final XmlDocument document) {
+  public XmlElementDescriptor @NotNull [] getRootElementsDescriptors(@Nullable final XmlDocument document) {
     XmlElementDescriptor[] elementDescriptors = CodeContext.getContext(namespace, module).getDescriptorsWithAllowedDeclaration();
     ArrayList<XmlElementDescriptor> results = new ArrayList<>(elementDescriptors.length);
 
@@ -170,8 +169,7 @@ public class FlexMxmlNSDescriptor implements XmlNSDescriptor, Validator<XmlDocum
   }
 
   @Override
-  @NotNull
-  public Object[] getDependencies() {
+  public Object @NotNull [] getDependencies() {
     return CodeContext.getContext(namespace, module).getDependencies();
   }
 

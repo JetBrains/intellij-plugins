@@ -12,8 +12,9 @@ import com.intellij.javascript.flex.mxml.FlexNameAlias;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.LanguageNamesValidation;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
@@ -22,7 +23,6 @@ import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.resolve.*;
-import com.intellij.lang.refactoring.NamesValidator;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Ref;
@@ -569,9 +569,9 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
   public String validateValue(final XmlElement context, String value) {
     final PsiElement parent = context instanceof XmlAttributeValue ? context.getParent() : null;
     if (parent instanceof XmlAttribute && FlexMxmlLanguageAttributeNames.ID.equals(((XmlAttribute)parent).getName())) {
-      final NamesValidator namesValidator = LanguageNamesValidation.INSTANCE.forLanguage(JavaScriptSupportLoader.JAVASCRIPT.getLanguage());
-      return namesValidator.isIdentifier(value, context.getProject()) ? null // ok
-                                                                      : JSBundle.message("invalid.identifier.value");
+      return LanguageNamesValidation.isIdentifier(JavascriptLanguage.INSTANCE, value, context.getProject()) ? null // ok
+                                                                                                                : JavaScriptBundle
+               .message("invalid.identifier.value");
     }
 
     if (value.indexOf('{') != -1) return null; // dynamic values
@@ -672,7 +672,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
   @NonNls
   public String getName(final PsiElement context) {
     XmlTag tag = (XmlTag)context;
-    if (tag.getName().indexOf("Rulezz") != -1) {
+    if (tag.getName().contains("Rulezz")) {
       // tag name completion
       final String namespaceByPrefix = tag.getPrefixByNamespace(parentDescriptor.context.namespace);
       if (namespaceByPrefix != null && !namespaceByPrefix.isEmpty()) return namespaceByPrefix + ":" + getName();

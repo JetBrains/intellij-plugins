@@ -97,8 +97,7 @@ public class FlexUnitRunConfiguration extends LocatableConfigurationBase
   }
 
   @Override
-  @NotNull
-  public Module[] getModules() {
+  public Module @NotNull [] getModules() {
     final Module module = ModuleManager.getInstance(getProject()).findModuleByName(myRunnerParameters.getModuleName());
     if (module != null && ModuleType.get(module) instanceof FlexModuleType) {
       return new Module[]{module};
@@ -124,7 +123,7 @@ public class FlexUnitRunConfiguration extends LocatableConfigurationBase
       return new FlashRunConfiguration.AirRunState(getProject(), env, myRunnerParameters) {
         @NotNull
         @Override
-        public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
+        public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner<?> runner) throws ExecutionException {
           final ProcessHandler processHandler = startProcess();
           final ExecutionConsole console = FlexBaseRunner.createFlexUnitRunnerConsole(getProject(), env, processHandler);
           return new DefaultExecutionResult(console, processHandler);

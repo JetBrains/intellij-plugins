@@ -50,8 +50,7 @@ public abstract class Angular2MetadataDirectiveStubBase<Psi extends Angular2Meta
   private final StringRef mySelector;
   private final StringRef myExportAs;
 
-  @NotNull
-  private final Map<String, Integer> myAttributes;
+  private final @NotNull Map<String, Integer> myAttributes;
 
   public Angular2MetadataDirectiveStubBase(@Nullable String memberName,
                                            @Nullable StubElement parent,
@@ -86,18 +85,15 @@ public abstract class Angular2MetadataDirectiveStubBase<Psi extends Angular2Meta
                    : emptyMap();
   }
 
-  @Nullable
-  public String getSelector() {
+  public @Nullable String getSelector() {
     return StringRef.toString(mySelector);
   }
 
-  @Nullable
-  public String getExportAs() {
+  public @Nullable String getExportAs() {
     return StringRef.toString(myExportAs);
   }
 
-  @NotNull
-  public Map<String, Integer> getAttributes() {
+  public @NotNull Map<String, Integer> getAttributes() {
     return myAttributes;
   }
 
@@ -130,8 +126,7 @@ public abstract class Angular2MetadataDirectiveStubBase<Psi extends Angular2Meta
     return FLAGS_STRUCTURE;
   }
 
-  @NotNull
-  private static Map<String, Integer> loadAttributesMapping(@NotNull final JsonObject source) {
+  private static @NotNull Map<String, Integer> loadAttributesMapping(final @NotNull JsonObject source) {
     return StreamEx.ofNullable(getPropertyValue(source.findProperty(MEMBERS), JsonObject.class))
       .map(toPropertyValue(CONSTRUCTOR, JsonArray.class))
       .nonNull()
@@ -144,8 +139,7 @@ public abstract class Angular2MetadataDirectiveStubBase<Psi extends Angular2Meta
       .orElse(emptyMap());
   }
 
-  @NotNull
-  private static Map<String, Integer> buildAttributesMapping(@NotNull final JsonArray paramDecorators) {
+  private static @NotNull Map<String, Integer> buildAttributesMapping(final @NotNull JsonArray paramDecorators) {
     // Checks if the input object represents the @Attribute decorator
     final Predicate<JsonObject> isAttributeDecorator = object -> {
       final JsonObject expr = getPropertyValue(object.findProperty(EXPRESSION), JsonObject.class);
@@ -187,8 +181,8 @@ public abstract class Angular2MetadataDirectiveStubBase<Psi extends Angular2Meta
     }
   }
 
-  private static <T extends JsonValue> Function<JsonObject, T> toPropertyValue(@NotNull final String property,
-                                                                               @NotNull final Class<T> clazz) {
+  private static <T extends JsonValue> Function<JsonObject, T> toPropertyValue(final @NotNull String property,
+                                                                               final @NotNull Class<T> clazz) {
     return o -> getPropertyValue(o.findProperty(property), clazz);
   }
 }

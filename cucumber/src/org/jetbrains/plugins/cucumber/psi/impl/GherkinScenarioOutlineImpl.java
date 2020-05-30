@@ -1,8 +1,6 @@
 package org.jetbrains.plugins.cucumber.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.SmartPointerManager;
-import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
@@ -52,24 +50,10 @@ public class GherkinScenarioOutlineImpl extends GherkinStepsHolderBase implement
   @Override
   @Nullable
   public Map<String, String> getOutlineTableMap() {
-    SmartPsiElementPointer<GherkinScenarioOutline> smartPointer = SmartPointerManager.getInstance(getProject()).createSmartPsiElementPointer(this);
-    return CachedValuesManager.getCachedValue(getContainingFile(), new MyCachedValueProvider(smartPointer));
+    return CachedValuesManager
+      .getCachedValue(this, () -> CachedValueProvider.Result.create(buildOutlineTableMap(this), PsiModificationTracker.MODIFICATION_COUNT));
   }
   
-  private static class MyCachedValueProvider implements CachedValueProvider<Map<String, String>> {
-    private final SmartPsiElementPointer<GherkinScenarioOutline> mySmartPointer;
-
-    private MyCachedValueProvider(@NotNull SmartPsiElementPointer<GherkinScenarioOutline> smartPointer) {
-      mySmartPointer = smartPointer;
-    }
-
-    @Nullable
-    @Override
-    public Result<Map<String, String>> compute() {
-      return CachedValueProvider.Result.create(buildOutlineTableMap(mySmartPointer.getElement()), PsiModificationTracker.MODIFICATION_COUNT);
-    }
-  } 
-
   @Nullable
   private static Map<String, String> buildOutlineTableMap(@Nullable GherkinScenarioOutline scenarioOutline) {
     if (scenarioOutline == null) {

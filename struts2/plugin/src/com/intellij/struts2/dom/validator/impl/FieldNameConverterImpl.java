@@ -61,10 +61,9 @@ public class FieldNameConverterImpl extends FieldNameConverter {
   }
 
   @Override
-  @NotNull
-  public PsiReference[] createReferences(final GenericDomValue<List<BeanProperty>> listGenericDomValue,
-                                         final PsiElement psiElement,
-                                         final ConvertContext convertContext) {
+  public PsiReference @NotNull [] createReferences(final GenericDomValue<List<BeanProperty>> listGenericDomValue,
+                                                   final PsiElement psiElement,
+                                                   final ConvertContext convertContext) {
     final PsiClass actionClass = findBeanPropertyClass(convertContext.getInvocationElement());
     return new BeanPropertyPathReferenceSet(psiElement, actionClass, false).getPsiReferences();
   }

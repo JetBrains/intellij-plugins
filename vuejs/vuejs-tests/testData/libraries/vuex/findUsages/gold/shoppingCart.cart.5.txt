@@ -1,0 +1,4 @@
+<cart.js:(1201,1220):(1,18)>	('setCheckoutStatus', null)
+<cart.js:(757,776):(1,18)>	('setCheckoutStatus', null)
+<cart.js:(901,920):(1,18)>	('setCheckoutStatus', 'successful')
+<cart.js:(966,985):(1,18)>	('setCheckoutStatus', 'failed')

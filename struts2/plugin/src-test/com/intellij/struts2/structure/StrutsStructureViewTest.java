@@ -16,7 +16,6 @@ package com.intellij.struts2.structure;
 
 import com.intellij.struts2.BasicLightHighlightingTestCase;
 import com.intellij.testFramework.PlatformTestUtil;
-import com.intellij.util.ui.tree.TreeUtil;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -33,7 +32,7 @@ public class StrutsStructureViewTest extends BasicLightHighlightingTestCase {
   public void testDefaultPresentation() {
     myFixture.configureByFile("struts-structure.xml");
     myFixture.testStructureView(component -> {
-      component.setActionActive(StructureViewTreeModel.HIDE_PARAMS_ID, false);
+      component.setActionActive(StructureViewTreeModel.getHideParamsId(), false);
       PlatformTestUtil.expandAll(component.getTree());
       PlatformTestUtil.assertTreeEqual(
         component.getTree(),
@@ -51,7 +50,7 @@ public class StrutsStructureViewTest extends BasicLightHighlightingTestCase {
   public void testHideParam() {
     myFixture.configureByFile("struts-structure.xml");
     myFixture.testStructureView(component -> {
-      component.setActionActive(StructureViewTreeModel.HIDE_PARAMS_ID, true);
+      component.setActionActive(StructureViewTreeModel.getHideParamsId(), true);
       PlatformTestUtil.expandAll(component.getTree());
       PlatformTestUtil.assertTreeEqual(
         component.getTree(),

@@ -15,7 +15,6 @@
 
 package com.intellij.struts2.dom.struts.impl;
 
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.struts2.dom.ConverterUtil;
 import com.intellij.struts2.dom.struts.Bean;
@@ -25,10 +24,14 @@ import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.ConvertContext;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.*;
 
 /**
  * @author Yann C&eacute;bron
@@ -58,14 +61,14 @@ public class UnknownHandlerRefConverterImpl extends UnknownHandlerRefConverter {
       return null;
     }
 
-    return ContainerUtil.find(getBeansOfTypeUnknownHandler(strutsModel), bean -> Comparing.equal(bean.getName().getStringValue(), name));
+    return ContainerUtil.find(getBeansOfTypeUnknownHandler(strutsModel), bean -> Objects.equals(bean.getName().getStringValue(), name));
   }
 
   private static final Function<StrutsRoot, Collection<? extends Bean>> BEANS_OF_TYPE_UNKNOWN_HANDLER_COLLECTOR =
     strutsRoot -> {
       final Set<Bean> unknownHandlerBeans = new HashSet<>(1);
       for (final Bean bean : strutsRoot.getBeans()) {
-        if (Comparing.equal(bean.getBeanType().getStringValue(), UNKNOWN_HANDLER_CLASS)) {
+        if (Objects.equals(bean.getBeanType().getStringValue(), UNKNOWN_HANDLER_CLASS)) {
           unknownHandlerBeans.add(bean);
         }
       }

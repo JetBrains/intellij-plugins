@@ -72,8 +72,8 @@ public class StrutsJQueryTaglibReferenceContributor extends StrutsJQueryTaglibRe
 
     // button
     registerBoolean("button", registrar, BUTTON_TAGS);
-    registerTags(CSS_CLASS_PROVIDER, "buttonIcon", registrar, BUTTON_TAGS);
-    registerTags(CSS_CLASS_PROVIDER, "buttonIconSecondary", registrar, BUTTON_TAGS);
+    registerTags(Holder.CSS_CLASS_PROVIDER, "buttonIcon", registrar, BUTTON_TAGS);
+    registerTags(Holder.CSS_CLASS_PROVIDER, "buttonIconSecondary", registrar, BUTTON_TAGS);
 
     // effect
     installEffect(registrar, "a", "div", "gridColumn", "radio", "submit", "tab", "textfield", "textarea");
@@ -128,7 +128,7 @@ public class StrutsJQueryTaglibReferenceContributor extends StrutsJQueryTaglibRe
     registerBoolean("ajaxcache", registrar, "head");
     registerBoolean("ajaxhistory", registrar, "head");
     registerBoolean("compressed", registrar, "head");
-    registerTags(HTML_ID_REFERENCE_PROVIDER, "defaultIndicator", registrar, "head");
+    registerTags(Holder.HTML_ID_REFERENCE_PROVIDER, "defaultIndicator", registrar, "head");
     registerTags(new StaticStringValuesReferenceProvider("black-tie", "blitzer", "cupertino", "dot-luv",
                                                          "eggplant", "excite-bike", "flick", "hot-sneaks",
                                                          "humanity", "le-frog", "mint-choc", "overcast",
@@ -142,7 +142,7 @@ public class StrutsJQueryTaglibReferenceContributor extends StrutsJQueryTaglibRe
 
     // <submit>
     registerBoolean("clearForm", registrar, "submit");
-    registerTags(RELATIVE_PATH_PROVIDER, "href", registrar, "submit");
+    registerTags(Holder.RELATIVE_PATH_PROVIDER, "href", registrar, "submit");
     registerBoolean("iframe", registrar, "submit");
     registerBoolean("resetForm", registrar, "submit");
     registerTags(new StaticStringValuesReferenceProvider(false, "button", "input", "image"),
@@ -150,7 +150,7 @@ public class StrutsJQueryTaglibReferenceContributor extends StrutsJQueryTaglibRe
 
     // <dialog>
     registerBoolean("autoOpen", registrar, "dialog");
-    registerTags(CSS_CLASS_PROVIDER, "dialogClass", registrar, "dialog");
+    registerTags(Holder.CSS_CLASS_PROVIDER, "dialogClass", registrar, "dialog");
     registerTags(ALL_EFFECTS_PROVIDER, "hideEffect", registrar, "dialog");
     registerBoolean("modal", registrar, "dialog");
     registerTags(ALL_EFFECTS_PROVIDER, "showEffect", registrar, "dialog");
@@ -172,7 +172,7 @@ public class StrutsJQueryTaglibReferenceContributor extends StrutsJQueryTaglibRe
     registerBoolean("useSelectedTabCookie", registrar, "tabbedpanel");
 
     // <tab>
-    registerTags(HTML_ID_REFERENCE_PROVIDER, "target", registrar, "tab");
+    registerTags(Holder.HTML_ID_REFERENCE_PROVIDER, "target", registrar, "tab");
 
     // <datepicker>
     registerBoolean("buttonImageOnly", registrar, "datepicker");
@@ -190,7 +190,7 @@ public class StrutsJQueryTaglibReferenceContributor extends StrutsJQueryTaglibRe
 
     // <slider>
     registerBoolean("animate", registrar, "slider");
-    registerTags(HTML_ID_REFERENCE_PROVIDER, "displayValueElement", registrar, "slider");
+    registerTags(Holder.HTML_ID_REFERENCE_PROVIDER, "displayValueElement", registrar, "slider");
     registerTags(new StaticStringValuesReferenceProvider(false, "horizontal", "vertical", "auto"),
                  "orientation", registrar, "slider");
 

@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.appcode.reveal;
 
-import com.intellij.CommonBundle;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.RunnerSettings;
@@ -9,6 +8,7 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
@@ -20,6 +20,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.HyperlinkLabel;
+import com.intellij.ui.UIBundle;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.util.containers.ContainerUtil;
@@ -134,7 +135,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
   private static AppleSdk getSdk(@NotNull final AppCodeRunConfiguration config) {
     return ReadAction.compute(() -> {
       XCBuildConfiguration xcBuildConfiguration = config.getConfiguration();
-      return xcBuildConfiguration == null ? null : xcBuildConfiguration.getRawBuildSettings().getBaseSdk();
+      return xcBuildConfiguration == null ? null : XCBuildSettings.getRawBuildSettings(xcBuildConfiguration).getBaseSdk();
     });
   }
 
@@ -148,6 +149,10 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
                                       @NotNull List<? super AnAction> actions) throws ExecutionException {
     super.createAdditionalActions(configuration, product, environment, buildConfiguration, console, processHandler, actions);
 
+    if (isMacCatalyst(buildConfiguration)) {
+      return;
+    }
+
     actions.add(new RefreshRevealAction(configuration,
             environment,
             processHandler,
@@ -160,6 +165,10 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
                                            @NotNull ExecutionEnvironment environment,
                                            @NotNull BuildConfiguration buildConfiguration,
                                            @NotNull File mainExecutable) throws ExecutionException {
+    if (isMacCatalyst(buildConfiguration)) {
+      return;
+    }
+
     File appBundle = Reveal.getDefaultRevealApplicationBundle();
     if (appBundle == null) return;
 
@@ -174,6 +183,10 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     RevealUsageTriggerCollector.Companion.trigger(configuration.getProject(), "inject");
 
     environment.putUserData(FILE_TO_INJECT, toInject);
+  }
+
+  private static boolean isMacCatalyst(@NotNull BuildConfiguration buildConfiguration) {
+    return buildConfiguration.getSdk().isMacCatalyst();
   }
 
   @Nullable
@@ -211,8 +224,8 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
         (Runnable)() -> response[0] = Messages.showYesNoDialog("Project is not configured with Reveal library.<br><br>" +
                                                              "Would you like to enable automatic library upload for this run configuration?",
                                                              "Reveal",
-                                                             Messages.YES_BUTTON,
-                                                             Messages.NO_BUTTON,
+                                                             Messages.getYesButton(),
+                                                             Messages.getNoButton(),
                                                              Messages.getQuestionIcon(),
                                                              new DialogWrapper.DoNotAskOption() {
                   @Override
@@ -238,7 +251,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
                   @NotNull
                   @Override
                   public String getDoNotShowMessage() {
-                    return CommonBundle.message("dialog.options.do.not.show");
+                    return UIBundle.message("dialog.options.do.not.show");
                   }
                 }
         ));
@@ -302,6 +315,10 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     if (result != null) return result;
 
     File plistFile = new File(product, "Info.plist");
+    if (!plistFile.isFile()) {
+      plistFile = new File(product, "Contents/Info.plist");
+    }
+
     Plist plist = PlistDriver.readAnyFormatSafe(plistFile);
     if (plist == null) throw new ExecutionException("Info.plist not found at " + plistFile);
 
@@ -397,8 +414,8 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
               "OS X targets are not yet supported.<br>" +
               "</html>");
 
-      myInjectCheckBox = new JBCheckBox("Inject Reveal library on launch");
-      myInstallCheckBox = new JBCheckBox("Upload Reveal library on the device if necessary");
+      myInjectCheckBox = new JBCheckBox(IdeBundle.message("checkbox.inject.reveal.library.on.launch"));
+      myInstallCheckBox = new JBCheckBox(IdeBundle.message("checkbox.upload.reveal.library.on.the.device.if.necessary"));
 
       myInjectHint = new JBLabel(UIUtil.ComponentStyle.SMALL);
       myInstallHint = new JBLabel(UIUtil.ComponentStyle.SMALL);
@@ -412,11 +429,11 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
 
       builder.addComponent(myNotAvailable);
       builder.addComponent(myInjectCheckBox, UIUtil.DEFAULT_VGAP * 3);
-      builder.setIndent(UIUtil.DEFAULT_HGAP * 4);
+      builder.setFormLeftIndent(UIUtil.DEFAULT_HGAP * 4).setHorizontalGap(UIUtil.DEFAULT_HGAP * 4);
       builder.addComponent(myInjectHint);
-      builder.setIndent(UIUtil.DEFAULT_HGAP);
+      builder.setFormLeftIndent(UIUtil.DEFAULT_HGAP).setHorizontalGap(UIUtil.DEFAULT_HGAP);
       builder.addComponent(myInstallCheckBox);
-      builder.setIndent(UIUtil.DEFAULT_HGAP * 5);
+      builder.setFormLeftIndent(UIUtil.DEFAULT_HGAP * 5).setHorizontalGap(UIUtil.DEFAULT_HGAP * 5);
       builder.addComponent(myInstallHint);
 
       JPanel controls = builder.getPanel();

@@ -64,15 +64,13 @@ public class AngularJSTagDescriptor implements XmlElementDescriptor {
     return HtmlNSDescriptorImpl.getCommonAttributeDescriptors(context);
   }
 
-  @Nullable
   @Override
-  public XmlAttributeDescriptor getAttributeDescriptor(XmlAttribute attribute) {
+  public @Nullable XmlAttributeDescriptor getAttributeDescriptor(XmlAttribute attribute) {
     return getAttributeDescriptor(attribute.getName(), attribute.getParent());
   }
 
-  @Nullable
   @Override
-  public XmlAttributeDescriptor getAttributeDescriptor(@NonNls final String attributeName, @Nullable XmlTag context) {
+  public @Nullable XmlAttributeDescriptor getAttributeDescriptor(@NonNls final String attributeName, @Nullable XmlTag context) {
     return ContainerUtil.find(getAttributesDescriptors(context),
                               descriptor1 -> attributeName.equals(descriptor1.getName()));
   }
@@ -82,9 +80,8 @@ public class AngularJSTagDescriptor implements XmlElementDescriptor {
     return null;
   }
 
-  @Nullable
   @Override
-  public XmlElementsGroup getTopGroup() {
+  public @Nullable XmlElementsGroup getTopGroup() {
     return null;
   }
 
@@ -93,9 +90,8 @@ public class AngularJSTagDescriptor implements XmlElementDescriptor {
     return CONTENT_TYPE_ANY;
   }
 
-  @Nullable
   @Override
-  public String getDefaultValue() {
+  public @Nullable String getDefaultValue() {
     return null;
   }
 

@@ -42,7 +42,7 @@ public abstract class DartIntroduceTestBase extends BasePlatformTestCase {
     doTest(null, true);
   }
 
-  protected void doTest(@Nullable Consumer<DartIntroduceOperation> customization, boolean replaceAll) {
+  protected void doTest(@Nullable Consumer<? super DartIntroduceOperation> customization, boolean replaceAll) {
     myFixture.configureByFile(getTestName(false) + getFileExtension());
     boolean inplaceEnabled = myFixture.getEditor().getSettings().isVariableInplaceRenameEnabled();
     try {
@@ -66,7 +66,7 @@ public abstract class DartIntroduceTestBase extends BasePlatformTestCase {
     myFixture.checkResultByFile(getTestName(false) + ".after" + getFileExtension());
   }
 
-  protected void doTestInplace(@Nullable Consumer<DartIntroduceOperation> customization) {
+  protected void doTestInplace(@Nullable Consumer<? super DartIntroduceOperation> customization) {
     String name = getTestName(false);
     myFixture.configureByFile(name + getFileExtension());
     final boolean enabled = myFixture.getEditor().getSettings().isVariableInplaceRenameEnabled();

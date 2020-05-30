@@ -19,6 +19,7 @@ import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
+import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil
 import com.intellij.lang.javascript.psi.impl.JSPsiElementFactory
 import com.intellij.lang.javascript.refactoring.FormatFixer
@@ -31,13 +32,17 @@ import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
+import com.intellij.util.castSafelyTo
+import org.jetbrains.vuejs.codeInsight.LANG_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.toAsset
+import org.jetbrains.vuejs.index.VUE_CLASS_COMPONENT_MODULE
+import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.index.hasVueClassComponentLibrary
 import org.jetbrains.vuejs.lang.html.VueFileType
-import org.jetbrains.vuejs.model.VueModelManager
+import org.jetbrains.vuejs.model.source.COMPONENTS_PROP
+import org.jetbrains.vuejs.model.source.NAME_PROP
 import org.jetbrains.vuejs.model.source.VueComponents
-import org.jetbrains.vuejs.model.source.VueComponents.Companion.getElementComponentDecorator
 
 class VueInsertHandler : XmlTagInsertHandler() {
   companion object {
@@ -66,14 +71,17 @@ class VueInsertHandler : XmlTagInsertHandler() {
     if (shouldHandleXmlInsert(context)) {
       super.handleInsert(context, item)
     }
-    val jsImplicitElement = VueModelManager.getComponentImplicitElement(item.`object` as PsiElement) ?: return
-    val importedFile = jsImplicitElement.containingFile
+    val element = item.`object`.castSafelyTo<Pair<*, *>>()
+                    ?.second?.castSafelyTo<SmartPsiElementPointer<*>>()
+                    ?.element
+                  ?: return
+    val importedFile = element.containingFile
     if (importedFile == context.file) return
-    val nodeModule = NodeModuleSearchUtil.findDependencyRoot(jsImplicitElement.containingFile.virtualFile)
+    val nodeModule = NodeModuleSearchUtil.findDependencyRoot(element.containingFile.virtualFile)
     if (isSkippedModule(nodeModule)) return
 
     context.commitDocument()
-    val isClass = jsImplicitElement.parent is JSClassExpression<*> || jsImplicitElement.parent is ES6Decorator
+    val isClass = element.context is JSClassExpression || element.context is ES6Decorator
     XmlTagNameSynchronizer.runWithoutCancellingSyncTagsEditing(context.document) {
       InsertHandlerWorker().insertComponentImport(context.file, item.lookupString, importedFile, context.editor, isClass)
     }
@@ -89,15 +97,17 @@ class VueInsertHandler : XmlTagInsertHandler() {
                               isClass: Boolean = false) {
       val file: XmlFile = context as? XmlFile ?: context.containingFile as? XmlFile ?: return
       val defaultExport = findOrCreateDefaultExport(file, isClass)
-      var obj = defaultExport.stubSafeElement as? JSObjectLiteralExpression ?: VueComponents.getExportedDescriptor(defaultExport)?.obj
+      val defaultExportElement = defaultExport.stubSafeElement
+      var obj = VueComponents.getComponentDescriptor(defaultExportElement)?.obj
 
       if (obj == null) {
-        val decorator = getElementComponentDecorator(defaultExport) ?: return
+        if (defaultExportElement !is JSClass) return
+        val decorator = VueComponents.getComponentDecorator(defaultExportElement) ?: return
         val newClass = JSPsiElementFactory.createJSClass("@Component({}) class A {}", decorator)
-        val newDecorator = getElementComponentDecorator(newClass)!!
+        val newDecorator = VueComponents.getComponentDecorator(newClass)!!
         val replacedDecorator = decorator.replace(newDecorator)
         forReformat(replacedDecorator)
-        obj = VueComponents.getExportedDescriptor(defaultExport)?.obj ?: return
+        obj = VueComponents.getComponentDescriptor(defaultExportElement)?.obj ?: return
       }
 
       val components = componentProperty(obj).value as? JSObjectLiteralExpression ?: return
@@ -134,7 +144,7 @@ class VueInsertHandler : XmlTagInsertHandler() {
         }
 
         val addedExport: JSExportAssignment
-        val lang = scriptTag.getAttribute("lang")?.value
+        val lang = scriptTag.getAttribute(LANG_ATTRIBUTE_NAME)?.value
         val dummyScript = createDummyScript(file.project, lang, isClass, fileName)
         if (content != null && content.children.any { it !is PsiWhiteSpace && it !is PsiComment }) {
           val dummyContent = PsiTreeUtil.findChildOfType(dummyScript, JSEmbeddedContent::class.java)!!
@@ -166,8 +176,8 @@ class VueInsertHandler : XmlTagInsertHandler() {
     }
 
     private fun addClassComponentImports(content: JSEmbeddedContent) {
-      insertImportIfNotThere("Vue", true, "vue", content)
-      insertImportIfNotThere("Component", false, "vue-class-component", content)
+      insertImportIfNotThere("Vue", true, VUE_MODULE, content)
+      insertImportIfNotThere("Component", false, VUE_CLASS_COMPONENT_MODULE, content)
     }
 
     private fun insertImportIfNotThere(exportedName: String, isDefault: Boolean, module: String, content: PsiElement) {
@@ -198,7 +208,7 @@ class VueInsertHandler : XmlTagInsertHandler() {
     }
 
     private fun componentProperty(obj: JSObjectLiteralExpression): JSProperty {
-      val property = obj.findProperty("components")
+      val property = obj.findProperty(COMPONENTS_PROP)
       if (property != null) return property
       val newProperty = JSPsiElementFactory.createJSExpression("{ components: {} }", obj,
                                                                JSObjectLiteralExpression::class.java).firstProperty!!
@@ -212,7 +222,7 @@ class VueInsertHandler : XmlTagInsertHandler() {
                             onTheNewLine: Boolean): JSProperty {
       val firstProperty = obj.firstProperty
       val anchor: PsiElement?
-      anchor = if ("name" == firstProperty?.name) {
+      anchor = if (NAME_PROP == firstProperty?.name) {
         PsiTreeUtil.findSiblingForward(firstProperty, JSTokenTypes.COMMA, null) ?: firstProperty
       }
       else {

@@ -15,7 +15,6 @@
 
 package com.intellij.struts2.dom.struts.action;
 
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
 import com.intellij.struts2.dom.struts.HasResultType;
 import com.intellij.struts2.dom.struts.strutspackage.GlobalResults;
@@ -24,14 +23,14 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.ResolvingConverter;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Yann C&eacute;bron
@@ -64,7 +63,7 @@ public class ExceptionMappingResultResolveConverter extends ResolvingConverter<H
     }
 
     return ContainerUtil.find(getVariants(context),
-                              (Condition<HasResultType>)result -> Comparing.equal(result.getName().getStringValue(), value));
+                              (Condition<HasResultType>)result -> Objects.equals(result.getName().getStringValue(), value));
   }
 
   @Override

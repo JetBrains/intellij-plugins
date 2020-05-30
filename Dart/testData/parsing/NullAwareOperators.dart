@@ -32,3 +32,25 @@ fnao3(x) {
 }
 
 static final Map<String?, Map<int?, bool?>?>? a;
+
+const x = true ? 2 : 3 is int;
+var y1 = x is int ? 0 : 1;
+var y2 = x is int ? ? 0 : 1;
+var y3 = x is! int ? 0 : 1;
+var y4 = x is! int ? ? 0 : 1;
+var y5 = x as int ? 0 : 1;
+var y6 = x as int ? ? 0 : 1;
+var y7 = x is Function() ? 0 : 1;
+var y8 = x is Function() ? ? 0 : 1;
+var y9 = x is List<Function> Function<A>(Function x) Function() ? 0 : 1;
+var y0 = x is List<Function> Function<A>(Function x) Function() ? ? 0 : 1;
+
+var set1 = { x as bool ? -3 : 3};
+var set2 = { x is bool ? -3 : 3};
+var set3 = { x as bool ? ? -3 : 3};
+var set4 = { x is bool ? ? -3 : 3};
+
+var map1 = { x as bool ? -3 : 3 : 5};
+var map2 = { x is bool ? -3 : 3 : 5};
+var map3 = { x as bool ? ? -3 : 3 : 5};
+var map4 = { x is bool ? ? -3 : 3 : 5};

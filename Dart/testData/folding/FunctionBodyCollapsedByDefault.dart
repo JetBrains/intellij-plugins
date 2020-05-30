@@ -41,9 +41,9 @@ abstract class B <fold text='{...}' expand='true'>{
   }</fold>
 
   operator ==(z) <fold text='{...}' expand='false'>{
-    if (true){
+    if (true)<fold text='{...}' expand='true'>{
       // a
-    }
+    }</fold>
   }</fold>
 }</fold>
 

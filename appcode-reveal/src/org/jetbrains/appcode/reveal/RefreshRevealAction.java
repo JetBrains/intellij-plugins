@@ -9,6 +9,7 @@ import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.execution.util.ExecUtil;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.jetbrains.cidr.execution.AppCodeRunConfiguration;
@@ -17,6 +18,7 @@ import com.jetbrains.cidr.execution.SimulatedBuildDestination;
 import com.jetbrains.cidr.xcode.Xcode;
 import com.jetbrains.cidr.xcode.frameworks.AppleSdk;
 import com.jetbrains.cidr.xcode.model.XCBuildConfiguration;
+import com.jetbrains.cidr.xcode.model.XCBuildSettings;
 import icons.AppcodeRevealIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.io.File;
 
-public class RefreshRevealAction extends AnAction implements AnAction.TransparentUpdate {
+public class RefreshRevealAction extends AnAction implements AnAction.TransparentUpdate, DumbAware {
   public static final Icon ICON = AppcodeRevealIcons.RunWithReveal;
 
   @NotNull private final AppCodeRunConfiguration myConfiguration;
@@ -55,7 +57,7 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
     String title = "Show in Reveal";
 
     XCBuildConfiguration xcBuildConfiguration = myConfiguration.getConfiguration();
-    AppleSdk sdk = xcBuildConfiguration == null ? null : xcBuildConfiguration.getRawBuildSettings().getBaseSdk();
+    AppleSdk sdk = xcBuildConfiguration == null ? null : XCBuildSettings.getRawBuildSettings(xcBuildConfiguration).getBaseSdk();
 
     File lib = null;
     boolean compatible = false;
@@ -84,7 +86,7 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
     }
     else if (myDisabled) {
       title += " (Action is disabled until configuration relaunch)";
-    }                                    
+    }
 
     e.getPresentation().setText(title, false);
   }

@@ -1,0 +1,3 @@
+<storefront-component.ts:(3120,3125):(1,4)>	['set']
+<storefront-decorated-component.ts:(905,922):(13,16)>	('breadcrumbs/set')
+<storefront-namespaced-component.ts:(1146,1163):(13,16)>	['breadcrumbs/set', 'configureItem']

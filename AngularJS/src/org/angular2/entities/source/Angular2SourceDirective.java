@@ -14,7 +14,6 @@ import com.intellij.lang.javascript.psi.stubs.JSPropertyStub;
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
 import com.intellij.lang.javascript.psi.util.JSClassUtils;
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
@@ -28,6 +27,9 @@ import one.util.streamex.StreamEx;
 import org.angular2.Angular2DecoratorUtil;
 import org.angular2.codeInsight.refs.Angular2ReferenceExpressionResolver;
 import org.angular2.entities.*;
+import org.angular2.entities.ivy.Angular2IvyEntity;
+import org.angular2.entities.metadata.Angular2MetadataUtil;
+import org.angular2.index.Angular2IndexingHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,11 +37,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.intellij.openapi.util.Pair.pair;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.containers.ContainerUtil.exists;
-import static org.angular2.entities.Angular2EntityUtils.TEMPLATE_REF;
-import static org.angular2.entities.Angular2EntityUtils.VIEW_CONTAINER_REF;
+import static org.angular2.entities.Angular2EntitiesProvider.withJsonMetadataFallback;
+import static org.angular2.entities.Angular2EntityUtils.*;
+import static org.angular2.entities.ivy.Angular2IvyUtil.getIvyEntity;
 
 public class Angular2SourceDirective extends Angular2SourceDeclaration implements Angular2Directive {
 
@@ -47,9 +49,8 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
     super(decorator, implicitElement);
   }
 
-  @NotNull
   @Override
-  public Angular2DirectiveSelector getSelector() {
+  public @NotNull Angular2DirectiveSelector getSelector() {
     return getCachedValue(() -> {
       JSProperty property = Angular2DecoratorUtil.getProperty(getDecorator(), Angular2DecoratorUtil.SELECTOR_PROP);
       String value = null;
@@ -81,19 +82,13 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
   }
 
   @Override
-  public boolean isStructuralDirective() {
-    Pair<Boolean, Boolean> matches = getConstructorParamsMatch();
-    return matches.first || matches.second;
+  public @NotNull Angular2DirectiveKind getDirectiveKind() {
+    return getCachedValue(() -> CachedValueProvider.Result.create(
+      getDirectiveKindNoCache(myClass), getClassModificationDependencies()));
   }
 
   @Override
-  public boolean isRegularDirective() {
-    return !getConstructorParamsMatch().first;
-  }
-
-  @NotNull
-  @Override
-  public List<String> getExportAsList() {
+  public @NotNull List<String> getExportAsList() {
     return getCachedValue(() -> {
       String exportAsString = Angular2DecoratorUtil.getPropertyValue(getDecorator(), Angular2DecoratorUtil.EXPORT_AS_PROP);
       return CachedValueProvider.Result.create(exportAsString == null
@@ -103,37 +98,23 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
     });
   }
 
-  @NotNull
   @Override
-  public Collection<? extends Angular2DirectiveProperty> getInputs() {
-    return getCachedProperties().first;
-  }
-
-  @NotNull
-  @Override
-  public Collection<? extends Angular2DirectiveProperty> getOutputs() {
-    return getCachedProperties().second;
-  }
-
-  @NotNull
-  @Override
-  public Collection<? extends Angular2DirectiveAttribute> getAttributes() {
+  public @NotNull Collection<? extends Angular2DirectiveAttribute> getAttributes() {
     return getCachedValue(
       () -> Result.create(getAttributeParameters(),
                           getClassModificationDependencies())
     );
   }
 
-  @NotNull
-  private Pair<Collection<? extends Angular2DirectiveProperty>, Collection<? extends Angular2DirectiveProperty>> getCachedProperties() {
+  @Override
+  public @NotNull Angular2DirectiveProperties getBindings() {
     return getCachedValue(
-      () -> CachedValueProvider.Result.create(getProperties(),
+      () -> CachedValueProvider.Result.create(getPropertiesNoCache(),
                                               getClassModificationDependencies())
     );
   }
 
-  @NotNull
-  private Pair<Collection<? extends Angular2DirectiveProperty>, Collection<? extends Angular2DirectiveProperty>> getProperties() {
+  private @NotNull Angular2DirectiveProperties getPropertiesNoCache() {
     Map<String, Angular2DirectiveProperty> inputs = new LinkedHashMap<>();
     Map<String, Angular2DirectiveProperty> outputs = new LinkedHashMap<>();
 
@@ -152,17 +133,37 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
         }
       });
 
-    inputMap.keySet().forEach(
+    inputMap.values().forEach(
       input -> inputs.put(input, new Angular2SourceDirectiveVirtualProperty(clazz, input)));
-    outputMap.keySet().forEach(
+    outputMap.values().forEach(
       output -> outputs.put(output, new Angular2SourceDirectiveVirtualProperty(clazz, output)));
 
-    return pair(Collections.unmodifiableCollection(inputs.values()),
-                Collections.unmodifiableCollection(outputs.values()));
+    Ref<Angular2DirectiveProperties> inheritedProperties = new Ref<>();
+    JSClassUtils.processClassesInHierarchy(clazz, false, (aClass, typeSubstitutor, fromImplements) -> {
+      if (aClass instanceof TypeScriptClass && Angular2EntitiesProvider.isDeclaredClass((TypeScriptClass)aClass)) {
+        Angular2DirectiveProperties props = withJsonMetadataFallback(aClass, cls -> {
+          Angular2IvyEntity<?> ivyEntity = getIvyEntity(aClass, true);
+          if (ivyEntity instanceof Angular2Directive) {
+            return ((Angular2Directive)ivyEntity).getBindings();
+          }
+          return null;
+        }, Angular2MetadataUtil::getMetadataClassDirectiveProperties);
+        if (props != null) {
+          inheritedProperties.set(props);
+          return false;
+        }
+      }
+      return true;
+    });
+
+    if (!inheritedProperties.isNull()) {
+      inheritedProperties.get().getInputs().forEach(prop -> inputs.putIfAbsent(prop.getName(), prop));
+      inheritedProperties.get().getOutputs().forEach(prop -> outputs.putIfAbsent(prop.getName(), prop));
+    }
+    return new Angular2DirectiveProperties(inputs.values(), outputs.values());
   }
 
-  @NotNull
-  private Map<String, String> readPropertyMappings(String source) {
+  private @NotNull Map<String, String> readPropertyMappings(String source) {
     JSProperty prop = Angular2DecoratorUtil.getProperty(getDecorator(), source);
     if (prop == null) {
       return Collections.emptyMap();
@@ -227,9 +228,8 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
     }
   }
 
-  @NotNull
-  private Collection<? extends Angular2DirectiveAttribute> getAttributeParameters() {
-    final TypeScriptFunction[] constructors = getTypeScriptClass().getConstructors();
+  private @NotNull Collection<? extends Angular2DirectiveAttribute> getAttributeParameters() {
+    final TypeScriptFunction[] constructors = myClass.getConstructors();
     return constructors.length == 1
            ? processCtorParameters(constructors[0])
            : Arrays.stream(constructors)
@@ -239,8 +239,7 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
              .orElse(Collections.emptyList());
   }
 
-  @NotNull
-  private static Collection<? extends Angular2DirectiveAttribute> processCtorParameters(@NotNull final JSFunction ctor) {
+  private static @NotNull Collection<? extends Angular2DirectiveAttribute> processCtorParameters(final @NotNull JSFunction ctor) {
     return StreamEx.of(ctor.getParameterVariables())
       .mapToEntry(JSParameter::getAttributeList)
       .nonNullValues()
@@ -254,9 +253,8 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
       .toList();
   }
 
-  @Nullable
-  private static String getStringParamValue(@Nullable ES6Decorator decorator) {
-    if (decorator == null) {
+  private static @Nullable String getStringParamValue(@Nullable ES6Decorator decorator) {
+    if (decorator == null || !Angular2IndexingHandler.isDecoratorStringArgStubbed(decorator)) {
       return null;
     }
     ES6DecoratorStub stub = decorator.getStub();
@@ -283,15 +281,8 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
     return null;
   }
 
-  @NotNull
-  private Pair<Boolean, Boolean> getConstructorParamsMatch() {
-    return getCachedValue(() -> CachedValueProvider.Result.create(
-      getConstructorParamsMatchNoCache(getTypeScriptClass()), getClassModificationDependencies()));
-  }
-
-  @NotNull
-  private static Pair<Boolean, Boolean> getConstructorParamsMatchNoCache(@NotNull TypeScriptClass clazz) {
-    Ref<Pair<Boolean, Boolean>> result = new Ref<>(pair(false, false));
+  public static @NotNull Angular2DirectiveKind getDirectiveKindNoCache(@NotNull TypeScriptClass clazz) {
+    Ref<Angular2DirectiveKind> result = new Ref<>(null);
     JSClassUtils.processClassesInHierarchy(clazz, false, (aClass, typeSubstitutor, fromImplements) -> {
       if (aClass instanceof TypeScriptClass) {
         List<String> types = StreamEx.of(((TypeScriptClass)aClass).getConstructors())
@@ -302,15 +293,14 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
           .nonNull()
           .map(type -> type.getTypeText())
           .toList();
-        boolean templateRef = exists(types, t -> t.contains(TEMPLATE_REF));
-        boolean viewContainerRef = exists(types, t -> t.contains(VIEW_CONTAINER_REF));
-        if (templateRef || viewContainerRef) {
-          result.set(pair(templateRef, viewContainerRef));
-          return false;
-        }
+        result.set(Angular2DirectiveKind.get(
+          exists(types, t -> t.contains(ELEMENT_REF)),
+          exists(types, t -> t.contains(TEMPLATE_REF)),
+          exists(types, t -> t.contains(VIEW_CONTAINER_REF))
+        ));
       }
-      return true;
+      return result.isNull();
     });
-    return result.get();
+    return result.isNull() ? Angular2DirectiveKind.REGULAR : result.get();
   }
 }

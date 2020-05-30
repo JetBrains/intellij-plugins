@@ -22,8 +22,7 @@ public class TapestryIdeView implements IdeView {
     }
 
     @Override
-    @NotNull
-    public PsiDirectory[] getDirectories() {
+    public PsiDirectory @NotNull [] getDirectories() {
         final List<PsiDirectory> directories = new ArrayList<>();
         final ModuleFileIndex moduleFileIndex = ModuleRootManager.getInstance((Module) _viewPane.getData(LangDataKeys.MODULE.getName())).getFileIndex();
         moduleFileIndex.iterateContent(

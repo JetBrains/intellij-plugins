@@ -1,0 +1,5 @@
+categoriesMap#null
+filtersMap#null
+notFoundCategoryIds#any[]
+products#any[]
+searchProductsStats#null

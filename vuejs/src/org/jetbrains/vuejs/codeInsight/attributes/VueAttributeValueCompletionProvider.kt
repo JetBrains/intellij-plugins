@@ -11,6 +11,9 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ProcessingContext
 import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeKind.*
+import org.jetbrains.vuejs.model.getAvailableSlots
+import java.util.*
 
 class VueAttributeValueCompletionProvider : CompletionProvider<CompletionParameters>() {
   private val VUE_SCRIPT_LANGUAGE = ContainerUtil.immutableSet("js", "ts")
@@ -22,28 +25,27 @@ class VueAttributeValueCompletionProvider : CompletionProvider<CompletionParamet
     val xmlAttribute = PsiTreeUtil.getParentOfType(parameters.position, XmlAttribute::class.java,
                                                    false)
     if (xmlTag == null || xmlAttribute == null) return
+
     for (completion in listOfCompletions(xmlTag, xmlAttribute)) {
       result.addElement(LookupElementBuilder.create(completion))
     }
   }
 
-  private fun listOfCompletions(xmlTag: XmlTag, xmlAttribute: XmlAttribute): Set<String> {
-    if (xmlAttribute.name == "lang") {
-      when (xmlTag.name) {
-        "script" -> return VUE_SCRIPT_LANGUAGE
-        "style" -> return VUE_STYLE_LANGUAGE
-        "template" -> return VUE_TEMPLATE_LANGUAGE
-      }
+  private fun listOfCompletions(xmlTag: XmlTag, xmlAttribute: XmlAttribute): Set<String> =
+    when (VueAttributeNameParser.parse(xmlAttribute.name, xmlTag).kind) {
+      SCRIPT_LANG -> VUE_SCRIPT_LANGUAGE
+      STYLE_LANG -> VUE_STYLE_LANGUAGE
+      TEMPLATE_LANG -> VUE_TEMPLATE_LANGUAGE
+      SLOT -> getAvailableSlots(xmlAttribute, false).map { it.name }.toSet()
+      else -> emptySet()
     }
-    return ContainerUtil.immutableSet()
-  }
 
   private fun vueStyleLanguages(): Set<String> {
     val result = mutableListOf<String>()
     result.add("css")
     CSSLanguage.INSTANCE.dialects.forEach {
       if (it.displayName != "JQuery-CSS") {
-        result.add(it.displayName.toLowerCase())
+        result.add(it.displayName.toLowerCase(Locale.US))
       }
     }
     return result.toSet()

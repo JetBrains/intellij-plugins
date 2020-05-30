@@ -49,8 +49,7 @@ public class FindUsersAction extends ActionGroup {
   }
 
   @Override
-  @NotNull
-  public AnAction[] getChildren(AnActionEvent e) {
+  public AnAction @NotNull [] getChildren(AnActionEvent e) {
     return myActions.toArray(AnAction.EMPTY_ARRAY);
   }
 }

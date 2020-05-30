@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex;
 
 import com.intellij.codeInsight.FileModificationService;
@@ -46,9 +47,8 @@ public class FlexCssReferenceContributor extends PsiReferenceContributor {
         return true;
       }
     })), new PsiReferenceProvider() {
-      @NotNull
       @Override
-      public PsiReference[] getReferencesByElement(@NotNull final PsiElement element, @NotNull ProcessingContext context) {
+      public PsiReference @NotNull [] getReferencesByElement(@NotNull final PsiElement element, @NotNull ProcessingContext context) {
         CssFunction fun = PsiTreeUtil.getParentOfType(element, CssFunction.class);
         if (fun != null && "Embed".equals(fun.getName())) {
           // TODO: remove this stuff once css function will have proper psi
@@ -67,9 +67,8 @@ public class FlexCssReferenceContributor extends PsiReferenceContributor {
         if (fun != null && element instanceof CssString) {
           assert FlexReferenceContributor.CLASS_REFERENCE.equals(fun.getName());
           refSet.setLocalQuickFixProvider(new LocalQuickFixProvider() {
-            @Nullable
             @Override
-            public LocalQuickFix[] getQuickFixes() {
+            public LocalQuickFix @Nullable [] getQuickFixes() {
               if (!ActionScriptRefactoringUtil.isValidClassName(value, true)) {
                 return LocalQuickFix.EMPTY_ARRAY;
               }
@@ -81,7 +80,7 @@ public class FlexCssReferenceContributor extends PsiReferenceContributor {
               for (ActionScriptCreateClassOrInterfaceFix fix : fixes) {
                 fix.setCreatedClassFqnConsumer(newFqn -> {
                   if (FileModificationService.getInstance().preparePsiElementForWrite(element)){
-                    ElementManipulators.getManipulator(element).handleContentChange(element, newFqn);
+                    ElementManipulators.handleContentChange(element, newFqn);
                   }
                 });
               }
@@ -122,9 +121,8 @@ public class FlexCssReferenceContributor extends PsiReferenceContributor {
         return true;
       }
     })), new PsiReferenceProvider() {
-      @NotNull
       @Override
-      public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+      public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
         String styleName = CssClassValueReference.getValue(element);
         if (styleName.length() > 0) {
           return new PsiReference[]{new CssClassValueReference(element)};

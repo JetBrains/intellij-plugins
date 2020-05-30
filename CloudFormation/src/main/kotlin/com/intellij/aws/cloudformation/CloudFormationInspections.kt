@@ -9,27 +9,7 @@ import com.intellij.aws.cloudformation.metadata.CloudFormationResourceType
 import com.intellij.aws.cloudformation.metadata.CloudFormationResourceType.Companion.isCustomResourceType
 import com.intellij.aws.cloudformation.metadata.awsServerlessFunction
 import com.intellij.aws.cloudformation.metadata.awsServerlessNamePrefix
-import com.intellij.aws.cloudformation.model.CfnArrayValueNode
-import com.intellij.aws.cloudformation.model.CfnFunctionNode
-import com.intellij.aws.cloudformation.model.CfnGlobalsNode
-import com.intellij.aws.cloudformation.model.CfnMappingsNode
-import com.intellij.aws.cloudformation.model.CfnMetadataNode
-import com.intellij.aws.cloudformation.model.CfnNameValueNode
-import com.intellij.aws.cloudformation.model.CfnNamedNode
-import com.intellij.aws.cloudformation.model.CfnNode
-import com.intellij.aws.cloudformation.model.CfnObjectValueNode
-import com.intellij.aws.cloudformation.model.CfnOutputsNode
-import com.intellij.aws.cloudformation.model.CfnParameterNode
-import com.intellij.aws.cloudformation.model.CfnParametersNode
-import com.intellij.aws.cloudformation.model.CfnResourceConditionNode
-import com.intellij.aws.cloudformation.model.CfnResourceDependsOnNode
-import com.intellij.aws.cloudformation.model.CfnResourceNode
-import com.intellij.aws.cloudformation.model.CfnResourceTypeNode
-import com.intellij.aws.cloudformation.model.CfnResourcesNode
-import com.intellij.aws.cloudformation.model.CfnRootNode
-import com.intellij.aws.cloudformation.model.CfnScalarValueNode
-import com.intellij.aws.cloudformation.model.CfnServerlessEntityDefaultsNode
-import com.intellij.aws.cloudformation.model.CfnVisitor
+import com.intellij.aws.cloudformation.model.*
 import com.intellij.aws.cloudformation.references.CloudFormationEntityReference
 import com.intellij.aws.cloudformation.references.CloudFormationMappingFirstLevelKeyReference
 import com.intellij.aws.cloudformation.references.CloudFormationMappingSecondLevelKeyReference
@@ -377,7 +357,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
     if (!isCustomResourceType(typeName)) {
       val resourceTypeMetadata = CloudFormationMetadataProvider.METADATA.findResourceType(typeName, parsed.root)
       if (resourceTypeMetadata == null) {
-        addProblem(resourceTypeValue, CloudFormationBundle.getString("format.unknown.type", typeName))
+        addProblem(resourceTypeValue, CloudFormationBundle.message("format.unknown.type", typeName))
       }
     }
 
@@ -390,7 +370,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
     }
 
     if (outputs.properties.size > CloudFormationMetadataProvider.METADATA.limits.maxOutputs) {
-      addProblem(outputs, CloudFormationBundle.getString("format.max.outputs.exceeded", CloudFormationMetadataProvider.METADATA.limits.maxOutputs))
+      addProblem(outputs, CloudFormationBundle.message("format.max.outputs.exceeded", CloudFormationMetadataProvider.METADATA.limits.maxOutputs))
     }
 
     super.outputs(outputs)
@@ -442,7 +422,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
     }
 
     if (parameters.parameters.size > CloudFormationMetadataProvider.METADATA.limits.maxParameters) {
-      addProblem(parameters, CloudFormationBundle.getString("format.max.parameters.exceeded", CloudFormationMetadataProvider.METADATA.limits.maxParameters))
+      addProblem(parameters, CloudFormationBundle.message("format.max.parameters.exceeded", CloudFormationMetadataProvider.METADATA.limits.maxParameters))
     }
 
     super.parameters(parameters)
@@ -576,7 +556,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
     }
 
     if (mappings.mappings.size > CloudFormationMetadataProvider.METADATA.limits.maxMappings) {
-      addProblem(mappings, CloudFormationBundle.getString("format.max.mappings.exceeded", CloudFormationMetadataProvider.METADATA.limits.maxMappings))
+      addProblem(mappings, CloudFormationBundle.message("format.max.mappings.exceeded", CloudFormationMetadataProvider.METADATA.limits.maxMappings))
     }
 
     super.mappings(mappings)
@@ -617,7 +597,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
             propertyName != CloudFormationConstants.CommentResourcePropertyName &&
             !isCustomResourceType(resourceType.value!!.value) &&
             metadata.findProperty(propertyName) == null) {
-          addProblem(it, CloudFormationBundle.getString("format.unknown.resource.type.property", propertyName))
+          addProblem(it, CloudFormationBundle.message("format.unknown.resource.type.property", propertyName))
         }
       }
 
@@ -626,7 +606,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
       if (missingProperties.isNotEmpty()) {
         addProblem(
             element = propertiesNode ?: resource,
-            description = CloudFormationBundle.getString("format.required.resource.properties.are.not.set", missingProperties.joinToString(separator = " "))
+            description = CloudFormationBundle.message("format.required.resource.properties.are.not.set", missingProperties.joinToString(separator = " "))
         )
       }
     }

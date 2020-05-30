@@ -1,0 +1,4 @@
+<getters.ts:(2547,2570):(8,23)>	getters.isCartSyncEnabled && getters.isCartConnected
+<getters.ts:(2640,2663):(8,23)>	getters.isTotalsSyncEnabled && getters.isCartConnected
+<itemActions.ts:(3422,3445):(8,23)>	getters.isCartSyncEnabled && getters.isCartConnected
+<storefront-component.ts:(905,927):(6,21)>	['cart/isCartConnected', 'category/bar']

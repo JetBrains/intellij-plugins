@@ -1,0 +1,39 @@
+<html lang="en">
+<head>
+  <title></title>
+</head>
+<body>
+<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+
+<div id="app" v-bind:foo="">
+  [[ message<error descr="Expected end of expression"> </error>d ]] {{ message d }}
+  <<warning descr="Unknown html tag foo">foo</warning>></<warning descr="Unknown html tag foo">foo</warning>>
+  <bar v-bind:bar="message"></bar>
+  <div v-foo=""></div>
+</div>
+[[ mess d ]] {{ <weak_warning descr="Unresolved variable or type mess">mess</weak_warning><error descr="Expected end of expression"> </error>d}}
+<<warning descr="Unknown html tag bar">bar</warning>></<warning descr="Unknown html tag bar">bar</warning>>
+<div <warning descr="Attribute v-foo is not allowed here">v-foo</warning>=""></div>
+
+<script>
+  const app = new <weak_warning descr="Unresolved type Vue">Vue</weak_warning>({
+    el: '#app',
+    delimiters: ['[[', ']]'],
+    directives: {
+      foo: function () {
+      }
+    },
+    components: {
+      bar: {
+        props: {
+          bar: String
+        }
+      }
+    },
+    data: {
+      message: 'Hello Vue!'
+    }
+  });
+</script>
+</body>
+</html>

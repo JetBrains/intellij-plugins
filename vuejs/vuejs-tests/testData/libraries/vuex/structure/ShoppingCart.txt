@@ -1,0 +1,40 @@
+VuexStoreContext: {
+  stores: [
+    VuexStoreImpl <store/index.js:261:JSNewExpression> {
+      modules: [
+        VuexModuleImpl cart [namespaced] <store/index.js:295:ES6Property> {
+          state: {
+            checkoutStatus: <modules/cart.js:112:JSProperty>,
+            items: <modules/cart.js:99:JSProperty>,
+          }
+          getters: {
+            cartProducts: <modules/cart.js:167:JSProperty>,
+            cartTotalPrice: <modules/cart.js:460:JSProperty>,
+          }
+          actions: {
+            addProductToCart: <modules/cart.js:1142:JSFunctionProperty>,
+            checkout: <modules/cart.js:661:JSFunctionProperty>,
+          }
+          mutations: {
+            incrementItemQuantity: <modules/cart.js:1756:JSFunctionProperty>,
+            pushProductToCart: <modules/cart.js:1654:JSFunctionProperty>,
+            setCartItems: <modules/cart.js:1890:JSFunctionProperty>,
+            setCheckoutStatus: <modules/cart.js:1956:JSFunctionProperty>,
+          }
+        }
+        VuexModuleImpl products [namespaced] <store/index.js:305:ES6Property> {
+          state: {
+            all: <modules/products.js:70:JSProperty>,
+          }
+          actions: {
+            getAllProducts: <modules/products.js:143:JSFunctionProperty>,
+          }
+          mutations: {
+            decrementProductInventory: <modules/products.js:360:JSFunctionProperty>,
+            setProducts: <modules/products.js:295:JSFunctionProperty>,
+          }
+        }
+      ]
+    }
+  ],
+}

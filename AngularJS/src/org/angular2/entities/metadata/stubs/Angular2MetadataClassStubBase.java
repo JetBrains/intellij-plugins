@@ -5,12 +5,15 @@ import com.intellij.json.psi.*;
 import com.intellij.lang.javascript.index.flags.BooleanStructureElement;
 import com.intellij.lang.javascript.index.flags.FlagsStructure;
 import com.intellij.openapi.util.AtomicNotNullLazyValue;
+import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.util.containers.ContainerUtil;
+import org.angular2.entities.Angular2DirectiveKind;
 import org.angular2.entities.Angular2EntityUtils;
 import org.angular2.entities.metadata.psi.Angular2MetadataClassBase;
+import org.angular2.index.Angular2MetadataClassNameIndex;
 import org.angular2.lang.metadata.MetadataUtils;
 import org.angular2.lang.metadata.psi.MetadataElementType;
 import org.angular2.lang.metadata.stubs.MetadataElementStub;
@@ -36,9 +39,8 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
 
   private static final AtomicNotNullLazyValue<Map<String, EntityFactory>> ENTITY_FACTORIES =
     new AtomicNotNullLazyValue<Map<String, EntityFactory>>() {
-      @NotNull
       @Override
-      protected Map<String, EntityFactory> compute() {
+      protected @NotNull Map<String, EntityFactory> compute() {
         return ContainerUtil.<String, EntityFactory>immutableMapBuilder()
           .put(MODULE_DEC, Angular2MetadataModuleStub::new)
           .put(PIPE_DEC, Angular2MetadataPipeStub::createPipeStub)
@@ -108,8 +110,7 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
     myOutputMappings = readFlag(HAS_OUTPUT_MAPPINGS) ? MetadataElementStub.readStringMap(stream) : Collections.emptyMap();
   }
 
-  @Nullable
-  public String getClassName() {
+  public @Nullable String getClassName() {
     return getMemberName();
   }
 
@@ -129,12 +130,13 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
     return Collections.unmodifiableMap(myOutputMappings);
   }
 
-  public boolean isStructuralDirective() {
-    return readFlag(IS_STRUCTURAL_DIRECTIVE_FLAG);
-  }
-
-  public boolean isRegularDirective() {
-    return readFlag(IS_REGULAR_DIRECTIVE_FLAG);
+  public @Nullable Angular2DirectiveKind getDirectiveKind() {
+    boolean isStructural = readFlag(IS_STRUCTURAL_DIRECTIVE_FLAG);
+    boolean isRegular = readFlag(IS_REGULAR_DIRECTIVE_FLAG);
+    if (isStructural || isRegular) {
+      return Angular2DirectiveKind.get(isRegular, isStructural);
+    }
+    return null;
   }
 
   @Override
@@ -147,6 +149,14 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
     }
     if (!myOutputMappings.isEmpty()) {
       writeStringMap(myOutputMappings, stream);
+    }
+  }
+
+  @Override
+  public void index(@NotNull IndexSink sink) {
+    super.index(sink);
+    if (getClassName() != null) {
+      sink.occurrence(Angular2MetadataClassNameIndex.KEY, getClassName());
     }
   }
 
@@ -163,9 +173,13 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
     JsonObject members = tryCast(doIfNotNull(source.findProperty(MEMBERS), JsonProperty::getValue), JsonObject.class);
     JsonProperty constructor = members != null ? members.findProperty(CONSTRUCTOR) : null;
     String constructorText = constructor != null ? constructor.getText() : "";
-    boolean hasTemplateRef = constructorText.contains(Angular2EntityUtils.TEMPLATE_REF);
-    writeFlag(IS_STRUCTURAL_DIRECTIVE_FLAG, hasTemplateRef || constructorText.contains(Angular2EntityUtils.VIEW_CONTAINER_REF));
-    writeFlag(IS_REGULAR_DIRECTIVE_FLAG, !hasTemplateRef);
+    Angular2DirectiveKind kind = Angular2DirectiveKind.get(
+      constructorText.contains(Angular2EntityUtils.ELEMENT_REF),
+      constructorText.contains(Angular2EntityUtils.TEMPLATE_REF),
+      constructorText.contains(Angular2EntityUtils.VIEW_CONTAINER_REF)
+    );
+    writeFlag(IS_STRUCTURAL_DIRECTIVE_FLAG, kind != null && kind.isStructural());
+    writeFlag(IS_REGULAR_DIRECTIVE_FLAG, kind != null && kind.isRegular());
   }
 
   private void loadMember(@NotNull JsonProperty property) {

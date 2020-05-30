@@ -32,4 +32,11 @@ class VueOptimizeImportTest : JSOptimizeImportTestBase() {
     FileDocumentManager.getInstance().saveAllDocuments()
     myFixture.checkResult("<script lang=\"ts\"></script>")
   }
+  
+  
+  fun testVueSimpleOptimizeWithType() {
+    val name = getTestName(false)
+    myFixture.configureByFiles("$name.vue", name + "_2.ts")
+    runOptimizeAction(defaultExtension)
+  }
 }

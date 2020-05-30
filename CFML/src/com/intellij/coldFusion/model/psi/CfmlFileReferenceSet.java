@@ -70,8 +70,7 @@ public class CfmlFileReferenceSet extends FileReferenceSet implements PlatformIc
 
 
     @Override
-    @NotNull
-    public Object[] getVariants() {
+    public Object @NotNull [] getVariants() {
 
       Collection<Object> variants = new LinkedList<>();
       String text = getElement().getNode().getText();

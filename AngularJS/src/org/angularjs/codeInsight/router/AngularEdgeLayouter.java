@@ -26,7 +26,7 @@ public class AngularEdgeLayouter {
       graph.setRealizer(edge, oneEdgeLayouter.myRealizer);
       final GraphManager gm = GraphManager.getGraphManager();
       graph.setEndPointsAbs(edge, gm.createYPoint(oneEdgeLayouter.sourceX, oneEdgeLayouter.sourceY),
-                                  gm.createYPoint(oneEdgeLayouter.targetX, oneEdgeLayouter.targetY));
+                            gm.createYPoint(oneEdgeLayouter.targetX, oneEdgeLayouter.targetY));
     }
   }
 
@@ -78,7 +78,8 @@ public class AngularEdgeLayouter {
       if (AngularUiRouterEdge.Type.parent.equals(edgeObject.getType())) {
         //realizer.setLineColor(new Color(255, 224, 69));
         myRealizer.setLineType(LineType.DOTTED_1);
-      } else {
+      }
+      else {
         //if (AngularUiRouterEdge.Type.providesTemplate.equals(edgeObject.getType())) realizer.setLineColor(new Color(113, 136, 255));
         if (AngularUiRouterEdge.Type.fillsTemplate.equals(edgeObject.getType())) {
           //realizer.setLineColor(new Color(110, 255, 192));

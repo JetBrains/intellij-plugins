@@ -32,7 +32,7 @@ public class ValidationStructureViewTest extends BasicLightHighlightingTestCase 
   public void testDefaultPresentation() {
     myFixture.configureByFile("validation-structure.xml");
     myFixture.testStructureView(component -> {
-      component.setActionActive(StructureViewTreeModel.HIDE_PARAMS_ID, false);
+      component.setActionActive(StructureViewTreeModel.getHideParamsId(), false);
       PlatformTestUtil.expandAll(component.getTree());
       PlatformTestUtil.assertTreeEqual(component.getTree(),
                                        "-validation-structure.xml\n" +
@@ -49,7 +49,7 @@ public class ValidationStructureViewTest extends BasicLightHighlightingTestCase 
   public void testHideParam() {
     myFixture.configureByFile("validation-structure.xml");
     myFixture.testStructureView(component -> {
-      component.setActionActive(StructureViewTreeModel.HIDE_PARAMS_ID, true);
+      component.setActionActive(StructureViewTreeModel.getHideParamsId(), true);
       PlatformTestUtil.expandAll(component.getTree());
       PlatformTestUtil.assertTreeEqual(component.getTree(),
                                        "-validation-structure.xml\n" +

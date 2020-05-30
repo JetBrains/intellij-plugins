@@ -1,0 +1,7 @@
+{
+  "rulesDirectory": "<RULES_DIRECTORY_TO_PATCH>",
+  "rules": {
+    "template-banana-in-box": "true",
+    "quotemark": [true, "single"]
+  }
+}

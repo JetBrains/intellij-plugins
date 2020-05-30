@@ -4,14 +4,14 @@ import {SchematicsProvider} from "./schematicsProvider";
 import {SchematicCommand} from "@angular/cli/models/schematic-command";
 
 let command = new (SchematicCommand as any)({}, null);
-command.getEngineHost();
+let engineHost = command.getEngineHost();
 
-const schematicsProvider: SchematicsProvider = {
+const schematicsProvider: Promise<SchematicsProvider> = Promise.resolve({
   getCollection(collectionName: string): Collection<any, any> {
     return command.getCollection(collectionName);
   },
-  getEngineHost() {
-    return command.getEngineHost();
+  listSchematics(collection): string[] {
+    return engineHost.listSchematics(collection)
   },
   getSchematic(collection: Collection<any, any>, schematicName: string, allowPrivate?: boolean): Schematic<any, any> {
     return command.getSchematic(collection, schematicName, allowPrivate);
@@ -19,6 +19,6 @@ const schematicsProvider: SchematicsProvider = {
   getDefaultSchematicCollection() {
     return command.getDefaultSchematicCollection();
   }
-}
+})
 
 export = schematicsProvider;

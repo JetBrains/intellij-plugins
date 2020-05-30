@@ -23,9 +23,8 @@ public class MetadataFileStubImpl extends PsiFileStubImpl<MetadataFileImpl> impl
     super.setPsi(psi);
   }
 
-  @NotNull
   @Override
-  public IStubFileElementType getType() {
+  public @NotNull IStubFileElementType getType() {
     return myType;
   }
 

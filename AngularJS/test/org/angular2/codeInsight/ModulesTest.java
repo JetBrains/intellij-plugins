@@ -12,6 +12,7 @@ import org.angular2.entities.Angular2Declaration;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Entity;
 import org.angular2.entities.Angular2Module;
+import org.angular2.modules.Angular2TestModule;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,6 +20,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
+
+import static org.angular2.modules.Angular2TestModule.*;
 
 public class ModulesTest extends Angular2CodeInsightFixtureTestCase {
 
@@ -95,14 +98,32 @@ public class ModulesTest extends Angular2CodeInsightFixtureTestCase {
     doResolutionTest("source-forRoot",
                      "mainModule.ts",
                      "export class Main<caret>Module {",
-                     "check.txt");
+                     "check.txt",
+                     ANGULAR_CORE_8_2_14);
+  }
+
+  public void testJsonMetadataForRootResolution() {
+    doResolutionTest("metadata-forRoot",
+                     "mainModule.ts",
+                     "export class Main<caret>Module {",
+                     "check.txt",
+                     ANGULAR_CORE_8_2_14);
+  }
+
+  public void testIvyMetadataForRootResolution() {
+    doResolutionTest("ivy-forRoot",
+                     "mainModule.ts",
+                     "export class Main<caret>Module {",
+                     "check.txt",
+                     ANGULAR_CORE_8_2_14);
   }
 
   public void testFormsResolution() {
     doResolutionTest("forms",
                      "myModule.ts",
                      "export class FormsModuleMetadata<caret>Test {",
-                     "check.txt");
+                     "check.txt",
+                     ANGULAR_FORMS_8_2_14);
   }
 
   public void testNgModuleWithConstant() {
@@ -116,7 +137,8 @@ public class ModulesTest extends Angular2CodeInsightFixtureTestCase {
     doResolutionTest("agm-core",
                      "module.ts",
                      "export class Main<caret>Module {",
-                     "check.txt");
+                     "check.txt",
+                     AGM_CORE_1_0_0_BETA_5);
   }
 
   public void testFunctionCalls() {
@@ -130,7 +152,8 @@ public class ModulesTest extends Angular2CodeInsightFixtureTestCase {
     doResolutionTest("evo-ui-kit",
                      "module.ts",
                      "export class Main<caret>Module {",
-                     "check.txt");
+                     "check.txt",
+                     EVO_UI_KIT_1_17_0);
   }
 
   public void testCommonNgClassModules() {
@@ -155,11 +178,31 @@ public class ModulesTest extends Angular2CodeInsightFixtureTestCase {
                                   "CommonModuleMetadataTest");
   }
 
+  public void testPrivateModuleExportMetadata() {
+    doResolutionTest("private-module-export-metadata",
+                     "module.ts",
+                     "export class Amount<caret>Module {",
+                     "check.txt",
+                     ANGULAR_CORE_8_2_14,
+                     NGXS_STORE_3_6_2);
+  }
+
+  public void testPrivateModuleExportIvy() {
+    doResolutionTest("private-module-export-ivy",
+                     "module.ts",
+                     "export class Amount<caret>Module {",
+                     "check.txt",
+                     ANGULAR_CORE_9_1_1_MIXED,
+                     NGXS_STORE_3_6_2_MIXED);
+  }
+
   private void doResolutionTest(@NotNull String directory,
                                 @NotNull String moduleFile,
                                 @NotNull String signature,
-                                @NotNull String checkFile) {
+                                @NotNull String checkFile,
+                                @NotNull Angular2TestModule @NotNull ... modules) {
     VirtualFile testDir = myFixture.copyDirectoryToProject(directory, "/");
+    configureCopy(myFixture, modules);
     myFixture.openFileInEditor(testDir.findFileByRelativePath(moduleFile));
     int moduleOffset = AngularTestUtil.findOffsetBySignature(signature, myFixture.getFile());
     PsiElement el = myFixture.getFile().findElementAt(moduleOffset);
@@ -180,6 +223,7 @@ public class ModulesTest extends Angular2CodeInsightFixtureTestCase {
                                              @NotNull String signature,
                                              String... modules) {
     VirtualFile testDir = myFixture.copyDirectoryToProject(directory, "/");
+    configureLink(myFixture);
     myFixture.openFileInEditor(testDir.findFileByRelativePath(declarationFile));
     int moduleOffset = AngularTestUtil.findOffsetBySignature(signature, myFixture.getFile());
     PsiElement el = myFixture.getFile().findElementAt(moduleOffset);

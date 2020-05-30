@@ -90,9 +90,7 @@ public class CssClassValueReference extends PsiPolyVariantCachingReference imple
 
   @Override
   public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
-    final ElementManipulator<PsiElement> manipulator = ElementManipulators.getManipulator(myElement);
-    assert manipulator != null;
-    return manipulator.handleContentChange(myElement, getRangeInElement(), newElementName);
+    return ElementManipulators.handleContentChange(myElement, getRangeInElement(), newElementName);
   }
 
   @Override
@@ -102,16 +100,14 @@ public class CssClassValueReference extends PsiPolyVariantCachingReference imple
   }
 
   @Override
-  @NotNull
-  public Object[] getVariants() {
+  public Object @NotNull [] getVariants() {
     MyCandidatesProcessor processor = new MyCandidatesProcessor();
     processStyles(processor);
     return processor.myStyleNames.toArray();
   }
 
-  @NotNull
   @Override
-  protected ResolveResult[] resolveInner(boolean incompleteCode, @NotNull PsiFile containingFile) {
+  protected ResolveResult @NotNull [] resolveInner(boolean incompleteCode, @NotNull PsiFile containingFile) {
     String value = getValue(myElement);
     if (value == null) return ResolveResult.EMPTY_ARRAY;
     MyResolveProcessor processor = new MyResolveProcessor(value);

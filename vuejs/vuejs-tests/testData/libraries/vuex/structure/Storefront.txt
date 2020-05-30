@@ -1,0 +1,200 @@
+VuexStoreContext: {
+  stores: [
+    VuexStoreImpl <store/index.ts:1065:TypeScriptNewExpression> {
+      state: {
+        __DEMO_MODE__: <store/index.ts:397:JSProperty>,
+        attribute: <store/index.ts:576:JSProperty>,
+        cart: <store/index.ts:435:JSProperty>,
+        category: <store/index.ts:672:JSProperty>,
+        checkout: <store/index.ts:447:JSProperty>,
+        cms: <store/index.ts:463:JSProperty>,
+        compare: <store/index.ts:474:JSProperty>,
+        config: <store/index.ts:421:JSProperty>,
+        newsletter: <store/index.ts:542:JSProperty>,
+        product: <store/index.ts:489:JSProperty>,
+        shipping: <store/index.ts:504:JSProperty>,
+        stock: <store/index.ts:813:JSProperty>,
+        storeView: <store/index.ts:843:JSProperty>,
+        twoStageCachingDelta1: <store/index.ts:860:JSProperty>,
+        twoStageCachingDelta2: <store/index.ts:888:JSProperty>,
+        twoStageCachingDisabled: <store/index.ts:916:JSProperty>,
+        ui: <store/index.ts:532:JSProperty>,
+        user: <store/index.ts:520:JSProperty>,
+        userTokenInvalidateAttemptsCount: <store/index.ts:980:JSProperty>,
+        userTokenInvalidateLock: <store/index.ts:1019:JSProperty>,
+        userTokenInvalidated: <store/index.ts:950:JSProperty>,
+        version: <store/index.ts:382:JSProperty>,
+        wishlist: <store/index.ts:560:JSProperty>,
+      }
+      getters: {
+        getCurrentStoreView: <store/getters.ts:148:JSProperty>,
+      }
+      actions: {
+        resetUserInvalidateLock: <store/actions.ts:196:TypeScriptFunctionProperty>,
+      }
+      modules: [
+        VuexModuleImpl category [namespaced] <store/index.ts:1155:JSProperty> {
+          state: {
+            categoriesMap: <category/index.ts:335:JSProperty>,
+            filtersMap: <category/index.ts:387:JSProperty>,
+            notFoundCategoryIds: <category/index.ts:358:JSProperty>,
+            products: <category/index.ts:407:JSProperty>,
+            searchProductsStats: <category/index.ts:425:JSProperty>,
+          }
+          getters: {
+            getAvailableFilters: <category/getters.ts:5128:JSProperty>,
+            getAvailableFiltersFrom: <category/getters.ts:2382:JSProperty>,
+            getBreadcrumbs: <category/getters.ts:5945:JSProperty>,
+            getBreadcrumbsFor: <category/getters.ts:6038:JSProperty>,
+            getCategories: <category/getters.ts:1226:JSProperty>,
+            getCategoriesMap: <category/getters.ts:1302:JSProperty>,
+            getCategoryByParams: <category/getters.ts:1761:JSProperty>,
+            getCategoryFrom: <category/getters.ts:1553:JSProperty>,
+            getCategoryProducts: <category/getters.ts:1455:JSProperty>,
+            getCategoryProductsTotal: <category/getters.ts:6463:JSProperty>,
+            getCategorySearchProductsStats: <category/getters.ts:6387:JSProperty>,
+            getCurrentCategory: <category/getters.ts:2259:JSProperty>,
+            getCurrentFilters: <category/getters.ts:5718:JSProperty>,
+            getCurrentFiltersFrom: <category/getters.ts:5254:JSProperty>,
+            getCurrentSearchQuery: <category/getters.ts:5584:JSProperty>,
+            getFiltersMap: <category/getters.ts:5084:JSProperty>,
+            getNotFoundCategoryIds: <category/getters.ts:1381:JSProperty>,
+            getSystemFilterNames: <category/getters.ts:5887:JSProperty>,
+            hasActiveFilters: <category/getters.ts:5798:JSProperty>,
+          }
+          actions: {
+            cacheProducts: <category/actions.ts:4158:TypeScriptFunctionProperty>,
+            changeRouterFilterParameters: <category/actions.ts:11716:TypeScriptFunctionProperty>,
+            configureProducts: <category/actions.ts:5746:TypeScriptFunctionProperty>,
+            findCategories: <category/actions.ts:6893:TypeScriptFunctionProperty>,
+            loadAvailableFiltersFrom: <category/actions.ts:10014:TypeScriptFunctionProperty>,
+            loadCategories: <category/actions.ts:7077:TypeScriptFunctionProperty>,
+            loadCategory: <category/actions.ts:8695:TypeScriptFunctionProperty>,
+            loadCategoryBreadcrumbs: <category/actions.ts:11834:TypeScriptFunctionProperty>,
+            loadCategoryFilters: <category/actions.ts:9165:TypeScriptFunctionProperty>,
+            loadCategoryProducts: <category/actions.ts:1436:TypeScriptFunctionProperty>,
+            loadMoreCategoryProducts: <category/actions.ts:2978:TypeScriptFunctionProperty>,
+            processCategoryProducts: <category/actions.ts:5238:TypeScriptFunctionProperty>,
+            registerCategoryProductsMapping: <category/actions.ts:6331:TypeScriptFunctionProperty>,
+            resetSearchFilters: <category/actions.ts:11564:JSProperty> [root],
+            switchSearchFilters: <category/actions.ts:11141:TypeScriptFunctionProperty>,
+          }
+        }
+      ]
+    }
+  ],
+  registeredModules: [
+    VuexModuleImpl cart [namespaced] <store/index.ts:1240:JSLiteralExpression> {
+      state: {
+        cartIsLoaded: <cart/index.ts:419:JSProperty>,
+        cartItems: <cart/index.ts:663:JSProperty>,
+        cartItemsHash: <cart/index.ts:572:JSProperty>,
+        cartServerLastSyncDate: <cart/index.ts:595:JSProperty>,
+        cartServerLastTotalsSyncDate: <cart/index.ts:626:JSProperty>,
+        cartServerToken: <cart/index.ts:444:JSProperty>,
+        connectBypassCount: <cart/index.ts:725:JSProperty>,
+        isAddingToCart: <cart/index.ts:752:JSProperty>,
+        isMicrocartOpen: <cart/index.ts:298:JSProperty>,
+        itemsAfterPlatformTotals: <cart/index.ts:326:JSProperty>,
+        payment: <cart/index.ts:555:JSProperty>,
+        platformTotalSegments: <cart/index.ts:386:JSProperty>,
+        platformTotals: <cart/index.ts:360:JSProperty>,
+        shipping: <cart/index.ts:537:JSProperty>,
+      }
+      getters: {
+        bypassCounter: <cart/getters.ts:2721:JSProperty>,
+        canSyncTotals: <cart/getters.ts:2574:JSProperty>,
+        canUpdateMethods: <cart/getters.ts:2480:JSProperty>,
+        getCartItems: <cart/getters.ts:1278:JSProperty>,
+        getCartToken: <cart/getters.ts:463:JSProperty>,
+        getCoupon: <cart/getters.ts:2139:JSProperty>,
+        getCurrentCartHash: <cart/getters.ts:778:JSProperty>,
+        getFirstPaymentMethod: <cart/getters.ts:1667:JSProperty>,
+        getFirstShippingMethod: <cart/getters.ts:1562:JSProperty>,
+        getIsAdding: <cart/getters.ts:2923:JSProperty>,
+        getIsMicroCartOpen: <cart/getters.ts:2969:JSProperty>,
+        getItemsTotalQuantity: <cart/getters.ts:2002:JSProperty>,
+        getLastCartHash: <cart/getters.ts:729:JSProperty>,
+        getLastSyncDate: <cart/getters.ts:511:JSProperty>,
+        getLastTotalsSyncDate: <cart/getters.ts:569:JSProperty>,
+        getPaymentMethod: <cart/getters.ts:685:JSProperty>,
+        getPaymentMethodCode: <cart/getters.ts:2853:JSProperty>,
+        getShippingMethod: <cart/getters.ts:639:JSProperty>,
+        getShippingMethod2: <cart/getters.ts:3023:JSProperty>,
+        getShippingMethodCode: <cart/getters.ts:2773:JSProperty>,
+        getTotals: <cart/getters.ts:1768:JSProperty>,
+        isCartConnected: <cart/getters.ts:1419:JSProperty>,
+        isCartEmpty: <cart/getters.ts:2667:JSProperty>,
+        isCartHashChanged: <cart/getters.ts:864:JSProperty>,
+        isCartHashChanged2: <cart/getters.ts:3096:JSProperty>,
+        isCartHashEmptyOrChanged: <cart/getters.ts:1179:JSProperty>,
+        isCartSyncEnabled: <cart/getters.ts:1472:JSProperty>,
+        isSyncRequired: <cart/getters.ts:957:JSProperty>,
+        isTotalsSyncEnabled: <cart/getters.ts:1320:JSProperty>,
+        isTotalsSyncRequired: <cart/getters.ts:1062:JSProperty>,
+        isVirtualCart: <cart/getters.ts:2359:JSProperty>,
+      }
+      actions: {
+        addItem: <actions/itemActions.ts:1490:TypeScriptFunctionProperty>,
+        addItems: <actions/itemActions.ts:2258:TypeScriptFunctionProperty>,
+        applyCoupon: <actions/couponActions.ts:354:TypeScriptFunctionProperty>,
+        authorize: <actions/connectActions.ts:1110:TypeScriptFunctionProperty>,
+        checkProductStatus: <actions/itemActions.ts:1962:TypeScriptFunctionProperty>,
+        clear: <actions/connectActions.ts:482:TypeScriptFunctionProperty>,
+        configureItem: <actions/itemActions.ts:446:TypeScriptFunctionProperty>,
+        connect: <actions/connectActions.ts:1633:TypeScriptFunctionProperty>,
+        disconnect: <actions/connectActions.ts:1019:TypeScriptFunctionProperty>,
+        findProductOption: <actions/productActions.ts:104:TypeScriptFunctionProperty>,
+        getItem: <actions/itemActions.ts:1370:TypeScriptFunctionProperty>,
+        getProductVariant: <actions/productActions.ts:610:TypeScriptFunctionProperty>,
+        getTotals: <actions/totalsActions.ts:365:TypeScriptFunctionProperty>,
+        load: <actions/synchronizeActions.ts:625:TypeScriptFunctionProperty>,
+        merge: <actions/mergeActions.ts:7411:TypeScriptFunctionProperty>,
+        mergeClientItem: <actions/mergeActions.ts:4000:TypeScriptFunctionProperty>,
+        mergeClientItems: <actions/mergeActions.ts:4791:TypeScriptFunctionProperty>,
+        mergeServerItem: <actions/mergeActions.ts:5288:TypeScriptFunctionProperty>,
+        mergeServerItems: <actions/mergeActions.ts:6538:TypeScriptFunctionProperty>,
+        overrideServerTotals: <actions/totalsActions.ts:585:TypeScriptFunctionProperty>,
+        pullMethods: <actions/methodsActions.ts:558:TypeScriptFunctionProperty>,
+        refreshTotals: <actions/totalsActions.ts:2985:TypeScriptFunctionProperty>,
+        removeCoupon: <actions/couponActions.ts:96:TypeScriptFunctionProperty>,
+        removeItem: <actions/itemActions.ts:3569:TypeScriptFunctionProperty>,
+        restoreQuantity: <actions/quantityActions.ts:318:TypeScriptFunctionProperty>,
+        serverPull: <actions/synchronizeActions.ts:1975:TypeScriptFunctionProperty>,
+        setDefaultCheckoutMethods: <actions/methodsActions.ts:941:TypeScriptFunctionProperty>,
+        stockSync: <actions/synchronizeActions.ts:3463:TypeScriptFunctionProperty>,
+        sync: <actions/synchronizeActions.ts:2247:TypeScriptFunctionProperty>,
+        syncPaymentMethods: <actions/methodsActions.ts:1287:TypeScriptFunctionProperty>,
+        syncShippingMethods: <actions/methodsActions.ts:3262:TypeScriptFunctionProperty>,
+        syncTotals: <actions/totalsActions.ts:1840:TypeScriptFunctionProperty>,
+        synchronizeCart: <actions/synchronizeActions.ts:1029:TypeScriptFunctionProperty>,
+        synchronizeServerItem: <actions/mergeActions.ts:2644:TypeScriptFunctionProperty>,
+        toggleMicrocart: <actions/connectActions.ts:398:TypeScriptFunctionProperty>,
+        updateClientItem: <actions/mergeActions.ts:584:TypeScriptFunctionProperty>,
+        updateItem: <actions/itemActions.ts:1273:TypeScriptFunctionProperty>,
+        updateQuantity: <actions/quantityActions.ts:889:TypeScriptFunctionProperty>,
+        updateServerItem: <actions/mergeActions.ts:1194:TypeScriptFunctionProperty>,
+        updateShippingMethods: <actions/methodsActions.ts:2949:TypeScriptFunctionProperty>,
+        updateTotalsAfterMerge: <actions/mergeActions.ts:7118:TypeScriptFunctionProperty>,
+      }
+      modules: [
+        VuexModuleImpl breadcrumbs [namespaced] <cart/index.ts:831:JSProperty> {
+          state: {
+            current: <breadcrumbs/index.ts:85:JSProperty>,
+            routes: <breadcrumbs/index.ts:69:JSProperty>,
+          }
+          getters: {
+            getBreadcrumbsCurrent: <breadcrumbs/index.ts:384:JSProperty>,
+            getBreadcrumbsRoutes: <breadcrumbs/index.ts:333:JSProperty>,
+          }
+          actions: {
+            set: <breadcrumbs/index.ts:248:TypeScriptFunctionProperty>,
+          }
+          mutations: {
+            set: <breadcrumbs/index.ts:123:TypeScriptFunctionProperty>,
+          }
+        }
+      ]
+    }
+  ]
+}

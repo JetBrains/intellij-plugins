@@ -42,8 +42,7 @@ public class CfmlAttributeDescription implements Comparable<CfmlAttributeDescrip
     myDescription = description;
   }
 
-  @Nullable
-  public String[] getValues() {
+  public String @Nullable [] getValues() {
     return myValues;
   }
 

@@ -4,16 +4,15 @@ package com.intellij.javascript.karma.execution;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.GeneralCommandLine;
+import com.intellij.execution.filters.Filter;
 import com.intellij.execution.process.*;
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
-import com.intellij.javascript.jest.JestUtil;
 import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.scope.KarmaScopeKind;
 import com.intellij.javascript.karma.server.KarmaJsSourcesLocator;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerTerminatedListener;
-import com.intellij.javascript.karma.tree.KarmaTestProxyFilterProvider;
 import com.intellij.javascript.nodejs.NodeStackTraceFilter;
 import com.intellij.javascript.nodejs.interpreter.NodeCommandLineConfigurator;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
@@ -23,11 +22,11 @@ import com.intellij.javascript.testFramework.jasmine.JasmineFileStructure;
 import com.intellij.javascript.testFramework.jasmine.JasmineFileStructureBuilder;
 import com.intellij.javascript.testFramework.qunit.QUnitFileStructure;
 import com.intellij.javascript.testFramework.qunit.QUnitFileStructureBuilder;
+import com.intellij.javascript.testing.JSTestRunnerUtil;
 import com.intellij.lang.javascript.ConsoleCommandLineFolder;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -35,7 +34,6 @@ import com.intellij.util.ObjectUtils;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.execution.ParametersListUtil;
-import com.intellij.util.io.BaseOutputReader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.io.LocalFileFinder;
@@ -85,12 +83,16 @@ public class KarmaExecutionSession {
 
   @NotNull
   private SMTRunnerConsoleView createSMTRunnerConsoleView() {
-    KarmaTestProxyFilterProvider filterProvider = new KarmaTestProxyFilterProvider(myProject, myKarmaServer);
-    KarmaConsoleProperties consoleProperties = new KarmaConsoleProperties(myRunConfiguration, myExecutor, filterProvider);
+    KarmaConsoleProperties consoleProperties = myRunConfiguration.createTestConsoleProperties(myExecutor, myKarmaServer);
     consoleProperties.addStackTraceFilter(new NodeStackTraceFilter(
       myProject, myKarmaServer.getServerSettings().getWorkingDirectorySystemDependent())
     );
     KarmaConsoleView consoleView = new KarmaConsoleView(consoleProperties, myKarmaServer, myExecutionType, myProcessHandler);
+    for (Filter filter : consoleProperties.getStackTrackFilters()) {
+      if (!(filter instanceof NodeStackTraceFilter)) {
+        consoleView.addMessageFilter(filter);
+      }
+    }
     SMTestRunnerConnectionUtil.initConsoleView(consoleView, consoleProperties.getTestFrameworkName());
     return consoleView;
   }
@@ -139,13 +141,7 @@ public class KarmaExecutionSession {
   private OSProcessHandler createOSProcessHandler(@NotNull KarmaServer server) throws ExecutionException {
     NodeJsInterpreter interpreter = myRunSettings.getInterpreterRef().resolveNotNull(myProject);
     GeneralCommandLine commandLine = createCommandLine(interpreter, server);
-    OSProcessHandler processHandler = new KillableColoredProcessHandler(commandLine) {
-      @NotNull
-      @Override
-      protected BaseOutputReader.Options readerOptions() {
-        return BaseOutputReader.Options.forMostlySilentProcess();
-      }
-    };
+    OSProcessHandler processHandler = new KillableColoredProcessHandler.Silent(commandLine);
     server.getRestarter().onRunnerExecutionStarted(processHandler);
     ProcessTerminatedListener.attach(processHandler);
     return processHandler;
@@ -173,17 +169,19 @@ public class KarmaExecutionSession {
     }
     String testNamesPattern = getTestNamesPattern();
     if (testNamesPattern != null) {
-      commandLine.addParameter("--testName=" + testNamesPattern);
+      // Name pattern should be surrounded with '/' to be in compliance with karma-jasmine:
+      // https://github.com/karma-runner/karma-jasmine/blob/39b1582987f4b82d6da4775414f208a8433ec794/src/adapter.js#L298
+      commandLine.addParameter("--testName=/" + testNamesPattern + "/");
       myFolder.addLastParameterFrom(commandLine);
     }
-    NodeCommandLineConfigurator.find(interpreter).configure(commandLine);
+    NodeCommandLineConfigurator.find(interpreter).configure(commandLine, NodeCommandLineConfigurator.defaultOptions(myProject));
     return commandLine;
   }
 
   @Nullable
   private String getTestNamesPattern() throws ExecutionException {
     if (myFailedTestNames != null) {
-      return getTestNamesPattern(myFailedTestNames, false);
+      return JSTestRunnerUtil.getTestsPattern(myFailedTestNames, false);
     }
     if (myRunSettings.getScopeKind() == KarmaScopeKind.TEST_FILE) {
       List<String> topNames = findTopLevelSuiteNames(myProject, myRunSettings.getTestFileSystemIndependentPath());
@@ -191,34 +189,15 @@ public class KarmaExecutionSession {
       if (topNames.isEmpty()) {
         throw new ExecutionException("No tests found in " + testFileName);
       }
-      return getTestNamesPattern(ContainerUtil.map(topNames, name -> Collections.singletonList(name)), true);
+      return JSTestRunnerUtil.getTestsPattern(ContainerUtil.map(topNames, name -> Collections.singletonList(name)), true);
     }
-    if (myRunSettings.getScopeKind() == KarmaScopeKind.SUITE) {
-      return getTestNamesPattern(Collections.singletonList(myRunSettings.getTestNames()), true);
-    }
-    if (myRunSettings.getScopeKind() == KarmaScopeKind.TEST) {
-      return getTestNamesPattern(Collections.singletonList(myRunSettings.getTestNames()), false);
+    if (myRunSettings.getScopeKind() == KarmaScopeKind.SUITE || myRunSettings.getScopeKind() == KarmaScopeKind.TEST) {
+      return JSTestRunnerUtil.buildTestNamesPattern(myProject,
+                                                    myRunSettings.getTestFileSystemDependentPath(),
+                                                    myRunSettings.getTestNames(),
+                                                    myRunSettings.getScopeKind() == KarmaScopeKind.SUITE);
     }
     return null;
-  }
-
-  @NotNull
-  private static String getTestNamesPattern(@NotNull List<List<String>> testNames, boolean suite) {
-    List<String> patterns = ContainerUtil.map(testNames, testFqn -> {
-      List<String> escaped = ContainerUtil.mapNotNull(testFqn, s -> JestUtil.escapeJavaScriptRegexp(s));
-      return StringUtil.join(escaped, " ");
-    });
-    if (patterns.isEmpty()) {
-      return "$^"; // matches nothing
-    }
-    String result;
-    if (patterns.size() == 1) {
-      result = patterns.get(0);
-    }
-    else {
-      result = "(" + StringUtil.join(patterns, "|") + ")";
-    }
-    return "^" + result + (suite ? " " : "$");
   }
 
   private static List<String> findTopLevelSuiteNames(@NotNull Project project, @NotNull String testFilePath) throws ExecutionException {

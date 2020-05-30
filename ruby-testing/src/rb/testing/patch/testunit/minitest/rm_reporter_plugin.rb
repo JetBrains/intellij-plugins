@@ -9,28 +9,72 @@ rescue LoadError
   $stderr.puts("====================================================================================================\n")
   $stderr.puts("Using default results reporter...\n")
 else
+  require 'drb/drb'
+  require 'minitest/rubymine_minitest_patch'
+
+  if defined? Minitest::Test
+    Minitest::Test.class_eval do
+      include RubyMineMinitestPatch
+      alias_method :original_run, :run
+      alias_method :run, :run_with_rm_hook
+    end
+  elsif defined? MiniTest::Unit::TestCase
+    MiniTest::Unit::TestCase.class_eval do
+      include RubyMineMinitestPatch
+      alias_method :original_run, :run
+      alias_method :run, :run_with_rm_hook
+    end
+  end
 
   module Minitest
-    def self.plugin_rm_reporter_options(opts, options)
+    class << self
+      attr_accessor :rubymine_reporter
+      attr_accessor :my_drb_url
     end
 
     def self.plugin_rm_reporter_init(options)
-      unless defined?(Minitest::Reporters)
-        self.reporter.reporters.clear
-        self.reporter << MyRubyMineReporter.new(options)
+      Minitest.reporter.reporters.clear
+      Minitest.reporter.reporters << self.rubymine_reporter
+    end
+
+    class TestResult < Struct.new(:suite, :name, :assertions, :time, :exception)
+      def result
+        case exception
+        when nil then :pass
+        when Skip then :skip
+        when Assertion then :failure
+        else :error
+        end
+      end
+
+      def passed?
+        self.result == :pass
+      end
+
+      def skipped?
+        self.result == :skip
+      end
+
+      def failure
+        self.exception
+      end
+
+      def error?
+        self.result == :error
       end
     end
 
-    private
-
-    class MyRubyMineReporter
+    class MyRubyMineReporter < MiniTest::Unit
       include ::Rake::TeamCity::RunnerCommon
       include ::Rake::TeamCity::RunnerUtils
       include ::Rake::TeamCity::Utils::UrlFormatter
 
       attr_accessor :io, :test_count, :assertion_count, :failures, :errors, :skips
+      attr_accessor :already_run_tests
+      attr_accessor :my_mutex
 
       def initialize(options = {})
+        super()
         @passed = true
         self.io= options[:io] || $stdout
         self.test_count = 0
@@ -38,6 +82,9 @@ else
         self.failures = 0
         self.errors = 0
         self.skips = 0
+        self.my_mutex = Mutex.new
+        self.already_run_tests = []
+        Minitest.my_drb_url = DRb.start_service(nil, self.already_run_tests).uri
       end
 
       def start
@@ -51,73 +98,96 @@ else
         # Report tests count:
         # todo: get test count
         if ::Rake::TeamCity.is_in_idea_mode
-          log(@message_factory.create_tests_count(test_count))
+          log(Rake::TeamCity::MessageFactory.create_tests_count(test_count))
         elsif ::Rake::TeamCity.is_in_buildserver_mode
-          log(@message_factory.create_progress_message("Starting.. (#{self.test_count} tests)"))
+          log(Rake::TeamCity::MessageFactory.create_progress_message("Starting.. (#{self.test_count} tests)"))
         end
         @suites_start_time = Time.now
       end
 
-      def report
-        total_time = Time.now - @suites_start_time
+      def close_all_suites
+        (0...already_run_tests.count).each do |i|
+          log(Rake::TeamCity::MessageFactory.create_suite_finished(already_run_tests[i], self.already_run_tests[i]))
+        end
+        self.already_run_tests.clear()
+      end
 
-        io.puts('Finished in %.5fs' % total_time)
-        io.print('%d tests, %d assertions, ' % [test_count, assertion_count])
-        io.print('%d failures, %d errors, ' % [failures, errors])
-        io.print('%d skips' % skips)
-        io.puts
+      def prerecord klass, name
+        # do not remove, this method called from minitest-reporters
+      end
+
+      def report
+        close_all_suites
+        []
       end
 
       def before_suite(suite)
-        log(@message_factory.create_suite_started(suite.name, location_from_ruby_qualified_name(suite.name)))
+        log(Rake::TeamCity::MessageFactory.create_suite_started(suite.name, location_from_ruby_qualified_name(suite.name)))
       end
 
       def after_suite(suite)
-        log(@message_factory.create_suite_finished(suite.name))
+        already_run_test.remove suite.name
+        log(Rake::TeamCity::MessageFactory.create_suite_finished(suite.name))
       end
 
       def before_test(test)
+        fqn = get_fqn_from_test(test)
+        tests = DRbObject.new_with_uri(Minitest.my_drb_url)
+        DRb.start_service
+
+        my_mutex.synchronize {
+          unless tests.include? test.class.to_s
+            tests << test.class.to_s
+            log(Rake::TeamCity::MessageFactory.create_suite_started(test.class.to_s, minitest_test_location(test.class.to_s), '0', test.class.to_s))
+          end
+        }
+
+        @test_start_time = Time.new
         @test_started = true
-        fqn = "#{test.class}.#{test.name}"
-        log(@message_factory.create_test_started(test.name, minitest_test_location(fqn)))
+        test_name = get_test_name(test)
+        log(Rake::TeamCity::MessageFactory.create_test_started(test_name, minitest_test_location(fqn), test.class.to_s, fqn))
       end
 
-      def record(result)
+      def after_test(result)
+        test_name = get_test_name(result)
+        fqn = get_fqn_from_test(result)
+        duration_ms = get_time_in_ms(Time.new - @test_start_time)
+        log(Rake::TeamCity::MessageFactory.create_test_finished(test_name, duration_ms, nil, fqn))
+      end
+
+      def record(result,  name = nil, assertions = nil, time = nil, exceptions = nil)
+        if name.nil?
+          process_test_result(result)
+        else
+          test_result = TestResult.new(result, name.to_sym, assertions, time, exceptions)
+          process_test_result(test_result)
+        end
+      end
+
+      def process_test_result(result)
+        fqn = get_fqn_from_test(result)
         self.test_count += 1
         self.assertion_count += result.assertions
         test_name = result.name
         if result.skipped?
           self.skips += 1
           with_result(result) do |exception_msg, backtrace|
-            log(@message_factory.create_test_ignored(test_name, exception_msg, backtrace))
+            log(Rake::TeamCity::MessageFactory.create_test_ignored(test_name, exception_msg, backtrace, fqn))
           end
         end
         # todo: replace this check with failed? when it will be available
         if not result.passed? and result.failure.class == Assertion
           self.failures += 1
           with_result(result) do |exception_msg, backtrace|
-            log(@message_factory.create_test_failed(test_name, exception_msg, backtrace))
+            log(Rake::TeamCity::MessageFactory.create_test_failed(test_name, exception_msg, backtrace, fqn))
           end
         end
         if result.error?
           self.errors += 1
           with_result(result) do |exception_msg, backtrace|
-            log(@message_factory.create_test_error(test_name, exception_msg, backtrace))
+            log(Rake::TeamCity::MessageFactory.create_test_error(test_name, exception_msg, backtrace, fqn))
           end
         end
-        if result.passed?
-          unless @test_started
-            # hope minitest will fire before_test callback soon, but for now we should emulate it
-            fqn = "#{result.class}.#{test_name}"
-            if "#{result.class}".end_with?("Minitest::Result")
-              fqn = "#{result.klass}.#{test_name}"
-            end
-            log(@message_factory.create_test_started(test_name, minitest_test_location(fqn)))
-          end
-          duration_ms = get_time_in_ms(result.time)
-          log(@message_factory.create_test_finished(test_name, duration_ms.nil? ? 0 : duration_ms))
-        end
-        @test_started = false
       end
 
       def passed?
@@ -125,6 +195,25 @@ else
       end
 
       private
+      def get_test_name(test)
+        if defined? test.name
+          test.name
+        else
+          test.__name__
+        end
+      end
+
+      def get_fqn_from_test(test)
+        test_name = get_test_name(test)
+
+        if "#{test.class}".end_with?("MiniTest::TestResult")
+          "#{test.suite}.#{test_name}"
+        elsif test.respond_to? :klass
+          "#{test.klass}.#{test_name}"
+        else
+          "#{test.class}.#{test_name}"
+        end
+      end
 
       def log(msg)
         io.flush

@@ -12,9 +12,8 @@ import org.jetbrains.annotations.Nullable;
  * @author Dennis.Ushakov
  */
 public class Angular2LookupCharFilter extends CharFilter {
-  @Nullable
   @Override
-  public Result acceptChar(char c, int prefixLength, Lookup lookup) {
+  public @Nullable Result acceptChar(char c, int prefixLength, Lookup lookup) {
     if (c == '(' || c == ')' || c == '[' || c == ']' || c == '*' || c == '#' || c == '@' || c == '.') {
       final PsiFile file = lookup.getPsiFile();
       if (file instanceof XmlFile && Angular2LangUtil.isAngular2Context(file)) {

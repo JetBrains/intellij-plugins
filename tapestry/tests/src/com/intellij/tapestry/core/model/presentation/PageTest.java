@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import static org.easymock.EasyMock.*;
+import static org.testng.Assert.assertEquals;
 
 /**
  * @author <a href="mailto:hugo.palma@logical-software.com">Hugo Palma</a>
@@ -29,15 +30,15 @@ public class PageTest {
         _classInRootPagesPackageMock = new JavaClassTypeMock("com.app.pages.SomeClass").setPublic(true).setDefaultConstructor(true);
 
         _resourceFinderMock = createMock(IResourceFinder.class);
-        _tapestryProjectMock = org.easymock.EasyMock.createMock(TapestryProject.class);
-        org.easymock.EasyMock.expect(_tapestryProjectMock.getApplicationRootPackage()).andReturn("com.app").anyTimes();
-        org.easymock.EasyMock.expect(_tapestryProjectMock.getResourceFinder()).andReturn(_resourceFinderMock).anyTimes();
+        _tapestryProjectMock = createMock(TapestryProject.class);
+        expect(_tapestryProjectMock.getApplicationRootPackage()).andReturn("com.app").anyTimes();
+        expect(_tapestryProjectMock.getResourceFinder()).andReturn(_resourceFinderMock).anyTimes();
 
-        _libraryMock = org.easymock.EasyMock.createMock(TapestryLibrary.class);
-        org.easymock.EasyMock.expect(_libraryMock.getBasePackage()).andReturn("com.app").anyTimes();
-        org.easymock.EasyMock.expect(_libraryMock.getId()).andReturn("application").anyTimes();
+        _libraryMock = createMock(TapestryLibrary.class);
+        expect(_libraryMock.getBasePackage()).andReturn("com.app").anyTimes();
+        expect(_libraryMock.getId()).andReturn("application").anyTimes();
 
-        org.easymock.EasyMock.replay(_tapestryProjectMock, _libraryMock);
+        replay(_tapestryProjectMock, _libraryMock);
     }
 
     @Test
@@ -46,7 +47,7 @@ public class PageTest {
         expect(_resourceFinderMock.findLocalizedContextResource("SomeClass.tml")).andReturn(new ArrayList<>()).anyTimes();
         replay(_resourceFinderMock);
 
-        assert new Page(_libraryMock, _classInRootPagesPackageMock, _tapestryProjectMock).getTemplate().length == 0;
+        assertEquals(new Page(_libraryMock, _classInRootPagesPackageMock, _tapestryProjectMock).getTemplate().length, 0);
     }
 
     @Test
@@ -69,7 +70,8 @@ public class PageTest {
         expect(_resourceFinderMock.findLocalizedContextResource("SomeClass.tml")).andReturn(templates).anyTimes();
         replay(_resourceFinderMock);
 
-        assert new Page(_libraryMock, _classInRootPagesPackageMock, _tapestryProjectMock).getTemplate()[0].getName().equals("SomeClass.tml");
+        assertEquals(new Page(_libraryMock, _classInRootPagesPackageMock, _tapestryProjectMock).getTemplate()[0].getName(),
+                     "SomeClass.tml");
     }
 
     @Test
@@ -80,7 +82,7 @@ public class PageTest {
         expect(_resourceFinderMock.findLocalizedContextResource("SomeClass.tml")).andReturn(web1).anyTimes();
         replay(_resourceFinderMock);
 
-        assert new Page(_libraryMock, _classInRootPagesPackageMock, _tapestryProjectMock).getTemplate().length == 2;
+        assertEquals(new Page(_libraryMock, _classInRootPagesPackageMock, _tapestryProjectMock).getTemplate().length, 2);
     }
 
     @Test

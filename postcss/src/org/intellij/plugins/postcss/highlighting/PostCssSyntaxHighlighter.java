@@ -108,9 +108,8 @@ public class PostCssSyntaxHighlighter extends CssHighlighter {
     return new PostCssHighlightingLexer(CssElementDescriptorFactory2.getInstance().getValueIdentifiers());
   }
 
-  @NotNull
   @Override
-  public TextAttributesKey[] getTokenHighlights(final IElementType tokenType) {
+  public TextAttributesKey @NotNull [] getTokenHighlights(final IElementType tokenType) {
     if (mapping.containsKey(tokenType)) {
       return pack(mapping.get(tokenType));
     }

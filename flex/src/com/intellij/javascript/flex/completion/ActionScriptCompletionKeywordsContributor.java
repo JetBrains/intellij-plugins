@@ -54,7 +54,7 @@ public class ActionScriptCompletionKeywordsContributor extends JSCompletionKeywo
       consumer.consume(JSLookupPriority.KEYWORDS_PRIORITY, true, accessModifiers);
       consumer.consume(JSLookupPriority.KEYWORDS_PRIORITY, true, "extends", "implements", "include",
                        "import", "static",
-                       "override", "namespace", "class", "interface", "var", "use");
+                       "override", "namespace", "class", "interface", "var", "const", "use");
       return false;
     }
     return true;

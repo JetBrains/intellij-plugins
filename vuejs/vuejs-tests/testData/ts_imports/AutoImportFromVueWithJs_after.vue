@@ -1,9 +1,9 @@
 <template><div></div></template>
 <script>
-    //no errors
-    import HelloWorld from "./src/HelloWorld.vue";
+//no errors
+import HelloWorld from "./src/HelloWorld.vue";
 
-    HelloWorld
+HelloWorld
 
 
 </script>

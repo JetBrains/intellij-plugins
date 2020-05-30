@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@angular/core": "0.0.0",
+    "foo": "0.0.0",
+    "bar": "0.0.0"
+  }
+}

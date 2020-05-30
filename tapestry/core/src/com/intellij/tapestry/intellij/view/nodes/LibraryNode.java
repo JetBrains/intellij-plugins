@@ -13,6 +13,6 @@ public class LibraryNode extends PackageNode {
         super(library, psiDirectory, module, treeBuilder);
 
         init(psiDirectory, new PresentationData(psiDirectory.getName(), psiDirectory.getName(),
-                                                AllIcons.Modules.Library, null));
+                                                AllIcons.Nodes.PpLib, null));
     }
 }

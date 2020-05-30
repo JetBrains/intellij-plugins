@@ -11,7 +11,7 @@ import com.intellij.flex.model.run.JpsFlexUnitRunConfigurationType;
 import com.intellij.flex.model.run.JpsFlexUnitRunnerParameters;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Trinity;
-import com.intellij.util.containers.ContainerUtilRt;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.builders.BuildTargetLoader;
@@ -40,12 +40,14 @@ public class FlexBuildTargetType extends BuildTargetType<FlexBuildTarget> {
 
     for (JpsTypedRunConfiguration<JpsFlashRunnerParameters> runConfig : project.getRunConfigurations(JpsFlashRunConfigurationType
                                                                                                        .INSTANCE)) {
-      ContainerUtilRt.addIfNotNull(result, FlexBuildTarget.create(project, runConfig.getType(), runConfig.getName()));
+      ContainerUtil.addIfNotNull(result,
+                                 FlexBuildTarget.create(project, runConfig.getType(), runConfig.getName()));
     }
 
     for (JpsTypedRunConfiguration<JpsFlexUnitRunnerParameters> runConfig : project.getRunConfigurations(JpsFlexUnitRunConfigurationType
                                                                                                           .INSTANCE)) {
-      ContainerUtilRt.addIfNotNull(result, FlexBuildTarget.create(project, runConfig.getType(), runConfig.getName()));
+      ContainerUtil.addIfNotNull(result,
+                                 FlexBuildTarget.create(project, runConfig.getType(), runConfig.getName()));
     }
 
     for (JpsTypedModule<JpsFlexBuildConfigurationManager> module : project.getModules(JpsFlexModuleType.INSTANCE)) {

@@ -15,22 +15,19 @@ import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.inspections.quickfixes.AddJSPropertyQuickFix;
 import org.angular2.inspections.quickfixes.RemoveJSProperty;
 import org.angular2.lang.Angular2Bundle;
-import org.angular2.lang.Angular2LangUtil;
 import org.jetbrains.annotations.NotNull;
 
 import static org.angular2.Angular2DecoratorUtil.*;
 
 public class AngularIncorrectTemplateDefinitionInspection extends LocalInspectionTool {
 
-  @NotNull
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
+  public @NotNull PsiElementVisitor buildVisitor(final @NotNull ProblemsHolder holder, boolean isOnTheFly) {
     return new JSElementVisitor() {
 
       @Override
       public void visitES6Decorator(ES6Decorator decorator) {
-        if (COMPONENT_DEC.equals(decorator.getDecoratorName())
-            && Angular2LangUtil.isAngular2Context(decorator)) {
+        if (isAngularEntityDecorator(decorator, COMPONENT_DEC)) {
           JSObjectLiteralExpression initializer = getObjectLiteralInitializer(decorator);
           if (initializer == null) {
             return;
@@ -43,16 +40,18 @@ public class AngularIncorrectTemplateDefinitionInspection extends LocalInspectio
                 && component.getTypeScriptClass() != null
                 && component.getTypeScriptClass().getName() != null) {
               holder.registerProblem(initializer,
-                                     Angular2Bundle.message("angular.inspection.decorator.missing-template",
+                                     Angular2Bundle.message("angular.inspection.invalid-template-definition.message.missing",
                                                             component.getTypeScriptClass().getName()),
                                      new AddJSPropertyQuickFix(initializer, TEMPLATE_PROP, "\n\n", 1, true),
                                      new AddJSPropertyQuickFix(initializer, TEMPLATE_URL_PROP, "./", 2, false));
             }
           }
           else if (template != null && templateUrl != null) {
+            //noinspection DialogTitleCapitalization
             ContainerUtil.packNullables(template.getNameIdentifier(), templateUrl.getNameIdentifier())
-              .forEach(id -> holder.registerProblem(id, Angular2Bundle.message("angular.inspection.decorator.duplicated-template"),
-                                                    new RemoveJSProperty(StringUtil.unquoteString(id.getText()))));
+              .forEach(id -> holder.registerProblem(
+                id, Angular2Bundle.message("angular.inspection.invalid-template-definition.message.duplicated"),
+                new RemoveJSProperty(StringUtil.unquoteString(id.getText()))));
           }
         }
       }

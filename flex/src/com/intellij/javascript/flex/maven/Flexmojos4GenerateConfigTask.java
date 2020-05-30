@@ -29,6 +29,7 @@ import gnu.trove.TObjectObjectProcedure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.execution.MavenExternalParameters;
 import org.jetbrains.idea.maven.importing.MavenRootModelAdapter;
+import org.jetbrains.idea.maven.importing.MavenRootModelAdapterLegacyImpl;
 import org.jetbrains.idea.maven.model.MavenId;
 import org.jetbrains.idea.maven.project.*;
 import org.jetbrains.idea.maven.utils.MavenProcessCanceledException;
@@ -326,7 +327,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
             if (module == null) return true;
 
             IdeModifiableModelsProviderImpl provider = new IdeModifiableModelsProviderImpl(project);
-            MavenRootModelAdapter a = new MavenRootModelAdapter(mavenProject, module, provider);
+            MavenRootModelAdapter a = new MavenRootModelAdapter(new MavenRootModelAdapterLegacyImpl(mavenProject, module, provider));
             for (String sourceRoot : sourceRoots) {
               a.addSourceFolder(sourceRoot, JavaSourceRootType.SOURCE);
             }

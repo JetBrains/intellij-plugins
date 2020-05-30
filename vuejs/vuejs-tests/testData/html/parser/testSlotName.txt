@@ -1,0 +1,30 @@
+HtmlFile:test.vue
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    HtmlTag:template
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('template')
+      XmlToken:XML_TAG_END('>')
+      XmlText
+        PsiWhiteSpace('\n  ')
+      HtmlTag:slot
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_NAME('slot')
+        PsiWhiteSpace(' ')
+        PsiElement(VUE:SLOT_TAG_ATTRIBUTE)
+          XmlToken:XML_NAME('name')
+          XmlToken:XML_EQ('=')
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
+            XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('foo')
+            XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER(''')
+        XmlToken:XML_TAG_END('>')
+        XmlToken:XML_END_TAG_START('</')
+        XmlToken:XML_NAME('slot')
+        XmlToken:XML_TAG_END('>')
+      XmlText
+        PsiWhiteSpace('\n')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('template')
+      XmlToken:XML_TAG_END('>')

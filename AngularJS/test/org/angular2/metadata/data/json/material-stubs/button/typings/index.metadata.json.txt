@@ -1,0 +1,24 @@
+MetadataFile:index.metadata.json
+  @angular/material/button <metadata node module>
+    MatButtonModule <metadata module>: imports=[CommonModule, MatCommonModule, MatRippleModule]; declarations=[MatAnchor, MatButton]; exports=[MatAnchor, MatButton, MatCommonModule]; scopeFullyResolved=false; exportsFullyResolved=false
+      ___dec.declarations <metadata array>
+        MatButton <metadata reference>('')
+        MatAnchor <metadata reference>('')
+      ___dec.exports <metadata array>
+        MatButton <metadata reference>('')
+        MatAnchor <metadata reference>('')
+        @angular/material/core#MatCommonModule <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        @angular/material/core#MatRippleModule <metadata reference>('')
+        @angular/material/core#MatCommonModule <metadata reference>('')
+    MatButtonBase <metadata class>('')
+    _MatButtonMixinBase: <metadata call>
+      #expression: @angular/material/core#mixinColor <metadata reference>('')
+    MatButton <metadata component>: selector=button[mat-button], button[mat-raised-button], button[mat-icon-button],
+             button[mat-fab], button[mat-mini-fab], button[mat-stroked-button],
+             button[mat-flat-button]; exportAs=matButton; inputs=[disabled, disableRipple, color]; outputs=[]; inOuts=[]
+      #ext: _MatButtonMixinBase <metadata reference>('')
+    MatAnchor <metadata component>: selector=a[mat-button], a[mat-raised-button], a[mat-icon-button], a[mat-fab],
+             a[mat-mini-fab], a[mat-stroked-button], a[mat-flat-button]; exportAs=matButton, matAnchor; inputs=[disabled, tabIndex, disableRipple, color]; outputs=[]; inOuts=[]
+      #ext: MatButton <metadata reference>('')

@@ -19,7 +19,7 @@ package org.dartlang.vm.service.element;
  * Adding new values to {@link EventKind} is considered a backwards compatible change. Clients
  * should ignore unrecognized events.
  */
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public enum EventKind {
 
   /**
@@ -79,6 +79,11 @@ public enum EventKind {
   IsolateUpdate,
 
   /**
+   * Event from dart:developer.log.
+   */
+  Logging,
+
+  /**
    * Indicates an isolate is not yet runnable. Only appears in an Isolate's pauseEvent. Never sent
    * over a stream.
    */
@@ -133,6 +138,11 @@ public enum EventKind {
    * Notification that a Service has been removed from the Service Protocol from another client.
    */
   ServiceUnregistered,
+
+  /**
+   * Notification that a VM flag has been changed via the service protocol.
+   */
+  VMFlagUpdate,
 
   /**
    * Notification that VM identifying information has changed. Currently used to notify of changes

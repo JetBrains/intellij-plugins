@@ -20,7 +20,7 @@ import com.google.gson.JsonObject;
 /**
  * {@link ScriptRef} is a reference to a {@link Script}.
  */
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class ScriptRef extends ObjRef {
 
   public ScriptRef(JsonObject json) {
@@ -31,6 +31,6 @@ public class ScriptRef extends ObjRef {
    * The uri from which this script was loaded.
    */
   public String getUri() {
-    return json.get("uri").getAsString();
+    return getAsString("uri");
   }
 }

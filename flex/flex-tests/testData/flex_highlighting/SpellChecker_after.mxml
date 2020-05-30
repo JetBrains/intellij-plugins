@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
     <mx:Script><![CDATA[
-        [Bindable] var tempo:int;
+        [Bindable] var type:int;
 
         function foo() {
-            tempo = 1;
+            type = 1;
         }
         ]]></mx:Script>
 </mx:Application>

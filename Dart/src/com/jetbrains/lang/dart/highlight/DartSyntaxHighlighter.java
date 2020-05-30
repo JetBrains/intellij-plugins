@@ -70,8 +70,7 @@ public class DartSyntaxHighlighter extends SyntaxHighlighterBase implements Embe
   }
 
   @Override
-  @NotNull
-  public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
+  public TextAttributesKey @NotNull [] getTokenHighlights(IElementType tokenType) {
     return pack(ATTRIBUTES.get(tokenType));
   }
 

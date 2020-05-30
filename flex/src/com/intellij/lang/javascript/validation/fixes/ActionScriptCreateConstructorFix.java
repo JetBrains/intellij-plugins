@@ -5,7 +5,7 @@ import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.template.Template;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.DialectDetector;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.ECMAScriptImportOptimizer;
@@ -108,7 +108,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
   }
 
   @Override
-  protected void applyFix(final Project project, final PsiElement psiElement, PsiFile file, Editor editor) {
+  protected void applyFix(final Project project, final PsiElement psiElement, @NotNull PsiFile file, @Nullable Editor editor) {
     final AtomicInteger count = new AtomicInteger();
     JSClass jsClass = myClass.getElement();
     JSCallExpression node = myNode.getElement();
@@ -149,7 +149,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
 
       new JSChangeSignatureFix(fakeFunction, node.getArgumentList()) {
         @Override
-        protected Pair<Boolean, List<JSParameterInfo>> handleCall(@NotNull JSFunction function, @NotNull JSExpression[] arguments, boolean dryRun) {
+        protected Pair<Boolean, List<JSParameterInfo>> handleCall(@NotNull JSFunction function, JSExpression @NotNull [] arguments, boolean dryRun) {
           List<JSParameterInfo> parameterInfos = super.handleCall(function, arguments, dryRun).second;
           return Pair.create(true, parameterInfos); // always show dialog
         }
@@ -158,7 +158,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
         protected JSChangeSignatureDialog createDialog(PsiElement context, final List<JSParameterInfo> paramInfos) {
           JSMethodDescriptor descriptor = new JSMethodDescriptor(getFunction(), true) {
             @Override
-            public List<JSParameterInfo> getParameters() {
+            public @NotNull List<JSParameterInfo> getParameters() {
               return paramInfos;
             }
           };
@@ -215,13 +215,13 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
   @NotNull
   @Override
   public String getName() {
-    return JSBundle.message("actionscript.create.constructor.intention.name", myName);
+    return JavaScriptBundle.message("actionscript.create.constructor.intention.name", myName);
   }
 
   private class MyDialog extends JSChangeSignatureDialog {
     MyDialog(JSMethodDescriptor descriptor, PsiElement context) {
       super(descriptor, context);
-      setTitle(JSBundle.message("create.constructor.dialog.title"));
+      setTitle(JavaScriptBundle.message("create.constructor.dialog.title"));
     }
 
     @Override
@@ -296,9 +296,8 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
       super(method, visibility, methodName, returnType, parameters, methodsToPropagateParameters, Collections.emptySet());
     }
 
-    @NotNull
     @Override
-    protected UsageInfo[] findUsages() {
+    protected UsageInfo @NotNull [] findUsages() {
       final Collection<UsageInfo> declarations = Collections.synchronizedCollection(new HashSet<>());
       final Collection<OtherUsageInfo> usages = Collections.synchronizedCollection(new HashSet<>());
 
@@ -324,7 +323,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
     }
 
     @Override
-    protected void performRefactoring(@NotNull UsageInfo[] usageInfos) {
+    protected void performRefactoring(UsageInfo @NotNull [] usageInfos) {
       final Collection<String> toImport = new ArrayList<>();
       JSCallExpression node = myNode.getElement();
       assert node != null;

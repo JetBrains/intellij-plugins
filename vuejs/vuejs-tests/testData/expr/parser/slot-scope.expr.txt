@@ -1,0 +1,102 @@
+JSFile:test.js.slot-scope.expr
+  VueJSEmbeddedExpression
+    VueJSSlotPropsExpression
+      JSParameterList
+        VueJSSlotPropsParameter
+          PsiElement(JS:IDENTIFIER)('a')
+------
+JSFile:test.js.slot-scope.expr
+  VueJSEmbeddedExpression
+    VueJSSlotPropsExpression
+      JSParameterList
+        VueJSSlotPropsParameter
+          PsiElement(JS:IDENTIFIER)('a')
+        PsiElement(JS:COMMA)(',')
+        PsiWhiteSpace(' ')
+        VueJSSlotPropsParameter
+          PsiElement(JS:IDENTIFIER)('b')
+------
+JSFile:test.js.slot-scope.expr
+  VueJSEmbeddedExpression
+    VueJSSlotPropsExpression
+      JSParameterList
+        JSDestructuringParameter
+          JSDestructuringObject
+            PsiElement(JS:LBRACE)('{')
+            JSDestructuringShorthandedProperty
+              VueJSSlotPropsParameter
+                PsiElement(JS:IDENTIFIER)('a')
+            PsiElement(JS:RBRACE)('}')
+        PsiElement(JS:COMMA)(',')
+        PsiWhiteSpace(' ')
+        JSDestructuringParameter
+          JSDestructuringObject
+            PsiElement(JS:LBRACE)('{')
+            JSDestructuringShorthandedProperty
+              VueJSSlotPropsParameter
+                PsiElement(JS:IDENTIFIER)('b')
+            PsiElement(JS:RBRACE)('}')
+------
+JSFile:test.js.slot-scope.expr
+  VueJSEmbeddedExpression
+    VueJSSlotPropsExpression
+      JSParameterList
+        VueJSSlotPropsParameter
+          PsiElement(JS:IDENTIFIER)('a')
+        PsiErrorElement:Expected comma or end of expression
+          <empty list>
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('b')
+------
+JSFile:test.js.slot-scope.expr
+  VueJSEmbeddedExpression
+    VueJSSlotPropsExpression
+      JSParameterList
+        JSDestructuringParameter
+          JSDestructuringObject
+            PsiElement(JS:LBRACE)('{')
+            JSDestructuringShorthandedProperty
+              VueJSSlotPropsParameter
+                PsiElement(JS:IDENTIFIER)('a')
+            PsiElement(JS:RBRACE)('}')
+        PsiElement(JS:COMMA)(',')
+        PsiWhiteSpace(' ')
+        VueJSSlotPropsParameter
+          PsiElement(JS:IDENTIFIER)('b')
+------
+JSFile:test.js.slot-scope.expr
+  VueJSEmbeddedExpression
+    VueJSSlotPropsExpression
+      JSParameterList
+        JSDestructuringParameter
+          JSDestructuringObject
+            PsiElement(JS:LBRACE)('{')
+            JSDestructuringShorthandedProperty
+              VueJSSlotPropsParameter
+                PsiElement(JS:IDENTIFIER)('a')
+            PsiElement(JS:COMMA)(',')
+            PsiWhiteSpace(' ')
+            JSDestructuringShorthandedProperty
+              VueJSSlotPropsParameter
+                PsiElement(JS:IDENTIFIER)('b')
+            PsiElement(JS:COMMA)(',')
+            PsiWhiteSpace(' ')
+            JSDestructuringShorthandedProperty
+              VueJSSlotPropsParameter
+                PsiElement(JS:IDENTIFIER)('c')
+            PsiElement(JS:RBRACE)('}')
+------
+JSFile:test.js.slot-scope.expr
+  VueJSEmbeddedExpression
+    VueJSSlotPropsExpression
+      JSParameterList
+        PsiErrorElement:formal parameter name expected
+          <empty list>
+    JSLiteralExpression
+      PsiElement(JS:STRING_LITERAL)('"foo"')
+    PsiErrorElement:Expected end of expression
+      <empty list>
+    PsiElement(JS:OR)('|')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('lowercase')

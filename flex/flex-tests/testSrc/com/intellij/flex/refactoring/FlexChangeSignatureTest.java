@@ -1,8 +1,9 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.refactoring;
 
 import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JSChangeSignatureTestBase;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
@@ -13,6 +14,8 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
+
+import static com.intellij.refactoring.changeSignature.ParameterInfo.NEW_PARAMETER;
 
 public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
   @Override
@@ -46,23 +49,23 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
 
   public void testAddParam1() {
     doTest("bar", JSAttributeList.AccessType.PUBLIC, "int",
-           new JSParameterInfo("stringParam", "String", "", "\"def\"", -1));
+           new JSParameterInfo("stringParam", "String", "", "\"def\"", NEW_PARAMETER));
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
   public void testAddParam2() {
     doTest("blablabala__12", JSAttributeList.AccessType.PACKAGE_LOCAL, "",
-           new JSParameterInfo("p", "mx.messaging.AbstractConsumer", "", "CONS", -1),
-           new JSParameterInfo("p2", "flash.events.EventDispatcher", "null", "DISP", -1));
+           new JSParameterInfo("p", "mx.messaging.AbstractConsumer", "", "CONS", NEW_PARAMETER),
+           new JSParameterInfo("p2", "flash.events.EventDispatcher", "null", "DISP", NEW_PARAMETER));
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
   public void testAddParam3() {
     doTest("bar", JSAttributeList.AccessType.PACKAGE_LOCAL, "",
-           new JSParameterInfo("p1", "int", "", "100", -1),
-           new JSParameterInfo("p2", "String", "abc", "\"def\"", -1),
-           new JSParameterInfo("p3", "Boolean", "false", "", -1),
-           new JSParameterInfo("p4", "...", "", "", -1, false, ECMAL4LanguageDialect.DIALECT_OPTION_HOLDER));
+           new JSParameterInfo("p1", "int", "", "100", NEW_PARAMETER),
+           new JSParameterInfo("p2", "String", "abc", "\"def\"", NEW_PARAMETER),
+           new JSParameterInfo("p3", "Boolean", "false", "", NEW_PARAMETER),
+           new JSParameterInfo("p4", "...", "", "", NEW_PARAMETER, false, ECMAL4LanguageDialect.DIALECT_OPTION_HOLDER));
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
@@ -98,8 +101,8 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
       assertPropagationCandidates(new String[]{"bar", "zzz", "abc", "nopropagate"});
       performRefactoring("foo", JSAttributeList.AccessType.PACKAGE_LOCAL, "",
                          new JSParameterInfo("s", "String", "", "", 0),
-                         new JSParameterInfo("added1", "Number", "", "added1def", -1),
-                         new JSParameterInfo("added2", "Object", "", "added2def", -1));
+                         new JSParameterInfo("added1", "Number", "", "added1def", NEW_PARAMETER),
+                         new JSParameterInfo("added2", "Object", "", "added2def", NEW_PARAMETER));
     });
   }
 
@@ -120,9 +123,9 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
     doTestConflicts("bar", JSAttributeList.AccessType.PACKAGE_LOCAL, "String", conflicts,
                     new JSParameterInfo("p1", "String", "", "", 0), // p1
                     new JSParameterInfo("p1", "String", "", "", 1), // p2->p1
-                    new JSParameterInfo("p1", "String", "", "a", -1),
-                    new JSParameterInfo("p2", "String", "", "b", -1),
-                    new JSParameterInfo("p3", "String", "", "c", -1));
+                    new JSParameterInfo("p1", "String", "", "a", NEW_PARAMETER),
+                    new JSParameterInfo("p2", "String", "", "b", NEW_PARAMETER),
+                    new JSParameterInfo("p3", "String", "", "c", NEW_PARAMETER));
   }
 
   public void testConflicts2() {
@@ -140,41 +143,41 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
     doDefaultTest((rootDir, rootAfter) -> {
       assertPropagationCandidates(new String[]{"ref", "aaa"});
       performRefactoring("abc2", JSAttributeList.AccessType.PACKAGE_LOCAL, "",
-             new JSParameterInfo("s", "String", "", "\"def\"", -1),
-             new JSParameterInfo("p", "int", "", "0", -1),
-             new JSParameterInfo("z", "Object", "", "this", -1));
+             new JSParameterInfo("s", "String", "", "\"def\"", NEW_PARAMETER),
+             new JSParameterInfo("p", "int", "", "0", NEW_PARAMETER),
+             new JSParameterInfo("z", "Object", "", "this", NEW_PARAMETER));
     });
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
   public void testExistingSignature() {
     doTest("foo", JSAttributeList.AccessType.PACKAGE_LOCAL, "",
-           new JSParameterInfo("p", "int", "15", "2000", -1),
-           new JSParameterInfo("s", "String", "null", "\"abcde\"", -1));
+           new JSParameterInfo("p", "int", "15", "2000", NEW_PARAMETER),
+           new JSParameterInfo("s", "String", "null", "\"abcde\"", NEW_PARAMETER));
   }
 
   public void testAddParam4() {
     doTest("foo", JSAttributeList.AccessType.PACKAGE_LOCAL, "void",
-           new JSParameterInfo("i", "int", "", "777", -1),
+           new JSParameterInfo("i", "int", "", "777", NEW_PARAMETER),
            new JSParameterInfo("p", "String", "\"default\"", "", 0),
-           new JSParameterInfo("z", "Test", "null", "", -1));
+           new JSParameterInfo("z", "Test", "null", "", NEW_PARAMETER));
   }
 
   public void testAddParam5() {
     doTest("foo", JSAttributeList.AccessType.PACKAGE_LOCAL, "void",
-           new JSParameterInfo("p", "String", "", "\"abc\"", -1),
+           new JSParameterInfo("p", "String", "", "\"abc\"", NEW_PARAMETER),
            new JSParameterInfo("args", "...", "", "", 0, false, ECMAL4LanguageDialect.DIALECT_OPTION_HOLDER));
   }
 
   public void testNested() {
     doTest("nested2", JSAttributeList.AccessType.PACKAGE_LOCAL, "int",
-           new JSParameterInfo("p", "String", "", "\"abc\"", -1));
+           new JSParameterInfo("p", "String", "", "\"abc\"", NEW_PARAMETER));
   }
 
   public void testSuperConstructorCall() {
     doTest("From", JSAttributeList.AccessType.PACKAGE_LOCAL, "",
            new JSParameterInfo("p", "String", "", "", 0),
-           new JSParameterInfo("b", "Boolean", "", "true", -1));
+           new JSParameterInfo("b", "Boolean", "", "true", NEW_PARAMETER));
   }
 
   public void testSuperConstructorCall2() {
@@ -182,7 +185,7 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
       assertPropagationCandidates(new String[]{"B"});
       performRefactoring("A", JSAttributeList.AccessType.PUBLIC, "",
              new JSParameterInfo("p", "String", "", "", 0),
-             new JSParameterInfo("b", "Boolean", "", "true", -1));
+             new JSParameterInfo("b", "Boolean", "", "true", NEW_PARAMETER));
     });
   }
 
@@ -198,7 +201,7 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
     doDefaultTest((rootDir, rootAfter) -> {
       assertPropagationCandidates(new String[]{"A", "B"});
       performRefactoring("doSmth", JSAttributeList.AccessType.PACKAGE_LOCAL, "",
-             new JSParameterInfo("s", "String", "", "\"abc\"", -1),
+             new JSParameterInfo("s", "String", "", "\"abc\"", NEW_PARAMETER),
              new JSParameterInfo("args", "...", "", "", 0, false, ECMAL4LanguageDialect.DIALECT_OPTION_HOLDER));
     });
   }
@@ -207,7 +210,7 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
     doTest("doSmth", JSAttributeList.AccessType.PACKAGE_LOCAL, "",
            new JSParameterInfo("s", "String", "", "", 1),
            new JSParameterInfo("i", "int", "", "", 0),
-           new JSParameterInfo("b", "Type", "", "def", -1),
+           new JSParameterInfo("b", "Type", "", "def", NEW_PARAMETER),
            new JSParameterInfo("i2", "int", "0", "", 2),
            new JSParameterInfo("p", "From", "null", "", 3));
   }
@@ -246,7 +249,7 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
 
   public void testAnonymousFunction4() {
     doTest("v2", JSAttributeList.AccessType.PACKAGE_LOCAL, "String", new JSParameterInfo("b2", "String", "", "", 1),
-           new JSParameterInfo("a2", "int", "", "", 0), new JSParameterInfo("c", "Boolean", "", "false", -1));
+           new JSParameterInfo("a2", "int", "", "", 0), new JSParameterInfo("c", "Boolean", "", "false", NEW_PARAMETER));
   }
 
   public void testAnonymousFunction5() {
@@ -254,43 +257,43 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
       assertPropagationCandidates(new String[]{"usage1", "usage2"});
       performRefactoring("sayLoud", JSAttributeList.AccessType.PUBLIC, "void",
              new JSParameterInfo("message", "String", "", "", 0),
-             new JSParameterInfo("loud", "Boolean", "true", "false", -1));
+             new JSParameterInfo("loud", "Boolean", "true", "false", NEW_PARAMETER));
     });
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
   public void testEventHandlerCall() {
     doTest("", JSAttributeList.AccessType.PACKAGE_LOCAL, "void",
-           new JSParameterInfo("i", "int", "", "1000", -1));
+           new JSParameterInfo("i", "int", "", "1000", NEW_PARAMETER));
   }
 
   public void testPropagateToFunctionExpression() {
     doDefaultTest((rootDir, rootAfter) -> {
       assertPropagationCandidates(new String[]{"f1"});
       performRefactoring("", JSAttributeList.AccessType.PACKAGE_LOCAL, "",
-                         new JSParameterInfo("i", "int", "", "100", -1));
+                         new JSParameterInfo("i", "int", "", "100", NEW_PARAMETER));
     });
   }
 
   public void testImportsForAgrumentsAndInitializers() {
     doTest("foo", JSAttributeList.AccessType.PACKAGE_LOCAL, "",
-           new JSParameterInfo("p1", "com.Foo", "aaa.A.SIZE", "new com.Foo()", -1),
-           new JSParameterInfo("p2", "com.Bar", "bbb.B.ourLength", "com.Bar.SIZE", -1),
-           new JSParameterInfo("p3", "String", "", "com.Foo.MESSAGE", -1),
-           new JSParameterInfo("p4", "bar.Zzz", "", "bar.Zzz.func(new bar.Yyy(), uuu.glob(com.Const))", -1),
-           new JSParameterInfo("p5", "bar.Yyy", "", "unresolved", -1));
+           new JSParameterInfo("p1", "com.Foo", "aaa.A.SIZE", "new com.Foo()", NEW_PARAMETER),
+           new JSParameterInfo("p2", "com.Bar", "bbb.B.ourLength", "com.Bar.SIZE", NEW_PARAMETER),
+           new JSParameterInfo("p3", "String", "", "com.Foo.MESSAGE", NEW_PARAMETER),
+           new JSParameterInfo("p4", "bar.Zzz", "", "bar.Zzz.func(new bar.Yyy(), uuu.glob(com.Const))", NEW_PARAMETER),
+           new JSParameterInfo("p5", "bar.Yyy", "", "unresolved", NEW_PARAMETER));
   }
 
   public void testIncompatibleOverrideConflict() {
     String[] conflicts = new String[]{
-      JSBundle.message("change.signature.conflict.incompatible.override", "method B.foo()", "method A.foo(int)", "Method B.foo()")
+      JavaScriptBundle.message("change.signature.conflict.incompatible.override", "method B.foo()", "method A.foo(int)", "Method B.foo()")
     };
     doTestConflicts("foo2", JSAttributeList.AccessType.PUBLIC, "", conflicts, new JSParameterInfo("j", "int", "", "", 0));
   }
 
   public void testIncompatibleImplementationConflict() {
     String[] conflicts = new String[]{
-      JSBundle.message("change.signature.conflict.incompatible.implementation", "method B.foo()", "method A.foo(int)", "Method B.foo()")
+      JavaScriptBundle.message("change.signature.conflict.incompatible.implementation", "method B.foo()", "method A.foo(int)", "Method B.foo()")
     };
     doTestConflicts("foo", JSAttributeList.AccessType.PUBLIC, "", conflicts, new JSParameterInfo("j", "int", "", "", 0));
   }

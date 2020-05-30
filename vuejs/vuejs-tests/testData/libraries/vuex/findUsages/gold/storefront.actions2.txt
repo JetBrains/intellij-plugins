@@ -1,0 +1,5 @@
+<connectActions.ts:(1583,1596):(1,12)>	('applyCoupon', coupon)
+<storefront-component.ts:(1989,2007):(6,17)>	('cart/applyCoupon', code)
+<storefront-component.ts:(2105,2123):(6,17)>	('cart/applyCoupon', code)
+<storefront-component.ts:(2230,2248):(6,17)>	type: 'cart/applyCoupon'
+<storefront-component.ts:(2354,2372):(6,17)>	type: 'cart/applyCoupon'

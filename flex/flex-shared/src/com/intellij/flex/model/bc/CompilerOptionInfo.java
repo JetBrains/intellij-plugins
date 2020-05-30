@@ -24,7 +24,7 @@ public class CompilerOptionInfo {
     public final String NAME;
     public final String DISPLAY_NAME;
     public final ListElementType LIST_ELEMENT_TYPE;
-    public @Nullable final String[] FILE_EXTENSIONS;
+    public final String @Nullable [] FILE_EXTENSIONS;
     public final String DEFAULT_VALUE;
 
     private ListElement(final String name) {
@@ -32,7 +32,7 @@ public class CompilerOptionInfo {
     }
 
     private ListElement(final String name, final String displayName, final ListElementType listElementType,
-                        final @Nullable String[] fileExtensions, final String defaultValue) {
+                        final String @Nullable [] fileExtensions, final String defaultValue) {
       NAME = name;
       DISPLAY_NAME = displayName;
       LIST_ELEMENT_TYPE = listElementType;
@@ -157,7 +157,7 @@ public class CompilerOptionInfo {
                              final @NotNull String displayName,
                              final @NotNull OptionType optionType,
                              final @Nullable String fileExtension,
-                             final @Nullable ListElement[] listElements,
+                             final ListElement @Nullable [] listElements,
                              final boolean advanced,
                              final @Nullable String sinceVersion,
                              final boolean okForAir,

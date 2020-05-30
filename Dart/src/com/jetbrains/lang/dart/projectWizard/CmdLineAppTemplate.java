@@ -9,7 +9,7 @@ import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -29,12 +29,12 @@ class CmdLineAppTemplate extends DartProjectTemplate {
                                   "dependencies:\n" +
                                   "\n" +
                                   "dev_dependencies:\n" +
-                                  "#  unittest: any\n").getBytes(Charset.forName("UTF-8")));
+                                  "#  unittest: any\n").getBytes(StandardCharsets.UTF_8));
     final VirtualFile binDir = VfsUtil.createDirectoryIfMissing(baseDir, "bin");
     final VirtualFile mainFile = binDir.createChildData(this, StringUtil.toLowerCase(module.getName()) + ".dart");
     mainFile.setBinaryContent(("void main() {\n" +
                                "  print('Hello, World!');\n" +
-                               "}\n").getBytes(Charset.forName("UTF-8")));
+                               "}\n").getBytes(StandardCharsets.UTF_8));
 
     createCmdLineRunConfiguration(module, mainFile);
 

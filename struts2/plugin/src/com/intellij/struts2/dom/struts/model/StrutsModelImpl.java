@@ -31,14 +31,14 @@ import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.model.impl.DomModelImpl;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Yann C&eacute;bron
@@ -124,7 +124,7 @@ class StrutsModelImpl extends DomModelImpl<StrutsRoot> implements StrutsModel {
 
     for (final StrutsPackage strutsPackage : getStrutsPackages()) {
       if (namespace == null ||
-          Comparing.equal(namespace, strutsPackage.searchNamespace())) {
+          Objects.equals(namespace, strutsPackage.searchNamespace())) {
         actionResultList.addAll(strutsPackage.getActions());
       }
     }

@@ -18,8 +18,11 @@ package com.intellij.struts2.reference.jsp;
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.LocalQuickFixProvider;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.PsiReferenceBase;
+import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlTag;
@@ -30,6 +33,7 @@ import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.DomUtil;
+import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,10 +44,9 @@ import org.jetbrains.annotations.Nullable;
  */
 public class ActionMethodReferenceProvider extends PsiReferenceProvider {
 
-  @NotNull
   @Override
-  public PsiReference[] getReferencesByElement(@NotNull final PsiElement psiElement,
-                                               @NotNull final ProcessingContext context) {
+  public PsiReference @NotNull [] getReferencesByElement(@NotNull final PsiElement psiElement,
+                                                         @NotNull final ProcessingContext context) {
     final XmlAttributeValue methodAttribute = (XmlAttributeValue) psiElement;
 
     final PsiElement parent = methodAttribute.getParent().getParent();
@@ -100,12 +103,11 @@ public class ActionMethodReferenceProvider extends PsiReferenceProvider {
         return null;
       }
 
-      return ContainerUtil.find(action.getActionMethods(), psiMethod -> Comparing.equal(psiMethod.getName(), methodName));
+      return ContainerUtil.find(action.getActionMethods(), psiMethod -> Objects.equals(psiMethod.getName(), methodName));
     }
 
-    @NotNull
     @Override
-    public Object[] getVariants() {
+    public Object @NotNull [] getVariants() {
       if (action == null) {
         return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
       }

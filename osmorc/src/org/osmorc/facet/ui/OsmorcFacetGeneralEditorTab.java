@@ -24,6 +24,7 @@
  */
 package org.osmorc.facet.ui;
 
+import com.intellij.CommonBundle;
 import com.intellij.facet.ui.*;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
@@ -197,7 +198,7 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
   @Nls
   @Override
   public String getDisplayName() {
-    return "General";
+    return CommonBundle.message("tab.title.general");
   }
 
   @Override

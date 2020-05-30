@@ -24,8 +24,7 @@ public class TapestryNamespaceDescriptor extends SchemaNSDescriptor {
   }
 
   @Override
-  @NotNull
-  public XmlElementDescriptor[] getRootElementsDescriptors(@Nullable XmlDocument doc) {
+  public XmlElementDescriptor @NotNull [] getRootElementsDescriptors(@Nullable XmlDocument doc) {
     if (doc == null) return XmlElementDescriptor.EMPTY_ARRAY;
     XmlTag rootTag = doc.getRootTag();
     if (rootTag == null) return XmlElementDescriptor.EMPTY_ARRAY;
@@ -65,8 +64,7 @@ public class TapestryNamespaceDescriptor extends SchemaNSDescriptor {
   }
 
   @Override
-  @NotNull
-  public Object[] getDependencies() {
+  public Object @NotNull [] getDependencies() {
     return TapestryProject.JAVA_STRUCTURE_DEPENDENCY;
   }
 

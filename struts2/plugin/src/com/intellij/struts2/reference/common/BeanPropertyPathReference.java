@@ -67,8 +67,7 @@ public class BeanPropertyPathReference extends PsiReferenceBase<PsiElement>
   }
 
   @Override
-  @NotNull
-  public Object[] getVariants() {
+  public Object @NotNull [] getVariants() {
     final PsiClass psiClass = getPsiClass();
     if (psiClass == null) {
       return ArrayUtilRt.EMPTY_OBJECT_ARRAY;

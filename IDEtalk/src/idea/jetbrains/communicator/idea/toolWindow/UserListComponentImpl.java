@@ -1,10 +1,12 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package jetbrains.communicator.idea.toolWindow;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.messager.Callout;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.concurrency.EdtExecutorService;
+import com.intellij.util.ui.TimerUtil;
 import com.thoughtworks.xstream.XStream;
 import jetbrains.communicator.core.EventVisitor;
 import jetbrains.communicator.core.IDEtalkAdapter;
@@ -20,7 +22,6 @@ import jetbrains.communicator.ide.UserListComponent;
 import jetbrains.communicator.idea.IdeaLocalMessage;
 import jetbrains.communicator.idea.UserTreeRenderer;
 import jetbrains.communicator.util.*;
-import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
 import org.picocontainer.Disposable;
 
@@ -41,7 +42,7 @@ import java.util.concurrent.TimeUnit;
  * @author Kir Maximov
  */
 public class UserListComponentImpl implements UserListComponent, Disposable {
-  private static final Logger LOG = Logger.getLogger(UserListComponentImpl.class);
+  private static final Logger LOG = Logger.getInstance(UserListComponentImpl.class);
   @NonNls
   private static final String TREE_STATE_FILE = "treeState.xml";
 
@@ -63,7 +64,7 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
     myLocalMessageDispatcher = localMessageDispatcher;
     myUserModel = userModel;
 
-    myTimer4Renderer = com.intellij.util.ui.UIUtil.createNamedTimer("IDETalk renderer", 200, new ActionListener() {
+    myTimer4Renderer = TimerUtil.createNamedTimer("IDETalk renderer", 200, new ActionListener() {
       @Override
       public void
       actionPerformed(ActionEvent e) {
@@ -122,7 +123,7 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
     try {
       myTree.setDragEnabled(true);
     } catch (Exception e) {
-      LOG.info(e, e);
+      LOG.info(e.getMessage(), e);
     }
   }
 

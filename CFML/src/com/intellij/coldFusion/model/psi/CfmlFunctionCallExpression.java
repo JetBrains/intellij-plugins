@@ -138,8 +138,7 @@ public class CfmlFunctionCallExpression extends CfmlCompositeElement implements 
     return externalType;
   }
 
-  @NotNull
-  public CfmlExpression[] getArguments() {
+  public CfmlExpression @NotNull [] getArguments() {
     CfmlArgumentList argumentListEl = findChildByClass(CfmlArgumentList.class);
     if (argumentListEl == null) {
       return new CfmlExpression[0];
@@ -147,8 +146,7 @@ public class CfmlFunctionCallExpression extends CfmlCompositeElement implements 
     return argumentListEl.getArguments();
   }
 
-  @NotNull
-  public String[] getArgumentsAsStrings() {
+  public String @NotNull [] getArgumentsAsStrings() {
     CfmlArgumentList argumentListEl = findChildByClass(CfmlArgumentList.class);
     if (argumentListEl == null) {
       return ArrayUtilRt.EMPTY_STRING_ARRAY;

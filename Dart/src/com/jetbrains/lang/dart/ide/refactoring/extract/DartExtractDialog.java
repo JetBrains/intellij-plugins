@@ -64,7 +64,7 @@ public class DartExtractDialog extends DialogWrapper {
   @Override
   protected ValidationInfo doValidate() {
     if (!StringUtil.isJavaIdentifier(getFunctionName())) {
-      return new ValidationInfo("Not a valid name!", myFunctionNameField);
+      return new ValidationInfo(DartBundle.message("validation.info.not.a.valid.name"), myFunctionNameField);
     }
     return super.doValidate();
   }

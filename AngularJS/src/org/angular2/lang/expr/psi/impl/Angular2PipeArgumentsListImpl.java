@@ -20,21 +20,18 @@ public class Angular2PipeArgumentsListImpl extends JSArgumentListImpl implements
   }
 
   @Override
-  @NotNull
-  public JSExpression[] getArguments() {
+  public JSExpression @NotNull [] getArguments() {
     JSExpression leftSide = getPipeLeftSideExpression();
     return leftSide != null
            ? ArrayUtil.prepend(leftSide, super.getArguments())
            : JSExpression.EMPTY_ARRAY;
   }
 
-  @NotNull
-  JSExpression[] getPipeRightSideExpressions() {
+  JSExpression @NotNull [] getPipeRightSideExpressions() {
     return super.getArguments();
   }
 
-  @Nullable
-  private JSExpression getPipeLeftSideExpression() {
+  private @Nullable JSExpression getPipeLeftSideExpression() {
     return doIfNotNull(((Angular2PipeExpressionImpl)getParent())
                          .findChildByType(Angular2ElementTypes.PIPE_LEFT_SIDE_ARGUMENT),
                        node -> doIfNotNull(node.getPsi(Angular2PipeLeftSideArgumentImpl.class),

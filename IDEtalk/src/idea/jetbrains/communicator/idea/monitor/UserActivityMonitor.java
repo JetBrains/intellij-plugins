@@ -1,16 +1,15 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package jetbrains.communicator.idea.monitor;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.BaseComponent;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.ProjectUtil;
 import jetbrains.communicator.core.IDEtalkOptions;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.transport.Transport;
 import jetbrains.communicator.core.users.PresenceMode;
 import jetbrains.communicator.core.users.UserPresence;
-import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -23,8 +22,8 @@ import java.awt.event.AWTEventListener;
  *
  * @see Transport#setOwnPresence(UserPresence)
  */
-public class UserActivityMonitor implements Disposable, Runnable, BaseComponent {
-  private static final Logger LOG = Logger.getLogger(UserActivityMonitor.class);
+public final class UserActivityMonitor implements Disposable, Runnable {
+  private static final Logger LOG = Logger.getInstance(UserActivityMonitor.class);
 
   private static final int REFRESH_INTERVAL = 60 * 1000;
   public static final int AWAY_MINS = 7;
@@ -33,12 +32,12 @@ public class UserActivityMonitor implements Disposable, Runnable, BaseComponent 
   private final Object myMonitor = new Object();
   private long myLastActionTimestamp;
   private volatile boolean myStop;
-  private int myRefreshInterval = REFRESH_INTERVAL;
   private volatile boolean myThreadDisposed = true;
 
-  @Override
-  public void initComponent() {
-    if (ApplicationManager.getApplication().isUnitTestMode()) return;
+  UserActivityMonitor() {
+    if (ApplicationManager.getApplication().isUnitTestMode()) {
+      return;
+    }
 
     KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(e -> {
       activity();
@@ -58,7 +57,7 @@ public class UserActivityMonitor implements Disposable, Runnable, BaseComponent 
     activity();
 
     ProjectUtil.runWhenProjectOpened(project -> {
-      Thread t = new Thread(this, getComponentName() + " thread");
+      Thread t = new Thread(this, getClass().getSimpleName() + " thread");
       t.setDaemon(true);
       t.start();
     });
@@ -81,18 +80,11 @@ public class UserActivityMonitor implements Disposable, Runnable, BaseComponent 
 
   void activity() {
     synchronized (myMonitor) {
-      if (System.currentTimeMillis() - myLastActionTimestamp > myRefreshInterval) {
+      if (System.currentTimeMillis() - myLastActionTimestamp > REFRESH_INTERVAL) {
         myLastActionTimestamp = System.currentTimeMillis();
         myMonitor.notifyAll();
       }
       myLastActionTimestamp = System.currentTimeMillis();
-    }
-  }
-
-
-  void setRefreshInterval(int refreshInterval) {
-    synchronized(myMonitor) {
-      myRefreshInterval = refreshInterval;
     }
   }
 
@@ -111,7 +103,7 @@ public class UserActivityMonitor implements Disposable, Runnable, BaseComponent 
         }
 
         synchronized (myMonitor) {
-          myMonitor.wait(myRefreshInterval);
+          myMonitor.wait(REFRESH_INTERVAL);
         }
       }
     }

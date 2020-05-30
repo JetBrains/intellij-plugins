@@ -17,7 +17,7 @@ package org.dartlang.vm.service.element;
 
 import com.google.gson.JsonObject;
 
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class ContextRef extends ObjRef {
 
   public ContextRef(JsonObject json) {
@@ -28,6 +28,6 @@ public class ContextRef extends ObjRef {
    * The number of variables in this context.
    */
   public int getLength() {
-    return json.get("length") == null ? -1 : json.get("length").getAsInt();
+    return getAsInt("length");
   }
 }

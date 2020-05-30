@@ -60,9 +60,8 @@ abstract class OgnlReferenceExpressionBase extends OgnlExpressionImpl {
         return myElement;
       }
 
-      @NotNull
       @Override
-      public Object[] getVariants() {
+      public Object @NotNull [] getVariants() {
         return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
 /*
   TODO

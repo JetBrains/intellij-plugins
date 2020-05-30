@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.presentation;
 
 import com.intellij.ide.projectView.PresentationData;
@@ -6,13 +7,13 @@ import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 public class SwfQualifiedNamedElementNode extends ProjectViewNode<JSQualifiedNamedElement> {
 
@@ -29,12 +30,12 @@ public class SwfQualifiedNamedElementNode extends ProjectViewNode<JSQualifiedNam
   public boolean canRepresent(Object element) {
     JSQualifiedNamedElement value = getValue();
     return value != null && value.isValid() && element != null && value.getClass() == element.getClass() &&
-           Comparing.equal(value.getQualifiedName(), ((JSQualifiedNamedElement)element).getQualifiedName());
+           Objects.equals(value.getQualifiedName(), ((JSQualifiedNamedElement)element).getQualifiedName());
   }
 
   @NotNull
   @Override
-  public Collection<? extends AbstractTreeNode> getChildren() {
+  public Collection<? extends AbstractTreeNode<?>> getChildren() {
     return new ArrayList<>();
   }
 

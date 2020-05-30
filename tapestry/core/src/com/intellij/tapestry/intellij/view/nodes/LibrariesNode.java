@@ -18,15 +18,14 @@ public class LibrariesNode extends TapestryNode {
     public LibrariesNode(Module module, AbstractTreeBuilder treeBuilder) {
         super(module, treeBuilder);
 
-        init("Libraries", new PresentationData("Libraries", "Libraries", AllIcons.Modules.Library, null));
+        init("Libraries", new PresentationData("Libraries", "Libraries", AllIcons.Nodes.PpLib, null));
     }
 
     /**
      * {@inheritDoc}
      */
-    @NotNull
     @Override
-    public SimpleNode[] getChildren() {
+    public SimpleNode @NotNull [] getChildren() {
         List<TapestryNode> children = new ArrayList<>();
 
         for (TapestryLibrary library : TapestryModuleSupportLoader.getTapestryProject(_module).getLibraries()) {

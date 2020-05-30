@@ -1,0 +1,3 @@
+<storefront-component.ts:(742,762):(6,19)>	isVirtualCart: 'cart/isVirtualCart'
+<storefront-decorated-component.ts:(230,250):(6,19)>	('cart/isVirtualCart')
+<storefront-namespaced-component.ts:(318,333):(1,14)>	isVirtualCart: 'isVirtualCart'

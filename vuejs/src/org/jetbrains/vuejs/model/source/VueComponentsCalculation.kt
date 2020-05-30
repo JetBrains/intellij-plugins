@@ -3,12 +3,17 @@ package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
+import com.intellij.lang.javascript.psi.types.evaluable.JSApplyIndexedAccessType
+import com.intellij.lang.javascript.psi.types.evaluable.JSReferenceType
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.util.castSafelyTo
 import com.intellij.util.containers.putValue
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
+import org.jetbrains.vuejs.codeInsight.objectLiteralFor
 import org.jetbrains.vuejs.index.GLOBAL_BINDING_MARK
 import org.jetbrains.vuejs.index.VueComponentsIndex
 import org.jetbrains.vuejs.index.getForAllKeys
@@ -66,29 +71,23 @@ class VueComponentsCalculation {
 
     private fun findObjectLiteralOfGlobalRegistration(element: JSImplicitElement):
       Pair<JSObjectLiteralExpression, Boolean>? {
-      if (element.parent !is JSCallExpression) return null
+      val context = element.context as? JSCallExpression ?: return null
       val indexData = getVueIndexData(element)
       val reference = indexData.descriptorRef ?: return null
 
-      val context = createLocalResolveContext(element)
       var resolved: PsiElement? = JSStubBasedPsiTreeUtil.resolveLocally(reference, context) ?: return null
-      resolved = (resolved as? JSVariable)?.initializerOrStub ?: resolved
+
       var indexedAccessUsed = indexData.groupRegistration
-      if (resolved is JSIndexedPropertyAccessExpression) {
-        indexedAccessUsed = true
-        resolved = (resolved as? JSIndexedPropertyAccessExpression)?.qualifier
-      }
-      if (resolved == null) return null
 
-      if (resolved is JSReferenceExpression) {
-        val variants = resolved.multiResolve(false)
-        val literal = getObjectLiteralFromResolve(variants.mapNotNull { if (it.isValidResult) it.element else null }.toList())
-        if (literal != null) return Pair(literal, indexedAccessUsed)
-      }
-      resolved = VueComponents.literalFor(resolved)
-
-      val obj = resolved ?: return null
-      return Pair(obj, indexedAccessUsed)
+      resolved = (resolved as? JSVariable)?.jsType?.castSafelyTo<JSApplyIndexedAccessType>()
+                   ?.qualifierType?.castSafelyTo<JSReferenceType>()
+                   ?.let {
+                     indexedAccessUsed = true
+                     JSStubBasedPsiTreeUtil.resolveLocally(it.referenceName, resolved!!) ?: return null
+                   }
+                 ?: resolved
+      return objectLiteralFor(resolved)
+        ?.let { Pair(it, indexedAccessUsed) }
     }
 
     private class SingleGlobalRegistration(val realName: String, val alias: String, val element: PsiElement)
@@ -96,10 +95,9 @@ class VueComponentsCalculation {
     // resolves name of 'singular' registration of Vue.component(ref (SomeComp.name or ref = 'literalName'), ref (SomeComp))
     private fun resolveGlobalComponentName(element: JSImplicitElement,
                                            descriptor: JSObjectLiteralExpression?): SingleGlobalRegistration? {
-      if (element.parent !is JSCallExpression) return null
+      val context = element.context as? JSCallExpression ?: return null
       val indexData = getVueIndexData(element)
       val reference = indexData.nameRef ?: return null
-      val context = createLocalResolveContext(element)
 
       val parts = reference.split('.')
       if (parts.size > 2) return null
@@ -107,86 +105,62 @@ class VueComponentsCalculation {
         // allow only Vue.component(SomeComp.name, SomeComp) form
         if (parts[0] != indexData.descriptorRef) return null
         // for functional components style, where there is no descriptor - heuristics (vuetify)
-        if (descriptor == null) return SingleGlobalRegistration(parts[0], parts[0], element.parent)
+        if (descriptor == null) return SingleGlobalRegistration(parts[0], parts[0], context)
 
         if (!descriptor.isValid) return null
         val property = descriptor.findProperty(parts[1])
         if (property != null) {
-          val alias = (property.value as? JSLiteralExpression)?.stringValue ?: ""
-          val realName = if ("name" == parts[1]) alias else propStrVal(descriptor, "name") ?: alias
+          val alias = property.jsType.castSafelyTo<JSStringLiteralTypeImpl>()?.literal ?: ""
+          val realName = if ("name" == parts[1]) alias else getNameFromDescriptor(descriptor) ?: alias
           return SingleGlobalRegistration(realName, alias, descriptor)
         }
         return null
       }
       if (descriptor == null) return null
-      var resolved = JSStubBasedPsiTreeUtil.resolveLocally(reference, context)
-      if (resolved is JSVariable) resolved = resolved.initializerOrStub
-      val strLiteral = resolved as? JSLiteralExpression
-      if (strLiteral != null && strLiteral.isQuotedLiteral) {
-        return SingleGlobalRegistration(propStrVal(descriptor, "name") ?: "", strLiteral.stringValue ?: "", descriptor)
-      }
-      return null
+      return (JSStubBasedPsiTreeUtil.resolveLocally(reference, context) as? JSVariable)
+        ?.jsType.castSafelyTo<JSStringLiteralTypeImpl>()
+        ?.literal
+        ?.let {
+          SingleGlobalRegistration(getNameFromDescriptor(descriptor) ?: "", it, descriptor)
+        }
     }
 
-    private fun propStrVal(descriptor: JSObjectLiteralExpression, name: String): String? =
-      (descriptor.findProperty(name)?.value as? JSLiteralExpression)?.stringValue
-
-    private fun createLocalResolveContext(element: JSImplicitElement) = element.parent
-
-    fun getObjectLiteralFromResolve(result: Collection<PsiElement>): JSObjectLiteralExpression? {
-      return result.mapNotNull(fun(it: PsiElement): JSObjectLiteralExpression? {
-        val element: PsiElement? = (it as? JSVariable)?.initializerOrStub ?: it
-        return VueComponents.literalFor(element)
-      }).firstOrNull()
-    }
+    private fun getNameFromDescriptor(descriptor: JSObjectLiteralExpression): String? =
+      (descriptor.findProperty(NAME_PROP)?.jsType as? JSStringLiteralTypeImpl)?.literal
 
     private fun processComponentGroupRegistration(objLiteral: JSObjectLiteralExpression,
                                                   libCompResolveMap: MutableMap<String, String>,
                                                   componentData: MutableMap<String, MutableList<Pair<PsiElement, Boolean>>>) {
       // object properties iteration
       val queue = ArrayDeque<PsiElement>()
-      queue.addAll(objLiteral.children)
+      queue.addAll(objLiteral.propertiesIncludingSpreads)
       val visited = mutableSetOf<PsiElement>()
       while (!queue.isEmpty()) {
         val element = queue.removeFirst()
         // technically, I can write spread to itself or a ring
-        if (visited.contains(element)) continue
-        visited.add(element)
+        if (!visited.add(element)) continue
 
-        val asSpread = element as? JSSpreadExpression
-        if (asSpread != null) {
-          val spreadExpression = asSpread.expression
-          if (spreadExpression is JSReferenceExpression) {
-            val literal = getObjectLiteralFromResolve(resolveToValid(spreadExpression))
-            if (literal != null) queue.addAll(literal.children)
+        when (element) {
+          is JSSpreadExpression -> {
+            objectLiteralFor(element.expression)
+              ?.let { queue.addAll(it.propertiesIncludingSpreads) }
           }
-          else if (spreadExpression is JSObjectLiteralExpression) {
-            queue.addAll(spreadExpression.children)
-          }
-          continue
-        }
-        val asProperty = element as? JSProperty
-        if (asProperty != null) {
-          val propName = asProperty.name
-          if (propName != null && asProperty.value != null) {
-            val candidate = asProperty.value!!
-            var descriptor = VueComponents.literalFor(candidate)
-            if (descriptor == null && candidate is JSReferenceExpression) {
-              descriptor = getObjectLiteralFromResolve(resolveToValid(candidate))
+          is JSProperty -> {
+            val propName = element.name
+            val descriptor = objectLiteralFor(element)
+
+            if (propName != null) {
+              val nameFromDescriptor = getTextIfLiteral(descriptor?.findProperty(NAME_PROP)?.value) ?: propName
+              // name used in call Vue.component() overrides what was set in descriptor itself
+              val normalizedName = fromAsset(propName)
+              val realName = fromAsset(nameFromDescriptor)
+              libCompResolveMap[normalizedName] = realName
+              componentData.putValue(realName, Pair(descriptor ?: element, true))
             }
-            val nameFromDescriptor = getTextIfLiteral(descriptor?.findProperty("name")?.value) ?: propName
-            // name used in call Vue.component() overrides what was set in descriptor itself
-            val normalizedName = fromAsset(propName)
-            val realName = fromAsset(nameFromDescriptor)
-            libCompResolveMap[normalizedName] = realName
-            componentData.putValue(realName, Pair(descriptor ?: asProperty, true))
           }
         }
       }
     }
-
-    private fun resolveToValid(reference: JSReferenceExpression) =
-      reference.multiResolve(false).mapNotNull { if (it.isValidResult) it.element else null }.toList()
 
     private fun selectComponentDefinition(list: List<Pair<PsiElement, Boolean>>): Pair<PsiElement, Boolean> {
       var selected: Pair<PsiElement, Boolean>? = null

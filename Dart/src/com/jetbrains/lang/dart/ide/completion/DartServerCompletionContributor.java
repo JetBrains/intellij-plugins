@@ -37,7 +37,6 @@ import com.intellij.ui.LayeredIcon;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ProcessingContext;
 import com.jetbrains.lang.dart.DartLanguage;
-import com.jetbrains.lang.dart.DartYamlFileTypeFactory;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.assists.AssistUtils;
 import com.jetbrains.lang.dart.assists.DartSourceEditException;
@@ -63,7 +62,9 @@ public class DartServerCompletionContributor extends CompletionContributor {
     extend(CompletionType.BASIC,
            or(psiElement().withLanguage(DartLanguage.INSTANCE),
               psiElement().inFile(psiFile().withLanguage(HTMLLanguage.INSTANCE)),
-              psiElement().inFile(psiFile().withName(DartYamlFileTypeFactory.DOT_ANALYSIS_OPTIONS))),
+              psiElement().inFile(psiFile().withName(".analysis_options")),
+              psiElement().inFile(psiFile().withName("analysis_options.yaml"))
+           ),
            new CompletionProvider<CompletionParameters>() {
              @Override
              protected void addCompletions(@NotNull final CompletionParameters parameters,
@@ -141,6 +142,10 @@ public class DartServerCompletionContributor extends CompletionContributor {
 
                  updatedResultSet.addElement(lookupElement);
                }, (includedSet, includedKinds, includedRelevanceTags, libraryFilePathSD) -> {
+                 if (includedKinds.isEmpty()) {
+                   return;
+                 }
+
                  final AvailableSuggestionSet suggestionSet = das.getAvailableSuggestionSet(includedSet.getId());
                  if (suggestionSet == null) {
                    return;
@@ -431,7 +436,8 @@ public class DartServerCompletionContributor extends CompletionContributor {
           icon = IconManager.getInstance().createRowIcon(icon, AllIcons.Gutter.OverridingMethod);
         }
         else {
-          icon = IconManager.getInstance().createRowIcon(icon, element.isPrivate() ? PlatformIcons.PRIVATE_ICON : PlatformIcons.PUBLIC_ICON);
+          icon = IconManager.getInstance().createRowIcon(icon, element.isPrivate() ? PlatformIcons.PRIVATE_ICON
+                                                                                   : PlatformIcons.PUBLIC_ICON);
           icon = applyOverlay(icon, element.isFinal(), AllIcons.Nodes.FinalMark);
           icon = applyOverlay(icon, element.isConst(), AllIcons.Nodes.FinalMark);
         }
@@ -470,7 +476,9 @@ public class DartServerCompletionContributor extends CompletionContributor {
           return;
         }
 
-        if (element != null && ElementKind.FUNCTION.equals(element.getKind()) && suggestion.getParameterNames() != null) {
+        if (element != null &&
+            (ElementKind.FUNCTION.equals(element.getKind()) || ElementKind.CONSTRUCTOR.equals(element.getKind())) &&
+            suggestion.getParameterNames() != null) {
           handleFunctionInvocationInsertion(context, item, suggestion);
         }
       });
@@ -581,8 +589,8 @@ public class DartServerCompletionContributor extends CompletionContributor {
       0,
       element.isDeprecated(),
       false,
-      suggestion.getDocSummary(),
-      suggestion.getDocComplete(),
+      null,
+      null,
       null,
       suggestion.getDefaultArgumentListString(),
       suggestion.getDefaultArgumentListTextRanges(),
@@ -639,6 +647,9 @@ public class DartServerCompletionContributor extends CompletionContributor {
     }
     else if (elementKind.equals(ElementKind.TOP_LEVEL_VARIABLE)) {
       return AllIcons.Nodes.Variable;
+    }
+    else if (elementKind.equals(ElementKind.EXTENSION)) {
+      return AllIcons.Nodes.Include;
     }
     else {
       return null;

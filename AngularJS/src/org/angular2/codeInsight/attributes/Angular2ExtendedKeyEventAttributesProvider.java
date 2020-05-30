@@ -138,11 +138,10 @@ public class Angular2ExtendedKeyEventAttributesProvider implements Angular2Attri
     }
   }
 
-  @Nullable
   @Override
-  public Angular2AttributeDescriptor getDescriptor(@NotNull XmlTag tag,
-                                                   @NotNull String attributeName,
-                                                   @NotNull Angular2AttributeNameParser.AttributeInfo info) {
+  public @Nullable Angular2AttributeDescriptor getDescriptor(@NotNull XmlTag tag,
+                                                             @NotNull String attributeName,
+                                                             @NotNull Angular2AttributeNameParser.AttributeInfo info) {
     if (info.type == EVENT
         && (info.name.startsWith(KEYDOWN_EVENT_BASE_PREFIX)
             || info.name.startsWith(KEYUP_EVENT_BASE_PREFIX))) {
@@ -152,9 +151,8 @@ public class Angular2ExtendedKeyEventAttributesProvider implements Angular2Attri
     return null;
   }
 
-  @NotNull
   @Override
-  public Collection<String> getRelatedAttributes(@NotNull XmlAttributeDescriptor descriptor) {
+  public @NotNull Collection<String> getRelatedAttributes(@NotNull XmlAttributeDescriptor descriptor) {
     return Collections.emptyList();
   }
 
@@ -191,6 +189,11 @@ public class Angular2ExtendedKeyEventAttributesProvider implements Angular2Attri
                                      null);
       }
       return super.buildElementInfo(prefixMatcher);
+    }
+
+    @Override
+    public XmlAttributeDescriptor cloneWithName(String attributeName) {
+      throw new UnsupportedOperationException();
     }
 
     @Override

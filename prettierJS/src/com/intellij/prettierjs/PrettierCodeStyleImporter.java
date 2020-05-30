@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.linter.JSLinterCodeStyleImporter;
 import com.intellij.lang.javascript.linter.JSNpmLinterState;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -63,9 +64,13 @@ public class PrettierCodeStyleImporter extends JSLinterCodeStyleImporter<Prettie
   protected PrettierUtil.Config computeEffectiveConfig(@NotNull PsiFile configPsi,
                                                        @NotNull NodeJsInterpreter interpreter,
                                                        @NotNull NodePackage linterPackage) throws ExecutionException {
-    String configFilePath = configPsi.getVirtualFile().getPath();
+    String configFilePath = FileUtil.toSystemDependentName(configPsi.getVirtualFile().getPath());
     String convertConfigScriptPath = getPluginDirectory(PrettierCodeStyleImporter.class, "prettierLanguageService/convert-prettier-config.js").getAbsolutePath();
-    List<String> parameters = Arrays.asList(convertConfigScriptPath, linterPackage.getSystemDependentPath(), configFilePath);
+    String absPkgPathToRequire = linterPackage.getAbsolutePackagePathToRequire(configPsi.getProject());
+    if (absPkgPathToRequire == null) {
+      throw new ExecutionException("Cannot find absolute package path to require: " + linterPackage);
+    }
+    List<String> parameters = Arrays.asList(convertConfigScriptPath, absPkgPathToRequire, configFilePath);
     String text = runToolWithArguments(configPsi, interpreter, parameters);
     if (LOG.isTraceEnabled()) {
       LOG.trace(String.format("Prettier: computed effective config for file %s:\n%s", configFilePath, text));

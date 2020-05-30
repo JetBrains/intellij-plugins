@@ -4,10 +4,12 @@ import com.intellij.aws.cloudformation.CloudFormationConstants
 import com.intellij.aws.cloudformation.CloudFormationMetadataProvider
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.testFramework.UsefulTestCase
-import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase
+import com.intellij.testFramework.builders.ModuleFixtureBuilder
+import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.ModuleFixture
 import java.util.Arrays
 
-class YamlCompletionTests : LightJavaCodeInsightFixtureTestCase() {
+class YamlCompletionTests : CodeInsightFixtureTestCase<ModuleFixtureBuilder<ModuleFixture>>() {
   val predefinedAndECSCluster = (CloudFormationMetadataProvider.METADATA.predefinedParameters + "ECSCluster").toTypedArray()
   private fun Array<String>.withQuotes(quote: String): Array<String> = this.map { "$quote$it$quote" }.toTypedArray()
 
@@ -41,9 +43,9 @@ class YamlCompletionTests : LightJavaCodeInsightFixtureTestCase() {
   fun testParameterType3() = checkBasicCompletion("parameter_type_3.yaml")
 
   fun testServerless1() = checkBasicCompletion("serverless_1.yaml",
-      "AutoPublishAlias", "CodeUri", "DeadLetterQueue", "DeploymentPreference", "InlineCode", "Description",
-      "Environment", "Events", "FunctionName", "KmsKeyArn", "MemorySize",
-      "Policies", "ReservedConcurrentExecutions", "Role", "Layers", "Tags", "Timeout", "Tracing", "VpcConfig")
+      "AutoPublishAlias", "CodeUri", "DeadLetterQueue", "DeploymentPreference", "InlineCode", "PermissionsBoundary",
+      "Description", "Environment", "Events", "FunctionName", "KmsKeyArn", "MemorySize",
+      "Policies", "VersionDescription", "ReservedConcurrentExecutions", "Role", "Layers", "Tags", "Timeout", "Tracing", "VpcConfig")
   fun testServerless2() = checkBasicCompletion("serverless_2.yaml",
       "AWS::Serverless::Api", "AWS::Serverless::Function", "AWS::Serverless::SimpleTable", "AWS::Serverless::Application", "AWS::Serverless::LayerVersion")
   fun testServerless3() = checkBasicCompletion("serverless_3.yaml")
@@ -55,7 +57,8 @@ class YamlCompletionTests : LightJavaCodeInsightFixtureTestCase() {
     UsefulTestCase.assertSameElements(strings, Arrays.asList(*expectedElements))
   }
 
-  override fun getTestDataPath(): String {
-    return TestUtil.getTestDataPath("completion/yaml")
+  override fun setUp() {
+    super.setUp()
+    myFixture.testDataPath = TestUtil.getTestDataPath("completion/yaml")
   }
 }

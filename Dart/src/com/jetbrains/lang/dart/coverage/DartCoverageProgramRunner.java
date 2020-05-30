@@ -59,7 +59,7 @@ public class DartCoverageProgramRunner extends GenericProgramRunner {
   }
 
   @Override
-  public RunnerSettings createConfigurationData(final ConfigurationInfoProvider settingsProvider) {
+  public RunnerSettings createConfigurationData(@NotNull final ConfigurationInfoProvider settingsProvider) {
     return new CoverageRunnerData();
   }
 
@@ -164,7 +164,7 @@ public class DartCoverageProgramRunner extends GenericProgramRunner {
       catch (ExecutionException e) {
         LOG.warn(e);
       }
-    }, "Activating Coverage Package...", true, project);
+    }, DartBundle.message("progress.title.activating.coverage.package"), true, project);
 
     // Even if 'pub global activate' process has been cancelled we can proceed if coverage already activated
     return myCoveragePackageActivated;

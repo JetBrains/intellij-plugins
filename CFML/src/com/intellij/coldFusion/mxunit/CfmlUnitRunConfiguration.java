@@ -86,7 +86,7 @@ public class CfmlUnitRunConfiguration extends LocatableConfigurationBase {
   public RunProfileState getState(@NotNull Executor executor, @NotNull final ExecutionEnvironment env) {
     return new RunProfileState() {
       @Override
-      public ExecutionResult execute(Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
+      public ExecutionResult execute(Executor executor, @NotNull ProgramRunner<?> runner) throws ExecutionException {
         final ProcessHandler processHandler = new MyProcessHandler();
 
         final ConsoleView console = createConsole(getProject(), processHandler, env, executor);

@@ -6,12 +6,11 @@ import com.intellij.lang.javascript.dialects.ECMAL4LanguageDialect;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.IElementType;
-import gnu.trove.THashSet;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
 import java.util.Set;
 
 /**
@@ -39,7 +38,7 @@ class AS3InterfaceDumper extends AbstractDumpProcessor {
   public boolean doDumpMember(final @NotNull MemberInfo memberInfo) {
     if (memberInfo.name == null) return false;
     if (memberInfo.name.name != null) {
-      if(memberInfo.name.name.indexOf(Abc.$CINIT) >= 0) return false;
+      if(memberInfo.name.name.contains(Abc.$CINIT)) return false;
       if (!StringUtil.isJavaIdentifier(memberInfo.name.name)) return false;
 
       if (!JSKeywordSets.IDENTIFIER_TOKENS_SET.contains(identifierType(memberInfo.name.name)) ) {
@@ -110,14 +109,14 @@ class AS3InterfaceDumper extends AbstractDumpProcessor {
   }
 
   private static @NonNls final Set<String> doNotNeedQoting =
-    new THashSet<>(Arrays.asList("null", "NaN", "undefined", "true", "false", "Infinity", "-Infinity"));
+    ContainerUtil.set("null", "NaN", "undefined", "true", "false", "Infinity", "-Infinity");
   private static boolean needsQuoting(final String value) {
     return !doNotNeedQoting.contains(value);
   }
 
   @Override
   public boolean doDumpMetaData(final @NotNull MetaData md) {
-    return md.name.indexOf("__") == -1;
+    return !md.name.contains("__");
   }
 
   @Override
@@ -219,12 +218,12 @@ class AS3InterfaceDumper extends AbstractDumpProcessor {
   }
 
   private static boolean isTopLevelObject(String parentName) {
-    return parentName != null ? parentName.startsWith("script"):false;
+    return parentName != null && parentName.startsWith("script");
   }
 
   private static boolean willDumpNsName(Multiname name, String parentName, boolean memberInParentNs, boolean constructor, boolean topLevelObject, String nsName) {
     return name != null && name.hasNotEmptyNs() && parentName != null &&
-        ((!constructor && !topLevelObject && !memberInParentNs) || nsName.indexOf("private") != -1);
+        ((!constructor && !topLevelObject && !memberInParentNs) || nsName.contains("private"));
   }
 
   @Override

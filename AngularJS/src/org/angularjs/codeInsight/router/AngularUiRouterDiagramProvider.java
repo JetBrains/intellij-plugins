@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs.codeInsight.router;
 
 import com.intellij.diagram.*;
@@ -33,6 +33,7 @@ import com.intellij.uml.core.renderers.DefaultUmlRenderer;
 import com.intellij.uml.presentation.DiagramPresentationModelImpl;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ui.JBUI;
+import org.angularjs.AngularJSBundle;
 import org.intellij.lang.annotations.Pattern;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,8 +47,6 @@ import java.awt.event.ComponentEvent;
 import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static com.intellij.util.ObjectUtils.notNull;
 
 /**
  * @author Irina.Chernushina on 3/23/2016.
@@ -78,9 +77,8 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
         }
       }
 
-      @Nullable
       @Override
-      public DiagramObject resolveElementByFQN(String fqn, Project project) {
+      public @Nullable DiagramObject resolveElementByFQN(String fqn, Project project) {
         final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(fqn);
         if (file == null) {
           return null;
@@ -98,9 +96,8 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
         return ArrayUtil.toObjectArray(parent.getChildrenList());
       }
 
-      @Nullable
       @Override
-      public DiagramObject findInDataContext(DataContext context) {
+      public @Nullable DiagramObject findInDataContext(DataContext context) {
         //todo ?
         return null;
       }
@@ -110,15 +107,13 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
         return element instanceof DiagramObject;
       }
 
-      @Nullable
       @Override
       public String getElementTitle(DiagramObject element) {
         return element.getName();
       }
 
-      @Nullable
       @Override
-      public SimpleColoredText getItemName(Object element, DiagramState presentation) {
+      public @Nullable SimpleColoredText getItemName(Object element, DiagramState presentation) {
         if (element instanceof DiagramObject) {
           return new SimpleColoredText(((DiagramObject)element).getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
         }
@@ -160,23 +155,20 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
       }
     };
     myColorManager = new DiagramColorManagerBase() {
-      @NotNull
       @Override
-      public Color getNodeHeaderBackground(@NotNull DiagramBuilder builder, @NotNull DiagramNode node, Object element) {
+      public @NotNull Color getNodeHeaderBackground(@NotNull DiagramBuilder builder, @NotNull DiagramNode node, Object element) {
         return getColor(builder, element);
       }
 
-      @NotNull
       @Override
-      public Color getNodeBackground(@NotNull DiagramBuilder builder,
-                                     @NotNull DiagramNode node,
-                                     Object element,
-                                     boolean selected) {
+      public @NotNull Color getNodeBackground(@NotNull DiagramBuilder builder,
+                                              @NotNull DiagramNode node,
+                                              Object element,
+                                              boolean selected) {
         return getColor(builder, element);
       }
 
-      @NotNull
-      private Color getColor(DiagramBuilder builder, Object nodeElement) {
+      private @NotNull Color getColor(DiagramBuilder builder, Object nodeElement) {
         if (nodeElement instanceof DiagramObject) {
           DiagramObject element = ((DiagramObject)nodeElement);
           if (Type.state.equals(element.getType())) {
@@ -192,7 +184,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
             return LightColors.SLIGHTLY_GREEN;
           }
         }
-        return notNull(builder.getColorScheme().getColor(DiagramColors.NODE_HEADER));
+        return Objects.requireNonNull(builder.getColorScheme().getColor(DiagramColors.NODE_HEADER));
       }
     };
   }
@@ -220,7 +212,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
 
   @Override
   public String getPresentableName() {
-    return "AngularJS ui-router states and views";
+    return AngularJSBundle.message("angularjs.ui.router.diagram.provider.name");
   }
 
   @Override
@@ -238,9 +230,8 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
     return new AngularUiRouterDiagramModel(project, virtualFile, this, nodesBuilder.getAllNodes(), nodesBuilder.getEdges());
   }
 
-  @Nullable
   @Override
-  public DiagramPresentationModel createPresentationModel(Project project, Graph2D graph) {
+  public @Nullable DiagramPresentationModel createPresentationModel(Project project, Graph2D graph) {
     return new DiagramPresentationModelImpl(graph, project, this) {
       @Override
       public boolean allowChangeVisibleCategories() {
@@ -249,9 +240,8 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
 
       private final Map<DiagramEdge, EdgeRealizer> myEdgeRealizers = new HashMap<>();
 
-      @NotNull
       @Override
-      public EdgeRealizer getEdgeRealizer(DiagramEdge edge) {
+      public @NotNull EdgeRealizer getEdgeRealizer(DiagramEdge edge) {
         if (!(edge instanceof AngularUiRouterEdge)) return super.getEdgeRealizer(edge);
         if (myEdgeRealizers.containsKey(edge)) return myEdgeRealizers.get(edge);
         UmlGraphBuilder builder = (UmlGraphBuilder)graph.getDataProvider(DiagramDataKeys.GRAPH_BUILDER).get(null);
@@ -281,7 +271,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
       public EdgeLabel[] getEdgeLabels(DiagramEdge umlEdge, String label) {
         if (!(umlEdge instanceof AngularUiRouterEdge)) return super.getEdgeLabels(umlEdge, label);
         AngularUiRouterEdge angularEdge = (AngularUiRouterEdge)umlEdge;
-        if (!isShowEdgeLabels() || umlEdge == null || StringUtil.isEmptyOrSpaces(angularEdge.getLabel())) {
+        if (!isShowEdgeLabels() || StringUtil.isEmptyOrSpaces(angularEdge.getLabel())) {
           return EMPTY_LABELS;
         }
         //if (!myVisibleEdges.contains(umlEdge)) return EMPTY_LABELS;
@@ -315,7 +305,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
           }
         }
         boolean sourceHeavier = edge.source().degree() > edge.target().degree();
-        Collections.sort(list, (o1, o2) -> {
+        list.sort((o1, o2) -> {
           final YPoint s1 = ((Graph2D)o1.getGraph()).getSourcePointAbs(o1);
           final YPoint s2 = ((Graph2D)o1.getGraph()).getSourcePointAbs(o2);
           if (Math.abs(s1.getX() - s2.getX()) > 5) return Double.compare(s1.getX(), s2.getX());
@@ -469,18 +459,16 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
     return false;
   }
 
-  @NotNull
   @Override
-  public DiagramExtras<DiagramObject> getExtras() {
+  public @NotNull DiagramExtras<DiagramObject> getExtras() {
     return new DiagramExtras<DiagramObject>() {
       @Override
       public List<AnAction> getExtraActions() {
         return Collections.singletonList(new MyEditSourceAction());
       }
 
-      @Nullable
       @Override
-      public Object getData(@NotNull String dataId, List<DiagramNode<DiagramObject>> list, DiagramBuilder builder) {
+      public @Nullable Object getData(@NotNull String dataId, List<DiagramNode<DiagramObject>> list, DiagramBuilder builder) {
         if (CommonDataKeys.PSI_ELEMENT.is(dataId) && list.size() == 1) {
           final SmartPsiElementPointer target = list.get(0).getIdentifyingElement().getNavigationTarget();
           return target == null ? null : target.getElement();
@@ -491,9 +479,8 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
         return null;
       }
 
-      @NotNull
       @Override
-      public Layouter getCustomLayouter(GraphSettings settings, Project project) {
+      public @NotNull Layouter getCustomLayouter(GraphSettings settings, Project project) {
         final SmartOrganicLayouter layouter = settings.getOrganicLayouter();
         layouter.setNodeEdgeOverlapAvoided(true);
 
@@ -523,9 +510,11 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
         return layouter;
       }
 
-      @NotNull
       @Override
-      public JComponent createNodeComponent(DiagramNode<DiagramObject> node, DiagramBuilder builder, Point basePoint, JPanel wrapper) {
+      public @NotNull JComponent createNodeComponent(DiagramNode<DiagramObject> node,
+                                                     DiagramBuilder builder,
+                                                     Point basePoint,
+                                                     JPanel wrapper) {
         final DiagramNodeContainer container = new DiagramNodeContainer(node, builder, basePoint);
         if (!GraphViewUtil.isPrintMode()) {
           if (!node.getIdentifyingElement().getErrors().isEmpty()) {
@@ -561,7 +550,9 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
     private final AnAction myAction;
 
     MyEditSourceAction() {
-      super("Jump To...", "Jump To...", AllIcons.Actions.EditSource);
+      super(AngularJSBundle.message("angularjs.ui.router.diagram.action.edit.source.name"),
+            AngularJSBundle.message("angularjs.ui.router.diagram.action.edit.source.description"),
+            AllIcons.Actions.EditSource);
       myAction = ActionManager.getInstance().getAction(IdeActions.ACTION_EDIT_SOURCE);
     }
 

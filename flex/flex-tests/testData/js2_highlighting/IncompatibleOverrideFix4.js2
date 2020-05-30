@@ -5,8 +5,8 @@ class <error>FooBase</error> {
 }
 
 package {
-class <error>Foo</error> extends FooBase {
-    override function foo():<error>int</error> {
+class Foo extends FooBase {
+    override function foo():<error descr="Incompatible override, should have return type ''">int</error> {
     }
 }
 }

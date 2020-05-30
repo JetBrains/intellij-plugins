@@ -1,6 +1,5 @@
 package com.dmarcotte.handlebars.psi.impl;
 
-import com.dmarcotte.handlebars.psi.HbMustacheName;
 import com.dmarcotte.handlebars.psi.HbPartial;
 import com.dmarcotte.handlebars.psi.HbPartialName;
 import com.intellij.lang.ASTNode;

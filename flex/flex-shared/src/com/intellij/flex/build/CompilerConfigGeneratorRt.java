@@ -615,7 +615,7 @@ public class CompilerConfigGeneratorRt {
 
   private void addFilesIncludedInSwc(final Element rootElement) {
     final JpsCompilerExcludes excludes =
-      JpsJavaExtensionService.getInstance().getOrCreateCompilerConfiguration(myModule.getProject()).getCompilerExcludes();
+      JpsJavaExtensionService.getInstance().getCompilerConfiguration(myModule.getProject()).getCompilerExcludes();
 
     final Map<String, String> filePathToPathInSwc = new THashMap<>();
 
@@ -776,7 +776,7 @@ public class CompilerConfigGeneratorRt {
 
   private void addLibClasses(final Element rootElement) throws IOException {
     final JpsCompilerExcludes excludes =
-      JpsJavaExtensionService.getInstance().getOrCreateCompilerConfiguration(myModule.getProject()).getCompilerExcludes();
+      JpsJavaExtensionService.getInstance().getCompilerConfiguration(myModule.getProject()).getCompilerExcludes();
     final Ref<Boolean> noClasses = new Ref<>(true);
 
     for (JpsTypedModuleSourceRoot srcRoot : myModule.getSourceRoots(JavaSourceRootType.SOURCE)) {

@@ -39,8 +39,7 @@ class DartTestRerunnerAction extends AbstractRerunFailedTestsAction {
     }
 
     @Override
-    @NotNull
-    public Module[] getModules() {
+    public Module @NotNull [] getModules() {
       return runner.getModulesToCompile();
     }
 

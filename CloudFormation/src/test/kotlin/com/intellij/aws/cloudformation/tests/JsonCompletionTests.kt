@@ -4,10 +4,12 @@ import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.util.BuildNumber
 import com.intellij.testFramework.UsefulTestCase
-import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase
+import com.intellij.testFramework.builders.ModuleFixtureBuilder
+import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.ModuleFixture
 import java.util.Arrays
 
-class JsonCompletionTests : LightJavaCodeInsightFixtureTestCase() {
+class JsonCompletionTests : CodeInsightFixtureTestCase<ModuleFixtureBuilder<ModuleFixture>>() {
   fun testResourceType1() {
     myFixture.configureByFiles("ResourceType1.template")
     myFixture.complete(CompletionType.BASIC, 1)
@@ -131,7 +133,8 @@ class JsonCompletionTests : LightJavaCodeInsightFixtureTestCase() {
     return true
   }
 
-  override fun getTestDataPath(): String {
-    return TestUtil.getTestDataPath("completion/json")
+  override fun setUp() {
+    super.setUp()
+    myFixture.testDataPath = TestUtil.getTestDataPath("completion/json")
   }
 }

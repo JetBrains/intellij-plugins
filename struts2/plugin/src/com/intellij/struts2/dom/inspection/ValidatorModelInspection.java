@@ -32,9 +32,8 @@ public class ValidatorModelInspection extends BasicDomElementsInspection<Validat
     super(Validators.class);
   }
 
-  @NotNull
   @Override
-  public String[] getGroupPath() {
+  public String @NotNull [] getGroupPath() {
     return new String[]{StrutsBundle.message("inspections.group.path.name"), getGroupDisplayName()};
   }
 

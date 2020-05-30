@@ -1,4 +1,4 @@
-HtmlFile:test.html
+HtmlFile:test.vue
   PsiElement(HTML_DOCUMENT)
     PsiElement(XML_PROLOG)
       PsiElement(XML_DOCTYPE)

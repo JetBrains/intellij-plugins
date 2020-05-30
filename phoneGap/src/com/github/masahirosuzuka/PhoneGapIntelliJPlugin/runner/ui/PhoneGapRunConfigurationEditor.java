@@ -148,7 +148,7 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
     myEnvComponent = new EnvironmentVariablesTextFieldWithBrowseButton();
     myEnvComponent.setPassParentEnvs(true);
 
-    myHasTarget = new JBCheckBox("Specify target");
+    myHasTarget = new JBCheckBox(PhoneGapBundle.message("checkbox.specify.target"));
     myTarget = new PhoneGapTargetsPanel();
     myExtraArgsTextField = new JBTextField(15);
     myCommand.setMinimumAndPreferredWidth(200);
@@ -159,7 +159,7 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
       @NotNull
       @Override
       public Set<String> getCachedValues() {
-        return ContainerUtil.newHashOrEmptySet(null);
+        return Collections.emptySet();
       }
 
       @Override
@@ -189,7 +189,7 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
       }
 
       private void processEmpty() {
-        myTarget.onUpdateValues(ContainerUtil.newHashOrEmptySet(null));
+        myTarget.onUpdateValues(Collections.emptySet());
       }
     });
 

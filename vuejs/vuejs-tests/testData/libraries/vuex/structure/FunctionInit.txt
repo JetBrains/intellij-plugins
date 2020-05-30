@@ -1,0 +1,19 @@
+VuexStoreContext: {
+  stores: [
+    VuexStoreImpl <store/store.js:190:JSNewExpression> {
+      modules: [
+        VuexModuleImpl myVuexModule [namespaced] <store/store.js:240:JSProperty> {
+          state: {
+            prop1: <store/myVuexModule.js:67:JSProperty>,
+          }
+          actions: {
+            fetchProp1: <store/myVuexModule.js:190:JSFunctionProperty>,
+          }
+          mutations: {
+            setProp1: <store/myVuexModule.js:105:JSFunctionProperty>,
+          }
+        }
+      ]
+    }
+  ],
+}

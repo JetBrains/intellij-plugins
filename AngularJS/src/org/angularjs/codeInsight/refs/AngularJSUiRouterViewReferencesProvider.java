@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.psi.JSObjectLiteralExpression;
 import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.lang.javascript.psi.resolve.CachingPolyReferenceBase;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
@@ -17,11 +18,10 @@ import org.jetbrains.annotations.NotNull;
  * @author Irina.Chernushina on 2/11/2016.
  */
 public class AngularJSUiRouterViewReferencesProvider extends PsiReferenceProvider {
-  @NotNull
   @Override
-  public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+  public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
     final PsiElement identifier = element instanceof JSProperty ? ((JSProperty)element).getNameIdentifier() : element;
-    return new PsiReference[] {new AngularJSUiRouterViewReference(identifier)};
+    return new PsiReference[]{new AngularJSUiRouterViewReference(identifier)};
   }
 
   private static class AngularJSUiRouterViewReference extends CachingPolyReferenceBase<PsiElement> {
@@ -37,12 +37,12 @@ public class AngularJSUiRouterViewReferencesProvider extends PsiReferenceProvide
     }
 
     @Override
-    @NotNull
-    public ResolveResult[] resolveInner() {
+    public ResolveResult @NotNull [] resolveInner() {
       final String id = getViewName();
-      final Condition<VirtualFile> filter = StringUtil.isEmptyOrSpaces(id) ? filterByTemplateUrl() : Condition.TRUE;
+      final Condition<VirtualFile> filter = StringUtil.isEmptyOrSpaces(id) ? filterByTemplateUrl() : Conditions.alwaysTrue();
       return AngularIndexUtil.multiResolveAngularNamedDefinitionIndex(getElement().getProject(),
-                                                                      AngularUiRouterViewsIndex.UI_ROUTER_VIEWS_CACHE_INDEX, id, filter, false);
+                                                                      AngularUiRouterViewsIndex.UI_ROUTER_VIEWS_CACHE_INDEX, id, filter,
+                                                                      false);
     }
 
     private Condition<VirtualFile> filterByTemplateUrl() {
@@ -62,7 +62,7 @@ public class AngularJSUiRouterViewReferencesProvider extends PsiReferenceProvide
           }
         }
       }
-      return Condition.TRUE;
+      return Conditions.alwaysTrue();
     }
 
     @Override

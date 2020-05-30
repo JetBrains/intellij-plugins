@@ -1,26 +1,12 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.codeInsight;
 
 import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.javascript.flex.documentation.FlexDocumentationProvider;
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.lang.javascript.JSAbstractDocumentationTest;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
-import com.intellij.lang.javascript.documentation.JSDocumentationProvider;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.openapi.vfs.JarFileSystem;
@@ -33,7 +19,7 @@ import com.intellij.psi.css.impl.util.CssDocumentationProvider;
 import com.intellij.testFramework.LightProjectDescriptor;
 
 public class FlexDocumentationTest extends JSAbstractDocumentationTest {
-  private static final String BASE_PATH = "/as_documentation/";
+  private static final String BASE_PATH = "as_documentation/";
 
   @Override
   protected String getBasePath() {
@@ -74,11 +60,6 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
     myFixture.configureByFile(BASE_PATH + fileName);
     PsiElement originalElement = myFixture.getFile().findElementAt(myFixture.getEditor().getCaretModel().getOffset());
     return provider.getDocumentationElementForLookupItem(getPsiManager(), originalElement.getText(), originalElement);
-  }
-
-  @Override
-  protected JSDocumentationProvider createDocumentationProvider() {
-    return new FlexDocumentationProvider();
   }
 
   public void testJSDocs6() {
@@ -178,7 +159,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
   public void testFlexCssSelectorMultiDocumentationInLookup() {
     testWithLibrary("MyLib1.swc", "MyLib1_src.zip", null, () -> {
-      String doc = testOne(new CssDocumentationProvider(), getTestName(false) + ".css");
+      String doc = testOne(getTestName(false) + ".css");
       assertTrue(doc.contains("p1.MyClass"));
       assertTrue(doc.contains("p2.MyClass"));
     });
@@ -216,7 +197,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   public void testFlexCssPropertyMultiDocumentationInLookup() {
     setUpJdk();
     DocumentationProvider cssDocProvider = new CssDocumentationProvider();
-    String doc = testOne(cssDocProvider, getTestName(false) + ".css", new CssPropertyDescriptorStub("borderColor"));
+    String doc = testOne(getTestName(false) + ".css", new CssPropertyDescriptorStub("borderColor"));
     assertNotNull(doc);
     assertTrue("Container's borderColor property missing", doc.contains("Container"));
     assertTrue("Button's borderColor property missing", doc.contains("Button"));
@@ -224,62 +205,58 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   }
 
   public void testQuickNavigateInfo() {
-    final String testName = getTestName(false);
-    doNavigateTest(testName, "js2", "public class xxx.AAA extends ZZZ<br>implements yyy.XXX");
+    doQuickNavigateTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
   public void testQuickNavigateInfoWithMxml() {
     setUpJdk();
-    doNavigateTest(getTestName(false), "mxml", "flash.display.Sprite<br>Event mouseDown" + file("MockFlex.as"));
+    doQuickNavigateTest(getTestName(false), "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
   public void testQuickNavigateInfoWithMxml2() {
-    doNavigateTest(getTestName(false), "mxml", "id xxx", false);
+    doQuickNavigateTest(getTestName(false), "mxml");
   }
 
   public void testQuickNavigateInfo_2() {
-    doNavigateTest(getTestName(false), "js2", "public var xxx.AAA.ttt:* = new Object");
+    doQuickNavigateTest();
   }
 
   public void testQuickNavigateInfo_3() {
-    doNavigateTest(getTestName(false), "js2", "public static function xxx.<a href=\"psi_element://AAA\">AAA</a>.yyy(p:Object):AAA");
+    doQuickNavigateTest();
   }
 
   public void testQuickNavigateInfo_4() {
-    doNavigateTest(getTestName(false), "js2", "(property) public static function xxx.AAA.yyy:Object");
+    doQuickNavigateTest();
   }
 
   public void testQuickNavigateInfo_5() {
-    doNavigateTest(getTestName(false), "js2", "public function xxx.getTimer()");
+    doQuickNavigateTest();
   }
 
   public void testQuickNavigateInfo_5_2() {
-    doNavigateTest(getTestName(false), "js2", "public function xxx.getTimer()");
+    doQuickNavigateTest();
   }
 
   public void testQuickNavigateInfo_6() {
-    doNavigateTest(getTestName(false), "js2", "testData.documentation<br>namespace XXX = \"\"", false);
+    doQuickNavigateTest();
   }
 
   public void testQuickNavigateInfo_7() {
-    doNavigateTest(getTestName(false), "js2", "xxx static const Foo.XXX = &quot;111&quot;");
+    doQuickNavigateTest();
   }
 
   public void testQuickNavigateInfo_9() {
-    doNavigateTest(getTestName(false), "js2",
-                   "var xxx:int");
+    doQuickNavigateTest();
   }
 
   public void testQuickNavigateInfo_10() {
-    doNavigateTest(getTestName(false), "js2",
-                   "var xxx:Vector.&lt;int&gt; = new Vector.&lt;int&gt;()");
+    doQuickNavigateTest();
   }
 
   public void testQuickNavigateInfo_11() {
-    doNavigateTest(getTestName(false), "js2",
-                   "function foo():Vector.&lt;int&gt;");
+    doQuickNavigateTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
@@ -449,7 +426,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   public void testQuickNavigateInfoFromSource() {
     testWithLibrary("MyLib.swc", "MyLib_src.zip", null, () -> {
       final String testName = getTestName(false);
-      doNavigateTest(testName, "js2", "public function LibraryMain.someMethod(param:int):int" + file("LibraryMain.as"));
+      doQuickNavigateTest();
     });
   }
 

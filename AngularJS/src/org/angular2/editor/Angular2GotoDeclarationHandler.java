@@ -6,10 +6,7 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.ContainerUtil;
-import org.angular2.Angular2InjectionUtils;
 import org.angular2.entities.Angular2Directive;
-import org.angular2.entities.Angular2DirectiveSelectorPsiElement;
-import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.lang.Angular2Bundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,19 +15,15 @@ import java.util.List;
 
 public class Angular2GotoDeclarationHandler implements GotoDeclarationHandler {
 
-  @Nullable
   @Override
-  public PsiElement[] getGotoDeclarationTargets(@Nullable PsiElement sourceElement, int offset, Editor editor) {
+  public PsiElement @Nullable [] getGotoDeclarationTargets(@Nullable PsiElement sourceElement, int offset, Editor editor) {
     return null;
   }
 
-  @Nullable
   @Override
-  public String getActionText(@NotNull DataContext context) {
-    PsiElement symbol = Angular2InjectionUtils.getTargetElementFromContext(context);
-    List<Angular2Directive> directives;
-    if (symbol instanceof Angular2DirectiveSelectorPsiElement
-        && !(directives = Angular2EntitiesProvider.findDirectives((Angular2DirectiveSelectorPsiElement)symbol)).isEmpty()) {
+  public @Nullable String getActionText(@NotNull DataContext context) {
+    List<Angular2Directive> directives = Angular2EditorUtils.getDirectivesAtCaret(context);
+    if (!directives.isEmpty()) {
       return ContainerUtil.all(directives, Angular2Directive::isComponent)
              ? Angular2Bundle.message("angular.action.goto-declaration.component")
              : Angular2Bundle.message("angular.action.goto-declaration.directive");

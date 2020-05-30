@@ -214,7 +214,7 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
         if (androidEnabled && iosEnabled && dialog.isBothAndroidAndIosSelected()) {
           final int choice =
             Messages.showYesNoDialog(myModule.getProject(), FlexBundle.message("use.same.descriptor.for.android.and.ios"),
-                                     CreateAirDescriptorTemplateDialog.TITLE, Messages.getQuestionIcon());
+                                     CreateAirDescriptorTemplateDialog.getTitleText(), Messages.getQuestionIcon());
           if (choice == Messages.YES) {
             myAirDescriptorInfoProvider.setCustomDescriptorForAndroidAndIOS(descriptorPath);
           }

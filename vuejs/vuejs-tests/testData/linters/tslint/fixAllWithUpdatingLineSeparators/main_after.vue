@@ -23,11 +23,8 @@ export class ConsoleGreeter extends Greeter<string> {
     }
 }
 
-
-
-
 var anotherArrow = () => {
-    return {x: 1}
+    return {x: 1};
 };
 </script>
 <style>

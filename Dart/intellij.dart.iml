@@ -41,10 +41,11 @@
     <orderEntry type="library" name="snakeyaml" level="project" />
     <orderEntry type="library" name="netty-codec-http" level="project" />
     <orderEntry type="library" name="markdownj" level="project" />
+    <orderEntry type="library" name="commons-lang3" level="project" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/commons-lang3-3.2.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/weberknecht-0.1.5.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -54,15 +55,6 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/json.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/weberknecht-0.1.5.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

@@ -3,6 +3,7 @@ package org.intellij.plugins.postcss.inspections;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElementVisitor;
@@ -16,8 +17,12 @@ import org.jetbrains.annotations.NotNull;
 
 public class PostCssCustomMediaInspection extends PostCssBaseInspection {
   private static final CssAddPrefixQuickFix ADD_PREFIX_QUICK_FIX =
-    new CssAddPrefixQuickFix(PostCssBundle.message("annotator.add.prefix.to.custom.media.quickfix.name"), "--",
-                             PostCssCustomMediaAtRule.class);
+    new CssAddPrefixQuickFix("--", PostCssCustomMediaAtRule.class) {
+      @Override
+      public @IntentionFamilyName @NotNull String getFamilyName() {
+        return PostCssBundle.message("annotator.add.prefix.to.custom.media.quickfix.name");
+      }
+    };
 
   @NotNull
   @Override

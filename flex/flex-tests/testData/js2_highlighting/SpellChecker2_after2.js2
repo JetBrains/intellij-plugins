@@ -1,4 +1,4 @@
 package {
 public class Vector$object {}
 }
-function foo(xxix:Vector.<Object>) {}
+function foo(typo:Vector.<Object>) {}

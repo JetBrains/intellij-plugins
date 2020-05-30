@@ -178,7 +178,7 @@ public class Angular2LexerSpecTest {
         it("should tokenize quoted string", () -> {
           final String str = "['\\'', \"\\\"\"]";
           final Token[] tokens = lex(str);
-          expectStringToken(tokens[1], 1, "\'");
+          expectStringToken(tokens[1], 1, "'");
           expectStringToken(tokens[3], 7, "\"");
         });
 

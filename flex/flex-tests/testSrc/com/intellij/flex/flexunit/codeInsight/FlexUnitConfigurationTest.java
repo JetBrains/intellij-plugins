@@ -90,15 +90,10 @@ public class FlexUnitConfigurationTest extends JavaCodeInsightTestCase implement
         assertTrue(place + "Invalid configuration", configuration instanceof FlexUnitRunConfiguration);
 
         final String[] expected;
-        if ("null".equals(marker.getValue())) {
-          expected = null;
-        }
-        else {
-          expected = marker.getValue().split(" ");
-          assertEquals(
-            place + "Expected should be in the form: \"Class com.test.Foo\" or \"Method com.test.Foo.testBar()\" or \"Package com.test\"",
-            2, expected.length);
-        }
+        expected = marker.getValue().split(" ");
+        assertEquals(
+          place + "Expected should be in the form: \"Class com.test.Foo\" or \"Method com.test.Foo.testBar()\" or \"Package com.test\"",
+          2, expected.length);
         final FlexUnitRunnerParameters params = ((FlexUnitRunConfiguration)configuration).getRunnerParameters();
         assertEquals(place + "Invalid scope", expected[0], params.getScope().name());
 

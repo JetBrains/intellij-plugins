@@ -17,11 +17,12 @@ package org.dartlang.vm.service.element;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A {@link ClassObj} provides information about a Dart language class.
  */
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class ClassObj extends Obj {
 
   public ClassObj(JsonObject json) {
@@ -33,8 +34,16 @@ public class ClassObj extends Obj {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public ErrorRef getError() {
-    return json.get("error") == null ? null : new ErrorRef((JsonObject) json.get("error"));
+    JsonObject obj = (JsonObject) json.get("error");
+    if (obj == null) return null;
+    final String type = json.get("type").getAsString();
+    if ("Instance".equals(type) || "@Instance".equals(type)) {
+      final String kind = json.get("kind").getAsString();
+      if ("Null".equals(kind)) return null;
+    }
+    return new ErrorRef(obj);
   }
 
   /**
@@ -76,11 +85,10 @@ public class ClassObj extends Obj {
   }
 
   /**
-   * The library which contains this class. TODO: This should be @Library, but the VM can return
-   * @Instance objects here.
+   * The library which contains this class.
    */
-  public ObjRef getLibrary() {
-    return new ObjRef((JsonObject) json.get("library"));
+  public LibraryRef getLibrary() {
+    return new LibraryRef((JsonObject) json.get("library"));
   }
 
   /**
@@ -88,8 +96,16 @@ public class ClassObj extends Obj {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public SourceLocation getLocation() {
-    return json.get("location") == null ? null : new SourceLocation((JsonObject) json.get("location"));
+    JsonObject obj = (JsonObject) json.get("location");
+    if (obj == null) return null;
+    final String type = json.get("type").getAsString();
+    if ("Instance".equals(type) || "@Instance".equals(type)) {
+      final String kind = json.get("kind").getAsString();
+      if ("Null".equals(kind)) return null;
+    }
+    return new SourceLocation(obj);
   }
 
   /**
@@ -99,15 +115,18 @@ public class ClassObj extends Obj {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public InstanceRef getMixin() {
-    return json.get("mixin") == null ? null : new InstanceRef((JsonObject) json.get("mixin"));
+    JsonObject obj = (JsonObject) json.get("mixin");
+    if (obj == null) return null;
+    return new InstanceRef(obj);
   }
 
   /**
    * The name of this class.
    */
   public String getName() {
-    return json.get("name").getAsString();
+    return getAsString("name");
   }
 
   /**
@@ -127,8 +146,16 @@ public class ClassObj extends Obj {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public ClassRef getSuperClass() {
-    return json.get("super") == null ? null : new ClassRef((JsonObject) json.get("super"));
+    JsonObject obj = (JsonObject) json.get("super");
+    if (obj == null) return null;
+    final String type = json.get("type").getAsString();
+    if ("Instance".equals(type) || "@Instance".equals(type)) {
+      final String kind = json.get("kind").getAsString();
+      if ("Null".equals(kind)) return null;
+    }
+    return new ClassRef(obj);
   }
 
   /**
@@ -138,21 +165,24 @@ public class ClassObj extends Obj {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public InstanceRef getSuperType() {
-    return json.get("superType") == null ? null : new InstanceRef((JsonObject) json.get("superType"));
+    JsonObject obj = (JsonObject) json.get("superType");
+    if (obj == null) return null;
+    return new InstanceRef(obj);
   }
 
   /**
    * Is this an abstract class?
    */
   public boolean isAbstract() {
-    return json.get("abstract").getAsBoolean();
+    return getAsBoolean("abstract");
   }
 
   /**
    * Is this a const class?
    */
   public boolean isConst() {
-    return json.get("const").getAsBoolean();
+    return getAsBoolean("const");
   }
 }

@@ -2,6 +2,5 @@
 package org.jetbrains.vuejs.model
 
 interface VueNamedEntity {
-
   val defaultName: String?
 }

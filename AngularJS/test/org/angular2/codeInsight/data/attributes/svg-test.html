@@ -1,0 +1,49 @@
+
+<svg:svg xmlns:svg="http://www.w3.org/2000/svg"
+         viewBox="0 0 100 100"
+         data-descr="my SVG"
+         (mousemove)="setCircleLocation($event)">
+  <svg:defs>
+    <svg:clipPath id="clip">
+      <svg:circle [attr.cx]="circle[0]"
+                  [attr.cy]="circle[1]"
+                  <weak_warning descr="Property wrong is not provided by any applicable directives nor by svg:circle element">[wrong]</weak_warning>="12"
+                  r="100" />
+    </svg:clipPath>
+  </svg:defs>
+  <svg:g clip-path="url(#clip)">
+    <svg:polygon points="125,30 125,30 125,30 31.9,63.2 46.1,186.3 125,230 125,230 125,230 203.9,186.3 218.1,63.2" />
+    <svg:polygon points="125,30 125,52.2 125,52.1 125,153.4 125,153.4 125,230 125,230 203.9,186.3 218.1,63.2 125,30" />
+    <svg:path d="M125,52.1L66.8,182.6h0h21.7h0l11.7-29.2h49.4l11.7,29.2h0h21.7h0L125,52.1L125,52.1L125,52.1L125,52.1
+    L125,52.1z M142,135.4H108l17-40.9L142,135.4z"/>
+  </svg:g>
+</svg:svg>
+
+<svg id="rocket"
+     <warning descr="Attribute alt is not allowed here">alt</warning>="Rocket Ship"
+     <warning descr="Attribute unknown is not allowed here">unknown</warning>="foo"
+     xmlns="http://www.w3.org/2000/svg"
+     data-descr="my SVG"
+     width="101.678"
+     height="101.678"
+     viewBox="0 0 101.678 101.678">
+  <g id="Group_83"
+     data-descr="my group"
+     transform="translate(-141 -696)"
+     <weak_warning descr="No directive is matched on attribute ngFor">*ngFor</weak_warning>="let <warning descr="Unused local variable item">item</warning> of items">
+  </g>
+</svg>
+
+<svg id="rocket"
+     <warning descr="Attribute alt is not allowed here">alt</warning>="Rocket Ship"
+     [attr.unknown]="<error descr="Unresolved variable or type foo">foo</error>"
+     [attr.width]="101.678"
+     data-descr="my SVG"
+     height="101.678">
+  <g id="Group_83"
+     data-name="Group 83"
+     data-descr="my SVG"
+     transform="translate(-141 -696)"
+     <weak_warning descr="No directive is matched on attribute ngFor">*ngFor</weak_warning>="let <warning descr="Unused local variable item">item</warning> of items">
+  </g>
+</svg>

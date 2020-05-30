@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.pubServer;
 
 import com.intellij.execution.ExecutionException;
@@ -28,7 +28,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.util.Consumer;
 import com.intellij.util.SmartList;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.net.NetKt;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.actions.DartPubActionBase;
@@ -66,6 +65,7 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 final class PubServerService extends NetService {
@@ -76,10 +76,10 @@ final class PubServerService extends NetService {
 
   private volatile VirtualFile firstServedDir;
 
-  private final ConcurrentMap<Channel, ClientInfo> serverToClientChannel = ContainerUtil.newConcurrentMap();
+  private final ConcurrentMap<Channel, ClientInfo> serverToClientChannel = new ConcurrentHashMap<>();
   private final ChannelRegistrar serverChannelRegistrar = new ChannelRegistrar();
 
-  private final ConcurrentMap<VirtualFile, ServerInfo> servedDirToSocketAddress = ContainerUtil.newConcurrentMap();
+  private final ConcurrentMap<VirtualFile, ServerInfo> servedDirToSocketAddress = new ConcurrentHashMap<>();
 
   private final Object myServerReadyLock = new Object();
 
@@ -132,8 +132,7 @@ final class PubServerService extends NetService {
     }
   }
 
-  @Nullable
-  private ServerInfo getServerInfo(@NotNull Channel channel) {
+  private @Nullable ServerInfo getServerInfo(@NotNull Channel channel) {
     for (ServerInfo serverInstanceInfo : servedDirToSocketAddress.values()) {
       if (channel.remoteAddress().equals(serverInstanceInfo.address)) {
         return serverInstanceInfo;
@@ -143,25 +142,22 @@ final class PubServerService extends NetService {
   }
 
   @Override
-  @NotNull
-  protected String getConsoleToolWindowId() {
+  protected @NotNull String getConsoleToolWindowId() {
     return DART_WEBDEV;
   }
 
   @Override
-  @NotNull
-  protected Icon getConsoleToolWindowIcon() {
+  protected @NotNull Icon getConsoleToolWindowIcon() {
     return DartIcons.PubServeToolWindow;
   }
 
-  @NotNull
   @Override
-  public ActionGroup getConsoleToolWindowActions() {
+  public @NotNull ActionGroup getConsoleToolWindowActions() {
     return new DefaultActionGroup(ActionManager.getInstance().getAction("Dart.stop.dart.webdev.server"));
   }
 
   @Override
-  protected void configureConsole(@NotNull final TextConsoleBuilder consoleBuilder) {
+  protected void configureConsole(final @NotNull TextConsoleBuilder consoleBuilder) {
     consoleBuilder.addFilter(new DartConsoleFilter(getProject(), firstServedDir));
     consoleBuilder.addFilter(new DartRelativePathsConsoleFilter(getProject(), firstServedDir.getParent().getPath()));
     consoleBuilder.addFilter(new UrlFilter());
@@ -172,11 +168,11 @@ final class PubServerService extends NetService {
     return processHandler != null && !processHandler.isProcessTerminated();
   }
 
-  public void sendToPubServer(@NotNull final Channel clientChannel,
-                              @NotNull final FullHttpRequest clientRequest,
+  public void sendToPubServer(final @NotNull Channel clientChannel,
+                              final @NotNull FullHttpRequest clientRequest,
                               @NotNull HttpHeaders extraHeaders,
-                              @NotNull final VirtualFile servedDir,
-                              @NotNull final String pathForPubServer) {
+                              final @NotNull VirtualFile servedDir,
+                              final @NotNull String pathForPubServer) {
     clientRequest.retain();
 
     if (getProcessHandler().getResultIfFullFilled() != null) {
@@ -193,8 +189,7 @@ final class PubServerService extends NetService {
   }
 
   @Override
-  @Nullable
-  protected OSProcessHandler createProcessHandler(@NotNull final Project project, final int port) throws ExecutionException {
+  protected @Nullable OSProcessHandler createProcessHandler(final @NotNull Project project, final int port) throws ExecutionException {
     final DartSdk dartSdk = DartSdk.getDartSdk(project);
     if (dartSdk == null) return null;
 
@@ -227,10 +222,10 @@ final class PubServerService extends NetService {
   }
 
   @Override
-  protected void connectToProcess(@NotNull final AsyncPromise<OSProcessHandler> promise,
+  protected void connectToProcess(final @NotNull AsyncPromise<OSProcessHandler> promise,
                                   final int port,
-                                  @NotNull final OSProcessHandler processHandler,
-                                  @NotNull final Consumer<String> errorOutputConsumer) {
+                                  final @NotNull OSProcessHandler processHandler,
+                                  final @NotNull Consumer<String> errorOutputConsumer) {
     if (DartWebdev.INSTANCE.useWebdev(DartSdk.getDartSdk(getProject()))) {
       synchronized (myServerReadyLock) {
         try {
@@ -254,7 +249,7 @@ final class PubServerService extends NetService {
     super.connectToProcess(promise, port, processHandler, errorOutputConsumer);
   }
 
-  static void sendBadGateway(@NotNull final Channel channel, @NotNull HttpHeaders extraHeaders) {
+  static void sendBadGateway(final @NotNull Channel channel, @NotNull HttpHeaders extraHeaders) {
     if (channel.isActive()) {
       Responses.send(HttpResponseStatus.BAD_GATEWAY, channel, null, null, extraHeaders);
     }
@@ -287,11 +282,11 @@ final class PubServerService extends NetService {
     }
   }
 
-  void sendToServer(@NotNull final VirtualFile servedDir,
-                    @NotNull final Channel clientChannel,
-                    @NotNull final FullHttpRequest clientRequest,
+  void sendToServer(final @NotNull VirtualFile servedDir,
+                    final @NotNull Channel clientChannel,
+                    final @NotNull FullHttpRequest clientRequest,
                     @NotNull HttpHeaders extraHeaders,
-                    @NotNull final String pathToPubServe) {
+                    final @NotNull String pathToPubServe) {
     ServerInfo serverInstanceInfo = servedDirToSocketAddress.get(servedDir);
     final InetSocketAddress address = serverInstanceInfo.address;
 
@@ -327,7 +322,7 @@ final class PubServerService extends NetService {
 
 
   @Nullable
-  String getPubServeAuthority(@NotNull final VirtualFile dir) {
+  String getPubServeAuthority(final @NotNull VirtualFile dir) {
     final ServerInfo serverInfo = servedDirToSocketAddress.get(dir);
     final InetSocketAddress address = serverInfo == null ? null : serverInfo.address;
     return address != null ? address.getHostString() + ":" + address.getPort() : null;
@@ -392,7 +387,7 @@ final class PubServerService extends NetService {
     }
 
     @Override
-    public void onTextAvailable(@NotNull final ProcessEvent event, @NotNull final Key outputType) {
+    public void onTextAvailable(final @NotNull ProcessEvent event, final @NotNull Key outputType) {
       final String text = StringUtil.toLowerCase(event.getText());
 
       // Serving `web` on http://localhost:53322
@@ -435,7 +430,7 @@ final class PubServerService extends NetService {
 
       myNotification = NOTIFICATION_GROUP.createNotification("", message, NotificationType.WARNING, new NotificationListener.Adapter() {
         @Override
-        protected void hyperlinkActivated(@NotNull final Notification notification, @NotNull final HyperlinkEvent e) {
+        protected void hyperlinkActivated(final @NotNull Notification notification, final @NotNull HyperlinkEvent e) {
           notification.expire();
           ToolWindowManager.getInstance(myProject).getToolWindow(DART_WEBDEV).activate(null);
         }

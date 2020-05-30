@@ -23,13 +23,6 @@ public class CucumberMissedExamplesInspection extends GherkinInspection {
   }
 
   @Override
-  @Nls
-  @NotNull
-  public String getDisplayName() {
-    return CucumberBundle.message("inspection.missed.example.name");
-  }
-
-  @Override
   @NotNull
   public String getShortName() {
     return "CucumberMissedExamples";

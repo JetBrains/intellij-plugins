@@ -6,6 +6,5 @@ import org.jetbrains.annotations.NotNull;
 
 public interface Angular2Action extends Angular2EmbeddedExpression {
 
-  @NotNull
-  JSExpressionStatement[] getStatements();
+  JSExpressionStatement @NotNull [] getStatements();
 }

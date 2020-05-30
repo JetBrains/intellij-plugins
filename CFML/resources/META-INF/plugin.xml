@@ -1,32 +1,30 @@
 <idea-plugin>
   <id>CFML Support</id>
   <name>CFML</name>
+  <category>Template Languages</category>
   <description>
     <![CDATA[
-      Provides editing support for ColdFusion files, and facilities for deploying applications to the <a href="http://www.adobe.com/products/coldfusion-family.html">ColdFusion server</a>.
-      The following features are available:
-        <ul>
-        <li>File type.</li>
-        <li>Coding assistance (code completion, syntax and error highlighting, code formatting and folding).</li>
-        <li>Navigation and search facilities.</li>
-        </ul>
+    Adds support for ColdFusion Markup Language (CFML).
+    <ul><li>Provides coding assistance, navigation and search for CFML files</li>
+    <li>Helps to deploy applications to the ColdFusion server with a dedicated run/debug configuration</li></ul>
+
+Requires the <a href="http://www.adobe.com/products/coldfusion-family.html">ColdFusion server</a> and configured path mapping between local folders with your application and corresponding directories on the server.
+To configure path mappings, open the <b>Settings / Preferences</b> dialog and select <b>Languages & Frameworks | ColdFusion</b>.
       ]]>
   </description>
   <vendor>JetBrains</vendor>
   <resource-bundle>messages.CfmlBundle</resource-bundle>
 
-  <depends>com.intellij.modules.sql</depends>
   <depends>com.intellij.modules.java</depends>
   <depends>com.intellij.modules.ultimate</depends>
-  <depends>com.intellij.database</depends>
-
+  <depends>com.intellij.modules.idea.ultimate</depends>
 
   <extensions defaultExtensionNs="com.intellij">
     <psi.referenceContributor language="CFML"
                               implementation="com.intellij.coldFusion.UI.editorActions.completionProviders.CfmlReferenceContributor"/>
     <programRunner implementation="com.intellij.coldFusion.UI.runner.CfmlRunner"/>
     <configurationType implementation="com.intellij.coldFusion.UI.runner.CfmlRunConfigurationType"/>
-    <runConfigurationProducer implementation="com.intellij.coldFusion.UI.runner.CfmlRunConfigurationProducer"/>
+    <runConfigurationProducer implementation="com.intellij.coldFusion.UI.runner.CfmlRunConfigurationProducer" order="before JavaScriptDebug"/>
     <localInspection language="CFML" shortName="CfmlReferenceInspection" bundle="messages.CfmlBundle" key="cfml.references.inspection"
                      groupKey="cfml.inspections.group" enabledByDefault="true" level="WARNING"
                      implementationClass="com.intellij.coldFusion.UI.inspections.CfmlReferenceInspection"/>
@@ -35,14 +33,9 @@
                      implementationClass="com.intellij.coldFusion.UI.inspections.CfmlFileReferenceInspection"/>
     <lang.psiStructureViewFactory language="CFML"
                                   implementationClass="com.intellij.coldFusion.UI.editorActions.structureView.CfmlStructureViewProvider"/>
-    <!--<fileBasedIndex implementation="com.intellij.coldFusion.model.files.CfmlFileIndex"/>-->
     <typedHandler implementation="com.intellij.coldFusion.UI.editorActions.typedHandlers.CfmlTypedHandler" order="first"/>/>
     <backspaceHandlerDelegate
         implementation="com.intellij.coldFusion.UI.editorActions.typedHandlers.CfmlBackspaceHandler"/>
-    <!--
-    <lang.braceMatcher language="CFML"
-                       implementationClass="com.intellij.coldFusion.UI.editorActions.matchers.CfmlPairedBraceMatcher"/>
-    -->
     <quoteHandler fileType="CFSCRIPT"
                   className="com.intellij.coldFusion.UI.editorActions.matchers.CfmlQuoteHandler"/>
     <quoteHandler fileType="CFML" className="com.intellij.coldFusion.UI.editorActions.matchers.CfmlQuoteHandler"/>
@@ -58,9 +51,9 @@
     <lang.syntaxHighlighterFactory language="CFML"
                                    implementationClass="com.intellij.coldFusion.UI.highlighting.CfmlSyntaxHighlighterFactory"/>
     <indexPatternBuilder implementation="com.intellij.coldFusion.model.psi.CfmlIndexPatternBuilder"/>
-    <completion.contributor language="CFML"
+    <completion.contributor language="CFML" order="before javaClassReference"
                             implementationClass="com.intellij.coldFusion.UI.editorActions.completionProviders.CfmlCompletionContributor"/>
-    <completion.contributor language="XML"
+    <completion.contributor language="XML" order="before javaClassReference"
                             implementationClass="com.intellij.coldFusion.UI.editorActions.completionProviders.CfmlCompletionContributor"/>
     <highlightErrorFilter implementation="com.intellij.coldFusion.model.CfmlErrorFilter"/>
     <lang.elementManipulator forClass="com.intellij.coldFusion.model.psi.CfmlCompositeElement"
@@ -71,8 +64,7 @@
     <lang.documentationProvider language="CFML"
                                 implementationClass="com.intellij.coldFusion.UI.editorActions.CfmlDocumentProvider"/>
     <treeStructureProvider implementation="com.intellij.coldFusion.UI.editorActions.CfmlScriptNodeSuppressor"/>
-    <!--<fileTypeIndentOptionsProvider implementation="com.intellij.coldFusion.UI.editorActions.CfmlIndentOptionsProvider"/>-->
-    <fileTypeFactory implementation="com.intellij.coldFusion.model.files.CfmlFileTypeFactory"/>
+    <fileType name="CFML" extensions="cfm;cfml;cfc" fieldName="INSTANCE" language="CFML" implementationClass="com.intellij.coldFusion.model.files.CfmlFileType"/>
     <enterHandlerDelegate implementation="com.intellij.coldFusion.UI.editorActions.typedHandlers.CfmlEnterHandler"/>
     <breadcrumbsInfoProvider implementation="com.intellij.coldFusion.UI.CfmlBreadcrumbsInfoProvider"/>
     <lang.implementationTextSelectioner language="CFML"
@@ -98,24 +90,28 @@
     <codeInsight.parameterInfo language="CFML"
                                implementationClass="com.intellij.coldFusion.UI.editorActions.CfmlParameterInfoHandler"/>
     <projectConfigurable groupId="language" instance="com.intellij.coldFusion.UI.config.CfmlProjectConfigurable"
-                         id="reference.plugin.settings.project.settings.cfml" displayName="ColdFusion" nonDefaultProject="true"/>
+                         id="reference.plugin.settings.project.settings.cfml"
+                         bundle="messages.CfmlBundle"
+                         key="configurable.CfmlProjectConfigurable.display.name"
+                         nonDefaultProject="true"/>
     <projectService serviceImplementation="com.intellij.coldFusion.UI.config.CfmlProjectConfiguration"/>
     <projectService serviceImplementation="com.intellij.coldFusion.model.info.CfmlLangInfo"/>
 
     <configurationType implementation="com.intellij.coldFusion.mxunit.CfmlUnitRunConfigurationType"/>
 
     <liveTemplateContext implementation="com.intellij.coldFusion.CfmlTemplateContextType"/>
-    <defaultLiveTemplatesProvider implementation="com.intellij.coldFusion.CfmlDefaultLiveTemplateProvider"/>
+    <defaultLiveTemplates file="liveTemplates/cfml_default.xml"/>
     <spellchecker.support language="CFML" implementationClass="com.intellij.coldFusion.model.CfmlSpellcheckingStrategy"/>
     <lang.surroundDescriptor language="CFML"
                              implementationClass="com.intellij.coldFusion.UI.editorActions.surroundWith.CfmlVariableSurroundDescriptor"/>
 
     <multiHostInjector implementation="com.intellij.coldFusion.injection.CfmlSqlMultiHostInjector" order="first"/>
+    <editorHighlighterProvider filetype="CFML" implementationClass="com.intellij.coldFusion.model.files.CfmlEditorHighlighterProvider"/>
   </extensions>
 
   <actions>
     <action id="NewCfmlFile" class="com.intellij.coldFusion.UI.CfmlCreateFileAction"
-            text="CFML/CFC file"
+            text="CFML/CFC File"
             description="Create new CFML/CFC file">
       <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
     </action>

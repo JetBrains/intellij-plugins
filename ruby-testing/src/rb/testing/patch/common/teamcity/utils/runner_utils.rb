@@ -26,17 +26,15 @@ module Rake
       ###########################################################################
       ####  Test::Unit
       ###########################################################################
-
-      # Converts Ruby Test Names : $TEST_METHOD_NAME($TEST_CASE_QUALIFIED_NAME)
-      # to Qualified name format :  $TEST_CASE_QUALIFIED_NAME.$TEST_METHOD_NAME
-      def convert_ruby_test_name_to_qualified(ruby_name)
+      # Retrieves a short test name and fully qualified name from test-unit entity name
+      def test_name_und_fqn(ruby_name)
         if ruby_name && (ruby_name.strip =~ /(\S+)\(([\w:]*)\)/)
           # p [$1, $2]
           method_name = $1
-          qualified_name = $2
-          return convert_test_unit_to_qualified(qualified_name, method_name)
+          suit_name = $2
+          return method_name, convert_test_unit_to_qualified(suit_name, method_name)
         end
-        ruby_name
+        [ruby_name, ruby_name]
       end
 
       def convert_test_unit_to_qualified(class_qualified_name, method_name)

@@ -64,9 +64,8 @@ public class CfmlType extends PsiType {
     return GlobalSearchScope.EMPTY_SCOPE;
   }
 
-  @NotNull
   @Override
-  public PsiType[] getSuperTypes() {
+  public PsiType @NotNull [] getSuperTypes() {
     return EMPTY_ARRAY;
   }
 }

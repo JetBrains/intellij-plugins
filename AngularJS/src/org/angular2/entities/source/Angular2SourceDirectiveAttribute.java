@@ -12,33 +12,29 @@ public class Angular2SourceDirectiveAttribute implements Angular2DirectiveAttrib
   private final JSParameter myParameter;
   private final String myName;
 
-  Angular2SourceDirectiveAttribute(@NotNull final JSParameter parameter,
-                                   @NotNull final String bindingName) {
+  Angular2SourceDirectiveAttribute(final @NotNull JSParameter parameter,
+                                   final @NotNull String bindingName) {
     myParameter = parameter;
     myName = bindingName;
   }
 
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     return myName;
   }
 
-  @Nullable
   @Override
-  public JSType getType() {
+  public @Nullable JSType getType() {
     return myParameter.getJSType();
   }
 
-  @NotNull
   @Override
-  public PsiElement getSourceElement() {
+  public @NotNull PsiElement getSourceElement() {
     return myParameter;
   }
 
-  @NotNull
   @Override
-  public PsiElement getNavigableElement() {
+  public @NotNull PsiElement getNavigableElement() {
     return myParameter.getNavigationElement();
   }
 

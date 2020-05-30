@@ -25,6 +25,8 @@ import com.intellij.util.Processor;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.cucumber.psi.GherkinStep;
+import org.jetbrains.plugins.cucumber.steps.reference.CucumberStepReference;
 import org.jetbrains.plugins.cucumber.steps.search.CucumberStepSearchUtil;
 
 import java.util.*;
@@ -217,7 +219,7 @@ public class CucumberUtil {
           while (j >= 0 && !Character.isWhitespace(result.charAt(j))) {
             j--;
           }
-          result.insert(j + 1, '(');
+          result.insert(j + 1, "(?:");
           inGroup = true;
         }
         result.append('|');
@@ -468,5 +470,11 @@ public class CucumberUtil {
 
   public static String escapeCucumberExpression(@NotNull String stepPattern) {
     return ESCAPE_PATTERN.matcher(stepPattern).replaceAll("\\\\$1");
+  }
+
+  @Nullable
+  public static PsiElement resolveSep(@NotNull GherkinStep step) {
+    PsiReference reference = Arrays.stream(step.getReferences()).filter(r -> r instanceof CucumberStepReference).findFirst().orElse(null);
+    return reference != null ? reference.resolve() : null;
   }
 }

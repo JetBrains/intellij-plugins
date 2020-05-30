@@ -54,8 +54,7 @@ public class StrutsPathReferenceConverterImpl extends StrutsPathReferenceConvert
   }
 
   @Override
-  @NotNull
-  public PsiReference[] createReferences(@NotNull final PsiElement psiElement, final boolean soft) {
+  public PsiReference @NotNull [] createReferences(@NotNull final PsiElement psiElement, final boolean soft) {
     return PathReferenceManager.getInstance().createCustomReferences(psiElement,
                                                                      soft,
                                                                      getResultContributors());

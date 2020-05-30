@@ -19,9 +19,6 @@ import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtilRt;
-import com.intellij.openapi.vcs.changes.ChangeListManager;
-import com.intellij.openapi.vcs.changes.IgnoredBeanFactory;
-import com.intellij.openapi.vcs.changes.IgnoredFileBean;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -73,12 +70,10 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
 
     indicator.setText(FlexBundle.message("generating.flex.config.for", myMavenProject.getDisplayName()));
 
-    final MavenProjectsTree.EmbedderTask task = new MavenProjectsTree.EmbedderTask() {
+    final MavenProjectResolver.EmbedderTask task = new MavenProjectResolver.EmbedderTask() {
       @Override
       public void run(MavenEmbedderWrapper embedder) throws MavenProcessCanceledException {
         List<VirtualFile> temporaryFiles = null;
-        final IgnoredFileBean[] filesToIgnoreOriginal = ChangeListManager.getInstance(project).getFilesToIgnore();
-
         try {
           MavenWorkspaceMap workspaceMap = new MavenWorkspaceMap();
           temporaryFiles = mavenIdToOutputFileMapping(workspaceMap, project, myTree.getProjects());
@@ -112,8 +107,6 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
           MavenLog.LOG.warn(e);
         }
         finally {
-          ChangeListManager.getInstance(project).setFilesToIgnore(filesToIgnoreOriginal);
-
           if (temporaryFiles != null && !temporaryFiles.isEmpty()) {
             removeTemporaryFiles(project, temporaryFiles);
           }
@@ -121,7 +114,7 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
       }
     };
 
-    myTree.executeWithEmbedder(myMavenProject, embeddersManager, MavenEmbeddersManager.FOR_POST_PROCESSING, console, indicator, task);
+    myResolver.executeWithEmbedder(myMavenProject, embeddersManager, MavenEmbeddersManager.FOR_POST_PROCESSING, console, indicator, task);
   }
 
   /**
@@ -150,7 +143,6 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
               if (outputDir == null) throw new IOException(IdeBundle.message("error.failed.to.create.directory", outputFolderPath));
               // if maven project is not compiled and output file doesn't exist flexmojos fails to generate Flex compiler configuration file.
               // Workaround is to create empty placeholder file.
-              ChangeListManager.getInstance(project).addFilesToIgnore(IgnoredBeanFactory.ignoreFile(outputFilePath, project));
               outputFile = FlexUtils.addFileWithContent(outputFileName, TEMPORARY_FILE_CONTENT, outputDir);
               if (outputFile == null) throw new IOException(IdeBundle.message("error.message.unable.to.create.file", outputFileName));
               temporaryFiles.add(outputFile);

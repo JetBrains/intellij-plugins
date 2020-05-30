@@ -81,8 +81,7 @@ class StructureViewTreeElement extends DomStructureTreeElement implements Colore
 
 
   @Override
-  @NotNull
-  public TreeElement[] getChildren() {
+  public TreeElement @NotNull [] getChildren() {
     final DomElement element = getElement();
     if (!element.isValid()) {
       return EMPTY_ARRAY;

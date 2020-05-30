@@ -3,7 +3,6 @@ package org.jetbrains.plugins.cucumber.java.inspections;
 import org.jetbrains.plugins.cucumber.inspections.GherkinMisplacedBackgroundInspection;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaCodeInsightTestCase;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
-import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 
 public class GherkinMisplacedBackgroundInspectionTest extends CucumberJavaCodeInsightTestCase {
   public void testMisplacedBackground() {
@@ -11,7 +10,6 @@ public class GherkinMisplacedBackgroundInspectionTest extends CucumberJavaCodeIn
   }
 
   protected void doTest() {
-    CucumberStepsIndex.getInstance(getProject()).reset();
     myFixture.enableInspections(new GherkinMisplacedBackgroundInspection());
     myFixture.copyDirectoryToProject(getTestName(true), "");
     myFixture.configureByFile(getTestName(true) + "/test.feature");

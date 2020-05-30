@@ -3,8 +3,13 @@ package org.angular2.lang;
 
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.WriteAction;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ex.ProjectRootManagerEx;
+import com.intellij.openapi.util.EmptyRunnable;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -16,15 +21,24 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.testFramework.LightVirtualFileBase;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.hash.HashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class Angular2LangUtil {
 
-  @NonNls private static final Key<CachedValue<Boolean>> ANGULAR2_CONTEXT_KEY = new Key<>("angular2.isContext");
+  @NonNls public static final String ANGULAR_CORE_PACKAGE = "@angular/core";
+  @NonNls public static final String ANGULAR_CLI_PACKAGE = "@angular/cli";
+  @NonNls public static final String $IMPLICIT = "$implicit";
+
+  @NonNls private static final Key<CachedValue<Boolean>> ANGULAR2_CONTEXT_CACHE_KEY = new Key<>("angular2.isContext.cache");
+  @NonNls private static final Key<Boolean> ANGULAR2_PREV_CONTEXT_KEY = new Key<>("angular2.isContext.prev");
+  @NonNls private static final Key<Object> ANGULAR2_CONTEXT_RELOAD_MARKER_KEY = new Key<>("angular2.isContext.reloadMarker");
+  private static final Logger LOG = Logger.getInstance(Angular2LangUtil.class);
+
+  private static final Object reloadMonitor = new Object();
 
   public static boolean isAngular2Context(@NotNull PsiElement context) {
     if (!context.isValid()) {
@@ -42,7 +56,6 @@ public class Angular2LangUtil {
   }
 
   public static boolean isAngular2Context(@NotNull Project project, @NotNull VirtualFile context) {
-    //noinspection HardCodedStringLiteral
     if (ApplicationManager.getApplication().isUnitTestMode()
         && "disabled".equals(System.getProperty("angular.js"))) {
       return false;
@@ -56,7 +69,7 @@ public class Angular2LangUtil {
     if (psiDir == null) {
       return false;
     }
-    return CachedValuesManager.getCachedValue(psiDir, ANGULAR2_CONTEXT_KEY, () -> {
+    boolean currentState = CachedValuesManager.getCachedValue(psiDir, ANGULAR2_CONTEXT_CACHE_KEY, () -> {
       Set<Object> dependencies = new HashSet<>();
       for (Angular2ContextProvider provider : Angular2ContextProvider.ANGULAR_CONTEXT_PROVIDER_EP.getExtensionList()) {
         CachedValueProvider.Result<Boolean> result = provider.isAngular2Context(psiDir);
@@ -65,8 +78,13 @@ public class Angular2LangUtil {
         }
         ContainerUtil.addAll(dependencies, result.getDependencyItems());
       }
+      if (dependencies.isEmpty()) {
+        dependencies.add(ModificationTracker.EVER_CHANGED);
+      }
       return new CachedValueProvider.Result<>(false, dependencies.toArray());
     });
+    checkContextChange(psiDir, currentState);
+    return currentState;
   }
 
   private static boolean isAngular2Context(@NotNull Project project) {
@@ -74,5 +92,28 @@ public class Angular2LangUtil {
       return isAngular2Context(project, project.getBaseDir());
     }
     return false;
+  }
+
+  private static void checkContextChange(@NotNull PsiDirectory psiDir, boolean currentState) {
+    Boolean prevState = psiDir.getUserData(ANGULAR2_PREV_CONTEXT_KEY);
+    if (prevState != null && prevState != currentState) {
+      reloadProject(psiDir.getProject(), psiDir);
+    }
+    psiDir.putUserData(ANGULAR2_PREV_CONTEXT_KEY, currentState);
+  }
+
+  private static void reloadProject(@NotNull Project project, @NotNull PsiDirectory psiDir) {
+    synchronized (reloadMonitor) {
+      if (project.getUserData(ANGULAR2_CONTEXT_RELOAD_MARKER_KEY) != null) {
+        return;
+      }
+      project.putUserData(ANGULAR2_CONTEXT_RELOAD_MARKER_KEY, new Object());
+    }
+    LOG.info("Reloading project " + project.getName() + " on Angular context change in directory " + psiDir.getVirtualFile().getPath());
+    ApplicationManager.getApplication().invokeLater(() -> WriteAction.run(() -> {
+      ProjectRootManagerEx.getInstanceEx(project)
+        .makeRootsChange(EmptyRunnable.getInstance(), false, true);
+      project.putUserData(ANGULAR2_CONTEXT_RELOAD_MARKER_KEY, null);
+    }), project.getDisposed());
   }
 }

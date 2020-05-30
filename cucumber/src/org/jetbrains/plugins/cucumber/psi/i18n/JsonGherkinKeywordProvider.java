@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.psi.i18n;
 
 import com.google.gson.Gson;
@@ -8,13 +8,15 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.*;
-import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
+import org.jetbrains.plugins.cucumber.steps.CucumberStepHelper;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -46,10 +48,10 @@ public class JsonGherkinKeywordProvider implements GherkinKeywordProvider {
     }
     return myGherkin6KeywordProvider;
   }
-  
+
   public static GherkinKeywordProvider getKeywordProvider(@NotNull PsiElement context) {
     Module module = findModuleForPsiElement(context);
-    boolean gherkin6Enabled = module != null && CucumberStepsIndex.getInstance(context.getProject()).isGherkin6Supported(module);
+    boolean gherkin6Enabled = module != null && CucumberStepHelper.isGherkin6Supported(module);
     return getKeywordProvider(gherkin6Enabled);
   }
 
@@ -57,11 +59,11 @@ public class JsonGherkinKeywordProvider implements GherkinKeywordProvider {
     GherkinKeywordProvider result = null;
     ClassLoader classLoader = JsonGherkinKeywordProvider.class.getClassLoader();
     if (classLoader != null) {
-      InputStream gherkinKeywordStream = ObjectUtils.notNull(classLoader.getResourceAsStream(jsonFileName));
+      InputStream gherkinKeywordStream = Objects.requireNonNull(classLoader.getResourceAsStream(jsonFileName));
       result = new JsonGherkinKeywordProvider(gherkinKeywordStream);
     }
 
-    return result != null ? result : new PlainGherkinKeywordProvider(); 
+    return result != null ? result : new PlainGherkinKeywordProvider();
   }
 
   public JsonGherkinKeywordProvider(@NotNull InputStream inputStream) {

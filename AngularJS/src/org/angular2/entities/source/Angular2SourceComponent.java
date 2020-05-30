@@ -22,6 +22,7 @@ import com.intellij.util.SmartList;
 import one.util.streamex.StreamEx;
 import org.angular2.Angular2InjectionUtils;
 import org.angular2.entities.Angular2Component;
+import org.angular2.entities.Angular2DirectiveKind;
 import org.angular2.entities.Angular2DirectiveSelector;
 import org.angular2.lang.html.psi.Angular2HtmlNgContentSelector;
 import org.angular2.lang.html.psi.Angular2HtmlRecursiveElementWalkingVisitor;
@@ -34,7 +35,7 @@ import java.util.List;
 
 import static com.intellij.psi.util.CachedValueProvider.Result.create;
 import static org.angular2.Angular2DecoratorUtil.*;
-import static org.angular2.lang.html.parser.Angular2HtmlStubElementTypes.NG_CONTENT_SELECTOR;
+import static org.angular2.lang.html.stub.Angular2HtmlStubElementTypes.NG_CONTENT_SELECTOR;
 
 public class Angular2SourceComponent extends Angular2SourceDirective implements Angular2Component {
 
@@ -42,22 +43,19 @@ public class Angular2SourceComponent extends Angular2SourceDirective implements 
     super(decorator, implicitElement);
   }
 
-  @Nullable
   @Override
-  public PsiFile getTemplateFile() {
+  public @Nullable PsiFile getTemplateFile() {
     return getCachedValue(() -> create(
       findAngularComponentTemplate(), VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, getDecorator()));
   }
 
-  @NotNull
   @Override
-  public List<PsiFile> getCssFiles() {
+  public @NotNull List<PsiFile> getCssFiles() {
     return getCachedValue(() -> create(findCssFiles(), VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, getDecorator()));
   }
 
-  @NotNull
   @Override
-  public List<Angular2DirectiveSelector> getNgContentSelectors() {
+  public @NotNull List<Angular2DirectiveSelector> getNgContentSelectors() {
     return getCachedValue(() -> {
       PsiFile template = getTemplateFile();
       if (template instanceof PsiFileImpl) {
@@ -85,34 +83,27 @@ public class Angular2SourceComponent extends Angular2SourceDirective implements 
   }
 
   @Override
-  public boolean isStructuralDirective() {
-    return false;
+  public @NotNull Angular2DirectiveKind getDirectiveKind() {
+    return Angular2DirectiveKind.REGULAR;
   }
 
-  @Override
-  public boolean isRegularDirective() {
-    return true;
-  }
-
-  @Nullable
-  private JSProperty getDecoratorProperty(@NotNull String name) {
+  private @Nullable JSProperty getDecoratorProperty(@NotNull String name) {
     return getProperty(getDecorator(), name);
   }
 
-  @Nullable
-  private PsiFile findAngularComponentTemplate() {
+  private @Nullable PsiFile findAngularComponentTemplate() {
     PsiFile file = getReferencedFile(getDecoratorProperty(TEMPLATE_URL_PROP), true);
     return file != null ? file
                         : getReferencedFile(getDecoratorProperty(TEMPLATE_PROP), false);
   }
 
-  private List<PsiFile> findCssFiles() {
+  private @NotNull List<PsiFile> findCssFiles() {
     return findCssFiles(getDecoratorProperty(STYLE_URLS_PROP), true)
       .append(findCssFiles(getDecoratorProperty(STYLES_PROP), false))
       .toList();
   }
 
-  private static StreamEx<PsiFile> findCssFiles(@Nullable JSProperty property, boolean directRefs) {
+  private static @NotNull StreamEx<PsiFile> findCssFiles(@Nullable JSProperty property, boolean directRefs) {
     if (property == null) {
       return StreamEx.empty();
     }
@@ -123,14 +114,16 @@ public class Angular2SourceComponent extends Angular2SourceDirective implements 
         return StreamEx.of(stub.getChildrenStubs())
           .map(StubElement::getPsi)
           .select(JSExpression.class)
-          .map(expr -> getReferencedFileFromStub(expr, directRefs));
+          .map(expr -> getReferencedFileFromStub(expr, directRefs))
+          .nonNull();
       }
     }
     return AstLoadingFilter.forceAllowTreeLoading(property.getContainingFile(), () ->
       StreamEx.ofNullable(property.getValue())
         .select(JSArrayLiteralExpression.class)
         .flatArray(JSArrayLiteralExpression::getExpressions)
-        .map(expr -> getReferencedFileFromPsi(expr, directRefs)));
+        .map(expr -> getReferencedFileFromPsi(expr, directRefs)))
+      .nonNull();
   }
 
   @StubSafe
@@ -155,7 +148,7 @@ public class Angular2SourceComponent extends Angular2SourceDirective implements 
   }
 
   @StubSafe
-  private static PsiFile getReferencedFileFromStub(@Nullable JSExpression stubbedExpression, boolean directRefs) {
+  private static @Nullable PsiFile getReferencedFileFromStub(@Nullable JSExpression stubbedExpression, boolean directRefs) {
     if (!directRefs
         && stubbedExpression instanceof JSCallExpression
         && ((JSCallExpression)stubbedExpression).isRequireCall()) {
@@ -231,9 +224,8 @@ public class Angular2SourceComponent extends Angular2SourceDirective implements 
       return myParent;
     }
 
-    @Nullable
     @Override
-    public String getText() {
+    public @Nullable String getText() {
       return myValue;
     }
 

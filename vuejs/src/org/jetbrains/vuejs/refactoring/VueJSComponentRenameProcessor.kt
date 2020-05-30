@@ -7,7 +7,7 @@ import com.intellij.lang.javascript.refactoring.JSDefaultRenameProcessor
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
-import com.intellij.psi.impl.source.html.HtmlTagImpl
+import com.intellij.psi.html.HtmlTag
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.listeners.RefactoringElementListener
@@ -22,7 +22,8 @@ class VueJSComponentRenameProcessor : JSDefaultRenameProcessor() {
 
   override fun renameElement(element: PsiElement, newName: String, usages: Array<out UsageInfo>, listener: RefactoringElementListener?) {
     for (usage in usages) {
-      if (usage.element is HtmlTagImpl && toAsset((usage.element as HtmlTagImpl).name) != (usage.element as HtmlTagImpl).name) {
+      val usageElement = usage.element
+      if (usageElement is HtmlTag && toAsset(usageElement.name) != usageElement.name) {
         RenameUtil.rename(usage, fromAsset(newName))
       }
       else {

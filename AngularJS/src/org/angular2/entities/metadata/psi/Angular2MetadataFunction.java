@@ -18,8 +18,7 @@ public class Angular2MetadataFunction extends Angular2MetadataElement<Angular2Me
     return (getStub().getMemberName() != null ? getStub().getMemberName() + " " : "") + "<metadata function>";
   }
 
-  @Nullable
-  public Angular2MetadataElement getValue() {
+  public @Nullable Angular2MetadataElement getValue() {
     return doIfNotNull(getStub().getFunctionValue(), Angular2MetadataElementStub::getPsi);
   }
 }

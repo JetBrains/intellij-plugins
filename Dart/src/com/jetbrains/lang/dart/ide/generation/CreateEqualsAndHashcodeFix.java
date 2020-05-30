@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.generation;
 
 import com.intellij.codeInsight.template.Template;
@@ -21,7 +7,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.hierarchy.type.DartServerTypeHierarchyTreeStructure;
 import com.jetbrains.lang.dart.psi.DartClass;
@@ -86,34 +71,29 @@ public class CreateEqualsAndHashcodeFix extends BaseCreateMethodsFix<DartCompone
     final Template template = templateManager.createTemplate(getClass().getName(), DART_TEMPLATE_GROUP);
     template.setToReformat(true);
 
-    final boolean doInsertOverrideAnnotation = CodeStyleSettingsManager.getSettings(myDartClass.getProject()).INSERT_OVERRIDE_ANNOTATION;
-    if (doInsertOverrideAnnotation) {
-      template.addTextSegment("@override\n");
-    }
+    template.addTextSegment("@override\n");
     template.addTextSegment("bool operator==(Object other) =>\nidentical(this, other) ||\n");
     if (mySuperclassOverridesEqualEqualAndHashCode) {
-      template.addTextSegment("super == other &&\n");
+      template.addTextSegment("super == other && ");
     }
-    template.addTextSegment("other is " + myDartClass.getName() + " &&\n");
+    template.addTextSegment("other is " + myDartClass.getName() + " && ");
     template.addTextSegment("runtimeType == other.runtimeType");
     for (DartComponent component : elementsToProcess) {
-      template.addTextSegment(" &&\n");
+      template.addTextSegment(" && ");
       template.addTextSegment(component.getName() + " == other." + component.getName());
     }
     template.addTextSegment(";\n");
 
-    if (doInsertOverrideAnnotation) {
-      template.addTextSegment("@override\n");
-    }
+    template.addTextSegment("@override\n");
     template.addTextSegment("int get hashCode => ");
     boolean firstItem = true;
     if (mySuperclassOverridesEqualEqualAndHashCode) {
-      template.addTextSegment("\nsuper.hashCode");
+      template.addTextSegment("super.hashCode");
       firstItem = false;
     }
     for (DartComponent component : elementsToProcess) {
       if (!firstItem) {
-        template.addTextSegment(" ^\n");
+        template.addTextSegment(" ^ ");
       }
       template.addTextSegment(component.getName() + ".hashCode");
       firstItem = false;
@@ -122,7 +102,6 @@ public class CreateEqualsAndHashcodeFix extends BaseCreateMethodsFix<DartCompone
       template.addTextSegment("0");
     }
     template.addTextSegment(";\n");
-    template.addEndVariable();
     template.addTextSegment(" "); // trailing space is removed when auto-reformatting, but it helps to enter line break if needed
 
     return template;

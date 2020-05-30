@@ -1,13 +1,13 @@
-class ParamInfo6 {
+class ParamInfo7 {
   main() {
-    add(<caret>abs(-123), 123);
+    add(<caret>abs(-123), y: 123);
   }
 
   static abs(int x) {
       return x >= 0 ? x : -x;
   }
 
-  static add(int x, int y = 239) {
+  static add(int x, {int y = 239}) {
       return x + y;
   }
 }

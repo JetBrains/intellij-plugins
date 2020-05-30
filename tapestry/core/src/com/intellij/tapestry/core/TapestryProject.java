@@ -195,8 +195,7 @@ public class TapestryProject {
     return (Page)ourNameToPageMap.get(myModule).get(StringUtil.toLowerCase(pageName));
   }
 
-  @NotNull
-  public String[] getAvailablePageNames() {
+  public String @NotNull [] getAvailablePageNames() {
     final Set<String> names = ourNameToPageMap.get(myModule).keySet();
     return ArrayUtilRt.toStringArray(names);
   }
@@ -284,8 +283,7 @@ public class TapestryProject {
     }
   }
 
-  @NotNull
-  public String[] getAvailableComponentNames() {
+  public String @NotNull [] getAvailableComponentNames() {
     final Set<String> names = ourNameToComponentMap.get(myModule).keySet();
     return ArrayUtilRt.toStringArray(names);
   }

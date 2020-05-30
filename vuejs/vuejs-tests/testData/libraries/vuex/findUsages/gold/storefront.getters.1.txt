@@ -1,0 +1,8 @@
+<itemActions.ts:(1418,1438):(8,20)>	getters.getCartItems.find
+<itemActions.ts:(2039,2059):(8,20)>	getters.getCartItems.find
+<itemActions.ts:(708,728):(8,20)>	getters.getCartItems.find
+<storefront-component.ts:(822,836):(1,13)>	['getCartItems', 'foobar', 'breadcrumbs/getBreadcrumbsRoutes']
+<storefront-decorated-component.ts:(593,607):(1,13)>	('getCartItems')
+<storefront-namespaced-component.ts:(530,544):(1,13)>	['getCartItems', 'foobar', 'breadcrumbs/getBreadcrumbsRoutes']
+<synchronizeActions.ts:(2461,2473):(0,12)>	{ getCartItems, canUpdateMethods, isSyncRequired, bypassCounter }
+<synchronizeActions.ts:(2786,2798):(0,12)>	clientItems: getCartItems

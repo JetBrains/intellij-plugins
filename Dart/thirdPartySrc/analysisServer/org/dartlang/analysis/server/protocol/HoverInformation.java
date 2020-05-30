@@ -8,20 +8,15 @@
  */
 package org.dartlang.analysis.server.protocol;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import com.google.common.collect.Lists;
-import com.google.dart.server.utilities.general.JsonUtilities;
+
 import com.google.dart.server.utilities.general.ObjectUtilities;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.util.ArrayList;
 import java.util.Iterator;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * The hover information associated with a specific location.
@@ -33,7 +28,7 @@ public class HoverInformation {
 
   public static final HoverInformation[] EMPTY_ARRAY = new HoverInformation[0];
 
-  public static final List<HoverInformation> EMPTY_LIST = Lists.newArrayList();
+  public static final List<HoverInformation> EMPTY_LIST = new ArrayList<>();
 
   /**
    * The offset of the range of characters that encompasses the cursor position and has the same
@@ -55,8 +50,9 @@ public class HoverInformation {
   private final String containingLibraryPath;
 
   /**
-   * The name of the library in which the referenced element is declared. This data is omitted if
-   * there is no referenced element, or if the element is declared inside an HTML file.
+   * The URI of the containing library, examples here include "dart:core", "package:.." and file uris
+   * represented by the path on disk, "/..". The data is omitted if the element is declared inside an
+   * HTML file.
    */
   private final String containingLibraryName;
 
@@ -185,8 +181,9 @@ public class HoverInformation {
   }
 
   /**
-   * The name of the library in which the referenced element is declared. This data is omitted if
-   * there is no referenced element, or if the element is declared inside an HTML file.
+   * The URI of the containing library, examples here include "dart:core", "package:.." and file uris
+   * represented by the path on disk, "/..". The data is omitted if the element is declared inside an
+   * HTML file.
    */
   public String getContainingLibraryName() {
     return containingLibraryName;

@@ -1,13 +1,17 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.prettierjs;
 
+import com.intellij.javascript.nodejs.util.NodePackageRef;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.linter.JSExternalToolIntegrationTest;
+import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
+import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.util.LineSeparator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,7 +30,9 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
   protected void setUp() throws Exception {
     super.setUp();
     myFixture.setTestDataPath(PrettierJSTestUtil.getTestDataPath() + "reformat");
-    PrettierConfiguration.getInstance(getProject()).update(getNodeInterpreter(), getNodePackage());
+    PrettierConfiguration.getInstance(getProject())
+      .withInterpreterRef(getNodeInterpreter())
+      .withLinterPackage(NodePackageRef.create(getNodePackage()));
   }
 
   public void testWithoutConfig() {
@@ -90,6 +96,36 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
 
   public void testFileDetectedByShebangLine() {
     doReformatFile("test", "");
+  }
+
+  public void testRunPrettierOnSave() {
+    PrettierConfiguration configuration = PrettierConfiguration.getInstance(getProject());
+    boolean origRunOnSave = configuration.isRunOnSave();
+    configuration.setRunOnSave(true);
+    try {
+      myFixture.configureByText("foo.js", "var  a=''");
+      myFixture.type(' ');
+      myFixture.performEditorAction("SaveAll");
+      PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue();
+      myFixture.checkResult("var a = \"\";\n");
+    }
+    finally {
+      configuration.setRunOnSave(origRunOnSave);
+    }
+  }
+
+  public void testRunPrettierOnCodeReformat() {
+    PrettierConfiguration configuration = PrettierConfiguration.getInstance(getProject());
+    boolean origRunOnReformat = configuration.isRunOnReformat();
+    configuration.setRunOnReformat(true);
+    try {
+      myFixture.configureByText("foo.js", "var  a=''");
+      myFixture.performEditorAction(IdeActions.ACTION_EDITOR_REFORMAT);
+      myFixture.checkResult("var a = \"\";\n");
+    }
+    finally {
+      configuration.setRunOnReformat(origRunOnReformat);
+    }
   }
 
   private void doReformatFile(final String extension) {

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<idea-plugin>
+  <extensions defaultExtensionNs="training">
+    <TrainingLangExtension language="Python" implementationClass="training.lang.PythonLangSupport"/>
+    <TrainingModules language="Python">
+      <module path="modules/python/EditorBasics.xml"/>
+      <module path="modules/python/Completions.xml"/>
+      <module path="modules/python/Navigation.xml"/>
+      <module path="modules/python/Refactorings.xml"/>
+    </TrainingModules>
+  </extensions>
+</idea-plugin>

@@ -1,0 +1,17 @@
+breadcrumbs#null
+breadcrumbs/current#null
+breadcrumbs/routes#any[]
+cartIsLoaded#false
+cartItems#any[]
+cartItemsHash#""
+cartServerLastSyncDate#0
+cartServerLastTotalsSyncDate#0
+cartServerToken#""
+connectBypassCount#0
+isAddingToCart#false
+isMicrocartOpen#false
+itemsAfterPlatformTotals#null
+payment#any[]
+platformTotalSegments#null
+platformTotals#null
+shipping#any[]

@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.icons.AllIcons;
@@ -13,8 +13,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class RestartDartAnalysisServerAction extends DumbAwareAction {
   public RestartDartAnalysisServerAction() {
-    super(DartBundle.message("dart.restart.server.action.name"),
-          DartBundle.message("dart.restart.server.action.name"),
+    super(DartBundle.messagePointer("dart.restart.server.action.name"),
+          DartBundle.messagePointer("dart.restart.server.action.name"),
           AllIcons.Actions.ForceRefresh);
   }
 

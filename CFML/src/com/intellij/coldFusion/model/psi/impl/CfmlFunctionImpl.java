@@ -63,8 +63,7 @@ public class CfmlFunctionImpl extends CfmlCompositeElement implements CfmlFuncti
   }
 
   @Override
-  @NotNull
-  public CfmlParameter[] getParameters() {
+  public CfmlParameter @NotNull [] getParameters() {
     final CfmlParametersList parametersList = findChildByClass(CfmlParametersList.class);
     if (parametersList != null) {
       return parametersList.getParameters();

@@ -75,13 +75,12 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
 
   @NotNull
   @Override
-  protected UsageViewDescriptor createUsageViewDescriptor(@NotNull UsageInfo[] usages) {
+  protected UsageViewDescriptor createUsageViewDescriptor(UsageInfo @NotNull [] usages) {
     return new FlexMoveInnerClassUsageViewDescriptor();
   }
 
-  @NotNull
   @Override
-  protected UsageInfo[] findUsages() {
+  protected UsageInfo @NotNull [] findUsages() {
     final Collection<UsageInfo> result = Collections.synchronizedCollection(new ArrayList<>());
     ReferencesSearch.search(myElement, new LocalSearchScope(myElement.getContainingFile())).forEach(reference -> {
       final PsiElement element = reference.getElement();
@@ -108,7 +107,7 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
   }
 
   @Override
-  protected void performRefactoring(@NotNull UsageInfo[] usages) {
+  protected void performRefactoring(UsageInfo @NotNull [] usages) {
     try {
       ActionScriptCreateClassOrInterfaceFix.createClass(myClassName, myPackageName, myTargetDirectory, false);
     }
@@ -229,7 +228,7 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
   }
 
   @Override
-  protected boolean isPreviewUsages(@NotNull UsageInfo[] usages) {
+  protected boolean isPreviewUsages(UsageInfo @NotNull [] usages) {
     if (UsageViewUtil.reportNonRegularUsages(usages, myProject)) {
       return true;
     }

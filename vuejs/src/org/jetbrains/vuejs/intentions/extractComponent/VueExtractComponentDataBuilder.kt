@@ -27,6 +27,8 @@ import com.intellij.psi.css.inspections.RemoveUnusedSymbolIntentionAction
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
+import com.intellij.xml.util.HtmlUtil.STYLE_TAG_NAME
+import com.intellij.xml.util.HtmlUtil.TEMPLATE_TAG_NAME
 import org.jetbrains.vuejs.codeInsight.detectLanguage
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.refs.VueTagNameReference
@@ -136,7 +138,7 @@ class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
     }
   }
 
-  private fun findTemplate(): XmlTag? = PsiTreeUtil.findFirstParent(list[0]) { "template" == (it as? XmlTag)?.name } as? XmlTag
+  private fun findTemplate(): XmlTag? = PsiTreeUtil.findFirstParent(list[0]) { TEMPLATE_TAG_NAME == (it as? XmlTag)?.name } as? XmlTag
 
   fun createNewComponent(newComponentName: String): VirtualFile? {
     val newText = generateNewComponentText(newComponentName) ?: return null
@@ -199,7 +201,7 @@ export default {
   private fun findStyles(file: PsiFile): List<XmlTag> {
     val xmlFile = file as? XmlFile ?: return emptyList()
     val document = xmlFile.document ?: return emptyList()
-    return document.children.filter { "style" == (it as? XmlTag)?.name }.map { it as XmlTag }
+    return document.children.filter { STYLE_TAG_NAME == (it as? XmlTag)?.name }.map { it as XmlTag }
   }
 
   private fun optimizeAndRemoveEmptyStyles(file: PsiFile) {
@@ -270,7 +272,7 @@ export default {
     if (components != null && components.isNotEmpty()) {
       val names = components.map { toAsset(it.name ?: "").capitalize() }.toMutableSet()
       (file as XmlFile).accept(object : VueFileVisitor() {
-        override fun visitElement(element: PsiElement?) {
+        override fun visitElement(element: PsiElement) {
           if (element is XmlTag) {
             names.remove(toAsset(element.name).capitalize())
           }

@@ -18,6 +18,7 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -64,7 +65,7 @@ public class KarmaCoverageEngine extends CoverageEngine {
   public CoverageSuite createCoverageSuite(@NotNull CoverageRunner covRunner,
                                            @NotNull String name,
                                            @NotNull CoverageFileProvider coverageDataFileProvider,
-                                           @Nullable String[] filters,
+                                           String @Nullable [] filters,
                                            long lastCoverageTimeStamp,
                                            @Nullable String suiteToMerge,
                                            boolean coverageByTestEnabled,
@@ -165,7 +166,7 @@ public class KarmaCoverageEngine extends CoverageEngine {
   }
 
   @Override
-  public List<PsiElement> findTestsByNames(@NotNull String[] testNames, @NotNull Project project) {
+  public List<PsiElement> findTestsByNames(String @NotNull [] testNames, @NotNull Project project) {
     return Collections.emptyList();
   }
 
@@ -194,7 +195,7 @@ public class KarmaCoverageEngine extends CoverageEngine {
       public AbstractTreeNode createRootNode() {
         VirtualFile rootDir = findRootDir(project, suiteBundle);
         if (rootDir == null) {
-          rootDir = myProject.getBaseDir();
+          rootDir = ProjectUtil.guessProjectDir(myProject);
         }
         PsiDirectory psiRootDir = PsiManager.getInstance(myProject).findDirectory(rootDir);
         return new CoverageListRootNode(myProject, psiRootDir, mySuitesBundle, myStateBean);

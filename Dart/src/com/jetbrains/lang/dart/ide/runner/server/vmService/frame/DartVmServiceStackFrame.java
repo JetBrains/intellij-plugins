@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server.vmService.frame;
 
 import com.intellij.icons.AllIcons;
@@ -78,7 +78,8 @@ public class DartVmServiceStackFrame extends XStackFrame {
   public void customizePresentation(@NotNull final ColoredTextContainer component) {
     final String unoptimizedPrefix = "[Unoptimized] ";
 
-    String name = StringUtil.trimEnd(myVmFrame.getCode().getName(), "="); // trim setter postfix
+    final CodeRef code = myVmFrame.getCode();
+    String name = code == null ? "unnamed" : StringUtil.trimEnd(code.getName(), "="); // trim setter postfix
     name = StringUtil.trimStart(name, unoptimizedPrefix);
 
     final boolean causal = myVmFrame.getKind() == FrameKind.AsyncCausal;
@@ -92,10 +93,12 @@ public class DartVmServiceStackFrame extends XStackFrame {
     component.setIcon(AllIcons.Debugger.Frame);
   }
 
-  @NotNull
+  @Nullable
   @Override
   public Object getEqualityObject() {
-    return myVmFrame.getLocation().getScript().getId() + ":" + myVmFrame.getCode().getId();
+    SourceLocation location = myVmFrame.getLocation();
+    CodeRef code = myVmFrame.getCode();
+    return location != null && code != null ? location.getScript().getId() + ":" + code.getId() : null;
   }
 
   @Override
@@ -160,12 +163,12 @@ public class DartVmServiceStackFrame extends XStackFrame {
 
       @Override
       public void received(Sentinel sentinel) {
-        node.setErrorMessage(sentinel.getValueAsString());
+        addVars(node, vars);
       }
 
       @Override
       public void onError(RPCError error) {
-        node.setErrorMessage(error.getMessage());
+        addVars(node, vars);
       }
     });
   }
@@ -177,10 +180,11 @@ public class DartVmServiceStackFrame extends XStackFrame {
       final Object value = var.getValue();
       if (value instanceof InstanceRef) {
         final InstanceRef instanceRef = (InstanceRef)value;
+        final SourceLocation location = myVmFrame.getLocation();
         final DartVmServiceValue.LocalVarSourceLocation varLocation =
-          "this".equals(var.getName())
+          "this".equals(var.getName()) || location == null
           ? null
-          : new DartVmServiceValue.LocalVarSourceLocation(myVmFrame.getLocation().getScript(), var.getDeclarationTokenPos());
+          : new DartVmServiceValue.LocalVarSourceLocation(location.getScript(), var.getDeclarationTokenPos());
         childrenList.add(new DartVmServiceValue(myDebugProcess, myIsolateId, var.getName(), instanceRef, varLocation, null, false));
       }
     }
@@ -191,7 +195,12 @@ public class DartVmServiceStackFrame extends XStackFrame {
   @Nullable
   @Override
   public XDebuggerEvaluator getEvaluator() {
-    return new DartVmServiceEvaluatorInFrame(myDebugProcess, myIsolateId, myVmFrame);
+    // Enable Expression evaluation for all run configurations except webdev run instances, until supported, progress tracked here:
+    // https://github.com/dart-lang/webdev/issues/715
+    if (!myDebugProcess.isWebdevDebug()) {
+      return new DartVmServiceEvaluatorInFrame(myDebugProcess, myIsolateId, myVmFrame);
+    }
+    return null;
   }
 
   public boolean isInDartSdkPatchFile() {

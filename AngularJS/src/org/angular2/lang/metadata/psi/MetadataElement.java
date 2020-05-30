@@ -4,9 +4,12 @@ package org.angular2.lang.metadata.psi;
 import com.intellij.openapi.util.AtomicNotNullLazyValue;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiInvalidElementAccessException;
 import com.intellij.psi.StubBasedPsiElement;
 import com.intellij.psi.impl.FakePsiElement;
 import com.intellij.psi.stubs.IStubElementType;
+import com.intellij.psi.stubs.PsiFileStubImpl;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ObjectUtils;
@@ -19,9 +22,8 @@ public abstract class MetadataElement<Stub extends MetadataElementStub<?>> exten
 
   private final Stub myStub;
   private final AtomicNotNullLazyValue<PsiElement[]> children = new AtomicNotNullLazyValue<PsiElement[]>() {
-    @NotNull
     @Override
-    protected PsiElement[] compute() {
+    protected PsiElement @NotNull [] compute() {
       return ContainerUtil.map2Array(getStub().getChildrenStubs(), PsiElement.class, s -> s.getPsi());
     }
   };
@@ -31,13 +33,29 @@ public abstract class MetadataElement<Stub extends MetadataElementStub<?>> exten
   }
 
   @Override
+  public PsiFile getContainingFile() {
+    StubElement stub = myStub;
+    while (stub != null && !(stub instanceof PsiFileStubImpl)) {
+      stub = stub.getParentStub();
+    }
+    if (stub == null) {
+      throw new PsiInvalidElementAccessException(this);
+    }
+    PsiFile result = ((PsiFileStubImpl)stub).getPsi();
+    if (result == null) {
+      throw new PsiInvalidElementAccessException(
+        this, "Metadata file psi has been cleared: " + ((PsiFileStubImpl)stub).getInvalidationReason());
+    }
+    return result;
+  }
+
+  @Override
   public PsiElement getParent() {
     return ObjectUtils.doIfNotNull(myStub.getParentStub(), StubElement::getPsi);
   }
 
-  @NotNull
   @Override
-  public TextRange getTextRangeInParent() {
+  public @NotNull TextRange getTextRangeInParent() {
     return TextRange.EMPTY_RANGE;
   }
 
@@ -55,27 +73,23 @@ public abstract class MetadataElement<Stub extends MetadataElementStub<?>> exten
     return (MetadataElement)ObjectUtils.doIfNotNull(getStub().findMember(name), MetadataElementStub::getPsi);
   }
 
-  @NotNull
   @Override
-  public PsiElement[] getChildren() {
+  public PsiElement @NotNull [] getChildren() {
     return children.getValue();
   }
 
   @Override
-  @Nullable
-  public PsiElement getFirstChild() {
+  public @Nullable PsiElement getFirstChild() {
     return ArrayUtil.getFirstElement(getChildren());
   }
 
   @Override
-  @Nullable
-  public PsiElement getLastChild() {
+  public @Nullable PsiElement getLastChild() {
     return ArrayUtil.getLastElement(getChildren());
   }
 
   @Override
-  @Nullable
-  public PsiElement getNextSibling() {
+  public @Nullable PsiElement getNextSibling() {
     PsiElement parent = getParent();
     if (parent == null) {
       return null;
@@ -86,8 +100,7 @@ public abstract class MetadataElement<Stub extends MetadataElementStub<?>> exten
   }
 
   @Override
-  @Nullable
-  public PsiElement getPrevSibling() {
+  public @Nullable PsiElement getPrevSibling() {
     PsiElement parent = getParent();
     if (parent == null) {
       return null;

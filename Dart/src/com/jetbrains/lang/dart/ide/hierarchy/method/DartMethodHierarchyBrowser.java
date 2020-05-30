@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.hierarchy.method;
 
 import com.intellij.ide.IdeBundle;
@@ -43,7 +44,7 @@ public class DartMethodHierarchyBrowser extends MethodHierarchyBrowserBase {
     final JTree tree = createTree(false);
     ActionGroup group = (ActionGroup)ActionManager.getInstance().getAction(IdeActions.GROUP_METHOD_HIERARCHY_POPUP);
     PopupHandler.installPopupHandler(tree, group, ActionPlaces.METHOD_HIERARCHY_VIEW_POPUP, ActionManager.getInstance());
-    trees.put(METHOD_TYPE, tree);
+    trees.put(getMethodType(), tree);
   }
 
   @Nullable
@@ -65,7 +66,7 @@ public class DartMethodHierarchyBrowser extends MethodHierarchyBrowserBase {
   @Nullable
   @Override
   protected HierarchyTreeStructure createHierarchyTreeStructure(@NotNull String type, @NotNull PsiElement psiElement) {
-    if (!METHOD_TYPE.equals(type)) {
+    if (!getMethodType().equals(type)) {
       LOG.error("unexpected type: " + type);
       return null;
     }
@@ -74,7 +75,7 @@ public class DartMethodHierarchyBrowser extends MethodHierarchyBrowserBase {
 
   @Nullable
   @Override
-  protected Comparator<NodeDescriptor> getComparator() {
+  protected Comparator<NodeDescriptor<?>> getComparator() {
     return null;
   }
 }

@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.psi.impl.JSFunctionCachedData;
 import com.intellij.lang.javascript.psi.impl.JSFunctionNodesVisitor;
 import com.intellij.lang.javascript.psi.types.JSAnyType;
 import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
+import com.intellij.lang.javascript.psi.types.JSTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSTypeSource;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.psi.PsiElement;
@@ -23,6 +24,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Entity;
 import org.angular2.entities.Angular2Module;
+import org.angular2.entities.metadata.Angular2MetadataUtil;
 import org.angular2.entities.metadata.psi.Angular2MetadataFunction;
 import org.angular2.entities.metadata.psi.Angular2MetadataModule;
 import org.angular2.entities.metadata.psi.Angular2MetadataObject;
@@ -39,7 +41,9 @@ import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.ObjectUtils.tryCast;
 import static com.intellij.util.containers.ContainerUtil.addIfNotNull;
 import static java.util.Arrays.asList;
+import static org.angular2.entities.Angular2ModuleResolver.MODULE_WITH_PROVIDERS_CLASS;
 import static org.angular2.entities.Angular2ModuleResolver.NG_MODULE_PROP;
+import static org.angular2.entities.ivy.Angular2IvyUtil.getIvyEntity;
 
 public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity> {
 
@@ -113,6 +117,12 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
       public void visitJSVariable(JSVariable node) {
         AstLoadingFilter.forceAllowTreeLoading(node.getContainingFile(), () ->
           addIfNotNull(result, node.getInitializer()));
+      }
+
+      @Override
+      public void visitJSProperty(JSProperty node) {
+        AstLoadingFilter.forceAllowTreeLoading(node.getContainingFile(), () ->
+          addIfNotNull(result, node.getValue()));
       }
 
       @Override
@@ -199,17 +209,6 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
     Set<JSResolvedTypeId> visitedTypes = new HashSet<>();
     boolean lookingForModule = myEntityClass.isAssignableFrom(Angular2Module.class);
     JSClass resolvedClazz = null;
-    if (lookingForModule) {
-      Angular2MetadataFunction metadataFunction = Angular2EntitiesProvider.findMetadataFunction(function);
-      Angular2MetadataModule metadataModule = resolveFunctionValue(metadataFunction);
-      if (metadataModule != null) {
-        processCacheDependency(metadataFunction);
-        processCacheDependency(metadataModule);
-        //noinspection unchecked
-        processEntity((T)metadataModule);
-        return;
-      }
-    }
     JSType type = function.getReturnType();
     while (type != null
            && !(type instanceof JSAnyType)
@@ -219,27 +218,29 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
       if (type.getSourceElement() != null) {
         processCacheDependency(type.getSourceElement());
       }
-      if (lookingForModule
-          && (ngModuleSignature = recordType.getValue().findPropertySignature(NG_MODULE_PROP)) != null) {
-        type = evaluateModuleWithProvidersType(ngModuleSignature, type.getSource());
-      }
-      else {
-        PsiElement sourceElement = type.getSourceElement();
-        if (sourceElement instanceof TypeScriptSingleType) {
-          JSReferenceExpression expression = AstLoadingFilter.forceAllowTreeLoading(
-            sourceElement.getContainingFile(), ((TypeScriptSingleType)sourceElement)::getReferenceExpression);
-          if (expression != null) {
-            resolvedClazz = tryCast(expression.resolve(), JSClass.class);
-            T entity = getEntity(resolvedClazz);
-            if (entity != null) {
-              processCacheDependency(resolvedClazz);
-              processEntity(entity);
-              return;
-            }
+      if (lookingForModule) {
+        if (type instanceof JSGenericTypeImpl
+            && ((JSGenericTypeImpl)type).getType() instanceof JSTypeImpl
+            && MODULE_WITH_PROVIDERS_CLASS.equals(((JSGenericTypeImpl)type).getType().getTypeText())) {
+          JSType argument = ContainerUtil.getFirstItem(((JSGenericTypeImpl)type).getArguments());
+          if (argument != null && !(argument instanceof JSAnyType)) {
+            type = argument;
+            lookingForModule = false;
+            continue;
           }
         }
-        else if (sourceElement instanceof TypeScriptClass) {
-          resolvedClazz = (JSClass)sourceElement;
+        if ((ngModuleSignature = recordType.getValue().findPropertySignature(NG_MODULE_PROP)) != null) {
+          type = evaluateModuleWithProvidersType(ngModuleSignature, type.getSource());
+          lookingForModule = false;
+          continue;
+        }
+      }
+      PsiElement sourceElement = type.getSourceElement();
+      if (sourceElement instanceof TypeScriptSingleType) {
+        JSReferenceExpression expression = AstLoadingFilter.forceAllowTreeLoading(
+          sourceElement.getContainingFile(), ((TypeScriptSingleType)sourceElement)::getReferenceExpression);
+        if (expression != null) {
+          resolvedClazz = tryCast(expression.resolve(), JSClass.class);
           T entity = getEntity(resolvedClazz);
           if (entity != null) {
             processCacheDependency(resolvedClazz);
@@ -247,9 +248,41 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
             return;
           }
         }
-        JSRecordType.CallSignature constructor = ContainerUtil.find(recordType.getValue().getCallSignatures(),
-                                                                    JSRecordType.CallSignature::hasNew);
-        type = doIfNotNull(constructor, JSRecordType.CallSignature::getReturnType);
+      }
+      else if (sourceElement instanceof TypeScriptClass) {
+        resolvedClazz = (JSClass)sourceElement;
+        T entity = getEntity(resolvedClazz);
+        if (entity != null) {
+          processCacheDependency(resolvedClazz);
+          processEntity(entity);
+          return;
+        }
+      }
+      JSRecordType.CallSignature constructor = ContainerUtil.find(recordType.getValue().getCallSignatures(),
+                                                                  JSRecordType.CallSignature::hasNew);
+      type = doIfNotNull(constructor, JSRecordType.CallSignature::getReturnType);
+    }
+    // Fallback to search in metadata
+    if (myEntityClass.isAssignableFrom(Angular2Module.class)) {
+      Angular2MetadataFunction metadataFunction = Angular2MetadataUtil.findMetadataFunction(function);
+      Angular2MetadataModule metadataModule = resolveFunctionValue(metadataFunction);
+      if (metadataModule != null) {
+        processCacheDependency(metadataFunction);
+        processCacheDependency(metadataModule);
+        // Make sure we translate to Ivy module if available
+        TypeScriptClass tsClass = metadataModule.getTypeScriptClass();
+        if (tsClass != null) {
+          Angular2Module ivyModule = tryCast(getIvyEntity(tsClass), Angular2Module.class);
+          if (ivyModule != null) {
+            processCacheDependency(tsClass);
+            //noinspection unchecked
+            processEntity((T)ivyModule);
+            return;
+          }
+        }
+        //noinspection unchecked
+        processEntity((T)metadataModule);
+        return;
       }
     }
     if (resolvedClazz != null && !(type instanceof JSAnyType)) {
@@ -263,7 +296,7 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
   private static JSType evaluateModuleWithProvidersType(JSRecordType.PropertySignature ngModuleSignature, JSTypeSource functionTypeSource) {
     JSType result = ngModuleSignature.getJSType();
     List<JSType> args;
-    JSFunctionBaseImpl function;
+    JSFunctionBaseImpl<?> function;
 
     if (result instanceof JSGenericTypeImpl
         && (args = ((JSGenericTypeImpl)result).getArguments()).size() == 1
@@ -274,10 +307,9 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
       JSType evaluatedReturnType = CachedValuesManager.getCachedValue(function, () -> {
         final JSFunctionCachedData cachedData = new JSFunctionCachedData();
         final List<JSFunction> nestedFuns = new SmartList<>();
-        final List<JSType> evaluatedReturnTypes = new SmartList<>();
         final JSFunctionNodesVisitor cachedDataEvaluator =
           new TypeScriptFunctionCachingVisitor(function,
-                                               cachedData, nestedFuns, evaluatedReturnTypes);
+                                               cachedData, nestedFuns);
         AstLoadingFilter.forceAllowTreeLoading(
           function.getContainingFile(),
           () -> cachedDataEvaluator.visitElement(function.getNode()));
@@ -291,8 +323,7 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
     return result;
   }
 
-  @Nullable
-  private static Angular2MetadataModule resolveFunctionValue(@Nullable Angular2MetadataFunction function) {
+  private static @Nullable Angular2MetadataModule resolveFunctionValue(@Nullable Angular2MetadataFunction function) {
     return Optional.ofNullable(function)
       .map(f -> tryCast(f.getValue(), Angular2MetadataObject.class))
       .map(value -> tryCast(value.findMember(NG_MODULE_PROP), Angular2MetadataReference.class))

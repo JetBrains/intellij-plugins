@@ -87,7 +87,7 @@ public class FlashPlayerTrustUtil {
   }
 
   private static void fixIdeaCfgFileContentIfNeeded(final @NotNull File ideaCfgFile,
-                                                    final @NotNull String[] trustedPaths,
+                                                    final String @NotNull [] trustedPaths,
                                                     final boolean runTrusted) throws IOException {
     final String[] trustedPathsFiltered = removeNestedPaths(trustedPaths);
 

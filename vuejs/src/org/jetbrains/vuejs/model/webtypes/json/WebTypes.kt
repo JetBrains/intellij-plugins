@@ -6,7 +6,7 @@ import java.util.*
 
 
 /**
- * web-types
+ * JSON schema for web-types
  *
  *
  *
@@ -17,59 +17,62 @@ import java.util.*
 class WebTypes {
 
   /**
-   *
+   * Framework, for which the components are provided by the library
    * (Required)
    *
    */
   /**
-   *
+   * Framework, for which the components are provided by the library
    * (Required)
    *
    */
   /**
-   *
+   * Framework, for which the components are provided by the library
    * (Required)
    *
    */
   @JsonProperty("framework")
+  @JsonPropertyDescription("Framework, for which the components are provided by the library")
   @get:JsonProperty("framework")
   @set:JsonProperty("framework")
   var framework: Framework? = null
   /**
-   *
+   * Name of the library
    * (Required)
    *
    */
   /**
-   *
+   * Name of the library
    * (Required)
    *
    */
   /**
-   *
+   * Name of the library
    * (Required)
    *
    */
   @JsonProperty("name")
+  @JsonPropertyDescription("Name of the library")
   @get:JsonProperty("name")
   @set:JsonProperty("name")
   var name: String? = null
   /**
-   *
+   * Version of the library, for which web-types are provided
    * (Required)
    *
    */
   /**
-   *
+   * Version of the library, for which web-types are provided
    * (Required)
    *
    */
   /**
-   *
+   * Version of the library, for which web-types are provided
    * (Required)
    *
    */
   @JsonProperty("version")
+  @JsonPropertyDescription("Version of the library, for which web-types are provided")
   @get:JsonProperty("version")
   @set:JsonProperty("version")
   var version: String? = null
@@ -92,6 +95,7 @@ class WebTypes {
   @get:JsonProperty("contributions")
   @set:JsonProperty("contributions")
   var contributions: Contributions? = null
+
   @JsonIgnore
   private val additionalProperties = HashMap<String, Any>()
 

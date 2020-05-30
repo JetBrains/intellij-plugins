@@ -62,9 +62,8 @@ public class CfmlCompositeElement extends StubBasedPsiElementBase<NamedStub> imp
     return CfmlScopesInfo.DEFAULT_SCOPE;
   }
 
-  @NotNull
   @Override
-  public PsiReference[] getReferences() {
+  public PsiReference @NotNull [] getReferences() {
     final PsiElement parent = getParent();
     if ((parent.getNode().getElementType() == CfmlElementTypes.ATTRIBUTE)) {
       final String localName = ((CfmlAttribute)parent).getAttributeName();

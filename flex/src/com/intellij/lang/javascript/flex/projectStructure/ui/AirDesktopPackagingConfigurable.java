@@ -6,8 +6,6 @@ import com.intellij.openapi.module.Module;
 import org.jetbrains.annotations.Nls;
 
 public class AirDesktopPackagingConfigurable extends AirPackagingConfigurableBase<ModifiableAirDesktopPackagingOptions> {
-  public static final String TAB_NAME = FlexBundle.message("bc.tab.air.desktop.display.name");
-
   public AirDesktopPackagingConfigurable(final Module module,
                                          final ModifiableAirDesktopPackagingOptions model,
                                          final AirDescriptorInfoProvider airDescriptorInfoProvider) {
@@ -17,11 +15,15 @@ public class AirDesktopPackagingConfigurable extends AirPackagingConfigurableBas
   @Override
   @Nls
   public String getDisplayName() {
-    return TAB_NAME;
+    return getTabName();
   }
 
   @Override
   public String getHelpTopic() {
     return "BuildConfigurationPage.AIRPackage";
+  }
+
+  public static String getTabName() {
+    return FlexBundle.message("bc.tab.air.desktop.display.name");
   }
 }

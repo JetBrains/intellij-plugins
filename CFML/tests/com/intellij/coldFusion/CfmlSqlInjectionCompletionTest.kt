@@ -5,8 +5,8 @@ import com.intellij.database.util.SqlDialects
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.sql.dialects.SqlDialectMappings
 import com.intellij.sql.dialects.SqlLanguageDialect
-import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.util.FileContentUtil
 import com.intellij.util.containers.ContainerUtil
 import java.util.*

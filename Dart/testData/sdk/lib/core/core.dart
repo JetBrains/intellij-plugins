@@ -101,7 +101,7 @@
  * and used by Map for its keys and values.
  *
  * For other kinds of collections, check out the
- * [dart:collection](#dart-collection) library.
+ * `dart:collection` library.
  *
  * ## Date and time
  *
@@ -137,28 +137,43 @@
  *
  * ## Other documentation
  *
- * For more information about how to use the built-in types, refer to
- * [Built-in Types](http://www.dartlang.org/docs/dart-up-and-running/contents/ch02.html#built-in-types)
+ * For more information about how to use the built-in types, refer to [Built-in
+ * Types](http://www.dartlang.org/docs/dart-up-and-running/contents/ch02.html#built-in-types)
  * in Chapter 2 of
  * [Dart: Up and Running](http://www.dartlang.org/docs/dart-up-and-running/).
  *
- * Also, see
- * [dart:core - Numbers, Collections, Strings, and More](http://www.dartlang.org/docs/dart-up-and-running/contents/ch03.html#ch03-dartcore---strings-collections-and-more)
+ * Also, see [dart:core - Numbers, Collections, Strings, and
+ * More](https://www.dartlang.org/docs/dart-up-and-running/ch03.html#dartcore---numbers-collections-strings-and-more)
  * for more coverage of classes in this package.
  *
  * The
  * [Dart Language Specification](http://www.dartlang.org/docs/spec/)
  * provides technical details.
+ *
+ * {@category Core}
  */
 library dart.core;
 
 import "dart:collection";
-import "dart:_internal" hide Symbol;
+import "dart:_internal" hide Symbol, LinkedList, LinkedListEntry;
 import "dart:_internal" as internal show Symbol;
-import "dart:convert" show UTF8, LATIN1, Encoding;
-import "dart:math" show Random;  // Used by List.shuffle.
+import "dart:convert"
+    show
+        ascii,
+        base64,
+        Base64Codec,
+        Encoding,
+        latin1,
+        StringConversionSink,
+        utf8;
+import "dart:math" show Random; // Used by List.shuffle.
+import "dart:typed_data" show Uint8List, Uint16List, Endian;
+
+@Since("2.1")
+export "dart:async" show Future, Stream;
 
 part "annotations.dart";
+part "bigint.dart";
 part "bool.dart";
 part "comparable.dart";
 part "date_time.dart";

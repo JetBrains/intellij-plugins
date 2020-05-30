@@ -31,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
 public class DartUnitMemberUsageGroupingRule extends SingleParentUsageGroupingRule implements DumbAware {
   @Nullable
   @Override
-  protected UsageGroup getParentGroupFor(@NotNull Usage usage, @NotNull UsageTarget[] targets) {
+  protected UsageGroup getParentGroupFor(@NotNull Usage usage, UsageTarget @NotNull [] targets) {
     PsiElement psiElement = usage instanceof PsiElementUsage ? ((PsiElementUsage)usage).getElement() : null;
     if (psiElement == null || psiElement.getLanguage() != DartLanguage.INSTANCE) return null;
 

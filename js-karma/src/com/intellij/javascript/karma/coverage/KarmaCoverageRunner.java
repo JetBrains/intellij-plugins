@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.karma.coverage;
 
 import com.intellij.coverage.CoverageEngine;
@@ -8,11 +9,11 @@ import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.testing.CoverageProjectDataLoader;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.rt.coverage.data.ProjectData;
-import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.Objects;
 
 public class KarmaCoverageRunner extends CoverageRunner {
 
@@ -21,7 +22,7 @@ public class KarmaCoverageRunner extends CoverageRunner {
 
   @NotNull
   public static KarmaCoverageRunner getInstance() {
-    return ObjectUtils.assertNotNull(CoverageRunner.getInstance(KarmaCoverageRunner.class));
+    return Objects.requireNonNull(CoverageRunner.getInstance(KarmaCoverageRunner.class));
   }
 
   @Override

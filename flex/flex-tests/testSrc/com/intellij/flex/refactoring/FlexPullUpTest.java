@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.refactoring;
 
 import com.intellij.flex.util.FlexTestUtils;
@@ -25,7 +25,6 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.impl.source.PostprocessReformattingAspect;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.refactoring.MultiFileTestCase;
 import com.intellij.refactoring.classMembers.MemberInfoBase;
@@ -119,9 +118,8 @@ public class FlexPullUpTest extends MultiFileTestCase {
     }
     assertSameElements(messages, expectedConflicts);
     if (conflicts.isEmpty()) {
-      WriteCommandAction.runWriteCommandAction(null, () -> {
+      WriteCommandAction.runWriteCommandAction(getProject(), () -> {
         new JSPullUpHelper(sourceClass, targetClass, infosArray, docCommentPolicy).moveMembersToBase();
-        myProject.getComponent(PostprocessReformattingAspect.class).doPostponedFormatting();
       });
 
       FileDocumentManager.getInstance().saveAllDocuments();

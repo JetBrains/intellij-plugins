@@ -18,29 +18,37 @@ import org.yaml.snakeyaml.Yaml
 private val LOG = Logger.getInstance(TsLintConfigWrapper::class.java)
 class TsLintConfigWrapper(private val rules: Map<String, TslintJsonOption>, private val extends: List<String>) {
 
-  fun hasExtends(): Boolean = !extends.isEmpty()
+  fun hasExtends(): Boolean = extends.isNotEmpty()
 
-  fun getOption(name: String): TslintJsonOption? = rules[name]
+  private fun getOption(name: String): TslintJsonOption? = rules[name]
 
-  fun getRulesToApply(project: Project): Collection<TsLintSimpleRule<*>> {
+  fun getRulesToApply(project: Project): Collection<TsLintRule> {
     ApplicationManager.getApplication().assertReadAccessAllowed()
     val settings = current(project)
     val languageSettings = language(settings)
     val jsCodeStyleSettings = custom(settings)
 
-    return TslintRulesSet.filter { it.isAvailable(project, languageSettings, jsCodeStyleSettings, this) }
+    return TslintRulesSet.filter {
+      val option = getOption(it.optionId)
+      option != null && option.isEnabled() && it.isAvailable(languageSettings, jsCodeStyleSettings, option)
+    }
   }
 
   private fun current(project: Project) = CodeStyle.getSettings(project)
   private fun language(settings: CodeStyleSettings) = settings.getCommonSettings(JavaScriptSupportLoader.TYPESCRIPT)
   private fun custom(settings: CodeStyleSettings) = settings.getCustomSettings(TypeScriptCodeStyleSettings::class.java)
 
-  fun applyRules(project: Project, rules: Collection<TsLintSimpleRule<*>>) {
+  fun applyRules(project: Project, rules: Collection<TsLintRule>) {
     JSCodeStyleUtil.updateProjectCodeStyle(project) { newSettings ->
       WriteAction.run<RuntimeException> {
         val newLanguageSettings = language(newSettings)
         val newJsCodeStyleSettings = custom(newSettings)
-        rules.forEach { rule -> rule.apply(project, newLanguageSettings, newJsCodeStyleSettings, this) }
+        rules.forEach {
+          val option = getOption(it.optionId)
+          if (option != null) {
+            it.apply(newLanguageSettings, newJsCodeStyleSettings, option)
+          }
+        }
       }
     }
   }
@@ -112,24 +120,35 @@ class TslintJsonOption(private val element: Any?) {
     return false
   }
 
-  fun getStringValues(): Collection<String> {
-    if (element is List<*>) {
-      return element.drop(1).mapNotNull { it as? String }
+  fun getStringValues(): List<String> {
+    return getOptionsList().filterIsInstance(String::class.java)
+  }
+
+  fun getOptionsList(): List<Any> {
+    val options = getRuleOptions()
+    if (options is List<*>) {
+      return options.filterNotNull()
     }
-    return asStringArrayOrSingleString(getOptionsElement())
+    if (options != null) {
+      return listOf(options)
+    }
+    return emptyList()
   }
 
   fun getNumberValue(): Int? {
-    return asInt(getOptionsElement())
+    return asInt(getRuleOptions())
   }
 
   fun getStringMapValue(): Map<String, String> {
-    return asStringMap(getOptionsElement())
+    return asStringMap(getRuleOptions())
   }
 
-  private fun getOptionsElement(): Any? {
-    if (this.element is List<*> && this.element.size > 1) {
-      return this.element[1]
+  private fun getRuleOptions(): Any? {
+    if (this.element is List<*>) {
+      if (this.element.size == 2) {
+        return this.element[1]
+      }
+      return element.drop(1)
     }
     if (this.element is Map<*, *>) {
       val optionsElement = this.element["options"]

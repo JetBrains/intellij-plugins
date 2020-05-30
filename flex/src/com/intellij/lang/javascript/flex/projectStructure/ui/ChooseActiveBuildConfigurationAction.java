@@ -170,7 +170,6 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
     private final Module myModule;
 
     EditBcsAction(Module module) {
-      super(null);
       myModule = module;
       final AnAction a = ActionManager.getInstance().getAction("ShowProjectStructureSettings");
       getTemplatePresentation().copyFrom(a.getTemplatePresentation());

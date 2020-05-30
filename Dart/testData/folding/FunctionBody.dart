@@ -41,17 +41,8 @@ abstract class B <fold text='{...}' expand='true'>{
   }</fold>
 
   operator ==(z) <fold text='{...}' expand='true'>{
-    if (true){
+    if (true)<fold text='{...}' expand='true'>{
       // a
-    }
+    }</fold>
   }</fold>
-}</fold>
-
-enum Foo1{}
-enum Foo2{a}
-enum Foo3<fold text='{...}' expand='true'>{a }</fold>
-enum Foo4<fold text='{...}' expand='true'>{
-a,
-b,
-//c
 }</fold>

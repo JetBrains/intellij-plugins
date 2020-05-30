@@ -5,7 +5,6 @@ import com.intellij.codeInspection.SuppressionUtil;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,8 +22,7 @@ public class GherkinSuppressionUtil {
   private GherkinSuppressionUtil() {
   }
 
-  @NotNull
-  public static SuppressQuickFix[] getDefaultSuppressActions(@NotNull final String toolId) {
+  public static SuppressQuickFix @NotNull [] getDefaultSuppressActions(@NotNull final String toolId) {
     return new SuppressQuickFix[]{
       new GherkinSuppressForStepCommentFix(toolId),
       new GherkinSuppressForScenarioCommentFix(toolId),

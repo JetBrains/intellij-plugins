@@ -16,7 +16,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.FileContentUtil;
 import com.intellij.util.indexing.FileBasedIndex;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -42,9 +41,8 @@ public class CfmlProjectConfigurable implements SearchableConfigurable, Configur
   }
 
   @Override
-  @Nls
   public String getDisplayName() {
-    return "ColdFusion";
+    return CfmlBundle.message("configurable.CfmlProjectConfigurable.display.name");
   }
 
   @Override

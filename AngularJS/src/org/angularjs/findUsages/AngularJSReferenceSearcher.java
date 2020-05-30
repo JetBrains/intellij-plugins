@@ -13,15 +13,16 @@
 // limitations under the License.
 package org.angularjs.findUsages;
 
-import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSParameter;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
+import com.intellij.lang.typescript.psi.TypeScriptPsiUtil;
 import com.intellij.openapi.application.QueryExecutorBase;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -30,13 +31,12 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
+import com.intellij.xml.util.HtmlUtil;
 import org.angular2.entities.Angular2Component;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Pipe;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Optional;
 
 public class AngularJSReferenceSearcher extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
   protected AngularJSReferenceSearcher() {
@@ -45,7 +45,7 @@ public class AngularJSReferenceSearcher extends QueryExecutorBase<PsiReference, 
 
   @Override
   public void processQuery(@NotNull ReferencesSearch.SearchParameters queryParameters,
-                           @NotNull final Processor<? super PsiReference> consumer) {
+                           final @NotNull Processor<? super PsiReference> consumer) {
     final JSImplicitElement directive;
     final Angular2Pipe pipe;
     final PsiElement element = queryParameters.getElementToSearch();
@@ -53,7 +53,8 @@ public class AngularJSReferenceSearcher extends QueryExecutorBase<PsiReference, 
       for (String attrName : DirectiveUtil.getAttributeNameVariations(directive.getName())) {
         queryParameters.getOptimizer().searchWord(attrName, queryParameters.getEffectiveSearchScope(), false, directive);
         queryParameters.getOptimizer().searchWord("x-" + attrName, queryParameters.getEffectiveSearchScope(), false, directive);
-        queryParameters.getOptimizer().searchWord("data-" + attrName, queryParameters.getEffectiveSearchScope(), false, directive);
+        queryParameters.getOptimizer()
+          .searchWord(HtmlUtil.HTML5_DATA_ATTR_PREFIX + attrName, queryParameters.getEffectiveSearchScope(), false, directive);
       }
     }
     else if ((pipe = Angular2EntitiesProvider.getPipe(element)) != null) {
@@ -65,11 +66,9 @@ public class AngularJSReferenceSearcher extends QueryExecutorBase<PsiReference, 
       }
     }
     else if (element instanceof TypeScriptField
-             || element instanceof TypeScriptFunction
+             || (element instanceof TypeScriptFunction && element.getContext() instanceof JSClass)
              || (element instanceof JSParameter
-                 && Optional.ofNullable(PsiTreeUtil.getContextOfType(element, TypeScriptFunction.class))
-                   .map(JSFunction::isConstructor)
-                   .orElse(false))) {
+                 && TypeScriptPsiUtil.isFieldParameter((JSParameter)element))) {
       String name = ((JSAttributeListOwner)element).getName();
       if (name != null && ((JSQualifiedNamedElement)element).getAccessType() == JSAttributeList.AccessType.PRIVATE) {
         Angular2Component component = Angular2EntitiesProvider.getComponent(PsiTreeUtil.getContextOfType(element, TypeScriptClass.class));

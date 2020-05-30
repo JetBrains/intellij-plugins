@@ -10,10 +10,8 @@ package org.dartlang.analysis.server.protocol;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import com.google.common.collect.Lists;
+
 import com.google.dart.server.utilities.general.JsonUtilities;
-import com.google.dart.server.utilities.general.ObjectUtilities;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -33,7 +31,7 @@ public class NavigationRegion {
 
   public static final NavigationRegion[] EMPTY_ARRAY = new NavigationRegion[0];
 
-  public static final List<NavigationRegion> EMPTY_LIST = Lists.newArrayList();
+  public static final List<NavigationRegion> EMPTY_LIST = new ArrayList<>();
 
   /**
    * The offset of the region from which the user can navigate.
@@ -52,7 +50,7 @@ public class NavigationRegion {
    */
   private final int[] targets;
 
-  private final List<NavigationTarget> targetObjects = Lists.newArrayList();
+  private final List<NavigationTarget> targetObjects = new ArrayList<>();
 
   /**
    * Constructor for {@link NavigationRegion}.

@@ -18,9 +18,9 @@ package com.intellij.struts2.annotators;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
-import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
+import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.Module;
@@ -97,19 +97,13 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
     }
 
     final boolean fileSetAvailable = allConfigFileSets.size() != 0;
-    final Annotation annotation =
-      holder.createWarningAnnotation(xmlFile,
-                                     fileSetAvailable ?
-                                     StrutsBundle.message("annotators.fileset.file.not.registered") :
-                                     StrutsBundle.message("annotators.fileset.no.file.sets"));
-    annotation.setFileLevelAnnotation(true);
 
+    IntentionAction fix;
     if (fileSetAvailable) {
-      final AddToFileSetFix addToFileSetFix = new AddToFileSetFix(xmlFile.getName());
-      annotation.registerFix(addToFileSetFix);
+      fix = new AddToFileSetFix(xmlFile.getName());
     }
     else {
-      annotation.registerFix(new IntentionAction() {
+      fix = new IntentionAction() {
         @Override
         @NotNull
         public String getText() {
@@ -140,8 +134,14 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
         public boolean startInWriteAction() {
           return false;
         }
-      });
+      };
     }
+    holder.newAnnotation(HighlightSeverity.WARNING,
+                                     fileSetAvailable ?
+                                     StrutsBundle.message("annotators.fileset.file.not.registered") :
+                                     StrutsBundle.message("annotators.fileset.no.file.sets"))
+        .range(xmlFile)
+    .fileLevel().withFix(fix).create();
   }
 
 

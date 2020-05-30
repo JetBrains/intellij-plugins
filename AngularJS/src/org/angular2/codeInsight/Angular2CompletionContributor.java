@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight;
 
 import com.intellij.codeInsight.completion.*;
@@ -37,6 +37,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.XmlExtension;
+import com.intellij.xml.util.HtmlUtil;
 import icons.AngularJSIcons;
 import one.util.streamex.StreamEx;
 import org.angular2.Angular2DecoratorUtil;
@@ -63,7 +64,7 @@ import java.util.*;
 import java.util.function.Consumer;
 
 import static com.intellij.codeInsight.completion.XmlAttributeReferenceCompletionProvider.isValidVariant;
-import static com.intellij.lang.javascript.psi.types.JSCompositeTypeBaseImpl.isNullOrUndefinedType;
+import static com.intellij.lang.javascript.psi.JSTypeUtils.isNullOrUndefinedType;
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 import static com.intellij.patterns.StandardPatterns.string;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
@@ -110,9 +111,9 @@ public class Angular2CompletionContributor extends CompletionContributor {
   private static class TemplateExpressionCompletionProvider extends CompletionProvider<CompletionParameters> {
 
     @Override
-    protected void addCompletions(@NotNull final CompletionParameters parameters,
-                                  @NotNull final ProcessingContext context,
-                                  @NotNull final CompletionResultSet result) {
+    protected void addCompletions(final @NotNull CompletionParameters parameters,
+                                  final @NotNull ProcessingContext context,
+                                  final @NotNull CompletionResultSet result) {
       PsiReference ref = parameters.getPosition().getContainingFile().findReferenceAt(parameters.getOffset());
       if (ref instanceof PsiMultiReference) {
         ref = ContainerUtil.find(((PsiMultiReference)ref).getReferences(), r ->
@@ -146,9 +147,9 @@ public class Angular2CompletionContributor extends CompletionContributor {
                                                                      : NG_PRIVATE_VARIABLE_PRIORITY.getPriorityValue()));
           List<TypeScriptFunction> transformMethods = new ArrayList<>(match.getTransformMethods());
           if (!transformMethods.isEmpty() && actualType != null) {
-            Collections.sort(transformMethods, Comparator.
+            transformMethods.sort(Comparator.
               <TypeScriptFunction>comparingInt(f -> isNullOrUndefinedType(f.getReturnType()) ? 1 : 0)
-              .thenComparingInt(f -> f.isOverloadDeclaration() ? 0 : 1));
+                                    .thenComparingInt(f -> f.isOverloadDeclaration() ? 0 : 1));
             Map<JSFunctionType, TypeScriptFunction> converted2Original = new LinkedHashMap<>();
             transformMethods.forEach(f -> {
               JSFunctionType type = TypeScriptTypeParser.buildFunctionType(f);
@@ -200,14 +201,12 @@ public class Angular2CompletionContributor extends CompletionContributor {
                                       type.getReturnType());
     }
 
-    @Nullable
-    private static JSType calcActualType(Angular2PipeReferenceExpression ref) {
+    private static @Nullable JSType calcActualType(Angular2PipeReferenceExpression ref) {
       Angular2PipeExpression pipeCall = (Angular2PipeExpression)ref.getParent();
       return doIfNotNull(ArrayUtil.getFirstElement(pipeCall.getArguments()),
                          expression -> new JSPsiBasedTypeOfType(expression, true));
     }
 
-    @SuppressWarnings("HardCodedStringLiteral")
     private static String renderPipeTypeText(@NotNull TypeScriptFunction f, @NotNull String pipeName) {
       StringBuilder result = new StringBuilder();
       result.append('[');
@@ -308,6 +307,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
           }
 
           Set<String> standardHtmlEvents = new HashSet<>(Angular2AttributeDescriptorsProvider.getStandardTagEventAttributeNames(tag));
+          boolean svg = HtmlUtil.SVG_NAMESPACE.equals(tag.getNamespace());
           result.runRemainingContributors(parameters, toPass -> {
             for (String str : toPass.getLookupElement().getAllLookupStrings()) {
               if (standardHtmlEvents.contains(str)
@@ -315,9 +315,15 @@ public class Angular2CompletionContributor extends CompletionContributor {
                 return;
               }
             }
+            LookupElement element = toPass.getLookupElement();
+            if (svg && !(element instanceof PrioritizedLookupElement)
+                && element.getPsiElement() == null) {
+              element = PrioritizedLookupElement.withPriority(element, Angular2AttributeDescriptor.AttributePriority.NORMAL.getValue() + 1);
+            }
+
             result.withPrefixMatcher(new TemplateBindingsPrefixMatcher(toPass.getPrefixMatcher()))
               .withRelevanceSorter(toPass.getSorter())
-              .addElement(toPass.getLookupElement());
+              .addElement(element);
           });
 
           //add abbreviations and prefixes in the end
@@ -331,7 +337,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
 
     private final CompletionResultSet myResult;
     private final List<Angular2AttributeDescriptor> myDescriptors;
-    @NotNull private final Angular2DeclarationsScope myScope;
+    private final @NotNull Angular2DeclarationsScope myScope;
     private final Set<String> myPrefixes = new HashSet<>();
     private final List<Runnable> myAbbreviations = new ArrayList<>();
 
@@ -344,8 +350,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
     }
 
     @Override
-    @NotNull
-    public Angular2DeclarationsScope getScope() {
+    public @NotNull Angular2DeclarationsScope getScope() {
       return myScope;
     }
 
@@ -355,7 +360,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
     }
 
     @Override
-    public void addDescriptors(@NotNull List<Angular2AttributeDescriptor> descriptorsInner) {
+    public void addDescriptors(@NotNull List<? extends Angular2AttributeDescriptor> descriptorsInner) {
       myDescriptors.addAll(descriptorsInner);
     }
 
@@ -384,7 +389,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
               .withLookupStrings(lookupNamesNoPrefix)
               .withPresentableText(lookupNamesNoPrefix.get(0) + "…" + (hidePrefix == null ? StringUtil.notNullize(suffix) : ""))
               .withIcon(AngularJSIcons.Angular2)
-              .withInsertHandler((@NotNull InsertionContext context, @NotNull LookupElement item) -> {
+              .withInsertHandler((InsertionContext context, LookupElement item) -> {
                 if (suffix != null) {
                   new Angular2AttributeInsertHandler(false, () -> false, suffix)
                     .handleInsert(context, item);

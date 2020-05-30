@@ -1,8 +1,8 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.prettierjs;
 
 import com.intellij.codeInsight.actions.FileTreeIterator;
-import com.intellij.codeInsight.actions.FormatChangedTextUtil;
+import com.intellij.codeInsight.actions.VcsFacade;
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.codeInsight.hint.HintManagerImpl;
 import com.intellij.codeInsight.hint.HintUtil;
@@ -10,6 +10,7 @@ import com.intellij.codeStyle.AbstractConvertLineSeparatorsAction;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.javascript.nodejs.interpreter.NodeInterpreterUtil;
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
 import com.intellij.javascript.nodejs.npm.NpmManager;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
@@ -27,10 +28,12 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.ex.util.EditorScrollingPositionKeeper;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbAware;
@@ -51,6 +54,7 @@ import com.intellij.ui.LightweightHint;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.LineSeparator;
 import com.intellij.util.NullableFunction;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.SemVer;
 import org.jetbrains.annotations.NotNull;
@@ -60,8 +64,12 @@ import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 public class ReformatWithPrettierAction extends AnAction implements DumbAware {
+  private static final @NotNull Logger LOG = Logger.getInstance(ReformatWithPrettierAction.class);
+  private static long EDT_TIMEOUT_MS = 2000;
+
   private final ErrorHandler myErrorHandler;
 
   public ReformatWithPrettierAction(@NotNull ErrorHandler errorHandler) {
@@ -99,47 +107,58 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       return;
     }
     Editor editor = e.getData(CommonDataKeys.EDITOR);
-    PrettierConfiguration configuration = PrettierConfiguration.getInstance(project);
-    try {
-      NodeInterpreterUtil.getValidInterpreterOrThrow(configuration.getInterpreterRef().resolve(project));
-    }
-    catch (ExecutionException e1) {
-      myErrorHandler.showError(project, editor, PrettierBundle.message("error.invalid.interpreter"),
-                () -> editSettings(project));
-      return;
-    }
-
-    NodePackage nodePackage = configuration.getPackage();
-    if (nodePackage.isEmptyPath()) {
-      myErrorHandler.showError(project, editor, PrettierBundle.message("error.no.valid.package"),
-                () -> editSettings(project));
-      return;
-    }
-    if (!nodePackage.isValid()) {
-      String message = PrettierBundle.message("error.package.is.not.installed",
-                                              NpmManager.getInstance(project).getNpmInstallPresentableText());
-      myErrorHandler.showError(project, editor, message, () -> installPackage(project));
-      return;
-    }
-    SemVer nodePackageVersion = nodePackage.getVersion();
-    if (nodePackageVersion != null && nodePackageVersion.compareTo(PrettierUtil.MIN_VERSION) < 0) {
-      myErrorHandler.showError(project, editor,
-                               PrettierBundle.message("error.unsupported.version", PrettierUtil.MIN_VERSION.getRawVersion()), null);
-      return;
-    }
-
     if (editor != null) {
-      processFileInEditor(project, editor, nodePackage);
+      processFileInEditor(project, editor, myErrorHandler);
     }
     else {
       VirtualFile[] virtualFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY);
       if (!ArrayUtil.isEmpty(virtualFiles)) {
-        processVirtualFiles(project, Arrays.asList(virtualFiles), nodePackage);
+        processVirtualFiles(project, Arrays.asList(virtualFiles), myErrorHandler);
       }
     }
   }
 
-  private void processFileInEditor(@NotNull Project project, @NotNull Editor editor, @NotNull NodePackage nodePackage) {
+  private static boolean checkNodeAndPackage(@NotNull Project project,
+                                             @Nullable Editor editor,
+                                             @NotNull NodeJsInterpreterRef interpreterRef,
+                                             @NotNull NodePackage nodePackage,
+                                             @NotNull ErrorHandler errorHandler) {
+    try {
+      NodeInterpreterUtil.getValidInterpreterOrThrow(interpreterRef.resolve(project));
+    }
+    catch (ExecutionException e1) {
+      errorHandler.showError(project, editor, PrettierBundle.message("error.invalid.interpreter"),
+                             () -> editSettings(project));
+      return false;
+    }
+
+    if (nodePackage.isEmptyPath()) {
+      errorHandler.showError(project, editor, PrettierBundle.message("error.no.valid.package"),
+                             () -> editSettings(project));
+      return false;
+    }
+    if (!nodePackage.isValid()) {
+      String message = PrettierBundle.message("error.package.is.not.installed",
+                                              NpmManager.getInstance(project).getNpmInstallPresentableText());
+      errorHandler.showError(project, editor, message, () -> installPackage(project));
+      return false;
+    }
+    SemVer nodePackageVersion = nodePackage.getVersion();
+    if (nodePackageVersion != null && nodePackageVersion.compareTo(PrettierUtil.MIN_VERSION) < 0) {
+      errorHandler.showError(project, editor,
+                             PrettierBundle.message("error.unsupported.version", PrettierUtil.MIN_VERSION.getRawVersion()), null);
+      return false;
+    }
+
+    return true;
+  }
+
+  private static void processFileInEditor(@NotNull Project project, @NotNull Editor editor, @NotNull ErrorHandler errorHandler) {
+    PrettierConfiguration configuration = PrettierConfiguration.getInstance(project);
+    NodePackage nodePackage = configuration.getPackage();
+
+    if (!checkNodeAndPackage(project, editor, configuration.getInterpreterRef(), nodePackage, errorHandler)) return;
+
     PsiFile file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
     if (file == null) {
       return;
@@ -155,7 +174,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     ensureConfigsSaved(Collections.singletonList(vFile), project);
     PrettierLanguageService service = PrettierLanguageService.getInstance(file.getProject());
     ThrowableComputable<PrettierLanguageService.FormatResult, RuntimeException> computable =
-      () -> ReadAction.compute(() -> performRequestForFile(project, nodePackage, service, file, range));
+      () -> performRequestForFile(project, nodePackage, service, file, range);
     PrettierLanguageService.FormatResult result = ProgressManager
       .getInstance()
       .runProcessWithProgressSynchronously(computable, PrettierBundle.message("progress.title"), true, project);
@@ -164,14 +183,14 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       return;
     }
     if (!StringUtil.isEmpty(result.error)) {
-      myErrorHandler.showErrorWithDetails(project, editor,
-                                          PrettierBundle.message("error.while.reformatting.message"), result.error);
+      errorHandler.showErrorWithDetails(project, editor,
+                                        PrettierBundle.message("error.while.reformatting.message"), result.error);
     }
     else if (result.unsupported) {
-      myErrorHandler.showError(project, editor, PrettierBundle.message("not.supported.file", file.getName()), null);
+      errorHandler.showError(project, editor, PrettierBundle.message("not.supported.file", file.getName()), null);
     }
     else if (result.ignored) {
-      showHintLater(editor, "Prettier: " + PrettierBundle.message("file.was.ignored", file.getName()), false, null);
+      showHintLater(editor, PrettierBundle.message("file.was.ignored.hint", file.getName()), false, null);
     }
     else {
       Document document = editor.getDocument();
@@ -198,6 +217,29 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     }
   }
 
+  public static TextRange processFileAsPostFormatProcessor(@NotNull PsiFile file, @NotNull TextRange range) {
+    // PostFormatProcessors are invoked in EDT under rite action. So we can't show progress and need to block for a while waiting for the result.
+    LOG.assertTrue(ApplicationManager.getApplication().isWriteAccessAllowed());
+
+    Project project = file.getProject();
+    PrettierConfiguration configuration = PrettierConfiguration.getInstance(project);
+    NodePackage nodePackage = configuration.getPackage();
+
+    if (!checkNodeAndPackage(project, null, configuration.getInterpreterRef(), nodePackage, PrettierSaveAction.NOOP_ERROR_HANDLER)) {
+      return range;
+    }
+
+    VirtualFile vFile = file.getVirtualFile();
+    ensureConfigsSaved(Collections.singletonList(vFile), project);
+    PrettierLanguageService service = PrettierLanguageService.getInstance(file.getProject());
+    PrettierLanguageService.FormatResult result = performRequestForFile(project, nodePackage, service, file, range);
+    if (result != null) {
+      int delta = applyFormatResult(project, vFile, result);
+      return range.grown(delta);
+    }
+    return range;
+  }
+
   private static void ensureConfigsSaved(@NotNull List<VirtualFile> virtualFiles, @NotNull Project project) {
     FileDocumentManager documentManager = FileDocumentManager.getInstance();
     for (VirtualFile config : PrettierUtil.lookupPossibleConfigFiles(virtualFiles, project)) {
@@ -208,9 +250,13 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     }
   }
 
-  private void processVirtualFiles(@NotNull Project project,
-                                   @NotNull List<VirtualFile> virtualFiles,
-                                   @NotNull NodePackage nodePackage) {
+  public static void processVirtualFiles(@NotNull Project project,
+                                         @NotNull List<VirtualFile> virtualFiles,
+                                         @NotNull ErrorHandler errorHandler) {
+    PrettierConfiguration configuration = PrettierConfiguration.getInstance(project);
+    NodePackage nodePackage = configuration.getPackage();
+    if (!checkNodeAndPackage(project, null, configuration.getInterpreterRef(), nodePackage, errorHandler)) return;
+
     ReadonlyStatusHandler.OperationStatus readonlyStatus = ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(virtualFiles);
     if (readonlyStatus.hasReadonlyFiles()) {
       return;
@@ -222,25 +268,32 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       if (psiDirectory == null) {
         return;
       }
-      processFileIterator(project, new FileTreeIterator(psiDirectory), nodePackage, false);
+      processFileIterator(project, new FileTreeIterator(psiDirectory), nodePackage, false, errorHandler);
     }
     else {
       processFileIterator(project, new FileTreeIterator(PsiUtilCore.toPsiFiles(psiManager, virtualFiles)),
-                          nodePackage, true);
+                          nodePackage, true, errorHandler);
     }
   }
 
-  private void processFileIterator(@NotNull Project project,
-                                   @NotNull final FileTreeIterator fileIterator,
-                                   @NotNull NodePackage nodePackage,
-                                   boolean reportSkippedFiles) {
+  private static void processFileIterator(@NotNull Project project,
+                                          @NotNull final FileTreeIterator fileIterator,
+                                          @NotNull NodePackage nodePackage,
+                                          boolean reportSkippedFiles,
+                                          @NotNull ErrorHandler errorHandler) {
     PrettierLanguageService service = PrettierLanguageService.getInstance(project);
-    Map<PsiFile, PrettierLanguageService.FormatResult> results = executeUnderProgress(project, indicator -> ReadAction.compute(() -> {
+    Map<PsiFile, PrettierLanguageService.FormatResult> results = executeUnderProgress(project, indicator -> {
       Map<PsiFile, PrettierLanguageService.FormatResult> reformattedResults = new HashMap<>();
 
-      while (fileIterator.hasNext()) {
-        PsiFile currentFile = fileIterator.next();
-        indicator.setText("Processing " + currentFile.getName());
+      List<PsiFile> files = new SmartList<>();
+      ReadAction.run(() -> {
+        while (fileIterator.hasNext()) {
+          files.add(fileIterator.next());
+        }
+      });
+
+      for (PsiFile currentFile : files) {
+        indicator.setText(PrettierBundle.message("processing.0.progress", currentFile.getName()));
         PrettierLanguageService.FormatResult result = performRequestForFile(project, nodePackage, service, currentFile, null);
         // timed out. show notification?
         if (result == null) {
@@ -249,7 +302,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
         if (result.unsupported && reportSkippedFiles) {
           PrettierLanguageService.FormatResult errorResult = PrettierLanguageService.FormatResult
             .error(PrettierBundle.message("not.supported.file", currentFile.getName()));
-          reformattedResults.put(currentFile,errorResult); 
+          reformattedResults.put(currentFile, errorResult);
         }
         if (result.ignored) {
           PrettierLanguageService.FormatResult errorResult =
@@ -260,7 +313,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
         reformattedResults.put(currentFile, result);
       }
       return reformattedResults;
-    }));
+    });
 
     runWriteCommandAction(project, () -> {
       for (Map.Entry<PsiFile, PrettierLanguageService.FormatResult> entry : results.entrySet()) {
@@ -268,25 +321,38 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
         if (virtualFile == null) {
           continue;
         }
-        Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
         PrettierLanguageService.FormatResult result = entry.getValue();
-        if (document != null && StringUtil.isEmpty(result.error) && !result.ignored) {
-          CharSequence textBefore = document.getCharsSequence();
-          LineSeparator newlineSeparator = StringUtil.detectSeparators(result.result);
-          String newContent = StringUtil.convertLineSeparators(result.result);
-          if (!StringUtil.equals(textBefore, newContent)) {
-            document.setText(newContent);
-          }
-          setDetectedLineSeparator(project, virtualFile, newlineSeparator);
-        }
+        applyFormatResult(project, virtualFile, result);
       }
     });
     List<String> errors = ContainerUtil.mapNotNull(results.entrySet(), t -> t.getValue().error);
     if (errors.size() > 0) {
-      myErrorHandler.showErrorWithDetails(project, null,
-                                          "Failed to reformat " + errors.size() + " files<br><a href=''>Details</a>",
-                                          StringUtil.join(errors, "\n"));
+      errorHandler.showErrorWithDetails(project, null,
+                                        PrettierBundle.message("failed.to.reformat.0.files", errors.size()),
+                                        StringUtil.join(errors, "\n"));
     }
+  }
+
+  /**
+   * @param result (new text length) - (old text length)
+   */
+  private static int applyFormatResult(@NotNull Project project,
+                                       @NotNull VirtualFile virtualFile,
+                                       @NotNull PrettierLanguageService.FormatResult result) {
+    Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
+    int delta = 0;
+    if (document != null && StringUtil.isEmpty(result.error) && !result.ignored && !result.unsupported) {
+      CharSequence textBefore = document.getCharsSequence();
+      LineSeparator newlineSeparator = StringUtil.detectSeparators(result.result);
+      String newContent = StringUtil.convertLineSeparators(result.result);
+      if (!StringUtil.equals(textBefore, newContent)) {
+        int lengthBefore = textBefore.length();
+        document.setText(newContent);
+        delta = newContent.length() - lengthBefore;
+      }
+      setDetectedLineSeparator(project, virtualFile, newlineSeparator);
+    }
+    return delta;
   }
 
   @Nullable
@@ -295,13 +361,39 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
                                                                             @NotNull PrettierLanguageService service,
                                                                             @NotNull PsiFile currentFile,
                                                                             @Nullable TextRange range) {
-    ApplicationManager.getApplication().assertReadAccessAllowed();
-    VirtualFile currentVFile = currentFile.getVirtualFile();
-    String filePath = currentVFile.getPath();
-    String text = JSLanguageServiceUtil.convertLineSeparatorsToFileOriginal(project, currentFile.getText(), currentVFile).toString();
-    VirtualFile ignoreVFile = PrettierUtil.findIgnoreFile(currentVFile, project);
-    String ignoreFilePath = ignoreVFile != null ? ignoreVFile.getPath() : null;
-    return JSLanguageServiceUtil.awaitFuture(service.format(filePath, ignoreFilePath, text, nodePackage, range));
+    boolean edt = ApplicationManager.getApplication().isDispatchThread();
+    if (!edt && ApplicationManager.getApplication().isReadAccessAllowed()) {
+      LOG.error("JSLanguageServiceUtil.awaitFuture() under read action may cause deadlock");
+    }
+
+    Ref<String> text = Ref.create();
+    Ref<String> filePath = Ref.create();
+    Ref<String> ignoreFilePath = Ref.create();
+
+    ReadAction.run(() -> {
+      if (!currentFile.isValid()) return;
+
+      VirtualFile currentVFile = currentFile.getVirtualFile();
+      filePath.set(currentVFile.getPath());
+      // PsiFile might be not committed at this point, take text from document
+      Document document = PsiDocumentManager.getInstance(project).getDocument(currentFile);
+      if (document == null) return;
+      CharSequence content = document.getImmutableCharSequence();
+      text.set(JSLanguageServiceUtil.convertLineSeparatorsToFileOriginal(project, content, currentVFile).toString());
+      VirtualFile ignoreVFile = PrettierUtil.findIgnoreFile(currentVFile, project);
+      if (ignoreVFile != null) {
+        ignoreFilePath.set(ignoreVFile.getPath());
+      }
+    });
+
+    if (text.isNull()) {
+      return PrettierLanguageService.FormatResult.UNSUPPORTED;
+    }
+
+    CompletableFuture<PrettierLanguageService.FormatResult> formatFuture =
+      service.format(filePath.get(), ignoreFilePath.get(), text.get(), nodePackage, range);
+    long timeout = edt ? EDT_TIMEOUT_MS : JSLanguageServiceUtil.getTimeout();
+    return JSLanguageServiceUtil.awaitFuture(formatFuture, timeout, JSLanguageServiceUtil.QUOTA_MILLS, null, true, null, edt);
   }
 
   private static <T> T executeUnderProgress(@NotNull Project project, @NotNull NullableFunction<ProgressIndicator, T> handler) {
@@ -315,11 +407,15 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     WriteCommandAction.runWriteCommandAction(project, PrettierBundle.message("command.name"), null, runnable);
   }
 
-  private static String buildNotificationMessage(@NotNull Document document, @NotNull CharSequence textBefore, boolean lineSeparatorsUpdated) {
-    int number = FormatChangedTextUtil.getInstance().calculateChangedLinesNumber(document, textBefore);
-    return "Prettier: " + (number > 0 ? "Reformatted " + number + " lines"
-                                      : lineSeparatorsUpdated
-                                        ? "Line endings were updated" : "No lines changed. Content is already properly formatted");
+  private static String buildNotificationMessage(@NotNull Document document,
+                                                 @NotNull CharSequence textBefore,
+                                                 boolean lineSeparatorsUpdated) {
+    int number = VcsFacade.getInstance().calculateChangedLinesNumber(document, textBefore);
+    if (number == 0) {
+      return lineSeparatorsUpdated ? PrettierBundle.message("line.endings.were.updated")
+                                   : PrettierBundle.message("no.lines.changed");
+    }
+    return PrettierBundle.message("formatted.0.lines", number);
   }
 
   private static void showHintLater(@NotNull Editor editor,
@@ -331,8 +427,8 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
                                            : HintUtil.createInformationLabel(text, hyperlinkListener, null, null);
       final LightweightHint hint = new LightweightHint(component);
       HintManagerImpl.getInstanceImpl()
-                     .showEditorHint(hint, editor, HintManager.UNDER, HintManager.HIDE_BY_ANY_KEY | HintManager.HIDE_BY_TEXT_CHANGE |
-                                                                      HintManager.HIDE_BY_SCROLLING, 0, false);
+        .showEditorHint(hint, editor, HintManager.UNDER, HintManager.HIDE_BY_ANY_KEY | HintManager.HIDE_BY_TEXT_CHANGE |
+                                                         HintManager.HIDE_BY_SCROLLING, 0, false);
     }, ModalityState.NON_MODAL, o -> editor.isDisposed() || !editor.getComponent().isShowing());
   }
 
@@ -350,7 +446,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
   }
 
   private static void editSettings(@NotNull Project project) {
-    new PrettierConfigurable(project).showEditDialog();
+    ShowSettingsUtil.getInstance().editConfigurable(project, new PrettierConfigurable(project));
   }
 
   /**
@@ -389,7 +485,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     @Override
     public void showError(@NotNull Project project, @Nullable Editor editor, @NotNull String text, @Nullable Runnable onLinkClick) {
       if (editor != null) {
-        showHintLater(editor, "Prettier: " + text, true, toHyperLinkListener(onLinkClick));
+        showHintLater(editor, PrettierBundle.message("prettier.formatter.hint.0", text), true, toHyperLinkListener(onLinkClick));
       }
       else {
         showErrorNotification(project, text, toNotificationListener(onLinkClick));
@@ -400,7 +496,8 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
                                               @NotNull String text,
                                               @Nullable NotificationListener notificationListener) {
       JSLinterGuesser.NOTIFICATION_GROUP
-        .createNotification("Prettier", text, NotificationType.ERROR, notificationListener)
+        .createNotification(PrettierBundle.message("prettier.formatter.notification.title"), text, NotificationType.ERROR,
+                            notificationListener)
         .notify(project);
     }
 

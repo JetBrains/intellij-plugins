@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
 <idea-plugin>
   <name>Tapestry</name>
   <id>com.intellij.tapestry</id>
@@ -8,7 +7,7 @@
   <depends>com.intellij.javaee</depends>
   <depends>com.intellij.properties</depends>
   <depends optional="true" config-file="tapestry-css-support-plugin.xml">com.intellij.css</depends>
-  <category>Web/JavaEE Technologies</category>
+  <category>JVM Frameworks</category>
 
   <extensions defaultExtensionNs="com.intellij">
     <facetType implementation="com.intellij.tapestry.intellij.facet.TapestryFacetType"/>
@@ -20,11 +19,12 @@
     <colorSettingsPage implementation="com.intellij.tapestry.intellij.lang.TemplateColorSettingsPage"/>
     <standardResourceProvider implementation="com.intellij.tapestry.intellij.TapestryResourceProvider"/>
 
-    <fileTypeFactory implementation="com.intellij.tapestry.lang.TmlFileTypeFactory"/>
+    <fileType name="TML" implementationClass="com.intellij.tapestry.lang.TmlFileType" fieldName="INSTANCE" language="TML" extensions="tml"/>
     <typedHandler implementation="com.intellij.tapestry.lang.TmlTypedHandler"/>
     <syntaxHighlighter key="TML" implementationClass="com.intellij.tapestry.lang.TmlHighlighter"/>
     <lang.parserDefinition language="TML" implementationClass="com.intellij.tapestry.psi.TmlParserDefinition"/>
     <lang.parserDefinition language="TEL" implementationClass="com.intellij.tapestry.psi.TelParserDefinition"/>
+    <lang.syntaxHighlighter language="TEL" implementationClass="com.intellij.tapestry.lang.TelHighlighter"/>
 
     <multiHostInjector implementation="com.intellij.tapestry.intellij.lang.TelLanguageInjector" />
     <annotator language="TML" implementationClass="com.intellij.tapestry.intellij.lang.annotator.TemplateTagAnnotator"/>
@@ -72,6 +72,7 @@
                      groupKey="tapestry.inspections.group" enabledByDefault="true" level="WARNING"
                      implementationClass="com.intellij.tapestry.intellij.inspections.TelReferencesInspection"/>
     <moduleService serviceImplementation="com.intellij.tapestry.intellij.TapestryModuleSupportLoader"/>
+    <psi.treeChangeListener implementation="com.intellij.tapestry.intellij.TapestryPsiTreeChangeListener"/>
   </extensions>
 
   <actions>
@@ -118,10 +119,8 @@
     </group>
   </actions>
 
-  <project-components>
-    <component>
-      <implementation-class>com.intellij.tapestry.intellij.TapestryListenersSupportLoader</implementation-class>
-    </component>
-  </project-components>
+  <projectListeners>
+    <listener class="com.intellij.tapestry.intellij.TapestryModuleRootListener" topic="com.intellij.openapi.roots.ModuleRootListener"/>
+  </projectListeners>
 
 </idea-plugin>

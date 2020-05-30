@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.library;
 
 import com.intellij.lang.javascript.index.JavaScriptIndex;
@@ -16,14 +16,13 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class ActionScriptLibraryProvider extends JSPredefinedLibraryProvider {
-  private static final Logger LOG = Logger.getInstance(ActionScriptLibraryProvider.class);
-  private static final Map<String, Ref<VirtualFile>> ourLibFileCache = ContainerUtil.newConcurrentMap();
-  private static final String[] ourActionScriptLibraries = new String[]{JavaScriptIndex.ECMASCRIPT_JS2, "E4X.js2"};
+public final class ActionScriptLibraryProvider extends JSPredefinedLibraryProvider {
 
-  @Nullable
-  private static VirtualFile getPredefinedLibFile(@NotNull String libFileName) {
+  private static final Map<String, Ref<VirtualFile>> ourLibFileCache = new ConcurrentHashMap<>();
+
+  private static @Nullable VirtualFile getPredefinedLibFile(@NotNull String libFileName) {
     Ref<VirtualFile> fileRef = getCachedFileRef(libFileName);
     if (fileRef != null) return fileRef.get();
     VirtualFile file = findFileByURL(libFileName);
@@ -33,19 +32,20 @@ public class ActionScriptLibraryProvider extends JSPredefinedLibraryProvider {
   private static VirtualFile findFileByURL(String libFileName) {
     URL libFileUrl = ActionScriptLibraryProvider.class.getResource(libFileName);
     if (libFileUrl == null) {
-      LOG.error("Cannot find " + libFileName + ", the installation is possibly broken.");
+      Logger.getInstance(ActionScriptLibraryProvider.class).error("Cannot find " + libFileName + ", the installation is possibly broken.");
       return null;
     }
     VirtualFile file = VfsUtil.findFileByURL(libFileUrl);
-    if (file != null && file.isValid()) {
-      return file;
+    if (file == null || !file.isValid()) {
+      Logger.getInstance(ActionScriptLibraryProvider.class)
+        .warn("Cannot find virtual file " + libFileName + " by url " + libFileUrl.toExternalForm());
+      return null;
     }
-    LOG.warn("Cannot find virtual file " + libFileName + " by url " + libFileUrl.toExternalForm());
-    return null;
+
+    return file;
   }
 
-  @Nullable
-  private static Ref<VirtualFile> getCachedFileRef(@NotNull String fileName) {
+  private static @Nullable Ref<VirtualFile> getCachedFileRef(@NotNull String fileName) {
     Ref<VirtualFile> ref = ourLibFileCache.get(fileName);
     VirtualFile file = ref != null ? ref.get() : null;
     if (file != null && !file.isValid()) {
@@ -55,20 +55,15 @@ public class ActionScriptLibraryProvider extends JSPredefinedLibraryProvider {
     return ref;
   }
 
-  @NotNull
-  public static Set<VirtualFile> getActionScriptPredefinedLibraryFiles() {
-    Set<VirtualFile> files = new HashSet<>(ourActionScriptLibraries.length);
-    for (String fileName : ourActionScriptLibraries) {
-      ContainerUtil.addIfNotNull(files, getPredefinedLibFile(fileName));
-    }
+  public static @NotNull Set<VirtualFile> getActionScriptPredefinedLibraryFiles() {
+    Set<VirtualFile> files = new HashSet<>(2);
+    ContainerUtil.addIfNotNull(files, getPredefinedLibFile(JavaScriptIndex.ECMASCRIPT_JS2));
+    ContainerUtil.addIfNotNull(files, getPredefinedLibFile("E4X.js2"));
     return files;
   }
 
-  @NotNull
   @Override
-  public Set<VirtualFile> getRequiredLibraryFilesToIndex() {
-    Set<VirtualFile> libFiles = new HashSet<>();
-    libFiles.addAll(getActionScriptPredefinedLibraryFiles());
-    return libFiles;
+  public @NotNull Set<VirtualFile> getRequiredLibraryFilesToIndex() {
+    return getActionScriptPredefinedLibraryFiles();
   }
 }

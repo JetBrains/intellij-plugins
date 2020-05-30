@@ -17,9 +17,7 @@ public interface Angular2Binding extends Angular2EmbeddedExpression {
   @Nullable
   Angular2Quote getQuote();
 
-
-  @Nullable
-  static Angular2Binding get(@NotNull XmlAttribute attribute) {
+  static @Nullable Angular2Binding get(@NotNull XmlAttribute attribute) {
     if (attribute instanceof Angular2HtmlPropertyBinding) {
       return ((Angular2HtmlPropertyBinding)attribute).getBinding();
     }

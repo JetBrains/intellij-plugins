@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ImportFilteringRule extends com.intellij.usages.rules.ImportFilteringRule {
   @Override
-  public boolean isVisible(@NotNull Usage usage, @NotNull UsageTarget[] targets) {
+  public boolean isVisible(@NotNull Usage usage, UsageTarget @NotNull [] targets) {
     if (usage instanceof PsiElementUsage) {
       final PsiElement psiElement = ((PsiElementUsage)usage).getElement();
       final PsiFile containingFile = psiElement.getContainingFile();

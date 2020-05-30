@@ -21,6 +21,7 @@ import com.intellij.xdebugger.breakpoints.XBreakpoint;
 import com.intellij.xdebugger.breakpoints.XBreakpointType;
 import com.intellij.xdebugger.breakpoints.ui.XBreakpointCustomPropertiesPanel;
 import com.intellij.xdebugger.impl.breakpoints.XBreakpointBase;
+import com.jetbrains.lang.dart.DartBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,7 +32,7 @@ public class DartExceptionBreakpointType
   extends XBreakpointType<XBreakpoint<DartExceptionBreakpointProperties>, DartExceptionBreakpointProperties> {
 
   public DartExceptionBreakpointType() {
-    super("dart-exception", "Dart Exception Breakpoint");
+    super("dart-exception", DartBundle.message("breakpoint.type.title.dart.exception.breakpoint"));
   }
 
   @NotNull
@@ -83,8 +84,8 @@ public class DartExceptionBreakpointType
     @NotNull
     @Override
     public JComponent getComponent() {
-      myBreakOnUncaughtExceptions = new JBRadioButton("Break on uncaught exceptions");
-      myBreakOnAllExceptions = new JBRadioButton("Break on all exceptions");
+      myBreakOnUncaughtExceptions = new JBRadioButton(DartBundle.message("radio.text.break.on.uncaught.exceptions"));
+      myBreakOnAllExceptions = new JBRadioButton(DartBundle.message("radio.text.break.on.all.exceptions"));
 
       final ButtonGroup group = new ButtonGroup();
       group.add(myBreakOnUncaughtExceptions);
@@ -93,7 +94,7 @@ public class DartExceptionBreakpointType
       final JPanel panel = new JPanel(new BorderLayout());
       panel.add(myBreakOnUncaughtExceptions, BorderLayout.NORTH);
       panel.add(myBreakOnAllExceptions, BorderLayout.SOUTH);
-      panel.setBorder(IdeBorderFactory.createTitledBorder("Breaking policy"));
+      panel.setBorder(IdeBorderFactory.createTitledBorder(DartBundle.message("border.breaking.policy")));
 
       return panel;
     }

@@ -17,9 +17,8 @@ public class DartBraceMatcher implements PairedBraceMatcher {
     new BracePair(DartTokenTypes.LONG_TEMPLATE_ENTRY_START, DartTokenTypes.LONG_TEMPLATE_ENTRY_END, false)
   };
 
-  @NotNull
   @Override
-  public BracePair[] getPairs() {
+  public BracePair @NotNull [] getPairs() {
     return BRACE_PAIRS;
   }
 

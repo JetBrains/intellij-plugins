@@ -37,8 +37,8 @@ import org.jetbrains.annotations.NotNull;
 public class CreateStrutsXmlAction extends CreateFileAction {
 
   public CreateStrutsXmlAction() {
-    super(StrutsBundle.message("create.config.new.file"),
-          StrutsBundle.message("create.config.new.file.description"),
+    super(StrutsBundle.messagePointer("create.config.new.file"),
+          StrutsBundle.messagePointer("create.config.new.file.description"),
           StrutsIcons.STRUTS_CONFIG_FILE);
   }
 
@@ -53,8 +53,7 @@ public class CreateStrutsXmlAction extends CreateFileAction {
   }
 
   @Override
-  @NotNull
-  protected PsiElement[] create(@NotNull final String newName, final PsiDirectory directory) throws Exception {
+  protected PsiElement @NotNull [] create(@NotNull final String newName, final PsiDirectory directory) throws Exception {
     @NonNls final String fileName = getFileName(newName);
 
     final Module module = ModuleUtilCore.findModuleForPsiElement(directory);

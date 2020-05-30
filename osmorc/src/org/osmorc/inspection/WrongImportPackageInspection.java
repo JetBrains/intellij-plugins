@@ -42,7 +42,7 @@ public class WrongImportPackageInspection extends AbstractOsgiVisitor {
   protected PsiElementVisitor buildVisitor(OsmorcFacet facet, final ProblemsHolder holder, boolean isOnTheFly) {
     return new PsiElementVisitor() {
       @Override
-      public void visitElement(PsiElement element) {
+      public void visitElement(@NotNull PsiElement element) {
         if (OsgiPsiUtil.isHeader(element, Constants.IMPORT_PACKAGE)) {
           nextValue:
           for (HeaderValue value : ((Header)element).getHeaderValues()) {

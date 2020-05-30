@@ -53,17 +53,17 @@ class YamlExamplesTest : LightPlatformCodeInsightTestCase() {
 
     configureByFile(fileName)
 
-    val parsed = CloudFormationParser.parse(myFile)
+    val parsed = CloudFormationParser.parse(file)
     val inspected = CloudFormationInspections.inspectFile(parsed)
 
     val unresolvedReferenceProblems = YamlUnresolvedReferencesInspection()
-        .checkFile(myFile, InspectionManager.getInstance(myFile.project), true)!!
+        .checkFile(file, InspectionManager.getInstance(file.project), true)!!
         .sortedBy { it.psiElement.textOffset }
         .map { CloudFormationProblem(it.psiElement, it.descriptionTemplate) }
 
     TestUtil.checkContent(
         File(testDataPath, "$fileName.expected"),
-        TestUtil.renderProblems(myFile, parsed.problems + inspected.problems + unresolvedReferenceProblems)
+        TestUtil.renderProblems(file, parsed.problems + inspected.problems + unresolvedReferenceProblems)
     )
   }
 

@@ -1,0 +1,2 @@
+<privateFields.vue:(374,382):(5,8)>	this.foo
+<privateFields.vue:(44,47):(0,3)>	foo

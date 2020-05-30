@@ -53,12 +53,12 @@ public class Struts2GlobalVariableProvider extends VtlGlobalVariableProvider {
     }
 
     final List<VtlVariable> result = new ArrayList<>();
-    result.add(new MyVtlVariable("response", file, WebCommonClassNames.HTTP_SERVLET_RESPONSE));
-    result.add(new MyVtlVariable("res", file, WebCommonClassNames.HTTP_SERVLET_RESPONSE));
-    result.add(new MyVtlVariable("request", file, WebCommonClassNames.HTTP_SERVLET_REQUEST));
-    result.add(new MyVtlVariable("req", file, WebCommonClassNames.HTTP_SERVLET_REQUEST));
-    result.add(new MyVtlVariable("application", file, WebCommonClassNames.SERVLET_CONTEXT));
-    result.add(new MyVtlVariable("session", file, WebCommonClassNames.HTTP_SESSION));
+    result.add(new MyVtlVariable("response", file, WebCommonClassNames.JAVAX_HTTP_SERVLET_RESPONSE));
+    result.add(new MyVtlVariable("res", file, WebCommonClassNames.JAVAX_HTTP_SERVLET_RESPONSE));
+    result.add(new MyVtlVariable("request", file, WebCommonClassNames.JAVAX_HTTP_SERVLET_REQUEST));
+    result.add(new MyVtlVariable("req", file, WebCommonClassNames.JAVAX_HTTP_SERVLET_REQUEST));
+    result.add(new MyVtlVariable("application", file, WebCommonClassNames.JAVAX_SERVLET_CONTEXT));
+    result.add(new MyVtlVariable("session", file, WebCommonClassNames.JAVAX_HTTP_SESSION));
     result.add(new MyVtlVariable("base", file, CommonClassNames.JAVA_LANG_STRING));
     result.add(new MyVtlVariable("stack", file, "com.opensymphony.xwork2.util.ValueStack"));
     result.add(new MyVtlVariable("action", file, "com.opensymphony.xwork2.ActionInvocation"));

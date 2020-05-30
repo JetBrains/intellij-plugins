@@ -10,7 +10,6 @@ import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author yole
@@ -33,12 +32,9 @@ public interface GherkinStep extends GherkinPsiElement, GherkinSuppressionHolder
 
   ASTNode getKeyword();
 
-  /**
-   * Deprecated
-   * Use getName() instead
-   */
-  @Deprecated
-  String getStepName();
+  @Override
+  @NotNull
+  String getName();
 
   @Nullable
   GherkinTable getTable();
@@ -66,7 +62,7 @@ public interface GherkinStep extends GherkinPsiElement, GherkinSuppressionHolder
 
   /**
    * Checks if step can be renamed (actually, all definitions are asked).
-   * See {@link org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition#supportsRename(String)}.
+   * See {@link AbstractStepDefinition#supportsRename(String)}.
    * Show {@link #RENAME_DISABLED_MESSAGE} or {@link #RENAME_BAD_SYMBOLS_MESSAGE}
    *
    * @param newName new name (to check if renaming to it is supported) or null to check if step could be renamed at all.

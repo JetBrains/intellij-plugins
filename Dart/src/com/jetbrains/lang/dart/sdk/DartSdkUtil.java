@@ -101,7 +101,7 @@ public class DartSdkUtil {
     };
 
     final ComponentWithBrowseButton.BrowseFolderActionListener<JComboBox> browseFolderListener =
-      new ComponentWithBrowseButton.BrowseFolderActionListener<>("Select Dart SDK Path", null, dartSdkPathComponent, project,
+      new ComponentWithBrowseButton.BrowseFolderActionListener<>(DartBundle.message("button.browse.dialog.title.select.dart.sdk.path"), null, dartSdkPathComponent, project,
                                                                  FileChooserDescriptorFactory.createSingleFolderDescriptor(),
                                                                  textComponentAccessor);
     dartSdkPathComponent.addActionListener(browseFolderListener);

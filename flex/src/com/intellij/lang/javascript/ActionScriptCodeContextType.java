@@ -13,7 +13,7 @@ public class ActionScriptCodeContextType extends TemplateContextType implements 
   @NonNls private static final String ACTION_SCRIPT = "ACTION_SCRIPT";
 
   public ActionScriptCodeContextType() {
-    super(ACTION_SCRIPT, JSBundle.message("actionscript.template.context.type"));
+    super(ACTION_SCRIPT, JavaScriptBundle.message("actionscript.template.context.type"));
   }
 
   @Override

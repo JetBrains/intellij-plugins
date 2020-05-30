@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.osgi.bnd.imp;
 
 import aQute.bnd.build.Container;
@@ -31,7 +31,7 @@ import com.intellij.openapi.roots.impl.ModifiableModelCommitter;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
-import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
@@ -43,6 +43,7 @@ import com.intellij.pom.java.LanguageLevel;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
+import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.java.compiler.JpsJavaCompilerOptions;
@@ -54,13 +55,15 @@ import org.osmorc.facet.OsmorcFacetType;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import static org.osmorc.i18n.OsmorcBundle.message;
 
-public class BndProjectImporter {
+public final class BndProjectImporter {
   public static final String CNF_DIR = Workspace.CNFDIR;
   public static final String BUILD_FILE = Workspace.BUILDFILE;
   public static final String BND_FILE = Project.BNDFILE;
@@ -98,7 +101,7 @@ public class BndProjectImporter {
   private final com.intellij.openapi.project.Project myProject;
   private final Workspace myWorkspace;
   private final Collection<? extends Project> myProjects;
-  private final Map<String, String> mySourcesMap = ContainerUtil.newTroveMap(FileUtil.PATH_HASHING_STRATEGY);
+  private final Map<String, String> mySourcesMap = new THashMap<>(FileUtil.PATH_HASHING_STRATEGY);
 
   public BndProjectImporter(@NotNull com.intellij.openapi.project.Project project,
                             @NotNull Workspace workspace,
@@ -427,7 +430,7 @@ public class BndProjectImporter {
           throw new IllegalArgumentException("Unknown module '" + name + "'");
         }
         entry = (ModuleOrderEntry)ContainerUtil.find(
-          rootModel.getOrderEntries(), e -> e instanceof ModuleOrderEntry && ((ModuleOrderEntry)e).getModule() == module);
+          rootModel.getOrderEntries(), e -> e instanceof ModuleOrderEntry && ((ModuleOrderEntry)e).getModuleName().equals(name));
         if (entry == null) {
           entry = rootModel.addModuleOrderEntry(module);
         }
@@ -516,7 +519,7 @@ public class BndProjectImporter {
 
   @NotNull
   public static Collection<Project> getWorkspaceProjects(@NotNull Workspace workspace) throws Exception {
-    return ContainerUtil.filter(workspace.getAllProjects(), Condition.NOT_NULL);
+    return ContainerUtil.filter(workspace.getAllProjects(), Conditions.notNull());
   }
 
   /**
@@ -525,7 +528,7 @@ public class BndProjectImporter {
   @Nullable
   public static Workspace findWorkspace(@NotNull com.intellij.openapi.project.Project project) {
     String basePath = project.getBasePath();
-    if (basePath != null && new File(basePath, CNF_DIR).exists()) {
+    if (basePath != null && Files.exists(Paths.get(basePath, CNF_DIR))) {
       try {
         Workspace ws = Workspace.getWorkspace(new File(basePath), CNF_DIR);
         BND_WORKSPACE_KEY.set(project, ws);

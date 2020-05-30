@@ -1,7 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs;
 
-import com.intellij.lang.documentation.DocumentationProviderEx;
+import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocComment;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocTag;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocTagValue;
@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * @author Dennis.Ushakov
  */
-public class AngularJSDocumentationProvider extends DocumentationProviderEx {
+public class AngularJSDocumentationProvider implements DocumentationProvider {
 
   private static PsiElement getElementForDocumentation(final Project project, final String directiveName) {
     return AngularIndexUtil.resolve(project, AngularDirectivesDocIndex.KEY, directiveName);

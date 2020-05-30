@@ -4,6 +4,8 @@ import {Component, Input} from "@angular/core";
 @Component({selector: 'my-comp'})
 class TodoCmp {
 
+    @Input nullBinding;
+    @Input anyBinding: any;
     @Input numberBinding: number;
     @Input booleanBinding: boolean;
     @Input stringBinding: string;

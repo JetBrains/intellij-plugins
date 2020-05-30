@@ -1,23 +1,11 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
 <idea-plugin>
   <id>cucumber-groovy</id>
   <name>Cucumber for Groovy</name>
+  <category>Test Tools</category>
   <description>
       <![CDATA[
-      Enables <a href="http://cukes.info/">Cucumber</a> support with step definitions written in Groovy.
-        The following coding assistance features are available:
-        <ul>
-          <li>Error and syntax highlighting.</li>
-          <li>Indentation.</li>
-          <li>Intention actions.</li>
-          <li>Viewing code structure.</li>
-          <li>Navigation in the source code.</li>
-          <li>Integrated documentation.</li>
-          <li>Code completion.</li>
-          <li>Search for usages.</li>
-          <li>Commenting and uncommenting lines.</li>
-        </ul>
-      ]]>
+Adds support for <a href="http://cukes.info/">Cucumber</a> testing tools with step definitions written in Groovy.
+ ]]>
    </description>
   <depends>gherkin</depends>
   <depends>org.intellij.groovy</depends>
@@ -32,6 +20,7 @@
     <elementDescriptionProvider implementation="org.jetbrains.plugins.cucumber.groovy.steps.search.GrStepDefinitionDescriptionProvider"/>
     <pom.declarationSearcher implementation="org.jetbrains.plugins.cucumber.groovy.steps.search.GrCucumberStepDeclarationSearcher"/>
     <codeInsight.lineMarkerProvider implementationClass="org.jetbrains.plugins.cucumber.groovy.steps.GrCucumberLineMarkerProvider" language="Groovy"/>
+    <fileBasedIndex implementation="org.jetbrains.plugins.cucumber.groovy.GrCucumberStepIndex"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.plugins.cucumber.steps">
@@ -39,6 +28,7 @@
   </extensions>
 
   <extensions defaultExtensionNs="org.intellij.groovy">
+    <delegatesToProvider implementation="org.jetbrains.plugins.cucumber.groovy.resolve.CustomWorldDelegatesToProvider"/>
     <membersContributor implementation="org.jetbrains.plugins.cucumber.groovy.resolve.noncode.CustomWorldContributor"/>
   </extensions>
 </idea-plugin>

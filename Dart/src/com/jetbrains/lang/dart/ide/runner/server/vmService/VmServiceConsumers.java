@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server.vmService;
 
 import org.dartlang.vm.service.consumer.*;
@@ -41,6 +42,25 @@ public class VmServiceConsumers {
   }
 
   public static abstract class EvaluateConsumerWrapper implements EvaluateConsumer {
+    @Override
+    public final void received(ErrorRef response) {
+      noGoodResult();
+    }
+
+    @Override
+    public final void received(Sentinel response) {
+      noGoodResult();
+    }
+
+    @Override
+    public final void onError(RPCError error) {
+      noGoodResult();
+    }
+
+    abstract public void noGoodResult();
+  }
+
+  public static abstract class InvokeConsumerWrapper implements InvokeConsumer {
     @Override
     public final void received(ErrorRef response) {
       noGoodResult();

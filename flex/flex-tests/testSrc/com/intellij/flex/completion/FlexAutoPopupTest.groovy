@@ -2,14 +2,12 @@
 package com.intellij.flex.completion
 
 import com.intellij.codeInsight.CodeInsightSettings
-import com.intellij.codeInsight.completion.CompletionAutoPopupTestCase
-import com.intellij.codeInsight.completion.impl.CamelHumpMatcher
 import com.intellij.flex.util.FlexTestUtils
 import com.intellij.lang.javascript.JSTestOption
 import com.intellij.lang.javascript.JSTestOptions
 import com.intellij.lang.javascript.flex.FlexModuleType
-import com.intellij.openapi.module.ModuleType
 import com.intellij.testFramework.LightProjectDescriptor
+import com.intellij.testFramework.fixtures.CompletionAutoPopupTestCase
 import com.intellij.testFramework.fixtures.DefaultLightProjectDescriptor
 import org.jetbrains.annotations.NotNull
 
@@ -21,9 +19,10 @@ class FlexAutoPopupTest extends CompletionAutoPopupTestCase {
   @NotNull
   protected LightProjectDescriptor getProjectDescriptor() {
     return new DefaultLightProjectDescriptor() {
-      @NotNull
-      ModuleType getModuleType() {
-        return FlexModuleType.getInstance()
+      @Override
+      String getModuleTypeId() {
+        return FlexModuleType.getInstance().getId()
+
       }
     }
   }
@@ -145,7 +144,6 @@ class FlexAutoPopupTest extends CompletionAutoPopupTestCase {
 
   @JSTestOptions([JSTestOption.WithFlexFacet])
   void testAutoPopupCompletionInsertsImport() {
-    CamelHumpMatcher.forceStartMatching(getTestRootDisposable())
     myFixture.configureByText("a.as", """
         package {
         public class Foo {
@@ -169,7 +167,6 @@ class FlexAutoPopupTest extends CompletionAutoPopupTestCase {
 
   @JSTestOptions([JSTestOption.WithFlexFacet])
   void testAutoPopupCompletionInsertsImportInMxml() {
-    CamelHumpMatcher.forceStartMatching(getTestRootDisposable())
     myFixture.configureByText("a.mxml", """
       <?xml version="1.0"?>
       <mx:Application  xmlns:mx="http://www.adobe.com/2006/mxml">

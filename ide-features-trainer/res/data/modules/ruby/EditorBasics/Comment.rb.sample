@@ -1,0 +1,7 @@
+def foo
+  p "Some method"
+end
+
+def hello
+  p "Hello world"
+end

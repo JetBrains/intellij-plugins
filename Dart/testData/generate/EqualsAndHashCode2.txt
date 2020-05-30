@@ -3,8 +3,7 @@ class EqualsAndHashCode2 {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is EqualsAndHashCode2 &&
-              runtimeType == other.runtimeType;
+          other is EqualsAndHashCode2 && runtimeType == other.runtimeType;
 
   @override
   int get hashCode => 0;

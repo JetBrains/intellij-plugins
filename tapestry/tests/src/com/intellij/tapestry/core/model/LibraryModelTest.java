@@ -44,9 +44,9 @@ public class LibraryModelTest {
 
         replay(javaTypeFinderMock);
 
-        TapestryProject tapestryProjectMock = org.easymock.EasyMock.createMock(TapestryProject.class);
-        org.easymock.EasyMock.expect(tapestryProjectMock.getJavaTypeFinder()).andReturn(javaTypeFinderMock);
-        org.easymock.EasyMock.replay(tapestryProjectMock);
+        TapestryProject tapestryProjectMock = createMock(TapestryProject.class);
+        expect(tapestryProjectMock.getJavaTypeFinder()).andReturn(javaTypeFinderMock);
+        replay(tapestryProjectMock);
 
         TapestryLibrary library = new TapestryLibrary(null, "com.app", tapestryProjectMock);
         assert library.getComponents().size() == 1;
@@ -62,9 +62,9 @@ public class LibraryModelTest {
 
         replay(javaTypeFinderMock);
 
-        TapestryProject tapestryProjectMock = org.easymock.EasyMock.createMock(TapestryProject.class);
-        org.easymock.EasyMock.expect(tapestryProjectMock.getJavaTypeFinder()).andReturn(javaTypeFinderMock);
-        org.easymock.EasyMock.replay(tapestryProjectMock);
+        TapestryProject tapestryProjectMock = createMock(TapestryProject.class);
+        expect(tapestryProjectMock.getJavaTypeFinder()).andReturn(javaTypeFinderMock);
+        replay(tapestryProjectMock);
 
         TapestryLibrary library = new TapestryLibrary(null, "com.app", tapestryProjectMock);
         assert library.getPages().size() == 1;
@@ -80,14 +80,15 @@ public class LibraryModelTest {
 
         replay(javaTypeFinderMock);
 
-        TapestryProject tapestryProjectMock = org.easymock.EasyMock.createMock(TapestryProject.class);
-        org.easymock.EasyMock.expect(tapestryProjectMock.getJavaTypeFinder()).andReturn(javaTypeFinderMock);
-        org.easymock.EasyMock.replay(tapestryProjectMock);
+        TapestryProject tapestryProjectMock = createMock(TapestryProject.class);
+        expect(tapestryProjectMock.getJavaTypeFinder()).andReturn(javaTypeFinderMock);
+        replay(tapestryProjectMock);
 
         TapestryLibrary library = new TapestryLibrary(null, "com.app", tapestryProjectMock);
         assert library.getMixins().size() == 1;
     }
 
+    @SuppressWarnings({"EqualsBetweenInconvertibleTypes", "ConstantConditions"})
     @Test
     public void equals() {
         TapestryLibrary library1 = new TapestryLibrary(null, "com.app1", null);

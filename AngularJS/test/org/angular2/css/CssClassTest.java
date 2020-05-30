@@ -9,6 +9,8 @@ import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 
 import static java.util.Arrays.asList;
+import static org.angular2.modules.Angular2TestModule.ANGULAR_COMMON_4_0_0;
+import static org.angular2.modules.Angular2TestModule.configureLink;
 
 public class CssClassTest extends Angular2CodeInsightFixtureTestCase {
 
@@ -132,7 +134,7 @@ public class CssClassTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testBoundClassCodeCompletion() {
-    AngularTestUtil.configureWithMetadataFiles(myFixture, "common");
+    configureLink(myFixture, ANGULAR_COMMON_4_0_0);
     myFixture.configureByFiles("complex.html", "complex.ts", "complex-global.css", "complex-internal.css",
                                "complex-cli.css", "complex-cli-index.html", "complex-cli-index.css",
                                "angular.json");
@@ -154,7 +156,7 @@ public class CssClassTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testBoundClassCodeCompletionCanonical() {
-    AngularTestUtil.configureWithMetadataFiles(myFixture, "common");
+    configureLink(myFixture, ANGULAR_COMMON_4_0_0);
     myFixture.configureByFiles("complex.html", "complex.ts", "complex-global.css", "complex-internal.css",
                                "complex-cli.css", "complex-cli-index.html", "complex-cli-index.css",
                                "angular.json");
@@ -178,7 +180,7 @@ public class CssClassTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testClassCodeCompletionRun() {
-    AngularTestUtil.configureWithMetadataFiles(myFixture, "common");
+    configureLink(myFixture, ANGULAR_COMMON_4_0_0);
     myFixture.configureByFiles("complex.html", "complex.ts", "complex-global.css", "complex-internal.css",
                                "complex-cli.css", "complex-cli-index.html", "complex-cli-index.css",
                                "angular.json");

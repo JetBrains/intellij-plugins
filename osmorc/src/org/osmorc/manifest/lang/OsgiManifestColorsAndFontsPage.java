@@ -83,9 +83,8 @@ public class OsgiManifestColorsAndFontsPage implements ColorSettingsPage {
     return OsmorcIdeaIcons.Osgi;
   }
 
-  @NotNull
   @Override
-  public AttributesDescriptor[] getAttributeDescriptors() {
+  public AttributesDescriptor @NotNull [] getAttributeDescriptors() {
     return ATTRIBUTE_DESCRIPTORS;
   }
 
@@ -95,9 +94,8 @@ public class OsgiManifestColorsAndFontsPage implements ColorSettingsPage {
     return ADDITIONAL_HIGHLIGHTING;
   }
 
-  @NotNull
   @Override
-  public ColorDescriptor[] getColorDescriptors() {
+  public ColorDescriptor @NotNull [] getColorDescriptors() {
     return ColorDescriptor.EMPTY_ARRAY;
   }
 

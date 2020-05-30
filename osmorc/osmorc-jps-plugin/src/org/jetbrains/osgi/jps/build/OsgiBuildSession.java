@@ -6,6 +6,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtilRt;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -107,7 +108,7 @@ public class OsgiBuildSession implements Reporter {
       throw new OsgiBuildException("Cannot create a directory for bundles '" + myOutputJarFile.getParent() + "'.");
     }
 
-    List<File> classes = ContainerUtil.newSmartList();
+    List<File> classes = new SmartList<>();
     if (myModuleOutputDir.exists()) {
       classes.add(myModuleOutputDir);
     }
@@ -124,7 +125,7 @@ public class OsgiBuildSession implements Reporter {
     }
     myClasses = classes.isEmpty() ? ArrayUtilRt.EMPTY_FILE_ARRAY : classes.toArray(new File[0]);
 
-    List<File> sources = ContainerUtil.newSmartList();
+    List<File> sources = new SmartList<>();
     for (JpsModuleSourceRoot sourceRoot : myModule.getSourceRoots()) {
       File sourceDir = sourceRoot.getFile();
       if (sourceDir.exists()) {
@@ -182,7 +183,7 @@ public class OsgiBuildSession implements Reporter {
       }
       finally {
         if (!FileUtil.delete(tempFile)) {
-          warning("Can't delete temporary file '" + tempFile + "'", null, null, -1);
+          warning("Can't delete a temporary file '" + tempFile + "'", null, null, -1);
         }
       }
     }
@@ -239,7 +240,7 @@ public class OsgiBuildSession implements Reporter {
 
     // resources
 
-    List<String> resources = ContainerUtil.newSmartList();
+    List<String> resources = new SmartList<>();
 
     if (myExtension.isOsmorcControlsManifest()) {
       String custom = properties.get(Constants.INCLUDE_RESOURCE);

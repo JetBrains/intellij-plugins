@@ -14,6 +14,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.StubIndexKey;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.xml.util.HtmlUtil;
 import org.angular2.index.Angular2IndexingHandler;
 import org.angularjs.index.AngularDirectivesDocIndex;
 import org.angularjs.index.AngularDirectivesIndex;
@@ -26,8 +27,7 @@ import java.util.Collection;
 
 public class DirectiveUtil {
 
-  @NotNull
-  public static String getPropertyAlias(@NotNull String propertyName, @Nullable final JSExpression attributeTypeExpr) {
+  public static @NotNull String getPropertyAlias(@NotNull String propertyName, final @Nullable JSExpression attributeTypeExpr) {
     if (attributeTypeExpr instanceof JSLiteralExpression) {
       String typeStr = ((JSLiteralExpression)attributeTypeExpr).getStringValue();
       if (typeStr != null) {
@@ -48,21 +48,18 @@ public class DirectiveUtil {
     return propertyName;
   }
 
-  @NotNull
-  public static String getAttributeName(@NotNull final String text) {
+  public static @NotNull String getAttributeName(final @NotNull String text) {
     return getAttributeName(text, false);
   }
 
-  @NotNull
-  public static Collection<String> getAttributeNameVariations(@NotNull final String text) {
+  public static @NotNull Collection<String> getAttributeNameVariations(final @NotNull String text) {
     return ContainerUtil.newHashSet(
       getAttributeName(text, false),
       getAttributeName(text, true)
     );
   }
 
-  @NotNull
-  private static String getAttributeName(@NotNull final String text, boolean splitDigits) {
+  private static @NotNull String getAttributeName(final @NotNull String text, boolean splitDigits) {
     StringBuilder result = new StringBuilder();
     boolean wasDigit = false;
     for (int i = 0; i < text.length(); i++) {
@@ -94,7 +91,7 @@ public class DirectiveUtil {
   public static String normalizeAttributeName(String name, boolean stripStartEnd) {
     if (name == null) return null;
     int index = 0;
-    if (name.startsWith("data-")) {
+    if (name.startsWith(HtmlUtil.HTML5_DATA_ATTR_PREFIX)) {
       index = 5;
     }
     else if (name.startsWith("x-")) {
@@ -126,7 +123,7 @@ public class DirectiveUtil {
     return result.toString();
   }
 
-  public static boolean isAngular2Directive(@Nullable final PsiElement directive) {
+  public static boolean isAngular2Directive(final @Nullable PsiElement directive) {
     return directive instanceof JSImplicitElement
            && !Angular2IndexingHandler.isPipe((JSImplicitElement)directive)
            && (directive.getParent() instanceof JSCallExpression ||
@@ -134,7 +131,7 @@ public class DirectiveUtil {
                directive.getParent() instanceof JsonElement);
   }
 
-  public static boolean processTagDirectives(@NotNull final Project project,
+  public static boolean processTagDirectives(final @NotNull Project project,
                                              @NotNull Processor<? super JSImplicitElement> processor) {
     final Collection<String> docDirectives = AngularIndexUtil.getAllKeys(AngularDirectivesDocIndex.KEY, project);
     for (String directiveName : docDirectives) {
@@ -159,28 +156,24 @@ public class DirectiveUtil {
     return true;
   }
 
-  @Nullable
-  public static JSImplicitElement getTagDirective(@NotNull String directiveName, @NotNull Project project) {
+  public static @Nullable JSImplicitElement getTagDirective(@NotNull String directiveName, @NotNull Project project) {
     return getDirective(directiveName, project);
   }
 
-  @Nullable
-  private static JSImplicitElement getTagDirective(@NotNull Project project,
-                                                   @NotNull String directiveName,
-                                                   @NotNull final StubIndexKey<String, JSImplicitElementProvider> index) {
+  private static @Nullable JSImplicitElement getTagDirective(@NotNull Project project,
+                                                             @NotNull String directiveName,
+                                                             final @NotNull StubIndexKey<String, JSImplicitElementProvider> index) {
     return getDirective(directiveName, project, index);
   }
 
-  @Nullable
-  private static JSImplicitElement getDirective(@NotNull String name, @NotNull Project project) {
+  private static @Nullable JSImplicitElement getDirective(@NotNull String name, @NotNull Project project) {
     final JSImplicitElement directive = getDirective(name, project, AngularDirectivesDocIndex.KEY);
     return directive == null ? getDirective(name, project, AngularDirectivesIndex.KEY) : directive;
   }
 
-  @Nullable
-  private static JSImplicitElement getDirective(@NotNull String name,
-                                                @NotNull Project project,
-                                                final @NotNull StubIndexKey<String, JSImplicitElementProvider> index) {
+  private static @Nullable JSImplicitElement getDirective(@NotNull String name,
+                                                          @NotNull Project project,
+                                                          final @NotNull StubIndexKey<String, JSImplicitElementProvider> index) {
     JSImplicitElement directive = AngularIndexUtil.resolve(project, index, name);
     final String restrictions = directive != null ? directive.getTypeString() : null;
     if (restrictions != null) {
@@ -193,8 +186,7 @@ public class DirectiveUtil {
     return null;
   }
 
-  @Nullable
-  public static JSImplicitElement getDirective(@Nullable PsiElement element) {
+  public static @Nullable JSImplicitElement getDirective(@Nullable PsiElement element) {
     if (element instanceof JSImplicitElement) {
       return isAngular2Directive(element) ? null : getDirective(element, ((JSImplicitElement)element).getName());
     }
@@ -204,8 +196,7 @@ public class DirectiveUtil {
     return null;
   }
 
-  @Nullable
-  private static JSImplicitElement getDirective(@NotNull PsiElement element, @NotNull final String directiveName) {
+  private static @Nullable JSImplicitElement getDirective(@NotNull PsiElement element, final @NotNull String directiveName) {
     final JSImplicitElement directive = AngularIndexUtil.resolve(element.getProject(), AngularDirectivesIndex.KEY, directiveName);
     if (directive != null && directive.isEquivalentTo(element)) {
       return directive;

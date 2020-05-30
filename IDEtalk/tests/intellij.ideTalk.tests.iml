@@ -7,15 +7,14 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="intellij.ideTalk.core" />
     <orderEntry type="module" module-name="intellij.ideTalk.jabber" />
     <orderEntry type="module" module-name="intellij.ideTalk.p2p" />
-    <orderEntry type="module" module-name="intellij.ideTalk.impl" />
     <orderEntry type="module" module-name="intellij.ideTalk.jabber.core" />
     <orderEntry type="module" module-name="intellij.ideTalk" />
     <orderEntry type="module" module-name="intellij.java.execution" />
     <orderEntry type="module" module-name="intellij.java" />
     <orderEntry type="module" module-name="intellij.platform.ide.impl" />
-    <orderEntry type="module" module-name="intellij.ideTalk.core" />
     <orderEntry type="module" module-name="intellij.platform.testFramework" />
     <orderEntry type="module" module-name="intellij.java.plugin" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.java.resources" />

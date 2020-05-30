@@ -28,6 +28,7 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
+import org.osmorc.i18n.OsmorcBundle;
 
 import javax.swing.*;
 
@@ -41,7 +42,7 @@ public class ApplicationSettingsEditor implements SearchableConfigurable {
   @Nls
   @Override
   public String getDisplayName() {
-    return "OSGi";
+    return OsmorcBundle.message("configurable.ApplicationSettingsEditor.display.name");
   }
 
   @Override

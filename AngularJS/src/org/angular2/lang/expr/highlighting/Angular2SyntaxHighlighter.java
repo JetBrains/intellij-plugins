@@ -15,15 +15,13 @@ public class Angular2SyntaxHighlighter extends TypeScriptHighlighter {
     super(Angular2Language.INSTANCE.getOptionHolder(), false);
   }
 
-  @NotNull
   @Override
-  public Lexer getHighlightingLexer() {
+  public @NotNull Lexer getHighlightingLexer() {
     return new Angular2Lexer();
   }
 
-  @NotNull
   @Override
-  public TokenSet getKeywords() {
+  public @NotNull TokenSet getKeywords() {
     return Angular2TokenTypes.KEYWORDS;
   }
 }

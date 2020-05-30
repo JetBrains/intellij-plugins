@@ -36,6 +36,11 @@ public final class DartRemoteDebugConfigurationType extends ConfigurationTypeBas
       public boolean isApplicable(@NotNull Project project) {
         return FileTypeIndex.containsFileOfType(DartFileType.INSTANCE, GlobalSearchScope.projectScope(project));
       }
+
+      @Override
+      public @NotNull String getId() {
+        return "Dart Remote Debug";
+      }
     });
   }
 

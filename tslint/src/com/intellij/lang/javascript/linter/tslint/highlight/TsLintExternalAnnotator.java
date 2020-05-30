@@ -42,9 +42,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 /**
  * @author Irina.Chernushina on 6/3/2015.
@@ -97,7 +95,7 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
   protected TsLinterInput createInfo(@NotNull PsiFile psiFile,
                                      TsLintState state,
                                      EditorColorsScheme colorsScheme) {
-    VirtualFile config = TslintUtil.getConfig(state, psiFile.getVirtualFile());
+    VirtualFile config = TslintUtil.getConfig(state, psiFile.getProject(), psiFile.getVirtualFile());
     boolean skipProcessing = config != null && saveConfigFileAndReturnSkipProcessing(psiFile.getProject(), config);
     if (skipProcessing) {
       return null;
@@ -116,7 +114,7 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
   }
 
   @Nullable
-  private JSLinterAnnotationResult annotateWithService(@NotNull TsLinterInput collectedInfo, @Nullable TsLintLanguageService service) {
+  private static JSLinterAnnotationResult annotateWithService(@NotNull TsLinterInput collectedInfo, @Nullable TsLintLanguageService service) {
     VirtualFile config = collectedInfo.getConfig();
     final Project project = collectedInfo.getProject();
     final TsLintState linterState = collectedInfo.getState();
@@ -145,23 +143,18 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
       return createGlobalErrorMessage(collectedInfo, config, globalError.get().getDescription());
     }
 
-    final List<JSLinterError> filtered = filterResultByFile(collectedInfo, result);
+    final List<TsLinterError> filtered = filterResultByFile(collectedInfo.getVirtualFile(), result);
     return JSLinterAnnotationResult.createLinterResult(collectedInfo, filtered, config);
   }
 
-  public List<JSLinterError> filterResultByFile(@NotNull TsLinterInput collectedInfo, @NotNull List<TsLinterError> annotationErrors) {
-    final String filePath = collectedInfo.getVirtualFile().getPath();
-    final String fileName = collectedInfo.getPsiFile().getName();
+  private static List<TsLinterError> filterResultByFile(@NotNull VirtualFile virtualFile, @NotNull List<TsLinterError> annotationErrors) {
+    final String filePath = virtualFile.getPath();
+    final String fileName = virtualFile.getName();
 
-    final Set<String> filteredPaths = annotationErrors.stream().map(TsLinterError::getAbsoluteFilePath)
-      .distinct()
-      .filter(path -> {
-        if (path == null) return true;
-        if (!path.endsWith(fileName)) return false;
-        return FileUtil.pathsEqual(filePath, path);
-      }).collect(Collectors.toSet());
-
-    return annotationErrors.stream().filter(el -> filteredPaths.contains(el.getAbsoluteFilePath())).collect(Collectors.toList());
+    return ContainerUtil.filter(annotationErrors, error -> {
+      String path = error.getAbsoluteFilePath();
+      return path == null || (/*optimization?*/path.endsWith(fileName) && FileUtil.pathsEqual(filePath, path));
+    });
   }
 
   @NotNull

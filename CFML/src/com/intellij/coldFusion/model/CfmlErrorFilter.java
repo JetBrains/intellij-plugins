@@ -8,7 +8,6 @@ import com.intellij.lang.Language;
 import com.intellij.lang.html.HTMLLanguage;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiErrorElement;
-import com.intellij.sql.psi.SqlLanguage;
 import org.jetbrains.annotations.NotNull;
 
 
@@ -21,7 +20,7 @@ public class CfmlErrorFilter extends HighlightErrorFilter {
       return true;
     }
     final Language language = element.getParent().getLanguage();
-    if (language == CfmlLanguage.INSTANCE || language == HTMLLanguage.INSTANCE || language == SqlLanguage.INSTANCE) return true;
+    if (language == CfmlLanguage.INSTANCE || language == HTMLLanguage.INSTANCE || language == CfmlUtil.getSqlLanguage()) return true;
     return false;
   }
 }

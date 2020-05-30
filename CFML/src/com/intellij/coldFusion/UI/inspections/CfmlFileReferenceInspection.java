@@ -16,7 +16,6 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 public class CfmlFileReferenceInspection extends LocalInspectionTool {
@@ -25,7 +24,7 @@ public class CfmlFileReferenceInspection extends LocalInspectionTool {
   public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
     return new PsiElementVisitor() {
       @Override
-      public void visitElement(final PsiElement element) {
+      public void visitElement(@NotNull final PsiElement element) {
         CfmlTag tagParent = PsiTreeUtil.getParentOfType((element), CfmlTag.class);
         if ((element.getNode().getElementType() == CfmlTokenTypes.STRING_TEXT)) {
           if ((tagParent == null ||
@@ -53,7 +52,8 @@ public class CfmlFileReferenceInspection extends LocalInspectionTool {
 
               holder.registerProblem(
                 ref.getElement(), ref.getRangeInElement(),
-                isOnTheFly ? "Path '" + ref.getCanonicalText() + "' not found" : "Path not found",
+                isOnTheFly ? CfmlBundle.message("problem.message.inspection.cfml.file.reference.description2", ref.getCanonicalText())
+                           : CfmlBundle.message("problem.message.inspection.cfml.file.reference.description"),
                 isOnTheFly && dir != null
                 ? new LocalQuickFix[]{new CreateFileFix(i < refs.length - 1, ref.getCanonicalText(), dir)}
                 : LocalQuickFix.EMPTY_ARRAY
@@ -66,13 +66,6 @@ public class CfmlFileReferenceInspection extends LocalInspectionTool {
         }
       }
     };
-  }
-
-  @Override
-  @Nls
-  @NotNull
-  public String getDisplayName() {
-    return CfmlBundle.message("cfml.file.references.inspection");
   }
 }
 

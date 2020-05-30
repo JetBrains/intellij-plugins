@@ -14,15 +14,13 @@ public class MetadataStubFileElementType extends IStubFileElementType<MetadataFi
     super(language);
   }
 
-  @NotNull
   @Override
-  public String getExternalId() {
+  public @NotNull String getExternalId() {
     return getLanguage() + ":" + toString();
   }
 
-  @NotNull
   @Override
-  public MetadataFileStubImpl deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) {
+  public @NotNull MetadataFileStubImpl deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) {
     return new MetadataFileStubImpl(null, this);
   }
 }

@@ -6,8 +6,8 @@ class <error>FooBase</error> {
 }
 
 package {
-class <error>Foo</error> extends FooBase {
-    override function foo<error>()</error>:void {
+class Foo extends FooBase {
+    override function foo<error descr="Incompatible override, should have signature '(p: EventDispatcher)'">()</error>:void {
     }
 }
 }

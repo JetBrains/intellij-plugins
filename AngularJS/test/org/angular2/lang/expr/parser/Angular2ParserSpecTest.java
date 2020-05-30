@@ -30,6 +30,7 @@ import junit.framework.AssertionFailedError;
 import org.angular2.lang.OleasterTestUtil;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.expr.psi.*;
+import org.jetbrains.annotations.NotNull;
 import org.junit.runner.RunWith;
 
 import java.util.List;
@@ -580,7 +581,7 @@ public class Angular2ParserSpecTest {
 
   private static List<String> keySpans(String source, Angular2TemplateBinding[] templateBindings) {
     return ReadAction.compute(() -> ContainerUtil.map(
-      templateBindings, binding -> source.substring(binding.getTextRange().getStartOffset(), binding.getTextRange().getEndOffset())));
+      templateBindings, binding -> binding.getTextRange().substring(source)));
   }
 
   private static List<String> exprSources(Angular2TemplateBinding[] templateBindings) {
@@ -597,7 +598,7 @@ public class Angular2ParserSpecTest {
     StringBuilder error = new StringBuilder();
     root.getPsi().accept(new Angular2RecursiveVisitor() {
       @Override
-      public void visitErrorElement(PsiErrorElement element) {
+      public void visitErrorElement(@NotNull PsiErrorElement element) {
         if (error.length() == 0) {
           error.append(element.getErrorDescription());
         }
@@ -674,7 +675,7 @@ public class Angular2ParserSpecTest {
     }
 
     @Override
-    public void visitElement(PsiElement element) {
+    public void visitElement(@NotNull PsiElement element) {
       if (element instanceof TypeScriptNotNullExpression) {
         printElement(((TypeScriptNotNullExpression)element).getExpression());
         result.append("!");
@@ -695,7 +696,7 @@ public class Angular2ParserSpecTest {
     }
 
     @Override
-    public void visitErrorElement(PsiErrorElement element) {
+    public void visitErrorElement(@NotNull PsiErrorElement element) {
       if (myReportErrors) {
         throw new AssertionFailedError("Found error: " + element.getErrorDescription());
       }
@@ -908,12 +909,12 @@ public class Angular2ParserSpecTest {
     }
 
     @Override
-    public void visitComment(PsiComment comment) {
+    public void visitComment(@NotNull PsiComment comment) {
       //do nothing
     }
 
     @Override
-    public void visitWhiteSpace(PsiWhiteSpace space) {
+    public void visitWhiteSpace(@NotNull PsiWhiteSpace space) {
       result.append(space.getText());
     }
 

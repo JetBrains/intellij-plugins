@@ -1,8 +1,10 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.index;
 
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.KeyDescriptor;
+import com.jetbrains.lang.dart.DartFileType;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,7 +41,7 @@ public class DartSymbolIndex extends ScalarIndexExtension<String> {
   @NotNull
   @Override
   public FileBasedIndex.InputFilter getInputFilter() {
-    return DartInputFilter.INSTANCE;
+    return new DefaultFileTypeSpecificInputFilter(DartFileType.INSTANCE);
   }
 
   @Override

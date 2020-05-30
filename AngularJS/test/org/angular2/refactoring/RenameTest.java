@@ -41,6 +41,10 @@ public class RenameTest extends Angular2MultiFileFixtureTestCase {
     doMultiFileTest("test.component.html", "newName");
   }
 
+  public void testI18nAttribute() {
+    doMultiFileTest("directive.ts", "new-name");
+  }
+
   public void testLocalInTemplate() {
     doMultiFileTest("test.component.html", "newName");
   }
@@ -102,6 +106,10 @@ public class RenameTest extends Angular2MultiFileFixtureTestCase {
   public void testInjectionReparse() {
     Messages.setTestDialog(TestDialog.OK);
     doMultiFileTest("foo.component.html", "product");
+  }
+
+  public void testNgContentSelector() {
+    doMultiFileTest("slots.component.ts", "new-tag");
   }
 
   private void doMultiFileTest(String mainFile, String newName) {

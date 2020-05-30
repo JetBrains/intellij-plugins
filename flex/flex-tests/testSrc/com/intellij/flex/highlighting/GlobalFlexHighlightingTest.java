@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.highlighting;
 
 import com.intellij.codeInsight.daemon.impl.DefaultHighlightVisitorBasedInspection;
@@ -19,7 +20,7 @@ public class GlobalFlexHighlightingTest extends JavaInspectionTestCase {
     boolean foundSyntaxCheckInspection = false;
     boolean foundAnnotatorInspection = false;
 
-    List<InspectionToolWrapper> tools = InspectionToolRegistrar.getInstance().createTools();
+    List<InspectionToolWrapper<?, ?>> tools = InspectionToolRegistrar.getInstance().createTools();
     for (InspectionToolWrapper tool : tools) {
       String shortName = tool.getShortName();
       foundAnnotatorInspection |= shortName.equals("Annotator");

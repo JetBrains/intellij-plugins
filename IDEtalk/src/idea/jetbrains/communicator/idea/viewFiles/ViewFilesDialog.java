@@ -54,8 +54,7 @@ public class ViewFilesDialog extends IdeaDialog {
   }
 
   @Override
-  @NotNull
-  protected Action[] createActions() {
+  protected Action @NotNull [] createActions() {
     setOKButtonText(CommunicatorStrings.getMsg("close"));
     return new Action[] {getOKAction()};
   }

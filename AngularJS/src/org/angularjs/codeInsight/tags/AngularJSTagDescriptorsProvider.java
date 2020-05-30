@@ -28,7 +28,8 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
 
   @Override
   public void addTagNameVariants(final List<LookupElement> elements, @NotNull XmlTag xmlTag, String prefix) {
-    if (!(xmlTag instanceof HtmlTag && AngularIndexUtil.hasAngularJS(xmlTag.getProject()))) {
+    if (!(xmlTag instanceof HtmlTag)
+        || !AngularIndexUtil.hasAngularJS(xmlTag.getProject())) {
       return;
     }
 
@@ -49,15 +50,14 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
     elements.add(element);
   }
 
-  @Nullable
   @Override
-  public XmlElementDescriptor getDescriptor(XmlTag xmlTag) {
+  public @Nullable XmlElementDescriptor getDescriptor(XmlTag xmlTag) {
     final Project project = xmlTag.getProject();
-    if (!(xmlTag instanceof HtmlTag && AngularIndexUtil.hasAngularJS(project))) {
+    if (!(xmlTag instanceof HtmlTag)
+        || XmlUtil.isTagDefinedByNamespace(xmlTag)
+        || !AngularIndexUtil.hasAngularJS(project)) {
       return null;
     }
-
-    if (XmlUtil.isTagDefinedByNamespace(xmlTag)) return null;
 
     final String tagName = xmlTag.getName();
     String directiveName = DirectiveUtil.normalizeAttributeName(tagName);

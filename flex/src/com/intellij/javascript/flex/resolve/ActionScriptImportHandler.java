@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.resolve;
 
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -28,12 +28,12 @@ import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlElementDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Konstantin.Ulitin
@@ -55,22 +55,20 @@ public class ActionScriptImportHandler extends JSImportHandler {
       protected CachedValue<Map<String, JSImportedElementResolveResult>> compute(final PsiElement psiElement, final Object p) {
         return CachedValuesManager
           .getManager(psiElement.getProject()).createCachedValue(() -> new CachedValueProvider.Result<>(
-            ContainerUtil.newConcurrentMap(),
+            new ConcurrentHashMap<String, JSImportedElementResolveResult>(),
             PsiModificationTracker.MODIFICATION_COUNT), false);
       }
     };
 
-  @NotNull
   @Override
-  public JSTypeResolveResult resolveName(@NotNull String type, @NotNull PsiElement context) {
+  public @NotNull JSTypeResolveResult resolveName(@NotNull String type, @NotNull PsiElement context) {
     final JSImportedElementResolveResult result = _resolveTypeName(type, context);
     String resolvedType = result != null ? result.qualifiedName : type;
     return new JSTypeResolveResult(resolvedType != null ? resolvedType : type, null);
   }
 
   // TODO _str should be JSReferenceExpression for caching!
-  @Nullable
-  private JSImportedElementResolveResult _resolveTypeName(@Nullable final String _name, @NotNull PsiElement context) {
+  private @Nullable JSImportedElementResolveResult _resolveTypeName(final @Nullable String _name, @NotNull PsiElement context) {
     String name = _name;
     if (name == null) return null;
     JSResolveUtil.GenericSignature genericSignature = JSResolveUtil.extractGenericSignature(name);
@@ -170,7 +168,7 @@ public class ActionScriptImportHandler extends JSImportHandler {
     return result;
   }
 
-  private static JSNamedElement resolveTypeNameInTheSamePackage(@NotNull final String str, final PsiElement context) {
+  private static JSNamedElement resolveTypeNameInTheSamePackage(final @NotNull String str, final PsiElement context) {
     JSNamedElement fileLocalElement = JSResolveUtil.findFileLocalElement(str, context);
     if (fileLocalElement != null) return fileLocalElement;
 
@@ -195,9 +193,8 @@ public class ActionScriptImportHandler extends JSImportHandler {
   }
 
 
-  @Nullable
   @Override
-  public JSImportedElementResolveResult resolveTypeNameUsingImports(@NotNull JSReferenceExpression expr) {
+  public @Nullable JSImportedElementResolveResult resolveTypeNameUsingImports(@NotNull JSReferenceExpression expr) {
     if (expr.getQualifier() != null) return null;
     if (JSResolveUtil.getElementThatShouldBeQualified(expr, null) != null) return null;
     if (expr.getReferencedName() == null) return null;

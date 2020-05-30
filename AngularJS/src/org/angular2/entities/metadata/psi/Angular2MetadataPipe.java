@@ -16,15 +16,13 @@ public class Angular2MetadataPipe extends Angular2MetadataDeclaration<Angular2Me
     super(element);
   }
 
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     return getStub().getPipeName();
   }
 
-  @NotNull
   @Override
-  public Collection<? extends TypeScriptFunction> getTransformMethods() {
+  public @NotNull Collection<? extends TypeScriptFunction> getTransformMethods() {
     return getCachedClassBasedValue(cls -> cls != null
                                            ? Angular2EntityUtils.getPipeTransformMethods(cls)
                                            : Collections.emptyList());

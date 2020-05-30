@@ -2,55 +2,55 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 /* Initialize access to schematics registry */
-var provider;
+let providerPromise;
 //find appropriate support
-for (var _i = 0, _a = ["60", "62", "70", "80"]; _i < _a.length; _i++) {
-    var version = _a[_i];
+for (let version of ["60", "62", "70", "80", "90"]) {
     try {
-        provider = require("./schematicsProvider" + version);
+        providerPromise = require("./schematicsProvider" + version);
         break;
     }
     catch (e) {
         //ignore
     }
 }
-if (!provider) {
+if (!providerPromise) {
     console.info("No schematics");
     process.exit(0);
 }
-var path = require("path");
-var fs = require("fs");
-var engineHost = provider.getEngineHost();
-var includeHidden = process.argv[2] === "--includeHidden";
-var defaultCollectionName = provider.getDefaultSchematicCollection();
-var collections = getAvailableSchematicCollections();
-if (collections.indexOf(defaultCollectionName) < 0) {
-    collections.push(defaultCollectionName);
-}
-var allSchematics = collections
-    // Update schematics should be executed only with `ng update`
-    .filter(function (c) { return c !== "@schematics/update"; })
-    .map(getCollectionSchematics)
-    .reduce(function (a, b) { return a.concat.apply(a, b); });
-console.info(JSON.stringify(allSchematics, null, 2));
-function getAvailableSchematicCollections() {
-    var result = [];
-    var packages = [];
-    fs.readdirSync(path.resolve(process.cwd(), "node_modules")).forEach(function (dir) {
+const path = require("path");
+const fs = require("fs");
+const includeHidden = process.argv[2] === "--includeHidden";
+(async function () {
+    let provider = await providerPromise;
+    const defaultCollectionName = provider.getDefaultSchematicCollection();
+    const collections = getAvailableSchematicCollections(provider);
+    if (collections.indexOf(defaultCollectionName) < 0) {
+        collections.push(defaultCollectionName);
+    }
+    const allSchematics = collections
+        // Update schematics should be executed only with `ng update`
+        .filter(c => c !== "@schematics/update")
+        .map(c => getCollectionSchematics(c, provider, defaultCollectionName))
+        .reduce((a, b) => a.concat(...b));
+    console.info(JSON.stringify(allSchematics, null, 2));
+})().catch(err => console.error(err.stack || err));
+function getAvailableSchematicCollections(provider) {
+    let result = [];
+    let packages = [];
+    fs.readdirSync(path.resolve(process.cwd(), "node_modules")).forEach(dir => {
         if (dir.startsWith("@")) {
-            fs.readdirSync(path.resolve(process.cwd(), "node_modules/" + dir)).forEach(function (subDir) {
-                packages.push(dir + "/" + subDir);
+            fs.readdirSync(path.resolve(process.cwd(), `node_modules/${dir}`)).forEach(subDir => {
+                packages.push(`${dir}/${subDir}`);
             });
         }
         else {
             packages.push(dir);
         }
     });
-    for (var _i = 0, packages_1 = packages; _i < packages_1.length; _i++) {
-        var pkgName = packages_1[_i];
-        var pkgPath = path.resolve(process.cwd(), "node_modules/" + pkgName + "/package.json");
+    for (const pkgName of packages) {
+        const pkgPath = path.resolve(process.cwd(), `node_modules/${pkgName}/package.json`);
         if (fs.existsSync(pkgPath)) {
-            var subInfo = require(pkgPath);
+            const subInfo = require(pkgPath);
             if (subInfo !== undefined && subInfo.schematics !== undefined) {
                 result.push(pkgName);
             }
@@ -58,14 +58,14 @@ function getAvailableSchematicCollections() {
     }
     return result;
 }
-function getCollectionSchematics(collectionName) {
-    var schematicNames;
-    var collection;
+function getCollectionSchematics(collectionName, provider, defaultCollectionName) {
+    let schematicNames;
+    let collection;
     try {
         collection = provider.getCollection(collectionName);
         schematicNames = includeHidden
             ? listAllSchematics(collection)
-            : engineHost.listSchematics(collection);
+            : provider.listSchematics(collection);
     }
     catch (e) {
         return [{
@@ -74,38 +74,38 @@ function getCollectionSchematics(collectionName) {
             }];
     }
     try {
-        var schematicInfos = schematicNames
-            .map(function (name) {
+        const schematicInfos = schematicNames
+            .map(name => {
             try {
                 return provider.getSchematic(collection, name).description;
             }
             catch (e) {
                 return {
-                    name: name,
+                    name,
                     error: "" + e.message
                 };
             }
         })
             //`ng-add` schematics should be executed only with `ng add`
-            .filter(function (info) { return (info.name !== "ng-add" || includeHidden) && (info.schemaJson !== undefined || info.error); });
-        var newFormat_1 = schematicInfos
-            .map(function (info) { return info.schemaJson ? info.schemaJson.properties : {}; })
-            .map(function (prop) { return Object.keys(prop).map(function (k) { return prop[k]; }); })
-            .reduce(function (a, b) { return a.concat(b); }, [])
-            .find(function (prop) { return prop.$default; });
-        return schematicInfos.map(function (info) {
-            var required = (info.schemaJson && info.schemaJson.required) || [];
+            .filter(info => (info.name !== "ng-add" || includeHidden) && (info.schemaJson !== undefined || info.error));
+        const newFormat = schematicInfos
+            .map(info => info.schemaJson ? info.schemaJson.properties : {})
+            .map(prop => Object.keys(prop).map(k => prop[k]))
+            .reduce((a, b) => a.concat(b), [])
+            .find(prop => prop.$default);
+        return schematicInfos.map(info => {
+            const required = (info.schemaJson && info.schemaJson.required) || [];
             return {
                 description: info.description,
                 name: (collectionName === defaultCollectionName ? "" : collectionName + ":") + info.name,
                 hidden: info.hidden,
                 error: info.error,
                 options: info.schemaJson
-                    ? filterProps(info.schemaJson, function (key, prop) { return newFormat_1 ? prop.$default === undefined : required.indexOf(key) < 0; })
+                    ? filterProps(info.schemaJson, (key, prop) => newFormat ? prop.$default === undefined : required.indexOf(key) < 0)
                         .concat(coreOptions())
                     : undefined,
                 arguments: info.schemaJson
-                    ? filterProps(info.schemaJson, function (key, prop) { return newFormat_1 ? prop.$default !== undefined && prop.$default.$source === "argv" : required.indexOf(key) >= 0; })
+                    ? filterProps(info.schemaJson, (key, prop) => newFormat ? prop.$default !== undefined && prop.$default.$source === "argv" : required.indexOf(key) >= 0)
                     : undefined
             };
         });
@@ -117,10 +117,9 @@ function getCollectionSchematics(collectionName) {
 }
 function listAllSchematics(collection) {
     collection = collection.description;
-    var schematics = [];
-    for (var _i = 0, _a = Object.keys(collection.schematics); _i < _a.length; _i++) {
-        var key = _a[_i];
-        var schematic = collection.schematics[key];
+    const schematics = [];
+    for (const key of Object.keys(collection.schematics)) {
+        const schematic = collection.schematics[key];
         if (schematic.private) {
             continue;
         }
@@ -136,9 +135,9 @@ function listAllSchematics(collection) {
     return schematics;
 }
 function filterProps(schemaJson, filter) {
-    var required = schemaJson.required || [];
-    var props = schemaJson.properties;
-    return Object.keys(props).filter(function (key) { return filter(key, props[key]); }).map(function (k) { return Object.assign({ name: k, required: required.indexOf(k) >= 0 }, props[k]); });
+    const required = schemaJson.required || [];
+    const props = schemaJson.properties;
+    return Object.keys(props).filter(key => filter(key, props[key])).map(k => Object.assign({ name: k, required: required.indexOf(k) >= 0 }, props[k]));
 }
 function coreOptions() {
     return [

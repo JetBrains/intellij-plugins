@@ -1,18 +1,25 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin;
 
 
-import com.intellij.AbstractBundle;
+import com.intellij.DynamicBundle;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
 
-public class PhoneGapBundle extends AbstractBundle {
+import java.util.function.Supplier;
 
-  public static String message(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, @NotNull Object... params) {
+public class PhoneGapBundle extends DynamicBundle {
+
+  public static String message(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, Object @NotNull ... params) {
     return ourInstance.getMessage(key, params);
   }
 
-  @NonNls public static final String BUNDLE = "com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle";
+  @NotNull
+  public static Supplier<String> messagePointer(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, Object @NotNull ... params) {
+    return ourInstance.getLazyMessage(key, params);
+  }
+
+  @NonNls public static final String BUNDLE = "messages.PhoneGapBundle";
   private static final PhoneGapBundle ourInstance = new PhoneGapBundle();
 
   private PhoneGapBundle() {

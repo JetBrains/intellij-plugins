@@ -3,10 +3,11 @@ package org.angular2.lang.expr.psi;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiRecursiveVisitor;
+import org.jetbrains.annotations.NotNull;
 
 public class Angular2RecursiveVisitor extends Angular2ElementVisitor implements PsiRecursiveVisitor {
   @Override
-  public void visitElement(PsiElement element) {
+  public void visitElement(@NotNull PsiElement element) {
     element.acceptChildren(this);
   }
 }

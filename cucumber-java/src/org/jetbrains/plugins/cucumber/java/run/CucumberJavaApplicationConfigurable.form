@@ -26,7 +26,7 @@
         <properties>
           <componentClass value="com.intellij.ui.RawCommandLineEditor"/>
           <labelLocation value="West"/>
-          <text resource-bundle="org/jetbrains/plugins/cucumber/java/CucumberJavaBundle" key="run.configuration.form.glue"/>
+          <text resource-bundle="messages/CucumberJavaBundle" key="run.configuration.form.glue"/>
         </properties>
       </component>
       <component id="4e853" class="com.intellij.openapi.ui.LabeledComponent" binding="myFeatureOrFolder">
@@ -36,7 +36,7 @@
         <properties>
           <componentClass value="com.intellij.openapi.ui.TextFieldWithBrowseButton"/>
           <labelLocation value="West"/>
-          <text resource-bundle="org/jetbrains/plugins/cucumber/java/CucumberJavaBundle" key="run.configuration.form.feature.or.folder.path"/>
+          <text resource-bundle="messages/CucumberJavaBundle" key="run.configuration.form.feature.or.folder.path"/>
         </properties>
       </component>
       <vspacer id="84c61">

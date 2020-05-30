@@ -106,6 +106,7 @@ public final class KarmaRunConfigurationProducer extends JsTestRunConfigurationP
     if (path != null) {
       templateSettings = guessConfigFileIfNeeded(templateSettings, virtualFile, element.getProject());
       KarmaRunSettings.Builder builder = templateSettings.toBuilder();
+      builder.setTestFilePath(virtualFile.getPath());
       String testName = path.getTestName();
       if (testName == null) {
         builder.setScopeKind(KarmaScopeKind.SUITE);

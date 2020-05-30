@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server.vmService.frame;
 
 import com.intellij.openapi.editor.Document;
@@ -126,7 +114,13 @@ public class DartVmServiceEvaluator extends XDebuggerEvaluator {
         wrappedCallback.errorOccurred(error.getMessage());
         return;
       }
-      LibraryRef libraryRef = findMatchingLibrary(isolate, libraryFiles);
+
+      LibraryRef libraryRef = isolate != null ? findMatchingLibrary(isolate, libraryFiles) : null;
+      if (libraryRef == null) {
+        wrappedCallback.errorOccurred("Can't evaluate.");
+        return;
+      }
+
       if (dartClassName != null) {
         vmService.getObject(isolateId, libraryRef.getId(), new GetObjectConsumer() {
 
@@ -138,7 +132,7 @@ public class DartVmServiceEvaluator extends XDebuggerEvaluator {
           @Override
           public void received(Obj response) {
             Library library = (Library)response;
-            for (ClassRef classRef: library.getClasses()) {
+            for (ClassRef classRef : library.getClasses()) {
               if (classRef.getName().equals(dartClassName)) {
                 vmService.evaluateInTargetContext(isolateId, classRef.getId(), expression, wrappedCallback);
                 return;
@@ -161,15 +155,16 @@ public class DartVmServiceEvaluator extends XDebuggerEvaluator {
     });
   }
 
-  private LibraryRef findMatchingLibrary(Isolate isolate, List<VirtualFile> libraryFiles) {
-    if (libraryFiles != null && !libraryFiles.isEmpty()) {
+  @Nullable
+  private LibraryRef findMatchingLibrary(@NotNull Isolate isolate, @NotNull List<VirtualFile> libraryFiles) {
+    if (!libraryFiles.isEmpty()) {
       Set<String> uris = new THashSet<>();
 
-      for (VirtualFile libraryFile: libraryFiles) {
+      for (VirtualFile libraryFile : libraryFiles) {
         uris.addAll(myDebugProcess.getUrisForFile(libraryFile));
       }
 
-      for (LibraryRef library: isolate.getLibraries()) {
+      for (LibraryRef library : isolate.getLibraries()) {
         if (uris.contains(library.getUri())) {
           return library;
         }
@@ -233,6 +228,7 @@ public class DartVmServiceEvaluator extends XDebuggerEvaluator {
     // find topmost reference, but stop if argument list found
     DartReference reference = null;
     PsiElement element = contextElement;
+    //noinspection ConditionalBreakInInfiniteLoop
     while (true) {
       if (element instanceof DartReference) {
         reference = (DartReference)element;

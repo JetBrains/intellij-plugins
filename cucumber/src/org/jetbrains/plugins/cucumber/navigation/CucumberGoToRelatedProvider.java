@@ -7,12 +7,11 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.plugins.cucumber.CucumberUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinFeature;
 import org.jetbrains.plugins.cucumber.psi.GherkinFile;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.cucumber.psi.GherkinStepsHolder;
-import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
-import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,19 +42,18 @@ public class CucumberGoToRelatedProvider extends GotoRelatedProvider {
           Collections.addAll(steps, stepHolder.getSteps());
         }
       }
-      final CucumberStepsIndex index = CucumberStepsIndex.getInstance(file.getProject());
       final List<PsiFile> resultFiles = new ArrayList<>();
       final List<GotoRelatedItem> result = new ArrayList<>();
       for (GherkinStep step : steps) {
-        AbstractStepDefinition stepDef = index.findStepDefinition(gherkinFile, step);
-        final PsiElement stepDefMethod = stepDef != null ? stepDef.getElement() : null;
+        PsiElement stepDefMethod = CucumberUtil.resolveSep(step);
+        if (stepDefMethod == null) {
+          continue;
+        }
 
-        if (stepDefMethod != null) {
-          final PsiFile stepDefFile = stepDefMethod.getContainingFile();
-          if (!resultFiles.contains(stepDefFile)) {
-            resultFiles.add(stepDefFile);
-            result.add(new GotoRelatedItem(stepDefFile, "Step definition file"));
-          }
+        PsiFile stepDefFile = stepDefMethod.getContainingFile();
+        if (!resultFiles.contains(stepDefFile)) {
+          resultFiles.add(stepDefFile);
+          result.add(new GotoRelatedItem(stepDefFile, "Step definition file"));
         }
       }
       return result;

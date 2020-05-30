@@ -28,9 +28,8 @@ public abstract class DartUriElementBase extends DartPsiCompositeElementImpl imp
     return references.length == 0 ? null : references[0];
   }
 
-  @NotNull
   @Override
-  public PsiReference[] getReferences() {
+  public PsiReference @NotNull [] getReferences() {
     return new PsiReference[]{new DartFileReference(this, getUriStringAndItsRange().first)};
   }
 

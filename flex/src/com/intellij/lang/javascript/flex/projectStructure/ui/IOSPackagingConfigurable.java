@@ -6,8 +6,6 @@ import com.intellij.openapi.module.Module;
 import org.jetbrains.annotations.Nls;
 
 public class IOSPackagingConfigurable extends AirPackagingConfigurableBase<ModifiableIosPackagingOptions> {
-  public static final String TAB_NAME = FlexBundle.message("bc.tab.ios.packaging.display.name");
-
   public IOSPackagingConfigurable(final Module module,
                                   final ModifiableIosPackagingOptions model,
                                   final AirDescriptorInfoProvider airDescriptorInfoProvider) {
@@ -17,11 +15,15 @@ public class IOSPackagingConfigurable extends AirPackagingConfigurableBase<Modif
   @Override
   @Nls
   public String getDisplayName() {
-    return TAB_NAME;
+    return getTabName();
   }
 
   @Override
   public String getHelpTopic() {
     return "BuildConfigurationPage.iOS";
+  }
+
+  public static String getTabName() {
+    return FlexBundle.message("bc.tab.ios.packaging.display.name");
   }
 }

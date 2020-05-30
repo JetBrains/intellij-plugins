@@ -1,6 +1,5 @@
 HtmlFile:test.vue
   PsiElement(HTML_DOCUMENT)
-    PsiWhiteSpace('\n      ')
     PsiElement(XML_PROLOG)
       <empty list>
     HtmlTag:template
@@ -8,7 +7,7 @@ HtmlFile:test.vue
       XmlToken:XML_NAME('template')
       XmlToken:XML_TAG_END('>')
       XmlText
-        PsiWhiteSpace('\n        ')
+        PsiWhiteSpace('\n  ')
       HtmlTag:script
         XmlToken:XML_START_TAG_START('<')
         XmlToken:XML_NAME('script')
@@ -21,7 +20,7 @@ HtmlFile:test.vue
             XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('text/template')
             XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
         XmlToken:XML_TAG_END('>')
-        HtmlEmbeddedContentImpl(HTML_EMBEDDED_CONTENT)
+        HtmlEmbeddedContentImpl(VUE_EMBEDDED_CONTENT):VUE_EMBEDDED_CONTENT
           PsiElement(HTML_DOCUMENT)
             PsiElement(XML_PROLOG)
               <empty list>
@@ -36,8 +35,7 @@ HtmlFile:test.vue
         XmlToken:XML_NAME('script')
         XmlToken:XML_TAG_END('>')
       XmlText
-        PsiWhiteSpace('\n      ')
+        PsiWhiteSpace('\n')
       XmlToken:XML_END_TAG_START('</')
       XmlToken:XML_NAME('template')
       XmlToken:XML_TAG_END('>')
-    PsiWhiteSpace('\n    ')

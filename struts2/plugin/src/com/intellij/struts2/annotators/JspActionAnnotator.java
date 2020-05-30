@@ -21,7 +21,6 @@ import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
@@ -37,14 +36,14 @@ import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.util.XmlTagUtil;
 import icons.Struts2Icons;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import javax.swing.Icon;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Annotates custom tags with "action" attribute.
@@ -77,13 +76,13 @@ public class JspActionAnnotator extends LineMarkerProviderDescriptor {
   }
 
   @Override
-  public LineMarkerInfo getLineMarkerInfo(@NotNull final PsiElement psiElement) {
+  public LineMarkerInfo<?> getLineMarkerInfo(final @NotNull PsiElement psiElement) {
     return null;
   }
 
   @Override
-  public void collectSlowLineMarkers(@NotNull final List<PsiElement> psiElements,
-                                     @NotNull final Collection<LineMarkerInfo> lineMarkerInfos) {
+  public void collectSlowLineMarkers(final @NotNull List<? extends PsiElement> psiElements,
+                                     final @NotNull Collection<? super LineMarkerInfo<?>> lineMarkerInfos) {
     if (psiElements.isEmpty()) {
       return;
     }
@@ -94,7 +93,7 @@ public class JspActionAnnotator extends LineMarkerProviderDescriptor {
   }
 
   private static void annotate(@NotNull final PsiElement element,
-                               @NotNull final Collection<LineMarkerInfo> lineMarkerInfos) {
+                               final @NotNull Collection<? super LineMarkerInfo<?>> lineMarkerInfos) {
     if (!(element instanceof XmlTag)) {
       return;
     }
@@ -107,7 +106,7 @@ public class JspActionAnnotator extends LineMarkerProviderDescriptor {
       return;
     }
 
-    if (!Comparing.equal(xmlTag.getNamespace(), StrutsConstants.TAGLIB_STRUTS_UI_URI)) {
+    if (!Objects.equals(xmlTag.getNamespace(), StrutsConstants.TAGLIB_STRUTS_UI_URI)) {
       return;
     }
 
@@ -122,9 +121,9 @@ public class JspActionAnnotator extends LineMarkerProviderDescriptor {
     }
 
     // special case for <action>
-    final String actionPath = Comparing.equal(tagName, ACTION_ATTRIBUTE_NAME) ?
-        xmlTag.getAttributeValue("name") :
-        xmlTag.getAttributeValue(ACTION_ATTRIBUTE_NAME);
+    final String actionPath = Objects.equals(tagName, ACTION_ATTRIBUTE_NAME) ?
+                              xmlTag.getAttributeValue("name") :
+                              xmlTag.getAttributeValue(ACTION_ATTRIBUTE_NAME);
     if (actionPath == null) {
       return;
     }

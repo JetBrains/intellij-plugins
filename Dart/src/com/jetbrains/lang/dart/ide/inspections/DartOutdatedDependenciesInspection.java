@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.inspections;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
@@ -34,9 +34,8 @@ import java.util.Set;
 public class DartOutdatedDependenciesInspection extends LocalInspectionTool {
   private final Set<String> myIgnoredPubspecPaths = new THashSet<>(); // remember for the current session only, do not serialize
 
-  @Nullable
   @Override
-  public ProblemDescriptor[] checkFile(@NotNull final PsiFile psiFile, @NotNull final InspectionManager manager, final boolean isOnTheFly) {
+  public ProblemDescriptor @Nullable [] checkFile(@NotNull final PsiFile psiFile, @NotNull final InspectionManager manager, final boolean isOnTheFly) {
     if (!isOnTheFly) return null;
 
     if (!(psiFile instanceof DartFile)) return null;
@@ -75,14 +74,13 @@ public class DartOutdatedDependenciesInspection extends LocalInspectionTool {
     return null;
   }
 
-  @NotNull
-  private ProblemDescriptor[] createProblemDescriptors(@NotNull final InspectionManager manager,
-                                                       @NotNull final PsiFile psiFile,
-                                                       @NotNull final VirtualFile pubspecFile,
-                                                       @NotNull final String errorMessage) {
+  private ProblemDescriptor @NotNull [] createProblemDescriptors(@NotNull final InspectionManager manager,
+                                                                 @NotNull final PsiFile psiFile,
+                                                                 @NotNull final VirtualFile pubspecFile,
+                                                                 @NotNull final String errorMessage) {
     final LocalQuickFix[] fixes = new LocalQuickFix[]{
-      new RunPubFix(DartBundle.message("get.dependencies"), "Dart.pub.get"),
-      new RunPubFix(DartBundle.message("upgrade.dependencies"), "Dart.pub.upgrade"),
+      new RunPubFix(DartBundle.message("pub.get"), "Dart.pub.get"),
+      new RunPubFix(DartBundle.message("pub.upgrade"), "Dart.pub.upgrade"),
       new OpenPubspecFix(),
       new IgnoreWarningFix(myIgnoredPubspecPaths, pubspecFile.getPath())};
 

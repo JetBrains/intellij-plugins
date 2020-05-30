@@ -6,9 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.jetbrains.plugins.cucumber.CucumberUtil.*;
-import static org.jetbrains.plugins.cucumber.CucumberUtil.isCucumberExpression;
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertFalse;
 
 public class CucumberUtilTest {
   @Test

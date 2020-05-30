@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.info;
 
 import com.intellij.openapi.util.TextRange;
@@ -12,13 +13,13 @@ import org.jetbrains.annotations.Nullable;
 public class DartFunctionDescription {
   private final String name;
   private final String returnType;
-  @NotNull private final DartParameterDescription[] myParameters;
-  @NotNull private final DartOptionalParameterDescription[] myOptionalParameters;
+  private final DartParameterDescription @NotNull [] myParameters;
+  private final DartOptionalParameterDescription @NotNull [] myOptionalParameters;
 
   public DartFunctionDescription(String name,
                                  String type,
-                                 @NotNull DartParameterDescription[] parameters,
-                                 @NotNull DartOptionalParameterDescription[] optionalParameters) {
+                                 DartParameterDescription @NotNull [] parameters,
+                                 DartOptionalParameterDescription @NotNull [] optionalParameters) {
     this.name = name;
     returnType = type;
     myParameters = parameters;
@@ -33,9 +34,12 @@ public class DartFunctionDescription {
     return returnType;
   }
 
-  @NotNull
-  public DartParameterDescription[] getParameters() {
+  public DartParameterDescription @NotNull [] getParameters() {
     return myParameters;
+  }
+
+  public DartOptionalParameterDescription @NotNull [] getOptionalParameters() {
+    return myOptionalParameters;
   }
 
   public String getParametersListPresentableText() {

@@ -17,6 +17,7 @@ public class KarmaConfigFileInspection extends JSInspection {
     return new JSElementVisitor() {
       @Override
       public void visitJSLiteralExpression(final JSLiteralExpression node) {
+        if (!node.isQuotedLiteral()) return;
         for (PsiReference ref : node.getReferences()) {
           if (ref instanceof KarmaConfigFileReference) {
             handleReference((KarmaConfigFileReference) ref, holder);

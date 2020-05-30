@@ -9,11 +9,14 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.pom.PomTarget;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.FakePsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.SearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+
+import static org.angular2.Angular2DecoratorUtil.getClassForDecoratorElement;
 
 public class Angular2DirectiveSelectorPsiElement extends FakePsiElement implements PomTarget, NavigationItem {
 
@@ -33,8 +36,7 @@ public class Angular2DirectiveSelectorPsiElement extends FakePsiElement implemen
   }
 
   @Override
-  @NotNull
-  public String getName() {
+  public @NotNull String getName() {
     return myName;
   }
 
@@ -48,9 +50,8 @@ public class Angular2DirectiveSelectorPsiElement extends FakePsiElement implemen
     return myParent.getValue().getTextOffset() + myRange.getStartOffset();
   }
 
-  @Nullable
   @Override
-  public TextRange getTextRange() {
+  public @Nullable TextRange getTextRange() {
     int startOffset = myParent.getValue().getTextOffset() + myRange.getStartOffset();
     return new TextRange(startOffset, startOffset + myName.length());
   }
@@ -60,15 +61,13 @@ public class Angular2DirectiveSelectorPsiElement extends FakePsiElement implemen
     return myName.length();
   }
 
-  @Nullable
   @Override
-  public String getText() {
+  public @Nullable String getText() {
     return myName;
   }
 
-  @NotNull
   @Override
-  public TextRange getTextRangeInParent() {
+  public @NotNull TextRange getTextRangeInParent() {
     return myRange;
   }
 
@@ -87,18 +86,21 @@ public class Angular2DirectiveSelectorPsiElement extends FakePsiElement implemen
     return getName();
   }
 
-  @Nullable
   @Override
-  public String getLocationString() {
+  public @Nullable String getLocationString() {
     PsiElement parent = myParent.getValue();
-    TypeScriptClass clazz = PsiTreeUtil.getContextOfType(parent, TypeScriptClass.class, false);
+    TypeScriptClass clazz = getClassForDecoratorElement(parent);
     return clazz != null ? "(" + clazz.getName() + ", " + parent.getContainingFile().getName() + ")"
                          : parent.getContainingFile().getName() + ":" + getTextOffset();
   }
 
-  @Nullable
   @Override
-  public Icon getIcon(boolean open) {
+  public @NotNull SearchScope getUseScope() {
+    return GlobalSearchScope.projectScope(getProject());
+  }
+
+  @Override
+  public @Nullable Icon getIcon(boolean open) {
     return isElementSelector() ? AllIcons.Nodes.Tag : AllIcons.Nodes.ObjectTypeAttribute;
   }
 

@@ -2,6 +2,7 @@
 package org.angular2.lang.html;
 
 import com.intellij.ide.highlighter.HtmlFileType;
+import com.intellij.lang.Language;
 import org.angular2.lang.Angular2Bundle;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,15 +14,17 @@ public class Angular2HtmlFileType extends HtmlFileType {
     super(Angular2HtmlLanguage.INSTANCE);
   }
 
-  @NotNull
+  protected Angular2HtmlFileType(Language language) {
+    super(language);
+  }
+
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     return "Angular2Html";
   }
 
-  @NotNull
   @Override
-  public String getDescription() {
+  public @NotNull String getDescription() {
     return Angular2Bundle.message("angular.description.angular-html-template");
   }
 }

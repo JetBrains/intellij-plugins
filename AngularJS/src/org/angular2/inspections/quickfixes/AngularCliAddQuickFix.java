@@ -26,19 +26,15 @@ public class AngularCliAddQuickFix implements LocalQuickFix, HighPriorityAction 
     myReinstall = reinstall;
   }
 
-  @Nls
-  @NotNull
   @Override
-  public String getName() {
+  public @Nls @NotNull String getName() {
     return Angular2Bundle.message(myReinstall ? "angular.quickfix.json.ng-add.name.reinstall"
                                               : "angular.quickfix.json.ng-add.name.run",
                                   myPackageName);
   }
 
-  @Nls
-  @NotNull
   @Override
-  public String getFamilyName() {
+  public @Nls @NotNull String getFamilyName() {
     return Angular2Bundle.message("angular.quickfix.json.ng-add.family");
   }
 

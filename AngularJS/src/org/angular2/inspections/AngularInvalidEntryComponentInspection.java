@@ -11,22 +11,18 @@ import com.intellij.psi.PsiElementVisitor;
 import org.angular2.entities.Angular2Component;
 import org.angular2.inspections.Angular2SourceEntityListValidator.ValidationResults;
 import org.angular2.lang.Angular2Bundle;
-import org.angular2.lang.Angular2LangUtil;
 import org.jetbrains.annotations.NotNull;
 
 import static org.angular2.Angular2DecoratorUtil.*;
 
 public class AngularInvalidEntryComponentInspection extends LocalInspectionTool {
 
-  @NotNull
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
+  public @NotNull PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
     return new JSElementVisitor() {
       @Override
       public void visitES6Decorator(ES6Decorator decorator) {
-        if ((MODULE_DEC.equals(decorator.getDecoratorName())
-             || COMPONENT_DEC.equals(decorator.getDecoratorName()))
-            && Angular2LangUtil.isAngular2Context(decorator)) {
+        if (isAngularEntityDecorator(decorator, MODULE_DEC, COMPONENT_DEC)) {
           ValidationResults<ProblemType> results = new ValidationResults<>();
           new EntryComponentsValidator().validate(decorator, results);
           if (MODULE_DEC.equals(decorator.getDecoratorName())) {
@@ -51,7 +47,7 @@ public class AngularInvalidEntryComponentInspection extends LocalInspectionTool 
     @Override
     protected void processNonEntityClass(@NotNull JSClass aClass) {
       registerProblem(ProblemType.INVALID_ENTRY_COMPONENT,
-                      Angular2Bundle.message("angular.inspection.decorator.not-a-component",
+                      Angular2Bundle.message("angular.inspection.invalid-entry-component.message.not-component",
                                              aClass.getName()));
     }
   }
@@ -65,14 +61,14 @@ public class AngularInvalidEntryComponentInspection extends LocalInspectionTool 
     @Override
     protected void processNonEntityClass(@NotNull JSClass aClass) {
       registerProblem(ProblemType.INVALID_ENTRY_COMPONENT,
-                      Angular2Bundle.message("angular.inspection.decorator.not-a-component",
+                      Angular2Bundle.message("angular.inspection.invalid-entry-component.message.not-component",
                                              aClass.getName()));
     }
 
     @Override
     protected void processAnyElement(JSElement node) {
       registerProblem(ProblemType.INVALID_ENTRY_COMPONENT,
-                      Angular2Bundle.message("angular.inspection.decorator.not-array-of-class-types"));
+                      Angular2Bundle.message("angular.inspection.invalid-entry-component.message.not-array-of-class-types"));
     }
   }
 }

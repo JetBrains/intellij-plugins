@@ -3,15 +3,13 @@ package org.angularjs.codeInsight;
 import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.lang.javascript.index.JSSymbolUtil;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl;
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
-import com.intellij.lang.javascript.psi.types.JSAnyType;
-import com.intellij.lang.javascript.psi.types.JSNamedTypeFactory;
-import com.intellij.lang.javascript.psi.types.JSRecordTypeImpl;
-import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
+import com.intellij.lang.javascript.psi.types.*;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
@@ -92,7 +90,7 @@ public class AngularJSProcessor {
     }
   }
 
-  private static void processComponentInitializer(@NotNull final XmlFile file,
+  private static void processComponentInitializer(final @NotNull XmlFile file,
                                                   @NotNull JSObjectLiteralExpression componentInitializer,
                                                   @NotNull Collection<? super JSPsiElementBase> result) {
     result.add(new AngularJSLocalImplicitElement(file, componentInitializer));
@@ -108,8 +106,9 @@ public class AngularJSProcessor {
   }
 
   private static class AngularJSLocalImplicitElement extends JSLocalImplicitElementImpl {
-    @NotNull private final XmlFile myFile;
-    private AngularJSLocalImplicitElement(@NotNull final XmlFile file,
+    private final @NotNull XmlFile myFile;
+
+    private AngularJSLocalImplicitElement(final @NotNull XmlFile file,
                                           @NotNull JSObjectLiteralExpression componentInitializer) {
       super(getCtrlVarName(componentInitializer), getComponentScopeType(file, componentInitializer), componentInitializer,
             JSImplicitElement.Type.Class);
@@ -134,9 +133,8 @@ public class AngularJSProcessor {
     }
   }
 
-  @NotNull
-  private static JSType getComponentScopeType(@NotNull final XmlFile file,
-                                              @NotNull JSObjectLiteralExpression componentInitializer) {
+  private static @NotNull JSType getComponentScopeType(final @NotNull XmlFile file,
+                                                       @NotNull JSObjectLiteralExpression componentInitializer) {
     List<JSRecordType.TypeMember> memberList = new ArrayList<>();
     Set<String> names = new HashSet<>();
     Consumer<JSRecordType.PropertySignature> processor = member -> {
@@ -182,6 +180,7 @@ public class AngularJSProcessor {
                                                      @NotNull Consumer<? super JSRecordType.PropertySignature> processor) {
     if (controllerProperty != null && controllerProperty.getValue() != null) {
       PsiElement controller = controllerProperty.getValue();
+      JSNamespace namespace = null;
       if (controller instanceof JSLiteralExpression && ((JSLiteralExpression)controller).isQuotedLiteral()) {
         for (PsiReference ref : controller.getReferences()) {
           PsiElement resolved = ref.resolve();
@@ -190,9 +189,9 @@ public class AngularJSProcessor {
           }
           if (resolved instanceof JSLiteralExpression
               && resolved.getParent() instanceof JSArgumentList) {
-            JSArgumentList args = (JSArgumentList)resolved.getParent();
-            if (args.getArguments().length >= 2) {
-              controller = args.getArguments()[1];
+            JSQualifiedName qName = JSSymbolUtil.getLiteralValueAsQualifiedName((JSLiteralExpression)resolved);
+            if (qName != null) {
+              namespace = JSNamedTypeFactory.createNamespace(qName, JSContext.INSTANCE, resolved);
             }
           }
         }
@@ -203,7 +202,6 @@ public class AngularJSProcessor {
           controller = resolved;
         }
       }
-      JSNamespace namespace = null;
       if (controller instanceof JSFunctionExpression) {
         JSType type = JSResolveUtil.getExpressionJSType((JSExpression)controller);
         if (type instanceof JSNamespace) {

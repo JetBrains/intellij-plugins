@@ -18,7 +18,7 @@
           <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text resource-bundle="com/jetbrains/lang/dart/DartBundle" key="reset.filter"/>
+          <text resource-bundle="messages/DartBundle" key="reset.filter"/>
         </properties>
       </component>
       <component id="9b806" class="com.intellij.ui.components.JBRadioButton" binding="myWholeProjectRadioButton" default-binding="true">

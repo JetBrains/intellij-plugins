@@ -16,10 +16,9 @@ import org.jetbrains.annotations.Nullable;
  */
 public class AngularAttributesRegistry {
 
-  @NotNull
-  public static AngularAttributeDescriptor createDescriptor(@Nullable final Project project,
-                                                            @NotNull String attributeName,
-                                                            @Nullable PsiElement declaration) {
+  public static @NotNull AngularAttributeDescriptor createDescriptor(final @Nullable Project project,
+                                                                     @NotNull String attributeName,
+                                                                     @Nullable PsiElement declaration) {
     if ("ngController".equals(DirectiveUtil.normalizeAttributeName(attributeName))) {
       return new AngularAttributeDescriptor(project, attributeName, AngularControllerIndex.KEY, declaration);
     }
@@ -42,8 +41,7 @@ public class AngularAttributesRegistry {
     return type.contains("object literal") || type.equals("mixed");
   }
 
-  @NotNull
-  private static String getType(XmlAttribute parent) {
+  private static @NotNull String getType(XmlAttribute parent) {
     XmlAttributeDescriptor descriptor = AngularJSAttributeDescriptorsProvider.getDescriptor(parent.getName(), parent.getParent());
     final PsiElement directive = descriptor != null ? descriptor.getDeclaration() : null;
     if (directive instanceof JSImplicitElement) {

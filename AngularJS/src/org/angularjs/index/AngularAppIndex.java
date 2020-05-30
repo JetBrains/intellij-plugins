@@ -13,9 +13,8 @@ public class AngularAppIndex extends FileBasedIndexExtension<String, AngularName
   public static final ID<String, AngularNamedItemDefinition> ANGULAR_APP_INDEX = ID.create("angularjs.app.index");
   private final AngularAttributeIndexer myIndexer = new AngularAttributeIndexer("ngApp");
 
-  @NotNull
   @Override
-  public FileBasedIndex.InputFilter getInputFilter() {
+  public @NotNull FileBasedIndex.InputFilter getInputFilter() {
     return AngularTemplateIndexInputFilter.INSTANCE;
   }
 
@@ -24,27 +23,23 @@ public class AngularAppIndex extends FileBasedIndexExtension<String, AngularName
     return true;
   }
 
-  @NotNull
   @Override
-  public ID<String, AngularNamedItemDefinition> getName() {
+  public @NotNull ID<String, AngularNamedItemDefinition> getName() {
     return ANGULAR_APP_INDEX;
   }
 
-  @NotNull
   @Override
-  public DataIndexer<String, AngularNamedItemDefinition, FileContent> getIndexer() {
+  public @NotNull DataIndexer<String, AngularNamedItemDefinition, FileContent> getIndexer() {
     return myIndexer;
   }
 
-  @NotNull
   @Override
-  public KeyDescriptor<String> getKeyDescriptor() {
+  public @NotNull KeyDescriptor<String> getKeyDescriptor() {
     return EnumeratorStringDescriptor.INSTANCE;
   }
 
-  @NotNull
   @Override
-  public DataExternalizer<AngularNamedItemDefinition> getValueExternalizer() {
+  public @NotNull DataExternalizer<AngularNamedItemDefinition> getValueExternalizer() {
     return AngularViewDefinitionExternalizer.INSTANCE;
   }
 

@@ -47,6 +47,12 @@ public class ParameterTypeSteps {
       Date.class,
       (String s) -> new SimpleDateFormat("yyyy-mm-dd").parse(s)
     ));
+
+    typeRegistry.defineParameterType(ParameterType.fromEnum(MyEnum.class));
+  }
+
+  @And("smth with {MyEnum}")
+  public void smthWithMyEnum(MyEnum value) throws Throwable {
   }
 
   @And("There is bigdecimal {bigdecimal}")
@@ -91,4 +97,6 @@ public class ParameterTypeSteps {
 
   @Given("step {}")
   public void anonymousParameterType() {}
+
+  public static enum MyEnum {ONE, TWO}
 }

@@ -6,6 +6,7 @@ import com.intellij.openapi.components.BaseState;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NotNullLazyValue;
 import icons.OsmorcIdeaIcons;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.osgi.bnd.imp.BndProjectImporter;
@@ -37,17 +38,27 @@ public final class BndRunConfigurationType extends ConfigurationTypeBase {
   private static abstract class FactoryBase extends ConfigurationFactory {
     private final String myName;
     private final NotNullLazyValue<? extends Icon> myIcon;
+    private final String myId;
 
-    FactoryBase(@NotNull ConfigurationType type, @NotNull String name, @NotNull NotNullLazyValue<? extends Icon> icon) {
+    FactoryBase(@NotNull ConfigurationType type,
+                @NotNull String name,
+                @NotNull @NonNls String id,
+                @NotNull NotNullLazyValue<? extends Icon> icon) {
       super(type);
       myName = name;
       myIcon = icon;
+      myId = id;
     }
 
     @NotNull
     @Override
     public String getName() {
       return myName;
+    }
+
+    @Override
+    public @NotNull String getId() {
+      return myId;
     }
 
     @Override
@@ -69,7 +80,7 @@ public final class BndRunConfigurationType extends ConfigurationTypeBase {
 
   private static class LaunchFactory extends FactoryBase {
     LaunchFactory(@NotNull ConfigurationType type) {
-      super(type, message("bnd.run.configuration.name"), createValue(() -> OsmorcIdeaIcons.BndLaunch));
+      super(type, message("bnd.run.configuration.name"), "Run Launcher", createValue(() -> OsmorcIdeaIcons.BndLaunch));
     }
 
     @NotNull
@@ -81,7 +92,7 @@ public final class BndRunConfigurationType extends ConfigurationTypeBase {
 
   private static class TestFactory extends FactoryBase {
     TestFactory(@NotNull ConfigurationType type) {
-      super(type, message("bnd.test.configuration.name"), createValue(() -> OsmorcIdeaIcons.BndTest));
+      super(type, message("bnd.test.configuration.name"), "Test Launcher (JUnit)", createValue(() -> OsmorcIdeaIcons.BndTest));
     }
 
     @NotNull

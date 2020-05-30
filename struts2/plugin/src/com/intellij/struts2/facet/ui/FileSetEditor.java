@@ -17,7 +17,6 @@ package com.intellij.struts2.facet.ui;
 
 import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
@@ -29,18 +28,20 @@ import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.ui.tree.TreeModelAdapter;
 import com.intellij.util.ui.tree.TreeUtil;
 import com.intellij.xml.config.ConfigFilesTreeBuilder;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
+import java.awt.Component;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import java.awt.*;
-import java.util.List;
-import java.util.Set;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class FileSetEditor extends DialogWrapper {
 
@@ -150,12 +151,12 @@ public class FileSetEditor extends DialogWrapper {
 
     final List<VirtualFilePointer> pointers = myFileSet.getFiles();
     for (int i = 0; i < pointers.size(); i++) {
-      if (!Comparing.equal(pointers.get(i).getUrl(), myOriginalSet.getFiles().get(i).getUrl())) {
+      if (!Objects.equals(pointers.get(i).getUrl(), myOriginalSet.getFiles().get(i).getUrl())) {
         return true;
       }
     }
 
-    return !Comparing.equal(myFileSet.getName(), myOriginalSet.getName());
+    return !Objects.equals(myFileSet.getName(), myOriginalSet.getName());
   }
 
   @Override

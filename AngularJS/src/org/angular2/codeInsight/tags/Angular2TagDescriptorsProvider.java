@@ -18,6 +18,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.XmlNSDescriptor;
 import com.intellij.xml.XmlTagNameProvider;
+import com.intellij.xml.util.HtmlUtil;
 import com.intellij.xml.util.XmlUtil;
 import icons.AngularJSIcons;
 import org.angular2.codeInsight.Angular2CodeInsightUtils;
@@ -47,8 +48,11 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
   public static final Set<String> NG_SPECIAL_TAGS = ContainerUtil.newHashSet(NG_CONTAINER, NG_CONTENT, NG_TEMPLATE);
 
   @Override
-  public void addTagNameVariants(@NotNull final List<LookupElement> elements, @NotNull XmlTag xmlTag, String prefix) {
-    if (!(xmlTag instanceof HtmlTag && Angular2LangUtil.isAngular2Context(xmlTag))) {
+  public void addTagNameVariants(final @NotNull List<LookupElement> elements, @NotNull XmlTag xmlTag, String prefix) {
+    if (!(xmlTag instanceof HtmlTag)
+        || DumbService.isDumb(xmlTag.getProject())
+        || !Angular2LangUtil.isAngular2Context(xmlTag)
+        || HtmlUtil.SVG_NAMESPACE.equals(xmlTag.getNamespace())) {
       return;
     }
     final Project project = xmlTag.getProject();
@@ -75,13 +79,25 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
       .nonNull()
       .forEach(element -> {
         if (names.add(element.getName())) {
-          addLookupItem(language, elements, element, element.getName(), null, null);
+          addNgContentSelectorBasedLookupItem(language, elements, element);
         }
       });
   }
 
   private static void addLookupItem(@NotNull Language language, @NotNull List<? super LookupElement> elements, @NotNull String name) {
     addLookupItem(language, elements, name, name, null, null);
+  }
+
+  private static void addNgContentSelectorBasedLookupItem(@NotNull Language language,
+                                                          @NotNull List<LookupElement> elements,
+                                                          @NotNull Angular2DirectiveSelectorPsiElement selectorElement) {
+    LookupElementBuilder element = LookupElementBuilder.create(selectorElement, selectorElement.getName())
+      .withIcon(AngularJSIcons.Angular2)
+      .withBoldness(true);
+    if (language.isKindOf(XMLLanguage.INSTANCE)) {
+      element = element.withInsertHandler(XmlTagInsertHandler.INSTANCE);
+    }
+    elements.add(PrioritizedLookupElement.withPriority(element, 2));
   }
 
   private static void addLookupItem(@NotNull Language language,
@@ -111,10 +127,11 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
                || proximity == DeclarationProximity.EXPORTED_BY_PUBLIC_MODULE ? 1 : 0));
   }
 
-  @Nullable
   @Override
-  public XmlElementDescriptor getDescriptor(@NotNull XmlTag xmlTag) {
-    if (!(xmlTag instanceof HtmlTag && Angular2LangUtil.isAngular2Context(xmlTag))) {
+  public @Nullable XmlElementDescriptor getDescriptor(@NotNull XmlTag xmlTag) {
+    if (!(xmlTag instanceof HtmlTag)
+        || DumbService.isDumb(xmlTag.getProject())
+        || !Angular2LangUtil.isAngular2Context(xmlTag)) {
       return null;
     }
     if (XmlUtil.isTagDefinedByNamespace(xmlTag)) {
@@ -155,8 +172,9 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
         elementDescriptor = nsDescriptor.getElementDescriptor(xmlTag);
       }
     }
-    return elementDescriptor instanceof HtmlElementDescriptorImpl
-           ? new Angular2StandardTagDescriptor((HtmlElementDescriptorImpl)elementDescriptor)
-           : null;
+    if (elementDescriptor instanceof HtmlElementDescriptorImpl) {
+      return new Angular2StandardTagDescriptor((HtmlElementDescriptorImpl)elementDescriptor);
+    }
+    return null;
   }
 }

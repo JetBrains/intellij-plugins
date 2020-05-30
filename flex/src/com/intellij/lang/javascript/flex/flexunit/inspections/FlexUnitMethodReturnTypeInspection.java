@@ -14,17 +14,9 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.types.primitives.JSVoidType;
 import com.intellij.lang.javascript.validation.fixes.JSChangeTypeFix;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 public class FlexUnitMethodReturnTypeInspection extends FlexUnitMethodInspectionBase {
-
-  @Override
-  @Nls
-  @NotNull
-  public String getDisplayName() {
-    return FlexBundle.message("flexunit.inspection.testmethodreturntype.displayname");
-  }
 
   @Override
   @NotNull

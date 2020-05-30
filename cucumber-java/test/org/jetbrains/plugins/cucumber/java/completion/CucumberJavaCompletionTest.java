@@ -5,7 +5,6 @@ import com.intellij.testFramework.fixtures.CompletionTester;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaCodeInsightTestCase;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinFileType;
-import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 
 import java.io.File;
 
@@ -76,6 +75,5 @@ public class CucumberJavaCompletionTest extends CucumberJavaCodeInsightTestCase 
   protected void setUp() throws Exception {
     super.setUp();
     myCompletionTester = new CompletionTester(myFixture);
-    CucumberStepsIndex.getInstance(getProject()).reset();
   }
 }

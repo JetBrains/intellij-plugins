@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.folding;
 
 import com.intellij.codeInsight.folding.CodeFoldingSettings;
@@ -38,6 +38,9 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
   private static final String SINGLE_LINE_DOC_COMMENT = "///...";
   private static final String SINGLE_LINE_COMMENT = "//...";
 
+  private static final String TEST_METHOD_NAME = "test";
+  private static final String GROUP_METHOD_NAME = "group";
+
   @Override
   protected boolean isCustomFoldingRoot(@NotNull final ASTNode node) {
     final IElementType type = node.getElementType();
@@ -55,25 +58,26 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     final TextRange fileHeaderRange = foldFileHeader(descriptors, dartFile, document); // 1. File header
     foldConsequentStatements(descriptors, dartFile, DartImportOrExportStatement.class);// 2. Import and export statements
     foldConsequentStatements(descriptors, dartFile, DartPartStatement.class);          // 3. Part statements
-    final Collection<PsiElement> psiElements = PsiTreeUtil.collectElementsOfType(
+    final Collection<PsiElement> psiElements = PsiTreeUtil.findChildrenOfAnyType(
       root,
-      new Class[]{
-        DartComponent.class,
-        DartTypeArguments.class,
-        PsiComment.class,
-        DartStringLiteralExpression.class,
-        DartSetOrMapLiteralExpression.class,
-        DartNewExpression.class,
-        DartCallExpression.class,
-        DartAssertStatement.class});
+      DartComponent.class,
+      DartTypeArguments.class,
+      PsiComment.class,
+      DartStringLiteralExpression.class,
+      DartSetOrMapLiteralExpression.class,
+      DartNewExpression.class,
+      DartCallExpression.class,
+      DartAssertStatement.class,
+      DartIfStatement.class);
     foldComments(descriptors, psiElements, fileHeaderRange);                           // 4. Comments and comment sequences
-    foldClassBodies(descriptors, dartFile);                                            // 5. Class body
-    foldFunctionBodies(descriptors, psiElements);                                      // 6. Function body
+    foldClassBodies(descriptors, dartFile);                                            // 5. Class bodies
+    foldFunctionBodies(descriptors, psiElements);                                      // 6. Function bodies
     foldTypeArguments(descriptors, psiElements);                                       // 7. Type arguments
     foldMultilineStrings(descriptors, psiElements);                                    // 8. Multi-line strings
     foldSetOrMapLiterals(descriptors, psiElements);                                    // 9. Set or Map literals
-    foldNewDartExpressions(descriptors, psiElements);                                  // 10. Constructor invocations
+    foldSomeDartCallExpressions(descriptors, psiElements);                             // 10. Constructor, "test", "group" invocations
     foldAssertExpressions(descriptors, psiElements);                                   // 11. Assert statements
+    foldIfStatements(descriptors, psiElements);                                        // 12. If statements
   }
 
   @Override
@@ -100,7 +104,10 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
       return multilineStringPlaceholder(node);                                                   // 8.   Multi-line strings
     }
     if (psiElement instanceof DartSetOrMapLiteralExpression) return BRACE_DOTS;                  // 9.   Set or Map literals
-    if (psiElement instanceof DartArguments) return PAREN_DOTS;                                  // 10. Constructor invocations
+    if (psiElement instanceof DartArguments) return PAREN_DOTS;                                  // 10.1 Constructor invocations
+    if (psiElement instanceof DartExpression) return DOT_DOT_DOT;                                // 10.2 Second arg in test methods
+
+    if (psiElement instanceof DartBlock) return BRACE_DOTS;                                      // 12.  If statements
 
     return DOT_DOT_DOT;
   }
@@ -238,18 +245,24 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
   }
 
   private static void foldClassBodies(@NotNull final List<FoldingDescriptor> descriptors, @NotNull final DartFile dartFile) {
-    for (DartClass dartClass : PsiTreeUtil.getChildrenOfTypeAsList(dartFile, DartClass.class)) {
-      if (dartClass instanceof DartClassDefinition) {
-        final DartClassBody body = ((DartClassDefinition)dartClass).getClassBody();
+    for (PsiElement element : PsiTreeUtil.getChildrenOfAnyType(dartFile, DartClass.class, DartExtensionDeclaration.class)) {
+      if (element instanceof DartClassDefinition) {
+        final DartClassBody body = ((DartClassDefinition)element).getClassBody();
         if (body != null && body.getTextLength() > 2) {
           descriptors.add(new FoldingDescriptor(body, body.getTextRange()));
         }
       }
-      else if (dartClass instanceof DartEnumDefinition) {
-        final ASTNode lBrace = dartClass.getNode().findChildByType(DartTokenTypes.LBRACE);
-        final ASTNode rBrace = dartClass.getNode().findChildByType(DartTokenTypes.RBRACE, lBrace);
+      else if (element instanceof DartEnumDefinition) {
+        final ASTNode lBrace = element.getNode().findChildByType(DartTokenTypes.LBRACE);
+        final ASTNode rBrace = element.getNode().findChildByType(DartTokenTypes.RBRACE, lBrace);
         if (lBrace != null && rBrace != null && rBrace.getStartOffset() - lBrace.getStartOffset() > 2) {
-          descriptors.add(new FoldingDescriptor(dartClass, TextRange.create(lBrace.getStartOffset(), rBrace.getStartOffset() + 1)));
+          descriptors.add(new FoldingDescriptor(element, TextRange.create(lBrace.getStartOffset(), rBrace.getStartOffset() + 1)));
+        }
+      }
+      else if (element instanceof DartExtensionDeclaration) {
+        final DartClassBody body = ((DartExtensionDeclaration)element).getClassBody();
+        if (body.getTextLength() > 2) {
+          descriptors.add(new FoldingDescriptor(body, body.getTextRange()));
         }
       }
     }
@@ -311,8 +324,8 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     }
   }
 
-  private static void foldNewDartExpressions(@NotNull final List<FoldingDescriptor> descriptors,
-                                             @NotNull final Collection<PsiElement> psiElements) {
+  private static void foldSomeDartCallExpressions(@NotNull final List<FoldingDescriptor> descriptors,
+                                                  @NotNull final Collection<PsiElement> psiElements) {
     for (PsiElement psiElement : psiElements) {
       if (psiElement instanceof DartNewExpression) {
         DartNewExpression dartNewExpression = (DartNewExpression)psiElement;
@@ -324,6 +337,9 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
         final String methodName = dartCallExpression.getExpression().getText();
         if (StringUtil.isCapitalized(methodName)) {
           foldNonEmptyDartArguments(descriptors, dartCallExpression.getArguments());
+        }
+        else if (TEST_METHOD_NAME.equals(methodName) || GROUP_METHOD_NAME.equals(methodName)) {
+          foldTestDartArguments(descriptors, dartCallExpression.getArguments());
         }
       }
     }
@@ -352,6 +368,19 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     }
   }
 
+  private static void foldIfStatements(@NotNull final List<FoldingDescriptor> descriptors,
+                                       @NotNull final Collection<PsiElement> psiElements) {
+    for (PsiElement psiElement : psiElements) {
+      if (psiElement instanceof DartIfStatement) {
+        final DartIfStatement dartIfStatement = (DartIfStatement)psiElement;
+        final List<DartBlock> dartBlockList = dartIfStatement.getBlockList();
+        for (DartBlock dartBlock : dartBlockList) {
+          descriptors.add(new FoldingDescriptor(dartBlock, dartBlock.getTextRange()));
+        }
+      }
+    }
+  }
+
   private static void foldNonEmptyDartArguments(@NotNull final List<FoldingDescriptor> descriptors,
                                                 @Nullable final DartArguments dartArguments) {
     if (dartArguments == null || dartArguments.getArgumentList() == null) return;
@@ -360,6 +389,22 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     if (dartArgumentList.getExpressionList().isEmpty() && dartArgumentList.getNamedArgumentList().isEmpty()) return;
 
     descriptors.add(new FoldingDescriptor(dartArguments, dartArguments.getTextRange()));
+  }
+
+  private static void foldTestDartArguments(@NotNull final List<FoldingDescriptor> descriptors,
+                                            @Nullable final DartArguments dartArguments) {
+    if (dartArguments == null || dartArguments.getArgumentList() == null) return;
+
+    DartArgumentList dartArgumentList = dartArguments.getArgumentList();
+    if (dartArgumentList.getExpressionList().size() != 2) return;
+
+    final DartExpression secondExpression = dartArgumentList.getExpressionList().get(1);
+    if (secondExpression == null) return;
+
+    final String text = secondExpression.getText();
+    if (text != null && text.contains("\n")) {
+      descriptors.add(new FoldingDescriptor(secondExpression, secondExpression.getTextRange()));
+    }
   }
 
   @NotNull

@@ -6,6 +6,7 @@ import com.intellij.coldFusion.model.psi.impl.CfmlAttributeImpl;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
+import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -20,10 +21,10 @@ public class CfmlAnnotator implements Annotator {
     if (elementNode != null) {
       if (elementNode.getElementType() == CfscriptTokenTypes.IDENTIFIER &&
           element.getParent() instanceof CfmlAttributeImpl) {
-        holder.createWeakWarningAnnotation(element, null).setTextAttributes(CfmlHighlighter.CfmlFileHighlighter.CFML_ATTRIBUTE);
+        holder.newSilentAnnotation(HighlightSeverity.WEAK_WARNING).textAttributes(CfmlHighlighter.CfmlFileHighlighter.CFML_ATTRIBUTE).create();
       }
       if (elementNode.getElementType() == CfscriptTokenTypes.ACTION_NAME) {
-        holder.createInfoAnnotation(elementNode, null).setTextAttributes(DefaultLanguageHighlighterColors.KEYWORD);
+        holder.newSilentAnnotation(HighlightSeverity.INFORMATION).textAttributes(DefaultLanguageHighlighterColors.KEYWORD).create();
       }
     }
   }

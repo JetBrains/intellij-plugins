@@ -197,7 +197,7 @@ public class AngularUiRouterTest extends BasePlatformTestCase {
           return;
         }
       }
-      Assert.assertTrue(false);
+      Assert.fail("Not found " + referencedTextExpected + " among results");
     } else {
       final PsiElement resolve = reference.resolve();
       Assert.assertNotNull(state, resolve);

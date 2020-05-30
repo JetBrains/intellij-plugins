@@ -39,8 +39,7 @@ public class Angular2MetadataNodeModule extends Angular2MetadataElement<Angular2
     super(element);
   }
 
-  @NotNull
-  public <T extends PsiElement> Pair<PsiFile, T> locateFileAndMember(String memberName, Class<T> memberClass) {
+  public @NotNull <T extends PsiElement> Pair<PsiFile, T> locateFileAndMember(String memberName, Class<T> memberClass) {
     PsiFile definitionPsi = loadRelativeFile(StringUtil.trimEnd(getContainingFile().getName(), METADATA_SUFFIX), D_TS_SUFFIX);
     T result = null;
     if (definitionPsi instanceof JSFile) {

@@ -31,7 +31,7 @@ public class DartTestRerunner implements RunProfileState {
 
   @Nullable
   @Override
-  public ExecutionResult execute(Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
+  public ExecutionResult execute(Executor executor, @NotNull ProgramRunner<?> runner) throws ExecutionException {
     DartTestRunningState state = new DartTestRunningState(environment);
     DartTestRunnerParameters params = state.getParameters();
     params.setScope(DartTestRunnerParameters.Scope.MULTIPLE_NAMES);
@@ -39,8 +39,7 @@ public class DartTestRerunner implements RunProfileState {
     return state.execute(executor, runner);
   }
 
-  @NotNull
-  Module[] getModulesToCompile() {
+  Module @NotNull [] getModulesToCompile() {
     return Module.EMPTY_ARRAY;
   }
 

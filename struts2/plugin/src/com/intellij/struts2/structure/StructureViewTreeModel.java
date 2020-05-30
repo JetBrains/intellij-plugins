@@ -43,16 +43,13 @@ import org.jetbrains.annotations.Nullable;
  * @author Yann C&eacute;bron
  */
 class StructureViewTreeModel extends DomStructureViewTreeModel implements StructureViewModel.ElementInfoProvider {
-
-  static final String HIDE_PARAMS_ID = StrutsBundle.message("structure.view.filter.params");
-
   private final Class[] alwaysPlus;
   private final Class[] alwaysLeaf;
 
   StructureViewTreeModel(@NotNull final XmlFile xmlFile,
                          @Nullable Editor editor,
-                         @NotNull final Class[] alwaysPlus,
-                         @NotNull final Class[] alwaysLeaf,
+                         final Class @NotNull [] alwaysPlus,
+                         final Class @NotNull [] alwaysLeaf,
                          Function<DomElement, DomService.StructureViewMode> descriptor) {
     super(xmlFile, descriptor, editor);
     this.alwaysPlus = alwaysPlus;
@@ -72,8 +69,7 @@ class StructureViewTreeModel extends DomStructureViewTreeModel implements Struct
   }
 
   @Override
-  @NotNull
-  public Filter[] getFilters() {
+  public Filter @NotNull [] getFilters() {
     return new Filter[]{new Filter() {
       @Override
       public boolean isVisible(final TreeElement treeElement) {
@@ -96,7 +92,7 @@ class StructureViewTreeModel extends DomStructureViewTreeModel implements Struct
       @Override
       @NotNull
       public String getName() {
-        return HIDE_PARAMS_ID;
+        return getHideParamsId();
       }
     }};
   }
@@ -121,5 +117,9 @@ class StructureViewTreeModel extends DomStructureViewTreeModel implements Struct
       }
     }
     return false;
+  }
+
+  static String getHideParamsId() {
+    return StrutsBundle.message("structure.view.filter.params");
   }
 }

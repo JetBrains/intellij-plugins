@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs.codeInsight.router;
 
 import com.intellij.lang.javascript.JSStubElementTypes;
@@ -36,14 +37,14 @@ public class AngularUiRouterDiagramBuilder {
   private final List<UiRouterState> myStates;
   private final Map<VirtualFile, Template> myTemplatesMap;
   private final Map<VirtualFile, RootTemplate> myRootTemplates;
-  @NotNull private final Project myProject;
+  private final @NotNull Project myProject;
   private final SmartPointerManager mySmartPointerManager;
   private final Map<PsiFile, Set<VirtualFile>> myModuleRecursiveDependencies;
   private Map<VirtualFile, Map<String, UiRouterState>> myRootTemplates2States;
   private Map<VirtualFile, Map<String, UiRouterState>> myDefiningFiles2States;
 
   // todo different scope
-  public AngularUiRouterDiagramBuilder(@NotNull final Project project) {
+  public AngularUiRouterDiagramBuilder(final @NotNull Project project) {
     myProject = project;
     myStates = new ArrayList<>();
     myTemplatesMap = new HashMap<>();
@@ -85,7 +86,8 @@ public class AngularUiRouterDiagramBuilder {
               if (arguments.length > 1 && arguments[1] instanceof JSObjectLiteralExpression) {
                 final JSObjectLiteralExpression object = (JSObjectLiteralExpression)arguments[1];
                 fillStateParameters(state, object);
-              } else if (arguments[0] instanceof JSObjectLiteralExpression) {
+              }
+              else if (arguments[0] instanceof JSObjectLiteralExpression) {
                 final JSObjectLiteralExpression object = (JSObjectLiteralExpression)arguments[0];
                 final JSProperty name = object.findProperty("name");
                 if (name != null && PsiTreeUtil.isAncestor(name, element.getNavigationElement(), false)) {
@@ -113,8 +115,7 @@ public class AngularUiRouterDiagramBuilder {
     }
   }
 
-  @Nullable
-  public static JSCallExpression findWrappingCallExpression(JSImplicitElement element) {
+  public static @Nullable JSCallExpression findWrappingCallExpression(JSImplicitElement element) {
     if (element.getNavigationElement() instanceof JSCallExpression) return (JSCallExpression)element.getNavigationElement();
     return ObjectUtils.tryCast(JSStubBasedPsiTreeUtil.getContextOfType(element, TokenSet.create(JSStubElementTypes.CALL_EXPRESSION), true),
                                JSCallExpression.class);
@@ -129,7 +130,8 @@ public class AngularUiRouterDiagramBuilder {
       final Set<VirtualFile> modulesFiles = entry.getValue().getModulesFiles();
       for (UiRouterState state : myStates) {
         final PsiElement element = entry.getValue().getPointer().getElement();
-        if (modulesFiles.contains(state.getFile()) || element != null && element.getContainingFile().getVirtualFile().equals(state.getFile())) {
+        if (modulesFiles.contains(state.getFile()) ||
+            element != null && element.getContainingFile().getVirtualFile().equals(state.getFile())) {
           putState2map(entry.getKey(), state, myRootTemplates2States);
           statesUsedInRoots.add(state);
         }
@@ -141,12 +143,15 @@ public class AngularUiRouterDiagramBuilder {
       if (statesUsedInRoots.contains(state)) continue;
       if (state.isGeneric()) {
         putState2map(myRootTemplates.keySet().iterator().next(), state, myRootTemplates2States);
-      } else putState2map(state.getFile(), state, myDefiningFiles2States);
+      }
+      else {
+        putState2map(state.getFile(), state, myDefiningFiles2States);
+      }
     }
   }
 
-  private static void putState2map(@NotNull final VirtualFile rootFile, @NotNull final UiRouterState state,
-                                   @NotNull final Map<VirtualFile, Map<String, UiRouterState>> rootMap) {
+  private static void putState2map(final @NotNull VirtualFile rootFile, final @NotNull UiRouterState state,
+                                   final @NotNull Map<VirtualFile, Map<String, UiRouterState>> rootMap) {
     Map<String, UiRouterState> map = rootMap.get(rootFile);
     if (map == null) rootMap.put(rootFile, (map = new HashMap<>()));
     if (map.containsKey(state.getName())) {
@@ -154,14 +159,14 @@ public class AngularUiRouterDiagramBuilder {
       if (!Comparing.equal(existing.getPointer(), state.getPointer()) && state.getPointer() != null) {
         existing.addDuplicateDefinition(state);
       }
-    } else {
+    }
+    else {
       map.put(state.getName(), state);
     }
   }
 
   private void getRootPages() {
     final List<VirtualFile> roots = new ArrayList<>();
-    Collections.sort(roots, (o1, o2) -> Integer.compare(o2.getUrl().length(), o1.getUrl().length()));
 
     final Map<PsiFile, AngularNamedItemDefinition> files = new HashMap<>();
     final FileBasedIndex instance = FileBasedIndex.getInstance();
@@ -226,8 +231,7 @@ public class AngularUiRouterDiagramBuilder {
       return toProcess.isEmpty();
     }
 
-    @Nullable
-    public T removeNext() {
+    public @Nullable T removeNext() {
       return toProcess.isEmpty() ? null : toProcess.remove();
     }
 
@@ -236,8 +240,7 @@ public class AngularUiRouterDiagramBuilder {
     }
   }
 
-  @NotNull
-  private Set<VirtualFile> getModuleFiles(PsiFile file, String mainModule) {
+  private @NotNull Set<VirtualFile> getModuleFiles(PsiFile file, String mainModule) {
     Set<VirtualFile> moduleFiles = myModuleRecursiveDependencies.get(file);
     if (moduleFiles != null) return moduleFiles;
 
@@ -274,7 +277,9 @@ public class AngularUiRouterDiagramBuilder {
     return processed;
   }
 
-  private void moduleDependenciesStep(String mainModule, NonCyclicQueue<? super VirtualFile> filesQueue, NonCyclicQueue<? super String> modulesQueue) {
+  private void moduleDependenciesStep(String mainModule,
+                                      NonCyclicQueue<? super VirtualFile> filesQueue,
+                                      NonCyclicQueue<? super String> modulesQueue) {
     addContainingFile(filesQueue, mainModule);
     if (!StringUtil.isEmptyOrSpaces(mainModule)) {
       final JSImplicitElement element = AngularIndexUtil.resolve(myProject, AngularModuleIndex.KEY, mainModule);
@@ -292,7 +297,7 @@ public class AngularUiRouterDiagramBuilder {
     }
   }
 
-  private void addContainingFile(@NotNull final NonCyclicQueue<? super VirtualFile> filesQueue, @NotNull final String module) {
+  private void addContainingFile(final @NotNull NonCyclicQueue<? super VirtualFile> filesQueue, final @NotNull String module) {
     final CommonProcessors.CollectProcessor<JSImplicitElement> collectProcessor = new CommonProcessors.CollectProcessor<>();
 
     AngularIndexUtil.multiResolve(myProject, AngularModuleIndex.KEY, module, collectProcessor);
@@ -317,7 +322,7 @@ public class AngularUiRouterDiagramBuilder {
     filesQueue.addAll(Arrays.asList(includedFiles));
   }
 
-  private String findPossibleRelativeUrl(@NotNull final List<? extends VirtualFile> roots, @NotNull final VirtualFile file) {
+  private String findPossibleRelativeUrl(final @NotNull List<? extends VirtualFile> roots, final @NotNull VirtualFile file) {
     VirtualFile contentRoot = null;
     for (VirtualFile root : roots) {
       if (root.equals(VfsUtilCore.getCommonAncestor(root, file))) {
@@ -381,8 +386,7 @@ public class AngularUiRouterDiagramBuilder {
     }
   }
 
-  @Nullable
-  private static PsiElement findTemplateDefinitionObject(@NotNull final JSProperty template) {
+  private static @Nullable PsiElement findTemplateDefinitionObject(final @NotNull JSProperty template) {
     final JSExpression value = template.getValue();
     if (value instanceof JSLiteralExpression) return value;
     if (value instanceof JSReferenceExpression) {
@@ -394,8 +398,7 @@ public class AngularUiRouterDiagramBuilder {
     return null;
   }
 
-  @Nullable
-  private VirtualFile parseTemplate(@NotNull final String url, @Nullable JSProperty urlProperty) {
+  private @Nullable VirtualFile parseTemplate(final @NotNull String url, @Nullable JSProperty urlProperty) {
     PsiFile templateFile = null;
     Template template = null;
     if (urlProperty != null && urlProperty.getValue() != null) {
@@ -415,8 +418,7 @@ public class AngularUiRouterDiagramBuilder {
     return null;
   }
 
-  @NotNull
-  static Template readTemplateFromFile(@NotNull Project project, @NotNull String url, PsiElement templateElement) {
+  static @NotNull Template readTemplateFromFile(@NotNull Project project, @NotNull String url, PsiElement templateElement) {
     final PsiFile templateFile = templateElement.getContainingFile();
     final Map<String, SmartPsiElementPointer<PsiElement>> placeholders = new HashMap<>();
     final Set<String> placeholdersSet = new HashSet<>();
@@ -435,7 +437,7 @@ public class AngularUiRouterDiagramBuilder {
                                final JSOffsetBasedImplicitElement implicitElement =
                                  new JSOffsetBasedImplicitElement(builder, (int)value.getStartOffset(), templateFile);
                                if (templateElement instanceof PsiFile ||
-                                      PsiTreeUtil.isAncestor(templateElement, implicitElement, false)) {
+                                   PsiTreeUtil.isAncestor(templateElement, implicitElement, false)) {
                                  placeholders.put(key, smartPointerManager.createSmartPsiElementPointer(implicitElement));
                                }
                                return true;
@@ -446,7 +448,7 @@ public class AngularUiRouterDiagramBuilder {
     return template;
   }
 
-  private UiView processView(@NotNull final JSProperty property) {
+  private UiView processView(final @NotNull JSProperty property) {
     final String name = property.getName();
     final JSExpression value = property.getValue();
     final JSObjectLiteralExpression expression = ObjectUtils.tryCast(value, JSObjectLiteralExpression.class);
@@ -473,8 +475,7 @@ public class AngularUiRouterDiagramBuilder {
     return view;
   }
 
-  @Nullable
-  private static String getPropertyValueIfExists(@NotNull final JSObjectLiteralExpression object, @NotNull final String name) {
+  private static @Nullable String getPropertyValueIfExists(final @NotNull JSObjectLiteralExpression object, final @NotNull String name) {
     final JSProperty urlProperty = object.findProperty(name);
     if (urlProperty != null && urlProperty.getValue() instanceof JSLiteralExpression &&
         ((JSLiteralExpression)urlProperty.getValue()).isQuotedLiteral()) {

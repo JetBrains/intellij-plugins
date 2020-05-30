@@ -7,6 +7,7 @@ import com.intellij.database.psi.DbDataSource
 import com.intellij.database.psi.DbPsiFacade
 import com.intellij.database.psi.DbPsiFacadeImpl
 import com.intellij.database.util.DbSqlUtil
+import com.intellij.database.util.DbUIUtil
 import com.intellij.database.util.SqlDialects
 import com.intellij.injected.editor.DocumentWindow
 import com.intellij.lang.annotation.HighlightSeverity
@@ -23,6 +24,7 @@ import com.intellij.sql.psi.SqlCommonKeywords
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.util.FileContentUtil
 import com.intellij.util.containers.isNullOrEmpty
+import com.intellij.util.ui.UIUtil
 import junit.framework.TestCase
 import org.junit.Test
 
@@ -135,15 +137,26 @@ fun CodeInsightTestFixture.createDataSource(vararg ddlFiles: String): DbDataSour
   val dataSource = SqlDataSourceImpl(dialect.dbms.name, project, null)
   dataSource.urls = urls
 
-  val dbPsiFacade = DbPsiFacade.getInstance(project)
+  val dbPsiFacade = DbPsiFacade.getInstance(project) as DbPsiFacadeImpl
   val manager = SqlDataSourceManager.getInstance(project)
   TestCase.assertNotNull(manager)
-  val dataSourceElement = (dbPsiFacade as DbPsiFacadeImpl).createDataSourceWrapperElement(dataSource, manager)
 
   manager.addDataSource(dataSource)
-  Disposer.register(testRootDisposable, Disposable { manager.removeDataSource(dataSource) })
+  Disposer.register(testRootDisposable, Disposable {
+    manager.removeDataSource(dataSource)
+    UIUtil.dispatchAllInvocationEvents()
+    dbPsiFacade.flushUpdates()
+    UIUtil.dispatchAllInvocationEvents()
+  })
+  val dataSourceElement = dbPsiFacade.dataSources.first { it.delegate == dataSource }
+  TestCase.assertNotNull(dataSourceElement)
 
-  val files = dataSource.files
+  DbUIUtil.invokeOnPooledThreadSync(dataSource::waitComputed)
+  UIUtil.dispatchAllInvocationEvents()
+  dbPsiFacade.flushUpdates()
+  UIUtil.dispatchAllInvocationEvents()
+
+  val files = dataSource.roots
   TestCase.assertFalse(files.isEmpty())
   return dataSourceElement
 }

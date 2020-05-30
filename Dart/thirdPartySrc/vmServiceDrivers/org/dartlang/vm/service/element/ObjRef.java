@@ -16,11 +16,12 @@ package org.dartlang.vm.service.element;
 // This is a generated file.
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * {@link ObjRef} is a reference to a {@link Obj}.
  */
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class ObjRef extends Response {
 
   public ObjRef(JsonObject json) {
@@ -28,9 +29,20 @@ public class ObjRef extends Response {
   }
 
   /**
+   * Provided and set to true if the id of an Object is fixed. If true, the id of an Object is
+   * guaranteed not to change or expire. The object may, however, still be _Collected_.
+   *
+   * Can return <code>null</code>.
+   */
+  @Nullable
+  public boolean getFixedId() {
+    return getAsBoolean("fixedId");
+  }
+
+  /**
    * A unique identifier for an Object. Passed to the getObject RPC to load this Object.
    */
   public String getId() {
-    return json.get("id").getAsString();
+    return getAsString("id");
   }
 }

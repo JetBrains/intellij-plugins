@@ -35,7 +35,7 @@ public class ConstantNameConverterImpl extends ConstantNameConverter {
 
   @Override
   @NotNull
-  public Collection<? extends String> getVariants(final ConvertContext context) {
+  public Collection<String> getVariants(final ConvertContext context) {
     final Module module = context.getModule();
     if (module == null) {
       return Collections.emptyList();

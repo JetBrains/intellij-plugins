@@ -34,10 +34,8 @@ public class ExportNgModuleDeclarationQuickFix extends LocalQuickFixAndIntention
     }
   }
 
-  @NotNull
-  private final String myDeclarationName;
-  @NotNull
-  private final SmartPsiElementPointer<ES6Decorator> myDeclarationDecorator;
+  private final @NotNull String myDeclarationName;
+  private final @NotNull SmartPsiElementPointer<ES6Decorator> myDeclarationDecorator;
 
   private ExportNgModuleDeclarationQuickFix(@NotNull PsiElement context,
                                             @NotNull Angular2SourceDeclaration declaration) {
@@ -46,16 +44,13 @@ public class ExportNgModuleDeclarationQuickFix extends LocalQuickFixAndIntention
     myDeclarationDecorator = SmartPointerManager.createPointer(declaration.getDecorator());
   }
 
-  @NotNull
   @Override
-  public String getText() {
+  public @NotNull String getText() {
     return Angular2Bundle.message("angular.quickfix.ngmodule.export.name", myDeclarationName);
   }
 
-  @Nls(capitalization = Nls.Capitalization.Sentence)
-  @NotNull
   @Override
-  public String getFamilyName() {
+  public @Nls(capitalization = Nls.Capitalization.Sentence) @NotNull String getFamilyName() {
     return Angular2Bundle.message("angular.quickfix.ngmodule.export.family");
   }
 

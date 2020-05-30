@@ -42,7 +42,7 @@ public class ClassInDefaultPackageInspection extends AbstractOsgiVisitor {
   protected PsiElementVisitor buildVisitor(OsmorcFacet facet, final ProblemsHolder holder, boolean isOnTheFly) {
     return new PsiElementVisitor() {
       @Override
-      public void visitFile(PsiFile file) {
+      public void visitFile(@NotNull PsiFile file) {
         if (file instanceof PsiClassOwner && ((PsiClassOwner)file).getPackageName().isEmpty()) {
           PsiClass[] classes = ((PsiClassOwner)file).getClasses();
           if (classes.length > 0) {

@@ -165,7 +165,7 @@ public class OsgiRunState extends JavaCommandLineState {
             }
 
             List<SelectedBundle> sortedBundles = new ArrayList<>(selectedBundles);
-            Collections.sort(sortedBundles, START_LEVEL_COMPARATOR);
+            sortedBundles.sort(START_LEVEL_COMPARATOR);
             result.set(sortedBundles);
           }
           catch (CantRunException e) {

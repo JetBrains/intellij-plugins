@@ -1,7 +1,7 @@
 <idea-plugin>
   <name>PostCSS</name>
   <id>org.intellij.plugins.postcss</id>
-  <category>HTML/JavaScript Development</category>
+  <category>Style Sheets</category>
   <vendor>JetBrains</vendor>
   <description>
     <![CDATA[
@@ -40,7 +40,7 @@
     <lang.ast.factory language="PostCSS" implementationClass="org.intellij.plugins.postcss.psi.impl.PostCssTreeElementFactory"/>
     <lang.commenter language="PostCSS" implementationClass="org.intellij.plugins.postcss.PostCssCommenter"/>
     <internalFileTemplate name="PostCSS File"/>
-    <lang.syntaxHighlighterFactory language="PostCSS" implementationClass="org.intellij.plugins.postcss.highlighting.PostCssSyntaxHighlighterFactory"/>
+    <lang.syntaxHighlighter language="PostCSS" implementationClass="org.intellij.plugins.postcss.highlighting.PostCssSyntaxHighlighter"/>
     <colorSettingsPage implementation="org.intellij.plugins.postcss.highlighting.PostCssColorsPage"/>
     <css.structureViewChildrenProvider implementation="org.intellij.plugins.postcss.fileStructure.PostCssStructureViewElementsProvider"/>
     <completion.contributor language="CSS" implementationClass="org.intellij.plugins.postcss.completion.PostCssDumbAwareCompletionContributor"
@@ -59,28 +59,29 @@
 
     <gotoSymbolContributor implementation="org.intellij.plugins.postcss.PostCssGotoSymbolContributor"/>
 
-    <localInspection language="PostCSS" bundle="org.intellij.plugins.postcss.PostCssBundle"
+    <localInspection language="PostCSS" bundle="messages.PostCssBundle"
                      key="inspections.nesting.problems.name"
                      groupKey="inspections.group.name" enabledByDefault="false" level="WARNING"
                      implementationClass="org.intellij.plugins.postcss.inspections.PostCssNestingInspection"/>
-    <localInspection language="PostCSS" bundle="org.intellij.plugins.postcss.PostCssBundle"
+    <localInspection language="PostCSS" bundle="messages.PostCssBundle"
                      key="inspections.custom.selector.problems.name"
                      groupKey="inspections.group.name" enabledByDefault="true" level="ERROR"
                      implementationClass="org.intellij.plugins.postcss.inspections.PostCssCustomSelectorInspection"/>
-    <localInspection language="PostCSS" bundle="org.intellij.plugins.postcss.PostCssBundle"
+    <localInspection language="PostCSS" bundle="messages.PostCssBundle"
                      key="inspections.media.query.range.problems.name"
                      groupKey="inspections.group.name" enabledByDefault="true" level="ERROR"
                      implementationClass="org.intellij.plugins.postcss.inspections.PostCssMediaRangeInspection"/>
-    <localInspection language="PostCSS" bundle="org.intellij.plugins.postcss.PostCssBundle"
+    <localInspection language="PostCSS" bundle="messages.PostCssBundle"
                      key="inspections.custom.media.problems.name"
                      groupKey="inspections.group.name" enabledByDefault="true" level="ERROR"
                      implementationClass="org.intellij.plugins.postcss.inspections.PostCssCustomMediaInspection"/>
-    <localInspection language="PostCSS" bundle="org.intellij.plugins.postcss.PostCssBundle"
+    <localInspection language="PostCSS" bundle="messages.PostCssBundle"
                      key="inspections.custom.property.problems.name"
                      groupKey="inspections.group.name" enabledByDefault="true" level="WARNING"
                      implementationClass="org.intellij.plugins.postcss.inspections.PostCssCustomPropertiesInspection"/>
   </extensions>
   <extensions defaultExtensionNs="com.intellij.css">
+    <supportedFileTypesProvider implementation="org.intellij.plugins.postcss.index.PostCssSupportedFileTypesProvider" version="1"/>
     <cssInspectionFilter language="PostCSS" implementationClass="org.intellij.plugins.postcss.inspections.suppress.PostCssInspectionFilter"/>
   </extensions>
 </idea-plugin>

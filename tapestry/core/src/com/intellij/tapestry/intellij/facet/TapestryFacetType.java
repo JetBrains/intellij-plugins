@@ -18,14 +18,14 @@ import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.lang.TmlFileType;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileContent;
 import icons.TapestryIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Set;
 
 public class TapestryFacetType extends FacetType<TapestryFacet, TapestryFacetConfiguration> {
 
@@ -88,7 +88,7 @@ public class TapestryFacetType extends FacetType<TapestryFacet, TapestryFacetCon
     @Override
     public void setupFacet(@NotNull TapestryFacet facet, ModifiableRootModel model) {
       final TapestryFacetConfiguration configuration = facet.getConfiguration();
-      final HashSet<String> componentDirectories = new HashSet<>(Arrays.asList(TapestryConstants.ELEMENT_PACKAGES));
+      Set<String> componentDirectories = ContainerUtil.set(TapestryConstants.ELEMENT_PACKAGES);
 
       for(VirtualFile file:FileTypeIndex.getFiles(TmlFileType.INSTANCE, GlobalSearchScope.moduleScope(facet.getModule()))) {
         final VirtualFile parent = file.getParent();

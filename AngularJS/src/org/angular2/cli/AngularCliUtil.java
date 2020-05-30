@@ -6,7 +6,7 @@ import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.javascript.JSRunConfigurationBuilder;
 import com.intellij.javascript.nodejs.CompletionModuleInfo;
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil;
-import com.intellij.javascript.nodejs.packageJson.PackageJsonGetDependenciesAction;
+import com.intellij.javascript.nodejs.packageJson.notification.PackageJsonGetDependenciesAction;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationDisplayType;
@@ -20,6 +20,9 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import icons.AngularJSIcons;
+import one.util.streamex.StreamEx;
+import org.angular2.cli.config.AngularConfig;
+import org.angular2.cli.config.AngularConfigProvider;
 import org.angular2.lang.Angular2Bundle;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -31,21 +34,22 @@ import java.util.List;
 import java.util.Map;
 
 import static com.intellij.openapi.util.Pair.pair;
+import static com.intellij.util.ObjectUtils.doIfNotNull;
+import static org.angular2.lang.Angular2LangUtil.ANGULAR_CLI_PACKAGE;
 
 public class AngularCliUtil {
 
-  private static final NotificationGroup ANGULAR_CLI_NOTIFICATIONS = new NotificationGroup(
-    Angular2Bundle.message("angular.description.angular-cli"), NotificationDisplayType.BALLOON,
-    false, null, AngularJSIcons.Angular2);
+  private static final NotificationGroup ANGULAR_CLI_NOTIFICATIONS =
+    new NotificationGroup("Angular CLI", NotificationDisplayType.BALLOON, false, null, AngularJSIcons.Angular2,
+                          Angular2Bundle.message("angular.description.angular-cli"), null);
 
   @NonNls private static final List<String> ANGULAR_JSON_NAMES = ContainerUtil.newArrayList(
     "angular.json", ".angular-cli.json", "angular-cli.json");
   @NonNls private static final String NG_CLI_DEFAULT_ADDRESS = "http://localhost:4200";
 
 
-  @Nullable
-  public static VirtualFile findCliJson(@Nullable VirtualFile dir) {
-    if (dir == null) return null;
+  public static @Nullable VirtualFile findCliJson(@Nullable VirtualFile dir) {
+    if (dir == null || !dir.isValid()) return null;
     for (String name : ANGULAR_JSON_NAMES) {
       VirtualFile cliJson = dir.findChild(name);
       if (cliJson != null) {
@@ -55,8 +59,7 @@ public class AngularCliUtil {
     return null;
   }
 
-  @Nullable
-  public static VirtualFile findAngularCliFolder(@NotNull Project project, @Nullable VirtualFile file) {
+  public static @Nullable VirtualFile findAngularCliFolder(@NotNull Project project, @Nullable VirtualFile file) {
     VirtualFile current = file;
     while (current != null) {
       if (current.isDirectory() && findCliJson(current) != null) return current;
@@ -70,7 +73,7 @@ public class AngularCliUtil {
 
   public static boolean hasAngularCLIPackageInstalled(@NotNull Project project, @NotNull VirtualFile cli) {
     List<CompletionModuleInfo> modules = new ArrayList<>();
-    NodeModuleSearchUtil.findModulesWithName(modules, AngularCliProjectGenerator.PACKAGE_NAME, cli, null);
+    NodeModuleSearchUtil.findModulesWithName(modules, ANGULAR_CLI_PACKAGE, cli, null);
     return !modules.isEmpty() && modules.get(0).getVirtualFile() != null;
   }
 
@@ -98,24 +101,25 @@ public class AngularCliUtil {
         }
 
         String packageJsonPath = getPackageJson(baseDir);
+        AngularConfig config;
         if (packageJsonPath == null
-            || !AngularCliConfigLoader.load(project, baseDir).exists()) {
+            || (config = AngularConfigProvider.getAngularConfig(project, baseDir)) == null) {
           return;
         }
+
+        createKarmaConfigurations(project, config);
+        createProtractorConfigurations(project, config);
 
         String nameSuffix = ModuleManager.getInstance(project).getModules().length > 1
                             ? " (" + baseDir.getName() + ")" : "";
 
         createJSDebugConfiguration(project, "Angular Application" + nameSuffix, NG_CLI_DEFAULT_ADDRESS);
-        createKarmaConfiguration(project, baseDir, "Tests" + nameSuffix);
-        createProtractorConfiguration(project, baseDir, "E2E Tests" + nameSuffix);
         RunManager.getInstance(project).setSelectedConfiguration(
           createNpmConfiguration(project, packageJsonPath, "Angular CLI Server" + nameSuffix, "start"));
       }));
   }
 
-  @Nullable
-  private static String getPackageJson(@NotNull VirtualFile baseDir) {
+  private static @Nullable String getPackageJson(@NotNull VirtualFile baseDir) {
     VirtualFile pkg = PackageJsonUtil.findChildPackageJsonFile(baseDir);
     if (pkg != null) {
       return pkg.getPath();
@@ -129,42 +133,43 @@ public class AngularCliUtil {
     ));
   }
 
-  @Nullable
-  private static RunnerAndConfigurationSettings createNpmConfiguration(@NotNull Project project,
-                                                                       @NotNull String packageJsonPath,
-                                                                       @NotNull @NonNls String label,
-                                                                       @NotNull String scriptName) {
+  private static @Nullable RunnerAndConfigurationSettings createNpmConfiguration(@NotNull Project project,
+                                                                                 @NotNull String packageJsonPath,
+                                                                                 @NotNull @NonNls String label,
+                                                                                 @NotNull String scriptName) {
     //noinspection HardCodedStringLiteral
     return createIfNoSimilar("npm", project, label, null, packageJsonPath,
                              ContainerUtil.newHashMap(pair("run-script", scriptName)));
   }
 
-  private static void createKarmaConfiguration(@NotNull Project project,
-                                               @NotNull VirtualFile baseDir,
-                                               @NotNull @NonNls String label) {
-    ObjectUtils.doIfNotNull(
-      AngularCliConfigLoader.load(project, baseDir).getKarmaConfigFile(),
-      file -> createIfNoSimilar("karma", project, label, baseDir, file.getPath(), Collections.emptyMap())
-    );
+  private static void createKarmaConfigurations(@NotNull Project project,
+                                                @NotNull AngularConfig config) {
+    StreamEx.of(config.getProjects())
+      .filter(ngProject -> ngProject.getKarmaConfigFile() != null
+                           && ngProject.getRootDir() != null)
+      .forEach(ngProject -> createIfNoSimilar("karma", project, "Tests (" + ngProject.getName() + ")",
+                                              ngProject.getRootDir(), ngProject.getKarmaConfigFile().getPath(),
+                                              Collections.emptyMap())
+      );
   }
 
-  private static void createProtractorConfiguration(@NotNull Project project,
-                                                    @NotNull VirtualFile baseDir,
-                                                    @NotNull @NonNls String label) {
-    ObjectUtils.doIfNotNull(
-      AngularCliConfigLoader.load(project, baseDir).getProtractorConfigFile(),
-      file -> createIfNoSimilar("protractor", project, label, null, file.getPath(), Collections.emptyMap())
-    );
+  private static void createProtractorConfigurations(@NotNull Project project,
+                                                     @NotNull AngularConfig config) {
+    StreamEx.of(config.getProjects())
+      .filter(ngProject -> ngProject.getProtractorConfigFile() != null
+                           && ngProject.getRootDir() != null)
+      .forEach(ngProject -> createIfNoSimilar("protractor", project, "E2E Tests (" + ngProject.getName() + ")",
+                                              ngProject.getRootDir(), ngProject.getProtractorConfigFile().getPath(),
+                                              Collections.emptyMap()));
   }
 
-  @Nullable
-  private static RunnerAndConfigurationSettings createIfNoSimilar(@NotNull @NonNls String rcType,
-                                                                  @NotNull Project project,
-                                                                  @NotNull String label,
-                                                                  VirtualFile baseDir,
-                                                                  String configPath,
-                                                                  @NotNull Map<String, Object> options) {
-    return ObjectUtils.doIfNotNull(
+  private static @Nullable RunnerAndConfigurationSettings createIfNoSimilar(@NotNull @NonNls String rcType,
+                                                                            @NotNull Project project,
+                                                                            @NonNls @NotNull String label,
+                                                                            VirtualFile baseDir,
+                                                                            String configPath,
+                                                                            @NotNull Map<String, Object> options) {
+    return doIfNotNull(
       JSRunConfigurationBuilder.getForName(rcType, project),
       builder -> ObjectUtils.notNull(
         builder.findSimilarRunConfiguration(baseDir, configPath, options),

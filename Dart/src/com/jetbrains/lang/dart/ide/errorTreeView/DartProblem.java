@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.openapi.project.Project;
@@ -10,49 +10,52 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.xml.util.XmlStringUtil;
+import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.util.DartBuildFileUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.dartlang.analysis.server.protocol.AnalysisError;
+import org.dartlang.analysis.server.protocol.DiagnosticMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.List;
 
 public class DartProblem {
 
-  @NotNull private final Project myProject;
-  @NotNull private final AnalysisError myAnalysisError;
+  private final @NotNull Project myProject;
+  private final @NotNull AnalysisError myAnalysisError;
 
   private String mySystemIndependentPath;
 
-  @Nullable private VirtualFile myFile;
-  @Nullable private VirtualFile myPackageRoot;
-  @Nullable private VirtualFile myContentRoot;
+  private @Nullable VirtualFile myFile;
+  private @Nullable VirtualFile myPackageRoot;
+  private @Nullable VirtualFile myContentRoot;
   private String myPresentableLocationWithoutLineNumber;
 
-  public DartProblem(@NotNull final Project project, @NotNull final AnalysisError error) {
+  public DartProblem(@NotNull Project project, @NotNull AnalysisError error) {
     myProject = project;
     myAnalysisError = error;
   }
 
-  @NotNull
-  public String getErrorMessage() {
+  public @NotNull String getErrorMessage() {
     return myAnalysisError.getMessage();
   }
 
-  @Nullable
-  public String getCorrectionMessage() {
+  public @Nullable String getCorrectionMessage() {
     return StringUtil.notNullize(myAnalysisError.getCorrection());
   }
 
-  @Nullable
-  public String getUrl() {
+  public @Nullable String getUrl() {
     return myAnalysisError.getUrl();
   }
 
-  @NotNull
-  public String getCode() {
+  @Nullable List<DiagnosticMessage> getDiagnosticMessages() {
+    return myAnalysisError.getContextMessages();
+  }
+
+  public @NotNull String getCode() {
     return StringUtil.notNullize(myAnalysisError.getCode());
   }
 
@@ -69,8 +72,7 @@ public class DartProblem {
     return DartAnalysisServerService.getInstance(myProject).getConvertedOffset(file, myAnalysisError.getLocation().getOffset());
   }
 
-  @NotNull
-  public String getSystemIndependentPath() {
+  public @NotNull String getSystemIndependentPath() {
     if (mySystemIndependentPath == null) {
       mySystemIndependentPath = FileUtil.toSystemIndependentName(myAnalysisError.getLocation().getFile());
     }
@@ -136,43 +138,39 @@ public class DartProblem {
    * If no pubspec.yaml then returns relative part from content root to the file.
    * File path is returned as failover.
    */
-  @NotNull
-  public String getPresentableLocationWithoutLineNumber() {
+  public @NotNull String getPresentableLocationWithoutLineNumber() {
     ensureInitialized();
     return myPresentableLocationWithoutLineNumber;
   }
 
-  @NotNull
-  public String getPresentableLocation() {
+  public @NotNull String getPresentableLocation() {
     return getPresentableLocationWithoutLineNumber() + ":" + getLineNumber();
   }
 
-  @Nullable
-  public VirtualFile getFile() {
+  public @Nullable VirtualFile getFile() {
     ensureInitialized();
     return myFile;
   }
 
-  @Nullable
-  public VirtualFile getPackageRoot() {
+  public @Nullable VirtualFile getPackageRoot() {
     ensureInitialized();
     return myPackageRoot;
   }
 
-  @Nullable
-  public VirtualFile getContentRoot() {
+  public @Nullable VirtualFile getContentRoot() {
     ensureInitialized();
     return myContentRoot;
   }
 
-  @NotNull
-  public static String generateTooltipText(@NotNull String message, @Nullable String correction, @Nullable String url) {
-    final StringBuilder tooltip = new StringBuilder("<html><p>").append(XmlStringUtil.escapeString(message)).append("</p>");
+  public static @NotNull String generateTooltipText(@NotNull String message, @Nullable String correction, @Nullable String url) {
+    StringBuilder tooltip = new StringBuilder("<html>").append(XmlStringUtil.escapeString(message));
     if (StringUtil.isNotEmpty(correction)) {
-      tooltip.append("<br/><p>").append(XmlStringUtil.escapeString(correction)).append("</p>");
+      tooltip.append("<br/><br/>").append(XmlStringUtil.escapeString(correction));
     }
     if (StringUtil.isNotEmpty(url)) {
-      tooltip.append("<a href='").append(url).append("'>Open documentation</a>");
+      tooltip.append("<br/><a href='").append(url).append("'>")
+        .append(DartBundle.message("action.DartProblemsViewPanel.open.documentation.text"))
+        .append("</a>");
     }
     tooltip.append("</html>");
     return tooltip.toString();

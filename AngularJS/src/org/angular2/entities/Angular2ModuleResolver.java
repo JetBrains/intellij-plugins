@@ -24,6 +24,7 @@ import static org.angular2.Angular2DecoratorUtil.*;
 public class Angular2ModuleResolver<T extends PsiElement> {
 
   @NonNls public static final String NG_MODULE_PROP = "ngModule";
+  @NonNls public static final String MODULE_WITH_PROVIDERS_CLASS = "ModuleWithProviders";
 
   @NonNls private static final String KEYS_PREFIX = "angular.moduleResolver.";
   private static final Key<CachedValue<ResolvedEntitiesList<Angular2Declaration>>> DECLARATIONS_KEY =
@@ -42,18 +43,15 @@ public class Angular2ModuleResolver<T extends PsiElement> {
     mySymbolCollector = symbolCollector;
   }
 
-  @NotNull
-  public Set<Angular2Declaration> getDeclarations() {
+  public @NotNull Set<Angular2Declaration> getDeclarations() {
     return getResolvedModuleList(DECLARATIONS_KEY, Angular2Declaration.class).entities;
   }
 
-  @NotNull
-  public Set<Angular2Module> getImports() {
+  public @NotNull Set<Angular2Module> getImports() {
     return getResolvedModuleList(IMPORTS_KEY, Angular2Module.class).entities;
   }
 
-  @NotNull
-  public Set<Angular2Entity> getExports() {
+  public @NotNull Set<Angular2Entity> getExports() {
     return getResolvedModuleList(EXPORTS_KEY, Angular2Entity.class).entities;
   }
 
@@ -78,8 +76,7 @@ public class Angular2ModuleResolver<T extends PsiElement> {
     return getResolvedModuleList(DECLARATIONS_KEY, Angular2Declaration.class).isFullyResolved;
   }
 
-  @NotNull
-  public Set<Angular2Declaration> getAllExportedDeclarations() {
+  public @NotNull Set<Angular2Declaration> getAllExportedDeclarations() {
     final T source = mySourceSupplier.get();
     return CachedValuesManager.getCachedValue(source, () -> {
       Set<Angular2Declaration> result = new HashSet<>();
@@ -111,9 +108,8 @@ public class Angular2ModuleResolver<T extends PsiElement> {
     });
   }
 
-  @NotNull
-  private <U extends Angular2Entity> ResolvedEntitiesList<U> getResolvedModuleList(@NotNull Key<CachedValue<ResolvedEntitiesList<U>>> key,
-                                                                                   @NotNull Class<U> entityClass) {
+  private @NotNull <U extends Angular2Entity> ResolvedEntitiesList<U> getResolvedModuleList(@NotNull Key<CachedValue<ResolvedEntitiesList<U>>> key,
+                                                                                            @NotNull Class<U> entityClass) {
     final T source = mySourceSupplier.get();
     @SuppressWarnings("UnnecessaryLocalVariable") final SymbolCollector<T> symbolCollector = mySymbolCollector;
     return CachedValuesManager.getCachedValue(source, key, () -> symbolCollector.collect(

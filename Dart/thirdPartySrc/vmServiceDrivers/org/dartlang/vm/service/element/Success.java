@@ -20,7 +20,7 @@ import com.google.gson.JsonObject;
 /**
  * The {@link Success} type is used to indicate that an operation completed successfully.
  */
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class Success extends Response {
 
   public Success(JsonObject json) {

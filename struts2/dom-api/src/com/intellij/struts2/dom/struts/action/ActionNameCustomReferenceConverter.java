@@ -32,8 +32,6 @@ import com.intellij.util.xml.GenericDomValue;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -50,11 +48,10 @@ public class ActionNameCustomReferenceConverter implements CustomReferenceConver
   private final Function<String, Object> ACTION_NAME_FUNCTION = s -> StringUtil.endsWithIgnoreCase(s, ACTION_SUFFIX) ?
                                                                  StringUtil.replaceIgnoreCase(s, ACTION_SUFFIX, "") : s;
 
-  @NotNull
   @Override
-  public PsiReference[] createReferences(final GenericDomValue<String> genericDomValue,
-                                         final PsiElement psiElement,
-                                         final ConvertContext convertContext) {
+  public PsiReference @NotNull [] createReferences(final GenericDomValue<String> genericDomValue,
+                                                   final PsiElement psiElement,
+                                                   final ConvertContext convertContext) {
     final PsiReferenceBase<PsiElement> ref = new PsiReferenceBase<PsiElement>(psiElement) {
 
       @Override
@@ -74,8 +71,7 @@ public class ActionNameCustomReferenceConverter implements CustomReferenceConver
       }
 
       @Override
-      @NotNull
-      public Object[] getVariants() {
+      public Object @NotNull [] getVariants() {
         final DomElement invocationElement = convertContext.getInvocationElement();
         final Action action = invocationElement.getParentOfType(Action.class, true);
         assert action != null;
@@ -90,7 +86,7 @@ public class ActionNameCustomReferenceConverter implements CustomReferenceConver
         final JavaCodeStyleManager codeStyleManager = JavaCodeStyleManager.getInstance(project);
         final SuggestedNameInfo info = codeStyleManager.suggestVariableName(VariableKind.LOCAL_VARIABLE, null, null, classType);
 
-        final Set<String> variants = new HashSet<>(Arrays.asList(info.names));
+        final Set<String> variants = ContainerUtil.set(info.names);
         variants.remove(ACTION_SUFFIX);
 
         // remove existing action-names

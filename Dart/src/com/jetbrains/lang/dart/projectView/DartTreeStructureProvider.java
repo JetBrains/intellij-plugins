@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.projectView;
 
 import com.intellij.ide.projectView.PresentationData;
@@ -33,8 +33,8 @@ public class DartTreeStructureProvider implements TreeStructureProvider, DumbAwa
 
   @Override
   @NotNull
-  public Collection<AbstractTreeNode> modify(final @NotNull AbstractTreeNode parentNode,
-                                             final @NotNull Collection<AbstractTreeNode> children,
+  public Collection<AbstractTreeNode<?>> modify(final @NotNull AbstractTreeNode<?> parentNode,
+                                             final @NotNull Collection<AbstractTreeNode<?>> children,
                                              final ViewSettings settings) {
     if (parentNode instanceof ExternalLibrariesNode) {
       return ContainerUtil.map(children, node -> {
@@ -95,7 +95,7 @@ public class DartTreeStructureProvider implements TreeStructureProvider, DumbAwa
                                         : null;
 
     if (pubspecYamlFile != null && !pubspecYamlFile.isDirectory()) {
-      final ArrayList<AbstractTreeNode> modifiedChildren = new ArrayList<>(children);
+      final ArrayList<AbstractTreeNode<?>> modifiedChildren = new ArrayList<>(children);
 
       final DartUrlResolver resolver = DartUrlResolver.getInstance(project, pubspecYamlFile);
       resolver.processLivePackages((packageName, packageDir) -> {
@@ -118,7 +118,7 @@ public class DartTreeStructureProvider implements TreeStructureProvider, DumbAwa
   }
 
   @Nullable
-  private static AbstractTreeNode getFolderNode(final @NotNull Collection<AbstractTreeNode> nodes, final @NotNull VirtualFile folder) {
+  private static AbstractTreeNode getFolderNode(final @NotNull Collection<AbstractTreeNode<?>> nodes, final @NotNull VirtualFile folder) {
     for (AbstractTreeNode node : nodes) {
       if (node instanceof PsiDirectoryNode && folder.equals(((PsiDirectoryNode)node).getVirtualFile())) {
         return node;
@@ -148,7 +148,7 @@ public class DartTreeStructureProvider implements TreeStructureProvider, DumbAwa
 
     @Override
     @NotNull
-    public Collection<? extends AbstractTreeNode> getChildren() {
+    public Collection<? extends AbstractTreeNode<?>> getChildren() {
       return Collections.emptyList();
     }
 

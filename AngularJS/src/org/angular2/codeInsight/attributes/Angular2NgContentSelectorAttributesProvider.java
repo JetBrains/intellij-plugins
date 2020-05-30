@@ -22,28 +22,24 @@ public class Angular2NgContentSelectorAttributesProvider implements Angular2Attr
                                           @NotNull XmlTag tag,
                                           @NotNull String attributeName) {
     getAvailableNgContentAttrSelectorsStream(tag, completionResultsConsumer.getScope())
-      .map(selector -> Angular2AttributeDescriptor.create(tag, selector.getName(), selector))
-      .nonNull()
+      .map(selector -> new NgContentSelectorBasedAttributeDescriptor(tag, selector))
       .forEach(completionResultsConsumer::addDescriptor);
   }
 
-  @Nullable
   @Override
-  public Angular2AttributeDescriptor getDescriptor(@NotNull XmlTag tag,
-                                                   @NotNull String attributeName,
-                                                   @NotNull Angular2AttributeNameParser.AttributeInfo info) {
+  public @Nullable Angular2AttributeDescriptor getDescriptor(@NotNull XmlTag tag,
+                                                             @NotNull String attributeName,
+                                                             @NotNull Angular2AttributeNameParser.AttributeInfo info) {
     String attrName = StringUtil.toLowerCase(attributeName);
     return getAvailableNgContentAttrSelectorsStream(tag, new Angular2DeclarationsScope(tag))
       .filter(selector -> StringUtil.toLowerCase(selector.getName()).equals(attrName))
-      .map(selector -> Angular2AttributeDescriptor.create(tag, selector.getName(), selector))
-      .nonNull()
+      .map(selector -> new NgContentSelectorBasedAttributeDescriptor(tag, selector))
       .findAny()
       .orElse(null);
   }
 
-  @NotNull
   @Override
-  public Collection<String> getRelatedAttributes(@NotNull XmlAttributeDescriptor descriptor) {
+  public @NotNull Collection<String> getRelatedAttributes(@NotNull XmlAttributeDescriptor descriptor) {
     return Collections.emptyList();
   }
 
@@ -57,5 +53,13 @@ public class Angular2NgContentSelectorAttributesProvider implements Angular2Attr
         .map(SimpleSelectorWithPsi::getAttributes)
         .append(selector.getAttributes()))
       .flatMap(Collection::stream);
+  }
+
+  private static class NgContentSelectorBasedAttributeDescriptor extends Angular2AttributeDescriptor {
+
+    protected NgContentSelectorBasedAttributeDescriptor(@NotNull XmlTag xmlTag,
+                                                        @NotNull Angular2DirectiveSelectorPsiElement selector) {
+      super(xmlTag, selector.getName(), AttributePriority.HIGH, Collections.singleton(selector), true);
+    }
   }
 }

@@ -8,9 +8,6 @@ import org.jetbrains.jps.model.serialization.java.compiler.JpsJavaCompilerOption
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class ErrorProneModelSerializerExtension extends JpsModelSerializerExtension {
   @NotNull
   @Override

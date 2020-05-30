@@ -1,11 +1,11 @@
 /*
  * Copyright (c) 2012, the Dart project authors.
- * 
+ *
  * Licensed under the Eclipse Public License v1.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -23,7 +23,7 @@ public interface Logger {
   /**
    * Implementation of {@link Logger} that does nothing.
    */
-  public class NullLogger implements Logger {
+  class NullLogger implements Logger {
     @Override
     public void logError(String message) {
     }
@@ -41,35 +41,35 @@ public interface Logger {
     }
   }
 
-  public static final Logger NULL = new NullLogger();
+  static final Logger NULL = new NullLogger();
 
   /**
    * Log the given message as an error.
-   * 
+   *
    * @param message an explanation of why the error occurred or what it means
    */
-  public void logError(String message);
+  void logError(String message);
 
   /**
    * Log the given exception as one representing an error.
-   * 
-   * @param message an explanation of why the error occurred or what it means
+   *
+   * @param message   an explanation of why the error occurred or what it means
    * @param exception the exception being logged
    */
-  public void logError(String message, Throwable exception);
+  void logError(String message, Throwable exception);
 
   /**
    * Log the given informational message.
-   * 
+   *
    * @param message an explanation of why the error occurred or what it means
    */
-  public void logInformation(String message);
+  void logInformation(String message);
 
   /**
    * Log the given exception as one representing an informational message.
-   * 
-   * @param message an explanation of why the error occurred or what it means
+   *
+   * @param message   an explanation of why the error occurred or what it means
    * @param exception the exception being logged
    */
-  public void logInformation(String message, Throwable exception);
+  void logInformation(String message, Throwable exception);
 }

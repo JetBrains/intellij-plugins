@@ -18,7 +18,7 @@ package org.dartlang.vm.service.element;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class VM extends Response {
 
   public VM(JsonObject json) {
@@ -29,14 +29,14 @@ public class VM extends Response {
    * Word length on target architecture (e.g. 32, 64).
    */
   public int getArchitectureBits() {
-    return json.get("architectureBits") == null ? -1 : json.get("architectureBits").getAsInt();
+    return getAsInt("architectureBits");
   }
 
   /**
    * The CPU we are actually running on.
    */
   public String getHostCPU() {
-    return json.get("hostCPU").getAsString();
+    return getAsString("hostCPU");
   }
 
   /**
@@ -52,10 +52,24 @@ public class VM extends Response {
   }
 
   /**
+   * A name identifying this vm. Not guaranteed to be unique.
+   */
+  public String getName() {
+    return getAsString("name");
+  }
+
+  /**
+   * The operating system we are running on.
+   */
+  public String getOperatingSystem() {
+    return getAsString("operatingSystem");
+  }
+
+  /**
    * The process id for the VM.
    */
   public int getPid() {
-    return json.get("pid") == null ? -1 : json.get("pid").getAsInt();
+    return getAsInt("pid");
   }
 
   /**
@@ -64,20 +78,20 @@ public class VM extends Response {
    * Suitable to pass to DateTime.fromMillisecondsSinceEpoch.
    */
   public int getStartTime() {
-    return json.get("startTime") == null ? -1 : json.get("startTime").getAsInt();
+    return getAsInt("startTime");
   }
 
   /**
    * The CPU we are generating code for.
    */
   public String getTargetCPU() {
-    return json.get("targetCPU").getAsString();
+    return getAsString("targetCPU");
   }
 
   /**
    * The Dart VM version string.
    */
   public String getVersion() {
-    return json.get("version").getAsString();
+    return getAsString("version");
   }
 }

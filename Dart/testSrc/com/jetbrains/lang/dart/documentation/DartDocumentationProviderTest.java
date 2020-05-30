@@ -1,7 +1,9 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.documentation;
 
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -56,6 +58,14 @@ public class DartDocumentationProviderTest extends DartCodeInsightFixtureTestCas
     doTestQuickNavigateInfo("E <b>E1</b>", "enum E { <caret>E1 } var e = E.E1;");
   }
 
+  public void testPsiDirectoryRef() {
+    final PsiFile psiFile = myFixture.addFileToProject("test.dart", "/// test docs\nvoid() main() {}");
+    final PsiDirectory psiDirectory = psiFile.getContainingDirectory();
+
+    String generatedDocs = myProvider.generateDoc(psiDirectory, null);
+    assertNull("expected no docs for directory", generatedDocs);
+  }
+
   public void testDocUrls() {
     doTestDocUrl("https://api.dartlang.org/stable/dart-core/int-class.html",
                  "core/int.dart",
@@ -71,9 +81,9 @@ public class DartDocumentationProviderTest extends DartCodeInsightFixtureTestCas
                  "external const factory int.fromEnvironment(String name, {int defaultValue});");
     doTestDocUrl("https://api.dartlang.org/stable/dart-math/cos.html",
                  "math/math.dart",
-                 "external double cos(num x);");
+                 "external double cos(num radians);");
     doTestDocUrl("https://api.dartlang.org/stable/dart-core/List/length.html",
                  "core/list.dart",
-                 "void set length(int newLength);");
+                 "set length(int newLength);");
   }
 }

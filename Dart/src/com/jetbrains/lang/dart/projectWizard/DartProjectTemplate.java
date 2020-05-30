@@ -1,23 +1,19 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.projectWizard;
 
 import com.intellij.execution.RunManager;
 import com.intellij.execution.RunnerAndConfigurationSettings;
-import com.intellij.execution.configurations.ConfigurationType;
-import com.intellij.execution.configurations.ConfigurationTypeUtil;
-import com.intellij.ide.browsers.impl.WebBrowserServiceImpl;
-import com.intellij.javascript.debugger.execution.JavaScriptDebugConfiguration;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiManager;
 import com.intellij.util.Consumer;
-import com.intellij.util.Url;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfiguration;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfigurationType;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunnerParameters;
+import com.jetbrains.lang.dart.ide.runner.server.webdev.DartWebdevConfiguration;
+import com.jetbrains.lang.dart.ide.runner.server.webdev.DartWebdevConfigurationType;
 import com.jetbrains.lang.dart.projectWizard.Stagehand.StagehandDescriptor;
 import org.jetbrains.annotations.NotNull;
 
@@ -60,7 +56,7 @@ public abstract class DartProjectTemplate {
   /**
    * Must be called in pooled thread without read action; {@code templatesConsumer} will be invoked in EDT
    */
-  public static void loadTemplatesAsync(final String sdkRoot, @NotNull final Consumer<? super List<DartProjectTemplate>> templatesConsumer) {
+  public static void loadTemplatesAsync(@NotNull String sdkRoot, @NotNull Consumer<? super List<DartProjectTemplate>> templatesConsumer) {
     if (ApplicationManager.getApplication().isReadAccessAllowed()) {
       LOG.error("DartProjectTemplate.loadTemplatesAsync() must be called in pooled thread without read action");
     }
@@ -100,17 +96,12 @@ public abstract class DartProjectTemplate {
 
   static void createWebRunConfiguration(final @NotNull Module module, final @NotNull VirtualFile htmlFile) {
     DartModuleBuilder.runWhenNonModalIfModuleNotDisposed(() -> {
-      final Url url = WebBrowserServiceImpl.getDebuggableUrl(PsiManager.getInstance(module.getProject()).findFile(htmlFile));
-      if (url == null) return;
-
-      ConfigurationType configurationType = ConfigurationTypeUtil.findConfigurationType("JavascriptDebugType");
-      if (configurationType == null) return;
-
       final RunManager runManager = RunManager.getInstance(module.getProject());
-      final RunnerAndConfigurationSettings settings = runManager.createConfiguration("", configurationType.getClass());
+      final RunnerAndConfigurationSettings settings = runManager.createConfiguration("", DartWebdevConfigurationType.class);
 
-      ((JavaScriptDebugConfiguration)settings.getConfiguration()).setUri(url.toDecodedForm());
-      settings.setName(((JavaScriptDebugConfiguration)settings.getConfiguration()).suggestedName());
+      DartWebdevConfiguration runConfiguration = (DartWebdevConfiguration)settings.getConfiguration();
+      runConfiguration.getParameters().setHtmlFilePath(htmlFile.getPath());
+      settings.setName(runConfiguration.suggestedName());
 
       runManager.addConfiguration(settings);
       runManager.setSelectedConfiguration(settings);
@@ -120,8 +111,7 @@ public abstract class DartProjectTemplate {
   static void createCmdLineRunConfiguration(final @NotNull Module module, final @NotNull VirtualFile mainDartFile) {
     DartModuleBuilder.runWhenNonModalIfModuleNotDisposed(() -> {
       final RunManager runManager = RunManager.getInstance(module.getProject());
-      final RunnerAndConfigurationSettings settings =
-        runManager.createConfiguration("", DartCommandLineRunConfigurationType.getInstance().getConfigurationFactories()[0]);
+      final RunnerAndConfigurationSettings settings = runManager.createConfiguration("", DartCommandLineRunConfigurationType.class);
 
       final DartCommandLineRunConfiguration runConfiguration = (DartCommandLineRunConfiguration)settings.getConfiguration();
       runConfiguration.getRunnerParameters().setFilePath(mainDartFile.getPath());

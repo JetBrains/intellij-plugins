@@ -36,33 +36,32 @@ public class PsiClassTypeMock extends PsiClassType {
   }
 
   @Override
-  @NotNull
-  public PsiType[] getParameters() {
+  public PsiType @NotNull [] getParameters() {
     return EMPTY_ARRAY;
   }
 
   @Override
   @NotNull
   public ClassResolveResult resolveGenerics() {
-    return null;
+    throw new UnsupportedOperationException();
   }
 
   @Override
   @NotNull
   public PsiClassType rawType() {
-    return null;
+    throw new UnsupportedOperationException();
   }
 
   @Override
   @NotNull
   public GlobalSearchScope getResolveScope() {
-    return null;
+    throw new UnsupportedOperationException();
   }
 
   @Override
   @NotNull
   public LanguageLevel getLanguageLevel() {
-    return null;
+    throw new UnsupportedOperationException();
   }
 
   @NotNull

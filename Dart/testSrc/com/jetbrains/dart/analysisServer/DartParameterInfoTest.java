@@ -1,7 +1,10 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.dart.analysisServer;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.testFramework.builders.ModuleFixtureBuilder;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.ModuleFixture;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import com.intellij.testFramework.utils.parameterInfo.MockCreateParameterInfoContext;
 import com.intellij.testFramework.utils.parameterInfo.MockParameterInfoUIContext;
@@ -11,7 +14,7 @@ import com.jetbrains.lang.dart.ide.info.DartFunctionDescription;
 import com.jetbrains.lang.dart.ide.info.DartParameterInfoHandler;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 
-public class DartParameterInfoTest extends CodeInsightFixtureTestCase {
+public class DartParameterInfoTest extends CodeInsightFixtureTestCase<ModuleFixtureBuilder<ModuleFixture>> {
   @Override
   public void setUp() throws Exception {
     super.setUp();
@@ -35,16 +38,16 @@ public class DartParameterInfoTest extends CodeInsightFixtureTestCase {
     assertNotNull(elt);
     parameterInfoHandler.showParameterInfo(elt, createContext);
     Object[] items = createContext.getItemsToShow();
-    assertTrue(items != null);
+    assertNotNull(items);
     assertTrue(items.length > 0);
-    MockParameterInfoUIContext context = new MockParameterInfoUIContext<>(elt);
+    MockParameterInfoUIContext<PsiElement> context = new MockParameterInfoUIContext<>(elt);
     parameterInfoHandler.updateUI((DartFunctionDescription)items[0], context);
     assertEquals(infoText, parameterInfoHandler.getParametersListPresentableText());
 
     // index check
     MockUpdateParameterInfoContext updateContext = new MockUpdateParameterInfoContext(getEditor(), getFile());
     final PsiElement element = parameterInfoHandler.findElementForUpdatingParameterInfo(updateContext);
-    assertNotNull(element);
+    assertEquals(elt, element);
     parameterInfoHandler.updateParameterInfo(element, updateContext);
     assertEquals(highlightedParameterIndex, updateContext.getCurrentParameter());
 
@@ -79,12 +82,12 @@ public class DartParameterInfoTest extends CodeInsightFixtureTestCase {
     doTest("int x, int y", 1);
   }
 
-  public void _testParamInfo6() {
-    doTest("int x, int y = 239", 1);
+  public void testParamInfo6() {
+    doTest("int x, {int y: 239}", 1);
   }
 
-  public void _testParamInfo7() {
-    doTest("int x, int y = 239", 0);
+  public void testParamInfo7() {
+    doTest("int x, {int y: 239}", 0);
   }
 
   public void testParamInfo8() {
@@ -125,6 +128,30 @@ public class DartParameterInfoTest extends CodeInsightFixtureTestCase {
 
   public void testParamInfo18() {
     doTest("[String s = 'foo']", 0, 1, 17);
+  }
+
+  public void testParamInfo19() {
+    doTest("[String str]", 0);
+  }
+
+  public void testParamInfo20() {
+    doTest("[String str]", 0);
+  }
+
+  public void testParamInfo21() {
+    doTest("[String str]", 0);
+  }
+
+  public void testParamInfo22() {
+    doTest("{String str}", 0);
+  }
+
+  public void testParamInfo23() {
+    doTest("{String str}", 0);
+  }
+
+  public void testParamInfo24() {
+    doTest("{String str}", 0);
   }
 
   public void testParamInfo_call_localVariable() {

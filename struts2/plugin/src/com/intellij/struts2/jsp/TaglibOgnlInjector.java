@@ -44,33 +44,33 @@ import static com.intellij.patterns.XmlPatterns.xmlTag;
  * @author Yann C&eacute;bron
  */
 public class TaglibOgnlInjector implements MultiHostInjector, DumbAware {
+  private static class Holder {
+    private static final XmlAttributeValuePattern STRUTS_TAG_ATTRIBUTE = xmlAttributeValue()
+      .withSuperParent(2, xmlTag().withNamespace(StrutsConstants.TAGLIB_STRUTS_UI_URI,
+                                                 StrutsConstants.TAGLIB_JQUERY_PLUGIN_URI,
+                                                 StrutsConstants.TAGLIB_JQUERY_RICHTEXT_PLUGIN_URI,
+                                                 StrutsConstants.TAGLIB_JQUERY_CHART_PLUGIN_URI,
+                                                 StrutsConstants.TAGLIB_JQUERY_TREE_PLUGIN_URI,
+                                                 StrutsConstants.TAGLIB_JQUERY_GRID_PLUGIN_URI,
+                                                 StrutsConstants.TAGLIB_JQUERY_MOBILE_PLUGIN_URI,
+                                                 StrutsConstants.TAGLIB_BOOTSTRAP_PLUGIN_URI
+      ))
+      .withLocalName(not(string().oneOf(StrutsConstants.TAGLIB_STRUTS_UI_CSS_ATTRIBUTES))); // do not mix with CSS
 
-  private static final XmlAttributeValuePattern STRUTS_TAG_ATTRIBUTE = xmlAttributeValue()
-    .withSuperParent(2, xmlTag().withNamespace(StrutsConstants.TAGLIB_STRUTS_UI_URI,
-                                               StrutsConstants.TAGLIB_JQUERY_PLUGIN_URI,
-                                               StrutsConstants.TAGLIB_JQUERY_RICHTEXT_PLUGIN_URI,
-                                               StrutsConstants.TAGLIB_JQUERY_CHART_PLUGIN_URI,
-                                               StrutsConstants.TAGLIB_JQUERY_TREE_PLUGIN_URI,
-                                               StrutsConstants.TAGLIB_JQUERY_GRID_PLUGIN_URI,
-                                               StrutsConstants.TAGLIB_JQUERY_MOBILE_PLUGIN_URI,
-                                               StrutsConstants.TAGLIB_BOOTSTRAP_PLUGIN_URI
-    ))
-    .withLocalName(not(string().oneOf(StrutsConstants.TAGLIB_STRUTS_UI_CSS_ATTRIBUTES))); // do not mix with CSS
+    // generic attribute containing "%{" (multiple occurrences possible)
+    private static final ElementPattern<XmlAttributeValue> OGNL_OCCURRENCE_PATTERN = xmlAttributeValue()
+      .withValue(string().longerThan(OgnlLanguage.EXPRESSION_PREFIX.length()).contains(OgnlLanguage.EXPRESSION_PREFIX));
 
-  // generic attribute containing "%{" (multiple occurrences possible)
-  private static final ElementPattern<XmlAttributeValue> OGNL_OCCURRENCE_PATTERN = xmlAttributeValue()
-    .withValue(string().longerThan(OgnlLanguage.EXPRESSION_PREFIX.length()).contains(OgnlLanguage.EXPRESSION_PREFIX));
+    // attributes always containing expression _without_ prefix
+    // <s:iterator> "value"
+    private static final ElementPattern<XmlAttributeValue> OGNL_WITHOUT_PREFIX_PATTERN = xmlAttributeValue()
+      .withLocalName("value")
+      .withSuperParent(2, xmlTag().withLocalName("iterator"));
 
-  // attributes always containing expression _without_ prefix
-  // <s:iterator> "value"
-  private static final ElementPattern<XmlAttributeValue> OGNL_WITHOUT_PREFIX_PATTERN = xmlAttributeValue()
-    .withLocalName("value")
-    .withSuperParent(2, xmlTag().withLocalName("iterator"));
-
-  // list/map expression
-  private static final ElementPattern<XmlAttributeValue> OGNL_LIST_MAP_PATTERN = xmlAttributeValue()
-    .withValue(string().andOr(string().startsWith("{"), string().startsWith("#{")));
-
+    // list/map expression
+    private static final ElementPattern<XmlAttributeValue> OGNL_LIST_MAP_PATTERN = xmlAttributeValue()
+      .withValue(string().andOr(string().startsWith("{"), string().startsWith("#{")));
+  }
   @Override
   public void getLanguagesToInject(@NotNull final MultiHostRegistrar multiHostRegistrar,
                                    @NotNull final PsiElement psiElement) {
@@ -79,7 +79,7 @@ public class TaglibOgnlInjector implements MultiHostInjector, DumbAware {
       return;
     }
 
-    if (!STRUTS_TAG_ATTRIBUTE.accepts(psiElement)) {
+    if (!Holder.STRUTS_TAG_ATTRIBUTE.accepts(psiElement)) {
       return;
     }
 
@@ -88,17 +88,17 @@ public class TaglibOgnlInjector implements MultiHostInjector, DumbAware {
       return;
     }
 
-    if (OGNL_OCCURRENCE_PATTERN.accepts(psiElement)) {
+    if (Holder.OGNL_OCCURRENCE_PATTERN.accepts(psiElement)) {
       OgnlLanguageInjector.injectOccurrences(multiHostRegistrar, (PsiLanguageInjectionHost)psiElement);
       return;
     }
 
-    if (OGNL_WITHOUT_PREFIX_PATTERN.accepts(psiElement)) {
+    if (Holder.OGNL_WITHOUT_PREFIX_PATTERN.accepts(psiElement)) {
       OgnlLanguageInjector.injectElementWithPrefixSuffix(multiHostRegistrar, (PsiLanguageInjectionHost)psiElement);
       return;
     }
 
-    if (OGNL_LIST_MAP_PATTERN.accepts(psiElement)) {
+    if (Holder.OGNL_LIST_MAP_PATTERN.accepts(psiElement)) {
       OgnlLanguageInjector.injectElementWithPrefixSuffix(multiHostRegistrar, (PsiLanguageInjectionHost)psiElement);
     }
   }

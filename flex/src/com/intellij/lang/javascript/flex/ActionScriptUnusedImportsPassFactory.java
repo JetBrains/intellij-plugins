@@ -3,17 +3,18 @@ package com.intellij.lang.javascript.flex;
 
 import com.intellij.codeHighlighting.*;
 import com.intellij.codeInsight.daemon.HighlightDisplayKey;
-import com.intellij.codeInsight.daemon.impl.AnnotationHolderImpl;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
+import com.intellij.codeInsight.daemon.impl.HighlightInfoType;
+import com.intellij.codeInsight.daemon.impl.SeverityRegistrar;
 import com.intellij.codeInsight.daemon.impl.UpdateHighlightersUtil;
+import com.intellij.codeInsight.daemon.impl.quickfix.QuickFixAction;
 import com.intellij.codeInsight.intention.IntentionAction;
+import com.intellij.codeInspection.ProblemDescriptorUtil;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.lang.ImportOptimizer;
-import com.intellij.lang.annotation.Annotation;
-import com.intellij.lang.annotation.AnnotationHolder;
-import com.intellij.lang.annotation.AnnotationSession;
+import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
 import com.intellij.lang.javascript.psi.JSElement;
@@ -32,6 +33,7 @@ import com.intellij.profile.codeInspection.InspectionProjectProfileManager;
 import com.intellij.psi.PsiCompiledElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -67,7 +69,7 @@ final class ActionScriptUnusedImportsPassFactory implements TextEditorHighlighti
       @Override
       @NotNull
       public String getText() {
-        return JSBundle.message("javascript.fix.optimize.imports");
+        return JavaScriptBundle.message("javascript.fix.optimize.imports");
       }
 
       @Override
@@ -135,27 +137,30 @@ final class ActionScriptUnusedImportsPassFactory implements TextEditorHighlighti
     }
 
     private List<HighlightInfo> getHighlights() {
-      final AnnotationHolder annotationHolder = new AnnotationHolderImpl(new AnnotationSession(myFile));
       final List<HighlightInfo> infos = new ArrayList<>(importStatements.size() + fqnsToReplaceWithShortName.size());
       IntentionAction action = createOptimizeImportsIntention();
 
-      createHighlights(importStatements, annotationHolder, action, JSBundle.message("javascript.validation.unused.import"), infos,
+      createHighlights(importStatements, action, JavaScriptBundle.message("javascript.validation.unused.import"), infos,
                        ProblemHighlightType.LIKE_UNUSED_SYMBOL);
-      createHighlights(fqnsToReplaceWithShortName, annotationHolder, action, JSBundle.message("javascript.validation.fqn.to.replace.with.import"), infos,
+      createHighlights(fqnsToReplaceWithShortName, action, JavaScriptBundle.message("javascript.validation.fqn.to.replace.with.import"), infos,
                        ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
       return infos;
     }
 
-    private static void createHighlights(Collection<? extends JSElement> elements, AnnotationHolder annotationHolder, IntentionAction action, String message, List<HighlightInfo> result,
+    private static void createHighlights(Collection<? extends JSElement> elements,
+                                         IntentionAction action,
+                                         String message,
+                                         List<? super HighlightInfo> result,
                                          @NotNull ProblemHighlightType type) {
       for (JSElement unusedImport : elements) {
         TextRange range = InjectedLanguageManager.getInstance(unusedImport.getProject()).injectedToHost(unusedImport, unusedImport.getTextRange());
         if (range.isEmpty()) continue;
 
-        final Annotation annotation = annotationHolder.createWarningAnnotation(range, message);
-        annotation.setHighlightType(type);
-        annotation.registerFix(action);
-        result.add(HighlightInfo.fromAnnotation(annotation));
+        HighlightInfoType highlightInfoType =
+          ProblemDescriptorUtil.getHighlightInfoType(type, HighlightSeverity.WARNING, SeverityRegistrar.getSeverityRegistrar(unusedImport.getProject()));
+        HighlightInfo info = HighlightInfo.newHighlightInfo(highlightInfoType).range(range).descriptionAndTooltip(message).create();
+        QuickFixAction.registerQuickFixAction(info, action);
+        ContainerUtil.addIfNotNull(result, info);
       }
     }
   }

@@ -45,16 +45,13 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
 
     final DartSdk sdk = DartSdk.getDartSdk(project);
     if (sdk != null && StringUtil.compareVersionNumbers(sdk.getVersion(), "2") < 0) {
-      myCheckedModeOrEnableAssertsCheckBox.setText("Checked mode");
+      myCheckedModeOrEnableAssertsCheckBox.setText(DartBundle.message("checkbox.text.checked.mode"));
       myCheckedModeOrEnableAssertsCheckBox.setMnemonic('c');
     }
     else {
-      myCheckedModeOrEnableAssertsCheckBox.setText("Enable asserts");
+      myCheckedModeOrEnableAssertsCheckBox.setText(DartBundle.message("checkbox.text.enable.asserts"));
       myCheckedModeOrEnableAssertsCheckBox.setMnemonic('l');
     }
-
-    myVMOptions.setDialogCaption(DartBundle.message("config.vmoptions.caption"));
-    myArguments.setDialogCaption(DartBundle.message("config.progargs.caption"));
 
     // 'Environment variables' is the widest label, anchored by myDartFileLabel
     myDartFileLabel.setPreferredSize(myEnvironmentVariables.getLabel().getPreferredSize());

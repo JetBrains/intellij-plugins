@@ -6,8 +6,13 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.model.VueInputProperty
 import org.jetbrains.vuejs.model.webtypes.json.Attribute
 
-class VueWebTypesInputProperty(it: Attribute, typeProvider: (Any?) -> JSType?) : VueInputProperty {
-  override val name: String = it.name!!
+internal class VueWebTypesInputProperty(attribute: Attribute, context: VueWebTypesEntitiesContainer.WebTypesContext)
+  : VueWebTypesDocumentedItem(attribute, context), VueInputProperty {
+
+  override val name: String = attribute.name!!
   override val source: PsiElement? = null
-  override val jsType: JSType? = typeProvider(it.type)
+  override val required: Boolean = attribute.required ?: false
+  override val jsType: JSType? = ((attribute.value as? Map<*, *>)?.get("type") ?: attribute.type)
+    ?.let { context.getType(it) }
+  override val defaultValue: String? = attribute.default
 }

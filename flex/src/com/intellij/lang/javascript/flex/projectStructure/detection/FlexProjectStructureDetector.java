@@ -42,7 +42,7 @@ public class FlexProjectStructureDetector extends ProjectStructureDetector {
   @Override
   @NotNull
   public DirectoryProcessingResult detectRoots(@NotNull final File dir,
-                                               @NotNull final File[] children,
+                                               final File @NotNull [] children,
                                                @NotNull final File base,
                                                @NotNull final List<DetectedProjectRoot> result) {
     for (File child : children) {

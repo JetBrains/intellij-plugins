@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.index;
 
 import com.intellij.openapi.util.Key;
@@ -19,7 +19,7 @@ import static com.jetbrains.lang.dart.ide.index.DartImportOrExportInfo.Kind;
 
 public class DartIndexUtil {
   // inc when change parser
-  public static final int INDEX_VERSION = 24;
+  public static final int INDEX_VERSION = 25;
 
   private static final Key<DartFileIndexData> ourDartCachesData = Key.create("dart.caches.index.data");
 
@@ -39,11 +39,15 @@ public class DartIndexUtil {
   private static DartFileIndexData indexFileRoots(PsiFile psiFile) {
     DartFileIndexData result = new DartFileIndexData();
 
-    result.setLibraryName(DartResolveUtil.getLibraryName(psiFile));
+    final DartLibraryStatement libraryStatement = PsiTreeUtil.getChildOfType(psiFile, DartLibraryStatement.class);
+    if (libraryStatement != null) {
+      result.setLibraryName(libraryStatement.getLibraryNameElement().getName());
+    }
+
     result.setIsPart(PsiTreeUtil.getChildOfType(psiFile, DartPartOfStatement.class) != null);
 
-    for (PsiElement rootElement : DartResolveUtil.findDartRoots(psiFile)) {
-      PsiElement[] children = rootElement.getChildren();
+    if (psiFile instanceof DartFile) {
+      PsiElement[] children = psiFile.getChildren();
 
       for (DartComponentName componentName : DartControlFlowUtil.getSimpleDeclarations(children, null, false)) {
         final String name = componentName.getName();

@@ -28,10 +28,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public class WebXmlStrutsConstantValueReferenceProvider extends PsiReferenceProvider {
 
-  @NotNull
   @Override
-  public PsiReference[] getReferencesByElement(@NotNull final PsiElement psiElement,
-                                               @NotNull final ProcessingContext processingContext) {
+  public PsiReference @NotNull [] getReferencesByElement(@NotNull final PsiElement psiElement,
+                                                         @NotNull final ProcessingContext processingContext) {
     return new PsiReference[]{new StrutsConstantValueReference((XmlTag) psiElement)};
   }
 

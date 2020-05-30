@@ -65,7 +65,7 @@ public class Angular2ParserTest extends LightPlatformCodeInsightTestCase impleme
     }
   }
 
-  private static void doSingleTest(String suffix, String path) throws Throwable {
+  private void doSingleTest(String suffix, String path) throws Throwable {
     final String text = FileUtil.loadFile(new File(path, suffix), true);
     final StringBuilder result = new StringBuilder();
 

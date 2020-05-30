@@ -7,20 +7,19 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.resolve.JSImportHandler;
 import com.intellij.lang.javascript.psi.resolve.JSTypeResolveResult;
 import com.intellij.psi.PsiElement;
-import org.angular2.index.Angular2IndexingHandler;
+import org.angular2.entities.Angular2ComponentLocator;
 import org.jetbrains.annotations.NotNull;
 
 public class Angular2ImportHandler extends TypeScriptImportHandler {
 
   private static final JSImportHandler JS_IMPORT_HANDLER = JSImportHandler.getInstance();
 
-  @NotNull
   @Override
-  protected JSTypeResolveResult resolveNameImpl(@NotNull String type,
-                                                @NotNull PsiElement sourceRaw,
-                                                @NotNull TypeScriptQualifiedNameResolver.StrictKind typeContext,
-                                                boolean includeAugmentations) {
-    TypeScriptClass cls = Angular2IndexingHandler.findComponentClass(sourceRaw);
+  protected @NotNull JSTypeResolveResult resolveNameImpl(@NotNull String type,
+                                                         @NotNull PsiElement sourceRaw,
+                                                         @NotNull TypeScriptQualifiedNameResolver.StrictKind typeContext,
+                                                         boolean includeAugmentations) {
+    TypeScriptClass cls = Angular2ComponentLocator.findComponentClass(sourceRaw);
     if (cls != null) {
       return super.resolveNameImpl(type, cls, typeContext, includeAugmentations);
     }

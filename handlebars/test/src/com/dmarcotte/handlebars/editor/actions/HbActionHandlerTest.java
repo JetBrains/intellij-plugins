@@ -42,7 +42,8 @@ public abstract class HbActionHandlerTest extends BasePlatformTestCase {
    * See class documentation for more info: {@link HbActionHandlerTest}
    */
   void doCharTest(final char charToType, @NotNull String before, @NotNull String expected) {
-    final TypedAction typedAction = EditorActionManager.getInstance().getTypedAction();
+    EditorActionManager.getInstance();
+    final TypedAction typedAction = TypedAction.getInstance();
     doExecuteActionTest(before, expected, () -> typedAction.actionPerformed(myFixture.getEditor(), charToType, ((EditorEx)myFixture.getEditor()).getDataContext()));
   }
 
@@ -53,7 +54,7 @@ public abstract class HbActionHandlerTest extends BasePlatformTestCase {
   protected void doEnterTest(@NotNull String before, @NotNull String expected) {
     final EditorActionHandler enterActionHandler = EditorActionManager.getInstance().getActionHandler(IdeActions.ACTION_EDITOR_ENTER);
     doExecuteActionTest(before, expected,
-                        () -> enterActionHandler.execute(myFixture.getEditor(), ((EditorEx)myFixture.getEditor()).getDataContext()));
+                        () -> enterActionHandler.execute(myFixture.getEditor(), null, ((EditorEx)myFixture.getEditor()).getDataContext()));
   }
 
   /**

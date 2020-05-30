@@ -43,10 +43,11 @@ public class AngularJSInjector implements MultiHostInjector {
     if (context.getLanguage() == XMLLanguage.INSTANCE) return;
     // check that we have angular directives indexed before injecting
     final Project project = context.getProject();
-    if (!AngularIndexUtil.hasAngularJS(project)) return;
 
     final PsiElement parent = context.getParent();
-    if (context instanceof XmlAttributeValueImpl && parent instanceof XmlAttribute) {
+    if (context instanceof XmlAttributeValueImpl && parent instanceof XmlAttribute &&
+        ((XmlAttributeValueImpl)context).isValidHost()) {
+      if (!AngularIndexUtil.hasAngularJS(project)) return;
       final String value = context.getText();
       final int start = value.startsWith("'") || value.startsWith("\"") ? 1 : 0;
       final int end = value.endsWith("'") || value.endsWith("\"") ? 1 : 0;
@@ -66,6 +67,7 @@ public class AngularJSInjector implements MultiHostInjector {
     }
 
     if (context instanceof XmlTextImpl && !nonBindable((XmlTextImpl)context) || context instanceof XmlAttributeValueImpl) {
+      if (!AngularIndexUtil.hasAngularJS(project)) return;
       final Pair<String, String> braces = BRACES_FACTORY.fun(context);
       if (braces == null) return;
 
@@ -74,16 +76,15 @@ public class AngularJSInjector implements MultiHostInjector {
     }
   }
 
-  private static boolean nonBindable(@NotNull final XmlTextImpl xmlText) {
+  private static boolean nonBindable(final @NotNull XmlTextImpl xmlText) {
     final XmlTag parentTag = xmlText.getParentTag();
     return parentTag != null && ContainerUtil.find(parentTag.getAttributes(),
                                                    attr -> "ngNonBindable".equals(DirectiveUtil.normalizeAttributeName(attr.getName()))) !=
                                 null;
   }
 
-  @NotNull
   @Override
-  public List<Class<? extends PsiElement>> elementsToInjectIn() {
+  public @NotNull List<Class<? extends PsiElement>> elementsToInjectIn() {
     return Arrays.asList(XmlTextImpl.class, XmlAttributeValueImpl.class);
   }
 }

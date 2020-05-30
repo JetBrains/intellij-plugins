@@ -26,6 +26,7 @@ package org.osmorc.manifest.lang;
 
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
+import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -50,18 +51,18 @@ public class OsgiManifestHighlightingAnnotator implements Annotator {
         HeaderValuePart nameElement = ((AssignmentExpression)parent).getNameElement();
         if (parent instanceof Attribute) {
           if (element == nameElement) {
-            annotate(element, OsgiManifestColorsAndFonts.ATTRIBUTE_NAME_KEY, holder);
+            annotate(OsgiManifestColorsAndFonts.ATTRIBUTE_NAME_KEY, holder);
           }
           else {
-            annotate(element, OsgiManifestColorsAndFonts.ATTRIBUTE_VALUE_KEY, holder);
+            annotate(OsgiManifestColorsAndFonts.ATTRIBUTE_VALUE_KEY, holder);
           }
         }
         else if (parent instanceof Directive) {
           if (element == nameElement) {
-            annotate(element, OsgiManifestColorsAndFonts.DIRECTIVE_NAME_KEY, holder);
+            annotate(OsgiManifestColorsAndFonts.DIRECTIVE_NAME_KEY, holder);
           }
           else {
-            annotate(element, OsgiManifestColorsAndFonts.DIRECTIVE_VALUE_KEY, holder);
+            annotate(OsgiManifestColorsAndFonts.DIRECTIVE_VALUE_KEY, holder);
           }
         }
       }
@@ -69,23 +70,21 @@ public class OsgiManifestHighlightingAnnotator implements Annotator {
     else if (element instanceof ManifestToken) {
       ManifestTokenType type = ((ManifestToken)element).getTokenType();
       if (element.getParent() instanceof Attribute && type == ManifestTokenType.EQUALS) {
-        annotate(element, OsgiManifestColorsAndFonts.ATTRIBUTE_ASSIGNMENT_KEY, holder);
+        annotate(OsgiManifestColorsAndFonts.ATTRIBUTE_ASSIGNMENT_KEY, holder);
       }
       else if (element.getParent() instanceof Directive && (type == ManifestTokenType.COLON || type == ManifestTokenType.EQUALS)) {
-        annotate(element, OsgiManifestColorsAndFonts.DIRECTIVE_ASSIGNMENT_KEY, holder);
+        annotate(OsgiManifestColorsAndFonts.DIRECTIVE_ASSIGNMENT_KEY, holder);
       }
       else if (element.getParent() instanceof Clause && type == ManifestTokenType.SEMICOLON) {
-        annotate(element, OsgiManifestColorsAndFonts.PARAMETER_SEPARATOR_KEY, holder);
+        annotate(OsgiManifestColorsAndFonts.PARAMETER_SEPARATOR_KEY, holder);
       }
       else if (element.getParent() instanceof Header && type == ManifestTokenType.COMMA) {
-        annotate(element, OsgiManifestColorsAndFonts.CLAUSE_SEPARATOR_KEY, holder);
+        annotate(OsgiManifestColorsAndFonts.CLAUSE_SEPARATOR_KEY, holder);
       }
     }
   }
 
-  private static void annotate(PsiElement element, TextAttributesKey key, AnnotationHolder holder) {
-    if (element != null) {
-      holder.createInfoAnnotation(element, null).setTextAttributes(key);
-    }
+  private static void annotate(@NotNull TextAttributesKey key, @NotNull AnnotationHolder holder) {
+    holder.newSilentAnnotation(HighlightSeverity.INFORMATION).textAttributes(key).create();
   }
 }

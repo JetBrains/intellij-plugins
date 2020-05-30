@@ -184,17 +184,18 @@ public class FlexProjectConfigTest extends JavaModuleTestCase {
         return false;
       }
 
-      return libraryId == ((FlexLibraryProperties)((LibraryEx)library).getProperties()).getId();
+      return libraryId.equals(((FlexLibraryProperties)((LibraryEx)library).getProperties()).getId());
     });
   }
 
   private String createModuleLibrary() {
     final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(myModule).getModifiableModel();
     final LibraryTable.ModifiableModel libraryTable = modifiableModel.getModuleLibraryTable().getModifiableModel();
-    LibraryEx library = (LibraryEx)libraryTable.createLibrary("test", FlexLibraryType.FLEX_LIBRARY);
+    LibraryEx.ModifiableModelEx libraryModel = (LibraryEx.ModifiableModelEx)libraryTable.createLibrary("test", FlexLibraryType.FLEX_LIBRARY).getModifiableModel();
     String libraryId = UUID.randomUUID().toString();
-    ((FlexLibraryProperties)library.getProperties()).setId(libraryId);
+    libraryModel.setProperties(new FlexLibraryProperties(libraryId));
     ApplicationManager.getApplication().runWriteAction(() -> {
+      libraryModel.commit();
       libraryTable.commit();
       modifiableModel.commit();
     });

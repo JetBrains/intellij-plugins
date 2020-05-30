@@ -25,9 +25,8 @@ public class Angular2PipeLeftSideArgumentImpl extends JSElementImpl implements A
                        node -> node.getPsi(JSExpression.class));
   }
 
-  @NotNull
   @Override
-  public JSExpression[] getArguments() {
+  public JSExpression @NotNull [] getArguments() {
     JSExpression leftExpr = getPipeLeftSideExpression();
     if (leftExpr == null) {
       return JSExpression.EMPTY_ARRAY;
@@ -37,8 +36,7 @@ public class Angular2PipeLeftSideArgumentImpl extends JSElementImpl implements A
                                 : ArrayUtil.prepend(leftExpr, mainArgsList);
   }
 
-  @Nullable
-  private JSExpression[] getPipeRightSideExpressions() {
+  private JSExpression @Nullable [] getPipeRightSideExpressions() {
     return doIfNotNull(((Angular2PipeExpressionImpl)getParent())
                          .findChildByType(Angular2ElementTypes.PIPE_ARGUMENTS_LIST),
                        node -> doIfNotNull(node.getPsi(Angular2PipeArgumentsListImpl.class),

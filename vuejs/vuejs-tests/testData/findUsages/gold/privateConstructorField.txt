@@ -1,0 +1,2 @@
+<privateFields.vue.int:(0,3):(0,3)>	bar
+<privateFields.vue:(401,409):(5,8)>	this.foo + 12 + this.bar

@@ -8,12 +8,11 @@ import com.intellij.psi.resolve.JavaMethodResolveHelper;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PropertyUtilBase;
 import com.intellij.tapestry.core.TapestryConstants;
-import gnu.trove.THashSet;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -26,8 +25,8 @@ import static com.intellij.util.containers.ContainerUtil.addIfNotNull;
  */
 abstract class TelVariantsProcessor<T> implements PsiScopeProcessor {
 
-  @NonNls private static final THashSet<String> INSECURE_OBJECT_METHODS =
-    new THashSet<>(Arrays.asList("wait", "notify", "notifyAll"));
+  @NonNls private static final Set<String> INSECURE_OBJECT_METHODS =
+    ContainerUtil.set("wait", "notify", "notifyAll");
 
   private final Set<T> myResult = new LinkedHashSet<>();
   private final boolean myForCompletion;
@@ -115,8 +114,7 @@ abstract class TelVariantsProcessor<T> implements PsiScopeProcessor {
   @Nullable
   protected abstract T createResult(final PsiNamedElement element, final boolean validResult);
 
-  @NotNull
-  public T[] getVariants(T[] array) {
+  public T @NotNull [] getVariants(T[] array) {
     if (myPropertyAccessors != null) {
       for (final JavaMethodCandidateInfo methodCandidateInfo : myPropertyAccessors.getMethods()) {
         final BeanProperty property = BeanProperty.createBeanProperty(methodCandidateInfo.getMethod());

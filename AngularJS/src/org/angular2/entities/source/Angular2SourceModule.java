@@ -26,7 +26,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.intellij.util.ObjectUtils.notNull;
 import static org.angular2.Angular2DecoratorUtil.getObjectLiteralInitializer;
 import static org.angular2.Angular2DecoratorUtil.getReferencedObjectLiteralInitializer;
 
@@ -41,26 +40,22 @@ public class Angular2SourceModule extends Angular2SourceEntity implements Angula
   }
 
   @Override
-  @NotNull
-  public Set<Angular2Declaration> getDeclarations() {
+  public @NotNull Set<Angular2Declaration> getDeclarations() {
     return myModuleResolver.getDeclarations();
   }
 
   @Override
-  @NotNull
-  public Set<Angular2Module> getImports() {
+  public @NotNull Set<Angular2Module> getImports() {
     return myModuleResolver.getImports();
   }
 
   @Override
-  @NotNull
-  public Set<Angular2Entity> getExports() {
+  public @NotNull Set<Angular2Entity> getExports() {
     return myModuleResolver.getExports();
   }
 
-  @NotNull
   @Override
-  public Set<Angular2Declaration> getAllExportedDeclarations() {
+  public @NotNull Set<Angular2Declaration> getAllExportedDeclarations() {
     return myModuleResolver.getAllExportedDeclarations();
   }
 
@@ -142,7 +137,7 @@ public class Angular2SourceModule extends Angular2SourceEntity implements Angula
 
     @Override
     protected void processCacheDependency(PsiElement element) {
-      myDependencies.add(notNull(element.getContainingFile(), element));
+      myDependencies.add(element);
     }
 
     @Override

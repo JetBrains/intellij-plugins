@@ -21,15 +21,13 @@ public class AngularJSFramework extends FrameworkType {
     super(ID);
   }
 
-  @NotNull
   @Override
-  public String getPresentableName() {
+  public @NotNull String getPresentableName() {
     return Angular2Bundle.message("angular.description.angular-cli");
   }
 
-  @NotNull
   @Override
-  public Icon getIcon() {
+  public @NotNull Icon getIcon() {
     return AngularJSIcons.Angular2;
   }
 }

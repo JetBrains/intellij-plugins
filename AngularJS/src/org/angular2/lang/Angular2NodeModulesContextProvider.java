@@ -3,23 +3,22 @@ package org.angular2.lang;
 
 import com.intellij.javascript.nodejs.library.NodeModulesDirectoryManager;
 import com.intellij.javascript.nodejs.library.NodeModulesLibraryDirectory;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.util.CachedValueProvider;
 import org.jetbrains.annotations.NotNull;
 
-import static org.angular2.lang.html.psi.impl.Angular2HtmlReferenceVariableImpl.ANGULAR_CORE_PACKAGE;
+import static org.angular2.lang.Angular2LangUtil.ANGULAR_CORE_PACKAGE;
 
 public class Angular2NodeModulesContextProvider implements Angular2ContextProvider {
-  @NotNull
   @Override
-  public CachedValueProvider.Result<Boolean> isAngular2Context(@NotNull PsiDirectory psiDir) {
+  public @NotNull CachedValueProvider.Result<Boolean> isAngular2Context(@NotNull PsiDirectory psiDir) {
     NodeModulesDirectoryManager manager = NodeModulesDirectoryManager.getInstance(psiDir.getProject());
-    String dirPath = psiDir.getVirtualFile().getPath() + "/";
     boolean result = false;
     for (NodeModulesLibraryDirectory dir : manager.getNodeModulesDirectories()) {
       VirtualFile nodeModules = dir.getNodeModulesDir();
-      if (dirPath.startsWith(nodeModules.getParent().getPath() + "/")) {
+      if (VfsUtilCore.isAncestor(nodeModules.getParent(), psiDir.getVirtualFile(), false)) {
         VirtualFile child = dir.getNodeModulesDir().findFileByRelativePath(ANGULAR_CORE_PACKAGE);
         if (child != null && child.isValid() && child.isDirectory()) {
           result = true;

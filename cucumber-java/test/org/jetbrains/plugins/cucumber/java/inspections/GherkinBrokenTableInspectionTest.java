@@ -3,7 +3,6 @@ package org.jetbrains.plugins.cucumber.java.inspections;
 import org.jetbrains.plugins.cucumber.inspections.GherkinBrokenTableInspection;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaCodeInsightTestCase;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
-import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 
 public class GherkinBrokenTableInspectionTest extends CucumberJavaCodeInsightTestCase {
   public void testBrokenTable() {
@@ -11,7 +10,6 @@ public class GherkinBrokenTableInspectionTest extends CucumberJavaCodeInsightTes
   }
 
   protected void doTest() {
-    CucumberStepsIndex.getInstance(getProject()).reset();
     myFixture.enableInspections(new GherkinBrokenTableInspection());
     myFixture.copyDirectoryToProject(getTestName(true), "");
     myFixture.configureByFile(getTestName(true) + "/test.feature");

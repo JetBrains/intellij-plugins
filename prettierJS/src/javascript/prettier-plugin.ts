@@ -1,6 +1,6 @@
 import * as prettier from "prettier";
 
-type PrettierApi = typeof prettier & { path: string }
+type PrettierApi = typeof prettier & { prettierPath: string, packageJsonPath?: string }
 
 interface FormatResponse {
     ignored?: boolean,
@@ -14,6 +14,7 @@ type FormatArguments = {
     end?: number,
     path: string,
     prettierPath: string,
+    packageJsonPath?: string,
     ignoreFilePath?: string,
     content: string,
     flushConfigCache: boolean
@@ -43,7 +44,7 @@ export class PrettierPlugin implements LanguagePlugin {
     }
 
     private handleReformatCommand(args: FormatArguments): FormatResponse {
-        let prettierApi = this.requirePrettierApi(args.prettierPath);
+        let prettierApi = this.requirePrettierApi(args.prettierPath, args.packageJsonPath);
 
         let options = {ignorePath: args.ignoreFilePath, withNodeModules: true};
         if (prettierApi.getFileInfo) {
@@ -58,12 +59,16 @@ export class PrettierPlugin implements LanguagePlugin {
         return performFormat(prettierApi, args)
     }
 
-    private requirePrettierApi(path: string): PrettierApi {
-        if (this._prettierApi != null && this._prettierApi.path == path) {
+    private requirePrettierApi(prettierPath: string, packageJsonPath?: string): PrettierApi {
+        if (this._prettierApi != null
+            && this._prettierApi.prettierPath == prettierPath
+            && this._prettierApi.packageJsonPath == packageJsonPath) {
             return this._prettierApi;
         }
-        let prettier = (<PrettierApi>require(path));
-        prettier.path = path;
+        const prettier = (<PrettierApi>requireInContext(prettierPath, packageJsonPath));
+        prettier.prettierPath = prettierPath;
+        prettier.packageJsonPath = packageJsonPath;
+        this._prettierApi = prettier;
         return prettier;
     }
 }
@@ -83,4 +88,21 @@ function performFormat(api: PrettierApi, args: FormatArguments): { formatted: st
     config.rangeStart = args.start;
     config.rangeEnd = args.end;
     return {formatted: api.format(args.content, config)};
+}
+
+function requireInContext(modulePathToRequire: string, contextPath?: string): any {
+    const contextRequire = getContextRequire(modulePathToRequire, contextPath);
+    return contextRequire(modulePathToRequire);
+}
+
+function getContextRequire(modulePathToRequire: string, contextPath?: string): NodeRequire {
+    if (contextPath != null) {
+        const m = require('module')
+        if (typeof m.createRequire === 'function') {
+            // https://nodejs.org/api/modules.html#modules_module_createrequire_filename
+            // Also, implemented for Yarn Pnp: https://next.yarnpkg.com/advanced/pnpapi/#requiremodule
+            return m.createRequire(contextPath);
+        }
+    }
+    return require;
 }

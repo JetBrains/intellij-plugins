@@ -15,9 +15,8 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class AngularHtmlLikeTemplateLocalInspectionTool extends LocalInspectionTool {
 
-  @NotNull
   @Override
-  public final PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
+  public final @NotNull PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
     if (holder.getFile() instanceof HtmlLikeFile
         && Angular2LangUtil.isAngular2Context(holder.getFile())) {
       return doBuildVisitor(holder);
@@ -25,8 +24,7 @@ public abstract class AngularHtmlLikeTemplateLocalInspectionTool extends LocalIn
     return PsiElementVisitor.EMPTY_VISITOR;
   }
 
-  @NotNull
-  protected PsiElementVisitor doBuildVisitor(@NotNull ProblemsHolder holder) {
+  protected @NotNull PsiElementVisitor doBuildVisitor(@NotNull ProblemsHolder holder) {
     return new XmlElementVisitor() {
       @Override
       public void visitXmlAttribute(XmlAttribute attribute) {

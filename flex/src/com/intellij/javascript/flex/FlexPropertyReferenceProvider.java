@@ -10,22 +10,24 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.util.ProcessingContext;
-import gnu.trove.THashSet;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author yole
  */
 public class FlexPropertyReferenceProvider extends PsiReferenceProvider {
-  private static final Set<String> ourMethodsWithPropertyReferences = new THashSet<>(
-    Arrays.asList("findResourceBundleWithResource", "getString", "getObject", "getClass", "getStringArray", "getNumber", "getInt",
-                  "getUint", "getBoolean"));
+  private static final Set<String> ourMethodsWithPropertyReferences = ContainerUtil
+    .set("findResourceBundleWithResource", "getString", "getObject", "getClass", "getStringArray", "getNumber", "getInt",
+         "getUint", "getBoolean");
 
-  @NotNull
   @Override
-  public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+  public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
     PsiElement parent = element.getParent();
 
     JSReferenceExpression invokedMethod = JSUtils.getMethodNameIfInsideCall(parent);
@@ -66,7 +68,7 @@ public class FlexPropertyReferenceProvider extends PsiReferenceProvider {
             PsiElement parentClass = JSResolveUtil.findParent(resolved);
             if (parentClass instanceof JSClass) {
               String name = ((JSClass)parentClass).getName();
-              isSoft = name == null || (name.indexOf("ResourceManager") == -1 && name.indexOf("ResourceBundle") == -1);
+              isSoft = name == null || (!name.contains("ResourceManager") && !name.contains("ResourceBundle"));
             }
           }
         }

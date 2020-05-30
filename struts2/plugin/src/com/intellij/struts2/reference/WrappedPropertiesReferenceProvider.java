@@ -38,10 +38,9 @@ public class WrappedPropertiesReferenceProvider extends PsiReferenceProvider {
     propertiesProvider = CommonReferenceProviderTypes.PROPERTIES_FILE_KEY_PROVIDER.getProvider();
   }
 
-  @NotNull
   @Override
-  public PsiReference[] getReferencesByElement(@NotNull final PsiElement psiElement,
-                                               @NotNull final ProcessingContext processingContext) {
+  public PsiReference @NotNull [] getReferencesByElement(@NotNull final PsiElement psiElement,
+                                                         @NotNull final ProcessingContext processingContext) {
     final StrutsFacet facet = StrutsFacet.getInstance(psiElement);
     return facet != null && !facet.getConfiguration().isPropertiesKeysDisabled() ?
         propertiesProvider.getReferencesByElement(psiElement, processingContext) : PsiReference.EMPTY_ARRAY;

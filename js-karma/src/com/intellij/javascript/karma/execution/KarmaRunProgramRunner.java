@@ -8,7 +8,6 @@ import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.process.NopProcessHandler;
 import com.intellij.execution.runners.*;
 import com.intellij.execution.ui.RunContentDescriptor;
-import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import org.jetbrains.annotations.NotNull;

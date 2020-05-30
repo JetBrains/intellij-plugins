@@ -52,6 +52,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -60,13 +61,14 @@ import java.util.stream.Collectors;
 public class FrameworkDefinitionsEditorComponent {
   private JPanel myMainPanel;
   private JPanel myFrameworkInstancesPanel;
-  private final JBList myFrameworkInstances;
   private JLabel myFrameworkIntegrator;
   private JLabel myHomeDir;
   private JLabel myFrameworkInstanceName;
   private JLabel myVersion;
   private JPanel myContentPanel;
+
   private final DefaultListModel<FrameworkInstanceDefinition> myModel;
+  private final JBList<FrameworkInstanceDefinition> myFrameworkInstances;
   private final MessageBus myBus;
   private final List<Pair<FrameworkInstanceDefinition, FrameworkInstanceDefinition>> myModified;
 
@@ -77,7 +79,7 @@ public class FrameworkDefinitionsEditorComponent {
 
     myContentPanel.setBorder(IdeBorderFactory.createTitledBorder("Framework instances:", false, JBUI.insetsTop(8)).setShowLine(false));
 
-    myFrameworkInstances = new JBList(myModel);
+    myFrameworkInstances = new JBList<>(myModel);
     myFrameworkInstances.getEmptyText().setText(OsmorcBundle.message("frameworks.empty"));
     myFrameworkInstances.setCellRenderer(new OsgiUiUtil.FrameworkInstanceRenderer());
 
@@ -88,13 +90,12 @@ public class FrameworkDefinitionsEditorComponent {
 
     myFrameworkInstancesPanel.add(
       ToolbarDecorator.createDecorator(myFrameworkInstances)
-        .setAddAction((b) ->
-          JBPopupFactory.getInstance().createActionGroupPopup(
-            OsmorcBundle.message("frameworks.add.title"),
-            new DefaultActionGroup(addActions),
-            DataManager.getInstance().getDataContext(b.getContextComponent()),
-            false, false, false, null, -1, null
-          ).show(ObjectUtils.notNull(b.getPreferredPopupPoint()))
+        .setAddAction((b) -> JBPopupFactory.getInstance().createActionGroupPopup(
+          OsmorcBundle.message("frameworks.add.title"),
+          new DefaultActionGroup(addActions),
+          DataManager.getInstance().getDataContext(b.getContextComponent()),
+          false, false, false, null, -1, null
+        ).show(Objects.requireNonNull(b.getPreferredPopupPoint()))
         )
         .setRemoveAction((b) -> removeFrameworkInstance())
         .setEditAction((b) -> editFrameworkInstance())
@@ -114,7 +115,7 @@ public class FrameworkDefinitionsEditorComponent {
 
     new DoubleClickListener() {
       @Override
-      protected boolean onDoubleClick(MouseEvent e) {
+      protected boolean onDoubleClick(@NotNull MouseEvent e) {
         if (myFrameworkInstances.getSelectedIndex() != -1) {
           editFrameworkInstance();
           return true;

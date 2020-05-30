@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.JSInjectionBracesUtil;
 import com.intellij.lang.javascript.injections.JSFormattableInjectionUtil;
 import com.intellij.lang.javascript.injections.JSInjectionUtil;
 import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -16,7 +17,6 @@ import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlText;
 import com.intellij.util.NullableFunction;
 import com.intellij.util.ObjectUtils;
-import org.angular2.Angular2DecoratorUtil;
 import org.angular2.lang.Angular2LangUtil;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.html.Angular2HtmlLanguage;
@@ -28,17 +28,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static org.angular2.Angular2DecoratorUtil.*;
 import static org.angular2.lang.expr.parser.Angular2PsiParser.*;
 
 public class Angular2Injector implements MultiHostInjector {
+  static class Holder {
+    static final NullableFunction<PsiElement, Pair<String, String>> BRACES_FACTORY = JSInjectionBracesUtil
+      .delimitersFactory(Angular2HtmlLanguage.INSTANCE.getDisplayName(),
+                         (project, key) -> /* no support for custom delimiters*/ null);
+  }
 
-  public static final NullableFunction<PsiElement, Pair<String, String>> BRACES_FACTORY = JSInjectionBracesUtil
-    .delimitersFactory(Angular2HtmlLanguage.INSTANCE.getDisplayName(),
-                       (project, key) -> /* no support for custom delimiters*/ null);
-
-  @NotNull
   @Override
-  public List<Class<? extends PsiElement>> elementsToInjectIn() {
+  public @NotNull List<Class<? extends PsiElement>> elementsToInjectIn() {
     return Arrays.asList(JSLiteralExpression.class, XmlText.class);
   }
 
@@ -48,7 +49,7 @@ public class Angular2Injector implements MultiHostInjector {
     final PsiElement parent = context.getParent();
     if (parent == null
         || parent.getLanguage().is(Angular2Language.INSTANCE)
-        || parent.getLanguage().is(Angular2HtmlLanguage.INSTANCE)
+        || parent.getLanguage().isKindOf(Angular2HtmlLanguage.INSTANCE)
         || !Angular2LangUtil.isAngular2Context(context)) {
       return;
     }
@@ -96,15 +97,14 @@ public class Angular2Injector implements MultiHostInjector {
   }
 
   private static void injectInterpolations(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement context) {
-    final Pair<String, String> braces = BRACES_FACTORY.fun(context);
+    final Pair<String, String> braces = Holder.BRACES_FACTORY.fun(context);
     if (braces == null) return;
     JSInjectionBracesUtil.injectInXmlTextByDelimiters(registrar, context, Angular2Language.INSTANCE,
                                                       braces.first, braces.second, INTERPOLATION);
   }
 
   @SuppressWarnings("HardCodedStringLiteral")
-  @Nullable
-  private static String getExpressionFileExtension(int valueLength, @NotNull String attributeName, boolean hostBinding) {
+  private static @Nullable String getExpressionFileExtension(int valueLength, @NotNull String attributeName, boolean hostBinding) {
     if (valueLength == 0) {
       return null;
     }
@@ -137,8 +137,7 @@ public class Angular2Injector implements MultiHostInjector {
     return parent instanceof JSProperty
            && propertyName.equals(((JSProperty)parent).getName())
            && injectIntoDecoratorExpr(registrar, context, parent,
-                                      decoratorName -> Angular2DecoratorUtil.isDirective(decoratorName)
-                                                       || Angular2DecoratorUtil.VIEW_DEC.equals(decoratorName),
+                                      decorator -> isAngularEntityDecorator(decorator, COMPONENT_DEC, DIRECTIVE_DEC, VIEW_DEC),
                                       language, fileExtension);
   }
 
@@ -146,14 +145,12 @@ public class Angular2Injector implements MultiHostInjector {
   private static boolean injectIntoDecoratorExpr(@NotNull MultiHostRegistrar registrar,
                                                  @NotNull JSLiteralExpression context,
                                                  @Nullable PsiElement parent,
-                                                 @NotNull Predicate<? super String> decoratorNameAcceptor,
+                                                 @NotNull Predicate<? super ES6Decorator> decoratorAcceptor,
                                                  @NotNull Language language,
                                                  @Nullable String fileExtension) {
-    final JSCallExpression callExpression = PsiTreeUtil.getParentOfType(parent, JSCallExpression.class);
-    final JSExpression expression = callExpression != null ? callExpression.getMethodExpression() : null;
-    if (expression instanceof JSReferenceExpression) {
-      final String decoratorName = ((JSReferenceExpression)expression).getReferenceName();
-      if (decoratorNameAcceptor.test(decoratorName)) {
+    final ES6Decorator decorator = PsiTreeUtil.getContextOfType(parent, ES6Decorator.class);
+    if (decorator != null) {
+      if (decoratorAcceptor.test(decorator)) {
         inject(registrar, context, language, fileExtension);
         JSFormattableInjectionUtil.setReformattableInjection(context, language);
       }

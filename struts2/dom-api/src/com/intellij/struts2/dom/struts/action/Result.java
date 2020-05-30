@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2019 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,6 +23,7 @@ import com.intellij.struts2.dom.struts.HasResultType;
 import com.intellij.struts2.dom.struts.strutspackage.ResultType;
 import com.intellij.util.xml.*;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * {@code result}.
@@ -35,14 +36,19 @@ public interface Result extends HasResultType, ParamsElement, GenericDomValue<Pa
 
   /**
    * Default result name.
+   *
+   * @see #getNameOrDefault()
    */
   @NonNls
   String DEFAULT_NAME = "success";
 
   @Override
-  @NameValue
+  @NameValue(unique = false)
   @Scope(ParentScopeProvider.class)
   GenericAttributeValue<String> getName();
+
+  @Nullable
+  String getNameOrDefault();
 
   /**
    * Returns the <em>local</em> result type. Usually {@link #getEffectiveResultType()} is required.
@@ -52,5 +58,4 @@ public interface Result extends HasResultType, ParamsElement, GenericDomValue<Pa
   @Override
   @Convert(ResultTypeResolvingConverter.class)
   GenericAttributeValue<ResultType> getType();
-
 }

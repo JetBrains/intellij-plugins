@@ -16,6 +16,10 @@ public class CucumberJavaCreateStepTest extends AbstractCucumberJavaCreateStepTe
     doTest(false);
   }
 
+  public void testCreateAllStepsInGherkin6() {
+    doTest(true);
+  }
+
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
     return CucumberJavaTestUtil.createCucumberJava8ProjectDescriptor();

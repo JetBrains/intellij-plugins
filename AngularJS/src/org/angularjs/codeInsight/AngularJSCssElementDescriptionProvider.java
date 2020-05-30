@@ -1,7 +1,6 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs.codeInsight;
 
-import com.intellij.lang.css.CssDialect;
 import com.intellij.lang.css.CssDialectMappings;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.project.Project;
@@ -29,18 +28,16 @@ public class AngularJSCssElementDescriptionProvider extends CssElementDescriptor
     final Project project = context.getProject();
     if (HtmlUtil.hasHtml(file)) return AngularIndexUtil.hasAngularJS(project);
     final VirtualFile virtualFile = file.getOriginalFile().getVirtualFile();
-    final CssDialect mapping = CssDialectMappings.getInstance(project).getMapping(virtualFile);
-    return (mapping == null || mapping == CssDialect.CLASSIC) && AngularIndexUtil.hasAngularJS(project);
+    return !CssDialectMappings.getInstance(project).hasCustomDialect(virtualFile) && AngularIndexUtil.hasAngularJS(project);
   }
 
   @Override
-  public boolean isPossibleSelector(@NotNull final String selector, @NotNull PsiElement context) {
+  public boolean isPossibleSelector(final @NotNull String selector, @NotNull PsiElement context) {
     return DirectiveUtil.getTagDirective(DirectiveUtil.normalizeAttributeName(selector), context.getProject()) != null;
   }
 
-  @NotNull
   @Override
-  public String[] getSimpleSelectors(@NotNull PsiElement context) {
+  public String @NotNull [] getSimpleSelectors(@NotNull PsiElement context) {
     final List<String> result = new LinkedList<>();
     DirectiveUtil.processTagDirectives(context.getProject(), proxy -> {
       result.add(DirectiveUtil.getAttributeName(proxy.getName()));
@@ -49,9 +46,8 @@ public class AngularJSCssElementDescriptionProvider extends CssElementDescriptor
     return ArrayUtilRt.toStringArray(result);
   }
 
-  @NotNull
   @Override
-  public PsiElement[] getDeclarationsForSimpleSelector(@NotNull CssSimpleSelector selector) {
+  public PsiElement @NotNull [] getDeclarationsForSimpleSelector(@NotNull CssSimpleSelector selector) {
     final JSImplicitElement directive =
       DirectiveUtil.getTagDirective(DirectiveUtil.normalizeAttributeName(selector.getElementName()), selector.getProject());
     return directive != null ? new PsiElement[]{directive} : PsiElement.EMPTY_ARRAY;

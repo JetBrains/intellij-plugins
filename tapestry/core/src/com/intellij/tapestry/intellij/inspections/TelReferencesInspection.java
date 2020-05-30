@@ -37,13 +37,6 @@ public class TelReferencesInspection extends TapestryInspectionBase {
   }
 
   @Override
-  @Nls
-  @NotNull
-  public String getDisplayName() {
-    return TapestryBundle.message("tel.references.inspection");
-  }
-
-  @Override
   @NonNls
   @NotNull
   public String getShortName() {

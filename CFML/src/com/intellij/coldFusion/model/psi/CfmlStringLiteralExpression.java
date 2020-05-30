@@ -42,9 +42,8 @@ public class CfmlStringLiteralExpression extends CfmlCompositeElement implements
     return "";
   }
 
-  @NotNull
   @Override
-  public PsiReference[] getReferences() {
+  public PsiReference @NotNull [] getReferences() {
     CfmlFunctionCallExpression functionCallEl = PsiTreeUtil.getParentOfType(this, CfmlFunctionCallExpression.class);
     if (functionCallEl != null && functionCallEl.isCreateObject()) {
       final String[] args = functionCallEl.getArgumentsAsStrings();

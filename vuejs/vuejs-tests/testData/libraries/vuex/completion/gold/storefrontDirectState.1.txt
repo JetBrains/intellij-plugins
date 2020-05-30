@@ -1,0 +1,5 @@
+!categoriesMap#null#101
+!filtersMap#null#101
+!notFoundCategoryIds#any[]#101
+!products#any[]#101
+!searchProductsStats#null#101

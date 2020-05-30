@@ -11,17 +11,13 @@ import javax.swing.*;
 import static com.intellij.codeInsight.CodeInsightSettings.*;
 
 public class DartAutoImportOptionsProvider implements AutoImportOptionsProvider {
-  private static final String INSERT_IMPORTS_ALWAYS = ApplicationBundle.message("combobox.insert.imports.all");
-  private static final String INSERT_IMPORTS_ASK = ApplicationBundle.message("combobox.insert.imports.ask");
-  private static final String INSERT_IMPORTS_NONE = ApplicationBundle.message("combobox.insert.imports.none");
-
   private JPanel myMainPanel;
   private JComboBox<String> mySmartPasteCombo;
 
   public DartAutoImportOptionsProvider() {
-    mySmartPasteCombo.addItem(INSERT_IMPORTS_ALWAYS);
-    mySmartPasteCombo.addItem(INSERT_IMPORTS_ASK);
-    mySmartPasteCombo.addItem(INSERT_IMPORTS_NONE);
+    mySmartPasteCombo.addItem(getInsertImportsAlways());
+    mySmartPasteCombo.addItem(getInsertImportsAsk());
+    mySmartPasteCombo.addItem(getInsertImportsNone());
   }
 
   @Nullable
@@ -33,7 +29,7 @@ public class DartAutoImportOptionsProvider implements AutoImportOptionsProvider 
   @Override
   public void reset() {
     final int val = DartCodeInsightSettings.getInstance().ADD_IMPORTS_ON_PASTE;
-    final String item = val == YES ? INSERT_IMPORTS_ALWAYS : val == ASK ? INSERT_IMPORTS_ASK : INSERT_IMPORTS_NONE;
+    final String item = val == YES ? getInsertImportsAlways() : val == ASK ? getInsertImportsAsk() : getInsertImportsNone();
     mySmartPasteCombo.setSelectedItem(item);
   }
 
@@ -49,6 +45,18 @@ public class DartAutoImportOptionsProvider implements AutoImportOptionsProvider 
 
   private int getSmartPasteValue() {
     final Object item = mySmartPasteCombo.getSelectedItem();
-    return INSERT_IMPORTS_ALWAYS.equals(item) ? YES : INSERT_IMPORTS_NONE.equals(item) ? NO : ASK;
+    return getInsertImportsAlways().equals(item) ? YES : getInsertImportsNone().equals(item) ? NO : ASK;
+  }
+
+  private static String getInsertImportsAlways() {
+    return ApplicationBundle.message("combobox.insert.imports.all");
+  }
+
+  private static String getInsertImportsAsk() {
+    return ApplicationBundle.message("combobox.insert.imports.ask");
+  }
+
+  private static String getInsertImportsNone() {
+    return ApplicationBundle.message("combobox.insert.imports.none");
   }
 }

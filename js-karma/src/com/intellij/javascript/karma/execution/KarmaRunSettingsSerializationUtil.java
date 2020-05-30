@@ -2,14 +2,10 @@ package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.configuration.EnvironmentVariablesData;
 import com.intellij.javascript.karma.scope.KarmaScopeKind;
+import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
-import com.intellij.javascript.nodejs.util.NodePackage;
-import com.intellij.javascript.testing.JsTestRunConfigurationProducer;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.JDOMExternalizerUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.PathUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,9 +28,7 @@ public class KarmaRunSettingsSerializationUtil {
 
   private KarmaRunSettingsSerializationUtil() {}
 
-  public static KarmaRunSettings readXml(@NotNull Element element,
-                                         @NotNull Project project,
-                                         boolean templateRunConfiguration) {
+  public static KarmaRunSettings readXml(@NotNull Element element) {
     KarmaRunSettings.Builder builder = new KarmaRunSettings.Builder();
 
     String configPath = StringUtil.notNullize(JDOMExternalizerUtil.readCustomField(element, CONFIG_FILE));
@@ -50,30 +44,18 @@ public class KarmaRunSettingsSerializationUtil {
 
     String karmaPackageDir = JDOMExternalizerUtil.readCustomField(element, KARMA_PACKAGE_DIR);
     if (karmaPackageDir != null) {
-      builder.setKarmaPackage(new NodePackage(karmaPackageDir));
+      builder.setKarmaPackage(KarmaUtil.PKG_DESCRIPTOR.createPackage(karmaPackageDir));
     }
 
-    String workingDirPath = JDOMExternalizerUtil.readCustomField(element, WORKING_DIRECTORY);
-    if (workingDirPath == null && !templateRunConfiguration) {
-      VirtualFile workingDir = JsTestRunConfigurationProducer.guessWorkingDirectory(project, configPath);
-      if (workingDir != null) {
-        workingDirPath = workingDir.getPath();
-      }
-      else {
-        workingDirPath = PathUtil.getParentPath(configPath);
-      }
-    }
-    builder.setWorkingDirectory(workingDirPath);
+    builder.setWorkingDirectory(StringUtil.notNullize(JDOMExternalizerUtil.readCustomField(element, WORKING_DIRECTORY)));
     builder.setInterpreterRef(NodeJsInterpreterRef.create(JDOMExternalizerUtil.readCustomField(element, NODE_INTERPRETER)));
     builder.setNodeOptions(StringUtil.notNullize(JDOMExternalizerUtil.readCustomField(element, NODE_OPTIONS)));
     builder.setEnvData(EnvironmentVariablesData.readExternal(element));
 
     KarmaScopeKind scopeKind = readScopeKind(element);
     builder.setScopeKind(scopeKind);
-    if (scopeKind == KarmaScopeKind.TEST_FILE) {
-      builder.setTestFilePath(JDOMExternalizerUtil.readCustomField(element, TEST_FILE_PATH));
-    }
-    else if (scopeKind == KarmaScopeKind.SUITE || scopeKind == KarmaScopeKind.TEST) {
+    builder.setTestFilePath(JDOMExternalizerUtil.readCustomField(element, TEST_FILE_PATH));
+    if (scopeKind == KarmaScopeKind.SUITE || scopeKind == KarmaScopeKind.TEST) {
       builder.setTestNames(readTestNames(element));
     }
 
@@ -102,9 +84,7 @@ public class KarmaRunSettingsSerializationUtil {
     return JDOMExternalizerUtil.getChildrenValueAttributes(testNamesElement, TEST_NAME);
   }
 
-  public static void writeXml(@NotNull Element element,
-                              @NotNull KarmaRunSettings settings,
-                              boolean templateRunConfiguration) {
+  public static void writeXml(@NotNull Element element, @NotNull KarmaRunSettings settings) {
     JDOMExternalizerUtil.writeCustomField(element, CONFIG_FILE, settings.getConfigPathSystemIndependent());
     if (StringUtil.isNotEmpty(settings.getKarmaOptions())) {
       JDOMExternalizerUtil.writeCustomField(element, KARMA_OPTIONS, settings.getKarmaOptions());
@@ -114,7 +94,7 @@ public class KarmaRunSettingsSerializationUtil {
                                             settings.getKarmaPackage().getSystemIndependentPath());
     }
     String workingDir = settings.getWorkingDirectorySystemIndependent();
-    if (!workingDir.isEmpty() && (templateRunConfiguration || shouldWriteWorkingDir(settings))) {
+    if (!workingDir.isEmpty()) {
       JDOMExternalizerUtil.writeCustomField(element, WORKING_DIRECTORY, workingDir);
     }
     JDOMExternalizerUtil.writeCustomField(element, NODE_INTERPRETER, settings.getInterpreterRef().getReferenceName());
@@ -126,32 +106,16 @@ public class KarmaRunSettingsSerializationUtil {
     if (scopeKind != KarmaScopeKind.ALL) {
       JDOMExternalizerUtil.writeCustomField(element, SCOPE_KIND, scopeKind.name());
     }
-    if (scopeKind == KarmaScopeKind.TEST_FILE) {
-      JDOMExternalizerUtil.writeCustomField(element, TEST_FILE_PATH, settings.getTestFileSystemIndependentPath());
+    String testFilePath = settings.getTestFileSystemIndependentPath();
+    if (StringUtil.isNotEmpty(testFilePath)) {
+      JDOMExternalizerUtil.writeCustomField(element, TEST_FILE_PATH, testFilePath);
     }
-    else if (scopeKind == KarmaScopeKind.SUITE || scopeKind == KarmaScopeKind.TEST) {
+    if (scopeKind == KarmaScopeKind.SUITE || scopeKind == KarmaScopeKind.TEST) {
       Element testNamesElement = new Element(TEST_NAMES);
       if (!settings.getTestNames().isEmpty()) {
         JDOMExternalizerUtil.addChildrenWithValueAttribute(testNamesElement, TEST_NAME, settings.getTestNames());
       }
       element.addContent(testNamesElement);
     }
-  }
-
-  private static boolean shouldWriteWorkingDir(@NotNull KarmaRunSettings settings) {
-    String configFileDirPath = trimTrailingPathSeparator(PathUtil.getParentPath(settings.getConfigPathSystemIndependent()));
-    String workingDirPath = trimTrailingPathSeparator(settings.getWorkingDirectorySystemIndependent());
-    return !configFileDirPath.equals(workingDirPath);
-  }
-
-  @NotNull
-  private static String trimTrailingPathSeparator(@NotNull String path) {
-    if (path.length() > 1) {
-      char ch = path.charAt(path.length() - 1);
-      if (ch == '/' || ch == '\\') {
-        return path.substring(0, path.length() - 1);
-      }
-    }
-    return path;
   }
 }

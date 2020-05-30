@@ -15,11 +15,11 @@ package org.dartlang.vm.service.element;
 
 // This is a generated file.
 
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public enum ErrorKind {
 
   /**
-   * The isolate has encounted an internal error. These errors should be reported as bugs.
+   * The isolate has encountered an internal error. These errors should be reported as bugs.
    */
   InternalError,
 

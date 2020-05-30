@@ -113,6 +113,7 @@ public interface FlexBuildConfiguration {
   @NotNull
   IosPackagingOptions getIosPackagingOptions();
 
+  @NotNull
   Icon getIcon();
 
   BuildConfigurationNature getNature();

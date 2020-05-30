@@ -25,9 +25,8 @@ final public class PostCssNestImpl extends CssAtRuleImpl implements PostCssNest 
     return new AtRulePresentation(this, getPresentableText());
   }
 
-  @NotNull
   @Override
-  public CssSelector[] getSelectors() {
+  public CssSelector @NotNull [] getSelectors() {
     final CssSelectorList selectorList = getSelectorList();
     return selectorList != null ? selectorList.getSelectors() : CssSelector.EMPTY_ARRAY;
   }
@@ -50,23 +49,20 @@ final public class PostCssNestImpl extends CssAtRuleImpl implements PostCssNest 
     return ("nest " + CssPsiUtil.getTokenText(getSelectorList())).trim();
   }
 
-  @NotNull
   @Override
-  public CssRuleset[] getNestedRulesets() {
+  public CssRuleset @NotNull [] getNestedRulesets() {
     final CssRuleset[] rulesets = PsiTreeUtil.getChildrenOfType(getBlock(), CssRuleset.class);
     return ObjectUtils.notNull(rulesets, CssRuleset.EMPTY_ARRAY);
   }
 
-  @NotNull
   @Override
-  public CssDeclaration[] getNestedDeclarations() {
+  public CssDeclaration @NotNull [] getNestedDeclarations() {
     final CssDeclaration[] declarations = PsiTreeUtil.getChildrenOfType(getBlock(), CssDeclaration.class);
     return ObjectUtils.notNull(declarations, CssDeclaration.EMPTY_ARRAY);
   }
 
-  @NotNull
   @Override
-  public PostCssNest[] getNestedNests() {
+  public PostCssNest @NotNull [] getNestedNests() {
     final PostCssNest[] nests = PsiTreeUtil.getChildrenOfType(getBlock(), PostCssNest.class);
     return ObjectUtils.notNull(nests, PostCssNest.EMPTY_ARRAY);
   }

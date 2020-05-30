@@ -1,12 +1,11 @@
-/*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package jetbrains.communicator.idea.codePointer;
 
 import com.intellij.execution.filters.HyperlinkInfo;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.editor.ScrollType;
@@ -23,9 +22,8 @@ import jetbrains.communicator.ide.SendCodePointerEvent;
 import jetbrains.communicator.idea.BaseIncomingLocalMessage;
 import jetbrains.communicator.idea.IDEAFacade;
 import jetbrains.communicator.idea.VFSUtil;
-import jetbrains.communicator.util.PositionCorrector;
 import jetbrains.communicator.util.CommunicatorStrings;
-import org.apache.log4j.Logger;
+import jetbrains.communicator.util.PositionCorrector;
 import org.jetbrains.annotations.NonNls;
 
 import javax.swing.*;
@@ -36,7 +34,7 @@ import java.util.Date;
  */
 public class IncomingCodePointerMessage extends BaseIncomingLocalMessage {
   @NonNls
-  private static final Logger LOG = Logger.getLogger(IncomingCodePointerMessage.class);
+  private static final Logger LOG = Logger.getInstance(IncomingCodePointerMessage.class);
   private final CodePointer myCodePointer;
   private final VFile myRemoteFile;
   private transient IDEAFacade myFacade;
@@ -146,9 +144,7 @@ public class IncomingCodePointerMessage extends BaseIncomingLocalMessage {
     }
 
     private int moveToTextBounds(int offset, int textLength) {
-      if (offset < 0) return 0;
-      if (offset > textLength - 1) return textLength - 1;
-      return offset;
+      return Math.max(0, Math.min(offset, textLength - 1));
     }
 
     private LogicalPosition getStartLogicalPosition(PositionCorrector positionCorrector) {

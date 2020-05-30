@@ -1,11 +1,12 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.linter.tslint.ui;
 
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterField;
 import com.intellij.javascript.nodejs.util.NodePackageField;
 import com.intellij.javascript.nodejs.util.NodePackageRef;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.linter.AutodetectLinterPackage;
+import com.intellij.lang.javascript.linter.tslint.TsLintBundle;
 import com.intellij.lang.javascript.linter.tslint.TslintUtil;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
 import com.intellij.lang.javascript.linter.ui.JSLinterConfigFileTexts;
@@ -54,7 +55,8 @@ public final class TslintPanel {
   public JComponent createComponent() {
     myRules = new TextFieldWithBrowseButton();
     myAllowJs = new JBCheckBox();
-    SwingHelper.installFileCompletionAndBrowseDialog(myProject, myRules, "Select additional rules directory",
+    SwingHelper.installFileCompletionAndBrowseDialog(myProject, myRules,
+                                                     TsLintBundle.message("additional.rules.directory.title"),
                                                      FileChooserDescriptorFactory.createSingleFolderDescriptor());
     final FormBuilder nodeFieldsWrapperBuilder = FormBuilder.createFormBuilder()
       .setHorizontalGap(UIUtil.DEFAULT_HGAP)
@@ -62,8 +64,8 @@ public final class TslintPanel {
     if (myAddLeftIndent) {
       nodeFieldsWrapperBuilder.setFormLeftIndent(UIUtil.DEFAULT_HGAP);
     }
-    nodeFieldsWrapperBuilder.addLabeledComponent("&Node interpreter:", myNodeInterpreterField)
-      .addLabeledComponent("TSLint package:", myNodePackageField);
+    nodeFieldsWrapperBuilder.addLabeledComponent(NodeJsInterpreterField.getLabelTextForComponent(), myNodeInterpreterField)
+      .addLabeledComponent(TsLintBundle.message("tslint.package.label"), myNodePackageField);
 
     FormBuilder builder = FormBuilder.createFormBuilder()
       .setHorizontalGap(UIUtil.DEFAULT_HGAP)
@@ -75,8 +77,8 @@ public final class TslintPanel {
       .addComponent(myConfigFileView.getComponent())
       .addSeparator(4)
       .addVerticalGap(4)
-      .addLabeledComponent("Additional rules directory:", myRules)
-      .addLabeledComponent("Lint JavaScript files:", myAllowJs)
+      .addLabeledComponent(TsLintBundle.message("additional.rules.directory.label"), myRules)
+      .addLabeledComponent(TsLintBundle.message("lint.javascript.files.label"), myAllowJs)
       .getPanel();
     final JPanel centerPanel = SwingHelper.wrapWithHorizontalStretch(panel);
     centerPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
@@ -111,7 +113,7 @@ public final class TslintPanel {
 
     myConfigFileView.setCustomConfigFileUsed(state.isCustomConfigFileUsed());
     myConfigFileView.setCustomConfigFilePath(StringUtil.notNullize(state.getCustomConfigFilePath()));
-    if (! StringUtil.isEmptyOrSpaces(state.getRulesDirectory())) {
+    if (!StringUtil.isEmptyOrSpaces(state.getRulesDirectory())) {
       myRules.setText(state.getRulesDirectory());
     }
     myAllowJs.setSelected(state.isAllowJs());
@@ -127,9 +129,8 @@ public final class TslintPanel {
   }
 
   private static JSLinterConfigFileTexts getConfigTexts() {
-    return new JSLinterConfigFileTexts(JSBundle.message("javascript.linter.configurable.config.autoSearch.title"),
-                                       "When linting a TypeScript file, TSLint looks for tslint.json or tslint.yaml starting from the file's folder and then moving up to the filesystem root" +
-                                       " or in the user's home directory.",
-                                       "Select TSLint configuration file (*.json|*.yaml)");
+    return new JSLinterConfigFileTexts(JavaScriptBundle.message("javascript.linter.configurable.config.autoSearch.title"),
+                                       TsLintBundle.message("tslint.configurable.search.option.description"),
+                                       TsLintBundle.message("tslint.configuration.file.title"));
   }
 }

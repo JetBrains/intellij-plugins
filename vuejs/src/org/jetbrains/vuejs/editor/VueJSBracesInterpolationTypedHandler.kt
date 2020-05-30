@@ -13,7 +13,9 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.NullableFunction
-import org.jetbrains.vuejs.index.isVueContext
+import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
+import com.intellij.xml.util.HtmlUtil.STYLE_TAG_NAME
+import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.html.VueFileType
 
 private val myBracesCompleter: JSInjectionBracesUtil.InterpolationBracesCompleter =
@@ -28,7 +30,7 @@ class VueJSBracesInterpolationTypedHandler : TypedHandlerDelegate() {
   }
 }
 
-private val myExcludedTopLevelTags = arrayOf("script", "style")
+private val myExcludedTopLevelTags = arrayOf(SCRIPT_TAG_NAME, STYLE_TAG_NAME)
 
 class VueInterpolationBracesCompleter(factory: NullableFunction<PsiElement, Pair<String, String>>) :
   JSInjectionBracesUtil.InterpolationBracesCompleter(factory) {

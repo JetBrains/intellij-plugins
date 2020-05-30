@@ -4,15 +4,13 @@ class Foo {
   // comment
   Array<Array<Int>> tmp;
 
-  function foo(int x, z)
-    {
+  function foo(int x, z) {
     new Foo(x, 2);
 
-    int absSum(int a, int b)
-      {
+    int absSum(int a, int b) {
       int value = a + b;
       return value > 0 ? value : -value;
-      }
+    }
     var arr = ["zero", "one"];
     var y = (x ^ 0x123) << 2;
     for (i in tmp) {
@@ -39,16 +37,16 @@ class Foo {
           default:
             var s1 = 'other';
         }
-      } catch (e) {
+      }
+      catch (e) {
         var message = arr[0];
       }
     } while (x < 0);
-    }
+  }
 
-  Foo(int n, int m)
-    {
+  Foo(int n, int m) {
     tmp = new Array<Array<Int>>();
     for (int i; i < 10; ++i)
       tmp.push(new Array<Int>());
-    }
+  }
 }

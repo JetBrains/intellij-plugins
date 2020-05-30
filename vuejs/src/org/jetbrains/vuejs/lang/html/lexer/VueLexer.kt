@@ -4,168 +4,122 @@ package org.jetbrains.vuejs.lang.html.lexer
 import com.intellij.lang.HtmlScriptContentProvider
 import com.intellij.lang.Language
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
-import com.intellij.lexer.HtmlHighlightingLexer
-import com.intellij.lexer.HtmlLexer
-import com.intellij.lexer.Lexer
-import com.intellij.lexer._HtmlLexer
+import com.intellij.lexer.*
 import com.intellij.psi.tree.IElementType
-import com.intellij.psi.xml.XmlTokenType
-import org.jetbrains.vuejs.lang.expr.VueElementTypes
+import com.intellij.psi.tree.TokenSet
+import com.intellij.psi.xml.XmlTokenType.*
+import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_END
+import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_EXPR
+import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_START
 
-class VueLexer(private val languageLevel: JSLanguageLevel) : HtmlLexer(), VueHandledLexer {
-  //  companion object {
-  //    val SEEN_INTERPOLATION:Int = 0x1000
-  //  }
-  companion object {
-    const val SEEN_VUE_ATTRIBUTE: Int = 0x10000
-  }
+class VueLexer(private val languageLevel: JSLanguageLevel, private val interpolationConfig: Pair<String, String>?)
+  : HtmlLexer(VueMergingLexer(FlexAdapter(_VueLexer(interpolationConfig))), true) {
 
-  private var interpolationLexer: Lexer? = null
-  private var interpolationStart = -1
-  private var seenTemplate: Boolean = false
-  private var seenVueAttribute: Boolean = false
+  private val helper: VueLexerHelper = VueLexerHelper(object : VueLexerHandle {
 
-  init {
-    registerHandler(XmlTokenType.XML_NAME, VueLangAttributeHandler())
-    registerHandler(XmlTokenType.XML_NAME, VueTemplateTagHandler())
-    registerHandler(XmlTokenType.XML_NAME, VueAttributesHandler())
-    registerHandler(XmlTokenType.XML_TAG_END, VueTagClosedHandler())
-    val scriptCleaner = VueTemplateCleaner()
-    registerHandler(XmlTokenType.XML_END_TAG_START, scriptCleaner)
-    registerHandler(XmlTokenType.XML_EMPTY_ELEMENT_END, scriptCleaner)
-  }
+    override var scriptType: String?
+      get() = this@VueLexer.scriptType
+      set(value) {
+        this@VueLexer.scriptType = value
+      }
+
+    override var seenTag: Boolean
+      get() = this@VueLexer.seenTag
+      set(value) {
+        this@VueLexer.seenTag = value
+      }
+
+    override var seenStyleType: Boolean
+      get() = this@VueLexer.seenStylesheetType
+      set(value) {
+        this@VueLexer.seenStylesheetType = value
+      }
+
+    override var seenScriptType: Boolean
+      get() = this@VueLexer.seenContentType
+      set(value) {
+        this@VueLexer.seenContentType = value
+      }
+    override var seenScript: Boolean
+      get() = this@VueLexer.seenScript
+      set(value) {
+        this@VueLexer.seenScript = value
+      }
+
+    override val seenStyle: Boolean get() = this@VueLexer.seenStyle
+    override val styleType: String? get() = this@VueLexer.styleType
+    override val inTagState: Boolean get() = (state and HtmlHighlightingLexer.BASE_STATE_MASK) == _VueLexer.START_TAG_NAME
+    override val interpolationConfig: Pair<String, String>? get() = this@VueLexer.interpolationConfig
+
+    override fun registerHandler(elementType: IElementType, value: TokenHandler) {
+      this@VueLexer.registerHandler(elementType, value)
+    }
+  })
 
   override fun findScriptContentProvider(mimeType: String?): HtmlScriptContentProvider? =
-    findScriptContentProviderVue(mimeType, { super.findScriptContentProvider(mimeType) }, languageLevel)
+    helper.findScriptContentProviderVue(mimeType, { super.findScriptContentProvider(mimeType) }, languageLevel)
 
-  override fun getStyleLanguage(): Language? = styleViaLang(ourDefaultStyleLanguage) ?: super.getStyleLanguage()
-
-  override fun seenScript(): Boolean = seenScript
-  override fun seenStyle(): Boolean = seenStyle
-  override fun seenTemplate(): Boolean = seenTemplate
-  override fun seenTag(): Boolean = seenTag
-  override fun seenAttribute(): Boolean = seenAttribute
-  override fun seenVueAttribute(): Boolean = seenVueAttribute
-  override fun getScriptType(): String? = scriptType
-  override fun getStyleType(): String? = styleType
-  override fun inTagState(): Boolean = (state and HtmlHighlightingLexer.BASE_STATE_MASK) == _HtmlLexer.START_TAG_NAME
-
-  override fun setSeenScriptType() {
-    seenContentType = true
-  }
-
-  override fun setSeenScript() {
-    seenScript = true
-  }
-
-  override fun setSeenStyleType() {
-    seenStylesheetType = true
-  }
-
-  override fun setSeenTemplate(template: Boolean) {
-    seenTemplate = template
-  }
-
-  override fun setSeenTag(tag: Boolean) {
-    seenTag = tag
-  }
-
-  override fun setSeenAttribute(attribute: Boolean) {
-    seenAttribute = attribute
-  }
-
-  override fun setSeenVueAttribute(value: Boolean) {
-    seenVueAttribute = value
-  }
+  override fun getStyleLanguage(): Language? = helper.styleViaLang(ourDefaultStyleLanguage) ?: super.getStyleLanguage()
 
   override fun start(buffer: CharSequence, startOffset: Int, endOffset: Int, initialState: Int) {
-    seenTemplate = initialState and VueTemplateTagHandler.SEEN_TEMPLATE != 0
-    seenVueAttribute = initialState and SEEN_VUE_ATTRIBUTE != 0
-    interpolationLexer = null
-    interpolationStart = -1
-    super.start(buffer, startOffset, endOffset, initialState)
+    super.start(buffer, startOffset, endOffset, helper.start(initialState))
   }
 
-  override fun getState(): Int {
-    val state = super.getState()
-    return state or when {
-      seenTemplate -> VueTemplateTagHandler.SEEN_TEMPLATE
-      seenVueAttribute -> SEEN_VUE_ATTRIBUTE
-      else -> 0
-    }
-    //     or (if (interpolationLexer != null) SEEN_INTERPOLATION else 0)
+  override fun isHtmlTagState(state: Int): Boolean {
+    return state == _VueLexer.START_TAG_NAME || state == _VueLexer.END_TAG_NAME
   }
+
+  override fun getState(): Int = helper.getState(super.getState())
+
+  override fun getTokenType(): IElementType? = helper.getTokenType(super.getTokenType())
 
   override fun endOfTheEmbeddment(name: String?): Boolean {
-    return super.endOfTheEmbeddment(name) ||
-           seenTemplate && "template" == name
+    return super.endOfTheEmbeddment(name) || helper.endOfTheEmbeddment(name)
   }
 
-  override fun getTokenType(): IElementType? {
-    if (seenTemplate && "html".equals(scriptType, true)) {
-      seenContentType = false
-      scriptType = null
-      seenScript = false
+  open class VueMergingLexer(original: FlexAdapter) : MergingLexerAdapterBase(original) {
+
+    override fun getMergeFunction(): MergeFunction {
+      return MergeFunction { type, originalLexer -> this.merge(type, originalLexer) }
     }
-    val type = super.getTokenType()
-    if (seenVueAttribute && type == XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN) {
-      return VueElementTypes.EMBEDDED_JS
+
+    protected open fun merge(type: IElementType?, originalLexer: Lexer): IElementType? {
+      var tokenType = type
+      val next = originalLexer.tokenType
+      if (tokenType === INTERPOLATION_START
+          && next !== INTERPOLATION_EXPR
+          && next !== INTERPOLATION_END) {
+        tokenType = if (next === XML_ATTRIBUTE_VALUE_TOKEN || next === XML_ATTRIBUTE_VALUE_END_DELIMITER)
+          XML_ATTRIBUTE_VALUE_TOKEN
+        else
+          XML_DATA_CHARACTERS
+      }
+      if (!TOKENS_TO_MERGE.contains(tokenType)) {
+        return tokenType
+      }
+      while (true) {
+        val nextTokenType = originalLexer.tokenType
+        if (nextTokenType !== tokenType) {
+          break
+        }
+        originalLexer.advance()
+      }
+      return tokenType
     }
-    //    if (interpolationLexer != null) return interpolationLexer!!.tokenType
-    return type
+
+    companion object {
+
+      private val TOKENS_TO_MERGE = TokenSet.create(XML_COMMENT_CHARACTERS, XML_WHITE_SPACE, XML_REAL_WHITE_SPACE,
+                                                    XML_ATTRIBUTE_VALUE_TOKEN, XML_DATA_CHARACTERS, XML_TAG_CHARACTERS)
+
+      fun isLexerWithinUnterminatedInterpolation(state: Int): Boolean {
+        return getBaseLexerState(state) == _VueLexer.UNTERMINATED_INTERPOLATION
+      }
+
+      fun getBaseLexerState(state: Int): Int {
+        return state and BaseHtmlLexer.BASE_STATE_MASK
+      }
+    }
   }
-
-  //  override fun getTokenStart(): Int {
-  //    if (interpolationLexer != null) {
-  //      return interpolationStart + interpolationLexer!!.tokenStart
-  //    }
-  //    return super.getTokenStart()
-  //  }
-  //
-  //  override fun getTokenEnd(): Int {
-  //    if (interpolationLexer != null) {
-  //      return interpolationStart + interpolationLexer!!.tokenEnd
-  //    }
-  //    return super.getTokenEnd()
-  //  }
-
-  //  override fun advance() {
-  //    if (interpolationLexer != null) {
-  //      interpolationLexer!!.advance()
-  //      try {
-  //        if (interpolationLexer!!.tokenType != null) {
-  //          return
-  //        }
-  //      }
-  //      catch (error: Error) {
-  //        Logger.getInstance(VueLexer::class.java).error(interpolationLexer!!.bufferSequence)
-  //      }
-  //
-  //      interpolationLexer = null
-  //      interpolationStart = -1
-  //      return
-  //    }
-  //    super.advance()
-  //    val originalType = super.getTokenType()
-  //    if (originalType === XmlTokenType.XML_DATA_CHARACTERS || originalType === XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN) {
-  //      var type: IElementType? = originalType!!
-  //      interpolationStart = super.getTokenStart()
-  //      val text = StringBuilder()
-  //      while (type === XmlTokenType.XML_DATA_CHARACTERS ||
-  //             type === XmlTokenType.XML_REAL_WHITE_SPACE ||
-  //             type === XmlTokenType.XML_WHITE_SPACE ||
-  //             type === XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN ||
-  //             type === XmlTokenType.XML_CHAR_ENTITY_REF ||
-  //             type === XmlTokenType.XML_ENTITY_REF_TOKEN) {
-  //        text.append(super.getTokenText())
-  //        super.advance()
-  //        type = tokenType
-  //      }
-  //      val lexer = VueInterpolationLexer("{{", "}}", originalType)
-  //      lexer.start(text)
-  //      lexer.advance()
-  //      interpolationLexer = lexer
-  //    }
-  //  }
 }
 

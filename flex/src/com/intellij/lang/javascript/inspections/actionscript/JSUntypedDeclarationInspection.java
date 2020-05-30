@@ -46,11 +46,6 @@ import org.jetbrains.annotations.NotNull;
  * @author Maxim.Mossienko
  */
 public class JSUntypedDeclarationInspection extends JSInspection {
-  @Override
-  @NotNull
-  public String getDisplayName() {
-    return FlexBundle.message("js.untyped.declaration.inspection.name");
-  }
 
   @Override
   @NotNull

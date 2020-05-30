@@ -1,0 +1,24 @@
+VuexStoreContext: {
+  stores: [
+    VuexStoreImpl <store/index.js:236:JSNewExpression> {
+      state: {
+        count: <store/index.js:195:JSProperty>,
+        history: <store/index.js:207:JSProperty>,
+      }
+      getters: {
+        count: <store/getters.js:13:JSVariable>,
+        recentHistory: <store/getters.js:73:JSVariable>,
+      }
+      actions: {
+        decrement: <store/actions.js:80:JSVariable>,
+        increment: <store/actions.js:13:JSVariable>,
+        incrementAsync: <store/actions.js:271:JSVariable>,
+        incrementIfOdd: <store/actions.js:148:JSVariable>,
+      }
+      mutations: {
+        decrement: <store/mutations.js:102:JSVariable>,
+        increment: <store/mutations.js:13:JSVariable>,
+      }
+    }
+  ],
+}

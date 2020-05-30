@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.java.steps.reference;
 
+import com.intellij.pom.PomTargetPsiElement;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.reference.impl.manipulators.StringLiteralManipulator;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -13,9 +14,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CucumberJavaReferenceProvider extends PsiReferenceProvider {
-  @NotNull
+
   @Override
-  public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+  public boolean acceptsTarget(@NotNull PsiElement target) {
+    return target instanceof PomTargetPsiElement &&
+           ((PomTargetPsiElement)target).getTarget() instanceof CucumberJavaParameterPomTarget;
+  }
+
+  @Override
+  public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
     if (!(element instanceof PsiLiteralExpression)) {
       return PsiReference.EMPTY_ARRAY;
     }
@@ -35,13 +42,17 @@ public class CucumberJavaReferenceProvider extends PsiReferenceProvider {
       return PsiReference.EMPTY_ARRAY;
     }
 
-    String cucumberExpression = CucumberJavaUtil.getStepAnnotationValue(method, null);
+    PsiAnnotation stepAnnotation = CucumberJavaUtil.getCucumberStepAnnotation(method);
+    if (stepAnnotation == null || !PsiTreeUtil.isAncestor(stepAnnotation, literalExpression, true)) {
+      return PsiReference.EMPTY_ARRAY;
+    }
+    String cucumberExpression = CucumberJavaUtil.getAnnotationValue(stepAnnotation);
     if (cucumberExpression == null) {
       return PsiReference.EMPTY_ARRAY;
     }
 
     List<CucumberJavaParameterTypeReference> result = new ArrayList<>();
-    CucumberUtil.processParameterTypesInCucumberExpression(cucumberExpression, range -> {
+    CucumberUtil.processParameterTypesInCucumberExpression(literalExpression.getValue().toString(), range -> {
       // Skip " in the begin of the String Literal
       range = range.shiftRight(StringLiteralManipulator.getValueRange(literalExpression).getStartOffset());
       result.add(new CucumberJavaParameterTypeReference(element, range));

@@ -1,0 +1,1 @@
+<cart.js:(509,529):(8,20)>	getters.cartProducts.reduce

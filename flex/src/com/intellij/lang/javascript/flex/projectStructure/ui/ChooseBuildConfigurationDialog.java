@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.lang.javascript.flex.FlexModuleType;
@@ -13,8 +14,8 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.ui.*;
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.containers.ContainerUtil;
-import java.util.HashMap;
 import com.intellij.util.ui.tree.TreeUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -27,7 +28,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -113,13 +114,13 @@ public class ChooseBuildConfigurationDialog extends DialogWrapper {
   protected JComponent createCenterPanel() {
     DefaultMutableTreeNode root = new DefaultMutableTreeNode();
     List<Module> modules = new ArrayList<>(myTreeItems.keySet());
-    Collections.sort(modules, (o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
+    modules.sort((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
 
     for (Module module : modules) {
       DefaultMutableTreeNode moduleNode = new DefaultMutableTreeNode(module, true);
       root.add(moduleNode);
       List<FlexBCConfigurable> bcs = myTreeItems.get(module);
-      Collections.sort(bcs, (o1, o2) -> o1.getDisplayName().compareToIgnoreCase(o2.getDisplayName()));
+      bcs.sort((o1, o2) -> o1.getDisplayName().compareToIgnoreCase(o2.getDisplayName()));
       for (FlexBCConfigurable bc : bcs) {
         DefaultMutableTreeNode bcNode = new DefaultMutableTreeNode(bc, false);
         moduleNode.add(bcNode);
@@ -166,7 +167,7 @@ public class ChooseBuildConfigurationDialog extends DialogWrapper {
     TreeUtil.expandAll(myTree);
     new DoubleClickListener() {
       @Override
-      protected boolean onDoubleClick(MouseEvent e) {
+      protected boolean onDoubleClick(@NotNull MouseEvent e) {
         if (mySelection != null) {
           doOKAction();
           return true;

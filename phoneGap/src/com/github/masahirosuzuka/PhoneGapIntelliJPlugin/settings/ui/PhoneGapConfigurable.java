@@ -106,7 +106,7 @@ public class PhoneGapConfigurable implements Configurable {
   @Nls
   @Override
   public String getDisplayName() {
-    return "PhoneGap/Cordova";
+    return PhoneGapBundle.message("configurable.PhoneGapConfigurable.display.name");
   }
 
   @Nullable

@@ -47,7 +47,7 @@ class FlexSourcesRootDetector extends RootDetector {
                             final Collection<VirtualFile> result,
                             final VirtualFile topmostRoot,
                             final ProgressIndicator progressIndicator) {
-    VfsUtilCore.visitChildrenRecursively(startFile, new VirtualFileVisitor() {
+    VfsUtilCore.visitChildrenRecursively(startFile, new VirtualFileVisitor<Void>() {
       @NotNull
       @Override
       public Result visitFileEx(@NotNull VirtualFile file) {

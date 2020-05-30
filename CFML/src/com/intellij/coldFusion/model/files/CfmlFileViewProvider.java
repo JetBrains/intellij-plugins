@@ -16,32 +16,28 @@
 package com.intellij.coldFusion.model.files;
 
 import com.intellij.coldFusion.model.CfmlLanguage;
+import com.intellij.coldFusion.model.CfmlUtil;
 import com.intellij.coldFusion.model.parsers.CfmlElementTypes;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageParserDefinitions;
-import com.intellij.lang.StdLanguages;
+import com.intellij.lang.html.HTMLLanguage;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.MultiplePsiFilesPerDocumentFileViewProvider;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.source.PsiFileImpl;
 import com.intellij.psi.templateLanguages.TemplateLanguageFileViewProvider;
-import com.intellij.sql.psi.SqlLanguage;
-import gnu.trove.THashSet;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
 import java.util.Set;
 
 /**
  * Created by Lera Nikolaenko
  */
 public class CfmlFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvider implements TemplateLanguageFileViewProvider {
-
-  private static final THashSet<Language> ourRelevantLanguages =
-    new THashSet<>(Arrays.asList(StdLanguages.HTML, CfmlLanguage.INSTANCE));
-
+  private static final Set<Language> ourRelevantLanguages = ContainerUtil.set(HTMLLanguage.INSTANCE, CfmlLanguage.INSTANCE);
 
   public CfmlFileViewProvider(final PsiManager manager, final VirtualFile virtualFile, final boolean physical) {
     super(manager, virtualFile, physical);
@@ -63,14 +59,12 @@ public class CfmlFileViewProvider extends MultiplePsiFilesPerDocumentFileViewPro
   @Nullable
   protected PsiFile createFile(@NotNull final Language lang) {
     if (lang == getTemplateDataLanguage()) {
-      // final PsiFileImpl file = (PsiFileImpl)LanguageParserDefinitions.INSTANCE.forLanguage(lang).createFile(this);
-
-      final PsiFileImpl file = (PsiFileImpl)LanguageParserDefinitions.INSTANCE.forLanguage(StdLanguages.HTML).createFile(this);
+      PsiFileImpl file = (PsiFileImpl)LanguageParserDefinitions.INSTANCE.forLanguage(HTMLLanguage.INSTANCE).createFile(this);
       file.setContentElementType(CfmlElementTypes.TEMPLATE_DATA);
       return file;
     }
-    if (lang == SqlLanguage.INSTANCE) {
-      final PsiFileImpl file = (PsiFileImpl)LanguageParserDefinitions.INSTANCE.forLanguage(SqlLanguage.INSTANCE).createFile(this);
+    if (lang == CfmlUtil.getSqlLanguage()) {
+      final PsiFileImpl file = (PsiFileImpl)LanguageParserDefinitions.INSTANCE.forLanguage(lang).createFile(this);
       file.setContentElementType(CfmlElementTypes.SQL_DATA);
       return file;
     }
@@ -90,7 +84,7 @@ public class CfmlFileViewProvider extends MultiplePsiFilesPerDocumentFileViewPro
   @Override
   @NotNull
   public Language getTemplateDataLanguage() {
-    return StdLanguages.HTML;
+    return HTMLLanguage.INSTANCE;
   }
 }
 

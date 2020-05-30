@@ -2,6 +2,7 @@ package com.dmarcotte.handlebars.format;
 
 import com.dmarcotte.handlebars.psi.HbPsiFile;
 import com.intellij.lang.Language;
+import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
@@ -15,8 +16,9 @@ public class HbFileIndentOptionsProvider extends FileIndentOptionsProvider {
   @Override
   public CommonCodeStyleSettings.IndentOptions getIndentOptions(@NotNull CodeStyleSettings settings, @NotNull PsiFile file) {
     if (file instanceof HbPsiFile) {
-      if (file.getViewProvider() instanceof TemplateLanguageFileViewProvider) {
-        Language language = ((TemplateLanguageFileViewProvider)file.getViewProvider()).getTemplateDataLanguage();
+      FileViewProvider provider = file.getViewProvider();
+      if (provider instanceof TemplateLanguageFileViewProvider) {
+        Language language = ((TemplateLanguageFileViewProvider)provider).getTemplateDataLanguage();
         return settings.getCommonSettings(language).getIndentOptions();
       }
     }

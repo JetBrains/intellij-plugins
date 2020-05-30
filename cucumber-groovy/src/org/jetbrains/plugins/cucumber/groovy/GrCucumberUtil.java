@@ -35,25 +35,23 @@ public class GrCucumberUtil {
 
   @Nullable
   public static GrReferenceExpression getCucumberStepRef(final GrMethodCall stepDefinition) {
-    return ApplicationManager.getApplication().runReadAction((NullableComputable<GrReferenceExpression>)() -> {
-      final GrExpression ref = stepDefinition.getInvokedExpression();
-      if (!(ref instanceof GrReferenceExpression)) return null;
+    final GrExpression ref = stepDefinition.getInvokedExpression();
+    if (!(ref instanceof GrReferenceExpression)) return null;
 
-      final PsiMethod method = stepDefinition.resolveMethod();
-      if (method == null) return null;
+    final PsiMethod method = stepDefinition.resolveMethod();
+    if (method == null) return null;
 
-      final PsiClass containingClass = method.getContainingClass();
-      if (containingClass == null) return null;
+    final PsiClass containingClass = method.getContainingClass();
+    if (containingClass == null) return null;
 
-      final String qName = containingClass.getQualifiedName();
-      if (qName == null) return null;
+    final String qName = containingClass.getQualifiedName();
+    if (qName == null) return null;
 
-      final String packageName = StringUtil.getPackageName(qName);
+    final String packageName = StringUtil.getPackageName(qName);
 
-      if (!GrCucumberCommonClassNames.isCucumberRuntimeGroovyPackage(packageName)) return null;
+    if (!GrCucumberCommonClassNames.isCucumberRuntimeGroovyPackage(packageName)) return null;
 
-      return (GrReferenceExpression)ref;
-    });
+    return (GrReferenceExpression)ref;
   }
 
   @Nullable

@@ -16,32 +16,47 @@ package org.dartlang.vm.service.element;
 // This is a generated file.
 
 import com.google.gson.JsonObject;
-import java.util.List;
 
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class ClassHeapStats extends Response {
 
   public ClassHeapStats(JsonObject json) {
     super(json);
   }
 
+  /**
+   * The number of bytes allocated for instances of class since the accumulator was last reset.
+   */
+  public int getAccumulatedSize() {
+    return getAsInt("accumulatedSize");
+  }
+
+  /**
+   * The number of bytes currently allocated for instances of class.
+   */
+  public int getBytesCurrent() {
+    return getAsInt("bytesCurrent");
+  }
+
+  /**
+   * The class for which this memory information is associated.
+   */
   public ClassRef getClassRef() {
     return new ClassRef((JsonObject) json.get("class"));
   }
 
-  public List<Integer> getNew() {
-    return getListInt("new");
+  /**
+   * The number of instances of class which have been allocated since the accumulator was last
+   * reset.
+   */
+  public int getInstancesAccumulated() {
+    return getAsInt("instancesAccumulated");
   }
 
-  public List<Integer> getOld() {
-    return getListInt("old");
-  }
-
-  public int getPromotedBytes() {
-    return json.get("promotedBytes") == null ? -1 : json.get("promotedBytes").getAsInt();
-  }
-
-  public int getPromotedInstances() {
-    return json.get("promotedInstances") == null ? -1 : json.get("promotedInstances").getAsInt();
+  /**
+   * The number of instances of class which are currently alive.
+   */
+  public int getInstancesCurrent() {
+    return getAsInt("instancesCurrent");
   }
 }

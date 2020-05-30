@@ -5,19 +5,21 @@ import com.intellij.codeInsight.navigation.actions.TypeDeclarationProvider;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import org.angular2.Angular2InjectionUtils;
+import com.intellij.util.containers.ContainerUtil;
 import org.angular2.entities.Angular2Component;
+import org.angular2.entities.Angular2Directive;
 import org.angular2.entities.Angular2DirectiveSelectorPsiElement;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.lang.Angular2Bundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public class Angular2TypeDeclarationProvider implements TypeDeclarationProvider {
 
-  @Nullable
   @Override
-  public PsiElement[] getSymbolTypeDeclarations(@NotNull PsiElement symbol) {
+  public PsiElement @Nullable [] getSymbolTypeDeclarations(@NotNull PsiElement symbol) {
     Angular2Component component;
     if (symbol instanceof Angular2DirectiveSelectorPsiElement
         && (component = Angular2EntitiesProvider.findComponent((Angular2DirectiveSelectorPsiElement)symbol)) != null) {
@@ -29,12 +31,10 @@ public class Angular2TypeDeclarationProvider implements TypeDeclarationProvider 
     return null;
   }
 
-  @Nullable
   @Override
-  public String getActionText(@NotNull DataContext context) {
-    PsiElement symbol = Angular2InjectionUtils.getTargetElementFromContext(context);
-    if (symbol instanceof Angular2DirectiveSelectorPsiElement
-        && Angular2EntitiesProvider.findComponent((Angular2DirectiveSelectorPsiElement)symbol) != null) {
+  public @Nullable String getActionText(@NotNull DataContext context) {
+    List<Angular2Directive> directives = Angular2EditorUtils.getDirectivesAtCaret(context);
+    if (ContainerUtil.find(directives, Angular2Directive::isComponent) != null) {
       return Angular2Bundle.message("angular.action.goto-type-declaration.component-template");
     }
     return null;

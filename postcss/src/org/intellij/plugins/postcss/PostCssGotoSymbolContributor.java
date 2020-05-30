@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class PostCssGotoSymbolContributor implements ChooseByNameContributorEx {
   @Override
-  public void processNames(@NotNull Processor<String> processor, @NotNull GlobalSearchScope scope, @Nullable IdFilter filter) {
+  public void processNames(@NotNull Processor<? super String> processor, @NotNull GlobalSearchScope scope, @Nullable IdFilter filter) {
     StubIndex.getInstance().processAllKeys(PostCssCustomSelectorIndex.KEY,
                                            s -> processor.process(s) && processor.process("--" + s) && processor.process(":--" + s),
                                            scope, filter);
@@ -27,7 +27,7 @@ public class PostCssGotoSymbolContributor implements ChooseByNameContributorEx {
 
   @Override
   public void processElementsWithName(@NotNull String name,
-                                      @NotNull Processor<NavigationItem> processor,
+                                      @NotNull Processor<? super NavigationItem> processor,
                                       @NotNull FindSymbolParameters parameters) {
     if (StringUtil.startsWith(name, ":--")) {
       StubIndex.getInstance().processElements(PostCssCustomSelectorIndex.KEY, name.substring(3), parameters.getProject(),

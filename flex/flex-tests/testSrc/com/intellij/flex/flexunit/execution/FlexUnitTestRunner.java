@@ -1,44 +1,38 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.flexunit.execution;
 
-import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionManager;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.execution.ui.RunContentManager;
 import com.intellij.lang.javascript.flex.run.FlexRunner;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-class FlexUnitTestRunner extends FlexRunner {
+final class FlexUnitTestRunner extends FlexRunner {
+  @Nullable
   @Override
-  public void execute(@NotNull final ExecutionEnvironment env, @Nullable final Callback callback) throws ExecutionException {
-    final Project project = env.getProject();
-    final RunProfileState state = env.getState();
-    if (state == null) {
-      return;
-    }
-
+  protected RunContentDescriptor doExecute(@NotNull RunProfileState state, @NotNull ExecutionEnvironment environment) {
+    Project project = environment.getProject();
     Runnable startRunnable = () -> {
-      try {
-        if (project.isDisposed()) return;
-
-        final RunContentDescriptor descriptor = doExecute(state, env);
-        if (callback != null) callback.processStarted(descriptor);
-
-        if (descriptor != null) {
-          ExecutionManager.getInstance(project).getContentManager().showRunContent(env.getExecutor(), descriptor);
-          final ProcessHandler processHandler = descriptor.getProcessHandler();
-          if (processHandler != null) processHandler.startNotify();
-        }
+      if (project.isDisposed()) {
+        return;
       }
-      catch (ExecutionException e) {
-        ExecutionUtil.handleExecutionError(env, e);
+
+      RunContentDescriptor descriptor = doExecute(state, environment);
+      if (descriptor != null) {
+        RunContentManager.getInstance(project).showRunContent(environment.getExecutor(), descriptor);
+        ProcessHandler processHandler = descriptor.getProcessHandler();
+        if (processHandler != null) {
+          processHandler.startNotify();
+        }
       }
     };
 
-    ExecutionManager.getInstance(project).compileAndRun(startRunnable, env, state, null);
+    ExecutionManager.getInstance(project).compileAndRun(startRunnable, environment, null);
+    return null;
   }
 }

@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.plugins.cucumber.CucumberUtil.buildRegexpFromCucumberExpression;
+import static org.jetbrains.plugins.cucumber.java.CucumberJavaUtil.JAVA_DEFAULT_PARAMETER_TYPE_MANAGER;
 import static org.jetbrains.plugins.cucumber.java.CucumberJavaUtil.getAllParameterTypes;
 
 public abstract class AbstractJavaStepDefinition extends AbstractStepDefinition {
@@ -40,11 +41,11 @@ public abstract class AbstractJavaStepDefinition extends AbstractStepDefinition 
       if (!CucumberJavaVersionUtil.isCucumber3OrMore(element)) {
         return definitionText;
       }
+    }
 
-      if (CucumberJavaUtil.isCucumberExpression(definitionText)) {
-        ParameterTypeManager parameterTypes = getAllParameterTypes(module);
-        return buildRegexpFromCucumberExpression(definitionText, parameterTypes);
-      }
+    if (CucumberJavaUtil.isCucumberExpression(definitionText)) {
+      ParameterTypeManager parameterTypes = module != null ? getAllParameterTypes(module) : JAVA_DEFAULT_PARAMETER_TYPE_MANAGER;
+      return buildRegexpFromCucumberExpression(definitionText, parameterTypes);
     }
 
     return definitionText;

@@ -15,6 +15,16 @@ public class CucumberJava4_5ResolveTest extends BaseCucumberJavaResolveTest {
     checkReference("tod<caret>ay", "step_method");
   }
 
+  public void testResolveToJava8StepDefinitions() {
+    init("stepResolve_cucumber_4_5");
+    checkReference("my jav<caret>a8 step", "Given");
+  }
+
+  public void testResolveEnumParameterType() {
+    init("stepResolve_cucumber_4_5");
+    checkReference("smth w<caret>ith ONE", "smthWithMyEnum");
+  }
+
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
     return CucumberJavaTestUtil.createCucumber4_5ProjectDescriptor();

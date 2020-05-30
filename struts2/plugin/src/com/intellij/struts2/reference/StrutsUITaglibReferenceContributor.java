@@ -30,12 +30,12 @@ import org.jetbrains.annotations.NotNull;
  */
 @SuppressWarnings("SpellCheckingInspection")
 public class StrutsUITaglibReferenceContributor extends StrutsTaglibReferenceContributorBase {
-
-  /**
-   * Form tags names.
-   */
-  @NonNls
-  private static final String[] TAGLIB_UI_FORM_TAGS = new String[]{
+  private static class Holder {
+    /**
+     * Form tags names.
+     */
+    @NonNls
+    private static final String[] TAGLIB_UI_FORM_TAGS = new String[]{
       "a",
       "checkbox",
       "checkboxlist",
@@ -62,9 +62,9 @@ public class StrutsUITaglibReferenceContributor extends StrutsTaglibReferenceCon
       "textfield",
       "token",
       "updownselect"
-  };
+    };
 
-  private static final String[] TAGLIB_UI_FORM_INPUT_TAGS = new String[]{
+    private static final String[] TAGLIB_UI_FORM_INPUT_TAGS = new String[]{
       "checkbox",
       "checkboxlist",
       "combobox",
@@ -79,8 +79,8 @@ public class StrutsUITaglibReferenceContributor extends StrutsTaglibReferenceCon
       "textarea",
       "textfield",
       "updownselect"
-  };
-
+    };
+  }
   @NotNull
   @Override
   protected String getNamespace() {
@@ -93,34 +93,34 @@ public class StrutsUITaglibReferenceContributor extends StrutsTaglibReferenceCon
 
     registerTags(new ThemeReferenceProvider(),
                  "theme", registrar,
-                 TAGLIB_UI_FORM_TAGS);
+                 Holder.TAGLIB_UI_FORM_TAGS);
 
-    registerBoolean("disabled", registrar, TAGLIB_UI_FORM_TAGS);
+    registerBoolean("disabled", registrar, Holder.TAGLIB_UI_FORM_TAGS);
 
     registerTags(new StaticStringValuesReferenceProvider(false, "left", "top"),
                  "labelposition", registrar,
-                 TAGLIB_UI_FORM_TAGS);
+                 Holder.TAGLIB_UI_FORM_TAGS);
 
-    registerTags(ACTION_PROPERTY_REFERENCE_PROVIDER,
+    registerTags(StrutsTaglibReferenceContributorBase.Holder.ACTION_PROPERTY_REFERENCE_PROVIDER,
                  "name", registrar,
-                 TAGLIB_UI_FORM_INPUT_TAGS);
-    registerTags(ACTION_PROPERTY_REFERENCE_PROVIDER,
+                 Holder.TAGLIB_UI_FORM_INPUT_TAGS);
+    registerTags(StrutsTaglibReferenceContributorBase.Holder.ACTION_PROPERTY_REFERENCE_PROVIDER,
                  "list", registrar,
                  "doubleselect", "inputtransferselect", "optiontransferselect", "select", "updownselect");
 
-    registerBoolean("required", registrar, TAGLIB_UI_FORM_TAGS);
+    registerBoolean("required", registrar, Holder.TAGLIB_UI_FORM_TAGS);
 
-    registerTags(ID_REFERENCE_PROVIDER,
+    registerTags(StrutsTaglibReferenceContributorBase.Holder.ID_REFERENCE_PROVIDER,
                  "id", registrar,
-                 TAGLIB_UI_FORM_INPUT_TAGS);
+                 Holder.TAGLIB_UI_FORM_INPUT_TAGS);
 
     registerTags(new StaticStringValuesReferenceProvider(false, "left", "right"),
                  "requiredposition", registrar,
-                 TAGLIB_UI_FORM_TAGS);
+                 Holder.TAGLIB_UI_FORM_TAGS);
 
     registerTags(wrappedPropertiesProvider,
                  "key", registrar,
-                 TAGLIB_UI_FORM_INPUT_TAGS);
+                 Holder.TAGLIB_UI_FORM_INPUT_TAGS);
 
     // elements with "readonly"
     registerBoolean("readonly", registrar, "combobox", "password", "textarea", "textfield");
@@ -134,11 +134,11 @@ public class StrutsUITaglibReferenceContributor extends StrutsTaglibReferenceCon
                     "doubleselect", "inputtransferselect", "optiontransferselect", "select", "updownselect");
 
     // elements with "action"
-    registerTags(ACTION_REFERENCE_PROVIDER,
+    registerTags(StrutsTaglibReferenceContributorBase.Holder.ACTION_REFERENCE_PROVIDER,
                  "action", registrar,
                  "a", "form", "reset", "submit", "url");
 
-    registerTags(ACTION_REFERENCE_PROVIDER,
+    registerTags(StrutsTaglibReferenceContributorBase.Holder.ACTION_REFERENCE_PROVIDER,
                  "name", registrar,
                  "action");
 
@@ -147,7 +147,7 @@ public class StrutsUITaglibReferenceContributor extends StrutsTaglibReferenceCon
                  "a", "reset", "submit", "url");
 
     // elements with "value" (relative path)
-    registerTags(RELATIVE_PATH_PROVIDER,
+    registerTags(StrutsTaglibReferenceContributorBase.Holder.RELATIVE_PATH_PROVIDER,
                  "value", registrar,
                  "include", "url");
 
@@ -157,24 +157,24 @@ public class StrutsUITaglibReferenceContributor extends StrutsTaglibReferenceCon
                  "a", "action", "form", "url");
 
     // CSS classes
-    registerTags(CSS_CLASS_PROVIDER,
+    registerTags(StrutsTaglibReferenceContributorBase.Holder.CSS_CLASS_PROVIDER,
                  "cssClass", registrar,
-                 TAGLIB_UI_FORM_TAGS);
+                 Holder.TAGLIB_UI_FORM_TAGS);
 
-    registerTags(CSS_CLASS_PROVIDER,
+    registerTags(StrutsTaglibReferenceContributorBase.Holder.CSS_CLASS_PROVIDER,
                  "cssErrorClass", registrar,
-                 TAGLIB_UI_FORM_TAGS);
+                 Holder.TAGLIB_UI_FORM_TAGS);
 
-    registerTags(CSS_CLASS_PROVIDER,
+    registerTags(StrutsTaglibReferenceContributorBase.Holder.CSS_CLASS_PROVIDER,
                  "tooltipCssClass", registrar,
-                 TAGLIB_UI_FORM_TAGS);
+                 Holder.TAGLIB_UI_FORM_TAGS);
 
     // *transfer/double-tags
-    registerTags(CSS_CLASS_PROVIDER,
+    registerTags(StrutsTaglibReferenceContributorBase.Holder.CSS_CLASS_PROVIDER,
                  "buttonCssClass", registrar,
                  "inputtransferselect", "optiontransferselect");
 
-    registerTags(CSS_CLASS_PROVIDER,
+    registerTags(StrutsTaglibReferenceContributorBase.Holder.CSS_CLASS_PROVIDER,
                  "doubleCssClass", registrar,
                  "inputtransferselect", "optiontransferselect");
 
@@ -182,10 +182,10 @@ public class StrutsUITaglibReferenceContributor extends StrutsTaglibReferenceCon
                     registrar,
                     "doubleselect", "inputtransferselect", "optiontransferselect");
 
-    registerTags(ACTION_PROPERTY_REFERENCE_PROVIDER,
+    registerTags(StrutsTaglibReferenceContributorBase.Holder.ACTION_PROPERTY_REFERENCE_PROVIDER,
                  "doubleName", registrar,
                  "doubleselect", "optiontransferselect");
-    registerTags(ACTION_PROPERTY_REFERENCE_PROVIDER,
+    registerTags(StrutsTaglibReferenceContributorBase.Holder.ACTION_PROPERTY_REFERENCE_PROVIDER,
                  "doubleList", registrar,
                  "doubleselect", "optiontransferselect");
 
@@ -214,7 +214,7 @@ public class StrutsUITaglibReferenceContributor extends StrutsTaglibReferenceCon
     registerBoolean("validate", registrar, "form");
 
     // <param>
-    registerTags(ACTION_PROPERTY_REFERENCE_PROVIDER,
+    registerTags(StrutsTaglibReferenceContributorBase.Holder.ACTION_PROPERTY_REFERENCE_PROVIDER,
                  "name", registrar,
                  "param");
 
@@ -231,7 +231,7 @@ public class StrutsUITaglibReferenceContributor extends StrutsTaglibReferenceCon
     registerTags(new StaticStringValuesReferenceProvider(false, "input", "button", "image", "submit"),
                  "type", registrar,
                  "submit");
-    registerTags(RELATIVE_PATH_PROVIDER,
+    registerTags(StrutsTaglibReferenceContributorBase.Holder.RELATIVE_PATH_PROVIDER,
                  "src", registrar,
                  "submit");
 

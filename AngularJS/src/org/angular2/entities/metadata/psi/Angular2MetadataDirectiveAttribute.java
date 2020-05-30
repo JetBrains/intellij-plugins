@@ -2,7 +2,7 @@ package org.angular2.entities.metadata.psi;
 
 import com.intellij.lang.javascript.psi.JSParameter;
 import com.intellij.lang.javascript.psi.JSType;
-import com.intellij.lang.javascript.psi.JSTypeInfoOwner;
+import com.intellij.lang.javascript.psi.JSTypeOwner;
 import com.intellij.openapi.util.NotNullComputable;
 import com.intellij.psi.PsiElement;
 import org.angular2.entities.Angular2DirectiveAttribute;
@@ -21,29 +21,26 @@ public class Angular2MetadataDirectiveAttribute implements Angular2DirectiveAttr
   private final NotNullComputable<? extends PsiElement> mySourceSupplier;
   private final String myName;
 
-  Angular2MetadataDirectiveAttribute(@NotNull final Supplier<? extends JSParameter> parameterSupplier,
-                                     @NotNull final NotNullComputable<? extends PsiElement> sourceSupplier,
-                                     @NotNull final String name) {
+  Angular2MetadataDirectiveAttribute(final @NotNull Supplier<? extends JSParameter> parameterSupplier,
+                                     final @NotNull NotNullComputable<? extends PsiElement> sourceSupplier,
+                                     final @NotNull String name) {
     myParameterSupplier = parameterSupplier;
     mySourceSupplier = sourceSupplier;
     myName = name;
   }
 
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     return myName;
   }
 
-  @Nullable
   @Override
-  public JSType getType() {
-    return doIfNotNull(myParameterSupplier.get(), JSTypeInfoOwner::getJSType);
+  public @Nullable JSType getType() {
+    return doIfNotNull(myParameterSupplier.get(), JSTypeOwner::getJSType);
   }
 
-  @NotNull
   @Override
-  public PsiElement getSourceElement() {
+  public @NotNull PsiElement getSourceElement() {
     return notNull(myParameterSupplier.get(), mySourceSupplier.compute());
   }
 

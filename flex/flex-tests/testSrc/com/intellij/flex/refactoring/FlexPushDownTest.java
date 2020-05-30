@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.refactoring;
 
 import com.intellij.flex.util.FlexTestUtils;
@@ -78,8 +79,7 @@ public class FlexPushDownTest extends MultiFileTestCase {
     JSMemberInfo[] infosArray = JSMemberInfo.getSelected(memberInfos, sourceClass, Conditions.alwaysTrue());
     new JSPushDownProcessor(myProject, infosArray, sourceClass, docCommentPolicy) {
       @Override
-      @NotNull
-      protected UsageInfo[] findUsages() {
+      protected UsageInfo @NotNull [] findUsages() {
         // ensure stable order
         final UsageInfo[] usages = super.findUsages();
         Arrays.sort(usages,
@@ -87,7 +87,7 @@ public class FlexPushDownTest extends MultiFileTestCase {
         return usages;
       }
     }.run();
-    myProject.getComponent(PostprocessReformattingAspect.class).doPostponedFormatting();
+    PostprocessReformattingAspect.getInstance(myProject).doPostponedFormatting();
     FileDocumentManager.getInstance().saveAllDocuments();
   }
 

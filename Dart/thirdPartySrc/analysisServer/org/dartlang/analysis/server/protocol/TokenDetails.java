@@ -8,10 +8,8 @@
  */
 package org.dartlang.analysis.server.protocol;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import com.google.common.collect.Lists;
+
 import com.google.dart.server.utilities.general.JsonUtilities;
 import com.google.dart.server.utilities.general.ObjectUtilities;
 import com.google.gson.JsonArray;
@@ -33,7 +31,7 @@ public class TokenDetails {
 
   public static final TokenDetails[] EMPTY_ARRAY = new TokenDetails[0];
 
-  public static final List<TokenDetails> EMPTY_LIST = Lists.newArrayList();
+  public static final List<TokenDetails> EMPTY_LIST = new ArrayList<>();
 
   /**
    * The token's lexeme.
@@ -54,12 +52,18 @@ public class TokenDetails {
   private final List<String> validElementKinds;
 
   /**
+   * The offset of the first character of the token in the file which it originated from.
+   */
+  private final int offset;
+
+  /**
    * Constructor for {@link TokenDetails}.
    */
-  public TokenDetails(String lexeme, String type, List<String> validElementKinds) {
+  public TokenDetails(String lexeme, String type, List<String> validElementKinds, int offset) {
     this.lexeme = lexeme;
     this.type = type;
     this.validElementKinds = validElementKinds;
+    this.offset = offset;
   }
 
   @Override
@@ -69,7 +73,8 @@ public class TokenDetails {
       return
         ObjectUtilities.equals(other.lexeme, lexeme) &&
         ObjectUtilities.equals(other.type, type) &&
-        ObjectUtilities.equals(other.validElementKinds, validElementKinds);
+        ObjectUtilities.equals(other.validElementKinds, validElementKinds) &&
+        other.offset == offset;
     }
     return false;
   }
@@ -78,7 +83,8 @@ public class TokenDetails {
     String lexeme = jsonObject.get("lexeme").getAsString();
     String type = jsonObject.get("type") == null ? null : jsonObject.get("type").getAsString();
     List<String> validElementKinds = jsonObject.get("validElementKinds") == null ? null : JsonUtilities.decodeStringList(jsonObject.get("validElementKinds").getAsJsonArray());
-    return new TokenDetails(lexeme, type, validElementKinds);
+    int offset = jsonObject.get("offset").getAsInt();
+    return new TokenDetails(lexeme, type, validElementKinds, offset);
   }
 
   public static List<TokenDetails> fromJsonArray(JsonArray jsonArray) {
@@ -98,6 +104,13 @@ public class TokenDetails {
    */
   public String getLexeme() {
     return lexeme;
+  }
+
+  /**
+   * The offset of the first character of the token in the file which it originated from.
+   */
+  public int getOffset() {
+    return offset;
   }
 
   /**
@@ -123,6 +136,7 @@ public class TokenDetails {
     builder.append(lexeme);
     builder.append(type);
     builder.append(validElementKinds);
+    builder.append(offset);
     return builder.toHashCode();
   }
 
@@ -139,6 +153,7 @@ public class TokenDetails {
       }
       jsonObject.add("validElementKinds", jsonArrayValidElementKinds);
     }
+    jsonObject.addProperty("offset", offset);
     return jsonObject;
   }
 
@@ -151,7 +166,9 @@ public class TokenDetails {
     builder.append("type=");
     builder.append(type + ", ");
     builder.append("validElementKinds=");
-    builder.append(StringUtils.join(validElementKinds, ", "));
+    builder.append(StringUtils.join(validElementKinds, ", ") + ", ");
+    builder.append("offset=");
+    builder.append(offset);
     builder.append("]");
     return builder.toString();
   }

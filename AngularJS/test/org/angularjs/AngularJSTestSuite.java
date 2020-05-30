@@ -4,6 +4,7 @@ package org.angularjs;
 import org.angular2.Angular2TestSuite;
 import org.angularjs.codeInsight.*;
 import org.angularjs.codeInsight.messageFormat.AngularMessageFormatAnnotatorTest;
+import org.angularjs.diagrams.DiagramsTest;
 import org.angularjs.editor.AngularTypedHandlerTest;
 import org.angularjs.findUsages.FindUsagesTest;
 import org.angularjs.index.AngularDirectiveCommentParsingTest;
@@ -36,6 +37,7 @@ import org.junit.runners.Suite;
   AngularUiRouterTest.class,
   ComponentsTest.class,
   NgDocTest.class,
+  DiagramsTest.class,
   AngularJSReSharperTestSuite.class,
   Angular2TestSuite.class
 })

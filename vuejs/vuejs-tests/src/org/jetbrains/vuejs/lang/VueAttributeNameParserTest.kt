@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.lang
 
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.*
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeKind.*
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeKind.SLOT
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueDirectiveKind.*
@@ -27,12 +28,37 @@ class VueAttributeNameParserTest : UsefulTestCase() {
     expect("slot", "slot", SLOT, injectJS = false, requiresAttributeValue = true)
     expect("ref", "ref", REF, injectJS = false, requiresAttributeValue = true)
     expect("slot-scope", "slot-scope", SLOT_SCOPE, injectJS = true, requiresAttributeValue = true)
+    expect("scope", "scope", PLAIN, injectJS = false, requiresAttributeValue = true)
+    expect("scope", "scope", SCOPE, injectJS = true, requiresAttributeValue = true, contextTag = "template")
 
     // contextual attributes within non valid context
     expect("scoped", "scoped", PLAIN, injectJS = false, requiresAttributeValue = true)
     expect("module", "module", PLAIN, injectJS = false, requiresAttributeValue = true)
     expect("src", "src", PLAIN, injectJS = false, requiresAttributeValue = true)
     expect("functional", "functional", PLAIN, injectJS = false, requiresAttributeValue = true)
+
+    // contextual attributes within valid contexts
+    expect("scoped", "scoped", STYLE_SCOPED, injectJS = false, requiresAttributeValue = false,
+           contextTag = "style", isTopLevelTag = true)
+    expect("module", "module", STYLE_MODULE, injectJS = false, requiresAttributeValue = false,
+           contextTag = "style", isTopLevelTag = true)
+    expect("functional", "functional", TEMPLATE_FUNCTIONAL, injectJS = false, requiresAttributeValue = false,
+           contextTag = "template", isTopLevelTag = true)
+
+
+    expect("id", "id", PLAIN, injectJS = false, requiresAttributeValue = true)
+    expect("id", "id", SCRIPT_ID, injectJS = false, requiresAttributeValue = true,
+           contextTag = "script", isTopLevelTag = true)
+    expect("id", "id", SCRIPT_ID, injectJS = false, requiresAttributeValue = true,
+           contextTag = "script", isTopLevelTag = false)
+
+    expect("src", "src", TEMPLATE_SRC, injectJS = false, requiresAttributeValue = true,
+           contextTag = "template", isTopLevelTag = true)
+    expect("src", "src", SCRIPT_SRC, injectJS = false, requiresAttributeValue = true,
+           contextTag = "script", isTopLevelTag = true)
+    expect("src", "src", STYLE_SRC, injectJS = false, requiresAttributeValue = true,
+           contextTag = "style", isTopLevelTag = true)
+
   }
 
   fun testDirectives() {
@@ -52,17 +78,18 @@ class VueAttributeNameParserTest : UsefulTestCase() {
     expect("v-foo:bar..a...b..", "foo", "bar", CUSTOM, setOf("", "a", "b"), injectJS = true, requiresAttributeValue = false)
 
     expect("v-@foo", "@foo", null, CUSTOM, injectJS = true, requiresAttributeValue = false)
+    expect("v-#foo", "#foo", null, CUSTOM, injectJS = true, requiresAttributeValue = false)
     expect("v-:foo", "", "foo", CUSTOM, injectJS = true, requiresAttributeValue = false)
 
     // Special directives
     expect("v-bind:a", "bind", "a", BIND, injectJS = true, requiresAttributeValue = true)
-    expect(":a", "bind", "a", BIND, injectJS = true, requiresAttributeValue = true)
-    expect(":", "bind", "", BIND, injectJS = true, requiresAttributeValue = true)
+    expect(":a", "bind", "a", BIND, injectJS = true, requiresAttributeValue = true, isShorthand = true)
+    expect(":", "bind", "", BIND, injectJS = true, requiresAttributeValue = true, isShorthand = true)
 
     expect("v-on:a", "on", "a", ON, injectJS = true, requiresAttributeValue = true)
-    expect("@a", "on", "a", ON, injectJS = true, requiresAttributeValue = true)
-    expect("@", "on", "", ON, injectJS = true, requiresAttributeValue = true)
-    expect("@a.native", "on", "a", ON, setOf("native"), injectJS = true, requiresAttributeValue = false)
+    expect("@a", "on", "a", ON, injectJS = true, requiresAttributeValue = true, isShorthand = true)
+    expect("@", "on", "", ON, injectJS = true, requiresAttributeValue = true, isShorthand = true)
+    expect("@a.native", "on", "a", ON, setOf("native"), injectJS = true, requiresAttributeValue = false, isShorthand = true)
 
     expect("v-else-if", "else-if", null, ELSE_IF, injectJS = true, requiresAttributeValue = true)
     expect("v-for", "for", null, FOR, injectJS = true, requiresAttributeValue = true)
@@ -72,7 +99,9 @@ class VueAttributeNameParserTest : UsefulTestCase() {
     expect("v-show", "show", null, SHOW, injectJS = true, requiresAttributeValue = true)
     expect("v-text", "text", null, TEXT, injectJS = true, requiresAttributeValue = true)
 
-    expect("v-slot", "slot", null, VueAttributeNameParser.VueDirectiveKind.SLOT, injectJS = false, requiresAttributeValue = false)
+    expect("v-slot", "slot", null, VueDirectiveKind.SLOT, injectJS = true, requiresAttributeValue = false)
+    expect("#header", "slot", "header", VueDirectiveKind.SLOT, injectJS = true, requiresAttributeValue = false, isShorthand = true)
+    expect("#", "slot", "", VueDirectiveKind.SLOT, injectJS = true, requiresAttributeValue = false, isShorthand = true)
 
     // No attribute value directives
     expect("v-cloak", "cloak", null, CLOAK, injectJS = false, requiresAttributeValue = false)
@@ -85,23 +114,27 @@ class VueAttributeNameParserTest : UsefulTestCase() {
   private fun expect(attributeName: String,
                      name: String,
                      arguments: String?,
-                     directiveKind: VueAttributeNameParser.VueDirectiveKind,
+                     directiveKind: VueDirectiveKind,
                      modifiers: Set<String> = emptySet(),
                      injectJS: Boolean,
-                     requiresAttributeValue: Boolean) {
+                     requiresAttributeValue: Boolean,
+                     isShorthand: Boolean = false) {
     expect(attributeName, name, DIRECTIVE, modifiers, injectJS, requiresAttributeValue)
-    val info = VueAttributeNameParser.parse(attributeName, null) as VueAttributeNameParser.VueDirectiveInfo
+    val info = VueAttributeNameParser.parse(attributeName) as VueDirectiveInfo
     assertEquals("$attributeName - wrong directive kind", directiveKind, info.directiveKind)
     assertEquals("$attributeName - wrong directive arguments", arguments, info.arguments)
+    assertEquals("$attributeName - wrong isShorthand value", isShorthand, info.isShorthand)
   }
 
   private fun expect(attributeName: String,
                      name: String,
-                     attributeKind: VueAttributeNameParser.VueAttributeKind,
+                     attributeKind: VueAttributeKind,
                      modifiers: Set<String> = emptySet(),
                      injectJS: Boolean,
-                     requiresAttributeValue: Boolean) {
-    val info = VueAttributeNameParser.parse(attributeName, null)
+                     requiresAttributeValue: Boolean,
+                     contextTag: String? = null,
+                     isTopLevelTag: Boolean = false) {
+    val info = VueAttributeNameParser.parse(attributeName, contextTag, isTopLevelTag)
     assertEquals("$attributeName - wrong parsed name", name, info.name)
     assertEquals("$attributeName - wrong kind", attributeKind, info.kind)
     assertEquals("$attributeName - wrong modifiers", modifiers, info.modifiers)

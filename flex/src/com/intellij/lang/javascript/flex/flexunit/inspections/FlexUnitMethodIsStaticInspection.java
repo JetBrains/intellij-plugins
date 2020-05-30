@@ -16,13 +16,6 @@ import org.jetbrains.annotations.NotNull;
 public class FlexUnitMethodIsStaticInspection extends FlexUnitMethodInspectionBase {
 
   @Override
-  @Nls
-  @NotNull
-  public String getDisplayName() {
-    return FlexBundle.message("flexunit.inspection.testmethodisstatic.displayname");
-  }
-
-  @Override
   @NotNull
   public String getShortName() {
     return "FlexUnitMethodIsStaticInspection";

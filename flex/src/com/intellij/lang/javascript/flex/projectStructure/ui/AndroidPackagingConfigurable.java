@@ -6,8 +6,6 @@ import com.intellij.openapi.module.Module;
 import org.jetbrains.annotations.Nls;
 
 public class AndroidPackagingConfigurable extends AirPackagingConfigurableBase<ModifiableAndroidPackagingOptions> {
-  public static final String TAB_NAME = FlexBundle.message("bc.tab.android.display.name");
-
   public AndroidPackagingConfigurable(final Module module,
                                       final ModifiableAndroidPackagingOptions model,
                                       final AirDescriptorInfoProvider airDescriptorInfoProvider) {
@@ -17,11 +15,15 @@ public class AndroidPackagingConfigurable extends AirPackagingConfigurableBase<M
   @Override
   @Nls
   public String getDisplayName() {
-    return TAB_NAME;
+    return getTabName();
   }
 
   @Override
   public String getHelpTopic() {
     return "BuildConfigurationPage.Android";
+  }
+
+  public static String getTabName() {
+    return FlexBundle.message("bc.tab.android.display.name");
   }
 }

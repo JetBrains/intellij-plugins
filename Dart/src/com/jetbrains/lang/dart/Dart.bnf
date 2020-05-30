@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 {
   psiImplUtilClass="com.jetbrains.lang.dart.util.DartPsiImplUtil"
 
@@ -64,6 +64,7 @@
   COVARIANT="covariant"
   DEFERRED="deferred"
   EXPORT="export"
+  EXTENSION="extension"
   EXTERNAL="external"
   FACTORY="factory"
   GET="get"
@@ -163,6 +164,7 @@ private topLevelDefinition ::= libraryStatement
                              | classDefinition
                              | mixinDeclaration
                              | enumDefinition
+                             | extensionDeclaration
                              | functionTypeAlias
                              | getterOrSetterDeclaration
                              | functionDeclarationWithBodyOrNative
@@ -175,7 +177,7 @@ incompleteDeclaration ::= metadata* ('external' | 'static' | 'final' | 'const' |
 
 partOfStatement ::= metadata* 'part' 'of' (libraryId | uriElement)';' {
   pin=4
-  methods = [ getLibraryName ]
+  methods = [ getLibraryName getLibraryFiles]
 }
 
 libraryId ::= <<nonStrictID>> ('.' <<nonStrictID>>)*
@@ -256,6 +258,9 @@ enumConstantDeclaration ::= componentName
   implements="com.jetbrains.lang.dart.psi.DartComponent"
   methods = [getMetadataList]
 }
+
+extensionDeclaration ::= 'extension' typeParameters? 'on' type '?'? classBody |
+                         'extension' <<nonStrictID>> typeParameters? 'on' type '?'? classBody
 
 mixinApplication ::= '=' type mixins? interfaces? ';' {pin = 1}
 private standardClassDeclarationTail ::= superclass? mixins? interfaces? ('native' stringLiteralExpression?)? classBody?
@@ -426,12 +431,12 @@ type ::= 'void' !untypedFunctionType | functionTypeWrapper | simpleType  {
   ]
 }
 
-untypedFunctionType ::= <<functionId>> typeParameters? parameterTypeList '?'?
+untypedFunctionType ::= <<functionId>> typeParameters? parameterTypeList ('?' !(expression ':'))?
 private functionTypeWrapper ::= (voidTypeFunctionType | untypedFunctionType | simpleType) typedFunctionType+ | untypedFunctionType
-left typedFunctionType ::= <<functionId>> typeParameters? parameterTypeList '?'?
+left typedFunctionType ::= <<functionId>> typeParameters? parameterTypeList ('?' !(expression ':'))?
 
 voidTypeFunctionType ::= 'void'
-simpleType ::= simpleQualifiedReferenceExpression typeArguments? '?'?
+simpleType ::= simpleQualifiedReferenceExpression typeArguments? ('?' !(expression ':'))?
 
 typeArguments ::= '<' typeList '>'
 typeList ::= type? (',' type)*

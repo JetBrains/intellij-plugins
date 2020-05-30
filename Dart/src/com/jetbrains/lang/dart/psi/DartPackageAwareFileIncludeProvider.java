@@ -1,8 +1,9 @@
 package com.jetbrains.lang.dart.psi;
 
+import com.intellij.ide.highlighter.HtmlFileType;
+import com.intellij.ide.highlighter.XHtmlFileType;
 import com.intellij.lang.xml.XMLLanguage;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -42,14 +43,13 @@ public class DartPackageAwareFileIncludeProvider extends FileIncludeProvider {
   }
 
   @Override
-  public void registerFileTypesUsedForIndexing(@NotNull final Consumer<FileType> fileTypeSink) {
-    fileTypeSink.consume(StdFileTypes.HTML);
-    fileTypeSink.consume(StdFileTypes.XHTML);
+  public void registerFileTypesUsedForIndexing(final @NotNull Consumer<? super FileType> fileTypeSink) {
+    fileTypeSink.consume(HtmlFileType.INSTANCE);
+    fileTypeSink.consume(XHtmlFileType.INSTANCE);
   }
 
-  @NotNull
   @Override
-  public FileIncludeInfo[] getIncludeInfos(@NotNull final FileContent content) {
+  public FileIncludeInfo @NotNull [] getIncludeInfos(@NotNull final FileContent content) {
     if (PubspecYamlUtil.findPubspecYamlFile(content.getProject(), content.getFile()) == null) return FileIncludeInfo.EMPTY;
 
     final PsiFile psiFile = content.getPsiFile();
@@ -72,7 +72,7 @@ public class DartPackageAwareFileIncludeProvider extends FileIncludeProvider {
       }
 
       @Override
-      public void visitElement(PsiElement element) {
+      public void visitElement(@NotNull PsiElement element) {
         if (element.getLanguage() instanceof XMLLanguage) {
           super.visitElement(element);
         }

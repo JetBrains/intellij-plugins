@@ -8,7 +8,6 @@ import com.intellij.lang.javascript.psi.impl.JSTextReference;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.angular2.lang.Angular2LangUtil;
 import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.index.AngularJSIndexingHandler;
 import org.jetbrains.annotations.NotNull;
@@ -23,9 +22,8 @@ public class AngularJSTargetElementEvaluator implements TargetElementEvaluator {
     return false;
   }
 
-  @Nullable
   @Override
-  public PsiElement getElementByReference(@NotNull PsiReference ref, int flags) {
+  public @Nullable PsiElement getElementByReference(@NotNull PsiReference ref, int flags) {
     if (ref instanceof JSTextReference) {
       final PsiElement element = ref.getElement();
       final JSCallExpression call = PsiTreeUtil.getParentOfType(element, JSCallExpression.class);
@@ -34,8 +32,8 @@ public class AngularJSTargetElementEvaluator implements TargetElementEvaluator {
         JSReferenceExpression callee = (JSReferenceExpression)expression;
         JSExpression qualifier = callee.getQualifier();
 
-        if (qualifier != null && AngularJSIndexingHandler.INTERESTING_METHODS.contains(callee.getReferenceName()) &&
-            (AngularIndexUtil.hasAngularJS(element.getProject()) || Angular2LangUtil.isAngular2Context(element))) {
+        if (qualifier != null && AngularJSIndexingHandler.INTERESTING_METHODS.contains(callee.getReferenceName())
+            && AngularIndexUtil.hasAngularJS(element.getProject())) {
           return element;
         }
       }

@@ -1,61 +1,59 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight.attributes
 
-import com.intellij.lang.javascript.psi.JSProperty
+import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
 import com.intellij.psi.meta.PsiPresentableMetaData
 import com.intellij.psi.xml.XmlElement
+import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ArrayUtil
 import com.intellij.xml.impl.BasicXmlAttributeDescriptor
 import icons.VuejsIcons
-import org.jetbrains.annotations.ApiStatus
+import org.jetbrains.vuejs.VueBundle
+import org.jetbrains.vuejs.codeInsight.BOOLEAN_TYPE
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeInfo
+import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
+import org.jetbrains.vuejs.model.VueInputProperty
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.VueModelVisitor.Proximity.*
 import javax.swing.Icon
 
-@Suppress("DEPRECATION")
-open class VueAttributeDescriptor(name: String,
-                                  element: PsiElement? = null,
-                                  acceptsNoValue: Boolean = false,
-                                  val priority: AttributePriority = AttributePriority.NORMAL) :
-  org.jetbrains.vuejs.codeInsight.VueAttributeDescriptor(name, element, isNonProp = acceptsNoValue) {
+open class VueAttributeDescriptor(protected val tag: XmlTag,
+                                  private val name: String,
+                                  internal val element: PsiElement? = null,
+                                  private val sources: List<VueDocumentedItem> = listOf(),
+                                  private val acceptsNoValue: Boolean = false,
+                                  private val acceptsValue: Boolean = true,
+                                  val priority: AttributePriority = AttributePriority.NORMAL,
+                                  isRequired: Boolean = false)
+  : BasicXmlAttributeDescriptor(), PsiPresentableMetaData {
 
-  enum class AttributePriority(val value: Double) {
-    NONE(0.0),
-    LOW(25.0),
-    NORMAL(50.0),
-    HIGH(100.0);
+  constructor(tag: XmlTag, name: String, prop: VueInputProperty) : this(
+    tag, name, prop.source, listOf(prop),
+    isRequired = prop.required,
+    acceptsNoValue = isBooleanProp(prop),
+    priority = AttributePriority.HIGH)
 
-    companion object {
-      fun of(proximity: VueModelVisitor.Proximity): AttributePriority {
-        return when (proximity) {
-          LOCAL -> HIGH
-          PLUGIN, APP -> NORMAL
-          GLOBAL -> LOW
-          OUT_OF_SCOPE -> NONE
-        }
-      }
-    }
+  private val _isRequired: Boolean = isRequired
+  private val info: NotNullLazyValue<VueAttributeInfo> = NotNullLazyValue.createValue {
+    VueAttributeNameParser.parse(getName(), tag)
   }
-}
 
-// This class is the original `VueAttributeDescriptor` class,
-// but it's renamed to allow instanceof check through deprecated class from 'codeInsight' package
-@Deprecated("Public for internal purpose only!")
-@ApiStatus.ScheduledForRemoval(inVersion = "2019.3")
-open class _VueAttributeDescriptor(private val name: String,
-                                   internal val element: PsiElement? = null,
-                                   private val acceptsNoValue: Boolean = false) : BasicXmlAttributeDescriptor(), PsiPresentableMetaData {
+  fun getInfo(): VueAttributeInfo = info.value
+
+  fun getSources(): List<VueDocumentedItem> = sources.toList()
+
+  override fun validateValue(context: XmlElement?, value: String?): String? {
+    if (value != null && !acceptsValue) {
+      return VueBundle.message("vue.inspection.message.attribute.does.not.accept.value", name)
+    }
+    return null
+  }
+
+  override fun isRequired(): Boolean = _isRequired
   override fun getName(): String = name
   override fun getDeclaration(): PsiElement? = element
   override fun init(element: PsiElement?) {}
-  override fun isRequired(): Boolean {
-    if (name.startsWith(":") || name.startsWith("v-bind:")) return false
-    // TODO use input prop definition model
-    val initializer = (element as? JSProperty)?.objectLiteralExpressionInitializer ?: return false
-    val literal = initializer.findProperty("required")?.literalExpressionInitializer
-    return literal != null && literal.isBooleanLiteral && "true" == literal.significantValue
-  }
 
   override fun isFixed(): Boolean = false
   override fun hasIdType(): Boolean = false
@@ -82,4 +80,27 @@ open class _VueAttributeDescriptor(private val name: String,
   override fun getTypeName(): String? = null
   override fun getIcon(): Icon = VuejsIcons.Vue
 
+  companion object {
+    private fun isBooleanProp(prop: VueInputProperty): Boolean {
+      return prop.jsType?.isDirectlyAssignableType(BOOLEAN_TYPE, null) ?: false
+    }
+  }
+
+  enum class AttributePriority(val value: Double) {
+    NONE(0.0),
+    LOW(25.0),
+    NORMAL(50.0),
+    HIGH(100.0);
+
+    companion object {
+      fun of(proximity: VueModelVisitor.Proximity): AttributePriority {
+        return when (proximity) {
+          LOCAL -> HIGH
+          PLUGIN, APP -> NORMAL
+          GLOBAL -> LOW
+          OUT_OF_SCOPE -> NONE
+        }
+      }
+    }
+  }
 }

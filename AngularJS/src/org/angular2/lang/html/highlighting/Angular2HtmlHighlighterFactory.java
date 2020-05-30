@@ -11,9 +11,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class Angular2HtmlHighlighterFactory extends SyntaxHighlighterFactory {
 
-  @NotNull
   @Override
-  public SyntaxHighlighter getSyntaxHighlighter(@Nullable Project project, @Nullable VirtualFile virtualFile) {
+  public @NotNull SyntaxHighlighter getSyntaxHighlighter(@Nullable Project project, @Nullable VirtualFile virtualFile) {
     //TODO take interpolation setup into account
     Pair<String, String> interpolationConfig = null;
     //noinspection ConstantConditions

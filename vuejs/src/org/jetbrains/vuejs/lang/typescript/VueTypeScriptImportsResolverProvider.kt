@@ -7,8 +7,9 @@ import com.intellij.lang.typescript.tsconfig.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
+import org.jetbrains.vuejs.context.enableVueTSService
+import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.findModule
-import org.jetbrains.vuejs.index.hasVue
 import org.jetbrains.vuejs.lang.html.VueFileType
 
 const val vueExtension = ".vue"
@@ -30,18 +31,18 @@ class VueTypeScriptImportsResolverProvider : TypeScriptImportsResolverProvider {
   override fun createResolver(project: Project,
                               context: TypeScriptImportResolveContext,
                               contextFile: VirtualFile): TypeScriptFileImportsResolver? {
-    if (!hasVue(project)) return null
+    if (!isVueContext(contextFile, project)) return null
 
     val defaultProvider = TypeScriptImportsResolverProvider.getDefaultProvider(project, context, contextFile)
-    val vueResolver = VueFileImportsResolver(project, context, typeScriptNodeResolver(project))
+    val vueResolver = VueFileImportsResolver(project, context, TypeScriptNodeReference.TS_PROCESSOR)
     return flattenAndAppendResolver(defaultProvider, vueResolver)
   }
 
   override fun createResolver(project: Project, config: TypeScriptConfig): TypeScriptFileImportsResolver? {
-    if (!hasVue(project)) return null
+    if (!enableVueTSService(project)) return null
 
     val defaultProvider = TypeScriptImportsResolverProvider.getDefaultProvider(project, config)
-    val nodeProcessor = typeScriptNodeResolver(project)
+    val nodeProcessor = TypeScriptNodeReference.TS_PROCESSOR
     val vueResolver = VueFileImportsResolver(project, config.resolveContext, nodeProcessor)
     return flattenAndAppendResolver(defaultProvider, vueResolver)
   }
@@ -61,7 +62,4 @@ class VueTypeScriptImportsResolverProvider : TypeScriptImportsResolverProvider {
 
     return TypeScriptCompositeImportsResolverImpl(result)
   }
-
-  private fun typeScriptNodeResolver(project: Project) =
-    TypeScriptNodeReference.TypeScriptNodeModuleDirectorySearchProcessor(project)
 }

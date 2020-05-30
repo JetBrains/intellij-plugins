@@ -44,8 +44,7 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
 
   private final String[] myNames;
 
-  @Nullable
-  private volatile Sdk[] mySdks;
+  private volatile Sdk @Nullable [] mySdks;
 
   public FlexCompositeSdk(String[] names) {
     myNames = names;
@@ -115,8 +114,7 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
   public RootProvider getRootProvider() {
     return new RootProvider() {
       @Override
-      @NotNull
-      public String[] getUrls(@NotNull final OrderRootType rootType) {
+      public String @NotNull [] getUrls(@NotNull final OrderRootType rootType) {
         final Collection<String> result = new HashSet<>();
         forAllSdks(sdk -> {
           result.addAll(Arrays.asList(sdk.getRootProvider().getUrls(rootType)));
@@ -126,8 +124,7 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
       }
 
       @Override
-      @NotNull
-      public VirtualFile[] getFiles(@NotNull final OrderRootType rootType) {
+      public VirtualFile @NotNull [] getFiles(@NotNull final OrderRootType rootType) {
         final Collection<VirtualFile> result = new HashSet<>();
         forAllSdks(sdk -> {
           result.addAll(Arrays.asList(sdk.getRootProvider().getFiles(rootType)));
@@ -173,8 +170,7 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
     }
   }
 
-  @NotNull
-  public Sdk[] getSdks() {
+  public Sdk @NotNull [] getSdks() {
     if (mySdks != null) {
       return mySdks;
     }

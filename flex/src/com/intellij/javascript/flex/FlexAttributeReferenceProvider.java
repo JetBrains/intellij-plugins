@@ -1,8 +1,8 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex;
 
 import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
-import com.intellij.codeInsight.daemon.XmlErrorMessages;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.LocalQuickFixProvider;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
@@ -28,6 +28,7 @@ import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.ProcessingContext;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
+import com.intellij.xml.psi.XmlPsiBundle;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,9 +37,8 @@ import org.jetbrains.annotations.Nullable;
  * @author yole
  */
 public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
-  @NotNull
   @Override
-  public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+  public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
     JSAttributeNameValuePairImpl nameValuePair = (JSAttributeNameValuePairImpl) element;
     final @NonNls String name = nameValuePair.getName();
     return valueRefs(nameValuePair, name);
@@ -219,8 +219,7 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
     public LocalQuickFix[] getQuickFixes() {
       final String fqn = myElement.getSimpleValue();
 
-      if (fqn != null && LanguageNamesValidation.INSTANCE.forLanguage(JavaScriptSupportLoader.JAVASCRIPT.getLanguage())
-        .isIdentifier(StringUtil.getShortName(fqn), null)) {
+      if (fqn != null && LanguageNamesValidation.isIdentifier(JavaScriptSupportLoader.JAVASCRIPT.getLanguage(), StringUtil.getShortName(fqn))) {
 
         final String[] baseClasses = myReferenceSet.getBaseClassFqns();
 
@@ -332,8 +331,7 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
     }
 
     @Override
-    @NotNull
-    public Object[] getVariants() {
+    public Object @NotNull [] getVariants() {
       return myAllowedValues;
     }
 
@@ -345,7 +343,7 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
     @Override
     @NotNull
     public String getUnresolvedMessagePattern() {
-      return XmlErrorMessages.message("wrong.value", "attribute");
+      return XmlPsiBundle.message("wrong.value", "attribute");
     }
   }
 }

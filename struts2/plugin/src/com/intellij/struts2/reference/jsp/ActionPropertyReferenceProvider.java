@@ -15,7 +15,6 @@
 
 package com.intellij.struts2.reference.jsp;
 
-import com.intellij.openapi.util.Comparing;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceProvider;
@@ -28,12 +27,12 @@ import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.reference.TaglibUtil;
 import com.intellij.struts2.reference.common.BeanPropertyPathReferenceSet;
 import com.intellij.util.ProcessingContext;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Refers to bean property of "enclosing" Action-class.
@@ -48,10 +47,9 @@ public class ActionPropertyReferenceProvider extends PsiReferenceProvider {
     this.supportsReadOnlyProperties = supportsReadOnlyProperties;
   }
 
-  @NotNull
   @Override
-  public PsiReference[] getReferencesByElement(@NotNull final PsiElement psiElement,
-                                               @NotNull final ProcessingContext processingContext) {
+  public PsiReference @NotNull [] getReferencesByElement(@NotNull final PsiElement psiElement,
+                                                         @NotNull final ProcessingContext processingContext) {
     if (TaglibUtil.isDynamicExpression(((XmlAttributeValue) psiElement).getValue())) {
       return PsiReference.EMPTY_ARRAY;
     }
@@ -64,8 +62,8 @@ public class ActionPropertyReferenceProvider extends PsiReferenceProvider {
       return PsiReference.EMPTY_ARRAY;
     }
 
-    final String actionName = Comparing.equal(actionTag.getLocalName(), "action") ?
-        actionTag.getAttributeValue("name") : actionTag.getAttributeValue("action");
+    final String actionName = Objects.equals(actionTag.getLocalName(), "action") ?
+                              actionTag.getAttributeValue("name") : actionTag.getAttributeValue("action");
     if (actionName == null || TaglibUtil.isDynamicExpression(actionName)) {
       return PsiReference.EMPTY_ARRAY;
     }

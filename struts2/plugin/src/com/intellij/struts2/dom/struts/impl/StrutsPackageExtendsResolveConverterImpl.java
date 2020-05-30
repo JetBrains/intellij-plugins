@@ -15,7 +15,6 @@
 
 package com.intellij.struts2.dom.struts.impl;
 
-import com.intellij.openapi.util.Comparing;
 import com.intellij.psi.PsiElement;
 import com.intellij.struts2.dom.ConverterUtil;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
@@ -27,10 +26,10 @@ import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.DomUtil;
 import com.intellij.util.xml.ElementPresentationManager;
 import com.intellij.util.xml.GenericDomValue;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Yann C&eacute;bron
@@ -50,7 +49,7 @@ public class StrutsPackageExtendsResolveConverterImpl extends StrutsPackageExten
     }
 
     return ContainerUtil.find(strutsModel.getStrutsPackages(),
-                              strutsPackage -> Comparing.equal(name, strutsPackage.getName().getStringValue()));
+                              strutsPackage -> Objects.equals(name, strutsPackage.getName().getStringValue()));
   }
 
   @Override

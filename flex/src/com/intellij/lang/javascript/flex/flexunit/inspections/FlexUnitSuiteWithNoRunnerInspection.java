@@ -12,13 +12,6 @@ import org.jetbrains.annotations.NotNull;
 public class FlexUnitSuiteWithNoRunnerInspection extends FlexUnitSuiteInspectionBase {
 
   @Override
-  @Nls
-  @NotNull
-  public String getDisplayName() {
-    return FlexBundle.message("flexunit.inspection.suitewithnorunner.displayname");
-  }
-
-  @Override
   @NotNull
   public String getShortName() {
     return "FlexUnitSuiteWithNoRunnerInspection";

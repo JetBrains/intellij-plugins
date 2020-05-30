@@ -15,9 +15,8 @@ import static org.angular2.lang.html.parser.Angular2AttributeNameParser.*;
 
 public class Angular2CssClassInAttributeReferenceProvider extends PsiReferenceProvider {
 
-  @NotNull
   @Override
-  public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+  public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
     if (!(element instanceof XmlAttribute)) {
       return PsiReference.EMPTY_ARRAY;
     }

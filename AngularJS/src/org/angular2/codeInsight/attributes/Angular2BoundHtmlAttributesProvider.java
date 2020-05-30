@@ -56,11 +56,10 @@ public class Angular2BoundHtmlAttributesProvider implements Angular2AttributesPr
     }
   }
 
-  @Nullable
   @Override
-  public Angular2AttributeDescriptor getDescriptor(@NotNull XmlTag tag,
-                                                   @NotNull String attributeName,
-                                                   @NotNull Angular2AttributeNameParser.AttributeInfo info) {
+  public @Nullable Angular2AttributeDescriptor getDescriptor(@NotNull XmlTag tag,
+                                                             @NotNull String attributeName,
+                                                             @NotNull Angular2AttributeNameParser.AttributeInfo info) {
     if (info.type == PROPERTY_BINDING
         && ((Angular2AttributeNameParser.PropertyBindingInfo)info).bindingType == PropertyBindingType.ATTRIBUTE) {
       String name = info.name;
@@ -71,9 +70,8 @@ public class Angular2BoundHtmlAttributesProvider implements Angular2AttributesPr
     return null;
   }
 
-  @NotNull
   @Override
-  public Collection<String> getRelatedAttributes(@NotNull XmlAttributeDescriptor descriptor) {
+  public @NotNull Collection<String> getRelatedAttributes(@NotNull XmlAttributeDescriptor descriptor) {
     if (descriptor instanceof Angular2AttributeDescriptor) {
       Angular2AttributeNameParser.AttributeInfo info = ((Angular2AttributeDescriptor)descriptor).getInfo();
       if (info instanceof Angular2AttributeNameParser.PropertyBindingInfo
@@ -105,6 +103,11 @@ public class Angular2BoundHtmlAttributesProvider implements Angular2AttributesPr
                     () -> PROPERTY_BINDING.buildName(BASE_PREFIX + originalDescriptor.getName())),
             originalDescriptor.getDeclarations(),
             true);
+    }
+
+    @Override
+    public XmlAttributeDescriptor cloneWithName(String attributeName) {
+      throw new UnsupportedOperationException();
     }
 
     @Override

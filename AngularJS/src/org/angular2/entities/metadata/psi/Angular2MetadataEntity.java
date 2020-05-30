@@ -15,7 +15,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.intellij.util.ObjectUtils.notNull;
 import static java.util.Arrays.asList;
 
 public abstract class Angular2MetadataEntity<Stub extends Angular2MetadataEntityStub<?>> extends Angular2MetadataClassBase<Stub> implements
@@ -25,21 +24,13 @@ public abstract class Angular2MetadataEntity<Stub extends Angular2MetadataEntity
     super(element);
   }
 
-  @NotNull
   @Override
-  public PsiElement getNavigableElement() {
+  public @NotNull PsiElement getNavigableElement() {
     return getSourceElement();
   }
 
-  @NotNull
   @Override
-  public PsiElement getSourceElement() {
-    return notNull(getTypeScriptClass(), this);
-  }
-
-  @Nullable
-  @Override
-  public ES6Decorator getDecorator() {
+  public @Nullable ES6Decorator getDecorator() {
     return null;
   }
 
@@ -62,7 +53,7 @@ public abstract class Angular2MetadataEntity<Stub extends Angular2MetadataEntity
         continue;
       }
       if (cacheDependencies != null && element != null) {
-        cacheDependencies.add(notNull(element.getContainingFile(), element));
+        cacheDependencies.add(element);
       }
       if (element instanceof Angular2MetadataArray) {
         resolveQueue.addAll(asList(element.getChildren()));

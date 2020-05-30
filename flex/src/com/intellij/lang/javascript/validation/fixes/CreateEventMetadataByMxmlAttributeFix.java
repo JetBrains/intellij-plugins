@@ -7,7 +7,7 @@ import com.intellij.codeInsight.template.impl.ConstantNode;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.openapi.application.WriteAction;
@@ -22,6 +22,7 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.xml.XmlElementDescriptor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static com.intellij.lang.javascript.validation.fixes.BaseCreateFix.getEditor;
 import static com.intellij.lang.javascript.validation.fixes.BaseCreateFix.navigate;
@@ -36,11 +37,11 @@ public class CreateEventMetadataByMxmlAttributeFix extends FixAndIntentionAction
   @Override
   @NotNull
   public String getName() {
-    return JSBundle.message("declare.event.0", myEventName);
+    return JavaScriptBundle.message("declare.event.0", myEventName);
   }
 
   @Override
-  protected void applyFix(final Project project, final PsiElement psiElement, PsiFile file, Editor editor) {
+  protected void applyFix(final Project project, final PsiElement psiElement, @NotNull PsiFile file, @Nullable Editor editor) {
     assert psiElement instanceof XmlAttribute;
 
     final XmlTag tag = (XmlTag)psiElement.getParent();

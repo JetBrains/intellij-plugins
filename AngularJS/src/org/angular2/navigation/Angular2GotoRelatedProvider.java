@@ -16,9 +16,9 @@ import com.intellij.util.ObjectUtils;
 import com.intellij.util.SmartList;
 import org.angular2.Angular2InjectionUtils;
 import org.angular2.entities.Angular2Component;
+import org.angular2.entities.Angular2ComponentLocator;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Module;
-import org.angular2.index.Angular2IndexingHandler;
 import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.Angular2LangUtil;
 import org.jetbrains.annotations.NotNull;
@@ -39,11 +39,8 @@ public class Angular2GotoRelatedProvider extends GotoRelatedProvider {
   private static final int STYLES_INDEX_START = 4;
   private static final int MODULE_INDEX = 5;
 
-  private static final String GROUP_NAME = Angular2Bundle.message("angular.action.goto-related.group-name");
-
-  @NotNull
   @Override
-  public List<? extends GotoRelatedItem> getItems(@NotNull PsiElement psiElement) {
+  public @NotNull List<? extends GotoRelatedItem> getItems(@NotNull PsiElement psiElement) {
     PsiFile file = psiElement.getContainingFile();
     if (file == null || !Angular2LangUtil.isAngular2Context(file)) {
       return Collections.emptyList();
@@ -60,7 +57,7 @@ public class Angular2GotoRelatedProvider extends GotoRelatedProvider {
       }
     }
     else {
-      componentClasses.addAll(Angular2IndexingHandler.findComponentClasses(file));
+      componentClasses.addAll(Angular2ComponentLocator.findComponentClasses(file));
     }
 
     PsiFile filter = ObjectUtils.notNull(
@@ -76,7 +73,7 @@ public class Angular2GotoRelatedProvider extends GotoRelatedProvider {
                       f -> !filter.equals(ObjectUtils.doIfNotNull(
                         f.getElement(), PsiElement::getContainingFile)));
       default:
-        return map(components, c -> new GotoRelatedItem(Objects.requireNonNull(c.getTypeScriptClass()), GROUP_NAME));
+        return map(components, c -> new GotoRelatedItem(Objects.requireNonNull(c.getTypeScriptClass()), getGroupName()));
     }
   }
 
@@ -110,12 +107,19 @@ public class Angular2GotoRelatedProvider extends GotoRelatedProvider {
                                              Angular2Bundle.message("angular.action.goto-related.styles",
                                                                     cssFiles.size() == 1 ? "" : " " + count++)));
     }
-    TypeScriptClass moduleClass = ObjectUtils.doIfNotNull(component.getModule(), Angular2Module::getTypeScriptClass);
-    if (moduleClass != null && moduleClass.getName() != null) {
-      result.add(new Angular2GoToRelatedItem(moduleClass, MODULE_INDEX, false,
-                                             Angular2Bundle.message("angular.action.goto-related.module")));
+    first = true;
+    for (TypeScriptClass moduleClass : mapNotNull(component.getAllModules(), Angular2Module::getTypeScriptClass)) {
+      if (moduleClass.getName() != null) {
+        result.add(new Angular2GoToRelatedItem(moduleClass, first ? MODULE_INDEX : -1, false,
+                                               Angular2Bundle.message("angular.action.goto-related.module")));
+        first = false;
+      }
     }
     return result;
+  }
+
+  private static String getGroupName() {
+    return Angular2Bundle.message("angular.action.goto-related.group-name");
   }
 
   private static final class Angular2GoToRelatedItem extends GotoRelatedItem {
@@ -127,7 +131,7 @@ public class Angular2GotoRelatedProvider extends GotoRelatedProvider {
                                     int mnemonic,
                                     boolean inlineable,
                                     @Nullable String name) {
-      super(element, GROUP_NAME, mnemonic > 9 ? -1 : mnemonic);
+      super(element, getGroupName(), mnemonic > 9 ? -1 : mnemonic);
       myContainerName = inlineable && InjectedLanguageManager.getInstance(element.getProject())
                                         .getTopLevelFile(element) != element.getContainingFile()
                         ? Angular2Bundle.message("angular.action.goto-related.inline")
@@ -135,9 +139,8 @@ public class Angular2GotoRelatedProvider extends GotoRelatedProvider {
       myName = name;
     }
 
-    @Nullable
     @Override
-    public String getCustomName() {
+    public @Nullable String getCustomName() {
       return myName;
     }
 

@@ -6,12 +6,12 @@ public class HbFormatterSampleFileTest extends HbFormatterTest {
 
   public void testContactsSampleFile()
     throws Exception {
-    doFileBasedTest();
+    doFileBasedTest(getTestName(false) + ".html");
   }
 
   public void testTodosSampleFile()
     throws Exception {
-    doFileBasedTest();
+    doFileBasedTest(getTestName(false) + ".html");
   }
 
   public void testHbTagHashAlignment()

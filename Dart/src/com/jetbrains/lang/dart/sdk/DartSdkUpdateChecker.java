@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.sdk;
 
 import com.intellij.ide.BrowserUtil;
@@ -7,7 +8,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.updateSettings.impl.UpdateChecker;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Couple;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
@@ -18,12 +18,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DartSdkUpdateChecker {
-
+public final class DartSdkUpdateChecker {
   public static final String SDK_STABLE_DOWNLOAD_URL = "https://www.dartlang.org/redirects/sdk-download-stable";
   private static final String SDK_DEV_DOWNLOAD_URL = "https://www.dartlang.org/redirects/sdk-download-dev";
 
@@ -34,7 +34,7 @@ public class DartSdkUpdateChecker {
   private static final String DART_LAST_SDK_CHECK_KEY = "DART_LAST_SDK_CHECK_KEY";
   private static final long CHECK_INTERVAL = TimeUnit.DAYS.toMillis(1);
 
-  private static final Pattern SEMANTIC_VERSION_PATTERN = Pattern.compile("(\\d+\\.\\d+\\.\\d+)([0-9A-Za-z\\-\\+\\.]*)");
+  private static final Pattern SEMANTIC_VERSION_PATTERN = Pattern.compile("(\\d+\\.\\d+\\.\\d+)([0-9A-Za-z\\-+.]*)");
 
   public static void mayBeCheckForSdkUpdate(@NotNull final Project project) {
     if (Registry.is("dart.projects.without.pubspec", false)) return;
@@ -42,7 +42,7 @@ public class DartSdkUpdateChecker {
     final DartSdkUpdateOption option = DartSdkUpdateOption.getDartSdkUpdateOption();
     if (option == DartSdkUpdateOption.DoNotCheck) return;
 
-    final long lastCheckedMillis = PropertiesComponent.getInstance().getOrInitLong(DART_LAST_SDK_CHECK_KEY, 0);
+    final long lastCheckedMillis = PropertiesComponent.getInstance().getLong(DART_LAST_SDK_CHECK_KEY, 0);
     if (System.currentTimeMillis() - lastCheckedMillis < CHECK_INTERVAL) return;
 
     final DartSdk sdk = DartSdk.getDartSdk(project);
@@ -114,7 +114,7 @@ public class DartSdkUpdateChecker {
     final String remainder2 = version2Parts.second;
 
     final int result = StringUtil.compareVersionNumbers(majorMinorPatch1, majorMinorPatch2);
-    if (result != 0 || Comparing.equal(remainder1, remainder2)) return result;
+    if (result != 0 || Objects.equals(remainder1, remainder2)) return result;
 
     if (remainder1.isEmpty()) return 1;
     if (remainder2.isEmpty()) return -1;
@@ -137,7 +137,7 @@ public class DartSdkUpdateChecker {
     final String title = DartBundle.message("dart.sdk.update.title");
     final String message = DartBundle.message("new.dart.sdk.available.for.download..notification", availableSdkVersion, currentSdkVersion);
 
-    UpdateChecker.NOTIFICATIONS.createNotification(title, message, NotificationType.INFORMATION, (notification, event) -> {
+    UpdateChecker.getNotificationGroup().createNotification(title, message, NotificationType.INFORMATION, (notification, event) -> {
       notification.expire();
       if ("download".equals(event.getDescription())) {
         BrowserUtil.browse(downloadUrl);

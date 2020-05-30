@@ -16,13 +16,14 @@ package org.dartlang.vm.service.element;
 // This is a generated file.
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The {@link UnresolvedSourceLocation} class is used to refer to an unresolved breakpoint
  * location. As such, it is meant to approximate the final location of the breakpoint but it is not
  * exact.
  */
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class UnresolvedSourceLocation extends Response {
 
   public UnresolvedSourceLocation(JsonObject json) {
@@ -35,8 +36,9 @@ public class UnresolvedSourceLocation extends Response {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public int getColumn() {
-    return json.get("column") == null ? -1 : json.get("column").getAsInt();
+    return getAsInt("column");
   }
 
   /**
@@ -45,8 +47,9 @@ public class UnresolvedSourceLocation extends Response {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public int getLine() {
-    return json.get("line") == null ? -1 : json.get("line").getAsInt();
+    return getAsInt("line");
   }
 
   /**
@@ -54,8 +57,16 @@ public class UnresolvedSourceLocation extends Response {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public ScriptRef getScript() {
-    return json.get("script") == null ? null : new ScriptRef((JsonObject) json.get("script"));
+    JsonObject obj = (JsonObject) json.get("script");
+    if (obj == null) return null;
+    final String type = json.get("type").getAsString();
+    if ("Instance".equals(type) || "@Instance".equals(type)) {
+      final String kind = json.get("kind").getAsString();
+      if ("Null".equals(kind)) return null;
+    }
+    return new ScriptRef(obj);
   }
 
   /**
@@ -63,8 +74,9 @@ public class UnresolvedSourceLocation extends Response {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public String getScriptUri() {
-    return json.get("scriptUri") == null ? null : json.get("scriptUri").getAsString();
+    return getAsString("scriptUri");
   }
 
   /**
@@ -73,7 +85,8 @@ public class UnresolvedSourceLocation extends Response {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public int getTokenPos() {
-    return json.get("tokenPos") == null ? -1 : json.get("tokenPos").getAsInt();
+    return getAsInt("tokenPos");
   }
 }

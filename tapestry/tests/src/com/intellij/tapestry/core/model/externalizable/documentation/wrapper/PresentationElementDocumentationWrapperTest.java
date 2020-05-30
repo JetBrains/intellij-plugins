@@ -2,6 +2,8 @@ package com.intellij.tapestry.core.model.externalizable.documentation.wrapper;
 
 import org.testng.annotations.Test;
 
+import static org.testng.Assert.assertEquals;
+
 public class PresentationElementDocumentationWrapperTest {
 
     @Test
@@ -9,20 +11,20 @@ public class PresentationElementDocumentationWrapperTest {
         PresentationElementDocumentationWrapper wrapper = new PresentationElementDocumentationWrapper(getClass().getResource("/documentation/presentation/Complete.xml"));
 
         // check description
-        assert wrapper.getDescription().equals("Component that triggers an action on the server with a subsequent full page refresh.");
+        assertEquals(wrapper.getDescription(), "Component that triggers an action on the server with a subsequent full page refresh.");
 
         // check parameters
-        assert wrapper.getParameterDescription("context").equals("value1");
+        assertEquals(wrapper.getParameterDescription("context"), "value1");
 
-        assert wrapper.getParameterDescription("disabled").equals("value2");
+        assertEquals(wrapper.getParameterDescription("disabled"), "value2");
 
-        assert wrapper.getParameterDescription("dontexist").equals("");
+        assertEquals(wrapper.getParameterDescription("dontexist"), "");
 
         // check examples
-        assert wrapper.getExamples().equals("Some component examples in HTML.");
+        assertEquals(wrapper.getExamples(), "Some component examples in HTML.");
 
         // check notes
-        assert wrapper.getNotes().equals("Some component notes in HTML.");
+        assertEquals(wrapper.getNotes(), "Some component notes in HTML.");
     }
 
     @Test
@@ -30,13 +32,13 @@ public class PresentationElementDocumentationWrapperTest {
         PresentationElementDocumentationWrapper wrapper = new PresentationElementDocumentationWrapper(getClass().getResource("/documentation/presentation/Empty.xml"));
 
         // check description
-        assert wrapper.getDescription().length() == 0;
+        assertEquals(wrapper.getDescription().length(), 0);
 
         // check examples
-        assert wrapper.getExamples().length() == 0;
+        assertEquals(wrapper.getExamples().length(), 0);
 
         // check notes
-        assert wrapper.getNotes().length() == 0;
+        assertEquals(wrapper.getNotes().length(), 0);
     }
 
     @Test
@@ -44,12 +46,12 @@ public class PresentationElementDocumentationWrapperTest {
         PresentationElementDocumentationWrapper wrapper = new PresentationElementDocumentationWrapper();
 
         // check description
-        assert wrapper.getDescription().length() == 0;
+        assertEquals(wrapper.getDescription().length(), 0);
 
         // check examples
-        assert wrapper.getExamples().length() == 0;
+        assertEquals(wrapper.getExamples().length(), 0);
 
         // check notes
-        assert wrapper.getNotes().length() == 0;
+        assertEquals(wrapper.getNotes().length(), 0);
     }
 }

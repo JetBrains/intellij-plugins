@@ -1,0 +1,17 @@
+!"breadcrumbs"#null#103
+!"breadcrumbs/current"#null#103
+!"breadcrumbs/routes"#any[]#103
+!"cartIsLoaded"#false#103
+!"cartItems"#any[]#103
+!"cartItemsHash"#""#103
+!"cartServerLastSyncDate"#0#103
+!"cartServerLastTotalsSyncDate"#0#103
+!"cartServerToken"#""#103
+!"connectBypassCount"#0#103
+!"isAddingToCart"#false#103
+!"isMicrocartOpen"#false#103
+!"itemsAfterPlatformTotals"#null#103
+!"payment"#any[]#103
+!"platformTotalSegments"#null#103
+!"platformTotals"#null#103
+!"shipping"#any[]#103

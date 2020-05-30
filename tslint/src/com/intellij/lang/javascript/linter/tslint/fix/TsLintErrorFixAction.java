@@ -105,7 +105,7 @@ public class TsLintErrorFixAction extends BaseIntentionAction implements HighPri
 
   private static boolean applyReplacements(@NotNull Document document,
                                            @NotNull String separator,
-                                           @NotNull TsLintFixInfo.TsLintFixReplacements[] replacements) {
+                                           TsLintFixInfo.TsLintFixReplacements @NotNull [] replacements) {
     String lf = LineSeparator.LF.getSeparatorString();
     if (lf.equals(separator)) {
       return applyFor(document.getTextLength(), replacements,
@@ -125,7 +125,7 @@ public class TsLintErrorFixAction extends BaseIntentionAction implements HighPri
   }
 
   private static boolean applyFor(int documentLength,
-                                  @NotNull TsLintFixInfo.TsLintFixReplacements[] replacements,
+                                  TsLintFixInfo.TsLintFixReplacements @NotNull [] replacements,
                                   @NotNull Consumer<TsLintFixInfo.TsLintFixReplacements> apply) {
     for (TsLintFixInfo.TsLintFixReplacements replacement : replacements) {
       int offset = replacement.innerStart;

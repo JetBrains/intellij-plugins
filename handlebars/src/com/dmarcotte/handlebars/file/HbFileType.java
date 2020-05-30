@@ -3,10 +3,7 @@ package com.dmarcotte.handlebars.file;
 
 import com.dmarcotte.handlebars.HbBundle;
 import com.dmarcotte.handlebars.HbLanguage;
-import com.dmarcotte.handlebars.HbTemplateHighlighter;
 import com.intellij.lang.Language;
-import com.intellij.openapi.editor.colors.EditorColorsScheme;
-import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.fileTypes.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -31,16 +28,6 @@ public class HbFileType extends LanguageFileType implements TemplateLanguageFile
 
   protected HbFileType(Language lang) {
     super(lang);
-
-    FileTypeEditorHighlighterProviders.INSTANCE.addExplicitExtension(this, new EditorHighlighterProvider() {
-      @Override
-      public EditorHighlighter getEditorHighlighter(@Nullable Project project,
-                                                    @NotNull FileType fileType,
-                                                    @Nullable VirtualFile virtualFile,
-                                                    @NotNull EditorColorsScheme editorColorsScheme) {
-        return new HbTemplateHighlighter(project, virtualFile, editorColorsScheme);
-      }
-    });
   }
 
   @Override

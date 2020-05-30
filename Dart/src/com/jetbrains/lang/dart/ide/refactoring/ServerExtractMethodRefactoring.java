@@ -30,8 +30,7 @@ public class ServerExtractMethodRefactoring extends ServerRefactoring {
     return feedback.canCreateGetter();
   }
 
-  @NotNull
-  public String[] getNames() {
+  public String @NotNull [] getNames() {
     return ArrayUtilRt.toStringArray(feedback.getNames());
   }
 
@@ -39,13 +38,11 @@ public class ServerExtractMethodRefactoring extends ServerRefactoring {
     return feedback.getOffsets().length;
   }
 
-  @NotNull
-  public int[] getOccurrencesOffsets() {
+  public int @NotNull [] getOccurrencesOffsets() {
     return DartAnalysisServerService.getInstance(getProject()).getConvertedOffsets(getFile(), feedback.getOffsets());
   }
 
-  @NotNull
-  public int[] getOccurrencesLengths() {
+  public int @NotNull [] getOccurrencesLengths() {
     return DartAnalysisServerService.getInstance(getProject()).getConvertedLengths(getFile(), feedback.getOffsets(), feedback.getLengths());
   }
 

@@ -30,8 +30,7 @@ public class DartPubGetAction extends DartPubActionBase {
   }
 
   @Override
-  @Nullable
-  protected String[] calculatePubParameters(@NotNull final Project project, @NotNull final VirtualFile pubspecYamlFile) {
+  protected String @Nullable [] calculatePubParameters(@NotNull final Project project, @NotNull final VirtualFile pubspecYamlFile) {
     return new String[]{"get"};
   }
 }

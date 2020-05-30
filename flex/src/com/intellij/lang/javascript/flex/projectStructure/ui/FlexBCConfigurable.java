@@ -65,8 +65,6 @@ import static com.intellij.lang.javascript.flex.projectStructure.ui.AirPackaging
 
 public class FlexBCConfigurable extends ProjectStructureElementConfigurable<ModifiableFlexBuildConfiguration>
   implements CompositeConfigurable.Item, Place.Navigator {
-
-  public static final String TAB_NAME = FlexBundle.message("bc.tab.general.display.name");
   public static final String LOCATION_ON_TAB = "FlashBuildConfiguration.locationOnTab";
 
   public enum Location {
@@ -252,7 +250,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
       public void actionPerformed(final ActionEvent e) {
         final Sdk sdk = myDependenciesConfigurable.getCurrentSdk();
         if (sdk == null || sdk.getSdkType() == FlexmojosSdkType.getInstance()) {
-          final SelectFlexSdkDialog dialog = new SelectFlexSdkDialog(myModule.getProject(), CreateHtmlWrapperTemplateDialog.TITLE,
+          final SelectFlexSdkDialog dialog = new SelectFlexSdkDialog(myModule.getProject(), CreateHtmlWrapperTemplateDialog.getTitleText(),
                                                                      FlexBundle.message("take.wrapper.template.from.sdk"));
           if (dialog.showAndGet()) {
             final Sdk dialogSdk = dialog.getSdk();
@@ -741,7 +739,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
 
   @Override
   public String getTabTitle() {
-    return TAB_NAME;
+    return getTabName();
   }
 
   @Override
@@ -773,5 +771,9 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
       }
     }
     return ActionCallback.DONE;
+  }
+
+  public static String getTabName() {
+    return FlexBundle.message("bc.tab.general.display.name");
   }
 }

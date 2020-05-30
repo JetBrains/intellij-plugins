@@ -38,9 +38,8 @@ import com.intellij.util.xml.ExtendClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Extends "class" resolving to Spring beans.
@@ -78,10 +77,9 @@ public class ExtendableClassConverterSpringContributor
   }
 
   @Override
-  @NotNull
-  public PsiReference[] getReferences(@NotNull final ConvertContext convertContext,
-                                      @NotNull final PsiElement psiElement,
-                                      @NotNull final ExtendClass extendClass) {
+  public PsiReference @NotNull [] getReferences(@NotNull final ConvertContext convertContext,
+                                                @NotNull final PsiElement psiElement,
+                                                @NotNull final ExtendClass extendClass) {
     return new PsiReference[]{new SpringBeanReference((XmlAttributeValue)psiElement,
                                                       convertContext.getModule(),
                                                       extendClass)};
@@ -128,17 +126,19 @@ public class ExtendableClassConverterSpringContributor
     }
 
     @Override
-    @NotNull
-    public Object[] getVariants() {
+    public Object @NotNull [] getVariants() {
       final SpringModel springModel = getSpringModel();
 
-      final PsiClass subClass = getPossibleSubClass();
-      final Collection<? extends SpringBeanPointer> list;
-      if (subClass != null) {
-        list = SpringModelSearchers.findBeans(springModel, SpringModelSearchParameters.byClass(subClass).withInheritors());
+      final @Nullable Set<PsiClass> subClasses = getPossibleSubClasses();
+
+      final Collection<SpringBeanPointer> list = new ArrayList<>();
+      if (subClasses.size() > 0) {
+        for (PsiClass subClass : subClasses) {
+          list.addAll(SpringModelSearchers.findBeans(springModel, SpringModelSearchParameters.byClass(subClass).withInheritors()));
+        }
       }
       else {
-        list = springModel.getAllCommonBeans();
+        list.addAll(springModel.getAllCommonBeans());
       }
 
       final List<LookupElement> variants = new ArrayList<>(list.size());
@@ -159,14 +159,16 @@ public class ExtendableClassConverterSpringContributor
      * @return Subclass the Spring bean reference must implement or {@code null} if no subclass defined.
      */
     @Nullable
-    private PsiClass getPossibleSubClass() {
-      final String subClassName = extendClass.value();
-      if (subClassName == null) {
+    private Set<PsiClass> getPossibleSubClasses() {
+      final String[] subClassName = extendClass.value();
+      if (subClassName.length == 0) {
         return null;
       }
-
-      final GlobalSearchScope searchScope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module, false);
-      return JavaPsiFacade.getInstance(module.getProject()).findClass(subClassName, searchScope);
+      return Arrays.stream(subClassName)
+        .map(s -> JavaPsiFacade.getInstance(module.getProject())
+        .findClass(s, GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module, false)))
+        .filter(Objects::nonNull)
+        .collect(Collectors.toSet());
     }
   }
 }

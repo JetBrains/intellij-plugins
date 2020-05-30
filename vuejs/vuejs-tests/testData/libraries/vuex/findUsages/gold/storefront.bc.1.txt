@@ -1,0 +1,17 @@
+<actions.ts:(10725,10747):(18,21)>	('cart/breadcrumbs/set', {}, {root: true})
+<index.ts:(289,294):(1,4)>	('set', payload)
+<storefront-component.ts:(2681,2703):(18,21)>	('cart/breadcrumbs/set', code)
+<storefront-component.ts:(2797,2819):(18,21)>	('cart/breadcrumbs/set', code)
+<storefront-component.ts:(2918,2940):(18,21)>	type: 'cart/breadcrumbs/set'
+<storefront-component.ts:(3042,3064):(18,21)>	type: 'cart/breadcrumbs/set'
+<storefront-component.ts:(3524,3546):(18,21)>	[\n      CART_ADD_ITEM,\n      'cart/breadcrumbs/set'\n    ]
+<storefront-component.ts:(3591,3608):(13,16)>	[\n      'breadcrumbs/set']
+<storefront-component.ts:(3672,3694):(18,21)>	('cart/breadcrumbs/set')
+<storefront-component.ts:(3722,3744):(18,21)>	type: 'cart/breadcrumbs/set'
+<storefront-component.ts:(3946,3951):(1,4)>	('set')
+<storefront-component.ts:(3990,3995):(1,4)>	type: 'set'
+<storefront-decorated-component.ts:(541,563):(18,21)>	('cart/breadcrumbs/set')
+<storefront-decorated-component.ts:(959,976):(13,16)>	('breadcrumbs/set')
+<storefront-namespaced-component.ts:(1348,1365):(13,16)>	['breadcrumbs/set']
+<storefront-namespaced-component.ts:(1430,1447):(13,16)>	('breadcrumbs/set')
+<storefront-namespaced-component.ts:(1475,1492):(13,16)>	type: 'breadcrumbs/set'

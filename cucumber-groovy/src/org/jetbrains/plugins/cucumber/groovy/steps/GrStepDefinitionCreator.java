@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.groovy.steps;
 
 import com.intellij.codeInsight.CodeInsightUtilCore;
@@ -18,7 +19,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.ObjectUtils;
 import cucumber.runtime.groovy.GroovySnippet;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
@@ -38,6 +38,7 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.params.GrParameter;
 import org.jetbrains.plugins.groovy.lang.psi.util.PsiUtil;
 
 import java.util.Collections;
+import java.util.Objects;
 
 /**
  * @author Max Medvedev
@@ -61,11 +62,11 @@ public class GrStepDefinitionCreator implements StepDefinitionCreator {
   }
 
   @Override
-  public boolean createStepDefinition(@NotNull GherkinStep step, @NotNull final PsiFile file) {
+  public boolean createStepDefinition(@NotNull GherkinStep step, @NotNull final PsiFile file, boolean withTemplate) {
     if (!(file instanceof GroovyFile)) return false;
 
     final Project project = file.getProject();
-    final VirtualFile vFile = ObjectUtils.assertNotNull(file.getVirtualFile());
+    final VirtualFile vFile = Objects.requireNonNull(file.getVirtualFile());
     final OpenFileDescriptor descriptor = new OpenFileDescriptor(project, vFile);
     FileEditorManager.getInstance(project).getAllEditors(vFile);
     FileEditorManager.getInstance(project).openTextEditor(descriptor, true);
@@ -109,6 +110,10 @@ public class GrStepDefinitionCreator implements StepDefinitionCreator {
     for (GrParameter var : blockVars) {
       PsiElement identifier = var.getNameIdentifierGroovy();
       builder.replaceElement(identifier, identifier.getText());
+    }
+
+    if (!withTemplate) {
+      return true;
     }
 
     TemplateManager manager = TemplateManager.getInstance(project);
@@ -166,7 +171,7 @@ public class GrStepDefinitionCreator implements StepDefinitionCreator {
   private static GrMethodCall buildStepDefinitionByStep(@NotNull final GherkinStep step) {
     final GroovyPsiElementFactory factory = GroovyPsiElementFactory.getInstance(step.getProject());
 
-    final Step cucumberStep = new Step(Collections.emptyList(), step.getKeyword().getText(), step.getStepName(), 0, null, null);
+    final Step cucumberStep = new Step(Collections.emptyList(), step.getKeyword().getText(), step.getName(), 0, null, null);
 
     SnippetGenerator generator = new SnippetGenerator(new GroovySnippet());
     final String fqnPendingException;
@@ -181,16 +186,11 @@ public class GrStepDefinitionCreator implements StepDefinitionCreator {
     return (GrMethodCall)factory.createStatementFromText(snippet, step);
   }
 
-  @Override
-  public boolean validateNewStepDefinitionFileName(@NotNull final Project project, @NotNull final String fileName) {
-    return true;
-  }
-
   @NotNull
   @Override
-  public PsiDirectory getDefaultStepDefinitionFolder(@NotNull GherkinStep step) {
+  public String getDefaultStepDefinitionFolderPath(@NotNull GherkinStep step) {
     final PsiFile featureFile = step.getContainingFile();
-    return ObjectUtils.assertNotNull(featureFile.getParent());
+    return Objects.requireNonNull(featureFile.getContainingDirectory()).getVirtualFile().getPath();
   }
 
   @NotNull

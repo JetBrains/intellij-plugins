@@ -16,9 +16,8 @@ public class Angular2ReadWriteAccessDetector extends JSDefaultReadWriteAccessDet
 
   public static final Angular2ReadWriteAccessDetector INSTANCE = new Angular2ReadWriteAccessDetector();
 
-  @NotNull
   @Override
-  public ReadWriteAccessDetector.Access getExpressionAccess(@NotNull PsiElement _expression) {
+  public @NotNull ReadWriteAccessDetector.Access getExpressionAccess(@NotNull PsiElement _expression) {
     ReadWriteAccessDetector.Access result = super.getExpressionAccess(_expression);
     if (result == ReadWriteAccessDetector.Access.Read
         && _expression.getParent() instanceof Angular2Binding) {

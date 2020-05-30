@@ -18,7 +18,7 @@ package org.dartlang.vm.service.element;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class MapAssociation extends Element {
 
   public MapAssociation(JsonObject json) {
@@ -29,10 +29,10 @@ public class MapAssociation extends Element {
    * @return one of <code>InstanceRef</code> or <code>Sentinel</code>
    */
   public InstanceRef getKey() {
-    JsonElement elem = json.get("key");
+    final JsonElement elem = json.get("key");
     if (!elem.isJsonObject()) return null;
-    JsonObject child = elem.getAsJsonObject();
-    String type = child.get("type").getAsString();
+    final JsonObject child = elem.getAsJsonObject();
+    final String type = child.get("type").getAsString();
     if ("Sentinel".equals(type)) return null;
     return new InstanceRef(child);
   }
@@ -41,10 +41,10 @@ public class MapAssociation extends Element {
    * @return one of <code>InstanceRef</code> or <code>Sentinel</code>
    */
   public InstanceRef getValue() {
-    JsonElement elem = json.get("value");
+    final JsonElement elem = json.get("value");
     if (!elem.isJsonObject()) return null;
-    JsonObject child = elem.getAsJsonObject();
-    String type = child.get("type").getAsString();
+    final JsonObject child = elem.getAsJsonObject();
+    final String type = child.get("type").getAsString();
     if ("Sentinel".equals(type)) return null;
     return new InstanceRef(child);
   }

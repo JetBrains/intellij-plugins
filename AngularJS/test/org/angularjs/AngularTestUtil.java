@@ -2,12 +2,9 @@
 package org.angularjs;
 
 import com.intellij.codeInsight.completion.PrioritizedLookupElement;
-import com.intellij.lang.javascript.dialects.JSLanguageLevel;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
-import com.intellij.lang.javascript.settings.JSRootConfiguration;
 import com.intellij.openapi.application.PathManager;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -33,20 +30,11 @@ import static org.junit.Assert.assertTrue;
  */
 public class AngularTestUtil {
 
-  public static void configureWithMetadataFiles(@NotNull CodeInsightTestFixture fixture,
-                                                @NotNull String... names) {
-    fixture.configureByFiles("package.json");
-    for (String name : names) {
-      fixture.configureByFiles(name + ".d.ts");
-      fixture.copyFileToProject(name + ".metadata.json");
-    }
-  }
-
   public static void enableAstLoadingFilter(@NotNull UsefulTestCase testCase) {
     Registry.get("ast.loading.filter").setValue(true, testCase.getTestRootDisposable());
   }
 
-  public static String getBaseTestDataPath(Class clazz) {
+  public static String getBaseTestDataPath(Class<?> clazz) {
     String contribPath = getContribPath();
     return contribPath + "/AngularJS/test/" + clazz.getPackage().getName().replace('.', '/') + "/data/";
   }
@@ -91,10 +79,10 @@ public class AngularTestUtil {
       if (results.size() > 1) {
         throw new AssertionError("Reference resolves to more than one element at '" + signature + "': "
                                  + results);
-      } else if (results.size() == 1) {
+      }
+      else if (results.size() == 1) {
         resolve = results.get(0).getElement();
       }
-
     }
     TestCase.assertNotNull("Reference resolves to null at '" + signature + "'", resolve);
     return resolve;

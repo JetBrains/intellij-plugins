@@ -1,17 +1,18 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart;
 
-import com.intellij.ProjectTopics;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.ModuleRootModificationUtil;
+import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.startup.StartupActivity;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.FilenameIndex;
@@ -28,18 +29,16 @@ import java.util.Set;
 
 import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
+/**
+ * {@link DartStartupActivity} configures "Dart Packages" library (based on Dart-specific pubspec.yaml and .packages files) on project open.
+ * Afterwards the "Dart Packages" library is kept up-to-dated thanks to {@link DartFileListener} and {@link DartModuleRootListener}.
+ *
+ * @see DartFileListener
+ * @see DartModuleRootListener
+ */
 public class DartStartupActivity implements StartupActivity {
   @Override
   public void runActivity(@NotNull Project project) {
-    VirtualFileManager.getInstance().addVirtualFileListener(new DartFileListener(project), project);
-
-    project.getMessageBus().connect().subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
-      @Override
-      public void rootsChanged(@NotNull ModuleRootEvent event) {
-        DartFileListener.scheduleDartPackageRootsUpdate(project);
-      }
-    });
-
     final Collection<VirtualFile> pubspecYamlFiles =
       FilenameIndex.getVirtualFilesByName(project, PUBSPEC_YAML, GlobalSearchScope.projectScope(project));
 
@@ -50,7 +49,9 @@ public class DartStartupActivity implements StartupActivity {
       }
     }
 
-    DartFileListener.scheduleDartPackageRootsUpdate(project);
+    if (!pubspecYamlFiles.isEmpty()) {
+      DartFileListener.scheduleDartPackageRootsUpdate(project);
+    }
   }
 
   public static void excludeBuildAndPackagesFolders(final @NotNull Module module, final @NotNull VirtualFile pubspecYamlFile) {
@@ -153,7 +154,7 @@ public class DartStartupActivity implements StartupActivity {
                                             final @NotNull ProjectFileIndex fileIndex) {
     if (folder == null) return;
 
-    VfsUtilCore.visitChildrenRecursively(folder, new VirtualFileVisitor() {
+    VfsUtilCore.visitChildrenRecursively(folder, new VirtualFileVisitor<Void>() {
       @Override
       @NotNull
       public Result visitFileEx(@NotNull final VirtualFile file) {

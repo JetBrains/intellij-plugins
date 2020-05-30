@@ -17,20 +17,12 @@ import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
 import de.roderick.weberknecht.WebSocket;
 import de.roderick.weberknecht.WebSocketEventHandler;
 import de.roderick.weberknecht.WebSocketException;
 import de.roderick.weberknecht.WebSocketMessage;
-
 import org.dartlang.vm.service.consumer.*;
-import org.dartlang.vm.service.element.Event;
-import org.dartlang.vm.service.element.Instance;
-import org.dartlang.vm.service.element.Library;
-import org.dartlang.vm.service.element.Obj;
-import org.dartlang.vm.service.element.RPCError;
-import org.dartlang.vm.service.element.Sentinel;
-import org.dartlang.vm.service.element.Version;
+import org.dartlang.vm.service.element.*;
 import org.dartlang.vm.service.internal.RequestSink;
 import org.dartlang.vm.service.internal.VmServiceConst;
 import org.dartlang.vm.service.internal.WebSocketRequestSink;
@@ -51,14 +43,12 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @SuppressWarnings({"unused", "WeakerAccess"})
 abstract class VmServiceBase implements VmServiceConst {
-
   /**
    * Connect to the VM observatory service via the specified URI
    *
    * @return an API object for interacting with the VM service (not {@code null}).
    */
   public static VmService connect(final String url) throws IOException {
-
     // Validate URL
     URI uri;
     try {
@@ -94,8 +84,7 @@ abstract class VmServiceBase implements VmServiceConst {
         Logging.getLogger().logInformation("VM message: " + message.getText());
         try {
           vmService.processMessage(message.getText());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           Logging.getLogger().logError(e.getMessage(), e);
         }
       }
@@ -142,9 +131,9 @@ abstract class VmServiceBase implements VmServiceConst {
       }
 
       @Override
-      public void received(Version response) {
-        int major = response.getMajor();
-        int minor = response.getMinor();
+      public void received(Version version) {
+        int major = version.getMajor();
+        int minor = version.getMinor();
         if (major != VmService.versionMajor || minor != VmService.versionMinor) {
           if (major == 2 || major == 3) {
             Logging.getLogger().logInformation(
@@ -157,9 +146,13 @@ abstract class VmServiceBase implements VmServiceConst {
             errMsg[0] = msg;
           }
         }
+
+        vmService.runtimeVersion = version;
+
         latch.countDown();
       }
     });
+
     try {
       if (!latch.await(5, TimeUnit.SECONDS)) {
         throw new IOException("Failed to determine protocol version");
@@ -178,7 +171,10 @@ abstract class VmServiceBase implements VmServiceConst {
    * Connect to the VM observatory service on the given local port.
    *
    * @return an API object for interacting with the VM service (not {@code null}).
+   *
+   * @deprecated prefer the Url based constructor {@link VmServiceBase#connect}
    */
+  @Deprecated
   public static VmService localConnect(int port) throws IOException {
     return connect("ws://localhost:" + port + "/ws");
   }
@@ -202,7 +198,7 @@ abstract class VmServiceBase implements VmServiceConst {
   /**
    * A list of objects to which {@link Event}s from the VM are forwarded.
    */
-  private final List<VmServiceListener> vmListeners = new ArrayList<VmServiceListener>();
+  private final List<VmServiceListener> vmListeners = new ArrayList<>();
 
   /**
    * A list of objects to which {@link Event}s from the VM are forwarded.
@@ -213,6 +209,8 @@ abstract class VmServiceBase implements VmServiceConst {
    * The channel through which observatory requests are made.
    */
   RequestSink requestSink;
+
+  Version runtimeVersion;
 
   /**
    * Add a listener to receive {@link Event}s from the VM.
@@ -240,6 +238,13 @@ abstract class VmServiceBase implements VmServiceConst {
    */
   public void removeServiceRunner(String service) {
     remoteServiceRunners.remove(service);
+  }
+
+  /**
+   * Return the VM service protocol version supported by the current debug connection.
+   */
+  public Version getRuntimeVersion() {
+    return runtimeVersion;
   }
 
   /**
@@ -307,7 +312,7 @@ abstract class VmServiceBase implements VmServiceConst {
 
   /**
    * Invoke a specific service protocol extension method.
-   *
+   * <p>
    * See https://api.dartlang.org/stable/dart-developer/dart-developer-library.html.
    */
   public void callServiceExtension(String isolateId, String method, ServiceExtensionConsumer consumer) {
@@ -318,7 +323,7 @@ abstract class VmServiceBase implements VmServiceConst {
 
   /**
    * Invoke a specific service protocol extension method.
-   *
+   * <p>
    * See https://api.dartlang.org/stable/dart-developer/dart-developer-library.html.
    */
   public void callServiceExtension(String isolateId, String method, JsonObject params, ServiceExtensionConsumer consumer) {
@@ -350,7 +355,7 @@ abstract class VmServiceBase implements VmServiceConst {
   }
 
   public void connectionOpened() {
-    for (VmServiceListener listener : vmListeners) {
+    for (VmServiceListener listener : new ArrayList<>(vmListeners)) {
       try {
         listener.connectionOpened();
       } catch (Exception e) {
@@ -360,7 +365,7 @@ abstract class VmServiceBase implements VmServiceConst {
   }
 
   private void forwardEvent(String streamId, Event event) {
-    for (VmServiceListener listener : vmListeners) {
+    for (VmServiceListener listener : new ArrayList<>(vmListeners)) {
       try {
         listener.received(streamId, event);
       } catch (Exception e) {
@@ -370,7 +375,7 @@ abstract class VmServiceBase implements VmServiceConst {
   }
 
   public void connectionClosed() {
-    for (VmServiceListener listener : vmListeners) {
+    for (VmServiceListener listener : new ArrayList<>(vmListeners)) {
       try {
         listener.connectionClosed();
       } catch (Exception e) {
@@ -431,7 +436,7 @@ abstract class VmServiceBase implements VmServiceConst {
     } else if (json.has("result") || json.has("error")) {
       processResponse(json);
     } else {
-        Logging.getLogger().logError("Malformed message");
+      Logging.getLogger().logError("Malformed message");
     }
   }
 
@@ -498,21 +503,21 @@ abstract class VmServiceBase implements VmServiceConst {
     final RemoteServiceRunner runner = remoteServiceRunners.get(method);
     try {
       runner.run(params, new RemoteServiceCompleter() {
-          public void result(JsonObject result) {
-            response.add(RESULT, result);
-            requestSink.add(response);
-          }
+        public void result(JsonObject result) {
+          response.add(RESULT, result);
+          requestSink.add(response);
+        }
 
-          public void error(int code, String message, JsonObject data) {
-            final JsonObject error = new JsonObject();
-            error.addProperty(CODE, code);
-            error.addProperty(MESSAGE, message);
-            if (data != null) {
-              error.add(DATA, data);
-            }
-            response.add(ERROR, error);
-            requestSink.add(response);
+        public void error(int code, String message, JsonObject data) {
+          final JsonObject error = new JsonObject();
+          error.addProperty(CODE, code);
+          error.addProperty(MESSAGE, message);
+          if (data != null) {
+            error.add(DATA, data);
           }
+          response.add(ERROR, error);
+          requestSink.add(response);
+        }
       });
     } catch (Exception e) {
       final String message = "Internal Server Error";
@@ -522,12 +527,11 @@ abstract class VmServiceBase implements VmServiceConst {
       error.addProperty(MESSAGE, message);
       response.add(ERROR, error);
       requestSink.add(response);
-      return;
     }
   }
 
   private static final RemoteServiceCompleter ignoreCallback =
-    new RemoteServiceCompleter() {
+      new RemoteServiceCompleter() {
         public void result(JsonObject result) {
           // ignore
         }
@@ -535,7 +539,7 @@ abstract class VmServiceBase implements VmServiceConst {
         public void error(int code, String message, JsonObject data) {
           // ignore
         }
-    };
+      };
 
   void processNotification(JsonObject json) {
     String method;
@@ -579,7 +583,6 @@ abstract class VmServiceBase implements VmServiceConst {
         runner.run(params, ignoreCallback);
       } catch (Exception e) {
         Logging.getLogger().logError("Internal Server Error", e);
-        return;
       }
     }
   }
@@ -615,11 +618,13 @@ abstract class VmServiceBase implements VmServiceConst {
         Logging.getLogger().logError("Response has invalid " + RESULT, e);
         return;
       }
-      String responseType;
-      try {
+      String responseType = "";
+      if (result.has(TYPE)) {
         responseType = result.get(TYPE).getAsString();
-      } catch (Exception e) {
-        Logging.getLogger().logError("Response missing " + TYPE, e);
+      }
+      // ServiceExtensionConsumers do not care about the response type.
+      else if (!(consumer instanceof ServiceExtensionConsumer)) {
+        Logging.getLogger().logError("Response missing " + TYPE + ": " + result.toString());
         return;
       }
       forwardResponse(consumer, responseType, result);

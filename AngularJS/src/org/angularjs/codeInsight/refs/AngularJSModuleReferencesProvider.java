@@ -49,10 +49,9 @@ import java.util.*;
 public class AngularJSModuleReferencesProvider extends PsiReferenceProvider {
   public static final String ANGULAR = "angular";
 
-  @NotNull
   @Override
-  public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
-    return new PsiReference[] {new AngularJSModuleReference((JSLiteralExpression)element)};
+  public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+    return new PsiReference[]{new AngularJSModuleReference((JSLiteralExpression)element)};
   }
 
   private static class AngularJSModuleReference extends CachingPolyReferenceBase<JSLiteralExpression> {
@@ -64,10 +63,9 @@ public class AngularJSModuleReferencesProvider extends PsiReferenceProvider {
       return StringUtil.unquoteString(getCanonicalText());
     }
 
-    @NotNull
     @Override
-    protected ResolveResult[] resolveInner() {
-      if(! isAngularModuleReferenceAccurate()) return ResolveResult.EMPTY_ARRAY;
+    protected ResolveResult @NotNull [] resolveInner() {
+      if (!isAngularModuleReferenceAccurate()) return ResolveResult.EMPTY_ARRAY;
       final String moduleName = getModuleName();
       if (StringUtil.isEmptyOrSpaces(moduleName)) return ResolveResult.EMPTY_ARRAY;
       final CommonProcessors.CollectProcessor<JSImplicitElement> collectProcessor = new CommonProcessors.CollectProcessor<>();
@@ -86,7 +84,8 @@ public class AngularJSModuleReferencesProvider extends PsiReferenceProvider {
         if (PsiTreeUtil.isAncestor(((JSArgumentList)parent).getArguments()[0], myElement, false)) {
           final JSExpression methodExpression = ((JSCallExpression)parent.getParent()).getMethodExpression();
           if (methodExpression instanceof JSReferenceExpression &&
-              JSSymbolUtil.isAccurateReferenceExpressionName((JSReferenceExpression)methodExpression, ANGULAR, AngularJSIndexingHandler.MODULE)) {
+              JSSymbolUtil
+                .isAccurateReferenceExpressionName((JSReferenceExpression)methodExpression, ANGULAR, AngularJSIndexingHandler.MODULE)) {
             return true;
           }
           if (AngularJSReferencesContributor.looksLikeAngularModuleReference(methodExpression)) {
@@ -95,7 +94,7 @@ public class AngularJSModuleReferencesProvider extends PsiReferenceProvider {
             if (qualifier instanceof JSReferenceExpression) {
               final PsiElement resolve = ((JSReferenceExpression)qualifier).resolve();
               if (resolve instanceof JSVariable && ((JSVariable)resolve).getInitializer() instanceof JSReferenceExpression &&
-                  JSSymbolUtil.isAccurateReferenceExpressionName((JSReferenceExpression) ((JSVariable)resolve).getInitializer(), ANGULAR)) {
+                  JSSymbolUtil.isAccurateReferenceExpressionName((JSReferenceExpression)((JSVariable)resolve).getInitializer(), ANGULAR)) {
                 return true;
               }
             }
@@ -173,14 +172,13 @@ public class AngularJSModuleReferencesProvider extends PsiReferenceProvider {
         myElement = element;
       }
 
-      @Nullable
       @Override
-      public Result<Pair<JSNamedElement, Integer>> compute() {
+      public @Nullable Result<Pair<JSNamedElement, Integer>> compute() {
         final JSCallExpression callExpression = PsiTreeUtil.getParentOfType(myElement, JSCallExpression.class);
         if (callExpression == null) return null;
         final JSExpression methodExpression = callExpression.getMethodExpression();
         if (methodExpression instanceof JSReferenceExpression && JSSymbolUtil
-              .isAccurateReferenceExpressionName((JSReferenceExpression)methodExpression, ANGULAR, AngularJSIndexingHandler.MODULE)) {
+          .isAccurateReferenceExpressionName((JSReferenceExpression)methodExpression, ANGULAR, AngularJSIndexingHandler.MODULE)) {
           if (callExpression.getArgumentList() == null || callExpression.getArgumentList().getArguments().length <= 1) {
             return null;
           }

@@ -6,7 +6,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings
 import com.intellij.util.LineSeparator
 
-val TslintRulesSet: Set<TsLintSimpleRule<out Any>> = setOf(ImportDestructuringSpacingRule(),
+val TslintRulesSet: Set<TsLintRule> = setOf(ImportDestructuringSpacingRule(),
                                                            QuotemarkRule(),
                                                            ForceQuotemarkRule(),
                                                            SemicolonRule(),
@@ -127,7 +127,7 @@ class SemicolonRule : TsLintSimpleRule<Boolean>("semicolon") {
 
 }
 
-open class ForceSemicolonRule : TsLintSimpleRule<Boolean>("semicolon") {
+class ForceSemicolonRule : TsLintSimpleRule<Boolean>("semicolon") {
   override fun getConfigValue(option: TslintJsonOption): Boolean? {
     val stringValues = option.getStringValues()
     if (stringValues.contains("never")) return true
@@ -457,35 +457,34 @@ class WhitespaceInTypeAssertionRule : MergedArrayRule("whitespace") {
   }
 }
 
-class IndentRule : TsLintSimpleRule<String>("indent") {
-  override fun getConfigValue(option: TslintJsonOption): String? {
-    val stringValues = option.getStringValues()
+class IndentRule : TsLintRule {
+  override val optionId: String = "indent"
 
-    if (stringValues.contains("spaces")) return "spaces"
-    if (stringValues.contains("tabs")) return "tabs"
-
-    return null
+  override fun isAvailable(languageSettings: CommonCodeStyleSettings,
+                           codeStyleSettings: JSCodeStyleSettings,
+                           option: TslintJsonOption): Boolean {
+    val stored = languageSettings.indentOptions ?: languageSettings.initIndentOptions()
+    val optionsList = option.getOptionsList()
+    val configContainsTabs = getUseTabs(optionsList)
+    val indentSize = getIndentSize(optionsList)
+    return (stored.USE_TAB_CHARACTER != configContainsTabs) ||
+           (!configContainsTabs && indentSize != null && (stored.CONTINUATION_INDENT_SIZE != indentSize || stored.INDENT_SIZE != indentSize))
   }
 
-  override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): String {
-    var indentOptions = languageSettings.indentOptions
-    if (indentOptions == null) {
-      indentOptions = languageSettings.initIndentOptions()
-    }
-
-    return if (indentOptions.USE_TAB_CHARACTER) "tabs" else "spaces"
-  }
-
-  override fun setValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings, value: String) {
-    var indentOptions = languageSettings.indentOptions
-    if (indentOptions == null) {
-      indentOptions = languageSettings.initIndentOptions()
-    }
-    when (value) {
-      "tabs" -> indentOptions.USE_TAB_CHARACTER = true
-      "spaces" -> indentOptions.USE_TAB_CHARACTER = false
+  override fun apply(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings, option: TslintJsonOption) {
+    val stored = languageSettings.indentOptions ?: languageSettings.initIndentOptions()
+    val optionsList = option.getOptionsList()
+    val configContainsTabs = getUseTabs(optionsList)
+    val indentSize = getIndentSize(optionsList)
+    stored.USE_TAB_CHARACTER = configContainsTabs
+    if (!configContainsTabs && indentSize != null) {
+      stored.CONTINUATION_INDENT_SIZE = indentSize
+      stored.INDENT_SIZE = indentSize
     }
   }
+
+  private fun getUseTabs(optionsList: List<Any>): Boolean = "tabs" == optionsList.getOrNull(0)
+  private fun getIndentSize(optionsList: List<Any>): Int? = (optionsList.getOrNull(1)as? Number)?.toInt()
 }
 
 class MaxLineLengthRule : TsLintSimpleRule<Int>("max-line-length") {

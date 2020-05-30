@@ -26,9 +26,13 @@ type Contacts = Contact[];
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let contact of contacts; index as i; trackBy: foo">
-          <td>{{i + 1}}</td>
-          <td>{{contact}}</td>
+        <tr *ngFor="let contact of contacts; index as i; trackBy: <error descr="Unresolved variable or type foo">foo</error>">
+            <td>{{i + 1}}</td>
+            <td>{{i.toExponential()}}</td>
+            <td>{{i.<error descr="Unresolved function or method big()">big</error>()}}</td>
+            <td>{{contact}}</td>
+            <td>{{contact.username}}</td>
+            <td>{{contact.<error descr="Unresolved variable foo">foo</error>}}</td>
         </tr>
         </tbody>
       </table>

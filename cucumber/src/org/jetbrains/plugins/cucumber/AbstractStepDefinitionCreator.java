@@ -1,21 +1,20 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber;
 
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
 import com.intellij.codeInsight.template.impl.TemplateState;
-import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
-import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
@@ -23,6 +22,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public abstract class AbstractStepDefinitionCreator implements StepDefinitionCreator {
   @Override
@@ -56,23 +56,13 @@ public abstract class AbstractStepDefinitionCreator implements StepDefinitionCre
 
   @NotNull
   @Override
-  public PsiDirectory getDefaultStepDefinitionFolder(@NotNull GherkinStep step) {
+  public String getDefaultStepDefinitionFolderPath(@NotNull GherkinStep step) {
     PsiFile featureFile = step.getContainingFile();
     final PsiDirectory dir = findStepDefinitionDirectory(featureFile);
-    if (dir == null) {
-      final PsiDirectory featureParentDir = featureFile.getParent();
-      assert featureParentDir != null;
-
-      final Ref<PsiDirectory> dirRef = new Ref<>();
-      WriteCommandAction.writeCommandAction(step.getProject())
-                        .withName(CucumberBundle.message("cucumber.quick.fix.create.step.command.name.add")).run(() -> {
-        // create steps_definitions directory
-        dirRef.set(featureParentDir.createSubdirectory(CucumberUtil.STEP_DEFINITIONS_DIR_NAME));
-      });
-
-      return dirRef.get();
+    if (dir != null) {
+      return dir.getVirtualFile().getPath();
     }
-    return dir;
+    return FileUtil.join(featureFile.getContainingDirectory().getVirtualFile().getPath(), CucumberUtil.STEP_DEFINITIONS_DIR_NAME);
   }
 
   @Nullable
@@ -98,7 +88,7 @@ public abstract class AbstractStepDefinitionCreator implements StepDefinitionCre
 
   protected void closeActiveTemplateBuilders(PsiFile file) {
     final Project project = file.getProject();
-    final VirtualFile vFile = ObjectUtils.assertNotNull(file.getVirtualFile());
+    final VirtualFile vFile = Objects.requireNonNull(file.getVirtualFile());
     final OpenFileDescriptor descriptor = new OpenFileDescriptor(project, vFile);
     FileEditorManager.getInstance(project).getAllEditors(vFile);
     FileEditorManager.getInstance(project).openTextEditor(descriptor, true);

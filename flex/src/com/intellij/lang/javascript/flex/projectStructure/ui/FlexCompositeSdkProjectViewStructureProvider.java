@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.ide.projectView.TreeStructureProvider;
@@ -14,28 +15,24 @@ import com.intellij.openapi.roots.*;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.hash.HashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class FlexCompositeSdkProjectViewStructureProvider implements TreeStructureProvider, DumbAware {
 
   @NotNull
   @Override
-  public Collection<AbstractTreeNode> modify(@NotNull final AbstractTreeNode parent,
-                                             @NotNull final Collection<AbstractTreeNode> children,
+  public Collection<AbstractTreeNode<?>> modify(@NotNull AbstractTreeNode<?> parent,
+                                             @NotNull final Collection<AbstractTreeNode<?>> children,
                                              final ViewSettings settings) {
     if (!(parent instanceof ExternalLibrariesNode)) {
       return children;
     }
 
     Set<Sdk> processedSdks = new HashSet<>();
-    Collection<AbstractTreeNode> result = new ArrayList<>();
+    Collection<AbstractTreeNode<?>> result = new ArrayList<>();
 
     for (AbstractTreeNode child : children) {
       Object value = child.getValue();
@@ -94,29 +91,31 @@ public class FlexCompositeSdkProjectViewStructureProvider implements TreeStructu
       return mySdk.getName();
     }
 
-    @NotNull
+    @Nullable
     @Override
-    public VirtualFile[] getRootFiles(@NotNull final OrderRootType type) {
+    public String getJdkTypeName() {
+      return mySdk.getSdkType().getName();
+    }
+
+    @Override
+    public VirtualFile @NotNull [] getRootFiles(@NotNull final OrderRootType type) {
       List<VirtualFile> directories =
         ContainerUtil.filter(mySdk.getRootProvider().getFiles(type), VirtualFile::isDirectory);
       return VfsUtilCore.toVirtualFileArray(directories);
     }
 
-    @NotNull
     @Override
-    public String[] getRootUrls(@NotNull final OrderRootType type) {
+    public String @NotNull [] getRootUrls(@NotNull final OrderRootType type) {
       return mySdk.getRootProvider().getUrls(type);
     }
 
-    @NotNull
     @Override
-    public VirtualFile[] getFiles(@NotNull final OrderRootType type) {
+    public VirtualFile @NotNull [] getFiles(@NotNull final OrderRootType type) {
       return mySdk.getRootProvider().getFiles(type);
     }
 
-    @NotNull
     @Override
-    public String[] getUrls(@NotNull final OrderRootType rootType) {
+    public String @NotNull [] getUrls(@NotNull final OrderRootType rootType) {
       return getRootUrls(rootType);
     }
 

@@ -2,6 +2,8 @@
   <div ref="someRef"></div>
   <div slot="someSlot"></div>
   <div slot-scope="someSlotScope"></div>
+  <div scope="someSlotScope"></div>
+  <template scope="someSlotScope"></template>
 
   <div v-text="someText"></div>
   <div v-html="someHtml"></div>
@@ -14,6 +16,9 @@
   <div v-pre="somePre"></div>
   <div v-cloak="someCloak"></div>
   <div v-once="someOnce"></div>
+
+  <div v-slot:header="{test}"></div>
+  <div #header="{test}"></div>
 
   <div v-on:click="someOn"></div>
   <div v-on:click.ctrl.capture="someOn"></div>

@@ -1,7 +1,6 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.annotator;
 
-import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.*;
@@ -11,16 +10,17 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
+import com.intellij.util.Consumer;
+import com.intellij.util.ObjectUtils;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.analyzer.DartServerData;
+import com.jetbrains.lang.dart.fixes.DartQuickFix;
 import com.jetbrains.lang.dart.fixes.DartQuickFixSet;
 import com.jetbrains.lang.dart.highlight.DartSyntaxHighlighterColors;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartProblem;
@@ -34,14 +34,12 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DartAnnotator implements Annotator {
 
-  private static final Key<Boolean> DART_SERVER_DATA_HANDLED = Key.create("DART_SERVER_DATA_HANDLED");
+  private static final Key<List<DartServerData.DartError>> DART_ERRORS = Key.create("DART_ERRORS");
+  private static final Key<List<DartServerData.DartHighlightRegion>> DART_HIGHLIGHTING = Key.create("DART_HIGHLIGHTING");
 
   private static final Map<String, String> HIGHLIGHTING_TYPE_MAP = new THashMap<>();
 
@@ -153,21 +151,20 @@ public class DartAnnotator implements Annotator {
     return DartAnalysisServerService.getInstance(project).isInIncludedRoots(file);
   }
 
-  public static boolean shouldIgnoreMessageFromDartAnalyzer(@NotNull final String filePath,
-                                                            @NotNull final String analysisErrorFileSD) {
-    // workaround for https://github.com/dart-lang/sdk/issues/25034
-    if (!filePath.equals(FileUtil.toSystemIndependentName(analysisErrorFileSD))) return true;
-
-    return false;
-  }
-
   @Override
   public void annotate(@NotNull final PsiElement element, @NotNull final AnnotationHolder holder) {
     if (holder.isBatchMode()) return;
 
     final AnnotationSession session = holder.getCurrentAnnotationSession();
-    if (session.getUserData(DART_SERVER_DATA_HANDLED) != Boolean.TRUE) {
-      session.putUserData(DART_SERVER_DATA_HANDLED, Boolean.TRUE);
+    List<DartServerData.DartError> notYetAppliedErrors = session.getUserData(DART_ERRORS);
+    List<DartServerData.DartHighlightRegion> notYetAppliedHighlighting = session.getUserData(DART_HIGHLIGHTING);
+
+    if (notYetAppliedErrors == null || notYetAppliedHighlighting == null) {
+      notYetAppliedErrors = new ArrayList<>();
+      notYetAppliedHighlighting = new ArrayList<>();
+
+      session.putUserData(DART_ERRORS, notYetAppliedErrors);
+      session.putUserData(DART_HIGHLIGHTING, notYetAppliedHighlighting);
 
       final VirtualFile vFile = element.getContainingFile().getVirtualFile();
       if (canBeAnalyzedByServer(element.getProject(), vFile)) {
@@ -179,19 +176,39 @@ public class DartAnnotator implements Annotator {
             service.waitForAnalysisToComplete_TESTS_ONLY(vFile);
           }
 
-          applyServerHighlighting(vFile, holder);
+          notYetAppliedErrors.addAll(service.getErrors(vFile));
+          notYetAppliedErrors.sort(Comparator.comparingInt(DartServerData.DartError::getOffset));
+          ensureNoErrorsAfterEOF(notYetAppliedErrors, element.getContainingFile().getTextLength());
+
+          notYetAppliedHighlighting.addAll(service.getHighlight(vFile));
+          notYetAppliedHighlighting.sort(Comparator.comparingInt(DartServerData.DartHighlightRegion::getOffset));
         }
       }
     }
 
+    processDartRegionsInRange(notYetAppliedErrors, element.getTextRange(), err -> {
+      VirtualFile vFile = element.getContainingFile().getVirtualFile();
+      DartQuickFixSet quickFixSet = new DartQuickFixSet(element.getManager(), vFile, err.getOffset(), err.getCode(), err.getSeverity());
+      createAnnotation(holder, err, quickFixSet.getQuickFixes());
+    });
+
+    processDartRegionsInRange(notYetAppliedHighlighting, element.getTextRange(), region -> {
+      String attributeKey = HIGHLIGHTING_TYPE_MAP.get(region.getType());
+      if (attributeKey != null) {
+        TextAttributesKey attributes = TextAttributesKey.find(attributeKey);
+        TextRange regionRange = new TextRange(region.getOffset(), region.getOffset() + region.getLength());
+        holder.newSilentAnnotation(HighlightSeverity.INFORMATION).range(regionRange).textAttributes(attributes).create();
+      }
+    });
+
     if (DartTokenTypes.COLON == element.getNode().getElementType() && element.getParent() instanceof DartTernaryExpression) {
-      holder.createInfoAnnotation(element, null).setTextAttributes(DartSyntaxHighlighterColors.OPERATION_SIGN);
+      holder.newSilentAnnotation(HighlightSeverity.INFORMATION).textAttributes(DartSyntaxHighlighterColors.OPERATION_SIGN).create();
       return;
     }
 
     if (DartTokenTypesSets.BUILT_IN_IDENTIFIERS.contains(element.getNode().getElementType())) {
       if (element.getNode().getTreeParent().getElementType() != DartTokenTypes.ID) {
-        holder.createInfoAnnotation(element, null).setTextAttributes(DartSyntaxHighlighterColors.KEYWORD);
+        holder.newSilentAnnotation(HighlightSeverity.INFORMATION).textAttributes(DartSyntaxHighlighterColors.KEYWORD).create();
         return;
       }
     }
@@ -202,7 +219,7 @@ public class DartAnnotator implements Annotator {
       if (previous != null && (previous.getElementType() == DartTokenTypes.SYNC ||
                                previous.getElementType() == DartTokenTypes.ASYNC ||
                                previous.getElementType() == DartTokenTypes.YIELD)) {
-        holder.createInfoAnnotation(element, null).setTextAttributes(DartSyntaxHighlighterColors.KEYWORD);
+        holder.newSilentAnnotation(HighlightSeverity.INFORMATION).textAttributes(DartSyntaxHighlighterColors.KEYWORD).create();
       }
     }
 
@@ -212,61 +229,57 @@ public class DartAnnotator implements Annotator {
     }
 
     if (element instanceof DartSymbolLiteralExpression) {
-      holder.createInfoAnnotation(element, null).setTextAttributes(DartSyntaxHighlighterColors.SYMBOL_LITERAL);
+      holder.newSilentAnnotation(HighlightSeverity.INFORMATION).textAttributes(DartSyntaxHighlighterColors.SYMBOL_LITERAL).create();
       //noinspection UnnecessaryReturnStatement
       return;
     }
   }
 
-  private static void applyServerHighlighting(@NotNull final VirtualFile file, @NotNull final AnnotationHolder holder) {
-    final PsiFile psiFile = holder.getCurrentAnnotationSession().getFile();
-
-    final DartAnalysisServerService das = DartAnalysisServerService.getInstance(psiFile.getProject());
-    for (DartServerData.DartError error : das.getErrors(file)) {
-      if (shouldIgnoreMessageFromDartAnalyzer(file.getPath(), error.getAnalysisErrorFileSD())) continue;
-
-      final Annotation annotation = createAnnotation(holder, error, psiFile.getTextLength());
-
-      if (annotation != null) {
-        final DartQuickFixSet quickFixSet =
-          new DartQuickFixSet(psiFile.getManager(), file, error.getOffset(), error.getCode(), error.getSeverity());
-
-        for (IntentionAction quickFix : quickFixSet.getQuickFixes()) {
-          annotation.registerFix(quickFix);
-        }
-
-        if (error.getCode() != null) {
-          annotation.setProblemGroup(new DartProblemGroup(error.getCode(), error.getSeverity()));
-        }
+  private static void ensureNoErrorsAfterEOF(List<DartServerData.DartError> errors, int fileLength) {
+    for (int i = errors.size() - 1; i >= 0; i--) {
+      DartServerData.DartError error = errors.get(i);
+      if (error.getOffset() >= fileLength) {
+        errors.set(i, error.asEofError(fileLength));
       }
-    }
-
-    for (DartServerData.DartHighlightRegion region : das.getHighlight(file)) {
-      final String attributeKey = HIGHLIGHTING_TYPE_MAP.get(region.getType());
-      if (attributeKey != null) {
-        final TextRange textRange = new TextRange(region.getOffset(), region.getOffset() + region.getLength());
-        holder.createInfoAnnotation(textRange, null).setTextAttributes(TextAttributesKey.find(attributeKey));
+      else {
+        return;
       }
     }
   }
 
-  @Nullable
-  private static Annotation createAnnotation(@NotNull final AnnotationHolder holder,
-                                             @NotNull final DartServerData.DartError error,
-                                             final int fileTextLength) {
-    int highlightingStart = error.getOffset();
-    int highlightingEnd = error.getOffset() + error.getLength();
-    if (highlightingEnd > fileTextLength) highlightingEnd = fileTextLength;
-    if (highlightingStart > 0 && highlightingStart >= highlightingEnd) highlightingStart = highlightingEnd - 1;
+  private static <T extends DartServerData.DartRegion> void processDartRegionsInRange(@NotNull List<T> regions,
+                                                                                      @NotNull TextRange psiElementRange,
+                                                                                      @NotNull Consumer<T> processor) {
+    if (regions.isEmpty()) return;
 
-    final TextRange textRange = new TextRange(highlightingStart, highlightingEnd);
+    int i = ObjectUtils.binarySearch(0, regions.size(),
+                                     mid -> regions.get(mid).getOffset() < psiElementRange.getStartOffset() ? -1 : 1);
+    i = Math.max(0, -i - 1);
 
+    T region = i < regions.size() ? regions.get(i) : null;
+
+    while (region != null && region.getOffset() < psiElementRange.getEndOffset()) {
+      if (psiElementRange.containsRange(region.getOffset(), region.getOffset() + region.getLength())) {
+        regions.remove(i);
+        processor.consume(region);
+      }
+      else {
+        i++; // regions.remove(i) not called => need to increment i
+      }
+      region = i < regions.size() ? regions.get(i) : null;
+    }
+  }
+
+  private static void createAnnotation(@NotNull final AnnotationHolder holder,
+                                       @NotNull final DartServerData.DartError error,
+                                       @NotNull List<DartQuickFix> fixes) {
+    final TextRange textRange = new TextRange(error.getOffset(), error.getOffset() + error.getLength());
     final String severity = error.getSeverity();
     final String message = error.getMessage();
     final ProblemHighlightType specialHighlightType = getSpecialHighlightType(error);
     final String tooltip = DartProblem.generateTooltipText(error.getMessage(), error.getCorrection(), error.getUrl());
     final HighlightSeverity annotationSeverity;
-    final TextAttributesKey textAttributesKey;
+    TextAttributesKey textAttributesKey;
 
     if (AnalysisErrorSeverity.INFO.equals(severity) && specialHighlightType == null) {
       annotationSeverity = HighlightSeverity.WEAK_WARNING;
@@ -281,17 +294,23 @@ public class DartAnnotator implements Annotator {
       textAttributesKey = DartSyntaxHighlighterColors.ERROR;
     }
     else {
-      return null;
+      return;
     }
 
-    final Annotation annotation = holder.createAnnotation(annotationSeverity, textRange, message, tooltip);
-    annotation.setTextAttributes(textAttributesKey);
+    AnnotationBuilder builder = holder.newAnnotation(annotationSeverity, message).range(textRange).tooltip(tooltip);
     if (specialHighlightType != null) {
-      annotation.setTextAttributes(null);
-      annotation.setHighlightType(specialHighlightType);
+      builder = builder.highlightType(specialHighlightType);
     }
-
-    return annotation;
+    else {
+      builder = builder.textAttributes(textAttributesKey);
+    }
+    if (error.getCode() != null) {
+      builder = builder.problemGroup(new DartProblemGroup(error.getCode(), error.getSeverity()));
+    }
+    for (DartQuickFix fix : fixes) {
+      builder = builder.withFix(fix);
+    }
+    builder.create();
   }
 
   @Nullable
@@ -337,17 +356,19 @@ public class DartAnnotator implements Annotator {
       final TextAttributesKey attribute =
         rangeAndValidity.second ? DartSyntaxHighlighterColors.VALID_STRING_ESCAPE : DartSyntaxHighlighterColors.INVALID_STRING_ESCAPE;
       if (rangeAndValidity.second) {
-        holder.createInfoAnnotation(range, null).setTextAttributes(attribute);
+        holder.newSilentAnnotation(HighlightSeverity.INFORMATION).range(range).textAttributes(attribute).create();
       }
       else {
-        holder.createErrorAnnotation(range, DartBundle.message("dart.color.settings.description.invalid.string.escape"))
-          .setTextAttributes(attribute);
+        holder.newAnnotation(HighlightSeverity.ERROR, DartBundle.message("dart.color.settings.description.invalid.string.escape"))
+          .range(range)
+          .textAttributes(attribute)
+          .create();
       }
     }
   }
 
   @NotNull
-  private static List<Pair<TextRange, Boolean>> getEscapeSequenceRangesAndValidity(final @Nullable String text) {
+  public static List<Pair<TextRange, Boolean>> getEscapeSequenceRangesAndValidity(final @Nullable String text) {
     // \\xFF                 2 hex digits
     // \\uFFFF               4 hex digits
     // \\u{F} - \\u{FFFFFF}  from 1 up to 6 hex digits

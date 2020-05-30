@@ -26,8 +26,7 @@ import java.util.Collection;
 public class FlexCssNavigationTest extends JavaCodeInsightTestCase {
   private static final @NonNls String BASE_PATH = "/flex_css_navigation/";
 
-  @NotNull
-  private PsiElement[] findTargetElements(@NotNull String... filenames) {
+  private PsiElement @NotNull [] findTargetElements(String @NotNull ... filenames) {
     String[] fileNamesWithBasePath = new String[filenames.length];
     for (int i = 0, filenamesLength = filenames.length; i < filenamesLength; i++) {
       fileNamesWithBasePath[i] = BASE_PATH + filenames[i];

@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.intellij.struts2.reference.jsp;
 
 import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection;
@@ -24,13 +23,11 @@ import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomManager;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 public class ActionLinkReferenceProviderTest extends BasicLightHighlightingTestCase {
-
-  @Override
   @NotNull
+  @Override
   protected String getTestDataLocation() {
     return "/reference/jsp/actionLink";
   }
@@ -46,10 +43,7 @@ public class ActionLinkReferenceProviderTest extends BasicLightHighlightingTestC
     createStrutsFileSet("struts-actionLink.xml");
 
     myFixture.copyFileToProject("jsp/index.jsp", "index.jsp");
-    myFixture.testHighlighting(true,
-                               false,
-                               false,
-                               "/jsp/actionLink-highlighting.jsp");
+    myFixture.testHighlighting(true, false, false, "jsp/actionLink-highlighting.jsp");
   }
 
   // TODO no reference, no highlighting..
@@ -64,14 +58,14 @@ public class ActionLinkReferenceProviderTest extends BasicLightHighlightingTestC
 
   public void testActionLinkCompletionVariantsNamespaceGiven() {
     createStrutsFileSet("struts-actionLink.xml");
-    myFixture.testCompletionVariants("/jsp/actionLink-completionvariants-namespace_given.jsp",
+    myFixture.testCompletionVariants("jsp/actionLink-completionvariants-namespace_given.jsp",
                                      "actionLink1.action",
                                      "actionLink2.action");
   }
 
   public void testActionLinkCompletionVariantsNoNamespace() {
     createStrutsFileSet("struts-actionLink.xml");
-    myFixture.testCompletionVariants("/jsp/actionLink-completionvariants-no-namespace.jsp",
+    myFixture.testCompletionVariants("jsp/actionLink-completionvariants-no-namespace.jsp",
                                      "jsp",
                                      "rootActionLink.action",
                                      "struts-actionLink.xml"
@@ -80,8 +74,8 @@ public class ActionLinkReferenceProviderTest extends BasicLightHighlightingTestC
 
   public void testActionLinkReferences() {
     createStrutsFileSet("struts-actionLink.xml");
-    checkActionReference("/jsp/actionLink-reference_1.jsp", "actionLink1");
-    checkActionReference("/jsp/actionLink-reference_2.jsp", "rootActionLink");
+    checkActionReference("jsp/actionLink-reference_1.jsp", "actionLink1");
+    checkActionReference("jsp/actionLink-reference_2.jsp", "rootActionLink");
   }
 
   /**
@@ -91,7 +85,7 @@ public class ActionLinkReferenceProviderTest extends BasicLightHighlightingTestC
    * @param actionName Name of the Action to resolve to.
    * @throws Throwable On errors.
    */
-  private void checkActionReference(@NonNls final String filename, @NonNls final String actionName) {
+  private void checkActionReference(final String filename, final String actionName) {
     final PsiReference psiReference = myFixture.getReferenceAtCaretPositionWithAssertion(filename);
     final PsiElement psiElement = psiReference.resolve();
     assertNotNull("no resolve element " + actionName, psiElement);

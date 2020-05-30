@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.util;
 
 import com.intellij.openapi.util.Key;
@@ -14,10 +15,7 @@ import com.jetbrains.lang.dart.resolve.DartResolveProcessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 
 public class DartPsiImplUtil {
@@ -97,6 +95,22 @@ public class DartPsiImplUtil {
     }
 
     return Pair.create(quotedDartString.substring(startOffset, endOffset), TextRange.create(startOffset, endOffset));
+  }
+
+  public static @NotNull List<VirtualFile> getLibraryFiles(final @NotNull DartPartOfStatement partOfStatement) {
+    final DartLibraryId libraryId = partOfStatement.getLibraryId();
+    if (libraryId != null) {
+      String libraryName = libraryId.getText();
+      return DartResolveUtil.findLibraryByName(partOfStatement, libraryName);
+    }
+
+    final DartUriElement uriElement = partOfStatement.getUriElement();
+    assert uriElement != null : "[" + partOfStatement.toString() + "]";
+
+    final String uri = uriElement.getUriStringAndItsRange().first;
+    final VirtualFile file = DartResolveUtil.getRealVirtualFile(partOfStatement.getContainingFile());
+    final VirtualFile targetFile = file == null ? null : DartResolveUtil.getImportedFile(partOfStatement.getProject(), file, uri);
+    return targetFile == null ? Collections.emptyList() : Collections.singletonList(targetFile);
   }
 
   @NotNull

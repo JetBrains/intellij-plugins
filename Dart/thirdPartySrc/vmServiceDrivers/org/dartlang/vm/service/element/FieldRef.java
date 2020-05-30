@@ -20,7 +20,7 @@ import com.google.gson.JsonObject;
 /**
  * An {@link FieldRef} is a reference to a {@link Field}.
  */
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class FieldRef extends ObjRef {
 
   public FieldRef(JsonObject json) {
@@ -40,7 +40,7 @@ public class FieldRef extends ObjRef {
    * The name of this field.
    */
   public String getName() {
-    return json.get("name").getAsString();
+    return getAsString("name");
   }
 
   /**
@@ -54,20 +54,20 @@ public class FieldRef extends ObjRef {
    * Is this field const?
    */
   public boolean isConst() {
-    return json.get("const").getAsBoolean();
+    return getAsBoolean("const");
   }
 
   /**
    * Is this field final?
    */
   public boolean isFinal() {
-    return json.get("final").getAsBoolean();
+    return getAsBoolean("final");
   }
 
   /**
    * Is this field static?
    */
   public boolean isStatic() {
-    return json.get("static").getAsBoolean();
+    return getAsBoolean("static");
   }
 }

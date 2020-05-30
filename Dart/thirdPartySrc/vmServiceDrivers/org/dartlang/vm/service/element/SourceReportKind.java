@@ -15,7 +15,7 @@ package org.dartlang.vm.service.element;
 
 // This is a generated file.
 
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public enum SourceReportKind {
 
   /**

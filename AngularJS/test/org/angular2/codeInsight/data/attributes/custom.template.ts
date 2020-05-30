@@ -1,3 +1,5 @@
+import {Component, Directive} from "@angular/core"
+
 @Directive({
     selector: '[my-customer]',
     properties: {

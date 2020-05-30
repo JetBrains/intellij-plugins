@@ -3,7 +3,7 @@
 <div *ngFor="let item of myArray; trackBy: <warning descr="Type (items: string) => string is not assignable to type TrackByFunction<string>">myBadFunction</warning>"></div>
 <ng-template ngFor [ngForOf]="myArray" [ngForTrackBy]="<warning descr="Type (items: string) => string is not assignable to type TrackByFunction<string>">myBadFunction</warning>" let-item></ng-template>
 
-<div *ngFor="let item of <warning descr="Type Array<string> is not assignable to type NgIterable<string & number> | QueryList<string & number>">myList</warning>; trackBy: myAnotherFunction"></div>
+<div *ngFor="let item of <warning descr="Type Array<string> is not assignable to type NgIterable<never> | QueryList<never>">myList</warning>; trackBy: myAnotherFunction"></div>
 
 <div *ngFor="let item of myArray; trackBy: myOkFunction"></div>
 <ng-template ngFor [ngForOf]="myArray" [ngForTrackBy]="myOkFunction" let-item></ng-template>
@@ -11,8 +11,8 @@
 <div *ngIf="true; extra: 12; super: 12"></div>
 <ng-template [ngIf]="true" [ngIfExtra]="12" [ngIfSuper]="12"></ng-template>
 
-<div *ngIf="true; extra: <warning descr="Type 12 is not assignable to type string & number">12</warning>; super: <warning descr="Type \"ee\" is not assignable to type string & number">'ee'</warning>"></div>
-<ng-template [ngIf]="true" [ngIfExtra]="<warning descr="Type 12 is not assignable to type string & number">12</warning>" [ngIfSuper]="<warning descr="Type \"ee\" is not assignable to type string & number">'ee'</warning>"></ng-template>
+<div *ngIf="true; extra: <warning descr="Type 12 is not assignable to type never">12</warning>; super: <warning descr="Type \"ee\" is not assignable to type never">'ee'</warning>"></div>
+<ng-template [ngIf]="true" [ngIfExtra]="<warning descr="Type 12 is not assignable to type never">12</warning>" [ngIfSuper]="<warning descr="Type \"ee\" is not assignable to type never">'ee'</warning>"></ng-template>
 
 <div *ngIf="true; then <warning descr="Type string is not assignable to type TemplateRef<NgIfContext> | null">myThen</warning>; else myElse"></div>
 

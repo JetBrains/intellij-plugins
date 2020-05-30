@@ -13,11 +13,13 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.util.PathUtilRt
 import com.intellij.xml.DefaultXmlExtension
+import org.jetbrains.annotations.Nls
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.tags.VueTagProvider
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.intentions.extractComponent.VueComponentInplaceIntroducer.Companion.GROUP_ID
+import java.util.*
 
 class VueExtractComponentRefactoring(private val project: Project,
                                      private val list: List<XmlTag>,
@@ -66,14 +68,19 @@ class VueExtractComponentRefactoring(private val project: Project,
       alreadyExisting.addAll(elements.map { toAsset(it.lookupString).capitalize() })
     }
 
+    @Nls
     fun validate(text: String): String? {
       val normalized = fromAsset(text.trim())
       val fileName = toAsset(text.trim()).capitalize() + ".vue"
       if (normalized.isEmpty() || !PathUtilRt.isValidFileName(fileName, false) ||
-          normalized.contains(' ') || forbidden.contains(normalized.toLowerCase())) return "Invalid component name: $normalized"
-      if (alreadyExisting.contains(normalized.toLowerCase())) return "Component $normalized already exists"
+          normalized.contains(' ') || forbidden.contains(normalized.toLowerCase(Locale.US))) {
+        return VueBundle.message("vue.template.intention.extract.component.error.component.name", normalized)
+      }
+      if (alreadyExisting.contains(normalized.toLowerCase(Locale.US))) {
+        return VueBundle.message("vue.template.intention.extract.component.error.component.exists", normalized)
+      }
       if (folder.findFile(fileName) != null) {
-        return "File $fileName already exists"
+        return VueBundle.message("vue.template.intention.extract.component.error.file.exists", fileName)
       }
       return null
     }

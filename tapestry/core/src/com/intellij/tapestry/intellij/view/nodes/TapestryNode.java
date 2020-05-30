@@ -39,9 +39,8 @@ public abstract class TapestryNode extends SimpleNode {
     /**
      * {@inheritDoc}
      */
-    @NotNull
     @Override
-    public SimpleNode[] getChildren() {
+    public SimpleNode @NotNull [] getChildren() {
         return new SimpleNode[0];
     }
 

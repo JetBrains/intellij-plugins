@@ -15,11 +15,11 @@ class CloudFormationInspectionsTests : LightPlatformCodeInsightTestCase() {
   fun inspectionsTest(fileName: String) {
     configureByFile(fileName)
 
-    val parsed = CloudFormationParser.parse(myFile)
+    val parsed = CloudFormationParser.parse(file)
     UsefulTestCase.assertEmpty(parsed.problems)
 
     val actualProblems = CloudFormationInspections.inspectFile(parsed)
-    val actualProblemsString = TestUtil.renderProblems(myFile, actualProblems.problems)
+    val actualProblemsString = TestUtil.renderProblems(file, actualProblems.problems)
 
     TestUtil.checkContent(File(testDataPath, fileName.removeSuffix(".template") + ".expected"), actualProblemsString)
   }

@@ -8,16 +8,16 @@
  */
 package org.dartlang.analysis.server.protocol;
 
-import com.google.common.collect.Lists;
+import java.util.List;
+
 import com.google.dart.server.utilities.general.ObjectUtilities;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * An node in the outline structure of a file.
@@ -29,7 +29,7 @@ public class Outline {
 
   public static final Outline[] EMPTY_ARRAY = new Outline[0];
 
-  public static final List<Outline> EMPTY_LIST = Lists.newArrayList();
+  public static final List<Outline> EMPTY_LIST = new ArrayList<>();
 
   /**
    * A description of the element represented by this node.
@@ -106,7 +106,7 @@ public class Outline {
     Outline outline = new Outline(parent, element, offset, length, codeOffset, codeLength);
 
     // compute children recursively
-    List<Outline> childrenList = Lists.newArrayList();
+    List<Outline> childrenList = new ArrayList<>();
     JsonElement childrenJsonArray = outlineObject.get("children");
     if (childrenJsonArray instanceof JsonArray) {
       Iterator<JsonElement> childrenElementIterator = ((JsonArray) childrenJsonArray).iterator();

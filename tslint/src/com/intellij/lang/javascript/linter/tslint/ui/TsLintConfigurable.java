@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.linter.tslint.ui;
 
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
@@ -57,7 +58,7 @@ public class TsLintConfigurable extends JSLinterConfigurable<TsLintState> {
     NodePackage nodePackage = state.getNodePackageRef().getConstantPackage();
     if (nodePackage != null && !nodePackage.isEmptyPath() && state.isAllowJs()) {
       if (!checkPackageVersionForJs(nodePackage.getVersion())) {
-        throw new ConfigurationException("Linting JavaScript is not supported for this version of TSLint.");
+        throw new ConfigurationException(TsLintBundle.message("linting.javascript.is.not.supported.for.this.version.of.tslint"));
       }
     }
     TslintLanguageServiceManager.getInstance(myProject).terminateServices();
