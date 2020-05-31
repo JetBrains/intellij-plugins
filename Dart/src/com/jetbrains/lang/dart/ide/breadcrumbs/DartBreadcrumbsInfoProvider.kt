@@ -164,6 +164,10 @@ class DartBreadcrumbsInfoProvider : BreadcrumbsProvider {
       // This should never be null, but just in case
       return e.type?.text ?: "constructor"
     }
+
+    override fun getVerbosePresentation(e: DartNewExpression): String {
+      return e.text
+    }
   }
 
   //
@@ -205,12 +209,12 @@ class DartBreadcrumbsInfoProvider : BreadcrumbsProvider {
   }
 
   private object ClosureHelper : Helper<DartFunctionExpression>(DartFunctionExpression::class.java) {
-    override fun getPresentation(e: DartFunctionExpression): String {
+    private fun getPresentations(e: DartFunctionExpression, isVerbose: Boolean): String {
       val parent = e.parent
       if (parent is DartNamedArgument || parent is DartArgumentList) {
         val parameterDescription = when (parent) {
-          is DartNamedArgument -> "${parent.parameterReferenceExpression.text}=>"
-          else -> "=>"
+          is DartNamedArgument -> if (isVerbose)  "${parent.parameterReferenceExpression.text}: ..." else "${parent.parameterReferenceExpression.text}=>"
+          else -> if (isVerbose) "..." else "=>"
         }
 
         val alreadyHasBreadcrumbForConstructor = true
@@ -218,12 +222,12 @@ class DartBreadcrumbsInfoProvider : BreadcrumbsProvider {
         val callExpression = PsiTreeUtil.findFirstParent(e) { it is DartCallExpression || it is DartNewExpression }
         val callTargetName:String = when (callExpression) {
           is DartNewExpression ->
-            (if (alreadyHasBreadcrumbForConstructor) "" else callExpression.type?.referenceExpression?.text)
+            (if (alreadyHasBreadcrumbForConstructor && !isVerbose) "" else callExpression.type?.referenceExpression?.text)
             ?: "<constructor>"
           is DartCallExpression -> {
             val functionExpression = callExpression.expression
             val reference = functionExpression.castSafelyTo<DartReference>()?.resolve()
-            if (alreadyHasBreadcrumbForConstructor && reference?.parent.castSafelyTo<DartComponent>()?.isConstructor == true) {
+            if (alreadyHasBreadcrumbForConstructor && !isVerbose && reference?.parent.castSafelyTo<DartComponent>()?.isConstructor == true) {
               ""
             }
             else {
@@ -237,8 +241,9 @@ class DartBreadcrumbsInfoProvider : BreadcrumbsProvider {
           else -> ""
         }
 
+        val prefix = if (isVerbose) "closure for " else ""
 
-        return if (callTargetName == "") parameterDescription else "$callTargetName($parameterDescription)"
+        return if (callTargetName == "") "${prefix}$parameterDescription" else "$prefix$callTargetName($parameterDescription)"
       } else if (parent is DartVarInit) {
         val reference = parent
           .siblings(forward = false)
@@ -252,6 +257,9 @@ class DartBreadcrumbsInfoProvider : BreadcrumbsProvider {
 
       return "=>"
     }
+
+    override fun getPresentation(e: DartFunctionExpression): String = getPresentations(e, false)
+    override fun getVerbosePresentation(e: DartFunctionExpression): String = getPresentations(e, true)
   }
 
   private object KeyValueHelper : Helper<DartMapEntry>(DartMapEntry::class.java) {
