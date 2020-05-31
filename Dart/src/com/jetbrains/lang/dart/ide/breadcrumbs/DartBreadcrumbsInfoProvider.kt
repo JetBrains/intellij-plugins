@@ -10,7 +10,9 @@ import com.intellij.psi.util.skipTokens
 import com.intellij.ui.breadcrumbs.BreadcrumbsProvider
 import com.intellij.util.castSafelyTo
 import com.jetbrains.lang.dart.DartLanguage
+import com.jetbrains.lang.dart.ide.documentation.DartDocUtil
 import com.jetbrains.lang.dart.psi.*
+
 
 // Based on PythonBreadcrumbsInfoProvider
 class DartBreadcrumbsInfoProvider : BreadcrumbsProvider {
@@ -25,8 +27,7 @@ class DartBreadcrumbsInfoProvider : BreadcrumbsProvider {
       ForHelper,
       //WhileHelper,
       //WithHelper,
-      ClassHelper,
-      ComponentHelper(DartComponent::class.java),
+      ComponentHelper,
       CallHelper,
       NewHelper,
       //NamedArgumentHelper,
@@ -75,8 +76,10 @@ class DartBreadcrumbsInfoProvider : BreadcrumbsProvider {
   }
 
 
-  private class ComponentHelper<T : DartComponent>(type: Class<T>) : Helper<T>(type) {
-    override fun getPresentation(e: T) = e.name ?: e.presentation?.presentableText ?: e.text ?: "wat"
+  /** Applies to many named elements: named compilation unit members, class members, etc. */
+  private object ComponentHelper : Helper<DartComponent>(DartComponent::class.java) {
+    override fun getPresentation(e: DartComponent):String = e.name ?: e.text
+    override fun getVerbosePresentation(e: DartComponent):String = DartDocUtil.getSignature(e) ?: getPresentation(e)
   }
 
   private object LambdaHelper : Helper<DartFunctionExpression>(DartFunctionExpression::class.java) {
@@ -197,10 +200,6 @@ class DartBreadcrumbsInfoProvider : BreadcrumbsProvider {
   //      .joinToString(prefix = prefix)
   //  }
   //}
-
-  private object ClassHelper : Helper<DartClass>(DartClass::class.java) {
-    override fun getPresentation(e: DartClass) = e.name ?: "class"
-  }
 
   private object NamedArgumentHelper : Helper<DartNamedArgument>(DartNamedArgument::class.java) {
     override fun getPresentation(e: DartNamedArgument): String {
