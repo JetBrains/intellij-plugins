@@ -88,8 +88,8 @@ class DartBreadcrumbsInfoProvider : BreadcrumbsProvider {
 
   /** Applies to many named elements: named compilation unit members, class members, etc. */
   private object ComponentHelper : Helper<DartComponent>(DartComponent::class.java) {
-    override fun getPresentation(e: DartComponent):String = StringEscapeUtils.escapeHtml(e.name ?: e.text)
-    override fun getVerbosePresentation(e: DartComponent):String = DartDocUtil.getSignature(e) ?: getPresentation(e)
+    override fun getPresentation(e: DartComponent): String = StringEscapeUtils.escapeHtml(e.name ?: e.text)
+    override fun getVerbosePresentation(e: DartComponent): String = DartDocUtil.getSignature(e) ?: getPresentation(e)
 
     override fun tooltipNeedsHtmlEscaping() = false
   }
@@ -142,14 +142,15 @@ class DartBreadcrumbsInfoProvider : BreadcrumbsProvider {
   private object CallHelper : Helper<DartCallExpression>(DartCallExpression::class.java) {
     private fun getName(e: DartCallExpression): String {
       val function = e.expression
-      var text :String? = null
+      var text: String? = null
 
       // Special case for over_react: invocation of parenthesized builder
       if (function is DartParenthesizedExpression) {
         val unwrapped = function.expression
         if (unwrapped is DartValueExpression && unwrapped.expressionList.lastOrNull() is DartCascadeReferenceExpression) {
           text = unwrapped.expressionList.first().text
-        } else {
+        }
+        else {
           text = unwrapped?.text
         }
       }
@@ -220,14 +221,14 @@ class DartBreadcrumbsInfoProvider : BreadcrumbsProvider {
       val parent = e.parent
       if (parent is DartNamedArgument || parent is DartArgumentList) {
         val parameterDescription = when (parent) {
-          is DartNamedArgument -> if (isVerbose)  "${parent.parameterReferenceExpression.text}: ..." else "${parent.parameterReferenceExpression.text}=>"
+          is DartNamedArgument -> if (isVerbose) "${parent.parameterReferenceExpression.text}: ..." else "${parent.parameterReferenceExpression.text}=>"
           else -> if (isVerbose) "..." else "=>"
         }
 
         val alreadyHasBreadcrumbForConstructor = true
 
         val callExpression = PsiTreeUtil.findFirstParent(e) { it is DartCallExpression || it is DartNewExpression }
-        val callTargetName:String = when (callExpression) {
+        val callTargetName: String = when (callExpression) {
           is DartNewExpression ->
             (if (alreadyHasBreadcrumbForConstructor && !isVerbose) "" else callExpression.type?.referenceExpression?.text)
             ?: "<constructor>"
@@ -251,7 +252,8 @@ class DartBreadcrumbsInfoProvider : BreadcrumbsProvider {
         val prefix = if (isVerbose) "closure for " else ""
 
         return if (callTargetName == "") "${prefix}$parameterDescription" else "$prefix$callTargetName($parameterDescription)"
-      } else if (parent is DartVarInit) {
+      }
+      else if (parent is DartVarInit) {
         val reference = parent
           .siblings(forward = false)
           .filterIsInstance<DartReference>()
@@ -274,7 +276,7 @@ class DartBreadcrumbsInfoProvider : BreadcrumbsProvider {
   }
 }
 
-fun String.looksLikeDartClassName(): Boolean  {
+fun String.looksLikeDartClassName(): Boolean {
   return Regex("^[_$]*[A-Z]").containsMatchIn(this)
 }
 
