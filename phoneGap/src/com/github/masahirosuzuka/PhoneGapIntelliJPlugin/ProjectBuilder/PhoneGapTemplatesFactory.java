@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class
-  PhoneGapTemplatesFactory extends ProjectTemplatesFactory {
+PhoneGapTemplatesFactory extends ProjectTemplatesFactory {
   @Override
   public String @NotNull [] getGroups() {
     return new String[]{WebModuleBuilder.GROUP_NAME};
@@ -16,6 +16,6 @@ public class
 
   @Override
   public ProjectTemplate @NotNull [] createTemplates(@Nullable String group, WizardContext context) {
-    return new ProjectTemplate[]{new PhoneGapProjectTemplateGenerator()};
+    return new ProjectTemplate[]{new CordovaProjectGenerator()};
   }
 }

@@ -126,9 +126,8 @@ public class CordovaBasedExecutor {
   }
 
   protected String @NotNull [] getNewProjectCommands(@NotNull String name) {
-    return new String[]{myPath, "create", name};
+    return new String[]{"create", name};
   }
-
 
   @NotNull
   public String getFrameworkName() {

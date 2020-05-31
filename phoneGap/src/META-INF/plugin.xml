@@ -26,17 +26,14 @@
     <!--<programRunner implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapRunner"/>-->
 
     <applicationService serviceImplementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.PhoneGapSettings"/>
-
-    <directoryProjectGenerator
-        implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectBuilder.PhoneGapProjectTemplateGenerator"/>
-
-    <projectTemplatesFactory implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectBuilder.PhoneGapTemplatesFactory"/>
-
+    
     <projectConfigurable provider="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapConfigurationProvider"/>
     <stepsBeforeRunProvider implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapAddPlatformBeforeRun"/>
     <postStartupActivity implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapStartupActivity"/>
     <vfs.asyncListener implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapFileListener"/>
     <notificationWhitelist groupIds="PhoneGap notification;Cordova Generator"/>
+    <directoryProjectGenerator implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectBuilder.CordovaProjectGenerator"/>
+    <projectTemplatesFactory implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectBuilder.PhoneGapTemplatesFactory"/>
   </extensions>
 
 

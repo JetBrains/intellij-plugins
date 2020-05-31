@@ -39,7 +39,7 @@ public class PhoneGapCommandLine {
   public static final String COMMAND_REMOTE_RUN = "remote run";
   public static final String COMMAND_REMOTE_BUILD = "remote build";
   public static final long PROCESS_TIMEOUT = TimeUnit.SECONDS.toMillis(120);
-  public static final long PROCESS_VERSION_TIMEOUT = TimeUnit.SECONDS.toMillis(5);
+  public static final long PROCESS_VERSION_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(10);
 
   @Nullable
   private final String myWorkDir;
@@ -189,6 +189,10 @@ public class PhoneGapCommandLine {
     executeVoidCommand(indicator, getExecutor().createNewProjectCommands(name, null));
   }
 
+  public String @NotNull [] getCreateNewProjectCommand(String name) {
+    return getExecutor().createNewProjectCommands(name, null);
+  }
+
   private boolean isPhoneGap() {
     assert myWorkDir != null;
     Boolean isPhoneGapByName = isPhoneGapExecutableByPath(myPath);
@@ -233,7 +237,7 @@ public class PhoneGapCommandLine {
 
 
   @NotNull
-  private static ThreeState isIonicPath(@Nullable String path) {
+  public static ThreeState isIonicPath(@Nullable String path) {
     if (StringUtil.isEmptyOrSpaces(path)) return ThreeState.NO;
 
     File file = new File(path);
