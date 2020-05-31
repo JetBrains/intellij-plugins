@@ -75,7 +75,7 @@ class DartBreadcrumbsInfoProvider : BreadcrumbsProvider {
 
     abstract fun getPresentation(e: T): String
 
-    open fun getVerbosePresentation(e: T): String = getPresentation(e);
+    open fun getVerbosePresentation(e: T): String = getPresentation(e)
     open fun accept(e: T): Boolean = true
 
     private fun truncate(text: String, maxLength: Int) = StringUtil.shortenTextWithEllipsis(text, maxLength, 0, true)
@@ -94,9 +94,6 @@ class DartBreadcrumbsInfoProvider : BreadcrumbsProvider {
     override fun tooltipNeedsHtmlEscaping() = false
   }
 
-  private object LambdaHelper : Helper<DartFunctionExpression>(DartFunctionExpression::class.java) {
-    override fun getPresentation(e: DartFunctionExpression) = "lambda ${e.formalParameterList.presentation?.presentableText}"
-  }
   //
   //private object ExceptHelper : Helper<DartExceptpart>(DartExceptpart::class.java) {
   //  override fun getPresentation(e: DartExceptpart): String {
@@ -132,7 +129,7 @@ class DartBreadcrumbsInfoProvider : BreadcrumbsProvider {
     override fun getPresentation(e: DartForInPart): String {
       //val parent = e.parent
       //val prefix = if (parent is DartForElement) "async for" else "for"
-      val prefix = "for";
+      val prefix = "for"
 
       val target = e.varAccessDeclaration ?: return prefix
       val source = e.expression
@@ -212,11 +209,11 @@ class DartBreadcrumbsInfoProvider : BreadcrumbsProvider {
   //  }
   //}
 
-  private object NamedArgumentHelper : Helper<DartNamedArgument>(DartNamedArgument::class.java) {
-    override fun getPresentation(e: DartNamedArgument): String {
-      return e.parameterReferenceExpression.text
-    }
-  }
+  //private object NamedArgumentHelper : Helper<DartNamedArgument>(DartNamedArgument::class.java) {
+  //  override fun getPresentation(e: DartNamedArgument): String {
+  //    return e.parameterReferenceExpression.text
+  //  }
+  //}
 
   private object ClosureHelper : Helper<DartFunctionExpression>(DartFunctionExpression::class.java) {
     private fun getPresentations(e: DartFunctionExpression, isVerbose: Boolean): String {
