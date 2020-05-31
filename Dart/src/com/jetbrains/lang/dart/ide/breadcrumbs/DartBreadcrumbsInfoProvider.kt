@@ -12,7 +12,7 @@ import com.intellij.util.castSafelyTo
 import com.jetbrains.lang.dart.DartLanguage
 import com.jetbrains.lang.dart.ide.documentation.DartDocUtil
 import com.jetbrains.lang.dart.psi.*
-
+import org.apache.commons.lang.StringEscapeUtils
 
 // Based on PythonBreadcrumbsInfoProvider
 class DartBreadcrumbsInfoProvider : BreadcrumbsProvider {
@@ -61,7 +61,17 @@ class DartBreadcrumbsInfoProvider : BreadcrumbsProvider {
 
   private abstract class Helper<T : DartPsiCompositeElement>(val type: Class<T>) {
     fun elementInfo(e: T): String = truncate(getPresentation(e), 32)
-    fun elementTooltip(e: T): String = truncate(getVerbosePresentation(e), 96)
+
+    fun elementTooltip(e: T): String {
+      var text = getVerbosePresentation(e)
+      if (tooltipNeedsHtmlEscaping()) {
+        text = truncate(text, 96)
+        text = StringEscapeUtils.escapeHtml(text)
+      }
+      return text
+    }
+
+    open fun tooltipNeedsHtmlEscaping(): Boolean = true
 
     abstract fun getPresentation(e: T): String
 
@@ -78,8 +88,10 @@ class DartBreadcrumbsInfoProvider : BreadcrumbsProvider {
 
   /** Applies to many named elements: named compilation unit members, class members, etc. */
   private object ComponentHelper : Helper<DartComponent>(DartComponent::class.java) {
-    override fun getPresentation(e: DartComponent):String = e.name ?: e.text
+    override fun getPresentation(e: DartComponent):String = StringEscapeUtils.escapeHtml(e.name ?: e.text)
     override fun getVerbosePresentation(e: DartComponent):String = DartDocUtil.getSignature(e) ?: getPresentation(e)
+
+    override fun tooltipNeedsHtmlEscaping() = false
   }
 
   private object LambdaHelper : Helper<DartFunctionExpression>(DartFunctionExpression::class.java) {
@@ -158,18 +170,17 @@ class DartBreadcrumbsInfoProvider : BreadcrumbsProvider {
     }
 
     override fun getVerbosePresentation(e: DartCallExpression): String {
-      return e.expression.text
+      return tryReplaceArguments(e, e.arguments, "(…)")
     }
   }
 
   private object NewHelper : Helper<DartNewExpression>(DartNewExpression::class.java) {
     override fun getPresentation(e: DartNewExpression): String {
-      // This should never be null, but just in case
       return e.type?.text ?: "constructor"
     }
 
     override fun getVerbosePresentation(e: DartNewExpression): String {
-      return e.text
+      return tryReplaceArguments(e, e.arguments, "(…)")
     }
   }
 
@@ -272,4 +283,21 @@ fun String.looksLikeDartClassName(): Boolean  {
 
 fun PsiElement.prevNonWhitespaceSibling(): PsiElement? {
   return siblings(forward = false).drop(1).skipTokens(TokenSet.WHITE_SPACE).firstOrNull()
+}
+
+fun tryReplaceArguments(callOrNewExpression: DartExpression, arguments: DartArguments?, replacement: String): String {
+  val range = callOrNewExpression.textRange!!
+  var text = callOrNewExpression.text!!
+  val argumentRange = arguments?.textRange
+
+  if (argumentRange != null) {
+    assert(range.contains(argumentRange))
+    text = text.replaceRange(
+      argumentRange.startOffset - range.startOffset,
+      argumentRange.endOffset - range.startOffset,
+      replacement
+    )
+  }
+
+  return text
 }
