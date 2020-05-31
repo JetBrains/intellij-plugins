@@ -216,15 +216,13 @@ class DartBreadcrumbsInfoProvider : BreadcrumbsProvider {
         val alreadyHasBreadcrumbForConstructor = true
 
         val callExpression = PsiTreeUtil.findFirstParent(e) { it is DartCallExpression || it is DartNewExpression }
-        val callTargetName = when (callExpression) {
+        val callTargetName:String = when (callExpression) {
           is DartNewExpression ->
             (if (alreadyHasBreadcrumbForConstructor) "" else callExpression.type?.referenceExpression?.text)
             ?: "<constructor>"
-          else -> {
-            val unresolvedReference = callExpression
-              ?.castSafelyTo<DartCallExpression>()?.expression
-              ?.castSafelyTo<DartReference>()
-            val reference = unresolvedReference?.resolve()
+          is DartCallExpression -> {
+            val functionExpression = callExpression.expression
+            val reference = functionExpression.castSafelyTo<DartReference>()?.resolve()
             if (alreadyHasBreadcrumbForConstructor && reference?.parent.castSafelyTo<DartComponent>()?.isConstructor == true) {
               ""
             }
@@ -233,10 +231,10 @@ class DartBreadcrumbsInfoProvider : BreadcrumbsProvider {
               // and not its target, preceding chained accesses, etc.
               reference?.castSafelyTo<DartNamedElement>()?.name
               // If that isn't available (e.g., no analysis server) fall back to the whole expression.
-              ?: unresolvedReference?.text
-              ?: "<call>"
+              ?: functionExpression.text
             }
           }
+          else -> ""
         }
 
 
