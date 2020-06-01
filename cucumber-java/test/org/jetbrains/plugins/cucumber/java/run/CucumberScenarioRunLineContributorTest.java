@@ -14,16 +14,14 @@ import javax.swing.*;
 import java.util.Date;
 
 public class CucumberScenarioRunLineContributorTest extends CucumberJavaCodeInsightTestCase {
-
-
   private static final String myTestFeature = "Feature: My feature\n\n" +
-                                              "Scenario: test\n" +
-                                              "Given a cat";
+                                              "  Scenario: test\n" +
+                                              "    Given a cat";
 
-  public void testScenarioRunLineContributorWhenScenarioNeverHaveBeenRan() {
+  public void testScenarioRunLineContributorWhenScenarioNeverHasBeenRan() {
     PsiFile file = myFixture.configureByText("test.feature", myTestFeature);
     PsiElement element = ((GherkinFile)file).getFeatures()[0].getScenarios()[0].findElementAt(0);
-    checkInfo(element, AllIcons.RunConfigurations.TestState.Run);
+    checkInfo(element, AllIcons.RunConfigurations.TestState.Run_run);
   }
 
   public void testScenarioRunLineContributorWhenScenarioHaveFailed() {
@@ -55,11 +53,10 @@ public class CucumberScenarioRunLineContributorTest extends CucumberJavaCodeInsi
                                               "| 1 |\n" +
                                               "| 2 |";
     PsiFile file = myFixture.configureByText("test.feature", featureWithScenarioOutline);
-    checkInfo( ((GherkinFile)file).getFeatures()[0].getScenarios()[0].findElementAt(0), AllIcons.RunConfigurations.TestState.Run);
+    checkInfo(((GherkinFile)file).getFeatures()[0].getScenarios()[0].findElementAt(0), AllIcons.RunConfigurations.TestState.Run_run);
     PsiElement[] elements = ((GherkinFile)file).getFeatures()[0].getScenarios()[0].getLastChild().getChildren()[0].getChildren();
-    checkInfo(elements[elements.length-2].findElementAt(0), AllIcons.RunConfigurations.TestState.Run);
-    checkInfo(elements[elements.length-1].findElementAt(0), AllIcons.RunConfigurations.TestState.Run);
-
+    checkInfo(elements[elements.length-2].findElementAt(0), AllIcons.RunConfigurations.TestState.Run_run);
+    checkInfo(elements[elements.length-1].findElementAt(0), AllIcons.RunConfigurations.TestState.Run_run);
   }
 
   private static void checkInfo(PsiElement element, Icon run) {

@@ -14,18 +14,13 @@ import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinFile;
 
 public abstract class CucumberRunLineMarkerContributor extends RunLineMarkerContributor {
-
   @Nullable
   @Override
   public Info getInfo(@NotNull PsiElement element) {
     if (!(element instanceof LeafElement)) return null;
     PsiFile psiFile = element.getContainingFile();
     if (!(psiFile instanceof GherkinFile)) return null;
-    IElementType type = ((LeafElement)element).getElementType();
-   if (!isValidElement(element)) return null;
-
-    InjectedLanguageManager injectedLanguageManager = InjectedLanguageManager.getInstance(element.getProject());
-    if (injectedLanguageManager.isInjectedFragment(psiFile)) return null;
+    if (!isValidElement(element)) return null;
 
     TestStateStorage.Record state = getTestStateStorage(element);
     return getInfo(state);
