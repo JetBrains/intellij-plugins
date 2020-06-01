@@ -18,20 +18,16 @@
 </div>
 <div>
     a   b b    b  b {{12  +  124}}
+    {{name}} {{
+    name}} {{ (function(){
+    var foo = 34
+                                return foo
+                                       + 45
+                                })()}}
 </div>
 <div>
-                     a   b {{
-
-                12 +   124
-
-    }} a b
+                     a   b {{12 +   124}} a b
 </div>
     <div>a   b {{ }} a b {{ name}}</div>
-    {{2*34}} {{name }} {{
-
-    name }} {{ 2*
-               3}} {{12 * 15 + name
-    }}
-    <div @click="12 + 11 * 34 " @dblclick=" name
-+ 23445"></div>
+    {{2*34}} {{name }}
 </template>
