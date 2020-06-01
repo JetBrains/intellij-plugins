@@ -1953,17 +1953,37 @@ export default class UsageComponent extends Vue {
     myFixture.configureFromTempProjectFile("test.vue")
     TestCase.assertEquals(
       "test.vue",
-      myFixture.resolveReference ("\"sty<caret>le\"").containingFile.name)
+      myFixture.resolveReference("\"sty<caret>le\"").containingFile.name)
     myFixture.moveToOffsetBySignature("\"<caret>classes\"")
     myFixture.completeBasic()
-    assertContainsElements(myFixture.renderLookupItems(true,true, true),
+    assertContainsElements(myFixture.renderLookupItems(true, true, true),
                            "!classes% (mixin.ts)#null#101", "!style% (test.vue)#null#101")
     TestCase.assertEquals(
       "mixin.ts",
-      myFixture.resolveReference ("{{ class<caret>es }}").containingFile.name)
+      myFixture.resolveReference("{{ class<caret>es }}").containingFile.name)
     TestCase.assertEquals(
       "mixin.ts",
-      myFixture.resolveReference ("\"class<caret>es\"").containingFile.name)
+      myFixture.resolveReference("\"class<caret>es\"").containingFile.name)
+  }
+
+  fun testTypedMixins() {
+    myFixture.configureDependencies(VUE_2_6_10)
+    myFixture.copyDirectoryToProject("vue-sfc-typed-mixins", ".")
+    myFixture.configureFromTempProjectFile("component.vue")
+    TestCase.assertEquals(
+      "mixin.ts",
+      myFixture.resolveReference("\"show<caret>1\"").containingFile.name)
+    myFixture.moveToOffsetBySignature("\"show<caret>1\"")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.renderLookupItems(true, true, true),
+                           "!show2%() (methods, component.vue)#void#101", "!show1%() (test.methods, mixin.ts)#void#101",
+                           "!show5%() (methods, mixin2.ts)#void#101")
+    myFixture.moveToOffsetBySignature("this.<caret>show2()")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.renderLookupItems(true, true, true),
+                           "!show2%() (methods, component.vue)#void#99", "!show1%() (test.methods, mixin.ts)#void#99",
+                           "!show5%() (methods, mixin2.ts)#void#99")
+
   }
 
 }

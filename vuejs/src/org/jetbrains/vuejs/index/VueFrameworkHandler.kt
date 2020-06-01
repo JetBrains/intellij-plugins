@@ -3,10 +3,7 @@ package org.jetbrains.vuejs.index
 
 import com.intellij.lang.ASTNode
 import com.intellij.lang.ecmascript6.ES6StubElementTypes
-import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
-import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
-import com.intellij.lang.ecmascript6.psi.JSClassExpression
-import com.intellij.lang.ecmascript6.psi.JSExportAssignment
+import com.intellij.lang.ecmascript6.psi.*
 import com.intellij.lang.javascript.*
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler
 import com.intellij.lang.javascript.index.JSSymbolUtil
@@ -271,12 +268,30 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
           arguments[1], true))
       }
     }
-    else if (reference.referenceName == EXTEND_FUN
-             && reference.qualifier
-               ?.castSafelyTo<JSReferenceExpression>()
-               ?.takeIf { !it.hasQualifier() }
-               ?.referenceName != VUE_NAMESPACE) {
-      recordExtends(outData, callExpression, reference.qualifier)
+    else if (reference.referenceName == EXTEND_FUN) {
+      when (val qualifier = reference.qualifier) {
+        is JSReferenceExpression -> if (
+          !qualifier.hasQualifier() && qualifier.referenceName != VUE_NAMESPACE) {
+          recordExtends(outData, callExpression, reference.qualifier)
+        }
+        // 3-rd party library support: vue-typed-mixin
+        is JSCallExpression -> {
+          val mixinsCall = qualifier.methodExpression?.castSafelyTo<JSReferenceExpression>()
+            ?.takeIf { !it.hasQualifier() }
+          if (mixinsCall?.referenceName != null
+              && JSStubBasedPsiTreeUtil.resolveLocally(mixinsCall.referenceName!!, mixinsCall)
+                ?.castSafelyTo<ES6ImportedBinding>()
+                ?.context?.castSafelyTo<ES6ImportExportDeclaration>()
+                ?.fromClause
+                ?.referenceText == "\"vue-typed-mixins\"") {
+            for (arg in qualifier.arguments) {
+              arg.castSafelyTo<JSReferenceExpression>()
+                ?.takeIf { !it.hasQualifier() }
+                ?.let { recordExtends(outData, callExpression, it) }
+            }
+          }
+        }
+      }
     }
   }
 
