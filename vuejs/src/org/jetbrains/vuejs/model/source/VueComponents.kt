@@ -5,7 +5,6 @@ import com.intellij.extapi.psi.StubBasedPsiElementBase
 import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
 import com.intellij.lang.ecmascript6.psi.JSClassExpression
 import com.intellij.lang.javascript.JSStubElementTypes
-import com.intellij.lang.javascript.index.JSSymbolUtil
 import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
@@ -14,7 +13,6 @@ import com.intellij.lang.javascript.psi.resolve.ES6QualifiedNameResolver
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.util.JSProjectUtil
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.castSafelyTo
@@ -41,21 +39,20 @@ class VueComponents {
       return !JSProjectUtil.isInLibrary(file, element.project) && !JSLibraryUtil.isProbableLibraryFile(file)
     }
 
-    fun vueMixinDescriptorFinder(implicitElement: JSImplicitElement): JSObjectLiteralExpression? {
-      val typeString = getVueIndexData(implicitElement).descriptorRef
-      if (!StringUtil.isEmptyOrSpaces(typeString)) {
-        val expression = resolveReferenceToVueComponent(implicitElement, typeString!!)
-        if (expression?.obj != null) {
-          return expression.obj
-        }
-      }
+    fun vueMixinDescriptorFinder(implicitElement: JSImplicitElement): VueComponentDescriptor? {
+      getVueIndexData(implicitElement).descriptorRef
+        ?.takeIf { it.isNotBlank() }
+        ?.let { resolveReferenceToVueComponent(implicitElement, it) }
+        ?.let { return it }
+
       val mixinObj = (implicitElement.parent as? JSProperty)?.parent as? JSObjectLiteralExpression
-      if (mixinObj != null) return mixinObj
+      if (mixinObj != null) return VueComponentDescriptor(mixinObj, null)
 
       val call = implicitElement.parent as? JSCallExpression
       if (call != null) {
         return JSStubBasedPsiTreeUtil.findDescendants(call, JSStubElementTypes.OBJECT_LITERAL_EXPRESSION)
           .firstOrNull { (it.context as? JSArgumentList)?.context == call || (it.context == call) }
+          ?.let { VueComponentDescriptor(it, null) }
       }
       return null
     }
@@ -63,16 +60,10 @@ class VueComponents {
     fun resolveReferenceToVueComponent(element: PsiElement, reference: String): VueComponentDescriptor? {
       val scope = createLocalResolveScope(element)
 
-      val resolvedLocally = JSStubBasedPsiTreeUtil.resolveLocally(reference, scope)
-      if (resolvedLocally != null) {
-        val literalFromResolve = getVueComponentFromResolve(listOf(resolvedLocally))
-        if (literalFromResolve != null) {
-          return literalFromResolve
-        }
-      }
-
-      val elements = ES6QualifiedNameResolver(scope).resolveQualifiedName(reference)
-      return getVueComponentFromResolve(elements)
+      return JSStubBasedPsiTreeUtil.resolveLocally(reference, scope)
+               ?.let { getVueComponentFromResolve(listOf(it)) }
+               ?.let { return it }
+             ?: getVueComponentFromResolve(ES6QualifiedNameResolver(scope).resolveQualifiedName(reference))
     }
 
     private fun createLocalResolveScope(element: PsiElement): PsiElement =
@@ -139,8 +130,7 @@ class VueComponents {
 
     @StubUnsafe
     private fun isExtendVueCall(callExpression: JSCallExpression): Boolean {
-      return JSSymbolUtil.isAccurateReferenceExpressionName(
-        callExpression.methodExpression as? JSReferenceExpression, VUE_NAMESPACE, EXTEND_FUN)
+      return (callExpression.methodExpression as? JSReferenceExpression)?.referenceName == EXTEND_FUN
     }
 
     @StubUnsafe

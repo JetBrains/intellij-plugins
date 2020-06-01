@@ -323,21 +323,19 @@ class VueModelManager {
       }
     }
 
-    fun getMixin(mixin: JSObjectLiteralExpression): VueMixin {
-      return getMixin(mixin as PsiElement)!!
-    }
+    fun getMixin(mixin: PsiElement): VueMixin? =
+      getMixin(getComponentDescriptor(mixin) ?: getEnclosingComponentDescriptor(mixin))
 
-    fun getMixin(mixin: PsiElement): VueMixin? {
-      val context = (getComponentDescriptor(mixin) ?: getEnclosingComponentDescriptor(mixin))
-        ?.let { it.clazz ?: it.obj!! }
-      return CachedValuesManager.getCachedValue(context ?: return null) {
-        val descriptor = getEnclosingComponentDescriptor(context)
-        val declaration: PsiElement = descriptor?.obj ?: context
+    fun getMixin(descriptor: VueComponentDescriptor?): VueMixin? {
+      val context = descriptor?.let { it.clazz ?: it.obj!! } ?: return null
+      return CachedValuesManager.getCachedValue(context) {
+        val enclosingDescriptor = getEnclosingComponentDescriptor(context)
+        val declaration: PsiElement = enclosingDescriptor?.obj ?: context
 
         CachedValueProvider.Result.create(VueSourceMixin(getComponentImplicitElement(context)
                                                          ?: buildImplicitElement(context),
-                                                         descriptor?.clazz,
-                                                         descriptor?.obj),
+                                                         enclosingDescriptor?.clazz,
+                                                         enclosingDescriptor?.obj),
                                           context, declaration)
       }
     }

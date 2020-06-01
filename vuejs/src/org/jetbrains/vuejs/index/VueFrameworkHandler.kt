@@ -34,6 +34,7 @@ import com.intellij.psi.xml.XmlDocument
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.PathUtil
+import com.intellij.util.castSafelyTo
 import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.codeInsight.toAsset
@@ -269,6 +270,13 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
           filterName, callExpression, VueGlobalFiltersIndex.JS_KEY, nameType,
           arguments[1], true))
       }
+    }
+    else if (reference.referenceName == EXTEND_FUN
+             && reference.qualifier
+               ?.castSafelyTo<JSReferenceExpression>()
+               ?.takeIf { !it.hasQualifier() }
+               ?.referenceName != VUE_NAMESPACE) {
+      recordExtends(outData, callExpression, reference.qualifier)
     }
   }
 

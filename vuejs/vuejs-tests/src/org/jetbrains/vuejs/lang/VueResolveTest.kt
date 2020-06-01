@@ -15,6 +15,7 @@ import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 import org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory
+import org.jetbrains.vuejs.lang.VueTestModule.VUE_2_6_10
 import org.jetbrains.vuejs.lang.expr.psi.VueJSVForExpression
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueNamedSymbol
@@ -1944,6 +1945,25 @@ export default class UsageComponent extends Vue {
     val element = myFixture.resolveReference("\"user<caret>Id\"")
     assertEquals("props.js", element.containingFile.name)
     myFixture.assertUnresolvedReference("\"user<caret>Id2\"")
+  }
+
+  fun testMixinExtend() {
+    myFixture.configureDependencies(VUE_2_6_10)
+    myFixture.copyDirectoryToProject("vue-sfc-extend-mixin", ".")
+    myFixture.configureFromTempProjectFile("test.vue")
+    TestCase.assertEquals(
+      "test.vue",
+      myFixture.resolveReference ("\"sty<caret>le\"").containingFile.name)
+    myFixture.moveToOffsetBySignature("\"<caret>classes\"")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.renderLookupItems(true,true, true),
+                           "!classes% (mixin.ts)#null#101", "!style% (test.vue)#null#101")
+    TestCase.assertEquals(
+      "mixin.ts",
+      myFixture.resolveReference ("{{ class<caret>es }}").containingFile.name)
+    TestCase.assertEquals(
+      "mixin.ts",
+      myFixture.resolveReference ("\"class<caret>es\"").containingFile.name)
   }
 
 }

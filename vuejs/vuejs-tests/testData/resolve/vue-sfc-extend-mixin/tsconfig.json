@@ -1,0 +1,20 @@
+{
+  "include": [
+    "**/*.ts",
+    "**/*.vue"
+  ],
+  "exclude": [
+    "**/*.spec.ts"
+  ],
+  "compilerOptions": {
+    "outDir": "./",
+    "baseUrl": "./",
+    "target": "es5",
+    "module": "esnext",
+    "importHelpers": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "noImplicitThis": true
+  }
+}

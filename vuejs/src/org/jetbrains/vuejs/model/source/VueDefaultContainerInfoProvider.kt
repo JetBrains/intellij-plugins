@@ -13,6 +13,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndexKey
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.castSafelyTo
 import one.util.streamex.StreamEx
 import org.jetbrains.vuejs.codeInsight.getJSTypeFromPropOptions
 import org.jetbrains.vuejs.codeInsight.getRequiredFromPropOptions
@@ -36,7 +37,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     override val model: VueModelDirectiveProperties get() = get(MODEL)
 
     override val delimiters: Pair<String, String>? get() = get(DELIMITERS)
-    override val extends: List<VueMixin> get() = get(EXTENDS)
+    override val extends: List<VueMixin> get() = get(EXTENDS) + get(EXTENDS_CALL)
     override val components: Map<String, VueComponent> get() = get(COMPONENTS)
     override val directives: Map<String, VueDirective> get() = get(DIRECTIVES)
     override val mixins: List<VueMixin> get() = get(MIXINS)
@@ -80,6 +81,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     }
 
     private val EXTENDS = MixinsAccessor(EXTENDS_PROP, VueExtendsBindingIndex.KEY)
+    private val EXTENDS_CALL = ExtendsCallAccessor()
     private val MIXINS = MixinsAccessor(MIXINS_PROP, VueMixinBindingIndex.KEY)
     private val DIRECTIVES = DirectivesAccessor()
     private val COMPONENTS = ComponentsAccessor()
@@ -94,6 +96,21 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     private val MODEL = ModelAccessor()
   }
 
+  private class ExtendsCallAccessor : ListAccessor<VueMixin>() {
+    override fun build(declaration: JSObjectLiteralExpression): List<VueMixin> =
+      declaration.context
+        ?.let { if (it is JSArgumentList) it.context else it }
+        ?.castSafelyTo<JSCallExpression>()
+        ?.indexingData
+        ?.implicitElements
+        ?.asSequence()
+        ?.filter { it.userString == VueExtendsBindingIndex.JS_KEY }
+        ?.mapNotNull { VueComponents.vueMixinDescriptorFinder(it) }
+        ?.mapNotNull { VueModelManager.getMixin(it) }
+        ?.toList()
+      ?: emptyList()
+  }
+
   private class MixinsAccessor(private val propertyName: String,
                                private val indexKey: StubIndexKey<String, JSImplicitElementProvider>)
     : ListAccessor<VueMixin>() {
@@ -103,12 +120,10 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
       val elements = resolve(LOCAL, GlobalSearchScope.fileScope(mixinsProperty.containingFile.originalFile), indexKey)
                      ?: return emptyList()
       val original = CompletionUtil.getOriginalOrSelf<PsiElement>(mixinsProperty)
-      return StreamEx.of(elements)
+      return elements.asSequence()
         .filter { PsiTreeUtil.isAncestor(original, it.parent, false) }
-        .map { VueComponents.vueMixinDescriptorFinder(it) }
-        .nonNull()
-        .map { VueModelManager.getMixin(it!!) }
-        .nonNull()
+        .mapNotNull { VueComponents.vueMixinDescriptorFinder(it) }
+        .mapNotNull { VueModelManager.getMixin(it) }
         .toList()
     }
   }
