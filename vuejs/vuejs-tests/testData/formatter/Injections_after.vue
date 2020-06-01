@@ -18,5 +18,15 @@
   <h1>
     {{ gettext('Lorem ipsum dolor sit amet, consectetur adipisicing elit. At dolor ducimus est et laboriosam recusandae rerum? Ad adipisci aperiam, beatae corporis culpa cum cumque deserunt eos et illo ipsa libero nisi nobis optio perferendis quasi ratione reprehenderit rerum velit voluptatem? Architecto eum harum illum ipsum iusto molestiae quaerat ratione repellat.')
     }}</h1>
-
+  <div>
+    {{12+124}} a b b b b
+  </div>
+  <div>
+    a b b b b {{12+124}}
+  </div>
+  <div>
+    a b {{12+124}} a b
+  </div>
+  <div>a b {{ }} a b</div>
+  {{2 * 34}}
 </template>
