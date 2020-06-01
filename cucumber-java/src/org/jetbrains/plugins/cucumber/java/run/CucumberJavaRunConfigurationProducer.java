@@ -21,6 +21,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.VersionComparatorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinFileType;
 
 import java.util.Set;
@@ -109,7 +110,8 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
       configuration.setGlueProvider(getGlueProvider(element));
     }
     configuration.setNameFilter(getNameFilter(context));
-    configuration.setFilePath(file.getPath());
+    String filePath = CucumberJavaUtil.computeFileUrl(element);
+    configuration.setFilePath(filePath);
     String programParametersFromDefaultConfiguration = StringUtil.defaultIfEmpty(configuration.getProgramParameters(), "");
     configuration.setProgramParameters(programParametersFromDefaultConfiguration + formatterOptions);
 
@@ -145,8 +147,10 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
     if (fileToRun == null) {
       return false;
     }
-
-    if (!fileToRun.getPath().equals(runConfiguration.getFilePath())) {
+    if (context.getPsiLocation() == null) {
+      return false;
+    }
+    if (!CucumberJavaUtil.computeFileUrl(context.getPsiLocation()).equals(runConfiguration.getFilePath())) {
       return false;
     }
 
