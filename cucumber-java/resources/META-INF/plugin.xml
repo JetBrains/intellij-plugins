@@ -37,8 +37,6 @@
     <pom.declarationSearcher implementation="org.jetbrains.plugins.cucumber.java.steps.search.CucumberJavaPomDeclarationSearcher"/>
     <fileBasedIndex implementation="org.jetbrains.plugins.cucumber.java.CucumberJava8StepIndex"/>
     <runConfigurationExtension implementation="org.jetbrains.plugins.cucumber.java.run.CucumberJUnitRunConfigurationExtension"/>
-    <runLineMarkerContributor id="featureRunLineMarkerContributor" language="Gherkin" implementationClass="org.jetbrains.plugins.cucumber.java.run.FeatureRunLineMarkerContributor"/>
-    <runLineMarkerContributor id="scenarioRunLineMarkerContributor" language="Gherkin" implementationClass="org.jetbrains.plugins.cucumber.java.run.ScenarioRunLineMarkerContributor"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.plugins.cucumber.steps">
