@@ -26,7 +26,13 @@ public class CucumberJavaParameterPomTarget extends DelegatePsiTarget implements
   @Nullable
   @Override
   public TextRange getNameIdentifierRange() {
-    return TextRange.create(1, getNavigationElement().getTextLength() - 1);
+    PsiElement element = getNavigationElement();
+    if (element instanceof PsiIdentifier) {
+      // method name
+      return TextRange.create(0, element.getTextLength());
+    }
+    // string argument
+    return TextRange.create(1, element.getTextLength() - 1);
   }
 
   @Override

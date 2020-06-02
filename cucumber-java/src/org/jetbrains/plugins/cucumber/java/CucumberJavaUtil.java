@@ -61,6 +61,8 @@ public class CucumberJavaUtil {
   public static final String CUCUMBER_1_1_MAIN_CLASS = "cucumber.api.cli.Main";
   public static final String CUCUMBER_4_5_MAIN_CLASS = "io.cucumber.core.cli.Main";
 
+  public static final String PARAMETER_TYPE_ANNOTATION_FQN = "io.cucumber.java.ParameterType";
+
   private static final CallMatcher FROM_ENUM_METHOD = CallMatcher.anyOf(
     CallMatcher.staticCall("io.cucumber.cucumberexpressions.ParameterType", "fromEnum")
   );
@@ -163,12 +165,27 @@ public class CucumberJavaUtil {
     return getCucumberHookAnnotation(method) != null;
   }
 
+  public static boolean isParameterType(@NotNull PsiMethod method) {
+    return getParameterTypeAnnotation(method) != null;
+  }
+
   public static boolean isStepDefinitionClass(@NotNull final PsiClass clazz) {
     PsiMethod[] methods = clazz.getAllMethods();
     for (PsiMethod method : methods) {
       if (getCucumberStepAnnotations(method).size() > 0 || getCucumberHookAnnotation(method) != null) return true;
     }
     return false;
+  }
+
+  @Nullable
+  public static PsiAnnotation getParameterTypeAnnotation(@NotNull PsiMethod method) {
+    for (PsiAnnotation annotation : method.getAnnotations()) {
+      String annotationFqn = getAnnotationName(annotation);
+      if (PARAMETER_TYPE_ANNOTATION_FQN.equals(annotationFqn)) {
+        return annotation;
+      }
+    }
+    return null;
   }
 
   public static List<PsiAnnotation> getCucumberStepAnnotations(@NotNull PsiMethod method) {
@@ -332,8 +349,38 @@ public class CucumberJavaUtil {
   @NotNull
   private static MapParameterTypeManager doGetAllParameterTypes(@NotNull Module module) {
     final GlobalSearchScope dependenciesScope = module.getModuleWithDependenciesAndLibrariesScope(true);
+
+    Map<String, String> values = new HashMap<>();
+    Map<String, SmartPsiElementPointer<PsiElement>> declarations = new HashMap<>();
+
+    processParameterTypesDefinedByAnnotation(module, dependenciesScope, values, declarations);
+    processParameterTypesDefinedByTypeRegistry(module, dependenciesScope, values, declarations);
+
+    values.putAll(STANDARD_PARAMETER_TYPES);
+    values.putAll(JAVA_PARAMETER_TYPES);
+    return new MapParameterTypeManager(values, declarations);
+  }
+
+  /**
+   * Looks for Parameter Type defined by Type Registry and stores Parameter Type's name, value in {@code values}
+   * and its SmartPointer in {@code declarations}
+   *
+   * For example, code below defines Parameter Type called "iso-date" that matches expression "\d{4}-\d{2}-\d{2}"
+   * <pre>{@code
+   *     typeRegistry.defineParameterType(new ParameterType<>(
+   *       "iso-date",
+   *       "\\d{4}-\\d{2}-\\d{2}",
+   *       Date.class,
+   *       (String s) -> new SimpleDateFormat("yyyy-mm-dd").parse(s)
+   *     ));
+   * }</pre>
+   */
+  private static void processParameterTypesDefinedByTypeRegistry(@NotNull Module module,
+                                                                 @NotNull GlobalSearchScope scope,
+                                                                 @NotNull Map<String, String> values,
+                                                                 @NotNull Map<String, SmartPsiElementPointer<PsiElement>> declarations) {
     CommonProcessors.CollectProcessor<UsageInfo> processor = new CommonProcessors.CollectProcessor<>();
-    JavaMethodFindUsagesOptions options = new JavaMethodFindUsagesOptions(dependenciesScope);
+    JavaMethodFindUsagesOptions options = new JavaMethodFindUsagesOptions(scope);
 
     PsiClass parameterTypeClass = ClassUtil.findPsiClass(PsiManager.getInstance(module.getProject()), PARAMETER_TYPE_CLASS);
     if (parameterTypeClass != null) {
@@ -345,8 +392,6 @@ public class CucumberJavaUtil {
       }
     }
 
-    Map<String, String> values = new HashMap<>();
-    Map<String, SmartPsiElementPointer<PsiElement>> declarations = new HashMap<>();
     for (UsageInfo ui: processor.getResults()) {
       PsiElement element = ui.getElement();
       if (element == null) {
@@ -362,10 +407,42 @@ public class CucumberJavaUtil {
         processParameterTypeMethodDeclaration(values, declarations, call);
       }
     }
+  }
 
-    values.putAll(STANDARD_PARAMETER_TYPES);
-    values.putAll(JAVA_PARAMETER_TYPES);
-    return new MapParameterTypeManager(values, declarations);
+  /**
+   * Looks for Parameter Type defined by annotation @{code @ParameterType}
+   * and stores Parameter Type's name, value in {@code values} and its SmartPointer in {@code declarations}
+   *
+   * For example, code below defines Parameter Type called "color" that matches expression "red|blue|yellow"
+   * <pre>{@code
+   *     @ParameterType("red|blue|yellow")
+   *     public String color(String color) {
+   *         return "Text with color: " + color;
+   *     }
+   * }</pre>
+   */
+  private static void processParameterTypesDefinedByAnnotation(@NotNull Module module,
+                                                               @NotNull GlobalSearchScope scope,
+                                                               @NotNull Map<String, String> values,
+                                                               @NotNull Map<String, SmartPsiElementPointer<PsiElement>> declarations) {
+    PsiClass parameterTypeAnnotationClass =
+      JavaPsiFacade.getInstance(module.getProject()).findClass(PARAMETER_TYPE_ANNOTATION_FQN, scope);
+    if (parameterTypeAnnotationClass != null) {
+      Query<PsiMethod> parameterTypeMethods = AnnotatedElementsSearch.searchPsiMethods(parameterTypeAnnotationClass, scope);
+      for (PsiMethod method : parameterTypeMethods.findAll()) {
+        PsiAnnotation parameterTypeAnnotation = getParameterTypeAnnotation(method);
+        if (parameterTypeAnnotation != null) {
+          String parameterTypeAnnotationValue = getAnnotationValue(parameterTypeAnnotation);
+          if (StringUtil.isNotEmpty(parameterTypeAnnotationValue)) {
+            values.put(method.getName(), parameterTypeAnnotationValue);
+            PsiIdentifier methodNameIdentifier = method.getNameIdentifier();
+            if (methodNameIdentifier != null) {
+              declarations.put(method.getName(), SmartPointerManager.createPointer(methodNameIdentifier));
+            }
+          }
+        }
+      }
+    }
   }
 
   private static void processParameterTypeMethodDeclaration(@NotNull Map<String, String> values,
