@@ -57,8 +57,8 @@ public class AngularSvgTest extends Angular2CodeInsightFixtureTestCase {
     AngularTestUtil.moveToOffsetBySignature("{{item.<caret>height}}", myFixture);
     myFixture.completeBasic();
     assertEquals(StreamEx.of(
-      "!foo#string#101", "!width#number#101", "constructor#Function#99", "hasOwnProperty#boolean#99", "isPrototypeOf#boolean#99",
-      "propertyIsEnumerable#boolean#99", "toLocaleString#string#99", "toString#string#99", "valueOf#Object#99"
+      "!foo#string#101", "!width#number#101", "constructor#Function#98", "hasOwnProperty#boolean#98", "isPrototypeOf#boolean#98",
+      "propertyIsEnumerable#boolean#98", "toLocaleString#string#98", "toString#string#98", "valueOf#Object#98"
                  ).sorted().toList(),
                  sorted(renderLookupItems(myFixture, true, true)));
   }
