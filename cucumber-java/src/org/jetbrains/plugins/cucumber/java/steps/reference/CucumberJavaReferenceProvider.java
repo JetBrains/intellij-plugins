@@ -37,16 +37,10 @@ public class CucumberJavaReferenceProvider extends PsiReferenceProvider {
       return PsiReference.EMPTY_ARRAY;
     }
 
-    PsiMethod method = PsiTreeUtil.getParentOfType(annotation, PsiMethod.class);
-    if (method == null) {
+    if (!CucumberJavaUtil.isCucumberStepAnnotation(annotation)) {
       return PsiReference.EMPTY_ARRAY;
     }
-
-    PsiAnnotation stepAnnotation = CucumberJavaUtil.getCucumberStepAnnotation(method);
-    if (stepAnnotation == null || !PsiTreeUtil.isAncestor(stepAnnotation, literalExpression, true)) {
-      return PsiReference.EMPTY_ARRAY;
-    }
-    String cucumberExpression = CucumberJavaUtil.getAnnotationValue(stepAnnotation);
+    String cucumberExpression = CucumberJavaUtil.getAnnotationValue(annotation);
     if (cucumberExpression == null) {
       return PsiReference.EMPTY_ARRAY;
     }

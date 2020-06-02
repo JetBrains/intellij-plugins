@@ -18,4 +18,9 @@ public class ShoppingStepdefs implements En {
   @Given("^step (red|black):$")
   public void my_step_with_colon(String param) {
   }
+
+  @Given("first regex")
+  @Given("second regex")
+  public void my_double_definition() {
+  }
 }

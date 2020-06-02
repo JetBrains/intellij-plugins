@@ -25,6 +25,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.CucumberUtil;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 
+import java.util.List;
+
 public class CucumberJavaStepDefinitionSearch implements QueryExecutor<PsiReference, ReferencesSearch.SearchParameters> {
   @Override
   public boolean execute(@NotNull final ReferencesSearch.SearchParameters queryParameters,
@@ -39,13 +41,20 @@ public class CucumberJavaStepDefinitionSearch implements QueryExecutor<PsiRefere
       return true;
     }
 
-    final PsiAnnotation stepAnnotation =
-      ReadAction.compute(() -> CucumberJavaUtil.getCucumberStepAnnotation(method));
+    List<PsiAnnotation> stepAnnotations =
+      ReadAction.compute(() -> CucumberJavaUtil.getCucumberStepAnnotations(method));
 
-    final String regexp = CucumberJavaUtil.getPatternFromStepDefinition(stepAnnotation);
-    if (regexp == null) {
-      return true;
+    for (PsiAnnotation stepAnnotation : stepAnnotations) {
+      final String regexp = CucumberJavaUtil.getPatternFromStepDefinition(stepAnnotation);
+      if (regexp == null) {
+        continue;
+      }
+      boolean result = CucumberUtil.findGherkinReferencesToElement(myElement, regexp, consumer, queryParameters.getEffectiveSearchScope());
+      if (!result) {
+        return false;
+      }
     }
-    return CucumberUtil.findGherkinReferencesToElement(myElement, regexp, consumer, queryParameters.getEffectiveSearchScope());
+
+    return true;
   }
 }

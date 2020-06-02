@@ -155,8 +155,8 @@ public class CucumberJavaUtil {
   }
 
   public static boolean isStepDefinition(@NotNull final PsiMethod method) {
-    final PsiAnnotation stepAnnotation = getCucumberStepAnnotation(method);
-    return stepAnnotation != null && getAnnotationValue(stepAnnotation) != null;
+    List<PsiAnnotation> stepAnnotations = getCucumberStepAnnotations(method);
+    return stepAnnotations.size() > 0;
   }
 
   public static boolean isHook(@NotNull final PsiMethod method) {
@@ -166,19 +166,20 @@ public class CucumberJavaUtil {
   public static boolean isStepDefinitionClass(@NotNull final PsiClass clazz) {
     PsiMethod[] methods = clazz.getAllMethods();
     for (PsiMethod method : methods) {
-      if (getCucumberStepAnnotation(method) != null || getCucumberHookAnnotation(method) != null) return true;
+      if (getCucumberStepAnnotations(method).size() > 0 || getCucumberHookAnnotation(method) != null) return true;
     }
     return false;
   }
 
-  public static PsiAnnotation getCucumberStepAnnotation(@NotNull PsiMethod method) {
-    return getCucumberStepAnnotation(method, null);
+  public static List<PsiAnnotation> getCucumberStepAnnotations(@NotNull PsiMethod method) {
+    return getCucumberStepAnnotations(method, null);
   }
 
-  @Nullable
-  public static PsiAnnotation getCucumberStepAnnotation(@NotNull PsiMethod method, @Nullable String annotationClassName) {
+  @NotNull
+  public static List<PsiAnnotation> getCucumberStepAnnotations(@NotNull PsiMethod method, @Nullable String annotationClassName) {
+    List<PsiAnnotation> result = new ArrayList<>();
     if (!method.hasModifierProperty(PsiModifier.PUBLIC)) {
-      return null;
+      return result;
     }
 
     final PsiAnnotation[] annotations = method.getModifierList().getAnnotations();
@@ -187,24 +188,27 @@ public class CucumberJavaUtil {
       if (annotation != null &&
           (annotationClassName == null || annotationClassName.equals(annotation.getQualifiedName())) &&
           isCucumberStepAnnotation(annotation)) {
-        return annotation;
+        result.add(annotation);
       }
     }
-    return null;
+    return result;
   }
 
   /**
    * Computes value of Step Definition Annotation. If {@code annotationClassName provided} value of the annotation with corresponding class
    * will be returned. Operations with string constants handled.
    */
-  @Nullable
-  public static String getStepAnnotationValue(@NotNull PsiMethod method, @Nullable String annotationClassName) {
-    final PsiAnnotation stepAnnotation = getCucumberStepAnnotation(method, annotationClassName);
-    if (stepAnnotation == null) {
-      return null;
+  public static @NotNull List<String> getStepAnnotationValues(@NotNull PsiMethod method, @Nullable String annotationClassName) {
+    List<String> result = new ArrayList<>();
+    final List<PsiAnnotation> stepAnnotations = getCucumberStepAnnotations(method, annotationClassName);
+    for (PsiAnnotation stepAnnotation : stepAnnotations) {
+      String annotationValue = getAnnotationValue(stepAnnotation);
+      if (annotationValue != null) {
+        result.add(annotationValue);
+      }
     }
 
-    return getAnnotationValue(stepAnnotation);
+    return result;
   }
 
   @Nullable

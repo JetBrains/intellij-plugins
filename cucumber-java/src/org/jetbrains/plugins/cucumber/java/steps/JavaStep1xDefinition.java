@@ -6,8 +6,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class JavaStep1xDefinition extends JavaAnnotatedStepDefinition {
-  public JavaStep1xDefinition(@NotNull PsiElement element, @NotNull String annotationClassName) {
-    super(element, annotationClassName);
+  public JavaStep1xDefinition(@NotNull PsiElement element, @NotNull String annotationValue) {
+    super(element, annotationValue);
   }
 
   @Nullable

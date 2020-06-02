@@ -5,7 +5,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
 public class JavaStep2xDefinition extends JavaAnnotatedStepDefinition {
-  public JavaStep2xDefinition(@NotNull PsiElement element, @NotNull String annotationClassName) {
-    super(element, annotationClassName);
+  public JavaStep2xDefinition(@NotNull PsiElement element, @NotNull String annotationValue) {
+    super(element, annotationValue);
   }
 }
