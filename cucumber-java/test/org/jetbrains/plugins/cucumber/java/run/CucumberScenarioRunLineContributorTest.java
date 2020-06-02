@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaCodeInsightTestCase;
 import org.jetbrains.plugins.cucumber.psi.GherkinFile;
+import org.jetbrains.plugins.cucumber.run.CucumberRunLineMarkerContributor;
 
 import javax.swing.*;
 import java.util.Date;
@@ -44,23 +45,8 @@ public class CucumberScenarioRunLineContributorTest extends CucumberJavaCodeInsi
     checkInfo(element, AllIcons.RunConfigurations.TestState.Green2);
   }
   
-  public void testScenarioRunLineContributorForScenarioOutline() {
-    String featureWithScenarioOutline = "Feature: myfeature\n\n" +
-                                          "Scenario outline: <a>\n" +
-                                            "Given: <a>\n" +
-                                            "Examples:\n" +
-                                              "| a |\n" +
-                                              "| 1 |\n" +
-                                              "| 2 |";
-    PsiFile file = myFixture.configureByText("test.feature", featureWithScenarioOutline);
-    checkInfo(((GherkinFile)file).getFeatures()[0].getScenarios()[0].findElementAt(0), AllIcons.RunConfigurations.TestState.Run_run);
-    PsiElement[] elements = ((GherkinFile)file).getFeatures()[0].getScenarios()[0].getLastChild().getChildren()[0].getChildren();
-    checkInfo(elements[elements.length-2].findElementAt(0), AllIcons.RunConfigurations.TestState.Run_run);
-    checkInfo(elements[elements.length-1].findElementAt(0), AllIcons.RunConfigurations.TestState.Run_run);
-  }
-
   private static void checkInfo(PsiElement element, Icon run) {
-    RunLineMarkerContributor.Info info = new ScenarioRunLineMarkerContributor().getInfo(element);
+    RunLineMarkerContributor.Info info = new CucumberRunLineMarkerContributor().getInfo(element);
     assertNotNull(info);
     assertEquals(run, info.icon);
   }

@@ -7,15 +7,14 @@ import com.intellij.execution.testframework.sm.runner.states.TestStateInfo;
 import com.intellij.icons.AllIcons;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaCodeInsightTestCase;
+import org.jetbrains.plugins.cucumber.run.CucumberRunLineMarkerContributor;
 
 import java.util.Date;
 
 public class CucumberFeatureRunLineContributorTest extends CucumberJavaCodeInsightTestCase {
-
-
   public void testFeatureRunLineContributorWhenFeatureNeverHaveBeenRan() {
     PsiFile file = myFixture.configureByText("test.feature", "Feature: My feature");
-    RunLineMarkerContributor.Info info = new FeatureRunLineMarkerContributor().getInfo(file.findElementAt(myFixture.getCaretOffset()));
+    RunLineMarkerContributor.Info info = new CucumberRunLineMarkerContributor().getInfo(file.findElementAt(myFixture.getCaretOffset()));
     assertNotNull(info);
     assertEquals(AllIcons.RunConfigurations.TestState.Run_run, info.icon);
   }
@@ -26,7 +25,7 @@ public class CucumberFeatureRunLineContributorTest extends CucumberJavaCodeInsig
     String testUrl = file.getVirtualFile().getUrl() + ":1";
     stateStorage.writeState(testUrl, new TestStateStorage.Record(TestStateInfo.Magnitude.FAILED_INDEX.getValue(), new Date(), 0, 0, "",
                                                                  "", ""));
-    RunLineMarkerContributor.Info info = new FeatureRunLineMarkerContributor().getInfo(file.findElementAt(myFixture.getCaretOffset()));
+    RunLineMarkerContributor.Info info = new CucumberRunLineMarkerContributor().getInfo(file.findElementAt(myFixture.getCaretOffset()));
     assertNotNull(info);
     assertEquals(AllIcons.RunConfigurations.TestState.Red2, info.icon);
   }
@@ -37,7 +36,7 @@ public class CucumberFeatureRunLineContributorTest extends CucumberJavaCodeInsig
     String testUrl = file.getVirtualFile().getUrl() + ":1";
     stateStorage.writeState(testUrl, new TestStateStorage.Record(TestStateInfo.Magnitude.PASSED_INDEX.getValue(), new Date(), 0, 0, "",
                                                                  "", ""));
-    RunLineMarkerContributor.Info info = new FeatureRunLineMarkerContributor().getInfo(file.findElementAt(myFixture.getCaretOffset()));
+    RunLineMarkerContributor.Info info = new CucumberRunLineMarkerContributor().getInfo(file.findElementAt(myFixture.getCaretOffset()));
     assertNotNull(info);
     assertEquals(AllIcons.RunConfigurations.TestState.Green2, info.icon);
   }

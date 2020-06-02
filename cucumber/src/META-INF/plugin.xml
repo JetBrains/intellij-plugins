@@ -86,6 +86,8 @@
     <additionalTextAttributes scheme="Default" file="colorSchemes/GherkinDefault.xml"/>
     <additionalTextAttributes scheme="Darcula" file="colorSchemes/GherkinDarcula.xml"/>
 
+    <runLineMarkerContributor id="scenarioRunLineMarkerContributor" language="Gherkin" implementationClass="org.jetbrains.plugins.cucumber.run.CucumberRunLineMarkerContributor"/>
+
     <intentionAction>
       <className>org.jetbrains.plugins.cucumber.intentions.ScenarioToOutlineIntention</className>
       <category>Cucumber</category>

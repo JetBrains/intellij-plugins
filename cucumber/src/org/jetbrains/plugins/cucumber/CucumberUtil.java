@@ -14,10 +14,14 @@
 package org.jetbrains.plugins.cucumber;
 
 import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.*;
 import com.intellij.psi.search.searches.ReferencesSearch;
@@ -476,5 +480,17 @@ public class CucumberUtil {
   public static PsiElement resolveSep(@NotNull GherkinStep step) {
     PsiReference reference = Arrays.stream(step.getReferences()).filter(r -> r instanceof CucumberStepReference).findFirst().orElse(null);
     return reference != null ? reference.resolve() : null;
+  }
+
+  public static Integer getLineNumber(@NotNull PsiElement element) {
+    PsiFile containingFile = element.getContainingFile();
+    Project project = containingFile.getProject();
+    PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(project);
+    Document document = psiDocumentManager.getDocument(containingFile);
+    int textOffset = element.getTextOffset();
+    if (document == null) {
+      return null;
+    }
+    return document.getLineNumber(textOffset) + 1;
   }
 }
