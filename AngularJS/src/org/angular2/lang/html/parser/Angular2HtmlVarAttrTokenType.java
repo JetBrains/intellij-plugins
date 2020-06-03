@@ -24,9 +24,9 @@ import static org.angular2.lang.html.stub.Angular2HtmlStubElementTypes.REFERENCE
 public class Angular2HtmlVarAttrTokenType extends Angular2EmbeddedContentTokenType {
 
   public static final Angular2HtmlVarAttrTokenType REFERENCE = new Angular2HtmlVarAttrTokenType(
-    "NG:REFERENCE_TOKEN", REFERENCE_VARIABLE, RefPrefixTokenParser::new);
+    "NG:REFERENCE_TOKEN", REFERENCE_VARIABLE, () -> new RefPrefixTokenParser());
   public static final Angular2HtmlVarAttrTokenType LET = new Angular2HtmlVarAttrTokenType(
-    "NG:LET_TOKEN", LET_VARIABLE, LetPrefixTokenParser::new);
+    "NG:LET_TOKEN", LET_VARIABLE, () -> new LetPrefixTokenParser());
 
 
   private final JSStubElementType<JSVariableStub<JSVariable>, JSVariable> myVarElementType;

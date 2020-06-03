@@ -2,6 +2,7 @@ package org.angularjs.codeInsight.refs;
 
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.psi.resolve.CachingPolyReferenceBase;
+import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
@@ -66,7 +67,7 @@ public class AngularJSNgAppReferencesProvider extends PsiReferenceProvider {
         };
         results = ContainerUtil.filter(results, filter);
       }
-      final List<ResolveResult> resolveResults = ContainerUtil.map(results, AngularIndexUtil.JS_IMPLICIT_TO_RESOLVE_RESULT);
+      List<ResolveResult> resolveResults = ContainerUtil.map(results, JSResolveResult::new);
       return resolveResults.toArray(ResolveResult.EMPTY_ARRAY);
     }
   }

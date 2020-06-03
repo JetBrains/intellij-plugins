@@ -73,7 +73,7 @@ public class AngularJSModuleReferencesProvider extends PsiReferenceProvider {
 
       final Collection<JSImplicitElement> results = collectProcessor.getResults();
       if (results.isEmpty()) return getGenericResolvedModules(moduleName);
-      final List<ResolveResult> resolveResults = ContainerUtil.map(results, AngularIndexUtil.JS_IMPLICIT_TO_RESOLVE_RESULT);
+      List<ResolveResult> resolveResults = ContainerUtil.map(results, JSResolveResult::new);
       return resolveResults.toArray(ResolveResult.EMPTY_ARRAY);
     }
 
