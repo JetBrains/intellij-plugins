@@ -4,6 +4,8 @@ package org.angular2.inspections;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
+import com.intellij.lang.javascript.JavaScriptBundle;
+import com.intellij.lang.typescript.inspection.TypeScriptExplicitMemberTypeInspection;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
@@ -129,6 +131,37 @@ public class Angular2TemplateInspectionsTest extends Angular2CodeInsightFixtureT
     myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
     doTest(AngularUndefinedBindingInspection.class, "hammerJs.html");
   }
+
+  public void testTypeScriptSpecifyTypeNoFix() {
+    doTestNoFix("no-specify-type-variable.html",
+                TypeScriptExplicitMemberTypeInspection.class, 
+                JavaScriptBundle.message("typescript.specify.type.explicitly"));
+  }  
+  
+  public void testTypeScriptSpecifyTypeNoFixNgFor() {
+    doTestNoFix("no-specify-type-variable-ng-for.html", 
+                TypeScriptExplicitMemberTypeInspection.class,
+                JavaScriptBundle.message("typescript.specify.type.explicitly"));
+  }
+
+  public void testTypeScriptNoIntroduceVariable() {
+    doTestNoFix("no-introduce-variable.html", 
+                null,
+                JavaScriptBundle.message("javascript.introduce.variable.title.local"));
+  }
+  
+  private void doTestNoFix(@NotNull String location, 
+                           @Nullable Class<? extends LocalInspectionTool> inspection, 
+                           @NotNull String quickFixName) {
+    if (inspection != null) {
+      myFixture.enableInspections(inspection);
+    }
+    myFixture.configureByFiles("package.json");
+    myFixture.configureByFiles(location);
+    myFixture.checkHighlighting();
+    assertNull(myFixture.getAvailableIntention(quickFixName));
+  }
+
 
   private void doTest(@NotNull Class<? extends LocalInspectionTool> inspection,
                       String... files) {
