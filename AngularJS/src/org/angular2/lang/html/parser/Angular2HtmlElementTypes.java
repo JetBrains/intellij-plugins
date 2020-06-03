@@ -19,17 +19,17 @@ import static com.intellij.psi.tree.TokenSet.create;
 
 public interface Angular2HtmlElementTypes extends XmlElementType, Angular2HtmlTokenTypes, Angular2HtmlStubElementTypes {
 
-  IElementType EXPANSION_FORM = new Angular2ElementType("NG:EXPANSION_FORM", Angular2HtmlExpansionFormImpl::new);
-  IElementType EXPANSION_FORM_CASE = new Angular2ElementType("NG:EXPANSION_FORM_CASE", Angular2HtmlExpansionFormCaseImpl::new);
+  IElementType EXPANSION_FORM = new Angular2ElementType("NG:EXPANSION_FORM", node -> new Angular2HtmlExpansionFormImpl(node));
+  IElementType EXPANSION_FORM_CASE = new Angular2ElementType("NG:EXPANSION_FORM_CASE", node -> new Angular2HtmlExpansionFormCaseImpl(node));
   IElementType EXPANSION_FORM_CASE_CONTENT = new Angular2ElementType("NG:EXPANSION_FORM_CASE_CONTENT",
-                                                                     Angular2HtmlExpansionFormCaseContentImpl::new);
+                                                                     node -> new Angular2HtmlExpansionFormCaseContentImpl(node));
 
-  IElementType EVENT = new Angular2ElementType("NG:EVENT", Angular2HtmlEventImpl::new);
-  IElementType BANANA_BOX_BINDING = new Angular2ElementType("NG:BANANA_BOX_BINDING", Angular2HtmlBananaBoxBindingImpl::new);
-  IElementType PROPERTY_BINDING = new Angular2ElementType("NG:PROPERTY_BINDING", Angular2HtmlPropertyBindingImpl::new);
-  IElementType REFERENCE = new Angular2ElementType("NG:REFERENCE", Angular2HtmlReferenceImpl::new);
-  IElementType LET = new Angular2ElementType("NG:LET", Angular2HtmlLetImpl::new);
-  IElementType TEMPLATE_BINDINGS = new Angular2ElementType("NG:TEMPLATE_BINDINGS", Angular2HtmlTemplateBindingsImpl::new);
+  IElementType EVENT = new Angular2ElementType("NG:EVENT", node -> new Angular2HtmlEventImpl(node));
+  IElementType BANANA_BOX_BINDING = new Angular2ElementType("NG:BANANA_BOX_BINDING", node -> new Angular2HtmlBananaBoxBindingImpl(node));
+  IElementType PROPERTY_BINDING = new Angular2ElementType("NG:PROPERTY_BINDING", node -> new Angular2HtmlPropertyBindingImpl(node));
+  IElementType REFERENCE = new Angular2ElementType("NG:REFERENCE", node -> new Angular2HtmlReferenceImpl(node));
+  IElementType LET = new Angular2ElementType("NG:LET", node -> new Angular2HtmlLetImpl(node));
+  IElementType TEMPLATE_BINDINGS = new Angular2ElementType("NG:TEMPLATE_BINDINGS", node -> new Angular2HtmlTemplateBindingsImpl(node));
 
   TokenSet ALL_ATTRIBUTES = create(
     EVENT,
