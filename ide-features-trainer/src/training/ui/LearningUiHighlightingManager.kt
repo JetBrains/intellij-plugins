@@ -28,10 +28,10 @@ object LearningUiHighlightingManager {
 
   fun highlightJListItem(list: JList<*>,
                          options: HighlightingOptions = HighlightingOptions(),
-                         index: () -> Int) {
-    highlightPartOfComponent(list, options) {
+                         index: () -> Int?) {
+    highlightPartOfComponent(list, options) l@{
       val i = index()
-      if (i < 0 && list.visibleRowCount <= i) null
+      if (i == null || i < 0 && list.visibleRowCount <= i) null
       else list.getCellBounds(i, i)
     }
   }

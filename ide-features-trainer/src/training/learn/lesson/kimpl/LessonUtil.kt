@@ -42,14 +42,14 @@ object LessonUtil {
     }
   }
 
-  fun findItem(ui: JList<*>, checkList: (item: Any) -> Boolean): Int {
+  fun findItem(ui: JList<*>, checkList: (item: Any) -> Boolean): Int? {
     for (i in 0 until ui.model.size) {
       val elementAt = ui.model.getElementAt(i)
       if (checkList(elementAt)) {
         return i
       }
     }
-    return -1
+    return null
   }
 }
 

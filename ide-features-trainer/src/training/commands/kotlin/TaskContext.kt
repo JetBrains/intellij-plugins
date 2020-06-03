@@ -228,7 +228,7 @@ class TaskContext(private val lessonExecutor: LessonExecutor,
     @Suppress("DEPRECATION")
     triggerByUiComponentAndHighlight {
       val delay = Timeout.timeout(500, TimeUnit.MILLISECONDS)
-      val tree = LearningUiUtil.findComponentWithTimeout(null, JTree::class.java, delay) {
+      val tree = LearningUiUtil.findShowingComponentWithTimeout(null, JTree::class.java, delay) {
         checkTree(it) != null
       }
       return@triggerByUiComponentAndHighlight {
@@ -245,7 +245,7 @@ class TaskContext(private val lessonExecutor: LessonExecutor,
     @Suppress("DEPRECATION")
     triggerByUiComponentAndHighlight {
       val delay = Timeout.timeout(500, TimeUnit.MILLISECONDS)
-      val whole = LearningUiUtil.findComponentWithTimeout(null, T::class.java, delay) {
+      val whole = LearningUiUtil.findShowingComponentWithTimeout(null, T::class.java, delay) {
         rectangle(it) != null
       }
       return@triggerByUiComponentAndHighlight {
@@ -263,13 +263,13 @@ class TaskContext(private val lessonExecutor: LessonExecutor,
   }
 
   // This method later can be converted to the public (But I'm not sure it will be ever needed in a such form
-  private fun triggerByFoundListItemAndHighlight(options: LearningUiHighlightingManager.HighlightingOptions, checkList: (list: JList<*>) -> Int) {
+  private fun triggerByFoundListItemAndHighlight(options: LearningUiHighlightingManager.HighlightingOptions, checkList: (list: JList<*>) -> Int?) {
     @Suppress("DEPRECATION")
     triggerByUiComponentAndHighlight {
       val delay = Timeout.timeout(500, TimeUnit.MILLISECONDS)
-      val list = LearningUiUtil.findComponentWithTimeout(null, JList::class.java, delay) {
+      val list = LearningUiUtil.findShowingComponentWithTimeout(null, JList::class.java, delay) l@{
         val index = checkList(it)
-        index != -1 && it.visibleRowCount > index
+        index != null && it.visibleRowCount > index
       }
       return@triggerByUiComponentAndHighlight {
         LearningUiHighlightingManager.highlightJListItem(list, options) {
@@ -286,7 +286,7 @@ class TaskContext(private val lessonExecutor: LessonExecutor,
     @Suppress("DEPRECATION")
     triggerByUiComponentAndHighlight l@{
       val delay = Timeout.timeout(500, TimeUnit.MILLISECONDS)
-      val component = LearningUiUtil.findComponentWithTimeout(null, ComponentType::class.java, delay) {
+      val component = LearningUiUtil.findShowingComponentWithTimeout(null, ComponentType::class.java, delay) {
         finderFunction(it)
       }
       return@l {

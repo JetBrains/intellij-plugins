@@ -40,7 +40,7 @@ class PythonTabCompletionLesson(module: Module) : KLesson("Tab Completion", modu
           text("Select item ${code("total")} by keyboard arrows or just start typing it.")
           restoreState {
             (previous.ui as? JList<*>)?.let { ui ->
-              !ui.isShowing || LessonUtil.findItem(ui, isTotalItem) == -1
+              !ui.isShowing || LessonUtil.findItem(ui, isTotalItem) == null
             } ?: true
           }
           stateCheck {

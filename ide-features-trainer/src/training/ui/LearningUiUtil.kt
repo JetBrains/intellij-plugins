@@ -80,12 +80,12 @@ object LearningUiUtil {
     }
   }
 
-  fun <ComponentType : Component> findComponentWithTimeout(container: Container?,
-                                                           componentClass: Class<ComponentType>,
-                                                           timeout: Timeout = Timeout.timeout(10, TimeUnit.SECONDS),
-                                                           finderFunction: (ComponentType) -> Boolean = { true }): ComponentType {
+  fun <ComponentType : Component> findShowingComponentWithTimeout(container: Container?,
+                                                                  componentClass: Class<ComponentType>,
+                                                                  timeout: Timeout = Timeout.timeout(10, TimeUnit.SECONDS),
+                                                                  finderFunction: (ComponentType) -> Boolean = { true }): ComponentType {
     try {
-      return waitUntilFound(robot, container, typeMatcher(componentClass) { finderFunction(it) }, timeout)
+      return waitUntilFound(robot, container, typeMatcher(componentClass) { it.isShowing && finderFunction(it) }, timeout)
     }
     catch (e: WaitTimedOutError) {
       throw ComponentLookupException(
