@@ -12,10 +12,10 @@ import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.java.IJavaTypeCreator;
 import com.intellij.tapestry.core.java.IJavaTypeFinder;
 import com.intellij.tapestry.core.model.TapestryLibrary;
-import com.intellij.tapestry.core.model.presentation.TapestryComponent;
 import com.intellij.tapestry.core.model.presentation.Mixin;
 import com.intellij.tapestry.core.model.presentation.Page;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
+import com.intellij.tapestry.core.model.presentation.TapestryComponent;
 import com.intellij.tapestry.core.model.presentation.components.BlockComponent;
 import com.intellij.tapestry.core.model.presentation.components.BodyComponent;
 import com.intellij.tapestry.core.model.presentation.components.ContainerComponent;
@@ -40,8 +40,8 @@ import static com.intellij.openapi.util.text.StringUtil.isNotEmpty;
  */
 public class TapestryProject {
 
-  public static final Object[] JAVA_STRUCTURE_DEPENDENCY = {PsiModificationTracker.JAVA_STRUCTURE_MODIFICATION_COUNT};
-  public static final Object[] OUT_OF_CODE_BLOCK_DEPENDENCY = {PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT};
+  public static final Object[] JAVA_STRUCTURE_DEPENDENCY = {PsiModificationTracker.MODIFICATION_COUNT};
+  public static final Object[] OUT_OF_CODE_BLOCK_DEPENDENCY = {PsiModificationTracker.MODIFICATION_COUNT};
   /**
    * The application library id.
    */
