@@ -22,7 +22,7 @@ class PythonTabCompletionLesson(module: Module) : KLesson("Tab Completion", modu
             return self.<caret>
   """.trimIndent())
 
-  private val sample = LessonSample(LessonUtil.insertIntoSample(template, "current"), template.startOffset, template.selection)
+  private val sample = createFromTemplate(template, "current")
 
   private val isTotalItem = { item: Any -> item.toString().contains("total") }
 

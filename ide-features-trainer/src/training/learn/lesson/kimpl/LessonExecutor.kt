@@ -92,6 +92,12 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
     }
   }
 
+  fun caret(position: LessonSamplePosition) {
+    addSimpleTaskAction {
+      setCaret(position)
+    }
+  }
+
   fun caret(offset: Int) {
     addSimpleTaskAction { OpenFileDescriptor(project, virtualFile, offset).navigateIn(editor) }
   }
@@ -295,9 +301,13 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
   private fun setSample(sample: LessonSample) {
     invokeLater(ModalityState.NON_MODAL) {
       setDocumentCode(sample.text)
-      sample.selection?.let { editor.selectionModel.setSelection(it.first, it.second) }
-      editor.caretModel.moveToOffset(sample.startOffset)
+      setCaret(sample.getPosition(0))
     }
+  }
+
+  private fun setCaret(position: LessonSamplePosition) {
+    position.selection?.let { editor.selectionModel.setSelection(it.first, it.second) }
+    editor.caretModel.moveToOffset(position.startOffset)
   }
 
   private fun setDocumentCode(code: String) {

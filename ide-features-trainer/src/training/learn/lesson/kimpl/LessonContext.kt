@@ -47,6 +47,10 @@ class LessonContext(val lesson: KLesson, val editor: Editor, val project: Projec
     executor.caret(text)
   }
 
+  fun caret(position: LessonSamplePosition) {
+    executor.caret(position)
+  }
+
   /**
    * There will not be any freeze in GUI thread.
    * The continue of the script will be scheduled with the [delayMillis]
