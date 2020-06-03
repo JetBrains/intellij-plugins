@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.commands.kotlin
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.WriteAction
@@ -43,6 +44,8 @@ class TaskContext(private val lessonExecutor: LessonExecutor,
   val lesson: KLesson = lessonExecutor.lesson
   val editor: Editor = lessonExecutor.editor
   val project: Project = lessonExecutor.project
+
+  val disposable: Disposable = recorder
 
   val steps: MutableList<CompletableFuture<Boolean>> = mutableListOf()
 
@@ -164,6 +167,12 @@ class TaskContext(private val lessonExecutor: LessonExecutor,
     }
     addStep(future)
     return result
+  }
+
+  fun addFutureStep(p: CompletableFuture<Boolean>.() -> Unit) {
+    val future: CompletableFuture<Boolean> = CompletableFuture()
+    addStep(future)
+    p.invoke(future)
   }
 
   fun addStep(step: CompletableFuture<Boolean>) {
