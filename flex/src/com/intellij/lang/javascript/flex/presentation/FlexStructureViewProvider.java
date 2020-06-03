@@ -23,6 +23,7 @@ import com.intellij.lang.javascript.psi.JSQualifiedName;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.lang.javascript.structureView.JSStructureViewElement;
+import com.intellij.lang.javascript.structureView.JSStructureViewElementBase;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -36,6 +37,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -62,12 +64,21 @@ public class FlexStructureViewProvider implements XmlStructureViewBuilderProvide
     };
   }
 
-  static class FlexStructureViewElement extends JSStructureViewElement {
+  static class FlexStructureViewClassElement extends JSStructureViewElement {
     private final XmlFile myFile;
 
-    FlexStructureViewElement(@NotNull JSClass clazz) {
-      super(clazz, true);
+    FlexStructureViewClassElement(@NotNull JSClass clazz) {
+      this(clazz, false);
+    }
+
+    FlexStructureViewClassElement(@NotNull JSClass clazz, boolean inherited) {
+      super(Collections.singletonList(clazz), Collections.emptySet(), null, true, inherited);
       myFile = (XmlFile)clazz.getContainingFile();
+    }
+
+    @Override
+    protected @NotNull JSStructureViewElementBase copyWithInheritedImpl() {
+      return new FlexStructureViewClassElement(((JSClass)myElements.get(0)), true);
     }
 
     @Override
@@ -107,7 +118,7 @@ public class FlexStructureViewProvider implements XmlStructureViewBuilderProvide
     @Override
     protected JSStructureViewElement createStructureViewElement(PsiElement element, Set<String> parentReferencedNames) {
       if (element instanceof XmlBackedJSClassImpl) {
-        return new FlexStructureViewElement((JSClass)element);
+        return new FlexStructureViewClassElement((JSClass)element);
       }
       else {
         return super.createStructureViewElement(element, parentReferencedNames);

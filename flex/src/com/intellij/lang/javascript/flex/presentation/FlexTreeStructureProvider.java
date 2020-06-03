@@ -44,8 +44,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static com.intellij.lang.javascript.flex.presentation.FlexStructureViewProvider.FlexStructureViewElement;
-
 public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAware {
   @NotNull
   @Override
@@ -58,7 +56,7 @@ public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAwa
       if (settings != null && settings.isShowMembers() && psiParent != null) {
         JSStructureViewElement elementNode =
           psiParent instanceof XmlBackedJSClassImpl ?
-          new FlexStructureViewElement(((XmlBackedJSClassImpl)psiParent)) :
+          new FlexStructureViewProvider.FlexStructureViewClassElement(((XmlBackedJSClassImpl)psiParent)) :
           new JSStructureViewElement(psiParent, true);
         StructureViewTreeElement[] structureViewChildren = elementNode.getChildren();
         for (StructureViewTreeElement structureViewChild : structureViewChildren) {
