@@ -127,6 +127,7 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
       if (methodExpression.getElementType() != JSElementTypes.REFERENCE_EXPRESSION) return false;
 
       final ASTNode referencedNameElement = methodExpression.getFirstChildNode();
+      if (referencedNameElement == null) return false;
       final String decoratorName = referencedNameElement.getText();
       return STUBBED_DECORATORS_STRING_ARGS.contains(decoratorName);
     }

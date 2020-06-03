@@ -25,7 +25,7 @@ class TemplateLoaderFrameworkHandler : FrameworkIndexingHandler() {
     if (methodExpression.elementType !== JSElementTypes.REFERENCE_EXPRESSION) return false
 
     val referencedNameElement = methodExpression.firstChildNode
-    return WITH_RENDER.equals(referencedNameElement.text, ignoreCase = true)
+    return WITH_RENDER.equals(referencedNameElement?.text, ignoreCase = true)
   }
 
   override fun processDecorator(decorator: ES6Decorator, data: JSElementIndexingDataImpl?): JSElementIndexingDataImpl? {

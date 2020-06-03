@@ -286,6 +286,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     if (methodExpression == null) return false;
 
     final ASTNode referencedNameElement = methodExpression.getLastChildNode();
+    if (referencedNameElement == null) return false;
     final ASTNode qualifierElement = JSReferenceExpressionImpl.getQualifierNode(methodExpression);
     if (qualifierElement == null) return false;
     String referencedName = referencedNameElement.getText();
