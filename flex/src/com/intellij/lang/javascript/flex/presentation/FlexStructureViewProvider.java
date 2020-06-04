@@ -36,10 +36,7 @@ import com.intellij.xml.util.HtmlUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Maxim.Mossienko
@@ -78,7 +75,7 @@ public class FlexStructureViewProvider implements XmlStructureViewBuilderProvide
 
     @Override
     protected @NotNull JSStructureViewElementBase copyWithInheritedImpl() {
-      return new FlexStructureViewClassElement(((JSClass)myElements.get(0)), true);
+      return new FlexStructureViewClassElement(((JSClass)Objects.requireNonNull(getElement())), true);
     }
 
     @Override
