@@ -5,13 +5,27 @@ import com.intellij.lang.DependentLanguage;
 import com.intellij.lang.javascript.DialectOptionHolder;
 import com.intellij.lang.javascript.JSLanguageDialect;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.dialects.JSLanguageFeature;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collections;
+import java.util.Set;
 
 public class Angular2Language extends JSLanguageDialect implements DependentLanguage {
   public static final Angular2Language INSTANCE = new Angular2Language();
 
   protected Angular2Language() {
-    super("Angular2", DialectOptionHolder.ANGULAR2);
+    super("Angular2", new DialectOptionHolder("ANGULAR2", true) {
+      @Override
+      protected @NotNull Set<@NotNull JSLanguageFeature> defineFeatures() {
+        return Collections.emptySet();
+      }
+
+      @Override
+      public boolean supportsES6CoolRefactoring() {
+        return false;
+      }
+    });
   }
 
   @Override
