@@ -29,11 +29,13 @@ import training.learn.lesson.kimpl.LessonUtil
 import training.ui.IncorrectLearningStateNotificationProvider
 import training.ui.LearningUiHighlightingManager
 import training.ui.LearningUiUtil
+import training.ui.UiManager
 import java.awt.Component
 import java.awt.Rectangle
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
+import javax.swing.Icon
 import javax.swing.JList
 import javax.swing.JTree
 import javax.swing.tree.TreePath
@@ -332,6 +334,15 @@ class TaskContext(private val lessonExecutor: LessonExecutor,
 
   fun code(sourceSample: String): String {
     return "<code>${StringUtil.escapeXmlEntities(sourceSample)}</code>"
+  }
+
+  fun icon(icon: Icon): String {
+    var index = UiManager.iconMap.getKeysByValue(icon)?.firstOrNull()
+    if (index == null) {
+      index = UiManager.iconMap.size.toString()
+      UiManager.iconMap[index] = icon
+    }
+    return "<icon_idx>$index</icon_idx>"
   }
 
   class DoneStepContext(val future: CompletableFuture<Boolean>) {

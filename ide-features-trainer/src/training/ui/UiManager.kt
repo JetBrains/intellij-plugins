@@ -3,15 +3,19 @@ package training.ui
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.util.containers.BidirectionalMap
 import training.learn.interfaces.Lesson
 import training.ui.views.LanguageChoosePanel
 import training.ui.views.LanguageChoosePanelPlace
 import training.ui.views.LearnPanel
 import training.ui.views.ModulesPanel
+import javax.swing.Icon
 
 object UiManager {
-  val learnPanelPerProject = mutableMapOf<Project, LearnPanel>()
-  val modulesPanelPerProject = mutableMapOf<Project, ModulesPanel>()
+  val learnPanelPerProject: MutableMap<Project, LearnPanel> = mutableMapOf()
+  val modulesPanelPerProject: MutableMap<Project, ModulesPanel> = mutableMapOf()
+
+  val iconMap = BidirectionalMap<String, Icon>()
 
   private val LOG = Logger.getInstance(this.javaClass)
 

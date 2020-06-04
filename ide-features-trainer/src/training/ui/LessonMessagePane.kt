@@ -15,6 +15,7 @@ import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.awt.geom.RoundRectangle2D
 import java.util.concurrent.CopyOnWriteArrayList
+import javax.swing.Icon
 import javax.swing.JTextPane
 import javax.swing.text.BadLocationException
 import javax.swing.text.SimpleAttributeSet
@@ -116,17 +117,8 @@ class LessonMessagePane : JTextPane() {
           Message.MessageType.CODE -> document.insertString(document.length, message.text, CODE)
           Message.MessageType.CHECK -> document.insertString(document.length, message.text, ROBOTO)
           Message.MessageType.LINK -> appendLink(message)
-          Message.MessageType.ICON -> {
-            var placeholder = " "
-            val icon = message.toIcon()
-            if (icon != null) {
-              while (this.getFontMetrics(this.font).stringWidth(placeholder) <= icon.iconWidth) {
-                placeholder += " "
-              }
-              placeholder += " "
-              document.insertString(document.length, placeholder, REGULAR)
-            }
-          }
+          Message.MessageType.ICON -> message.toIcon()?.let { addPlaceholderForIcon(it) }
+          Message.MessageType.ICON_IDX -> UiManager.iconMap[message.text]?.let { addPlaceholderForIcon(it) }
         }
         message.endOffset = document.endPosition.offset
       }
@@ -136,6 +128,15 @@ class LessonMessagePane : JTextPane() {
     catch (e: BadLocationException) {
       LOG.warn(e)
     }
+  }
+
+  private fun addPlaceholderForIcon(icon: Icon) {
+    var placeholder = " "
+    while (this.getFontMetrics(this.font).stringWidth(placeholder) <= icon.iconWidth) {
+      placeholder += " "
+    }
+    placeholder += " "
+    document.insertString(document.length, placeholder, REGULAR)
   }
 
   /**
@@ -250,6 +251,11 @@ class LessonMessagePane : JTextPane() {
         else if (myMessage.type == Message.MessageType.ICON) {
           val rect = modelToView(myMessage.startOffset)
           val icon = myMessage.toIcon()
+          icon?.paintIcon(this, g2d, rect.x, rect.y)
+        }
+        else if (myMessage.type == Message.MessageType.ICON_IDX) {
+          val rect = modelToView(myMessage.startOffset)
+          val icon = UiManager.iconMap[myMessage.text]
           icon?.paintIcon(this, g2d, rect.x, rect.y)
         }
       }
