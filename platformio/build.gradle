@@ -43,7 +43,7 @@ patchPluginXml {
   changeNotes """
 <ul>
  <li>platformio.ini highlighting</li>
- <li>All strings are externolized</li>
+ <li>All strings are externalized</li>
  <li>Profiles and run configurations are created automatically when a new project is created</li>
  <li>UI changes and fixes</li>
  <li>The plugin now depends on ini4idea</li>
