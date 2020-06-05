@@ -3,11 +3,10 @@ package com.intellij.deno.modules
 import com.intellij.deno.DenoSettings
 import com.intellij.lang.ecmascript6.psi.impl.JSImportPathConfiguration
 import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
-import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.frameworks.modules.JSBaseModuleReferenceContributor
 import com.intellij.lang.javascript.modules.JSModuleNameInfo
+import com.intellij.lang.javascript.modules.JSModuleNameInfo.ExtensionSettings
 import com.intellij.lang.javascript.modules.JSModuleNameInfoImpl
-import com.intellij.lang.javascript.modules.JSModuleNameInfoImpl.PathSettings.EXACT
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
@@ -43,6 +42,6 @@ class DenoModuleReferenceContributor : JSBaseModuleReferenceContributor() {
       externalModuleName = "./$externalModuleName"
     }
     
-    return JSModuleNameInfoImpl(externalModuleName, moduleFileOrDirectory, resolvedModuleFile, place, emptyArray(), EXACT)
+    return JSModuleNameInfoImpl(externalModuleName, moduleFileOrDirectory, resolvedModuleFile, place, emptyArray(), ExtensionSettings.EXACT)
   }
 }
