@@ -4,7 +4,6 @@ import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.ui.treeStructure.treetable.*;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.ui.EditableModel;
@@ -136,7 +135,7 @@ abstract class EditableTreeTable<T> extends TreeTable {
   }
 
   private static ColumnInfo[] wrap(ColumnInfo[] columns) {
-    return ContainerUtil.map2Array(columns, ColumnInfo.class, (Function<ColumnInfo, ColumnInfo>)columnInfo -> new ColumnInfoWrapper(columnInfo));
+    return ContainerUtil.map2Array(columns, ColumnInfo.class, columnInfo -> new ColumnInfoWrapper(columnInfo));
   }
 
   public void refresh() {
