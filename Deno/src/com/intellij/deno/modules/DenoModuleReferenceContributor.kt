@@ -6,6 +6,8 @@ import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.frameworks.modules.JSBaseModuleReferenceContributor
 import com.intellij.lang.javascript.modules.JSModuleNameInfo
+import com.intellij.lang.javascript.modules.JSModuleNameInfoImpl
+import com.intellij.lang.javascript.modules.JSModuleNameInfoImpl.PathSettings.EXACT
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
@@ -40,30 +42,7 @@ class DenoModuleReferenceContributor : JSBaseModuleReferenceContributor() {
     if (!externalModuleName.startsWith(".") && !externalModuleName.startsWith(File.separator)) {
       externalModuleName = "./$externalModuleName"
     }
-
-    val quote = JSCodeStyleSettings.getQuote(place)
-
-    return object : JSModuleNameInfo {
-      override fun getPath(): String {
-        return quote + moduleName + quote
-      }
-
-      override fun getResolvedFile(): VirtualFile {
-        return resolvedModuleFile
-      }
-
-      override fun getModuleName(): String {
-        return externalModuleName
-      }
-
-      override fun isValid(): Boolean {
-        return true
-      }
-
-      override fun getModuleFileOrDirectory(): VirtualFile {
-        return moduleFileOrDirectory
-      }
-
-    }
+    
+    return JSModuleNameInfoImpl(externalModuleName, moduleFileOrDirectory, resolvedModuleFile, place, emptyArray(), EXACT)
   }
 }
