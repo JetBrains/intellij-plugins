@@ -1,7 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.ui
 
-import com.intellij.util.containers.ContainerUtil
 import org.fest.swing.core.BasicRobot
 import org.fest.swing.core.GenericTypeMatcher
 import org.fest.swing.core.Robot
@@ -47,30 +46,38 @@ object LearningUiUtil {
   /**
    * Waits for a first component which passes the given matcher under the given root to become visible.
    */
-  fun <T : Component> waitUntilFound(robot: Robot,
-                                     root: Container?,
-                                     matcher: GenericTypeMatcher<T>,
-                                     timeout: Timeout): T {
-    val reference = AtomicReference<T>()
+  fun <T : Component> waitUntilFoundAll(robot: Robot,
+                                        root: Container?,
+                                        matcher: GenericTypeMatcher<T>,
+                                        timeout: Timeout): Collection<T> {
+    val reference = AtomicReference<Collection<T>>()
     Pause.pause(object : Condition("Find component using " + matcher.toString()) {
       override fun test(): Boolean {
         val finder = robot.finder()
         val allFound = if (root != null) finder.findAll(root, matcher) else finder.findAll(matcher)
-        val found = allFound.size == 1
-        if (found) {
-          reference.set(ContainerUtil.getFirstItem(allFound))
+        if (allFound.isNotEmpty()) {
+          reference.set(allFound)
+          return true
         }
-        else if (allFound.size > 1) {
-          // Only allow a single component to be found, otherwise you can get some really confusing
-          // test failures; the matcher should pick a specific enough instance
-          throw ComponentLookupException(
-            "Found more than one " + matcher.supportedType().simpleName + " which matches the criteria: " + allFound)
-        }
-        return found
+        return false
       }
     }, timeout)
 
     return reference.get()
+  }
+
+  fun <T : Component> waitUntilFound(robot: Robot,
+                                     root: Container?,
+                                     matcher: GenericTypeMatcher<T>,
+                                     timeout: Timeout): T {
+    val allFound = waitUntilFoundAll(robot, root, matcher, timeout)
+    if (allFound.size > 1) {
+      // Only allow a single component to be found, otherwise you can get some really confusing
+      // test failures; the matcher should pick a specific enough instance
+      throw ComponentLookupException(
+        "Found more than one " + matcher.supportedType().simpleName + " which matches the criteria: " + allFound)
+    }
+    return allFound.single()
   }
 
   fun <ComponentType : Component?> typeMatcher(componentTypeClass: Class<ComponentType>,
@@ -86,6 +93,19 @@ object LearningUiUtil {
                                                                   finderFunction: (ComponentType) -> Boolean = { true }): ComponentType {
     try {
       return waitUntilFound(robot, container, typeMatcher(componentClass) { it.isShowing && finderFunction(it) }, timeout)
+    }
+    catch (e: WaitTimedOutError) {
+      throw ComponentLookupException(
+        "Unable to find ${componentClass.simpleName} ${if (container != null) "in container $container" else ""} in ${timeout.duration()}(ms)")
+    }
+  }
+
+  fun <ComponentType : Component> findAllShowingComponentWithTimeout(container: Container?,
+                                                                     componentClass: Class<ComponentType>,
+                                                                     timeout: Timeout = Timeout.timeout(10, TimeUnit.SECONDS),
+                                                                     finderFunction: (ComponentType) -> Boolean = { true }): Collection<ComponentType> {
+    try {
+      return waitUntilFoundAll(robot, container, typeMatcher(componentClass) { it.isShowing && finderFunction(it) }, timeout)
     }
     catch (e: WaitTimedOutError) {
       throw ComponentLookupException(
