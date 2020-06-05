@@ -20,11 +20,6 @@ public class Angular2Language extends JSLanguageDialect implements DependentLang
       protected @NotNull Set<@NotNull JSLanguageFeature> defineFeatures() {
         return Collections.emptySet();
       }
-
-      @Override
-      public boolean supportsES6CoolRefactoring() {
-        return false;
-      }
     });
   }
 
