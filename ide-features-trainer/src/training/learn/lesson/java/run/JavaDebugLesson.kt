@@ -7,6 +7,7 @@ import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.icons.AllIcons
 import com.intellij.ide.impl.DataManagerImpl
+import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.actionSystem.impl.ActionButton
@@ -27,6 +28,7 @@ import com.intellij.xdebugger.*
 import com.intellij.xdebugger.impl.XDebugSessionImpl
 import com.intellij.xdebugger.impl.XDebuggerManagerImpl
 import com.intellij.xdebugger.impl.frame.XDebuggerFramesList
+import org.fest.swing.timing.Timeout
 import training.commands.kotlin.TaskContext
 import training.commands.kotlin.TaskTestContext
 import training.keymap.KeymapUtil
@@ -36,8 +38,10 @@ import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.lineWithBreakpoints
 import training.learn.lesson.kimpl.subscribeForMessageBus
 import training.ui.LearningUiHighlightingManager
+import training.ui.LearningUiUtil
 import java.awt.Rectangle
 import java.lang.Thread.sleep
+import java.util.concurrent.TimeUnit
 import javax.swing.text.JTextComponent
 
 class JavaDebugLesson(module: Module) : KLesson("Debug Workflow", module, "JAVA") {
@@ -90,7 +94,7 @@ class JavaDebugLesson(module: Module) : KLesson("Debug Workflow", module, "JAVA"
         test { actions(it) }
       }
 
-      highlightButton("Debug '$demoClassName'")
+      highlightButtonById("Debug")
 
       lateinit var debugSession: XDebugSession
       task("Debug") {
@@ -133,7 +137,7 @@ class JavaDebugLesson(module: Module) : KLesson("Debug Workflow", module, "JAVA"
 
       waitBeforeContinue(500)
 
-      highlightButton("New Watch...")
+      highlightButtonById("XDebugger.NewWatch")
 
       task("Debugger.AddToWatch") {
         val position = sample.getPosition(1)
@@ -152,7 +156,7 @@ class JavaDebugLesson(module: Module) : KLesson("Debug Workflow", module, "JAVA"
         test { actions(it) }
       }
 
-      highlightButton("Step Into")
+      highlightButtonById("StepInto")
 
       actionTask("StepInto") {
         "Lets step into. You can use action ${action(it)} or the button ${icon(AllIcons.Actions.TraceInto)} at the debug panel."
@@ -205,7 +209,7 @@ class JavaDebugLesson(module: Module) : KLesson("Debug Workflow", module, "JAVA"
         }
       }
 
-      highlightButton("Build Project")
+      highlightButtonById("CompileDirty")
 
       task("CompileDirty") {
         text("For big programs rerun can take too much time. " +
@@ -231,7 +235,7 @@ class JavaDebugLesson(module: Module) : KLesson("Debug Workflow", module, "JAVA"
         }
       }
 
-      highlightButton("Drop Frame")
+      highlightButtonById("Debugger.PopFrame")
 
       actionTask("Debugger.PopFrame") {
         "We patched our method, but right now we are still executing old obsolete ${code("extractNumber")} and it will throw the exception again. " +
@@ -239,21 +243,21 @@ class JavaDebugLesson(module: Module) : KLesson("Debug Workflow", module, "JAVA"
              "Click ${icon(AllIcons.Actions.PopFrame)} at the debug panel or use ${action(it)}."
       }
 
-      highlightButton("Step Over")
+      highlightButtonById("StepOver")
 
       actionTask("StepOver") {
         "Let's check that the call of ${code("extractNumber")} will not throw an exception now. " +
              "Use Step Over action ${action(it)} or click the button ${icon(AllIcons.Actions.TraceOver)}."
       }
 
-      highlightButton("Resume Program")
+      highlightButtonById("Resume")
 
       actionTask("Resume") {
         "Seems no exceptions by now. Let's continue execution with ${action(it)} or" +
              "click the button ${icon(AllIcons.Actions.Resume)}."
       }
 
-      highlightButton("Mute Breakpoints")
+      highlightButtonById("XDebugger.MuteBreakpoints")
 
       actionTask("XDebugger.MuteBreakpoints") {
         "Ups, same breakpoint again. Note that ${code("extractNumber(s)")} in <strong>Watches</strong> has now another value. " +
@@ -265,7 +269,7 @@ class JavaDebugLesson(module: Module) : KLesson("Debug Workflow", module, "JAVA"
 
       caret(sample.getPosition(3))
 
-      highlightButton("Run to Cursor")
+      highlightButtonById("RunToCursor")
 
       actionTask("RunToCursor") {
         "Let's check the result of ${code("findAverage")}. " +
@@ -274,7 +278,7 @@ class JavaDebugLesson(module: Module) : KLesson("Debug Workflow", module, "JAVA"
              "Note that <strong>Run to Cursor</strong> works even if breakpoints are muted."
       }
 
-      highlightButton("Evaluate Expression...")
+      highlightButtonById("EvaluateExpression")
 
       actionTask("EvaluateExpression") {
         "It seems the ${code("result")} is not an average we want to find." +
@@ -306,9 +310,15 @@ class JavaDebugLesson(module: Module) : KLesson("Debug Workflow", module, "JAVA"
         test { GuiTestUtil.shortcut(Key.ENTER) }
       }
 
+      highlightButtonById("Stop")
+
       actionTask("Stop") {
         "It will be a correct answer! Lets close the dialog and stop debugging by ${action(it)}" +
              "or button ${icon(AllIcons.Actions.Suspend)}."
+      }
+
+      task {
+        LearningUiHighlightingManager.clearHighlights()
       }
     }
 
@@ -318,13 +328,24 @@ class JavaDebugLesson(module: Module) : KLesson("Debug Workflow", module, "JAVA"
     }
   }
 
-  private fun LessonContext.highlightButton(text: String) {
+  private fun LessonContext.highlightButtonById(actionId: String) {
+    val needToFindButton = ActionManager.getInstance().getAction(actionId)
     task {
       LearningUiHighlightingManager.clearHighlights()
-      triggerByUiComponentAndHighlight<ActionButton> { ui ->
-        ui.presentation.text == text
+      ApplicationManager.getApplication().executeOnPooledThread {
+        val result = LearningUiUtil.findAllShowingComponentWithTimeout(null, ActionButton::class.java,
+                                                                       Timeout.timeout(1,
+                                                                                                                   TimeUnit.SECONDS)) { ui ->
+          ui.action == needToFindButton
           // Some buttons are duplicated to several tab-panels. It is a way to find an active one.
           && UIUtil.getParentOfType(Toolbar::class.java, ui)?.location?.x != 0
+        }
+
+        invokeLater {
+          for (button in result) {
+            LearningUiHighlightingManager.highlightComponent(button)
+          }
+        }
       }
     }
   }
