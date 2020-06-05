@@ -1,12 +1,12 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.lesson.kimpl
 
-import com.intellij.icons.AllIcons
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.editor.impl.DocumentMarkupModel
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ex.ToolWindowManagerListener
 import com.intellij.util.messages.Topic
+import com.intellij.xdebugger.XDebuggerManager
 import training.commands.kotlin.TaskContext
 import javax.swing.JList
 
@@ -69,12 +69,11 @@ fun <L> TaskContext.subscribeForMessageBus(topic: Topic<L>, handler: L) {
 }
 
 fun TaskContext.lineWithBreakpoints(): Set<Int> {
-  val document = editor.document
-  val breakpoints = DocumentMarkupModel.forDocument(document, project, true).allHighlighters
-    .filter {
-      it.gutterIconRenderer?.icon == AllIcons.Debugger.Db_set_breakpoint
-    }.map {
-      document.getLineNumber(it.startOffset) + 1
-    }.toSet()
-  return breakpoints
+  val breakpointManager = XDebuggerManager.getInstance(project).breakpointManager
+  return breakpointManager.allBreakpoints.filter {
+    val file = FileDocumentManager.getInstance().getFile(editor.document)
+    it.sourcePosition?.file == file
+  }.mapNotNull {
+    it.sourcePosition?.line
+  }.toSet()
 }
