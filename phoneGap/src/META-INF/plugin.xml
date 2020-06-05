@@ -33,7 +33,6 @@
     <vfs.asyncListener implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapFileListener"/>
     <notificationWhitelist groupIds="PhoneGap notification;Cordova Generator"/>
     <directoryProjectGenerator implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectBuilder.CordovaProjectGenerator"/>
-    <projectTemplatesFactory implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectBuilder.PhoneGapTemplatesFactory"/>
   </extensions>
 
 
