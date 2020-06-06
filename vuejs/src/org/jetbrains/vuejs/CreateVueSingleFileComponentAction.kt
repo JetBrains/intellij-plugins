@@ -25,8 +25,8 @@ class CreateVueSingleFileComponentAction : CreateFileFromTemplateAction(VueBundl
       PlatformDataKeys.PSI_ELEMENT.getData(dataContext) ?: return false)
   }
 
-  override fun buildDialog(project: Project?, directory: PsiDirectory?, builder: CreateFileFromTemplateDialog.Builder?) {
-    builder!!
+  override fun buildDialog(project: Project, directory: PsiDirectory, builder: CreateFileFromTemplateDialog.Builder) {
+    builder
       .setTitle("New $name")
       .addKind(name, VuejsIcons.Vue, VUE_TEMPLATE_NAME)
   }
