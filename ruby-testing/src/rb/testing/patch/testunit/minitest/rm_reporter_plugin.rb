@@ -25,6 +25,22 @@ else
       alias_method :run, :run_with_rm_hook
     end
   end
+  if defined? MiniTest::Unit
+    MiniTest::Unit.module_eval do
+      if defined? MiniTest::Unit.respond_to(:status)
+        alias_method :original_status, :status
+
+        def status(io = nil)
+          Minitest.rubymine_reporter.close_all_suites()
+          if io.nil?
+            return original_status
+          else
+            return original_status(io)
+          end
+        end
+      end
+    end
+  end
 
   module Minitest
     class << self
@@ -121,6 +137,10 @@ else
       def report
         close_all_suites
         []
+      end
+
+      def status
+        a = 1 / 0
       end
 
       def before_suite(suite)
