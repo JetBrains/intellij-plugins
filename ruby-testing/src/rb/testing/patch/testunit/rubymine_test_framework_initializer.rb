@@ -41,4 +41,6 @@ if is_minitest_run
   if defined? Minitest::Reporters.reporters
     Minitest::Reporters.reporters = [Minitest.rubymine_reporter]
   end
+
+  require 'rubymine_test_framework_initializer'
 end

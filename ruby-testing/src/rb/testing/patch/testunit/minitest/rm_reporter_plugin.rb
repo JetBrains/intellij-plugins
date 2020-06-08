@@ -33,6 +33,8 @@ else
     end
 
     def self.plugin_rm_reporter_init(options)
+      require 'rubymine_test_framework_initializer'
+
       Minitest.reporter.reporters.clear
       Minitest.reporter.reporters << self.rubymine_reporter
     end
