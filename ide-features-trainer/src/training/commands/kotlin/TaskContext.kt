@@ -28,8 +28,8 @@ import training.learn.lesson.kimpl.LessonExecutor
 import training.learn.lesson.kimpl.LessonUtil
 import training.ui.IncorrectLearningStateNotificationProvider
 import training.ui.LearningUiHighlightingManager
+import training.ui.LearningUiManager
 import training.ui.LearningUiUtil
-import training.ui.UiManager
 import java.awt.Component
 import java.awt.Rectangle
 import java.util.concurrent.CompletableFuture
@@ -337,10 +337,10 @@ class TaskContext(private val lessonExecutor: LessonExecutor,
   }
 
   fun icon(icon: Icon): String {
-    var index = UiManager.iconMap.getKeysByValue(icon)?.firstOrNull()
+    var index = LearningUiManager.iconMap.getKeysByValue(icon)?.firstOrNull()
     if (index == null) {
-      index = UiManager.iconMap.size.toString()
-      UiManager.iconMap[index] = icon
+      index = LearningUiManager.iconMap.size.toString()
+      LearningUiManager.iconMap[index] = icon
     }
     return "<icon_idx>$index</icon_idx>"
   }

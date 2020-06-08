@@ -26,7 +26,7 @@ internal class LearnToolWindowFactory : ToolWindowFactoryEx, DumbAware {
   }
 
   override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
-    val learnToolWindow = LearnToolWindow(project, toolWindow.disposable)
+    val learnToolWindow = LearnToolWindow(project)
     val contentManager = toolWindow.contentManager
     val content = contentManager.factory.createContent(learnToolWindow, null, false)
     content.isCloseable = false

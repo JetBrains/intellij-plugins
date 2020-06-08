@@ -19,8 +19,6 @@ import training.learn.interfaces.Lesson
 import training.learn.interfaces.Module
 
 class CourseManager internal constructor() {
-
-  var learnProject: Project? = null
   val mapModuleVirtualFile = mutableMapOf<Module, VirtualFile>()
 
   private val allModules: MutableList<Module> = mutableListOf()

@@ -23,8 +23,9 @@ import training.learn.LearnBundle
 import training.learn.interfaces.Lesson
 import training.learn.lesson.kimpl.LessonExecutor
 import training.ui.LearningUiHighlightingManager
+import training.ui.LearningUiManager
 import training.ui.Message
-import training.ui.UiManager
+import training.ui.views.LearnPanel
 import training.util.createBalloon
 import training.util.createNamedSingleThreadExecutor
 import training.util.editorPointForBalloon
@@ -53,6 +54,7 @@ class LessonManager {
     currentLessonExecutor = lessonExecutor
   }
 
+  /** Save to use in any moment (from AWT thread) */
   internal fun stopLesson() {
     currentLessonExecutor?.stopLesson()
     currentLessonExecutor?.lesson?.onStop()
@@ -63,18 +65,21 @@ class LessonManager {
 
   @Throws(Exception::class)
   internal fun initLesson(editor: Editor, cLesson: Lesson) {
+    val learnPanel = learnPanel ?: return
     stopLesson()
+    learnPanel.clear()
+
     //remove mouse blocks and action recorders from last editor
     lastEditor = editor //rearrange last editor
-    UiManager.setLessonNameOnLearnPanels(cLesson.name)
+    learnPanel.setLessonName(cLesson.name)
     val module = cLesson.module
     val moduleName = module.name
-    UiManager.setModuleNameOnLearnPanels(moduleName)
-    UiManager.initLessonOnLearnPanels(cLesson)
+    learnPanel.setModuleName(moduleName)
+    learnPanel.modulePanel.init(cLesson)
     if (cLesson.existedFile == null) {
       clearEditor(editor)
     }
-    clearLessonPanel()
+    learnPanel.clearLessonPanel()
 
     mouseListenerHolder?.restoreMouseActions(editor)
 
@@ -113,49 +118,51 @@ class LessonManager {
     }
 
     if (runnable != null)
-      UiManager.setButtonSkipActionOnLearnPanels(runnable, buttonText, true)
+      learnPanel.setButtonSkipActionAndText(runnable, buttonText, true)
     else
-      UiManager.setButtonSkipActionOnLearnPanels(null, null, false)
+      learnPanel.setButtonSkipActionAndText(null, null, false)
+    learnPanel.updateButtonUi()
   }
 
   fun addMessages(element: Element) {
-    UiManager.addMessagesToLearnPanels(Message.convert(element))
-    UiManager.updateToolWindowScrollPane()
+    learnPanel?.addMessages(Message.convert(element))
+    LearningUiManager.activeToolWindow?.updateScrollPane()
   }
 
   fun resetMessagesNumber(number: Int) {
-    UiManager.resetMessagesNumber(number)
+    learnPanel?.resetMessagesNumber(number)
   }
 
-  fun messagesNumber(): Int = UiManager.messagesNumber()
+  fun messagesNumber(): Int = learnPanel?.messagesNumber() ?: 0
 
   fun passExercise() {
-    UiManager.setPreviousMessagePassedOnLearnPanels()
+    learnPanel?.setPreviousMessagesPassed()
   }
 
   fun passLesson(project: Project, cLesson: Lesson) {
-    UiManager.setLessonPassedOnLearnPanels()
+    val learnPanel = learnPanel ?: return
+    learnPanel.setLessonPassed()
     if (cLesson.module.hasNotPassedLesson()) {
       val notPassedLesson = cLesson.module.giveNotPassedLesson()
-      UiManager.setButtonNextActionOnLearnPanels(Runnable {
+      learnPanel.setButtonNextAction(notPassedLesson, null) {
         try {
           CourseManager.instance.openLesson(project, notPassedLesson)
         }
         catch (e: Exception) {
           LOG.error(e)
         }
-      }, notPassedLesson)
+      }
     }
     else {
       val module = CourseManager.instance.giveNextModule(cLesson)
       if (module == null) {
-        UiManager.setButtonNextActionOnLearnPanels(Runnable {
-          clearLessonPanel()
-          UiManager.setModuleNameOnLearnPanels("")
-          UiManager.setLessonNameOnLearnPanels(LearnBundle.message("learn.ui.course.completed.caption"))
-          UiManager.addMessageToLearnPanels(LearnBundle.message("learn.ui.course.completed.description"))
-          UiManager.hideNextButtonOnLearnPanels()
-        }, null, LearnBundle.message("learn.ui.course.completed.caption"))
+        learnPanel.setButtonNextAction(null, LearnBundle.message("learn.ui.course.completed.caption")) {
+          learnPanel.clearLessonPanel()
+          learnPanel.setModuleName("")
+          learnPanel.setLessonName(LearnBundle.message("learn.ui.course.completed.caption"))
+          learnPanel.addMessage(LearnBundle.message("learn.ui.course.completed.description"))
+          learnPanel.hideNextButton()
+        }
       }
       else {
         var lesson = module.giveNotPassedLesson()
@@ -163,17 +170,18 @@ class LessonManager {
 
         val lessonFromNextModule = lesson
         val nextModule = lessonFromNextModule.module
-        UiManager.setButtonNextActionOnLearnPanels(Runnable {
+        learnPanel.setButtonNextAction(lesson, LearnBundle.message("learn.ui.button.next.module") + " " + nextModule.name) {
           try {
             CourseManager.instance.openLesson(project, lessonFromNextModule)
           }
           catch (e: Exception) {
             LOG.error(e)
           }
-        }, lesson, LearnBundle.message("learn.ui.button.next.module") + " " + nextModule.name)
+        }
       }
     }
-    UiManager.updateLessonsForPanels(cLesson)
+    learnPanel.updateUI()
+    learnPanel.modulePanel.updateLessons(cLesson)
   }
 
 
@@ -191,10 +199,6 @@ class LessonManager {
 
       }
     }
-  }
-
-  private fun clearLessonPanel() {
-    UiManager.clearLessonPanels()
   }
 
   private fun removeActionsRecorders() {
@@ -265,6 +269,9 @@ class LessonManager {
   fun unblockMouse(editor: Editor) {
     mouseListenerHolder?.restoreMouseActions(editor)
   }
+
+  private val learnPanel: LearnPanel?
+    get() = LearningUiManager.activeToolWindow?.learnPanel
 
   companion object {
     @Volatile

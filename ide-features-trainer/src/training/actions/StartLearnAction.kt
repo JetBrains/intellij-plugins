@@ -34,7 +34,7 @@ class StartLearnAction : AnAction(
 
   class MyDialog : DialogWrapper(null, true) {
 
-    val myLangChoosePanel = LanguageChoosePanel(opaque = false, addButton = false)
+    val myLangChoosePanel = LanguageChoosePanel(toolWindow = null, opaque = false, addButton = false)
 
     fun initialize(): MyDialog {
       isModal = true

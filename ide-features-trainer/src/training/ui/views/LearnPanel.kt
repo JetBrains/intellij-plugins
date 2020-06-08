@@ -14,10 +14,10 @@ import training.learn.CourseManager
 import training.learn.LearnBundle
 import training.learn.interfaces.Lesson
 import training.learn.lesson.kimpl.KLesson
+import training.ui.LearningUiManager
 import training.ui.LessonMessagePane
 import training.ui.Message
 import training.ui.UISettings
-import training.ui.UiManager
 import training.util.LearningLessonsAutoExecutor
 import training.util.TrainingMode
 import training.util.featureTrainerMode
@@ -86,7 +86,7 @@ class LearnPanel : JPanel() {
     moduleNameLabel.border = UISettings.instance.checkmarkShiftBorder
 
     allTopicsLabel.name = "allTopicsLabel"
-    allTopicsLabel.setListener({ _, _ -> UiManager.setModulesView() }, null)
+    allTopicsLabel.setListener({ _, _ -> LearningUiManager.resetModulesView() }, null)
 
     lessonNameLabel.name = "lessonNameLabel"
     lessonNameLabel.border = UISettings.instance.checkmarkShiftBorder
@@ -236,11 +236,10 @@ class LearnPanel : JPanel() {
     repaint()
   }
 
-  @JvmOverloads
-  fun setButtonNextAction(runnable: Runnable, notPassedLesson: Lesson?, text: String? = null) {
+  fun setButtonNextAction(notPassedLesson: Lesson?, text: String?, runnable: () -> Unit) {
     val buttonAction = object : AbstractAction() {
       override fun actionPerformed(actionEvent: ActionEvent) {
-        runnable.run()
+        runnable()
       }
     }
     buttonAction.putValue(Action.NAME, "Next")

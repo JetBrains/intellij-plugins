@@ -118,7 +118,7 @@ class LessonMessagePane : JTextPane() {
           Message.MessageType.CHECK -> document.insertString(document.length, message.text, ROBOTO)
           Message.MessageType.LINK -> appendLink(message)
           Message.MessageType.ICON -> message.toIcon()?.let { addPlaceholderForIcon(it) }
-          Message.MessageType.ICON_IDX -> UiManager.iconMap[message.text]?.let { addPlaceholderForIcon(it) }
+          Message.MessageType.ICON_IDX -> LearningUiManager.iconMap[message.text]?.let { addPlaceholderForIcon(it) }
         }
         message.endOffset = document.endPosition.offset
       }
@@ -255,7 +255,7 @@ class LessonMessagePane : JTextPane() {
         }
         else if (myMessage.type == Message.MessageType.ICON_IDX) {
           val rect = modelToView(myMessage.startOffset)
-          val icon = UiManager.iconMap[myMessage.text]
+          val icon = LearningUiManager.iconMap[myMessage.text]
           icon?.paintIcon(this, g2d, rect.x, rect.y)
         }
       }

@@ -19,7 +19,8 @@ import training.learn.CourseManager
 import training.learn.NewLearnProjectUtil
 import training.learn.lesson.LessonManager
 import training.learn.lesson.LessonStateManager
-import training.ui.UiManager
+import training.ui.LearnToolWindowFactory
+import training.ui.LearningUiManager
 import java.awt.Point
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -86,16 +87,21 @@ fun createAnAction(icon: Icon, action: (AnActionEvent) -> Unit): AnAction {
 }
 
 fun clearTrainingProgress() {
+  LessonManager.instance.stopLesson()
   LessonStateManager.resetPassedStatus()
-  UiManager.setLanguageChooserView()
+  for (toolWindow in LearnToolWindowFactory.learnWindowPerProject.values) {
+    toolWindow.reinitViews()
+    toolWindow.setModulesPanel()
+  }
+  LearningUiManager.activeToolWindow = null
 }
 
 fun resetPrimaryLanguage(activeLangSupport: LangSupport): Boolean {
   val old = LangManager.getInstance().getLangSupport()
   if (activeLangSupport != old) {
-    LangManager.getInstance().updateLangSupport(activeLangSupport)
-    UiManager.setModulesView()
     LessonManager.instance.stopLesson()
+    LangManager.getInstance().updateLangSupport(activeLangSupport)
+    LearningUiManager.activeToolWindow?.setModulesPanel()
     return true
   }
   return false
