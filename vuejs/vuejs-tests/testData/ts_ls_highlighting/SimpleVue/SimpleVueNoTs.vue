@@ -3,5 +3,5 @@
     var a1= 1;
     a1 = ""; //no ts errors here 
     
-    export default {}
+    export default {foo: 12}
 </script>
