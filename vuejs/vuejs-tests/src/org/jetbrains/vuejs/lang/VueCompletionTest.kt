@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang
 
 import com.intellij.codeInsight.CodeInsightSettings
@@ -1722,10 +1722,16 @@ export default class ComponentInsertion extends Vue {
     }
     myFixture.moveToOffsetBySignature("this.<caret>\$options.foo")
     myFixture.completeBasic()
-    myFixture.renderLookupItems(true,  true).let {
+    myFixture.renderLookupItems(true, true).let {
       assertContainsElements(it, "!foo#number#99")
       assertDoesntContain(it, "!\$foo#number#99")
     }
+  }
+
+  fun testSassGlobalFunctions() {
+    myFixture.configureByText("foo.vue", "<style lang='scss'>*{color: tra<caret> }</style>")
+    myFixture.completeBasic()
+    assertOrderedEquals(myFixture.lookupElementStrings!!, "transparent", "transparentize")
   }
 
   private fun assertDoesntContainVueLifecycleHooks() {
