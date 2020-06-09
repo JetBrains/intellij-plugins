@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.codeInsight;
 
 import com.intellij.codeInsight.JavaCodeInsightTestCase;
@@ -29,7 +30,6 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Consumer;
-import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -158,14 +158,14 @@ public class FlexNavigationTest extends JavaCodeInsightTestCase {
 
     if (expectedForSource != null) {
       PsiElement source = element.getNavigationElement();
-      final String expected = PathUtil.getCanonicalPath(expectedForSource.getUrl());
-      final String actual = PathUtil.getCanonicalPath(source.getContainingFile().getVirtualFile().getUrl());
+      final String expected = FileUtil.toCanonicalPath(expectedForSource.getUrl());
+      final String actual = FileUtil.toCanonicalPath(source.getContainingFile().getVirtualFile().getUrl());
       assertEquals("element with source", expected, actual);
     }
     if (expectedForDoc != null) {
       PsiElement doc = FlexDocumentationProvider.findTopLevelNavigationElement((JSQualifiedNamedElement)element);
-      final String expected = PathUtil.getCanonicalPath(expectedForDoc.getUrl());
-      final String actual = PathUtil.getCanonicalPath(doc.getContainingFile().getVirtualFile().getUrl());
+      final String expected = FileUtil.toCanonicalPath(expectedForDoc.getUrl());
+      final String actual = FileUtil.toCanonicalPath(doc.getContainingFile().getVirtualFile().getUrl());
       assertEquals("element with asdoc", expected, actual);
     }
   }
