@@ -71,8 +71,6 @@
       <keyboard-shortcut first-keystroke="control shift RIGHT" keymap="Mac OS X 10.5+"/>
       <keyboard-shortcut first-keystroke="control shift RIGHT" keymap="Mac OS X"/>
     </action>
-    <!--TODO: REMOVE THIS ACTION BEFORE RELEASE-->
-    <action id="learn.open.chooseLang" text="Choose Lang" class="training.actions.ShowChooseLangPanelAction"/>
 
     <!-- Help -->
     <action id="ShowLearnPanel" class="training.actions.OpenLearnPanel" text="IDE Interactive Guide" icon="FeaturesTrainerIcons.FeatureTrainerToolWindow">
