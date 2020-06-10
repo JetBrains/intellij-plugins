@@ -18,7 +18,7 @@ class DenoTypeScriptServiceProtocol(project: Project,
   TypeScriptServiceStandardOutputProtocol(project, settings, readyConsumer, eventConsumer, serviceName, tsServicePath) {
 
   override fun createState(): TypeScriptServiceInitialStateObject {
-    val state = super.createState() //actually right now we don't need to override any properties for vue service
+    val state = super.createState()
     state.pluginName = "denoTypeScript"
     val pluginProbe = JSLanguageServiceUtil.getPluginDirectory(this::class.java, "deno-service/node_modules/typescript-deno-plugin").parentFile.parentFile.path
     state.pluginProbeLocations = state.pluginProbeLocations + LocalFilePath.create(pluginProbe)
