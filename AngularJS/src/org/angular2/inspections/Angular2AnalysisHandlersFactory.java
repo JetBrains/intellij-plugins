@@ -64,7 +64,7 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
       }
 
       @Override
-      protected Ref<String> createUnresolvedCallReferenceMessage(JSReferenceExpression methodExpression, boolean isNewExpression) {
+      protected @NotNull Ref<String> createUnresolvedCallReferenceMessage(@NotNull JSReferenceExpression methodExpression, boolean isNewExpression) {
         if (methodExpression instanceof Angular2PipeReferenceExpression) {
           return Ref.create(Angular2Bundle.message("angular.inspection.unresolved-pipe.message", methodExpression.getReferenceName()));
         }
