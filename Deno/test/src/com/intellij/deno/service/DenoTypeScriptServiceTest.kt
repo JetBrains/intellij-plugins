@@ -1,6 +1,6 @@
-package com.intellij.deno
+package com.intellij.deno.service
 
-import com.intellij.deno.service.DenoTypeScriptService
+import com.intellij.deno.DenoSettings
 import com.intellij.lang.javascript.service.JSLanguageService
 import com.intellij.lang.javascript.service.JSLanguageServiceBase
 import com.intellij.lang.javascript.service.JSLanguageServiceProvider

@@ -1,6 +1,7 @@
-package com.intellij.deno
+package com.intellij.deno.codeInsight
 
 import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.deno.DenoTestBase
 
 class DenoModulesTest : DenoTestBase() {
   

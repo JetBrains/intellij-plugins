@@ -1,5 +1,6 @@
-package com.intellij.deno
+package com.intellij.deno.codeInsight
 
+import com.intellij.deno.DenoTestBase
 import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase
 
 class DenoHighlightTest : DenoTestBase() {
