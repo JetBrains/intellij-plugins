@@ -43,6 +43,34 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
     return configs.any { service.parseConfigFile(it)?.include?.accept(virtualFile) ?: false }
   }
 
+  override fun postprocessErrors(file: PsiFile, errors: MutableList<JSAnnotationError>): List<JSAnnotationError> {
+    if (file.virtualFile != null && isVueFile(file.virtualFile)) {
+      return ReadAction.compute<List<JSAnnotationError>, Throwable> {
+        val document = PsiDocumentManager.getInstance(file.project).getDocument(file)
+        val module = findModule(file)
+        if (module != null && document != null) {
+          val startOffset = module.textRange.startOffset
+          val startLine = document.getLineNumber(startOffset)
+          val startColumn = startOffset - document.getLineStartOffset(startLine)
+          val endOffset = module.textRange.endOffset
+          val endLine = document.getLineNumber(endOffset)
+          val endColumn = endOffset - document.getLineStartOffset(endLine)
+          return@compute errors.filter { error -> isWithinRange(error, startLine, startColumn, endLine, endColumn) }
+        }
+        return@compute super.postprocessErrors(file, errors)
+      }
+    }
+    return super.postprocessErrors(file, errors)
+  }
+
+  private fun isWithinRange(error: JSAnnotationError, startLine: Int, startColumn: Int, endLine: Int, endColumn: Int): Boolean {
+    if (error !is JSLanguageServiceAnnotationResult) {
+      return false
+    }
+    return (error.line > startLine || error.line == startLine && error.column >= startColumn) &&
+           (error.endLine < endLine || error.endLine == endLine && error.endColumn <= endColumn)
+  }
+
   override fun getProcessName(): String = "Vue TypeScript"
 
   override fun isServiceEnabled(context: VirtualFile): Boolean = super.isServiceEnabled(context) && isVueServiceEnabled()

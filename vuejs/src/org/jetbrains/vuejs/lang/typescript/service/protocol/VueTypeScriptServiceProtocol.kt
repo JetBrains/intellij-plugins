@@ -19,7 +19,7 @@ class VueTypeScriptServiceProtocol(project: Project,
 
   override fun createState(): TypeScriptServiceInitialStateObject {
     val state = super.createState()
-    //actually right now we don't need to override any properties for vue service
+
     state.pluginName = "vueTypeScript"
     val pluginProbe = JSLanguageServiceUtil.getPluginDirectory(this::class.java, "vue-service/node_modules/ws-typescript-vue-plugin").parentFile.parentFile.path
     state.pluginProbeLocations = state.pluginProbeLocations + LocalFilePath.create(pluginProbe)
