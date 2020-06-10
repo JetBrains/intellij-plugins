@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang
 
 import com.intellij.lang.javascript.JSTestUtils.testWithinLanguageLevel
@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection
 import com.intellij.openapi.application.PathManager
+import com.intellij.psi.css.inspections.invalid.CssInvalidFunctionInspection
 import com.intellij.psi.css.inspections.invalid.CssInvalidPseudoSelectorInspection
 import com.intellij.spellchecker.inspections.SpellCheckingInspection
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
@@ -13,6 +14,8 @@ import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.util.ThrowableRunnable
 import com.intellij.xml.util.CheckTagEmptyBodyInspection
 import junit.framework.TestCase
+import org.jetbrains.plugins.scss.inspections.SassScssResolvedByNameOnlyInspection
+import org.jetbrains.plugins.scss.inspections.SassScssUnresolvedVariableInspection
 import org.jetbrains.vuejs.lang.html.VueFileType
 
 class VueHighlightingTest : BasePlatformTestCase() {
@@ -1525,6 +1528,21 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
     myFixture.checkHighlighting()
   }
 
+  fun testScssBuiltInModules() {
+    myFixture.enableInspections(CssInvalidFunctionInspection::class.java,
+                                SassScssResolvedByNameOnlyInspection::class.java,
+                                SassScssUnresolvedVariableInspection::class.java)
+    myFixture.configureByFile(getTestName(true) + ".vue")
+    myFixture.checkHighlighting()
+  }
+
+  fun testSassBuiltInModules() {
+    myFixture.enableInspections(CssInvalidFunctionInspection::class.java,
+                                SassScssResolvedByNameOnlyInspection::class.java,
+                                SassScssUnresolvedVariableInspection::class.java)
+    myFixture.configureByFile(getTestName(true) + ".vue")
+    myFixture.checkHighlighting()
+  }
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {
