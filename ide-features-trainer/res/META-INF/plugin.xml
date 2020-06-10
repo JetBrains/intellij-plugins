@@ -53,7 +53,11 @@
       serviceImplementation="training.learn.lesson.LessonStateBase"/>
     <applicationService
       serviceImplementation="training.statistic.StatisticBase"/>
-    <toolWindow id="Learn" icon="FeaturesTrainerIcons.FeatureTrainerToolWindow" factoryClass="training.ui.LearnToolWindowFactory"/>
+    <toolWindow id="Learn"
+                canCloseContents="true"
+                icon="FeaturesTrainerIcons.FeatureTrainerToolWindow"
+                factoryClass="training.ui.LearnToolWindowFactory"
+    />
 
     <editorNotificationProvider implementation="training.ui.IncorrectLearningStateNotificationProvider"/>
 
@@ -66,11 +70,16 @@
   </extensions>
 
   <actions>
-    <action id="learn.next.lesson" class="training.actions.NextLessonAction" text="Next Lesson">
+    <action id="learn.next.lesson" class="training.actions.NextNonPassedLessonAction" text="Next Non-Passed Lesson">
       <keyboard-shortcut first-keystroke="alt shift RIGHT" keymap="$default"/>
       <keyboard-shortcut first-keystroke="control shift RIGHT" keymap="Mac OS X 10.5+"/>
       <keyboard-shortcut first-keystroke="control shift RIGHT" keymap="Mac OS X"/>
     </action>
+
+    <action id="PreviousLessonAction" class="training.actions.PreviousLessonAction" text="Previous Lesson"/>
+    <action id="NextLessonAction" class="training.actions.NextLessonAction" text="Next Lesson"/>
+    <action id="ResetLearningProgressAction" class="training.actions.ResetLearningProgressAction" text="Reset Learning Progress"/>
+    <action id="RestartLessonAction" class="training.actions.RestartLessonAction" text="Restart Lesson"/>
 
     <!-- Help -->
     <action id="ShowLearnPanel" class="training.actions.OpenLearnPanel" text="IDE Interactive Guide" icon="FeaturesTrainerIcons.FeatureTrainerToolWindow">
@@ -82,6 +91,10 @@
     <registryKey key="ide.features.trainer.mode"
                  description="This is internal option to use different development modes"
                  defaultValue="normal"
+                 restartRequired="false"/>
+    <registryKey key="ide.features.trainer.new.ui"
+                 description="Turn on it to look at new developing UI for IFT"
+                 defaultValue="FALSE"
                  restartRequired="false"/>
   </extensions>
 </idea-plugin>

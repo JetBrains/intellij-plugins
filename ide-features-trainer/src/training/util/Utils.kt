@@ -114,3 +114,6 @@ fun findLanguageSupport(project: Project): LangSupport? {
   }
   return null
 }
+
+val useNewLearningUi: Boolean
+  get() = Registry.`is`("ide.features.trainer.new.ui", false)

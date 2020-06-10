@@ -10,6 +10,7 @@ import training.learn.exceptons.NoSdkException
 import java.io.File
 
 interface LangSupport {
+  /** Is should be a language ID */
   val primaryLanguage: String
   val defaultProductName: String
     get() = ""

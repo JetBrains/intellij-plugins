@@ -25,8 +25,7 @@ import java.nio.file.Files
 class PythonLangSupport : AbstractLangSupport() {
   override val defaultProjectName = "PyCharmLearningProject"
 
-  override val primaryLanguage: String
-    get() = "python"
+  override val primaryLanguage = "Python"
 
   override val defaultProductName: String = "PyCharm"
 

@@ -8,22 +8,15 @@ import training.learn.CourseManager
 import training.learn.lesson.LessonManager
 import training.ui.LearningUiManager
 
-class NextLessonAction : AnAction(AllIcons.Actions.Forward) {
+class RestartLessonAction : AnAction(AllIcons.Actions.Restart) {
   override fun actionPerformed(e: AnActionEvent) {
     val activeToolWindow = LearningUiManager.activeToolWindow ?: return
     val lesson = LessonManager.instance.currentLesson ?: return
-    val lessonsForModules = CourseManager.instance.lessonsForModules
-    val index = lessonsForModules.indexOf(lesson)
-    if (index < 0 || index >= lessonsForModules.size) return
-    CourseManager.instance.openLesson(activeToolWindow.project, lessonsForModules[index + 1])
+    CourseManager.instance.openLesson(activeToolWindow.project, lesson)
   }
 
   override fun update(e: AnActionEvent) {
     val activeToolWindow = LearningUiManager.activeToolWindow
-    val lesson = LessonManager.instance.currentLesson
-    e.presentation.isEnabled = activeToolWindow != null
-                               && activeToolWindow.project == e.project
-                               && lesson != null
-                               && CourseManager.instance.lessonsForModules.lastOrNull() != lesson
+    e.presentation.isEnabled = activeToolWindow != null && activeToolWindow.project == e.project
   }
 }

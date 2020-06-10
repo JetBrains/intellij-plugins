@@ -21,6 +21,7 @@ import training.ui.UISettings
 import training.util.LearningLessonsAutoExecutor
 import training.util.TrainingMode
 import training.util.featureTrainerMode
+import training.util.useNewLearningUi
 import java.awt.*
 import java.awt.event.ActionEvent
 import java.net.URI
@@ -67,7 +68,9 @@ class LearnPanel : JPanel() {
     add(lessonPanel)
     modulePanel.alignmentX = Component.LEFT_ALIGNMENT
 
-    add(modulePanel)
+    if (!useNewLearningUi) {
+      add(modulePanel)
+    }
 
     //set LearnPanel UI
     preferredSize = Dimension(UISettings.instance.width, 100)
@@ -118,9 +121,11 @@ class LearnPanel : JPanel() {
     buttonPanel.add(button)
 
     //shift right for checkmark
-    lessonPanel.add(moduleNameLabel)
-    lessonPanel.add(Box.createVerticalStrut(UISettings.instance.lessonNameGap))
-    lessonPanel.add(lessonNameLabel)
+    if(!useNewLearningUi) {
+      lessonPanel.add(moduleNameLabel)
+      lessonPanel.add(Box.createVerticalStrut(UISettings.instance.lessonNameGap))
+      lessonPanel.add(lessonNameLabel)
+    }
     lessonPanel.add(lessonMessagePane)
     lessonPanel.add(Box.createVerticalStrut(UISettings.instance.beforeButtonGap))
     lessonPanel.add(Box.createVerticalGlue())

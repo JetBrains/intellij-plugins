@@ -156,7 +156,7 @@ class OpenLessonAction(val lesson: Lesson) : AnAction(lesson.name) {
 
       //open next lesson if current is passed
       LOG.debug("${projectWhereToStartLesson.name}: Set lesson view")
-      LearningUiManager.activeToolWindow?.setLearnPanel()
+      LearningUiManager.activeToolWindow?.setLearnPanel(lesson)
       LOG.debug("${projectWhereToStartLesson.name}: XmlLesson onStart()")
       lesson.onStart()
 

@@ -26,6 +26,9 @@ class CourseManager internal constructor() {
   val modules: List<Module>
     get() = LangManager.getInstance().getLangSupport()?.let { filterByLanguage(it) } ?: emptyList()
 
+  val lessonsForModules: List<Lesson>
+    get() = modules.map { it.lessons }.flatten()
+
   init {
     initXmlModules()
   }
@@ -89,19 +92,17 @@ class CourseManager internal constructor() {
       .firstOrNull { it.name.toUpperCase() == lessonName.toUpperCase() }
   }
 
-  /**
-   * @return null if lesson has no module or it is only one lesson in module
-   */
-  fun giveNextLesson(currentLesson: Lesson): Lesson? {
-    val module = currentLesson.module
-    val lessons = module.lessons
-    val size = lessons.size
-    if (size == 1) return null
-    return lessons.firstOrNull {
-      lessons.indexOf(it) > lessons.indexOf(currentLesson) &&
-      lessons.indexOf(it) < lessons.size && !it.passed
+  fun getNextNonPassedLesson(currentLesson: Lesson?): Lesson? {
+    val lessons = lessonsForModules
+    val list = if (currentLesson != null) {
+      val index = lessons.indexOf(currentLesson)
+      if (index < 0) return null
+      lessons.subList(index + 1, lessons.size) + lessons.subList(0, index + 1)
     }
-      ?.let { lessons[lessons.indexOf(it)] }
+    else {
+      lessons
+    }
+    return list.find { !it.passed }
   }
 
   fun giveNextModule(currentLesson: Lesson): Module? {
