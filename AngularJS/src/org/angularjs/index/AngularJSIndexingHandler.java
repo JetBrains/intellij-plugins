@@ -22,10 +22,7 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure;
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
-import com.intellij.lang.javascript.psi.types.JSContext;
-import com.intellij.lang.javascript.psi.types.JSNamedType;
-import com.intellij.lang.javascript.psi.types.JSTypeSource;
-import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
+import com.intellij.lang.javascript.psi.types.*;
 import com.intellij.lang.javascript.psi.util.JSTreeUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
@@ -630,6 +627,26 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
           if (argument instanceof JSLiteralExpression && ((JSLiteralExpression)argument).isQuotedLiteral()) {
             return unquote(argument);
           }
+        }
+      }
+    }
+    return null;
+  }
+
+  @Override
+  public @Nullable JSNamespace findNamespace(@NotNull JSExpression expression, @Nullable Set<PsiElement> visited) {
+    PsiElement argumentList = expression.getParent();
+    if (!(argumentList instanceof JSArgumentList)) return null;
+    PsiElement callExpression = argumentList.getParent();
+    if (!(callExpression instanceof JSCallExpression)) return null;
+    JSExpression methodExpression = ((JSCallExpression)callExpression).getMethodExpression();
+    if (methodExpression instanceof JSReferenceExpression &&
+        "controller".equals(((JSReferenceExpression)methodExpression).getReferenceName())) {
+      JSExpression[] arguments = ((JSArgumentList)argumentList).getArguments();
+      if (arguments.length >= 2 && arguments[1] == expression && arguments[0] instanceof JSLiteralExpression) {
+        JSQualifiedName name = JSSymbolUtil.getLiteralValueAsQualifiedName((JSLiteralExpression)arguments[0]);
+        if (name != null) {
+          return JSNamedTypeFactory.createNamespace(name, JSContext.INSTANCE, expression);
         }
       }
     }
