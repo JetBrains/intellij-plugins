@@ -27,7 +27,7 @@ else
   end
   if defined? MiniTest::Unit
     MiniTest::Unit.module_eval do
-      if defined? MiniTest::Unit.respond_to(:status)
+      if defined? MiniTest::Unit and MiniTest::Unit.respond_to?(:status)
         alias_method :original_status, :status
 
         def status(io = nil)
@@ -137,10 +137,6 @@ else
       def report
         close_all_suites
         []
-      end
-
-      def status
-        a = 1 / 0
       end
 
       def before_suite(suite)
