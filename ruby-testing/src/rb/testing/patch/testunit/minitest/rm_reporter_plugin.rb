@@ -33,9 +33,9 @@ else
         def status(io = nil)
           Minitest.rubymine_reporter.close_all_suites()
           if io.nil?
-            return original_status
+            original_status
           else
-            return original_status(io)
+            original_status(io)
           end
         end
       end
