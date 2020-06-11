@@ -131,6 +131,6 @@ public class CordovaBasedExecutor {
 
   @NotNull
   public String getFrameworkName() {
-    return "PhoneGap/Cordova";
+    return "Cordova";
   }
 }

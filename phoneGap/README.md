@@ -1,6 +1,6 @@
-###About PhoneGap/Cordova Plugin for IntelliJ
+###About Cordova Plugin for IntelliJ
 
-PhoneGap/Cordova plugin for IntelliJ IDEA
+Cordova plugin for IntelliJ IDEA
 
 #####Supported Cordova-based Frameworks: Cordova, PhoneGap, Ionic
 * Project wizard
@@ -10,12 +10,12 @@ PhoneGap/Cordova plugin for IntelliJ IDEA
 * Auto exclude 'platforms' directory
 
 ###How to use
-####(0) Install PhoneGap/Cordova plugin for IntelliJ
-Preference -> Plugins -> Search "PhoneGap/Cordova Plugin"
+####(0) Install Cordova plugin for IntelliJ
+Preference -> Plugins -> Search "Cordova Plugin"
 
 Restart IntelliJ IDEA
 
-####(1) Install NodeJS and PhoneGap/Cordova/Ionic
+####(1) Install NodeJS and Cordova/PhoneGap/Ionic
 Please install from [Node.js Official site](http://nodejs.org/)
 
 For PhoneGap
@@ -43,16 +43,16 @@ See https://developer.apple.com/xcode/
 
 $npm install -g ios-sim
 
-####(3) Create PhoneGap Project
+####(3) Create Cordova Project
 
 see https://confluence.jetbrains.com/display/IntelliJIDEA/PhoneGap%2C+Cordova+and+Ionic
 
-####(4) Run PhoneGap app
-Run -> Edit Configuration -> Create new PhoneGap/Cordova run Configuration -> run
+####(4) Run Cordova app
+Run -> Edit Configuration -> Create new Cordova run Configuration -> run
 
 ### ToDo List
 
-* Code completion for PhoneGap function, event (onDeviceReady(), onSuccess(), ..etc)
+* Code completion for Cordova function, event (onDeviceReady(), onSuccess(), ..etc)
 * WindowsPhone support
 * weinre support
 * Windows Phone support
