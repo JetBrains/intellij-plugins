@@ -5,7 +5,6 @@ import com.intellij.util.ResourceUtil;
 
 import javax.swing.tree.TreeNode;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.stream.Stream;
 
 import static com.jetbrains.cidr.cpp.embedded.platformio.project.DeviceTreeNode.TYPE.*;
@@ -38,8 +37,8 @@ public class PlatformioBoardsParserTest extends UsefulTestCase {
                                                  "--board", "disco_f334c8", "-O", "framework=stm32cube"));
   }
 
-  @SuppressWarnings({"unchecked", "rawtypes"})
+  @SuppressWarnings("unchecked")
   private static Stream<DeviceTreeNode> childrenStream(TreeNode treeNode) {
-    return Collections.list((Enumeration)treeNode.children()).stream();
+    return Collections.list(treeNode.children()).stream();
   }
 }
