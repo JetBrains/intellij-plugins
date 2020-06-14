@@ -19,7 +19,7 @@ final class PrettierCompatibleCodeStyleInstaller implements DirectoryProjectConf
   }
 
   @Override
-  public void configureProject(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull Ref<Module> moduleRef, boolean isNewProject) {
+  public void configureProject(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull Ref<Module> moduleRef, boolean isProjectCreatedWithWizard) {
     if (project.isDefault() || project.getBasePath() == null || project.isDisposed()) {
       return;
     }

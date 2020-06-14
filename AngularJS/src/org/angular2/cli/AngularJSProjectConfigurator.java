@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class AngularJSProjectConfigurator implements DirectoryProjectConfigurator {
   @Override
-  public void configureProject(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull Ref<Module> moduleRef, boolean isNewProject) {
+  public void configureProject(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull Ref<Module> moduleRef, boolean isProjectCreatedWithWizard) {
     Module module = moduleRef.get();
     if (module == null) {
       return;
