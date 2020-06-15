@@ -220,7 +220,14 @@ class VueParserTest : HtmlParsingTest("", "vue",
     """.trimIndent())
   }
 
-  private class MockJSRootConfiguration internal constructor(project: Project) : JSRootConfigurationBase(project) {
+  fun testLangAttribute() {
+    doTestVue("""
+      <template><div lang="ts"><span></span></div></template>
+      <template lang="html"><div lang="ts"><span></span></div></template>
+    """.trimIndent())
+  }
+
+  private class MockJSRootConfiguration constructor(project: Project) : JSRootConfigurationBase(project) {
 
     override fun storeLanguageLevelAndUpdateCaches(languageLevel: JSLanguageLevel?) {
       if (myState == null) myState = State()

@@ -78,6 +78,7 @@ class VueLexerHelper(private val handle: VueLexerHandle) {
       handle.seenScriptType = false
       handle.scriptType = null
       handle.seenScript = false
+      seenTemplate = false
     }
     return tokenType
   }
@@ -135,6 +136,9 @@ class VueLexerHelper(private val handle: VueLexerHandle) {
 
   inner class VueTagClosedHandler : BaseHtmlLexer.TokenHandler {
     override fun handleElement(lexer: Lexer) {
+      if (seenTemplate && handle.scriptType == null) {
+        seenTemplate = false
+      }
       if (seenTemplate && handle.seenScript) {
         handle.seenTag = true
       }
