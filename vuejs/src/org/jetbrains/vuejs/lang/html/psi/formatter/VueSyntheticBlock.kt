@@ -5,9 +5,7 @@ import com.intellij.formatting.Block
 import com.intellij.formatting.BlockEx
 import com.intellij.formatting.Indent
 import com.intellij.formatting.Spacing
-import com.intellij.lang.ASTNode
 import com.intellij.lang.Language
-import com.intellij.lang.LanguageNamesValidation
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.formatter.xml.AnotherLanguageBlockWrapper
 import com.intellij.psi.formatter.xml.SyntheticBlock
@@ -27,16 +25,13 @@ class VueSyntheticBlock(subBlocks: List<Block>,
   override fun getSpacing(child1: Block?, child2: Block): Spacing? =
     if (isVueInterpolationBorder(child1, child2) || isVueInterpolationBorder(child2, child1)) {
       val injectedWrapper = (child1 as? AnotherLanguageBlockWrapper ?: child2 as AnotherLanguageBlockWrapper)
-      val injectedNode = injectedWrapper.node
-      val isSimple = isSimpleInterpolation(injectedNode)
       val spacesWithinInterpolation: Boolean
       val insertNewLine: Boolean
       myXmlFormattingPolicy.settings.getCustomSettings(VueCodeStyleSettings::class.java).let {
-        spacesWithinInterpolation = if (isSimple) it.SPACES_WITHIN_SIMPLE_INTERPOLATION_EXPRESSIONS else it.SPACES_WITHIN_COMPLEX_INTERPOLATION_EXPRESSIONS
-        insertNewLine = if (isSimple)
-          if (child1 !is AnotherLanguageBlockWrapper) it.SIMPLE_INTERPOLATION_NEW_LINE_AFTER_START_DELIMITER else it.SIMPLE_INTERPOLATION_NEW_LINE_BEFORE_END_DELIMITER
-        else
-          if (child1 !is AnotherLanguageBlockWrapper) it.COMPLEX_INTERPOLATION_NEW_LINE_AFTER_START_DELIMITER else it.COMPLEX_INTERPOLATION_NEW_LINE_BEFORE_END_DELIMITER
+        spacesWithinInterpolation = it.SPACES_WITHIN_INTERPOLATION_EXPRESSIONS
+        insertNewLine = if (child1 !is AnotherLanguageBlockWrapper) it.INTERPOLATION_NEW_LINE_AFTER_START_DELIMITER
+        else it.INTERPOLATION_NEW_LINE_BEFORE_END_DELIMITER
+
       }
       val spaces = if (spacesWithinInterpolation) 1 else 0
       if (insertNewLine) {
@@ -52,7 +47,7 @@ class VueSyntheticBlock(subBlocks: List<Block>,
         }
       }
       else {
-        Spacing.createSpacing(spaces, spaces, 0, !isSimple, myXmlFormattingPolicy.keepBlankLines)
+        Spacing.createSpacing(spaces, spaces, 0, true, myXmlFormattingPolicy.keepBlankLines)
       }
     }
     else {
@@ -72,8 +67,5 @@ class VueSyntheticBlock(subBlocks: List<Block>,
     fun isVueInterpolationBorder(child1: Block?, child2: Block?): Boolean =
       (child1 is VueHtmlBlock || child1 is VueBlock)
       && (child2 as? AnotherLanguageBlockWrapper)?.node?.psi?.language == VueJSLanguage.INSTANCE
-
-    fun isSimpleInterpolation(node: ASTNode) =
-      LanguageNamesValidation.isIdentifier(VueJSLanguage.INSTANCE, node.chars.trim().toString())
   }
 }

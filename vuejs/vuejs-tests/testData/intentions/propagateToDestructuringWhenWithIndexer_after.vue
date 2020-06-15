@@ -2,7 +2,7 @@
     <div class="hello">
         <h1>{{ msg }}</h1>
         <ul>
-            <li v-for="({name, price}<caret>, i) in list"> {{i}}:{{name}} - {{price}}</li>
+            <li v-for="({name, price}<caret>, i) in list"> {{ i }}:{{ name }} - {{ price }}</li>
         </ul>
     </div>
 </template>

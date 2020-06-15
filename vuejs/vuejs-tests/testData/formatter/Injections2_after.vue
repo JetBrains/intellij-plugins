@@ -1,12 +1,12 @@
 <template>
   <div>
-    {{ 12 + 124 }} a b b b b {{ 34 + 45 }}
+    {{12 + 124}} a b b b b {{34 + 45}}
   </div>
   <div>
     { 56 + 124 }} a b b b b { 78 + 45 }}
   </div>
   <div> 12 a a
-    {{ 90 + 124 }} a b b b b {{ 12 + 45 }}{{ 8*3 }}ab{{ 45 + 8 }}
+    {{90 + 124}} a b b b b {{12 + 45}}{{8*3}}ab{{45 + 8}}
     <div>
       <div>
 
@@ -19,11 +19,13 @@
       gettext('Lorem ipsum dolor sit amet, consectetur adipisicing elit. At dolor ducimus est et laboriosam recusandae rerum? Ad adipisci aperiam, beatae corporis culpa cum cumque deserunt eos et illo ipsa libero nisi nobis optio perferendis quasi ratione reprehenderit rerum velit voluptatem? Architecto eum harum illum ipsum iusto molestiae quaerat ratione repellat.')
     }}</h1>
   <div>
-    {{ 12 + 124 }} a b b b b
+    {{12 + 124}} a b b b b
   </div>
   <div>
-    a b b b b {{ 12 + 124 }}
-    {{name}} {{name}} {{
+    a b b b b {{12 + 124}}
+    {{name}} {{
+      name
+    }} {{
       (function () {
         var foo = 34
         return foo
@@ -32,8 +34,8 @@
     }}
   </div>
   <div>
-    a b {{ 12 + 124 }} a b
+    a b {{12 + 124}} a b
   </div>
   <div>a b {{ }} a b {{name}}</div>
-  {{ 2*34 }} {{name}}
+  {{2*34}} {{name}}
 </template>

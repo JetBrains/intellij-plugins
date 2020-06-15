@@ -25,14 +25,8 @@ class VueCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
      src="./assets/logo.png">
         <HelloWorld  
      msg =  "Welcome to Your Vue.js App"/></div>
-     {{simple   }}
-     {{veryLongLongLongLongLongLongLongLongSimpleInterpolation}}
-{{
-simpleOverMultipleLines}}
-     {{a + complex
-     * interpolation + over (multiple - lines)}}
-     {{ a + complex *interpolation(in_a-single  - line)}}
-     {{12+13}} 
+     <span>{{descr    }}</span>
+     <span>{{ (function (){ alert("Vue is great!")   } return "Really great!")() }}</span>
     </template>
     
      <script>
@@ -90,42 +84,25 @@ simpleOverMultipleLines}}
   override fun customizeSettings(consumer: CodeStyleSettingsCustomizable, settingsType: SettingsType) {
     when (settingsType) {
       SettingsType.SPACING_SETTINGS -> {
-        consumer.showCustomOption(VueCodeStyleSettings::class.java, "SPACES_WITHIN_SIMPLE_INTERPOLATION_EXPRESSIONS",
-                                  VueBundle.message("vue.formatting.spacing.within.simple-interpolations"),
-                                  VueBundle.message("vue.formatting.spacing.within.group"))
-        consumer.showCustomOption(VueCodeStyleSettings::class.java, "SPACES_WITHIN_COMPLEX_INTERPOLATION_EXPRESSIONS",
-                                  VueBundle.message("vue.formatting.spacing.within.complex-interpolations"),
+        consumer.showCustomOption(VueCodeStyleSettings::class.java, "SPACES_WITHIN_INTERPOLATION_EXPRESSIONS",
+                                  VueBundle.message("vue.formatting.spacing.within.interpolations"),
                                   VueBundle.message("vue.formatting.spacing.within.group"))
       }
       SettingsType.WRAPPING_AND_BRACES_SETTINGS -> {
 
         consumer.showCustomOption(VueCodeStyleSettings::class.java,
-                                  "SIMPLE_INTERPOLATION_WRAP",
-                                  VueBundle.message("vue.formatting.wrapping.simple-interpolations"),
+                                  "INTERPOLATION_WRAP",
+                                  VueBundle.message("vue.formatting.wrapping.interpolations"),
                                   null,
                                   CodeStyleSettingsCustomizable.WRAP_OPTIONS, CodeStyleSettingsCustomizable.WRAP_VALUES)
         consumer.showCustomOption(VueCodeStyleSettings::class.java,
-                                  "SIMPLE_INTERPOLATION_NEW_LINE_AFTER_START_DELIMITER",
+                                  "INTERPOLATION_NEW_LINE_AFTER_START_DELIMITER",
                                   VueBundle.message("vue.formatting.wrapping.new-line-after-start-delimiter"),
-                                  VueBundle.message("vue.formatting.wrapping.simple-interpolations"))
+                                  VueBundle.message("vue.formatting.wrapping.interpolations"))
         consumer.showCustomOption(VueCodeStyleSettings::class.java,
-                                  "SIMPLE_INTERPOLATION_NEW_LINE_BEFORE_END_DELIMITER",
+                                  "INTERPOLATION_NEW_LINE_BEFORE_END_DELIMITER",
                                   VueBundle.message("vue.formatting.wrapping.new-line-before-end-delimiter"),
-                                  VueBundle.message("vue.formatting.wrapping.simple-interpolations"))
-
-        consumer.showCustomOption(VueCodeStyleSettings::class.java,
-                                  "COMPLEX_INTERPOLATION_WRAP",
-                                  VueBundle.message("vue.formatting.wrapping.complex-interpolations"),
-                                  null,
-                                  CodeStyleSettingsCustomizable.WRAP_OPTIONS, CodeStyleSettingsCustomizable.WRAP_VALUES)
-        consumer.showCustomOption(VueCodeStyleSettings::class.java,
-                                  "COMPLEX_INTERPOLATION_NEW_LINE_AFTER_START_DELIMITER",
-                                  VueBundle.message("vue.formatting.wrapping.new-line-after-start-delimiter"),
-                                  VueBundle.message("vue.formatting.wrapping.complex-interpolations"))
-        consumer.showCustomOption(VueCodeStyleSettings::class.java,
-                                  "COMPLEX_INTERPOLATION_NEW_LINE_BEFORE_END_DELIMITER",
-                                  VueBundle.message("vue.formatting.wrapping.new-line-before-end-delimiter"),
-                                  VueBundle.message("vue.formatting.wrapping.complex-interpolations"))
+                                  VueBundle.message("vue.formatting.wrapping.interpolations"))
 
       }
       else -> {

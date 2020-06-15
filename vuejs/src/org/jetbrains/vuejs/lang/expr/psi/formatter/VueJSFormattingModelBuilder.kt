@@ -26,11 +26,7 @@ class VueJSFormattingModelBuilder : JavascriptFormattingModelBuilder() {
     val host = InjectedLanguageManager.getInstance(element.project).getInjectionHost(element)
     if (host is XmlText) {
       // interpolation injection
-      val file = element.containingFile
-      val isSimple = VueSyntheticBlock.isSimpleInterpolation(file.node)
-      val wrapType = settings.getCustomSettings(VueCodeStyleSettings::class.java).let {
-        WrappingUtil.getWrapType(if (isSimple) it.SIMPLE_INTERPOLATION_WRAP else it.COMPLEX_INTERPOLATION_WRAP)
-      }
+      val wrapType = WrappingUtil.getWrapType(settings.getCustomSettings(VueCodeStyleSettings::class.java).INTERPOLATION_WRAP)
       rootBlock = jsBlockContext.createBlock(element.node, Wrap.createWrap(wrapType, true),
                                              alignment, Indent.getNormalIndent(), null, null)
       // Wrap with a composite block to add indentation

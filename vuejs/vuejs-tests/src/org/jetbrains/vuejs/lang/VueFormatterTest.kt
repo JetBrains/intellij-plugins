@@ -162,8 +162,7 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
       styleSettings.getCustomSettings(VueCodeStyleSettings::class.java).let {
         it.UNIFORM_INDENT = true
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "template"
-        it.SPACES_WITHIN_SIMPLE_INTERPOLATION_EXPRESSIONS = true
-        it.SPACES_WITHIN_COMPLEX_INTERPOLATION_EXPRESSIONS = false
+        it.SPACES_WITHIN_INTERPOLATION_EXPRESSIONS = true
       }
       styleSettings.getCommonSettings(JavascriptLanguage.INSTANCE).SPACE_AROUND_ADDITIVE_OPERATORS = false
       styleSettings.getLanguageIndentOptions(VueLanguage.INSTANCE).INDENT_SIZE = 2
@@ -176,8 +175,7 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
       styleSettings.getCustomSettings(VueCodeStyleSettings::class.java).let {
         it.UNIFORM_INDENT = true
         it.INDENT_CHILDREN_OF_TOP_LEVEL = "template"
-        it.SPACES_WITHIN_SIMPLE_INTERPOLATION_EXPRESSIONS = false
-        it.SPACES_WITHIN_COMPLEX_INTERPOLATION_EXPRESSIONS = true
+        it.SPACES_WITHIN_INTERPOLATION_EXPRESSIONS = false
       }
       styleSettings.getCommonSettings(JavascriptLanguage.INSTANCE).SPACE_AROUND_MULTIPLICATIVE_OPERATORS = false
       styleSettings.getCommonSettings(JavascriptLanguage.INSTANCE).SPACE_AROUND_ADDITIVE_OPERATORS = true
@@ -190,54 +188,40 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
     JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) { styleSettings ->
       val vueSettings = styleSettings.getCustomSettings(VueCodeStyleSettings::class.java)
       vueSettings.UNIFORM_INDENT = true
+      vueSettings.SPACES_WITHIN_INTERPOLATION_EXPRESSIONS = false
       styleSettings.getLanguageIndentOptions(VueLanguage.INSTANCE).INDENT_SIZE = 4
-      vueSettings.COMPLEX_INTERPOLATION_NEW_LINE_BEFORE_END_DELIMITER = false
-      vueSettings.COMPLEX_INTERPOLATION_NEW_LINE_AFTER_START_DELIMITER = false
-      vueSettings.SIMPLE_INTERPOLATION_NEW_LINE_BEFORE_END_DELIMITER = false
-      vueSettings.SIMPLE_INTERPOLATION_NEW_LINE_AFTER_START_DELIMITER = false
+      vueSettings.INTERPOLATION_NEW_LINE_BEFORE_END_DELIMITER = false
+      vueSettings.INTERPOLATION_NEW_LINE_AFTER_START_DELIMITER = false
 
-      vueSettings.COMPLEX_INTERPOLATION_WRAP = CommonCodeStyleSettings.DO_NOT_WRAP
-      vueSettings.SIMPLE_INTERPOLATION_WRAP = CommonCodeStyleSettings.DO_NOT_WRAP
+      vueSettings.INTERPOLATION_WRAP = CommonCodeStyleSettings.DO_NOT_WRAP
       doTest(1)
 
-      vueSettings.COMPLEX_INTERPOLATION_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED
-      vueSettings.SIMPLE_INTERPOLATION_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED
+      vueSettings.INTERPOLATION_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED
       doTest(2)
 
-      vueSettings.COMPLEX_INTERPOLATION_WRAP = CommonCodeStyleSettings.WRAP_ALWAYS
-      vueSettings.SIMPLE_INTERPOLATION_WRAP = CommonCodeStyleSettings.WRAP_ALWAYS
+      vueSettings.INTERPOLATION_WRAP = CommonCodeStyleSettings.WRAP_ALWAYS
       doTest(3)
 
-      vueSettings.COMPLEX_INTERPOLATION_NEW_LINE_BEFORE_END_DELIMITER = true
-      vueSettings.COMPLEX_INTERPOLATION_NEW_LINE_AFTER_START_DELIMITER = true
-      vueSettings.SIMPLE_INTERPOLATION_NEW_LINE_BEFORE_END_DELIMITER = true
-      vueSettings.SIMPLE_INTERPOLATION_NEW_LINE_AFTER_START_DELIMITER = true
+      vueSettings.INTERPOLATION_NEW_LINE_BEFORE_END_DELIMITER = true
+      vueSettings.INTERPOLATION_NEW_LINE_AFTER_START_DELIMITER = true
 
-      vueSettings.COMPLEX_INTERPOLATION_WRAP = CommonCodeStyleSettings.DO_NOT_WRAP
-      vueSettings.SIMPLE_INTERPOLATION_WRAP = CommonCodeStyleSettings.DO_NOT_WRAP
+      vueSettings.INTERPOLATION_WRAP = CommonCodeStyleSettings.DO_NOT_WRAP
       doTest(4)
 
-      vueSettings.COMPLEX_INTERPOLATION_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED
-      vueSettings.SIMPLE_INTERPOLATION_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED
+      vueSettings.INTERPOLATION_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED
       doTest(5)
 
-      vueSettings.COMPLEX_INTERPOLATION_WRAP = CommonCodeStyleSettings.WRAP_ALWAYS
-      vueSettings.SIMPLE_INTERPOLATION_WRAP = CommonCodeStyleSettings.WRAP_ALWAYS
+      vueSettings.INTERPOLATION_WRAP = CommonCodeStyleSettings.WRAP_ALWAYS
       doTest(6)
 
-      vueSettings.COMPLEX_INTERPOLATION_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED
-      vueSettings.SIMPLE_INTERPOLATION_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED
+      vueSettings.INTERPOLATION_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED
 
-      vueSettings.COMPLEX_INTERPOLATION_NEW_LINE_AFTER_START_DELIMITER = true
-      vueSettings.COMPLEX_INTERPOLATION_NEW_LINE_BEFORE_END_DELIMITER = false
-      vueSettings.SIMPLE_INTERPOLATION_NEW_LINE_AFTER_START_DELIMITER = false
-      vueSettings.SIMPLE_INTERPOLATION_NEW_LINE_BEFORE_END_DELIMITER = true
+      vueSettings.INTERPOLATION_NEW_LINE_AFTER_START_DELIMITER = false
+      vueSettings.INTERPOLATION_NEW_LINE_BEFORE_END_DELIMITER = true
       doTest(7)
 
-      vueSettings.COMPLEX_INTERPOLATION_NEW_LINE_AFTER_START_DELIMITER = false
-      vueSettings.COMPLEX_INTERPOLATION_NEW_LINE_BEFORE_END_DELIMITER = true
-      vueSettings.SIMPLE_INTERPOLATION_NEW_LINE_AFTER_START_DELIMITER = true
-      vueSettings.SIMPLE_INTERPOLATION_NEW_LINE_BEFORE_END_DELIMITER = false
+      vueSettings.INTERPOLATION_NEW_LINE_AFTER_START_DELIMITER = true
+      vueSettings.INTERPOLATION_NEW_LINE_BEFORE_END_DELIMITER = false
 
       doTest(8)
 
