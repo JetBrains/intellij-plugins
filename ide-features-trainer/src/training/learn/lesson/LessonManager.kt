@@ -151,6 +151,7 @@ class LessonManager {
   }
 
   fun passLesson(project: Project, cLesson: Lesson) {
+    LearningUiHighlightingManager.clearHighlights()
     val learnPanel = learnPanel ?: return
     learnPanel.setLessonPassed()
     val nextLesson = CourseManager.instance.getNextNonPassedLesson(cLesson)

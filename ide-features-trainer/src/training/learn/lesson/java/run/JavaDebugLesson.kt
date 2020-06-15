@@ -316,10 +316,6 @@ class JavaDebugLesson(module: Module) : KLesson("Debug Workflow", module, "JAVA"
         "It will be a correct answer! Lets close the dialog and stop debugging by ${action(it)}" +
              "or button ${icon(AllIcons.Actions.Suspend)}."
       }
-
-      task {
-        LearningUiHighlightingManager.clearHighlights()
-      }
     }
 
   private fun inHotSwapDialog(): Boolean {
