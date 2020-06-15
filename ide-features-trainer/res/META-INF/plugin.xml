@@ -15,6 +15,8 @@
   <depends optional="true" config-file="swift-deps.xml">com.intellij.modules.cidr.lang</depends>
   <depends optional="true" config-file="javascript-deps.xml">JavaScript</depends>
 
+  <resource-bundle>messages.LearnBundle</resource-bundle>
+
   <projectListeners>
     <listener class="training.editor.LearnProjectFileEditorListener"
               topic="com.intellij.openapi.fileEditor.FileEditorManagerListener"/>
@@ -70,19 +72,19 @@
   </extensions>
 
   <actions>
-    <action id="learn.next.lesson" class="training.actions.NextNonPassedLessonAction" text="Next Non-Passed Lesson">
+    <action id="learn.next.lesson" class="training.actions.NextNonPassedLessonAction">
       <keyboard-shortcut first-keystroke="alt shift RIGHT" keymap="$default"/>
       <keyboard-shortcut first-keystroke="control shift RIGHT" keymap="Mac OS X 10.5+"/>
       <keyboard-shortcut first-keystroke="control shift RIGHT" keymap="Mac OS X"/>
     </action>
 
-    <action id="PreviousLessonAction" class="training.actions.PreviousLessonAction" text="Previous Lesson"/>
-    <action id="NextLessonAction" class="training.actions.NextLessonAction" text="Next Lesson"/>
-    <action id="ResetLearningProgressAction" class="training.actions.ResetLearningProgressAction" text="Reset Learning Progress"/>
-    <action id="RestartLessonAction" class="training.actions.RestartLessonAction" text="Restart Lesson"/>
+    <action id="PreviousLessonAction" class="training.actions.PreviousLessonAction"/>
+    <action id="NextLessonAction" class="training.actions.NextLessonAction"/>
+    <action id="ResetLearningProgressAction" class="training.actions.ResetLearningProgressAction"/>
+    <action id="RestartLessonAction" class="training.actions.RestartLessonAction"/>
 
     <!-- Help -->
-    <action id="ShowLearnPanel" class="training.actions.OpenLearnPanel" text="IDE Interactive Guide" icon="FeaturesTrainerIcons.FeatureTrainerToolWindow">
+    <action id="ShowLearnPanel" class="training.actions.OpenLearnPanel" icon="FeaturesTrainerIcons.FeatureTrainerToolWindow">
       <add-to-group group-id="HelpMenu"/>
     </action>
   </actions>
