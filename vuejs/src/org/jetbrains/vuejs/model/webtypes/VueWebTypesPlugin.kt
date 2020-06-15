@@ -8,7 +8,7 @@ import org.jetbrains.vuejs.model.VueGlobal
 import org.jetbrains.vuejs.model.VuePlugin
 import org.jetbrains.vuejs.model.webtypes.json.WebTypes
 
-class VueWebTypesPlugin(project: Project, packageJson: VirtualFile,
+class VueWebTypesPlugin(project: Project, packageJson: VirtualFile?,
                         webTypes: WebTypes, owner: VueEntitiesContainer)
   : VueWebTypesEntitiesContainer(project, packageJson, webTypes, owner), VuePlugin {
 

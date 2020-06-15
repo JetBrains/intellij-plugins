@@ -22,7 +22,7 @@ import org.jetbrains.vuejs.model.webtypes.json.WebTypes
 import java.util.*
 import java.util.regex.PatternSyntaxException
 
-open class VueWebTypesEntitiesContainer(project: Project, packageJson: VirtualFile,
+open class VueWebTypesEntitiesContainer(project: Project, packageJson: VirtualFile?,
                                         webTypes: WebTypes, owner: VueEntitiesContainer) : VueEntitiesContainer {
 
   override val source: PsiElement? = null
@@ -49,7 +49,7 @@ open class VueWebTypesEntitiesContainer(project: Project, packageJson: VirtualFi
         else -> { doc -> "<p>" + StringUtil.escapeXmlEntities(doc).replace(EOL_PATTERN, "<br>") }
       }
 
-    val sourceSymbolResolver = PsiManager.getInstance(project).findFile(packageJson)
+    val sourceSymbolResolver = packageJson?.let { PsiManager.getInstance(project).findFile(it) }
       ?.let { WebTypesSourceSymbolResolver(it, webTypes.name ?: "unknown") }
 
     val support = object : WebTypesContext {

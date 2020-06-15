@@ -1986,6 +1986,12 @@ export default class UsageComponent extends Vue {
 
   }
 
+  fun testGotoDeclarationDirectives() {
+    myFixture.configureByFile("gotoDeclarationDirectives.vue")
+    myFixture.performEditorAction("GotoDeclaration")
+    TestCase.assertEquals(104, myFixture.caretOffset)
+  }
+
 }
 
 fun globalMixinText(): String {

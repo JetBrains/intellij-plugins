@@ -2,7 +2,9 @@
 package org.jetbrains.vuejs.codeInsight.attributes
 
 import com.intellij.openapi.util.NotNullLazyValue
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiReference
 import com.intellij.psi.meta.PsiPresentableMetaData
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
@@ -57,14 +59,13 @@ open class VueAttributeDescriptor(protected val tag: XmlTag,
 
   override fun isFixed(): Boolean = false
   override fun hasIdType(): Boolean = false
-  override fun getEnumeratedValueDeclaration(xmlElement: XmlElement?, value: String?): PsiElement? {
-    return if (isEnumerated)
+  override fun getEnumeratedValueDeclaration(xmlElement: XmlElement?, value: String?): PsiElement? =
+    if (isEnumerated)
       xmlElement
     else if (value == null || value.isEmpty())
       null
     else
       super.getEnumeratedValueDeclaration(xmlElement, value)
-  }
 
   override fun hasIdRefType(): Boolean = false
   override fun getDefaultValue(): Nothing? = null
@@ -76,6 +77,12 @@ open class VueAttributeDescriptor(protected val tag: XmlTag,
     }
     return ArrayUtil.EMPTY_STRING_ARRAY
   }
+
+  override fun getValueReferences(element: XmlElement?, text: String): Array<PsiReference> =
+    if (StringUtil.equalsIgnoreCase(name, text))
+      super.getValueReferences(element, text)
+    else
+      PsiReference.EMPTY_ARRAY
 
   override fun getTypeName(): String? = null
   override fun getIcon(): Icon = VuejsIcons.Vue

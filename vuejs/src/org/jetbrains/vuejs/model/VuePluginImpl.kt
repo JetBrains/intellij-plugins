@@ -24,10 +24,10 @@ class VuePluginImpl(private val project: Project, private val packageJson: Virtu
     }
 
   private fun buildPlugin(): Result<VuePlugin>? {
-    return VueWebTypesRegistry.createWebTypesPlugin(project, packageJson, this)
-           ?: Result.create(VueSourcePlugin(project, packageJson) as VuePlugin, packageJson,
-                            NodeModulesDirectoryManager.getInstance(project).nodeModulesDirChangeTracker,
-                            VueWebTypesRegistry.MODIFICATION_TRACKER)
+    val webTypes = VueWebTypesRegistry.createWebTypesPlugin(project, packageJson, this)
+    val dependencies = mutableSetOf<Any>(packageJson, NodeModulesDirectoryManager.getInstance(project).nodeModulesDirChangeTracker)
+    dependencies.addAll(webTypes.dependencyItems)
+    return Result.create(webTypes.value ?: VueSourcePlugin(project, packageJson), dependencies)
   }
 
   override fun toString(): String {
