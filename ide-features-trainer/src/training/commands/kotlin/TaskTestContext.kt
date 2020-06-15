@@ -86,6 +86,9 @@ class TaskTestContext(val task: TaskContext) {
   }
 
   companion object {
+    @Volatile
+    var inTestMode: Boolean = false
+
     val guiTestCase: GuiTestCase by lazy { GuiTestCase() }
   }
 }

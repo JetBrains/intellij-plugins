@@ -47,7 +47,6 @@ interface Lesson {
     lessonListeners.forEach { it.lessonPassed(this) }
   }
 
-  @JvmDefault
   fun onStop() {
     lessonListeners.forEach { it.lessonStopped(this) }
   }
@@ -57,7 +56,6 @@ interface Lesson {
     onPass()
   }
 
-  @JvmDefault
   val testScriptProperties : TaskTestContext.TestScriptProperties
     get() = TaskTestContext.TestScriptProperties()
 }

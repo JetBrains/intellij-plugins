@@ -23,6 +23,7 @@ import com.intellij.util.Alarm
 import com.intellij.util.DocumentUtil
 import training.commands.kotlin.PreviousTaskInfo
 import training.commands.kotlin.TaskContext
+import training.commands.kotlin.TaskTestContext
 import training.learn.ActionsRecorder
 import training.learn.lesson.LessonManager
 import training.ui.IncorrectLearningStateNotificationProvider
@@ -291,7 +292,7 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
   }
 
   private fun processTestActions(taskContext: TaskContext) {
-    if (TaskContext.inTestMode) {
+    if (TaskTestContext.inTestMode) {
       LessonManager.instance.testActionsExecutor.execute {
         taskContext.testActions.forEach { it.run() }
       }

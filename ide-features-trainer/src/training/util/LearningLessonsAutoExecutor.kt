@@ -12,7 +12,6 @@ import com.intellij.testGuiFramework.fixtures.IdeFrameFixture
 import com.intellij.testGuiFramework.impl.GuiTestCase
 import com.intellij.testGuiFramework.impl.linkLabel
 import org.jetbrains.concurrency.AsyncPromise
-import training.commands.kotlin.TaskContext
 import training.commands.kotlin.TaskTestContext
 import training.learn.CourseManager
 import training.learn.interfaces.Lesson
@@ -70,7 +69,7 @@ class LearningLessonsAutoExecutor(val project: Project, private val progress: Pr
       }
     })
     progress.checkCanceled()
-    TaskContext.inTestMode = true
+    TaskTestContext.inTestMode = true
     try {
       linkAtLearnPanel { ideFrameFixture.linkLabel(lesson.name).click() }
       val passedStatus = lessonPromise.blockingGet(lesson.testScriptProperties.duration, TimeUnit.SECONDS)
@@ -82,7 +81,7 @@ class LearningLessonsAutoExecutor(val project: Project, private val progress: Pr
       }
     }
     finally {
-      TaskContext.inTestMode = false
+      TaskTestContext.inTestMode = false
     }
   }
 
@@ -105,7 +104,7 @@ class LearningLessonsAutoExecutor(val project: Project, private val progress: Pr
           learningLessonsAutoExecutor.runAllLessons()
         }
         finally {
-          TaskContext.inTestMode = false
+          TaskTestContext.inTestMode = false
         }
       }
     }
@@ -117,7 +116,7 @@ class LearningLessonsAutoExecutor(val project: Project, private val progress: Pr
           learningLessonsAutoExecutor.runSingleLesson(lesson)
         }
         finally {
-          TaskContext.inTestMode = false
+          TaskTestContext.inTestMode = false
         }
       }
     }

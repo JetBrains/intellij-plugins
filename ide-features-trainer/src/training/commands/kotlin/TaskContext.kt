@@ -353,9 +353,4 @@ class TaskContext(private val lessonExecutor: LessonExecutor,
       }
     }
   }
-
-  companion object {
-    @Volatile
-    var inTestMode: Boolean = false
-  }
 }
