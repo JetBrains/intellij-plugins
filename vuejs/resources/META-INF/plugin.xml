@@ -27,9 +27,6 @@ Support for <a href="https://vuejs.org">Vue.js</a> projects.
 
 Learn more about Vue.js support in the <a href="https://www.jetbrains.com/help/webstorm/vue-js.html">IDE
     documentation</a>.
-
-<h3>Limitations</h3>
-Vue components defined using separate .html, .js, and .css files are not supported: <a href="https://youtrack.jetbrains.com/issue/WEB-32274">WEB-32274</a>.
   ]]></description>
   <vendor>JetBrains</vendor>
   <category>JavaScript Frameworks and Tools</category>
