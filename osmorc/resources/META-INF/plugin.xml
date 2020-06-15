@@ -107,8 +107,7 @@
 
     <facetType implementation="org.osmorc.facet.OsmorcFacetType"/>
     <framework.detector implementation="org.osmorc.facet.OsmorcFrameworkDetector"/>
-    <frameworkSupport implementation="org.osmorc.facet.OsgiFrameworkSupportProvider"/>
-    <library.type implementation="org.osmorc.facet.OsgiCoreLibraryType"/>
+
     <library.dependencyScopeSuggester implementation="org.osmorc.facet.OsgiLibraryDependencyScopeSuggester"/>
 
     <standardResourceProvider implementation="org.jetbrains.osgi.xml.OsgiResourceProvider"/>

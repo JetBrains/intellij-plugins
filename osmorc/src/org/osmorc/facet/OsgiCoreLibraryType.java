@@ -18,6 +18,7 @@ import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtilRt;
 import icons.OsmorcIdeaIcons;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
@@ -29,6 +30,11 @@ import java.util.List;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
+/**
+ * @deprecated will be removed without replacement
+ */
+@ApiStatus.ScheduledForRemoval(inVersion = "2020.3")
+@Deprecated
 public class OsgiCoreLibraryType extends DownloadableLibraryType {
   private static final String ID = "org.osgi.core";
   private static final String DETECTOR_CLASS = "org.osgi.framework.Constants";
