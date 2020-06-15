@@ -6,14 +6,12 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.annotations.CalledInAwt
 import training.commands.kotlin.TaskContext
 
-class LessonContext(val lesson: KLesson, val editor: Editor, val project: Project, private val executor: LessonExecutor) {
+abstract class LessonContext(val lesson: KLesson, val editor: Editor, val project: Project) {
   /**
    * Start a new task in a lesson context
    */
   @CalledInAwt
-  fun task(taskContent: TaskContext.() -> Unit) {
-    executor.task(taskContent)
-  }
+  abstract fun task(taskContent: TaskContext.() -> Unit)
 
   /** Describe a simple task: just one action required */
   fun actionTask(action: String, getText: TaskContext.(action: String) -> String) {
@@ -34,32 +32,20 @@ class LessonContext(val lesson: KLesson, val editor: Editor, val project: Projec
     }
   }
 
-  fun caret(offset: Int) {
-    executor.caret(offset)
-  }
+  abstract fun caret(offset: Int)
 
-  /** NOTE:  [line] and [column] starts from 1 not from zero. So these parameters should be same as in editors. */
-  fun caret(line: Int, column: Int) {
-    executor.caret(line, column)
-  }
+    /** NOTE:  [line] and [column] starts from 1 not from zero. So these parameters should be same as in editors. */
+    abstract fun caret(line: Int, column: Int)
 
-  fun caret(text: String) {
-    executor.caret(text)
-  }
+  abstract fun caret(text: String)
 
-  fun caret(position: LessonSamplePosition) {
-    executor.caret(position)
-  }
+  abstract fun caret(position: LessonSamplePosition)
 
   /**
    * There will not be any freeze in GUI thread.
    * The continue of the script will be scheduled with the [delayMillis]
    */
-  fun waitBeforeContinue(delayMillis: Int) {
-    executor.waitBeforeContinue(delayMillis)
-  }
+  abstract fun waitBeforeContinue(delayMillis: Int)
 
-  fun prepareSample(sample: LessonSample) {
-    executor.prepareSample(sample)
-  }
+  abstract fun prepareSample(sample: LessonSample)
 }

@@ -34,7 +34,7 @@ import training.learn.lesson.LessonManager
 import training.learn.lesson.LessonProcessor
 import training.learn.lesson.XmlLesson
 import training.learn.lesson.kimpl.KLesson
-import training.learn.lesson.kimpl.LessonContext
+import training.learn.lesson.kimpl.LessonContextImpl
 import training.learn.lesson.kimpl.LessonExecutor
 import training.learn.lesson.listeners.NextLessonListener
 import training.learn.lesson.listeners.StatisticLessonListener
@@ -218,7 +218,7 @@ class OpenLessonAction(val lesson: Lesson) : AnAction(lesson.name) {
 
   private fun processDslLesson(lesson: KLesson, textEditor: TextEditor, projectWhereToStartLesson: Project) {
     val executor = LessonExecutor(lesson, textEditor.editor, projectWhereToStartLesson)
-    val lessonContext = LessonContext(lesson, textEditor.editor, projectWhereToStartLesson, executor)
+    val lessonContext = LessonContextImpl(lesson, textEditor.editor, projectWhereToStartLesson, executor)
     LessonManager.instance.initDslLesson(textEditor.editor, lesson, executor)
     lesson.lessonContent(lessonContext)
     executor.processNextTask(0)
