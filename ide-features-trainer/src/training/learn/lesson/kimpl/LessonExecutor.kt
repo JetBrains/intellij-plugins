@@ -163,7 +163,7 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
     val recorder = ActionsRecorder(project, editor.document)
     currentRecorder = recorder
     val taskCallbackData = TaskCallbackData()
-    val taskContext = TaskContext(this, recorder, taskIndex, taskCallbackData)
+    val taskContext = TaskContextImpl(this, recorder, taskIndex, taskCallbackData)
     isUnderTaskProcessing = true
     taskContext.apply(taskContent)
     isUnderTaskProcessing = false
@@ -179,7 +179,7 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
   }
 
   /** @return a callback to clear resources used to track restore */
-  private fun checkForRestore(taskContext: TaskContext,
+  private fun checkForRestore(taskContext: TaskContextImpl,
                               taskIndex: Int,
                               stepsRecorder: ActionsRecorder,
                               taskCallbackData: TaskCallbackData): () -> Unit {
@@ -242,7 +242,7 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
     return clearRestore
   }
 
-  private fun chainNextTask(taskContext: TaskContext,
+  private fun chainNextTask(taskContext: TaskContextImpl,
                             taskIndex: Int,
                             recorder: ActionsRecorder,
                             taskCallbackData: TaskCallbackData) {
@@ -275,7 +275,7 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
     }
   }
 
-  private fun isTaskCompleted(taskContext: TaskContext) = taskContext.steps.all { it.isDone && it.get() }
+  private fun isTaskCompleted(taskContext: TaskContextImpl) = taskContext.steps.all { it.isDone && it.get() }
 
   private fun addSimpleTaskAction(taskAction: () -> Unit) {
     assert(ApplicationManager.getApplication().isDispatchThread)
@@ -291,7 +291,7 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
     }
   }
 
-  private fun processTestActions(taskContext: TaskContext) {
+  private fun processTestActions(taskContext: TaskContextImpl) {
     if (TaskTestContext.inTestMode) {
       LessonManager.instance.testActionsExecutor.execute {
         taskContext.testActions.forEach { it.run() }

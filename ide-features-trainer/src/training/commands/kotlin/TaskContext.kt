@@ -3,32 +3,15 @@ package training.commands.kotlin
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.ModalityState
-import com.intellij.openapi.application.WriteAction
-import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.text.StringUtil
-import com.intellij.openapi.wm.IdeFocusManager
-import com.intellij.psi.PsiDocumentManager
-import com.intellij.ui.EditorNotifications
 import com.intellij.ui.tree.TreeVisitor
 import com.intellij.util.ui.tree.TreeUtil
-import org.fest.swing.exception.ComponentLookupException
-import org.fest.swing.exception.WaitTimedOutError
 import org.fest.swing.timing.Timeout
 import org.intellij.lang.annotations.Language
-import org.jdom.input.SAXBuilder
-import training.check.Check
-import training.learn.ActionsRecorder
-import training.learn.lesson.LessonManager
 import training.learn.lesson.kimpl.KLesson
-import training.learn.lesson.kimpl.LessonExecutor
 import training.learn.lesson.kimpl.LessonUtil
-import training.ui.IncorrectLearningStateNotificationProvider
 import training.ui.LearningUiHighlightingManager
-import training.ui.LearningUiManager
 import training.ui.LearningUiUtil
 import java.awt.Component
 import java.awt.Rectangle
@@ -40,25 +23,14 @@ import javax.swing.JList
 import javax.swing.JTree
 import javax.swing.tree.TreePath
 
-class TaskContext(private val lessonExecutor: LessonExecutor,
-                  private val recorder: ActionsRecorder,
-                  private val taskIndex: Int,
-                  private val callbackData: LessonExecutor.TaskCallbackData) {
-  val lesson: KLesson = lessonExecutor.lesson
-  val editor: Editor = lessonExecutor.editor
-  val project: Project = lessonExecutor.project
+abstract class TaskContext {
+  abstract val lesson: KLesson
+  abstract val editor: Editor
+  abstract val project: Project
 
-  val disposable: Disposable = recorder
+  abstract val disposable: Disposable
 
-  val steps: MutableList<CompletableFuture<Boolean>> = mutableListOf()
-
-  val testActions: MutableList<Runnable> = mutableListOf()
-
-  fun restoreState(delayMillis: Int = 0, checkState: () -> Boolean) {
-    if (callbackData.restoreCondition != null) throw IllegalStateException("Only one restore context per task is allowed")
-    callbackData.delayMillis = delayMillis
-    callbackData.restoreCondition = checkState
-  }
+  abstract fun restoreState(delayMillis: Int = 0, checkState: () -> Boolean)
 
   /** Shortcut */
   fun restoreByUi(delayMillis: Int = 0) {
@@ -67,8 +39,7 @@ class TaskContext(private val lessonExecutor: LessonExecutor,
     }
   }
 
-  val previous: PreviousTaskInfo
-    get() = lessonExecutor.getUserVisibleInfo(taskIndex)
+  abstract val previous: PreviousTaskInfo
 
   enum class RestoreProposal {
     None,
@@ -77,65 +48,26 @@ class TaskContext(private val lessonExecutor: LessonExecutor,
     Force
   }
 
-  fun proposeRestore(restoreCheck: () -> RestoreProposal) {
-    val key = IncorrectLearningStateNotificationProvider.INCORRECT_LEARNING_STATE_NOTIFICATION
-    var restoreResult = false
-    restoreState {
-      val file = lessonExecutor.virtualFile
-      val type = restoreCheck()
-      if (type == RestoreProposal.Force) {
-        return@restoreState true
-      }
-      if (type == RestoreProposal.None) {
-        if (file.getUserData(key) != null) {
-          IncorrectLearningStateNotificationProvider.clearMessage(file, project)
-        }
-      }
-      else if (type != file.getUserData(key)?.type) {
-        val proposal = IncorrectLearningStateNotificationProvider.RestoreNotification(type) {
-          restoreResult = true
-        }
-        file.putUserData(key, proposal)
-        EditorNotifications.getInstance(project).updateNotifications(file)
-      }
-      return@restoreState restoreResult
-    }
-  }
+  abstract fun proposeRestore(restoreCheck: () -> RestoreProposal)
 
   /**
    * Write a text to the learn panel (panel with a learning tasks).
    */
-  fun text(@Language("HTML") text: String) {
-    val wrappedText = "<root><text>$text</text></root>"
-    val textAsElement = SAXBuilder().build(wrappedText.byteInputStream()).rootElement.getChild("text")
-                        ?: throw IllegalStateException("Can't parse as XML:\n$text")
-    LessonManager.instance.addMessages(textAsElement)
-  }
+  abstract fun text(@Language("HTML") text: String)
 
   /** Simply wait until an user perform particular action */
-  fun trigger(actionId: String) {
-    addStep(recorder.futureAction(actionId))
-  }
+  abstract fun trigger(actionId: String)
 
   /** Simply wait until an user perform actions */
-  fun trigger(checkId: (String) -> Boolean) {
-    addStep(recorder.futureAction(checkId))
-  }
+  abstract fun trigger(checkId: (String) -> Boolean)
 
   /** Trigger on actions start. Needs if you want to split long actions into several tasks. */
-  fun triggerStart(actionId: String, checkState: () -> Boolean = { true }) {
-    addStep(recorder.futureActionOnStart(actionId, checkState))
-  }
+  abstract fun triggerStart(actionId: String, checkState: () -> Boolean = { true })
 
-  fun triggers(vararg actionIds: String) {
-    addStep(recorder.futureListActions(actionIds.toList()))
-  }
+  abstract fun triggers(vararg actionIds: String)
 
   /** An user need to rice an action which leads to necessary state change */
-  fun <T : Any?> trigger(actionId: String, calculateState: () -> T, checkState: (T, T) -> Boolean) {
-    val check = getCheck(calculateState, checkState)
-    addStep(recorder.futureActionAndCheckAround(actionId, check))
-  }
+  abstract fun <T : Any?> trigger(actionId: String, calculateState: () -> T, checkState: (T, T) -> Boolean)
 
   /** An user need to rice an action which leads to appropriate end state */
   fun trigger(actionId: String, checkState: () -> Boolean) {
@@ -146,76 +78,21 @@ class TaskContext(private val lessonExecutor: LessonExecutor,
    * Check that IDE state is as expected
    * In some rare cases DSL could wish to complete a future by itself
    */
-  fun stateCheck(checkState: () -> Boolean): CompletableFuture<Boolean> {
-    val future = recorder.futureCheck { checkState() }
-    addStep(future)
-    return future
-  }
+  abstract fun stateCheck(checkState: () -> Boolean): CompletableFuture<Boolean>
 
   /**
    * Check that IDE state is fit
    * @return A feature with value associated with fit state
    */
-  fun <T : Any> stateRequired(requiredState: () -> T?): Future<T> {
-    val result = CompletableFuture<T>()
-    val future = recorder.futureCheck {
-      val state = requiredState()
-      if (state != null) {
-        result.complete(state)
-        true
-      }
-      else {
-        false
-      }
-    }
-    addStep(future)
-    return result
-  }
+  abstract fun <T : Any> stateRequired(requiredState: () -> T?): Future<T>
 
-  fun addFutureStep(p: DoneStepContext.() -> Unit) {
-    val future: CompletableFuture<Boolean> = CompletableFuture()
-    addStep(future)
-    p.invoke(DoneStepContext(future))
-  }
+  abstract fun addFutureStep(p: DoneStepContext.() -> Unit)
 
-  fun addStep(step: CompletableFuture<Boolean>) {
-    steps.add(step)
-  }
+  abstract fun addStep(step: CompletableFuture<Boolean>)
 
-  val focusOwner: Component?
-    get() = IdeFocusManager.getInstance(project).focusOwner
+  abstract val focusOwner: Component?
 
-  private fun <T : Any?> getCheck(calculateState: () -> T, checkState: (T, T) -> Boolean): Check {
-    return object : Check {
-      var state: T? = null
-
-      override fun before() {
-        state = calculateAction()
-      }
-
-      override fun check(): Boolean = state?.let { checkState(it, calculateAction()) } ?: false
-
-      override fun set(project: Project, editor: Editor) {
-        // do nothing
-      }
-
-      // Some checks are needed to be performed in EDT thread
-      // For example, selection information  could not be got (for some magic reason) from another thread
-      // Also we need to commit document
-      private fun calculateAction() = WriteAction.computeAndWait<T, RuntimeException> {
-        PsiDocumentManager.getInstance(project).commitDocument(editor.document)
-        calculateState()
-      }
-    }
-  }
-
-  fun test(action: TaskTestContext.() -> Unit) {
-    testActions.add(Runnable {
-      DumbService.getInstance(project).waitForSmartMode()
-      TaskTestContext(this).action()
-    })
-  }
-
+  abstract fun test(action: TaskTestContext.() -> Unit)
 
   fun triggerByFoundPathAndHighlight(highlightBorder: Boolean = true, highlightInside: Boolean = false, checkPath: (tree: JTree, path: TreePath) -> Boolean) {
     triggerByFoundPathAndHighlight(LearningUiHighlightingManager.HighlightingOptions(highlightBorder, highlightInside)) { tree ->
@@ -256,7 +133,6 @@ class TaskContext(private val lessonExecutor: LessonExecutor,
       }
     }
   }
-
 
   fun triggerByListItemAndHighlight(highlightBorder: Boolean = true, highlightInside: Boolean = false, checkList: (item: Any) -> Boolean) {
     triggerByFoundListItemAndHighlight(LearningUiHighlightingManager.HighlightingOptions(highlightBorder, highlightInside)) { ui: JList<*> ->
@@ -300,50 +176,16 @@ class TaskContext(private val lessonExecutor: LessonExecutor,
   }
 
   @Deprecated("It is auxiliary method with explicit class parameter. Use inlined short form instead")
-  fun triggerByUiComponentAndHighlight(findAndHighlight: () -> (() -> Component)) {
-    val step = CompletableFuture<Boolean>()
-    ApplicationManager.getApplication().executeOnPooledThread {
-      while (true) {
-        if (lessonExecutor.hasBeenStopped) {
-          step.complete(false)
-          break
-        }
-        try {
-          val highlightFunction = findAndHighlight()
-          invokeLater(ModalityState.any()) {
-            lessonExecutor.foundComponent = highlightFunction()
-            lessonExecutor.rehighlightComponent = highlightFunction
-            step.complete(true)
-          }
-        }
-        catch (e: WaitTimedOutError) {
-          continue
-        }
-        catch (e: ComponentLookupException) {
-          continue
-        }
-        break
-      }
-    }
-    steps.add(step)
-  }
+  abstract fun triggerByUiComponentAndHighlight(findAndHighlight: () -> (() -> Component))
 
-  fun action(id: String): String {
-    return "<action>$id</action>"
-  }
+  /** Show shortcut for [actionId] inside lesson step message */
+  abstract fun action(actionId: String): String
 
-  fun code(sourceSample: String): String {
-    return "<code>${StringUtil.escapeXmlEntities(sourceSample)}</code>"
-  }
+  /** Highlight as code inside lesson step message */
+  abstract fun code(sourceSample: String): String
 
-  fun icon(icon: Icon): String {
-    var index = LearningUiManager.iconMap.getKeysByValue(icon)?.firstOrNull()
-    if (index == null) {
-      index = LearningUiManager.iconMap.size.toString()
-      LearningUiManager.iconMap[index] = icon
-    }
-    return "<icon_idx>$index</icon_idx>"
-  }
+  /** Show an [icon] inside lesson step message */
+  abstract fun icon(icon: Icon): String
 
   class DoneStepContext(val future: CompletableFuture<Boolean>) {
     fun completeStep() {
