@@ -40,7 +40,9 @@ class RefactoringLesson(module: Module) : KLesson("Refactorings in a Nutshell", 
   override val lessonContent: LessonContext.() -> Unit
     get() {
       return {
-        JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
+        prepareRuntimeTask {
+          JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
+        }
         prepareSample(sample)
         task("Refactorings.QuickListPopupAction") {
           text("WebStorm has a <a href='https://www.jetbrains.com/help/webstorm/refactoring-source-code.html#ws_supported_refactorings'>number of refactorings</a> that can automatically restructure existing code without changing its behavior across the entire project. Let's look up the list of refactorings available for the <strong>books</strong> parameter. To do this, press ${action(it)} or go to <strong>Refactor > Refactor This</strong> from the main menu.")

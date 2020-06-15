@@ -10,6 +10,7 @@ import com.intellij.openapi.editor.impl.EditorComponentImpl
 import com.intellij.testGuiFramework.impl.button
 import com.intellij.testGuiFramework.impl.jList
 import com.intellij.ui.components.JBCheckBox
+import training.commands.kotlin.TaskRuntimeContext
 import training.commands.kotlin.TaskTestContext
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
@@ -22,14 +23,17 @@ import javax.swing.JButton
 class JavaRunConfigurationLesson(module: Module) : KLesson("Run Configuration", module, "JAVA") {
   private val demoClassName = JavaRunLessonsUtils.demoClassName
 
+  private fun TaskRuntimeContext.runManager() = RunManager.getInstance(project)
+  private fun TaskRuntimeContext.configurations() =
+    runManager().allSettings.filter { it.name.contains(demoClassName) }
+
   override val lessonContent: LessonContext.() -> Unit
     get() = {
-      val runManager = RunManager.getInstance(project)
-
-      fun configurations() =
-        runManager.allSettings.filter { it.name.contains(demoClassName) }
-
-      configurations().forEach { runManager.removeConfiguration(it) }
+      task {
+        before {
+          configurations().forEach { runManager().removeConfiguration(it) }
+        }
+      }
 
       prepareSample(JavaRunLessonsUtils.demoSample)
 

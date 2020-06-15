@@ -9,7 +9,7 @@ import com.intellij.openapi.util.SystemInfo
 import com.intellij.testGuiFramework.framework.GuiTestUtil
 import com.intellij.testGuiFramework.util.Key
 import com.intellij.ui.components.fields.ExtendableTextField
-import training.commands.kotlin.TaskContext
+import training.commands.kotlin.TaskRuntimeContext
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
@@ -90,6 +90,6 @@ class GotoActionLesson(module: Module, lang: String, private val sample: LessonS
 
   private fun isLineNumbersShown() = EditorSettingsExternalizable.getInstance().isLineNumbersShown
 
-  private fun TaskContext.checkWordInSearch(expected: String): Boolean =
+  private fun TaskRuntimeContext.checkWordInSearch(expected: String): Boolean =
     (focusOwner as? ExtendableTextField)?.text?.toLowerCase()?.contains(expected.toLowerCase()) == true
 }

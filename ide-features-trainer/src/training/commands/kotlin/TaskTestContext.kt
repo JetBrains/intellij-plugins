@@ -24,7 +24,7 @@ import java.awt.Component
 import java.awt.Container
 import javax.swing.JList
 
-class TaskTestContext(val task: TaskContext) {
+class TaskTestContext(rt: TaskRuntimeContext): TaskRuntimeContext(rt.lesson, rt.editor, rt.project, rt.disposable) {
 
   data class TestScriptProperties (
     val duration: Int = 6 //seconds
@@ -38,7 +38,7 @@ class TaskTestContext(val task: TaskContext) {
     for (actionId in actionIds) {
       val action = ActionManager.getInstance().getAction(actionId) ?: error("Action $actionId is non found")
       DataManager.getInstance().dataContextFromFocusAsync.onSuccess { dataContext ->
-        TransactionGuard.submitTransaction(task.project, Runnable {
+        TransactionGuard.submitTransaction(project, Runnable {
           val event = AnActionEvent.createFromAnAction(action, null, ActionPlaces.UNKNOWN, dataContext)
           ActionUtil.performActionDumbAwareWithCallbacks(action, event, dataContext)
         })

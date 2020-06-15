@@ -218,7 +218,7 @@ class OpenLessonAction(val lesson: Lesson) : AnAction(lesson.name) {
 
   private fun processDslLesson(lesson: KLesson, textEditor: TextEditor, projectWhereToStartLesson: Project) {
     val executor = LessonExecutor(lesson, textEditor.editor, projectWhereToStartLesson)
-    val lessonContext = LessonContextImpl(lesson, textEditor.editor, projectWhereToStartLesson, executor)
+    val lessonContext = LessonContextImpl(executor)
     LessonManager.instance.initDslLesson(textEditor.editor, lesson, executor)
     lesson.lessonContent(lessonContext)
     executor.processNextTask(0)

@@ -16,7 +16,9 @@ class DebuggingFirstPart(module: Module) : KLesson("Debugging Code. Part I", mod
   override val lessonContent: LessonContext.() -> Unit
     get() {
       return {
-        JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
+        prepareRuntimeTask {
+          JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
+        }
         prepareSample(jsDebuggerSample)
         task("Run") {
           text("Now that we have a run/debug configuration in place, let’s see how to work with the built-in debugger. \n" +

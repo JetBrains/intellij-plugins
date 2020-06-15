@@ -29,7 +29,7 @@ import com.intellij.xdebugger.impl.XDebugSessionImpl
 import com.intellij.xdebugger.impl.XDebuggerManagerImpl
 import com.intellij.xdebugger.impl.frame.XDebuggerFramesList
 import org.fest.swing.timing.Timeout
-import training.commands.kotlin.TaskContext
+import training.commands.kotlin.TaskRuntimeContext
 import training.commands.kotlin.TaskTestContext
 import training.keymap.KeymapUtil
 import training.learn.interfaces.Module
@@ -48,22 +48,25 @@ class JavaDebugLesson(module: Module) : KLesson("Debug Workflow", module, "JAVA"
   private val demoClassName = JavaRunLessonsUtils.demoClassName
   private val sample = JavaRunLessonsUtils.demoSample
 
-  override val lessonContent: LessonContext.() -> Unit
-    get() = {
-      prepareSample(sample)
+  override val lessonContent: LessonContext.() -> Unit = {
+    prepareSample(sample)
 
-      var needToRun = true
-      runWriteAction {
-        val breakpointManager = XDebuggerManager.getInstance(project).breakpointManager
-        breakpointManager.allBreakpoints.forEach { breakpointManager.removeBreakpoint(it) }
+    var needToRun = false
+    task {
+      before {
+        runWriteAction {
+          val breakpointManager = XDebuggerManager.getInstance(project).breakpointManager
+          breakpointManager.allBreakpoints.forEach { breakpointManager.removeBreakpoint(it) }
 
-        needToRun = !selectedNeedConfiguration() && !configureDebugConfiguration()
+          needToRun = !selectedNeedConfiguration() && !configureDebugConfiguration()
+        }
       }
+    }
 
-      if (needToRun) {
-        // Normally this step should not be shown!
-        task {
-          text("Before debugging let's run the program and see what is going wrong ${action("RunClass")}.")
+    if (needToRun) {
+      // Normally this step should not be shown!
+      task {
+        text("Before debugging let's run the program and see what is going wrong ${action("RunClass")}.")
           addFutureStep {
             subscribeForMessageBus(RunManagerListener.TOPIC, object : RunManagerListener {
               override fun runConfigurationSelected(settings: RunnerAndConfigurationSettings?) {
@@ -78,7 +81,9 @@ class JavaDebugLesson(module: Module) : KLesson("Debug Workflow", module, "JAVA"
 
       lateinit var logicalPosition: LogicalPosition
       task {
-        logicalPosition = editor.offsetToLogicalPosition(sample.startOffset)
+        before {
+          logicalPosition = editor.offsetToLogicalPosition(sample.startOffset)
+        }
         triggerByPartOfComponent<EditorGutterComponentEx> l@{ ui ->
           if (CommonDataKeys.EDITOR.getData(ui as DataProvider) != editor) return@l null
           val y = editor.visualLineToY(editor.logicalToVisualPosition(logicalPosition).line)
@@ -124,7 +129,9 @@ class JavaDebugLesson(module: Module) : KLesson("Debug Workflow", module, "JAVA"
       }
 
       task("EditorEscape") {
-        LearningUiHighlightingManager.clearHighlights()
+        before {
+          LearningUiHighlightingManager.clearHighlights()
+        }
         text("Many trace actions will focus debug toolwindow. Lets return to the editor with ${action(it)}")
         stateCheck {
           focusOwner is EditorComponentImpl
@@ -181,7 +188,9 @@ class JavaDebugLesson(module: Module) : KLesson("Debug Workflow", module, "JAVA"
       waitBeforeContinue(500)
 
       task("QuickEvaluateExpression") {
-        LearningUiHighlightingManager.clearHighlights()
+        before {
+          LearningUiHighlightingManager.clearHighlights()
+        }
         caret(sample.getPosition(2))
         text("Lets see what we are going to pass to ${code("Integer.parseInt")}. We selected the argument. " +
              "Invoke Quick Evaluate Expression ${action(it)}.")
@@ -296,7 +305,9 @@ class JavaDebugLesson(module: Module) : KLesson("Debug Workflow", module, "JAVA"
       }
 
       task {
-        LearningUiHighlightingManager.clearHighlights()
+        before {
+          LearningUiHighlightingManager.clearHighlights()
+        }
         text("Click <strong>Evaluate</strong> or hit ${action("EditorEnter")}.")
         addFutureStep {
           debugSession.addSessionListener(object : XDebugSessionListener {
@@ -327,32 +338,34 @@ class JavaDebugLesson(module: Module) : KLesson("Debug Workflow", module, "JAVA"
   private fun LessonContext.highlightButtonById(actionId: String) {
     val needToFindButton = ActionManager.getInstance().getAction(actionId)
     task {
-      LearningUiHighlightingManager.clearHighlights()
-      ApplicationManager.getApplication().executeOnPooledThread {
-        val result = LearningUiUtil.findAllShowingComponentWithTimeout(null, ActionButton::class.java,
-                                                                       Timeout.timeout(1,
-                                                                                                                   TimeUnit.SECONDS)) { ui ->
-          ui.action == needToFindButton
-          // Some buttons are duplicated to several tab-panels. It is a way to find an active one.
-          && UIUtil.getParentOfType(Toolbar::class.java, ui)?.location?.x != 0
-        }
+      before {
+        LearningUiHighlightingManager.clearHighlights()
+        ApplicationManager.getApplication().executeOnPooledThread {
+          val result = LearningUiUtil.findAllShowingComponentWithTimeout(null, ActionButton::class.java,
+                                                                         Timeout.timeout(1,
+                                                                                         TimeUnit.SECONDS)) { ui ->
+            ui.action == needToFindButton
+            // Some buttons are duplicated to several tab-panels. It is a way to find an active one.
+            && UIUtil.getParentOfType(Toolbar::class.java, ui)?.location?.x != 0
+          }
 
-        invokeLater {
-          for (button in result) {
-            LearningUiHighlightingManager.highlightComponent(button)
+          invokeLater {
+            for (button in result) {
+              LearningUiHighlightingManager.highlightComponent(button)
+            }
           }
         }
       }
     }
   }
 
-  private fun LessonContext.selectedNeedConfiguration(): Boolean {
+  private fun TaskRuntimeContext.selectedNeedConfiguration(): Boolean {
     val runManager = RunManager.getInstance(project)
     val selectedConfiguration = runManager.selectedConfiguration
     return selectedConfiguration?.name == demoClassName
   }
 
-  private fun LessonContext.configureDebugConfiguration(): Boolean {
+  private fun TaskRuntimeContext.configureDebugConfiguration(): Boolean {
     val runManager = RunManager.getInstance(project)
     val dataContext = DataManagerImpl.getInstance().getDataContext(editor.component)
     val configurationsFromContext = ConfigurationContext.getFromContext(dataContext).configurationsFromContext
@@ -363,7 +376,7 @@ class JavaDebugLesson(module: Module) : KLesson("Debug Workflow", module, "JAVA"
     return true
   }
 
-  private fun TaskContext.checkWordInTextField(expected: String): Boolean =
+  private fun TaskRuntimeContext.checkWordInTextField(expected: String): Boolean =
     (focusOwner as? JTextComponent)?.text?.replace(" ", "")?.toLowerCase() == expected.toLowerCase().replace(" ", "")
 
   override val testScriptProperties: TaskTestContext.TestScriptProperties

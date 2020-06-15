@@ -14,7 +14,9 @@ class DebuggingSecondPart(module: Module) : KLesson("Debugging Code. Part II", m
   override val lessonContent: LessonContext.() -> Unit
     get() {
       return {
-        JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
+        prepareRuntimeTask {
+          JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
+        }
         prepareSample(BeforeDebugging.jsDebuggerSample)
         task("StepInto") {
           text("<strong>Important</strong>: Please make sure that there’s a breakpoint on line 1 and that the debugger is launched (<action>DebugClass</action>) and opened on the <strong>Debugger</strong> tab before moving forward.\nLet's continue with locating a bug in our code and learn a few more things that come in handy when debugging in WebStorm." +

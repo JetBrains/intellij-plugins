@@ -44,11 +44,13 @@ class NavigationLesson(module: Module) : KLesson("Secrets of Efficient Navigatio
   override val lessonContent: LessonContext.() -> Unit
     get() {
       return {
-        JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
-        
-        //by default in 2020.1 "Structure" is in "top-left" state, also the state can be changed by user 
-        val toolWindow = ToolWindowManager.getInstance(project).getToolWindow("Structure")
-        toolWindow?.setSplitMode(true, null)
+        prepareRuntimeTask {
+          JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
+
+          //by default in 2020.1 "Structure" is in "top-left" state, also the state can be changed by user
+          val toolWindow = ToolWindowManager.getInstance(project).getToolWindow("Structure")
+          toolWindow?.setSplitMode(true, null)
+        }
         
         prepareSample(sample)
         

@@ -1,12 +1,11 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.lesson.kimpl
 
-import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.project.Project
 import org.jetbrains.annotations.CalledInAwt
 import training.commands.kotlin.TaskContext
+import training.commands.kotlin.TaskRuntimeContext
 
-abstract class LessonContext(val lesson: KLesson, val editor: Editor, val project: Project) {
+abstract class LessonContext {
   /**
    * Start a new task in a lesson context
    */
@@ -19,6 +18,14 @@ abstract class LessonContext(val lesson: KLesson, val editor: Editor, val projec
       text(getText(action))
       trigger(action)
       test { actions(action) }
+    }
+  }
+
+  fun prepareRuntimeTask(preparation: TaskRuntimeContext.() -> Unit) {
+    task {
+      before {
+        preparation()
+      }
     }
   }
 

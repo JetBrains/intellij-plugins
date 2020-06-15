@@ -27,7 +27,9 @@ class BasicCompletionLesson(module: Module) : KLesson("The Nuts and Bolts of Cod
   override val lessonContent: LessonContext.() -> Unit
     get() {
       return {
-        JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
+        prepareRuntimeTask {
+          JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
+        }
         prepareSample(sample)
 
         caret(136)

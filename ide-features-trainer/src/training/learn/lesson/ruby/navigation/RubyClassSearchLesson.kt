@@ -5,7 +5,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.testGuiFramework.framework.GuiTestUtil
 import com.intellij.testGuiFramework.util.Key
 import com.intellij.ui.components.fields.ExtendableTextField
-import training.commands.kotlin.TaskContext
+import training.commands.kotlin.TaskRuntimeContext
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
@@ -47,7 +47,7 @@ class RubyClassSearchLesson(module: Module) : KLesson("Class Search", module, "r
       }
     }
 
-  private fun TaskContext.checkWordInSearch(expected: String): Boolean =
+  private fun TaskRuntimeContext.checkWordInSearch(expected: String): Boolean =
     (focusOwner as? ExtendableTextField)?.text?.toLowerCase() == expected.toLowerCase()
 
   override val existedFile: String

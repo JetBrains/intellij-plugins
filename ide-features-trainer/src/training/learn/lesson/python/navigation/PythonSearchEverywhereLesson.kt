@@ -9,7 +9,7 @@ import com.intellij.testGuiFramework.util.Key
 import com.intellij.testGuiFramework.util.Modifier
 import com.intellij.testGuiFramework.util.Shortcut
 import com.intellij.ui.components.fields.ExtendableTextField
-import training.commands.kotlin.TaskContext
+import training.commands.kotlin.TaskRuntimeContext
 import training.commands.kotlin.TaskTestContext
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
@@ -94,7 +94,7 @@ class PythonSearchEverywhereLesson(module: Module) : KLesson("Search Everywhere"
     }
   }
 
-  private fun TaskContext.checkWordInSearch(expected: String): Boolean =
+  private fun TaskRuntimeContext.checkWordInSearch(expected: String): Boolean =
     (focusOwner as? ExtendableTextField)?.text?.toLowerCase() == expected.toLowerCase()
 
   override val existedFile = "src/jinja2/__init__.py"

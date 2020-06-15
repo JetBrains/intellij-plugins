@@ -8,6 +8,7 @@ import com.intellij.openapi.wm.ex.ToolWindowManagerListener
 import com.intellij.util.messages.Topic
 import com.intellij.xdebugger.XDebuggerManager
 import training.commands.kotlin.TaskContext
+import training.commands.kotlin.TaskRuntimeContext
 import javax.swing.JList
 
 object LessonUtil {
@@ -64,11 +65,11 @@ fun TaskContext.toolWindowShowed(toolWindowId: String) {
   }
 }
 
-fun <L> TaskContext.subscribeForMessageBus(topic: Topic<L>, handler: L) {
+fun <L> TaskRuntimeContext.subscribeForMessageBus(topic: Topic<L>, handler: L) {
   project.messageBus.connect(disposable).subscribe(topic, handler)
 }
 
-fun TaskContext.lineWithBreakpoints(): Set<Int> {
+fun TaskRuntimeContext.lineWithBreakpoints(): Set<Int> {
   val breakpointManager = XDebuggerManager.getInstance(project).breakpointManager
   return breakpointManager.allBreakpoints.filter {
     val file = FileDocumentManager.getInstance().getFile(editor.document)

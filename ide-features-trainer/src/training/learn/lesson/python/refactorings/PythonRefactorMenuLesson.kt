@@ -4,7 +4,7 @@ package training.learn.lesson.python.refactorings
 import com.intellij.refactoring.rename.inplace.InplaceRefactoring
 import com.intellij.testGuiFramework.framework.GuiTestUtil
 import com.intellij.testGuiFramework.util.Key
-import training.commands.kotlin.TaskContext
+import training.commands.kotlin.TaskRuntimeContext
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
@@ -58,5 +58,5 @@ class PythonRefactorMenuLesson(module: Module) : KLesson("Refactoring Menu", mod
     }
   }
 
-  private fun TaskContext.hasInplaceRename() = editor.getUserData(InplaceRefactoring.INPLACE_RENAMER) != null
+  private fun TaskRuntimeContext.hasInplaceRename() = editor.getUserData(InplaceRefactoring.INPLACE_RENAMER) != null
 }

@@ -32,7 +32,7 @@ class PythonTabCompletionLesson(module: Module) : KLesson("Tab Completion", modu
         prepareSample(sample)
         task("CodeCompletion") {
           text("Suppose you want to replace ${code("current")} by ${code("total")}. Invoke completion by pressing ${action(it)}.")
-          triggerByListItemAndHighlight(checkList = isTotalItem)
+          triggerByListItemAndHighlight(checkList = { ui -> isTotalItem(ui) })
           proposeRestoreMe()
           test { actions(it) }
         }

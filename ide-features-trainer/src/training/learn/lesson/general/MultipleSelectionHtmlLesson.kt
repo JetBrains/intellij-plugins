@@ -4,7 +4,7 @@ package training.learn.lesson.general
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.html.HtmlTag
 import com.intellij.psi.util.PsiTreeUtil
-import training.commands.kotlin.TaskContext
+import training.commands.kotlin.TaskRuntimeContext
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
@@ -57,7 +57,7 @@ class MultipleSelectionHtmlLesson(module: Module) : KLesson("Multiple Selections
       }
     }
 
-  private fun TaskContext.checkMultiChange(): Boolean {
+  private fun TaskRuntimeContext.checkMultiChange(): Boolean {
     val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.document)
 
     val childrenOfType1 = PsiTreeUtil.findChildrenOfType(psiFile, HtmlTag::class.java)

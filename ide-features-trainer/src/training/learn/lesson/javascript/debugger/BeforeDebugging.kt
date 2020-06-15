@@ -33,8 +33,9 @@ class BeforeDebugging(module: Module) : KLesson("Before Debugging: Run/Debug Con
   override val lessonContent: LessonContext.() -> Unit
     get() {
       return {
-        JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
-
+        prepareRuntimeTask {
+          JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
+        }
         prepareSample(jsDebuggerSample)
         task("RunClass") {
           text("With WebStorm, you can run and debug all kinds of JavaScript apps right where you write your code.\n" +

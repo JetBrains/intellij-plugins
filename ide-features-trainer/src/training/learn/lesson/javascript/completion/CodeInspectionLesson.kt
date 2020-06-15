@@ -36,7 +36,9 @@ class CodeInspectionLesson(module: Module) : KLesson("The Power of Code Inspecti
   override val lessonContent: LessonContext.() -> Unit
     get() {
       return {
-        JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
+        prepareRuntimeTask {
+          JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
+        }
         prepareSample(sample)
         task("GotoNextError") {
           text("As you work in the editor, WebStorm constantly analyzes your code, detects various problems in it, and suggests how it can be improved. The opened file has two highlighted problems on lines 4 and 5. Let’s check what they are by pressing ${action(it)}.")
@@ -46,7 +48,7 @@ class CodeInspectionLesson(module: Module) : KLesson("The Power of Code Inspecti
         }
         task("ShowIntentionActions") {
           text("You can also use <strong>F2</strong> to jump from one error to another. Or, you can explore the found problems by hovering over them.\nIn this file, the IDE has located an unresolved variable – one that wasn't defined anywhere in the code. It suggests creating a new one, <strong>book</strong>, as one of the possible fixes, but we need to add a parameter book instead. Place the caret on <strong>book</strong> and hit ${action(it)} to see the full list of fixes.")
-          caret(editor.document.getLineEndOffset(3) - 11)
+          before { caret(editor.document.getLineEndOffset(3) - 11) }
           
           //handle simple alt+enter and alt+enter for the error tooltip 
           trigger { id -> id == it || id == "com.intellij.codeInsight.daemon.impl.DaemonTooltipWithActionRenderer\$addActionsRow$2"}

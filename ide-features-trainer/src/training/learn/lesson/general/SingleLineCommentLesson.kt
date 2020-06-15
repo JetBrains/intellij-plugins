@@ -4,6 +4,7 @@ package training.learn.lesson.general
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
+import training.commands.kotlin.TaskRuntimeContext
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
@@ -14,7 +15,7 @@ class SingleLineCommentLesson(module: Module, lang: String, private val sample: 
 
   override val lessonContent: LessonContext.() -> Unit
     get() = {
-      fun countCommentedLines(): Int =
+      fun TaskRuntimeContext.countCommentedLines(): Int =
         calculateComments(PsiDocumentManager.getInstance(project).getPsiFile(editor.document)!!)
 
       prepareSample(sample)
