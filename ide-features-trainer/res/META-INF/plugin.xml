@@ -23,12 +23,12 @@
   </projectListeners>
 
   <extensionPoints>
-    <extensionPoint name="TrainingLangExtension"
+    <extensionPoint name="ift.language.extension"
                     beanClass="com.intellij.lang.LanguageExtensionPoint" dynamic="true">
       <with attribute="implementationClass" implements="training.lang.LangSupport"/>
     </extensionPoint>
 
-    <extensionPoint name="TrainingModules" beanClass="training.learn.TrainingModules" dynamic="true"/>
+    <extensionPoint name="ift.modules" beanClass="training.learn.TrainingModules" dynamic="true"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">

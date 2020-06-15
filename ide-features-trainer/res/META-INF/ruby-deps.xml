@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <idea-plugin>
   <extensions defaultExtensionNs="training">
-    <TrainingLangExtension language="ruby" implementationClass="training.lang.RubyLangSupport"/>
+    <ift.language.extension language="ruby" implementationClass="training.lang.RubyLangSupport"/>
 
-    <TrainingModules language="ruby">
+    <ift.modules language="ruby">
       <module path="modules/ruby/EditorBasics.xml"/>
       <module path="modules/ruby/Navigation.xml"/>
       <module path="modules/ruby/Completions.xml"/>
       <module path="modules/ruby/Refactorings.xml"/>
-    </TrainingModules>
+    </ift.modules>
   </extensions>
 </idea-plugin>
