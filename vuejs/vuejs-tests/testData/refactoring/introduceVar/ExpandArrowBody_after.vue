@@ -16,8 +16,8 @@
         methods: {
             isNotInList1(v) {
                 return this.list1.every(k => {
-                    var created = v.id !== k.id;
-                    return created;
+                  var created = v.id !== k.id;
+                  return created;
                 })
             }
         }
