@@ -24,7 +24,7 @@ import java.awt.Component
 import java.awt.Container
 import javax.swing.JList
 
-class TaskTestContext(rt: TaskRuntimeContext): TaskRuntimeContext(rt.lesson, rt.editor, rt.project, rt.disposable) {
+class TaskTestContext(rt: TaskRuntimeContext): TaskRuntimeContext(rt) {
 
   data class TestScriptProperties (
     val duration: Int = 6 //seconds

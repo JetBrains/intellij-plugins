@@ -23,7 +23,7 @@ abstract class TaskContext {
   /** Put here some initialization for the task */
   abstract fun before(preparation: TaskRuntimeContext.() -> Unit)
 
-  abstract fun restoreState(delayMillis: Int = 0, checkState: () -> Boolean)
+  abstract fun restoreState(delayMillis: Int = 0, checkState: TaskRuntimeContext.() -> Boolean)
 
   /** Shortcut */
   fun restoreByUi(delayMillis: Int = 0) {
@@ -31,8 +31,6 @@ abstract class TaskContext {
       previous.ui?.isShowing?.not() ?: true
     }
   }
-
-  abstract val previous: PreviousTaskInfo
 
   enum class RestoreProposal {
     None,
@@ -178,7 +176,7 @@ abstract class TaskContext {
   /** Show an [icon] inside lesson step message */
   abstract fun icon(icon: Icon): String
 
-  class DoneStepContext(val future: CompletableFuture<Boolean>, rt: TaskRuntimeContext): TaskRuntimeContext(rt.lesson, rt.editor, rt.project, rt.disposable) {
+  class DoneStepContext(val future: CompletableFuture<Boolean>, rt: TaskRuntimeContext): TaskRuntimeContext(rt) {
     fun completeStep() {
       assert(ApplicationManager.getApplication().isDispatchThread)
       if (!future.isDone && !future.isCancelled) {

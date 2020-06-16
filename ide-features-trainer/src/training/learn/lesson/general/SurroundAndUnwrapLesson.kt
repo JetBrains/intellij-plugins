@@ -52,7 +52,7 @@ abstract class SurroundAndUnwrapLesson(module: Module, lang: String) :
           editor.caretModel.currentCaret.moveCaretRelatively(0, lineShiftBeforeUnwrap, false, true)
         }
       }
-      task { // restore point
+      prepareRuntimeTask { // restore point
         prepareSample(previous.sample)
       }
 
