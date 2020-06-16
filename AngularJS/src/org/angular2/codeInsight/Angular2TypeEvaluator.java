@@ -60,12 +60,12 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
   }
 
   @Override
-  protected void doAddType(@NotNull JSType type, @Nullable PsiElement source) {
+  protected void doAddType(@Nullable JSType type, @Nullable PsiElement source, boolean skipGuard) {
     if (type instanceof JSUnknownType) {
       // convert unknown to any to have less strict type validation in Angular
       type = JSAnyType.get(type.getSource());
     }
-    super.doAddType(type, source);
+    super.doAddType(type, source, skipGuard);
   }
 
   @Override
