@@ -93,7 +93,7 @@ import compUI from 'compUI.vue'
 <script>
 import ToImport from "./toImport";
 export default {
-    components: {ToImport}
+  components: {ToImport}
 }
 </script>
 """)
@@ -200,7 +200,7 @@ export default {
 <script>
 import ToImport from "./toImport";
 export default {
-    components: {ToImport}
+  components: {ToImport}
 }
 </script>
 """)
@@ -232,7 +232,7 @@ export default {
 <script>
 import ToImport from "./toImport";
 export default {
-    components: {ToImport}
+  components: {ToImport}
 }
 </script>""")
     })
@@ -973,7 +973,7 @@ import Vue from "vue";
 import {Component} from "vue-class-component";
 import ShortComponent from "./ShortComponent";
 @Component({
-    components: {ShortComponent}
+  components: {ShortComponent}
 })
 export default class ComponentInsertion extends Vue {
 }
@@ -990,7 +990,7 @@ import Vue from "vue";
 import {Component} from "vue-class-component";
 import ShortComponent from "./ShortComponent";
 @Component({
-    components: {ShortComponent}
+  components: {ShortComponent}
 })
 export default class ComponentInsertion extends Vue {
 }
@@ -1010,7 +1010,7 @@ import Vue from "vue";
 import {Component} from "vue-class-component";
 import ShortComponent from "./ShortComponent";
 @Component({
-    components: {ShortComponent}
+  components: {ShortComponent}
 })
 export default class ComponentInsertion extends Vue {
 }
@@ -1031,7 +1031,7 @@ import {Component} from "vue-class-component";
 import Vue from "vue";
 import ShortComponent from "./ShortComponent";
 @Component({
-    components: {ShortComponent}
+  components: {ShortComponent}
 })
 export default class ComponentInsertion extends Vue {
 }
@@ -1045,7 +1045,7 @@ export default class ComponentInsertion extends Vue {
 import Vue from "vue";
 import {Component} from "vue-class-component";
 @Component({
-    name: "a123"
+  name: "a123"
 })
 export default class ComponentInsertion extends Vue {
 }
@@ -1058,8 +1058,8 @@ import Vue from "vue";
 import {Component} from "vue-class-component";
 import ShortComponent from "./ShortComponent";
 @Component({
-    name: "a123",
-    components: {ShortComponent}
+  name: "a123",
+  components: {ShortComponent}
 })
 export default class ComponentInsertion extends Vue {
 }

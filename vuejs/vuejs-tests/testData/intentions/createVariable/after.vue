@@ -2,7 +2,7 @@
 <script lang="ts">
     class MyClass {
         name: String;
-        private name2: String;
+      private name2: String;
         Foo() {
             this.name = this.name2;
         }
