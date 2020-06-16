@@ -9,6 +9,7 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx
+import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.EmptyRunnable
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.ModificationTracker
@@ -143,5 +144,10 @@ private fun reloadProject(project: Project, file: VirtualFile) {
           .makeRootsChange(EmptyRunnable.getInstance(), false, true)
         project.putUserData(VUE_CONTEXT_RELOAD_MARKER_KEY, null)
       }
-    }, project.disposed)
+    }, Condition<Any> {
+    project.disposed.value(null).also {
+      // Clear the flag in case the project is recycled
+      if (it) project.putUserData(VUE_CONTEXT_RELOAD_MARKER_KEY, null)
+    }
+  })
 }
