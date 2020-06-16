@@ -4,6 +4,7 @@ package training.learn.lesson.python.completion
 import com.intellij.testGuiFramework.framework.GuiTestUtil
 import com.intellij.testGuiFramework.util.Key
 import training.commands.kotlin.TaskContext
+import training.commands.kotlin.TaskRuntimeContext
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.*
 import javax.swing.JList
@@ -68,7 +69,7 @@ class PythonTabCompletionLesson(module: Module) : KLesson("Tab Completion", modu
       }
     }
 
-  private fun TaskContext.selectNeededItem(): Boolean? {
+  private fun TaskRuntimeContext.selectNeededItem(): Boolean? {
     return (previous.ui as? JList<*>)?.let { ui ->
       if (!ui.isShowing) return false
       val selectedIndex = ui.selectedIndex

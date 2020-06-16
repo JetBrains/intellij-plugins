@@ -16,7 +16,6 @@ import org.fest.swing.exception.WaitTimedOutError
 import org.intellij.lang.annotations.Language
 import org.jdom.input.SAXBuilder
 import training.check.Check
-import training.commands.kotlin.PreviousTaskInfo
 import training.commands.kotlin.TaskContext
 import training.commands.kotlin.TaskRuntimeContext
 import training.commands.kotlin.TaskTestContext
@@ -33,7 +32,11 @@ internal class TaskContextImpl(private val lessonExecutor: LessonExecutor,
                                private val recorder: ActionsRecorder,
                                private val taskIndex: Int,
                                private val callbackData: LessonExecutor.TaskCallbackData) : TaskContext() {
-  private val runtimeContext = TaskRuntimeContext(lessonExecutor.lesson, lessonExecutor.editor, lessonExecutor.project, recorder)
+  private val runtimeContext = TaskRuntimeContext(lessonExecutor.lesson,
+                                                  lessonExecutor.editor,
+                                                  lessonExecutor.project,
+                                                  recorder,
+                                                  { lessonExecutor.getUserVisibleInfo(taskIndex) })
 
   val steps: MutableList<CompletableFuture<Boolean>> = mutableListOf()
 
@@ -43,14 +46,11 @@ internal class TaskContextImpl(private val lessonExecutor: LessonExecutor,
     preparation(runtimeContext) // just call it here
   }
 
-  override fun restoreState(delayMillis: Int, checkState: () -> Boolean) {
+  override fun restoreState(delayMillis: Int, checkState: TaskRuntimeContext.() -> Boolean) {
     if (callbackData.restoreCondition != null) throw IllegalStateException("Only one restore context per task is allowed")
     callbackData.delayMillis = delayMillis
-    callbackData.restoreCondition = checkState
+    callbackData.restoreCondition = { checkState(runtimeContext) }
   }
-
-  override val previous: PreviousTaskInfo
-    get() = lessonExecutor.getUserVisibleInfo(taskIndex)
 
   override fun proposeRestore(restoreCheck: TaskRuntimeContext.() -> RestoreProposal) {
     val key = IncorrectLearningStateNotificationProvider.INCORRECT_LEARNING_STATE_NOTIFICATION
