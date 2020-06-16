@@ -52,15 +52,14 @@ class JavaDebugLesson(module: Module) : KLesson("Debug Workflow", module, "JAVA"
     prepareSample(sample)
 
     var needToRun = false
-    task {
-      before {
-        runWriteAction {
-          val breakpointManager = XDebuggerManager.getInstance(project).breakpointManager
-          breakpointManager.allBreakpoints.forEach { breakpointManager.removeBreakpoint(it) }
+    prepareRuntimeTask {
+      runWriteAction {
+        val breakpointManager = XDebuggerManager.getInstance(project).breakpointManager
+        breakpointManager.allBreakpoints.forEach { breakpointManager.removeBreakpoint(it) }
 
-          needToRun = !selectedNeedConfiguration() && !configureDebugConfiguration()
-        }
+        needToRun = !selectedNeedConfiguration() && !configureDebugConfiguration()
       }
+
     }
 
     if (needToRun) {
@@ -337,22 +336,20 @@ class JavaDebugLesson(module: Module) : KLesson("Debug Workflow", module, "JAVA"
 
   private fun LessonContext.highlightButtonById(actionId: String) {
     val needToFindButton = ActionManager.getInstance().getAction(actionId)
-    task {
-      before {
-        LearningUiHighlightingManager.clearHighlights()
-        ApplicationManager.getApplication().executeOnPooledThread {
-          val result = LearningUiUtil.findAllShowingComponentWithTimeout(null, ActionButton::class.java,
-                                                                         Timeout.timeout(1,
-                                                                                         TimeUnit.SECONDS)) { ui ->
-            ui.action == needToFindButton
-            // Some buttons are duplicated to several tab-panels. It is a way to find an active one.
-            && UIUtil.getParentOfType(Toolbar::class.java, ui)?.location?.x != 0
-          }
+    prepareRuntimeTask {
+      LearningUiHighlightingManager.clearHighlights()
+      ApplicationManager.getApplication().executeOnPooledThread {
+        val result = LearningUiUtil.findAllShowingComponentWithTimeout(null, ActionButton::class.java,
+                                                                       Timeout.timeout(1,
+                                                                                       TimeUnit.SECONDS)) { ui ->
+          ui.action == needToFindButton
+          // Some buttons are duplicated to several tab-panels. It is a way to find an active one.
+          && UIUtil.getParentOfType(Toolbar::class.java, ui)?.location?.x != 0
+        }
 
-          invokeLater {
-            for (button in result) {
-              LearningUiHighlightingManager.highlightComponent(button)
-            }
+        invokeLater {
+          for (button in result) {
+            LearningUiHighlightingManager.highlightComponent(button)
           }
         }
       }
