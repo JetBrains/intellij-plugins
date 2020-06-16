@@ -29,7 +29,7 @@
       (function () {
         var foo = 34
         return foo
-                + 45
+            + 45
       })()
     }}
   </div>

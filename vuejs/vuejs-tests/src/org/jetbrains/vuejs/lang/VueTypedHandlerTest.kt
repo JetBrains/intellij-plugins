@@ -179,9 +179,9 @@ export default {<caret>}
   fun testTypeClosingCol() {
     myFixture.configureByText("TypeClosingCol.vue", """
 <template>
-    <div>
-        <Col><<caret>
-    </div>
+  <div>
+    <Col><<caret>
+  </div>
 </template>
 <script lang="es6">
   export default {
@@ -194,9 +194,9 @@ export default {<caret>}
     myFixture.type("/")
     myFixture.checkResult("""
 <template>
-    <div>
-        <Col></Col>
-    </div>
+  <div>
+    <Col></Col>
+  </div>
 </template>
 <script lang="es6">
   export default {

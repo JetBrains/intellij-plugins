@@ -1,7 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang
 
-import com.intellij.application.options.CodeStyle
+import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.vfs.VfsUtil
@@ -9,6 +9,7 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 import org.jetbrains.vuejs.intentions.extractComponent.VueExtractComponentIntention
 import org.jetbrains.vuejs.intentions.extractComponent.VueExtractComponentRefactoring
+import org.jetbrains.vuejs.lang.html.VueLanguage
 
 class VueExtractComponentTest : BasePlatformTestCase() {
   fun testExtractSingleTag() = doExtractTest(
@@ -515,8 +516,7 @@ export default {
   components: { CoolStuck }
 }
 </script>
-"""
-      ,
+""",
       """
 <template>
     <NewComponent/>
@@ -560,8 +560,7 @@ export default {
   components: { CoolStuck }
 }
 </script>
-"""
-      ,
+""",
       """
 <template>
     <NewComponent/>
@@ -813,8 +812,8 @@ ${'$'}duration = 1.4s
     transition opacity .15s ease
     animation rotator ${'$'}duration linear infinite
     animation-play-state paused""" +
-  // TODO fix the refactoring: below should be only 1 blank line!
-  """
+      // TODO fix the refactoring: below should be only 1 blank line!
+      """
 
 
 @keyframes rotator
@@ -1064,13 +1063,16 @@ export default {
 
   private fun doExtractTest(existing: String, modified: String, newText: String?, numTags: Int = 1,
                             newCompName: String = "NewComponent") {
-    val currentSettings = CodeStyle.getSettings(myFixture.project).getCommonSettings(JavascriptLanguage.INSTANCE)
-    val before = currentSettings.BLANK_LINES_BEFORE_IMPORTS
-    val after = currentSettings.BLANK_LINES_AFTER_IMPORTS
-
-    try {
-      currentSettings.BLANK_LINES_BEFORE_IMPORTS = 0
-      currentSettings.BLANK_LINES_AFTER_IMPORTS = 0
+    JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) { styleSettings ->
+      styleSettings.getCommonSettings(JavascriptLanguage.INSTANCE).let {
+        it.BLANK_LINES_BEFORE_IMPORTS = 0
+        it.BLANK_LINES_AFTER_IMPORTS = 0
+      }
+      styleSettings.getCommonSettings(VueLanguage.INSTANCE).indentOptions?.let {
+        it.INDENT_SIZE = 4
+        it.TAB_SIZE = 4
+        it.CONTINUATION_INDENT_SIZE = 8
+      }
 
       myFixture.configureByText(getTestName(false) + ".vue", existing)
 
@@ -1092,10 +1094,6 @@ export default {
         myFixture.configureByText("NewComponent2.vue", VfsUtil.loadText(created!!.viewProvider.virtualFile))
         myFixture.checkResult(newText)
       }
-    }
-    finally {
-      currentSettings.BLANK_LINES_BEFORE_IMPORTS = before
-      currentSettings.BLANK_LINES_AFTER_IMPORTS = after
     }
   }
 }
