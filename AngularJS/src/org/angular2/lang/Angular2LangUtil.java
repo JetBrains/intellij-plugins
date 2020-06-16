@@ -114,6 +114,13 @@ public class Angular2LangUtil {
       ProjectRootManagerEx.getInstanceEx(project)
         .makeRootsChange(EmptyRunnable.getInstance(), false, true);
       project.putUserData(ANGULAR2_CONTEXT_RELOAD_MARKER_KEY, null);
-    }), project.getDisposed());
+    }), (value) -> {
+      boolean result = project.getDisposed().value(null);
+      if (result) {
+        // Clear the flag in case the project is recycled
+        project.putUserData(ANGULAR2_CONTEXT_RELOAD_MARKER_KEY, null);
+      }
+      return result;
+    });
   }
 }
