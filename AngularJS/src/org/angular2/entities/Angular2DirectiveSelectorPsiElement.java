@@ -6,7 +6,7 @@ import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.util.AtomicNotNullLazyValue;
 import com.intellij.openapi.util.NotNullFactory;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.pom.PomTarget;
+import com.intellij.pom.PsiDeclaredTarget;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.FakePsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -18,7 +18,7 @@ import javax.swing.*;
 
 import static org.angular2.Angular2DecoratorUtil.getClassForDecoratorElement;
 
-public class Angular2DirectiveSelectorPsiElement extends FakePsiElement implements PomTarget, NavigationItem {
+public class Angular2DirectiveSelectorPsiElement extends FakePsiElement implements PsiDeclaredTarget, NavigationItem {
 
   private final AtomicNotNullLazyValue<PsiElement> myParent;
   private final TextRange myRange;
@@ -69,6 +69,11 @@ public class Angular2DirectiveSelectorPsiElement extends FakePsiElement implemen
   @Override
   public @NotNull TextRange getTextRangeInParent() {
     return myRange;
+  }
+
+  @Override
+  public @Nullable TextRange getNameIdentifierRange() {
+    return new TextRange(0, myRange.getLength());
   }
 
   @Override
