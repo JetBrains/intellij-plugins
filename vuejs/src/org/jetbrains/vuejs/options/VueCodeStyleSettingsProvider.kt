@@ -57,10 +57,6 @@ class VueCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
     return result
   }
 
-  override fun useTextReformat(): Boolean {
-    return true
-  }
-
   override fun getIndentOptionsEditor(): IndentOptionsEditor? {
     return VueIndentOptionsEditor()
   }
