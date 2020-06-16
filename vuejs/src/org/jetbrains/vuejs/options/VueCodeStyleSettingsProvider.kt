@@ -77,6 +77,12 @@ class VueCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
     }
   }
 
+  override fun customizeDefaults(commonSettings: CommonCodeStyleSettings, indentOptions: CommonCodeStyleSettings.IndentOptions) {
+    indentOptions.TAB_SIZE = 2
+    indentOptions.INDENT_SIZE = 2
+    indentOptions.CONTINUATION_INDENT_SIZE = 4
+  }
+
   override fun createCustomSettings(settings: CodeStyleSettings): CustomCodeStyleSettings? {
     return VueCodeStyleSettings(settings)
   }

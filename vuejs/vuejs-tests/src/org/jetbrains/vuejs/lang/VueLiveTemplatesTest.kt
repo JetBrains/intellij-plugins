@@ -118,11 +118,11 @@ export default {
     myFixture.checkResult("""
 <script>
 export default {
-    actions: {
-        updateValue({commit}, payload) {
-            commit(updateValue, payload);
-        }
+  actions: {
+    updateValue({commit}, payload) {
+      commit(updateValue, payload);
     }
+  }
 }
 </script>
 """)
