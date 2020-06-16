@@ -64,6 +64,7 @@ import org.junit.runners.Suite
   VueCopyPasteTest::class,
   VueMoveModuleMemberTest::class,
   VueTypeScriptDuplicateTest::class,
+  VueIntroduceVariableTest::class,
   VueTypeScriptLineMarkersTest::class,
   VueTypeScriptHighlightingTest::class
 )
