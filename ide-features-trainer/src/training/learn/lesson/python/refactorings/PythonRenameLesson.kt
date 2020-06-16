@@ -86,8 +86,10 @@ class PythonRenameLesson(module: Module) : KLesson("Rename", module, "Python") {
 
     task {
       // Increase deterministic: collapse nodes
-      (previous.ui as? JTree)?.let { tree ->
-        TreeUtil.collapseAll(tree, 1)
+      before {
+        (previous.ui as? JTree)?.let { tree ->
+          TreeUtil.collapseAll(tree, 1)
+        }
       }
       text("In simple case PyCharm will just rename without confirmation. But in this sample PyCharm see two calls of  " +
            "${code("teams")} method for objects with unknown type. Expand <strong>Dynamic references</strong> item.")
