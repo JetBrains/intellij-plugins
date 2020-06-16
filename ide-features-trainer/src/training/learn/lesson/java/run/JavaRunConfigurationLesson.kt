@@ -29,10 +29,8 @@ class JavaRunConfigurationLesson(module: Module) : KLesson("Run Configuration", 
 
   override val lessonContent: LessonContext.() -> Unit
     get() = {
-      task {
-        before {
-          configurations().forEach { runManager().removeConfiguration(it) }
-        }
+      prepareRuntimeTask {
+        configurations().forEach { runManager().removeConfiguration(it) }
       }
 
       prepareSample(JavaRunLessonsUtils.demoSample)

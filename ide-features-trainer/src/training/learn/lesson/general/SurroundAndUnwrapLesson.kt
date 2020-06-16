@@ -47,10 +47,8 @@ abstract class SurroundAndUnwrapLesson(module: Module, lang: String) :
           type("${surroundItems.joinToString(separator = " ")}\n") }
       }
 
-      task {
-        before {
-          editor.caretModel.currentCaret.moveCaretRelatively(0, lineShiftBeforeUnwrap, false, true)
-        }
+      prepareRuntimeTask {
+        editor.caretModel.currentCaret.moveCaretRelatively(0, lineShiftBeforeUnwrap, false, true)
       }
       prepareRuntimeTask { // restore point
         prepareSample(previous.sample)
