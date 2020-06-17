@@ -3,11 +3,13 @@ package org.angularjs.codeInsight;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.lang.javascript.psi.JSDefinitionExpression;
+import com.intellij.lang.javascript.psi.JSLiteralExpression;
 import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.impl.source.tree.LeafElement;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.angularjs.AngularTestUtil;
 
@@ -109,5 +111,13 @@ public class DependencyInjectionTest extends BasePlatformTestCase {
     myFixture.copyFileToProject("angular.js");
     myFixture.configureByText(JavaScriptFileType.INSTANCE, "someRef.serv.<caret>");
     myFixture.completeBasic();
+  }
+  
+  public void testParameterNavigation() {
+    myFixture.copyFileToProject("angular.js");
+    myFixture.configureByFile(getTestName(false) + ".js");
+    PsiElement target = JSTestUtils.getGotoDeclarationTarget(myFixture, myFixture.getFile());
+    if (target instanceof LeafElement) target = target.getParent();
+    assertInstanceOf(target, JSLiteralExpression.class);
   }
 }
