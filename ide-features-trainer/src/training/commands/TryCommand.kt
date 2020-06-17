@@ -6,6 +6,8 @@ import com.intellij.openapi.diagnostic.Logger
 import training.check.Check
 import training.learn.ActionsRecorder
 import training.learn.lesson.LessonManager
+import training.learn.lesson.LessonProcessor
+import training.ui.LearningUiManager
 import java.util.concurrent.CompletableFuture
 import kotlin.concurrent.thread
 
@@ -13,6 +15,8 @@ class TryCommand : Command(CommandType.TRY) {
 
   @Throws(Exception::class)
   override fun execute(executionList: ExecutionList) {
+    LearningUiManager.activeToolWindow?.learnPanel?.updateLessonProgress(LessonProcessor.tasksNumber, LessonProcessor.currentTaskIndex)
+    LessonProcessor.currentTaskIndex++
 
     val element = executionList.elements.poll()
     val check: Check?
