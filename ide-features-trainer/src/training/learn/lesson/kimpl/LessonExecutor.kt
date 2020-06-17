@@ -27,18 +27,22 @@ import training.commands.kotlin.TaskTestContext
 import training.learn.ActionsRecorder
 import training.learn.lesson.LessonManager
 import training.ui.IncorrectLearningStateNotificationProvider
+import training.ui.LearningUiManager
 import java.awt.Component
 import java.util.concurrent.CompletableFuture
 
 class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Project) {
   private data class TaskInfo(val content: (Int) -> Unit,
-                              var restoreIndex: Int = 0,
+                              var restoreIndex: Int,
+                              val realTaskIndex: Int?,
                               var messagesNumberBeforeStart: Int = 0,
                               var rehighlightComponent: (() -> Component)? = null,
                               var userVisibleInfo: PreviousTaskInfo? = null)
 
   data class TaskCallbackData(var restoreCondition: (() -> Boolean)? = null,
                               var delayMillis: Int = 0)
+
+  private var currentRealTaskNumber = 0
 
   private var isUnderTaskProcessing = false
   private val taskActions: MutableList<TaskInfo> = ArrayList()
@@ -52,8 +56,8 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
   var hasBeenStopped = false
     private set
 
-  private fun addTaskAction(content: (Int) -> Unit) {
-    taskActions.add(TaskInfo(content, taskActions.size - 1))
+  private fun addTaskAction(realTaskIndex: Int? = null, content: (Int) -> Unit) {
+    taskActions.add(TaskInfo(content, taskActions.size - 1, realTaskIndex))
   }
 
   fun getUserVisibleInfo(index: Int): PreviousTaskInfo {
@@ -76,7 +80,9 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
       throw IllegalStateException("Nested tasks are not permitted!")
     }
 
-    addTaskAction { processTask(taskContent, it) }
+    val isRealTask = LessonExecutorUtil.isRealTask(taskContent)
+    val realTaskNumber = if (isRealTask) currentRealTaskNumber++ else null
+    addTaskAction(realTaskNumber) { processTask(taskContent, it) }
   }
 
   fun stopLesson() {
@@ -132,6 +138,9 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
       return
     }
     val taskInfo = taskActions[taskIndex]
+    taskInfo.realTaskIndex?.let {
+      LearningUiManager.activeToolWindow?.learnPanel?.updateLessonProgress(currentRealTaskNumber, it)
+    }
     taskInfo.messagesNumberBeforeStart = LessonManager.instance.messagesNumber()
     setUserVisibleInfo(taskIndex)
     taskInfo.content(taskIndex)

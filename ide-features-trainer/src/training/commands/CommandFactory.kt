@@ -9,9 +9,7 @@ object CommandFactory {
 
     element ?: return NoCommand()
 
-    val tagName = element.name ?: return NoCommand()
-    val commandType: Command.CommandType = Command.CommandType.values().firstOrNull { tagName.toUpperCase() == it.toString().toUpperCase() }
-                                           ?: return NoCommand()
+    val commandType = getCommandType(element) ?: return NoCommand()
 
     when (commandType) {
       Command.CommandType.TEXT -> return TextCommand()
@@ -28,8 +26,12 @@ object CommandFactory {
       Command.CommandType.SHOWLINENUMBER -> return ShowLineNumberCommand()
       Command.CommandType.EXPANDALLBLOCKS -> return ExpandAllBlocksCommand()
       Command.CommandType.SETSELECTION -> return SetSelectionCommand()
-      else -> throw BadCommandException("unable to parse command from$tagName")
+      else -> throw BadCommandException("unable to parse command from${element.name ?: return NoCommand()}")
     }
   }
 
+  fun getCommandType(element: Element): Command.CommandType? {
+    val tagName = element.name ?: return null
+    return Command.CommandType.values().firstOrNull { tagName.toUpperCase() == it.toString().toUpperCase() }
+  }
 }

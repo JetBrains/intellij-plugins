@@ -57,7 +57,7 @@ class LearnToolWindow internal constructor(val project: Project,
 
   private fun reinitViewsInternal() {
     if (!useNewLearningUi) {
-      learnPanel = LearnPanel()
+      learnPanel = LearnPanel(this)
     }
     modulesPanel.updateMainPanel()
   }
@@ -68,7 +68,7 @@ class LearnToolWindow internal constructor(val project: Project,
       contentManager.contents.filter { it.component != this }.forEach {
         contentManager.removeContent(it, true)
       }
-      learnPanel = LearnPanel()
+      learnPanel = LearnPanel(this)
       val lessonToolWindowTab = object: SimpleToolWindowPanel(true, true) {
         init {
           setContent(JBScrollPane(learnPanel))
