@@ -5,25 +5,21 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import training.learn.CourseManager
-import training.learn.lesson.LessonManager
-import training.ui.LearningUiManager
+import training.ui.LearnToolWindowFactory
 
 class NextLessonAction : AnAction(AllIcons.Actions.Forward) {
   override fun actionPerformed(e: AnActionEvent) {
-    val activeToolWindow = LearningUiManager.activeToolWindow ?: return
-    val lesson = LessonManager.instance.currentLesson ?: return
+    val project = e.project ?: return
+    val lesson = LearnToolWindowFactory.learnWindowPerProject[project]?.learnPanel?.lesson ?: return
     val lessonsForModules = CourseManager.instance.lessonsForModules
     val index = lessonsForModules.indexOf(lesson)
     if (index < 0 || index >= lessonsForModules.size) return
-    CourseManager.instance.openLesson(activeToolWindow.project, lessonsForModules[index + 1])
+    CourseManager.instance.openLesson(project, lessonsForModules[index + 1])
   }
 
   override fun update(e: AnActionEvent) {
-    val activeToolWindow = LearningUiManager.activeToolWindow
-    val lesson = LessonManager.instance.currentLesson
-    e.presentation.isEnabled = activeToolWindow != null
-                               && activeToolWindow.project == e.project
-                               && lesson != null
-                               && CourseManager.instance.lessonsForModules.lastOrNull() != lesson
+    val project = e.project
+    val lesson = LearnToolWindowFactory.learnWindowPerProject[project]?.learnPanel?.lesson
+    e.presentation.isEnabled = lesson != null && CourseManager.instance.lessonsForModules.lastOrNull() != lesson
   }
 }

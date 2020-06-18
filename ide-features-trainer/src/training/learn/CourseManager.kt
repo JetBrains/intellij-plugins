@@ -17,6 +17,10 @@ import training.lang.LangSupport
 import training.learn.exceptons.InvalidSdkException
 import training.learn.interfaces.Lesson
 import training.learn.interfaces.Module
+import training.learn.lesson.LessonManager
+import training.ui.LearnToolWindowFactory
+import training.ui.LearningUiManager
+import training.util.isLearningDocumentationMode
 
 class CourseManager internal constructor() {
   val mapModuleVirtualFile = mutableMapOf<Module, VirtualFile>()
@@ -62,7 +66,17 @@ class CourseManager internal constructor() {
    */
   @Synchronized
   fun openLesson(projectWhereToOpen: Project, lesson: Lesson?) {
+    LessonManager.instance.stopLesson()
     if (lesson == null) return //todo: remove null lessons
+    if (isLearningDocumentationMode(projectWhereToOpen)) {
+      if (projectWhereToOpen == LearningUiManager.activeToolWindow?.project) {
+        LearningUiManager.activeToolWindow = null
+      }
+      LearnToolWindowFactory.learnWindowPerProject[projectWhereToOpen]?.let { learnToolWindow ->
+        learnToolWindow.openInDocumentationMode(lesson)
+        return
+      }
+    }
     val focusOwner = IdeFocusManager.getInstance(projectWhereToOpen).focusOwner
     val parent = DataManager.getInstance().getDataContext(focusOwner)
     val data = mutableMapOf<String, Any?>()

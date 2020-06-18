@@ -8,25 +8,20 @@ import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.ui.EditorNotifications
 import org.fest.swing.exception.ComponentLookupException
 import org.fest.swing.exception.WaitTimedOutError
 import org.intellij.lang.annotations.Language
-import org.jdom.input.SAXBuilder
 import training.check.Check
 import training.commands.kotlin.TaskContext
 import training.commands.kotlin.TaskRuntimeContext
 import training.commands.kotlin.TaskTestContext
 import training.learn.ActionsRecorder
-import training.learn.lesson.LessonManager
 import training.ui.IncorrectLearningStateNotificationProvider
-import training.ui.LearningUiManager
 import java.awt.Component
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
-import javax.swing.Icon
 
 internal class TaskContextImpl(private val lessonExecutor: LessonExecutor,
                                private val recorder: ActionsRecorder,
@@ -77,12 +72,7 @@ internal class TaskContextImpl(private val lessonExecutor: LessonExecutor,
     }
   }
 
-  override fun text(@Language("HTML") text: String) {
-    val wrappedText = "<root><text>$text</text></root>"
-    val textAsElement = SAXBuilder().build(wrappedText.byteInputStream()).rootElement.getChild("text")
-                        ?: throw IllegalStateException("Can't parse as XML:\n$text")
-    LessonManager.instance.addMessages(textAsElement)
-  }
+  override fun text(@Language("HTML") text: String) = LessonExecutorUtil.addTextToLearnPanel(text)
 
   override fun trigger(actionId: String) {
     addStep(recorder.futureAction(actionId))
@@ -195,22 +185,5 @@ internal class TaskContextImpl(private val lessonExecutor: LessonExecutor,
       }
     }
     steps.add(step)
-  }
-
-  override fun action(actionId: String): String {
-    return "<action>$actionId</action>"
-  }
-
-  override fun code(sourceSample: String): String {
-    return "<code>${StringUtil.escapeXmlEntities(sourceSample)}</code>"
-  }
-
-  override fun icon(icon: Icon): String {
-    var index = LearningUiManager.iconMap.getKeysByValue(icon)?.firstOrNull()
-    if (index == null) {
-      index = LearningUiManager.iconMap.size.toString()
-      LearningUiManager.iconMap[index] = icon
-    }
-    return "<icon_idx>$index</icon_idx>"
   }
 }

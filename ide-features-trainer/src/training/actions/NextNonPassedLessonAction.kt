@@ -12,7 +12,7 @@ import training.ui.LearnToolWindowFactory
 class NextNonPassedLessonAction : AnAction(AllIcons.Actions.NextOccurence) {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
-    val lesson = LessonManager.instance.currentLesson ?: return
+    val lesson = LearnToolWindowFactory.learnWindowPerProject[project]?.learnPanel?.lesson ?: LessonManager.instance.currentLesson ?: return
     val nextNonPassedLesson = CourseManager.instance.getNextNonPassedLesson(lesson) ?: return
     CourseManager.instance.openLesson(project, nextNonPassedLesson)
   }
@@ -21,6 +21,6 @@ class NextNonPassedLessonAction : AnAction(AllIcons.Actions.NextOccurence) {
     val project = e.project ?: return
     val toolWindowManager = ToolWindowManager.getInstance(project)
     val toolWindow = toolWindowManager.getToolWindow(LearnToolWindowFactory.LEARN_TOOL_WINDOW) ?: return
-    e.presentation.isEnabled = toolWindow.isVisible &&  CourseManager.instance.getNextNonPassedLesson(null) != null
+    e.presentation.isEnabled = toolWindow.isVisible && CourseManager.instance.getNextNonPassedLesson(null) != null
   }
 }

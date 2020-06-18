@@ -5,11 +5,19 @@ import org.jdom.Element
 
 object CommandFactory {
 
-  fun buildCommand(element: Element?): Command {
+  fun buildCommand(element: Element?, documentationMode: Boolean): Command {
 
     element ?: return NoCommand()
 
     val commandType = getCommandType(element) ?: return NoCommand()
+
+    if (documentationMode) {
+      when (commandType) {
+        Command.CommandType.TEXT -> return TextCommand()
+        Command.CommandType.TRY -> return TextCommand()
+        else -> return JustPeakNextCommand()
+      }
+    }
 
     when (commandType) {
       Command.CommandType.TEXT -> return TextCommand()

@@ -1,9 +1,12 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.lesson.kimpl
 
+import org.intellij.lang.annotations.Language
+import org.jdom.input.SAXBuilder
 import training.commands.kotlin.TaskContext
 import training.commands.kotlin.TaskRuntimeContext
 import training.commands.kotlin.TaskTestContext
+import training.learn.lesson.LessonManager
 import java.awt.Component
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
@@ -14,6 +17,13 @@ internal object LessonExecutorUtil {
     val fakeTaskContext = FakeTaskContext()
     taskContent(fakeTaskContext)
     return fakeTaskContext.hasDetection && fakeTaskContext.hasText
+  }
+
+  fun addTextToLearnPanel(@Language("HTML") text: String) {
+    val wrappedText = "<root><text>$text</text></root>"
+    val textAsElement = SAXBuilder().build(wrappedText.byteInputStream()).rootElement.getChild("text")
+                        ?: throw IllegalStateException("Can't parse as XML:\n$text")
+    LessonManager.instance.addMessages(textAsElement)
   }
 }
 
