@@ -247,7 +247,7 @@
     <ognl.variableReferencesContributor id="s2jsp"
                                         implementation="com.intellij.struts2.jsp.ognl.OgnlStruts2JspVariableReferencesContributor"/>
 
-    <notificationWhitelist groupIds="Struts 2"/>
+    <notificationAllowlist groupIds="Struts 2"/>
   </extensions>
 
   <actions>

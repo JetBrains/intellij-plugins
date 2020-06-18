@@ -285,7 +285,7 @@
                                       implementationClass="org.angular2.lang.metadata.MetadataJsonFileViewProviderFactory"/>
     <lang.elementManipulator forClass="org.angular2.lang.html.psi.Angular2HtmlNgContentSelector"
                              implementationClass="org.angular2.lang.html.psi.impl.Angular2HtmlNgContentSelectorManipulator"/>
-    <notificationWhitelist groupIds="Angular CLI"/>
+    <notificationAllowlist groupIds="Angular CLI"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">
