@@ -11,7 +11,7 @@ import java.util.function.Consumer
 class VueContainerScopeProvider : VueTemplateScopesProvider() {
 
   override fun getScopes(element: PsiElement, hostElement: PsiElement?): List<VueTemplateScope> {
-    return VueModelManager.findEnclosingContainer(element)
+    return VueModelManager.findEnclosingContainer(hostElement ?: element)
              ?.let { listOf(VueContainerScope(it)) }
            ?: emptyList()
   }
