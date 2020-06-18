@@ -7,6 +7,7 @@ import com.intellij.openapi.util.SystemInfo
 import com.intellij.ui.JBColor
 import com.intellij.util.ui.JBUI
 import icons.FeaturesTrainerIcons
+import training.util.useNewLearningUi
 import java.awt.Font
 import java.awt.Graphics
 import java.awt.Graphics2D
@@ -144,15 +145,31 @@ class LessonMessagePane : JTextPane() {
    */
   @Throws(BadLocationException::class)
   fun passPreviousMessages() {
-    if (lessonMessages.size > 0) {
-      val lessonMessage = lessonMessages[lessonMessages.size - 1]
-      lessonMessage.passed = true
+    val lessonMessage = lessonMessages.lastOrNull() ?: return
+    lessonMessage.passed = true
 
-      //Repaint text with passed style
-      val passedStyle = this.addStyle("PassedStyle", null)
-      StyleConstants.setForeground(passedStyle, UISettings.instance.passedColor)
-      styledDocument.setCharacterAttributes(0, lessonMessage.end, passedStyle, false)
+    //Repaint text with passed style
+    val passedStyle = this.addStyle("PassedStyle", null)
+    StyleConstants.setForeground(passedStyle, UISettings.instance.passedColor)
+    styledDocument.setCharacterAttributes(0, lessonMessage.end, passedStyle, false)
+  }
+
+  fun redrawMessagesAsCompleted() {
+    val copy = lessonMessages.toList()
+    //copy.forEach { it.passed = false }
+    clear()
+    for (lessonMessage in copy) {
+      addMessage(lessonMessage.messages.toTypedArray())
     }
+
+    for ((index, it) in lessonMessages.withIndex()) {
+      it.passed = copy[index].passed
+    }
+    addMessage(arrayOf(Message("Completed!", Message.MessageType.TEXT_BOLD)))
+    val completedStyle = this.addStyle("Completed", null)
+    StyleConstants.setForeground(completedStyle, UISettings.instance.completedColor)
+    styledDocument.setCharacterAttributes(lessonMessages.last().start, lessonMessages.last().end, completedStyle, false)
+    repaint()
   }
 
   fun clear() {
@@ -206,11 +223,12 @@ class LessonMessagePane : JTextPane() {
         if (startOffset != 0) startOffset++
         try {
           val rectangle = modelToView(startOffset)
+          val checkmark = if (useNewLearningUi) FeaturesTrainerIcons.GreenCheckmark else FeaturesTrainerIcons.Checkmark
           if (SystemInfo.isMac) {
-            FeaturesTrainerIcons.Checkmark.paintIcon(this, g, rectangle.x - UISettings.instance.checkIndent, rectangle.y + JBUI.scale(1))
+            checkmark.paintIcon(this, g, rectangle.x - UISettings.instance.checkIndent, rectangle.y + JBUI.scale(1))
           }
           else {
-            FeaturesTrainerIcons.Checkmark.paintIcon(this, g, rectangle.x - UISettings.instance.checkIndent, rectangle.y + JBUI.scale(1))
+            checkmark.paintIcon(this, g, rectangle.x - UISettings.instance.checkIndent, rectangle.y + JBUI.scale(1))
           }
         }
         catch (e: BadLocationException) {

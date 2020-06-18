@@ -134,9 +134,9 @@ class LearnPanel(private val learnToolWindow: LearnToolWindow) : JPanel() {
       lessonPanel.add(lessonNameLabel)
     }
     lessonPanel.add(lessonMessagePane)
+    lessonPanel.add(Box.createVerticalStrut(UISettings.instance.beforeButtonGap))
 
     if (!useNewLearningUi) {
-      lessonPanel.add(Box.createVerticalStrut(UISettings.instance.beforeButtonGap))
       lessonPanel.add(Box.createVerticalGlue())
       lessonPanel.add(buttonPanel)
       lessonPanel.add(Box.createVerticalStrut(UISettings.instance.afterButtonGap))
@@ -254,6 +254,10 @@ class LearnPanel(private val learnToolWindow: LearnToolWindow) : JPanel() {
 
   fun setLessonPassed() {
     setButtonToNext()
+    if (useNewLearningUi) {
+      lessonMessagePane.redrawMessagesAsCompleted()
+    }
+    revalidate()
     this.repaint()
   }
 
@@ -487,6 +491,10 @@ class LearnPanel(private val learnToolWindow: LearnToolWindow) : JPanel() {
 
   override fun getPreferredSize(): Dimension {
     if (lessonPanel.minimumSize == null) return Dimension(10, 10)
+    if (useNewLearningUi) {
+      return Dimension(lessonPanel.minimumSize.getWidth().toInt() + UISettings.instance.westInset + UISettings.instance.eastInset,
+                       lessonPanel.minimumSize.getHeight().toInt() + footer.minimumSize.getHeight().toInt() + UISettings.instance.northInset + UISettings.instance.southInset)
+    }
     return if (modulePanel.minimumSize == null) Dimension(10, 10)
     else Dimension(
       lessonPanel.minimumSize.getWidth().toInt() +
