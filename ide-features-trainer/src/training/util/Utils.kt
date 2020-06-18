@@ -4,6 +4,7 @@ package training.util
 import com.google.common.util.concurrent.ThreadFactoryBuilder
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.lang.Language
+import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.editor.Editor
@@ -13,6 +14,7 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.ui.UIUtil
+import training.actions.LearningDocumentationModeAction
 import training.lang.LangManager
 import training.lang.LangSupport
 import training.learn.CourseManager
@@ -117,3 +119,8 @@ fun findLanguageSupport(project: Project): LangSupport? {
 
 val useNewLearningUi: Boolean
   get() = Registry.`is`("ide.features.trainer.new.ui", false)
+
+fun isLearningDocumentationMode(project: Project): Boolean =
+  (ActionManager.getInstance().getAction("LearningDocumentationModeAction") as? LearningDocumentationModeAction)
+    ?.isSelectedInProject(project)
+  ?: false

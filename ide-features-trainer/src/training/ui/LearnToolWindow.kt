@@ -9,12 +9,18 @@ import com.intellij.openapi.ui.SimpleToolWindowPanel
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.components.JBScrollPane
+import com.intellij.ui.content.ContentManagerEvent
+import com.intellij.ui.content.ContentManagerListener
 import icons.FeaturesTrainerIcons
 import training.actions.ChooseProgrammingLanguageForLearningAction
 import training.lang.LangManager
 import training.learn.interfaces.Lesson
 import training.learn.lesson.LessonListener
 import training.learn.lesson.LessonManager
+import training.learn.lesson.LessonProcessor
+import training.learn.lesson.XmlLesson
+import training.learn.lesson.kimpl.DocumentationModeLessonContext
+import training.learn.lesson.kimpl.KLesson
 import training.ui.views.LanguageChoosePanel
 import training.ui.views.LearnPanel
 import training.ui.views.ModulesPanel
@@ -52,6 +58,11 @@ class LearnToolWindow internal constructor(val project: Project,
       Disposer.register(parentDisposable, Disposable {
         LessonManager.instance.removeLessonListener(lessonListener)
       })
+      wholeToolWindow.contentManager.addContentManagerListener(object : ContentManagerListener {
+        override fun contentRemoved(event: ContentManagerEvent) {
+          learnPanel = null
+        }
+      })
     }
   }
 
@@ -62,13 +73,13 @@ class LearnToolWindow internal constructor(val project: Project,
     modulesPanel.updateMainPanel()
   }
 
-  fun setLearnPanel(lesson: Lesson) {
+  fun setLearnPanel(lesson: Lesson, documentationMode: Boolean = false) {
     if (useNewLearningUi) {
       val contentManager = wholeToolWindow.contentManager
       contentManager.contents.filter { it.component != this }.forEach {
         contentManager.removeContent(it, true)
       }
-      learnPanel = LearnPanel(this)
+      learnPanel = LearnPanel(this, lesson, documentationMode)
       val lessonToolWindowTab = object: SimpleToolWindowPanel(true, true) {
         init {
           setContent(JBScrollPane(learnPanel))
@@ -126,6 +137,7 @@ class LearnToolWindow internal constructor(val project: Project,
     })
 
     group.add(ChooseProgrammingLanguageForLearningAction(this))
+    group.add(ActionManager.getInstance().getAction("LearningDocumentationModeAction"))
     group.add(ActionManager.getInstance().getAction("ResetLearningProgressAction"))
     return ActionManager.getInstance().createActionToolbar(IDE_FEATURES_TRAINER_TOOLBAR, group, true)
   }
@@ -135,13 +147,9 @@ class LearnToolWindow internal constructor(val project: Project,
     group.add(ActionManager.getInstance().getAction("RestartLessonAction"))
     group.add(ActionManager.getInstance().getAction("PreviousLessonAction"))
     group.add(ActionManager.getInstance().getAction("NextLessonAction"))
-
     group.add(ActionManager.getInstance().getAction("learn.next.lesson"))
-    group.add(object : AnAction(AllIcons.Actions.ListFiles) {
-      override fun actionPerformed(e: AnActionEvent) {
-        System.err.println("click!")
-      }
-    })
+    group.add(ActionManager.getInstance().getAction("LearningDocumentationModeAction"))
+
     group.add(object : AnAction(AllIcons.Toolwindows.ToolWindowFavorites) {
       override fun actionPerformed(e: AnActionEvent) {
         System.err.println("click!")
@@ -153,5 +161,15 @@ class LearnToolWindow internal constructor(val project: Project,
       }
     })
     return ActionManager.getInstance().createActionToolbar(IDE_FEATURES_TRAINER_TOOLBAR, group, true)
+  }
+
+  fun openInDocumentationMode(lesson: Lesson) {
+    setLearnPanel(lesson, true)
+    if (lesson is KLesson) {
+      lesson.lessonContent(DocumentationModeLessonContext())
+    }
+    else if (lesson is XmlLesson) {
+      LessonProcessor.process(project, lesson, null, true)
+    }
   }
 }

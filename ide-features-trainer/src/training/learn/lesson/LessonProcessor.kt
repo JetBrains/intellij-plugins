@@ -22,20 +22,22 @@ object LessonProcessor {
     private set
   var currentTaskIndex: Int = 0
 
-  fun process(project: Project, lesson: XmlLesson, editor: Editor) {
+  fun process(project: Project, lesson: XmlLesson, editor: Editor?, documentationMode: Boolean = true) {
     val elements = createListOfCommands(lesson.scenario.root)
     val myQueueOfElements = LinkedBlockingQueue(elements)
 
     //Initialize lesson in the editor
-    LessonManager.instance.initLesson(editor, lesson)
+    if (editor != null) {
+      LessonManager.instance.initLesson(editor, lesson)
+    }
 
     tasksNumber = elements.filter { CommandFactory.getCommandType(it) == Command.CommandType.TRY }.count()
     currentTaskIndex = 0
 
     //Prepare environment before execution
-    with(ExecutionList(myQueueOfElements, lesson, project)) {
+    with(ExecutionList(myQueueOfElements, lesson, project, documentationMode)) {
       currentExecutionList = this
-      CommandFactory.buildCommand(myQueueOfElements.peek()).execute(this)
+      CommandFactory.buildCommand(myQueueOfElements.peek(), documentationMode).execute(this)
     }
   }
 

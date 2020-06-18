@@ -2,12 +2,14 @@
 package training.commands.kotlin
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.ui.tree.TreeVisitor
 import com.intellij.util.ui.tree.TreeUtil
 import org.fest.swing.timing.Timeout
 import org.intellij.lang.annotations.Language
 import training.learn.lesson.kimpl.LessonUtil
 import training.ui.LearningUiHighlightingManager
+import training.ui.LearningUiManager
 import training.ui.LearningUiUtil
 import java.awt.Component
 import java.awt.Rectangle
@@ -168,13 +170,24 @@ abstract class TaskContext {
   abstract fun triggerByUiComponentAndHighlight(findAndHighlight: TaskRuntimeContext.() -> (() -> Component))
 
   /** Show shortcut for [actionId] inside lesson step message */
-  abstract fun action(actionId: String): String
+  open fun action(actionId: String): String  {
+    return "<action>$actionId</action>"
+  }
 
   /** Highlight as code inside lesson step message */
-  abstract fun code(sourceSample: String): String
+  open fun code(sourceSample: String): String  {
+    return "<code>${StringUtil.escapeXmlEntities(sourceSample)}</code>"
+  }
 
   /** Show an [icon] inside lesson step message */
-  abstract fun icon(icon: Icon): String
+  open fun icon(icon: Icon): String  {
+    var index = LearningUiManager.iconMap.getKeysByValue(icon)?.firstOrNull()
+    if (index == null) {
+      index = LearningUiManager.iconMap.size.toString()
+      LearningUiManager.iconMap[index] = icon
+    }
+    return "<icon_idx>$index</icon_idx>"
+  }
 
   class DoneStepContext(val future: CompletableFuture<Boolean>, rt: TaskRuntimeContext): TaskRuntimeContext(rt) {
     fun completeStep() {
