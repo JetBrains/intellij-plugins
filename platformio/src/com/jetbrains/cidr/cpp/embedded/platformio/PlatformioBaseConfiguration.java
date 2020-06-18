@@ -9,15 +9,9 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
-import com.jetbrains.cidr.cpp.cmake.CMakeException;
-import com.jetbrains.cidr.cpp.cmake.model.CMakeConfigurator;
-import com.jetbrains.cidr.cpp.cmake.model.CMakeModel;
-import com.jetbrains.cidr.cpp.cmake.model.CMakeModelConfigurationData;
 import com.jetbrains.cidr.cpp.cmake.model.CMakeTarget;
-import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace;
 import com.jetbrains.cidr.cpp.execution.CMakeAppRunConfiguration;
 import com.jetbrains.cidr.cpp.execution.CMakeBuildConfigurationHelper;
-import com.jetbrains.cidr.cpp.execution.CMakeBuildProfileExecutionTarget;
 import com.jetbrains.cidr.cpp.toolchains.CPPDebugger;
 import com.jetbrains.cidr.cpp.toolchains.CPPToolchains;
 import com.jetbrains.cidr.execution.CidrCommandLineState;
@@ -110,31 +104,6 @@ public abstract class PlatformioBaseConfiguration extends CMakeAppRunConfigurati
       platformioLocation = file == null ? null : file.getAbsolutePath();
     }
     return platformioLocation;
-  }
-
-  //todo use for automatic .svd file opening
-  @Nullable
-  public static CMakeConfigurator findActiveConfigurator(@NotNull Project project) throws CMakeException {
-    CMakeWorkspace workspace = CMakeWorkspace.getInstance(project);
-    if (!workspace.isInitialized()) {
-      return null;
-    }
-    CMakeModel model = workspace.getModel();
-    CMakeBuildProfileExecutionTarget selectedBuildProfile = getSelectedBuildProfile(project);
-    if (model != null && selectedBuildProfile != null) {
-      String profileName = selectedBuildProfile.getProfileName();
-      CMakeModelConfigurationData configurationData = model
-        .getConfigurationData()
-        .stream()
-        .filter(confData -> profileName.equals(confData.getConfigName()))
-        .findAny()
-        .orElse(null);
-
-      if (configurationData != null) {
-        return configurationData.getCacheConfigurator();
-      }
-    }
-    return null;
   }
 
   @NotNull

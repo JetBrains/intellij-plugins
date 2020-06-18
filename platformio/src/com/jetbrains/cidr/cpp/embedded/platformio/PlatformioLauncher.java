@@ -13,18 +13,23 @@ import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFileSystem;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.*;
 import com.intellij.ui.content.Content;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
 import com.intellij.xdebugger.ui.XDebugTabLayouter;
 import com.jetbrains.cidr.ArchitectureType;
+import com.jetbrains.cidr.cpp.cmake.CMakeException;
 import com.jetbrains.cidr.cpp.cmake.CMakeSettings;
+import com.jetbrains.cidr.cpp.cmake.model.CMakeModel;
+import com.jetbrains.cidr.cpp.cmake.model.CMakeModelConfigurationData;
+import com.jetbrains.cidr.cpp.cmake.model.CMakeVariable;
 import com.jetbrains.cidr.cpp.cmake.workspace.CMakeProfileInfo;
 import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace;
 import com.jetbrains.cidr.cpp.embedded.EmbeddedBundle;
 import com.jetbrains.cidr.cpp.execution.CLionLauncher;
+import com.jetbrains.cidr.cpp.execution.CMakeAppRunConfiguration;
 import com.jetbrains.cidr.cpp.execution.CMakeBuildProfileExecutionTarget;
 import com.jetbrains.cidr.cpp.execution.debugger.backend.CLionGDBDriverConfiguration;
 import com.jetbrains.cidr.cpp.execution.debugger.embedded.svd.SvdPanel;
@@ -120,6 +125,7 @@ public class PlatformioLauncher extends CLionLauncher {
       return null;
     }};
 
+    VirtualFile defaultSvdLocation = findSvdFile(getProject());
     return new CidrDebugProcess(parameters, xDebugSession, commandLineState.getConsoleBuilder(),
                                 consoleCopyFilter) {
 
@@ -138,7 +144,8 @@ public class PlatformioLauncher extends CLionLauncher {
           @Override
           public void registerAdditionalContent(@NotNull RunnerLayoutUi ui) {
             innerLayouter.registerAdditionalContent(ui);
-            SvdPanel.registerPeripheralTab(gdbDebugProcess, ui);
+            SvdPanel panel = SvdPanel.registerPeripheralTab(gdbDebugProcess, ui);
+            panel.setSvdDefaultLocation(defaultSvdLocation);
           }
         };
       }
@@ -202,5 +209,40 @@ public class PlatformioLauncher extends CLionLauncher {
         }
       }
     });
+  }
+
+  @Nullable
+  public static VirtualFile findSvdFile(@NotNull Project project) {
+    CMakeWorkspace workspace = CMakeWorkspace.getInstance(project);
+    if (!workspace.isInitialized()) {
+      return null;
+    }
+
+    CMakeModel model = workspace.getModel();
+    CMakeBuildProfileExecutionTarget selectedBuildProfile = CMakeAppRunConfiguration.getSelectedBuildProfile(project);
+    File projectDir = workspace.getModelProjectDir();
+    if (model == null || selectedBuildProfile == null || projectDir == null) {
+      return null;
+    }
+
+    String profileName = selectedBuildProfile.getProfileName();
+    CMakeModelConfigurationData configurationData = model
+      .getConfigurationData()
+      .stream()
+      .filter(confData -> profileName.equals(confData.getConfigName()))
+      .findAny()
+      .orElse(null);
+
+    if (configurationData == null) return null;
+    try {
+      CMakeVariable variable = configurationData.getCacheConfigurator().findVariable("CLION_SVD_FILE_PATH");
+      if (variable == null || variable.getValue() == null) return null;
+      return VfsUtilCore.findRelativeFile(
+        variable.getValue(),
+        VfsUtil.findFileByIoFile(projectDir, false));
+    }
+    catch (CMakeException ignored) {
+      return null;
+    }
   }
 }
