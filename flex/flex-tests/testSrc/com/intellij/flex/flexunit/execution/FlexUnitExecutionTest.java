@@ -187,9 +187,6 @@ public abstract class FlexUnitExecutionTest extends JavaCodeInsightTestCase impl
     if (!outputFolder.isDirectory() && !outputFolder.mkdirs()) {
       fail("Failed to create output folder: " + outputFolder);
     }
-
-    myFilesToDelete.add(outputFolder);
-
     return LocalFileSystem.getInstance().refreshAndFindFileByIoFile(outputFolder);
   }
 
