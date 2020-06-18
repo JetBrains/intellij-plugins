@@ -27,7 +27,7 @@ import java.util.function.Consumer
 class VueTemplateElementsScopeProvider : VueTemplateScopesProvider() {
 
   override fun getScopes(element: PsiElement, hostElement: PsiElement?): List<VueTemplateScope> {
-    val hostFile = CompletionUtil.getOriginalOrSelf(notNull(hostElement, element)).containingFile
+    val hostFile = CompletionUtil.getOriginalOrSelf(hostElement ?: element).containingFile
     val templateRootScope = CachedValuesManager.getCachedValue(hostFile) {
       CachedValueProvider.Result.create(
         VueTemplateScopeBuilder(hostFile).topLevelScope,
