@@ -36,7 +36,21 @@ class LearnPanel(private val learnToolWindow: LearnToolWindow, val lesson: Lesso
 
   //XmlLesson panel items
   private val lessonPanel = JPanel()
-  private val moduleNameLabel = JLabel()
+
+  private val moduleNameLabel: JLabel = if (!useNewLearningUi) JLabel()
+  else object : LinkLabel<Any>("", null, { _, _ ->
+    learnToolWindow.setMeSelected()
+  }) {
+    override fun getNormal(): Color = UISettings.instance.lessonActiveColor
+
+    override fun paintComponent(g: Graphics) {
+      super.paintComponent(g)
+      val bounds = textBounds
+      val lineY = getUI().getBaseline(this, width, height) + 1
+      g.drawLine(bounds.x, lineY, bounds.x + bounds.width, lineY)
+    }
+  }
+
   private val allTopicsLabel: LinkLabel<Any> = LinkLabel(LearnBundle.message("learn.ui.alltopics"), null)
 
   private val lessonNameLabel = JLabel() //Name of the current lesson
@@ -135,7 +149,18 @@ class LearnPanel(private val learnToolWindow: LearnToolWindow, val lesson: Lesso
     buttonPanel.add(button)
 
     //shift right for checkmark
-    if (!useNewLearningUi) {
+    if (useNewLearningUi) {
+      val moduleNamePanel = JPanel()
+      moduleNamePanel.name = "Message and Module Title"
+      moduleNamePanel.alignmentX = Component.LEFT_ALIGNMENT
+      moduleNamePanel.layout = BoxLayout(moduleNamePanel, BoxLayout.X_AXIS)
+      moduleNamePanel.add(lessonNameLabel)
+      moduleNamePanel.add(Box.createHorizontalGlue())
+      moduleNamePanel.add(moduleNameLabel)
+      moduleNamePanel.maximumSize = Dimension(1000, 70) // Magic
+      lessonPanel.add(moduleNamePanel)
+    }
+    else {
       lessonPanel.add(moduleNameLabel)
       lessonPanel.add(Box.createVerticalStrut(UISettings.instance.lessonNameGap))
       lessonPanel.add(lessonNameLabel)
@@ -184,7 +209,7 @@ class LearnPanel(private val learnToolWindow: LearnToolWindow, val lesson: Lesso
 
   fun setLessonName(lessonName: String) {
     lessonNameLabel.text = lessonName
-    lessonNameLabel.foreground = UISettings.instance.defaultTextColor
+    lessonNameLabel.foreground = if (useNewLearningUi && lesson?.passed == true) UISettings.instance.completedColor else UISettings.instance.defaultTextColor
     lessonNameLabel.isFocusable = false
     this.revalidate()
     this.repaint()
