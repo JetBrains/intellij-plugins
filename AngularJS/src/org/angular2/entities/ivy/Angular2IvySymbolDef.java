@@ -211,7 +211,7 @@ public abstract class Angular2IvySymbolDef {
       }
 
       JSParameterListElement[] params = constructor.getParameters();
-      TypeScriptType[] paramsDecoratorsInfo = ((TypeScriptTupleType)declaration).getElements();
+      JSTypeDeclaration[] paramsDecoratorsInfo = ((TypeScriptTupleType)declaration).getElements();
       if (params.length != paramsDecoratorsInfo.length) {
         return true;
       }
