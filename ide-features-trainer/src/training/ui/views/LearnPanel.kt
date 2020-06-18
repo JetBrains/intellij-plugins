@@ -1,9 +1,11 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.ui.views
 
+import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.guessCurrentProject
 import com.intellij.openapi.util.SystemInfo
+import com.intellij.ui.components.labels.ActionLink
 import com.intellij.ui.components.labels.LinkLabel
 import com.intellij.util.containers.BidirectionalMap
 import com.intellij.util.ui.JBUI
@@ -30,7 +32,7 @@ import javax.swing.border.MatteBorder
 /**
  * @author Sergey Karashevich
  */
-class LearnPanel(private val learnToolWindow: LearnToolWindow) : JPanel() {
+class LearnPanel(private val learnToolWindow: LearnToolWindow, val lesson: Lesson? = null, private val documentationMode: Boolean = false) : JPanel() {
 
   //XmlLesson panel items
   private val lessonPanel = JPanel()
@@ -90,6 +92,11 @@ class LearnPanel(private val learnToolWindow: LearnToolWindow) : JPanel() {
     footer.isOpaque = false
     footer.border = MatteBorder(1, 0, 0, 0, UISettings.instance.separatorColor)
 
+    if (documentationMode) {
+      val link = ActionLink("Switch to Interactive Mode", ActionManager.getInstance().getAction("LearningDocumentationModeAction"))
+      setFooterElement(link)
+    }
+
     moduleNameLabel.name = "moduleNameLabel"
     moduleNameLabel.font = UISettings.instance.moduleNameFont
     moduleNameLabel.isFocusable = false
@@ -143,9 +150,14 @@ class LearnPanel(private val learnToolWindow: LearnToolWindow) : JPanel() {
     }
   }
 
-  fun updateLessonProgress(all: Int, current: Int) {
+  private fun setFooterElement(jComponent: JComponent) {
     footer.removeAll()
     footer.add(Box.createHorizontalGlue())
+    jComponent.alignmentX = Component.CENTER_ALIGNMENT
+    footer.add(jComponent)
+  }
+
+  fun updateLessonProgress(all: Int, current: Int) {
     val jComponent: JComponent = if (all != current) {
       JLabel(LearnBundle.message("learn.ui.lesson.progress", current, all))
     }
@@ -165,8 +177,7 @@ class LearnPanel(private val learnToolWindow: LearnToolWindow) : JPanel() {
         }
       }
     }
-    jComponent.alignmentX = Component.CENTER_ALIGNMENT
-    footer.add(jComponent)
+    setFooterElement(jComponent)
     footer.revalidate()
     footer.repaint()
   }
