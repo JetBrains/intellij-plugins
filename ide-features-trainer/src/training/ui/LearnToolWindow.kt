@@ -73,6 +73,12 @@ class LearnToolWindow internal constructor(val project: Project,
     modulesPanel.updateMainPanel()
   }
 
+  fun setMeSelected() {
+    val contentManager = wholeToolWindow.contentManager
+    val myTab = contentManager.contents.firstOrNull { it.component == this } ?: return
+    contentManager.setSelectedContent(myTab, true)
+  }
+
   fun setLearnPanel(lesson: Lesson, documentationMode: Boolean = false) {
     if (useNewLearningUi) {
       val contentManager = wholeToolWindow.contentManager
@@ -165,6 +171,9 @@ class LearnToolWindow internal constructor(val project: Project,
 
   fun openInDocumentationMode(lesson: Lesson) {
     setLearnPanel(lesson, true)
+    learnPanel?.setLessonName(lesson.name)
+    learnPanel?.setModuleName(lesson.module.name)
+    learnPanel?.modulePanel?.init(lesson)
     if (lesson is KLesson) {
       lesson.lessonContent(DocumentationModeLessonContext())
     }
