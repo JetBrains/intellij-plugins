@@ -7,5 +7,6 @@
                          parentId="Settings.JavaScript"
                          instance="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.ui.PhoneGapConfigurable" order="last"/>
     <projectTemplatesFactory implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectBuilder.PhoneGapTemplatesFactory"/>
+    <directoryProjectGenerator implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectBuilder.CordovaProjectGenerator"/>
   </extensions>
 </idea-plugin>
