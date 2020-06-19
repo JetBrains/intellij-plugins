@@ -103,7 +103,8 @@ class VueJSTypeEvaluator(context: JSEvaluateContext, processor: JSTypeProcessor,
 
   private fun addVForVarType(source: PsiElement, vararg types: JSType) {
     val typeSource = JSTypeSourceFactory.createTypeSource(source, false)
-    val commonType = (JSTupleTypeImpl(typeSource, types.toMutableList(), false, 0, false).toArrayType(false) as JSArrayType).type
+    val commonType = (JSTupleTypeImpl(typeSource, types.toMutableList(), emptyList(), false, 0, false).toArrayType(
+      false) as JSArrayType).type
     addType(commonType, source, true)
   }
 
