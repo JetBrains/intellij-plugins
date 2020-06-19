@@ -70,6 +70,7 @@ class CourseManager internal constructor() {
     if (lesson == null) return //todo: remove null lessons
     if (isLearningDocumentationMode(projectWhereToOpen)) {
       if (projectWhereToOpen == LearningUiManager.activeToolWindow?.project) {
+        LessonManager.instance.stopLesson()
         LearningUiManager.activeToolWindow = null
       }
       LearnToolWindowFactory.learnWindowPerProject[projectWhereToOpen]?.let { learnToolWindow ->
