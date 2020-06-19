@@ -89,30 +89,29 @@ class LearningItems : JPanel() {
     result.layout = HorizontalLayout(5)
 
     result.border = JBUI.Borders.empty(5, 7)
-    //add(spacer, BorderLayout.WEST)
     val expandIcon = IconUtil.toSize(if (expanded.contains(module)) UIUtil.getTreeExpandedIcon() else UIUtil.getTreeCollapsedIcon(),
                                      JBUIScale.scale(16), JBUIScale.scale(16))
     val expandIconLabel = JLabel(expandIcon)
 
     val name = JLabel(module.name)
-    //name.font = JBFont.label().asPlain().deriveFont(18.0f)
-    if (!module.hasNotPassedLesson()) name.foreground = UIUtil.getInactiveTextColor()
-
-    val checkMarkIcon = if (!module.hasNotPassedLesson()) FeaturesTrainerIcons.GreenCheckmark else EmptyIcon.ICON_16
-    val checkmarkIconLabel = JLabel(checkMarkIcon)
-
-    checkmarkIconLabel.border = JBUI.Borders.emptyRight(8)
-    checkmarkIconLabel.verticalAlignment = SwingConstants.CENTER
 
     result.add(expandIconLabel)
     result.add(name)
-    createModuleProgressLabel(module)?.let {
-      result.add(UISettings.rigidGap(UISettings::progressGap, isVertical = false))
-      result.add(it)
+
+    if (!module.hasNotPassedLesson()) {
+      val checkMarkIcon = if (!module.hasNotPassedLesson()) FeaturesTrainerIcons.Checkmark else EmptyIcon.ICON_16
+      val checkmarkIconLabel = JLabel(checkMarkIcon)
+
+      checkmarkIconLabel.border = JBUI.Borders.emptyRight(8)
+      checkmarkIconLabel.verticalAlignment = SwingConstants.CENTER
+      result.add(checkmarkIconLabel)
     }
-
-    result.add(checkmarkIconLabel)
-
+    else {
+      createModuleProgressLabel(module)?.let {
+        result.add(UISettings.rigidGap(UISettings::progressGap, isVertical = false))
+        result.add(it)
+      }
+    }
 
     result.addMouseListener(object : MouseListener {
       override fun mouseClicked(e: MouseEvent) {
@@ -127,7 +126,6 @@ class LearningItems : JPanel() {
       }
 
       override fun mousePressed(e: MouseEvent) {
-        //moduleName.doClick()
       }
 
       override fun mouseReleased(e: MouseEvent) {
