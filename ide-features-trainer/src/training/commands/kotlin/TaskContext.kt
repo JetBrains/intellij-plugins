@@ -127,7 +127,7 @@ abstract class TaskContext {
 
   fun triggerByListItemAndHighlight(highlightBorder: Boolean = true, highlightInside: Boolean = false, checkList: TaskRuntimeContext.(item: Any) -> Boolean) {
     triggerByFoundListItemAndHighlight(LearningUiHighlightingManager.HighlightingOptions(highlightBorder, highlightInside)) { ui: JList<*> ->
-      LessonUtil.findItem(ui) { checkList(ui) }
+      LessonUtil.findItem(ui) { checkList(it) }
     }
   }
 

@@ -18,8 +18,9 @@ internal class LearnToolWindowFactory : ToolWindowFactoryEx, DumbAware {
     super.init(toolWindow)
     val project = (toolWindow as? ToolWindowEx)?.project ?: return
     toolWindow.isShowStripeButton = findLanguageSupport(project) != null
-    //toolWindow.title = ""
-    toolWindow.getComponent().putClientProperty(ToolWindowContentUi.HIDE_ID_LABEL, "true")
+    if (useNewLearningUi) {
+      toolWindow.getComponent().putClientProperty(ToolWindowContentUi.HIDE_ID_LABEL, "true")
+    }
   }
 
   override fun getAnchor(): ToolWindowAnchor? {
