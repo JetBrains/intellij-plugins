@@ -60,6 +60,9 @@ class LearnToolWindow internal constructor(val project: Project,
       })
       wholeToolWindow.contentManager.addContentManagerListener(object : ContentManagerListener {
         override fun contentRemoved(event: ContentManagerEvent) {
+          if (LearningUiManager.activeToolWindow == this@LearnToolWindow) {
+            LessonManager.instance.stopLesson()
+          }
           learnPanel = null
         }
       })
