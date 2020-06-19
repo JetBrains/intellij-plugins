@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.lesson.kimpl
 
+import com.intellij.openapi.project.Project
 import training.commands.kotlin.TaskContext
 import training.commands.kotlin.TaskRuntimeContext
 import training.commands.kotlin.TaskTestContext
@@ -8,8 +9,8 @@ import java.awt.Component
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
 
-internal class DocumentationModeLessonContext : LessonContext() {
-  private val documentationModeTaskContext = DocumentationModeTaskContext()
+internal class DocumentationModeLessonContext(project: Project) : LessonContext() {
+  private val documentationModeTaskContext = DocumentationModeTaskContext(project)
 
   override fun task(taskContent: TaskContext.() -> Unit) {
     taskContent(documentationModeTaskContext)
@@ -28,14 +29,14 @@ internal class DocumentationModeLessonContext : LessonContext() {
   override fun prepareSample(sample: LessonSample) = Unit // do nothing
 }
 
-private class DocumentationModeTaskContext : TaskContext() {
+private class DocumentationModeTaskContext(private val project: Project) : TaskContext() {
   override fun before(preparation: TaskRuntimeContext.() -> Unit) = Unit // do nothing
 
   override fun restoreState(delayMillis: Int, checkState: TaskRuntimeContext.() -> Boolean) = Unit // do nothing
 
   override fun proposeRestore(restoreCheck: TaskRuntimeContext.() -> RestoreProposal) = Unit // do nothing
 
-  override fun text(text: String) = LessonExecutorUtil.addTextToLearnPanel(text)
+  override fun text(text: String) = LessonExecutorUtil.addTextToLearnPanel(text, project)
 
   override fun trigger(actionId: String) = Unit // do nothing
 

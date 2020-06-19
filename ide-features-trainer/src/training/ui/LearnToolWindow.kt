@@ -175,7 +175,7 @@ class LearnToolWindow internal constructor(val project: Project,
     learnPanel?.setModuleName(lesson.module.name)
     learnPanel?.modulePanel?.init(lesson)
     if (lesson is KLesson) {
-      lesson.lessonContent(DocumentationModeLessonContext())
+      lesson.lessonContent(DocumentationModeLessonContext(project))
     }
     else if (lesson is XmlLesson) {
       LessonProcessor.process(project, lesson, null, true)
