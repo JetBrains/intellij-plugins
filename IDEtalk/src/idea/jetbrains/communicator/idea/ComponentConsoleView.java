@@ -48,7 +48,7 @@ class ComponentConsoleView implements ConsoleView, PlaceProvider<String> {
   }
 
   @Override
-  public void attachToProcess(ProcessHandler processHandler) {
+  public void attachToProcess(@NotNull ProcessHandler processHandler) {
     throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
   }
 
