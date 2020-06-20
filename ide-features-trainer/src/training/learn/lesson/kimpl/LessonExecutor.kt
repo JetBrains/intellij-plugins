@@ -3,6 +3,7 @@ package training.learn.lesson.kimpl
 
 import com.intellij.find.FindManager
 import com.intellij.find.FindResult
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.invokeLater
@@ -27,6 +28,7 @@ import training.commands.kotlin.TaskTestContext
 import training.learn.ActionsRecorder
 import training.learn.lesson.LessonManager
 import training.ui.IncorrectLearningStateNotificationProvider
+import training.ui.LearnToolWindowFactory
 import training.ui.LearningUiManager
 import java.awt.Component
 import java.util.concurrent.CompletableFuture
@@ -51,6 +53,9 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
   var rehighlightComponent: (() -> Component)? = null
 
   private var currentRecorder: ActionsRecorder? = null
+  private var currentRestoreRecorder: ActionsRecorder? = null
+
+  private val parentDisposable: Disposable = LearnToolWindowFactory.learnWindowPerProject[project]?.parentDisposable ?: project
 
   @Volatile
   var hasBeenStopped = false
@@ -87,10 +92,16 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
 
   fun stopLesson() {
     assert(ApplicationManager.getApplication().isDispatchThread)
-    currentRecorder?.let { Disposer.dispose(it) }
+    disposeRecorders()
     hasBeenStopped = true
     taskActions.clear()
+  }
+
+  private fun disposeRecorders() {
+    currentRecorder?.let { Disposer.dispose(it) }
     currentRecorder = null
+    currentRestoreRecorder?.let { Disposer.dispose(it) }
+    currentRestoreRecorder = null
   }
 
   fun prepareSample(sample: LessonSample) {
@@ -135,6 +146,7 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
     if (taskIndex == taskActions.size) {
       lesson.pass()
       LessonManager.instance.passLesson(project, lesson)
+      disposeRecorders()
       return
     }
     val taskInfo = taskActions[taskIndex]
@@ -169,7 +181,8 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
 
   private fun processTask(taskContent: TaskContext.() -> Unit, taskIndex: Int) {
     assert(ApplicationManager.getApplication().isDispatchThread)
-    val recorder = ActionsRecorder(project, editor.document)
+    disposeRecorders()
+    val recorder = ActionsRecorder(project, editor.document, parentDisposable)
     currentRecorder = recorder
     val taskCallbackData = TaskCallbackData()
     val taskContext = TaskContextImpl(this, recorder, taskIndex, taskCallbackData)
@@ -190,10 +203,8 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
   /** @return a callback to clear resources used to track restore */
   private fun checkForRestore(taskContext: TaskContextImpl,
                               taskIndex: Int,
-                              stepsRecorder: ActionsRecorder,
                               taskCallbackData: TaskCallbackData): () -> Unit {
     fun restoreTask() {
-      disposeRecorderLater(stepsRecorder)
       taskContext.steps.forEach { it.cancel(true) }
       val restoreIndex = taskActions[taskIndex].restoreIndex
       val restoreInfo = taskActions[restoreIndex]
@@ -210,7 +221,8 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
       return {}
     }
 
-    val restoreRecorder = ActionsRecorder(project, editor.document)
+    val restoreRecorder = ActionsRecorder(project, editor.document, parentDisposable)
+    currentRestoreRecorder = restoreRecorder
     lateinit var clearRestore: () -> Unit
     val checkRestoreCondition = restoreRecorder.futureCheck {
       if (hasBeenStopped) {
@@ -232,7 +244,6 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
       checkRestoreCondition
     }
     clearRestore = {
-      disposeRecorderLater(restoreRecorder)
       if (!restoreFuture.isDone) {
         restoreFuture.cancel(true)
       }
@@ -255,7 +266,7 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
                             taskIndex: Int,
                             recorder: ActionsRecorder,
                             taskCallbackData: TaskCallbackData) {
-    val clearRestore = checkForRestore(taskContext, taskIndex, recorder, taskCallbackData)
+    val clearRestore = checkForRestore(taskContext, taskIndex, taskCallbackData)
 
     recorder.tryToCheckCallback()
 
@@ -264,23 +275,13 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
         assert(ApplicationManager.getApplication().isDispatchThread)
         val taskHasBeenDone = isTaskCompleted(taskContext)
         if (taskHasBeenDone) {
-          disposeRecorderLater(recorder)
           clearRestore()
-          currentRecorder = null
           LessonManager.instance.passExercise()
           if(foundComponent == null) foundComponent = taskActions[taskIndex].userVisibleInfo?.ui
           if(rehighlightComponent == null) rehighlightComponent = taskActions[taskIndex].rehighlightComponent
           processNextTask(taskIndex + 1)
         }
       }
-    }
-  }
-
-  private fun disposeRecorderLater(recorder: ActionsRecorder) {
-    // Now we are inside some listener registered by recorder
-    invokeLater(ModalityState.any()) {
-      // So better to exit from all callbacks and then clear all related data
-      Disposer.dispose(recorder)
     }
   }
 

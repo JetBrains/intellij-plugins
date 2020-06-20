@@ -31,7 +31,7 @@ internal class LearnToolWindowFactory : ToolWindowFactoryEx, DumbAware {
   }
 
   override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
-    val learnToolWindow = LearnToolWindow(project, toolWindow, toolWindow.disposable)
+    val learnToolWindow = LearnToolWindow(project, toolWindow)
     if (useNewLearningUi) {
       val contentManager = toolWindow.contentManager
       val menu = contentManager.factory.createContent(learnToolWindow, "All Topics", false)
