@@ -114,7 +114,7 @@ class JavaDebugLesson(module: Module) : KLesson("Debug Workflow", module, "JAVA"
                 override fun sessionPaused() {
                   invokeLater { completeStep() }
                 }
-              })
+              }, disposable)
             }
           })
         }

@@ -29,7 +29,8 @@ import java.beans.PropertyChangeListener
 import java.util.concurrent.CompletableFuture
 
 class ActionsRecorder(private val project: Project,
-                      private val document: Document) : Disposable {
+                      private val document: Document,
+                      parentDisposable: Disposable) : Disposable {
 
   private val documentListeners: MutableList<DocumentListener> = mutableListOf()
   // TODO: do we really need a lot of listeners?
@@ -51,7 +52,7 @@ class ActionsRecorder(private val project: Project,
   private var focusChangeListener: PropertyChangeListener? = null
 
   init {
-    Disposer.register(project, this)
+    Disposer.register(parentDisposable, this)
 
     // We could not unregister a listener (it will be done in dispose)
     // So the simple solution is to use a proxy
@@ -118,6 +119,7 @@ class ActionsRecorder(private val project: Project,
   }
 
   override fun dispose() {
+    System.err.println("dispose ActionsRecorder")
     removeListeners()
     disposed = true
     Disposer.dispose(this)
