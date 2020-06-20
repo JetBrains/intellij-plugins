@@ -28,10 +28,9 @@ import training.util.useNewLearningUi
 
 private const val IDE_FEATURES_TRAINER_TOOLBAR = "IdeFeaturesTrainerToolbar"
 
-class LearnToolWindow internal constructor(val project: Project,
-                                           private val wholeToolWindow: ToolWindow,
-                                           parentDisposable: Disposable
-) : SimpleToolWindowPanel(true, true), DataProvider {
+class LearnToolWindow internal constructor(val project: Project, private val wholeToolWindow: ToolWindow) : SimpleToolWindowPanel(true, true), DataProvider {
+  val parentDisposable: Disposable = wholeToolWindow.disposable
+
   private var scrollPane: JBScrollPane
   var learnPanel: LearnPanel? = null
     private set
@@ -57,6 +56,9 @@ class LearnToolWindow internal constructor(val project: Project,
       LessonManager.instance.addLessonListener(lessonListener)
       Disposer.register(parentDisposable, Disposable {
         LessonManager.instance.removeLessonListener(lessonListener)
+        if (LearningUiManager.activeToolWindow == this) {
+          LearningUiHighlightingManager.clearHighlights()
+        }
       })
       wholeToolWindow.contentManager.addContentManagerListener(object : ContentManagerListener {
         override fun contentRemoved(event: ContentManagerEvent) {
