@@ -4,7 +4,7 @@
   <description>
     <![CDATA[
         Allows to build projects using <a href="https://errorprone.info/">Error Prone Java compiler</a> to catch common Java mistakes at compile-time.
-        To use the compiler, go to File | Settings | Compiler | 'Java Compiler' and select 'Javac with error-prone' in 'Use compiler' box.
+        To use the compiler, go to <span class="menupath">'File | Settings/Preferences | Build, Execution, Deployment | Compiler | Java Compiler'</span> and select 'Javac with error-prone' in 'Use compiler' box.
       ]]>
   </description>
   <depends>com.intellij.modules.java</depends>
