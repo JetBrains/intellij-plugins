@@ -1,10 +1,9 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.lesson.javascript.debugger
 
-import com.intellij.lang.javascript.dialects.JSLanguageLevel
-import com.intellij.lang.javascript.settings.JSRootConfiguration
 import training.lang.JavaScriptLangSupport
 import training.learn.interfaces.Module
+import training.learn.lesson.javascript.setLanguageLevel
 import training.learn.lesson.javascript.textOnLine
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
@@ -14,9 +13,7 @@ class DebuggingSecondPart(module: Module) : KLesson("Debugging Code. Part II", m
   override val lessonContent: LessonContext.() -> Unit
     get() {
       return {
-        prepareRuntimeTask {
-          JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
-        }
+        setLanguageLevel()
         prepareSample(BeforeDebugging.jsDebuggerSample)
         task("StepInto") {
           text("<strong>Important</strong>: Please make sure that there’s a breakpoint on line 1 and that the debugger is launched (<action>DebugClass</action>) and opened on the <strong>Debugger</strong> tab before moving forward.\nLet's continue with locating a bug in our code and learn a few more things that come in handy when debugging in WebStorm." +
