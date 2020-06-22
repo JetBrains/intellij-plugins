@@ -6,7 +6,6 @@ import com.intellij.lang.Language;
 import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.lang.ParserDefinition;
 import com.intellij.lexer.Lexer;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.LanguageSubstitutors;
 import com.intellij.psi.MultiplePsiFilesPerDocumentFileViewProvider;
@@ -16,6 +15,7 @@ import com.intellij.psi.impl.source.PsiFileImpl;
 import com.intellij.psi.templateLanguages.ConfigurableTemplateLanguageFileViewProvider;
 import com.intellij.psi.templateLanguages.TemplateDataElementType;
 import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings;
+import com.intellij.psi.templateLanguages.TemplateDataModifications;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -41,17 +41,12 @@ public class HbFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvi
     if (result != null) return result;
     TemplateDataElementType created = new TemplateDataElementType("HB_TEMPLATE_DATA", lang, CONTENT, OUTER_ELEMENT_TYPE) {
       @Override
-      protected void appendCurrentTemplateToken(@NotNull StringBuilder result,
-                                                @NotNull CharSequence buf,
-                                                @NotNull Lexer lexer,
-                                                @NotNull RangeCollector collector) {
+      protected void appendCurrentTemplateToken(@NotNull Lexer lexer, @NotNull TemplateDataModifications modifications) {
         String nextSequence = lexer.getTokenText();
         if (nextSequence.endsWith("=")) {
           //insert fake ="" for attributes inside html tags
-          nextSequence += "\"\"";
-          collector.addRangeToRemove(new TextRange(lexer.getTokenEnd(), lexer.getTokenEnd() + 2));
+          modifications.addRangeToRemove(lexer.getTokenEnd(), "\"\"");
         }
-        result.append(nextSequence);
       }
     };
     TemplateDataElementType prevValue = TEMPLATE_DATA_TO_LANG.putIfAbsent(lang.getID(), created);
