@@ -1,10 +1,9 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.lesson.javascript.completion
 
-import com.intellij.lang.javascript.dialects.JSLanguageLevel
-import com.intellij.lang.javascript.settings.JSRootConfiguration
 import training.lang.JavaScriptLangSupport
 import training.learn.interfaces.Module
+import training.learn.lesson.javascript.setLanguageLevel
 import training.learn.lesson.javascript.textAtCaretEqualsTo
 import training.learn.lesson.javascript.textOnLine
 import training.learn.lesson.kimpl.KLesson
@@ -36,9 +35,7 @@ class CodeInspectionLesson(module: Module) : KLesson("The Power of Code Inspecti
   override val lessonContent: LessonContext.() -> Unit
     get() {
       return {
-        prepareRuntimeTask {
-          JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
-        }
+        setLanguageLevel()
         prepareSample(sample)
         task("GotoNextError") {
           text("As you work in the editor, WebStorm constantly analyzes your code, detects various problems in it, and suggests how it can be improved. The opened file has two highlighted problems on lines 4 and 5. Let’s check what they are by pressing ${action(it)}.")

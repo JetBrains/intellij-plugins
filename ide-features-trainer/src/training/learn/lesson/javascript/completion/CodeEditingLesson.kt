@@ -2,9 +2,8 @@
 package training.learn.lesson.javascript.completion
 
 import com.intellij.application.options.CodeStyle
-import com.intellij.lang.javascript.dialects.JSLanguageLevel
-import com.intellij.lang.javascript.settings.JSRootConfiguration
 import training.learn.interfaces.Module
+import training.learn.lesson.javascript.setLanguageLevel
 import training.learn.lesson.javascript.textAfterOffset
 import training.learn.lesson.javascript.textBeforeOffset
 import training.learn.lesson.javascript.textOnLine
@@ -43,8 +42,8 @@ class CodeEditingLesson(module: Module) : KLesson("Code Editing Tips and Tricks"
   override val lessonContent: LessonContext.() -> Unit
     get() {
       return {
+        setLanguageLevel()
         prepareRuntimeTask {
-          JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
           CodeStyle.getSettings(project).AUTODETECT_INDENTS = false
         }
         prepareSample(sample)
