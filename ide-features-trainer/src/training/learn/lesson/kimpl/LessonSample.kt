@@ -27,9 +27,14 @@ fun parseLessonSample(rowText: String): LessonSample {
   val positionList = mutableListOf<LessonSamplePosition>()
   val resultText = parseCarets(text, positionList)
   val positions = mutableMapOf<Int, LessonSamplePosition>()
-  for (position in positionList) {
-    if (positions[position.id] != null) error("several same id in the sample")
-    positions[position.id] = position
+  if (positionList.isNotEmpty()) {
+    for (position in positionList) {
+      if (positions[position.id] != null) error("several same id in the sample")
+      positions[position.id] = position
+    }
+  }
+  else {
+    positions[0] = LessonSamplePosition(id = 0, startOffset = 0)
   }
   return LessonSample(resultText, positions)
 }

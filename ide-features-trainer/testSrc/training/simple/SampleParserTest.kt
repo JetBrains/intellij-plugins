@@ -48,4 +48,9 @@ class SampleParserTest : UsefulTestCase() {
     TestCase.assertEquals(Pair(5, 8), sample.getPosition(1).selection)
     TestCase.assertEquals(2, sample.getPosition(2).startOffset)
   }
+
+  fun testNoCaret() {
+    val sample = parseLessonSample("hello world")
+    assertSame(0, sample.startOffset)
+  }
 }
