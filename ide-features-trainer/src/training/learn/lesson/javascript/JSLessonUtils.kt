@@ -4,6 +4,7 @@ package training.learn.lesson.javascript
 import com.intellij.icons.AllIcons
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lang.javascript.settings.JSRootConfiguration
+import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.editor.impl.DocumentMarkupModel
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.psi.PsiDocumentManager
@@ -13,7 +14,7 @@ import training.commands.kotlin.TaskRuntimeContext
 import training.learn.lesson.kimpl.LessonContext
 
 fun LessonContext.setLanguageLevel() {
-  prepareRuntimeTask {
+  prepareRuntimeTask(ModalityState.NON_MODAL) {
     JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
   }
 }
