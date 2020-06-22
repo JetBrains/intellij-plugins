@@ -119,7 +119,6 @@ class ActionsRecorder(private val project: Project,
   }
 
   override fun dispose() {
-    System.err.println("dispose ActionsRecorder")
     removeListeners()
     disposed = true
     Disposer.dispose(this)
