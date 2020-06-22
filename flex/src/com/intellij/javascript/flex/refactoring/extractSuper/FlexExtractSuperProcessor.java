@@ -161,7 +161,7 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
       return JSPullUpConflictsUtil.checkConflicts(myMembersToMove, mySourceClass, createFakeClass(), v, JSVisibilityUtil.DEFAULT_OPTIONS);
     }
     else {
-      MultiMap<PsiElement, String> conflicts = new MultiMap<PsiElement, String>(Collections.synchronizedMap(CollectionFactory.createMap())) {
+      MultiMap<PsiElement, String> conflicts = new MultiMap<PsiElement, String>(Collections.synchronizedMap(CollectionFactory.createSmallMemoryFootprintMap())) {
         @NotNull
         @Override
         protected Collection<String> createCollection() {
