@@ -2,11 +2,10 @@
 package training.learn.lesson.javascript.completion
 
 import com.intellij.codeInsight.template.TemplateManager
-import com.intellij.lang.javascript.dialects.JSLanguageLevel
-import com.intellij.lang.javascript.settings.JSRootConfiguration
 import com.intellij.ui.components.JBList
 import training.lang.JavaScriptLangSupport
 import training.learn.interfaces.Module
+import training.learn.lesson.javascript.setLanguageLevel
 import training.learn.lesson.javascript.textAtCaretEqualsTo
 import training.learn.lesson.javascript.textOnLine
 import training.learn.lesson.kimpl.KLesson
@@ -40,9 +39,7 @@ class RefactoringLesson(module: Module) : KLesson("Refactorings in a Nutshell", 
   override val lessonContent: LessonContext.() -> Unit
     get() {
       return {
-        prepareRuntimeTask {
-          JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
-        }
+        setLanguageLevel()
         prepareSample(sample)
         task("Refactorings.QuickListPopupAction") {
           text("WebStorm has a <a href='https://www.jetbrains.com/help/webstorm/refactoring-source-code.html#ws_supported_refactorings'>number of refactorings</a> that can automatically restructure existing code without changing its behavior across the entire project. Let's look up the list of refactorings available for the <strong>books</strong> parameter. To do this, press ${action(it)} or go to <strong>Refactor > Refactor This</strong> from the main menu.")

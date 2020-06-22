@@ -1,13 +1,12 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.lesson.javascript.completion
 
-import com.intellij.lang.javascript.dialects.JSLanguageLevel
-import com.intellij.lang.javascript.settings.JSRootConfiguration
 import com.intellij.openapi.editor.impl.EditorComponentImpl
 import com.intellij.openapi.wm.ToolWindowManager
 import training.lang.JavaScriptLangSupport
 import training.learn.interfaces.Module
 import training.learn.lesson.javascript.checkWordInSearchEverywhereInput
+import training.learn.lesson.javascript.setLanguageLevel
 import training.learn.lesson.javascript.shiftSymbol
 import training.learn.lesson.javascript.textAtCaretEqualsTo
 import training.learn.lesson.kimpl.KLesson
@@ -44,9 +43,8 @@ class NavigationLesson(module: Module) : KLesson("Secrets of Efficient Navigatio
   override val lessonContent: LessonContext.() -> Unit
     get() {
       return {
+        setLanguageLevel()
         prepareRuntimeTask {
-          JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
-
           //by default in 2020.1 "Structure" is in "top-left" state, also the state can be changed by user
           val toolWindow = ToolWindowManager.getInstance(project).getToolWindow("Structure")
           toolWindow?.setSplitMode(true, null)
