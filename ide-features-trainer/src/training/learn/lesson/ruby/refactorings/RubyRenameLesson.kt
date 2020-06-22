@@ -9,6 +9,7 @@ import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.parseLessonSample
 import java.util.concurrent.Future
+import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 
 class RubyRenameLesson(module: Module) : KLesson("Rename", module, "ruby") {
@@ -61,7 +62,10 @@ class RubyRenameLesson(module: Module) : KLesson("Rename", module, "ruby") {
         }
       }
       task("Do Refactor") {
-        val result = template.replace("<name>", replace.get()).replace("<caret>", "")
+        var result = ""
+        before {
+          result = template.replace("<name>", replace.get(2, TimeUnit.SECONDS)).replace("<caret>", "")
+        }
         text("In order to be confident about the refactoring, RubyMine lets you preview it before confirming." +
              "Click <strong>$it</strong> to complete the refactoring.")
         stateCheck { editor.document.text == result }
