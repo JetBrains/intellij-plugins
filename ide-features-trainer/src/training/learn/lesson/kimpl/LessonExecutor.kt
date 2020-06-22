@@ -135,6 +135,9 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
     get() = FileDocumentManager.getInstance().getFile(editor.document) ?: error("No Virtual File")
 
   fun processNextTask(taskIndex: Int) {
+    isUnderTaskProcessing = true
+    // ModalityState.current() or without argument - cannot be used: dialog steps can stop to work.
+    // Good example: track of rename refactoring
     invokeLater(ModalityState.any()) {
       processNextTask2(taskIndex)
     }
@@ -186,9 +189,7 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
     currentRecorder = recorder
     val taskCallbackData = TaskCallbackData()
     val taskContext = TaskContextImpl(this, recorder, taskIndex, taskCallbackData)
-    isUnderTaskProcessing = true
     taskContext.apply(taskContent)
-    isUnderTaskProcessing = false
 
     if (taskContext.steps.isEmpty()) {
       processNextTask(taskIndex + 1)
