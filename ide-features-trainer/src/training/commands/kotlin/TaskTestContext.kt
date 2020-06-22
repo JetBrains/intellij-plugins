@@ -55,9 +55,9 @@ class TaskTestContext(rt: TaskRuntimeContext): TaskRuntimeContext(rt) {
     }
   }
 
-  fun <ComponentType : Component> waitComponent(componentClass: Class<ComponentType>, partOfName: String) {
+  fun <ComponentType : Component> waitComponent(componentClass: Class<ComponentType>, partOfName: String? = null) {
     waitUntilFound(null, componentClass, Timeouts.seconds02) {
-      it.javaClass.name.contains(partOfName) && it.isShowing
+      (if (partOfName != null) it.javaClass.name.contains(partOfName) else true) && it.isShowing
     }
   }
 
