@@ -50,9 +50,8 @@ import com.intellij.refactoring.util.RefactoringDescriptionLocation;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.usageView.UsageViewDescriptor;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.containers.CollectionFactory;
 import com.intellij.util.containers.MultiMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectMaps;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -162,7 +161,7 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
       return JSPullUpConflictsUtil.checkConflicts(myMembersToMove, mySourceClass, createFakeClass(), v, JSVisibilityUtil.DEFAULT_OPTIONS);
     }
     else {
-      MultiMap<PsiElement, String> conflicts = new MultiMap<PsiElement, String>(Object2ObjectMaps.synchronize(new Object2ObjectOpenHashMap<>())) {
+      MultiMap<PsiElement, String> conflicts = new MultiMap<PsiElement, String>(Collections.synchronizedMap(CollectionFactory.createMap())) {
         @NotNull
         @Override
         protected Collection<String> createCollection() {
