@@ -1,6 +1,8 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.lesson.kimpl
 
+import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.application.invokeLater
 import org.jetbrains.annotations.CalledInAwt
 import training.commands.kotlin.TaskContext
 import training.commands.kotlin.TaskRuntimeContext
@@ -21,10 +23,13 @@ abstract class LessonContext {
     }
   }
 
-  fun prepareRuntimeTask(preparation: TaskRuntimeContext.() -> Unit) {
+  fun prepareRuntimeTask(modalityState: ModalityState? = ModalityState.any(), preparation: TaskRuntimeContext.() -> Unit) {
     task {
-      before {
-        preparation()
+      addFutureStep {
+        invokeLater(modalityState) {
+          preparation()
+          completeStep()
+        }
       }
     }
   }
