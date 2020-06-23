@@ -35,13 +35,6 @@ object ProjectUtils {
     return@lazy ideaProjectsPath
   }
 
-  @Deprecated("Use method below", ReplaceWith("importOrOpenProject(langSupport, null)"))
-  fun importOrOpenProject(projectPath: String,
-                          projectName: String,
-                          classLoader: ClassLoader): Project? {
-    throw IllegalStateException("This method should not be called at all")
-  }
-
   /**
    * For example:
    * @projectPath = "/learnProjects/SimpleProject"

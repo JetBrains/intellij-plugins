@@ -32,7 +32,6 @@ object CommandFactory {
       Command.CommandType.CARETBLOCK -> return CaretBlockCommand()
       Command.CommandType.CARETUNBLOCK -> return CaretUnblockCommand()
       Command.CommandType.SHOWLINENUMBER -> return ShowLineNumberCommand()
-      Command.CommandType.EXPANDALLBLOCKS -> return ExpandAllBlocksCommand()
       Command.CommandType.SETSELECTION -> return SetSelectionCommand()
       else -> throw BadCommandException("unable to parse command from${element.name ?: return NoCommand()}")
     }
