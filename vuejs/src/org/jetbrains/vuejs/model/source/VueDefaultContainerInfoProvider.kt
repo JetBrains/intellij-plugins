@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.model.source
 
 import com.intellij.codeInsight.completion.CompletionUtil
+import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
@@ -9,6 +10,8 @@ import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
 import com.intellij.lang.javascript.psi.types.evaluable.JSApplyCallType
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
+import com.intellij.psi.StubBasedPsiElement
+import com.intellij.psi.impl.source.html.HtmlFileImpl
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndexKey
 import com.intellij.psi.tree.TokenSet
@@ -117,14 +120,28 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
 
     override fun build(declaration: JSObjectLiteralExpression): List<VueMixin> {
       val mixinsProperty = declaration.findProperty(propertyName) ?: return emptyList()
-      val elements = resolve(LOCAL, GlobalSearchScope.fileScope(mixinsProperty.containingFile.originalFile), indexKey)
-                     ?: return emptyList()
       val original = CompletionUtil.getOriginalOrSelf<PsiElement>(mixinsProperty)
-      return elements.asSequence()
-        .filter { PsiTreeUtil.isAncestor(original, it.parent, false) }
-        .mapNotNull { VueComponents.vueMixinDescriptorFinder(it) }
-        .mapNotNull { VueModelManager.getMixin(it) }
-        .toList()
+      val referencedMixins: List<VueMixin> =
+        resolve(LOCAL, GlobalSearchScope.fileScope(mixinsProperty.containingFile.originalFile), indexKey)
+          ?.asSequence()
+          ?.filter { PsiTreeUtil.isAncestor(original, it.parent, false) }
+          ?.mapNotNull { VueComponents.vueMixinDescriptorFinder(it) }
+          ?.mapNotNull { VueModelManager.getMixin(it) }
+          ?.toList()
+        ?: emptyList()
+
+      val initializerMixins: List<VueMixin> =
+        (mixinsProperty as? StubBasedPsiElement<*>)?.stub
+          ?.getChildrenByType(JSElementTypes.OBJECT_LITERAL_EXPRESSION, JSObjectLiteralExpression.ARRAY_FACTORY)
+          ?.mapNotNull { VueModelManager.getMixin(it) }
+        ?: (mixinsProperty.value as? JSArrayLiteralExpression)
+          ?.expressions
+          ?.asSequence()
+          ?.filterIsInstance<JSObjectLiteralExpression>()
+          ?.mapNotNull { VueModelManager.getMixin(it) }
+          ?.toList()
+        ?: emptyList()
+      return referencedMixins + initializerMixins
     }
   }
 
@@ -151,12 +168,14 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
       return StreamEx.of(ContainerMember.Components.readMembers(declaration))
         .mapToEntry({ p -> p.first }, { p -> p.second })
         .mapValues { element ->
-          (VueComponents.meaningfulExpression(element) ?: element)
-            .let { meaningfulElement ->
-              getComponentDescriptor(meaningfulElement as? JSElement)
-                ?.let { it.obj ?: it.clazz }
-            }
-            ?.let { VueModelManager.getComponent(it) }
+          val meaningfulElement = VueComponents.meaningfulExpression(element) ?: element
+          if (meaningfulElement is HtmlFileImpl) {
+            VueModelManager.getComponent(meaningfulElement)
+          }
+          else {
+            getComponentDescriptor(meaningfulElement as? JSElement)
+              ?.let { VueModelManager.getComponent(it) }
+          }
           ?: VueUnresolvedComponent()
         }
         .distinctKeys()

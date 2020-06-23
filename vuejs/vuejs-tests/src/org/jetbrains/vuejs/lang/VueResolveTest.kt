@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.lang
 
 import com.intellij.lang.ecmascript6.psi.JSClassExpression
 import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClassExpression
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
@@ -933,7 +934,9 @@ Vue.component('global-comp-literal', {
 """)
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)
-    val property = reference!!.resolve()!!.parent
+    val element = reference!!.resolve()
+    TestCase.assertNotNull(element)
+    val property = element!!.parent
     TestCase.assertNotNull(property)
     TestCase.assertTrue(property is JSProperty)
     TestCase.assertEquals("insideGlobalCompLiteral", (property as JSProperty).name)
@@ -1257,7 +1260,9 @@ const props = {seeMe: {}}
   private fun doTestResolveIntoProperty(name: String) {
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)
-    val property = reference!!.resolve()!!.parent
+    val element = reference!!.resolve()
+    TestCase.assertNotNull(element)
+    val property = element!!.parent
     TestCase.assertNotNull(property)
     TestCase.assertTrue(property is JSProperty)
     TestCase.assertEquals(name, (property as JSProperty).name)
@@ -1743,7 +1748,9 @@ export default class UsageComponent extends Vue {
 }
 </script>
 """)
-    doResolveIntoLibraryComponent("long-vue", "LongComponent.vue")
+    val target = myFixture.resolveReference("<<caret>LongComponent/>")
+    TestCase.assertEquals("LongComponent.vue", target.containingFile.name)
+    TestCase.assertTrue(target.parent is TypeScriptClassExpression)
   }
 
   fun testLocalComponentsExtendsResolve() {
@@ -1911,7 +1918,8 @@ export default class UsageComponent extends Vue {
       Triple("script-template-vue", "scriptTemplateVue1", "<slot name=\"scriptTemplateVue1\"></slot>"),
       Triple("require-decorators", "default", "<slot></slot>"),
       Triple("x-template", "xTemplate1", "<slot name=\"xTemplate1\"></slot>"),
-      Triple("export-import", "exportImport1", "<slot name=\"exportImport1\"></slot>")
+      Triple("export-import", "exportImport1", "<slot name=\"exportImport1\"></slot>"),
+      Triple("no-script-section", "noScriptSection1", "<slot name=\"noScriptSection1\"></slot>")
     )) {
       val slotWithCaret = slotName.replaceRange(1, 1, "<caret>")
       for (signature in listOf("<$tag><template v-slot:$slotWithCaret",
@@ -1990,6 +1998,13 @@ export default class UsageComponent extends Vue {
     myFixture.configureByFile("gotoDeclarationDirectives.vue")
     myFixture.performEditorAction("GotoDeclaration")
     TestCase.assertEquals(104, myFixture.caretOffset)
+  }
+
+  fun testNoScriptSection() {
+    myFixture.configureByFiles("noScriptSection/test.vue", "noScriptSection/noScriptSection.vue")
+    TestCase.assertEquals(
+      "noScriptSection.vue",
+      myFixture.resolveReference("<no-script<caret>-section>").containingFile.name)
   }
 
 }

@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
-import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.JSAliasTypeImpl
 import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl
@@ -22,8 +21,8 @@ import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInf
 
 class VueCompositionInfoProvider : VueContainerInfoProvider {
 
-  override fun getInfo(initializer: JSObjectLiteralExpression?, clazz: JSClass?): VueContainerInfo? {
-    return initializer?.let { VueCompositionInfo(it) }
+  override fun getInfo(descriptor: VueSourceEntityDescriptor): VueContainerInfo? {
+    return descriptor.initializer?.let { VueCompositionInfo(it) }
   }
 
   class VueCompositionInfo(val initializer: JSObjectLiteralExpression) : VueContainerInfo {

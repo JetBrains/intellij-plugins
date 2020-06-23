@@ -10,8 +10,8 @@ interface VueSourceEntity {
 
   fun isPartOfImplementation(element: JSElement): Boolean =
     PsiTreeUtil.isContextAncestor(initializer, element, false)
-    || PsiTreeUtil.isContextAncestor(clazz, element, false)
+    || PsiTreeUtil.isContextAncestor(descriptor.clazz, element, false)
 
-  val initializer: JSObjectLiteralExpression? get() = null
-  val clazz: JSClass? get() = null
+  val descriptor: VueSourceEntityDescriptor
+  val initializer: JSObjectLiteralExpression? get() = descriptor.initializer
 }

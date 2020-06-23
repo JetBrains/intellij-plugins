@@ -118,15 +118,15 @@ internal class VueGlobalImpl(override val project: Project, private val packageJ
 
   private fun buildElementToParentMap(): MultiMap<VueScopeElement, VueEntitiesContainer> {
     val result = MultiMap<VueScopeElement, VueEntitiesContainer>()
-    StreamEx.of<VueEntitiesContainer>(this)
-      .append(plugins)
-      .append(apps)
+    sequenceOf(this)
+      .plus(plugins)
+      .plus(apps)
       .forEach { container ->
-        StreamEx.of(container.components.values,
-                    container.directives.values,
-                    container.filters.values,
-                    container.mixins)
-          .flatMap(Collection<VueScopeElement>::stream)
+        sequenceOf(container.components.values,
+                   container.directives.values,
+                   container.filters.values,
+                   container.mixins)
+          .flatMap { it.asSequence() }
           .forEach { el -> result.putValue(el, container) }
       }
     return result

@@ -99,8 +99,8 @@ fun createImplicitElement(name: String, provider: PsiElement, indexKey: String,
 
 private fun normalizeNameForIndex(name: String) = fromAsset(name.substringBeforeLast(GLOBAL_BINDING_MARK))
 
-fun getVueIndexData(element: JSImplicitElement): VueIndexData {
-  val typeStr = element.typeString ?: return VueIndexData(element.name, null, null, false, isGlobal = false)
+fun getVueIndexData(element: JSImplicitElement): VueIndexData? {
+  val typeStr = element.typeString ?: return null
   val originalName = typeStr.substringAfterLast(DELIMITER)
   val s = typeStr.substringBeforeLast(DELIMITER)
   val parts = s.split(DELIMITER)

@@ -123,9 +123,6 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
           if (it is JSReferenceExpression) {
             recordMixin(out, property, it, false)
           }
-          else if (it is JSObjectLiteralExpression && it.firstProperty != null) {
-            recordMixin(out, it.firstProperty!!, null, false)
-          }
         }
     }
     else if (EXTENDS_PROP == name && property.value is JSReferenceExpression) {
@@ -212,12 +209,12 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     if (!isComponentDecorator(decorator)) return data
 
     val exportAssignment = (decorator.parent as? JSAttributeList)?.parent as? ES6ExportDefaultAssignment ?: return data
-    val classExpression = exportAssignment.stubSafeElement as? JSClassExpression ?: return data
+    if (exportAssignment.stubSafeElement !is JSClassExpression) return data
 
     val nameProperty = VueComponents.getDescriptorFromDecorator(decorator)?.findProperty(NAME_PROP)
     val name = getTextIfLiteral(nameProperty?.value) ?: FileUtil.getNameWithoutExtension(decorator.containingFile.name)
     val outData = data ?: JSElementIndexingDataImpl()
-    outData.addImplicitElement(createImplicitElement(name, classExpression, VueComponentsIndex.JS_KEY, null, null, false))
+    outData.addImplicitElement(createImplicitElement(name, decorator, VueComponentsIndex.JS_KEY, null, null, false))
     return outData
   }
 
@@ -241,15 +238,13 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
           val qualifierRef = nameRef.qualifier as? JSReferenceExpression
           componentName = (qualifierRef?.referenceName ?: nameRef.referenceName) + GLOBAL_BINDING_MARK
         }
-        val provider: PsiElement = (arguments[1] as? JSObjectLiteralExpression)?.firstProperty ?: callExpression
-        outData.addImplicitElement(createImplicitElement(componentName, provider, VueComponentsIndex.JS_KEY,
+        outData.addImplicitElement(createImplicitElement(componentName, callExpression, VueComponentsIndex.JS_KEY,
                                                          nameRefString, arguments[1], true))
       }
     }
     else if (VueStaticMethod.Mixin.matches(reference)) {
       if (arguments.size == 1) {
-        val provider = (arguments[0] as? JSObjectLiteralExpression)?.firstProperty ?: callExpression
-        recordMixin(outData, provider, arguments[0], true)
+        recordMixin(outData, callExpression, arguments[0], true)
       }
     }
     else if (VueStaticMethod.Directive.matches(reference)) {

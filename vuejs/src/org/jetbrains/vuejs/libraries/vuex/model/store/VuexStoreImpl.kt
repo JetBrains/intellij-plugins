@@ -16,6 +16,7 @@ import org.jetbrains.vuejs.codeInsight.objectLiteralFor
 import org.jetbrains.vuejs.libraries.vuex.types.VuexGetterType
 import org.jetbrains.vuejs.model.VueImplicitElement
 import org.jetbrains.vuejs.model.source.EntityContainerInfoProvider.InitializedContainerInfoProvider.BooleanValueAccessor
+import org.jetbrains.vuejs.model.source.VueSourceEntityDescriptor
 
 abstract class VuexContainerImpl : VuexContainer {
 
@@ -34,17 +35,14 @@ abstract class VuexContainerImpl : VuexContainer {
   override val modules: Map<String, VuexModule>
     get() = get(VuexContainerInfoProvider.VuexContainerInfo::modules)
 
-  private fun <T> get(accessor: (VuexContainerInfoProvider.VuexContainerInfo) -> Map<String, T>): Map<String, T> {
-    return VuexContainerInfoProvider.INSTANCE.getInfo(initializer, null)?.let {
-      accessor.invoke(it)
-    } ?: mapOf()
-  }
+  private fun <T> get(accessor: (VuexContainerInfoProvider.VuexContainerInfo) -> Map<String, T>): Map<String, T> =
+    getInfo()?.let { accessor.invoke(it) } ?: mapOf()
 
-  protected fun get(accessor: (VuexContainerInfoProvider.VuexContainerInfo) -> Boolean): Boolean {
-    return VuexContainerInfoProvider.INSTANCE.getInfo(initializer, null)?.let {
-      accessor.invoke(it)
-    } == true
-  }
+  protected fun get(accessor: (VuexContainerInfoProvider.VuexContainerInfo) -> Boolean): Boolean =
+    getInfo()?.let { accessor.invoke(it) } == true
+
+  private fun getInfo(): VuexContainerInfoProvider.VuexContainerInfo? =
+    initializer?.let { VuexContainerInfoProvider.INSTANCE.getInfo(VueSourceEntityDescriptor(it, null)) }
 }
 
 class VuexModuleImpl(override val name: String,

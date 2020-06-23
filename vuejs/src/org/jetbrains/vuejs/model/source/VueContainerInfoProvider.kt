@@ -13,7 +13,7 @@ import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInf
 interface VueContainerInfoProvider : EntityContainerInfoProvider<VueContainerInfo> {
 
   @JvmDefault
-  override fun getInfo(initializer: JSObjectLiteralExpression?, clazz: JSClass?): VueContainerInfo?
+  override fun getInfo(descriptor: VueSourceEntityDescriptor): VueContainerInfo?
 
   @JvmDefault
   fun getThisTypeProperties(instanceOwner: VueInstanceOwner,
