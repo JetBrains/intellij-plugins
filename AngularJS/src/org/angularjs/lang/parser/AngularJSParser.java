@@ -15,7 +15,7 @@ public class AngularJSParser
   extends JavaScriptParser<AngularJSParser.AngularJSExpressionParser, StatementParser, FunctionParser, JSPsiTypeParser> {
 
   public AngularJSParser(PsiBuilder builder) {
-    super(JavaScriptSupportLoader.JAVASCRIPT_1_5, builder);
+    super(DialectOptionHolder.JS_1_5, builder);
     myExpressionParser = new AngularJSExpressionParser();
     myStatementParser = new StatementParser<AngularJSParser>(this) {
       @Override
