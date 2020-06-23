@@ -102,7 +102,7 @@ public class Angular2Parser extends JavaScriptParser<Angular2Parser.Angular2Expr
   }
 
   private Angular2Parser(PsiBuilder builder, boolean isAction, boolean isSimpleBinding, boolean isJavaScript) {
-    super(JavaScriptSupportLoader.JAVASCRIPT_1_5, builder);
+    super(DialectOptionHolder.JS_1_5, builder);
     myIsAction = isAction;
     myIsSimpleBinding = isSimpleBinding;
     myIsJavaScript = isJavaScript;
