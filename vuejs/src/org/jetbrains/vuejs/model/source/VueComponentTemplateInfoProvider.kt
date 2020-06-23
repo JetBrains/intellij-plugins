@@ -5,7 +5,6 @@ import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
-import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -30,9 +29,8 @@ import org.jetbrains.vuejs.model.resolveTagSrcReference
 
 class VueComponentTemplateInfoProvider : VueContainerInfoProvider {
 
-  override fun getInfo(initializer: JSObjectLiteralExpression?, clazz: JSClass?): VueContainerInfoProvider.VueContainerInfo? {
-    return VueComponentTemplateInfo(initializer ?: clazz ?: return null)
-  }
+  override fun getInfo(descriptor: VueSourceEntityDescriptor): VueContainerInfoProvider.VueContainerInfo? =
+    VueComponentTemplateInfo(descriptor.initializer ?: descriptor.clazz ?: descriptor.source)
 
   private class VueComponentTemplateInfo(private val element: PsiElement) : VueContainerInfoProvider.VueContainerInfo {
     override val template: VueTemplate<*>?
@@ -49,26 +47,24 @@ class VueComponentTemplateInfoProvider : VueContainerInfoProvider {
 
   companion object {
 
-    private fun createInfo(template: PsiElement?): VueTemplate<*>? {
-      return when (template) {
+    private fun createInfo(template: PsiElement?): VueTemplate<*>? =
+      when (template) {
         is XmlFile -> VueFileTemplate(template)
         is XmlTag -> VueTagTemplate(template)
         else -> null
       }
-    }
 
     private fun locateTemplateInTheSameVueFile(source: PsiElement): CachedValueProvider.Result<VueTemplate<*>?>? {
-      source.context
-        ?.containingFile
+      val context = source as? PsiFile ?: source.context!!
+      return context.containingFile
         ?.castSafelyTo<XmlFile>()
         ?.let { findTopLevelVueTag(it, HtmlUtil.TEMPLATE_TAG_NAME) }
         ?.let {
-          return CachedValueProvider.Result.create(locateTemplateInTemplateTag(it), source.context, source.context!!.containingFile)
+          CachedValueProvider.Result.create(locateTemplateInTemplateTag(it), context, context.containingFile)
         }
-      return null
     }
 
-    private fun locateTemplateInTemplateProperty(source: PsiElement): CachedValueProvider.Result<VueTemplate<*>?>? {
+    private fun locateTemplateInTemplateProperty(source: PsiElement): CachedValueProvider.Result<VueTemplate<*>?>? =
       (source as? JSObjectLiteralExpression)
         ?.findProperty(TEMPLATE_PROP)
         ?.value
@@ -78,10 +74,8 @@ class VueComponentTemplateInfoProvider : VueContainerInfoProvider {
             ?.let { return CachedValueProvider.Result.create(createInfo(it), source, it) }
 
           // Referenced template
-          return getReferencedTemplate(expression)
+          getReferencedTemplate(expression)
         }
-      return null
-    }
 
     private fun getReferencedTemplate(expression: JSExpression): CachedValueProvider.Result<VueTemplate<*>?> {
       var directRefs = getTextIfLiteral(expression)?.startsWith("#") == true
@@ -147,10 +141,8 @@ class VueComponentTemplateInfoProvider : VueContainerInfoProvider {
       return result
     }
 
-    private fun locateTemplateInTemplateTag(tag: XmlTag): VueTemplate<*>? {
-      return resolveTagSrcReference(tag)
-        ?.let { createInfo(it) }
-    }
+    private fun locateTemplateInTemplateTag(tag: XmlTag): VueTemplate<*>? =
+      resolveTagSrcReference(tag)?.let { createInfo(it) }
 
   }
 

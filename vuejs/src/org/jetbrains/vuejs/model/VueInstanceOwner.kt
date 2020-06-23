@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterface
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.*
+import com.intellij.openapi.util.UserDataHolder
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
@@ -22,11 +23,11 @@ import java.util.*
 
 interface VueInstanceOwner : VueScopeElement {
   val thisType: JSType
-    get() = source?.let { source ->
-      CachedValuesManager.getCachedValue(source) {
+    get() = if (source != null && this is UserDataHolder) {
+      CachedValuesManager.getManager(source!!.project).getCachedValue(this) {
         CachedValueProvider.Result.create(buildInstanceType(this), PsiModificationTracker.MODIFICATION_COUNT)
       }
-    } ?: JSAnyType.get(source, false)
+    } else null ?: JSAnyType.get(source, false)
 }
 
 private val VUE_INSTANCE_PROPERTIES: List<String> = listOf(

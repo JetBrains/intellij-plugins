@@ -81,8 +81,16 @@ export class VueScriptCache {
     }, {
       recognizeSelfClosing: true
     })
+
     parser.write(contents)
     parser.end()
+
+    // Allow for empty <script> tag
+    if (result.trim() === "") {
+      result = "import Vue from 'vue'; export default Vue;"
+      scriptKind = ts_impl.ScriptKind.TS;
+    }
+
     const snapshot = ts_impl.ScriptSnapshot.fromString(result);
     // Allow to retrieve script kind from snapshot
     (<any>snapshot).scriptKind = scriptKind

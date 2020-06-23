@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.libraries.templateLoader
 
 import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
 import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.openapi.vfs.VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS
@@ -13,15 +14,16 @@ import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.libraries.templateLoader.TemplateLoaderFrameworkHandler.Companion.WITH_RENDER
 import org.jetbrains.vuejs.model.VueFileTemplate
 import org.jetbrains.vuejs.model.VueTemplate
+import org.jetbrains.vuejs.model.source.VueSourceEntityDescriptor
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInfo
 
 class TemplateLoaderComponentInfoProvider : VueContainerInfoProvider {
 
-  override fun getInfo(initializer: JSObjectLiteralExpression?, clazz: JSClass?): VueContainerInfo? {
+  override fun getInfo(descriptor: VueSourceEntityDescriptor): VueContainerInfo? {
     return when {
-      clazz != null -> TemplateLoaderClassInfo(clazz)
-      initializer != null -> TemplateLoaderInitializerInfo(initializer)
+      descriptor.clazz != null -> TemplateLoaderClassInfo(descriptor.clazz)
+      descriptor.initializer != null -> TemplateLoaderInitializerInfo(descriptor.initializer)
       else -> null
     }
   }
@@ -33,7 +35,7 @@ class TemplateLoaderComponentInfoProvider : VueContainerInfoProvider {
           ?.decorators
           ?.asSequence()
           ?.plus(clazz.parent.castSafelyTo<ES6ExportDefaultAssignment>()
-                   ?.attributeList?.decorators ?: emptyArray())
+                   ?.attributeList?.decorators ?: emptyArray<ES6Decorator>())
           ?.find { it.decoratorName?.equals(WITH_RENDER, ignoreCase = true) == true }
           ?.expression
           ?.let { resolveToFile(it) }

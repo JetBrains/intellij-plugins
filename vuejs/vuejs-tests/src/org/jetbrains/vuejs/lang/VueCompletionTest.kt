@@ -1569,7 +1569,8 @@ export default class ComponentInsertion extends Vue {
       Pair("require-decorators", listOf("requireDecorators1", "requireDecorators2", "default")),
       Pair("x-template", listOf("xTemplate1", "xTemplate2", "default")),
       Pair("export-import", listOf("exportImport1", "exportImport2")),
-      Pair("some-lib", listOf("someLib1", "someLib2"))
+      Pair("some-lib", listOf("someLib1", "someLib2")),
+      Pair("no-script-section", listOf("noScriptSection1", "noScriptSection2", "default"))
     )) {
       for (signature in listOf("$tag><template v-slot:<caret></$tag", "$tag><div slot=\"<caret>\"</$tag")) {
         myFixture.moveToOffsetBySignature(signature)
