@@ -41,12 +41,13 @@ public class HbFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvi
     if (result != null) return result;
     TemplateDataElementType created = new TemplateDataElementType("HB_TEMPLATE_DATA", lang, CONTENT, OUTER_ELEMENT_TYPE) {
       @Override
-      protected void appendCurrentTemplateToken(@NotNull Lexer lexer, @NotNull TemplateDataModifications modifications) {
+      protected @NotNull TemplateDataModifications appendCurrentTemplateToken(@NotNull Lexer lexer) {
         String nextSequence = lexer.getTokenText();
         if (nextSequence.endsWith("=")) {
           //insert fake ="" for attributes inside html tags
-          modifications.addRangeToRemove(lexer.getTokenEnd(), "\"\"");
+          return TemplateDataModifications.fromRangeToRemove(lexer.getTokenEnd(), "\"\"");
         }
+        return super.appendCurrentTemplateToken(lexer);
       }
     };
     TemplateDataElementType prevValue = TEMPLATE_DATA_TO_LANG.putIfAbsent(lang.getID(), created);
