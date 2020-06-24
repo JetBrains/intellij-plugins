@@ -19,7 +19,6 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.NotNullLazyKey;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.xml.Converter;
 import org.jetbrains.annotations.NotNull;
@@ -34,9 +33,6 @@ import java.util.List;
  */
 public abstract class StrutsConstantManager {
 
-  private static final NotNullLazyKey<StrutsConstantManager, Project> INSTANCE_KEY =
-    ServiceManager.createLazyKey(StrutsConstantManager.class);
-
   /**
    * EP for contributing plugin-specific {@link StrutsConstant}s.
    */
@@ -44,7 +40,7 @@ public abstract class StrutsConstantManager {
     new ExtensionPointName<>("com.intellij.struts2.constantContributor");
 
   public static StrutsConstantManager getInstance(@NotNull final Project project) {
-    return INSTANCE_KEY.getValue(project);
+    return ServiceManager.getService(project, StrutsConstantManager.class);
   }
 
   /**

@@ -18,7 +18,6 @@ package com.intellij.struts2.dom.struts.model;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.NotNullLazyKey;
 import com.intellij.openapi.util.UserDataHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlFile;
@@ -37,10 +36,8 @@ import java.util.Set;
  */
 public abstract class StrutsManager {
 
-  private static final NotNullLazyKey<StrutsManager, Project> INSTANCE_KEY = ServiceManager.createLazyKey(StrutsManager.class);
-
   public static StrutsManager getInstance(@NotNull final Project project) {
-    return INSTANCE_KEY.getValue(project);
+    return ServiceManager.getService(project, StrutsManager.class);
   }
 
   /**
