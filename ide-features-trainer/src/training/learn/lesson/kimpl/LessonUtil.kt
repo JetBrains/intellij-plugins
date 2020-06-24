@@ -57,8 +57,8 @@ object LessonUtil {
 fun TaskContext.toolWindowShowed(toolWindowId: String) {
   addFutureStep {
     subscribeForMessageBus(ToolWindowManagerListener.TOPIC, object: ToolWindowManagerListener {
-      override fun toolWindowShown(id: String, toolWindow: ToolWindow) {
-        if (id == toolWindowId)
+      override fun toolWindowShown(toolWindow: ToolWindow) {
+        if (toolWindow.id == toolWindowId)
           completeStep()
       }
     })
