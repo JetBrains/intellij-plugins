@@ -18,7 +18,6 @@ package com.intellij.struts2.dom.validator;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.NotNullLazyKey;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
@@ -35,11 +34,8 @@ import java.util.List;
  */
 public abstract class ValidatorManager {
 
-  private static final NotNullLazyKey<ValidatorManager, Project> INSTANCE_KEY =
-      ServiceManager.createLazyKey(ValidatorManager.class);
-
   public static ValidatorManager getInstance(@NotNull final Project project) {
-    return INSTANCE_KEY.getValue(project);
+    return ServiceManager.getService(project, ValidatorManager.class);
   }
 
   /**
