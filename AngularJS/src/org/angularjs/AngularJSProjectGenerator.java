@@ -12,27 +12,23 @@ import javax.swing.*;
  * @author Dennis.Ushakov
  */
 public class AngularJSProjectGenerator extends AbstractGithubTagDownloadedProjectGenerator {
-  @NotNull
   @Override
-  protected String getDisplayName() {
+  protected @NotNull String getDisplayName() {
     return AngularJSBundle.message("angularjs.new.project.name");
   }
 
-  @NotNull
   @Override
-  public String getGithubUserName() {
+  public @NotNull String getGithubUserName() {
     return "angular";
   }
 
-  @NotNull
   @Override
-  public String getGithubRepositoryName() {
+  public @NotNull String getGithubRepositoryName() {
     return "angular-seed";
   }
 
-  @Nullable
   @Override
-  public String getDescription() {
+  public @Nullable String getDescription() {
     return AngularJSBundle.message("angularjs.new.project.description");
   }
 
@@ -41,9 +37,8 @@ public class AngularJSProjectGenerator extends AbstractGithubTagDownloadedProjec
     return AngularJSIcons.AngularJS;
   }
 
-  @Nullable
   @Override
-  public String getPrimaryZipArchiveUrlForDownload(@NotNull GithubTagInfo tag) {
+  public @Nullable String getPrimaryZipArchiveUrlForDownload(@NotNull GithubTagInfo tag) {
     return null;
   }
 }

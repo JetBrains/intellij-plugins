@@ -18,11 +18,10 @@ import java.io.IOException;
 
 public class Angular2MetadataPipeStub extends Angular2MetadataEntityStub<Angular2MetadataPipe> {
 
-  @Nullable
-  public static Angular2MetadataPipeStub createPipeStub(@Nullable String memberName,
-                                                        @Nullable StubElement parent,
-                                                        @NotNull JsonObject classSource,
-                                                        @NotNull JsonObject decoratorSource) {
+  public static @Nullable Angular2MetadataPipeStub createPipeStub(@Nullable String memberName,
+                                                                  @Nullable StubElement parent,
+                                                                  @NotNull JsonObject classSource,
+                                                                  @NotNull JsonObject decoratorSource) {
     JsonObject decoratorArg = getDecoratorInitializer(decoratorSource, JsonObject.class);
     if (decoratorArg != null) {
       String pipeName = MetadataUtils.readStringPropertyValue(decoratorArg.findProperty(NAME));
@@ -48,8 +47,7 @@ public class Angular2MetadataPipeStub extends Angular2MetadataEntityStub<Angular
     myPipeName = stream.readName();
   }
 
-  @NotNull
-  public String getPipeName() {
+  public @NotNull String getPipeName() {
     return StringRef.toString(myPipeName);
   }
 

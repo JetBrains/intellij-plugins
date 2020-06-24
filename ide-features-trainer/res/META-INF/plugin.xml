@@ -15,18 +15,20 @@
   <depends optional="true" config-file="swift-deps.xml">com.intellij.modules.cidr.lang</depends>
   <depends optional="true" config-file="javascript-deps.xml">JavaScript</depends>
 
+  <resource-bundle>messages.LearnBundle</resource-bundle>
+
   <projectListeners>
     <listener class="training.editor.LearnProjectFileEditorListener"
               topic="com.intellij.openapi.fileEditor.FileEditorManagerListener"/>
   </projectListeners>
 
   <extensionPoints>
-    <extensionPoint name="TrainingLangExtension"
+    <extensionPoint name="ift.language.extension"
                     beanClass="com.intellij.lang.LanguageExtensionPoint" dynamic="true">
       <with attribute="implementationClass" implements="training.lang.LangSupport"/>
     </extensionPoint>
 
-    <extensionPoint name="TrainingModules" beanClass="training.learn.TrainingModules" dynamic="true"/>
+    <extensionPoint name="ift.modules" beanClass="training.learn.TrainingModules" dynamic="true"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -37,10 +39,10 @@
       implementation="training.statistic.IdeFeaturesTrainerRuleValidator"/>
     <statistics.validation.customWhiteListRule
       implementation="training.statistic.IdeFeaturesTrainerModuleRuleValidator"/>
-    <applicationService serviceInterface="com.intellij.ide.RecentProjectListActionProvider"
-                        serviceImplementation="training.ui.welcomeScreen.recentProjects.IFTRecentProjectListActionProvider"
-                        overrides="true"/>
+    <applicationService serviceImplementation="training.ui.welcomeScreen.recentProjects.IFTRecentProjectListActionProvider"/>
     <welcomeFrameProvider implementation="training.ui.welcomeScreen.recentProjects.IFTFlatWelcomeFrameProvider" order="first"/>
+    <welcomeTabFactory id="TutorialsWelcomeTab" implementation="training.ui.welcomeScreen.TutorialsWelcomeTabFactory" order="last"/>
+
     <applicationService
       serviceImplementation="training.learn.CourseManager"/>
     <applicationService
@@ -53,7 +55,11 @@
       serviceImplementation="training.learn.lesson.LessonStateBase"/>
     <applicationService
       serviceImplementation="training.statistic.StatisticBase"/>
-    <toolWindow id="Learn" icon="FeaturesTrainerIcons.FeatureTrainerToolWindow" factoryClass="training.ui.LearnToolWindowFactory"/>
+    <toolWindow id="Learn"
+                canCloseContents="true"
+                icon="FeaturesTrainerIcons.FeatureTrainerToolWindow"
+                factoryClass="training.ui.LearnToolWindowFactory"
+    />
 
     <editorNotificationProvider implementation="training.ui.IncorrectLearningStateNotificationProvider"/>
 
@@ -66,19 +72,32 @@
   </extensions>
 
   <actions>
-    <action id="learn.next.lesson" class="training.actions.NextLessonAction" text="Next Lesson">
+    <action id="learn.next.lesson" class="training.actions.NextNonPassedLessonAction">
       <keyboard-shortcut first-keystroke="alt shift RIGHT" keymap="$default"/>
       <keyboard-shortcut first-keystroke="control shift RIGHT" keymap="Mac OS X 10.5+"/>
       <keyboard-shortcut first-keystroke="control shift RIGHT" keymap="Mac OS X"/>
     </action>
-    <!--TODO: REMOVE THIS ACTION BEFORE RELEASE-->
-    <action id="learn.open.chooseLang" text="Choose Lang" class="training.actions.ShowChooseLangPanelAction"/>
+
+    <action id="PreviousLessonAction" class="training.actions.PreviousLessonAction"/>
+    <action id="NextLessonAction" class="training.actions.NextLessonAction"/>
+    <action id="ResetLearningProgressAction" class="training.actions.ResetLearningProgressAction"/>
+    <action id="RestartLessonAction" class="training.actions.RestartLessonAction"/>
+    <action id="LearningDocumentationModeAction" class="training.actions.LearningDocumentationModeAction"/>
+
+    <!-- Help -->
+    <action id="ShowLearnPanel" class="training.actions.OpenLearnPanel" icon="FeaturesTrainerIcons.FeatureTrainerToolWindow">
+      <add-to-group group-id="HelpMenu"/>
+    </action>
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
     <registryKey key="ide.features.trainer.mode"
                  description="This is internal option to use different development modes"
                  defaultValue="normal"
+                 restartRequired="false"/>
+    <registryKey key="ide.features.trainer.new.ui"
+                 description="Turn on it to look at new developing UI for IFT"
+                 defaultValue="FALSE"
                  restartRequired="false"/>
   </extensions>
 </idea-plugin>

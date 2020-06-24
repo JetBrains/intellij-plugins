@@ -4,6 +4,7 @@ package training.learn.lesson.python.completion
 import com.intellij.testGuiFramework.framework.GuiTestUtil
 import com.intellij.testGuiFramework.util.Key
 import training.commands.kotlin.TaskContext
+import training.commands.kotlin.TaskRuntimeContext
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.*
 import javax.swing.JList
@@ -22,7 +23,7 @@ class PythonTabCompletionLesson(module: Module) : KLesson("Tab Completion", modu
             return self.<caret>
   """.trimIndent())
 
-  private val sample = LessonSample(LessonUtil.insertIntoSample(template, "current"), template.startOffset, template.selection)
+  private val sample = createFromTemplate(template, "current")
 
   private val isTotalItem = { item: Any -> item.toString().contains("total") }
 
@@ -32,7 +33,7 @@ class PythonTabCompletionLesson(module: Module) : KLesson("Tab Completion", modu
         prepareSample(sample)
         task("CodeCompletion") {
           text("Suppose you want to replace ${code("current")} by ${code("total")}. Invoke completion by pressing ${action(it)}.")
-          triggerByListItemAndHighlight(checkList = isTotalItem)
+          triggerByListItemAndHighlight(checkList = { ui -> isTotalItem(ui) })
           proposeRestoreMe()
           test { actions(it) }
         }
@@ -40,7 +41,7 @@ class PythonTabCompletionLesson(module: Module) : KLesson("Tab Completion", modu
           text("Select item ${code("total")} by keyboard arrows or just start typing it.")
           restoreState {
             (previous.ui as? JList<*>)?.let { ui ->
-              !ui.isShowing || LessonUtil.findItem(ui, isTotalItem) == -1
+              !ui.isShowing || LessonUtil.findItem(ui, isTotalItem) == null
             } ?: true
           }
           stateCheck {
@@ -68,7 +69,7 @@ class PythonTabCompletionLesson(module: Module) : KLesson("Tab Completion", modu
       }
     }
 
-  private fun TaskContext.selectNeededItem(): Boolean? {
+  private fun TaskRuntimeContext.selectNeededItem(): Boolean? {
     return (previous.ui as? JList<*>)?.let { ui ->
       if (!ui.isShowing) return false
       val selectedIndex = ui.selectedIndex

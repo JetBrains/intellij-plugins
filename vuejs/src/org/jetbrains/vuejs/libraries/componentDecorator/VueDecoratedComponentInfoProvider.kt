@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.ecmal4.JSReferenceListMember
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.model.*
@@ -47,7 +48,7 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
               props.add(VueDecoratedInputProperty(member.memberName, member, getDecoratorArgument(decorator, 0)))
             }
             PROP_SYNC_DEC -> if (member is PropertySignature) {
-              computed.add(VueDecoratedComputedProperty(member.memberName, member))
+              computed.add(VueDecoratedComputedProperty(member.memberName, member, getDecoratorArgument(decorator, 1)))
               getNameFromDecorator(decorator)?.let { name ->
                 props.add(VueDecoratedInputProperty(name, member, getDecoratorArgument(decorator, 1)))
                 emits.add(VueDecoratedPropertyEmitCall("update:$name", member))
@@ -133,13 +134,28 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
 
     private class VueDecoratedInputProperty(name: String, member: PropertySignature, propOptions: JSExpression?)
       : VueDecoratedProperty(name, member), VueInputProperty {
-      val typeFromProps = getJSTypeFromPropOptions(propOptions)
+      private val typeFromProps = getJSTypeFromPropOptions(propOptions)
+
       override val jsType: JSType? get() = typeFromProps ?: member.jsType
       override val required: Boolean = getRequiredFromPropOptions(propOptions)
     }
 
-    private class VueDecoratedComputedProperty(name: String, member: PropertySignature)
-      : VueDecoratedProperty(name, member), VueComputedProperty
+    private class VueDecoratedComputedProperty(name: String, member: PropertySignature, propOptions: JSExpression? = null)
+      : VueDecoratedProperty(name, member), VueComputedProperty {
+
+      override val source: PsiElement?
+      override val jsType: JSType? get() = (source as? JSTypeOwner)?.jsType
+
+      init {
+        val propOptionsType = getJSTypeFromPropOptions(propOptions)
+        source = if (propOptionsType != null) {
+          VueImplicitElement(name, propOptionsType, member.memberSource.singleElement!!,
+                             JSImplicitElement.Type.Property, false)
+        }
+        else
+          member.memberSource.singleElement!!
+      }
+    }
 
     private class VueDecoratedDataProperty(member: PropertySignature)
       : VueDecoratedProperty(member.memberName, member), VueDataProperty
@@ -150,7 +166,7 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
     }
 
     private class VueDecoratedPropertyMethod(name: String, member: PropertySignature)
-      : VueDecoratedNamedSymbol<PropertySignature>(name, member), VueMethod
+      : VueDecoratedProperty(name, member), VueMethod
 
   }
 

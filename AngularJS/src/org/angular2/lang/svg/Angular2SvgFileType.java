@@ -13,15 +13,13 @@ public class Angular2SvgFileType extends Angular2HtmlFileType {
     super(Angular2SvgLanguage.INSTANCE);
   }
 
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     return "Angular2Svg";
   }
 
-  @NotNull
   @Override
-  public String getDescription() {
+  public @NotNull String getDescription() {
     return Angular2Bundle.message("angular.description.angular-svg-template");
   }
 }

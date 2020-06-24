@@ -32,14 +32,14 @@ import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.struts2.model.constant.StrutsConstantHelper;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ConstantFunction;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import icons.Struts2Icons;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Provides links to Action-URLs in all places where Servlet-URLs are processed.
@@ -248,7 +248,7 @@ TODO not needed so far ?!
 
     @Override
     public Object @NotNull [] getVariants() {
-      return ContainerUtil.map2Array(allStrutsPackages, Object.class, (Function<StrutsPackage, Object>)strutsPackage -> {
+      return ContainerUtil.map2Array(allStrutsPackages, Object.class, strutsPackage -> {
         final String packageNamespace = strutsPackage.searchNamespace();
         return LookupElementBuilder.create(packageNamespace.length() != 1 ? packageNamespace + "/" : packageNamespace)
           .withIcon(StrutsIcons.STRUTS_PACKAGE)

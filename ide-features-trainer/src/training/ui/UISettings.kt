@@ -65,6 +65,7 @@ class UISettings {
   val passedColor = JBColor(Color(105, 105, 105), Color(103, 103, 103))
   val backgroundColor = Color(245, 245, 245)
   val descriptionColor = Color(128, 128, 128)
+  val completedColor = JBColor(Color(50, 100, 50), Color(100, 150, 100))
   var questionColor = lessonActiveColor
 
   //BORDERS

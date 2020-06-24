@@ -20,15 +20,13 @@ import org.jetbrains.annotations.NotNull;
 
 public class Angular2HtmlParserDefinition extends HTMLParserDefinition {
 
-  @NotNull
   @Override
-  public Lexer createLexer(Project project) {
+  public @NotNull Lexer createLexer(Project project) {
     return new Angular2HtmlLexer(true, null);
   }
 
-  @NotNull
   @Override
-  public PsiParser createParser(Project project) {
+  public @NotNull PsiParser createParser(Project project) {
     return new Angular2HtmlParser();
   }
 
@@ -42,9 +40,8 @@ public class Angular2HtmlParserDefinition extends HTMLParserDefinition {
     return new HtmlFileImpl(viewProvider, Angular2HtmlFileElementType.INSTANCE);
   }
 
-  @NotNull
   @Override
-  public PsiElement createElement(ASTNode node) {
+  public @NotNull PsiElement createElement(ASTNode node) {
     if (node.getElementType() instanceof Angular2EmbeddedContentTokenType) {
       return new XmlASTWrapperPsiElement(node);
     }

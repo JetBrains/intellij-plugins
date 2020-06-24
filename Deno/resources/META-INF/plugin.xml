@@ -1,0 +1,38 @@
+<idea-plugin url="https://github.com/JetBrains/intellij-plugins/tree/master/Deno">
+  <id>deno</id>
+  <name>Deno</name>
+  <category>JavaScript Frameworks and Tools</category>
+  <description><![CDATA[
+<p>Support for <a href="https://deno.land/">Deno</a> projects.</p>
+<ul>
+<li>Coding assistance for Deno APIs and imports
+<li>Run files with Deno and debug them using the built-in visual debugger
+</ul>
+Enable Deno support for the current project in <i>Preferences | Languages \& Frameworks | Deno</i>.
+]]></description>
+  
+  <vendor>JetBrains</vendor>
+  
+  <depends>JavaScript</depends>
+  <depends>com.intellij.css</depends>
+  <depends>com.intellij.modules.platform</depends>
+  <depends>JavaScriptDebugger</depends>
+  <resource-bundle>messages.DenoBundle</resource-bundle>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <projectConfigurable groupId="language" instance="com.intellij.deno.DenoConfigurable"/>
+    <projectService serviceImplementation="com.intellij.deno.DenoSettings" />
+    <projectService serviceImplementation="com.intellij.deno.service.DenoTypeScriptService" />
+    <additionalLibraryRootsProvider implementation="com.intellij.deno.DenoLibraryProvider"/>
+    <lang.substitutor language="TEXT" implementationClass="com.intellij.deno.lang.DenoCachedFilesSubstitutor"/>
+    <configurationType implementation="com.intellij.deno.run.DenoConfigurationType"/>
+    <runConfigurationProducer implementation="com.intellij.deno.run.DenoRunConfigurationProducer" />
+
+    <annotator language="JavaScript" implementationClass="com.intellij.deno.inspection.DenoEditorNotificationAnnotator"/>
+    <lang.inspectionSuppressor language="JavaScript" implementationClass="com.intellij.deno.inspection.DenoInspectionSuppressor"/>
+  </extensions>
+  <extensions defaultExtensionNs="JavaScript">
+    <languageServiceProvider order="first" implementation="com.intellij.deno.service.DenoTypeScriptServiceProvider"/>
+    <moduleReferenceContributor implementation="com.intellij.deno.modules.DenoModuleReferenceContributor"/>
+  </extensions>
+</idea-plugin>

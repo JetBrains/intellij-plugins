@@ -62,7 +62,7 @@ public class DartServerData {
    * @return {@code true} if {@code errors} were processes, {@code false} if ignored;
    * errors are ignored if the file has been edited and new contents has not yet been sent to the server.
    */
-  boolean computedErrors(@NotNull final String filePath, final @NotNull List<? extends AnalysisError> errors, final boolean restartHighlighting) {
+  boolean computedErrors(@NotNull String filePath, @NotNull List<? extends AnalysisError> errors, boolean restartHighlighting) {
     if (myFilePathsWithUnsentChanges.contains(filePath)) return false;
 
     final List<DartError> newErrors = new ArrayList<>(errors.size());
@@ -131,7 +131,7 @@ public class DartServerData {
     myOutlineData.put(filePath, outline);
     ApplicationManager.getApplication().invokeLater(() -> myEventDispatcher.getMulticaster().outlineUpdated(filePath),
                                                     ModalityState.NON_MODAL,
-                                                    myService.getProject().getDisposed());
+                                                    myService.getDisposedCondition());
   }
 
   void computedAvailableSuggestions(final @NotNull List<? extends AvailableSuggestionSet> changed, final int @NotNull [] removed) {
@@ -325,7 +325,7 @@ public class DartServerData {
                        DaemonCodeAnalyzer.getInstance(project).restart();
                      },
                      ModalityState.NON_MODAL,
-                     project.getDisposed());
+                     myService.getDisposedCondition());
     }
   }
 

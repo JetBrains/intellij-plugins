@@ -16,8 +16,7 @@ import org.jetbrains.annotations.NotNull;
 public class Angular2HtmlFormattingModelBuilder implements FormattingModelBuilder {
 
   @Override
-  @NotNull
-  public FormattingModel createModel(final PsiElement element, final CodeStyleSettings settings) {
+  public @NotNull FormattingModel createModel(final PsiElement element, final CodeStyleSettings settings) {
     final PsiFile psiFile = element.getContainingFile();
     final FormattingDocumentModelImpl documentModel = FormattingDocumentModelImpl.createOn(psiFile);
     return new XmlFormattingModel(

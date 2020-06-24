@@ -32,8 +32,8 @@ import org.angular2.lang.Angular2LangUtil;
 import org.angular2.lang.expr.psi.Angular2Interpolation;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor;
+import org.angular2.lang.html.psi.Angular2HtmlLet;
 import org.angular2.lang.html.psi.Angular2HtmlReference;
-import org.angular2.lang.html.psi.Angular2HtmlVariable;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -58,7 +58,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
 
   private static final ThreadLocal<Boolean> gettingDescriptors = new ThreadLocal<>();
 
-  public static XmlAttributeDescriptor getAttributeDescriptor(@Nullable final String attrName, @Nullable XmlTag xmlTag,
+  public static XmlAttributeDescriptor getAttributeDescriptor(final @Nullable String attrName, @Nullable XmlTag xmlTag,
                                                               @NotNull BiFunction<? super XmlTag, ? super Predicate<String>, XmlAttributeDescriptor[]> attrDescrProvider) {
     if (attrName == null || xmlTag == null || DumbService.isDumb(xmlTag.getProject())) {
       return null;
@@ -150,17 +150,15 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
     return result.values().toArray(XmlAttributeDescriptor.EMPTY);
   }
 
-  @Nullable
   @Override
-  public XmlAttributeDescriptor getAttributeDescriptor(@Nullable final String attrName, @Nullable XmlTag xmlTag) {
+  public @Nullable XmlAttributeDescriptor getAttributeDescriptor(final @Nullable String attrName, @Nullable XmlTag xmlTag) {
     return xmlTag != null && Angular2LangUtil.isAngular2Context(xmlTag)
            ? getAttributeDescriptor(attrName, xmlTag, Angular2AttributeDescriptorsProvider::getAttributeDescriptors)
            : null;
   }
 
-  @NotNull
-  private static Collection<XmlAttributeDescriptor> getDirectiveDescriptors(@NotNull XmlTag xmlTag,
-                                                                            @NotNull Predicate<String> shouldIncludeOneTimeBinding) {
+  private static @NotNull Collection<XmlAttributeDescriptor> getDirectiveDescriptors(@NotNull XmlTag xmlTag,
+                                                                                     @NotNull Predicate<String> shouldIncludeOneTimeBinding) {
     Angular2ApplicableDirectivesProvider applicableDirectives = new Angular2ApplicableDirectivesProvider(xmlTag);
 
     List<XmlAttributeDescriptor> result = new ArrayList<>();
@@ -268,8 +266,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
     }
   }
 
-  @NotNull
-  public static List<String> getStandardTagEventAttributeNames(@NotNull XmlTag xmlTag) {
+  public static @NotNull List<String> getStandardTagEventAttributeNames(@NotNull XmlTag xmlTag) {
     return ContainerUtil.mapNotNull(getDefaultAttributeDescriptors(xmlTag), attrDescriptor -> {
       String name = attrDescriptor.getName();
       if (name.startsWith(EVENT_ATTR_PREFIX)) {
@@ -279,8 +276,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
     });
   }
 
-  @NotNull
-  private static Collection<XmlAttributeDescriptor> getStandardPropertyAndEventDescriptors(@NotNull XmlTag xmlTag) {
+  private static @NotNull Collection<XmlAttributeDescriptor> getStandardPropertyAndEventDescriptors(@NotNull XmlTag xmlTag) {
     return CachedValuesManager.getCachedValue(xmlTag, STANDARD_PROPERTIES_KEY, () -> {
       Set<String> allowedElementProperties = new HashSet<>(DomElementSchemaRegistry.getElementProperties(xmlTag));
       allowedElementProperties.addAll(ContainerUtil.map(
@@ -326,12 +322,11 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
     });
   }
 
-  @NotNull
-  private static List<XmlAttributeDescriptor> getExistingVarsAndRefsDescriptors(@NotNull XmlTag xmlTag) {
+  private static @NotNull List<XmlAttributeDescriptor> getExistingVarsAndRefsDescriptors(@NotNull XmlTag xmlTag) {
     List<XmlAttributeDescriptor> result = new ArrayList<>();
     xmlTag.acceptChildren(new Angular2HtmlElementVisitor() {
       @Override
-      public void visitVariable(Angular2HtmlVariable variable) {
+      public void visitLet(Angular2HtmlLet variable) {
         result.add(new Angular2AttributeDescriptor(xmlTag, variable.getName(),
                                                    singletonList(variable.getNameElement()),
                                                    true));

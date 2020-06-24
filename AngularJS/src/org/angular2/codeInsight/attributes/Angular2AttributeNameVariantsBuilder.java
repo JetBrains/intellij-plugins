@@ -11,11 +11,10 @@ import java.util.List;
 
 public class Angular2AttributeNameVariantsBuilder {
 
-  @NotNull
-  public static List<String> forTypes(@NotNull String name,
-                                      boolean includeCanonicalVariants,
-                                      boolean includeDataPrefixVariants,
-                                      Angular2AttributeType... types) {
+  public static @NotNull List<String> forTypes(@NotNull String name,
+                                               boolean includeCanonicalVariants,
+                                               boolean includeDataPrefixVariants,
+                                               Angular2AttributeType... types) {
     List<String> result = new ArrayList<>();
     for (Angular2AttributeType type : types) {
       result.add(type.buildName(name, false));

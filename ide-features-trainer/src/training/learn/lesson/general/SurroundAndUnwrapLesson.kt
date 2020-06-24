@@ -2,6 +2,7 @@
 package training.learn.lesson.general
 
 import training.commands.kotlin.TaskContext
+import training.commands.kotlin.TaskRuntimeContext
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
@@ -46,10 +47,10 @@ abstract class SurroundAndUnwrapLesson(module: Module, lang: String) :
           type("${surroundItems.joinToString(separator = " ")}\n") }
       }
 
-      task {
+      prepareRuntimeTask {
         editor.caretModel.currentCaret.moveCaretRelatively(0, lineShiftBeforeUnwrap, false, true)
       }
-      task { // restore point
+      prepareRuntimeTask { // restore point
         prepareSample(previous.sample)
       }
 
@@ -89,7 +90,7 @@ abstract class SurroundAndUnwrapLesson(module: Module, lang: String) :
     return false
   }
 
-  private fun TaskContext.proposeIfModified(checkCaret: () -> Boolean) {
+  private fun TaskContext.proposeIfModified(checkCaret: TaskRuntimeContext.() -> Boolean) {
     proposeRestore {
       when {
         editor.document.text != previous.text -> TaskContext.RestoreProposal.Modification

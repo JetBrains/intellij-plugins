@@ -16,9 +16,8 @@ public class Angular2RenameInputValidator implements RenameInputValidator {
   private static final Pattern TAG_NAME_PATTERN = Pattern.compile("[a-zA-Z][a-zA-Z0-9-]*");
   private static final Pattern ATTRIBUTE_NAME_PATTERN = Pattern.compile("[^\\p{Space}\"'>/=\\p{Cntrl}]+");
 
-  @NotNull
   @Override
-  public ElementPattern<? extends PsiElement> getPattern() {
+  public @NotNull ElementPattern<? extends PsiElement> getPattern() {
     return PlatformPatterns.psiElement(Angular2DirectiveSelectorPsiElement.class);
   }
 

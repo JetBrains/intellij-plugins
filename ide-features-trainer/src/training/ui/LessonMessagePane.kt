@@ -7,6 +7,7 @@ import com.intellij.openapi.util.SystemInfo
 import com.intellij.ui.JBColor
 import com.intellij.util.ui.JBUI
 import icons.FeaturesTrainerIcons
+import training.util.useNewLearningUi
 import java.awt.Font
 import java.awt.Graphics
 import java.awt.Graphics2D
@@ -117,15 +118,8 @@ class LessonMessagePane : JTextPane() {
           Message.MessageType.CODE -> document.insertString(document.length, message.text, CODE)
           Message.MessageType.CHECK -> document.insertString(document.length, message.text, ROBOTO)
           Message.MessageType.LINK -> appendLink(message)
-          Message.MessageType.ICON -> {
-            val icon = iconFromPath(message)
-            var placeholder = " "
-            while (this.getFontMetrics(this.font).stringWidth(placeholder) <= icon.iconWidth) {
-              placeholder += " "
-            }
-            placeholder += " "
-            document.insertString(document.length, placeholder, REGULAR)
-          }
+          Message.MessageType.ICON -> message.toIcon()?.let { addPlaceholderForIcon(it) }
+          Message.MessageType.ICON_IDX -> LearningUiManager.iconMap[message.text]?.let { addPlaceholderForIcon(it) }
         }
         message.endOffset = document.endPosition.offset
       }
@@ -137,20 +131,45 @@ class LessonMessagePane : JTextPane() {
     }
   }
 
+  private fun addPlaceholderForIcon(icon: Icon) {
+    var placeholder = " "
+    while (this.getFontMetrics(this.font).stringWidth(placeholder) <= icon.iconWidth) {
+      placeholder += " "
+    }
+    placeholder += " "
+    document.insertString(document.length, placeholder, REGULAR)
+  }
+
   /**
    * inserts a checkmark icon to the end of the LessonMessagePane document as a styled label.
    */
   @Throws(BadLocationException::class)
   fun passPreviousMessages() {
-    if (lessonMessages.size > 0) {
-      val lessonMessage = lessonMessages[lessonMessages.size - 1]
-      lessonMessage.passed = true
+    val lessonMessage = lessonMessages.lastOrNull() ?: return
+    lessonMessage.passed = true
 
-      //Repaint text with passed style
-      val passedStyle = this.addStyle("PassedStyle", null)
-      StyleConstants.setForeground(passedStyle, UISettings.instance.passedColor)
-      styledDocument.setCharacterAttributes(0, lessonMessage.end, passedStyle, false)
+    //Repaint text with passed style
+    val passedStyle = this.addStyle("PassedStyle", null)
+    StyleConstants.setForeground(passedStyle, UISettings.instance.passedColor)
+    styledDocument.setCharacterAttributes(0, lessonMessage.end, passedStyle, false)
+  }
+
+  fun redrawMessagesAsCompleted() {
+    val copy = lessonMessages.toList()
+    //copy.forEach { it.passed = false }
+    clear()
+    for (lessonMessage in copy) {
+      addMessage(lessonMessage.messages.toTypedArray())
     }
+
+    for ((index, it) in lessonMessages.withIndex()) {
+      it.passed = copy[index].passed
+    }
+    addMessage(arrayOf(Message("Completed!", Message.MessageType.TEXT_BOLD)))
+    val completedStyle = this.addStyle("Completed", null)
+    StyleConstants.setForeground(completedStyle, UISettings.instance.completedColor)
+    styledDocument.setCharacterAttributes(lessonMessages.last().start, lessonMessages.last().end, completedStyle, false)
+    repaint()
   }
 
   fun clear() {
@@ -204,11 +223,12 @@ class LessonMessagePane : JTextPane() {
         if (startOffset != 0) startOffset++
         try {
           val rectangle = modelToView(startOffset)
+          val checkmark = if (useNewLearningUi) FeaturesTrainerIcons.GreenCheckmark else FeaturesTrainerIcons.Checkmark
           if (SystemInfo.isMac) {
-            FeaturesTrainerIcons.Checkmark.paintIcon(this, g, rectangle.x - UISettings.instance.checkIndent, rectangle.y + JBUI.scale(1))
+            checkmark.paintIcon(this, g, rectangle.x - UISettings.instance.checkIndent, rectangle.y + JBUI.scale(1))
           }
           else {
-            FeaturesTrainerIcons.Checkmark.paintIcon(this, g, rectangle.x - UISettings.instance.checkIndent, rectangle.y + JBUI.scale(1))
+            checkmark.paintIcon(this, g, rectangle.x - UISettings.instance.checkIndent, rectangle.y + JBUI.scale(1))
           }
         }
         catch (e: BadLocationException) {
@@ -248,18 +268,16 @@ class LessonMessagePane : JTextPane() {
         }
         else if (myMessage.type == Message.MessageType.ICON) {
           val rect = modelToView(myMessage.startOffset)
-          val icon = iconFromPath(myMessage)
-          icon.paintIcon(this, g2d, rect.x, rect.y)
+          val icon = myMessage.toIcon()
+          icon?.paintIcon(this, g2d, rect.x, rect.y)
+        }
+        else if (myMessage.type == Message.MessageType.ICON_IDX) {
+          val rect = modelToView(myMessage.startOffset)
+          val icon = LearningUiManager.iconMap[myMessage.text]
+          icon?.paintIcon(this, g2d, rect.x, rect.y)
         }
       }
     }
-  }
-
-  private fun iconFromPath(myMessage: Message): Icon {
-    val iconName = myMessage.text.substringAfterLast(".")
-    val path = myMessage.text.substringBeforeLast(".")
-    val fullPath = "com.intellij.icons.${path.replace(".", "$")}"
-    return Class.forName(fullPath).getField(iconName).get(null) as Icon
   }
 
   companion object {

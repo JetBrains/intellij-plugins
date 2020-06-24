@@ -16,11 +16,10 @@ import static com.intellij.util.ObjectUtils.tryCast;
 
 public class Angular2ActionFactory {
 
-  @Nullable
-  public static AddNgModuleDeclarationAction createAddNgModuleDeclarationAction(@Nullable Editor editor,
-                                                                                @NotNull PsiElement element,
-                                                                                @NotNull Angular2Declaration declaration,
-                                                                                boolean codeCompletion) {
+  public static @Nullable AddNgModuleDeclarationAction createAddNgModuleDeclarationAction(@Nullable Editor editor,
+                                                                                          @NotNull PsiElement element,
+                                                                                          @NotNull Angular2Declaration declaration,
+                                                                                          boolean codeCompletion) {
 
     Angular2SourceDeclaration sourceDeclaration = tryCast(declaration, Angular2SourceDeclaration.class);
     String className;
@@ -33,37 +32,33 @@ public class Angular2ActionFactory {
                                                 codeCompletion);
   }
 
-  @NotNull
-  public static AddNgModuleDeclarationAction createAddNgModuleDeclarationAction(@Nullable Editor editor,
-                                                                                @NotNull PsiElement element,
-                                                                                @NotNull SmartPsiElementPointer<ES6Decorator> declarationDecorator,
-                                                                                @NotNull String declarationName,
-                                                                                @NotNull String actionName,
-                                                                                boolean codeCompletion) {
+  public static @NotNull AddNgModuleDeclarationAction createAddNgModuleDeclarationAction(@Nullable Editor editor,
+                                                                                         @NotNull PsiElement element,
+                                                                                         @NotNull SmartPsiElementPointer<ES6Decorator> declarationDecorator,
+                                                                                         @NotNull String declarationName,
+                                                                                         @NotNull String actionName,
+                                                                                         boolean codeCompletion) {
     return new AddNgModuleDeclarationAction(editor, element, declarationDecorator, declarationName, actionName, codeCompletion);
   }
 
-  @NotNull
-  public static NgModuleImportAction createNgModuleImportAction(@Nullable Editor editor,
-                                                                @NotNull PsiElement element,
-                                                                boolean codeCompletion) {
+  public static @NotNull NgModuleImportAction createNgModuleImportAction(@Nullable Editor editor,
+                                                                         @NotNull PsiElement element,
+                                                                         boolean codeCompletion) {
     return createNgModuleImportAction(editor, element, Angular2Bundle.message("angular.quickfix.ngmodule.import.name.choice"),
                                       codeCompletion);
   }
 
-  @NotNull
-  public static NgModuleImportAction createNgModuleImportAction(@Nullable Editor editor,
-                                                                @NotNull PsiElement element,
-                                                                @NotNull String actionName,
-                                                                boolean codeCompletion) {
+  public static @NotNull NgModuleImportAction createNgModuleImportAction(@Nullable Editor editor,
+                                                                         @NotNull PsiElement element,
+                                                                         @NotNull String actionName,
+                                                                         boolean codeCompletion) {
     return new NgModuleImportAction(editor, element, actionName, codeCompletion);
   }
 
-  @Nullable
-  public static ExportNgModuleDeclarationAction createExportNgModuleDeclarationAction(@Nullable Editor editor,
-                                                                                      @NotNull PsiElement element,
-                                                                                      @NotNull Angular2Declaration declaration,
-                                                                                      boolean codeCompletion) {
+  public static @Nullable ExportNgModuleDeclarationAction createExportNgModuleDeclarationAction(@Nullable Editor editor,
+                                                                                                @NotNull PsiElement element,
+                                                                                                @NotNull Angular2Declaration declaration,
+                                                                                                boolean codeCompletion) {
     Angular2SourceDeclaration sourceDeclaration = tryCast(declaration, Angular2SourceDeclaration.class);
     String className;
     return sourceDeclaration == null || (className = sourceDeclaration.getTypeScriptClass().getName()) == null
@@ -73,12 +68,11 @@ public class Angular2ActionFactory {
                                                    codeCompletion);
   }
 
-  @NotNull
-  public static ExportNgModuleDeclarationAction createExportNgModuleDeclarationAction(@Nullable Editor editor,
-                                                                                      @NotNull PsiElement element,
-                                                                                      @NotNull SmartPsiElementPointer<ES6Decorator> declarationDecorator,
-                                                                                      @NotNull String actionName,
-                                                                                      boolean codeCompletion) {
+  public static @NotNull ExportNgModuleDeclarationAction createExportNgModuleDeclarationAction(@Nullable Editor editor,
+                                                                                               @NotNull PsiElement element,
+                                                                                               @NotNull SmartPsiElementPointer<ES6Decorator> declarationDecorator,
+                                                                                               @NotNull String actionName,
+                                                                                               boolean codeCompletion) {
     return new ExportNgModuleDeclarationAction(editor, element, declarationDecorator, actionName, codeCompletion);
   }
 }

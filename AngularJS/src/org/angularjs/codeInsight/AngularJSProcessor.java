@@ -90,7 +90,7 @@ public class AngularJSProcessor {
     }
   }
 
-  private static void processComponentInitializer(@NotNull final XmlFile file,
+  private static void processComponentInitializer(final @NotNull XmlFile file,
                                                   @NotNull JSObjectLiteralExpression componentInitializer,
                                                   @NotNull Collection<? super JSPsiElementBase> result) {
     result.add(new AngularJSLocalImplicitElement(file, componentInitializer));
@@ -106,8 +106,9 @@ public class AngularJSProcessor {
   }
 
   private static class AngularJSLocalImplicitElement extends JSLocalImplicitElementImpl {
-    @NotNull private final XmlFile myFile;
-    private AngularJSLocalImplicitElement(@NotNull final XmlFile file,
+    private final @NotNull XmlFile myFile;
+
+    private AngularJSLocalImplicitElement(final @NotNull XmlFile file,
                                           @NotNull JSObjectLiteralExpression componentInitializer) {
       super(getCtrlVarName(componentInitializer), getComponentScopeType(file, componentInitializer), componentInitializer,
             JSImplicitElement.Type.Class);
@@ -132,9 +133,8 @@ public class AngularJSProcessor {
     }
   }
 
-  @NotNull
-  private static JSType getComponentScopeType(@NotNull final XmlFile file,
-                                              @NotNull JSObjectLiteralExpression componentInitializer) {
+  private static @NotNull JSType getComponentScopeType(final @NotNull XmlFile file,
+                                                       @NotNull JSObjectLiteralExpression componentInitializer) {
     List<JSRecordType.TypeMember> memberList = new ArrayList<>();
     Set<String> names = new HashSet<>();
     Consumer<JSRecordType.PropertySignature> processor = member -> {

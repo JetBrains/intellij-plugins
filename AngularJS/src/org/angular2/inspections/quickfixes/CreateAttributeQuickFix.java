@@ -26,17 +26,13 @@ public class CreateAttributeQuickFix implements LocalQuickFix {
     myAttributeName = attributeName;
   }
 
-  @Nls
-  @NotNull
   @Override
-  public String getName() {
+  public @Nls @NotNull String getName() {
     return Angular2Bundle.message("angular.quickfix.template.create-attribute.name", myAttributeName);
   }
 
-  @Nls
-  @NotNull
   @Override
-  public String getFamilyName() {
+  public @Nls @NotNull String getFamilyName() {
     return Angular2Bundle.message("angular.quickfix.template.create-attribute.family");
   }
 

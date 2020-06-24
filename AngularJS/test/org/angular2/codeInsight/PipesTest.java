@@ -10,11 +10,12 @@ import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.intellij.openapi.util.Pair.pair;
 import static com.intellij.util.containers.ContainerUtil.sorted;
 import static java.util.Arrays.asList;
-import static org.angularjs.AngularTestUtil.configureWithMetadataFiles;
+import static org.angular2.modules.Angular2TestModule.*;
 import static org.angularjs.AngularTestUtil.resolveReference;
 
 public class PipesTest extends Angular2CodeInsightFixtureTestCase {
@@ -40,7 +41,7 @@ public class PipesTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testStandardPipesCompletion() {
-    configureWithMetadataFiles(myFixture, "common");
+    configureLink(myFixture, ANGULAR_COMMON_8_2_14);
     myFixture.configureByFiles("pipe.html");
     myFixture.completeBasic();
     final List<String> variants = myFixture.getLookupElementStrings();
@@ -49,8 +50,8 @@ public class PipesTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testNormalPipeResultCompletion() {
-    configureWithMetadataFiles(myFixture, "common");
-    myFixture.configureByFiles("pipeResultCompletion.html", "json_pipe.d.ts");
+    configureLink(myFixture, ANGULAR_COMMON_8_2_14);
+    myFixture.configureByFiles("pipeResultCompletion.html");
     myFixture.completeBasic();
     final List<String> variants = myFixture.getLookupElementStrings();
     assertDoesntContain(variants, "wait", "wake", "year", "xml", "stack");
@@ -58,8 +59,8 @@ public class PipesTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testAsyncPipeResultCompletion() {
-    configureWithMetadataFiles(myFixture, "common");
-    myFixture.configureByFiles("asyncPipe.html", "asyncPipe.ts", "async_pipe.d.ts", "Observable.d.ts");
+    configureCopy(myFixture, ANGULAR_COMMON_8_2_14, RXJS_6_4_0);
+    myFixture.configureByFiles("asyncPipe.html", "asyncPipe.ts");
     myFixture.completeBasic();
     final List<String> variants = myFixture.getLookupElementStrings();
     assertDoesntContain(variants, "wait", "wake", "year", "xml", "stack");
@@ -67,15 +68,15 @@ public class PipesTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testAsyncPipeResolution() {
-    configureWithMetadataFiles(myFixture, "common");
-    myFixture.configureByFiles("asyncPipe.html", "asyncPipe.ts", "async_pipe.d.ts", "Observable.d.ts", "ng_for_of.d.ts");
+    configureCopy(myFixture, ANGULAR_CORE_8_2_14, ANGULAR_COMMON_8_2_14, RXJS_6_4_0);
+    myFixture.configureByFiles("asyncPipe.html", "asyncPipe.ts");
 
     PsiElement transformMethod = resolveReference("makeObservable() | as<caret>ync", myFixture);
-    assertEquals("async_pipe.d.ts", transformMethod.getContainingFile().getName());
+    assertEquals("common.d.ts", transformMethod.getContainingFile().getName());
     assertEquals("transform<T>(obj: Observable<T> | null | undefined): T | null;", transformMethod.getText());
 
     transformMethod = resolveReference("makePromise() | as<caret>ync", myFixture);
-    assertEquals("async_pipe.d.ts", transformMethod.getContainingFile().getName());
+    assertEquals("common.d.ts", transformMethod.getContainingFile().getName());
     assertEquals("transform<T>(obj: Promise<T> | null | undefined): T | null;", transformMethod.getText());
 
     PsiElement contactField = resolveReference("contact.crea<caret>ted_at", myFixture);
@@ -83,41 +84,45 @@ public class PipesTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testAsyncNgIfAsContentAssist() {
-    configureWithMetadataFiles(myFixture, "common");
-    myFixture.configureByFiles("ngIfAs.ts", "async_pipe.d.ts", "Observable.d.ts");
+    configureCopy(myFixture, ANGULAR_COMMON_8_2_14, RXJS_6_4_0);
+    myFixture.configureByFiles("ngIfAs.ts");
     myFixture.completeBasic();
     myFixture.checkResultByFile("ngIfAs.after.ts");
   }
 
   public void testAsyncNgIfAsObjType() {
-    configureWithMetadataFiles(myFixture, "common");
-    myFixture.configureByFiles("ngIfAsObj.ts", "async_pipe.d.ts", "Observable.d.ts");
+    configureCopy(myFixture, ANGULAR_COMMON_8_2_14, RXJS_6_4_0);
+    myFixture.configureByFiles("ngIfAsObj.ts");
     assertEquals("{foo: Person}", ((JSTypeOwner)myFixture.getElementAtCaret()).getJSType().getResolvedTypeText());
   }
 
   public void testContextAware() {
-    myFixture.configureByFiles("context-aware.html", "context-aware.ts", "json_pipe.ts", "async_pipe.ts",
-                               "i18n_plural_pipe.ts", "case_conversion_pipes.ts", "Observable.d.ts", "package.json");
+    configureCopy(myFixture, ANGULAR_COMMON_8_2_14, RXJS_6_4_0);
+    myFixture.configureByFiles("context-aware.html", "context-aware.ts");
     for (Pair<String, List<String>> check : asList(
       pair("{{ 12 | }}", asList(
-        "json#[<any> | json] : <string>#100",
+        "json#[<any> | json] : <string>#101",
         "i18nPlural#[<number> | i18nPlural:<{[p: string]: string}>:<s…#101")),
       pair("{{ \"test\" | }}", asList(
-        "json#[<any> | json] : <string>#100",
+        "json#[<any> | json] : <string>#101",
         "lowercase#[<string> | lowercase] : <string>#101",
-        "titlecase#[<string> | titlecase] : <string>#100",
-        "uppercase#[<string> | uppercase] : <string>#100")),
+        "titlecase#[<string> | titlecase] : <string>#101",
+        "uppercase#[<string> | uppercase] : <string>#101")),
       pair("{{ makePromise() | }}", asList(
-        "json#[<any> | json] : <string>#100",
+        "json#[<any> | json] : <string>#101",
         "async#[<Promise<T>> | async] : <T>#101")),
       pair("{{ makeObservable() | }}", asList(
-        "json#[<any> | json] : <string>#100",
+        "json#[<any> | json] : <string>#101",
         "async#[<Observable<T>> | async] : <T>#101"))
     )) {
       AngularTestUtil.moveToOffsetBySignature(check.first.replace("|", "|<caret>"), myFixture);
       myFixture.completeBasic();
       assertEquals("Issue when checking: " + check.first, sorted(check.second),
-                   sorted(AngularTestUtil.renderLookupItems(myFixture, true, true)));
+                   AngularTestUtil.renderLookupItems(myFixture, true, true)
+                     .stream().filter(item -> item.startsWith("json") || item.startsWith("i18nPlural")
+                                              || item.startsWith("lowercase") || item.startsWith("titlecase")
+                                              || item.startsWith("uppercase") || item.startsWith("async"))
+                     .sorted().collect(Collectors.toList()));
     }
   }
 }

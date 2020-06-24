@@ -4,11 +4,10 @@ package org.jetbrains.vuejs.libraries.vuex
 import com.intellij.openapi.application.PathManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.jetbrains.vuejs.lang.checkUsages
-import org.jetbrains.vuejs.lang.createPackageJsonWithVueDependency
 
 class VuexFindUsagesTest : BasePlatformTestCase() {
 
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/vuex/findUsages"
+  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/libraries/vuex/findUsages"
 
   fun testStorefront() {
     with(myFixture) {

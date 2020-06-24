@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.Map;
 
-import static org.angular2.lang.html.highlighting.Angular2HtmlFileHighlighter.*;
+import static org.angular2.lang.html.highlighting.Angular2HtmlHighlighterColors.*;
 
 public class Angular2ColorsAndFontsPage implements ColorSettingsPage, DisplayPrioritySortable {
   private static final AttributesDescriptor[] ATTRS;
@@ -39,8 +39,7 @@ public class Angular2ColorsAndFontsPage implements ColorSettingsPage, DisplayPri
   }
 
   @Override
-  @NotNull
-  public String getDisplayName() {
+  public @NotNull String getDisplayName() {
     //noinspection HardCodedStringLiteral
     return "Angular Template";
   }
@@ -61,16 +60,14 @@ public class Angular2ColorsAndFontsPage implements ColorSettingsPage, DisplayPri
   }
 
   @Override
-  @NotNull
-  public SyntaxHighlighter getHighlighter() {
+  public @NotNull SyntaxHighlighter getHighlighter() {
     final SyntaxHighlighter highlighter = SyntaxHighlighterFactory.getSyntaxHighlighter(Angular2HtmlFileType.INSTANCE, null, null);
     assert highlighter != null;
     return highlighter;
   }
 
   @Override
-  @NotNull
-  public String getDemoText() {
+  public @NotNull String getDemoText() {
     return "<li attr=\"value\"\n" +
            "    *ngFor=\"let hero of heroes as test\"\n" +
            "    [class.selected]=\"hero === selectedHero\"\n" +
@@ -83,9 +80,8 @@ public class Angular2ColorsAndFontsPage implements ColorSettingsPage, DisplayPri
            "<input [(ngModel)]=\"hero.name\" #model=\"ngModel\"/>\n";
   }
 
-  @Nullable
   @Override
-  public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
+  public @Nullable Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
     return null;
   }
 

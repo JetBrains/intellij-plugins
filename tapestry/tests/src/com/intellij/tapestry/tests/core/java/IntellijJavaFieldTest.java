@@ -14,24 +14,26 @@ import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.util.IncorrectOperationException;
 import org.testng.annotations.Test;
 
+import static org.testng.Assert.*;
+
 public class IntellijJavaFieldTest extends BaseTestCase {
 
     @Test(dataProvider = JAVA_MODULE_FIXTURE_PROVIDER)
     public void getName(IdeaProjectTestFixture fixture) throws IncorrectOperationException {
         PsiField psiField = getJavaFacade(fixture).getElementFactory().createField("_fieldName", PsiType.BOOLEAN);
 
-        assert new IntellijJavaField(fixture.getModule(), psiField).getName().equals("_fieldName");
+        assertEquals(new IntellijJavaField(fixture.getModule(), psiField).getName(), "_fieldName");
 
-        assert new IntellijJavaField(fixture.getModule(), psiField).getPsiField().getName().equals("_fieldName");
+        assertEquals(new IntellijJavaField(fixture.getModule(), psiField).getPsiField().getName(), "_fieldName");
     }
 
     @Test(dataProvider = JAVA_MODULE_FIXTURE_PROVIDER)
     public void getType_primitive(IdeaProjectTestFixture fixture) throws IncorrectOperationException {
         PsiField psiField = getJavaFacade(fixture).getElementFactory().createField("_fieldName", PsiType.BOOLEAN);
 
-        assert new IntellijJavaField(fixture.getModule(), psiField).getType() instanceof IJavaPrimitiveType;
+        assertTrue(new IntellijJavaField(fixture.getModule(), psiField).getType() instanceof IJavaPrimitiveType);
 
-        assert new IntellijJavaField(fixture.getModule(), psiField).getType().getName().equals("boolean");
+        assertEquals(new IntellijJavaField(fixture.getModule(), psiField).getType().getName(), "boolean");
     }
 
     @Test(dataProvider = JAVA_MODULE_FIXTURE_PROVIDER)
@@ -41,16 +43,16 @@ public class IntellijJavaFieldTest extends BaseTestCase {
                 getJavaFacade(fixture).findClass("com.app.util.Class1", GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(fixture.getModule())).getFields()[1]
         );
 
-        assert field.getType() instanceof IntellijJavaClassType;
+        assertTrue(field.getType() instanceof IntellijJavaClassType);
 
-        assert ((IntellijJavaClassType) field.getType()).getFullyQualifiedName().equals("com.app.util.Class1");
+        assertEquals(((IntellijJavaClassType)field.getType()).getFullyQualifiedName(), "com.app.util.Class1");
     }
 
     @Test(dataProvider = JAVA_MODULE_FIXTURE_PROVIDER)
     public void getType_cant_resolve(IdeaProjectTestFixture fixture) throws IncorrectOperationException {
         IntellijJavaField field = new IntellijJavaField(fixture.getModule(), new PsiFieldMock().setType(new PsiClassTypeMock().setResolve(null)));
 
-        assert field.getType() == null;
+        assertNull(field.getType());
     }
 
     @Test(dataProvider = JAVA_MODULE_FIXTURE_PROVIDER)
@@ -60,7 +62,7 @@ public class IntellijJavaFieldTest extends BaseTestCase {
                 getJavaFacade(fixture).findClass("com.app.util.Class1", GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(fixture.getModule())).getFields()[2]
         );
 
-        assert field.getType() instanceof IJavaArrayType;
+        assertTrue(field.getType() instanceof IJavaArrayType);
     }
 
     @Test(dataProvider = JAVA_MODULE_FIXTURE_PROVIDER)
@@ -75,9 +77,9 @@ public class IntellijJavaFieldTest extends BaseTestCase {
                 getJavaFacade(fixture).findClass("com.app.util.Class1", GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(fixture.getModule())).getFields()[1]
         );
 
-        assert field1.isPrivate();
+        assertTrue(field1.isPrivate());
 
-        assert !field2.isPrivate();
+        assertFalse(field2.isPrivate());
     }
 
     @Test(dataProvider = JAVA_MODULE_FIXTURE_PROVIDER)
@@ -87,7 +89,7 @@ public class IntellijJavaFieldTest extends BaseTestCase {
                 getJavaFacade(fixture).findClass("com.app.util.Class1", GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(fixture.getModule())).getFields()[2]
         );
 
-        assert field1.getAnnotations().size() == 0;
+        assertEquals(field1.getAnnotations().size(), 0);
     }
 
     @Test(dataProvider = JAVA_MODULE_FIXTURE_PROVIDER)
@@ -97,7 +99,7 @@ public class IntellijJavaFieldTest extends BaseTestCase {
                 getJavaFacade(fixture).findClass("com.app.util.Class1", GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(fixture.getModule())).getFields()[1]
         );
 
-        assert field2.getAnnotations().size() == 1;
+        assertEquals(field2.getAnnotations().size(), 1);
     }
 
     @Test(dataProvider = JAVA_MODULE_FIXTURE_PROVIDER)
@@ -107,7 +109,7 @@ public class IntellijJavaFieldTest extends BaseTestCase {
                 getJavaFacade(fixture).findClass("com.app.util.Class1", GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(fixture.getModule())).getFields()[0]
         );
 
-        assert field1.getDocumentation().equals("");
+        assertTrue(field1.getDocumentation().isEmpty());
     }
 
     @Test(dataProvider = JAVA_MODULE_FIXTURE_PROVIDER)
@@ -117,41 +119,42 @@ public class IntellijJavaFieldTest extends BaseTestCase {
                 getJavaFacade(fixture).findClass("com.app.util.Class1", GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(fixture.getModule())).getFields()[1]
         );
 
-        assert field2.getDocumentation().equals(" field2. docs.");
+        assertEquals(field2.getDocumentation(), " field2. docs.");
     }
 
     @Test(dataProvider = JAVA_MODULE_FIXTURE_PROVIDER)
     public void getStringRepresentation(IdeaProjectTestFixture fixture) throws IncorrectOperationException {
-        assert new IntellijJavaField(fixture.getModule(), getJavaFacade(fixture).getElementFactory().createField("_fieldName", PsiType.BOOLEAN)).getStringRepresentation()
-                .equals("private boolean _fieldName;");
+        assertEquals(
+          new IntellijJavaField(fixture.getModule(), getJavaFacade(fixture).getElementFactory().createField("_fieldName", PsiType.BOOLEAN))
+            .getStringRepresentation(), "private boolean _fieldName;");
     }
 
     @Test(dataProvider = JAVA_MODULE_FIXTURE_PROVIDER)
     public void isValid(IdeaProjectTestFixture fixture) {
-        assert new IntellijJavaField(fixture.getModule(), new PsiFieldMock().setValid(true)).isValid();
+        assertTrue(new IntellijJavaField(fixture.getModule(), new PsiFieldMock().setValid(true)).isValid());
 
-        assert !new IntellijJavaField(fixture.getModule(), new PsiFieldMock().setValid(false)).isValid();
+        assertFalse(new IntellijJavaField(fixture.getModule(), new PsiFieldMock().setValid(false)).isValid());
     }
 
+    @SuppressWarnings({"SimplifiedTestNGAssertion", "EqualsBetweenInconvertibleTypes", "ConstantConditions"})
     @Test(dataProvider = JAVA_MODULE_FIXTURE_PROVIDER)
-    public void equals(IdeaProjectTestFixture fixture) {
+    public void testEquals(IdeaProjectTestFixture fixture) {
         IntellijJavaField field1 = new IntellijJavaField(fixture.getModule(), new PsiFieldMock().setMockName("field1"));
         IntellijJavaField field2 = new IntellijJavaField(fixture.getModule(), new PsiFieldMock().setMockName("field2"));
         IntellijJavaField field3 = new IntellijJavaField(fixture.getModule(), new PsiFieldMock().setMockName("field1"));
 
-        assert !field1.equals(null);
+        assertFalse(field1.equals(null));
+        assertFalse(field1.equals(""));
 
-        assert !field1.equals("");
+        assertNotEquals(field2, field1);
 
-        assert !field1.equals(field2);
-
-        assert field1.equals(field3);
+        assertEquals(field3, field1);
     }
 
     @Test(dataProvider = JAVA_MODULE_FIXTURE_PROVIDER)
     public void hashCode(IdeaProjectTestFixture fixture) {
         IntellijJavaField field1 = new IntellijJavaField(fixture.getModule(), new PsiFieldMock().setMockName("field1"));
 
-        assert field1.hashCode() == "field1".hashCode();
+        assertEquals("field1".hashCode(), field1.hashCode());
     }
 }

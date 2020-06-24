@@ -4,6 +4,8 @@ package org.jetbrains.vuejs.lang.html.psi.formatter
 import com.intellij.application.options.codeStyle.properties.CommaSeparatedValues
 import com.intellij.configurationStore.Property
 import com.intellij.psi.codeStyle.CodeStyleSettings
+import com.intellij.psi.codeStyle.CommonCodeStyleSettings
+import com.intellij.psi.codeStyle.CommonCodeStyleSettings.WrapConstant
 import com.intellij.psi.codeStyle.CustomCodeStyleSettings
 import org.jetbrains.annotations.NonNls
 
@@ -19,5 +21,18 @@ class VueCodeStyleSettings(settings: CodeStyleSettings) : CustomCodeStyleSetting
   @Property(externalName = "uniform_indent")
   @JvmField
   var UNIFORM_INDENT = true
+
+  @JvmField
+  var SPACES_WITHIN_INTERPOLATION_EXPRESSIONS = true
+
+  @WrapConstant
+  @JvmField
+  var INTERPOLATION_WRAP = CommonCodeStyleSettings.DO_NOT_WRAP
+
+  @JvmField
+  var INTERPOLATION_NEW_LINE_AFTER_START_DELIMITER = true
+
+  @JvmField
+  var INTERPOLATION_NEW_LINE_BEFORE_END_DELIMITER = true
 
 }

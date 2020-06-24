@@ -3,10 +3,16 @@ package com.intellij.prettierjs
 
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterField
 import com.intellij.javascript.nodejs.util.NodePackageField
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.IdeActions
+import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.options.BoundSearchableConfigurable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
+import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.ui.layout.*
+import java.nio.file.FileSystems
+import java.util.regex.PatternSyntaxException
 import javax.swing.JLabel
 
 class PrettierConfigurable(private val project: Project) : BoundSearchableConfigurable(
@@ -32,16 +38,51 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
           { nodePackageField, nodePackageRef -> nodePackageField.selectedRef = nodePackageRef },
           PropertyBinding({ prettierConfiguration.nodePackageRef }, { prettierConfiguration.withLinterPackage(it) })
         )
-      }
+      }.largeGapAfter()
 
       row {
-        val runOnSaveCheckBox = checkBox(PrettierBundle.message("run.on.save.for.files"),
-                                         { prettierConfiguration.isRunOnSave },
-                                         { prettierConfiguration.isRunOnSave = it }).actsAsLabel().component
+        val runForFilesLabel = JLabel(PrettierBundle.message("run.for.files.label"))
+        runForFilesLabel()
 
-        textField({ prettierConfiguration.filesPattern }, { prettierConfiguration.filesPattern = it })
-          .commentComponent(PrettierBundle.message("files.pattern.comment"))
-          .enableIf(runOnSaveCheckBox.selected)
+        cell(isFullWidth = true) {
+          textField({ prettierConfiguration.filesPattern }, { prettierConfiguration.filesPattern = it })
+            .withValidationOnInput {
+              try {
+                FileSystems.getDefault().getPathMatcher("glob:" + it.text)
+                null
+              }
+              catch (e: PatternSyntaxException) {
+                ValidationInfo(e.message?.lines()?.firstOrNull() ?: PrettierBundle.message("invalid.pattern"), it)
+              }
+            }
+            .component.apply { runForFilesLabel.labelFor = this }
+
+          comment(PrettierBundle.message("files.pattern.comment"))
+        }
+      }
+
+      // empty label - to have the check box below the file patterns field
+      row("") {
+        cell {
+          checkBox(PrettierBundle.message("on.code.reformat.label"),
+                   { prettierConfiguration.isRunOnReformat },
+                   { prettierConfiguration.isRunOnReformat = it })
+
+          val shortcut = ActionManager.getInstance().getKeyboardShortcut(IdeActions.ACTION_EDITOR_REFORMAT)
+          shortcut?.let { comment(KeymapUtil.getShortcutText(it)) }
+        }
+      }
+
+      // empty label - to have the check box below the file patterns field
+      row("") {
+        cell {
+          checkBox(PrettierBundle.message("on.save.label"),
+                   { prettierConfiguration.isRunOnSave },
+                   { prettierConfiguration.isRunOnSave = it })
+
+          val shortcut = ActionManager.getInstance().getKeyboardShortcut("SaveAll")
+          shortcut?.let { comment(KeymapUtil.getShortcutText(it)) }
+        }
       }
     }
   }

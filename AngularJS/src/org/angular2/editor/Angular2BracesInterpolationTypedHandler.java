@@ -29,13 +29,12 @@ public class Angular2BracesInterpolationTypedHandler extends TypedHandlerDelegat
     };
   }
 
-  @NotNull
   @Override
-  public Result beforeCharTyped(char c,
-                                @NotNull Project project,
-                                @NotNull Editor editor,
-                                @NotNull PsiFile file,
-                                @NotNull FileType fileType) {
+  public @NotNull Result beforeCharTyped(char c,
+                                         @NotNull Project project,
+                                         @NotNull Editor editor,
+                                         @NotNull PsiFile file,
+                                         @NotNull FileType fileType) {
     final Language language = file.getLanguage();
     if (language.isKindOf(Angular2HtmlLanguage.INSTANCE)) {
       return myBracesCompleter.beforeCharTyped(c, project, editor, file);

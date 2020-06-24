@@ -43,9 +43,8 @@ public class Angular2InspectionSuppressor implements InspectionSuppressor {
     return new SuppressQuickFix[]{new Angular2SuppressByCommentFix(stripToolIdPrefix(toolId))};
   }
 
-  @Nullable
-  private static PsiElement getStatementToolSuppressedIn(@NotNull PsiElement place,
-                                                         @NotNull String toolId) {
+  private static @Nullable PsiElement getStatementToolSuppressedIn(@NotNull PsiElement place,
+                                                                   @NotNull String toolId) {
     PsiElement statement = PsiTreeUtil.getParentOfType(place, Angular2EmbeddedExpression.class);
     if (statement != null) {
       PsiElement candidate = PsiTreeUtil.skipWhitespacesForward(statement);
@@ -64,8 +63,8 @@ public class Angular2InspectionSuppressor implements InspectionSuppressor {
     return null;
   }
 
-  private static boolean isSuppressedInStatement(@NotNull final PsiElement place,
-                                                 @NotNull final String toolId) {
+  private static boolean isSuppressedInStatement(final @NotNull PsiElement place,
+                                                 final @NotNull String toolId) {
     return ReadAction.compute(() -> getStatementToolSuppressedIn(place, toolId)) != null;
   }
 
@@ -92,21 +91,18 @@ public class Angular2InspectionSuppressor implements InspectionSuppressor {
       container.getParent().addAfter(comment, container);
     }
 
-    @Nullable
     @Override
-    public PsiElement getContainer(PsiElement context) {
+    public @Nullable PsiElement getContainer(PsiElement context) {
       return PsiTreeUtil.getParentOfType(context, Angular2EmbeddedExpression.class);
     }
 
     @Override
-    @NotNull
-    public String getText() {
+    public @NotNull String getText() {
       return Angular2Bundle.message("angular.suppress.for-expression");
     }
 
-    @Nullable
     @Override
-    protected List<? extends PsiElement> getCommentsFor(@NotNull PsiElement container) {
+    protected @Nullable List<? extends PsiElement> getCommentsFor(@NotNull PsiElement container) {
       final PsiElement next = PsiTreeUtil.skipWhitespacesForward(container);
       if (next == null) {
         return null;
@@ -114,8 +110,7 @@ public class Angular2InspectionSuppressor implements InspectionSuppressor {
       return Collections.singletonList(next);
     }
 
-    @NotNull
-    protected String getSuppressText() {
+    protected @NotNull String getSuppressText() {
       return SuppressionUtilCore.SUPPRESS_INSPECTIONS_TAG_NAME + " " + myID;
     }
   }

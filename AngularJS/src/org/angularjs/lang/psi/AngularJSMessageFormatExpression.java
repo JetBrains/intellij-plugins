@@ -31,7 +31,8 @@ public class AngularJSMessageFormatExpression extends JSExpressionImpl {
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof AngularJSElementVisitor) {
       ((AngularJSElementVisitor)visitor).visitMessageFormatExpression(this);
-    } else {
+    }
+    else {
       super.accept(visitor);
     }
   }
@@ -50,7 +51,8 @@ public class AngularJSMessageFormatExpression extends JSExpressionImpl {
     if (typeElement == null) return null;
     try {
       return AngularJSMessageFormatParser.ExtensionType.valueOf(typeElement.getText());
-    } catch (IllegalArgumentException e) {
+    }
+    catch (IllegalArgumentException e) {
       return null;
     }
   }

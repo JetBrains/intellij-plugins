@@ -10,8 +10,7 @@ public class Angular2MetadataString extends Angular2MetadataElement<Angular2Meta
     super(element);
   }
 
-  @NotNull
-  public String getValue() {
+  public @NotNull String getValue() {
     return getStub().getValue();
   }
 

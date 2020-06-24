@@ -15,10 +15,10 @@ import com.intellij.javascript.nodejs.CompletionModuleInfo;
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager;
+import com.intellij.javascript.nodejs.npm.registry.NpmRegistryService;
 import com.intellij.javascript.nodejs.packageJson.InstalledPackageVersion;
 import com.intellij.javascript.nodejs.packageJson.NodeInstalledPackageFinder;
 import com.intellij.javascript.nodejs.packageJson.NodePackageBasicInfo;
-import com.intellij.javascript.nodejs.npm.registry.NpmRegistryService;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
@@ -346,15 +346,13 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
       getOKAction().putValue(Action.NAME, Angular2Bundle.message("angular.action.ng-add.button-install"));
     }
 
-    @Nullable
     @Override
-    public JComponent getPreferredFocusedComponent() {
+    public @Nullable JComponent getPreferredFocusedComponent() {
       return myTextEditor;
     }
 
-    @Nullable
     @Override
-    protected JComponent createCenterPanel() {
+    protected @Nullable JComponent createCenterPanel() {
       JPanel panel = new JPanel(new BorderLayout(0, 4));
       myTextEditor = new TextFieldWithAutoCompletion<>(
         myProject, new NodePackagesCompletionProvider(myExistingPackages), false, null);
@@ -377,29 +375,25 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
       myExistingPackages = existingPackages;
     }
 
-    @NotNull
     @Override
-    protected String getLookupString(@NotNull NodePackageBasicInfo item) {
+    protected @NotNull String getLookupString(@NotNull NodePackageBasicInfo item) {
       return item.getName();
     }
 
-    @Nullable
     @Override
-    public CharFilter.Result acceptChar(char c) {
+    public @Nullable CharFilter.Result acceptChar(char c) {
       return c == '@' || c == '/' ? CharFilter.Result.ADD_TO_PREFIX : null;
     }
 
-    @NotNull
     @Override
-    public CompletionResultSet applyPrefixMatcher(@NotNull CompletionResultSet result, @NotNull String prefix) {
+    public @NotNull CompletionResultSet applyPrefixMatcher(@NotNull CompletionResultSet result, @NotNull String prefix) {
       CompletionResultSet res = super.applyPrefixMatcher(result, prefix);
       res.restartCompletionOnAnyPrefixChange();
       return res;
     }
 
-    @NotNull
     @Override
-    public Collection<NodePackageBasicInfo> getItems(String prefix, boolean cached, CompletionParameters parameters) {
+    public @NotNull Collection<NodePackageBasicInfo> getItems(String prefix, boolean cached, CompletionParameters parameters) {
       if (cached) {
         return Collections.emptyList();
       }
@@ -420,9 +414,8 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
       return result;
     }
 
-    @NotNull
     @Override
-    public LookupElementBuilder createLookupBuilder(@NotNull NodePackageBasicInfo item) {
+    public @NotNull LookupElementBuilder createLookupBuilder(@NotNull NodePackageBasicInfo item) {
       return super.createLookupBuilder(item)
         .withTailText(item.getDescription() != null ? "  " + item.getDescription() : null, true);
     }

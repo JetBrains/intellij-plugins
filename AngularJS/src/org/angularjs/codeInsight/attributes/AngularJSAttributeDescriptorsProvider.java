@@ -76,7 +76,7 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
   private static PsiElement applicableDirective(@NotNull Project project,
                                                 @NotNull String directiveName,
                                                 @NotNull XmlTag tag,
-                                                @NotNull final StubIndexKey<String, JSImplicitElementProvider> index) {
+                                                final @NotNull StubIndexKey<String, JSImplicitElementProvider> index) {
     Ref<PsiElement> result = Ref.create(PsiUtilCore.NULL_PSI_ELEMENT);
     AngularIndexUtil.multiResolve(project, index, directiveName, (directive) -> {
       // Ensure this is our element
@@ -167,9 +167,8 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
            || DirectiveUtil.normalizeAttributeName(name).equals("ngForm");
   }
 
-  @Nullable
   @Override
-  public XmlAttributeDescriptor getAttributeDescriptor(final String attrName, XmlTag xmlTag) {
+  public @Nullable XmlAttributeDescriptor getAttributeDescriptor(final String attrName, XmlTag xmlTag) {
     return getDescriptor(attrName, xmlTag);
   }
 

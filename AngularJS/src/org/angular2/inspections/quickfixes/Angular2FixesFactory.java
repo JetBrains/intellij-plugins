@@ -11,14 +11,20 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Consumer;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.MultiMap;
 import one.util.streamex.StreamEx;
+import org.angular2.cli.config.AngularConfig;
+import org.angular2.cli.config.AngularConfigProvider;
+import org.angular2.cli.config.AngularProject;
 import org.angular2.codeInsight.Angular2DeclarationsScope;
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity;
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider;
@@ -87,9 +93,8 @@ public class Angular2FixesFactory {
     }
   }
 
-  @NotNull
-  public static MultiMap<DeclarationProximity, Angular2Declaration> getCandidatesForResolution(@NotNull PsiElement element,
-                                                                                               boolean codeCompletion) {
+  public static @NotNull MultiMap<DeclarationProximity, Angular2Declaration> getCandidatesForResolution(@NotNull PsiElement element,
+                                                                                                        boolean codeCompletion) {
     Angular2DeclarationsScope scope = new Angular2DeclarationsScope(element);
     if (scope.getModule() == null || !scope.isInSource(scope.getModule())) {
       return MultiMap.empty();
@@ -178,21 +183,59 @@ public class Angular2FixesFactory {
     else {
       throw new IllegalArgumentException(element.getClass().getName());
     }
-    MultiMap<DeclarationProximity, Angular2Declaration> result = new MultiMap<>();
-
+    List<Angular2Declaration> declarations = new SmartList<>();
     Consumer<Supplier<List<? extends Angular2Declaration>>> declarationProcessor = p -> StreamEx.of(p.get())
       .filter(filter.get())
-      .forEach(declaration -> result.putValue(scope.getDeclarationProximity(declaration), declaration));
+      .forEach(declaration -> declarations.add(declaration));
 
     declarationProcessor.consume(provider);
-    if (result.isEmpty() && codeCompletion && secondaryProvider != null) {
+    if (declarations.isEmpty() && codeCompletion && secondaryProvider != null) {
       declarationProcessor.consume(secondaryProvider);
     }
+
+    MultiMap<DeclarationProximity, Angular2Declaration> result = new MultiMap<>();
+    removeLocalLibraryElements(element, declarations)
+      .forEach(declaration -> result.putValue(scope.getDeclarationProximity(declaration), declaration));
+
     return result;
   }
 
-  @NotNull
-  private static Supplier<List<? extends Angular2Declaration>> createSecondaryProvider(@NotNull Angular2TemplateBindings bindings) {
+  private static Collection<Angular2Declaration> removeLocalLibraryElements(@NotNull PsiElement context,
+                                                                            @NotNull List<Angular2Declaration> declarations) {
+    VirtualFile contextFile = context.getContainingFile().getOriginalFile().getVirtualFile();
+    AngularConfig config = AngularConfigProvider.getAngularConfig(context.getProject(), contextFile);
+    if (config == null) {
+      return declarations;
+    }
+    AngularProject contextProject = config.getProject(contextFile);
+    if (contextProject == null) {
+      return declarations;
+    }
+    Set<VirtualFile> localRoots = map2SetNotNull(config.getProjects(), project -> {
+      if (project.getType() == AngularProject.AngularProjectType.LIBRARY
+          && !project.equals(contextProject)) {
+        return project.getSourceDir();
+      }
+      return null;
+    });
+
+    // TODO do not provide proposals from dist dir for local lib context - requires parsing ng-package.json
+    // localRoots.add(contextProject.getOutputDirectory())
+
+    VirtualFile projectRoot = config.getAngularJsonFile().getParent();
+    return filter(declarations, declaration -> {
+      VirtualFile file = PsiUtilCore.getVirtualFile(declaration.getSourceElement());
+      while (file != null && !file.equals(projectRoot)) {
+        if (localRoots.contains(file)) {
+          return false;
+        }
+        file = file.getParent();
+      }
+      return true;
+    });
+  }
+
+  private static @NotNull Supplier<List<? extends Angular2Declaration>> createSecondaryProvider(@NotNull Angular2TemplateBindings bindings) {
     return () -> Optional.of(notNull(InjectedLanguageManager.getInstance(bindings.getProject()).getInjectionHost(bindings), bindings))
       .map(element -> PsiTreeUtil.getParentOfType(element, XmlAttribute.class))
       .map(XmlAttribute::getDescriptor)
@@ -207,10 +250,11 @@ public class Angular2FixesFactory {
     }
     boolean hasDirective = false;
     boolean hasComponent = false;
-    for (Angular2Declaration declaration: declarations) {
+    for (Angular2Declaration declaration : declarations) {
       if (declaration instanceof Angular2Component) {
         hasComponent = true;
-      } else {
+      }
+      else {
         hasDirective = true;
       }
     }
@@ -240,7 +284,7 @@ public class Angular2FixesFactory {
 
     PsiElementProcessor<JSElement> processor = new PsiElementProcessor<JSElement>() {
       @Override
-      public boolean execute(@NotNull final JSElement element) {
+      public boolean execute(final @NotNull JSElement element) {
         Optional.ofNullable(elementMap.get(element))
           .map(actionFactory)
           .ifPresent(QuestionAction::execute);

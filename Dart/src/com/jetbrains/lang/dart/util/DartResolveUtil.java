@@ -781,12 +781,13 @@ public class DartResolveUtil {
     return finalResult == null ? DartClassResolveResult.EMPTY : finalResult;
   }
 
-  public static int getArgumentIndex(PsiElement place, @Nullable DartFunctionDescription functionDescription) {
+  public static int getArgumentIndex(@Nullable PsiElement place, @Nullable DartFunctionDescription functionDescription) {
+    if (place == null) return -1;
+
     int parameterIndex = -1;
     final DartArgumentList argumentList = PsiTreeUtil.getParentOfType(place, DartArgumentList.class, false);
     String selectedArgumentName = null;
     if (place == argumentList) {
-      assert argumentList != null;
       final DartFunctionDescription functionDescription2 =
         DartFunctionDescription.tryGetDescription((DartCallExpression)argumentList.getParent());
       // the last one

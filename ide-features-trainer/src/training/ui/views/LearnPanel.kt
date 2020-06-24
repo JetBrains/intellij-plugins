@@ -1,9 +1,11 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.ui.views
 
+import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.guessCurrentProject
 import com.intellij.openapi.util.SystemInfo
+import com.intellij.ui.components.labels.ActionLink
 import com.intellij.ui.components.labels.LinkLabel
 import com.intellij.util.containers.BidirectionalMap
 import com.intellij.util.ui.JBUI
@@ -13,32 +15,42 @@ import training.keymap.KeymapUtil
 import training.learn.CourseManager
 import training.learn.LearnBundle
 import training.learn.interfaces.Lesson
+import training.learn.lesson.LessonManager
 import training.learn.lesson.kimpl.KLesson
-import training.ui.LessonMessagePane
-import training.ui.Message
-import training.ui.UISettings
-import training.ui.UiManager
+import training.ui.*
 import training.util.LearningLessonsAutoExecutor
 import training.util.TrainingMode
 import training.util.featureTrainerMode
+import training.util.useNewLearningUi
 import java.awt.*
 import java.awt.event.ActionEvent
 import java.net.URI
 import javax.swing.*
 import javax.swing.border.EmptyBorder
 import javax.swing.border.MatteBorder
-import javax.swing.text.BadLocationException
 
 /**
  * @author Sergey Karashevich
  */
-class LearnPanel : JPanel() {
-
-  private val boxLayout: BoxLayout = BoxLayout(this, BoxLayout.Y_AXIS)
+class LearnPanel(private val learnToolWindow: LearnToolWindow, val lesson: Lesson? = null, private val documentationMode: Boolean = false) : JPanel() {
 
   //XmlLesson panel items
   private val lessonPanel = JPanel()
-  private val moduleNameLabel = JLabel()
+
+  private val moduleNameLabel: JLabel = if (!useNewLearningUi) JLabel()
+  else object : LinkLabel<Any>("", null, { _, _ ->
+    learnToolWindow.setMeSelected()
+  }) {
+    override fun getNormal(): Color = UISettings.instance.lessonActiveColor
+
+    override fun paintComponent(g: Graphics) {
+      super.paintComponent(g)
+      val bounds = textBounds
+      val lineY = getUI().getBaseline(this, width, height) + 1
+      g.drawLine(bounds.x, lineY, bounds.x + bounds.width, lineY)
+    }
+  }
+
   private val allTopicsLabel: LinkLabel<Any> = LinkLabel(LearnBundle.message("learn.ui.alltopics"), null)
 
   private val lessonNameLabel = JLabel() //Name of the current lesson
@@ -48,12 +60,13 @@ class LearnPanel : JPanel() {
 
   //XmlModule panel stuff
   val modulePanel = ModulePanel()
+  private val footer = JPanel()
 
   //modulePanel UI
   private val lessonPanelBoxLayout = BoxLayout(lessonPanel, BoxLayout.Y_AXIS)
 
   init {
-    layout = boxLayout
+    layout = BoxLayout(this, BoxLayout.Y_AXIS)
     isFocusable = false
 
     //Obligatory block
@@ -65,9 +78,15 @@ class LearnPanel : JPanel() {
 
     lessonPanel.alignmentX = Component.LEFT_ALIGNMENT
     add(lessonPanel)
-    modulePanel.alignmentX = Component.LEFT_ALIGNMENT
 
-    add(modulePanel)
+    if (!useNewLearningUi) {
+      modulePanel.alignmentX = Component.LEFT_ALIGNMENT
+      add(modulePanel)
+    }
+    else {
+      footer.alignmentX = Component.LEFT_ALIGNMENT
+      add(footer)
+    }
 
     //set LearnPanel UI
     preferredSize = Dimension(UISettings.instance.width, 100)
@@ -80,13 +99,25 @@ class LearnPanel : JPanel() {
     lessonPanel.isFocusable = false
     lessonPanel.isOpaque = false
 
+    footer.name = "footerLessonPanel"
+    footer.layout = BoxLayout(footer, BoxLayout.Y_AXIS)
+    //footer.layout = BorderLayout()
+    footer.isFocusable = false
+    footer.isOpaque = false
+    footer.border = MatteBorder(1, 0, 0, 0, UISettings.instance.separatorColor)
+
+    if (documentationMode) {
+      val link = ActionLink("Switch to Interactive Mode", ActionManager.getInstance().getAction("LearningDocumentationModeAction"))
+      setFooterElement(link)
+    }
+
     moduleNameLabel.name = "moduleNameLabel"
     moduleNameLabel.font = UISettings.instance.moduleNameFont
     moduleNameLabel.isFocusable = false
     moduleNameLabel.border = UISettings.instance.checkmarkShiftBorder
 
     allTopicsLabel.name = "allTopicsLabel"
-    allTopicsLabel.setListener({ _, _ -> UiManager.setModulesView() }, null)
+    allTopicsLabel.setListener({ _, _ -> LearningUiManager.resetModulesView() }, null)
 
     lessonNameLabel.name = "lessonNameLabel"
     lessonNameLabel.border = UISettings.instance.checkmarkShiftBorder
@@ -118,19 +149,67 @@ class LearnPanel : JPanel() {
     buttonPanel.add(button)
 
     //shift right for checkmark
-    lessonPanel.add(moduleNameLabel)
-    lessonPanel.add(Box.createVerticalStrut(UISettings.instance.lessonNameGap))
-    lessonPanel.add(lessonNameLabel)
+    if (useNewLearningUi) {
+      val moduleNamePanel = JPanel()
+      moduleNamePanel.name = "Message and Module Title"
+      moduleNamePanel.alignmentX = Component.LEFT_ALIGNMENT
+      moduleNamePanel.layout = BoxLayout(moduleNamePanel, BoxLayout.X_AXIS)
+      moduleNamePanel.add(lessonNameLabel)
+      moduleNamePanel.add(Box.createHorizontalGlue())
+      moduleNamePanel.add(moduleNameLabel)
+      moduleNamePanel.maximumSize = Dimension(1000, 70) // Magic
+      lessonPanel.add(moduleNamePanel)
+    }
+    else {
+      lessonPanel.add(moduleNameLabel)
+      lessonPanel.add(Box.createVerticalStrut(UISettings.instance.lessonNameGap))
+      lessonPanel.add(lessonNameLabel)
+    }
     lessonPanel.add(lessonMessagePane)
     lessonPanel.add(Box.createVerticalStrut(UISettings.instance.beforeButtonGap))
-    lessonPanel.add(Box.createVerticalGlue())
-    lessonPanel.add(buttonPanel)
-    lessonPanel.add(Box.createVerticalStrut(UISettings.instance.afterButtonGap))
+
+    if (!useNewLearningUi) {
+      lessonPanel.add(Box.createVerticalGlue())
+      lessonPanel.add(buttonPanel)
+      lessonPanel.add(Box.createVerticalStrut(UISettings.instance.afterButtonGap))
+    }
+  }
+
+  private fun setFooterElement(jComponent: JComponent) {
+    footer.removeAll()
+    footer.add(Box.createHorizontalGlue())
+    jComponent.alignmentX = Component.CENTER_ALIGNMENT
+    footer.add(jComponent)
+  }
+
+  fun updateLessonProgress(all: Int, current: Int) {
+    val jComponent: JComponent = if (all != current) {
+      JLabel(LearnBundle.message("learn.ui.lesson.progress", current, all))
+    }
+    else {
+      val notPassedLesson = CourseManager.instance.getNextNonPassedLesson(LessonManager.instance.currentLesson)
+      if (notPassedLesson != null) {
+        val keyStroke = getNextLessonKeyStrokeText()
+        val text = "${LearnBundle.message("learn.ui.button.next.lesson")}: ${notPassedLesson.name} ($keyStroke)"
+        LinkLabel<Any>(text, null) { _, _ ->
+          CourseManager.instance.openLesson(learnToolWindow.project, notPassedLesson)
+        }
+      }
+      else {
+        LinkLabel<Any>(LearnBundle.message("learn.ui.course.completed.caption"), null) { _, _ ->
+          clearLessonPanel()
+          addMessage(LearnBundle.message("learn.ui.course.completed.description"))
+        }
+      }
+    }
+    setFooterElement(jComponent)
+    footer.revalidate()
+    footer.repaint()
   }
 
   fun setLessonName(lessonName: String) {
     lessonNameLabel.text = lessonName
-    lessonNameLabel.foreground = UISettings.instance.defaultTextColor
+    lessonNameLabel.foreground = if (useNewLearningUi && lesson?.passed == true) UISettings.instance.completedColor else UISettings.instance.defaultTextColor
     lessonNameLabel.isFocusable = false
     this.revalidate()
     this.repaint()
@@ -205,16 +284,16 @@ class LearnPanel : JPanel() {
   fun messagesNumber(): Int = lessonMessagePane.messagesNumber()
 
   fun setPreviousMessagesPassed() {
-    try {
-      lessonMessagePane.passPreviousMessages()
-    }
-    catch (e: BadLocationException) {
-      LOG.warn(e)
-    }
+    lessonMessagePane.passPreviousMessages()
+    updateLessonProgress(0, 0)
   }
 
   fun setLessonPassed() {
     setButtonToNext()
+    if (useNewLearningUi) {
+      lessonMessagePane.redrawMessagesAsCompleted()
+    }
+    revalidate()
     this.repaint()
   }
 
@@ -236,11 +315,10 @@ class LearnPanel : JPanel() {
     repaint()
   }
 
-  @JvmOverloads
-  fun setButtonNextAction(runnable: Runnable, notPassedLesson: Lesson?, text: String? = null) {
+  fun setButtonNextAction(notPassedLesson: Lesson?, text: String?, runnable: () -> Unit) {
     val buttonAction = object : AbstractAction() {
       override fun actionPerformed(actionEvent: ActionEvent) {
-        runnable.run()
+        runnable()
       }
     }
     buttonAction.putValue(Action.NAME, "Next")
@@ -332,6 +410,7 @@ class LearnPanel : JPanel() {
       moduleNamePanel.removeAll()
       moduleNamePanel.add(moduleLessons)
       moduleNamePanel.add(Box.createHorizontalStrut(20))
+      allTopicsLabel.alignmentX = Component.CENTER_ALIGNMENT
       moduleNamePanel.add(Box.createHorizontalGlue())
       moduleNamePanel.add(allTopicsLabel)
 
@@ -348,6 +427,7 @@ class LearnPanel : JPanel() {
           isSelected = false
           isEnabled = true
           isOpaque = false
+          @Suppress("HardCodedStringLiteral")
           text = "Run"
         })
       }
@@ -445,14 +525,12 @@ class LearnPanel : JPanel() {
     }
   }
 
-  fun hasNextButton(): Boolean = button.isEnabled && button.isVisible
-
-  fun clickButton() {
-    if (hasNextButton()) button.doClick()
-  }
-
   override fun getPreferredSize(): Dimension {
     if (lessonPanel.minimumSize == null) return Dimension(10, 10)
+    if (useNewLearningUi) {
+      return Dimension(lessonPanel.minimumSize.getWidth().toInt() + UISettings.instance.westInset + UISettings.instance.eastInset,
+                       lessonPanel.minimumSize.getHeight().toInt() + footer.minimumSize.getHeight().toInt() + UISettings.instance.northInset + UISettings.instance.southInset)
+    }
     return if (modulePanel.minimumSize == null) Dimension(10, 10)
     else Dimension(
       lessonPanel.minimumSize.getWidth().toInt() +

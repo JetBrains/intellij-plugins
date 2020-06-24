@@ -1,29 +1,21 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang
 
-import com.intellij.codeInsight.daemon.impl.analysis.XmlUnboundNsPrefixInspection
-import com.intellij.codeInspection.htmlInspections.*
-import com.intellij.htmltools.codeInspection.htmlInspections.HtmlDeprecatedAttributeInspection
-import com.intellij.htmltools.codeInspection.htmlInspections.HtmlDeprecatedTagInspection
-import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.JSTestUtils.testWithinLanguageLevel
 import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
-import com.intellij.lang.javascript.inspections.*
-import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection
-import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection
-import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection
+import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection
 import com.intellij.openapi.application.PathManager
+import com.intellij.psi.css.inspections.invalid.CssInvalidFunctionInspection
 import com.intellij.psi.css.inspections.invalid.CssInvalidPseudoSelectorInspection
 import com.intellij.spellchecker.inspections.SpellCheckingInspection
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.util.ThrowableRunnable
-import com.intellij.xml.util.CheckEmptyTagInspection
 import com.intellij.xml.util.CheckTagEmptyBodyInspection
-import com.sixrr.inspectjs.validity.ThisExpressionReferencesGlobalObjectJSInspection
 import junit.framework.TestCase
-import org.jetbrains.vuejs.inspections.DuplicateTagInspection
+import org.jetbrains.plugins.scss.inspections.SassScssResolvedByNameOnlyInspection
+import org.jetbrains.plugins.scss.inspections.SassScssUnresolvedVariableInspection
 import org.jetbrains.vuejs.lang.html.VueFileType
 
 class VueHighlightingTest : BasePlatformTestCase() {
@@ -31,27 +23,7 @@ class VueHighlightingTest : BasePlatformTestCase() {
 
   override fun setUp() {
     super.setUp()
-    myFixture.enableInspections(HtmlDeprecatedAttributeInspection(),
-                                HtmlDeprecatedTagInspection(),
-                                HtmlUnknownBooleanAttributeInspectionBase(),
-                                HtmlUnknownAttributeInspection(),
-                                HtmlUnknownTagInspection(),
-                                RequiredAttributesInspection(),
-                                JSUnusedLocalSymbolsInspection(),
-                                JSAnnotatorInspection(),
-                                JSUnresolvedVariableInspection(),
-                                JSUnresolvedFunctionInspection(),
-                                JSValidateTypesInspection(),
-                                ThisExpressionReferencesGlobalObjectJSInspection(),
-                                JSValidateTypesInspection(),
-                                JSIncompatibleTypesComparisonInspection(),
-                                TypeScriptValidateTypesInspection(),
-                                TypeScriptUnresolvedVariableInspection(),
-                                TypeScriptUnresolvedFunctionInspection(),
-                                DuplicateTagInspection(),
-                                JSCheckFunctionSignaturesInspection(),
-                                XmlUnboundNsPrefixInspection(),
-                                CheckEmptyTagInspection())
+    myFixture.enableInspections(VueInspectionsProvider())
   }
 
   fun testDirectivesWithoutParameters() {
@@ -816,8 +788,7 @@ Vue.component('global-comp-literal', {
   }
 
   fun testBuiltinTagsHighlighting() {
-    createPackageJsonWithVueDependency(myFixture, "")
-    myFixture.copyDirectoryToProject("../types/node_modules", "./node_modules")
+    myFixture.configureDependencies(VueTestModule.VUE_2_5_3)
     myFixture.configureByText("BuiltinTagsHighlighting.vue", """
 <template>
     <transition-group>
@@ -1232,7 +1203,6 @@ import BComponent from 'b-component'
   }
 
   fun testEndTagNotForbidden() {
-    myFixture.enableInspections(HtmlExtraClosingTagInspection::class.java)
     myFixture.addFileToProject("input.vue", "<script>export default {name: 'Input'}</script>")
     myFixture.configureByText("foo.vue", """<template> <Input> </Input> </template>
       <script>
@@ -1243,7 +1213,6 @@ import BComponent from 'b-component'
   }
 
   fun testColonInEventName() {
-    myFixture.enableInspections(XmlUnboundNsPrefixInspection::class.java)
     myFixture.configureByText("foo.vue", """
       |<template>
       |  <div @update:property=''></div>
@@ -1327,8 +1296,7 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
   }
 
   fun testVueExtendSyntax() {
-    myFixture.copyDirectoryToProject("../types/node_modules", "./node_modules")
-    JSTestUtils.addPackageJson(myFixture, "vue")
+    myFixture.configureDependencies(VueTestModule.VUE_2_5_3)
     myFixture.configureByText("a-component.vue", """<script>export default Vue.extend({props:{msg: String}})</script>""")
     myFixture.configureByText("b-component.vue", """
       <template>
@@ -1351,8 +1319,7 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
   }
 
   fun testBootstrapVue() {
-    createPackageJsonWithVueDependency(myFixture, "\"bootstrap-vue\": \"latest\"")
-    myFixture.copyDirectoryToProject("../libs/bootstrap-vue/node_modules", "./node_modules")
+    myFixture.configureDependencies(VueTestModule.BOOTSTRAP_VUE_2_0_0_RC_11)
     myFixture.configureByText("b-component.vue", """
       <template>
         <b-alert show>Foo</b-alert>
@@ -1444,8 +1411,7 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
   }
 
   fun testDirectiveWithModifiers() {
-    createPackageJsonWithVueDependency(myFixture, "\"bootstrap-vue\": \"latest\"")
-    myFixture.copyDirectoryToProject("../libs/bootstrap-vue/node_modules", "./node_modules")
+    myFixture.configureDependencies(VueTestModule.BOOTSTRAP_VUE_2_0_0_RC_11)
     myFixture.configureByText("a-component.vue", """
       <template>
         <div>
@@ -1506,8 +1472,7 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
   }
 
   fun testPrivateMembersHighlighting() {
-    myFixture.enableInspections(JSUnusedGlobalSymbolsInspection::class.java,
-                                JSUnusedLocalSymbolsInspection::class.java)
+    myFixture.enableInspections(JSUnusedGlobalSymbolsInspection::class.java)
     myFixture.configureByFile("privateFields.vue")
     myFixture.checkHighlighting()
   }
@@ -1525,8 +1490,7 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
   }
 
   fun testCompositionApiBasic() {
-    createPackageJsonWithVueDependency(myFixture, """ "@vue/composition-api": "0.0.0" """)
-    myFixture.copyDirectoryToProject("../libs/composition-api", "node_modules/@vue/composition-api")
+    myFixture.configureDependencies(VueTestModule.COMPOSITION_API_0_4_0)
     myFixture.configureByFile("compositeComponent1.vue")
     myFixture.checkHighlighting()
     myFixture.configureByFile("compositeComponent2.vue")
@@ -1546,6 +1510,39 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
     myFixture.checkHighlighting()
   }
 
+  fun testComputedTypeTS() {
+    myFixture.configureDependencies(VueTestModule.VUE_2_6_10)
+    myFixture.configureByFile("computedTypeTS.vue")
+    myFixture.checkHighlighting()
+  }
+
+  fun testComputedTypeJS() {
+    myFixture.configureDependencies(VueTestModule.VUE_2_6_10)
+    myFixture.configureByFile("computedTypeJS.vue")
+    myFixture.checkHighlighting()
+  }
+
+  fun testDataTypeTS() {
+    myFixture.configureDependencies(VueTestModule.VUE_2_6_10)
+    myFixture.configureByFile("dataTypeTS.vue")
+    myFixture.checkHighlighting()
+  }
+
+  fun testScssBuiltInModules() {
+    myFixture.enableInspections(CssInvalidFunctionInspection::class.java,
+                                SassScssResolvedByNameOnlyInspection::class.java,
+                                SassScssUnresolvedVariableInspection::class.java)
+    myFixture.configureByFile(getTestName(true) + ".vue")
+    myFixture.checkHighlighting()
+  }
+
+  fun testSassBuiltInModules() {
+    myFixture.enableInspections(CssInvalidFunctionInspection::class.java,
+                                SassScssResolvedByNameOnlyInspection::class.java,
+                                SassScssUnresolvedVariableInspection::class.java)
+    myFixture.configureByFile(getTestName(true) + ".vue")
+    myFixture.checkHighlighting()
+  }
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {

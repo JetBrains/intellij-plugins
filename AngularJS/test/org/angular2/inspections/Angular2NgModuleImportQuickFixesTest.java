@@ -1,19 +1,21 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.inspections;
 
-import com.intellij.lang.resharper.ReSharperTestUtil;
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection;
-import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.testFramework.PsiTestUtil;
+import com.intellij.util.ArrayUtil;
 import org.angular2.Angular2MultiFileFixtureTestCase;
 import org.angular2.inspections.quickfixes.Angular2FixesFactory;
+import org.angular2.modules.Angular2TestModule;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
+
 import static com.intellij.lang.javascript.modules.ES6ImportAction.NAME_TO_IMPORT;
+import static com.intellij.lang.javascript.ui.NodeModuleNamesUtil.PACKAGE_JSON;
 
 public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtureTestCase {
 
@@ -148,7 +150,8 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
                     "test.html",
                     "[ngValue<caret>]",
                     "Import Angular module...",
-                    "FormsModule - \"@angular/forms\"");
+                    "FormsModule - \"@angular/forms\"",
+                    Angular2TestModule.ANGULAR_FORMS_8_2_14);
   }
 
   public void testFormsModule2() {
@@ -156,7 +159,8 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
                     "test.html",
                     "ng<caret>Model",
                     "Import Angular module...",
-                    "FormsModule - \"@angular/forms\"");
+                    "FormsModule - \"@angular/forms\"",
+                    Angular2TestModule.ANGULAR_FORMS_8_2_14);
   }
 
   public void testFormsModule3() {
@@ -164,7 +168,8 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
                     "test.html",
                     "[ng<caret>Model]",
                     "Import FormsModule",
-                    null);
+                    null,
+                    Angular2TestModule.ANGULAR_FORMS_8_2_14);
   }
 
   public void testFormsModule4() {
@@ -172,7 +177,8 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
                     "test.html",
                     "[(ng<caret>Model)]",
                     "Import FormsModule",
-                    null);
+                    null,
+                    Angular2TestModule.ANGULAR_FORMS_8_2_14);
   }
 
   public void testFormsModuleCompletion1() {
@@ -180,7 +186,8 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
                      "test.html",
                      "[ngValue]=\"foo\"",
                      "[ngVal\nfoo",
-                     "FormsModule - \"@angular/forms\"");
+                     "FormsModule - \"@angular/forms\"",
+                     Angular2TestModule.ANGULAR_FORMS_8_2_14);
   }
 
   public void testFormsModuleCompletion2() {
@@ -188,7 +195,8 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
                      "test.html",
                      "ngModel ",
                      "ngMod\n\b\b ",
-                     "FormsModule - \"@angular/forms\"");
+                     "FormsModule - \"@angular/forms\"",
+                     Angular2TestModule.ANGULAR_FORMS_8_2_14);
   }
 
   public void testFormsModuleCompletion3() {
@@ -196,7 +204,8 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
                      "test.html",
                      "[ngModel]=\"foo\"",
                      "[ngMod\nfoo",
-                     "FormsModule - \"@angular/forms\"");
+                     "FormsModule - \"@angular/forms\"",
+                     Angular2TestModule.ANGULAR_FORMS_8_2_14);
   }
 
   public void testFormsModuleCompletion4() {
@@ -204,7 +213,8 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
                      "test.html",
                      "[(ngModel)]=\"foo\"",
                      "[(ngMod\nfoo",
-                     "FormsModule - \"@angular/forms\"");
+                     "FormsModule - \"@angular/forms\"",
+                     Angular2TestModule.ANGULAR_FORMS_8_2_14);
   }
 
   public void testReactiveFormsModule1() {
@@ -212,7 +222,8 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
                     "test.html",
                     "[ngValue<caret>]",
                     "Import Angular module...",
-                    "ReactiveFormsModule - \"@angular/forms\"");
+                    "ReactiveFormsModule - \"@angular/forms\"",
+                    Angular2TestModule.ANGULAR_FORMS_8_2_14);
   }
 
   public void testReactiveFormsModule2() {
@@ -220,7 +231,8 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
                     "test.html",
                     "ng<caret>Model",
                     "Import Angular module...",
-                    "ReactiveFormsModule - \"@angular/forms\"");
+                    "ReactiveFormsModule - \"@angular/forms\"",
+                    Angular2TestModule.ANGULAR_FORMS_8_2_14);
   }
 
   public void testReactiveFormsModuleCompletion1() {
@@ -228,7 +240,8 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
                      "test.html",
                      "[ngValue]=\"foo\"",
                      "[ngVal\nfoo",
-                     "ReactiveFormsModule - \"@angular/forms\"");
+                     "ReactiveFormsModule - \"@angular/forms\"",
+                     Angular2TestModule.ANGULAR_FORMS_8_2_14);
   }
 
   public void testReactiveFormsModuleCompletion2() {
@@ -236,9 +249,20 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
                      "test.html",
                      "ngModel ",
                      "ngMod\n\b\b ",
-                     "ReactiveFormsModule - \"@angular/forms\"");
+                     "ReactiveFormsModule - \"@angular/forms\"",
+                     Angular2TestModule.ANGULAR_FORMS_8_2_14);
   }
 
+  public void testLocalLib() {
+    doMultiFileTest("src/app/app.component.html",
+                    "Import MyLibModule");
+  }
+
+  public void testLocalLibCompletion() {
+    doCompletionTest("localLib", "src/app/app.component.html",
+                     "lib-my-lib", "lib-my-l\n",
+                     "MyLibModule - \"my-lib\"");
+  }
 
   private void doMultiFileTest(@NotNull String mainFile,
                                @NotNull String intention) {
@@ -256,19 +280,12 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
                                @NotNull String mainFile,
                                @Nullable String signature,
                                @NotNull String intention,
-                               @Nullable String importName) {
-    doTest((rootDir, rootAfter) -> {
-      initInspections();
-      initNodeModules();
-      myFixture.configureFromTempProjectFile(mainFile);
-      if (signature != null) {
-        AngularTestUtil.moveToOffsetBySignature(signature, myFixture);
-      }
-      if (importName != null) {
-        myFixture.getEditor().putUserData(NAME_TO_IMPORT, importName);
-      }
+                               @Nullable String importName,
+                               @NotNull Angular2TestModule @NotNull ... modules) {
+    initInspections();
+    doTest((rootDir, rootAfter) -> configureTestAndRun(mainFile, signature, importName, modules, () -> {
       myFixture.launchAction(myFixture.findSingleIntention(intention));
-    }, testName);
+    }), testName);
   }
 
   private void doTagCompletionTest(@NotNull String mainFile,
@@ -281,21 +298,37 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
                                 @NotNull String mainFile,
                                 @NotNull String toRemove,
                                 @NotNull String toType,
-                                @Nullable String importToSelect) {
-    doTest((rootDir, rootAfter) -> {
-      initNodeModules();
-      myFixture.configureFromTempProjectFile(mainFile);
+                                @Nullable String importToSelect,
+                                @NotNull Angular2TestModule @NotNull ... modules) {
+    doTest((rootDir, rootAfter) -> configureTestAndRun(mainFile, "<caret>" + toRemove, importToSelect, modules, () -> {
       myFixture.getEditor().putUserData(Angular2FixesFactory.DECLARATION_TO_CHOOSE, "MyDirective");
-      if (importToSelect != null) {
-        myFixture.getEditor().putUserData(NAME_TO_IMPORT, importToSelect);
-      }
-      AngularTestUtil.moveToOffsetBySignature("<caret>" + toRemove, myFixture);
       myFixture.getEditor().getSelectionModel().setSelection(myFixture.getCaretOffset(),
                                                              myFixture.getCaretOffset() + toRemove.length());
       myFixture.type("\b");
       myFixture.completeBasic();
       myFixture.type(toType);
-    }, testName);
+    }), testName);
+  }
+
+  private void configureTestAndRun(@NotNull String mainFile, @Nullable String signature, @Nullable String importName,
+                                   @NotNull Angular2TestModule @NotNull [] modules, Runnable runnable) throws IOException {
+    boolean hasPkgJson = myFixture.getTempDirFixture().getFile(PACKAGE_JSON) != null;
+    Angular2TestModule.configureLink(myFixture, ArrayUtil.mergeArrays(
+      modules, new Angular2TestModule[]{Angular2TestModule.ANGULAR_CORE_4_0_0, Angular2TestModule.ANGULAR_COMMON_4_0_0,
+        Angular2TestModule.ANGULAR_PLATFORM_BROWSER_4_0_0}));
+    myFixture.configureFromTempProjectFile(mainFile);
+    if (signature != null) {
+      AngularTestUtil.moveToOffsetBySignature(signature, myFixture);
+    }
+    if (importName != null) {
+      myFixture.getEditor().putUserData(NAME_TO_IMPORT, importName);
+    }
+    runnable.run();
+    if (!hasPkgJson) {
+      WriteAction.runAndWait(() -> {
+        myFixture.getTempDirFixture().getFile(PACKAGE_JSON).delete(null);
+      });
+    }
   }
 
   private void initInspections() {
@@ -305,20 +338,5 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
       AngularInvalidTemplateReferenceVariableInspection.class,
       TypeScriptUnresolvedFunctionInspection.class
     );
-  }
-
-  private void initNodeModules() {
-    VirtualFile nodeModules = getNodeModules();
-    PsiTestUtil.addSourceContentToRoots(getModule(), nodeModules);
-    Disposer.register(myFixture.getTestRootDisposable(),
-                      () -> PsiTestUtil.removeContentEntry(getModule(), nodeModules));
-  }
-
-  @NotNull
-  private VirtualFile getNodeModules() {
-    VirtualFile nodeModules = ReSharperTestUtil.fetchVirtualFile(
-      getTestDataPath(), getTestRoot() + "/node_modules", getTestRootDisposable());
-    assert nodeModules != null;
-    return nodeModules;
   }
 }

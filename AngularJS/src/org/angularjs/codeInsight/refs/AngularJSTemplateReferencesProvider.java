@@ -73,9 +73,8 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
       super(element);
     }
 
-    @NotNull
     @Override
-    public Collection<PsiFileSystemItem> computeDefaultContexts() {
+    public @NotNull Collection<PsiFileSystemItem> computeDefaultContexts() {
       final PsiElement element = getElement();
       if (Angular2LangUtil.isAngular2Context(element)) {
         final PsiFile file = element.getContainingFile().getOriginalFile();
@@ -108,8 +107,7 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
       }
     }
 
-    @Nullable
-    private Angular2TemplateReferenceData encodeTemplateReferenceData() {
+    private @Nullable Angular2TemplateReferenceData encodeTemplateReferenceData() {
       final PsiFile file = getElement().getContainingFile().getOriginalFile();
       String pathString = StringUtil.trimStart(getPathString(), "./");
       Collection<PsiFileSystemItem> contexts = new LinkedHashSet<>();
@@ -185,13 +183,11 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
       this.contexts = contexts != null ? ContainerUtil.map(contexts, PsiFileSystemItem::getVirtualFile) : null;
     }
 
-    @Nullable
-    private PsiFileSystemItem getTargetFile(@NotNull PsiManager manager) {
+    private @Nullable PsiFileSystemItem getTargetFile(@NotNull PsiManager manager) {
       return FileReferenceHelper.getPsiFileSystemItem(manager, targetFile);
     }
 
-    @Nullable
-    private Collection<PsiFileSystemItem> getContexts(@NotNull PsiManager manager) {
+    private @Nullable Collection<PsiFileSystemItem> getContexts(@NotNull PsiManager manager) {
       return contexts != null
              ? ContainerUtil.mapNotNull(contexts, item -> FileReferenceHelper.getPsiFileSystemItem(manager, item))
              : null;

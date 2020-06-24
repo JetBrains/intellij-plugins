@@ -10,7 +10,7 @@ import org.jetbrains.vuejs.libraries.vuex.model.store.*
 
 class VuexTestStructure : BasePlatformTestCase() {
 
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/vuex/structure"
+  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/libraries/vuex/structure"
 
   fun testNuxtJs() {
     myFixture.configureStore(VuexTestStore.NuxtJs)
@@ -20,44 +20,44 @@ class VuexTestStructure : BasePlatformTestCase() {
 
   fun testNuxtJs2() {
     myFixture.configureStore(VuexTestStore.NuxtJs)
-    myFixture.configureByText("foo.vue","<script>export default{}</script>")
+    myFixture.configureByText("foo.vue", "<script>export default{}</script>")
     TestCase.assertNull(VuexModelManager.getVuexStoreContext(myFixture.file))
   }
 
   fun testStorefront() {
     myFixture.configureStore(VuexTestStore.Storefront)
-    myFixture.configureByText("foo.vue","<script>export default{}</script>")
+    myFixture.configureByText("foo.vue", "<script>export default{}</script>")
     doTestStructure()
   }
 
   fun testShoppingCart() {
     myFixture.configureStore(VuexTestStore.ShoppingCart)
-    myFixture.configureByText("foo.vue","<script>export default{}</script>")
+    myFixture.configureByText("foo.vue", "<script>export default{}</script>")
     doTestStructure()
   }
 
   fun testCounterHot() {
     myFixture.configureStore(VuexTestStore.CounterHot)
-    myFixture.configureByText("foo.vue","<script>export default{}</script>")
+    myFixture.configureByText("foo.vue", "<script>export default{}</script>")
     doTestStructure()
   }
 
   fun testSimpleStore() {
     myFixture.configureStore(VuexTestStore.SimpleStore)
-    myFixture.configureByText("foo.vue","<script>export default{}</script>")
+    myFixture.configureByText("foo.vue", "<script>export default{}</script>")
     doTestStructure()
   }
 
   fun testFunctionInit() {
     myFixture.configureStore(VuexTestStore.FunctionInit)
-    myFixture.configureByText("foo.vue","<script>export default{}</script>")
+    myFixture.configureByText("foo.vue", "<script>export default{}</script>")
     doTestStructure()
   }
 
   private fun doTestStructure() {
     val context = VuexModelManager.getVuexStoreContext(myFixture.file)!!
     myFixture.configureByText("check.txt", printContext(context))
-    myFixture.checkResultByFile(getTestName(false)+ ".txt")
+    myFixture.checkResultByFile(getTestName(false) + ".txt")
   }
 
   private fun printContext(context: VuexStoreContext): String {

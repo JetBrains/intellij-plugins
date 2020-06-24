@@ -11,6 +11,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.Consumer;
 import org.angular2.lang.Angular2Bundle;
+import org.angular2.lang.Angular2LangUtil;
 import org.jetbrains.annotations.NonNls;
 
 import static org.angular2.lang.expr.lexer.Angular2TokenTypes.*;
@@ -92,8 +93,6 @@ public class Angular2Parser extends JavaScriptParser<Angular2Parser.Angular2Expr
     new Angular2Parser(builder).parseJS(root);
   }
 
-  @NonNls private static final String $IMPLICIT = "$implicit";
-
   private final boolean myIsAction;
   private final boolean myIsSimpleBinding;
   private final boolean myIsJavaScript;
@@ -103,7 +102,7 @@ public class Angular2Parser extends JavaScriptParser<Angular2Parser.Angular2Expr
   }
 
   private Angular2Parser(PsiBuilder builder, boolean isAction, boolean isSimpleBinding, boolean isJavaScript) {
-    super(JavaScriptSupportLoader.JAVASCRIPT_1_5, builder);
+    super(DialectOptionHolder.JS_1_5, builder);
     myIsAction = isAction;
     myIsSimpleBinding = isSimpleBinding;
     myIsJavaScript = isJavaScript;
@@ -218,7 +217,7 @@ public class Angular2Parser extends JavaScriptParser<Angular2Parser.Angular2Expr
             name = parseTemplateBindingKey(false);
           }
           else {
-            name = $IMPLICIT;
+            name = Angular2LangUtil.$IMPLICIT;
           }
         }
         else if (builder.getTokenType() == AS_KEYWORD) {
@@ -345,13 +344,15 @@ public class Angular2Parser extends JavaScriptParser<Angular2Parser.Angular2Expr
           builder.advanceLexer();
           if (!parseAssignmentExpressionChecked()) {
             builder.error(JavaScriptBundle.message("javascript.parser.message.expected.expression"));
-          } else {
+          }
+          else {
             hasParams = true;
           }
         }
         if (hasParams) {
           params.done(PIPE_ARGUMENTS_LIST);
-        } else {
+        }
+        else {
           params.drop();
         }
         pipe.done(PIPE_EXPRESSION);
@@ -425,8 +426,7 @@ public class Angular2Parser extends JavaScriptParser<Angular2Parser.Angular2Expr
 
     @Override
     protected int getCurrentBinarySignPriority(boolean allowIn, boolean advance) {
-      if (builder.getTokenType() == OR
-          || builder.getTokenType() == AS_KEYWORD) {
+      if (builder.getTokenType() == OR) {
         return -1;
       }
       return super.getCurrentBinarySignPriority(allowIn, advance);

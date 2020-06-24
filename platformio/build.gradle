@@ -9,26 +9,25 @@ buildscript {
             url 'https://dl.bintray.com/jetbrains/intellij-plugin-service'
         }
     }
-    dependencies {
-        classpath "org.jetbrains.intellij.plugins:gradle-intellij-plugin:0.5.0-SNAPSHOT"
-    }
 }
-
 plugins {
     id 'java'
-    id 'org.jetbrains.intellij' version '0.4.16'
+    id 'org.jetbrains.intellij' version '0.4.21'
 }
 apply plugin: 'org.jetbrains.intellij'
 
+repositories {
+  mavenCentral()
+}
+
 
 group 'intellij.clion.embedded.platformio'
-version '1.0'
-
+version '1.1'
 
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
-  version 'CL-LATEST-EAP-SNAPSHOT'
+  version 'CL-2020.1.1'
   downloadSources false
   plugins = ['clion-embedded']
 }
@@ -43,6 +42,10 @@ sourceSets {
 patchPluginXml {
   changeNotes """
 <ul>
- <li>Added Gradle support</li>
+ <li>platformio.ini highlighting</li>
+ <li>All strings are externalized</li>
+ <li>Profiles and run configurations are created automatically when a new project is created</li>
+ <li>UI changes and fixes</li>
+ <li>The plugin now depends on ini4idea</li>
 </ul>"""
 }

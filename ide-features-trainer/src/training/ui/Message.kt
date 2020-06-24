@@ -10,11 +10,13 @@ import org.jdom.Text
 import org.jdom.output.XMLOutputter
 import training.keymap.KeymapUtil.getKeyStrokeText
 import training.keymap.KeymapUtil.getShortcutByActionId
+import java.lang.reflect.Field
 import java.util.function.Consumer
+import javax.swing.Icon
 
 class Message(val text: String, val type: MessageType) {
 
-  enum class MessageType { TEXT_REGULAR, TEXT_BOLD, SHORTCUT, CODE, LINK, CHECK, ICON }
+  enum class MessageType { TEXT_REGULAR, TEXT_BOLD, SHORTCUT, CODE, LINK, CHECK, ICON, ICON_IDX }
 
   var startOffset = 0
   var endOffset = 0
@@ -26,6 +28,19 @@ class Message(val text: String, val type: MessageType) {
            "messageText='" + text + '\''.toString() +
            ", messageType=" + type +
            '}'
+  }
+
+  fun toIcon(): Icon? {
+    val iconName = text.substringAfterLast(".")
+    val path = text.substringBeforeLast(".")
+    val fullPath = "com.intellij.icons.${path.replace(".", "$")}"
+    val field: Field?
+    try {
+      field = Class.forName(fullPath).getField(iconName)
+    } catch (e: NoSuchFieldException) {
+      return null
+    }
+    return field?.get(null) as Icon
   }
 
   companion object {
@@ -46,6 +61,7 @@ class Message(val text: String, val type: MessageType) {
           var link: String? = null
           when (content.name) {
             "icon" -> type = MessageType.ICON
+            "icon_idx" -> type = MessageType.ICON_IDX
             "code" -> type = MessageType.CODE
             "shortcut" -> type = MessageType.SHORTCUT
             "strong" -> type = MessageType.TEXT_BOLD
@@ -63,6 +79,9 @@ class Message(val text: String, val type: MessageType) {
                 getKeyStrokeText(getShortcutByActionId("GotoAction")) + " → " +
                 ActionManager.getInstance().getAction(text).templatePresentation.text
               }
+            }
+            "raw_action" -> {
+              type = MessageType.SHORTCUT
             }
             "ide" -> {
               type = MessageType.TEXT_REGULAR

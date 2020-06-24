@@ -18,8 +18,7 @@ import training.util.JdkSetupUtil
  * @author Sergey Karashevich
  */
 class JavaLangSupport : AbstractLangSupport() {
-  override val primaryLanguage: String
-    get() = "java"
+  override val primaryLanguage: String = "JAVA"
 
   override val defaultProductName: String = "IDEA"
 

@@ -8,7 +8,11 @@ FormsModuleMetadataTest: Angular2SourceModule
         NgModel: Angular2MetadataDirective
         NgModelGroup: Angular2MetadataDirective
       exports:
-        InternalFormsSharedModule: Angular2MetadataModule
+        NgForm: Angular2MetadataDirective
+        NgFormSelectorWarning: Angular2MetadataDirective
+        NgModel: Angular2MetadataDirective
+        NgModelGroup: Angular2MetadataDirective
+        ɵInternalFormsSharedModule: Angular2MetadataModule
           imports:
           declarations:
             CheckboxControlValueAccessor: Angular2MetadataDirective
@@ -19,8 +23,6 @@ FormsModuleMetadataTest: Angular2SourceModule
             MinLengthValidator: Angular2MetadataDirective
             NgControlStatus: Angular2MetadataDirective
             NgControlStatusGroup: Angular2MetadataDirective
-            NgNoValidate: Angular2MetadataDirective
-            NgSelectMultipleOption: Angular2MetadataDirective
             NgSelectOption: Angular2MetadataDirective
             NumberValueAccessor: Angular2MetadataDirective
             PatternValidator: Angular2MetadataDirective
@@ -29,6 +31,8 @@ FormsModuleMetadataTest: Angular2SourceModule
             RequiredValidator: Angular2MetadataDirective
             SelectControlValueAccessor: Angular2MetadataDirective
             SelectMultipleControlValueAccessor: Angular2MetadataDirective
+            ɵNgNoValidate: Angular2MetadataDirective
+            ɵNgSelectMultipleOption: Angular2MetadataDirective
           exports:
             CheckboxControlValueAccessor: Angular2MetadataDirective
             CheckboxRequiredValidator: Angular2MetadataDirective
@@ -38,8 +42,6 @@ FormsModuleMetadataTest: Angular2SourceModule
             MinLengthValidator: Angular2MetadataDirective
             NgControlStatus: Angular2MetadataDirective
             NgControlStatusGroup: Angular2MetadataDirective
-            NgNoValidate: Angular2MetadataDirective
-            NgSelectMultipleOption: Angular2MetadataDirective
             NgSelectOption: Angular2MetadataDirective
             NumberValueAccessor: Angular2MetadataDirective
             PatternValidator: Angular2MetadataDirective
@@ -48,6 +50,8 @@ FormsModuleMetadataTest: Angular2SourceModule
             RequiredValidator: Angular2MetadataDirective
             SelectControlValueAccessor: Angular2MetadataDirective
             SelectMultipleControlValueAccessor: Angular2MetadataDirective
+            ɵNgNoValidate: Angular2MetadataDirective
+            ɵNgSelectMultipleOption: Angular2MetadataDirective
           all-exported-declarations:
             CheckboxControlValueAccessor: Angular2MetadataDirective
             CheckboxRequiredValidator: Angular2MetadataDirective
@@ -57,8 +61,6 @@ FormsModuleMetadataTest: Angular2SourceModule
             MinLengthValidator: Angular2MetadataDirective
             NgControlStatus: Angular2MetadataDirective
             NgControlStatusGroup: Angular2MetadataDirective
-            NgNoValidate: Angular2MetadataDirective
-            NgSelectMultipleOption: Angular2MetadataDirective
             NgSelectOption: Angular2MetadataDirective
             NumberValueAccessor: Angular2MetadataDirective
             PatternValidator: Angular2MetadataDirective
@@ -67,6 +69,8 @@ FormsModuleMetadataTest: Angular2SourceModule
             RequiredValidator: Angular2MetadataDirective
             SelectControlValueAccessor: Angular2MetadataDirective
             SelectMultipleControlValueAccessor: Angular2MetadataDirective
+            ɵNgNoValidate: Angular2MetadataDirective
+            ɵNgSelectMultipleOption: Angular2MetadataDirective
           scope:
             CheckboxControlValueAccessor: Angular2MetadataDirective
             CheckboxRequiredValidator: Angular2MetadataDirective
@@ -76,8 +80,6 @@ FormsModuleMetadataTest: Angular2SourceModule
             MinLengthValidator: Angular2MetadataDirective
             NgControlStatus: Angular2MetadataDirective
             NgControlStatusGroup: Angular2MetadataDirective
-            NgNoValidate: Angular2MetadataDirective
-            NgSelectMultipleOption: Angular2MetadataDirective
             NgSelectOption: Angular2MetadataDirective
             NumberValueAccessor: Angular2MetadataDirective
             PatternValidator: Angular2MetadataDirective
@@ -86,13 +88,11 @@ FormsModuleMetadataTest: Angular2SourceModule
             RequiredValidator: Angular2MetadataDirective
             SelectControlValueAccessor: Angular2MetadataDirective
             SelectMultipleControlValueAccessor: Angular2MetadataDirective
+            ɵNgNoValidate: Angular2MetadataDirective
+            ɵNgSelectMultipleOption: Angular2MetadataDirective
           scope fully resolved: true
           exports fully resolved: true
           declarations fully resolved: true
-        NgForm: Angular2MetadataDirective
-        NgFormSelectorWarning: Angular2MetadataDirective
-        NgModel: Angular2MetadataDirective
-        NgModelGroup: Angular2MetadataDirective
       all-exported-declarations:
         CheckboxControlValueAccessor: Angular2MetadataDirective
         CheckboxRequiredValidator: Angular2MetadataDirective
@@ -106,8 +106,6 @@ FormsModuleMetadataTest: Angular2SourceModule
         NgFormSelectorWarning: Angular2MetadataDirective
         NgModel: Angular2MetadataDirective
         NgModelGroup: Angular2MetadataDirective
-        NgNoValidate: Angular2MetadataDirective
-        NgSelectMultipleOption: Angular2MetadataDirective
         NgSelectOption: Angular2MetadataDirective
         NumberValueAccessor: Angular2MetadataDirective
         PatternValidator: Angular2MetadataDirective
@@ -116,6 +114,8 @@ FormsModuleMetadataTest: Angular2SourceModule
         RequiredValidator: Angular2MetadataDirective
         SelectControlValueAccessor: Angular2MetadataDirective
         SelectMultipleControlValueAccessor: Angular2MetadataDirective
+        ɵNgNoValidate: Angular2MetadataDirective
+        ɵNgSelectMultipleOption: Angular2MetadataDirective
       scope:
         CheckboxControlValueAccessor: Angular2MetadataDirective
         CheckboxRequiredValidator: Angular2MetadataDirective
@@ -129,8 +129,6 @@ FormsModuleMetadataTest: Angular2SourceModule
         NgFormSelectorWarning: Angular2MetadataDirective
         NgModel: Angular2MetadataDirective
         NgModelGroup: Angular2MetadataDirective
-        NgNoValidate: Angular2MetadataDirective
-        NgSelectMultipleOption: Angular2MetadataDirective
         NgSelectOption: Angular2MetadataDirective
         NumberValueAccessor: Angular2MetadataDirective
         PatternValidator: Angular2MetadataDirective
@@ -139,6 +137,8 @@ FormsModuleMetadataTest: Angular2SourceModule
         RequiredValidator: Angular2MetadataDirective
         SelectControlValueAccessor: Angular2MetadataDirective
         SelectMultipleControlValueAccessor: Angular2MetadataDirective
+        ɵNgNoValidate: Angular2MetadataDirective
+        ɵNgSelectMultipleOption: Angular2MetadataDirective
       scope fully resolved: true
       exports fully resolved: true
       declarations fully resolved: true
@@ -158,8 +158,6 @@ FormsModuleMetadataTest: Angular2SourceModule
     NgFormSelectorWarning: Angular2MetadataDirective
     NgModel: Angular2MetadataDirective
     NgModelGroup: Angular2MetadataDirective
-    NgNoValidate: Angular2MetadataDirective
-    NgSelectMultipleOption: Angular2MetadataDirective
     NgSelectOption: Angular2MetadataDirective
     NumberValueAccessor: Angular2MetadataDirective
     PatternValidator: Angular2MetadataDirective
@@ -168,6 +166,8 @@ FormsModuleMetadataTest: Angular2SourceModule
     RequiredValidator: Angular2MetadataDirective
     SelectControlValueAccessor: Angular2MetadataDirective
     SelectMultipleControlValueAccessor: Angular2MetadataDirective
+    ɵNgNoValidate: Angular2MetadataDirective
+    ɵNgSelectMultipleOption: Angular2MetadataDirective
   scope fully resolved: true
   exports fully resolved: true
   declarations fully resolved: true

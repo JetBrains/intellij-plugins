@@ -11,8 +11,8 @@ import training.lang.LangSupport
 import training.learn.BundlePlace
 import training.learn.CourseManager
 import training.learn.LearnBundle
+import training.ui.LearnToolWindow
 import training.ui.UISettings
-import training.ui.UiManager
 import training.util.clearTrainingProgress
 import training.util.resetPrimaryLanguage
 import java.awt.Color
@@ -34,10 +34,11 @@ sealed class LanguageChoosePanelPlace(bundleAppendix: String) : BundlePlace(bund
   object TOOL_WINDOW : LanguageChoosePanelPlace(".tool.window")
 }
 
-class LanguageChoosePanel(opaque: Boolean = true,
-                          private val addButton: Boolean = true,
-                          val place: LanguageChoosePanelPlace = LanguageChoosePanelPlace.WELCOME_SCREEN) : JPanel() {
+class LanguageChoosePanel(private val toolWindow: LearnToolWindow?,
+                          opaque: Boolean = true,
+                          private val addButton: Boolean = true) : JPanel() {
 
+  private val place: LanguageChoosePanelPlace = if (toolWindow == null) LanguageChoosePanelPlace.WELCOME_SCREEN else LanguageChoosePanelPlace.TOOL_WINDOW
   private val caption = JLabel()
   private val description = MyJTextPane(UISettings.instance.width)
 
@@ -91,17 +92,11 @@ class LanguageChoosePanel(opaque: Boolean = true,
 
   private fun createLearnButton(): JButton {
     val button = JButton()
-    button.action = object : AbstractAction() {
-      override fun actionPerformed(e: ActionEvent) {
-        button.isEnabled = false
-      }
-    }
     button.isOpaque = false
     button.action = object : AbstractAction(LearnBundle.messageInPlace("learn.choose.language.button", place)) {
       override fun actionPerformed(e: ActionEvent?) {
-        if (!resetPrimaryLanguage(getActiveLangSupport())) {
-          UiManager.setModulesView()
-        }
+        resetPrimaryLanguage(getActiveLangSupport())
+        toolWindow?.setModulesPanel()
       }
     }
     return button

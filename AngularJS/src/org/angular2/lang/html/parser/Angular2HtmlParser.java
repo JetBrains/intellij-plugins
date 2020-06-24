@@ -9,8 +9,7 @@ import org.jetbrains.annotations.NotNull;
 public class Angular2HtmlParser extends HTMLParser {
 
   @Override
-  @NotNull
-  protected HtmlParsing createHtmlParsing(@NotNull PsiBuilder builder) {
+  protected @NotNull HtmlParsing createHtmlParsing(@NotNull PsiBuilder builder) {
     return new Angular2HtmlParsing(builder);
   }
 }

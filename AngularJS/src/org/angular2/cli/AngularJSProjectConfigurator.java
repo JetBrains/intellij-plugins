@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.cli;
 
 import com.intellij.ide.projectView.actions.MarkRootActionBase;
@@ -16,26 +16,27 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Dennis.Ushakov
  */
-public class AngularJSProjectConfigurator implements DirectoryProjectConfigurator {
-
+public final class AngularJSProjectConfigurator implements DirectoryProjectConfigurator {
   @Override
-  public void configureProject(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull Ref<Module> moduleRef, boolean newProject) {
+  public void configureProject(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull Ref<Module> moduleRef, boolean isProjectCreatedWithWizard) {
     Module module = moduleRef.get();
-    if (module != null) {
-      final VirtualFile cliJson = AngularCliUtil.findCliJson(baseDir);
-      final ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
-      final ContentEntry entry = MarkRootActionBase.findContentEntry(model, baseDir);
-      if (entry != null && cliJson != null) {
-        excludeDefault(baseDir, entry);
-        ApplicationManager.getApplication().runWriteAction(() -> {
-          model.commit();
-          project.save();
-        });
-        AngularCliUtil.createRunConfigurations(project, baseDir);
-      }
-      else {
-        model.dispose();
-      }
+    if (module == null) {
+      return;
+    }
+
+    final VirtualFile cliJson = AngularCliUtil.findCliJson(baseDir);
+    final ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
+    final ContentEntry entry = MarkRootActionBase.findContentEntry(model, baseDir);
+    if (entry != null && cliJson != null) {
+      excludeDefault(baseDir, entry);
+      ApplicationManager.getApplication().runWriteAction(() -> {
+        model.commit();
+        project.save();
+      });
+      AngularCliUtil.createRunConfigurations(project, baseDir);
+    }
+    else {
+      model.dispose();
     }
   }
 

@@ -8,6 +8,9 @@ import java.util.*;
 import static com.jetbrains.cidr.cpp.embedded.platformio.project.DeviceTreeNode.TYPE.*;
 
 public class BoardsJsonParser {
+
+  public static final String ARDUINO_ID = "arduino";
+
   private BoardsJsonParser() {
   }
 
@@ -19,7 +22,7 @@ public class BoardsJsonParser {
   @NotNull
   public static DeviceTreeNode parse(@NotNull CharSequence text) {
     SortedMap<String, DeviceTreeNode> boardsByVendor = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-    DeviceTreeNode rootNode = new DeviceTreeNode(null, ROOT, "");
+    DeviceTreeNode rootNode = new DeviceTreeNode(null, ROOT, "", BoardInfo.EMPTY);
     try (JsonReaderEx jsonReader = new JsonReaderEx(text)) {
       for (jsonReader.beginArray(); jsonReader.hasNext(); ) {
         jsonReader.beginObject();
@@ -57,13 +60,18 @@ public class BoardsJsonParser {
           continue;
         }
         DeviceTreeNode vendorNode =
-          boardsByVendor.computeIfAbsent(vendorName, name -> rootNode.add(new DeviceTreeNode(rootNode, VENDOR, name)));
-        DeviceTreeNode board = new DeviceTreeNode(vendorNode, BOARD, Objects.requireNonNull(boardName), "--board", boardId);
+          boardsByVendor.computeIfAbsent(vendorName, name -> rootNode.add(new DeviceTreeNode(rootNode, VENDOR, name, BoardInfo.EMPTY)));
+        BoardInfo boardInfo = new BoardInfo(SourceTemplate.getByFrameworkName(frameworks), "--board", boardId);
+
+        DeviceTreeNode board = new DeviceTreeNode(vendorNode, BOARD, Objects.requireNonNull(boardName), boardInfo);
         vendorNode.add(board);
         if (frameworks.size() > 1) {
           for (String frameworkName : frameworks) {
+            BoardInfo frameworkBoardInfo = new BoardInfo(
+              SourceTemplate.getByFrameworkName(frameworkName),
+              "--board", boardId, "-O", "framework=" + frameworkName);
             DeviceTreeNode framework =
-              new DeviceTreeNode(board, FRAMEWORK, frameworkName, "--board", boardId, "-O", "framework=" + frameworkName);
+              new DeviceTreeNode(board, FRAMEWORK, frameworkName, frameworkBoardInfo);
             board.add(framework);
           }
         }

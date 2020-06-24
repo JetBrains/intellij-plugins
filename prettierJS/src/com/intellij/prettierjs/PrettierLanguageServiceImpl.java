@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.prettierjs;
 
 import com.google.gson.JsonObject;
@@ -33,7 +34,7 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
 
   public PrettierLanguageServiceImpl(@NotNull Project project) {
     super(project);
-    project.getMessageBus().connect().subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
+    project.getMessageBus().connect(this).subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
       @Override
       public void after(@NotNull List<? extends VFileEvent> events) {
         for (VFileEvent event : events) {
@@ -102,6 +103,12 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
     }
 
     @Override
+    protected boolean needReadActionToCreateState() {
+      // PrettierPostFormatProcessor runs under write action. Read action here is not needed and it would block the service startup
+      return false;
+    }
+
+    @Override
     protected JSLanguageServiceInitialState createState() {
       JSLanguageServiceInitialState state = new JSLanguageServiceInitialState();
       final File service = new File(JSLanguageServiceUtil.getPluginDirectory(this.getClass(), "prettierLanguageService"),
@@ -124,8 +131,8 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
     protected NodeJsInterpreter getInterpreter() {
       return JSLanguageServiceUtil.getInterpreterIfValid(
         PrettierConfiguration.getInstance(myProject)
-                             .getInterpreterRef()
-                             .resolve(myProject));
+          .getInterpreterRef()
+          .resolve(myProject));
     }
 
     @NotNull

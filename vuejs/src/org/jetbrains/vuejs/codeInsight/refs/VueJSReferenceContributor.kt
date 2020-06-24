@@ -2,7 +2,10 @@
 package org.jetbrains.vuejs.codeInsight.refs
 
 import com.intellij.lang.javascript.patterns.JSPatterns
-import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.JSElement
+import com.intellij.lang.javascript.psi.JSLiteralExpression
+import com.intellij.lang.javascript.psi.JSReferenceExpression
+import com.intellij.lang.javascript.psi.JSThisExpression
 import com.intellij.lang.javascript.psi.impl.JSPropertyImpl
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.resolve.CachingPolyReferenceBase
@@ -15,19 +18,15 @@ import com.intellij.psi.filters.ElementFilter
 import com.intellij.psi.filters.position.FilterPattern
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
-import com.intellij.psi.util.PsiTreeUtil.*
+import com.intellij.psi.util.PsiTreeUtil.getParentOfType
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ProcessingContext
 import com.intellij.util.castSafelyTo
-import org.apache.commons.lang.StringUtils
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.VueIdIndex
-import org.jetbrains.vuejs.model.VueMethod
 import org.jetbrains.vuejs.model.VueModelManager
-import org.jetbrains.vuejs.model.VueModelProximityVisitor
-import org.jetbrains.vuejs.model.VueProperty
 import org.jetbrains.vuejs.model.source.NAME_PROP
 import org.jetbrains.vuejs.model.source.TEMPLATE_PROP
 import org.jetbrains.vuejs.model.source.VueSourceEntity
@@ -50,23 +49,8 @@ class VueJSReferenceContributor : PsiReferenceContributor() {
       return PlatformPatterns.psiElement(JSReferenceExpression::class.java)
         .and(FilterPattern(object : ElementFilter {
           override fun isAcceptable(element: Any?, context: PsiElement?): Boolean {
-            if (element !is JSReferenceExpression
-                || element.qualifier !is JSThisExpression) return false
-
-            //find enclosing function and it's second level enclosing function
-            val function = getContextOfType(element, JSFunction::class.java)
-            if (function == null || !isVueContext(function)) return false
-            var secondLevelFunctionScope = findFirstContext(function, true) { it is JSFunction && !it.isArrowFunction } as? JSFunction
-            if (function.isArrowFunction && secondLevelFunctionScope != null) {
-              secondLevelFunctionScope = findFirstContext(secondLevelFunctionScope,
-                                                          true) { it is JSFunction && !it.isArrowFunction } as? JSFunction
-            }
-
-            val component = VueModelManager.findEnclosingComponent(element) as? VueSourceEntity ?: return false
-
-            // we're good if function is part of implementation and second level function is null or is not part of the component
-            return component.isPartOfImplementation(function)
-                   && (secondLevelFunctionScope == null || !component.isPartOfImplementation(secondLevelFunctionScope))
+            return VueModelManager.findComponentForThisResolve(
+              element.castSafelyTo<JSReferenceExpression>()?.qualifier?.castSafelyTo() ?: return false) != null
           }
 
           override fun isClassAcceptable(hintClass: Class<*>?): Boolean {
@@ -115,32 +99,25 @@ class VueJSReferenceContributor : PsiReferenceContributor() {
 
 
   private class VueComponentLocalReference(reference: JSReferenceExpressionImpl,
-                                           textRange: TextRange?) : CachingPolyReferenceBase<JSReferenceExpressionImpl>(reference,
-                                                                                                                        textRange) {
+                                           textRange: TextRange?)
+    : CachingPolyReferenceBase<JSReferenceExpressionImpl>(reference, textRange) {
+
     override fun resolveInner(): Array<ResolveResult> {
-      // let function context around the expression be enough to think it is used somewhere in assembling the exported object
       val ref = element
-      val name = StringUtils.uncapitalize(ref.referenceName)
-      if (name == null
-          || (ref.qualifier != null && ref.qualifier !is JSThisExpression)
-          || (getParentOfType(element, JSFunction::class.java, true)) == null) return ResolveResult.EMPTY_ARRAY
-      val result = mutableListOf<ResolveResult>()
-      VueModelManager.findEnclosingComponent(ref)?.acceptPropertiesAndMethods(object : VueModelProximityVisitor() {
-        override fun visitProperty(property: VueProperty, proximity: Proximity): Boolean {
-          return acceptSameProximity(proximity, name == StringUtils.uncapitalize(property.name)) {
-            property.source?.let { result.add(PsiElementResolveResult(it)) }
-          }
-        }
-
-        override fun visitMethod(method: VueMethod, proximity: Proximity): Boolean {
-          return acceptSameProximity(proximity, name == StringUtils.uncapitalize(method.name)) {
-            method.source?.let { result.add(PsiElementResolveResult(it)) }
-          }
-        }
-      }, onlyPublic = false)
-      return if (result.isNotEmpty()) result.toTypedArray() else ResolveResult.EMPTY_ARRAY
+      val name = ref.referenceName
+      if (name == null) return ResolveResult.EMPTY_ARRAY
+      return ref.qualifier
+               .castSafelyTo<JSThisExpression>()
+               ?.let { VueModelManager.findComponentForThisResolve(it) }
+               ?.thisType
+               ?.asRecordType()
+               ?.findPropertySignature(name)
+               ?.memberSource
+               ?.allSourceElements
+               ?.mapNotNull { if (it.isValid) PsiElementResolveResult(it) else null }
+               ?.toTypedArray<ResolveResult>()
+             ?: ResolveResult.EMPTY_ARRAY
     }
-
   }
 
   private class VueComponentNameReferenceProvider : PsiReferenceProvider() {

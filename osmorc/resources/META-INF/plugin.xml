@@ -107,8 +107,7 @@
 
     <facetType implementation="org.osmorc.facet.OsmorcFacetType"/>
     <framework.detector implementation="org.osmorc.facet.OsmorcFrameworkDetector"/>
-    <frameworkSupport implementation="org.osmorc.facet.OsgiFrameworkSupportProvider"/>
-    <library.type implementation="org.osmorc.facet.OsgiCoreLibraryType"/>
+
     <library.dependencyScopeSuggester implementation="org.osmorc.facet.OsgiLibraryDependencyScopeSuggester"/>
 
     <standardResourceProvider implementation="org.jetbrains.osgi.xml.OsgiResourceProvider"/>
@@ -132,7 +131,7 @@
                     key="configurable.LibraryBundlingEditor.display.name"
                     instance="org.osmorc.settings.LibraryBundlingEditor"/>
     </applicationConfigurable>
-    <notificationWhitelist groupIds="OSGi Bnd Notifications;OSGi;OSGi Important Messages"/>
+    <notificationAllowlist groupIds="OSGi Bnd Notifications;OSGi;OSGi Important Messages"/>
   </extensions>
 
   <extensions defaultExtensionNs="Osmorc">
@@ -152,13 +151,13 @@
   </projectListeners>
 
   <actions>
-    <action id="osgi.bnd.reimport" icon="OsmorcIdeaIcons.Bnd" text="Reimport Projects"
-            description="Reimport selected Bnd/Bndtools projects"
+    <action id="osgi.bnd.reimport" icon="OsmorcIdeaIcons.Bnd" text="Reload Projects"
+            description="Reload selected Bnd/Bndtools projects"
             class="org.jetbrains.osgi.bnd.imp.ReimportProjectsAction">
       <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
     </action>
-    <action id="osgi.bnd.reimport.all" icon="OsmorcIdeaIcons.Bnd" text="Reimport Workspace"
-            description="Reimport entire Bnd/Bndtools workspace"
+    <action id="osgi.bnd.reimport.all" icon="OsmorcIdeaIcons.Bnd" text="Reload Workspace"
+            description="Reload entire Bnd/Bndtools workspace"
             class="org.jetbrains.osgi.bnd.imp.ReimportWorkspaceAction">
       <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
     </action>

@@ -12,9 +12,8 @@ import org.jetbrains.annotations.NotNull;
 import static org.angular2.lang.Angular2LangUtil.ANGULAR_CORE_PACKAGE;
 
 public class Angular2NodeModulesContextProvider implements Angular2ContextProvider {
-  @NotNull
   @Override
-  public CachedValueProvider.Result<Boolean> isAngular2Context(@NotNull PsiDirectory psiDir) {
+  public @NotNull CachedValueProvider.Result<Boolean> isAngular2Context(@NotNull PsiDirectory psiDir) {
     NodeModulesDirectoryManager manager = NodeModulesDirectoryManager.getInstance(psiDir.getProject());
     boolean result = false;
     for (NodeModulesLibraryDirectory dir : manager.getNodeModulesDirectories()) {

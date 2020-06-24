@@ -1,8 +1,8 @@
 class com.xmxmxm.manager.clazz {
-  var tempo:uint;
+  var type:uint;
   var x:String = "A string with spelling errrror";
   function foo():void {
-    tempo = 1;
+    type = 1;
 
     var v:String = "foo\bline\fline\nline\rline\tline\u12abline\xabline" +
         "typoo\btypoo\ftypoo\ntypoo\rtypoo\ttypoo\u12abtypoo\xabtypoo";

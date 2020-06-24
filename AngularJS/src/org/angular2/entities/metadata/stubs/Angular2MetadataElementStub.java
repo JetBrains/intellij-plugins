@@ -18,9 +18,8 @@ public abstract class Angular2MetadataElementStub<Psi extends MetadataElement> e
 
   private static final AtomicNotNullLazyValue<Map<String, ConstructorFromJsonValue>> TYPE_FACTORY =
     new AtomicNotNullLazyValue<Map<String, ConstructorFromJsonValue>>() {
-      @NotNull
       @Override
-      protected Map<String, ConstructorFromJsonValue> compute() {
+      protected @NotNull Map<String, ConstructorFromJsonValue> compute() {
         return ContainerUtil.<String, ConstructorFromJsonValue>immutableMapBuilder()
           .put(SYMBOL_CLASS, Angular2MetadataClassStubBase::createClassStub)
           .put(SYMBOL_REFERENCE, Angular2MetadataReferenceStub::createReferenceStub)

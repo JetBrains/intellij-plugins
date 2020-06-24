@@ -24,9 +24,8 @@ public class Angular2FindUsagesHandlerFactory extends FindUsagesHandlerFactory {
     return element instanceof Angular2DirectiveSelectorPsiElement;
   }
 
-  @Nullable
   @Override
-  public FindUsagesHandler createFindUsagesHandler(@NotNull PsiElement element, boolean forHighlightUsages) {
+  public @Nullable FindUsagesHandler createFindUsagesHandler(@NotNull PsiElement element, boolean forHighlightUsages) {
     if (element instanceof Angular2DirectiveSelectorPsiElement) {
       return new DirectiveSelectorFindUsagesHandler((Angular2DirectiveSelectorPsiElement)element);
     }

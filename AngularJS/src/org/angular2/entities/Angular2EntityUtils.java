@@ -19,9 +19,11 @@ import org.angular2.lang.selector.Angular2DirectiveSimpleSelector;
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector.ParseException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import static com.intellij.openapi.util.Pair.pair;
 
@@ -34,8 +36,7 @@ public class Angular2EntityUtils {
   private static final String INDEX_ELEMENT_NAME_PREFIX = ">";
   private static final String INDEX_ATTRIBUTE_NAME_PREFIX = "=";
 
-  @NotNull
-  public static Collection<? extends TypeScriptFunction> getPipeTransformMethods(@NotNull TypeScriptClass cls) {
+  public static @NotNull Collection<? extends TypeScriptFunction> getPipeTransformMethods(@NotNull TypeScriptClass cls) {
     //noinspection RedundantCast,unchecked
     return (Collection<? extends TypeScriptFunction>)(Collection)TypeScriptTypeParser
       .buildTypeFromClass(cls, false)
@@ -52,8 +53,7 @@ public class Angular2EntityUtils {
       .orElseGet(Collections::emptyList);
   }
 
-  @NotNull
-  public static Pair<String, String> parsePropertyMapping(@NotNull String property) {
+  public static @NotNull Pair<String, String> parsePropertyMapping(@NotNull String property) {
     int ind = property.indexOf(':');
     if (ind > 0) {
       return pair(property.substring(0, ind).trim(), property.substring(ind + 1).trim());
@@ -61,8 +61,7 @@ public class Angular2EntityUtils {
     return pair(property.trim(), property.trim());
   }
 
-  @NotNull
-  public static String getElementDirectiveIndexName(@NotNull String elementName) {
+  public static @NotNull String getElementDirectiveIndexName(@NotNull String elementName) {
     return INDEX_ELEMENT_NAME_PREFIX + elementName;
   }
 
@@ -70,16 +69,14 @@ public class Angular2EntityUtils {
     return elementName.startsWith(INDEX_ELEMENT_NAME_PREFIX);
   }
 
-  @NotNull
-  public static String getElementName(@NotNull String elementDirectiveIndexName) {
+  public static @NotNull String getElementName(@NotNull String elementDirectiveIndexName) {
     if (!isElementDirectiveIndexName(elementDirectiveIndexName)) {
       throw new IllegalArgumentException();
     }
     return elementDirectiveIndexName.substring(1);
   }
 
-  @NotNull
-  public static String getAttributeDirectiveIndexName(@NotNull String attributeName) {
+  public static @NotNull String getAttributeDirectiveIndexName(@NotNull String attributeName) {
     return INDEX_ATTRIBUTE_NAME_PREFIX + attributeName;
   }
 
@@ -87,16 +84,18 @@ public class Angular2EntityUtils {
     return attributeName.startsWith(INDEX_ATTRIBUTE_NAME_PREFIX);
   }
 
-  @NotNull
-  public static String getAttributeName(@NotNull String attributeIndexName) {
+  public static @NotNull String getAttributeName(@NotNull String attributeIndexName) {
     if (!isAttributeDirectiveIndexName(attributeIndexName)) {
       throw new IllegalArgumentException();
     }
     return attributeIndexName.substring(1);
   }
 
-  @NotNull
-  public static Set<String> getDirectiveIndexNames(@NotNull String selector) {
+  public static <T extends Angular2Module> @Nullable T defaultChooseModule(@NotNull Stream<T> modulesStream) {
+    return modulesStream.min(Comparator.comparing(Angular2Module::getName)).orElse(null);
+  }
+
+  public static @NotNull Set<String> getDirectiveIndexNames(@NotNull String selector) {
     List<Angular2DirectiveSimpleSelector> selectors;
     try {
       selectors = Angular2DirectiveSimpleSelector.parse(selector);
@@ -262,8 +261,7 @@ public class Angular2EntityUtils {
     return getEntityClassName(entity);
   }
 
-  @NotNull
-  public static String unquote(@NotNull String s) {
+  public static @NotNull String unquote(@NotNull String s) {
     return s.length() > 1 && ("'\"`".indexOf(s.charAt(0)) >= 0) && s.charAt(0) == s.charAt(s.length() - 1) ?
            s.substring(1, s.length() - 1) : s;
   }

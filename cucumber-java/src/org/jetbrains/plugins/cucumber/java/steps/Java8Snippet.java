@@ -10,6 +10,6 @@ public class Java8Snippet extends JavaSnippet {
 
   @Override
   public String template() {
-    return "{0}(\"{1}\", ({3}) -> \'{\'\n    // {4}\n{5}    throw new PendingException();\n\'}\')";
+    return "{0}(\"{1}\", ({3}) -> '{'\n    // {4}\n{5}    throw new PendingException();\n'}')";
   }
 }

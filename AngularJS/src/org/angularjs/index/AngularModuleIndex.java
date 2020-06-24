@@ -17,9 +17,8 @@ import java.util.Set;
 public class AngularModuleIndex extends AngularIndexBase {
   public static final StubIndexKey<String, JSImplicitElementProvider> KEY = StubIndexKey.createIndexKey("angularjs.module.index");
 
-  @NotNull
   @Override
-  public StubIndexKey<String, JSImplicitElementProvider> getKey() {
+  public @NotNull StubIndexKey<String, JSImplicitElementProvider> getKey() {
     return KEY;
   }
 
@@ -27,10 +26,11 @@ public class AngularModuleIndex extends AngularIndexBase {
   public static List<String> findDependenciesInModuleDeclaration(JSCallExpression call) {
     final JSExpression methodExpression = call.getMethodExpression();
     if (methodExpression instanceof JSReferenceExpression &&
-        JSSymbolUtil.isAccurateReferenceExpressionName((JSReferenceExpression)methodExpression, "angular", AngularJSIndexingHandler.MODULE)) {
+        JSSymbolUtil
+          .isAccurateReferenceExpressionName((JSReferenceExpression)methodExpression, "angular", AngularJSIndexingHandler.MODULE)) {
       final JSExpression[] arguments = call.getArguments();
       if (arguments.length > 1 && arguments[0] instanceof JSLiteralExpression
-          && ((JSLiteralExpression) arguments[0]).isQuotedLiteral()
+          && ((JSLiteralExpression)arguments[0]).isQuotedLiteral()
           && arguments[1] instanceof JSArrayLiteralExpression) {
         final JSArrayLiteralExpression array = (JSArrayLiteralExpression)arguments[1];
         final JSExpression[] children = array.getExpressions();

@@ -157,6 +157,7 @@ class OsgiMavenImporterTest : FacetImporterTestCase<OsmorcFacet>() {
           <groupId>org.apache.felix</groupId>
           <artifactId>maven-bundle-plugin</artifactId>
           <version>2.5.3</version>
+          <extensions>true</extensions>
           ${pluginConfig}
         </plugin>
       </plugins>

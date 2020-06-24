@@ -1,5 +1,5 @@
 package <error>foo</error> {
-public <error>final</error> interface <error>Target</error> {
+public <error>final</error> interface Target {
     <error>fi<caret>nal</error> function doIt();
 }
 }

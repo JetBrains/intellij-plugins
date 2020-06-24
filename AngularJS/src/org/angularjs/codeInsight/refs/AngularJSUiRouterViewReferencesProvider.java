@@ -21,7 +21,7 @@ public class AngularJSUiRouterViewReferencesProvider extends PsiReferenceProvide
   @Override
   public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
     final PsiElement identifier = element instanceof JSProperty ? ((JSProperty)element).getNameIdentifier() : element;
-    return new PsiReference[] {new AngularJSUiRouterViewReference(identifier)};
+    return new PsiReference[]{new AngularJSUiRouterViewReference(identifier)};
   }
 
   private static class AngularJSUiRouterViewReference extends CachingPolyReferenceBase<PsiElement> {
@@ -41,7 +41,8 @@ public class AngularJSUiRouterViewReferencesProvider extends PsiReferenceProvide
       final String id = getViewName();
       final Condition<VirtualFile> filter = StringUtil.isEmptyOrSpaces(id) ? filterByTemplateUrl() : Conditions.alwaysTrue();
       return AngularIndexUtil.multiResolveAngularNamedDefinitionIndex(getElement().getProject(),
-                                                                      AngularUiRouterViewsIndex.UI_ROUTER_VIEWS_CACHE_INDEX, id, filter, false);
+                                                                      AngularUiRouterViewsIndex.UI_ROUTER_VIEWS_CACHE_INDEX, id, filter,
+                                                                      false);
     }
 
     private Condition<VirtualFile> filterByTemplateUrl() {

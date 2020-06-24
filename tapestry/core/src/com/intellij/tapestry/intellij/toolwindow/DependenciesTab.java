@@ -7,7 +7,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiFile;
-import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.java.IJavaField;
 import com.intellij.tapestry.core.model.presentation.InjectedElement;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
@@ -115,51 +114,12 @@ public class DependenciesTab {
                 new TreeSelectionListener() {
                     @Override
                     public void valueChanged(TreeSelectionEvent event) {
-
                         if (event.getNewLeadSelectionPath() != null) {
-                            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) event.getNewLeadSelectionPath().getLastPathComponent();
-                            Object selectedObject = selectedNode.getUserObject();
+                          _dependenciesTree.getSelectionCount();
+                          _documentationPane.setText(null);
 
-                            Object selectedClass = ((DefaultMutableTreeNode) event.getNewLeadSelectionPath().getPath()[0]).getUserObject();
-                            IJavaClassType elementClass = ((PresentationLibraryElement) selectedClass).getElementClass();
-
-                            String text = null;
-                            try {
-                                /*if (selectedNode instanceof EmbeddedComponentsNode) {
-                                    text = SerializationHandler.getInstance().serializeToDependencies(((EmbeddedComponentsNode) selectedNode).getEmbeddedComponentNodes(), "Embedded");
-                                } else if (selectedNode instanceof InjectedPagesNode) {
-                                    text = SerializationHandler.getInstance().serializeToDependencies(((InjectedPagesNode) selectedNode).getInjectedComponentNodes(), "Injected");
-                                } else if (selectedNode instanceof EmbeddedComponentNode) {
-                                    text = SerializationHandler.getInstance().serializeToDocumentation(((EmbeddedComponentNode) selectedNode).getInjectedComponent(), elementClass);
-                                } else if (selectedNode instanceof InjectedPageNode) {
-                                    text = SerializationHandler.getInstance().serializeToDocumentation(((InjectedPageNode) selectedNode).getInjectedPage(), elementClass);
-                                } else if (selectedNode instanceof EmbeddedTemplateNode) {
-                                    text = SerializationHandler.getInstance().serializeToDependencies(((EmbeddedTemplateNode) selectedNode).getEmbeddedTemplateNodes(), selectedNode.toString());
-                                } else {
-                                    text = SerializationHandler.getInstance().serializeToDocumentation(selectedObject, null);
-                                }*/
-                            } catch (RuntimeException e) {
-                                text = null;
-                            }
-
-                            if (_dependenciesTree.getSelectionCount() == 1 && text != null && !(selectedNode instanceof EmbeddedComponentsNode) && !(selectedNode instanceof InjectedPagesNode)) {
-                                _documentationPane.setText(text);
-                                _documentationPane.setSelectionStart(0);
-                                _documentationPane.setSelectionEnd(0);
-
-                                _navigateToElementAction.getTemplatePresentation().setEnabled(true);
-
-                                if (selectedNode instanceof EmbeddedTemplateNode || selectedNode.isRoot())
-                                    _navigateToUsageAction.getTemplatePresentation().setEnabled(false);
-                                else
-                                    _navigateToUsageAction.getTemplatePresentation().setEnabled(true);
-
-                            } else {
-                                _documentationPane.setText(text);
-
-                                _navigateToElementAction.getTemplatePresentation().setEnabled(false);
-                                _navigateToUsageAction.getTemplatePresentation().setEnabled(false);
-                            }
+                          _navigateToElementAction.getTemplatePresentation().setEnabled(false);
+                          _navigateToUsageAction.getTemplatePresentation().setEnabled(false);
                         }
                     }
                 }
@@ -202,20 +162,13 @@ public class DependenciesTab {
      * @param element the element to show the dependencies of.
      */
     public void showDependencies(Module module, Object element) {
-        String text = null;
-        try {
-            //text = SerializationHandler.getInstance().serializeToDocumentation(element, null);
-        } catch (RuntimeException e) {
-            text = null;
-        }
-
-        if (shouldShowDependencies(element)) {
+      if (shouldShowDependencies(element)) {
             _dependenciesTree.setVisible(true);
 
             _dependenciesTree.setModel(null);
             _dependenciesTree.setModel(new DefaultTreeModel(new DependenciesRootNode(element)));
 
-            _documentationPane.setText(text);
+            _documentationPane.setText(null);
 
             _navigateToElementAction.getTemplatePresentation().setEnabled(false);
             _navigateToUsageAction.getTemplatePresentation().setEnabled(false);

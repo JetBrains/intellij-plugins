@@ -149,14 +149,14 @@
     <variable name="2" expression="" defaultValue="&quot;'root'&quot;" alwaysStopAt="true" />
     <variable name="Name" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
     <context>
-      <option name="TS_STATEMENT" value="true" />
+      <option name="TS_TOP_LEVEL_STATEMENT" value="true" />
     </context>
   </template>
   <template name="a-guard-can-activate-child" value="import { Injectable } from &apos;@angular/core&apos;;&#10;import { ActivatedRouteSnapshot, CanActivateChild, RouterStateSnapshot } from &apos;@angular/router&apos;;&#10;&#10;@Injectable({providedIn: $2$})&#10;export class $Name$Guard implements CanActivateChild {&#10;	constructor() { }&#10;&#10;	canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {&#10;		return true;$END$&#10;	}&#10;}" description="Angular CanActivateChild guard" toReformat="true" toShortenFQNames="true">
     <variable name="2" expression="" defaultValue="&quot;'root'&quot;" alwaysStopAt="true" />
     <variable name="Name" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
     <context>
-      <option name="TS_STATEMENT" value="true" />
+      <option name="TS_TOP_LEVEL_STATEMENT" value="true" />
     </context>
   </template>
   <template name="a-guard-can-deactivate" value="import { Injectable } from &apos;@angular/core&apos;;&#10;import { ActivatedRouteSnapshot, CanDeactivate, RouterStateSnapshot } from &apos;@angular/router&apos;;&#10;import { Observable } from &apos;rxjs&apos;;&#10;&#10;import { $ComponentName$Component } from &apos;./$filename$.component&apos;;&#10;&#10;// Consider using this interface for all CanDeactivate guards,&#10;// and have your components implement this interface, too.&#10;//&#10;//   e.g. export class CanDeactivateGuard implements CanDeactivate&lt;CanComponentDeactivate&gt; {&#10;//&#10;// export interface CanComponentDeactivate {&#10;// canDeactivate: () =&gt; any;&#10;// }&#10;&#10;@Injectable({providedIn: $4$})&#10;export class $Name$Guard implements CanDeactivate&lt;$ComponentName$Component&gt; {&#10;	canDeactivate(&#10;		component: $ComponentName$Component,&#10;		currentRoute: ActivatedRouteSnapshot, &#10;		currentState: RouterStateSnapshot&#10;	): Observable&lt;boolean&gt;|Promise&lt;boolean&gt;|boolean {&#10;		return false;$END$&#10;	}&#10;}" description="Angular CanDeactivate guard" toReformat="true" toShortenFQNames="true">
@@ -165,14 +165,14 @@
     <variable name="filename" expression="lowercaseAndDash(ComponentName)" defaultValue="" alwaysStopAt="true" />
     <variable name="Name" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
     <context>
-      <option name="TS_STATEMENT" value="true" />
+      <option name="TS_TOP_LEVEL_STATEMENT" value="true" />
     </context>
   </template>
   <template name="a-guard-can-load" value="import { Injectable } from &apos;@angular/core&apos;;&#10;import { CanLoad, Route } from &apos;@angular/router&apos;;&#10;&#10;@Injectable({providedIn: $2$})&#10;export class $Name$Guard implements CanLoad {&#10;	constructor() { }&#10;&#10;	canLoad(route: Route) {&#10;		return true;$END$&#10;	}&#10;}" description="Angular CanLoad guard" toReformat="true" toShortenFQNames="true">
     <variable name="2" expression="" defaultValue="&quot;'root'&quot;" alwaysStopAt="true" />
     <variable name="Name" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
     <context>
-      <option name="TS_STATEMENT" value="true" />
+      <option name="TS_TOP_LEVEL_STATEMENT" value="true" />
     </context>
   </template>
   <template name="a-component" value="import { Component, OnInit } from &apos;@angular/core&apos;;&#10;&#10;@Component({&#10;	selector: &apos;$selector_name$&apos;,&#10;	templateUrl: &apos;$name$.component.html&apos;&#10;})&#10;&#10;export class $Name$Component implements OnInit {&#10;	constructor() { }&#10;&#10;	ngOnInit() { }$END$&#10;}" description="Angular component" toReformat="true" toShortenFQNames="true">
@@ -180,7 +180,7 @@
     <variable name="name" expression="lowercaseAndDash(Name)" defaultValue="" alwaysStopAt="true" />
     <variable name="selector_name" expression="lowercaseAndDash(Name)" defaultValue="" alwaysStopAt="true" />
     <context>
-      <option name="TS_STATEMENT" value="true" />
+      <option name="TS_TOP_LEVEL_STATEMENT" value="true" />
     </context>
   </template>
   <template name="a-component-inline" value="import { Component, OnInit } from &apos;@angular/core&apos;;&#10;&#10;@Component({&#10;	selector: &apos;$selector_name$&apos;,&#10;	template: `$END$`&#10;})&#10;&#10;export class $Name$Component implements OnInit {&#10;	constructor() { }&#10;&#10;	ngOnInit() { }&#10;}" description="Angular component with an inline template" toReformat="true" toShortenFQNames="true">
@@ -188,13 +188,13 @@
     <variable name="selector_name" expression="lowercaseAndDash(Name)" defaultValue="" alwaysStopAt="true" />
 
     <context>
-      <option name="TS_STATEMENT" value="true" />
+      <option name="TS_TOP_LEVEL_STATEMENT" value="true" />
     </context>
   </template>
   <template name="a-preload-strategy" value="import { PreloadingStrategy, Route } from &apos;@angular/router&apos;;&#10;import { Observable, of } from &apos;rxjs&apos;;&#10;&#10;export class PreloadSelectedModulesList implements PreloadingStrategy {&#10;	preload(route: Route, load: Function): Observable&lt;any&gt; {&#10;		return route.data &amp;&amp; route.data[&apos;$preload$&apos;] ? load() : of(null);&#10;	}&#10;}&#10;$END$" description="Angular custom preload strategy" toReformat="true" toShortenFQNames="true">
     <variable name="preload" expression="" defaultValue="&quot;preload&quot;" alwaysStopAt="true" />
     <context>
-      <option name="TS_STATEMENT" value="true" />
+      <option name="TS_TOP_LEVEL_STATEMENT" value="true" />
     </context>
   </template>
   <template name="a-route-path-default" value="{ path: &apos;&apos;, pathMatch: &apos;full&apos;, redirectTo: &apos;$path$&apos; }$END$" description="Angular default route path" toReformat="true" toShortenFQNames="true">
@@ -207,7 +207,7 @@
     <variable name="Name" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
     <variable name="selector_name" expression="lowercaseAndDash(Name)" defaultValue="" alwaysStopAt="true" />
     <context>
-      <option name="TS_STATEMENT" value="true" />
+      <option name="TS_TOP_LEVEL_STATEMENT" value="true" />
     </context>
   </template>
   <template name="a-route-path-eager" value="{ path: &apos;$path$&apos;, component: $Name$Component }," description="Angular eager route path" toReformat="true" toShortenFQNames="true">
@@ -221,26 +221,26 @@
     <variable name="2" expression="" defaultValue="&quot;'root'&quot;" alwaysStopAt="true" />
     <variable name="ServiceName" expression="" defaultValue="&quot;ServiceName&quot;" alwaysStopAt="true" />
     <context>
-      <option name="TS_STATEMENT" value="true" />
+      <option name="TS_TOP_LEVEL_STATEMENT" value="true" />
     </context>
   </template>
   <template name="a-http-interceptor" value="import { Injectable } from &apos;@angular/core&apos;;&#10;import { HttpInterceptor, HttpEvent, HttpHandler, HttpRequest } from &apos;@angular/common/http&apos;;&#10;import { Observable } from &apos;rxjs&apos;;&#10;&#10;@Injectable({providedIn: $1$})&#10;export class HeaderInterceptor implements HttpInterceptor {&#10;	intercept(req: HttpRequest&lt;any&gt;, next: HttpHandler): Observable&lt;HttpEvent&lt;any&gt;&gt; {&#10;		return next.handle(req);&#10;	}&#10;}" description="Empty Angular HttpInterceptor for HttpClient" toReformat="true" toShortenFQNames="true">
     <variable name="1" expression="" defaultValue="&quot;'root'&quot;" alwaysStopAt="true" />
     <context>
-      <option name="TS_STATEMENT" value="true" />
+      <option name="TS_TOP_LEVEL_STATEMENT" value="true" />
     </context>
   </template>
   <template name="a-http-interceptor-headers" value="import { Injectable } from &apos;@angular/core&apos;;&#10;import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest } from &apos;@angular/common/http&apos;;&#10;import { Observable } from &apos;rxjs&apos;;&#10;&#10;@Injectable({providedIn: $1$})&#10;export class HeaderInterceptor implements HttpInterceptor {&#10;	constructor() {}&#10;&#10;	intercept(req: HttpRequest&lt;any&gt;, next: HttpHandler): Observable&lt;HttpEvent&lt;any&gt;&gt; {&#10;		const headers = req.headers&#10;			.set(&apos;Content-Type&apos;, &apos;application/json&apos;);&#10;		const authReq = req.clone({ headers });&#10;		return next.handle(authReq);&#10;	}&#10;}" description="Angular HttpInterceptor for headers HttpClient" toReformat="true" toShortenFQNames="true">
     <variable name="1" expression="" defaultValue="&quot;'root'&quot;" alwaysStopAt="true" />
     <context>
-      <option name="TS_STATEMENT" value="true" />
+      <option name="TS_TOP_LEVEL_STATEMENT" value="true" />
     </context>
   </template>
   <template name="a-http-interceptor-logging" value="import { HttpInterceptor, HttpHandler, HttpRequest, HttpEvent, HttpResponse } from &apos;@angular/common/http&apos;;&#10;import { Observable, tap } from &apos;rxjs&apos;;&#10;&#10;@Injectable({providedIn: $1$})&#10;export class LogInterceptor implements HttpInterceptor {&#10;	constructor() {}&#10;&#10;	intercept(req: HttpRequest&lt;any&gt;, next: HttpHandler): Observable&lt;HttpEvent&lt;any&gt;&gt; {&#10;		const started = Date.now();&#10;		return next.handle(req).pipe(&#10;			tap(event =&gt; {&#10;				if (event instanceof HttpResponse) {&#10;					const elapsed = Date.now() - started;&#10;					console.log(`Request for \${req.urlWithParams} took \$elapsed$ ms.`);&#10;				}&#10;			})&#10;		);&#10;	}&#10;}" description="Angular HttpInterceptor for Logging HttpClient" toReformat="true" toShortenFQNames="true">
     <variable name="1" expression="" defaultValue="&quot;'root'&quot;" alwaysStopAt="true" />
     <variable name="elapsed" expression="" defaultValue="&quot;&quot;" alwaysStopAt="true" />
     <context>
-      <option name="TS_STATEMENT" value="true" />
+      <option name="TS_TOP_LEVEL_STATEMENT" value="true" />
     </context>
   </template>
   <template name="a-route-path-lazy" value="{ path: &apos;$path$&apos;, loadChildren: &apos;$lazy_path$#$lazy_module$&apos; }," description="Angular lazy route path" toReformat="true" toShortenFQNames="true">
@@ -255,7 +255,7 @@
     <variable name="Name" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
     <variable name="name" expression="lowercaseAndDash(Name)" defaultValue="" alwaysStopAt="true" />
     <context>
-      <option name="TS_STATEMENT" value="true" />
+      <option name="TS_TOP_LEVEL_STATEMENT" value="true" />
     </context>
   </template>
   <template name="a-ctor-skip-self" value="constructor( @Optional() @SkipSelf() parentModule: $ModuleName$ {&#10;	if (parentModule) {&#10;		const msg = `$ModuleName$ has already been loaded. &#10;			Import $ModuleName$ once, only, in the root AppModule.`;&#10;		throw new Error(msg);&#10;	}&#10;}" description="Angular Module SkipSelf constructor" toReformat="true" toShortenFQNames="true">
@@ -268,14 +268,14 @@
     <variable name="forChild" expression="" defaultValue="&quot;forChild&quot;" alwaysStopAt="true" />
     <variable name="Name" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
     <context>
-      <option name="TS_STATEMENT" value="true" />
+      <option name="TS_TOP_LEVEL_STATEMENT" value="true" />
     </context>
   </template>
   <template name="a-pipe" value="import { Pipe, PipeTransform } from &apos;@angular/core&apos;;&#10;&#10;@Pipe({&#10;	name: &apos;$selector_name$&apos;&#10;})&#10;&#10;export class $Name$Pipe implements PipeTransform {&#10;	transform(value: any, ...args: any[]): any {&#10;		$END$&#10;	}&#10;}" description="Angular pipe" toReformat="true" toShortenFQNames="true">
     <variable name="Name" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
     <variable name="selector_name" expression="lowercaseAndDash(Name)" defaultValue="" alwaysStopAt="true" />
     <context>
-      <option name="TS_STATEMENT" value="true" />
+      <option name="TS_TOP_LEVEL_STATEMENT" value="true" />
     </context>
   </template>
   <template name="a-injectable-providedin" value="@Injectable({providedIn: $1$})$END$" description="Angular Injectable ProvidedIn" toReformat="true" toShortenFQNames="true">
@@ -288,14 +288,14 @@
     <variable name="prefix_app" expression="" defaultValue="&quot;prefix-app&quot;" alwaysStopAt="true" />
     <variable name="App" expression="" defaultValue="&quot;App&quot;" alwaysStopAt="true" />
     <context>
-      <option name="TS_STATEMENT" value="true" />
+      <option name="TS_TOP_LEVEL_STATEMENT" value="true" />
     </context>
   </template>
   <template name="a-module-root" value="import { NgModule } from &apos;@angular/core&apos;;&#10;import { BrowserModule  } from &apos;@angular/platform-browser&apos;;&#10;import { HttpModule } from &apos;@angular/http&apos;;&#10;&#10;import { $App$Component } from &apos;./$app$.component&apos;;&#10;&#10;@NgModule({&#10;	imports: [&#10;		BrowserModule,&#10;		HttpModule,&#10;	],&#10;	declarations: [$App$Component],&#10;	bootstrap: [$App$Component],&#10;})&#10;export class $App$Module { }&#10;$END$" description="Angular Root Module" toReformat="true" toShortenFQNames="true">
     <variable name="App" expression="" defaultValue="&quot;App&quot;" alwaysStopAt="true" />
     <variable name="app" expression="lowercaseAndDash(App)" defaultValue="" alwaysStopAt="true" />
     <context>
-      <option name="TS_STATEMENT" value="true" />
+      <option name="TS_TOP_LEVEL_STATEMENT" value="true" />
     </context>
   </template>
   <template name="a-route-path-with-children" value="{&#10;	path: &apos;$path$&apos;, &#10;	component: $Component$,&#10;	children: [&#10;		{ path: &apos;$childpath$&apos;, component: $ChildComponent$ }&#10;	]&#10;}$END$" description="Angular route path with children" toReformat="true" toShortenFQNames="true">
@@ -316,7 +316,7 @@
   <template name="a-service" value="import { Injectable } from &apos;@angular/core&apos;;&#10;&#10;@Injectable()&#10;export class $Name$Service {&#10;$END$&#10;	constructor() { }&#10;}" description="Angular service" toReformat="true" toShortenFQNames="true">
     <variable name="Name" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true" />
     <context>
-      <option name="TS_STATEMENT" value="true" />
+      <option name="TS_TOP_LEVEL_STATEMENT" value="true" />
     </context>
   </template>
   <template name="a-httpclient-get" value="return this.httpClient.get(&apos;$url$&apos;);$END$" description="Angular HttpClient.get" toReformat="true" toShortenFQNames="true">
@@ -329,18 +329,18 @@
     <variable name="2" expression="" defaultValue="&quot;../core&quot;" alwaysStopAt="true" />
     <variable name="Model" expression="" defaultValue="&quot;Model&quot;" alwaysStopAt="true" />
     <context>
-      <option name="TS_STATEMENT" value="true" />
+      <option name="TS_TOP_LEVEL_STATEMENT" value="true" />
     </context>
   </template>
   <template name="a-ngrx-data-entity-metadata" value="import { EntityMetadataMap } from &apos;ngrx-data&apos;;&#10;&#10;const entityMetadata: EntityMetadataMap = {&#10;  $Model1$: {},$END$&#10;};&#10;&#10;export const entityConfig = {&#10;  entityMetadata&#10;};" description="NgRx Data Entity Metadata" toReformat="true" toShortenFQNames="true">
     <variable name="Model1" expression="" defaultValue="&quot;Model1&quot;" alwaysStopAt="true" />
     <context>
-      <option name="TS_STATEMENT" value="true" />
+      <option name="TS_TOP_LEVEL_STATEMENT" value="true" />
     </context>
   </template>
   <template name="a-ngrx-data-store-module" value="import { NgModule } from &apos;@angular/core&apos;;&#10;import { EffectsModule } from &apos;@ngrx/effects&apos;;&#10;import { StoreModule } from &apos;@ngrx/store&apos;;&#10;import { StoreDevtoolsModule } from &apos;@ngrx/store-devtools&apos;;&#10;import { NgrxDataModule } from &apos;ngrx-data&apos;;&#10;import { environment } from &apos;../../environments/environment&apos;;&#10;import { entityConfig } from &apos;./entity-metadata&apos;;&#10;&#10;@NgModule({&#10;  imports: [&#10;    StoreModule.forRoot({}),&#10;    EffectsModule.forRoot([]),&#10;    environment.production ? [] : StoreDevtoolsModule.instrument(),&#10;    NgrxDataModule.forRoot(entityConfig)&#10;  ]&#10;})&#10;export class AppStoreModule {}" description="NgRx Data Store Module" toReformat="true" toShortenFQNames="true">
     <context>
-      <option name="TS_STATEMENT" value="true" />
+      <option name="TS_TOP_LEVEL_STATEMENT" value="true" />
     </context>
   </template>
   <template name="a-output-event" value="@Output() $eventName$ = new EventEmitter&lt;$eventType$&gt;();" description="Angular @Output event and emitter" toReformat="true" toShortenFQNames="true">
@@ -359,13 +359,13 @@
   <template name="a-rxjs-import" value="import { $Observable$ } from &apos;rxjs&apos;;&#10;$END$" description="RxJs import" toReformat="true" toShortenFQNames="true">
     <variable name="Observable" expression="" defaultValue="&quot;Observable&quot;" alwaysStopAt="true" />
     <context>
-      <option name="TS_STATEMENT" value="true" />
+      <option name="TS_TOP_LEVEL_STATEMENT" value="true" />
     </context>
   </template>
   <template name="a-rxjs-operator-import" value="import { $map$ } from &apos;rxjs/operators&apos;;&#10;$END$" description="RxJs import" toReformat="true" toShortenFQNames="true">
     <variable name="map" expression="" defaultValue="&quot;map&quot;" alwaysStopAt="true" />
     <context>
-      <option name="TS_STATEMENT" value="true" />
+      <option name="TS_TOP_LEVEL_STATEMENT" value="true" />
     </context>
   </template>
   <template name="a-subscribe" value="this.$service$.$function$&#10;	.subscribe($arg$ =&gt; this.$property$ = $arg$);&#10;$END$" description="Angular observable subscribe" toReformat="true" toShortenFQNames="true">

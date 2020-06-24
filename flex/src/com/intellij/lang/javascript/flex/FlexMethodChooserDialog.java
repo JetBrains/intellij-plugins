@@ -95,6 +95,6 @@ public class FlexMethodChooserDialog extends DialogWrapper {
   }
 
   public JSFunction getSelectedMethod() {
-    return (JSFunction)myList.getSelectedValue();
+    return myList.getSelectedValue();
   }
 }

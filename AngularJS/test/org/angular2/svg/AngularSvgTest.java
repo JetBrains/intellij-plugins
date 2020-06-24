@@ -7,6 +7,7 @@ import org.angular2.inspections.Angular2TemplateInspectionsProvider;
 import org.angularjs.AngularTestUtil;
 
 import static com.intellij.util.containers.ContainerUtil.sorted;
+import static org.angular2.modules.Angular2TestModule.*;
 import static org.angularjs.AngularTestUtil.renderLookupItems;
 
 public class AngularSvgTest extends Angular2CodeInsightFixtureTestCase {
@@ -17,15 +18,15 @@ public class AngularSvgTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testHighlighting() {
+    configureCopy(myFixture, ANGULAR_COMMON_4_0_0, ANGULAR_CORE_4_0_0);
     myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
-    myFixture.copyDirectoryToProject(".", ".");
-    myFixture.configureFromTempProjectFile("svg-highlighting.component.svg");
+    myFixture.configureByFiles("svg-highlighting.component.svg","svg-highlighting.component.ts");
     myFixture.checkHighlighting();
   }
 
   public void testCompletion() {
-    myFixture.copyDirectoryToProject(".", ".");
-    myFixture.configureFromTempProjectFile("svg-completion.component.svg");
+    configureLink(myFixture, ANGULAR_COMMON_4_0_0, ANGULAR_CORE_4_0_0);
+    myFixture.configureByFiles("svg-completion.component.svg", "svg-completion.component.ts");
     AngularTestUtil.moveToOffsetBySignature("<<caret>paths></paths>", myFixture);
     myFixture.completeBasic();
     assertEquals(StreamEx.of(
@@ -38,8 +39,9 @@ public class AngularSvgTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testExpressionsCompletion() {
+    configureCopy(myFixture, ANGULAR_COMMON_4_0_0, ANGULAR_CORE_4_0_0);
     myFixture.copyDirectoryToProject(".", ".");
-    myFixture.configureFromTempProjectFile("svg-completion.component.svg");
+    myFixture.configureByFiles("svg-completion.component.svg", "svg-completion.component.ts");
     AngularTestUtil.moveToOffsetBySignature("{{<caret>item.height}}", myFixture);
     myFixture.completeBasic();
     assertEquals(StreamEx.of(
@@ -49,13 +51,14 @@ public class AngularSvgTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testExpressionsCompletion2() {
+    configureCopy(myFixture, ANGULAR_COMMON_4_0_0, ANGULAR_CORE_4_0_0);
     myFixture.copyDirectoryToProject(".", ".");
-    myFixture.configureFromTempProjectFile("svg-completion.component.svg");
+    myFixture.configureByFiles("svg-completion.component.svg", "svg-completion.component.ts");
     AngularTestUtil.moveToOffsetBySignature("{{item.<caret>height}}", myFixture);
     myFixture.completeBasic();
     assertEquals(StreamEx.of(
-      "!foo#string#101", "!width#number#101", "constructor#Function#99", "hasOwnProperty#boolean#99", "isPrototypeOf#boolean#99",
-      "propertyIsEnumerable#boolean#99", "toLocaleString#string#99", "toString#string#99", "valueOf#Object#99"
+      "!foo#string#101", "!width#number#101", "constructor#Function#98", "hasOwnProperty#boolean#98", "isPrototypeOf#boolean#98",
+      "propertyIsEnumerable#boolean#98", "toLocaleString#string#98", "toString#string#98", "valueOf#Object#98"
                  ).sorted().toList(),
                  sorted(renderLookupItems(myFixture, true, true)));
   }

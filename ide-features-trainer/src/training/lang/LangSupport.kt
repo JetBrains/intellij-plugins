@@ -10,6 +10,7 @@ import training.learn.exceptons.NoSdkException
 import java.io.File
 
 interface LangSupport {
+  /** Is should be a language ID */
   val primaryLanguage: String
   val defaultProductName: String
     get() = ""
@@ -20,17 +21,19 @@ interface LangSupport {
     get() = null
 
   /** Callback should download and install demo project */
-  @JvmDefault
   val installRemoteProject: ((projectDirectory: File) -> Unit)?
     get() = null
 
   /** Relative path inside plugin resources. Used iff [installRemoteProject] is null*/
-  @JvmDefault
   val projectResourcePath: String
-  get() = "/learnProjects/${primaryLanguage.toLowerCase()}/$defaultProjectName"
+    get() = "/learnProjects/${primaryLanguage.toLowerCase()}/$defaultProjectName"
+
+  /** Language can specify default sandbox-like file to be used for lessons with modifications but also with project support */
+  val projectSandboxRelativePath: String?
+    get() = null
 
   companion object {
-    const val EP_NAME = "training.TrainingLangExtension"
+    const val EP_NAME = "training.ift.language.extension"
   }
 
   /**
@@ -63,18 +66,6 @@ interface LangSupport {
 
   fun getToolWindowAnchor(): ToolWindowAnchor = ToolWindowAnchor.LEFT
 
-  @Deprecated("It is useless method now")
-  fun importLearnProject(): Project? {
-    return null
-  }
-
-  @Deprecated("This method will be removed, just define projectResourcePath to customize your project deirectory")
-  fun createProject(projectName: String, projectToClose: Project?): Project? = null
-
-  @Deprecated("It is not called from anywhere, just API watcher binary compatibility problem")
-  fun setProjectListeners(project: Project) {}
-
   /** true means block source code modification in demo learning projects (scratches can be modified anyway)*/
-  @JvmDefault
   fun blockProjectFileModification(project: Project, file: VirtualFile): Boolean = false
 }

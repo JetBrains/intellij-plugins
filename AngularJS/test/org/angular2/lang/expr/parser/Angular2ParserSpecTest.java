@@ -581,7 +581,7 @@ public class Angular2ParserSpecTest {
 
   private static List<String> keySpans(String source, Angular2TemplateBinding[] templateBindings) {
     return ReadAction.compute(() -> ContainerUtil.map(
-      templateBindings, binding -> source.substring(binding.getTextRange().getStartOffset(), binding.getTextRange().getEndOffset())));
+      templateBindings, binding -> binding.getTextRange().substring(source)));
   }
 
   private static List<String> exprSources(Angular2TemplateBinding[] templateBindings) {

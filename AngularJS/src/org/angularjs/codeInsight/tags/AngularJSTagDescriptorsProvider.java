@@ -50,9 +50,8 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
     elements.add(element);
   }
 
-  @Nullable
   @Override
-  public XmlElementDescriptor getDescriptor(XmlTag xmlTag) {
+  public @Nullable XmlElementDescriptor getDescriptor(XmlTag xmlTag) {
     final Project project = xmlTag.getProject();
     if (!(xmlTag instanceof HtmlTag)
         || XmlUtil.isTagDefinedByNamespace(xmlTag)

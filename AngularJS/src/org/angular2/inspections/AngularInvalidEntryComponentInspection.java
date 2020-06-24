@@ -17,9 +17,8 @@ import static org.angular2.Angular2DecoratorUtil.*;
 
 public class AngularInvalidEntryComponentInspection extends LocalInspectionTool {
 
-  @NotNull
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
+  public @NotNull PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
     return new JSElementVisitor() {
       @Override
       public void visitES6Decorator(ES6Decorator decorator) {

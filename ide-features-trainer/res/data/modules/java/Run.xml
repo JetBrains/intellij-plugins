@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="Run and Debug" lessonsPath="RunAndDebug/" version="0.3" id="basics" fileType="PROJECT" description="Learn about run/debug workflow">
+  <lesson-kt implementationClass="training.learn.lesson.java.run.JavaRunConfigurationLesson"/>
+  <lesson-kt implementationClass="training.learn.lesson.java.run.JavaDebugLesson"/>
+</module>

@@ -13,6 +13,8 @@ import icons.ClionEmbeddedPlatformioIcons;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Supplier;
+
 public class PlatformioConfigurationType extends CMakeRunConfigurationType {
 
   public static final String PLATFORM_IO_DEBUG_ID = "PlatformIO Debug";
@@ -20,22 +22,30 @@ public class PlatformioConfigurationType extends CMakeRunConfigurationType {
   private final ConfigurationFactory[] myNewProjectFactories;
 
   public PlatformioConfigurationType() {
-    super(TYPE_ID, PLATFORM_IO_DEBUG_ID, "PlatformIO", "PlatformIO",
+    super(TYPE_ID, PLATFORM_IO_DEBUG_ID, ClionEmbeddedPlatformioBundle.message("platformio.name"),
+          ClionEmbeddedPlatformioBundle.message("platformio.description"),
           NotNullLazyValue.createValue(() -> ClionEmbeddedPlatformioIcons.Platformio));
 
     ConfigurationFactory uploadFactory = getConfigurationFactories()[0];
     ToolConfigurationFactory uploadConfigurationFactory =
-      new ToolConfigurationFactory("PlatformIO Upload", "PlatformIO Upload", "-c", "clion", "run", "--target", "upload");
+      new ToolConfigurationFactory("PlatformIO Upload", () -> ClionEmbeddedPlatformioBundle.message("run.config.upload"), "-c", "clion",
+                                   "run", "--target", "upload");
 
-    addFactory(new ToolConfigurationFactory("PlatformIO Test", "PlatformIO Test", "-c", "clion", "test"));
+    addFactory(
+      new ToolConfigurationFactory("PlatformIO Test", () -> ClionEmbeddedPlatformioBundle.message("run.config.test"), "-c", "clion",
+                                   "test"));
     addFactory(uploadConfigurationFactory);
-    addFactory(new ToolConfigurationFactory("PlatformIO Program", "PlatformIO Program", "-c", "clion", "run", "--target", "program"));
-    addFactory(new ToolConfigurationFactory("PlatformIO Uploadfs", "PlatformIO Uploadfs", "-c", "clion", "run", "--target", "uploadfs"));
+    addFactory(
+      new ToolConfigurationFactory("PlatformIO Program", () -> ClionEmbeddedPlatformioBundle.message("run.config.program"), "-c", "clion",
+                                   "run", "--target", "program"));
+    addFactory(
+      new ToolConfigurationFactory("PlatformIO Uploadfs", () -> ClionEmbeddedPlatformioBundle.message("run.config.uploadfs"), "-c", "clion",
+                                   "run", "--target", "uploadfs"));
     myNewProjectFactories = new ConfigurationFactory[]{uploadFactory, uploadConfigurationFactory};
   }
 
   @NotNull
-  public ConfigurationFactory[] getNewProjectFactories() {
+  public ConfigurationFactory @NotNull [] getNewProjectFactories() {
     return myNewProjectFactories;
   }
 
@@ -58,7 +68,7 @@ public class PlatformioConfigurationType extends CMakeRunConfigurationType {
       @NotNull
       @Override
       public String getName() {
-        return PLATFORM_IO_DEBUG_ID;
+        return ClionEmbeddedPlatformioBundle.message("run.config.debug");
       }
 
       @Override
@@ -83,10 +93,10 @@ public class PlatformioConfigurationType extends CMakeRunConfigurationType {
 
   public class ToolConfigurationFactory extends ConfigurationFactory {
     private final String[] cliParameters;
-    private final String name;
+    private final Supplier<String> name;
     private final String myId;
 
-    ToolConfigurationFactory(@NonNls @NotNull String id, @NotNull String name, String... cliParameters) {
+    ToolConfigurationFactory(@NonNls @NotNull String id, @NotNull Supplier<String> name, String... cliParameters) {
       super(PlatformioConfigurationType.this);
       this.myId = id;
       this.name = name;
@@ -107,7 +117,7 @@ public class PlatformioConfigurationType extends CMakeRunConfigurationType {
     @Override
     public @NotNull
     String getName() {
-      return name;
+      return name.get();
     }
   }
 }

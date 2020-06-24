@@ -3,12 +3,10 @@ package com.intellij.flex.codeInsight;
 
 import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.javascript.flex.documentation.FlexDocumentationProvider;
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.lang.javascript.JSAbstractDocumentationTest;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
-import com.intellij.lang.javascript.documentation.JSDocumentationProvider;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.openapi.vfs.JarFileSystem;
@@ -62,11 +60,6 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
     myFixture.configureByFile(BASE_PATH + fileName);
     PsiElement originalElement = myFixture.getFile().findElementAt(myFixture.getEditor().getCaretModel().getOffset());
     return provider.getDocumentationElementForLookupItem(getPsiManager(), originalElement.getText(), originalElement);
-  }
-
-  @Override
-  protected JSDocumentationProvider createDocumentationProvider() {
-    return new FlexDocumentationProvider();
   }
 
   public void testJSDocs6() {
@@ -166,7 +159,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
   public void testFlexCssSelectorMultiDocumentationInLookup() {
     testWithLibrary("MyLib1.swc", "MyLib1_src.zip", null, () -> {
-      String doc = testOne(new CssDocumentationProvider(), getTestName(false) + ".css");
+      String doc = testOne(getTestName(false) + ".css");
       assertTrue(doc.contains("p1.MyClass"));
       assertTrue(doc.contains("p2.MyClass"));
     });
@@ -204,7 +197,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   public void testFlexCssPropertyMultiDocumentationInLookup() {
     setUpJdk();
     DocumentationProvider cssDocProvider = new CssDocumentationProvider();
-    String doc = testOne(cssDocProvider, getTestName(false) + ".css", new CssPropertyDescriptorStub("borderColor"));
+    String doc = testOne(getTestName(false) + ".css", new CssPropertyDescriptorStub("borderColor"));
     assertNotNull(doc);
     assertTrue("Container's borderColor property missing", doc.contains("Container"));
     assertTrue("Button's borderColor property missing", doc.contains("Button"));

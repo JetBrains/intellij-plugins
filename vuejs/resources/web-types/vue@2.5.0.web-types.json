@@ -438,6 +438,7 @@
           "doc-url": "https://vuejs.org/v2/api/#v-text",
           "value": {
             "kind": "expression",
+            "required": true,
             "type": "string"
           }
         },
@@ -447,6 +448,7 @@
           "doc-url": "https://vuejs.org/v2/api/#v-html",
           "value": {
             "kind": "expression",
+            "required": true,
             "type": "string"
           }
         },
@@ -456,6 +458,7 @@
           "doc-url": "https://vuejs.org/v2/api/#v-show",
           "value": {
             "kind": "expression",
+            "required": true,
             "type": "any"
           }
         },
@@ -465,6 +468,7 @@
           "doc-url": "https://vuejs.org/v2/api/#v-if",
           "value": {
             "kind": "expression",
+            "required": true,
             "type": "any"
           }
         },
@@ -482,6 +486,7 @@
           "doc-url": "https://vuejs.org/v2/api/#v-else-if",
           "value": {
             "kind": "expression",
+            "required": true,
             "type": "any"
           }
         },
@@ -491,6 +496,7 @@
           "doc-url": "https://vuejs.org/v2/api/#v-for",
           "value": {
             "kind": "expression",
+            "required": true,
             "type": [
               "any[]",
               "object",
@@ -506,6 +512,7 @@
           "doc-url": "https://vuejs.org/v2/api/#v-on",
           "value": {
             "kind": "expression",
+            "required": true,
             "type": [
               "Function",
               "object",
@@ -571,6 +578,7 @@
           "doc-url": "https://vuejs.org/v2/api/#v-bind",
           "value": {
             "kind": "expression",
+            "required": true,
             "type": [
               "any",
               "Object"
@@ -601,6 +609,7 @@
           "doc-url": "https://vuejs.org/v2/api/#v-model",
           "value": {
             "kind": "expression",
+            "required": true,
             "type": "any"
           },
           "vue-modifiers": [

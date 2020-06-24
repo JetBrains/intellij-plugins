@@ -1,5 +1,6 @@
 package org.jetbrains.plugins.cucumber.java.highlighting;
 
+import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.plugins.cucumber.inspections.CucumberStepInspection;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaCodeInsightTestCase;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
@@ -14,6 +15,10 @@ public class CucumberHighlightingTest extends CucumberJavaCodeInsightTestCase {
   }
 
   public void testStepWithDocstring() {
+    doTest();
+  }
+
+  public void testOrGroup() {
     doTest();
   }
 
@@ -34,5 +39,10 @@ public class CucumberHighlightingTest extends CucumberJavaCodeInsightTestCase {
     myFixture.enableInspections(new CucumberStepInspection());
     myFixture.copyDirectoryToProject(getTestName(true), "");
     myFixture.configureByFile(getTestName(true) + "/test.feature");
+  }
+
+  @Override
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return CucumberJavaTestUtil.createCucumber3ProjectDescriptor();
   }
 }

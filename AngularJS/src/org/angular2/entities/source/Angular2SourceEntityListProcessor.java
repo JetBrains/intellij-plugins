@@ -323,8 +323,7 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
     return result;
   }
 
-  @Nullable
-  private static Angular2MetadataModule resolveFunctionValue(@Nullable Angular2MetadataFunction function) {
+  private static @Nullable Angular2MetadataModule resolveFunctionValue(@Nullable Angular2MetadataFunction function) {
     return Optional.ofNullable(function)
       .map(f -> tryCast(f.getValue(), Angular2MetadataObject.class))
       .map(value -> tryCast(value.findMember(NG_MODULE_PROP), Angular2MetadataReference.class))

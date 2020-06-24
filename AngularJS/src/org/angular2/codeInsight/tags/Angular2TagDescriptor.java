@@ -40,15 +40,13 @@ public class Angular2TagDescriptor implements XmlElementDescriptor {
     myName = tag.getLocalName();
   }
 
-  @NotNull
   @Override
-  public String getQualifiedName() {
+  public @NotNull String getQualifiedName() {
     return myName;
   }
 
-  @NotNull
   @Override
-  public String getDefaultName() {
+  public @NotNull String getDefaultName() {
     return myName;
   }
 
@@ -58,8 +56,7 @@ public class Angular2TagDescriptor implements XmlElementDescriptor {
   }
 
   @Override
-  @Nullable
-  public XmlElementDescriptor getElementDescriptor(XmlTag childTag, XmlTag contextTag) {
+  public @Nullable XmlElementDescriptor getElementDescriptor(XmlTag childTag, XmlTag contextTag) {
     return XmlDescriptorUtil.getElementDescriptor(childTag, contextTag);
   }
 
@@ -68,28 +65,24 @@ public class Angular2TagDescriptor implements XmlElementDescriptor {
     return HtmlNSDescriptorImpl.getCommonAttributeDescriptors(context);
   }
 
-  @Nullable
   @Override
-  public XmlAttributeDescriptor getAttributeDescriptor(XmlAttribute attribute) {
+  public @Nullable XmlAttributeDescriptor getAttributeDescriptor(XmlAttribute attribute) {
     return getAttributeDescriptor(attribute.getName(), attribute.getParent());
   }
 
-  @Nullable
   @Override
-  public XmlAttributeDescriptor getAttributeDescriptor(@NonNls final String attributeName, @Nullable XmlTag context) {
+  public @Nullable XmlAttributeDescriptor getAttributeDescriptor(@NonNls final String attributeName, @Nullable XmlTag context) {
     return mergeWithAngularDescriptorIfPossible(HtmlNSDescriptorImpl.getCommonAttributeDescriptor(attributeName, context),
                                                 attributeName, context);
   }
 
-  @Nullable
   @Override
-  public XmlNSDescriptor getNSDescriptor() {
+  public @Nullable XmlNSDescriptor getNSDescriptor() {
     return null;
   }
 
-  @Nullable
   @Override
-  public XmlElementsGroup getTopGroup() {
+  public @Nullable XmlElementsGroup getTopGroup() {
     return null;
   }
 
@@ -98,9 +91,8 @@ public class Angular2TagDescriptor implements XmlElementDescriptor {
     return CONTENT_TYPE_ANY;
   }
 
-  @Nullable
   @Override
-  public String getDefaultValue() {
+  public @Nullable String getDefaultValue() {
     return null;
   }
 
@@ -109,8 +101,7 @@ public class Angular2TagDescriptor implements XmlElementDescriptor {
     return ContainerUtil.getFirstItem(myResolver.getDeclarations());
   }
 
-  @NotNull
-  public List<Angular2Directive> getSourceDirectives() {
+  public @NotNull List<Angular2Directive> getSourceDirectives() {
     return myResolver.getSourceDirectives();
   }
 
@@ -118,15 +109,13 @@ public class Angular2TagDescriptor implements XmlElementDescriptor {
     return Collections.singleton(directive.getSelector().getPsiElementForElement(myName));
   }
 
-  @NotNull
   @Override
-  public String getName(PsiElement context) {
+  public @NotNull String getName(PsiElement context) {
     return getName();
   }
 
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     return myName;
   }
 
@@ -142,8 +131,7 @@ public class Angular2TagDescriptor implements XmlElementDescriptor {
     return myImplied;
   }
 
-  @NotNull
-  private static JSImplicitElementImpl createDirective(@NotNull XmlTag xmlTag) {
+  private static @NotNull JSImplicitElementImpl createDirective(@NotNull XmlTag xmlTag) {
     //noinspection HardCodedStringLiteral
     return new JSImplicitElementImpl.Builder(xmlTag.getLocalName(), xmlTag)
       .setTypeString("E;;;")

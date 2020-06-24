@@ -10,7 +10,7 @@ import com.intellij.util.xmlb.annotations.XCollection;
 
 @Tag("module")
 public class TrainingModules extends AbstractExtensionPointBean {
-  public static final ExtensionPointName<TrainingModules> EP_NAME = ExtensionPointName.create("training.TrainingModules");
+  public static final ExtensionPointName<TrainingModules> EP_NAME = ExtensionPointName.create("training.ift.modules");
 
   @Attribute("language")
   public String language;

@@ -144,9 +144,7 @@ public class IncomingCodePointerMessage extends BaseIncomingLocalMessage {
     }
 
     private int moveToTextBounds(int offset, int textLength) {
-      if (offset < 0) return 0;
-      if (offset > textLength - 1) return textLength - 1;
-      return offset;
+      return Math.max(0, Math.min(offset, textLength - 1));
     }
 
     private LogicalPosition getStartLogicalPosition(PositionCorrector positionCorrector) {

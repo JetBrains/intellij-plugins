@@ -1,8 +1,9 @@
 package com.jetbrains.lang.dart.psi;
 
+import com.intellij.ide.highlighter.HtmlFileType;
+import com.intellij.ide.highlighter.XHtmlFileType;
 import com.intellij.lang.xml.XMLLanguage;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -43,8 +44,8 @@ public class DartPackageAwareFileIncludeProvider extends FileIncludeProvider {
 
   @Override
   public void registerFileTypesUsedForIndexing(final @NotNull Consumer<? super FileType> fileTypeSink) {
-    fileTypeSink.consume(StdFileTypes.HTML);
-    fileTypeSink.consume(StdFileTypes.XHTML);
+    fileTypeSink.consume(HtmlFileType.INSTANCE);
+    fileTypeSink.consume(XHtmlFileType.INSTANCE);
   }
 
   @Override

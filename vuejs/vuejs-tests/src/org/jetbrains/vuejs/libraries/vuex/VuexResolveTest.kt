@@ -12,7 +12,7 @@ import org.jetbrains.vuejs.lang.resolveReference
 
 class VuexResolveTest : BasePlatformTestCase() {
 
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/vuex/resolve"
+  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/libraries/vuex/resolve"
 
   fun testStorefrontComponentStoreAccess() {
     doStorefrontTest(
@@ -400,7 +400,7 @@ class VuexResolveTest : BasePlatformTestCase() {
            "'foo/change<caret>Data'" to "foo/actions.js:19:JSFunctionProperty")
     myFixture.configureFromTempProjectFile("store/store/foo/actions.js")
     doTest(false,
-    "UPDATE_TEST_<caret>DATA" to "foo/index.js:75:JSFunctionProperty")
+           "UPDATE_TEST_<caret>DATA" to "foo/index.js:75:JSFunctionProperty")
     myFixture.configureByText("foo.vue", """
       <script>
       export default {

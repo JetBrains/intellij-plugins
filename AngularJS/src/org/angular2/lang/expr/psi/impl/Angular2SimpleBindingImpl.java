@@ -26,15 +26,13 @@ public class Angular2SimpleBindingImpl extends Angular2EmbeddedExpressionImpl im
     }
   }
 
-  @Nullable
   @Override
-  public JSExpression getExpression() {
+  public @Nullable JSExpression getExpression() {
     return Angular2BindingImpl.getExpression(this);
   }
 
-  @Nullable
   @Override
-  public Angular2Quote getQuote() {
+  public @Nullable Angular2Quote getQuote() {
     return Angular2BindingImpl.getQuote(this);
   }
 }

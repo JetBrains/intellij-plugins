@@ -77,8 +77,12 @@ public class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
                                message("angularjs.ui.router.diagram.action.new.diagram.name"));
       return;
     }
-    if (graphBuilders.size() == 1) consumer.consume(graphBuilders.get(0).getSecond());
-    else filterGraphBuilders(project, graphBuilders, consumer);
+    if (graphBuilders.size() == 1) {
+      consumer.consume(graphBuilders.get(0).getSecond());
+    }
+    else {
+      filterGraphBuilders(project, graphBuilders, consumer);
+    }
   }
 
   private static void filterGraphBuilders(Project project, List<? extends Pair<String, AngularUiRouterGraphBuilder>> builders,

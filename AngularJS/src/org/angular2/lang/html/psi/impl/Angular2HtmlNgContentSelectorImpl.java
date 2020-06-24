@@ -30,8 +30,7 @@ public class Angular2HtmlNgContentSelectorImpl extends StubBasedPsiElementBase<A
   }
 
   @Override
-  @NotNull
-  public Angular2DirectiveSelector getSelector() {
+  public @NotNull Angular2DirectiveSelector getSelector() {
     Angular2HtmlNgContentSelectorStub stub = getGreenStub();
     String text;
     if (stub != null) {

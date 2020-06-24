@@ -13,7 +13,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveResult;
 import com.intellij.util.Processor;
 import one.util.streamex.StreamEx;
-import org.angular2.index.Angular2IndexingHandler;
+import org.angular2.entities.Angular2ComponentLocator;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.html.Angular2HtmlLanguage;
 import org.jetbrains.annotations.NonNls;
@@ -29,7 +29,7 @@ public final class Angular2TemplateScopesResolver {
   @NonNls private static final String HTML_ELEMENT_CLASS_NAME = "HTMLElement";
   @NonNls private static final String HTML_ELEMENT_TAG_NAME_MAP_CLASS_NAME = "HTMLElementTagNameMap";
 
-  public static void resolve(final @NotNull PsiElement element, @NotNull final Processor<? super ResolveResult> processor) {
+  public static void resolve(final @NotNull PsiElement element, final @NotNull Processor<? super ResolveResult> processor) {
     PsiElement original = CompletionUtil.getOriginalOrSelf(element);
     if (!checkLanguage(original)) {
       return;
@@ -61,11 +61,10 @@ public final class Angular2TemplateScopesResolver {
                ));
   }
 
-  @Nullable
   @NonNls
-  public static JSType getHtmlElementClassType(@NotNull PsiElement context, @NotNull @NonNls String tagName) {
+  public static @Nullable JSType getHtmlElementClassType(@NotNull PsiElement context, @NotNull @NonNls String tagName) {
     JSTypeSource typeSource = JSTypeSourceFactory.createTypeSource(
-      notNull(Angular2IndexingHandler.findComponentClass(context), context), true);
+      notNull(Angular2ComponentLocator.findComponentClass(context), context), true);
     return Optional
       .ofNullable(JSTypeUtils.createType(HTML_ELEMENT_TAG_NAME_MAP_CLASS_NAME, typeSource))
       .map(tagNameMap -> tagNameMap.asRecordType().findPropertySignature(StringUtil.toLowerCase(tagName)))

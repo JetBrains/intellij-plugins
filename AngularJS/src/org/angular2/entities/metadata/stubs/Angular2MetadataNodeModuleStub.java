@@ -26,8 +26,7 @@ public class Angular2MetadataNodeModuleStub extends Angular2MetadataElementStub<
   @NonNls private static final String EXPORTS = "exports";
   private static final String METADATA = "metadata";
 
-  @Nullable
-  private final StringRef myImportAs;
+  private final @Nullable StringRef myImportAs;
 
   public Angular2MetadataNodeModuleStub(@NotNull StubInputStream stream, @Nullable StubElement parentStub) throws IOException {
     super(stream, parentStub, Angular2MetadataElementTypes.NODE_MODULE);
@@ -68,8 +67,7 @@ public class Angular2MetadataNodeModuleStub extends Angular2MetadataElementStub<
     writeString(myImportAs, stream);
   }
 
-  @Nullable
-  public String getImportAs() {
+  public @Nullable String getImportAs() {
     return StringRef.toString(myImportAs);
   }
 }

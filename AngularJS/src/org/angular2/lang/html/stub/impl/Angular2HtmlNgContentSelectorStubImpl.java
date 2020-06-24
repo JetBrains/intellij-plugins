@@ -3,10 +3,10 @@ package org.angular2.lang.html.stub.impl;
 
 import com.intellij.psi.stubs.*;
 import com.intellij.util.io.StringRef;
-import org.angular2.lang.html.parser.Angular2HtmlStubElementTypes;
 import org.angular2.lang.html.psi.Angular2HtmlNgContentSelector;
 import org.angular2.lang.html.psi.impl.Angular2HtmlNgContentSelectorImpl;
 import org.angular2.lang.html.stub.Angular2HtmlNgContentSelectorStub;
+import org.angular2.lang.html.stub.Angular2HtmlStubElementTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,9 +40,8 @@ public class Angular2HtmlNgContentSelectorStubImpl extends StubBase<Angular2Html
     return new Angular2HtmlNgContentSelectorImpl(this, Angular2HtmlStubElementTypes.NG_CONTENT_SELECTOR);
   }
 
-  @Nullable
   @Override
-  public String getSelector() {
+  public @Nullable String getSelector() {
     return StringRef.toString(mySelector);
   }
 }

@@ -21,6 +21,7 @@ import com.intellij.openapi.util.Pair
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
 import training.check.Check
+import training.util.DataLoader
 import java.awt.KeyboardFocusManager
 import java.awt.event.KeyEvent
 import java.awt.event.MouseEvent
@@ -28,7 +29,8 @@ import java.beans.PropertyChangeListener
 import java.util.concurrent.CompletableFuture
 
 class ActionsRecorder(private val project: Project,
-                      private val document: Document) : Disposable {
+                      private val document: Document,
+                      parentDisposable: Disposable) : Disposable {
 
   private val documentListeners: MutableList<DocumentListener> = mutableListOf()
   // TODO: do we really need a lot of listeners?
@@ -50,7 +52,7 @@ class ActionsRecorder(private val project: Project,
   private var focusChangeListener: PropertyChangeListener? = null
 
   init {
-    Disposer.register(project, this)
+    Disposer.register(parentDisposable, this)
 
     // We could not unregister a listener (it will be done in dispose)
     // So the simple solution is to use a proxy
@@ -294,5 +296,11 @@ class ActionsRecorder(private val project: Project,
     focusChangeListener?.let { KeyboardFocusManager.getCurrentKeyboardFocusManager().removePropertyChangeListener("focusOwner", it) }
   }
 
-  private fun getActionId(action: AnAction): String = ActionManager.getInstance().getId(action) ?: action.javaClass.name
+  private fun getActionId(action: AnAction): String {
+    val actionId = ActionManager.getInstance().getId(action) ?: action.javaClass.name
+    if (DataLoader.liveMode) {
+      println(actionId)
+    }
+    return actionId
+  }
 }

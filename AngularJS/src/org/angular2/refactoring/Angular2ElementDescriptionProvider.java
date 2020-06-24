@@ -11,15 +11,14 @@ import com.intellij.usageView.UsageViewTypeLocation;
 import org.angular2.entities.Angular2DirectiveSelectorPsiElement;
 import org.angular2.index.Angular2IndexingHandler;
 import org.angular2.lang.Angular2Bundle;
-import org.angular2.lang.html.psi.Angular2HtmlReferenceVariable;
+import org.angular2.lang.html.psi.Angular2HtmlAttrVariable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class Angular2ElementDescriptionProvider implements ElementDescriptionProvider {
 
-  @Nullable
   @Override
-  public String getElementDescription(@NotNull PsiElement element, @NotNull ElementDescriptionLocation location) {
+  public @Nullable String getElementDescription(@NotNull PsiElement element, @NotNull ElementDescriptionLocation location) {
     String type = getTypeDescription(element);
     if (type != null) {
       if (location instanceof UsageViewTypeLocation) {
@@ -43,7 +42,7 @@ public class Angular2ElementDescriptionProvider implements ElementDescriptionPro
         && Angular2IndexingHandler.isPipe((JSImplicitElement)element)) {
       return Angular2Bundle.message("angular.description.pipe");
     }
-    if (element instanceof Angular2HtmlReferenceVariable) {
+    if (element instanceof Angular2HtmlAttrVariable) {
       return Angular2Bundle.message("angular.description.ref-var");
     }
     return null;

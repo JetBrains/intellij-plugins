@@ -37,12 +37,9 @@ public class AddNgModuleDeclarationQuickFix extends LocalQuickFixAndIntentionAct
     }
   }
 
-  @NotNull
-  private final String myDeclarationName;
-  @NotNull
-  private final SmartPsiElementPointer<ES6Decorator> myDeclarationDecorator;
-  @Nullable
-  private final String myModuleName;
+  private final @NotNull String myDeclarationName;
+  private final @NotNull SmartPsiElementPointer<ES6Decorator> myDeclarationDecorator;
+  private final @Nullable String myModuleName;
 
   private AddNgModuleDeclarationQuickFix(@NotNull PsiElement context,
                                          @NotNull Angular2SourceDeclaration declaration) {
@@ -59,18 +56,15 @@ public class AddNgModuleDeclarationQuickFix extends LocalQuickFixAndIntentionAct
     }
   }
 
-  @NotNull
   @Override
-  public String getText() {
+  public @NotNull String getText() {
     return Angular2Bundle.message(myModuleName == null ? "angular.quickfix.ngmodule.declare.name.choice"
                                                        : "angular.quickfix.ngmodule.declare.name",
                                   myDeclarationName, myModuleName);
   }
 
-  @Nls(capitalization = Nls.Capitalization.Sentence)
-  @NotNull
   @Override
-  public String getFamilyName() {
+  public @Nls(capitalization = Nls.Capitalization.Sentence) @NotNull String getFamilyName() {
     return Angular2Bundle.message("angular.quickfix.ngmodule.declare.family");
   }
 
@@ -89,8 +83,7 @@ public class AddNgModuleDeclarationQuickFix extends LocalQuickFixAndIntentionAct
     }
   }
 
-  @NotNull
-  public static List<Angular2Module> getCandidates(@NotNull PsiElement context) {
+  public static @NotNull List<Angular2Module> getCandidates(@NotNull PsiElement context) {
     Queue<Angular2Module> processingQueue = new Queue<>(20);
     Angular2DeclarationsScope scope = new Angular2DeclarationsScope(context);
     Angular2Module contextModule = scope.getModule();

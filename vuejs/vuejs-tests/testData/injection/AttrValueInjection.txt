@@ -380,8 +380,9 @@ HtmlFile:AttrValueInjection.vue
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
             ASTWrapperPsiElement(VueJS:EMBEDDED_EXPR)
               VueJSEmbeddedExpression
-                JSReferenceExpression
-                  PsiElement(JS:IDENTIFIER)('someOn')
+                JSExpressionStatement
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('someOn')
             XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
         XmlToken:XML_TAG_END('>')
         XmlToken:XML_END_TAG_START('</')
@@ -400,8 +401,9 @@ HtmlFile:AttrValueInjection.vue
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
             ASTWrapperPsiElement(VueJS:EMBEDDED_EXPR)
               VueJSEmbeddedExpression
-                JSReferenceExpression
-                  PsiElement(JS:IDENTIFIER)('someOn')
+                JSExpressionStatement
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('someOn')
             XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
         XmlToken:XML_TAG_END('>')
         XmlToken:XML_END_TAG_START('</')
@@ -420,8 +422,9 @@ HtmlFile:AttrValueInjection.vue
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
             ASTWrapperPsiElement(VueJS:EMBEDDED_EXPR)
               VueJSEmbeddedExpression
-                JSReferenceExpression
-                  PsiElement(JS:IDENTIFIER)('someOn')
+                JSExpressionStatement
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('someOn')
             XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
         XmlToken:XML_TAG_END('>')
         XmlToken:XML_END_TAG_START('</')
@@ -440,8 +443,9 @@ HtmlFile:AttrValueInjection.vue
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
             ASTWrapperPsiElement(VueJS:EMBEDDED_EXPR)
               VueJSEmbeddedExpression
-                JSReferenceExpression
-                  PsiElement(JS:IDENTIFIER)('someOn')
+                JSExpressionStatement
+                  JSReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('someOn')
             XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
         XmlToken:XML_TAG_END('>')
         XmlToken:XML_END_TAG_START('</')

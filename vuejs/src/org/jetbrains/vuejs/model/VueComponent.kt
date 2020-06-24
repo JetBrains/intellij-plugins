@@ -3,4 +3,4 @@ package org.jetbrains.vuejs.model
 
 import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
 
-interface VueComponent : VueNamedEntity, VueScopeElement, VueDocumentedItem
+interface VueComponent : VueNamedEntity, VueInstanceOwner, VueDocumentedItem

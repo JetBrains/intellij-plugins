@@ -1,7 +1,6 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs.codeInsight;
 
-import com.intellij.lang.css.CssDialect;
 import com.intellij.lang.css.CssDialectMappings;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.project.Project;
@@ -29,12 +28,11 @@ public class AngularJSCssElementDescriptionProvider extends CssElementDescriptor
     final Project project = context.getProject();
     if (HtmlUtil.hasHtml(file)) return AngularIndexUtil.hasAngularJS(project);
     final VirtualFile virtualFile = file.getOriginalFile().getVirtualFile();
-    final CssDialect mapping = CssDialectMappings.getInstance(project).getMapping(virtualFile);
-    return (mapping == null || mapping == CssDialect.CLASSIC) && AngularIndexUtil.hasAngularJS(project);
+    return !CssDialectMappings.getInstance(project).hasCustomDialect(virtualFile) && AngularIndexUtil.hasAngularJS(project);
   }
 
   @Override
-  public boolean isPossibleSelector(@NotNull final String selector, @NotNull PsiElement context) {
+  public boolean isPossibleSelector(final @NotNull String selector, @NotNull PsiElement context) {
     return DirectiveUtil.getTagDirective(DirectiveUtil.normalizeAttributeName(selector), context.getProject()) != null;
   }
 

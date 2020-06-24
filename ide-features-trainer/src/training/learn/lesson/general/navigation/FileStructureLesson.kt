@@ -6,7 +6,7 @@ import com.intellij.openapi.editor.impl.EditorComponentImpl
 import com.intellij.testGuiFramework.framework.GuiTestUtil
 import com.intellij.testGuiFramework.util.Key
 import com.intellij.ui.speedSearch.SpeedSearchSupply
-import training.commands.kotlin.TaskContext
+import training.commands.kotlin.TaskRuntimeContext
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
@@ -48,7 +48,7 @@ abstract class FileStructureLesson(module: Module, lang: String) : KLesson("File
       }
     }
 
-  private fun TaskContext.checkWordInSearch(expected: String): Boolean {
+  private fun TaskRuntimeContext.checkWordInSearch(expected: String): Boolean {
     val focusOwner = focusOwner
     if (focusOwner is DnDAwareTree && focusOwner.javaClass.name.contains("FileStructurePopup")) {
       val supply = SpeedSearchSupply.getSupply(focusOwner)

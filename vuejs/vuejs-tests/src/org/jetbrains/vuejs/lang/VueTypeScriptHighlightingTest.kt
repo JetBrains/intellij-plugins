@@ -15,12 +15,14 @@ package org.jetbrains.vuejs.lang
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase
+import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.typescript.TypeScriptHighlightingTest
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.util.Function
 import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.lang.html.VueLanguage
 
 class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
   private val toFix = setOf(
@@ -91,5 +93,16 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
   // these tests need to be ignored with additional code:
   override fun testIntermediateResultsNotCachedForRecursiveTypes() {
     LOG.info("Skipping muted test")
+  }
+
+  override fun doHighlightingWithInvokeFixAndCheckResult(fixName: String?, ext: String?, vararg files: String?) {
+    JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) { styleSettings ->
+      styleSettings.getCommonSettings(VueLanguage.INSTANCE).indentOptions?.let {
+        it.INDENT_SIZE = 4
+        it.TAB_SIZE = 4
+        it.CONTINUATION_INDENT_SIZE = 8
+      }
+      super.doHighlightingWithInvokeFixAndCheckResult(fixName, ext, *files)
+    }
   }
 }

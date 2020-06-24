@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.model.psi.stubs;
 
 import com.intellij.coldFusion.model.CfmlLanguage;
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author vnikolaenko
  */
-public abstract class CfmlStubElementType<S extends StubElement, T extends CfmlPsiElement> extends IStubElementType<S, T> {
+public abstract class CfmlStubElementType<S extends StubElement<?>, T extends CfmlPsiElement> extends IStubElementType<S, T> {
   public CfmlStubElementType(@NotNull @NonNls final String debugName, @Nullable final Language language) {
     super(debugName, CfmlLanguage.INSTANCE);
   }

@@ -10,7 +10,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlChildRole;
 import com.intellij.psi.xml.XmlElement;
 import org.angular2.lang.html.parser.Angular2HtmlElementTypes.Angular2ElementType;
-import org.angular2.lang.html.parser.Angular2HtmlReferenceTokenType;
+import org.angular2.lang.html.parser.Angular2HtmlVarAttrTokenType;
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor;
 import org.angular2.lang.html.psi.Angular2HtmlReference;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +25,7 @@ public class Angular2HtmlReferenceImpl extends Angular2HtmlBoundAttributeImpl im
   @Override
   public int getChildRole(@NotNull ASTNode child) {
     IElementType i = child.getElementType();
-    if (i == Angular2HtmlReferenceTokenType.INSTANCE) {
+    if (i == Angular2HtmlVarAttrTokenType.REFERENCE) {
       return XmlChildRole.XML_NAME;
     }
     return super.getChildRole(child);
@@ -35,15 +35,14 @@ public class Angular2HtmlReferenceImpl extends Angular2HtmlBoundAttributeImpl im
   public XmlElement getNameElement() {
     XmlElement res = super.getNameElement();
     if (res == null &&
-        getFirstChild().getNode().getElementType() == Angular2HtmlReferenceTokenType.INSTANCE) {
+        getFirstChild().getNode().getElementType() == Angular2HtmlVarAttrTokenType.REFERENCE) {
       return (XmlElement)getFirstChild();
     }
     return res;
   }
 
-  @Nullable
   @Override
-  public JSVariable getVariable() {
+  public @Nullable JSVariable getVariable() {
     return PsiTreeUtil.findChildOfType(this, JSVariable.class);
   }
 
@@ -60,9 +59,8 @@ public class Angular2HtmlReferenceImpl extends Angular2HtmlBoundAttributeImpl im
     }
   }
 
-  @NotNull
   @Override
-  public String getReferenceName() {
+  public @NotNull String getReferenceName() {
     return getAttributeInfo().name;
   }
 }

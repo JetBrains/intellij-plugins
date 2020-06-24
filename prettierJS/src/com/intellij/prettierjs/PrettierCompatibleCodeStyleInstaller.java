@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.prettierjs;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -14,8 +14,13 @@ import org.jetbrains.annotations.NotNull;
 
 final class PrettierCompatibleCodeStyleInstaller implements DirectoryProjectConfigurator {
   @Override
-  public void configureProject(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull Ref<Module> moduleRef, boolean newProject) {
-    if (project.isDefault() || project.getBaseDir() == null || project.isDisposed()) {
+  public boolean isEdtRequired() {
+    return false;
+  }
+
+  @Override
+  public void configureProject(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull Ref<Module> moduleRef, boolean isProjectCreatedWithWizard) {
+    if (project.isDefault() || project.getBasePath() == null || project.isDisposed()) {
       return;
     }
     StartupManager.getInstance(project).runAfterOpened(() -> {

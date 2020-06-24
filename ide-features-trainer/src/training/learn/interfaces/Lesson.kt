@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.interfaces
 
+import training.commands.kotlin.TaskTestContext
 import training.learn.lesson.LessonListener
 import training.learn.lesson.LessonState
 import training.learn.lesson.LessonStateManager
@@ -46,7 +47,6 @@ interface Lesson {
     lessonListeners.forEach { it.lessonPassed(this) }
   }
 
-  @JvmDefault
   fun onStop() {
     lessonListeners.forEach { it.lessonStopped(this) }
   }
@@ -56,4 +56,6 @@ interface Lesson {
     onPass()
   }
 
+  val testScriptProperties : TaskTestContext.TestScriptProperties
+    get() = TaskTestContext.TestScriptProperties()
 }

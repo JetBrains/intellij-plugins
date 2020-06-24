@@ -52,15 +52,15 @@ class QuickFixes: NSObject {
     <MoveCaret position="6:17"/>
     <Try triggers="ShowIntentionActions">Press <action>ShowIntentionActions</action> and select <strong>Apply Fix-it</strong> to replace the unused variable with <code>_</code></Try>
     <Try triggers="CodeInspection.OnEditor">AppCode also integrates SourceKit as a separate inspection. This means you can run it on the whole file and fix all the problems at once if several fix-its are available. Press <action>CodeInspection.OnEditor</action>.</Try>
-    <Text>As you can see, we have three problems in this piece of code: two warnings and one error. Select <strong>Swift → SourceKit inspections</strong>, press <action>ShowIntentionActions</action> and select <strong>Apply Fix-it</strong> (or click the Apply Fix-it button on the right). This should correct all three problems.</Text>
+    <Text>As you can see, we have several problems in this piece of code. Let's fix some of them. Select <strong>Swift → SourceKit inspections</strong> and click the <strong>Apply Fix-it</strong> button on the right. This should correct all the problems in this group.</Text>
     <MoveCaret position="15:19"/>
     <Try triggers="ShowIntentionActions;EditorChooseLookupItem">Now press <action>EditorEscape</action> to return to the editor window, place the caret on the incorrectly spelled variable name, and then press <action>ShowIntentionActions</action>. Select <strong>Typo: Rename to...</strong>, choose the correct option, and then press <action>EditorEnter</action></Try>
     <MoveCaret position="15:41"/>
     <Try triggers="ShowIntentionActions;EditorChooseLookupItem;ShowIntentionActions;EditorChooseLookupItem;">Note how only the needed part was corrected and all variable usages were automatically renamed. Now, repeat the same actions twice to fix the <code>incorrctlySpeled</code> string.</Try>
     <Try trigger="GotoNextError">Press <action>GotoNextError</action> to go to the next error.</Try>
-    <Try triggers="ShowIntentionActions">Error handling intentions can help you add <code>try/catch/throws</code> where needed. Press <action>ShowIntentionActions</action> and select one of the quick-fixes.</Try>
+    <Try triggers="ShowIntentionActions">Error handling intentions can help you add <code>try/catch/throws</code> where needed. Press <action>EditorEscape</action>→<action>ShowIntentionActions</action> and select one of the quick-fixes.</Try>
     <Try trigger="GotoNextError">Press <action>GotoNextError</action> to go to the next warning.</Try>
-    <Try triggers="ShowIntentionActions">You can also remove redundant <code>@objc</code> attributes. Press <action>ShowIntentionActions</action> and select <strong>Remove redundant attribute @objc</strong>.</Try>
+    <Try triggers="com.intellij.codeInsight.daemon.impl.DaemonTooltipWithActionRenderer$addActionsRow$1">You can also remove redundant <code>@objc</code> attributes. Press <shortcut>⇧⌥⏎</shortcut>.</Try>
     <Try triggers="ShowIntentionActions">If you need to add or remove an explicit type to/from some variable, simply press <action>ShowIntentionActions</action> and select <strong>Add/Remove explicit type</strong>. Try it now with the <code>fileManager</code> variable.</Try>
     <Win/>
 </xml>

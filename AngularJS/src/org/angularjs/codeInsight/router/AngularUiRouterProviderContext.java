@@ -13,8 +13,7 @@ import java.util.Map;
  * @author Irina.Chernushina on 7/5/2016.
  */
 public class AngularUiRouterProviderContext {
-  @NotNull
-  private final Project myProject;
+  private final @NotNull Project myProject;
   private final Map<VirtualFile, AngularUiRouterGraphBuilder.GraphNodesBuilder> myData;
 
   public static AngularUiRouterProviderContext getInstance(@NotNull Project project) {
@@ -34,8 +33,7 @@ public class AngularUiRouterProviderContext {
     myData.put(nodesBuilder.getKey(), nodesBuilder);
   }
 
-  @Nullable
-  public AngularUiRouterGraphBuilder.GraphNodesBuilder getBuilder(@NotNull final VirtualFile file) {
+  public @Nullable AngularUiRouterGraphBuilder.GraphNodesBuilder getBuilder(final @NotNull VirtualFile file) {
     return myData.get(file);
   }
 }

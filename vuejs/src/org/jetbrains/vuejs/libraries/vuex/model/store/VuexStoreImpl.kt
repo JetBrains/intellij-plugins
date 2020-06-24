@@ -16,6 +16,7 @@ import org.jetbrains.vuejs.codeInsight.objectLiteralFor
 import org.jetbrains.vuejs.libraries.vuex.types.VuexGetterType
 import org.jetbrains.vuejs.model.VueImplicitElement
 import org.jetbrains.vuejs.model.source.EntityContainerInfoProvider.InitializedContainerInfoProvider.BooleanValueAccessor
+import org.jetbrains.vuejs.model.source.VueSourceEntityDescriptor
 
 abstract class VuexContainerImpl : VuexContainer {
 
@@ -34,17 +35,14 @@ abstract class VuexContainerImpl : VuexContainer {
   override val modules: Map<String, VuexModule>
     get() = get(VuexContainerInfoProvider.VuexContainerInfo::modules)
 
-  private fun <T> get(accessor: (VuexContainerInfoProvider.VuexContainerInfo) -> Map<String, T>): Map<String, T> {
-    return VuexContainerInfoProvider.INSTANCE.getInfo(initializer, null)?.let {
-      accessor.invoke(it)
-    } ?: mapOf()
-  }
+  private fun <T> get(accessor: (VuexContainerInfoProvider.VuexContainerInfo) -> Map<String, T>): Map<String, T> =
+    getInfo()?.let { accessor.invoke(it) } ?: mapOf()
 
-  protected fun get(accessor: (VuexContainerInfoProvider.VuexContainerInfo) -> Boolean): Boolean {
-    return VuexContainerInfoProvider.INSTANCE.getInfo(initializer, null)?.let {
-      accessor.invoke(it)
-    } == true
-  }
+  protected fun get(accessor: (VuexContainerInfoProvider.VuexContainerInfo) -> Boolean): Boolean =
+    getInfo()?.let { accessor.invoke(it) } == true
+
+  private fun getInfo(): VuexContainerInfoProvider.VuexContainerInfo? =
+    initializer?.let { VuexContainerInfoProvider.INSTANCE.getInfo(VueSourceEntityDescriptor(it, null)) }
 }
 
 class VuexModuleImpl(override val name: String,
@@ -105,7 +103,7 @@ abstract class VuexNamedSymbolImpl(override val name: String,
 class VuexStatePropertyImpl(name: String, source: PsiElement)
   : VuexNamedSymbolImpl(name, source), VuexStateProperty {
   override fun getResolveTarget(namespace: String, qualifiedName: String): JSLocalImplicitElementImpl {
-    return VuexStoreStateElement(qualifiedName.substring(namespace.length), qualifiedName, source, (source as? JSTypeInfoOwner)?.jsType)
+    return VuexStoreStateElement(qualifiedName.substring(namespace.length), qualifiedName, source, (source as? JSTypeOwner)?.jsType)
   }
 }
 
@@ -132,7 +130,7 @@ class VuexGetterImpl(name: String, source: PsiElement)
   : VuexNamedSymbolImpl(name, source), VuexGetter {
 
   private val jsType: JSType?
-    get() = (source as? JSTypeInfoOwner)?.let { VuexGetterType(JSTypeSourceFactory.createTypeSource(source, false), it) }
+    get() = (source as? JSTypeOwner)?.let { VuexGetterType(JSTypeSourceFactory.createTypeSource(source, false), it) }
 
   override fun getResolveTarget(namespace: String, qualifiedName: String): JSLocalImplicitElementImpl =
     VueImplicitElement(qualifiedName.substring(namespace.length), jsType, source, JSImplicitElement.Type.Property, true)

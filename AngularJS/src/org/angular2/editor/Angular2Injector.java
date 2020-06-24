@@ -37,9 +37,9 @@ public class Angular2Injector implements MultiHostInjector {
       .delimitersFactory(Angular2HtmlLanguage.INSTANCE.getDisplayName(),
                          (project, key) -> /* no support for custom delimiters*/ null);
   }
-  @NotNull
+
   @Override
-  public List<Class<? extends PsiElement>> elementsToInjectIn() {
+  public @NotNull List<Class<? extends PsiElement>> elementsToInjectIn() {
     return Arrays.asList(JSLiteralExpression.class, XmlText.class);
   }
 
@@ -104,8 +104,7 @@ public class Angular2Injector implements MultiHostInjector {
   }
 
   @SuppressWarnings("HardCodedStringLiteral")
-  @Nullable
-  private static String getExpressionFileExtension(int valueLength, @NotNull String attributeName, boolean hostBinding) {
+  private static @Nullable String getExpressionFileExtension(int valueLength, @NotNull String attributeName, boolean hostBinding) {
     if (valueLength == 0) {
       return null;
     }

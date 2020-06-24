@@ -1,9 +1,11 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.compiled;
 
 import com.intellij.lang.javascript.flex.importer.FlexImporter;
 import com.intellij.openapi.fileTypes.BinaryFileDecompiler;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.util.text.Strings;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
@@ -17,21 +19,12 @@ public class SwfFileDecompiler implements BinaryFileDecompiler {
   @Override
   @NotNull
   public CharSequence decompile(@NotNull final VirtualFile file) {
-    final Project project = findProject();
-    if (project == null) return "";
+    Project project = ArrayUtil.getFirstElement(ProjectManager.getInstance().getOpenProjects());
     try {
-      return FlexImporter.buildInterfaceFromStream(file.getInputStream());
+      return project != null ? FlexImporter.buildInterfaceFromStream(file.getInputStream()) : "";
     }
     catch (IOException ex) {
-      return ArrayUtil.EMPTY_CHAR_SEQUENCE;
+      return Strings.EMPTY_CHAR_SEQUENCE;
     }
-  }
-
-  private static Project findProject() {
-    final Project[] projects = ProjectManager.getInstance().getOpenProjects();
-    if (projects.length == 0) return null;
-    final Project project = projects[0];
-
-    return project;
   }
 }

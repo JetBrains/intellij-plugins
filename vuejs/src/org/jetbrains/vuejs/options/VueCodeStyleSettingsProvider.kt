@@ -5,10 +5,12 @@ import com.intellij.application.options.CodeStyleAbstractConfigurable
 import com.intellij.application.options.CodeStyleAbstractPanel
 import com.intellij.application.options.IndentOptionsEditor
 import com.intellij.lang.Language
-import com.intellij.psi.codeStyle.CodeStyleConfigurable
-import com.intellij.psi.codeStyle.CodeStyleSettings
-import com.intellij.psi.codeStyle.CustomCodeStyleSettings
-import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiFileFactory
+import com.intellij.psi.codeStyle.*
+import com.intellij.psi.impl.source.PsiFileImpl
+import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.lang.html.psi.formatter.VueCodeStyleSettings
 
@@ -23,6 +25,8 @@ class VueCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
      src="./assets/logo.png">
         <HelloWorld  
      msg =  "Welcome to Your Vue.js App"/></div>
+     <span>{{descr    }}</span>
+     <span>{{ (function (){ alert("Vue is great!")   } return "Really great!")() }}</span>
     </template>
     
      <script>
@@ -42,6 +46,17 @@ class VueCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
     </style>
   """.trimIndent()
 
+  override fun createFileFromText(project: Project, text: String): PsiFile? {
+    val first = PsiFileFactory.getInstance(project).createFileFromText(
+      "a.vue", VueLanguage.INSTANCE, text, false, true
+    )
+    // Trick injection manager into providing injections - if original file is present
+    // the manager will allow for injections
+    val result = PsiFileFactory.getInstance(project).createFileFromText(text, first)
+    (result as PsiFileImpl).originalFile = first
+    return result
+  }
+
   override fun getIndentOptionsEditor(): IndentOptionsEditor? {
     return VueIndentOptionsEditor()
   }
@@ -58,7 +73,42 @@ class VueCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
     }
   }
 
+  override fun customizeDefaults(commonSettings: CommonCodeStyleSettings, indentOptions: CommonCodeStyleSettings.IndentOptions) {
+    indentOptions.TAB_SIZE = 2
+    indentOptions.INDENT_SIZE = 2
+    indentOptions.CONTINUATION_INDENT_SIZE = 4
+  }
+
   override fun createCustomSettings(settings: CodeStyleSettings): CustomCodeStyleSettings? {
     return VueCodeStyleSettings(settings)
+  }
+
+  override fun customizeSettings(consumer: CodeStyleSettingsCustomizable, settingsType: SettingsType) {
+    when (settingsType) {
+      SettingsType.SPACING_SETTINGS -> {
+        consumer.showCustomOption(VueCodeStyleSettings::class.java, "SPACES_WITHIN_INTERPOLATION_EXPRESSIONS",
+                                  VueBundle.message("vue.formatting.spacing.within.interpolations"),
+                                  VueBundle.message("vue.formatting.spacing.within.group"))
+      }
+      SettingsType.WRAPPING_AND_BRACES_SETTINGS -> {
+
+        consumer.showCustomOption(VueCodeStyleSettings::class.java,
+                                  "INTERPOLATION_WRAP",
+                                  VueBundle.message("vue.formatting.wrapping.interpolations"),
+                                  null,
+                                  CodeStyleSettingsCustomizable.WRAP_OPTIONS, CodeStyleSettingsCustomizable.WRAP_VALUES)
+        consumer.showCustomOption(VueCodeStyleSettings::class.java,
+                                  "INTERPOLATION_NEW_LINE_AFTER_START_DELIMITER",
+                                  VueBundle.message("vue.formatting.wrapping.new-line-after-start-delimiter"),
+                                  VueBundle.message("vue.formatting.wrapping.interpolations"))
+        consumer.showCustomOption(VueCodeStyleSettings::class.java,
+                                  "INTERPOLATION_NEW_LINE_BEFORE_END_DELIMITER",
+                                  VueBundle.message("vue.formatting.wrapping.new-line-before-end-delimiter"),
+                                  VueBundle.message("vue.formatting.wrapping.interpolations"))
+
+      }
+      else -> {
+      }
+    }
   }
 }

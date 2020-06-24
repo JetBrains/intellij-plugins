@@ -75,7 +75,7 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
 
   public void testMetaClassSig2() {
     doTest("<code><b>test.dart</b><br>class <b>A</b><br><br></code>",
-           "@Meta(\'foo\') class <caret>A {};\n" +
+           "@Meta('foo') class <caret>A {};\n" +
            "class Meta {\n" +
            "  final String name;\n" +
            "  const Meta([this.name]);\n" +

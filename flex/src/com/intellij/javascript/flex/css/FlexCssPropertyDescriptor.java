@@ -442,16 +442,16 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
       }
     }
 
-    Set<PsiElement> navPairs = navElement2pairInfo.keySet();
     Map<String, PsiElement> qName2ResultElement = new HashMap<>();
-    for (PsiElement navPair : navPairs) {
-      PairInfo pairInfo = navElement2pairInfo.get(navPair);
+    for (Map.Entry<PsiElement, PairInfo> entry : navElement2pairInfo.entrySet()) {
+      PsiElement navElement = entry.getKey();
+      PairInfo pairInfo = entry.getValue();
       String jsClassQName = pairInfo.myJsClassQName;
       PsiElement navPairInOtherClassWithSameQName = jsClassQName != null ? qName2ResultElement.get(jsClassQName) : null;
       if (navPairInOtherClassWithSameQName == null ||
-          navPairInOtherClassWithSameQName == navElement2pairInfo.get(navPairInOtherClassWithSameQName) &&
-          pairInfo.myPair != navPair) {
-        qName2ResultElement.put(jsClassQName, navPair);
+          navPairInOtherClassWithSameQName == navElement2pairInfo.get(navPairInOtherClassWithSameQName).myPair &&
+          pairInfo.myPair != navElement) {
+        qName2ResultElement.put(jsClassQName, navElement);
       }
     }
     Collection<PsiElement> result = qName2ResultElement.values();

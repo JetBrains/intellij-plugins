@@ -78,6 +78,7 @@ class VueLexerHelper(private val handle: VueLexerHandle) {
       handle.seenScriptType = false
       handle.scriptType = null
       handle.seenScript = false
+      seenTemplate = false
     }
     return tokenType
   }
@@ -109,6 +110,8 @@ class VueLexerHelper(private val handle: VueLexerHandle) {
           .filter { style.equals(it.id, ignoreCase = true) }
           .forEach { return it }
       }
+      // Vue CLI uses PostCSS internally - https://cli.vuejs.org/guide/css.html#postcss
+      // Make it default
       return if (style == null) Language.findLanguageByID("PostCSS") else null
     }
   }
@@ -133,6 +136,9 @@ class VueLexerHelper(private val handle: VueLexerHandle) {
 
   inner class VueTagClosedHandler : BaseHtmlLexer.TokenHandler {
     override fun handleElement(lexer: Lexer) {
+      if (seenTemplate && handle.scriptType == null) {
+        seenTemplate = false
+      }
       if (seenTemplate && handle.seenScript) {
         handle.seenTag = true
       }

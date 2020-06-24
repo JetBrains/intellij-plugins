@@ -52,7 +52,7 @@ public class DartRemotePostfixTemplate extends PostfixTemplate {
         prefix = "Bang";
       }
       Class<?> templateClass = Class.forName("com.jetbrains.lang.dart.ide.template.postfix." + prefix + "PostfixTemplate");
-      Constructor<?> constructor = ((Class<?>)templateClass).getDeclaredConstructor(PostfixCompletionTemplate.class);
+      Constructor<?> constructor = templateClass.getDeclaredConstructor(PostfixCompletionTemplate.class);
       return (DartRemotePostfixTemplate)constructor.newInstance(template);
     }
     catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException ex) {

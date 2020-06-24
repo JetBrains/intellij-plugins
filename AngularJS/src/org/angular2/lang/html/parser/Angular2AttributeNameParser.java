@@ -34,8 +34,7 @@ public class Angular2AttributeNameParser {
     pair("tabindex", "tabIndex")
   );
 
-  @NotNull
-  public static AttributeInfo parseBound(@NotNull String name) {
+  public static @NotNull AttributeInfo parseBound(@NotNull String name) {
     AttributeInfo info = parse(name);
     return info.type != Angular2AttributeType.REGULAR ? info :
            new PropertyBindingInfo(info.name, info.isCanonical, false, PROPERTY);
@@ -45,14 +44,12 @@ public class Angular2AttributeNameParser {
     return parse(name, NG_TEMPLATE);
   }
 
-  @NotNull
-  public static AttributeInfo parse(@NotNull String name, @Nullable XmlTag tag) {
+  public static @NotNull AttributeInfo parse(@NotNull String name, @Nullable XmlTag tag) {
     return parse(name, tag != null ? tag.getLocalName() : NG_TEMPLATE);
   }
 
   @SuppressWarnings("HardCodedStringLiteral")
-  @NotNull
-  public static AttributeInfo parse(@NotNull String name, @NotNull String tagName) {
+  public static @NotNull AttributeInfo parse(@NotNull String name, @NotNull String tagName) {
     name = normalizeAttributeName(name);
     if (name.startsWith("bindon-")) {
       return parsePropertyBindingCanonical(name.substring(7), true);
@@ -76,7 +73,7 @@ public class Angular2AttributeNameParser {
       return parseTemplateBindings(name.substring(1));
     }
     else if (name.startsWith("let-")) {
-      return parseVariable(name.substring(4), isTemplateTag(tagName));
+      return parseLet(name.substring(4), isTemplateTag(tagName));
     }
     else if (name.startsWith("#")) {
       return parseReference(name.substring(1), false);
@@ -89,22 +86,21 @@ public class Angular2AttributeNameParser {
     }
     else if (name.equals(Angular2NgContentDescriptor.ATTR_SELECT) && tagName.equals(NG_CONTENT)) {
       return new AttributeInfo(name, false, Angular2AttributeType.NG_CONTENT_SELECTOR);
-    } else if (name.startsWith("i18n-")) {
+    }
+    else if (name.startsWith("i18n-")) {
       return new AttributeInfo(name.substring(5), false, Angular2AttributeType.I18N);
     }
     return new AttributeInfo(name, false, Angular2AttributeType.REGULAR);
   }
 
-  @NotNull
-  public static String normalizeAttributeName(@NotNull String name) {
+  public static @NotNull String normalizeAttributeName(@NotNull String name) {
     if (StringUtil.startsWithIgnoreCase(name, HtmlUtil.HTML5_DATA_ATTR_PREFIX)) {
       return name.substring(5);
     }
     return name;
   }
 
-  @NotNull
-  private static AttributeInfo parsePropertyBindingShort(@NotNull String name, boolean bananaBoxBinding) {
+  private static @NotNull AttributeInfo parsePropertyBindingShort(@NotNull String name, boolean bananaBoxBinding) {
     if (!bananaBoxBinding && name.startsWith("@")) {
       return new PropertyBindingInfo(name.substring(1), false, false, ANIMATION);
     }
@@ -112,8 +108,7 @@ public class Angular2AttributeNameParser {
   }
 
   @SuppressWarnings("HardCodedStringLiteral")
-  @NotNull
-  private static AttributeInfo parsePropertyBindingCanonical(@NotNull String name, boolean bananaBoxBinding) {
+  private static @NotNull AttributeInfo parsePropertyBindingCanonical(@NotNull String name, boolean bananaBoxBinding) {
     if (!bananaBoxBinding && name.startsWith("animate-")) {
       return new PropertyBindingInfo(name.substring(8), true, false, ANIMATION);
     }
@@ -121,8 +116,7 @@ public class Angular2AttributeNameParser {
   }
 
   @SuppressWarnings("HardCodedStringLiteral")
-  @NotNull
-  private static AttributeInfo parsePropertyBindingRest(@NotNull String name, boolean isCanonical, boolean bananaBoxBinding) {
+  private static @NotNull AttributeInfo parsePropertyBindingRest(@NotNull String name, boolean isCanonical, boolean bananaBoxBinding) {
     if (name.startsWith("attr.")) {
       return new PropertyBindingInfo(name.substring(5), isCanonical, bananaBoxBinding, ATTRIBUTE);
     }
@@ -137,8 +131,7 @@ public class Angular2AttributeNameParser {
 
 
   @SuppressWarnings("HardCodedStringLiteral")
-  @NotNull
-  private static AttributeInfo parseEvent(@NotNull String name, boolean isCanonical) {
+  private static @NotNull AttributeInfo parseEvent(@NotNull String name, boolean isCanonical) {
     if (name.startsWith("@")) {
       name = name.substring(1);
     }
@@ -151,13 +144,11 @@ public class Angular2AttributeNameParser {
     return parseAnimationEvent(name, isCanonical);
   }
 
-  @NotNull
-  private static AttributeInfo parseTemplateBindings(@NotNull String name) {
+  private static @NotNull AttributeInfo parseTemplateBindings(@NotNull String name) {
     return new AttributeInfo(name, false, Angular2AttributeType.TEMPLATE_BINDINGS);
   }
 
-  @NotNull
-  private static AttributeInfo parseAnimationEvent(@NotNull String name, boolean isCanonical) {
+  private static @NotNull AttributeInfo parseAnimationEvent(@NotNull String name, boolean isCanonical) {
     int dot = name.indexOf('.');
     if (dot < 0) {
       return new EventInfo(name, isCanonical, AnimationPhase.INVALID,
@@ -178,8 +169,7 @@ public class Angular2AttributeNameParser {
                                                 phase, name.substring(0, dot)));
   }
 
-  @NotNull
-  private static AttributeInfo parseVariable(@NotNull String varName, boolean isInTemplateTag) {
+  private static @NotNull AttributeInfo parseLet(@NotNull String varName, boolean isInTemplateTag) {
     if (!isInTemplateTag) {
       return new AttributeInfo(varName, false, Angular2AttributeType.REGULAR,
                                Angular2Bundle.message("angular.parse.template.let-only-on-ng-template"));
@@ -188,11 +178,10 @@ public class Angular2AttributeNameParser {
       return new AttributeInfo(varName, false, Angular2AttributeType.REGULAR,
                                Angular2Bundle.message("angular.parse.template.let-dash-not-allowed-in-name"));
     }
-    return new AttributeInfo(varName, false, Angular2AttributeType.VARIABLE);
+    return new AttributeInfo(varName, false, Angular2AttributeType.LET);
   }
 
-  @NotNull
-  private static AttributeInfo parseReference(@NotNull String refName, boolean isCanonical) {
+  private static @NotNull AttributeInfo parseReference(@NotNull String refName, boolean isCanonical) {
     if (refName.contains("-")) {
       return new AttributeInfo(refName, false, Angular2AttributeType.REGULAR,
                                Angular2Bundle.message("angular.parse.template.ref-var-dash-not-allowed-in-name"));
@@ -205,12 +194,9 @@ public class Angular2AttributeNameParser {
 
   public static class AttributeInfo {
 
-    @NotNull
-    public final String name;
-    @Nullable
-    public final String error;
-    @NotNull
-    public final Angular2AttributeType type;
+    public final @NotNull String name;
+    public final @Nullable String error;
+    public final @NotNull Angular2AttributeType type;
     public final boolean isCanonical;
 
     public AttributeInfo(@NotNull String name, boolean isCanonical, @NotNull Angular2AttributeType type) {
@@ -242,8 +228,7 @@ public class Angular2AttributeNameParser {
 
   public static class PropertyBindingInfo extends AttributeInfo {
 
-    @NotNull
-    public final PropertyBindingType bindingType;
+    public final @NotNull PropertyBindingType bindingType;
 
     public PropertyBindingInfo(@NotNull String name,
                                boolean isCanonical,
@@ -286,11 +271,9 @@ public class Angular2AttributeNameParser {
 
   public static class EventInfo extends AttributeInfo {
 
-    @Nullable
-    public final AnimationPhase animationPhase;
+    public final @Nullable AnimationPhase animationPhase;
 
-    @NotNull
-    public final EventType eventType;
+    public final @NotNull EventType eventType;
 
     public EventInfo(@NotNull String name, boolean isCanonical) {
       super(name, isCanonical, Angular2AttributeType.EVENT);

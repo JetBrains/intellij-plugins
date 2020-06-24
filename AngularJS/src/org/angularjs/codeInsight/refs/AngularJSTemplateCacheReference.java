@@ -34,8 +34,7 @@ public class AngularJSTemplateCacheReference extends AngularJSReferenceBase<JSLi
   }
 
   @Override
-  @Nullable
-  public PsiElement resolveInner() {
+  public @Nullable PsiElement resolveInner() {
     final FileBasedIndex instance = FileBasedIndex.getInstance();
     final Project project = getElement().getProject();
     final String id = getCanonicalText();

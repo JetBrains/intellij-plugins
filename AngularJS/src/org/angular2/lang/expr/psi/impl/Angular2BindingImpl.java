@@ -31,8 +31,7 @@ public class Angular2BindingImpl extends Angular2EmbeddedExpressionImpl implemen
     }
   }
 
-  @Nullable
-  static JSExpression getExpression(Angular2EmbeddedExpressionImpl expression) {
+  static @Nullable JSExpression getExpression(Angular2EmbeddedExpressionImpl expression) {
     return Arrays.stream(expression.getChildren(JSExtendedLanguagesTokenSetProvider.EXPRESSIONS))
       .map(node -> node.getPsi(JSExpression.class))
       .findFirst()
@@ -46,15 +45,13 @@ public class Angular2BindingImpl extends Angular2EmbeddedExpressionImpl implemen
       .orElse(null);
   }
 
-  @Nullable
   @Override
-  public JSExpression getExpression() {
+  public @Nullable JSExpression getExpression() {
     return getExpression(this);
   }
 
-  @Nullable
   @Override
-  public Angular2Quote getQuote() {
+  public @Nullable Angular2Quote getQuote() {
     return getQuote(this);
   }
 }

@@ -16,7 +16,7 @@
 package com.intellij.struts2.reference.web;
 
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
-import com.intellij.javaee.model.xml.ParamValue;
+import com.intellij.javaee.model.CommonParamValue;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -162,9 +162,9 @@ class StrutsConstantValueReference extends PsiReferenceBase<XmlTag> implements E
     assert paramValueElement != null;
 
     final DomElement domElement = paramValueElement.getParent();
-    assert domElement instanceof ParamValue;
+    assert domElement instanceof CommonParamValue;
 
-    final ParamValue initParamElement = (ParamValue) domElement;
+    final CommonParamValue initParamElement = (CommonParamValue) domElement;
     final String paramName = initParamElement.getParamName().getStringValue();
     if (StringUtil.isEmpty(paramName)) {
       return null;

@@ -13,14 +13,11 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import one.util.streamex.StreamEx;
-import org.angular2.entities.Angular2Declaration;
-import org.angular2.entities.Angular2EntitiesProvider;
-import org.angular2.entities.Angular2Entity;
-import org.angular2.entities.Angular2Module;
+import org.angular2.entities.*;
 import org.angular2.entities.metadata.psi.Angular2MetadataEntity;
-import org.angular2.index.Angular2IndexingHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,8 +45,8 @@ public class Angular2DeclarationsScope {
         return create(null, null, false);
       }
       return CachedValuesManager.getCachedValue(file, () -> {
-        Angular2Module module = doIfNotNull(Angular2EntitiesProvider.getComponent(
-          Angular2IndexingHandler.findComponentClass(file)), c -> c.getModule());
+        Angular2Module module = doIfNotNull(Angular2EntitiesProvider.getComponent(Angular2ComponentLocator.findComponentClass(file)),
+                                            c -> selectModule(c, file));
         return CachedValueProvider.Result.create(
           module != null ? create(module, module.getDeclarationsInScope(), module.isScopeFullyResolved())
                          : create(null, null, false),
@@ -60,16 +57,14 @@ public class Angular2DeclarationsScope {
       () -> ProjectRootManager.getInstance(element.getProject()).getFileIndex());
   }
 
-  @Nullable
-  public <T extends Angular2Declaration> Pair<T, DeclarationProximity> getClosestDeclaration(@NotNull Collection<T> declarations) {
+  public @Nullable <T extends Angular2Declaration> Pair<T, DeclarationProximity> getClosestDeclaration(@NotNull Collection<T> declarations) {
     return StreamEx.of(declarations)
       .map(d -> pair(d, getDeclarationProximity(d)))
       .min(Comparator.comparing(p -> p.second))
       .orElse(null);
   }
 
-  @Nullable
-  public Angular2Module getModule() {
+  public @Nullable Angular2Module getModule() {
     return myScope.getValue().first;
   }
 
@@ -90,8 +85,7 @@ public class Angular2DeclarationsScope {
                   module -> module.isPublic() && module.getTypeScriptClass() != null);
   }
 
-  @NotNull
-  public DeclarationProximity getDeclarationProximity(@NotNull Angular2Declaration declaration) {
+  public @NotNull DeclarationProximity getDeclarationProximity(@NotNull Angular2Declaration declaration) {
     if (contains(declaration)) {
       return DeclarationProximity.IN_SCOPE;
     }
@@ -113,8 +107,7 @@ public class Angular2DeclarationsScope {
     return DeclarationProximity.NOT_REACHABLE;
   }
 
-  @NotNull
-  public DeclarationProximity getDeclarationsProximity(@NotNull Iterable<? extends Angular2Declaration> declarations) {
+  public @NotNull DeclarationProximity getDeclarationsProximity(@NotNull Iterable<? extends Angular2Declaration> declarations) {
     if (myScope == null) {
       return DeclarationProximity.IN_SCOPE;
     }
@@ -151,5 +144,19 @@ public class Angular2DeclarationsScope {
     NOT_DECLARED_IN_ANY_MODULE,
     NOT_EXPORTED_BY_MODULE,
     NOT_REACHABLE
+  }
+
+  private static @Nullable Angular2Module selectModule(@NotNull Angular2Component component, @NotNull PsiFile context) {
+    Collection<Angular2Module> modules = component.getAllModules();
+    if (modules.size() > 1) {
+      for (Angular2FrameworkHandler handler : Angular2FrameworkHandler.EP_NAME.getExtensionList()) {
+        Angular2Module result = handler.selectModuleForDeclarationsScope(modules, component, context);
+        if (result != null) {
+          return result;
+        }
+      }
+      return Angular2EntityUtils.defaultChooseModule(modules.stream());
+    }
+    return ContainerUtil.getFirstItem(modules);
   }
 }

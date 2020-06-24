@@ -17,16 +17,21 @@ import training.lang.LangSupport
 import training.learn.exceptons.InvalidSdkException
 import training.learn.interfaces.Lesson
 import training.learn.interfaces.Module
+import training.learn.lesson.LessonManager
+import training.ui.LearnToolWindowFactory
+import training.ui.LearningUiManager
+import training.util.isLearningDocumentationMode
 
 class CourseManager internal constructor() {
-
-  var learnProject: Project? = null
   val mapModuleVirtualFile = mutableMapOf<Module, VirtualFile>()
 
   private val allModules: MutableList<Module> = mutableListOf()
 
   val modules: List<Module>
-    get() = filterByLanguage(LangManager.getInstance().getLanguageDisplayName())
+    get() = LangManager.getInstance().getLangSupport()?.let { filterByLanguage(it) } ?: emptyList()
+
+  val lessonsForModules: List<Lesson>
+    get() = modules.map { it.lessons }.flatten()
 
   init {
     initXmlModules()
@@ -39,13 +44,14 @@ class CourseManager internal constructor() {
   fun initXmlModules() {
     val trainingModules = TrainingModules.EP_NAME.extensions
     for (modules in trainingModules) {
-      val primaryLanguage = modules.language
+      val primaryLanguage = LangManager.getInstance().getLangSupportById(modules.language) ?:
+                            error("Cannot find primary language support: ${modules.language}")
       val classLoader = modules.loaderForClass
       for (module in modules.children) {
         val moduleFilename = module.xmlPath
-        val module = XmlModule.initModule(moduleFilename, primaryLanguage, classLoader)
-                     ?: throw Exception("Unable to init module (is null) from file: $moduleFilename")
-        allModules.add(module)
+        val xmlModule = XmlModule.initModule(moduleFilename, primaryLanguage, classLoader)
+                        ?: throw Exception("Unable to init module (is null) from file: $moduleFilename")
+        allModules.add(xmlModule)
       }
     }
   }
@@ -60,7 +66,18 @@ class CourseManager internal constructor() {
    */
   @Synchronized
   fun openLesson(projectWhereToOpen: Project, lesson: Lesson?) {
+    LessonManager.instance.stopLesson()
     if (lesson == null) return //todo: remove null lessons
+    if (isLearningDocumentationMode(projectWhereToOpen)) {
+      if (projectWhereToOpen == LearningUiManager.activeToolWindow?.project) {
+        LessonManager.instance.stopLesson()
+        LearningUiManager.activeToolWindow = null
+      }
+      LearnToolWindowFactory.learnWindowPerProject[projectWhereToOpen]?.let { learnToolWindow ->
+        learnToolWindow.openInDocumentationMode(lesson)
+        return
+      }
+    }
     val focusOwner = IdeFocusManager.getInstance(projectWhereToOpen).focusOwner
     val parent = DataManager.getInstance().getDataContext(focusOwner)
     val data = mutableMapOf<String, Any?>()
@@ -90,19 +107,17 @@ class CourseManager internal constructor() {
       .firstOrNull { it.name.toUpperCase() == lessonName.toUpperCase() }
   }
 
-  /**
-   * @return null if lesson has no module or it is only one lesson in module
-   */
-  fun giveNextLesson(currentLesson: Lesson): Lesson? {
-    val module = currentLesson.module
-    val lessons = module.lessons
-    val size = lessons.size
-    if (size == 1) return null
-    return lessons.firstOrNull {
-      lessons.indexOf(it) > lessons.indexOf(currentLesson) &&
-      lessons.indexOf(it) < lessons.size && !it.passed
+  fun getNextNonPassedLesson(currentLesson: Lesson?): Lesson? {
+    val lessons = lessonsForModules
+    val list = if (currentLesson != null) {
+      val index = lessons.indexOf(currentLesson)
+      if (index < 0) return null
+      lessons.subList(index + 1, lessons.size) + lessons.subList(0, index + 1)
     }
-      ?.let { lessons[lessons.indexOf(it)] }
+    else {
+      lessons
+    }
+    return list.find { !it.passed }
   }
 
   fun giveNextModule(currentLesson: Lesson): Module? {
@@ -121,26 +136,22 @@ class CourseManager internal constructor() {
     return nextModule
   }
 
-  fun calcLessonsForLanguage(langSupport: LangSupport): Int {
-    return ContainerUtil.concat(filterByLanguage(langSupport.primaryLanguage).map { m -> m.lessons }).size
+  fun calcLessonsForLanguage(primaryLangSupport: LangSupport): Int {
+    return ContainerUtil.concat(filterByLanguage(primaryLangSupport).map { m -> m.lessons }).size
   }
 
-  fun calcPassedLessonsForLanguage(langSupport: LangSupport): Int {
-    return filterByLanguage(langSupport.primaryLanguage)
+  fun calcPassedLessonsForLanguage(primaryLangSupport: LangSupport): Int {
+    return filterByLanguage(primaryLangSupport)
       .flatMap { m -> m.lessons }
       .filter { it.passed }
       .size
   }
 
-  private fun filterByLanguage(language: String): List<Module> {
-    return allModules.filter { m ->
-      m.primaryLanguage!!.equals(language, ignoreCase = true)
-    }
+  private fun filterByLanguage(primaryLangSupport: LangSupport): List<Module> {
+    return allModules.filter { it.primaryLanguage == primaryLangSupport }
   }
 
-  fun getModulesByLanguage(langSupport: LangSupport): List<Module> {
-    return filterByLanguage(langSupport.primaryLanguage)
-  }
+  fun getModulesByLanguage(primaryLangSupport: LangSupport): List<Module> = filterByLanguage(primaryLangSupport)
 
   companion object {
     val instance: CourseManager

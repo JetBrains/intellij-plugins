@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.lang.javascript.psi.types.*
+import com.intellij.lang.javascript.psi.types.evaluable.JSApplyNewType
 import com.intellij.lang.javascript.psi.types.evaluable.JSReturnedExpressionType
 import com.intellij.lang.javascript.psi.types.primitives.JSBooleanType
 import com.intellij.lang.javascript.psi.types.primitives.JSNumberType
@@ -17,6 +18,7 @@ import com.intellij.lang.javascript.psi.types.primitives.JSStringType
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil.isStubBased
 import com.intellij.lang.typescript.modules.TypeScriptNodeReference
+import com.intellij.lang.typescript.resolve.TypeScriptAugmentationUtil
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
@@ -158,7 +160,7 @@ fun resolveElementTo(element: PsiElement?, vararg classes: KClass<out JSElement>
             // Try extract reference name from type
             ?: JSPsiImplUtils.getInitializerReference(cur)?.let { JSStubBasedPsiTreeUtil.resolveLocally(it, cur) }
             // Most expensive solution through substitution, works with function calls
-            ?: (element as? JSTypeInfoOwner)?.jsType?.substitute()?.sourceElement
+            ?: (element as? JSTypeOwner)?.jsType?.substitute()?.sourceElement
           )?.let { queue.addLast(it) }
         }
         is PsiPolyVariantReference -> cur.multiResolve(false)
@@ -236,7 +238,8 @@ fun getJSTypeFromPropOptions(expression: JSExpression?): JSType? {
 }
 
 private fun getJSTypeFromVueType(reference: JSReferenceExpression): JSType? {
-  return reference.referenceName?.let { vueTypesMap[it] }
+  return JSApplyNewType(JSTypeofTypeImpl(reference, JSTypeSourceFactory.createTypeSource(reference, false)),
+                        JSTypeSourceFactory.createTypeSource(reference, false))
 }
 
 fun getRequiredFromPropOptions(expression: JSExpression?): Boolean {
@@ -291,8 +294,18 @@ fun <T : PsiElement> resolveSymbolFromNodeModule(scope: PsiElement?, moduleName:
   return getCachedValue(scope ?: return null, key) {
     TypeScriptNodeReference(scope, moduleName, 0).resolve()
       ?.castSafelyTo<JSElement>()
-      ?.let { ES6PsiUtil.resolveSymbolInModule(symbolName, scope, it) }
-      ?.asSequence()
+      ?.let { module ->
+        val symbols = ES6PsiUtil.resolveSymbolInModule(symbolName, scope, module)
+        if (symbols.isEmpty()) {
+          TypeScriptAugmentationUtil.getModuleAugmentations(module)
+            .asSequence()
+            .filterIsInstance<JSElement>()
+            .flatMap { ES6PsiUtil.resolveSymbolInModule(symbolName, scope, it).asSequence() }
+        }
+        else {
+          symbols.asSequence()
+        }
+      }
       ?.filter { it.element?.isValid == true }
       ?.mapNotNull { tryCast(it.element, symbolClass) }
       ?.firstOrNull()

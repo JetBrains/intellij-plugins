@@ -11,4 +11,4 @@
 <script lang="ts">
 <warning>    console.log('hello')</warning>
 <warning>    console.log('world')</warning>
-<warning></warning></script>
+</script>

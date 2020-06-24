@@ -6,6 +6,9 @@ import com.intellij.openapi.diagnostic.Logger
 import training.check.Check
 import training.learn.ActionsRecorder
 import training.learn.lesson.LessonManager
+import training.learn.lesson.LessonProcessor
+import training.ui.LearnToolWindowFactory
+import training.ui.LearningUiManager
 import java.util.concurrent.CompletableFuture
 import kotlin.concurrent.thread
 
@@ -13,6 +16,8 @@ class TryCommand : Command(CommandType.TRY) {
 
   @Throws(Exception::class)
   override fun execute(executionList: ExecutionList) {
+    LearningUiManager.activeToolWindow?.learnPanel?.updateLessonProgress(LessonProcessor.tasksNumber, LessonProcessor.currentTaskIndex)
+    LessonProcessor.currentTaskIndex++
 
     val element = executionList.elements.poll()
     val check: Check?
@@ -24,7 +29,9 @@ class TryCommand : Command(CommandType.TRY) {
 
     LessonManager.instance.addMessages(element)
 
-    val recorder = ActionsRecorder(editor.project!!, editor.document)
+    val project = editor.project!!
+    val parentDisposable = LearnToolWindowFactory.learnWindowPerProject[project]?.parentDisposable ?: project
+    val recorder = ActionsRecorder(project, editor.document, parentDisposable)
     LessonManager.instance.registerActionsRecorder(recorder)
 
     if (element.getAttribute("check") != null) {

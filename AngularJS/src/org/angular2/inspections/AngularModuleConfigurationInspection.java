@@ -38,9 +38,8 @@ public abstract class AngularModuleConfigurationInspection extends LocalInspecti
     myProblemType = type;
   }
 
-  @NotNull
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
+  public @NotNull PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
     return new JSElementVisitor() {
       @Override
       public void visitES6Decorator(ES6Decorator decorator) {
@@ -49,8 +48,7 @@ public abstract class AngularModuleConfigurationInspection extends LocalInspecti
     };
   }
 
-  @NotNull
-  public static ValidationResults<ProblemType> getValidationResults(@NotNull ES6Decorator decorator) {
+  public static @NotNull ValidationResults<ProblemType> getValidationResults(@NotNull ES6Decorator decorator) {
     return isAngularEntityDecorator(decorator, MODULE_DEC)
            ? CachedValuesManager.getCachedValue(decorator,
                                                 () -> CachedValueProvider.Result.create(
@@ -59,8 +57,7 @@ public abstract class AngularModuleConfigurationInspection extends LocalInspecti
            : ValidationResults.empty();
   }
 
-  @NotNull
-  private static ValidationResults<ProblemType> validate(@NotNull ES6Decorator decorator) {
+  private static @NotNull ValidationResults<ProblemType> validate(@NotNull ES6Decorator decorator) {
     Angular2Module module = Angular2EntitiesProvider.getModule(decorator);
     if (module == null) {
       return ValidationResults.empty();

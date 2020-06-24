@@ -5,6 +5,7 @@ import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import org.jetbrains.idea.maven.MavenImportingTestCase;
+import org.jetbrains.idea.maven.project.MavenWorkspaceSettingsComponent;
 import org.jetbrains.idea.maven.server.MavenServerManager;
 
 import java.io.File;
@@ -28,8 +29,8 @@ public class NonJarDependenciesImportingTest extends MavenImportingTestCase {
 
   public void testArtifactTypeProvidedByExtensionPlugin() {
     // this test is basically the same as com.intellij.flex.maven.Flexmojos3ImporterTest.testConfiguringResourceBundleDependency
-    MavenServerManager.getInstance().setUseMaven2();
     // This test ensures that we download all necessary extension plugins.
+    MavenWorkspaceSettingsComponent.getInstance(myProject).getSettings().generalSettings.setMavenHome(MavenServerManager.BUNDLED_MAVEN_2);
     importProject("<groupId>test</groupId>" +
                   "<artifactId>project</artifactId>" +
                   "<version>1</version>" +

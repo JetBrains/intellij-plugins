@@ -20,9 +20,12 @@ public class AngularJSBracesInterpolationTypedHandler extends TypedHandlerDelega
     myBracesCompleter = new JSInjectionBracesUtil.InterpolationBracesCompleter(AngularJSInjector.BRACES_FACTORY);
   }
 
-  @NotNull
   @Override
-  public Result beforeCharTyped(char c, @NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file, @NotNull FileType fileType) {
+  public @NotNull Result beforeCharTyped(char c,
+                                         @NotNull Project project,
+                                         @NotNull Editor editor,
+                                         @NotNull PsiFile file,
+                                         @NotNull FileType fileType) {
     final Language language = file.getLanguage();
     if (HTMLLanguage.INSTANCE.equals(language)) {
       return myBracesCompleter.beforeCharTyped(c, project, editor, file);

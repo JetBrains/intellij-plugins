@@ -13,6 +13,7 @@ import com.intellij.openapi.util.io.UniqueNameBuilder
 import com.intellij.openapi.wm.impl.welcomeScreen.FlatWelcomeFrame
 import com.intellij.openapi.wm.impl.welcomeScreen.NewRecentProjectPanel
 import com.intellij.openapi.wm.impl.welcomeScreen.RecentProjectPanel
+import com.intellij.openapi.wm.impl.welcomeScreen.WelcomeScreenUIManager
 import com.intellij.ui.ColorUtil
 import com.intellij.ui.JBColor
 import com.intellij.ui.ListUtil
@@ -41,12 +42,12 @@ import javax.swing.event.ListDataEvent
 import javax.swing.event.ListDataListener
 
 class GroupsPanel(val app: Application) : NewRecentProjectPanel(app) {
-  override fun createList(recentProjectActions: Array<out AnAction>?, size: Dimension?): JBList<*> {
+  override fun createList(recentProjectActions: Array<out AnAction>?, size: Dimension?): JBList<AnAction?> {
     val list = ActionList(IFTRecentProjectListActionProvider.instance.getIFTActions().toTypedArray(), this)
     //restore non-project actions after RecentProjectsWelcomeScreenActionBase#rebuildRecentProjectDataModel
     list.model.addListDataListener(RestorableListListener())
 
-    list.background = FlatWelcomeFrame.getProjectsBackground()
+    list.background = WelcomeScreenUIManager.getProjectsBackground()
     list.addMouseListener(object : PopupHandler() {
       override fun invokePopup(comp: Component, x: Int, y: Int) {
         val index = list.locationToIndex(Point(x, y))
@@ -177,11 +178,12 @@ class GroupsPanel(val app: Application) : NewRecentProjectPanel(app) {
       }
 
       override fun getListBackground(isSelected: Boolean, hasFocus: Boolean): Color {
-        return if (isSelected) FlatWelcomeFrame.getListSelectionColor(hasFocus) else FlatWelcomeFrame.getProjectsBackground()
+        return if (isSelected) WelcomeScreenUIManager.getProjectsSelectionBackground(hasFocus)
+        else WelcomeScreenUIManager.getProjectsBackground()
       }
 
       override fun getListForeground(isSelected: Boolean, hasFocus: Boolean): Color {
-        return UIUtil.getListForeground(isSelected && hasFocus)
+        return WelcomeScreenUIManager.getProjectsSelectionForeground(isSelected, hasFocus)
       }
 
       override fun layoutComponents() {

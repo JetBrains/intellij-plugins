@@ -10,7 +10,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class PlatformioActionGroup extends ActionGroup {
   public PlatformioActionGroup() {
-    super("PlatformIO", ClionEmbeddedPlatformioBundle.message("platformio.support"), ClionEmbeddedPlatformioIcons.Platformio);
+    super(ClionEmbeddedPlatformioBundle.message("platformio.actiongroup.name"), ClionEmbeddedPlatformioBundle.message("platformio.support"),
+          ClionEmbeddedPlatformioIcons.Platformio);
   }
 
   @Override

@@ -98,7 +98,7 @@ class VueInsertHandler : XmlTagInsertHandler() {
       val file: XmlFile = context as? XmlFile ?: context.containingFile as? XmlFile ?: return
       val defaultExport = findOrCreateDefaultExport(file, isClass)
       val defaultExportElement = defaultExport.stubSafeElement
-      var obj = VueComponents.getComponentDescriptor(defaultExportElement)?.obj
+      var obj = VueComponents.getComponentDescriptor(defaultExportElement)?.initializer
 
       if (obj == null) {
         if (defaultExportElement !is JSClass) return
@@ -107,7 +107,7 @@ class VueInsertHandler : XmlTagInsertHandler() {
         val newDecorator = VueComponents.getComponentDecorator(newClass)!!
         val replacedDecorator = decorator.replace(newDecorator)
         forReformat(replacedDecorator)
-        obj = VueComponents.getComponentDescriptor(defaultExportElement)?.obj ?: return
+        obj = VueComponents.getComponentDescriptor(defaultExportElement)?.initializer ?: return
       }
 
       val components = componentProperty(obj).value as? JSObjectLiteralExpression ?: return

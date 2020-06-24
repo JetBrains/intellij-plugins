@@ -16,9 +16,8 @@ class Angular2ExpansionFormCaseContentTokenType extends Angular2EmbeddedContentT
     super("NG:EXPANSION_FORM_CASE_CONTENT_TOKEN", Angular2HtmlLanguage.INSTANCE);
   }
 
-  @NotNull
   @Override
-  protected Lexer createLexer() {
+  protected @NotNull Lexer createLexer() {
     return new Angular2HtmlLexer(true, null);
   }
 

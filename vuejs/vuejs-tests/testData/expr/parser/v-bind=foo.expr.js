@@ -1,4 +1,6 @@
 "foo"|lowercase
+"foo" | get("bar")
+"foo" | await
 "foo" | lowercase
 "foo" | mod(false, 12)
 "foo" | first | second(12, 34) | third

@@ -1,5 +1,5 @@
 <template>
     <ul id="example-1">
-        {{ !true?"bar":"foo"}}
+      {{ !true ? "bar" : "foo" }}
     </ul>
 </template>

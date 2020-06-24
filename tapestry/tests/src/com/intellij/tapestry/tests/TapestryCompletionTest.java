@@ -10,10 +10,10 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.javaee.ExternalResourceManagerEx;
 import com.intellij.testFramework.UsefulTestCase;
 import com.intellij.xml.util.XmlUtil;
-import gnu.trove.THashSet;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NonNls;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import static com.intellij.util.ArrayUtil.mergeArrays;
@@ -227,7 +227,7 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
       UsefulTestCase.assertSameElements(myFixture.getLookupElementStrings(), expectedItems);
       return;
     }
-    final Set<String> elements = new THashSet<>(myFixture.getLookupElementStrings());
+    final Set<String> elements = new HashSet<>(myFixture.getLookupElementStrings());
     for (String expectedItem : expectedItems) {
       assertTrue(expectedItem + " not found", elements.contains(expectedItem));
     }

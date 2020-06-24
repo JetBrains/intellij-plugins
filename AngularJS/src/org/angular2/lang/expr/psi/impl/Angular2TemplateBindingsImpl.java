@@ -14,8 +14,7 @@ import java.util.Arrays;
 
 public class Angular2TemplateBindingsImpl extends Angular2EmbeddedExpressionImpl implements Angular2TemplateBindings {
 
-  @NotNull
-  private final String myTemplateName;
+  private final @NotNull String myTemplateName;
 
   public Angular2TemplateBindingsImpl(IElementType elementType, @NotNull String templateName) {
     super(elementType);
@@ -33,8 +32,7 @@ public class Angular2TemplateBindingsImpl extends Angular2EmbeddedExpressionImpl
   }
 
   @Override
-  @NotNull
-  public String getTemplateName() {
+  public @NotNull String getTemplateName() {
     return myTemplateName;
   }
 

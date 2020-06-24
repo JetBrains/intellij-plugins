@@ -27,15 +27,13 @@ Support for <a href="https://vuejs.org">Vue.js</a> projects.
 
 Learn more about Vue.js support in the <a href="https://www.jetbrains.com/help/webstorm/vue-js.html">IDE
     documentation</a>.
-
-<h3>Limitations</h3>
-Vue components defined using separate .html, .js, and .css files are not supported: <a href="https://youtrack.jetbrains.com/issue/WEB-32274">WEB-32274</a>.
   ]]></description>
   <vendor>JetBrains</vendor>
   <category>JavaScript Frameworks and Tools</category>
 
   <depends>JavaScript</depends>
   <depends>com.intellij.modules.platform</depends>
+  <depends>com.intellij.css</depends>
   <depends optional="true" config-file="js-debugger.xml">JavaScriptDebugger</depends>
   <depends optional="true" config-file="vue-copyright.xml">com.intellij.copyright</depends>
 
@@ -91,7 +89,8 @@ Vue components defined using separate .html, .js, and .css files are not support
     <stubElementTypeHolder class="org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes"/>
 
     <langCodeStyleSettingsProvider implementation="org.jetbrains.vuejs.options.VueCodeStyleSettingsProvider"/>
-    <fileIndentOptionsProvider implementation="org.jetbrains.vuejs.lang.html.psi.formatter.VueFileIndentOptionsProvider"/>
+    <fileIndentOptionsProvider implementation="org.jetbrains.vuejs.lang.html.psi.formatter.VueFileIndentOptionsProvider"
+                               id="vue" order="before html"/>
 
     <directoryProjectGenerator
       implementation="org.jetbrains.vuejs.cli.VueCliProjectGenerator"/>  <!-- works in WebStorm and other SmallIDEs -->
@@ -144,6 +143,8 @@ Vue components defined using separate .html, .js, and .css files are not support
     <highlightingPassFactory
       implementation="org.jetbrains.vuejs.lang.typescript.service.VueTypeScriptServiceHighlightingPassFactoryRegistrar"/>
     <lang.formatter language="Vue" implementationClass="org.jetbrains.vuejs.lang.html.psi.formatter.VueFormattingModelBuilder"/>
+    <lang.formatter language="VueJS" implementationClass="org.jetbrains.vuejs.lang.expr.psi.formatter.VueJSFormattingModelBuilder"/>
+
     <lang.syntaxHighlighterFactory language="VueJS"
                                    implementationClass="org.jetbrains.vuejs.lang.expr.highlighting.VueJSHighlighterFactory"/>
     <idIndexer filetype="Vue" implementationClass="org.jetbrains.vuejs.lang.html.index.VueIdIndexer"/>
@@ -193,6 +194,9 @@ Vue components defined using separate .html, .js, and .css files are not support
     <vuejs.containerInfoProvider implementation="org.jetbrains.vuejs.libraries.templateLoader.TemplateLoaderComponentInfoProvider"
                                  id="templateLoader"
                                  order="after defaultTemplate"/>
+    <vuejs.containerInfoProvider implementation="org.jetbrains.vuejs.libraries.vuelidate.VuelidateContainerInfoProvider"
+                                 id="vuelidate"
+                                 order="after decoratedComponent"/>
 
     <lang.documentationProvider implementationClass="org.jetbrains.vuejs.codeInsight.documentation.VueDocumentationProvider"
                                 language="Vue" order="before html"/>
@@ -212,7 +216,7 @@ Vue components defined using separate .html, .js, and .css files are not support
     <elementScopeProvider implementation="org.jetbrains.vuejs.VueElementResolveScopeProvider"/>
     <indexedFileTypeProvider implementation="org.jetbrains.vuejs.lang.html.VueIndexedFileTypeProvider"/>
 
-    <frameworkIndexingHandler implementation="org.jetbrains.vuejs.index.VueFrameworkHandler" version="5"/>
+    <frameworkIndexingHandler implementation="org.jetbrains.vuejs.index.VueFrameworkHandler" version="8"/>
     <frameworkIndexingHandler implementation="org.jetbrains.vuejs.libraries.vuex.index.VuexFrameworkHandler" version="6"/>
     <frameworkIndexingHandler implementation="org.jetbrains.vuejs.libraries.templateLoader.TemplateLoaderFrameworkHandler" version="1"/>
 

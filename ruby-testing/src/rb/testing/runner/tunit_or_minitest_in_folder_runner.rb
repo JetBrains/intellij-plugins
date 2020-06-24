@@ -26,8 +26,6 @@ require 'teamcity/utils/runner_utils'
 require 'teamcity/utils/service_message_factory'
 require 'rubymine_test_framework_initializer'
 
-include RubyMineTestFrameworkInitializer
-
 def collect_test_scripts
   test_scripts = []
   Dir["#{IntelliJ::FOLDER_PATH}/#{IntelliJ::SEARCH_MASK}"].each { |file|

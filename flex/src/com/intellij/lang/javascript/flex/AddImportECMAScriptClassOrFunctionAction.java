@@ -106,7 +106,7 @@ public class AddImportECMAScriptClassOrFunctionAction implements HintAction, Que
       }
 
       if (!hasValidResult) {
-        final Collection<JSQualifiedNamedElement> candidates = getCandidates(editor, file);
+        final Collection<JSQualifiedNamedElement> candidates = getCandidates(file);
 
         isAvailableCalculated = true;
         isAvailable = candidates.size() > 0;
@@ -135,11 +135,11 @@ public class AddImportECMAScriptClassOrFunctionAction implements HintAction, Que
     return isAvailable;
   }
 
-  private Collection<JSQualifiedNamedElement> getCandidates(Editor editor, PsiFile file) {
+  private @NotNull Collection<JSQualifiedNamedElement> getCandidates(@NotNull PsiFile file) {
     final Collection<JSQualifiedNamedElement> candidates;
 
     if (myReference instanceof JSReferenceExpression && ((JSReferenceExpression)myReference).getQualifier() == null) {
-      Collection<JSQualifiedNamedElement> c = getCandidates(editor, file, myReference.getCanonicalText());
+      Collection<JSQualifiedNamedElement> c = getCandidates(file, myReference.getCanonicalText());
       filterCandidates(c);
       candidates = new THashSet<>(c, JSPsiImplUtils.QUALIFIED_NAME_HASHING_STRATEGY);
     }
@@ -167,7 +167,7 @@ public class AddImportECMAScriptClassOrFunctionAction implements HintAction, Que
     return candidates;
   }
 
-  public static Collection<JSQualifiedNamedElement> getCandidates(final Editor editor, final PsiFile file, final String name) {
+  private static Collection<JSQualifiedNamedElement> getCandidates(final PsiFile file, final String name) {
     final Module module = ModuleUtilCore.findModuleForPsiElement(file);
     if (module != null) {
       GlobalSearchScope searchScope;
@@ -179,7 +179,7 @@ public class AddImportECMAScriptClassOrFunctionAction implements HintAction, Que
       } else {
         searchScope = JSResolveUtil.getResolveScope(file);
       }
-      return JSResolveUtil.findElementsByName(name, editor.getProject(), searchScope);
+      return JSResolveUtil.findElementsByName(name, file.getProject(), searchScope);
     }
     else {
       return Collections.emptyList();
@@ -190,7 +190,7 @@ public class AddImportECMAScriptClassOrFunctionAction implements HintAction, Que
   public boolean fixSilently(@NotNull Editor editor) {
     if (!ActionScriptAutoImportOptionsProvider.isAddUnambiguousImportsOnTheFly()) return false;
 
-    Collection<JSQualifiedNamedElement> candidates = getCandidates(editor, myReference.getElement().getContainingFile());
+    Collection<JSQualifiedNamedElement> candidates = getCandidates(myReference.getElement().getContainingFile());
     if (candidates.size() == 1) {
       JSQualifiedNamedElement element = candidates.iterator().next();
       CommandProcessor.getInstance().runUndoTransparentAction(() -> doImport(element.getQualifiedName()));
@@ -201,7 +201,7 @@ public class AddImportECMAScriptClassOrFunctionAction implements HintAction, Que
 
   @Override
   public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) {
-    final Collection<JSQualifiedNamedElement> candidates = getCandidates(editor, file);
+    final Collection<JSQualifiedNamedElement> candidates = getCandidates(file);
 
     if (candidates.isEmpty() || myUnambiguousTheFlyMode && candidates.size() != 1) {
       return;

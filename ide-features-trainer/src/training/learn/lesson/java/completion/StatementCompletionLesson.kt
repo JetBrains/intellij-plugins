@@ -4,7 +4,7 @@ package training.learn.lesson.java.completion
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiForStatement
 import com.intellij.psi.util.PsiTreeUtil
-import training.commands.kotlin.TaskContext
+import training.commands.kotlin.TaskRuntimeContext
 import training.lang.JavaLangSupport
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
@@ -49,7 +49,7 @@ class StatementCompletionLesson(module: Module) : KLesson("Statement Completion"
     }
   }
 
-  private fun TaskContext.checkIfAppended(): Boolean {
+  private fun TaskRuntimeContext.checkIfAppended(): Boolean {
     val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.document)
     val psiForStatements = PsiTreeUtil.findChildrenOfType(psiFile, PsiForStatement::class.java).toTypedArray()
     if (psiForStatements.size < 2) return false

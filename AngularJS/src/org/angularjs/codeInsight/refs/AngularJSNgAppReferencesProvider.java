@@ -2,6 +2,7 @@ package org.angularjs.codeInsight.refs;
 
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.psi.resolve.CachingPolyReferenceBase;
+import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
@@ -16,7 +17,9 @@ import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.index.AngularModuleIndex;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Irina.Chernushina on 3/21/2016.
@@ -48,13 +51,15 @@ public class AngularJSNgAppReferencesProvider extends PsiReferenceProvider {
       if (results.size() > 1) {
         final Condition<JSImplicitElement> filter = new Condition<JSImplicitElement>() {
           private Set<VirtualFile> includedFiles;
+
           @Override
           public boolean value(JSImplicitElement element) {
             if (includedFiles == null) {
               final PsiFile topLevelFile =
                 InjectedLanguageManager.getInstance(getElement().getProject()).getTopLevelFile(getElement().getContainingFile());
               final VirtualFile appDefinitionFile = topLevelFile.getVirtualFile();
-              final VirtualFile[] includedFilesArr = FileIncludeManager.getManager(getElement().getProject()).getIncludedFiles(appDefinitionFile, true, true);
+              final VirtualFile[] includedFilesArr =
+                FileIncludeManager.getManager(getElement().getProject()).getIncludedFiles(appDefinitionFile, true, true);
               includedFiles = ContainerUtil.set(includedFilesArr);
             }
             return includedFiles.contains(element.getContainingFile().getVirtualFile());
@@ -62,7 +67,7 @@ public class AngularJSNgAppReferencesProvider extends PsiReferenceProvider {
         };
         results = ContainerUtil.filter(results, filter);
       }
-      final List<ResolveResult> resolveResults = ContainerUtil.map(results, AngularIndexUtil.JS_IMPLICIT_TO_RESOLVE_RESULT);
+      List<ResolveResult> resolveResults = ContainerUtil.map(results, JSResolveResult::new);
       return resolveResults.toArray(ResolveResult.EMPTY_ARRAY);
     }
   }

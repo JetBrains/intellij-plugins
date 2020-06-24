@@ -43,6 +43,9 @@
     <extensionPoint qualifiedName="org.angular2.templateScopesProvider"
                     interface="org.angular2.codeInsight.template.Angular2TemplateScopesProvider"
                     dynamic="true"/>
+    <extensionPoint qualifiedName="org.angular2.frameworkHandler"
+                    interface="org.angular2.entities.Angular2FrameworkHandler"
+                    dynamic="true"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -186,6 +189,7 @@
               language="Angular2Html"/>
     <multiHostInjector implementation="org.angular2.editor.Angular2Injector" order="after JSCommentInjector, before JSConfigurationInjector"
                        id="angular2"/>
+    <xml.xmlExtension implementation="org.angular2.codeInsight.Angular2HtmlExtension" order="before html" id="angular2"/>
     <lang.parserDefinition language="Angular2Html" implementationClass="org.angular2.lang.html.parser.Angular2HtmlParserDefinition"/>
     <lang.syntaxHighlighterFactory language="Angular2Html"
                                    implementationClass="org.angular2.lang.html.highlighting.Angular2HtmlHighlighterFactory"/>
@@ -234,7 +238,7 @@
     <idIndexer filetype="Angular2Html" implementationClass="org.angular2.lang.html.index.Angular2HtmlIdIndexer"/>
     <todoIndexer filetype="Angular2Html" implementationClass="org.angular2.lang.html.index.Angular2HtmlTodoIndexer"/>
     <xml.fileNSInfoProvider implementation="org.angular2.lang.html.Angular2HtmlNSInfoProvider"/>
-    <stubElementTypeHolder class="org.angular2.lang.html.parser.Angular2HtmlStubElementTypes"/>
+    <stubElementTypeHolder class="org.angular2.lang.html.stub.Angular2HtmlStubElementTypes"/>
     <lang.formatter language="Angular2Html" implementationClass="org.angular2.lang.html.Angular2HtmlFormattingModelBuilder"/>
     <gotoDeclarationHandler implementation="org.angular2.editor.Angular2GotoDeclarationHandler" order="first"/>
     <typeDeclarationProvider implementation="org.angular2.editor.Angular2TypeDeclarationProvider" order="first"/>
@@ -281,7 +285,7 @@
                                       implementationClass="org.angular2.lang.metadata.MetadataJsonFileViewProviderFactory"/>
     <lang.elementManipulator forClass="org.angular2.lang.html.psi.Angular2HtmlNgContentSelector"
                              implementationClass="org.angular2.lang.html.psi.impl.Angular2HtmlNgContentSelectorManipulator"/>
-    <notificationWhitelist groupIds="Angular CLI"/>
+    <notificationAllowlist groupIds="Angular CLI"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">

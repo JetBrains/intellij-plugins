@@ -10,9 +10,8 @@ public class Angular2MetadataClassNameIndex extends Angular2IndexBase<Angular2Me
   public static final StubIndexKey<String, Angular2MetadataClassBase> KEY =
     StubIndexKey.createIndexKey("angular2.metadata.className.index");
 
-  @NotNull
   @Override
-  public StubIndexKey<String, Angular2MetadataClassBase> getKey() {
+  public @NotNull StubIndexKey<String, Angular2MetadataClassBase> getKey() {
     return KEY;
   }
 }

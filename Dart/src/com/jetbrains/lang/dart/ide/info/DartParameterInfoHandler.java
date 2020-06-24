@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.info;
 
 import com.intellij.codeInsight.CodeInsightBundle;
@@ -59,7 +59,8 @@ public class DartParameterInfoHandler implements ParameterInfoHandler<PsiElement
 
   @Override
   public PsiElement findElementForUpdatingParameterInfo(@NotNull UpdateParameterInfoContext context) {
-    return context.getFile().findElementAt(context.getEditor().getCaretModel().getOffset());
+    PsiElement element = context.getFile().findElementAt(context.getEditor().getCaretModel().getOffset());
+    return element != null ? findElementForParameterInfo(element) : null;
   }
 
   @Override
@@ -102,7 +103,8 @@ public class DartParameterInfoHandler implements ParameterInfoHandler<PsiElement
       ? (DartFunctionDescription)context.getObjectsToView()[0]
       : null;
 
-    int parameterIndex = DartResolveUtil.getArgumentIndex(place, functionDescription);
+    PsiElement element = context.getFile().findElementAt(context.getEditor().getCaretModel().getOffset());
+    int parameterIndex = DartResolveUtil.getArgumentIndex(element, functionDescription);
     context.setCurrentParameter(parameterIndex);
 
     if (context.getParameterOwner() == null) {

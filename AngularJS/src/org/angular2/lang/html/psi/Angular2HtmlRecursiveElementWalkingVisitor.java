@@ -11,7 +11,7 @@ public class Angular2HtmlRecursiveElementWalkingVisitor extends Angular2HtmlElem
   };
 
   @Override
-  public void visitElement(@NotNull final PsiElement element) {
+  public void visitElement(final @NotNull PsiElement element) {
     myWalkingState.elementStarted(element);
   }
 

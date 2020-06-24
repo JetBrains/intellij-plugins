@@ -30,9 +30,8 @@ public class AngularCliAddDependencyInspection extends LocalInspectionTool {
 
   private static final long TIMEOUT = 2000;
 
-  @NotNull
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
+  public @NotNull PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
     return new JsonElementVisitor() {
       @Override
       public void visitFile(@NotNull PsiFile file) {
@@ -83,8 +82,7 @@ public class AngularCliAddDependencyInspection extends LocalInspectionTool {
     }
   }
 
-  @NotNull
-  private static TextRange getTextRange(@NotNull JsonValue element) {
+  private static @NotNull TextRange getTextRange(@NotNull JsonValue element) {
     TextRange range = element.getTextRange();
     if (element instanceof JsonStringLiteral && range.getLength() > 2 &&
         StringUtil.isQuotedString(element.getText())) {

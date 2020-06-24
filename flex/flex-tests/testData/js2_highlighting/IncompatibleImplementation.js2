@@ -4,7 +4,7 @@ package <error>xxx</error> {
     function bar(x);
   }
 
-  class <error>IncompatibleImplementation</error> implements Foo {
+  class <error descr="More than one externally visible symbol defined in file">IncompatibleImplementation</error> implements Foo {
     public function bar<error descr="Incompatible implementation, should have signature '(x)'">()</error> {
     }
     <error descr="Incompatible implementation, should have 'public' access modifier">protected</error> function foo() {

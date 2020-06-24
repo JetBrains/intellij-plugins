@@ -20,21 +20,18 @@ public class Angular2IvyDirectiveAttribute implements Angular2DirectiveAttribute
     mySource = source;
   }
 
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     return myName;
   }
 
-  @Nullable
   @Override
-  public JSType getType() {
+  public @Nullable JSType getType() {
     return mySource.getJSType();
   }
 
-  @NotNull
   @Override
-  public PsiElement getSourceElement() {
+  public @NotNull PsiElement getSourceElement() {
     return mySource;
   }
 

@@ -18,8 +18,7 @@ public class Angular2ComponentPropertyResolveResult extends JSResolveResult {
     myPropertySignature = propertySignature;
   }
 
-  @Nullable
-  public JSType getJSType() {
+  public @Nullable JSType getJSType() {
     return myPropertySignature.getJSType();
   }
 

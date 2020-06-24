@@ -95,9 +95,8 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
     return myElement;
   }
 
-  @Nullable
   @Override
-  public String handleTargetRename(@NotNull @NonNls String newTargetName) {
+  public @Nullable String handleTargetRename(@NotNull @NonNls String newTargetName) {
     return newTargetName;
   }
 
@@ -106,9 +105,8 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
     return null;
   }
 
-  @Nullable
   @Override
-  public Icon getIcon() {
+  public @Nullable Icon getIcon() {
     return AngularJSIcons.Angular2;
   }
 }

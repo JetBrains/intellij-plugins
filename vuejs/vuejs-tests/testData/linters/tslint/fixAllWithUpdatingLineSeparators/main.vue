@@ -29,7 +29,7 @@
 <warning>var anotherArrow = () => {</warning>
 <warning>    return {x: 1}</warning><EOLWarning></EOLWarning>
 <warning>}</warning><EOLWarning></EOLWarning>
-<warning></warning></script>
+</script>
 <style>
   div {
     color: red

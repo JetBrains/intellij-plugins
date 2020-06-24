@@ -2,9 +2,11 @@
 import {Collection, Schematic} from '@angular-devkit/schematics';
 
 export interface SchematicsProvider {
-    getCollection(collectionName: string): Collection<any, any>;
-    listSchematics(collection: Collection<any, any>): string[]
-    getSchematic(collection: Collection<any, any>, schematicName: string, allowPrivate?: boolean): Schematic<any, any>;
+  getCollection(collectionName: string): Collection<any, any>;
 
-    getDefaultSchematicCollection(): string;
+  listSchematics(collection: Collection<any, any>): string[]
+
+  getSchematic(collection: Collection<any, any>, schematicName: string, allowPrivate?: boolean): Schematic<any, any>;
+
+  getDefaultSchematicCollection(): string;
 }

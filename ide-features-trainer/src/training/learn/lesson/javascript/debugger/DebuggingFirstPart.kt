@@ -1,12 +1,11 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.lesson.javascript.debugger
 
-import com.intellij.lang.javascript.dialects.JSLanguageLevel
-import com.intellij.lang.javascript.settings.JSRootConfiguration
 import training.lang.JavaScriptLangSupport
 import training.learn.interfaces.Module
 import training.learn.lesson.javascript.debugger.BeforeDebugging.Companion.jsDebuggerSample
 import training.learn.lesson.javascript.lineContainsBreakpoint
+import training.learn.lesson.javascript.setLanguageLevel
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 
@@ -16,7 +15,7 @@ class DebuggingFirstPart(module: Module) : KLesson("Debugging Code. Part I", mod
   override val lessonContent: LessonContext.() -> Unit
     get() {
       return {
-        JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
+        setLanguageLevel()
         prepareSample(jsDebuggerSample)
         task("Run") {
           text("Now that we have a run/debug configuration in place, let’s see how to work with the built-in debugger. \n" +

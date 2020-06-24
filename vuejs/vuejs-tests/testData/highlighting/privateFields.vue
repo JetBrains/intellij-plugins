@@ -28,15 +28,15 @@
 
     }
 
-    private get foo(): number {
-      return 12
+    private get foo(): boolean {
+      return true
     }
 
     private set <warning descr="Unused property unusedSetter">unusedSetter</warning>(<warning descr="Unused parameter a">a</warning>) {
 
     }
 
-    private set foo(a: <error descr="Set accessor method has type that is not compatible with get accessor type, expecting 'number'">boolean</error>) {
+    private set foo(a: boolean) {
       a.toString();
     }
   }

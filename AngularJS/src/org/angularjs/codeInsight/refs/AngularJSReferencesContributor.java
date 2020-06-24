@@ -202,7 +202,7 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
                 element.getValue() instanceof JSReferenceExpression || element.getValue() == null);
       }
 
-      private PsiElement moveUpChain(@Nullable final PsiElement element, final Class<? extends PsiElement> @NotNull ... clazz) {
+      private PsiElement moveUpChain(final @Nullable PsiElement element, final Class<? extends PsiElement> @NotNull ... clazz) {
         PsiElement current = element;
         for (Class<? extends PsiElement> aClass : clazz) {
           current = current != null && aClass.isInstance(current.getParent()) ? current.getParent() : current;
@@ -228,7 +228,7 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
     }));
   }
 
-  private static PsiElementPattern.Capture<XmlAttributeValue> xmlAttributePattern(@NotNull final String directiveName) {
+  private static PsiElementPattern.Capture<XmlAttributeValue> xmlAttributePattern(final @NotNull String directiveName) {
     return PlatformPatterns.psiElement(XmlAttributeValue.class).and(new FilterPattern(new ElementFilter() {
       @Override
       public boolean isAcceptable(Object element, @Nullable PsiElement context) {

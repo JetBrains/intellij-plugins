@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Precise Navigation" id="swift.navigation.search" lang="Swift">
+<xml type="Scenario" name="Precise Navigation" id="swift.navigation.precise" lang="Swift">
     <CopyText><![CDATA[import UIKit
 
 class PreciseNavigationController : UIViewController {
@@ -30,7 +30,7 @@ class PreciseNavigationController : UIViewController {
     <Try trigger="GotoPreviousError">Jump back to the first error with <action>GotoPreviousError</action>.</Try>
     <Try triggers="CommentByLineComment;GotoNextError;CommentByLineComment">Now comment each of these lines by pressing <action>CommentByLineComment</action> - <action>GotoNextError</action> - <action>CommentByLineComment</action>.</Try>
     <Try trigger="GotoNextError">Cool! Now try pressing <action>GotoNextError</action> again - it should point you to the first warning in the file.</Try>
-    <Try trigger="ShowIntentionActions">Use <action>ShowIntentionActions</action> to fix the first warning.</Try>
+    <Try trigger="ShowIntentionActions">Press <action>EditorEscape</action> and use <action>ShowIntentionActions</action> to fix the first warning.</Try>
     <Try trigger="MethodDown">To quickly jump to the next method in the current file, press <action>MethodDown</action>.</Try>
     <Try trigger="MethodUp">Jump to the previous method by using <action>MethodUp</action>.</Try>
     <Try trigger="JumpToLastChange">Imagine you have a long file and you can't quite remember what you've changed in it and where. Simply press <action>JumpToLastChange</action> to jump to the most recent change in the file.</Try>

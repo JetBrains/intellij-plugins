@@ -1,11 +1,11 @@
 package com.intellij.javascript.flex.css;
 
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.AtomicNotNullLazyValue;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.search.DelegatingGlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.indexing.IndexableSetContributor;
 import org.jetbrains.annotations.NotNull;
@@ -44,25 +44,10 @@ public class FlexStylesIndexableSetContributor extends IndexableSetContributor {
 
   @NotNull
   public static GlobalSearchScope enlarge(@NotNull final GlobalSearchScope scope) {
-    return scope.union(new GlobalSearchScope() {
+    return scope.union(new DelegatingGlobalSearchScope(scope) {
       @Override
       public boolean contains(@NotNull final VirtualFile file) {
         return ourFiles.getValue().contains(file);
-      }
-
-      @Override
-      public int compare(@NotNull final VirtualFile file1, @NotNull final VirtualFile file2) {
-        return scope.compare(file1, file2);
-      }
-
-      @Override
-      public boolean isSearchInModuleContent(@NotNull final Module aModule) {
-        return scope.isSearchInModuleContent(aModule);
-      }
-
-      @Override
-      public boolean isSearchInLibraries() {
-        return scope.isSearchInLibraries();
       }
     });
   }

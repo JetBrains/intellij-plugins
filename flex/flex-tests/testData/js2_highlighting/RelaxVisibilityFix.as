@@ -1,5 +1,5 @@
 package {
-public class RelaxVisibilityFix {
+public class <error descr="More than one externally visible symbol defined in file">RelaxVisibilityFix</error> {
       private static var v;
    }
 

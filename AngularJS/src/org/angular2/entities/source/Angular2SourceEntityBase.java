@@ -28,15 +28,13 @@ public abstract class Angular2SourceEntityBase extends UserDataHolderBase implem
     myClass = aClass;
   }
 
-  @NotNull
   @Override
-  public TypeScriptClass getTypeScriptClass() {
+  public @NotNull TypeScriptClass getTypeScriptClass() {
     return myClass;
   }
 
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     return StringUtil.notNullize(myClass.getName(), Angular2Bundle.message("angular.description.unnamed"));
   }
 
@@ -49,13 +47,17 @@ public abstract class Angular2SourceEntityBase extends UserDataHolderBase implem
     return CachedValuesManager.getManager(myClass.getProject()).getCachedValue(this, provider);
   }
 
-  /** Since Ivy entities are cached on TypeScriptClass dependencies, we can avoid caching for values depending solely on class contents. */
+  /**
+   * Since Ivy entities are cached on TypeScriptClass dependencies, we can avoid caching for values depending solely on class contents.
+   */
   protected <T> @NotNull T getLazyValue(Key<T> key, @NotNull Supplier<@NotNull ? extends T> provider) {
     T result = getUserData(key);
     return result != null ? result : putUserDataIfAbsent(key, provider.get());
   }
 
-  /** Since Ivy entities are cached on TypeScriptClass dependencies, we can avoid caching for values depending solely on class contents. */
+  /**
+   * Since Ivy entities are cached on TypeScriptClass dependencies, we can avoid caching for values depending solely on class contents.
+   */
   protected <T> @Nullable T getNullableLazyValue(Key<T> key, @NotNull Supplier<@Nullable ? extends T> provider) {
     T result = getUserData(key);
     if (result == NULL_MARK) {
@@ -66,15 +68,15 @@ public abstract class Angular2SourceEntityBase extends UserDataHolderBase implem
       if (result == null) {
         //noinspection unchecked
         putUserDataIfAbsent(key, (T)NULL_MARK);
-      } else {
+      }
+      else {
         return putUserDataIfAbsent(key, result);
       }
     }
     return result;
   }
 
-  @NotNull
-  protected Collection<Object> getClassModificationDependencies() {
+  protected @NotNull Collection<Object> getClassModificationDependencies() {
     return getCachedValue(() -> {
       Collection<Object> dependencies = new HashSet<>();
       JSClassUtils.processClassesInHierarchy(myClass, true, (aClass, typeSubstitutor, fromImplements) -> {
@@ -84,5 +86,4 @@ public abstract class Angular2SourceEntityBase extends UserDataHolderBase implem
       return CachedValueProvider.Result.create(dependencies, dependencies);
     });
   }
-
 }

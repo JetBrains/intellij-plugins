@@ -20,13 +20,12 @@ import java.util.Map;
 public class AngularAttributeIndexer implements DataIndexer<String, AngularNamedItemDefinition, FileContent> {
   private final String myDirectiveName;
 
-  public AngularAttributeIndexer(@NotNull final String directiveName) {
+  public AngularAttributeIndexer(final @NotNull String directiveName) {
     myDirectiveName = directiveName;
   }
 
-  @NotNull
   @Override
-  public Map<String, AngularNamedItemDefinition> map(@NotNull FileContent inputData) {
+  public @NotNull Map<String, AngularNamedItemDefinition> map(@NotNull FileContent inputData) {
     final Map<String, AngularNamedItemDefinition> map = new HashMap<>();
     final PsiFile file = inputData.getPsiFile();
     if (file instanceof XmlFile) {

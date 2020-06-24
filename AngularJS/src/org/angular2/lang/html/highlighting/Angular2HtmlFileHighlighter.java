@@ -8,7 +8,6 @@ import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.highlighting.JSHighlighter;
 import com.intellij.lang.javascript.highlighting.TypeScriptHighlighter;
 import com.intellij.lexer.Lexer;
-import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.XmlHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.FileTypeRegistry;
@@ -28,42 +27,12 @@ import static com.intellij.lang.javascript.highlighting.TypeScriptHighlighter.*;
 import static com.intellij.openapi.editor.XmlHighlighterColors.HTML_CODE;
 import static com.intellij.openapi.util.Pair.pair;
 import static com.intellij.util.containers.ContainerUtil.newArrayList;
+import static org.angular2.lang.html.highlighting.Angular2HtmlHighlighterColors.*;
+import static org.angular2.lang.html.highlighting.Angular2HtmlHighlightingLexer.EXPANSION_FORM_COMMA;
+import static org.angular2.lang.html.highlighting.Angular2HtmlHighlightingLexer.EXPANSION_FORM_CONTENT;
 import static org.angular2.lang.html.parser.Angular2HtmlElementTypes.*;
 
 class Angular2HtmlFileHighlighter extends HtmlFileHighlighter {
-
-  public static final TextAttributesKey NG_BANANA_BINDING_ATTR_NAME = TextAttributesKey.createTextAttributesKey(
-    "NG.BANANA_BINDING_ATTR_NAME", DefaultLanguageHighlighterColors.INSTANCE_FIELD);
-
-  public static final TextAttributesKey NG_EVENT_BINDING_ATTR_NAME = TextAttributesKey.createTextAttributesKey(
-    "NG.EVENT_BINDING_ATTR_NAME", DefaultLanguageHighlighterColors.INSTANCE_FIELD);
-
-  public static final TextAttributesKey NG_INTERPOLATION_DELIMITER = TextAttributesKey.createTextAttributesKey(
-    "NG.SCRIPT_DELIMITERS", DefaultLanguageHighlighterColors.SEMICOLON);
-
-  public static final TextAttributesKey NG_EXPANSION_FORM_DELIMITER = TextAttributesKey.createTextAttributesKey(
-    "NG.EXPANSION_FORM_DELIMITERS", DefaultLanguageHighlighterColors.SEMICOLON);
-
-  public static final TextAttributesKey NG_PROPERTY_BINDING_ATTR_NAME = TextAttributesKey.createTextAttributesKey(
-    "NG.PROPERTY_BINDING_ATTR_NAME", DefaultLanguageHighlighterColors.INSTANCE_FIELD);
-
-  public static final TextAttributesKey NG_REFERENCE_ATTR_NAME = TextAttributesKey.createTextAttributesKey(
-    "NG.REFERENCE_ATTR_NAME", DefaultLanguageHighlighterColors.LOCAL_VARIABLE);
-
-  public static final TextAttributesKey NG_TEMPLATE_BINDINGS_ATTR_NAME = TextAttributesKey.createTextAttributesKey(
-    "NG.TEMPLATE_BINDINGS_ATTR_NAME", DefaultLanguageHighlighterColors.STATIC_FIELD);
-
-  public static final TextAttributesKey NG_TEMPLATE_VARIABLE_ATTR_NAME = TextAttributesKey.createTextAttributesKey(
-    "NG.TEMPLATE_VARIABLE_ATTR_NAME", DefaultLanguageHighlighterColors.LOCAL_VARIABLE);
-
-  public static final TextAttributesKey NG_EXPRESSION = TextAttributesKey.createTextAttributesKey(
-    "NG.EXPRESSIONS", DefaultLanguageHighlighterColors.TEMPLATE_LANGUAGE_COLOR);
-
-  public static final TextAttributesKey NG_EXPANSION_FORM = TextAttributesKey.createTextAttributesKey(
-    "NG.EXPANSION_FORM", DefaultLanguageHighlighterColors.TEMPLATE_LANGUAGE_COLOR);
-
-  public static final TextAttributesKey NG_EXPANSION_FORM_COMMA = TextAttributesKey.createTextAttributesKey(
-    "NG.EXPANSION_FORM_COMMA", DefaultLanguageHighlighterColors.COMMA);
 
   private static final Map<IElementType, TextAttributesKey[]> keys = new HashMap<>();
   private static final JSHighlighter ourJsHighlighter = new JSHighlighter(DialectOptionHolder.JS_1_5);
@@ -83,8 +52,8 @@ class Angular2HtmlFileHighlighter extends HtmlFileHighlighter {
       token -> put(token, HTML_CODE, NG_EXPANSION_FORM, NG_EXPANSION_FORM_DELIMITER)
     );
 
-    put(Angular2HtmlHighlightingLexer.EXPANSION_FORM_CONTENT, HTML_CODE, NG_EXPANSION_FORM);
-    put(Angular2HtmlHighlightingLexer.EXPANSION_FORM_COMMA, HTML_CODE, NG_EXPANSION_FORM, NG_EXPANSION_FORM_COMMA);
+    put(EXPANSION_FORM_CONTENT, HTML_CODE, NG_EXPANSION_FORM);
+    put(EXPANSION_FORM_COMMA, HTML_CODE, NG_EXPANSION_FORM, NG_EXPANSION_FORM_COMMA);
 
     newArrayList(
       pair(BANANA_BOX_BINDING, NG_BANANA_BINDING_ATTR_NAME),
@@ -92,7 +61,7 @@ class Angular2HtmlFileHighlighter extends HtmlFileHighlighter {
       pair(PROPERTY_BINDING, NG_PROPERTY_BINDING_ATTR_NAME),
       pair(REFERENCE, NG_REFERENCE_ATTR_NAME),
       pair(TEMPLATE_BINDINGS, NG_TEMPLATE_BINDINGS_ATTR_NAME),
-      pair(VARIABLE, NG_TEMPLATE_VARIABLE_ATTR_NAME)).forEach(
+      pair(LET, NG_TEMPLATE_LET_ATTR_NAME)).forEach(
       p -> put(p.first, HTML_CODE, XmlHighlighterColors.HTML_TAG, XmlHighlighterColors.HTML_ATTRIBUTE_NAME, p.second)
     );
 
@@ -132,10 +101,8 @@ class Angular2HtmlFileHighlighter extends HtmlFileHighlighter {
     return mapToTsKeys(result, tokenType);
   }
 
-  @NotNull
   @Override
-  public Lexer getHighlightingLexer() {
-    //noinspection HardCodedStringLiteral
+  public @NotNull Lexer getHighlightingLexer() {
     return new Angular2HtmlHighlightingLexer(myTokenizeExpansionForms, myInterpolationConfig,
                                              FileTypeRegistry.getInstance().findFileTypeByName("CSS"));
   }
@@ -144,8 +111,7 @@ class Angular2HtmlFileHighlighter extends HtmlFileHighlighter {
     return ContainerUtil.map2Array(tokenHighlights, TextAttributesKey.class, key -> getTsMappedKey(key, tokenType));
   }
 
-  @NotNull
-  private static TextAttributesKey getTsMappedKey(@NotNull TextAttributesKey key, @NotNull IElementType tokenType) {
+  private static @NotNull TextAttributesKey getTsMappedKey(@NotNull TextAttributesKey key, @NotNull IElementType tokenType) {
     return !key.getExternalName().startsWith("JS.") //NON-NLS
            ? key
            : ourTsKeyMap.computeIfAbsent(pair(key, tokenType), p -> {

@@ -10,9 +10,8 @@ import org.jetbrains.annotations.NotNull;
 public class AngularUiRouterStatesIndex extends AngularIndexBase {
   public static final StubIndexKey<String, JSImplicitElementProvider> KEY = StubIndexKey.createIndexKey("angularjs.ui.router.states.index");
 
-  @NotNull
   @Override
-  public StubIndexKey<String, JSImplicitElementProvider> getKey() {
+  public @NotNull StubIndexKey<String, JSImplicitElementProvider> getKey() {
     return KEY;
   }
 }

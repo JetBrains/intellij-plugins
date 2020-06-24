@@ -35,8 +35,8 @@ import static org.angular2.Angular2DecoratorUtil.EXPORTS_PROP;
 
 public class AddNgModuleDeclarationAction extends Angular2NgModuleSelectAction {
 
-  @NotNull private final String myDeclarationName;
-  @NotNull private final SmartPsiElementPointer<ES6Decorator> myDecorator;
+  private final @NotNull String myDeclarationName;
+  private final @NotNull SmartPsiElementPointer<ES6Decorator> myDecorator;
 
   AddNgModuleDeclarationAction(@Nullable Editor editor,
                                @NotNull PsiElement context,
@@ -54,9 +54,8 @@ public class AddNgModuleDeclarationAction extends Angular2NgModuleSelectAction {
     return Angular2Bundle.message("angular.quickfix.ngmodule.declare.select.module", myDeclarationName);
   }
 
-  @NotNull
   @Override
-  public List<JSElement> getCandidates() {
+  public @NotNull List<JSElement> getCandidates() {
     Angular2SourceDeclaration declaration = tryCast(
       Angular2EntitiesProvider.getDeclaration(myDecorator.getElement()),
       Angular2SourceDeclaration.class);
@@ -69,13 +68,12 @@ public class AddNgModuleDeclarationAction extends Angular2NgModuleSelectAction {
       .toList();
   }
 
-  @NotNull
   @Override
-  protected List<JSElement> getFinalElements(@NotNull Project project,
-                                             @NotNull PsiFile file,
-                                             @NotNull List<JSElement> candidates,
-                                             @NotNull Collection<JSElement> elementsFromLibraries,
-                                             @NotNull Map<PsiElement, JSModuleNameInfo> renderedTexts) {
+  protected @NotNull List<JSElement> getFinalElements(@NotNull Project project,
+                                                      @NotNull PsiFile file,
+                                                      @NotNull List<JSElement> candidates,
+                                                      @NotNull Collection<JSElement> elementsFromLibraries,
+                                                      @NotNull Map<PsiElement, JSModuleNameInfo> renderedTexts) {
     return candidates;
   }
 

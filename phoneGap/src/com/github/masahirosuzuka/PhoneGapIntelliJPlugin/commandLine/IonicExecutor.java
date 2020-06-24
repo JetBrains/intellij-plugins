@@ -7,17 +7,17 @@ import org.jetbrains.annotations.Nullable;
 
 public class IonicExecutor extends CordovaBasedExecutor {
 
-  public IonicExecutor(String path, String version) {
+  public IonicExecutor(String path, @Nullable String version) {
     super(path, version);
   }
 
   @Override
   protected String @NotNull [] getNewProjectCommands(@NotNull String name) {
     if (!isIonic3AndLater()) {
-      return new String[]{myPath, "start", name};
+      return new String[]{"start", name};
     }
 
-    return new String[]{myPath, "start", name, "blank", "--skip-link", "--confirm", "--no-interactive"};
+    return new String[]{"start", name, "blank", "--skip-link", "--confirm", "--no-interactive"};
   }
 
 
@@ -101,6 +101,6 @@ public class IonicExecutor extends CordovaBasedExecutor {
 
   private boolean isIonic3AndLater() {
     SemVer parsedVersion = SemVer.parseFromText(myVersion);
-    return parsedVersion != null && parsedVersion.getMajor() >= 3;
+    return parsedVersion == null || parsedVersion.getMajor() >= 3;
   }
 }

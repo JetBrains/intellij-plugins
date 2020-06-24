@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.lesson.ruby.completion
 
-import training.lang.RubyLangSupport
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
@@ -43,6 +42,4 @@ end
 
   private fun calculateResult(insert: String) =
     StringBuffer(sample.text).insert(sample.startOffset, insert).toString()
-
-  override val existedFile = RubyLangSupport.sandboxFile
 }

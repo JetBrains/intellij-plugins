@@ -74,7 +74,7 @@ class Navigation: UITableViewController {
         return true
     }
 
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             objects.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .fade)
@@ -88,8 +88,8 @@ class Navigation: UITableViewController {
     <Text>There are plenty of navigation views in <ide/>. Knowing which one to call in a given situation will help you use the IDE more efficiently.</Text>
     <Try trigger="ActivateProjectToolWindow">The <strong>Project</strong> view is similar to the Project navigator in Xcode. It shows all the projects included in a particular workspace, and all the files and groups inside them. Open the <strong>Project</strong> view by pressing (<action>ActivateProjectToolWindow</action>).</Try>
     <Text>By default, the <strong>Project</strong> view in <ide/> shows files and folders in the same order as they are stored on the filesystem.</Text>
-    <Try trigger="com.intellij.ide.projectView.impl.ProjectViewImpl$ManualOrderAction">Click the <icon>AllIcons.General.Gear</icon> icon in the project view options menu, and then select <strong>Xcode order</strong> to set the same order of files as in Xcode (if you selected Xcode behavior when setting up <ide/>, this option will be enabled automatically).</Try>
-    <Text>Other features include <strong>Autoscroll from source</strong> and <strong>Autoscroll to source</strong>. The former allows you to automatically open the code of a file when selecting it, while the latter automatically sets the focus on the file name in the <strong>Project</strong> view when the editor area is in focus.</Text>
+    <Try trigger="ProjectView.ManualOrder">Click the <icon>AllIcons.General.GearPlain</icon> icon in the project view options menu, and then select <strong>Xcode order</strong> to set the same order of files as in Xcode (if you selected Xcode behavior when setting up <ide/>, this option will be enabled automatically).</Try>
+    <Text>Other features include <strong>Open Files with Single Click</strong> and <strong>Always Select Opened File</strong>. The former allows you to automatically open the code of a file when selecting it, while the latter automatically sets the focus on the file name in the <strong>Project</strong> view when the editor area is in focus.</Text>
     <Text>The <strong>Files</strong> view is an additional helpful mode for <ide/>’s <strong>Project</strong> view. It shows all the files inside the directory where <code>.xcworkspace</code> or <code>.xcproject</code> is located. With this view, you can easily open any file not included in your project and view it.</Text>
     <Try triggers="com.intellij.ui.content.tabs.TabbedContentAction$MyNextTabAction">Activate the <strong>Files</strong> view by pressing <action>NextTab</action>.</Try>
     <MoveCaret position="1:1" />
@@ -110,7 +110,7 @@ class Navigation: UITableViewController {
     <Try triggers="ToggleLineBreakpoint;Debug">Toggle a breakpoint at line 11 using <action>ToggleLineBreakpoint</action> and then press <action>Debug</action>.</Try>
     <Text>The <strong>Debug</strong> tool window (<action>ActivateDebugToolWindow</action>) is similar to Xcode's <strong>Debug</strong> navigator. It shows all the watches, local variables on the right-hand side, and the list of threads on the left-hand side.</Text>
     <Try triggers="Stop">Stop your application by pressing <action>Stop</action>.</Try>
-    <MoveCaret position="17:9" />
+    <MoveCaret position="16:9" />
     <Try trigger="ViewBreakpoints">The <strong>Breakpoints</strong> dialog has the same functionality as <strong>Breakpoint</strong> navigator in Xcode - it shows the list of all breakpoints in your project. Activate it by using <action>ViewBreakpoints</action>.</Try>
     <Try trigger="ActivateVersionControlToolWindow">Init the GIT repository via <action>Vcs.QuickListPopupAction</action>→<strong>Create Git Repository</strong>. Now activate the <strong>VCS</strong> toolwindow with the <action>ActivateVersionControlToolWindow</action> shortcut.</Try>
     <Text>The <strong>VCS</strong> tool window provides everything you need to work with version control systems, including the <strong>Changes</strong> view, the <strong>VCS log</strong>, and more.</Text>

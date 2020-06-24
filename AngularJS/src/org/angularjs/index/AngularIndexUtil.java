@@ -31,11 +31,11 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.ParameterizedCachedValue;
 import com.intellij.psi.util.ParameterizedCachedValueProvider;
 import com.intellij.util.ConcurrencyUtil;
-import com.intellij.util.Function;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.ID;
+import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,7 +51,6 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class AngularIndexUtil {
   public static final int BASE_VERSION = 65; // Don't forget to update AngularJSIndexingHandler registration
-  public static final Function<JSImplicitElement, ResolveResult> JS_IMPLICIT_TO_RESOLVE_RESULT = JSResolveResult::new;
 
   private static final ConcurrentMap<String, Key<ParameterizedCachedValue<Collection<String>, Pair<Project, ID<String, ?>>>>> ourCacheKeys =
     new ConcurrentHashMap<>();
@@ -134,7 +133,7 @@ public class AngularIndexUtil {
         }
       }
     }
-    final List<ResolveResult> list = ContainerUtil.map(elements, JS_IMPLICIT_TO_RESOLVE_RESULT);
+    List<ResolveResult> list = ContainerUtil.map(elements, JSResolveResult::new);
     return list.toArray(ResolveResult.EMPTY_ARRAY);
   }
 
@@ -231,12 +230,14 @@ public class AngularIndexUtil {
                                    ? stubIndex.getAllKeys((StubIndexKey<String, ?>)id, project)
                                    : fileIndex.getAllKeys(id, project);
 
-      List<String> filteredKeys = ContainerUtil.filter(
-        allKeys,
-        key -> id instanceof StubIndexKey
-               ? !stubIndex.processElements((StubIndexKey<String, PsiElement>)id, key, project, scope, PsiElement.class, element -> false)
-               : !fileIndex.processValues(id, key, null, (file, value) -> false, scope)
-      );
+      List<String> filteredKeys = StreamEx.of(allKeys)
+        .filter(key ->
+                  id instanceof StubIndexKey
+                  ? !stubIndex
+                    .processElements((StubIndexKey<String, PsiElement>)id, key, project, scope, PsiElement.class, element -> false)
+                  : !fileIndex.processValues(id, key, null, (file, value) -> false, scope))
+        .sorted()
+        .toList();
       return Result.create(filteredKeys, PsiManager.getInstance(project).getModificationTracker());
     }
   }

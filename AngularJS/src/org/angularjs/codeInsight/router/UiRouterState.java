@@ -13,20 +13,18 @@ import java.util.List;
  * @author Irina.Chernushina on 3/8/2016.
  */
 public class UiRouterState {
-  @NotNull
-  private final String myName;
+  private final @NotNull String myName;
   private String myUrl;
   private String myTemplateUrl;
   private boolean myHasTemplateDefined;
   private String myParentName;
   private List<UiView> myViews;
-  @Nullable private SmartPsiElementPointer<PsiElement> myPointer;
+  private @Nullable SmartPsiElementPointer<PsiElement> myPointer;
   private boolean myIsAbstract;
-  @NotNull
-  private final VirtualFile myFile;
-  @Nullable private List<SmartPsiElementPointer<PsiElement>> myDuplicateDefinitions;
+  private final @NotNull VirtualFile myFile;
+  private @Nullable List<SmartPsiElementPointer<PsiElement>> myDuplicateDefinitions;
   private VirtualFile myTemplateFile;
-  @Nullable private SmartPsiElementPointer<PsiElement> myTemplatePointer;
+  private @Nullable SmartPsiElementPointer<PsiElement> myTemplatePointer;
   private boolean myGeneric;
 
   public UiRouterState(@NotNull String name, @NotNull VirtualFile file) {
@@ -34,8 +32,7 @@ public class UiRouterState {
     myFile = file;
   }
 
-  @NotNull
-  public String getName() {
+  public @NotNull String getName() {
     return myName;
   }
 
@@ -83,8 +80,7 @@ public class UiRouterState {
     myViews = views;
   }
 
-  @Nullable
-  public SmartPsiElementPointer<PsiElement> getPointer() {
+  public @Nullable SmartPsiElementPointer<PsiElement> getPointer() {
     return myPointer;
   }
 
@@ -100,12 +96,11 @@ public class UiRouterState {
     myIsAbstract = anAbstract;
   }
 
-  @NotNull
-  public VirtualFile getFile() {
+  public @NotNull VirtualFile getFile() {
     return myFile;
   }
 
-  public void addDuplicateDefinition(@NotNull final UiRouterState state) {
+  public void addDuplicateDefinition(final @NotNull UiRouterState state) {
     if (myDuplicateDefinitions == null) myDuplicateDefinitions = new ArrayList<>();
     myDuplicateDefinitions.add(state.getPointer());
   }
@@ -148,8 +143,7 @@ public class UiRouterState {
     myGeneric = generic;
   }
 
-  @Nullable
-  public SmartPsiElementPointer<PsiElement> getTemplatePointer() {
+  public @Nullable SmartPsiElementPointer<PsiElement> getTemplatePointer() {
     return myTemplatePointer;
   }
 

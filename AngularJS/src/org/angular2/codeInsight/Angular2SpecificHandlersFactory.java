@@ -12,23 +12,22 @@ import com.intellij.lang.typescript.resolve.TypeScriptTypeHelper;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
 import org.angular2.codeInsight.refs.Angular2ReferenceExpressionResolver;
+import org.angular2.entities.Angular2ComponentLocator;
 import org.angular2.findUsages.Angular2ReadWriteAccessDetector;
-import org.angular2.index.Angular2IndexingHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class Angular2SpecificHandlersFactory extends JavaScriptSpecificHandlersFactory {
 
-  @NotNull
   @Override
-  public ResolveCache.PolyVariantResolver<JSReferenceExpressionImpl> createReferenceExpressionResolver(
+  public @NotNull ResolveCache.PolyVariantResolver<JSReferenceExpressionImpl> createReferenceExpressionResolver(
     JSReferenceExpressionImpl referenceExpression, boolean ignorePerformanceLimits) {
     return new Angular2ReferenceExpressionResolver(referenceExpression, ignorePerformanceLimits);
   }
 
   @Override
   public <T extends ResultSink> QualifiedItemProcessor<T> createQualifiedItemProcessor(@NotNull T sink, @NotNull PsiElement place) {
-    JSClass clazz = Angular2IndexingHandler.findComponentClass(place);
+    JSClass clazz = Angular2ComponentLocator.findComponentClass(place);
     if (clazz != null && DialectDetector.isTypeScript(clazz)) {
       return new TypeScriptQualifiedItemProcessor<>(sink, place.getContainingFile());
     }
@@ -36,27 +35,23 @@ public class Angular2SpecificHandlersFactory extends JavaScriptSpecificHandlersF
     return super.createQualifiedItemProcessor(sink, place);
   }
 
-  @NotNull
   @Override
-  public JSImportHandler getImportHandler() {
+  public @NotNull JSImportHandler getImportHandler() {
     return new Angular2ImportHandler();
   }
 
-  @NotNull
   @Override
-  public JSTypeEvaluator newTypeEvaluator(@NotNull JSEvaluateContext context, @NotNull JSTypeProcessor processor) {
+  public @NotNull JSTypeEvaluator newTypeEvaluator(@NotNull JSEvaluateContext context, @NotNull JSTypeProcessor processor) {
     return new Angular2TypeEvaluator(context, processor);
   }
 
-  @NotNull
   @Override
-  public AccessibilityProcessingHandler createAccessibilityProcessingHandler(@Nullable PsiElement place, boolean skipNsResolving) {
+  public @NotNull AccessibilityProcessingHandler createAccessibilityProcessingHandler(@Nullable PsiElement place, boolean skipNsResolving) {
     return new Angular2AccessibilityProcessingHandler(place);
   }
 
-  @NotNull
   @Override
-  public JSDialectSpecificReadWriteAccessDetector getReadWriteAccessDetector() {
+  public @NotNull JSDialectSpecificReadWriteAccessDetector getReadWriteAccessDetector() {
     return Angular2ReadWriteAccessDetector.INSTANCE;
   }
 
@@ -65,9 +60,8 @@ public class Angular2SpecificHandlersFactory extends JavaScriptSpecificHandlersF
     return Angular2TypeEvaluationHelper.INSTANCE;
   }
 
-  @NotNull
   @Override
-  public JSTypeHelper getTypeHelper() {
+  public @NotNull JSTypeHelper getTypeHelper() {
     return TypeScriptTypeHelper.getInstance();
   }
 }

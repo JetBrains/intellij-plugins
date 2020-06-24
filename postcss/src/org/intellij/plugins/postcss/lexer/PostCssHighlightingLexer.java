@@ -50,7 +50,7 @@ public class PostCssHighlightingLexer extends CssHighlighterLexer {
     int state = 0;
     state |= afterAmpersand ? AFTER_AMPERSAND_FLAG : 0;
     state |= afterAmpersand ? AFTER_NUMBER_FLAG : 0;
-    state |= blockNestingDepth <= BLOCK_LEVEL_MASK ? blockNestingDepth : BLOCK_LEVEL_MASK;
+    state |= Math.min(blockNestingDepth, BLOCK_LEVEL_MASK);
     return super.getState() | (state << MY_BASE_STATE_SHIFT);
   }
 

@@ -20,22 +20,22 @@ import static com.intellij.lang.javascript.JSTokenTypes.STRING_LITERAL;
 
 public interface Angular2ElementTypes extends JSElementTypes, Angular2StubElementTypes {
 
-  IElementType PIPE_EXPRESSION = new Angular2ExpressionElementType("NG:PIPE_EXPRESSION", Angular2PipeExpressionImpl::new);
-  IElementType PIPE_ARGUMENTS_LIST = new Angular2ExpressionElementType("NG:PIPE_ARGUMENTS_LIST", Angular2PipeArgumentsListImpl::new);
+  IElementType PIPE_EXPRESSION = new Angular2ExpressionElementType("NG:PIPE_EXPRESSION", node -> new Angular2PipeExpressionImpl(node));
+  IElementType PIPE_ARGUMENTS_LIST = new Angular2ExpressionElementType("NG:PIPE_ARGUMENTS_LIST", node -> new Angular2PipeArgumentsListImpl(node));
   IElementType PIPE_LEFT_SIDE_ARGUMENT =
-    new Angular2ExpressionElementType("NG:PIPE_LEFT_SIDE_ARGUMENT", Angular2PipeLeftSideArgumentImpl::new);
+    new Angular2ExpressionElementType("NG:PIPE_LEFT_SIDE_ARGUMENT", node -> new Angular2PipeLeftSideArgumentImpl(node));
   IElementType PIPE_REFERENCE_EXPRESSION =
-    new Angular2ExpressionElementType("NG:PIPE_REFERENCE_EXPRESSION", Angular2PipeReferenceExpressionImpl::new);
-  IElementType CHAIN_STATEMENT = new Angular2ElementType("NG:CHAIN_STATEMENT", Angular2ChainImpl::new);
-  IElementType QUOTE_STATEMENT = new Angular2ElementType("NG:QUOTE_STATEMENT", Angular2QuoteImpl::new);
-  IElementType ACTION_STATEMENT = new Angular2ElementType("NG:ACTION", Angular2ActionImpl::new);
-  IElementType BINDING_STATEMENT = new Angular2ElementType("NG:BINDING", Angular2BindingImpl::new);
-  IElementType INTERPOLATION_STATEMENT = new Angular2ElementType("NG:INTERPOLATION", Angular2InterpolationImpl::new);
-  IElementType SIMPLE_BINDING_STATEMENT = new Angular2ElementType("NG:SIMPLE_BINDING", Angular2SimpleBindingImpl::new);
+    new Angular2ExpressionElementType("NG:PIPE_REFERENCE_EXPRESSION", node -> new Angular2PipeReferenceExpressionImpl(node));
+  IElementType CHAIN_STATEMENT = new Angular2ElementType("NG:CHAIN_STATEMENT", node -> new Angular2ChainImpl(node));
+  IElementType QUOTE_STATEMENT = new Angular2ElementType("NG:QUOTE_STATEMENT", node -> new Angular2QuoteImpl(node));
+  IElementType ACTION_STATEMENT = new Angular2ElementType("NG:ACTION", node -> new Angular2ActionImpl(node));
+  IElementType BINDING_STATEMENT = new Angular2ElementType("NG:BINDING", node -> new Angular2BindingImpl(node));
+  IElementType INTERPOLATION_STATEMENT = new Angular2ElementType("NG:INTERPOLATION", node -> new Angular2InterpolationImpl(node));
+  IElementType SIMPLE_BINDING_STATEMENT = new Angular2ElementType("NG:SIMPLE_BINDING", node -> new Angular2SimpleBindingImpl(node));
   IElementType TEMPLATE_BINDINGS_STATEMENT = new Angular2ElementType("NG:TEMPLATE_BINDINGS_STATEMENT", (type) -> {
     throw new UnsupportedOperationException("Use createTemplateBindingsStatement method instead");
   });
-  IElementType TEMPLATE_BINDING_KEY = new Angular2ElementType("NG:TEMPLATE_BINDING_KEY", Angular2TemplateBindingKeyImpl::new);
+  IElementType TEMPLATE_BINDING_KEY = new Angular2ElementType("NG:TEMPLATE_BINDING_KEY", node -> new Angular2TemplateBindingKeyImpl(node));
   IElementType TEMPLATE_BINDING_STATEMENT = new Angular2ElementType("NG:TEMPLATE_BINDING_STATEMENT", (type) -> {
     throw new UnsupportedOperationException("Use createTemplateBindingStatement method instead");
   });
@@ -52,17 +52,15 @@ public interface Angular2ElementTypes extends JSElementTypes, Angular2StubElemen
 
   class Angular2ElementType extends IElementType implements ICompositeElementType {
 
-    @NotNull
-    private final Function<Angular2ElementType, ASTNode> myClassConstructor;
+    private final @NotNull Function<Angular2ElementType, ASTNode> myClassConstructor;
 
     public Angular2ElementType(@NotNull @NonNls String debugName, @NotNull Function<Angular2ElementType, ASTNode> classConstructor) {
       super(debugName, Angular2Language.INSTANCE);
       myClassConstructor = classConstructor;
     }
 
-    @NotNull
     @Override
-    public ASTNode createCompositeNode() {
+    public @NotNull ASTNode createCompositeNode() {
       return myClassConstructor.apply(this);
     }
   }
@@ -77,23 +75,19 @@ public interface Angular2ElementTypes extends JSElementTypes, Angular2StubElemen
 
   class Angular2TemplateBindingType extends IElementType implements ICompositeElementType {
 
-    @NotNull
-    private final String myKey;
+    private final @NotNull String myKey;
     private final boolean myVar;
-    @Nullable
-    private final String myName;
+    private final @Nullable String myName;
 
     public Angular2TemplateBindingType(@NotNull String key, boolean isVar, @Nullable String name) {
-      //noinspection HardCodedStringLiteral
       super("NG:TEMPLATE_BINDING_STATEMENT", Angular2Language.INSTANCE, false);
       myKey = key;
       myVar = isVar;
       myName = name;
     }
 
-    @NotNull
     @Override
-    public ASTNode createCompositeNode() {
+    public @NotNull ASTNode createCompositeNode() {
       return new Angular2TemplateBindingImpl(TEMPLATE_BINDING_STATEMENT, myKey, myVar, myName);
     }
   }
@@ -101,17 +95,15 @@ public interface Angular2ElementTypes extends JSElementTypes, Angular2StubElemen
   class Angular2TemplateBindingsType extends IElementType implements ICompositeElementType {
 
 
-    @NotNull private final String myTemplateName;
+    private final @NotNull String myTemplateName;
 
     public Angular2TemplateBindingsType(@NotNull String templateName) {
-      //noinspection HardCodedStringLiteral
       super("NG:TEMPLATE_BINDINGS_STATEMENT", Angular2Language.INSTANCE, false);
       myTemplateName = templateName;
     }
 
-    @NotNull
     @Override
-    public ASTNode createCompositeNode() {
+    public @NotNull ASTNode createCompositeNode() {
       return new Angular2TemplateBindingsImpl(TEMPLATE_BINDINGS_STATEMENT, myTemplateName);
     }
   }

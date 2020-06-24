@@ -10,7 +10,7 @@ import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -33,7 +33,7 @@ class WebAppTemplate extends DartProjectTemplate {
                                   "dependencies:\n" +
                                   "  browser: any\n" +
                                   "dev_dependencies:\n" +
-                                  "#  unittest: any\n").getBytes(Charset.forName("UTF-8")));
+                                  "#  unittest: any\n").getBytes(StandardCharsets.UTF_8));
 
     final VirtualFile webDir = VfsUtil.createDirectoryIfMissing(baseDir, "web");
 
@@ -51,7 +51,7 @@ class WebAppTemplate extends DartProjectTemplate {
                                "    buffer.write(text[i]);\n" +
                                "  }\n" +
                                "  querySelector('#sample_text_id').text = buffer.toString();\n" +
-                               "}\n").getBytes(Charset.forName("UTF-8")));
+                               "}\n").getBytes(StandardCharsets.UTF_8));
 
     final VirtualFile htmlFile = webDir.createChildData(this, lowercaseName + ".html");
     htmlFile.setBinaryContent(("<!DOCTYPE html>\n\n" +
@@ -70,7 +70,7 @@ class WebAppTemplate extends DartProjectTemplate {
                                "    <script type=\"" + DartLanguage.DART_MIME_TYPE + "\" src=\"" + lowercaseName + ".dart\"></script>\n" +
                                "    <script src=\"packages/browser/dart.js\"></script>\n" +
                                "  </body>\n" +
-                               "</html>\n").getBytes(Charset.forName("UTF-8")));
+                               "</html>\n").getBytes(StandardCharsets.UTF_8));
 
     final VirtualFile cssFile = webDir.createChildData(this, lowercaseName + ".css");
     cssFile.setBinaryContent(("body {\n" +
@@ -97,7 +97,7 @@ class WebAppTemplate extends DartProjectTemplate {
                               "  margin-top: 140px;\n" +
                               "  -webkit-user-select: none;\n" +
                               "  user-select: none;\n" +
-                              "}\n").getBytes(Charset.forName("UTF-8")));
+                              "}\n").getBytes(StandardCharsets.UTF_8));
 
     createWebRunConfiguration(module, htmlFile);
 

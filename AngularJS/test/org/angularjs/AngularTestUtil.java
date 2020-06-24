@@ -30,15 +30,6 @@ import static org.junit.Assert.assertTrue;
  */
 public class AngularTestUtil {
 
-  public static void configureWithMetadataFiles(@NotNull CodeInsightTestFixture fixture,
-                                                String @NotNull ... names) {
-    fixture.configureByFiles("package.json");
-    for (String name : names) {
-      fixture.configureByFiles(name + ".d.ts");
-      fixture.copyFileToProject(name + ".metadata.json");
-    }
-  }
-
   public static void enableAstLoadingFilter(@NotNull UsefulTestCase testCase) {
     Registry.get("ast.loading.filter").setValue(true, testCase.getTestRootDisposable());
   }

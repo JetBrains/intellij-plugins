@@ -26,12 +26,13 @@ import java.util.function.Function
 
 interface EntityContainerInfoProvider<T> {
 
-  fun getInfo(initializer: JSObjectLiteralExpression?, clazz: JSClass?): T?
+  @JvmDefault
+  fun getInfo(descriptor: VueSourceEntityDescriptor): T? = null
 
   abstract class DecoratedContainerInfoProvider<T>(val createInfo: (clazz: JSClass) -> T) : EntityContainerInfoProvider<T> {
 
-    final override fun getInfo(initializer: JSObjectLiteralExpression?, clazz: JSClass?): T? =
-      clazz?.let {
+    final override fun getInfo(descriptor: VueSourceEntityDescriptor): T? =
+      descriptor.clazz?.let {
         val manager = CachedValuesManager.getManager(it.project)
         manager.getCachedValue(it, manager.getKeyForClass<T>(this::class.java), {
           val dependencies = mutableListOf<Any>()
@@ -47,8 +48,8 @@ interface EntityContainerInfoProvider<T> {
 
   abstract class InitializedContainerInfoProvider<T>(val createInfo: (initializer: JSObjectLiteralExpression) -> T) : EntityContainerInfoProvider<T> {
 
-    final override fun getInfo(initializer: JSObjectLiteralExpression?, clazz: JSClass?): T? =
-      initializer?.let {
+    final override fun getInfo(descriptor: VueSourceEntityDescriptor): T? =
+      descriptor.initializer?.let {
         val manager = CachedValuesManager.getManager(it.project)
         manager.getCachedValue(it, manager.getKeyForClass<T>(this::class.java), {
           CachedValueProvider.Result.create(createInfo(it), PsiModificationTracker.MODIFICATION_COUNT)

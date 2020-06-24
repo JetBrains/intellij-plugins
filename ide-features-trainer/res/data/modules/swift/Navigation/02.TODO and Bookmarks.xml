@@ -1,4 +1,4 @@
-<xml type="Scenario" name="TODOs &amp; Bookmarks" id="swift.navigation.toolwindows" lang="Swift">
+<xml type="Scenario" name="TODOs &amp; Bookmarks" id="swift.navigation.bookmarks" lang="Swift">
     <CopyText><![CDATA[import UIKit
 
 class Navigation: UITableViewController {
@@ -74,7 +74,7 @@ class Navigation: UITableViewController {
         return true
     }
 
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             objects.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .fade)

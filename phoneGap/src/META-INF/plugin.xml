@@ -1,17 +1,18 @@
 <idea-plugin>
   <id>com.github.masahirosuzuka.PhoneGapIntelliJPlugin</id>
-  <name>PhoneGap/Cordova</name>
+  <name>Cordova</name>
   <vendor>JetBrains</vendor>
   <category>JavaScript Frameworks and Tools</category>
   <resource-bundle>messages.PhoneGapBundle</resource-bundle>
 
   <description><![CDATA[
-        <h4>PhoneGap/Cordova integration for IntelliJ Platform.</h4>
+        <h4>Cordova integration for IntelliJ Platform.</h4>
         <br><b>Note:</b> The plugin is a part of WebStorm IDE and you don't need install it manually for WebStorm<br><br>
 
-        <p>* PhoneGap/Cordova Project wizard</p>
-        <p>* Run PhoneGap/Cordova application from IntelliJ toolbar</p>
+        <p>* Cordova Project wizard</p>
+        <p>* Run Cordova application from IntelliJ toolbar</p>
         <p>* Code completion for event types</p>
+        <p>* PhoneGap support</p>
         <p>* Ionic support</p>
         <p>See README.md</p>
 
@@ -26,17 +27,12 @@
     <!--<programRunner implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapRunner"/>-->
 
     <applicationService serviceImplementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.PhoneGapSettings"/>
-
-    <directoryProjectGenerator
-        implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectBuilder.PhoneGapProjectTemplateGenerator"/>
-
-    <projectTemplatesFactory implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectBuilder.PhoneGapTemplatesFactory"/>
-
+    
     <projectConfigurable provider="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapConfigurationProvider"/>
     <stepsBeforeRunProvider implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapAddPlatformBeforeRun"/>
     <postStartupActivity implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapStartupActivity"/>
     <vfs.asyncListener implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapFileListener"/>
-    <notificationWhitelist groupIds="PhoneGap notification;Cordova Generator"/>
+    <notificationAllowlist groupIds="PhoneGap notification;Cordova Generator"/>
   </extensions>
 
 

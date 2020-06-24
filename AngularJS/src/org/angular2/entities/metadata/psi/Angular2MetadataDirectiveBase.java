@@ -27,9 +27,8 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
   implements Angular2Directive {
 
   private final AtomicNotNullLazyValue<List<String>> myExportAsList = new AtomicNotNullLazyValue<List<String>>() {
-    @NotNull
     @Override
-    protected List<String> compute() {
+    protected @NotNull List<String> compute() {
       String exportAsString = getStub().getExportAs();
       return exportAsString == null
              ? Collections.emptyList()
@@ -47,21 +46,18 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
     super(element);
   }
 
-  @NotNull
   @Override
-  public Angular2DirectiveSelector getSelector() {
+  public @NotNull Angular2DirectiveSelector getSelector() {
     return mySelector.getValue();
   }
 
-  @NotNull
   @Override
-  public List<String> getExportAsList() {
+  public @NotNull List<String> getExportAsList() {
     return myExportAsList.getValue();
   }
 
-  @NotNull
   @Override
-  public Collection<? extends Angular2DirectiveAttribute> getAttributes() {
+  public @NotNull Collection<? extends Angular2DirectiveAttribute> getAttributes() {
     return myAttributes.getValue();
   }
 
@@ -82,16 +78,14 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
     return Result.create(result, cacheDependencies);
   }
 
-  @NotNull
-  private Collection<? extends Angular2DirectiveAttribute> buildAttributes() {
+  private @NotNull Collection<? extends Angular2DirectiveAttribute> buildAttributes() {
     return EntryStream.of(getStub().getAttributes())
       .mapKeyValue((name, index) -> new Angular2MetadataDirectiveAttribute(() -> getConstructorParameter(index),
                                                                            this::getSourceElement, name))
       .toImmutableList();
   }
 
-  @Nullable
-  private JSParameter getConstructorParameter(@NotNull Integer index) {
+  private @Nullable JSParameter getConstructorParameter(@NotNull Integer index) {
     TypeScriptClass cls = getTypeScriptClass();
     if (cls == null || index < 0) {
       return null;

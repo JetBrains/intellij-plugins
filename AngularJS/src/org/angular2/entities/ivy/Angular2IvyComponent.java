@@ -25,9 +25,8 @@ public class Angular2IvyComponent extends Angular2IvyDirective implements Angula
     super(entityDef);
   }
 
-  @Nullable
   @Override
-  public PsiFile getTemplateFile() {
+  public @Nullable PsiFile getTemplateFile() {
     return null;
   }
 
@@ -36,15 +35,13 @@ public class Angular2IvyComponent extends Angular2IvyDirective implements Angula
     return Angular2DirectiveKind.REGULAR;
   }
 
-  @NotNull
   @Override
-  public List<PsiFile> getCssFiles() {
+  public @NotNull List<PsiFile> getCssFiles() {
     return Collections.emptyList();
   }
 
-  @NotNull
   @Override
-  public List<Angular2DirectiveSelector> getNgContentSelectors() {
+  public @NotNull List<Angular2DirectiveSelector> getNgContentSelectors() {
     List<Angular2DirectiveSelector> result = getNullableLazyValue(
       IVY_NG_CONTENT_SELECTORS,
       () -> doIfNotNull(

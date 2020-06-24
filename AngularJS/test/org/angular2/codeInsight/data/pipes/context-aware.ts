@@ -1,10 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 import {Component, NgModule} from '@angular/core';
-import {Observable} from "./Observable";
-import {App} from "ionic-angular";
-import {AsyncPipe} from "./async_pipe";
-import {I18nPluralPipe} from "./i18n_plural_pipe";
-import {LowerCasePipe} from "./case_conversion_pipes";
+import {Observable} from "rxjs";
+import {AsyncPipe, I18nPluralPipe, LowerCasePipe} from "@angular/common";
 
 interface MiniContact {
     username: string;

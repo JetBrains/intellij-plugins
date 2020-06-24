@@ -19,15 +19,13 @@ public class Angular2SourceDirectiveVirtualProperty implements Angular2Directive
     myName = bindingName;
   }
 
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     return myName;
   }
 
-  @Nullable
   @Override
-  public JSType getType() {
+  public @Nullable JSType getType() {
     return null;
   }
 
@@ -36,9 +34,8 @@ public class Angular2SourceDirectiveVirtualProperty implements Angular2Directive
     return true;
   }
 
-  @NotNull
   @Override
-  public JSElement getSourceElement() {
+  public @NotNull JSElement getSourceElement() {
     return myOwner;
   }
 

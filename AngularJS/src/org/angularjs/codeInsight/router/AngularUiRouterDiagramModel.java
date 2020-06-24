@@ -20,40 +20,36 @@ import java.util.Map;
  */
 public class AngularUiRouterDiagramModel extends DiagramDataModel<DiagramObject> {
   private final VirtualFile myRootFile;
-  @NotNull private final List<AngularUiRouterNode> myNodes;
-  @NotNull private final List<AngularUiRouterEdge> myEdges;
+  private final @NotNull List<AngularUiRouterNode> myNodes;
+  private final @NotNull List<AngularUiRouterEdge> myEdges;
 
-  public AngularUiRouterDiagramModel(@NotNull final Project project,
-                                     VirtualFile rootFile, @NotNull final AngularUiRouterDiagramProvider provider,
-                                     @NotNull final List<AngularUiRouterNode> nodes,
-                                     @NotNull final List<AngularUiRouterEdge> edges) {
+  public AngularUiRouterDiagramModel(final @NotNull Project project,
+                                     VirtualFile rootFile, final @NotNull AngularUiRouterDiagramProvider provider,
+                                     final @NotNull List<AngularUiRouterNode> nodes,
+                                     final @NotNull List<AngularUiRouterEdge> edges) {
     super(project, provider);
     myRootFile = rootFile;
     myNodes = new ArrayList<>(nodes);
     myEdges = edges;
   }
 
-  @NotNull
   @Override
-  public Collection<AngularUiRouterNode> getNodes() {
+  public @NotNull Collection<AngularUiRouterNode> getNodes() {
     return myNodes;
   }
 
-  @NotNull
   @Override
-  public Collection<AngularUiRouterEdge> getEdges() {
+  public @NotNull Collection<AngularUiRouterEdge> getEdges() {
     return myEdges;
   }
 
-  @NotNull
   @Override
-  public String getNodeName(DiagramNode<DiagramObject> n) {
+  public @NotNull String getNodeName(DiagramNode<DiagramObject> n) {
     return n.getTooltip();
   }
 
-  @Nullable
   @Override
-  public DiagramNode<DiagramObject> addElement(DiagramObject element) {
+  public @Nullable DiagramNode<DiagramObject> addElement(DiagramObject element) {
     return null;
   }
 
@@ -66,14 +62,15 @@ public class AngularUiRouterDiagramModel extends DiagramDataModel<DiagramObject>
     if (template != null) {
       Map<String, UiRouterState> map = builder.getDefiningFiles2States().get(myRootFile);
       final AngularUiRouterGraphBuilder graphBuilder;
-        if (map == null) {
-          map = builder.getRootTemplates2States().get(myRootFile);
-          if (map == null) return;
-          graphBuilder = new AngularUiRouterGraphBuilder(getProject(), map, builder.getTemplatesMap(),
-                                                         rootTemplates.get(myRootFile), myRootFile);
-        } else {
-          graphBuilder = new AngularUiRouterGraphBuilder(getProject(), map, builder.getTemplatesMap(), null, myRootFile);
-        }
+      if (map == null) {
+        map = builder.getRootTemplates2States().get(myRootFile);
+        if (map == null) return;
+        graphBuilder = new AngularUiRouterGraphBuilder(getProject(), map, builder.getTemplatesMap(),
+                                                       rootTemplates.get(myRootFile), myRootFile);
+      }
+      else {
+        graphBuilder = new AngularUiRouterGraphBuilder(getProject(), map, builder.getTemplatesMap(), null, myRootFile);
+      }
       final AngularUiRouterDiagramProvider diagramProvider = (AngularUiRouterDiagramProvider)getProvider();
       final AngularUiRouterGraphBuilder.GraphNodesBuilder model = graphBuilder.createDataModel(diagramProvider);
       if (myNodes.equals(model.getAllNodes()) && myEdges.equals(model.getEdges())) return;
@@ -88,9 +85,8 @@ public class AngularUiRouterDiagramModel extends DiagramDataModel<DiagramObject>
     }
   }
 
-  @NotNull
   @Override
-  public ModificationTracker getModificationTracker() {
+  public @NotNull ModificationTracker getModificationTracker() {
     return PsiManager.getInstance(getProject()).getModificationTracker();
   }
 

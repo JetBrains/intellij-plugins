@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.JSRecordType.PropertySignature
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.openapi.extensions.ExtensionPointName
 import org.jetbrains.vuejs.model.*
@@ -11,7 +12,13 @@ import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInf
 
 interface VueContainerInfoProvider : EntityContainerInfoProvider<VueContainerInfo> {
 
-  override fun getInfo(initializer: JSObjectLiteralExpression?, clazz: JSClass?): VueContainerInfo?
+  @JvmDefault
+  override fun getInfo(descriptor: VueSourceEntityDescriptor): VueContainerInfo?
+
+  @JvmDefault
+  fun getThisTypeProperties(instanceOwner: VueInstanceOwner,
+                            standardProperties: MutableMap<String, PropertySignature>)
+    : Collection<PropertySignature> = emptyList()
 
   interface VueContainerInfo {
     val components: Map<String, VueComponent> get() = emptyMap()

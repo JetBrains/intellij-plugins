@@ -11,7 +11,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.testGuiFramework.framework.GuiTestUtil.shortcut
 import com.intellij.testGuiFramework.util.Key
 import com.intellij.ui.table.JBTable
-import training.commands.kotlin.TaskContext
+import training.commands.kotlin.TaskRuntimeContext
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
@@ -36,16 +36,16 @@ abstract class DeclarationAndUsagesLesson(module: Module, lang: String) : KLesso
       task("GotoDeclaration") {
         text("Now the caret is on the attribute accessor declaration. " +
              "Use the same shortcut ${action(it)} to see all of its usages, then select one of them.")
-        trigger(it, { state() }, fun(before: MyInfo?, now: MyInfo?): Boolean {
+        trigger(it, { state() }) l@{ before, now ->
           if (before == null || now == null) {
-            return false
+            return@l false
           }
 
           val navigationElement = before.target.navigationElement
-          return navigationElement == now.target.navigationElement &&
-                 isInsidePsi(navigationElement, before.position) &&
-                 !isInsidePsi(navigationElement, now.position)
-        })
+          return@l navigationElement == now.target.navigationElement &&
+                   isInsidePsi(navigationElement, before.position) &&
+                   !isInsidePsi(navigationElement, now.position)
+        }
         test {
           actions(it)
           ideFrame {
@@ -102,7 +102,7 @@ abstract class DeclarationAndUsagesLesson(module: Module, lang: String) : KLesso
       }
     }
 
-  private fun TaskContext.state(): MyInfo? {
+  private fun TaskRuntimeContext.state(): MyInfo? {
     val flags = TargetElementUtil.ELEMENT_NAME_ACCEPTED or TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED
 
     val currentEditor = FileEditorManager.getInstance(project).selectedTextEditor ?: return null
@@ -111,7 +111,7 @@ abstract class DeclarationAndUsagesLesson(module: Module, lang: String) : KLesso
 
     val file = PsiDocumentManager.getInstance(project).getPsiFile(currentEditor.document) ?: return null
     val position = MyPosition(file,
-                                                                                                                         currentEditor.caretModel.offset)
+                              currentEditor.caretModel.offset)
 
     return MyInfo(target, position)
   }

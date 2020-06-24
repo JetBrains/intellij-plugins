@@ -20,9 +20,8 @@ public class Angular2TemplateVariableElementType extends JSVariableElementType {
     super("NG:TEMPLATE_VARIABLE");
   }
 
-  @NotNull
   @Override
-  public JSVariableStub<JSVariable> createStub(@NotNull JSVariable psi, StubElement parentStub) {
+  public @NotNull JSVariableStub<JSVariable> createStub(@NotNull JSVariable psi, StubElement parentStub) {
     return new Angular2TemplateVariableStubImpl(psi, parentStub, this);
   }
 
@@ -36,9 +35,8 @@ public class Angular2TemplateVariableElementType extends JSVariableElementType {
     return new Angular2TemplateVariableImpl(node);
   }
 
-  @NotNull
   @Override
-  public JSVariableStub<JSVariable> deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+  public @NotNull JSVariableStub<JSVariable> deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
     return new Angular2TemplateVariableStubImpl(dataStream, parentStub, this);
   }
 }

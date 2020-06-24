@@ -54,8 +54,7 @@ public class ExternalNodeModuleResolver {
     return result != null ? result : resolveFromIndex(memberExtractor);
   }
 
-  @Nullable
-  private Angular2MetadataElement resolveFromFileSystem(@NotNull Function<Angular2MetadataNodeModule, Angular2MetadataElement> memberExtractor) {
+  private @Nullable Angular2MetadataElement resolveFromFileSystem(@NotNull Function<Angular2MetadataNodeModule, Angular2MetadataElement> memberExtractor) {
     return doIfNotNull(NodeModuleSearchUtil.findAncestorNodeModulesDir(mySource.getContainingFile().getVirtualFile()), dir -> {
       Angular2MetadataNodeModule module = doIfNotNull(mySource.loadRelativeFile(dir, myModuleName, METADATA_SUFFIX),
                                                       file -> PsiTreeUtil.getStubChildOfType(file, Angular2MetadataNodeModule.class));
@@ -63,8 +62,7 @@ public class ExternalNodeModuleResolver {
     });
   }
 
-  @Nullable
-  private Angular2MetadataElement resolveFromIndex(@NotNull Function<Angular2MetadataNodeModule, Angular2MetadataElement> memberExtractor) {
+  private @Nullable Angular2MetadataElement resolveFromIndex(@NotNull Function<Angular2MetadataNodeModule, Angular2MetadataElement> memberExtractor) {
     MultiMap<Angular2MetadataElement, Angular2MetadataNodeModule> candidates = MultiMap.createSet();
     StubIndex.getInstance().processElements(
       Angular2MetadataNodeModuleIndex.KEY, myModuleName, mySource.getProject(),
@@ -150,13 +148,11 @@ public class ExternalNodeModuleResolver {
     }
   }
 
-  @Nullable
-  private static String getNodeModulesPath(@NotNull Angular2MetadataElement element) {
+  private static @Nullable String getNodeModulesPath(@NotNull Angular2MetadataElement element) {
     return stripNodeModulesPath(doIfNotNull(element.getContainingFile().getOriginalFile().getVirtualFile(), VirtualFile::getPath));
   }
 
-  @Nullable
-  private static String stripNodeModulesPath(@Nullable String path) {
+  private static @Nullable String stripNodeModulesPath(@Nullable String path) {
     int index = path != null ? path.lastIndexOf(NODE_MODULES_SEGMENT) : -1;
     return index >= 0 ? path.substring(0, index + 1) : null;
   }

@@ -38,10 +38,11 @@ import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-import static org.jetbrains.plugins.cucumber.java.CucumberJavaUtil.getCucumberStepAnnotation;
+import static org.jetbrains.plugins.cucumber.java.CucumberJavaUtil.getCucumberStepAnnotations;
 
 public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
   private static final String STEP_DEFINITION_SUFFIX = "MyStepdefs";
@@ -102,7 +103,7 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
     final TemplateBuilderImpl builder = (TemplateBuilderImpl)TemplateBuilderFactory.getInstance().createTemplateBuilder(addedElement);
 
     final TextRange range = new TextRange(1, regexpElement.getTextLength() - 1);
-    builder.replaceElement(regexpElement, range, regexpElement.getText().substring(range.getStartOffset(), range.getEndOffset()));
+    builder.replaceElement(regexpElement, range, range.substring(regexpElement.getText()));
 
     for (PsiParameter var : blockVars.getParameters()) {
       final PsiElement nameIdentifier = var.getNameIdentifier();
@@ -115,7 +116,7 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
       final PsiElement firstStatement = body.getStatements()[0];
       final TextRange pendingRange = new TextRange(0, firstStatement.getTextLength() - 1);
       builder.replaceElement(firstStatement, pendingRange,
-                             firstStatement.getText().substring(pendingRange.getStartOffset(), pendingRange.getEndOffset()));
+                             pendingRange.substring(firstStatement.getText()));
     }
 
     PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
@@ -287,7 +288,8 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
 
   private static PsiMethod createStepDefinitionFromSnippet(@NotNull PsiMethod methodFromSnippet, @NotNull GherkinStep step,
                                                            @NotNull JVMElementFactory factory) {
-    PsiAnnotation cucumberStepAnnotation = getCucumberStepAnnotation(methodFromSnippet);
+    List<PsiAnnotation> annotationsFromSnippetMethod = getCucumberStepAnnotations(methodFromSnippet);
+    PsiAnnotation cucumberStepAnnotation = annotationsFromSnippetMethod.get(0);
     String regexp = CucumberJavaUtil.getPatternFromStepDefinition(cucumberStepAnnotation);
     String stepAnnotationName = cucumberStepAnnotation.getQualifiedName();
     if (stepAnnotationName == null) {

@@ -1,7 +1,6 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.actions;
 
-import com.google.common.collect.Sets;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.QueryExecutorBase;
 import com.intellij.openapi.project.Project;
@@ -28,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -127,7 +127,7 @@ public class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, Defini
     if (hierarchyItems.isEmpty()) return Collections.emptySet();
 
     final Set<DartComponent> result = new THashSet<>(hierarchyItems.size());
-    addSubClasses(project, scope, Sets.newHashSet(), hierarchyItems, result, hierarchyItems.get(0), false);
+    addSubClasses(project, scope, new HashSet<TypeHierarchyItem>(), hierarchyItems, result, hierarchyItems.get(0), false);
     return result;
   }
 
@@ -138,7 +138,7 @@ public class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, Defini
     if (hierarchyItems.isEmpty()) return Collections.emptySet();
 
     final Set<DartComponent> result = new THashSet<>(hierarchyItems.size());
-    addSubMembers(project, scope, Sets.newHashSet(), hierarchyItems, result, hierarchyItems.get(0), false);
+    addSubMembers(project, scope, new HashSet<TypeHierarchyItem>(), hierarchyItems, result, hierarchyItems.get(0), false);
     return result;
   }
 

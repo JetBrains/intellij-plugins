@@ -81,6 +81,7 @@
                      implementationClass="org.intellij.plugins.postcss.inspections.PostCssCustomPropertiesInspection"/>
   </extensions>
   <extensions defaultExtensionNs="com.intellij.css">
+    <supportedFileTypesProvider implementation="org.intellij.plugins.postcss.index.PostCssSupportedFileTypesProvider" version="1"/>
     <cssInspectionFilter language="PostCSS" implementationClass="org.intellij.plugins.postcss.inspections.suppress.PostCssInspectionFilter"/>
   </extensions>
 </idea-plugin>

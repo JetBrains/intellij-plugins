@@ -29,8 +29,8 @@ public class Angular2EmbeddedExprTokenType extends Angular2EmbeddedContentTokenT
     return new Angular2EmbeddedExprTokenType("NG:TEMPLATE_BINDINGS_EXPR", ExpressionType.TEMPLATE_BINDINGS, templateKey);
   }
 
-  @NotNull private final ExpressionType myExpressionType;
-  @Nullable private final String myTemplateKey;
+  private final @NotNull ExpressionType myExpressionType;
+  private final @Nullable String myTemplateKey;
 
   private Angular2EmbeddedExprTokenType(@NotNull @NonNls String debugName, @NotNull ExpressionType expressionType) {
     super(debugName, Angular2Language.INSTANCE);
@@ -60,9 +60,8 @@ public class Angular2EmbeddedExprTokenType extends Angular2EmbeddedContentTokenT
     return Objects.hash(super.hashCode(), myExpressionType, myTemplateKey);
   }
 
-  @NotNull
   @Override
-  protected Lexer createLexer() {
+  protected @NotNull Lexer createLexer() {
     return new Angular2Lexer();
   }
 
@@ -93,6 +92,5 @@ public class Angular2EmbeddedExprTokenType extends Angular2EmbeddedContentTokenT
         myParseMethod.accept(builder, root);
       }
     }
-
   }
 }

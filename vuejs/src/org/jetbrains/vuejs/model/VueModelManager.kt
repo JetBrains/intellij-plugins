@@ -13,7 +13,6 @@ import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
@@ -31,10 +30,12 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
+import com.intellij.util.castSafelyTo
 import com.intellij.xml.util.HtmlUtil
 import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
 import org.jetbrains.vuejs.codeInsight.getHostFile
 import org.jetbrains.vuejs.codeInsight.toAsset
+import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.source.*
@@ -54,6 +55,27 @@ class VueModelManager {
              ?: getGlobal(templateElement)
     }
 
+    fun findComponentForThisResolve(jsThisExpression: JSThisExpression): VueComponent? {
+      //find enclosing function and it's second level enclosing function
+      val function = PsiTreeUtil.getContextOfType(jsThisExpression, JSFunction::class.java)
+      if (function == null || !isVueContext(function)) return null
+      var secondLevelFunctionScope = PsiTreeUtil.findFirstContext(function, true) { it is JSFunction && !it.isArrowFunction } as? JSFunction
+      if (function.isArrowFunction && secondLevelFunctionScope != null) {
+        secondLevelFunctionScope = PsiTreeUtil.findFirstContext(secondLevelFunctionScope,
+                                                                true) { it is JSFunction && !it.isArrowFunction } as? JSFunction
+      }
+
+      val component = findEnclosingComponent(jsThisExpression) ?: return null
+
+      // we're good if function is part of implementation and second level function is null or is not part of the component
+      if (component is VueSourceEntity
+          && component.isPartOfImplementation(function)
+          && (secondLevelFunctionScope == null || !component.isPartOfImplementation(secondLevelFunctionScope))) {
+        return component
+      }
+      return null
+    }
+
     fun findEnclosingComponent(jsElement: JSElement): VueComponent? {
       var context: PsiElement = PsiTreeUtil.getContextOfType(jsElement, false,
                                                              JSObjectLiteralExpression::class.java, JSClass::class.java)
@@ -67,7 +89,7 @@ class VueModelManager {
         }
         context = superContext
       }
-      return getComponentDescriptor(context)?.let { it.obj ?: it.clazz }?.let { getComponent(it) }
+      return getComponent(getComponentDescriptor(context))
     }
 
     private fun findComponent(templateElement: PsiElement): VueComponent? {
@@ -90,23 +112,39 @@ class VueModelManager {
         else -> null
       }
         ?.let { getEnclosingComponentDescriptor(CompletionUtil.getOriginalOrSelf(it)) }
-        ?.let { getComponent(it.obj ?: it.clazz!!) }
+        ?.let { getComponent(it) }
     }
 
-    private fun getEnclosingComponentDescriptor(element: PsiElement): VueComponentDescriptor? {
+    private fun getEnclosingComponentDescriptor(element: PsiElement): VueSourceEntityDescriptor? {
       var context: PsiElement? = element
+      if (element is JSImplicitElement) {
+        context = element.context
+        if (context is JSCallExpression
+            || (context is JSProperty && context.name != "name")) {
+          getVueIndexData(element)
+            ?.descriptorRef
+            ?.let { VueComponents.resolveReferenceToVueComponent(context!!, it) }
+            ?.initializer
+            ?.let { return VueSourceEntityDescriptor(it) }
+
+          if (context is JSProperty) {
+            return VueSourceEntityDescriptor(source = element)
+          }
+        }
+      }
       if (context is JSCallExpression) {
         val stub = (context as? StubBasedPsiElement<*>)?.stub
-        if (stub != null) {
-          context = stub.getChildrenByType(JSStubElementTypes.OBJECT_LITERAL_EXPRESSION,
-                                           JSObjectLiteralExpression.ARRAY_FACTORY)
+        val initializer = if (stub != null) {
+          stub.getChildrenByType(JSStubElementTypes.OBJECT_LITERAL_EXPRESSION,
+                                 JSObjectLiteralExpression.ARRAY_FACTORY)
             .firstOrNull()
         }
         else {
-          context = context.argumentList
+          context.argumentList
             ?.arguments
             ?.find { it is JSObjectLiteralExpression }
-        }
+        }.castSafelyTo<JSObjectLiteralExpression>()
+        return VueSourceEntityDescriptor(initializer, source = initializer ?: context)
       }
       else if (context is JSProperty) {
         context = context.context
@@ -121,7 +159,7 @@ class VueModelManager {
       }
 
       return when (context) {
-        is JSObjectLiteralExpression -> VueComponentDescriptor(obj = context)
+        is JSObjectLiteralExpression -> VueSourceEntityDescriptor(initializer = context)
         is ES6Decorator -> {
           val clazz = when (val parentContext = context.context?.context) {
             is JSExportAssignment -> parentContext.stubSafeElement as? JSClass
@@ -130,24 +168,20 @@ class VueModelManager {
           }
           val obj = VueComponents.getDescriptorFromDecorator(context)
           if (clazz != null || obj != null)
-            VueComponentDescriptor(obj = obj, clazz = clazz)
+            VueSourceEntityDescriptor(initializer = obj, clazz = clazz)
           else
             null
         }
         is JSClass -> {
-          val decorator = VueComponents.getComponentDecorator(context)
-          VueComponentDescriptor(
-            obj = decorator?.let { VueComponents.getDescriptorFromDecorator(it) },
-            clazz = context)
+          VueComponents.getClassComponentDescriptor(context)
         }
         null -> null
         else -> getDescriptorFromVueModule(context)
-                ?: getDescriptorFromReferencedScript(context)
                 ?: findReferencingComponentDescriptor(context)
       }
     }
 
-    private fun findReferencingComponentDescriptor(context: PsiElement): VueComponentDescriptor? {
+    private fun findReferencingComponentDescriptor(context: PsiElement): VueSourceEntityDescriptor? {
       if (context !is XmlElement) return null
 
       PsiTreeUtil.findFirstParent(context) {
@@ -158,7 +192,7 @@ class VueModelManager {
       }?.let { scriptTag ->
         val id = (scriptTag as XmlTag).getAttribute("id")?.value ?: return null
 
-        var result: VueComponentDescriptor? = null
+        var result: VueSourceEntityDescriptor? = null
         StubIndex.getInstance().processElements(VueIdIndex.KEY, id, context.project,
                                                 GlobalSearchScope.projectScope(context.project),
                                                 PsiElement::class.java) { element ->
@@ -178,7 +212,7 @@ class VueModelManager {
 
       val file = getHostFile(context) ?: return null
       val name = file.viewProvider.virtualFile.name
-      var result: VueComponentDescriptor? = null
+      var result: VueSourceEntityDescriptor? = null
 
       StubIndex.getInstance().processElements(VueUrlIndex.KEY, name, context.project,
                                               GlobalSearchScope.projectScope(context.project),
@@ -204,28 +238,29 @@ class VueModelManager {
                  && element.valueElement?.references
                    ?.any { it.resolve()?.containingFile == context.containingFile } == true) {
           result = getDescriptorFromVueModule(element)
-                   ?: getDescriptorFromReferencedScript(element)
         }
         true
       }
       return result
     }
 
-    private fun getDescriptorFromVueModule(element: PsiElement): VueComponentDescriptor? {
-      return getDefaultExportedComponent(findModule(element))
-    }
-
-    private fun getDescriptorFromReferencedScript(element: PsiElement): VueComponentDescriptor? {
+    private fun getDescriptorFromVueModule(element: PsiElement): VueSourceEntityDescriptor? {
       val file = element as? XmlFile ?: element.containingFile as? XmlFile
       if (file != null && file.fileType == VueFileType.INSTANCE) {
-        // TODO stub safe resolution
-        return findTopLevelVueTag(file, SCRIPT_TAG_NAME)
-          ?.let { getDefaultExportedComponent(resolveTagSrcReference(it) as? PsiFile) }
+        val script = findScriptTag(file)
+        if (script != null) {
+          getDefaultExportedComponent(
+            resolveTagSrcReference(script) as? PsiFile
+            ?: PsiTreeUtil.getStubChildOfType(script, JSEmbeddedContent::class.java)
+          )?.let { return it }
+        }
+        if (element.containingFile.originalFile.virtualFile.fileType == VueFileType.INSTANCE)
+          return VueSourceEntityDescriptor(source = element.containingFile)
       }
       return null
     }
 
-    private fun getDefaultExportedComponent(content: PsiElement?): VueComponentDescriptor? {
+    private fun getDefaultExportedComponent(content: PsiElement?): VueSourceEntityDescriptor? {
       return content
         ?.let {
           (ES6PsiUtil.findDefaultExport(it) as? JSExportAssignment)?.stubSafeElement
@@ -273,60 +308,38 @@ class VueModelManager {
       return result
     }
 
-    fun getComponent(element: PsiElement): VueComponent? {
-      val context: PsiElement = getComponentImplicitElement(element)?.context ?: element
-      if (!context.isValid)
-        return null
-      return CachedValuesManager.getCachedValue(context) {
-        val implicitElement = getComponentImplicitElement(context)
-        val data = implicitElement?.let { getVueIndexData(it) }
-        val descriptor = getEnclosingComponentDescriptor(context)
-        var declaration: PsiElement = descriptor?.obj ?: context
-        if (declaration is JSImplicitElement) {
-          declaration = declaration.context ?: declaration
-        }
-        if (declaration is JSProperty) {
-          declaration = declaration.parent ?: declaration
-        }
-        else if (declaration is JSCallExpression) {
-          data?.descriptorRef
-            ?.let { VueComponents.resolveReferenceToVueComponent(context, it) }
-            ?.obj
-            ?.let { declaration = it }
-        }
-        CachedValueProvider.Result.create(VueSourceComponent(implicitElement ?: buildImplicitElement(context),
-                                                             descriptor?.clazz,
-                                                             declaration as? JSObjectLiteralExpression,
-                                                             data),
-                                          context, declaration)
+    fun getComponent(element: PsiElement): VueComponent? =
+      getComponent(getComponentDescriptor(element) ?: getEnclosingComponentDescriptor(element))
+
+    fun getComponent(descriptor: VueSourceEntityDescriptor?): VueComponent? =
+      descriptor?.getCachedValue { descr ->
+        val declaration = descr.source
+        val implicitElement = getComponentImplicitElement(declaration)
+        val data = implicitElement
+          ?.let { getVueIndexData(it) }
+          ?.takeIf { it.originalName != JavaScriptBundle.message("element.name.anonymous") }
+        CachedValueProvider.Result.create(VueSourceComponent(implicitElement
+                                                             ?: buildImplicitElement(declaration),
+                                                             descr, data), declaration)
       }
-    }
 
-    fun getMixin(mixin: JSObjectLiteralExpression): VueMixin {
-      return getMixin(mixin as PsiElement)!!
-    }
+    fun getMixin(mixin: PsiElement): VueMixin? =
+      getMixin(getComponentDescriptor(mixin) ?: getEnclosingComponentDescriptor(mixin))
 
-    fun getMixin(mixin: PsiElement): VueMixin? {
-      val context = (getComponentDescriptor(mixin) ?: getEnclosingComponentDescriptor(mixin))
-        ?.let { it.clazz ?: it.obj!! }
-      return CachedValuesManager.getCachedValue(context ?: return null) {
-        val descriptor = getEnclosingComponentDescriptor(context)
-        val declaration: PsiElement = descriptor?.obj ?: context
-
-        CachedValueProvider.Result.create(VueSourceMixin(getComponentImplicitElement(context)
-                                                         ?: buildImplicitElement(context),
-                                                         descriptor?.clazz,
-                                                         descriptor?.obj),
-                                          context, declaration)
+    fun getMixin(descriptor: VueSourceEntityDescriptor?): VueMixin? =
+      descriptor?.getCachedValue {
+        val declaration = it.source
+        CachedValueProvider.Result.create(VueSourceMixin(getComponentImplicitElement(declaration)
+                                                         ?: buildImplicitElement(declaration),
+                                                         it), declaration)
       }
-    }
 
     fun getFilter(it: JSImplicitElement): VueFilter? {
       if (it.userString == VueGlobalFiltersIndex.JS_KEY) {
         val call = it.context ?: return null
         var filterMethod: PsiElement = it
         val data = getVueIndexData(it)
-        if (!data.nameRef.isNullOrBlank()) {
+        if (data != null && !data.nameRef.isNullOrBlank()) {
           resolveFilterReference(call, data.nameRef)
             ?.let { filterMethod = it }
         }
@@ -365,8 +378,8 @@ class VueModelManager {
       }
     }
 
-    private fun getComponentImplicitElement(declaration: PsiElement): JSImplicitElement? {
-      return if (declaration is JSImplicitElement && declaration.userString == VueComponentsIndex.JS_KEY)
+    private fun getComponentImplicitElement(declaration: PsiElement): JSImplicitElement? =
+      if (declaration is JSImplicitElement && declaration.userString == VueComponentsIndex.JS_KEY)
         declaration
       else if (declaration is JSObjectLiteralExpression) {
         val implicitElement = declaration.findProperty("name")
@@ -375,9 +388,9 @@ class VueModelManager {
                                 ?.let { buildImplicitElement(it) }
         var parent = PsiTreeUtil.getContextOfType(declaration, ES6ClassExpression::class.java, JSExportAssignment::class.java)
         if (parent is JSExportAssignment) {
-          parent = parent.stubSafeElement as? ES6ClassExpression
+          parent = parent.stubSafeElement as? JSClass
         }
-        if (parent is ES6ClassExpression)
+        if (parent is JSClass)
           (implicitElement?.toBuilder() ?: JSImplicitElementImpl.Builder(
             JavaScriptBundle.message("element.name.anonymous"), parent))
             .setProvider(parent)
@@ -386,13 +399,13 @@ class VueModelManager {
         else
           implicitElement
       }
-      else if (declaration is ES6ClassExpression)
+      else if (declaration is JSClass)
         buildImplicitElement(declaration, declaration.name ?: JavaScriptBundle.message("element.name.anonymous"))
       else
         (declaration as? JSImplicitElementProvider)?.indexingData?.implicitElements?.find {
           it.userString == VueComponentsIndex.JS_KEY
         }
-    }
+
 
     private fun buildImplicitElement(parent: PsiElement, name: String = JavaScriptBundle.message("element.name.anonymous")) =
       JSImplicitElementImpl(JSImplicitElementImpl.Builder(name, parent).forbidAstAccess())

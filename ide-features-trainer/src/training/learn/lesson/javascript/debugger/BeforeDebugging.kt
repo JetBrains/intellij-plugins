@@ -2,12 +2,11 @@
 package training.learn.lesson.javascript.debugger
 
 import com.intellij.execution.RunManager
-import com.intellij.lang.javascript.dialects.JSLanguageLevel
-import com.intellij.lang.javascript.settings.JSRootConfiguration
 import com.intellij.openapi.editor.impl.EditorComponentImpl
 import com.intellij.ui.treeStructure.Tree
 import training.lang.JavaScriptLangSupport
 import training.learn.interfaces.Module
+import training.learn.lesson.javascript.setLanguageLevel
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.parseLessonSample
@@ -33,8 +32,7 @@ class BeforeDebugging(module: Module) : KLesson("Before Debugging: Run/Debug Con
   override val lessonContent: LessonContext.() -> Unit
     get() {
       return {
-        JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
-
+        setLanguageLevel()
         prepareSample(jsDebuggerSample)
         task("RunClass") {
           text("With WebStorm, you can run and debug all kinds of JavaScript apps right where you write your code.\n" +

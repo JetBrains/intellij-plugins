@@ -21,7 +21,6 @@ import com.intellij.psi.ResolveResult;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ArrayUtilRt;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -158,7 +157,7 @@ public class CfmlArgumentNameReference extends CfmlReferenceExpression implement
 
     if (!result.isEmpty() || superResult.length > 0) {
       return ArrayUtil.mergeArrays(superResult, ContainerUtil.map2Array(result, Object.class,
-                                                                        (Function<LookupElement, Object>)lookupElement -> lookupElement));
+                                                                        lookupElement -> lookupElement));
     }
     return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
   }

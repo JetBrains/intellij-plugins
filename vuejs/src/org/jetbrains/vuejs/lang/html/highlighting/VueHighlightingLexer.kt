@@ -1,8 +1,9 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang.html.highlighting
 
 import com.intellij.lang.HtmlScriptContentProvider
 import com.intellij.lang.Language
+import com.intellij.lang.css.CSSLanguage
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lexer.*
 import com.intellij.psi.tree.IElementType
@@ -72,7 +73,7 @@ class VueHighlightingLexer(private val languageLevel: JSLanguageLevel,
   override fun findScriptContentProvider(mimeType: String?): HtmlScriptContentProvider? =
     helper.findScriptContentProviderVue(mimeType, { super.findScriptContentProvider(mimeType) }, languageLevel)
 
-  override fun getStyleLanguage(): Language? = helper.styleViaLang(HtmlLexer.ourDefaultStyleLanguage) ?: super.getStyleLanguage()
+  override fun getStyleLanguage(): Language? = helper.styleViaLang(CSSLanguage.INSTANCE) ?: super.getStyleLanguage()
 
   override fun start(buffer: CharSequence, startOffset: Int, endOffset: Int, initialState: Int) {
     super.start(buffer, startOffset, endOffset, helper.start(initialState))

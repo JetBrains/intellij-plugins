@@ -37,9 +37,8 @@ public class Angular2PipeNameReferencesProvider extends PsiReferenceProvider {
       return false;
     }
 
-    @Nullable
     @Override
-    public PsiElement resolveInner() {
+    public @Nullable PsiElement resolveInner() {
       ES6Decorator decorator = PsiTreeUtil.getParentOfType(getElement(), ES6Decorator.class);
       if (decorator != null && PIPE_DEC.equals(decorator.getDecoratorName())) {
         return doIfNotNull(Angular2EntitiesProvider.getPipe(decorator), Angular2Element::getSourceElement);

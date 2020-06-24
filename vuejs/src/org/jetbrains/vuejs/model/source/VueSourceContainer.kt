@@ -1,9 +1,8 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.source
 
-import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
-import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.psi.PsiElement
 import one.util.streamex.StreamEx
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
@@ -11,13 +10,13 @@ import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInfo
 
 abstract class VueSourceContainer(sourceElement: JSImplicitElement,
-                                  override val clazz: JSClass?,
-                                  override val initializer: JSObjectLiteralExpression?) : VueContainer, VueSourceEntity {
+                                  override val descriptor: VueSourceEntityDescriptor)
+  : UserDataHolderBase(), VueContainer, VueSourceEntity {
 
   override val source: PsiElement = sourceElement
   override val parents: List<VueEntitiesContainer> get() = VueGlobalImpl.getParents(this)
 
-  override val element: String? get() = getTextIfLiteral(initializer?.findProperty(EL_PROP)?.literalExpressionInitializer)
+  override val element: String? get() = getTextIfLiteral(descriptor.initializer?.findProperty(EL_PROP)?.literalExpressionInitializer)
 
   override val data: List<VueDataProperty> get() = get(DATA)
   override val computed: List<VueComputedProperty> get() = get(COMPUTED)
@@ -38,7 +37,7 @@ abstract class VueSourceContainer(sourceElement: JSImplicitElement,
   override val filters: Map<String, VueFilter> get() = get(FILTERS)
 
   private fun <T> get(accessor: MemberAccessor<T>): T {
-    return accessor.get(initializer, clazz)
+    return accessor.get(descriptor)
   }
 
   companion object {
@@ -59,16 +58,16 @@ abstract class VueSourceContainer(sourceElement: JSImplicitElement,
     private val MODEL = ModelAccessor(VueContainerInfo::model)
     private val TEMPLATE = TemplateAccessor(VueContainerInfo::template)
 
-    fun getTemplate(descriptor: VueComponentDescriptor): VueTemplate<*>? {
-      return TEMPLATE.get(descriptor.obj, descriptor.clazz)
+    fun getTemplate(descriptor: VueSourceEntityDescriptor): VueTemplate<*>? {
+      return TEMPLATE.get(descriptor)
     }
   }
 
   private abstract class MemberAccessor<T>(val extInfoAccessor: (VueContainerInfo) -> T?, val takeFirst: Boolean = false) {
 
-    fun get(initializer: JSObjectLiteralExpression?, clazz: JSClass?): T {
+    fun get(descriptor: VueSourceEntityDescriptor): T {
       return StreamEx.of(VueContainerInfoProvider.getProviders())
-               .map { it.getInfo(initializer, clazz)?.let(extInfoAccessor) }
+               .map { it.getInfo(descriptor)?.let(extInfoAccessor) }
                .nonNull()
                .let {
                  @Suppress("UNCHECKED_CAST")

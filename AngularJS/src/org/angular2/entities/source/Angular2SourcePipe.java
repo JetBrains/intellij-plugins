@@ -20,15 +20,13 @@ public class Angular2SourcePipe extends Angular2SourceDeclaration implements Ang
     this.myName = implicitElement.getName();
   }
 
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     return myName;
   }
 
-  @NotNull
   @Override
-  public Collection<? extends TypeScriptFunction> getTransformMethods() {
+  public @NotNull Collection<? extends TypeScriptFunction> getTransformMethods() {
     return getCachedValue(() -> CachedValueProvider.Result.create(
       Angular2EntityUtils.getPipeTransformMethods(myClass), getClassModificationDependencies())
     );

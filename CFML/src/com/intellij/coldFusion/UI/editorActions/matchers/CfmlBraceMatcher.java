@@ -7,6 +7,7 @@ import com.intellij.coldFusion.model.CfmlUtil;
 import com.intellij.coldFusion.model.files.CfmlFileType;
 import com.intellij.coldFusion.model.lexer.CfmlTokenTypes;
 import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
+import com.intellij.ide.highlighter.HtmlFileType;
 import com.intellij.ide.highlighter.XmlFileType;
 import com.intellij.lang.BracePair;
 import com.intellij.lang.Language;
@@ -15,7 +16,6 @@ import com.intellij.lang.PairedBraceMatcher;
 import com.intellij.openapi.editor.highlighter.HighlighterIterator;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeExtensionPoint;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -83,7 +83,7 @@ public class CfmlBraceMatcher implements BraceMatcher {
         for (FileTypeExtensionPoint<BraceMatcher> ext : BraceMatcher.EP_NAME.getExtensionList()) {
           if (ext.filetype != null && ext.filetype.equals(tokenFileType.getName())) {
             return ext.getInstance().isLBraceToken(iterator, fileText,
-                                                   tokenFileType instanceof XmlFileType ? StdFileTypes.HTML : tokenFileType);
+                                                   tokenFileType instanceof XmlFileType ? HtmlFileType.INSTANCE : tokenFileType);
           }
         }
       }
@@ -116,7 +116,7 @@ public class CfmlBraceMatcher implements BraceMatcher {
         for (FileTypeExtensionPoint<BraceMatcher> ext : BraceMatcher.EP_NAME.getExtensionList()) {
           if (ext.filetype != null && ext.filetype.equals(tokenFileType.getName())) {
             return ext.getInstance().isRBraceToken(iterator, fileText,
-                                                   tokenFileType instanceof XmlFileType ? StdFileTypes.HTML : tokenFileType);
+                                                   tokenFileType instanceof XmlFileType ? HtmlFileType.INSTANCE : tokenFileType);
           }
         }
       }

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.refactoring.extractSuper;
 
 import com.intellij.javascript.flex.refactoring.RenameMoveUtils;
@@ -50,6 +50,7 @@ import com.intellij.refactoring.util.RefactoringDescriptionLocation;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.usageView.UsageViewDescriptor;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.containers.CollectionFactory;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -160,13 +161,7 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
       return JSPullUpConflictsUtil.checkConflicts(myMembersToMove, mySourceClass, createFakeClass(), v, JSVisibilityUtil.DEFAULT_OPTIONS);
     }
     else {
-      MultiMap<PsiElement, String> conflicts = new MultiMap<PsiElement, String>() {
-        @NotNull
-        @Override
-        protected Map<PsiElement, Collection<String>> createMap() {
-          return Collections.synchronizedMap(super.createMap());
-        }
-
+      MultiMap<PsiElement, String> conflicts = new MultiMap<PsiElement, String>(Collections.synchronizedMap(CollectionFactory.createSmallMemoryFootprintMap())) {
         @NotNull
         @Override
         protected Collection<String> createCollection() {

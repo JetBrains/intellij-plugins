@@ -15,7 +15,7 @@ public class AngularJSParser
   extends JavaScriptParser<AngularJSParser.AngularJSExpressionParser, StatementParser, FunctionParser, JSPsiTypeParser> {
 
   public AngularJSParser(PsiBuilder builder) {
-    super(JavaScriptSupportLoader.JAVASCRIPT_1_5, builder);
+    super(DialectOptionHolder.JS_1_5, builder);
     myExpressionParser = new AngularJSExpressionParser();
     myStatementParser = new StatementParser<AngularJSParser>(this) {
       @Override
@@ -107,7 +107,8 @@ public class AngularJSParser
           builder.advanceLexer();
           if (builder.getTokenType() == JSTokenTypes.IDENTIFIER) {
             buildTokenElement(JSElementTypes.REFERENCE_EXPRESSION);
-          } else {
+          }
+          else {
             builder.error(JavaScriptBundle.message("javascript.parser.message.expected.identifier"));
           }
         }
@@ -190,7 +191,8 @@ public class AngularJSParser
         final PsiBuilder.Marker def = builder.mark();
         buildTokenElement(JSElementTypes.REFERENCE_EXPRESSION);
         def.done(JSStubElementTypes.DEFINITION_EXPRESSION);
-      } else {
+      }
+      else {
         builder.error(JavaScriptBundle.message("javascript.parser.message.expected.identifier"));
       }
     }
@@ -205,6 +207,10 @@ public class AngularJSParser
     @Override
     protected int getCurrentBinarySignPriority(boolean allowIn, boolean advance) {
       if (builder.getTokenType() == JSTokenTypes.OR) return 10;
+      if (builder.getTokenType() == JSTokenTypes.AS_KEYWORD) {
+        if (advance) builder.advanceLexer();
+        return 10;
+      }
       return super.getCurrentBinarySignPriority(allowIn, advance);
     }
 
@@ -252,7 +258,8 @@ public class AngularJSParser
       if (builder.getTokenType() != JSTokenTypes.OF_KEYWORD) {
         expr.drop();
         return true;
-      } else {
+      }
+      else {
         builder.advanceLexer();
       }
       parseExpression();
@@ -261,7 +268,8 @@ public class AngularJSParser
         builder.advanceLexer();
         if (builder.getTokenType() != JSTokenTypes.COLON) {
           builder.error(JavaScriptBundle.message("javascript.parser.message.expected.colon"));
-        } else {
+        }
+        else {
           builder.advanceLexer();
         }
         parseExpression();
@@ -275,7 +283,8 @@ public class AngularJSParser
       builder.advanceLexer();
       if (builder.getTokenType() != JSTokenTypes.IDENTIFIER) {
         builder.error(JavaScriptBundle.message("javascript.parser.message.expected.identifier"));
-      } else {
+      }
+      else {
         buildTokenElement(JSStubElementTypes.VARIABLE);
       }
       def.done(JSStubElementTypes.VAR_STATEMENT);
@@ -287,13 +296,15 @@ public class AngularJSParser
         PsiBuilder.Marker statement = builder.mark();
         buildTokenElement(JSStubElementTypes.VARIABLE);
         statement.done(JSStubElementTypes.VAR_STATEMENT);
-      } else {
+      }
+      else {
         final PsiBuilder.Marker keyValue = builder.mark();
         parseKeyValue();
         if (builder.getTokenType() != JSTokenTypes.IN_KEYWORD) {
           expr.rollbackTo();
           return false;
-        } else {
+        }
+        else {
           keyValue.done(JSElementTypes.PARENTHESIZED_EXPRESSION);
         }
       }
@@ -312,23 +323,27 @@ public class AngularJSParser
       final PsiBuilder.Marker comma = builder.mark();
       if (isIdentifierToken(builder.getTokenType())) {
         buildTokenElement(JSStubElementTypes.VARIABLE);
-      } else {
+      }
+      else {
         builder.error(JavaScriptBundle.message("javascript.parser.message.expected.identifier"));
       }
       if (builder.getTokenType() == JSTokenTypes.COMMA) {
         builder.advanceLexer();
-      } else {
+      }
+      else {
         builder.error(JavaScriptBundle.message("javascript.parser.message.expected.comma"));
       }
       if (isIdentifierToken(builder.getTokenType())) {
         buildTokenElement(JSStubElementTypes.VARIABLE);
-      } else {
+      }
+      else {
         builder.error(JavaScriptBundle.message("javascript.parser.message.expected.identifier"));
       }
       comma.done(JSStubElementTypes.VAR_STATEMENT);
       if (builder.getTokenType() == JSTokenTypes.RPAR) {
         builder.advanceLexer();
-      } else {
+      }
+      else {
         builder.error(JavaScriptBundle.message("javascript.parser.message.expected.rparen"));
       }
     }

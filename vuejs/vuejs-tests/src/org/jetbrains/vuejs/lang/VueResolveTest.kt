@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.lang
 
 import com.intellij.lang.ecmascript6.psi.JSClassExpression
 import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClassExpression
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
@@ -15,6 +16,7 @@ import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 import org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory
+import org.jetbrains.vuejs.lang.VueTestModule.VUE_2_6_10
 import org.jetbrains.vuejs.lang.expr.psi.VueJSVForExpression
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueNamedSymbol
@@ -932,7 +934,9 @@ Vue.component('global-comp-literal', {
 """)
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)
-    val property = reference!!.resolve()!!.parent
+    val element = reference!!.resolve()
+    TestCase.assertNotNull(element)
+    val property = element!!.parent
     TestCase.assertNotNull(property)
     TestCase.assertTrue(property is JSProperty)
     TestCase.assertEquals("insideGlobalCompLiteral", (property as JSProperty).name)
@@ -1256,7 +1260,9 @@ const props = {seeMe: {}}
   private fun doTestResolveIntoProperty(name: String) {
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)
-    val property = reference!!.resolve()!!.parent
+    val element = reference!!.resolve()
+    TestCase.assertNotNull(element)
+    val property = element!!.parent
     TestCase.assertNotNull(property)
     TestCase.assertTrue(property is JSProperty)
     TestCase.assertEquals(name, (property as JSProperty).name)
@@ -1410,8 +1416,7 @@ const props = {seeMe: {}}
   }
 
   fun testResolveIntoVueDefinitions() {
-    createPackageJsonWithVueDependency(myFixture, "")
-    myFixture.copyDirectoryToProject("../types/node_modules", "./node_modules")
+    myFixture.configureDependencies(VueTestModule.VUE_2_5_3)
     myFixture.configureByText("ResolveIntoVueDefinitions.vue", """
 <script>
   export default {
@@ -1428,8 +1433,7 @@ const props = {seeMe: {}}
   }
 
   fun testResolveElementUiComponent() {
-    createPackageJsonWithVueDependency(myFixture, "\"element-ui\": \"2.0.5\"")
-    myFixture.copyDirectoryToProject("../libs/element-ui/node_modules", "./node_modules")
+    myFixture.configureDependencies(VueTestModule.ELEMENT_UI_2_0_5)
     val testData = arrayOf(
       Trinity("el-col", "ElCol", "col.js"),
       Trinity("el-button", "ElButton", "button.vue"),
@@ -1442,8 +1446,7 @@ const props = {seeMe: {}}
   }
 
   fun testResolveMintUiComponent() {
-    createPackageJsonWithVueDependency(myFixture, "\"mint-ui\": \"^2.2.3\"")
-    myFixture.copyDirectoryToProject("../libs/mint-ui/node_modules", "./node_modules")
+    myFixture.configureDependencies(VueTestModule.MINT_UI_2_2_3)
     val testData = arrayOf(
       Trinity("mt-field", "mt-field", "field.vue"),
       Trinity("mt-swipe", "mt-swipe", "swipe.vue"),
@@ -1458,8 +1461,7 @@ const props = {seeMe: {}}
   // Resolve into web-types libraries not supported for now.
   @Suppress("TestFunctionName", "unused")
   fun _testResolveVuetifyComponent() {
-    createPackageJsonWithVueDependency(myFixture, "\"vuetify\": \"0.17.2\"")
-    myFixture.copyDirectoryToProject("../libs/vuetify/vuetify_017/node_modules", "./node_modules")
+    myFixture.configureDependencies(VueTestModule.VUETIFY_0_17_2)
     val testData = arrayOf(
       Trinity("v-list", "v-list", "VList.js"),
       Trinity("v-list-tile-content", "v-list-tile-content", "index.js")
@@ -1746,7 +1748,9 @@ export default class UsageComponent extends Vue {
 }
 </script>
 """)
-    doResolveIntoLibraryComponent("long-vue", "LongComponent.vue")
+    val target = myFixture.resolveReference("<<caret>LongComponent/>")
+    TestCase.assertEquals("LongComponent.vue", target.containingFile.name)
+    TestCase.assertTrue(target.parent is TypeScriptClassExpression)
   }
 
   fun testLocalComponentsExtendsResolve() {
@@ -1888,7 +1892,7 @@ export default class UsageComponent extends Vue {
   }
 
   fun testVueDefaultSymbols() {
-    configureVueDefinitions(myFixture)
+    myFixture.configureDependencies(VueTestModule.VUE_2_5_3)
     myFixture.configureByFile("vueDefaultSymbols.vue")
     assertEquals("vue.d.ts",
                  myFixture.resolveReference("\$<caret>slots").containingFile.name)
@@ -1914,7 +1918,8 @@ export default class UsageComponent extends Vue {
       Triple("script-template-vue", "scriptTemplateVue1", "<slot name=\"scriptTemplateVue1\"></slot>"),
       Triple("require-decorators", "default", "<slot></slot>"),
       Triple("x-template", "xTemplate1", "<slot name=\"xTemplate1\"></slot>"),
-      Triple("export-import", "exportImport1", "<slot name=\"exportImport1\"></slot>")
+      Triple("export-import", "exportImport1", "<slot name=\"exportImport1\"></slot>"),
+      Triple("no-script-section", "noScriptSection1", "<slot name=\"noScriptSection1\"></slot>")
     )) {
       val slotWithCaret = slotName.replaceRange(1, 1, "<caret>")
       for (signature in listOf("<$tag><template v-slot:$slotWithCaret",
@@ -1948,6 +1953,58 @@ export default class UsageComponent extends Vue {
     val element = myFixture.resolveReference("\"user<caret>Id\"")
     assertEquals("props.js", element.containingFile.name)
     myFixture.assertUnresolvedReference("\"user<caret>Id2\"")
+  }
+
+  fun testMixinExtend() {
+    myFixture.configureDependencies(VUE_2_6_10)
+    myFixture.copyDirectoryToProject("vue-sfc-extend-mixin", ".")
+    myFixture.configureFromTempProjectFile("test.vue")
+    TestCase.assertEquals(
+      "test.vue",
+      myFixture.resolveReference("\"sty<caret>le\"").containingFile.name)
+    myFixture.moveToOffsetBySignature("\"<caret>classes\"")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.renderLookupItems(true, true, true),
+                           "!classes% (mixin.ts)#null#101", "!style% (test.vue)#null#101")
+    TestCase.assertEquals(
+      "mixin.ts",
+      myFixture.resolveReference("{{ class<caret>es }}").containingFile.name)
+    TestCase.assertEquals(
+      "mixin.ts",
+      myFixture.resolveReference("\"class<caret>es\"").containingFile.name)
+  }
+
+  fun testTypedMixins() {
+    myFixture.configureDependencies(VUE_2_6_10)
+    myFixture.copyDirectoryToProject("vue-sfc-typed-mixins", ".")
+    myFixture.configureFromTempProjectFile("component.vue")
+    TestCase.assertEquals(
+      "mixin.ts",
+      myFixture.resolveReference("\"show<caret>1\"").containingFile.name)
+    myFixture.moveToOffsetBySignature("\"show<caret>1\"")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.renderLookupItems(true, true, true),
+                           "!show2%() (methods, component.vue)#void#101", "!show1%() (test.methods, mixin.ts)#void#101",
+                           "!show5%() (methods, mixin2.ts)#void#101")
+    myFixture.moveToOffsetBySignature("this.<caret>show2()")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.renderLookupItems(true, true, true),
+                           "!show2%() (methods, component.vue)#void#99", "!show1%() (test.methods, mixin.ts)#void#99",
+                           "!show5%() (methods, mixin2.ts)#void#99")
+
+  }
+
+  fun testGotoDeclarationDirectives() {
+    myFixture.configureByFile("gotoDeclarationDirectives.vue")
+    myFixture.performEditorAction("GotoDeclaration")
+    TestCase.assertEquals(104, myFixture.caretOffset)
+  }
+
+  fun testNoScriptSection() {
+    myFixture.configureByFiles("noScriptSection/test.vue", "noScriptSection/noScriptSection.vue")
+    TestCase.assertEquals(
+      "noScriptSection.vue",
+      myFixture.resolveReference("<no-script<caret>-section>").containingFile.name)
   }
 
 }

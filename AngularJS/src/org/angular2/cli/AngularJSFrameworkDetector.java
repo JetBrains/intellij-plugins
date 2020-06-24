@@ -40,15 +40,13 @@ public class AngularJSFrameworkDetector extends FrameworkDetector {
     super(AngularJSFramework.ID);
   }
 
-  @NotNull
   @Override
-  public FileType getFileType() {
+  public @NotNull FileType getFileType() {
     return JsonFileType.INSTANCE;
   }
 
-  @NotNull
   @Override
-  public ElementPattern<FileContent> createSuitableFilePattern() {
+  public @NotNull ElementPattern<FileContent> createSuitableFilePattern() {
     return FileContentPattern.fileContent().withName(
       StandardPatterns.string().with(new PatternCondition<String>("cli-json-name") {
         @Override
@@ -91,7 +89,7 @@ public class AngularJSFrameworkDetector extends FrameworkDetector {
   }
 
   @Override
-  public FrameworkType getFrameworkType() {
+  public @NotNull FrameworkType getFrameworkType() {
     return AngularJSFramework.INSTANCE;
   }
 
@@ -102,21 +100,18 @@ public class AngularJSFrameworkDetector extends FrameworkDetector {
       myNewFiles = newFiles;
     }
 
-    @NotNull
     @Override
-    public Collection<? extends VirtualFile> getRelatedFiles() {
+    public @NotNull Collection<? extends VirtualFile> getRelatedFiles() {
       return myNewFiles;
     }
 
-    @NotNull
     @Override
-    public String getSetupText() {
+    public @NotNull String getSetupText() {
       return Angular2Bundle.message("angular.description.angular-cli");
     }
 
-    @NotNull
     @Override
-    public FrameworkDetector getDetector() {
+    public @NotNull FrameworkDetector getDetector() {
       return AngularJSFrameworkDetector.this;
     }
 
@@ -132,7 +127,7 @@ public class AngularJSFrameworkDetector extends FrameworkDetector {
         }
         AngularJSProjectConfigurator.excludeDefault(item.getParent(), entry);
         modifiableModelsProvider.commitModuleModifiableModel(model);
-        for (VirtualFile vf: myNewFiles) {
+        for (VirtualFile vf : myNewFiles) {
           AngularCliUtil.createRunConfigurations(module.getProject(), vf.getParent());
         }
       }

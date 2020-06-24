@@ -90,7 +90,8 @@ public class PlatformioLauncher extends CLionLauncher {
     Optional<String> cmakeBuildType = getCmakeBuildType(commandLineState);
     DebuggerDriverConfiguration debuggerDriverConfiguration = new CLionGDBDriverConfiguration(getConfiguration().getProject(),
                                                                                               ((PlatformioBaseConfiguration)getConfiguration())
-                                                                                                .getToolchain()) {
+                                                                                                .getToolchain(),
+                                                                                              getConfiguration().isElevated()) {
       @Override
       public @NotNull
       GeneralCommandLine createDriverCommandLine(@NotNull DebuggerDriver driver, @NotNull ArchitectureType architectureType)

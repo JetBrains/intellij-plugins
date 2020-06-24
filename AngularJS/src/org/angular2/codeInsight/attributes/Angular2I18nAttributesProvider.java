@@ -68,18 +68,18 @@ public class Angular2I18nAttributesProvider implements Angular2AttributesProvide
     return info.type == REGULAR && !info.name.equals(I18N_ATTR);
   }
 
-  @Nullable
   @Override
-  public Angular2AttributeDescriptor getDescriptor(@NotNull XmlTag tag, @NotNull String attributeName, @NotNull AttributeInfo info) {
+  public @Nullable Angular2AttributeDescriptor getDescriptor(@NotNull XmlTag tag,
+                                                             @NotNull String attributeName,
+                                                             @NotNull AttributeInfo info) {
     if (info.type == I18N) {
       return new Angular2I18nAttributeDescriptor(tag, info.name, tag.getAttribute(info.name));
     }
     return null;
   }
 
-  @NotNull
   @Override
-  public Collection<String> getRelatedAttributes(@NotNull XmlAttributeDescriptor descriptor) {
+  public @NotNull Collection<String> getRelatedAttributes(@NotNull XmlAttributeDescriptor descriptor) {
     return emptyList();
   }
 

@@ -12,10 +12,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.testIntegration.TestFinderHelper;
 import com.intellij.util.containers.ContainerUtil;
-import org.angular2.entities.Angular2Declaration;
-import org.angular2.entities.Angular2EntitiesProvider;
-import org.angular2.entities.Angular2EntityUtils;
-import org.angular2.entities.Angular2Module;
+import org.angular2.entities.*;
 import org.angular2.entities.source.Angular2SourceModule;
 import org.angular2.lang.Angular2Bundle;
 import org.jetbrains.annotations.NotNull;
@@ -28,9 +25,8 @@ import static org.angular2.entities.Angular2EntityUtils.renderEntityList;
 
 public class AngularMissingOrInvalidDeclarationInModuleInspection extends LocalInspectionTool {
 
-  @NotNull
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
+  public @NotNull PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
     return new JSElementVisitor() {
 
       @Override
@@ -41,6 +37,9 @@ public class AngularMissingOrInvalidDeclarationInModuleInspection extends LocalI
                                                     Angular2Declaration.class);
           if (declaration != null) {
             Collection<Angular2Module> modules = declaration.getAllModules();
+            if (Angular2FrameworkHandler.EP_NAME.extensions().anyMatch(h -> h.suppressModuleInspectionErrors(modules, declaration))) {
+              return;
+            }
             PsiElement classIdentifier = notNull(doIfNotNull(getClassForDecoratorElement(decorator),
                                                              TypeScriptClass::getNameIdentifier), decorator);
             if (modules.isEmpty()) {

@@ -8,7 +8,6 @@ import org.jdom.Element
 import training.commands.Command
 import training.commands.CommandFactory
 import training.commands.ExecutionList
-import java.util.concurrent.BlockingQueue
 import java.util.concurrent.LinkedBlockingQueue
 
 object LessonProcessor {
@@ -19,22 +18,31 @@ object LessonProcessor {
   var currentExecutionList: ExecutionList? = null
     private set
 
-  fun process(project: Project, lesson: XmlLesson, editor: Editor) {
+  var tasksNumber: Int = 0
+    private set
+  var currentTaskIndex: Int = 0
 
-    val myQueueOfElements = createQueueOfCommands(lesson.scenario.root)
+  fun process(project: Project, lesson: XmlLesson, editor: Editor?, documentationMode: Boolean = true) {
+    val elements = createListOfCommands(lesson.scenario.root)
+    val myQueueOfElements = LinkedBlockingQueue(elements)
 
     //Initialize lesson in the editor
-    LessonManager.instance.initLesson(editor, lesson)
+    if (editor != null) {
+      LessonManager.instance.initLesson(editor, lesson)
+    }
+
+    tasksNumber = elements.filter { CommandFactory.getCommandType(it) == Command.CommandType.TRY }.count()
+    currentTaskIndex = 0
 
     //Prepare environment before execution
-    with(ExecutionList(myQueueOfElements, lesson, project)) {
+    with(ExecutionList(myQueueOfElements, lesson, project, documentationMode)) {
       currentExecutionList = this
-      CommandFactory.buildCommand(myQueueOfElements.peek()).execute(this)
+      CommandFactory.buildCommand(myQueueOfElements.peek(), documentationMode).execute(this)
     }
   }
 
-  private fun createQueueOfCommands(root: Element): BlockingQueue<Element> {
-    val commandsQueue = LinkedBlockingQueue<Element>()
+  private fun createListOfCommands(root: Element): List<Element> {
+    val commandsQueue = mutableListOf<Element>()
     for (rootChild in root.children) {
       //if element is MouseBlocked (blocks all mouse events) than add all children inside it.
       if (isMouseBlock(rootChild)) {

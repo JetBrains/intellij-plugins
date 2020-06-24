@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "@angular/core": "~9.0.0-rc.2",
-    "ng-zorro-antd": "^8.5.0"
-  }
-}

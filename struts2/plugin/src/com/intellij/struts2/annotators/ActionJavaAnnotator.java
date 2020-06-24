@@ -15,7 +15,7 @@
 
 package com.intellij.struts2.annotators;
 
-import com.intellij.openapi.fileTypes.StdFileTypes;
+import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import icons.Struts2Icons;
@@ -55,7 +55,7 @@ public class ActionJavaAnnotator extends ActionAnnotatorBase {
     }
 
     // do not run on classes within JSPs
-    if (psiElement.getContainingFile().getFileType() != StdFileTypes.JAVA) {
+    if (psiElement.getContainingFile().getFileType() != JavaFileType.INSTANCE) {
       return null;
     }
 

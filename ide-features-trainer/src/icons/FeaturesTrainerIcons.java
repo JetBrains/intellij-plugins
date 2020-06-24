@@ -18,4 +18,5 @@ public final class FeaturesTrainerIcons {
   /** 16x16 */ public static final @NotNull Icon Checkmark = load("/img/checkmark.svg");
   /** 16x16 */ public static final @NotNull Icon FeatureTrainer = load("/img/featureTrainer.svg");
   /** 13x13 */ public static final @NotNull Icon FeatureTrainerToolWindow = load("/img/featureTrainerToolWindow.svg");
+  /** 16x16 */ public static final @NotNull Icon GreenCheckmark = load("/img/greenCheckmark.svg");
 }

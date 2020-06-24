@@ -2,15 +2,14 @@
 package training.ui
 
 import com.intellij.lang.Language
+import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.options.BoundConfigurable
 import com.intellij.openapi.ui.DialogPanel
-import com.intellij.openapi.ui.showYesNoDialog
 import com.intellij.ui.layout.*
 import training.actions.StartLearnAction
 import training.lang.LangManager
 import training.learn.LearnBundle
 import training.ui.welcomeScreen.recentProjects.actionGroups.GroupManager
-import training.util.clearTrainingProgress
 import training.util.resetPrimaryLanguage
 import javax.swing.DefaultComboBoxModel
 
@@ -37,11 +36,7 @@ class FeaturesTrainerSettingsPanel : BoundConfigurable(LearnBundle.message("lear
       }
     }
     row {
-      link(LearnBundle.message("learn.option.reset.progress")) {
-        if (showYesNoDialog(LearnBundle.message("learn.option.reset.progress.dialog"), LearnBundle.message("learn.option.reset.progress.confirm"), null)) {
-          clearTrainingProgress()
-        }
-      }
+      buttonFromAction(LearnBundle.message("learn.option.reset.progress"), "settings", ActionManager.getInstance().getAction("ResetLearningProgressAction"))
     }
   }
 

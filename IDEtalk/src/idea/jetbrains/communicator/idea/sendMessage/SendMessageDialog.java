@@ -48,7 +48,7 @@ public class SendMessageDialog extends IdeaDialog {
     setTitle(" Send Message/Stacktrace ");
 
     setOKButtonText("Send");
-    getOKAction().putValue(Action.MNEMONIC_KEY, new Integer((int) 'S'));
+    getOKAction().putValue(Action.MNEMONIC_KEY, new Integer('S'));
 
     ArrayList<User> users = new ArrayList<>(Arrays.asList(availableUsers));
     UIUtil.setupUserList(myRecipients, users);

@@ -6,14 +6,16 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.Supplier;
+
 @SuppressWarnings("WeakerAccess")
 public class PlatformioToolConfiguration extends PlatformioBaseConfiguration
   implements RunConfigurationWithSuppressedDefaultDebugAction {
 
   public PlatformioToolConfiguration(@NotNull Project project,
                                      @NotNull ConfigurationFactory configurationFactory,
-                                     @NotNull String name,
-                                     @Nullable String... cliParameters) {
+                                     @NotNull Supplier<String> name,
+                                     String @Nullable ... cliParameters) {
     super(project, configurationFactory, "Production", name, cliParameters);
   }
 

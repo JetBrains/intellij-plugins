@@ -4,7 +4,7 @@ package {
       function set foo(x:int):void;
   }
 
-  class ImplicitGetSet implements IImplicitGetSet {
+  class <error descr="More than one externally visible symbol defined in file">ImplicitGetSet</error> implements IImplicitGetSet {
       [Bindable]
       public var foo:int;
   }

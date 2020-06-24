@@ -1,0 +1,3 @@
+MetadataFile:button.metadata.json
+  @angular/material/button <metadata node module>
+    export * from ./button/index <metadata module export>('')

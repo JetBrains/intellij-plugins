@@ -11,7 +11,7 @@
   <mx:Script>
     function foo() {
       var node:*;
-      node.id = 1<warning descr="Unterminated statement"></warning>
+      node.id = 1<caret><warning descr="Unterminated statement"></warning>
       var className:* = node.@()
     }
   </mx:Script>

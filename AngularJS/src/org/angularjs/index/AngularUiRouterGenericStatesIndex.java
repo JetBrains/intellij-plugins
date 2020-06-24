@@ -8,11 +8,11 @@ import org.jetbrains.annotations.NotNull;
  * @author Irina.Chernushina on 6/29/2016.
  */
 public class AngularUiRouterGenericStatesIndex extends AngularIndexBase {
-  public static final StubIndexKey<String, JSImplicitElementProvider> KEY = StubIndexKey.createIndexKey("angularjs.ui.router.generic.states.index");
+  public static final StubIndexKey<String, JSImplicitElementProvider> KEY =
+    StubIndexKey.createIndexKey("angularjs.ui.router.generic.states.index");
 
-  @NotNull
   @Override
-  public StubIndexKey<String, JSImplicitElementProvider> getKey() {
+  public @NotNull StubIndexKey<String, JSImplicitElementProvider> getKey() {
     return KEY;
   }
 }

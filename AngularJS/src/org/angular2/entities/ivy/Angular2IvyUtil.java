@@ -43,15 +43,19 @@ public class Angular2IvyUtil {
   }
 
   public static Angular2IvyEntity<?> getIvyEntity(@NotNull PsiElement element) {
+    return getIvyEntity(element, false);
+  }
+
+  public static Angular2IvyEntity<?> getIvyEntity(@NotNull PsiElement element, boolean allowAbstractClasses) {
     final Angular2IvySymbolDef.Entity entityDef;
     if (element instanceof TypeScriptClass) {
       if (!isDeclaredClass((TypeScriptClass)element)) {
         return null;
       }
-      entityDef = Angular2IvySymbolDef.get((TypeScriptClass)element);
+      entityDef = Angular2IvySymbolDef.get((TypeScriptClass)element, allowAbstractClasses);
     }
     else if (element instanceof TypeScriptField) {
-      entityDef = Angular2IvySymbolDef.get((TypeScriptField)element);
+      entityDef = Angular2IvySymbolDef.get((TypeScriptField)element, allowAbstractClasses);
     }
     else {
       entityDef = null;

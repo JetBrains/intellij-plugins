@@ -16,7 +16,7 @@ import java.util.Map;
 
 public class Angular2NgModuleSelectAction extends ES6ImportAction {
 
-  @NotNull private final String myActionName;
+  private final @NotNull String myActionName;
   protected final boolean myCodeCompletion;
 
   public Angular2NgModuleSelectAction(@Nullable Editor editor,
@@ -30,15 +30,14 @@ public class Angular2NgModuleSelectAction extends ES6ImportAction {
     myCodeCompletion = codeCompletion;
   }
 
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     return myActionName;
   }
 
-  @NotNull
   @Override
-  protected String getDebugNameForElement(@NotNull JSElement element, @NotNull Map<PsiElement, JSModuleNameInfo> preRenderedQNames) {
+  protected @NotNull String getDebugNameForElement(@NotNull JSElement element,
+                                                   @NotNull Map<PsiElement, JSModuleNameInfo> preRenderedQNames) {
     JSModuleNameInfo info = preRenderedQNames.get(element);
     return element.getName()
            + " - " + ObjectUtils.coalesce(info == null ? null : info.getPath(),

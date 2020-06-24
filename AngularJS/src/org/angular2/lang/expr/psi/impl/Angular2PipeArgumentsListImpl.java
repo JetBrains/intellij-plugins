@@ -31,8 +31,7 @@ public class Angular2PipeArgumentsListImpl extends JSArgumentListImpl implements
     return super.getArguments();
   }
 
-  @Nullable
-  private JSExpression getPipeLeftSideExpression() {
+  private @Nullable JSExpression getPipeLeftSideExpression() {
     return doIfNotNull(((Angular2PipeExpressionImpl)getParent())
                          .findChildByType(Angular2ElementTypes.PIPE_LEFT_SIDE_ARGUMENT),
                        node -> doIfNotNull(node.getPsi(Angular2PipeLeftSideArgumentImpl.class),

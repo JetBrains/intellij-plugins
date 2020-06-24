@@ -2,7 +2,13 @@
 package training.learn.lesson.kimpl
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.wm.ToolWindow
+import com.intellij.openapi.wm.ex.ToolWindowManagerListener
+import com.intellij.util.messages.Topic
+import com.intellij.xdebugger.XDebuggerManager
 import training.commands.kotlin.TaskContext
+import training.commands.kotlin.TaskRuntimeContext
 import javax.swing.JList
 
 object LessonUtil {
@@ -37,14 +43,38 @@ object LessonUtil {
     }
   }
 
-  fun findItem(ui: JList<*>, checkList: (item: Any) -> Boolean): Int {
+  fun findItem(ui: JList<*>, checkList: (item: Any) -> Boolean): Int? {
     for (i in 0 until ui.model.size) {
       val elementAt = ui.model.getElementAt(i)
       if (checkList(elementAt)) {
         return i
       }
     }
-    return -1
+    return null
   }
+}
 
+fun TaskContext.toolWindowShowed(toolWindowId: String) {
+  addFutureStep {
+    subscribeForMessageBus(ToolWindowManagerListener.TOPIC, object: ToolWindowManagerListener {
+      override fun toolWindowShown(id: String, toolWindow: ToolWindow) {
+        if (id == toolWindowId)
+          completeStep()
+      }
+    })
+  }
+}
+
+fun <L> TaskRuntimeContext.subscribeForMessageBus(topic: Topic<L>, handler: L) {
+  project.messageBus.connect(disposable).subscribe(topic, handler)
+}
+
+fun TaskRuntimeContext.lineWithBreakpoints(): Set<Int> {
+  val breakpointManager = XDebuggerManager.getInstance(project).breakpointManager
+  return breakpointManager.allBreakpoints.filter {
+    val file = FileDocumentManager.getInstance().getFile(editor.document)
+    it.sourcePosition?.file == file
+  }.mapNotNull {
+    it.sourcePosition?.line
+  }.toSet()
 }

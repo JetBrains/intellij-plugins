@@ -1,6 +1,7 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.project
 
+import com.intellij.ide.impl.OpenProjectTask
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.ide.util.projectWizard.WizardContext
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
@@ -109,7 +110,7 @@ object ProjectUtils {
       }
       val toSelect = findFileByIoFile(dest, true) ?: throw Exception("Copied Learn project folder is null")
       invokeLater {
-        val openOrImport = ProjectUtil.openOrImport(toSelect.path, projectToClose, false)
+        val openOrImport = ProjectUtil.openOrImport(toSelect.toNioPath(), OpenProjectTask(projectToClose = projectToClose))
                            ?: error("Could not create project for " + langSupport.primaryLanguage)
         postInitCallback(openOrImport)
       }

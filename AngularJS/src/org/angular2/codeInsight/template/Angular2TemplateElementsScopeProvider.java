@@ -50,9 +50,8 @@ public class Angular2TemplateElementsScopeProvider extends Angular2TemplateScope
            || LEGACY_TEMPLATE_TAG.equalsIgnoreCase(tagName);
   }
 
-  @NotNull
   @Override
-  public List<? extends Angular2TemplateScope> getScopes(@NotNull PsiElement element, @Nullable PsiElement hostElement) {
+  public @NotNull List<? extends Angular2TemplateScope> getScopes(@NotNull PsiElement element, @Nullable PsiElement hostElement) {
     final PsiFile hostFile = CompletionUtil.getOriginalOrSelf(notNull(hostElement, element)).getContainingFile();
 
     boolean isInjected = hostElement != null;
@@ -73,7 +72,7 @@ public class Angular2TemplateElementsScopeProvider extends Angular2TemplateScope
 
     private final List<JSPsiElementBase> elements = new ArrayList<>();
 
-    @NotNull private final TextRange myRange;
+    private final @NotNull TextRange myRange;
 
     private Angular2TemplateElementScope(@NotNull PsiElement root, @Nullable Angular2TemplateElementScope parent) {
       super(parent);
@@ -92,8 +91,7 @@ public class Angular2TemplateElementsScopeProvider extends Angular2TemplateScope
       elements.add(element);
     }
 
-    @Nullable
-    public Angular2TemplateElementScope findBestMatchingTemplateScope(@NotNull PsiElement element) {
+    public @Nullable Angular2TemplateElementScope findBestMatchingTemplateScope(@NotNull PsiElement element) {
       if (!myRange.contains(element.getTextOffset())) {
         return null;
       }
@@ -126,8 +124,7 @@ public class Angular2TemplateElementsScopeProvider extends Angular2TemplateScope
 
   private static class Angular2BaseScopeBuilder extends Angular2HtmlRecursiveElementVisitor {
 
-    @NotNull
-    private final PsiFile myTemplateFile;
+    private final @NotNull PsiFile myTemplateFile;
     private final Stack<Angular2TemplateElementScope> scopes = new Stack<>();
 
     Angular2BaseScopeBuilder(@NotNull PsiFile templateFile) {
@@ -135,8 +132,7 @@ public class Angular2TemplateElementsScopeProvider extends Angular2TemplateScope
       scopes.add(new Angular2TemplateElementScope(templateFile, null));
     }
 
-    @NotNull
-    public Angular2TemplateElementScope getTopLevelScope() {
+    public @NotNull Angular2TemplateElementScope getTopLevelScope() {
       myTemplateFile.accept(this);
       assert scopes.size() == 1;
       return scopes.peek();
@@ -203,8 +199,11 @@ public class Angular2TemplateElementsScopeProvider extends Angular2TemplateScope
     }
 
     @Override
-    public void visitVariable(Angular2HtmlVariable variable) {
-      addElement(createVariable(variable.getVariableName(), variable));
+    public void visitLet(Angular2HtmlLet let) {
+      JSVariable var = let.getVariable();
+      if (var != null) {
+        addElement(var);
+      }
     }
 
     @Override
@@ -249,7 +248,7 @@ public class Angular2TemplateElementsScopeProvider extends Angular2TemplateScope
         case REFERENCE:
           addReference(attribute, info, isTemplateTag(attribute.getParent()));
           break;
-        case VARIABLE:
+        case LET:
           addVariable(attribute, info);
           break;
         case TEMPLATE_BINDINGS:

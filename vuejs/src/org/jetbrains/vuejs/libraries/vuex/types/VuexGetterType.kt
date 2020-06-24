@@ -10,7 +10,7 @@ import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.util.ProcessingContext
 
 class VuexGetterType(source: JSTypeSource,
-                     private val element: JSTypeInfoOwner)
+                     private val element: JSTypeOwner)
   : JSSimpleTypeBaseImpl(source), JSCodeBasedType, JSTypeWithIncompleteSubstitution {
 
   override fun copyWithNewSource(source: JSTypeSource): JSType {

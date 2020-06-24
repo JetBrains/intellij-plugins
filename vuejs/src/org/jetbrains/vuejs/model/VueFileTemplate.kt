@@ -21,4 +21,12 @@ class VueFileTemplate(override val source: XmlFile) : VueTemplate<XmlFile> {
     super.safeVisitTags(visitor)
   }
 
+  override fun equals(other: Any?): Boolean {
+    return (other as? VueFileTemplate)?.source == source
+  }
+
+  override fun hashCode(): Int {
+    return source.hashCode()
+  }
+
 }

@@ -9,8 +9,7 @@ public interface Angular2Element {
   @NotNull
   PsiElement getSourceElement();
 
-  @NotNull
-  default PsiElement getNavigableElement() {
+  default @NotNull PsiElement getNavigableElement() {
     return getSourceElement();
   }
 }

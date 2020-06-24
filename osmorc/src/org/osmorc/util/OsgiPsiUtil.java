@@ -61,7 +61,7 @@ public class OsgiPsiUtil {
     return CachedValuesManager.getManager(project).getCachedValue(project, () -> {
       GlobalSearchScope scope = ProjectScope.getLibrariesScope(project);
       PsiClass aClass = JavaPsiFacade.getInstance(project).findClass(BundleActivator.class.getName(), scope);
-      return CachedValueProvider.Result.create(aClass, PsiModificationTracker.JAVA_STRUCTURE_MODIFICATION_COUNT);
+      return CachedValueProvider.Result.create(aClass, PsiModificationTracker.MODIFICATION_COUNT);
     });
   }
 

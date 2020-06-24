@@ -84,8 +84,7 @@ public class Angular2MetadataComponentStub extends Angular2MetadataDirectiveStub
     return Angular2DirectiveKind.REGULAR;
   }
 
-  @NotNull
-  public List<String> getNgContentSelectors() {
+  public @NotNull List<String> getNgContentSelectors() {
     return myNgContentSelectors;
   }
 

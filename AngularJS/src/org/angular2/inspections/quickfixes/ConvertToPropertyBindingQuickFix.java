@@ -18,17 +18,13 @@ public class ConvertToPropertyBindingQuickFix implements LocalQuickFix {
     myPropertyName = propertyName;
   }
 
-  @Nls
-  @NotNull
   @Override
-  public String getName() {
+  public @Nls @NotNull String getName() {
     return Angular2Bundle.message("angular.quickfix.template.bind-to-property.name", myPropertyName);
   }
 
-  @Nls
-  @NotNull
   @Override
-  public String getFamilyName() {
+  public @Nls @NotNull String getFamilyName() {
     return Angular2Bundle.message("angular.quickfix.template.bind-to-property.family");
   }
 

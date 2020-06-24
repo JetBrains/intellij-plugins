@@ -35,7 +35,7 @@ public final class PlatformioService {
       ServiceManager.getService(project, PlatformioService.class).myState = State.OK;
     }
     else {
-      PlatformioService serviceIfCreated = ServiceManager.getServiceIfCreated(project, PlatformioService.class);
+      PlatformioService serviceIfCreated = project.getServiceIfCreated(PlatformioService.class);
       if (serviceIfCreated != null) serviceIfCreated.myState = State.NONE;
     }
   }
@@ -46,7 +46,7 @@ public final class PlatformioService {
 
   public static State getState(@Nullable Project project) {
     if (project == null || project.isDefault()) return State.NONE;
-    PlatformioService platformioService = ServiceManager.getServiceIfCreated(project, PlatformioService.class);
+    PlatformioService platformioService = project.getServiceIfCreated(PlatformioService.class);
     return platformioService == null ? State.NONE : platformioService.getState();
   }
 

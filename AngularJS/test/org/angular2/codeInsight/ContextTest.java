@@ -15,6 +15,8 @@ import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInsp
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection;
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection;
 import com.intellij.psi.PsiElement;
+import com.intellij.testFramework.fixtures.TestLookupElementPresentation;
+import com.intellij.xml.util.CheckDtdReferencesInspection;
 import one.util.streamex.StreamEx;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angular2.inspections.Angular2TemplateInspectionsProvider;
@@ -210,7 +212,7 @@ public class ContextTest extends Angular2CodeInsightFixtureTestCase {
                               "bar#string#(test: string)",
                               "foo#string#null"),
                  StreamEx.of(myFixture.getLookupElements()).map(el -> {
-                   LookupElementPresentation presentation = LookupElementPresentation.renderElement(el);
+                   LookupElementPresentation presentation = TestLookupElementPresentation.renderReal(el);
                    return presentation.getItemText() + "#" + presentation.getTypeText() + "#" + presentation.getTailText();
                  }).sorted().toList());
   }
@@ -244,5 +246,24 @@ public class ContextTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.enableInspections(TypeScriptUnresolvedVariableInspection.class);
     myFixture.configureByFiles("unions.ts", "ng_for_of.ts", "iterable_differs.ts", "package.json");
     myFixture.checkHighlighting();
+  }
+
+  public void testNgspEntityNoNg() {
+    myFixture.enableInspections(new CheckDtdReferencesInspection());
+    myFixture.configureByFiles("ngsp-no-ng.html");
+    myFixture.checkHighlighting();
+  }
+
+  public void testNgspEntityWithNg() {
+    myFixture.enableInspections(new CheckDtdReferencesInspection());
+    myFixture.configureByFiles("ngsp-with-ng.html", "package.json");
+    myFixture.checkHighlighting();
+  }
+
+  public void testNgspEntityCompletion() {
+    myFixture.configureByFiles("package.json");
+    myFixture.configureByText("foo.html", "&<caret>");
+    myFixture.completeBasic();
+    assertContainsElements(myFixture.getLookupElementStrings(), "ngsp");
   }
 }

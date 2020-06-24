@@ -18,15 +18,13 @@ public class Angular2QuoteImpl extends JSStatementImpl implements Angular2Quote 
   }
 
   @Override
-  @NotNull
-  public String getName() {
+  public @NotNull String getName() {
     final ASTNode node = findChildByType(JSKeywordSets.IDENTIFIER_NAMES);
     return node != null ? node.getText() : "";
   }
 
   @Override
-  @NotNull
-  public String getContents() {
+  public @NotNull String getContents() {
     final ASTNode colon = findChildByType(JSTokenTypes.COLON);
     return colon != null ? this.getText().substring(colon.getStartOffset() - getStartOffset() + 1) : "";
   }

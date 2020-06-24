@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.folding;
 
 import com.intellij.codeInsight.folding.CodeFoldingSettings;
@@ -70,8 +70,8 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
       DartAssertStatement.class,
       DartIfStatement.class);
     foldComments(descriptors, psiElements, fileHeaderRange);                           // 4. Comments and comment sequences
-    foldClassBodies(descriptors, dartFile);                                            // 5. Class body
-    foldFunctionBodies(descriptors, psiElements);                                      // 6. Function body
+    foldClassBodies(descriptors, dartFile);                                            // 5. Class bodies
+    foldFunctionBodies(descriptors, psiElements);                                      // 6. Function bodies
     foldTypeArguments(descriptors, psiElements);                                       // 7. Type arguments
     foldMultilineStrings(descriptors, psiElements);                                    // 8. Multi-line strings
     foldSetOrMapLiterals(descriptors, psiElements);                                    // 9. Set or Map literals
@@ -245,18 +245,24 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
   }
 
   private static void foldClassBodies(@NotNull final List<FoldingDescriptor> descriptors, @NotNull final DartFile dartFile) {
-    for (DartClass dartClass : PsiTreeUtil.getChildrenOfTypeAsList(dartFile, DartClass.class)) {
-      if (dartClass instanceof DartClassDefinition) {
-        final DartClassBody body = ((DartClassDefinition)dartClass).getClassBody();
+    for (PsiElement element : PsiTreeUtil.getChildrenOfAnyType(dartFile, DartClass.class, DartExtensionDeclaration.class)) {
+      if (element instanceof DartClassDefinition) {
+        final DartClassBody body = ((DartClassDefinition)element).getClassBody();
         if (body != null && body.getTextLength() > 2) {
           descriptors.add(new FoldingDescriptor(body, body.getTextRange()));
         }
       }
-      else if (dartClass instanceof DartEnumDefinition) {
-        final ASTNode lBrace = dartClass.getNode().findChildByType(DartTokenTypes.LBRACE);
-        final ASTNode rBrace = dartClass.getNode().findChildByType(DartTokenTypes.RBRACE, lBrace);
+      else if (element instanceof DartEnumDefinition) {
+        final ASTNode lBrace = element.getNode().findChildByType(DartTokenTypes.LBRACE);
+        final ASTNode rBrace = element.getNode().findChildByType(DartTokenTypes.RBRACE, lBrace);
         if (lBrace != null && rBrace != null && rBrace.getStartOffset() - lBrace.getStartOffset() > 2) {
-          descriptors.add(new FoldingDescriptor(dartClass, TextRange.create(lBrace.getStartOffset(), rBrace.getStartOffset() + 1)));
+          descriptors.add(new FoldingDescriptor(element, TextRange.create(lBrace.getStartOffset(), rBrace.getStartOffset() + 1)));
+        }
+      }
+      else if (element instanceof DartExtensionDeclaration) {
+        final DartClassBody body = ((DartExtensionDeclaration)element).getClassBody();
+        if (body.getTextLength() > 2) {
+          descriptors.add(new FoldingDescriptor(body, body.getTextRange()));
         }
       }
     }

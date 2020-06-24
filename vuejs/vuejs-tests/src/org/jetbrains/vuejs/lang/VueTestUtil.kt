@@ -20,12 +20,12 @@ import junit.framework.TestCase
 import junit.framework.TestCase.assertTrue
 import java.io.File
 
-fun getVueTestDataPath() = PathManager.getHomePath() + vueRelativeTestDataPath()
+fun getVueTestDataPath(): String = PathManager.getHomePath() + vueRelativeTestDataPath()
 
-fun vueRelativeTestDataPath() = "/contrib/vuejs/vuejs-tests/testData"
+fun vueRelativeTestDataPath(): String = "/contrib/vuejs/vuejs-tests/testData"
 
 // TODO remove duplication with AngularTestUtil
-fun CodeInsightTestFixture.renderLookupItems(renderPriority: Boolean, renderTypeText: Boolean): List<String> {
+fun CodeInsightTestFixture.renderLookupItems(renderPriority: Boolean, renderTypeText: Boolean, renderTailText: Boolean = false): List<String> {
   return ContainerUtil.mapNotNull<LookupElement, String>(lookupElements!!) { el ->
     val result = StringBuilder()
     val presentation = TestLookupElementPresentation.renderReal(el)
@@ -33,6 +33,10 @@ fun CodeInsightTestFixture.renderLookupItems(renderPriority: Boolean, renderType
       result.append('!')
     }
     result.append(el.lookupString)
+    if (renderTailText) {
+      result.append('%')
+      result.append(presentation.tailText)
+    }
     if (renderTypeText) {
       result.append('#')
       result.append(presentation.typeText)

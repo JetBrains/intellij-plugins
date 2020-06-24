@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner;
 
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapAndroidTargets;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapIosTargets;
@@ -259,11 +260,12 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase impleme
   }
 
   public void throwOSWarning() throws RuntimeConfigurationWarning {
-    throw new RuntimeConfigurationWarning("Applications for platform " + myPlatform + " can not be built on this OS");
+    throw new RuntimeConfigurationWarning(
+      PhoneGapBundle.message("dialog.message.applications.for.platform.can.be.built.on.this.os", myPlatform));
   }
 
   public void throwUnsupportedCommandWarning() throws RuntimeConfigurationWarning {
-    throw new RuntimeConfigurationWarning("Phonegap/Cordova doesn't support " + myCommand + " for " + myPlatform);
+    throw new RuntimeConfigurationWarning(PhoneGapBundle.message("dialog.message.phonegap.doesn.t.support.for", myCommand, myPlatform));
   }
 
   public PhoneGapCommandLine getCommandLine() {

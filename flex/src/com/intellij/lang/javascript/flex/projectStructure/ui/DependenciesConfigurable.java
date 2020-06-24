@@ -1772,13 +1772,13 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
     @NotNull
     @Override
-    public Library createLibrary(String name, @Nullable PersistentLibraryKind kind) {
+    public Library createLibrary(String name, @Nullable PersistentLibraryKind<?> kind) {
       return myDelegate.createLibrary(name, kind);
     }
 
     @NotNull
     @Override
-    public Library createLibrary(String name, @Nullable PersistentLibraryKind type, @Nullable ProjectModelExternalSource externalSource) {
+    public Library createLibrary(String name, @Nullable PersistentLibraryKind<?> type, @Nullable ProjectModelExternalSource externalSource) {
       return myDelegate.createLibrary(name, type, externalSource);
     }
 

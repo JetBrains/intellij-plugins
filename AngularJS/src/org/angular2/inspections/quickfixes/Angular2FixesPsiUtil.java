@@ -75,8 +75,7 @@ public class Angular2FixesPsiUtil {
     return added;
   }
 
-  @NotNull
-  public static JSProperty reformatJSObjectLiteralProperty(JSProperty property) {
+  public static @NotNull JSProperty reformatJSObjectLiteralProperty(JSProperty property) {
     SmartPsiElementPointer<JSProperty> propertyPointer = SmartPointerManager.createPointer(property);
     FormatFixer.create(property.getParent(), FormatFixer.Mode.Reformat).fixFormat();
     property = propertyPointer.getElement();
@@ -134,8 +133,7 @@ public class Angular2FixesPsiUtil {
     return whiteSpace != null && whiteSpace.getText().contains("\n");
   }
 
-  @Nullable
-  private static LeafPsiElement findCommaOrBracket(@NotNull JSElement property) {
+  private static @Nullable LeafPsiElement findCommaOrBracket(@NotNull JSElement property) {
     PsiElement el = PsiTreeUtil.skipWhitespacesForward(property);
     if (!(el instanceof LeafPsiElement)
         || el.getNode().getElementType() != COMMA) {

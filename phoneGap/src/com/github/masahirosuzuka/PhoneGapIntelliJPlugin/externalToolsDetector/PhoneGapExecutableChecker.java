@@ -1,5 +1,6 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.externalToolsDetector;
 
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.PhoneGapSettings;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.OSProcessHandler;
@@ -39,8 +40,8 @@ public class PhoneGapExecutableChecker {
 
   private static void noPhoneGap() {
     String groupDisplayId = "PhoneGap notification";
-    String notificationTitle = "PhoneGap Plugin";
-    String notificationMessage = "PhoneGap/Cordova has incorrect executable path";
+    String notificationTitle = PhoneGapBundle.message("notification.title.cordova.plugin");
+    String notificationMessage = PhoneGapBundle.message("notification.content.cordova.has.incorrect.executable.path");
     NotificationType notificationType = NotificationType.ERROR;
     Notification notification = new Notification(groupDisplayId, notificationTitle, notificationMessage, notificationType);
 

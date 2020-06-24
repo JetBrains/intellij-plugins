@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.lesson.general
 
-import training.commands.ShowLineNumberCommand
 import training.lang.JavaLangSupport
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
@@ -13,7 +12,6 @@ class MoveLesson(module: Module, lang: String, private val sample: LessonSample)
   override val lessonContent: LessonContext.() -> Unit
     get() = {
       prepareSample(sample)
-      ShowLineNumberCommand.showLineNumber(editor)
 
       actionTask("MoveLineDown") {
         "Rearranging lines usually takes two actions: cut and paste. In this IDE, you can do it with just one: " +

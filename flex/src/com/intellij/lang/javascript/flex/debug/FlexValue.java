@@ -357,7 +357,7 @@ class FlexValue extends XValue {
       final boolean doubleQuoted = fullValue.charAt(0) == '\"' && fullValue.charAt(fullValue.length() - 1) == '\"';
 
       if (value.length() > XValueNode.MAX_VALUE_LENGTH) {
-        final String ending = doubleQuoted ? "\" " : quoted ? "\' " : " ";
+        final String ending = doubleQuoted ? "\" " : quoted ? "' " : " ";
         value = value.substring(0, XValueNode.MAX_VALUE_LENGTH).concat(ending);
       }
       value = value.trim();

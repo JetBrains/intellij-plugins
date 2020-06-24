@@ -3,22 +3,22 @@ package org.angular2.lang.html.parser;
 
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.xml.XmlElementType;
+import org.angular2.lang.html.stub.Angular2HtmlStubElementTypes;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@SuppressWarnings("HardCodedStringLiteral")
 public enum Angular2AttributeType {
 
   REFERENCE(Angular2HtmlElementTypes.REFERENCE, "#", "", "ref-"),
   REGULAR(XmlElementType.XML_ATTRIBUTE, "", "", null),
-  VARIABLE(Angular2HtmlElementTypes.VARIABLE, "let-", "", null),
+  LET(Angular2HtmlElementTypes.LET, "let-", "", null),
   BANANA_BOX_BINDING(Angular2HtmlElementTypes.BANANA_BOX_BINDING, "[(", ")]", "bindon-"),
   PROPERTY_BINDING(Angular2HtmlElementTypes.PROPERTY_BINDING, "[", "]", "bind-"),
   EVENT(Angular2HtmlElementTypes.EVENT, "(", ")", "on-"),
   TEMPLATE_BINDINGS(Angular2HtmlElementTypes.TEMPLATE_BINDINGS, "*", "", null),
   NG_CONTENT_SELECTOR(Angular2HtmlStubElementTypes.NG_CONTENT_SELECTOR, "", "", null),
-  I18N(XmlElementType.XML_ATTRIBUTE, "i18n-", "" ,null);
+  I18N(XmlElementType.XML_ATTRIBUTE, "i18n-", "", null);
 
   private final IElementType myElementType;
   private final String myPrefix;
@@ -36,8 +36,7 @@ public enum Angular2AttributeType {
   }
 
 
-  @NotNull
-  public String buildName(@NotNull String name) {
+  public @NotNull String buildName(@NotNull String name) {
     return buildName(name, false);
   }
 
@@ -52,8 +51,7 @@ public enum Angular2AttributeType {
     return myPrefix + name + mySuffix;
   }
 
-  @NotNull
-  public IElementType getElementType() {
+  public @NotNull IElementType getElementType() {
     return myElementType;
   }
 

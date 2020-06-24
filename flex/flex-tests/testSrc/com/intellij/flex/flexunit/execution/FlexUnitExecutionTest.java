@@ -187,9 +187,6 @@ public abstract class FlexUnitExecutionTest extends JavaCodeInsightTestCase impl
     if (!outputFolder.isDirectory() && !outputFolder.mkdirs()) {
       fail("Failed to create output folder: " + outputFolder);
     }
-
-    myFilesToDelete.add(outputFolder);
-
     return LocalFileSystem.getInstance().refreshAndFindFileByIoFile(outputFolder);
   }
 
@@ -416,21 +413,13 @@ public abstract class FlexUnitExecutionTest extends JavaCodeInsightTestCase impl
 
   private static void checkOutput(AbstractTestProxy testProxy, @Nullable FlexUnitRunnerParameters.OutputLogLevel logLevel) {
     final StringBuilder stdout = new StringBuilder();
-    final StringBuilder stderr = new StringBuilder();
-    final StringBuilder system = new StringBuilder();
     testProxy.printOn(new Printer() {
       @Override
       public void print(String text, ConsoleViewContentType contentType) {
         if (contentType == ConsoleViewContentType.NORMAL_OUTPUT) {
           stdout.append(text);
         }
-        else if (contentType == ConsoleViewContentType.ERROR_OUTPUT) {
-          stderr.append(text);
-        }
-        else if (contentType == ConsoleViewContentType.SYSTEM_OUTPUT) {
-          system.append(text);
-        }
-        else {
+        else if (contentType != ConsoleViewContentType.ERROR_OUTPUT && contentType != ConsoleViewContentType.SYSTEM_OUTPUT) {
           assert false;
         }
       }
@@ -449,22 +438,19 @@ public abstract class FlexUnitExecutionTest extends JavaCodeInsightTestCase impl
       }
     });
 
-    //Assert.assertTrue("Test error output should be empty but was '" + stderr + "'", stderr.length() == 0);
-    //Assert.assertTrue("Test system output should be empty but was '" + system + "'", system.length() == 0);
-
     if (logLevel == null) {
-      Assert.assertTrue("Test std output should be empty but was '" + stdout + "'", stdout.length() == 0);
+      Assert.assertEquals("Test std output should be empty but was '" + stdout + "'", 0, stdout.length());
     }
     else {
       for (FlexUnitRunnerParameters.OutputLogLevel level : FlexUnitRunnerParameters.OutputLogLevel.values()) {
         String message = LOG_MESSAGES.get(level);
         if (message != null) {
-          if (level.ordinal() <= logLevel.ordinal()) {
+          if (level.compareTo(logLevel) <= 0) {
             Assert.assertTrue("Expected message '" + message + "' was not found in test output '" + stdout + "'",
                               stdout.indexOf(message) != -1);
           }
           else {
-            Assert.assertTrue("Message '" + message + "' was not expected in test output '" + stdout + "'", stdout.indexOf(message) == -1);
+            Assert.assertEquals("Message '" + message + "' was not expected in test output '" + stdout + "'", stdout.indexOf(message), -1);
           }
         }
       }

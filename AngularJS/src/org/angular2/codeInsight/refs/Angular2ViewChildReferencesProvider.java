@@ -47,9 +47,8 @@ public class Angular2ViewChildReferencesProvider extends PsiReferenceProvider {
       return false;
     }
 
-    @Nullable
     @Override
-    public PsiElement resolveInner() {
+    public @Nullable PsiElement resolveInner() {
       Ref<PsiElement> result = new Ref<>();
       final String refName = myElement.getStringValue();
       if (refName != null) {
@@ -106,8 +105,7 @@ public class Angular2ViewChildReferencesProvider extends PsiReferenceProvider {
       }
     }
 
-    @Nullable
-    private PsiFile getTemplate() {
+    private @Nullable PsiFile getTemplate() {
       final TypeScriptClass cls = PsiTreeUtil.getContextOfType(getElement(), TypeScriptClass.class);
       if (cls != null) {
         Angular2Component component = Angular2EntitiesProvider.getComponent(cls);

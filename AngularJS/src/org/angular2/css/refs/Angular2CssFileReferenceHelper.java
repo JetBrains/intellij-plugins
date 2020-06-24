@@ -18,9 +18,8 @@ import java.util.Collection;
 import java.util.Collections;
 
 public class Angular2CssFileReferenceHelper extends WebpackCssFileReferenceHelper {
-  @NotNull
   @Override
-  public Collection<PsiFileSystemItem> getContexts(@NotNull final Project project, @NotNull final VirtualFile file) {
+  public @NotNull Collection<PsiFileSystemItem> getContexts(final @NotNull Project project, final @NotNull VirtualFile file) {
     final Collection<PsiFileSystemItem> result = new SmartList<>(new AngularCliAwareCssFileReferenceResolver(project, file));
     StreamEx.ofNullable(AngularConfigProvider.getAngularProject(project, file))
       .flatCollection(AngularProject::getStylePreprocessorIncludeDirs)
@@ -31,12 +30,12 @@ public class Angular2CssFileReferenceHelper extends WebpackCssFileReferenceHelpe
   }
 
   private static class AngularCliAwareCssFileReferenceResolver extends WebpackTildeFileReferenceResolver {
-    AngularCliAwareCssFileReferenceResolver(@NotNull final Project project, @NotNull final VirtualFile contextFile) {
+    AngularCliAwareCssFileReferenceResolver(final @NotNull Project project, final @NotNull VirtualFile contextFile) {
       super(project, contextFile);
     }
 
     @Override
-    protected Collection<VirtualFile> findRootDirectories(@NotNull final VirtualFile context, @NotNull final Project project) {
+    protected Collection<VirtualFile> findRootDirectories(final @NotNull VirtualFile context, final @NotNull Project project) {
       AngularProject ngProject = AngularConfigProvider.getAngularProject(project, context);
       if (ngProject != null) {
         TypeScriptConfig tsConfig = TypeScriptConfigService.Provider.parseConfigFile(project, ngProject.getTsConfigFile());

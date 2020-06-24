@@ -30,21 +30,18 @@ public class Angular2MetadataComponent extends Angular2MetadataDirectiveBase<Ang
     super(element);
   }
 
-  @Nullable
   @Override
-  public HtmlFileImpl getTemplateFile() {
+  public @Nullable HtmlFileImpl getTemplateFile() {
     return null;
   }
 
-  @NotNull
   @Override
-  public List<PsiFile> getCssFiles() {
+  public @NotNull List<PsiFile> getCssFiles() {
     return Collections.emptyList();
   }
 
-  @NotNull
   @Override
-  public List<Angular2DirectiveSelector> getNgContentSelectors() {
+  public @NotNull List<Angular2DirectiveSelector> getNgContentSelectors() {
     return myNgContentSelectors.getValue();
   }
 

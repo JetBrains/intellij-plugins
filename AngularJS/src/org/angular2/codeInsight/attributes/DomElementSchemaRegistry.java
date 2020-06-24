@@ -11,8 +11,7 @@ import java.util.*;
 
 public class DomElementSchemaRegistry {
 
-  @NotNull
-  public static Set<String> getElementProperties(@NotNull XmlTag tag) {
+  public static @NotNull Set<String> getElementProperties(@NotNull XmlTag tag) {
     String tagName = StringUtil.toLowerCase(tag.getLocalName());
     if (tag.getNamespace().equals(HtmlUtil.SVG_NAMESPACE)) {
       tagName = ":svg:" + tagName; //NON-NLS

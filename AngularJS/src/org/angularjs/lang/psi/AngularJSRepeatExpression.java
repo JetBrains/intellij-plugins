@@ -29,7 +29,8 @@ public class AngularJSRepeatExpression extends JSExpressionImpl {
     final PsiElement firstChild = getFirstChild();
     if (firstChild instanceof JSDefinitionExpression) {
       return Collections.singletonList((JSDefinitionExpression)firstChild);
-    } else if (firstChild instanceof JSParenthesizedExpression) {
+    }
+    else if (firstChild instanceof JSParenthesizedExpression) {
       final PsiElement commaExpression = PsiTreeUtil.findChildOfType(firstChild, JSCommaExpression.class);
       if (commaExpression != null) {
         return PsiTreeUtil.findChildrenOfType(commaExpression, JSDefinitionExpression.class);
@@ -52,7 +53,8 @@ public class AngularJSRepeatExpression extends JSExpressionImpl {
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof AngularJSElementVisitor) {
       ((AngularJSElementVisitor)visitor).visitAngularJSRepeatExpression(this);
-    } else {
+    }
+    else {
       super.accept(visitor);
     }
   }

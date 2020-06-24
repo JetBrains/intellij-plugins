@@ -47,9 +47,8 @@ public class Angular2PipeRenameProcessor extends JSDefaultRenameProcessor {
     return false;
   }
 
-  @Nullable
   @Override
-  public PsiElement substituteElementToRename(@NotNull PsiElement element, @Nullable Editor editor) {
+  public @Nullable PsiElement substituteElementToRename(@NotNull PsiElement element, @Nullable Editor editor) {
     return Objects.requireNonNull(Angular2EntitiesProvider.getPipe(element)).getSourceElement();
   }
 
@@ -73,12 +72,11 @@ public class Angular2PipeRenameProcessor extends JSDefaultRenameProcessor {
     RenameUtil.doRenameGenericNamedElement(element, newName, usages, listener);
   }
 
-  @NotNull
   @Override
-  public RenameDialog createRenameDialog(@NotNull Project project,
-                                         @NotNull final PsiElement element,
-                                         PsiElement nameSuggestionContext,
-                                         Editor editor) {
+  public @NotNull RenameDialog createRenameDialog(@NotNull Project project,
+                                                  final @NotNull PsiElement element,
+                                                  PsiElement nameSuggestionContext,
+                                                  Editor editor) {
     return super.createRenameDialog(project, Objects.requireNonNull(Angular2EntitiesProvider.getPipe(element)).getSourceElement(),
                                     nameSuggestionContext, editor);
   }

@@ -29,7 +29,7 @@ class VueComponentsCalculation {
 
       val componentData = mutableMapOf<String, MutableList<Pair<PsiElement, Boolean>>>()
       for (value in allValues) {
-        val indexData = getVueIndexData(value)
+        val indexData = getVueIndexData(value) ?: continue
         val name = indexData.originalName
         val isGlobal = indexData.isGlobal || globalize
         if (isGlobal && name.endsWith(GLOBAL_BINDING_MARK)) {
@@ -73,7 +73,7 @@ class VueComponentsCalculation {
       Pair<JSObjectLiteralExpression, Boolean>? {
       val context = element.context as? JSCallExpression ?: return null
       val indexData = getVueIndexData(element)
-      val reference = indexData.descriptorRef ?: return null
+      val reference = indexData?.descriptorRef ?: return null
 
       var resolved: PsiElement? = JSStubBasedPsiTreeUtil.resolveLocally(reference, context) ?: return null
 
@@ -97,7 +97,7 @@ class VueComponentsCalculation {
                                            descriptor: JSObjectLiteralExpression?): SingleGlobalRegistration? {
       val context = element.context as? JSCallExpression ?: return null
       val indexData = getVueIndexData(element)
-      val reference = indexData.nameRef ?: return null
+      val reference = indexData?.nameRef ?: return null
 
       val parts = reference.split('.')
       if (parts.size > 2) return null

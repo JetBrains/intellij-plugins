@@ -6,4 +6,4 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import org.jetbrains.vuejs.model.VueApp
 
 class VueSourceApp(source: JSImplicitElement, declaration: JSObjectLiteralExpression)
-  : VueSourceContainer(source, null, declaration), VueApp
+  : VueSourceContainer(source, VueSourceEntityDescriptor(declaration)), VueApp

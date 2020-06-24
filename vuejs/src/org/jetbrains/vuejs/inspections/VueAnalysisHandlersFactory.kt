@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.validation.*
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.Trinity
 import com.intellij.psi.ResolveResult
+import org.jetbrains.annotations.NotNull
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.lang.expr.psi.VueJSFilterExpression
 import org.jetbrains.vuejs.lang.expr.psi.VueJSFilterReferenceExpression
@@ -87,7 +88,7 @@ class VueAnalysisHandlersFactory : JSAnalysisHandlersFactory() {
       override fun createUnresolvedCallReferenceMessage(methodExpression: JSReferenceExpression,
                                                         isNewExpression: Boolean): Ref<String> {
         return if (methodExpression is VueJSFilterReferenceExpression) {
-          Ref.create<String>(VueBundle.message("vue.inspection.message.unresolved.filter", methodExpression.referenceName!!))
+          Ref.create(VueBundle.message("vue.inspection.message.unresolved.filter", methodExpression.referenceName!!))
         }
         else super.createUnresolvedCallReferenceMessage(methodExpression, isNewExpression)
       }

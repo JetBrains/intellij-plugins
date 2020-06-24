@@ -6,8 +6,8 @@ import com.intellij.diagram.extras.DiagramExtras;
 import com.intellij.diagram.settings.DiagramConfigElement;
 import com.intellij.diagram.settings.DiagramConfigGroup;
 import com.intellij.diagram.util.DiagramUtils;
-import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.uml.utils.DiagramBundle;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -17,30 +17,30 @@ import java.util.List;
  * @author Konstantin Bulenkov
  */
 public class FlashUmlExtras extends DiagramExtras<Object> {
-  private static final DiagramElementsProvider[] PROVIDERS = {new FlashUmlSupersProvider(), new FlashUmlImplementationsProvider()};
+  private final DiagramElementsProvider[] myProviders = {new FlashUmlSupersProvider(), new FlashUmlImplementationsProvider()};
 
-  private static final FlashUmlDndProvider DND_PROVIDER = new FlashUmlDndProvider();
+  private final FlashUmlDndProvider myDndProvider = new FlashUmlDndProvider();
 
 
-  private static final DiagramConfigGroup[] ADDITIONAL_SETTINGS_GROUPS;
+  private final DiagramConfigGroup[] myAdditionalSettingsGroups;
 
-  static {
-    DiagramConfigGroup dependenciesGroup = new DiagramConfigGroup(FlexBundle.message("uml.dependencies.settings.group.title"));
+  FlashUmlExtras() {
+    DiagramConfigGroup dependenciesGroup = new DiagramConfigGroup(DiagramBundle.message("uml.dependencies.settings.group.title"));
     for (FlashUmlDependenciesSettingsOption option : FlashUmlDependenciesSettingsOption.values()) {
       dependenciesGroup.addElement(new DiagramConfigElement(option.getDisplayName(), true));
     }
-    ADDITIONAL_SETTINGS_GROUPS = new DiagramConfigGroup[]{dependenciesGroup};
+    myAdditionalSettingsGroups = new DiagramConfigGroup[]{dependenciesGroup};
   }
 
   @Override
   public DiagramElementsProvider<Object>[] getElementsProviders() {
     //noinspection unchecked
-    return PROVIDERS;
+    return myProviders;
   }
 
   @Override
   public FlashUmlDndProvider getDnDProvider() {
-    return DND_PROVIDER;
+    return myDndProvider;
   }
 
   @Override
@@ -50,7 +50,7 @@ public class FlashUmlExtras extends DiagramExtras<Object> {
 
   @Override
   public DiagramConfigGroup @NotNull [] getAdditionalDiagramSettings() {
-    return ADDITIONAL_SETTINGS_GROUPS;
+    return myAdditionalSettingsGroups;
   }
 
   @Override

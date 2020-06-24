@@ -59,17 +59,20 @@ public class AngularModulesProvider implements JSModuleConnectionProvider {
     for (String key : processor.getResults()) {
       AngularIndexUtil.multiResolve(project, AngularModuleIndex.KEY, key,
                                     element -> {
-        if (!file.equals(element.getContainingFile())) return true;
-        // todo whether it would blink
+                                      if (!file.equals(element.getContainingFile())) return true;
+                                      // todo whether it would blink
                                       final JSCallExpression expression = PsiTreeUtil.getParentOfType(element, JSCallExpression.class);
                                       if (expression != null) {
-                                        final List<String> dependencies = AngularModuleIndex.findDependenciesInModuleDeclaration(expression);
+                                        final List<String> dependencies =
+                                          AngularModuleIndex.findDependenciesInModuleDeclaration(expression);
                                         if (dependencies != null) {
                                           for (String dependency : dependencies) {
-                                            final JSImplicitElement resolve = AngularIndexUtil.resolve(project, AngularModuleIndex.KEY, dependency);
+                                            final JSImplicitElement resolve =
+                                              AngularIndexUtil.resolve(project, AngularModuleIndex.KEY, dependency);
                                             if (resolve != null) {
                                               result.add(new Link(spm.createSmartPsiElementPointer(element.getNavigationElement()),
-                                                                  spm.createSmartPsiElementPointer(resolve.getNavigationElement()), key, resolve.getName(),
+                                                                  spm.createSmartPsiElementPointer(resolve.getNavigationElement()), key,
+                                                                  resolve.getName(),
                                                                   AngularJSIcons.AngularJS));
                                             }
                                           }

@@ -32,12 +32,11 @@ import static org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProx
 
 public class Angular2CodeInsightUtils {
 
-  @NotNull
   @Contract(pure = true)
-  public static LookupElementBuilder decorateLookupElementWithModuleSource(@NotNull LookupElementBuilder element,
-                                                                           @NotNull List<? extends Angular2Declaration> declarations,
-                                                                           @NotNull DeclarationProximity proximity,
-                                                                           @NotNull Angular2DeclarationsScope moduleScope) {
+  public static @NotNull LookupElementBuilder decorateLookupElementWithModuleSource(@NotNull LookupElementBuilder element,
+                                                                                    @NotNull List<? extends Angular2Declaration> declarations,
+                                                                                    @NotNull DeclarationProximity proximity,
+                                                                                    @NotNull Angular2DeclarationsScope moduleScope) {
     if (proximity == DeclarationProximity.EXPORTED_BY_PUBLIC_MODULE) {
       List<Angular2Module> modules = StreamEx.of(declarations)
         .flatCollection(declaration -> {

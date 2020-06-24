@@ -32,11 +32,10 @@ import static org.angular2.Angular2DecoratorUtil.COMPONENT_DEC;
 public class Angular2RenameExtension implements JSRenameExtension {
   @NonNls private static final String[] CANDIDATE_EXTENSIONS = new String[]{"css", "scss", "less", "styl", "html", "spec.ts"};
 
-  @NotNull
   @Override
-  public Map<PsiFile, String> getAdditionalFilesToRename(@NotNull PsiElement original,
-                                                         @NotNull PsiFile originalFile,
-                                                         @NotNull String newFileName) {
+  public @NotNull Map<PsiFile, String> getAdditionalFilesToRename(@NotNull PsiElement original,
+                                                                  @NotNull PsiFile originalFile,
+                                                                  @NotNull String newFileName) {
     if (!(original instanceof JSAttributeListOwner) ||
         Angular2DecoratorUtil.findDecorator((JSAttributeListOwner)original, COMPONENT_DEC) == null) {
       return Collections.emptyMap();

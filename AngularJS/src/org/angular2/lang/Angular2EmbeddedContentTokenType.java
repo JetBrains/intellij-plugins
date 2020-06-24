@@ -29,9 +29,8 @@ public abstract class Angular2EmbeddedContentTokenType extends IElementType
     super(debugName, language, register);
   }
 
-  @NotNull
   @Override
-  public final ASTNode parse(@NotNull CharSequence text, @NotNull CharTable table) {
+  public final @NotNull ASTNode parse(@NotNull CharSequence text, @NotNull CharTable table) {
     return new LazyParseableElement(this, text);
   }
 
@@ -58,8 +57,7 @@ public abstract class Angular2EmbeddedContentTokenType extends IElementType
     return builder;
   }
 
-  @NotNull
-  protected abstract Lexer createLexer();
+  protected abstract @NotNull Lexer createLexer();
 
   protected abstract void parse(@NotNull PsiBuilder builder);
 }

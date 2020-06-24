@@ -58,7 +58,8 @@ public class Angular2EntitiesProvider {
     if (result != null) {
       return result;
     }
-    return withJsonMetadataFallback(element, Angular2IvyUtil::getIvyEntity, Angular2MetadataUtil::getMetadataEntity);
+    return Angular2EntitiesProvider.<Angular2Entity, PsiElement>withJsonMetadataFallback(
+      element, Angular2IvyUtil::getIvyEntity, Angular2MetadataUtil::getMetadataEntity);
   }
 
   public static <R, E extends PsiElement> @Nullable R withJsonMetadataFallback(E element,
@@ -74,23 +75,19 @@ public class Angular2EntitiesProvider {
     return result;
   }
 
-  @Nullable
-  public static Angular2Declaration getDeclaration(@Nullable PsiElement element) {
+  public static @Nullable Angular2Declaration getDeclaration(@Nullable PsiElement element) {
     return tryCast(getEntity(element), Angular2Declaration.class);
   }
 
-  @Nullable
-  public static Angular2Component getComponent(@Nullable PsiElement element) {
+  public static @Nullable Angular2Component getComponent(@Nullable PsiElement element) {
     return tryCast(getEntity(element), Angular2Component.class);
   }
 
-  @Nullable
-  public static Angular2Directive getDirective(@Nullable PsiElement element) {
+  public static @Nullable Angular2Directive getDirective(@Nullable PsiElement element) {
     return tryCast(getEntity(element), Angular2Directive.class);
   }
 
-  @Nullable
-  public static Angular2Pipe getPipe(@Nullable PsiElement element) {
+  public static @Nullable Angular2Pipe getPipe(@Nullable PsiElement element) {
     if (element instanceof TypeScriptFunction
         && TRANSFORM_METHOD.equals(((TypeScriptFunction)element).getName())
         && element.getContext() instanceof TypeScriptClass) {
@@ -99,23 +96,20 @@ public class Angular2EntitiesProvider {
     return tryCast(getEntity(element), Angular2Pipe.class);
   }
 
-  @Nullable
-  public static Angular2Module getModule(@Nullable PsiElement element) {
+  public static @Nullable Angular2Module getModule(@Nullable PsiElement element) {
     return tryCast(getEntity(element), Angular2Module.class);
   }
 
-  @NotNull
-  public static List<Angular2Directive> findElementDirectivesCandidates(@NotNull Project project, @NotNull String elementName) {
+  public static @NotNull List<Angular2Directive> findElementDirectivesCandidates(@NotNull Project project, @NotNull String elementName) {
     return findDirectivesCandidates(project, getElementDirectiveIndexName(elementName));
   }
 
-  @NotNull
-  public static List<Angular2Directive> findAttributeDirectivesCandidates(@NotNull Project project, @NotNull String attributeName) {
+  public static @NotNull List<Angular2Directive> findAttributeDirectivesCandidates(@NotNull Project project,
+                                                                                   @NotNull String attributeName) {
     return findDirectivesCandidates(project, getAttributeDirectiveIndexName(attributeName));
   }
 
-  @NotNull
-  public static List<Angular2Pipe> findPipes(@NotNull Project project, @NotNull String name) {
+  public static @NotNull List<Angular2Pipe> findPipes(@NotNull Project project, @NotNull String name) {
     List<Angular2Pipe> result = new SmartList<>();
     AngularIndexUtil.multiResolve(
       project, Angular2SourcePipeIndex.KEY, name, pipe -> {
@@ -127,8 +121,7 @@ public class Angular2EntitiesProvider {
     return result;
   }
 
-  @NotNull
-  public static List<Angular2Directive> findDirectives(@NotNull Angular2DirectiveSelectorPsiElement selector) {
+  public static @NotNull List<Angular2Directive> findDirectives(@NotNull Angular2DirectiveSelectorPsiElement selector) {
     if (selector.isElementSelector()) {
       return findElementDirectivesCandidates(selector.getProject(), selector.getName());
     }
@@ -138,13 +131,11 @@ public class Angular2EntitiesProvider {
     return Collections.emptyList();
   }
 
-  @Nullable
-  public static Angular2Component findComponent(@NotNull Angular2DirectiveSelectorPsiElement selector) {
+  public static @Nullable Angular2Component findComponent(@NotNull Angular2DirectiveSelectorPsiElement selector) {
     return (Angular2Component)ContainerUtil.find(findDirectives(selector), Angular2Directive::isComponent);
   }
 
-  @NotNull
-  public static Map<String, List<Angular2Directive>> getAllElementDirectives(@NotNull Project project) {
+  public static @NotNull Map<String, List<Angular2Directive>> getAllElementDirectives(@NotNull Project project) {
     return CachedValuesManager.getManager(project).getCachedValue(project, () -> create(
       StreamEx.of(AngularIndexUtil.getAllKeys(Angular2SourceDirectiveIndex.KEY, project))
         .append(AngularIndexUtil.getAllKeys(Angular2MetadataDirectiveIndex.KEY, project))
@@ -159,8 +150,7 @@ public class Angular2EntitiesProvider {
     );
   }
 
-  @NotNull
-  public static Map<String, List<Angular2Pipe>> getAllPipes(@NotNull Project project) {
+  public static @NotNull Map<String, List<Angular2Pipe>> getAllPipes(@NotNull Project project) {
     return CachedValuesManager.getManager(project).getCachedValue(project, () -> create(
       StreamEx.of(AngularIndexUtil.getAllKeys(Angular2SourcePipeIndex.KEY, project))
         .append(AngularIndexUtil.getAllKeys(Angular2MetadataPipeIndex.KEY, project))
@@ -269,8 +259,7 @@ public class Angular2EntitiesProvider {
     return isDirective(element) || isPipe(element) || isModule(element);
   }
 
-  @NotNull
-  private static List<Angular2Directive> findDirectivesCandidates(@NotNull Project project, @NotNull String indexLookupName) {
+  private static @NotNull List<Angular2Directive> findDirectivesCandidates(@NotNull Project project, @NotNull String indexLookupName) {
     List<Angular2Directive> result = new ArrayList<>();
     StubIndex.getInstance().processElements(
       Angular2SourceDirectiveIndex.KEY, indexLookupName, project, GlobalSearchScope.allScope(project), JSImplicitElementProvider.class,

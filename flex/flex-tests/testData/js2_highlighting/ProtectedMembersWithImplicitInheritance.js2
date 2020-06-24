@@ -1,6 +1,6 @@
 package {
 
-public class ProtectedMembersWithImplicitInheritance extends BaseClass {
+public class <error descr="More than one externally visible symbol defined in file">ProtectedMembersWithImplicitInheritance</error> extends BaseClass {
 
     [Bindable]
     public var some:String;
@@ -10,7 +10,7 @@ public class ProtectedMembersWithImplicitInheritance extends BaseClass {
     }
 }
 
-class <error descr="Class 'BaseClass' should be defined in file 'BaseClass.js2'">BaseClass</error> {
+class <error descr="Class 'BaseClass' should be defined in file 'BaseClass.js2'"><error descr="More than one externally visible symbol defined in file">BaseClass</error></error> {
     protected var localIndex;
 
     public function toString():String {

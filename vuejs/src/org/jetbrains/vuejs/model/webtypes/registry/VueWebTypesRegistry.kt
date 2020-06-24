@@ -31,6 +31,7 @@ import com.intellij.util.text.SemVer
 import one.util.streamex.EntryStream
 import one.util.streamex.StreamEx
 import org.jdom.Element
+import org.jetbrains.vuejs.model.VueEntitiesContainer
 import org.jetbrains.vuejs.model.VueGlobal
 import org.jetbrains.vuejs.model.VuePlugin
 import org.jetbrains.vuejs.model.webtypes.VueWebTypesGlobal
@@ -75,13 +76,20 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
         Result.create(VueWebTypesGlobal(project, packageJsonFile, webTypes, owner), packageJsonFile, file)
       }
 
-    fun createWebTypesPlugin(project: Project, packageJsonFile: VirtualFile, owner: VuePlugin): Result<VuePlugin>? {
+    fun createWebTypesPlugin(project: Project, packageJsonFile: VirtualFile, owner: VuePlugin): Result<VuePlugin?> {
       val data = PackageJsonUtil.getOrCreateData(packageJsonFile)
       loadWebTypes(packageJsonFile, data)?.let { (webTypes, file) ->
         return Result.create(VueWebTypesPlugin(project, packageJsonFile, webTypes, owner),
                              packageJsonFile, file, MODIFICATION_TRACKER)
       }
       return instance.getWebTypesPlugin(project, packageJsonFile, data, owner)
+    }
+
+    fun createWebTypesPlugin(project: Project,
+                             packageName: String,
+                             packageVersion: String?,
+                             owner: VueEntitiesContainer): Result<VuePlugin?> {
+      return instance.getWebTypesPlugin(project, packageName, SemVer.parseFromText(packageVersion), null, owner)
     }
 
     private fun loadWebTypes(packageJsonFile: VirtualFile,
@@ -91,8 +99,8 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
         packageJsonFile.parent?.findFileByRelativePath(it)
       }
       return webTypesFile?.inputStream?.let {
-          createObjectMapper().readValue(it, WebTypes::class.java)
-        }
+        createObjectMapper().readValue(it, WebTypes::class.java)
+      }
         ?.takeIf { it.framework == WebTypes.Framework.VUE }
         ?.let { Pair(it, webTypesFile) }
     }
@@ -153,31 +161,39 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
   private fun getWebTypesPlugin(project: Project,
                                 packageJsonFile: VirtualFile,
                                 packageJson: PackageJsonData,
-                                owner: VuePlugin): Result<VuePlugin>? {
+                                owner: VuePlugin): Result<VuePlugin?> {
+    return packageJson.name?.let { getWebTypesPlugin(project, it, packageJson.version, packageJsonFile, owner) }
+           ?: Result.create(null as VuePlugin?, packageJsonFile)
+  }
+
+  private fun getWebTypesPlugin(project: Project,
+                                packageName: String,
+                                packageVersion: SemVer?,
+                                packageJsonFile: VirtualFile?,
+                                owner: VueEntitiesContainer): Result<VuePlugin?> {
     return processState { state, tracker ->
-      val webTypesPackageName = normalizePackageName(packageJson)
-      val url = getWebTypesUrl(state.availableVersions["@web-types/$webTypesPackageName"], packageJson.version)
-                  ?.let { loadPackageWebTypes(it) }
-                ?: getWebTypesUrl(bundledWebTypes[webTypesPackageName], packageJson.version)
-                  ?.let { loadPackageWebTypes(it) }
-      return@processState url
-        ?.let { VueWebTypesPlugin(project, packageJsonFile, it, owner) }
-        ?.let { Result.create(it, tracker, packageJsonFile) }
+      val webTypesPackageName = normalizePackageName(packageName)
+      val webTypes = getWebTypesUrl(state.availableVersions["@web-types/$webTypesPackageName"], packageVersion)
+                       ?.let { loadPackageWebTypes(it) }
+                     ?: getWebTypesUrl(bundledWebTypes[webTypesPackageName], packageVersion)
+                       ?.let { loadPackageWebTypes(it) }
+      return@processState Result.create(webTypes?.let { VueWebTypesPlugin(project, packageJsonFile, it, owner) }, tracker)
     }
   }
 
-  private fun normalizePackageName(packageJson: PackageJsonData): String? {
-    return packageJson.name?.replace(WEB_TYPES_PKG_NAME_REPLACE_PATTERN, "at-$1-$2")
-  }
+  private fun normalizePackageName(packageName: String?): String? =
+    packageName?.replace(WEB_TYPES_PKG_NAME_REPLACE_PATTERN, "at-$1-$2")
 
   private fun getWebTypesUrl(versions: SortedMap<SemVer, String>?,
                              pkgVersion: SemVer?): String? {
     if (versions == null || versions.isEmpty()) {
       return null
     }
-    var webTypesVersionEntry = versions.entries.find {
-      pkgVersion == null || it.key <= pkgVersion
-    } ?: return null
+    var webTypesVersionEntry = (if (pkgVersion == null)
+      versions.entries.findLast { it.key.preRelease == null }
+    else
+      versions.entries.find { it.key <= pkgVersion })
+                               ?: return null
 
     if (webTypesVersionEntry.key.preRelease?.contains(LETTERS_PATTERN) == true) {
       // `2.0.0-beta.1` version is higher than `2.0.0-1`, so we need to manually find if there
@@ -446,7 +462,7 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
         catch (e: ExecutionException) {
           // Do not log IOExceptions as errors, since they can appear because of HTTP communication
           if (e.cause is IOException) {
-            LOG.warn(e)
+            LOG.warn(e.message)
           }
           else {
             LOG.error(e)

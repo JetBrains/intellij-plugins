@@ -24,6 +24,8 @@
   <extensions defaultExtensionNs="com.intellij">
     <moduleConfigurationEditorProvider implementation="com.intellij.lang.javascript.flex.FlexModuleConfigurationEditorProvider"/>
     <highlightingPassFactory implementation="com.intellij.lang.javascript.flex.ActionScriptUnusedImportsPassFactory"/>
+    <lang.syntaxHighlighterFactory language="ECMA Script Level 4"
+                                   implementationClass="com.intellij.lang.actionscript.highlighting.ECMAL4SyntaxHighlighterFactory"/>
 
     <compiler.buildTargetScopeProvider implementation="com.intellij.lang.javascript.flex.build.FlexBuildTargetScopeProvider"/>
     <compiler.buildTargetScopeProvider implementation="com.intellij.lang.javascript.flex.build.FlexResourceBuildTargetScopeProvider"/>
@@ -270,7 +272,7 @@
     <completion.contributor language="ECMA Script Level 4" id="ActionScriptMethodsCompletionContributor" order="before JSPatternBasedCompletionContributor" implementationClass="com.intellij.lang.javascript.flex.completion.ActionScriptMethodsCompletionContributor"/>
 
     <projectService serviceImplementation="com.intellij.javascript.flex.mxml.schema.CodeContextHolder"/>
-    <notificationWhitelist groupIds="AIR Packaging;Flash app not compiled before launch;Maven;Flash Compiler;Debugger"/>
+    <notificationAllowlist groupIds="AIR Packaging;Flash app not compiled before launch;Maven;Flash Compiler;Debugger"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">

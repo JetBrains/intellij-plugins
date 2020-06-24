@@ -26,6 +26,7 @@
 
   <!-- required dependencies -->
   <depends>com.intellij.javaee</depends>
+  <depends>com.intellij.javaee.web</depends>
   <depends>JavaScript</depends>
   <depends>com.intellij.java-i18n</depends>
 
@@ -51,8 +52,6 @@
                     interface="com.intellij.struts2.dom.ExtendableClassConverter$ExtendableClassConverterContributor" dynamic="true"/>
     <extensionPoint name="paramNameCustomConverter"
                     interface="com.intellij.struts2.dom.params.ParamNameConverter$ParamNameCustomConverter" dynamic="true"/>
-    <extensionPoint name="paramValueConverter"
-                    interface="com.intellij.util.xml.converters.values.GenericDomValueConvertersRegistry$Provider"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -248,7 +247,7 @@
     <ognl.variableReferencesContributor id="s2jsp"
                                         implementation="com.intellij.struts2.jsp.ognl.OgnlStruts2JspVariableReferencesContributor"/>
 
-    <notificationWhitelist groupIds="Struts 2"/>
+    <notificationAllowlist groupIds="Struts 2"/>
   </extensions>
 
   <actions>

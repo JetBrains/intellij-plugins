@@ -24,7 +24,11 @@ import java.awt.Component
 import java.awt.Container
 import javax.swing.JList
 
-class TaskTestContext(val task: TaskContext) {
+class TaskTestContext(rt: TaskRuntimeContext): TaskRuntimeContext(rt) {
+
+  data class TestScriptProperties (
+    val duration: Int = 6 //seconds
+  )
 
   fun type(text: String) {
     GuiTestUtil.typeText(text)
@@ -34,7 +38,7 @@ class TaskTestContext(val task: TaskContext) {
     for (actionId in actionIds) {
       val action = ActionManager.getInstance().getAction(actionId) ?: error("Action $actionId is non found")
       DataManager.getInstance().dataContextFromFocusAsync.onSuccess { dataContext ->
-        TransactionGuard.submitTransaction(task.project, Runnable {
+        TransactionGuard.submitTransaction(project, Runnable {
           val event = AnActionEvent.createFromAnAction(action, null, ActionPlaces.UNKNOWN, dataContext)
           ActionUtil.performActionDumbAwareWithCallbacks(action, event, dataContext)
         })
@@ -51,9 +55,9 @@ class TaskTestContext(val task: TaskContext) {
     }
   }
 
-  fun <ComponentType : Component> waitComponent(componentClass: Class<ComponentType>, partOfName: String) {
+  fun <ComponentType : Component> waitComponent(componentClass: Class<ComponentType>, partOfName: String? = null) {
     waitUntilFound(null, componentClass, Timeouts.seconds02) {
-      it.javaClass.name.contains(partOfName) && it.isShowing
+      (if (partOfName != null) it.javaClass.name.contains(partOfName) else true) && it.isShowing
     }
   }
 
@@ -82,6 +86,9 @@ class TaskTestContext(val task: TaskContext) {
   }
 
   companion object {
+    @Volatile
+    var inTestMode: Boolean = false
+
     val guiTestCase: GuiTestCase by lazy { GuiTestCase() }
   }
 }

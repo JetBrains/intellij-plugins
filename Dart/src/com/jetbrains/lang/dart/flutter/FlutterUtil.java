@@ -99,7 +99,7 @@ public class FlutterUtil {
 
     try {
       //noinspection unchecked
-      return (Map)yaml.load(yamlContents);
+      return yaml.load(yamlContents);
     }
     catch (Exception e) {
       return null;

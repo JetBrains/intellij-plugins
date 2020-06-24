@@ -1,6 +1,6 @@
 <template>
   <div>
-      {{this["newName"]}}
+    {{ this["newName"] }}
   </div>
 </template>
 

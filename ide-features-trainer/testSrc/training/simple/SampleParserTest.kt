@@ -4,6 +4,7 @@
 package training.simple
 
 import com.intellij.testFramework.UsefulTestCase
+import junit.framework.TestCase
 import training.learn.lesson.kimpl.parseLessonSample
 
 class SampleParserTest : UsefulTestCase() {
@@ -38,5 +39,18 @@ class SampleParserTest : UsefulTestCase() {
     assertSame(17, sample.startOffset)
     assertSame(6, sample.selection?.first ?: -1)
     assertSame(17, sample.selection?.second ?: -1)
+  }
+
+  fun testMultipleTags() {
+    val sample = parseLessonSample("a <caret id=2/>bb <select id=1>ccc</select> dddd <caret>eee")
+    assertSameLines("a bb ccc dddd eee", sample.text)
+    TestCase.assertEquals(14, sample.startOffset)
+    TestCase.assertEquals(Pair(5, 8), sample.getPosition(1).selection)
+    TestCase.assertEquals(2, sample.getPosition(2).startOffset)
+  }
+
+  fun testNoCaret() {
+    val sample = parseLessonSample("hello world")
+    assertSame(0, sample.startOffset)
   }
 }

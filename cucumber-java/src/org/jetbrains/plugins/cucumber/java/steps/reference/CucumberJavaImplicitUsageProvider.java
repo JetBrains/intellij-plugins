@@ -14,7 +14,7 @@ public class CucumberJavaImplicitUsageProvider implements ImplicitUsageProvider 
     if(element instanceof PsiClass) {
       return isStepDefinitionClass((PsiClass)element);
     } else if (element instanceof PsiMethod) {
-      return isStepDefinition((PsiMethod)element) || isHook((PsiMethod)element);
+      return isStepDefinition((PsiMethod)element) || isHook((PsiMethod)element) || isParameterType((PsiMethod)element);
     }
 
     return false;

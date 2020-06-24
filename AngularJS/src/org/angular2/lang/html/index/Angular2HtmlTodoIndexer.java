@@ -12,9 +12,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 
 public class Angular2HtmlTodoIndexer extends VersionedTodoIndexer {
-  @NotNull
   @Override
-  public Map<TodoIndexEntry, Integer> map(@NotNull FileContent inputData) {
+  public @NotNull Map<TodoIndexEntry, Integer> map(@NotNull FileContent inputData) {
     return BaseFilterLexerUtil.scanContent(inputData, consumer ->
       new Angular2HtmlFilterLexer(consumer, SyntaxHighlighterFactory.getSyntaxHighlighter(
         Angular2HtmlLanguage.INSTANCE, inputData.getProject(), inputData.getFile()).getHighlightingLexer())).todoMap;

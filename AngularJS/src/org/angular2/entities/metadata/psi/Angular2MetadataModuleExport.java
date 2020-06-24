@@ -46,8 +46,7 @@ public class Angular2MetadataModuleExport extends Angular2MetadataElement<Angula
       .append(" <metadata module export>").toString();
   }
 
-  @Nullable
-  private Angular2MetadataNodeModule getExportNodeModule() {
+  private @Nullable Angular2MetadataNodeModule getExportNodeModule() {
     String from = getStub().getFrom();
     if (from == null) {
       return null;

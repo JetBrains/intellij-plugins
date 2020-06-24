@@ -72,6 +72,7 @@
                      groupKey="tapestry.inspections.group" enabledByDefault="true" level="WARNING"
                      implementationClass="com.intellij.tapestry.intellij.inspections.TelReferencesInspection"/>
     <moduleService serviceImplementation="com.intellij.tapestry.intellij.TapestryModuleSupportLoader"/>
+    <psi.treeChangeListener implementation="com.intellij.tapestry.intellij.TapestryPsiTreeChangeListener"/>
   </extensions>
 
   <actions>
@@ -118,10 +119,8 @@
     </group>
   </actions>
 
-  <project-components>
-    <component>
-      <implementation-class>com.intellij.tapestry.intellij.TapestryListenersSupportLoader</implementation-class>
-    </component>
-  </project-components>
+  <projectListeners>
+    <listener class="com.intellij.tapestry.intellij.TapestryModuleRootListener" topic="com.intellij.openapi.roots.ModuleRootListener"/>
+  </projectListeners>
 
 </idea-plugin>

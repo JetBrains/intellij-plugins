@@ -99,12 +99,12 @@ public class FlashUmlProvider extends DiagramProvider<Object> {
     return myExtras;
   }
 
-  public static final DiagramCreateNewElementAction[] ELEMENT_ACTIONS = {
+  private final DiagramCreateNewElementAction[] myElementActions = {
     new NewActionScriptClassUmlAction(),
     new NewFlexComponentUmlAction()
   };
 
-  public static final DiagramCreateNewNodeElementAction[] NODE_ACTIONS = {
+  private final DiagramCreateNewNodeElementAction[] myNodeActions = {
     new FlexCreateFieldFromDiagramAction(),
     new FlexCreateMethodFromDiagramAction(),
     new FlexCreateConstructorFromDiagramAction()
@@ -113,13 +113,13 @@ public class FlashUmlProvider extends DiagramProvider<Object> {
   @Override
   public DiagramCreateNewElementAction<Object, ?>[] getCreateNewActions() {
     //noinspection unchecked
-    return ELEMENT_ACTIONS;
+    return myElementActions;
   }
 
   @Override
   public DiagramCreateNewNodeElementAction<Object, ?>[] getCreateNewNodeElementActions() {
     //noinspection unchecked
-    return NODE_ACTIONS;
+    return myNodeActions;
   }
 
   @Override
