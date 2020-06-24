@@ -35,6 +35,7 @@ import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.ID;
+import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -229,12 +230,14 @@ public class AngularIndexUtil {
                                    ? stubIndex.getAllKeys((StubIndexKey<String, ?>)id, project)
                                    : fileIndex.getAllKeys(id, project);
 
-      List<String> filteredKeys = ContainerUtil.filter(
-        allKeys,
-        key -> id instanceof StubIndexKey
-               ? !stubIndex.processElements((StubIndexKey<String, PsiElement>)id, key, project, scope, PsiElement.class, element -> false)
-               : !fileIndex.processValues(id, key, null, (file, value) -> false, scope)
-      );
+      List<String> filteredKeys = StreamEx.of(allKeys)
+        .filter(key ->
+                  id instanceof StubIndexKey
+                  ? !stubIndex
+                    .processElements((StubIndexKey<String, PsiElement>)id, key, project, scope, PsiElement.class, element -> false)
+                  : !fileIndex.processValues(id, key, null, (file, value) -> false, scope))
+        .sorted()
+        .toList();
       return Result.create(filteredKeys, PsiManager.getInstance(project).getModificationTracker());
     }
   }
