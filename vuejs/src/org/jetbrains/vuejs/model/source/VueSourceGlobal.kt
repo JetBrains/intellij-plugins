@@ -122,7 +122,7 @@ class VueSourceGlobal(override val project: Project, private val packageJsonUrl:
         .map { Pair(it.name, VueSourceDirective(it.name, it.parent)) }
         // TODO properly support multiple directives with the same name
         .distinctBy { it.first }
-        .toMap()
+        .toMap(TreeMap())
     }
 
     private fun buildMixinsList(scope: GlobalSearchScope): List<VueMixin> {
