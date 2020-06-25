@@ -151,9 +151,8 @@ class JavaDebugLesson(module: Module) : KLesson("Debug Workflow", module, "JAVA"
                              ?: error("Invalid sample data")
         caret(position)
         val hasShortcut = KeymapUtil.getShortcutByActionId(it) != null
-        text("IDE has several ways to show values. For this step we selected the call. Lets add it to <strong>Watches</strong>. " +
-             "You can copy the expression into clipboard, use ${icon(
-               AllIcons.General.Add)} button on the debug panel and past copied text." +
+        text("IDE has several ways to show values. For this step, we selected the call. Lets add it to <strong>Watches</strong>. " +
+             "You can copy the expression into clipboard, use ${icon(AllIcons.General.Add)} button on the debug panel and past copied text. " +
              "Or you can just use action ${action(it)} ${if (hasShortcut) "" else " (consider to add a shortcut for it later)"}.")
         stateCheck {
           val watches = (XDebuggerManager.getInstance(project) as XDebuggerManagerImpl).watchesManager.getWatches("Application")

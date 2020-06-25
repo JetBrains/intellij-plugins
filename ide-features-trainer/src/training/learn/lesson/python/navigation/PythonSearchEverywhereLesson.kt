@@ -24,7 +24,7 @@ class PythonSearchEverywhereLesson(module: Module) : KLesson("Search Everywhere"
 
     val shift = KeyEvent.getKeyModifiersText(InputEvent.SHIFT_MASK)
     actionTask("SearchEverywhere") {
-      "To open <strong>Search Everywhere</strong> you need to press <shortcut>$shift</shortcut> two times in raw."
+      "To open <strong>Search Everywhere</strong> you need to press <shortcut>$shift</shortcut> two times in a row."
     }
     task("cae") {
       text("Suppose you are looking for a class with ${code("cache")} and ${code("extension")} words in the name. " +
