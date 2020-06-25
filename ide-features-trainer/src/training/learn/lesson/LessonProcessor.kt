@@ -22,7 +22,7 @@ object LessonProcessor {
     private set
   var currentTaskIndex: Int = 0
 
-  fun process(project: Project, lesson: XmlLesson, editor: Editor?, documentationMode: Boolean = true) {
+  fun process(project: Project, lesson: XmlLesson, editor: Editor?, documentationMode: Boolean = false) {
     val elements = createListOfCommands(lesson.scenario.root)
     val myQueueOfElements = LinkedBlockingQueue(elements)
 
