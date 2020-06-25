@@ -17,7 +17,7 @@ import training.learn.lesson.kimpl.LessonSample
 import javax.swing.JPanel
 
 class GotoActionLesson(module: Module, lang: String, private val sample: LessonSample) :
-  KLesson("Actions", module, lang) {
+  KLesson("Search for actions", module, lang) {
 
   companion object {
     private const val FIND_ACTION_WORKAROUND: String = "https://intellij-support.jetbrains.com/hc/en-us/articles/360005137400-Cmd-Shift-A-hotkey-opens-Terminal-with-apropos-search-instead-of-the-Find-Action-dialog"
@@ -27,10 +27,10 @@ class GotoActionLesson(module: Module, lang: String, private val sample: LessonS
     get() = {
       prepareSample(sample)
       actionTask("GotoAction") {
-        "One of the most useful shortcuts is Find Action. It lets you search through all available actions " +
+        "One of the most useful shortcuts is <strong>Find Action</strong>. It lets you search through all available actions " +
                 "without having to know their individual shortcuts.\nTry it now with ${action(it)}." +
-                if (SystemInfo.isMacOSMojave) " (If Terminal search opens instead of Find Action, " +
-                        "refer to <a href=\"$FIND_ACTION_WORKAROUND\">this article</a>.)" else ""
+                if (SystemInfo.isMacOSMojave) "\nIf <strong>Terminal</strong> search opens instead of <strong>Find Action</strong>, " +
+                        "refer to <a href=\"$FIND_ACTION_WORKAROUND\">this article</a>." else ""
       }
       actionTask("About") {
         "Let's say you want to read about the IDE, type <strong>about</strong> and press ${action("EditorEnter")}."
