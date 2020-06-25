@@ -46,6 +46,7 @@
   <category>JVM Frameworks</category>
   <vendor>JetBrains</vendor>
 
+  <depends>com.intellij.javaee</depends>
   <depends>com.intellij.modules.java</depends>
   <depends optional="true" config-file="osgi-maven-support.xml">org.jetbrains.idea.maven</depends>
 
@@ -55,6 +56,8 @@
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
+    <javaee.legacy.project.wizard/>
+
     <postStartupActivity implementation="org.jetbrains.osgi.bnd.imp.ReimportPostStartupActivity"/>
     <vfs.asyncListener implementation="org.jetbrains.osgi.bnd.imp.ReimportPostStartupActivity$FileListener"/>
 

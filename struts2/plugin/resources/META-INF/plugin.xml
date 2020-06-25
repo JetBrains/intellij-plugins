@@ -55,6 +55,7 @@
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
+    <javaee.legacy.project.wizard/>
 
     <facetType implementation="com.intellij.struts2.facet.StrutsFacetType"/>
 

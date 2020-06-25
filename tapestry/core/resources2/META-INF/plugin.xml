@@ -10,6 +10,8 @@
   <category>JVM Frameworks</category>
 
   <extensions defaultExtensionNs="com.intellij">
+    <javaee.legacy.project.wizard/>
+
     <facetType implementation="com.intellij.tapestry.intellij.facet.TapestryFacetType"/>
     <framework.detector implementation="com.intellij.tapestry.intellij.facet.TapestryFacetType$TapestryFrameworkDetector"/>
     <frameworkSupport implementation="com.intellij.tapestry.intellij.facet.TapestryFrameworkSupportProvider"/>
