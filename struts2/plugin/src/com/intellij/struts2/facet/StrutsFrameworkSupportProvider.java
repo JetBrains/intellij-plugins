@@ -25,7 +25,9 @@ import com.intellij.ide.util.frameworkSupport.FrameworkSupportConfigurableBase;
 import com.intellij.ide.util.frameworkSupport.FrameworkSupportModel;
 import com.intellij.ide.util.frameworkSupport.FrameworkSupportProviderBase;
 import com.intellij.ide.util.frameworkSupport.FrameworkVersion;
+import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.jam.model.util.JamCommonUtil;
+import com.intellij.javaee.framework.JavaeeProjectCategory;
 import com.intellij.javaee.model.xml.web.Filter;
 import com.intellij.javaee.model.xml.web.FilterMapping;
 import com.intellij.javaee.model.xml.web.WebApp;
@@ -73,7 +75,7 @@ import java.util.Set;
  */
 public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportProvider<StrutsFacet> {
 
-  private static final Logger LOG = Logger.getInstance("#com.intellij.struts2.facet.StrutsFrameworkSupportProvider");
+  private static final Logger LOG = Logger.getInstance(StrutsFrameworkSupportProvider.class);
 
   public StrutsFrameworkSupportProvider() {
     super(StrutsFacetType.getInstance());
@@ -93,6 +95,11 @@ public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportPr
   @Override
   protected void setupConfiguration(final StrutsFacet strutsFacet,
                                     final ModifiableRootModel modifiableRootModel, final FrameworkVersion version) {
+  }
+
+  @Override
+  public boolean isEnabledForModuleBuilder(@NotNull ModuleBuilder builder) {
+    return JavaeeProjectCategory.LEGACY_MODULE_BUILDER_ID.equals(builder.getBuilderId());
   }
 
   @Override

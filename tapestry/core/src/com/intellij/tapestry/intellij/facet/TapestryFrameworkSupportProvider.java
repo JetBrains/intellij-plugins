@@ -4,6 +4,7 @@ import com.intellij.CommonBundle;
 import com.intellij.facet.ui.FacetBasedFrameworkSupportProvider;
 import com.intellij.ide.util.frameworkSupport.FrameworkRole;
 import com.intellij.ide.util.frameworkSupport.FrameworkVersion;
+import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.javaee.framework.JavaeeProjectCategory;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
@@ -49,6 +50,11 @@ public class TapestryFrameworkSupportProvider extends FacetBasedFrameworkSupport
       result.add(new FrameworkVersion(name, "tapestry-" + name, TapestryFacetConfiguration.getLibraryInfos(name)));
     }
     return result;
+  }
+
+  @Override
+  public boolean isEnabledForModuleBuilder(@NotNull ModuleBuilder builder) {
+    return JavaeeProjectCategory.LEGACY_MODULE_BUILDER_ID.equals(builder.getBuilderId());
   }
 
   @Override
