@@ -54,6 +54,7 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
                                                 @NotNull String text,
                                                 @NotNull NodePackage prettierPackage,
                                                 @Nullable TextRange range) {
+    filePath = JSLanguageServiceUtil.normalizeNameAndPath(filePath);
     ignoreFilePath = JSLanguageServiceUtil.normalizeNameAndPath(ignoreFilePath);
     JSLanguageServiceQueue process = getProcess();
     if (process == null || !process.isValid()) {
