@@ -65,7 +65,7 @@
                              instance="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioConfigurable"
                              bundle="messages.ClionEmbeddedPlatformioBundle"
                              key="configurable.ClionEmbeddedPlatformioBundle.display.name"
-                             groupId="build"/>
+                             groupId="language"/>
   </extensions>
 
   <actions>

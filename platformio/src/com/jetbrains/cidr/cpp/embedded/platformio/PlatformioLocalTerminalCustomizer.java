@@ -4,6 +4,7 @@ import com.intellij.execution.Platform;
 import com.intellij.execution.configurations.PathEnvironmentVariableUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.plugins.terminal.LocalTerminalCustomizer;
 
 import java.io.File;
@@ -15,14 +16,17 @@ public class PlatformioLocalTerminalCustomizer extends LocalTerminalCustomizer {
 
   @Override
   public String[] customizeCommandAndEnvironment(Project project, String[] command, Map<String, String> envs) {
-    File platformioLocation = new File(PlatformioConfigurable.getPioLocation());
-    if (platformioLocation.isFile() && platformioLocation.canExecute()) {
-      String parentPath = platformioLocation.getParent();
-      String path = envs.getOrDefault(ENV_PATH, "");
-      if (
-        PathEnvironmentVariableUtil.getPathDirs(path)
-          .stream().noneMatch(s -> FileUtil.pathsEqual(s, parentPath))) {
-        envs.replace(ENV_PATH, path + Platform.current().pathSeparator + parentPath);
+    String pioLocation = PlatformioConfigurable.getPioLocation();
+    if (!StringUtil.isEmptyOrSpaces(pioLocation)) {
+      File platformioLocation = new File(pioLocation);
+      if (platformioLocation.isFile() && platformioLocation.canExecute()) {
+        String parentPath = platformioLocation.getParent();
+        String path = envs.getOrDefault(ENV_PATH, "");
+        if (
+          PathEnvironmentVariableUtil.getPathDirs(path)
+            .stream().noneMatch(s -> FileUtil.pathsEqual(s, parentPath))) {
+          envs.replace(ENV_PATH, path + Platform.current().pathSeparator + parentPath);
+        }
       }
     }
     return super.customizeCommandAndEnvironment(project, command, envs);
