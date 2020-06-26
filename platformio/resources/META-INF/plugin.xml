@@ -46,6 +46,7 @@
   <depends>com.intellij.modules.clion.cmake</depends>
   <depends>com.intellij.clion.embedded</depends>
   <depends>com.jetbrains.plugins.ini4idea</depends>
+  <depends optional="true" config-file="terminal-dep.xml">org.jetbrains.plugins.terminal</depends>
 
   <extensions defaultExtensionNs="com.intellij">
     <configurationType order="last" id="platformio"
@@ -60,6 +61,11 @@
     <directoryIndexExcludePolicy implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioExcludePolicy"/>
     <vfs.asyncListener implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioListener"/>
     <postStartupActivity implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioListener"/>
+    <applicationConfigurable order="last" id="clion.platformio.config"
+                             instance="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioConfigurable"
+                             bundle="messages.ClionEmbeddedPlatformioBundle"
+                             key="configurable.ClionEmbeddedPlatformioBundle.display.name"
+                             groupId="build"/>
   </extensions>
 
   <actions>

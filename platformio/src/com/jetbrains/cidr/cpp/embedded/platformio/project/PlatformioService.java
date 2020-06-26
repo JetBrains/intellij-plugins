@@ -9,9 +9,11 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle;
+import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioConfigurable;
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioFileType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -62,7 +64,13 @@ public final class PlatformioService {
         openInstallGuide();
       }
     });
-
+    notification.addAction(new AnAction(ClionEmbeddedPlatformioBundle.message("open.settings.link")) {
+      @Override
+      public void actionPerformed(@NotNull AnActionEvent e) {
+        openSettings(project);
+        notification.expire();
+      }
+    });
     Notifications.Bus.notify(notification, project);
   }
 
@@ -73,6 +81,10 @@ public final class PlatformioService {
         .anyMatch(root -> root.findChild(PlatformioFileType.FILE_NAME) != null);
     setEnabled(project, enabled);
     return enabled ? State.OK : State.NONE;
+  }
+
+  public static void openSettings(@Nullable Project project) {
+    ShowSettingsUtil.getInstance().showSettingsDialog(project, PlatformioConfigurable.class);
   }
 
   public enum State {

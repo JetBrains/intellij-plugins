@@ -95,7 +95,10 @@ public abstract class PlatformioBaseConfiguration extends CMakeAppRunConfigurati
 
   @Nullable
   public static String findPlatformio() {
-    String platformioLocation;
+    String platformioLocation = PlatformioConfigurable.getPioLocation();
+    if (!platformioLocation.isEmpty()) {
+      return new File(platformioLocation).canExecute() ? platformioLocation : null;
+    }
     if (SystemInfo.isWindows) {
       platformioLocation = PathEnvironmentVariableUtil.findExecutableInWindowsPath("platformio", null);
     }

@@ -100,8 +100,11 @@ public class PlatformioProjectSettingsStep extends ProjectSettingsStepBase<Ref<B
             setErrorText(platformioIsNotFound);
             myTree.getEmptyText().setText(platformioIsNotFound);
             myTree.getEmptyText()
-              .appendSecondaryText(ClionEmbeddedPlatformioBundle.message("install.guide"), SimpleTextAttributes.LINK_ATTRIBUTES,
-                                   e -> PlatformioService.openInstallGuide());
+              .appendLine(ClionEmbeddedPlatformioBundle.message("open.settings.link"), SimpleTextAttributes.LINK_ATTRIBUTES,
+                          e -> PlatformioService.openSettings(getProject()))
+              .appendLine(ClionEmbeddedPlatformioBundle.message("install.guide"), SimpleTextAttributes.LINK_ATTRIBUTES,
+                          e -> PlatformioService.openInstallGuide());
+
             return;
           }
           GeneralCommandLine commandLine = new GeneralCommandLine()
