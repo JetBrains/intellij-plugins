@@ -68,21 +68,42 @@ open class VueWebTypesEntitiesContainer(project: Project, packageJson: VirtualFi
     components = webTypes.contributions
                    ?.html
                    ?.tags
+                   ?.asSequence()
                    ?.filter { it.name != null }
-                   ?.associateBy({ it.name!! }, { VueWebTypesComponent(it, support) })
+                   ?.flatMap { tag ->
+                     tag.aliases
+                       .asSequence()
+                       .plus(tag.name!!)
+                       .map { Pair(it, VueWebTypesComponent(tag, support)) }
+                   }
+                   ?.toMap()
                  ?: Collections.emptyMap()
     directives = webTypes.contributions
                    ?.html
                    ?.attributes
-                   ?.filter { it.name?.startsWith(ATTR_DIRECTIVE_PREFIX) ?: false }
-                   ?.associateBy({ it.name!!.substring(2) }, { VueWebTypesDirective(it, support) })
+                   ?.asSequence()
+                   ?.filter { it.name != null }
+                   ?.flatMap { attribute ->
+                     attribute.aliases
+                       .asSequence()
+                       .plus(attribute.name!!)
+                       .filter { it.startsWith(ATTR_DIRECTIVE_PREFIX) }
+                       .map { Pair(it, VueWebTypesDirective(attribute, support)) }
+                   }
+                   ?.toMap()
                  ?: Collections.emptyMap()
     filters = webTypes.contributions
                 ?.html
                 ?.vueFilters
+                ?.asSequence()
                 ?.filter { it.name != null }
-                ?.distinctBy { it.name }
-                ?.associateBy({ it.name!! }, { VueWebTypesFilter(it, support) })
+                ?.flatMap { filter ->
+                  filter.aliases
+                    .asSequence()
+                    .plus(filter.name!!)
+                    .map { Pair(it, VueWebTypesFilter(filter, support)) }
+                }
+                ?.toMap()
               ?: Collections.emptyMap()
   }
 

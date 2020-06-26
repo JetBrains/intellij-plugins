@@ -2,9 +2,9 @@
 package org.jetbrains.vuejs.model.webtypes
 
 import org.jetbrains.vuejs.model.VueSlot
-import org.jetbrains.vuejs.model.webtypes.json.Slot
+import org.jetbrains.vuejs.model.webtypes.json.HtmlTagSlot
 
-internal class VueWebTypesSlot(slot: Slot, context: VueWebTypesEntitiesContainer.WebTypesContext)
+internal class VueWebTypesSlot(slot: HtmlTagSlot, context: VueWebTypesEntitiesContainer.WebTypesContext)
   : VueWebTypesDocumentedItem(slot, context), VueSlot {
 
   override val name: String = slot.name!!

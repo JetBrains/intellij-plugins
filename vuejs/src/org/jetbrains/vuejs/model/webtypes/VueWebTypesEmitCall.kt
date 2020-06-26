@@ -2,9 +2,9 @@
 package org.jetbrains.vuejs.model.webtypes
 
 import org.jetbrains.vuejs.model.VueEmitCall
-import org.jetbrains.vuejs.model.webtypes.json.Event
+import org.jetbrains.vuejs.model.webtypes.json.HtmlTagEvent
 
-internal class VueWebTypesEmitCall(event: Event, context: VueWebTypesEntitiesContainer.WebTypesContext)
+internal class VueWebTypesEmitCall(event: HtmlTagEvent, context: VueWebTypesEntitiesContainer.WebTypesContext)
   : VueWebTypesDocumentedItem(event, context), VueEmitCall {
 
   override val name: String = event.name!!

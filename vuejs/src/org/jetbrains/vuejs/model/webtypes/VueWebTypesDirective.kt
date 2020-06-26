@@ -7,9 +7,9 @@ import org.jetbrains.vuejs.model.VueDirective
 import org.jetbrains.vuejs.model.VueDirectiveArgument
 import org.jetbrains.vuejs.model.VueDirectiveModifier
 import org.jetbrains.vuejs.model.VueEntitiesContainer
-import org.jetbrains.vuejs.model.webtypes.json.Attribute_
+import org.jetbrains.vuejs.model.webtypes.json.HtmlAttribute
 
-internal class VueWebTypesDirective(attribute: Attribute_,
+internal class VueWebTypesDirective(attribute: HtmlAttribute,
                                     context: VueWebTypesEntitiesContainer.WebTypesContext)
   : VueWebTypesSourceEntity(attribute, context), VueDirective {
 

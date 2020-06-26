@@ -4,9 +4,9 @@ package org.jetbrains.vuejs.model.webtypes
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.model.VueInputProperty
-import org.jetbrains.vuejs.model.webtypes.json.Attribute
+import org.jetbrains.vuejs.model.webtypes.json.HtmlTagAttribute
 
-internal class VueWebTypesInputProperty(attribute: Attribute, context: VueWebTypesEntitiesContainer.WebTypesContext)
+internal class VueWebTypesInputProperty(attribute: HtmlTagAttribute, context: VueWebTypesEntitiesContainer.WebTypesContext)
   : VueWebTypesDocumentedItem(attribute, context), VueInputProperty {
 
   override val name: String = attribute.name!!
