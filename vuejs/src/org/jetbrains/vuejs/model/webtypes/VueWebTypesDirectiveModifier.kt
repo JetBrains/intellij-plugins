@@ -2,9 +2,9 @@
 package org.jetbrains.vuejs.model.webtypes
 
 import org.jetbrains.vuejs.model.VueDirectiveModifier
-import org.jetbrains.vuejs.model.webtypes.json.VueModifier
+import org.jetbrains.vuejs.model.webtypes.json.HtmlAttributeVueModifier
 
-internal class VueWebTypesDirectiveModifier(modifier: VueModifier,
+internal class VueWebTypesDirectiveModifier(modifier: HtmlAttributeVueModifier,
                                             context: VueWebTypesEntitiesContainer.WebTypesContext)
   : VueWebTypesDocumentedItem(modifier, context), VueDirectiveModifier {
 

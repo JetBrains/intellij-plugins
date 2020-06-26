@@ -2,9 +2,9 @@
 package org.jetbrains.vuejs.model.webtypes
 
 import org.jetbrains.vuejs.model.VueDirectiveArgument
-import org.jetbrains.vuejs.model.webtypes.json.VueArgument
+import org.jetbrains.vuejs.model.webtypes.json.HtmlAttributeVueArgument
 
-internal class VueWebTypesDirectiveArgument(argument: VueArgument,
+internal class VueWebTypesDirectiveArgument(argument: HtmlAttributeVueArgument,
                                             context: VueWebTypesEntitiesContainer.WebTypesContext)
   : VueWebTypesDocumentedItem(argument, context), VueDirectiveArgument {
 

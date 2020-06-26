@@ -3,9 +3,9 @@ package org.jetbrains.vuejs.model.webtypes
 
 import org.jetbrains.vuejs.model.VueEntitiesContainer
 import org.jetbrains.vuejs.model.VueGlobal
-import org.jetbrains.vuejs.model.webtypes.json.VueFilter
+import org.jetbrains.vuejs.model.webtypes.json.HtmlVueFilter
 
-internal class VueWebTypesFilter(filter: VueFilter,
+internal class VueWebTypesFilter(filter: HtmlVueFilter,
                                  context: VueWebTypesEntitiesContainer.WebTypesContext)
   : VueWebTypesSourceEntity(filter, context), org.jetbrains.vuejs.model.VueFilter {
 

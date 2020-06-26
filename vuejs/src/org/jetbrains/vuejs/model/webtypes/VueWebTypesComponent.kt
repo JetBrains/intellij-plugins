@@ -2,10 +2,10 @@
 package org.jetbrains.vuejs.model.webtypes
 
 import org.jetbrains.vuejs.model.*
-import org.jetbrains.vuejs.model.webtypes.json.Tag
+import org.jetbrains.vuejs.model.webtypes.json.HtmlTag
 import java.util.*
 
-internal class VueWebTypesComponent(tag: Tag, context: VueWebTypesEntitiesContainer.WebTypesContext)
+internal class VueWebTypesComponent(tag: HtmlTag, context: VueWebTypesEntitiesContainer.WebTypesContext)
   : VueWebTypesSourceEntity(tag, context), VueRegularComponent {
 
   override val global: VueGlobal? get() = context.parent.global
