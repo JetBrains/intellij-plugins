@@ -19,7 +19,6 @@ import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.MultiMap
-import one.util.streamex.StreamEx
 import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.model.source.VueSourceGlobal
 import org.jetbrains.vuejs.model.webtypes.registry.VueWebTypesRegistry
@@ -90,7 +89,7 @@ internal class VueGlobalImpl(override val project: Project, private val packageJ
                          enabledPackages: Set<String>): List<VuePlugin> =
     NodeModuleUtil.findNodeModulesByPackageJson(packageJson)
       ?.let { getVuePluginPackageJsons(it, enabledPackages) }
-      ?.filter { isVueLibrary(it) }
+      ?.filter { isVueLibrary(it, enabledPackages) }
       ?.map { VuePluginImpl(project, it) }
       ?.toList()
     ?: emptyList()
@@ -195,9 +194,10 @@ internal class VueGlobalImpl(override val project: Project, private val packageJ
       return result
     }
 
-    private fun isVueLibrary(it: VirtualFile): Boolean {
+    private fun isVueLibrary(it: VirtualFile, enabledPackages: Set<String>): Boolean {
       val data = PackageJsonUtil.getOrCreateData(it)
       return data.name == "vue"
+             || enabledPackages.contains(data.name)
              || data.containsOneOfDependencyOfAnyType("vue-loader", "vue-latest", "vue", "vue-template-compiler")
              || data.webTypes != null
     }
