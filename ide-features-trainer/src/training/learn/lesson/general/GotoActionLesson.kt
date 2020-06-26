@@ -17,7 +17,7 @@ import training.learn.lesson.kimpl.LessonSample
 import javax.swing.JPanel
 
 class GotoActionLesson(module: Module, lang: String, private val sample: LessonSample) :
-  KLesson("Search for actions", module, lang) {
+  KLesson("Actions", "Search for actions", module, lang) {
 
   companion object {
     private const val FIND_ACTION_WORKAROUND: String = "https://intellij-support.jetbrains.com/hc/en-us/articles/360005137400-Cmd-Shift-A-hotkey-opens-Terminal-with-apropos-search-instead-of-the-Find-Action-dialog"
