@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * The starting point of the resolvers chain.
  */
-public class ValueResolverChain extends ChainBase {
+public final class ValueResolverChain extends ChainBase {
 
     private static final Logger _logger = Logger.getInstance(ValueResolverChain.class);
 

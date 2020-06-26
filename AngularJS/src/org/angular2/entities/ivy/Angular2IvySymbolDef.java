@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.entities.ivy;
 
 import com.intellij.extapi.psi.StubBasedPsiElementBase;
@@ -55,7 +55,7 @@ public abstract class Angular2IvySymbolDef {
     public abstract Angular2IvyEntity<?> createEntity();
   }
 
-  public static class Module extends Entity {
+  public static final class Module extends Entity {
     private Module(@NotNull Object fieldStubOrPsi) {super(fieldStubOrPsi);}
 
     public @NotNull List<TypeScriptTypeofType> getTypesList(@NotNull String property) {
@@ -129,7 +129,7 @@ public abstract class Angular2IvySymbolDef {
     }
   }
 
-  public static class Component extends Directive {
+  public static final class Component extends Directive {
 
     private Component(@NotNull Object fieldStubOrPsi) {super(fieldStubOrPsi);}
 
@@ -152,7 +152,7 @@ public abstract class Angular2IvySymbolDef {
     }
   }
 
-  public static class Pipe extends Entity {
+  public static final class Pipe extends Entity {
 
     private Pipe(@NotNull Object fieldStubOrPsi) {super(fieldStubOrPsi);}
 
@@ -171,7 +171,7 @@ public abstract class Angular2IvySymbolDef {
     }
   }
 
-  public static class Factory extends Angular2IvySymbolDef {
+  public static final class Factory extends Angular2IvySymbolDef {
 
     private Factory(@NotNull Object fieldStubOrPsi) {super(fieldStubOrPsi);}
 

@@ -6,7 +6,7 @@ import org.apache.commons.chain.impl.ChainBase;
 /**
  * The starting point of the documentation generation chain.
  */
-public class DocumentationGenerationChain extends ChainBase {
+public final class DocumentationGenerationChain extends ChainBase {
 
     private static final Logger _logger = Logger.getInstance(DocumentationGenerationChain.class);
 

@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.model.bc;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -14,13 +14,13 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 
-public class CompilerOptionInfo {
+public final class CompilerOptionInfo {
 
   public enum OptionType {Group, Boolean, String, Int, File, List, IncludeClasses, IncludeFiles}
 
   public enum ListElementType {String, File, FileOrFolder, Class, Boolean, Locale}
 
-  public static class ListElement {
+  public static final class ListElement {
     public final String NAME;
     public final String DISPLAY_NAME;
     public final ListElementType LIST_ELEMENT_TYPE;

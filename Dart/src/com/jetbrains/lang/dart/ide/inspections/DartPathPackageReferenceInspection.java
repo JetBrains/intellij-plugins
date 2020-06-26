@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.inspections;
 
 import com.intellij.CommonBundle;
@@ -129,7 +129,7 @@ public class DartPathPackageReferenceInspection extends LocalInspectionTool {
     return null;
   }
 
-  private static class AddContentRootFix extends IntentionAndQuickFixAction {
+  private static final class AddContentRootFix extends IntentionAndQuickFixAction {
     @NotNull private final Module myModule;
     @NotNull private final VirtualFile myContentRoot;
 

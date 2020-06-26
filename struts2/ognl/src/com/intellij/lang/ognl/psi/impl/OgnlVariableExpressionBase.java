@@ -42,7 +42,7 @@ abstract class OgnlVariableExpressionBase extends OgnlExpressionImpl {
     return new OgnlVariableReferencePsiReference(this);
   }
 
-  private static class OgnlVariableReferencePsiReference extends PsiReferenceBase.Poly<PsiElement> {
+  private static final class OgnlVariableReferencePsiReference extends PsiReferenceBase.Poly<PsiElement> {
 
     private static final Function<OgnlVariableReference, PsiElementResolveResult> RESOLVE_FUNCTION =
       reference -> new PsiElementResolveResult(reference.getNavigationElement());

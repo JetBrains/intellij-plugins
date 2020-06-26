@@ -156,7 +156,7 @@ public class Struts2GlobalVariableProvider extends FtlGlobalVariableProvider {
   }
 
 
-  private static class MyFtlLightVariable extends FtlLightVariable {
+  private static final class MyFtlLightVariable extends FtlLightVariable {
 
     private MyFtlLightVariable(@NotNull @NonNls final String name,
                                @NotNull final PsiElement parent,

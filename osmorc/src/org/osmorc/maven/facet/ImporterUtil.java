@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 /**
  * Helper class for importing settings from the maven bundle plugin.
  */
-public class ImporterUtil {
+public final class ImporterUtil {
   private static final Pattern FUZZY_VERSION = Pattern.compile("(\\d+)(\\.(\\d+)(\\.(\\d+))?)?([^a-zA-Z0-9](.*))?", Pattern.DOTALL);
 
   private ImporterUtil() { }

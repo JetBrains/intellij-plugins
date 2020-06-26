@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * The built-in Body element.
  */
-public class BodyComponent extends TapestryComponent {
+public final class BodyComponent extends TapestryComponent {
 
   private BodyComponent(IJavaClassType componentClass, TapestryProject project) throws NotTapestryElementException {
     super(componentClass, project);

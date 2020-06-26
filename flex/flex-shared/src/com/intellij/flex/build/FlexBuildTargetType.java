@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.build;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -24,7 +25,7 @@ import org.jetbrains.jps.model.runConfiguration.JpsTypedRunConfiguration;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FlexBuildTargetType extends BuildTargetType<FlexBuildTarget> {
+public final class FlexBuildTargetType extends BuildTargetType<FlexBuildTarget> {
   public static final FlexBuildTargetType INSTANCE = new FlexBuildTargetType();
 
   private FlexBuildTargetType() {

@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * The built-in Parameter element.
  */
-public class ParameterComponent extends TapestryComponent {
+public final class ParameterComponent extends TapestryComponent {
 
   private final Map<String, TapestryParameter> myParameters = new HashMap<>();
 

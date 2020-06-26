@@ -7,7 +7,7 @@ import org.jetbrains.annotations.PropertyKey;
 
 import java.util.function.Supplier;
 
-public class ClionEmbeddedPlatformioBundle extends DynamicBundle {
+public final class ClionEmbeddedPlatformioBundle extends DynamicBundle {
   @NonNls private static final String BUNDLE = "messages.ClionEmbeddedPlatformioBundle";
   private static final ClionEmbeddedPlatformioBundle INSTANCE = new ClionEmbeddedPlatformioBundle();
 

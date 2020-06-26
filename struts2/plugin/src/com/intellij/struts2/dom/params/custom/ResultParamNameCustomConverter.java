@@ -60,7 +60,7 @@ public class ResultParamNameCustomConverter extends ParamNameConverter.ParamName
   }
 
 
-  private static class MergingBeanPropertyPathReference extends PsiReferenceBase<PsiElement>
+  private static final class MergingBeanPropertyPathReference extends PsiReferenceBase<PsiElement>
     implements EmptyResolveMessageProvider, LocalQuickFixProvider {
 
     private final List<BeanPropertyPathReference[]> allReferences = new SmartList<>();

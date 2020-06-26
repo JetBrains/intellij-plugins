@@ -45,7 +45,7 @@ public class FlashUmlChangeTracker extends ChangeTracker<JSClass, JSNamedElement
     }
   }
 
-  private static class MethodFilter extends NameFilter<JSFunction> {
+  private static final class MethodFilter extends NameFilter<JSFunction> {
     private final JSFunction.FunctionKind myKind;
 
     private MethodFilter(JSFunction.FunctionKind kind) {

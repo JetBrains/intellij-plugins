@@ -90,7 +90,7 @@ public class ActionPathResultContributor extends StrutsResultContributor {
   }
 
 
-  private static class ActionPathReference extends PsiReferenceBase<XmlTag> {
+  private static final class ActionPathReference extends PsiReferenceBase<XmlTag> {
 
     private final String currentPackage;
     private final StrutsModel model;

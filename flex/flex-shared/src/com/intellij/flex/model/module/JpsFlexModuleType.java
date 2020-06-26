@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.model.module;
 
 import com.intellij.flex.model.bc.JpsFlexBuildConfigurationManager;
@@ -10,7 +11,7 @@ import org.jetbrains.jps.model.ex.JpsElementTypeBase;
 import org.jetbrains.jps.model.module.JpsModuleType;
 import org.jetbrains.jps.model.serialization.module.JpsModulePropertiesSerializer;
 
-public class JpsFlexModuleType extends JpsElementTypeBase<JpsFlexBuildConfigurationManager> implements JpsModuleType<JpsFlexBuildConfigurationManager> {
+public final class JpsFlexModuleType extends JpsElementTypeBase<JpsFlexBuildConfigurationManager> implements JpsModuleType<JpsFlexBuildConfigurationManager> {
   public static final JpsFlexModuleType INSTANCE = new JpsFlexModuleType();
   private static final String ID = "Flex";
 

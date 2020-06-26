@@ -31,7 +31,7 @@ import org.jetbrains.lang.manifest.highlighting.ManifestColorsAndFonts;
 /**
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
-public class OsgiManifestColorsAndFonts {
+public final class OsgiManifestColorsAndFonts {
   static final TextAttributesKey ATTRIBUTE_NAME_KEY =
     TextAttributesKey.createTextAttributesKey("osmorc.attributeName", DefaultLanguageHighlighterColors.INSTANCE_FIELD);
   static final TextAttributesKey ATTRIBUTE_ASSIGNMENT_KEY =

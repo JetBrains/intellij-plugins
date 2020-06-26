@@ -69,7 +69,7 @@ public class Struts2GlobalVariableProvider extends VtlGlobalVariableProvider {
   }
 
 
-  private static class MyVtlVariable extends VtlLightVariable {
+  private static final class MyVtlVariable extends VtlLightVariable {
 
     private MyVtlVariable(final String name, final VtlFile parent, final String fqnClassName) {
       super(name, parent, fqnClassName);

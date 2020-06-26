@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.prettierjs;
 
 import com.google.gson.Gson;
@@ -45,7 +45,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.*;
 
-public class PrettierUtil {
+public final class PrettierUtil {
 
   public static final Icon ICON = null;
   public static final String PACKAGE_NAME = "prettier";
@@ -228,7 +228,7 @@ public class PrettierUtil {
   public static Config parseConfigFromJsonText(String text) {
     try (JsonReader reader = new JsonReader(new StringReader(text))) {
       if (reader.peek() == JsonToken.STRING) {
-        return null; 
+        return null;
       }
       return parseConfigFromMap(OUR_GSON_SERIALIZER.fromJson(reader, Map.class));
     }

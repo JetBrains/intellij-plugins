@@ -37,7 +37,7 @@ import org.osmorc.util.OsgiPsiUtil;
 /**
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
-public class BundleActivatorParser extends ClassReferenceParser {
+public final class BundleActivatorParser extends ClassReferenceParser {
   public static final HeaderParser INSTANCE = new BundleActivatorParser();
 
   private BundleActivatorParser() { }

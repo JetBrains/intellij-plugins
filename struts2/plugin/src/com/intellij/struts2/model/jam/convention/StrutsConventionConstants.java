@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NonNls;
 /**
  * @author Yann C&eacute;bron
  */
-public class StrutsConventionConstants {
+public final class StrutsConventionConstants {
 
   private StrutsConventionConstants() {
   }

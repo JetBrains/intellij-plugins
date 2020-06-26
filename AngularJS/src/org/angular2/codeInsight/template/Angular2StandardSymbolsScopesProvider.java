@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight.template;
 
 import com.intellij.lang.javascript.psi.JSElement;
@@ -65,7 +65,7 @@ public class Angular2StandardSymbolsScopesProvider extends Angular2TemplateScope
     return result;
   }
 
-  private static class Angular2$AnyScope extends Angular2TemplateScope {
+  private static final class Angular2$AnyScope extends Angular2TemplateScope {
 
     private final JSImplicitElement $any;
 
@@ -86,7 +86,7 @@ public class Angular2StandardSymbolsScopesProvider extends Angular2TemplateScope
     }
   }
 
-  private static class Angular2EventScope extends Angular2TemplateScope {
+  private static final class Angular2EventScope extends Angular2TemplateScope {
 
     private final XmlAttribute myEvent;
 
@@ -106,7 +106,7 @@ public class Angular2StandardSymbolsScopesProvider extends Angular2TemplateScope
     }
   }
 
-  private static class Angular2EventImplicitElement extends JSLocalImplicitElementImpl {
+  private static final class Angular2EventImplicitElement extends JSLocalImplicitElementImpl {
     private final @Nullable Collection<PsiElement> myDeclarations;
 
     private Angular2EventImplicitElement(@NotNull XmlAttribute attribute) {

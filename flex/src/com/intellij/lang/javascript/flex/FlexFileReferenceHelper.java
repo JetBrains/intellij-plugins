@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.codeInspection.LocalQuickFix;
@@ -69,7 +69,7 @@ public class FlexFileReferenceHelper extends FileReferenceHelper {
     return Collections.emptyList();
   }
 
-  private static class AddLeadingSlashFix extends FixAndIntentionAction {
+  private static final class AddLeadingSlashFix extends FixAndIntentionAction {
     private AddLeadingSlashFix(final JSAttributeNameValuePair element) {
       registerElementRefForFix(element, null);
     }

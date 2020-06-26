@@ -82,7 +82,7 @@ public class ActionMethodReferenceProvider extends PsiReferenceProvider {
   }
 
 
-  private static class ActionMethodReference
+  private static final class ActionMethodReference
       extends PsiReferenceBase<XmlAttributeValue>
       implements LocalQuickFixProvider, EmptyResolveMessageProvider {
 

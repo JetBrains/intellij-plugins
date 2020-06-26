@@ -191,7 +191,7 @@ public class FrameworkDefinitionsEditorComponent {
   }
 
 
-  private class AddAction extends AnAction implements DumbAware, Comparable<AddAction> {
+  private final class AddAction extends AnAction implements DumbAware, Comparable<AddAction> {
     private final FrameworkIntegrator myIntegrator;
 
     private AddAction(FrameworkIntegrator integrator) {

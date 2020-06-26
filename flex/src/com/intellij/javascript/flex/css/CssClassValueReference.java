@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.css;
 
 import com.intellij.lang.injection.InjectedLanguageManager;
@@ -170,7 +170,7 @@ public class CssClassValueReference extends PsiPolyVariantCachingReference imple
     }
   }
 
-  private static class MyResolveProcessor extends MyCssElementProcessor {
+  private static final class MyResolveProcessor extends MyCssElementProcessor {
     private final String myReferenceText;
     private final Set<CssSelectorSuffix> myTargets = new LinkedHashSet<>();
 

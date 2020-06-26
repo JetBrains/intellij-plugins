@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.test;
 
 import com.intellij.execution.Executor;
@@ -24,7 +25,7 @@ class DartTestRerunnerAction extends AbstractRerunFailedTestsAction {
     return new RerunProfile(configuration, runner);
   }
 
-  private static class RerunProfile extends MyRunProfile implements DartRunConfiguration {
+  private static final class RerunProfile extends MyRunProfile implements DartRunConfiguration {
     private final DartTestRerunner runner;
 
     private RerunProfile(RunConfigurationBase configuration, DartTestRerunner runner) {

@@ -66,7 +66,7 @@ public class FlexCompositeSdkProjectViewStructureProvider implements TreeStructu
     return result;
   }
 
-  private static class IndividualSdkOrderEntry implements ModuleJdkOrderEntry {
+  private static final class IndividualSdkOrderEntry implements ModuleJdkOrderEntry {
 
     @NotNull
     private final Sdk mySdk;

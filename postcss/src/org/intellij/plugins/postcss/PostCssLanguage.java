@@ -6,7 +6,7 @@ import com.intellij.lang.css.CSSLanguage;
 import com.intellij.lang.css.CssLanguageProperties;
 import org.jetbrains.annotations.NotNull;
 
-public class PostCssLanguage extends Language implements CssLanguageProperties {
+public final class PostCssLanguage extends Language implements CssLanguageProperties {
   public static final PostCssLanguage INSTANCE = new PostCssLanguage();
 
   private PostCssLanguage(){

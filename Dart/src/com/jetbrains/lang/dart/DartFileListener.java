@@ -369,7 +369,7 @@ public class DartFileListener implements AsyncFileListener {
     }
   }
 
-  private static class DartFileChangeApplier implements ChangeApplier {
+  private static final class DartFileChangeApplier implements ChangeApplier {
     private final List<? extends VFileEvent> myDotPackageEvents;
     private final List<? extends VFileEvent> myMoveOrRenameAnalyzableFileEvents;
 

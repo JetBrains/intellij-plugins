@@ -38,7 +38,7 @@ import java.util.List;
  *
  * @author Yann C&eacute;bron
  */
-public class StrutsConstantHelper {
+public final class StrutsConstantHelper {
 
   private static final Function<String, String> DOT_PATH_FUNCTION = s -> "." + s;
 

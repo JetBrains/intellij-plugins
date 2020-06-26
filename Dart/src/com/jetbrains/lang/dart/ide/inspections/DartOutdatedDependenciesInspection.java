@@ -88,7 +88,7 @@ public class DartOutdatedDependenciesInspection extends LocalInspectionTool {
       manager.createProblemDescriptor(psiFile, errorMessage, true, fixes, ProblemHighlightType.GENERIC_ERROR_OR_WARNING)};
   }
 
-  private static class RunPubFix extends IntentionAndQuickFixAction {
+  private static final class RunPubFix extends IntentionAndQuickFixAction {
     private final String myFixName;
     private final String myActionId;
 

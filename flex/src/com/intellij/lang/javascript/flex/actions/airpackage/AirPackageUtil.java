@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.actions.airpackage;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -33,7 +33,7 @@ import java.util.zip.ZipFile;
 import static com.intellij.lang.javascript.flex.actions.airpackage.AirPackageProjectParameters.*;
 import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMobileDebugTransport;
 
-public class AirPackageUtil {
+public final class AirPackageUtil {
 
   public static final int DEBUG_PORT_DEFAULT = 7936;
 

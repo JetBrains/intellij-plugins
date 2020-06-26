@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package jetbrains.communicator.p2p;
 
 import jetbrains.communicator.core.Pico;
@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
  * @author Kir
  */
 @SuppressWarnings({"HardCodedStringLiteral"})
-public class NetworkUtil {
+public final class NetworkUtil {
   private static final Logger LOG = Logger.getLogger(NetworkUtil.class);
 
   private static final TimeoutCachedValue<List<InetAddress>> ourInterfaces = new TimeoutCachedValue<>(30, TimeUnit.SECONDS, () -> {

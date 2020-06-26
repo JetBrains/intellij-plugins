@@ -29,7 +29,7 @@ import javax.swing.*;
 /**
  * @author Yann C&eacute;bron
  */
-public class OgnlFileType extends LanguageFileType {
+public final class OgnlFileType extends LanguageFileType {
 
   public static final OgnlFileType INSTANCE = new OgnlFileType();
 

@@ -25,7 +25,7 @@ import java.util.function.Supplier;
  *
  * @author Yann C&eacute;bron
  */
-public class StrutsBundle extends DynamicBundle {
+public final class StrutsBundle extends DynamicBundle {
 
   public static String message(@NotNull @PropertyKey(resourceBundle = PATH_TO_BUNDLE) String key, Object @NotNull ... params) {
     return ourInstance.getMessage(key, params);

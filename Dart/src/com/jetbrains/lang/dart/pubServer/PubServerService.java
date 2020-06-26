@@ -83,7 +83,7 @@ final class PubServerService extends NetService {
 
   private final Object myServerReadyLock = new Object();
 
-  private static class ServerInfo {
+  private static final class ServerInfo {
     private final InetSocketAddress address;
     private final Deque<Channel> freeServerChannels = PlatformDependent.newConcurrentDeque();
 
@@ -92,7 +92,7 @@ final class PubServerService extends NetService {
     }
   }
 
-  private static class ClientInfo {
+  private static final class ClientInfo {
     private final Channel channel;
     private final HttpHeaders extraHeaders;
 

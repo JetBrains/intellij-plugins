@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.osgi.jps.build;
 
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +18,7 @@ import java.util.Map;
 /**
  * @author michael.golubev
  */
-public class OsmorcBuildTargetType extends ModuleBasedBuildTargetType<OsmorcBuildTarget> {
+public final class OsmorcBuildTargetType extends ModuleBasedBuildTargetType<OsmorcBuildTarget> {
   public static final OsmorcBuildTargetType INSTANCE = new OsmorcBuildTargetType();
 
   private OsmorcBuildTargetType() {

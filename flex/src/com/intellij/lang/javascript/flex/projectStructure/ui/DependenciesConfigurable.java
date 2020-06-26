@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -104,7 +104,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     public static final Location SDK = new Location("sdk") {
     };
 
-    public static class TableEntry extends Location {
+    public static final class TableEntry extends Location {
       private final String locationString;
 
       private TableEntry(final String locationString) {
@@ -610,7 +610,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
   }
 
-  private static class SdkEntryItem extends MyTableItem {
+  private static final class SdkEntryItem extends MyTableItem {
     private final String url;
     private final LinkageType linkageType;
 
@@ -1721,7 +1721,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
   }
 
-  private static class LibraryTableModifiableModelWrapper implements LibraryTable.ModifiableModel {
+  private static final class LibraryTableModifiableModelWrapper implements LibraryTable.ModifiableModel {
     private final LibraryTable.ModifiableModel myDelegate;
     private final Condition<Library> myLibraryFilter;
 

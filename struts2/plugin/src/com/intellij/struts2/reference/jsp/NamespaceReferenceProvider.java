@@ -59,7 +59,7 @@ public class NamespaceReferenceProvider extends PsiReferenceProvider {
   }
 
 
-  private static class NamespaceReference extends PsiReferenceBase.Poly<XmlAttributeValue>
+  private static final class NamespaceReference extends PsiReferenceBase.Poly<XmlAttributeValue>
       implements EmptyResolveMessageProvider {
 
     private static final Function<StrutsPackage, LookupElement> STRUTS_PACKAGE_LOOKUP_ELEMENT_FUNCTION =

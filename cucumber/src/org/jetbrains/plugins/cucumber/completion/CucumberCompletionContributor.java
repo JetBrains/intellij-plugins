@@ -1,4 +1,4 @@
-  // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+  // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.completion;
 
 import com.intellij.codeInsight.TailType;
@@ -95,7 +95,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
           if (coveringElement instanceof PsiFileSystemItem) {
             addFeatureKeywords(result, gherkinKeywordTable);
           } else if (coveringElement instanceof GherkinFeature) {
-            if (gherkin6Enabled) { 
+            if (gherkin6Enabled) {
               addRuleKeyword(result, gherkinKeywordTable);
             }
             addScenarioKeywords(result, psiFile, position, gherkinKeywordTable);
@@ -130,8 +130,8 @@ public class CucumberCompletionContributor extends CompletionContributor {
                                      @NotNull GherkinKeywordTable gherkinKeywordTable) {
     addKeywordsToResult(gherkinKeywordTable.getRuleKeywords(), result, true);
   }
-  
-  private static void addScenarioKeywords(@NotNull CompletionResultSet result, @NotNull PsiFile originalFile, 
+
+  private static void addScenarioKeywords(@NotNull CompletionResultSet result, @NotNull PsiFile originalFile,
                                           @NotNull PsiElement originalPosition, @NotNull GherkinKeywordTable table) {
     final List<String> keywords = new ArrayList<>();
 
@@ -344,7 +344,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
       return result;
     }
 
-  private static class StepInsertHandler implements InsertHandler<LookupElement> {
+  private static final class StepInsertHandler implements InsertHandler<LookupElement> {
     private final List<TextRange> ranges;
 
     private StepInsertHandler(List<TextRange> ranges) {

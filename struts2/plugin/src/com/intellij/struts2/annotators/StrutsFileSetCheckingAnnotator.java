@@ -148,7 +148,7 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
   /**
    * Adds the current struts.xml file to an existing file set.
    */
-  private static class AddToFileSetFix extends BaseIntentionAction implements Iconable {
+  private static final class AddToFileSetFix extends BaseIntentionAction implements Iconable {
 
     private AddToFileSetFix(final String filename) {
       setText(StrutsBundle.message("annotators.fileset.fix.add.to.fileset", filename));

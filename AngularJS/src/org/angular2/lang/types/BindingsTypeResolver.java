@@ -51,7 +51,7 @@ import static com.intellij.util.containers.ContainerUtil.*;
 import static org.angular2.entities.Angular2EntityUtils.TEMPLATE_REF;
 import static org.angular2.lang.types.Angular2TypeUtils.getEventVariableType;
 
-class BindingsTypeResolver {
+final class BindingsTypeResolver {
 
   private final @NotNull PsiElement myElement;
   private final @NotNull List<Angular2Directive> myMatched;

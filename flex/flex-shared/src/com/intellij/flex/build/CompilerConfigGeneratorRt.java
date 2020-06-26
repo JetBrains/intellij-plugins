@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.build;
 
 import com.intellij.flex.FlexCommonBundle;
@@ -40,7 +40,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public class CompilerConfigGeneratorRt {
+public final class CompilerConfigGeneratorRt {
 
   private static final String[] LIB_ORDER =
     {"framework", "textLayout", "osmf", "spark", "sparkskins", "rpc", "charts", "spark_dmv", "mx", "advancedgrids"};

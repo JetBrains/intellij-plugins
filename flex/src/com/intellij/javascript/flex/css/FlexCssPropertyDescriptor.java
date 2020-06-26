@@ -271,7 +271,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     return value;
   }
 
-  private static class DocumentationElement {
+  private static final class DocumentationElement {
     String header;
     String documentation;
 
@@ -403,7 +403,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     }
   }
 
-  private static class PairInfo {
+  private static final class PairInfo {
     final PsiElement myPair;
     final String myJsClassQName;
 

@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.model;
 
 import com.intellij.flex.model.bc.JpsFlexModuleOrProjectCompilerOptions;
@@ -13,7 +14,7 @@ import org.jetbrains.jps.model.ex.JpsCompositeElementBase;
 import org.jetbrains.jps.model.ex.JpsElementChildRoleBase;
 import org.jetbrains.jps.model.serialization.JpsProjectExtensionSerializer;
 
-public class JpsFlexProjectLevelCompilerOptionsExtension extends JpsCompositeElementBase<JpsFlexProjectLevelCompilerOptionsExtension> {
+public final class JpsFlexProjectLevelCompilerOptionsExtension extends JpsCompositeElementBase<JpsFlexProjectLevelCompilerOptionsExtension> {
 
   private static final JpsElementChildRole<JpsFlexProjectLevelCompilerOptionsExtension> ROLE =
     JpsElementChildRoleBase.create("flex project level compiler options holder");

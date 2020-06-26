@@ -7,7 +7,7 @@ import org.apache.commons.chain.impl.ChainBase;
 /**
  * The starting point of the externalize to class chain.
  */
-public class ExternalizeToClassChain extends ChainBase {
+public final class ExternalizeToClassChain extends ChainBase {
 
     private static final Logger _logger = Logger.getInstance(ExternalizeToClassChain.class);
 

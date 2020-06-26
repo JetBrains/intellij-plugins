@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Yann C&eacute;bron
  */
-public class StrutsConstantKey<T> {
+public final class StrutsConstantKey<T> {
 
   private final String key;
 

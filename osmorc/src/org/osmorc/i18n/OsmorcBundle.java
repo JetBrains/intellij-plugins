@@ -41,7 +41,7 @@ import java.util.function.Supplier;
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
-public class OsmorcBundle extends DynamicBundle {
+public final class OsmorcBundle extends DynamicBundle {
   private static final String PATH_TO_BUNDLE = "messages.OsmorcBundle";
   private static final AbstractBundle INSTANCE = new OsmorcBundle();
 

@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.prettierjs;
 
 import com.intellij.javascript.nodejs.util.NodePackage;
@@ -21,7 +22,7 @@ public interface PrettierLanguageService {
     return ((PrettierLanguageServiceImpl)ServiceManager.getService(project, PrettierLanguageService.class));
   }
 
-  class FormatResult {
+  final class FormatResult {
     public static final FormatResult IGNORED = new FormatResult(null, null, true, false);
     public static final FormatResult UNSUPPORTED = new FormatResult(null, null, false, true);
     public final String result;

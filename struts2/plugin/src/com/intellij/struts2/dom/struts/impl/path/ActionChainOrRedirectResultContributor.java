@@ -76,7 +76,7 @@ public class ActionChainOrRedirectResultContributor extends StrutsResultContribu
   }
 
 
-  private static class ActionChainReference extends PsiReferenceBase<XmlTag> implements EmptyResolveMessageProvider {
+  private static final class ActionChainReference extends PsiReferenceBase<XmlTag> implements EmptyResolveMessageProvider {
 
     private final String currentPackage;
     private final StrutsModel model;

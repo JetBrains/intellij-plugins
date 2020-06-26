@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.build;
 
 import com.intellij.flex.FlexCommonBundle;
@@ -38,7 +39,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
+public final class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
 
   private final @NotNull JpsFlexBuildConfiguration myBC;
   private final @NotNull String myId;

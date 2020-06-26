@@ -11,7 +11,7 @@ import javax.swing.*;
 /**
  * @author Alexey Chmutov
  */
-public class TelFileType extends LanguageFileType {
+public final class TelFileType extends LanguageFileType {
   public static final TelFileType INSTANCE = new TelFileType();
   private TelFileType() {
     super(TelLanguage.INSTANCE);

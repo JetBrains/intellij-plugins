@@ -39,7 +39,7 @@ import org.osgi.framework.Version;
 /**
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
-public class BundleVersionParser extends StandardHeaderParser {
+public final class BundleVersionParser extends StandardHeaderParser {
   public static final HeaderParser INSTANCE = new BundleVersionParser();
 
   private BundleVersionParser() { }

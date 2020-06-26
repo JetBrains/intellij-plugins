@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author Alexey Chmutov
  */
-public class TelPsiUtil {
+public final class TelPsiUtil {
   private TelPsiUtil() {
   }
 

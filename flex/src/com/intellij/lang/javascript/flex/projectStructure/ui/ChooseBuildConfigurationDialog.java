@@ -35,7 +35,7 @@ import java.util.Map;
 /**
  * @author ksafonov
  */
-public class ChooseBuildConfigurationDialog extends DialogWrapper {
+public final class ChooseBuildConfigurationDialog extends DialogWrapper {
   private final Map<Module, List<FlexBCConfigurable>> myTreeItems;
   private Tree myTree;
   private DefaultMutableTreeNode[] mySelection;

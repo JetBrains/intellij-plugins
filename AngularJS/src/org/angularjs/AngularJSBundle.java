@@ -8,7 +8,7 @@ import org.jetbrains.annotations.PropertyKey;
 
 import java.util.function.Supplier;
 
-public class AngularJSBundle extends DynamicBundle {
+public final class AngularJSBundle extends DynamicBundle {
   @NonNls public static final String BUNDLE = "messages.AngularJSBundle";
   private static final AngularJSBundle INSTANCE = new AngularJSBundle();
 

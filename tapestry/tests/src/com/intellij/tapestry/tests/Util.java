@@ -17,7 +17,7 @@ import java.io.IOException;
  *
  * @author Alexey Chmutov
  */
-public class Util {
+public final class Util {
   protected static final String DOT_TML = "." + TapestryConstants.TEMPLATE_FILE_EXTENSION;
   protected static final String DOT_JAVA = ".java";
   protected static final String DOT_GROOVY = ".groovy";

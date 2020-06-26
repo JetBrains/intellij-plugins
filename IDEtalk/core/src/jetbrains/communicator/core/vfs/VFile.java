@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package jetbrains.communicator.core.vfs;
 
@@ -13,7 +13,7 @@ import java.util.Vector;
  * @author Kir
  *
  */
-public class VFile implements Comparable, Cloneable {
+public final class VFile implements Comparable, Cloneable {
   private String myContentPath;
   private final String myFullPath;
   private final boolean myWritable;

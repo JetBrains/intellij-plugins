@@ -333,7 +333,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
     }
   }
 
-  private static class MyCompletionResultsConsumer implements CompletionResultsConsumer {
+  private static final class MyCompletionResultsConsumer implements CompletionResultsConsumer {
 
     private final CompletionResultSet myResult;
     private final List<Angular2AttributeDescriptor> myDescriptors;

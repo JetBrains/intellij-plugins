@@ -28,7 +28,7 @@ import java.util.concurrent.TimeoutException;
  * @author Kir
  */
 @NonNls
-public class UIUtil {
+public final class UIUtil {
   public static final int BLINK_DELAY = 800;
 
   private UIUtil() {

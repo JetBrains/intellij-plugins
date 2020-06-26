@@ -27,7 +27,7 @@ import java.util.Arrays;
  *
  * @author Yann C&eacute;bron
  */
-public class ResultTypeResolver {
+public final class ResultTypeResolver {
 
   private ResultTypeResolver() {
   }

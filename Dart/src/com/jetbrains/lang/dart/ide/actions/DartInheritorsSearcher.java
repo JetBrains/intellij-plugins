@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Set;
 
 public class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, DefinitionsScopedSearch.SearchParameters> {
-  private static class HierarchyInfo {
+  private static final class HierarchyInfo {
     @NotNull final String filePath;
     final int offset;
     final long modCount;

@@ -83,7 +83,7 @@ public class UnregisteredActivatorInspection extends AbstractOsgiVisitor {
     };
   }
 
-  private static class RegisterInManifestQuickfix extends AbstractOsgiQuickFix {
+  private static final class RegisterInManifestQuickfix extends AbstractOsgiQuickFix {
     private final String myActivatorClass;
 
     private RegisterInManifestQuickfix(@NotNull String activatorClass) {
@@ -105,7 +105,7 @@ public class UnregisteredActivatorInspection extends AbstractOsgiVisitor {
     }
   }
 
-  private static class RegisterInConfigurationQuickfix extends AbstractOsgiQuickFix {
+  private static final class RegisterInConfigurationQuickfix extends AbstractOsgiQuickFix {
     private final String myActivatorClass;
     private final OsmorcFacetConfiguration myConfiguration;
 

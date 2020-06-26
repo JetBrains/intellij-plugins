@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight.template;
 
 import com.intellij.codeInsight.completion.CompletionUtil;
@@ -68,7 +68,7 @@ public class Angular2TemplateElementsScopeProvider extends Angular2TemplateScope
     return Collections.singletonList(templateRootScope.findBestMatchingTemplateScope(notNull(hostElement, element)));
   }
 
-  private static class Angular2TemplateElementScope extends Angular2TemplateScope {
+  private static final class Angular2TemplateElementScope extends Angular2TemplateScope {
 
     private final List<JSPsiElementBase> elements = new ArrayList<>();
 

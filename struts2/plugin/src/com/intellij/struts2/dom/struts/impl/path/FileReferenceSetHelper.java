@@ -38,7 +38,7 @@ import java.util.Objects;
  *
  * @author Yann C&eacute;bron
  */
-public class FileReferenceSetHelper {
+public final class FileReferenceSetHelper {
 
   private FileReferenceSetHelper() {
   }

@@ -6,7 +6,7 @@ import com.intellij.lang.Language;
 /**
  * @author Alexey Chmutov
  */
-public class TelLanguage extends Language implements InjectableLanguage {
+public final class TelLanguage extends Language implements InjectableLanguage {
 
   public static final TelLanguage INSTANCE = new TelLanguage();
 

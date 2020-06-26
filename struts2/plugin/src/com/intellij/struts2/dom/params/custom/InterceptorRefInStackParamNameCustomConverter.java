@@ -92,7 +92,7 @@ public class InterceptorRefInStackParamNameCustomConverter extends ParamNameConv
   }
 
 
-  private static class InterceptorRefPsiReference extends PsiReferenceBase<PsiElement>
+  private static final class InterceptorRefPsiReference extends PsiReferenceBase<PsiElement>
       implements EmptyResolveMessageProvider {
 
     private final InterceptorRef resolvedInterceptorRef;

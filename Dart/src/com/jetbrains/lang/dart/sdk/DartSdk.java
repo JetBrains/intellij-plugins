@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class DartSdk {
+public final class DartSdk {
   public static final String DART_SDK_LIB_NAME = "Dart SDK";
   private static final String UNKNOWN_VERSION = "unknown";
 

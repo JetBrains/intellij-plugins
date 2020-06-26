@@ -34,7 +34,7 @@ import org.jetbrains.lang.manifest.psi.HeaderValuePart;
 /**
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
-public class RequireBundleParser extends OsgiHeaderParser {
+public final class RequireBundleParser extends OsgiHeaderParser {
   public static final HeaderParser INSTANCE = new RequireBundleParser();
 
   private RequireBundleParser() { }

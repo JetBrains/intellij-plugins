@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.model.bc.impl;
 
 import com.intellij.flex.model.bc.JpsAirPackageEntry;
@@ -65,7 +66,7 @@ public class JpsAirPackageEntryImpl extends JpsElementBase<JpsAirPackageEntryImp
     myPathInPackage = state.PATH_IN_PACKAGE;
   }
 
-  private static class JpsAirPackageEntryRole extends JpsElementChildRoleBase<JpsAirPackageEntry>
+  private static final class JpsAirPackageEntryRole extends JpsElementChildRoleBase<JpsAirPackageEntry>
     implements JpsElementCreator<JpsAirPackageEntry> {
 
     private JpsAirPackageEntryRole() {

@@ -34,7 +34,7 @@ import static junit.framework.Assert.assertNotNull;
  *
  * @author Yann C&eacute;bron
  */
-class AnnotatorTestUtils {
+final class AnnotatorTestUtils {
 
   private AnnotatorTestUtils() {
   }

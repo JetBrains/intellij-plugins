@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.compiler.options.CompilerUIConfigurable;
@@ -896,7 +896,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     return sdkVersion == null ? UNKNOWN_SDK_VERSION : sdkVersion;
   }
 
-  private class RepeatableValueEditor extends TextFieldWithBrowseButton {
+  private final class RepeatableValueEditor extends TextFieldWithBrowseButton {
     private final Project myProject;
     private CompilerOptionInfo myInfo;
     private String myValue;

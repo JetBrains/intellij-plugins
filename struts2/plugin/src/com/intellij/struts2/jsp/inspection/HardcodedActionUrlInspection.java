@@ -94,7 +94,7 @@ public class HardcodedActionUrlInspection extends XmlSuppressableInspectionTool 
   }
 
 
-  private static class WrapWithSUrl implements LocalQuickFix {
+  private static final class WrapWithSUrl implements LocalQuickFix {
 
     private final String myActionExtension;
 

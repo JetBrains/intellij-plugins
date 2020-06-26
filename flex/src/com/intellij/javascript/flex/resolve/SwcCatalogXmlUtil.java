@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class SwcCatalogXmlUtil {
+public final class SwcCatalogXmlUtil {
 
   /**
    * <code><b>Pair.first</b></code> is modification stamp of <i>catalog.xml</i> file when this user data was put<br>
@@ -48,7 +48,7 @@ public class SwcCatalogXmlUtil {
   private SwcCatalogXmlUtil() {
   }
 
-  public static class ComponentFromCatalogXml {
+  public static final class ComponentFromCatalogXml {
     public final @NotNull String myName;
     public final @NotNull String myClassFqn;
     public final @NotNull String myUri;
@@ -65,7 +65,7 @@ public class SwcCatalogXmlUtil {
     }
   }
 
-  public static class ComponentFromManifest {
+  public static final class ComponentFromManifest {
     public final @NotNull String myComponentName;
     public final @NotNull String myClassFqn;
 

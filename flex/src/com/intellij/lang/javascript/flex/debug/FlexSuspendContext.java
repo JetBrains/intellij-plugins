@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.openapi.application.ReadAction;
@@ -40,7 +40,7 @@ public class FlexSuspendContext extends XSuspendContext {
     return myFlexExecutionStack;
   }
 
-  private static class FlexExecutionStack extends XExecutionStack {
+  private static final class FlexExecutionStack extends XExecutionStack {
     private final FlexStackFrame myTopFrame;
     private @Nullable List<XStackFrame> myAprioriKnownFrames;
 

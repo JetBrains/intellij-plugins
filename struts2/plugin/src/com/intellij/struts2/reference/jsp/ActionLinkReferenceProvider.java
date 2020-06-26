@@ -97,7 +97,7 @@ TODO not needed so far ?!
   }
 
 
-  private static class ActionLinkReference extends PsiReferenceBase<PsiElement> implements EmptyResolveMessageProvider {
+  private static final class ActionLinkReference extends PsiReferenceBase<PsiElement> implements EmptyResolveMessageProvider {
 
     private final StrutsModel strutsModel;
     private final List<String> actionExtensions;
@@ -211,7 +211,7 @@ TODO not needed so far ?!
   /**
    * Provides reference to S2-package within action-path.
    */
-  private static class ActionLinkPackageReference extends PsiReferenceBase<PsiElement> implements EmptyResolveMessageProvider {
+  private static final class ActionLinkPackageReference extends PsiReferenceBase<PsiElement> implements EmptyResolveMessageProvider {
 
     private final String namespace;
     private final List<StrutsPackage> allStrutsPackages;

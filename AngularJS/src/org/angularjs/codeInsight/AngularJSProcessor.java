@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs.codeInsight;
 
 import com.intellij.codeInsight.completion.CompletionUtil;
@@ -105,7 +106,7 @@ public class AngularJSProcessor {
     return ctrlName != null ? ctrlName : $CTRL;
   }
 
-  private static class AngularJSLocalImplicitElement extends JSLocalImplicitElementImpl {
+  private static final class AngularJSLocalImplicitElement extends JSLocalImplicitElementImpl {
     private final @NotNull XmlFile myFile;
 
     private AngularJSLocalImplicitElement(final @NotNull XmlFile file,

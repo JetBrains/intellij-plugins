@@ -513,7 +513,7 @@ public class DartServerData {
     }
   }
 
-  public static class DartHighlightRegion extends DartRegion {
+  public static final class DartHighlightRegion extends DartRegion {
     private final String type;
 
     private DartHighlightRegion(final int offset, final int length, @NotNull final String type) {
@@ -526,7 +526,7 @@ public class DartServerData {
     }
   }
 
-  public static class DartError extends DartRegion {
+  public static final class DartError extends DartRegion {
     @NotNull private final String mySeverity;
     @Nullable private final String myCode;
     @NotNull private final String myMessage;
@@ -611,7 +611,7 @@ public class DartServerData {
     }
   }
 
-  public static class DartNavigationTarget {
+  public static final class DartNavigationTarget {
     private final String myFile;
     private final int myOriginalOffset;
     private final String myKind;
@@ -640,7 +640,7 @@ public class DartServerData {
     }
   }
 
-  public static class DartOverrideMember extends DartRegion {
+  public static final class DartOverrideMember extends DartRegion {
     @Nullable private final OverriddenMember mySuperclassMember;
     @Nullable private final List<OverriddenMember> myInterfaceMembers;
 

@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.test;
 
 import com.google.gson.JsonSyntaxException;
@@ -409,7 +410,7 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
     return properties;
   }
 
-  private class MyConsoleView extends SMTRunnerConsoleView {
+  private final class MyConsoleView extends SMTRunnerConsoleView {
     private final TestsOutputConsolePrinter myTestsOutputConsolePrinter;
 
     private MyConsoleView(final TestConsoleProperties consoleProperties, final ExecutionEnvironment environment) {

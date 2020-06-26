@@ -122,7 +122,7 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
     return panel;
   }
 
-  private static class PubActionsPanel extends EditorNotificationPanel {
+  private static final class PubActionsPanel extends EditorNotificationPanel {
     private PubActionsPanel(@NotNull DartSdk sdk) {
       super(EditorColors.GUTTER_BACKGROUND);
       createActionLabel(DartBundle.message("pub.get"), "Dart.pub.get");
@@ -183,7 +183,7 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
     }
   }
 
-  private static class OpenWebPageRunnable implements Runnable {
+  private static final class OpenWebPageRunnable implements Runnable {
     @NotNull private final String myUrl;
 
     private OpenWebPageRunnable(@NotNull final String url) {
@@ -196,7 +196,7 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
     }
   }
 
-  private static class OpenDartSettingsRunnable implements Runnable {
+  private static final class OpenDartSettingsRunnable implements Runnable {
     @NotNull private final Project myProject;
 
     private OpenDartSettingsRunnable(@NotNull final Project project) {

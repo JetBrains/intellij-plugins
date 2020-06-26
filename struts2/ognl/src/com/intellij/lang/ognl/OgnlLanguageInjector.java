@@ -24,7 +24,7 @@ import com.intellij.psi.PsiLanguageInjectionHost;
  *
  * @author Yann C&eacute;bron
  */
-public class OgnlLanguageInjector {
+public final class OgnlLanguageInjector {
 
   private final MultiHostRegistrar registrar;
   private final PsiLanguageInjectionHost element;

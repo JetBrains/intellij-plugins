@@ -34,7 +34,7 @@ import java.util.Properties;
  *
  * @author Yann C&eacute;bron
  */
-public class StrutsVersionDetector {
+public final class StrutsVersionDetector {
   private StrutsVersionDetector() { }
 
   @Nullable

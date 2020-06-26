@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author Alexey Chmutov
  */
-public class TapestryPropertyNamingUtil {
+public final class TapestryPropertyNamingUtil {
   private TapestryPropertyNamingUtil() {
   }
 

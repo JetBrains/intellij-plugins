@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.karma.execution;
 
 import com.intellij.openapi.vfs.VirtualFile;
@@ -26,7 +27,7 @@ public class KarmaRunConfigurationRefactoringHandler {
     return null;
   }
 
-  private static class FilePathRefactoringElementListener extends UndoRefactoringElementAdapter {
+  private static final class FilePathRefactoringElementListener extends UndoRefactoringElementAdapter {
     private final KarmaRunConfiguration myConfiguration;
 
     private FilePathRefactoringElementListener(@NotNull KarmaRunConfiguration configuration) {

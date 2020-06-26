@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.model.bc.impl;
 
 import com.intellij.flex.model.bc.ComponentSet;
@@ -25,7 +26,7 @@ import org.jetbrains.jps.model.module.impl.JpsSdkReferenceRole;
 
 import java.util.List;
 
-class JpsFlexDependenciesImpl extends JpsCompositeElementBase<JpsFlexDependenciesImpl> implements JpsFlexDependencies {
+final class JpsFlexDependenciesImpl extends JpsCompositeElementBase<JpsFlexDependenciesImpl> implements JpsFlexDependencies {
   static final JpsFlexDependenciesRole ROLE = new JpsFlexDependenciesRole();
 
   // todo  may be one untyped reference instead of 2 sdk references?

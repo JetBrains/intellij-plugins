@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.base;
 
 import com.intellij.execution.configurations.ConfigurationFactory;
@@ -74,7 +75,7 @@ public abstract class DartRunConfigurationBase extends LocatableConfigurationBas
     return null;
   }
 
-  private class RenameRefactoringListener extends UndoRefactoringElementAdapter {
+  private final class RenameRefactoringListener extends UndoRefactoringElementAdapter {
     private @NotNull String myAffectedPath;
 
     private RenameRefactoringListener(final @NotNull String affectedPath) {

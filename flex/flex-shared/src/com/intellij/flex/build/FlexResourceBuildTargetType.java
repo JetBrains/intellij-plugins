@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.build;
 
 import com.intellij.flex.model.bc.JpsFlexBuildConfigurationManager;
@@ -14,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FlexResourceBuildTargetType extends ModuleBasedBuildTargetType<FlexResourceBuildTarget> {
+public final class FlexResourceBuildTargetType extends ModuleBasedBuildTargetType<FlexResourceBuildTarget> {
   public static final FlexResourceBuildTargetType PRODUCTION = new FlexResourceBuildTargetType("flex-resource-production", false);
   public static final FlexResourceBuildTargetType TEST = new FlexResourceBuildTargetType("flex-resource-test", true);
 

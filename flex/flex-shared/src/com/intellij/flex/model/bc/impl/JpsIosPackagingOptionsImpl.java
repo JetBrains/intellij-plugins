@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.model.bc.impl;
 
 import com.intellij.flex.model.bc.JpsAirPackageEntry;
@@ -14,7 +15,7 @@ import org.jetbrains.jps.model.ex.JpsElementChildRoleBase;
 import java.util.ArrayList;
 import java.util.List;
 
-class JpsIosPackagingOptionsImpl extends JpsAirPackagingOptionsBase<JpsIosPackagingOptionsImpl> implements JpsIosPackagingOptions {
+final class JpsIosPackagingOptionsImpl extends JpsAirPackagingOptionsBase<JpsIosPackagingOptionsImpl> implements JpsIosPackagingOptions {
 
   static final JpsIosPackagingOptionsRole ROLE = new JpsIosPackagingOptionsRole();
 

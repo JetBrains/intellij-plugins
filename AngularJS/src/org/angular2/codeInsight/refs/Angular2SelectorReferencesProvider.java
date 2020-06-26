@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight.refs;
 
 import com.intellij.javaee.ExternalResourceManagerEx;
@@ -90,7 +90,7 @@ public class Angular2SelectorReferencesProvider extends PsiReferenceProvider {
     return descriptorEx != null ? descriptorEx.getElementDescriptor(name, XmlUtil.XHTML_URI) : null;
   }
 
-  private static class HtmlElementReference extends PsiReferenceBase<PsiElement> {
+  private static final class HtmlElementReference extends PsiReferenceBase<PsiElement> {
 
     private final Angular2DirectiveSelectorPsiElement mySelectorPsiElement;
 
@@ -106,7 +106,7 @@ public class Angular2SelectorReferencesProvider extends PsiReferenceProvider {
     }
   }
 
-  private static class HtmlAttributeReference extends PsiPolyVariantReferenceBase<PsiElement> {
+  private static final class HtmlAttributeReference extends PsiPolyVariantReferenceBase<PsiElement> {
 
     private final Angular2DirectiveSelectorPsiElement mySelectorPsiElement;
     private final String myElementName;

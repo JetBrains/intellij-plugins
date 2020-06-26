@@ -90,7 +90,7 @@ public class PackageAccessibilityInspection extends AbstractBaseJavaLocalInspect
     return problems.isEmpty() ? null : problems.toArray(ProblemDescriptor.EMPTY_ARRAY);
   }
 
-  private static class Problem {
+  private static final class Problem {
     final ProblemHighlightType type;
     final String message;
     final LocalQuickFix[] fixes;

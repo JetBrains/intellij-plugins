@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.linter.tslint.service;
 
 import com.google.gson.*;
@@ -175,7 +175,7 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
     }
   }
 
-  private static class GetErrorsCommand extends BaseCommand{
+  private static final class GetErrorsCommand extends BaseCommand{
     public String content;
     private GetErrorsCommand(LocalFilePath filePath, @Nullable LocalFilePath configPath, String content) {
       super(filePath, configPath);
@@ -189,7 +189,7 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
     }
   }
 
-  private static class FixErrorsCommand extends BaseCommand{
+  private static final class FixErrorsCommand extends BaseCommand{
     private FixErrorsCommand(LocalFilePath filePath, @Nullable LocalFilePath configPath) {
       super(filePath, configPath);
     }
@@ -201,7 +201,7 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
     }
   }
 
-  private static class Protocol extends JSLanguageServiceNodeStdProtocolBase {
+  private static final class Protocol extends JSLanguageServiceNodeStdProtocolBase {
     private final NodePackage myNodePackage;
     private final VirtualFile myWorkingDirectory;
 

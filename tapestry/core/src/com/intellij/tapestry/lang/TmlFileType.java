@@ -10,7 +10,7 @@ import javax.swing.*;
 /**
  * @author Alexey Chmutov
  */
-public class TmlFileType extends XmlLikeFileType {
+public final class TmlFileType extends XmlLikeFileType {
 
   public static final TmlFileType INSTANCE = new TmlFileType();
 

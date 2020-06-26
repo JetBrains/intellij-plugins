@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.flex.model.bc.LinkageType;
@@ -29,7 +29,7 @@ import java.util.List;
 
 import static com.intellij.openapi.util.SystemInfo.isWinVistaOrNewer;
 
-public class FlashPlayerTrustUtil {
+public final class FlashPlayerTrustUtil {
 
   private final static String WINDOWS_VISTA_AND_7_TRUST_DIR_REL_PATH =
     "\\AppData\\Roaming\\Macromedia\\Flash Player\\#Security\\FlashPlayerTrust";

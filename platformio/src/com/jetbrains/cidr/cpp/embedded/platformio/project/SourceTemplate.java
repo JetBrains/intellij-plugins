@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
-public class SourceTemplate {
+public final class SourceTemplate {
   public static final SourceTemplate NONE = new SourceTemplate("", "");
   public static final SourceTemplate GENERIC = new SourceTemplate(
     "main.c",

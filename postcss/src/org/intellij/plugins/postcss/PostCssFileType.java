@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.nio.charset.Charset;
 
-public class PostCssFileType extends LanguageFileType {
+public final class PostCssFileType extends LanguageFileType {
   public static final PostCssFileType POST_CSS = new PostCssFileType();
   @NonNls public static final String DEFAULT_EXTENSION = "pcss";
 

@@ -13,7 +13,7 @@ import java.util.HashMap;
 /**
  * The built-in Block element.
  */
-public class BlockComponent extends TapestryComponent {
+public final class BlockComponent extends TapestryComponent {
 
   private final Map<String, TapestryParameter> myParameters = new HashMap<>();
 

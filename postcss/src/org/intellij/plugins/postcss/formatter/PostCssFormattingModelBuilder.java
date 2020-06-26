@@ -28,7 +28,7 @@ public class PostCssFormattingModelBuilder extends CssFormattingModelBuilder {
            leaf.getNode().getElementType() == PostCssTokenTypes.POST_CSS_SIMPLE_VARIABLE_TOKEN;
   }
 
-  private static class PostCssFormattingExtension extends CssFormattingExtension {
+  private static final class PostCssFormattingExtension extends CssFormattingExtension {
     private PostCssFormattingExtension(CommonCodeStyleSettings commonSettings, CssCodeStyleSettings customSettings) {
       super(commonSettings, customSettings);
     }
@@ -53,7 +53,7 @@ public class PostCssFormattingModelBuilder extends CssFormattingModelBuilder {
     }
   }
 
-  private static class PostCssRootBlock extends CssRootBlock {
+  private static final class PostCssRootBlock extends CssRootBlock {
     private PostCssRootBlock(ASTNode _node, CssFormattingExtension extension) {
       super(_node, extension);
     }
@@ -74,7 +74,7 @@ public class PostCssFormattingModelBuilder extends CssFormattingModelBuilder {
     }
   }
 
-  private static class PostCssSelectorBlock extends CssSelectorBlock {
+  private static final class PostCssSelectorBlock extends CssSelectorBlock {
     private PostCssSelectorBlock(ASTNode node, CssFormattingExtension extension) {
       super(node, Indent.getNoneIndent(), extension);
     }
@@ -91,7 +91,7 @@ public class PostCssFormattingModelBuilder extends CssFormattingModelBuilder {
     }
   }
 
-  private static class PostCssPropertyBlock extends CssPropertyBlock {
+  private static final class PostCssPropertyBlock extends CssPropertyBlock {
     private PostCssPropertyBlock(ASTNode _node,
                                  Indent indent,
                                  CssFormattingExtension extension,

@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.expr.lexer;
 
 import com.intellij.lexer.*;
@@ -38,7 +38,7 @@ public class Angular2Lexer extends MergingLexerAdapterBase {
     return new MyLexerPosition(super.getCurrentPosition(), myMergeFunction.isPrevTokenEscapeSequence());
   }
 
-  private static class MyLexerPosition implements LexerPosition {
+  private static final class MyLexerPosition implements LexerPosition {
 
     private final LexerPosition myOriginal;
     private final boolean myPrevTokenEscapeSequence;
@@ -67,7 +67,7 @@ public class Angular2Lexer extends MergingLexerAdapterBase {
     }
   }
 
-  private static class MyMergeFunction implements MergeFunction {
+  private static final class MyMergeFunction implements MergeFunction {
 
     private boolean myPrevTokenEscapeSequence;
 

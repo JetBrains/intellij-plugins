@@ -7,7 +7,7 @@ import java.util.*;
 
 import static com.jetbrains.cidr.cpp.embedded.platformio.project.DeviceTreeNode.TYPE.*;
 
-public class BoardsJsonParser {
+public final class BoardsJsonParser {
 
   public static final String ARDUINO_ID = "arduino";
 

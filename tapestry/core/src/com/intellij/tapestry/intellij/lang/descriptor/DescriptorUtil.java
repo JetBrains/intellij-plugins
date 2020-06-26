@@ -36,7 +36,7 @@ import java.util.List;
 /**
  * @author Alexey Chmutov
  */
-class DescriptorUtil {
+final class DescriptorUtil {
   private DescriptorUtil() {
   }
 

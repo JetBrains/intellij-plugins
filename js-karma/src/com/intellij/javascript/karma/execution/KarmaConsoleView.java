@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.ExecutionResult;
@@ -175,7 +176,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     return null;
   }
 
-  private static class KarmaRootTestProxyFormatter implements SMRootTestProxyFormatter {
+  private static final class KarmaRootTestProxyFormatter implements SMRootTestProxyFormatter {
 
     private final TestTreeView myTreeView;
     private boolean myTestRunProcessTerminated = false;

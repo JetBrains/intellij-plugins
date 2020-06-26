@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.inspections;
 
 import com.intellij.codeInspection.LocalInspectionTool;
@@ -139,7 +139,7 @@ public abstract class AngularModuleConfigurationInspection extends LocalInspecti
     }
   }
 
-  private static class ImportsValidator extends ImportExportValidator<Angular2Module> {
+  private static final class ImportsValidator extends ImportExportValidator<Angular2Module> {
 
     private ImportsValidator(@NotNull Angular2Module module) {
       super(Angular2Module.class, IMPORTS_PROP, module);

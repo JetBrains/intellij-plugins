@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * The built-in Container element.
  */
-public class ContainerComponent extends TapestryComponent {
+public final class ContainerComponent extends TapestryComponent {
 
   private ContainerComponent(IJavaClassType componentClass, TapestryProject project) throws NotTapestryElementException {
     super(componentClass, project);

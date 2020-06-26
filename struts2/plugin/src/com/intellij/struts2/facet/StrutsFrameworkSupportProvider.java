@@ -201,7 +201,7 @@ public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportPr
     });
   }
 
-  private static class Struts2FrameworkSupportConfigurable extends FrameworkSupportConfigurableBase
+  private static final class Struts2FrameworkSupportConfigurable extends FrameworkSupportConfigurableBase
     implements FrameworkSupportWithLibrary {
 
     private Struts2FrameworkSupportConfigurable(FrameworkSupportProviderBase frameworkSupportProvider,

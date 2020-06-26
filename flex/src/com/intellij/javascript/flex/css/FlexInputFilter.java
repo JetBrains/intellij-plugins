@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.css;
 
 import com.intellij.javascript.flex.FlexApplicationComponent;
@@ -12,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 /**
 * @author Eugene.Kudelevsky
 */
-class FlexInputFilter extends DefaultFileTypeSpecificInputFilter {
+final class FlexInputFilter extends DefaultFileTypeSpecificInputFilter {
 
   private FlexInputFilter() {
     super(ActionScriptFileType.INSTANCE, FlexApplicationComponent.SWF_FILE_TYPE, JavaScriptSupportLoader.getMxmlFileType());

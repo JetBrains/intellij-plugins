@@ -182,7 +182,7 @@ public final class Struts2ProjectDescriptorBuilder extends DefaultLightProjectDe
     return result;
   }
 
-  private static class LibraryDefinition {
+  private static final class LibraryDefinition {
     private final String groupId;
     private final String[] artifactIds;
 

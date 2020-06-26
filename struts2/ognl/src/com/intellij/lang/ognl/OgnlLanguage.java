@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NonNls;
 /**
  * @author Yann C&eacute;bron
  */
-public class OgnlLanguage extends Language implements InjectableLanguage {
+public final class OgnlLanguage extends Language implements InjectableLanguage {
 
   @NonNls
   public static final String ID = "OGNL";

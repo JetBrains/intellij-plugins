@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.mxml.schema;
 
 import com.intellij.codeInsight.daemon.IdeValidationHost;
@@ -33,7 +33,7 @@ import java.util.Set;
 
 import static com.intellij.lang.javascript.JavaScriptSupportLoader.*;
 
-public class MxmlLanguageTagsUtil {
+public final class MxmlLanguageTagsUtil {
 
   static final String NAME_ATTRIBUTE = "name";
 
@@ -382,7 +382,7 @@ public class MxmlLanguageTagsUtil {
     }
   }
 
-  private static class DeclareNamespaceIntention implements IntentionAction {
+  private static final class DeclareNamespaceIntention implements IntentionAction {
     private final XmlTag myRootTag;
     private final String myDefaultPrefix;
     private final String myNamespace;

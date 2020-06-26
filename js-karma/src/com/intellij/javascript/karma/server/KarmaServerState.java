@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.karma.server;
 
 import com.google.common.base.Splitter;
@@ -186,7 +187,7 @@ public class KarmaServerState {
     return null;
   }
 
-  private class BrowserEventHandler implements StreamEventHandler {
+  private final class BrowserEventHandler implements StreamEventHandler {
 
     private final String myEventType;
 
