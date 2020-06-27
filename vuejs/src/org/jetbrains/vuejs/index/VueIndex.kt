@@ -4,15 +4,11 @@ package org.jetbrains.vuejs.index
 import com.intellij.javascript.nodejs.packages.NodePackageUtil
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider
-import com.intellij.lang.javascript.psi.JSIndexedPropertyAccessExpression
-import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
-import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScope
@@ -36,7 +32,7 @@ const val COMPOSITION_API_MODULE: String = "@vue/composition-api"
 const val GLOBAL: String = "global"
 const val LOCAL: String = "local"
 const val GLOBAL_BINDING_MARK: String = "*"
-private const val INDEXED_ACCESS_HINT = "[]"
+internal const val INDEXED_ACCESS_HINT = "[]"
 const val DELIMITER = "#"
 
 fun getForAllKeys(scope: GlobalSearchScope, key: StubIndexKey<String, JSImplicitElementProvider>): Collection<JSImplicitElement> {
@@ -82,22 +78,7 @@ fun hasVueClassComponentLibrary(project: Project): Boolean {
   }
 }
 
-fun createImplicitElement(name: String, provider: PsiElement, indexKey: String,
-                          nameType: String? = null,
-                          descriptor: PsiElement? = null,
-                          isGlobal: Boolean = false): JSImplicitElementImpl {
-  val normalized = normalizeNameForIndex(name)
-  val nameTypeRecord = nameType ?: ""
-  val asIndexed = descriptor as? JSIndexedPropertyAccessExpression
-  var descriptorRef = asIndexed?.qualifier?.text ?: (descriptor as? JSReferenceExpression)?.text ?: ""
-  if (asIndexed != null) descriptorRef += INDEXED_ACCESS_HINT
-  return JSImplicitElementImpl.Builder(normalized, provider)
-    .setUserString(indexKey)
-    .setTypeString("${if (isGlobal) 1 else 0}$DELIMITER$nameTypeRecord$DELIMITER$descriptorRef$DELIMITER$name")
-    .toImplicitElement()
-}
-
-private fun normalizeNameForIndex(name: String) = fromAsset(name.substringBeforeLast(GLOBAL_BINDING_MARK))
+internal fun normalizeNameForIndex(name: String) = fromAsset(name.substringBeforeLast(GLOBAL_BINDING_MARK))
 
 fun getVueIndexData(element: JSImplicitElement): VueIndexData? {
   val typeStr = element.typeString ?: return null

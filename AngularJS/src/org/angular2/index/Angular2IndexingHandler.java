@@ -84,9 +84,6 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
     INDEX_MAP.put(ANGULAR2_DIRECTIVE_INDEX_USER_STRING, Angular2SourceDirectiveIndex.KEY);
     INDEX_MAP.put(ANGULAR2_PIPE_INDEX_USER_STRING, Angular2SourcePipeIndex.KEY);
     INDEX_MAP.put(ANGULAR2_MODULE_INDEX_USER_STRING, Angular2SourceModuleIndex.KEY);
-    for (String key : INDEX_MAP.keySet()) {
-      JSImplicitElement.ourUserStringsRegistry.registerUserString(key);
-    }
   }
 
   public static boolean isPipe(@NotNull JSImplicitElement element) {
@@ -251,10 +248,10 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
     }
   }
 
-  private static void addComponentExternalFilesRefs(@NotNull ES6Decorator decorator,
-                                                    @NotNull String namePrefix,
-                                                    @NotNull Consumer<? super JSImplicitElement> processor,
-                                                    @NotNull List<String> fileUrls) {
+  private void addComponentExternalFilesRefs(@NotNull ES6Decorator decorator,
+                                             @NotNull String namePrefix,
+                                             @NotNull Consumer<? super JSImplicitElement> processor,
+                                             @NotNull List<String> fileUrls) {
     for (String fileUrl : fileUrls) {
       int lastSlash = fileUrl.lastIndexOf('/');
       String name = fileUrl.substring(lastSlash + 1);
@@ -265,14 +262,14 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
         continue;
       }
       JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(namePrefix + name, decorator)
-        .setUserString(ANGULAR2_TEMPLATE_URLS_INDEX_USER_STRING);
+        .setUserString(this, ANGULAR2_TEMPLATE_URLS_INDEX_USER_STRING);
       processor.consume(elementBuilder.toImplicitElement());
     }
   }
 
-  private static void addDirective(@NotNull TypeScriptClass directiveClass,
-                                   @NotNull Consumer<? super JSImplicitElement> processor,
-                                   @NonNls @Nullable String selector) {
+  private void addDirective(@NotNull TypeScriptClass directiveClass,
+                            @NotNull Consumer<? super JSImplicitElement> processor,
+                            @NonNls @Nullable String selector) {
     final Set<String> indexNames;
     if (selector == null) {
       selector = "<null>";
@@ -285,29 +282,28 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
       .Builder(notNull(directiveClass.getName(), selector), directiveClass)
       .setType(JSImplicitElement.Type.Class)
       .setTypeString(DIRECTIVE_TYPE + StringUtil.join(indexNames, "/"))
-      .setUserString(ANGULAR2_DIRECTIVE_INDEX_USER_STRING)
+      .setUserString(this, ANGULAR2_DIRECTIVE_INDEX_USER_STRING)
       .toImplicitElement();
     processor.consume(directive);
   }
 
-  private static void addPipe(@NotNull TypeScriptClass pipeClass,
-                              @NotNull Consumer<? super JSImplicitElement> processor,
-                              @NonNls @Nullable String pipe) {
+  private void addPipe(@NotNull TypeScriptClass pipeClass,
+                       @NotNull Consumer<? super JSImplicitElement> processor,
+                       @NonNls @Nullable String pipe) {
     if (pipe == null) {
       pipe = Angular2Bundle.message("angular.description.unnamed");
     }
     JSImplicitElementImpl pipeElement = new JSImplicitElementImpl.Builder(pipe, pipeClass)
-      .setUserString(ANGULAR2_PIPE_INDEX_USER_STRING)
+      .setUserString(this, ANGULAR2_PIPE_INDEX_USER_STRING)
       .setTypeString(PIPE_TYPE)
       .setType(JSImplicitElement.Type.Class)
       .toImplicitElement();
     processor.consume(pipeElement);
   }
 
-  private static void addModule(@NotNull TypeScriptClass moduleClass,
-                                @NotNull Consumer<JSImplicitElement> processor) {
+  private void addModule(@NotNull TypeScriptClass moduleClass, @NotNull Consumer<JSImplicitElement> processor) {
     JSImplicitElementImpl pipeElement = new JSImplicitElementImpl.Builder(NG_MODULE_INDEX_NAME, moduleClass)
-      .setUserString(ANGULAR2_MODULE_INDEX_USER_STRING)
+      .setUserString(this, ANGULAR2_MODULE_INDEX_USER_STRING)
       .setTypeString(MODULE_TYPE)
       .setType(JSImplicitElement.Type.Class)
       .toImplicitElement();
@@ -389,5 +385,10 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
       }
     }
     return null;
+  }
+
+  @Override
+  protected @NotNull Set<@NotNull String> computeJSImplicitElementUserStringKeys() {
+    return INDEX_MAP.keySet();
   }
 }
