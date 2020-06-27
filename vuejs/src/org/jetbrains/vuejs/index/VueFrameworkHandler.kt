@@ -145,7 +145,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
             ?.takeIf { it.startsWith("#") && it.length > 1 }
             ?.let {
               JSImplicitElementImpl.Builder(it.substring(1), property)
-                .setUserString(VueIdIndex.JS_KEY)
+                .setUserString(this, VueIdIndex.JS_KEY)
                 .forbidAstAccess()
                 .toImplicitElement()
             }
@@ -157,7 +157,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
             ?.takeIf { it.isNotBlank() }
             ?.let {
               JSImplicitElementImpl.Builder(it, property)
-                .setUserString(VueUrlIndex.JS_KEY)
+                .setUserString(this, VueUrlIndex.JS_KEY)
                 .forbidAstAccess()
                 .toImplicitElement()
             }
@@ -371,6 +371,26 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       sink?.occurrence(index, element.name)
     }
     return index == VueUrlIndex.KEY
+  }
+
+  fun createImplicitElement(name: String, provider: PsiElement, indexKey: String,
+                            nameType: String? = null,
+                            descriptor: PsiElement? = null,
+                            isGlobal: Boolean = false): JSImplicitElementImpl {
+    val normalized = normalizeNameForIndex(name)
+    val nameTypeRecord = nameType ?: ""
+    val asIndexed = descriptor as? JSIndexedPropertyAccessExpression
+    var descriptorRef = asIndexed?.qualifier?.text ?: (descriptor as? JSReferenceExpression)?.text ?: ""
+    if (asIndexed != null) descriptorRef += INDEXED_ACCESS_HINT
+    return JSImplicitElementImpl.Builder(normalized, provider)
+      .setUserString(this, indexKey)
+      .setTypeString("${if (isGlobal) 1 else 0}$DELIMITER$nameTypeRecord$DELIMITER$descriptorRef$DELIMITER$name")
+      .toImplicitElement()
+  }
+
+  override fun computeJSImplicitElementUserStringKeys(): Set<String> {
+    return setOf(VueUrlIndex.JS_KEY, VueOptionsIndex.JS_KEY, VueMixinBindingIndex.JS_KEY, VueComponentsIndex.JS_KEY,
+                 VueGlobalDirectivesIndex.JS_KEY, VueExtendsBindingIndex.JS_KEY, VueGlobalFiltersIndex.JS_KEY, VueIdIndex.JS_KEY)
   }
 }
 

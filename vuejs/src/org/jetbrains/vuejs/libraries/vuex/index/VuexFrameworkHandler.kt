@@ -103,7 +103,7 @@ class VuexFrameworkHandler : FrameworkIndexingHandler() {
       if (JSSymbolUtil.isAccurateReferenceExpressionName(reference, VUEX_NAMESPACE, STORE)) {
         outData.addImplicitElement(
           JSImplicitElementImpl.Builder(STORE, callExpression)
-            .setUserString(VuexStoreIndex.JS_KEY)
+            .setUserString(this, VuexStoreIndex.JS_KEY)
             .setType(JSImplicitElement.Type.Variable)
             .forbidAstAccess()
             .toImplicitElement())
@@ -114,7 +114,7 @@ class VuexFrameworkHandler : FrameworkIndexingHandler() {
         ?.referenceName
       outData.addImplicitElement(
         JSImplicitElementImpl.Builder(REGISTER_MODULE, callExpression)
-          .setUserString(VuexStoreIndex.JS_KEY)
+          .setUserString(this, VuexStoreIndex.JS_KEY)
           .setTypeString(type)
           .forbidAstAccess()
           .toImplicitElement())
@@ -131,5 +131,9 @@ class VuexFrameworkHandler : FrameworkIndexingHandler() {
 
   override fun addTypeFromResolveResult(evaluator: JSTypeEvaluator, context: JSEvaluateContext, result: PsiElement): Boolean {
     return VuexStoreTypeProvider.addTypeFromResolveResult(evaluator, result)
+  }
+
+  override fun computeJSImplicitElementUserStringKeys(): Set<String> {
+    return setOf(VuexStoreIndex.JS_KEY)
   }
 }
