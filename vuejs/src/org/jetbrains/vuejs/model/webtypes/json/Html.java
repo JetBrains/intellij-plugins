@@ -1,16 +1,12 @@
 
 package org.jetbrains.vuejs.model.webtypes.json;
 
+import com.fasterxml.jackson.annotation.*;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyDescription;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.annotation.JsonValue;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -37,11 +33,11 @@ public class Html {
     @JsonPropertyDescription("Markup language in which descriptions are formatted")
     private Html.DescriptionMarkup descriptionMarkup = Html.DescriptionMarkup.fromValue("none");
     @JsonProperty("tags")
-    private List<HtmlTag> tags = new ArrayList<HtmlTag>();
+    private List<HtmlTag> tags = new ArrayList<>();
     @JsonProperty("attributes")
-    private List<HtmlAttribute> attributes = new ArrayList<HtmlAttribute>();
+    private List<HtmlAttribute> attributes = new ArrayList<>();
     @JsonProperty("vue-filters")
-    private List<HtmlVueFilter> vueFilters = new ArrayList<HtmlVueFilter>();
+    private List<HtmlVueFilter> vueFilters = new ArrayList<>();
 
     /**
      * Language in which types as specified.
@@ -120,7 +116,7 @@ public class Html {
         MARKDOWN("markdown"),
         NONE("none");
         private final String value;
-        private final static Map<String, Html.DescriptionMarkup> CONSTANTS = new HashMap<String, Html.DescriptionMarkup>();
+        private final static Map<String, Html.DescriptionMarkup> CONSTANTS = new HashMap<>();
 
         static {
             for (Html.DescriptionMarkup c: values()) {
@@ -128,7 +124,7 @@ public class Html {
             }
         }
 
-        private DescriptionMarkup(String value) {
+        DescriptionMarkup(String value) {
             this.value = value;
         }
 
@@ -163,7 +159,7 @@ public class Html {
 
         TYPESCRIPT("typescript");
         private final String value;
-        private final static Map<String, Html.TypesSyntax> CONSTANTS = new HashMap<String, Html.TypesSyntax>();
+        private final static Map<String, Html.TypesSyntax> CONSTANTS = new HashMap<>();
 
         static {
             for (Html.TypesSyntax c: values()) {
@@ -171,7 +167,7 @@ public class Html {
             }
         }
 
-        private TypesSyntax(String value) {
+        TypesSyntax(String value) {
             this.value = value;
         }
 

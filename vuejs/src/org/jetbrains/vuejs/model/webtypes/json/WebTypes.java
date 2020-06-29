@@ -1,17 +1,10 @@
 
 package org.jetbrains.vuejs.model.webtypes.json;
 
+import com.fasterxml.jackson.annotation.*;
+
 import java.util.HashMap;
 import java.util.Map;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyDescription;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.annotation.JsonValue;
 
 
 /**
@@ -61,7 +54,7 @@ public class WebTypes {
     @JsonProperty("contributions")
     private Contributions contributions;
     @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    private Map<String, Object> additionalProperties = new HashMap<>();
 
     /**
      * Framework, for which the components are provided by the library
@@ -162,7 +155,7 @@ public class WebTypes {
 
         VUE("vue");
         private final String value;
-        private final static Map<String, WebTypes.Framework> CONSTANTS = new HashMap<String, WebTypes.Framework>();
+        private final static Map<String, WebTypes.Framework> CONSTANTS = new HashMap<>();
 
         static {
             for (WebTypes.Framework c: values()) {
@@ -170,7 +163,7 @@ public class WebTypes {
             }
         }
 
-        private Framework(String value) {
+        Framework(String value) {
             this.value = value;
         }
 
