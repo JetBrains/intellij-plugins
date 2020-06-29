@@ -88,7 +88,7 @@ open class VueWebTypesEntitiesContainer(project: Project, packageJson: VirtualFi
                        .asSequence()
                        .plus(attribute.name!!)
                        .filter { it.startsWith(ATTR_DIRECTIVE_PREFIX) }
-                       .map { Pair(it, VueWebTypesDirective(attribute, support)) }
+                       .map { Pair(it.substring(2), VueWebTypesDirective(attribute, support)) }
                    }
                    ?.toMap()
                  ?: Collections.emptyMap()
