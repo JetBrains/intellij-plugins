@@ -6,9 +6,8 @@ import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.openapi.application.PathManager
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.testFramework.EdtTestUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.intellij.util.ThrowableRunnable
+import com.intellij.testFramework.runInEdtAndWait
 import junit.framework.TestCase
 import one.util.streamex.StreamEx
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpression
@@ -60,7 +59,7 @@ class VueTemplateInjectionsTest : BasePlatformTestCase() {
 
   @After
   public override fun tearDown() {
-    EdtTestUtil.runInEdtAndWait(ThrowableRunnable { super.tearDown() })
+    runInEdtAndWait { super.tearDown() }
   }
 
   override fun getTestDataPath(): String {

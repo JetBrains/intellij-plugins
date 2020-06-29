@@ -1,12 +1,11 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang
 
-import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import com.intellij.openapi.util.EmptyRunnable
-import com.intellij.testFramework.EdtTestUtil
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
-import com.intellij.util.ThrowableRunnable
+import com.intellij.testFramework.runInEdtAndWait
 
 fun CodeInsightTestFixture.configureDependencies(vararg modules: VueTestModule) {
   createPackageJsonWithVueDependency(
@@ -18,12 +17,12 @@ fun CodeInsightTestFixture.configureDependencies(vararg modules: VueTestModule) 
     tempDirFixture.copyAll("${getVueTestDataPath()}/modules/${module.folder}/node_modules", "node_modules")
   }
   // TODO - this shouldn't be needed, something's wrong with how roots are set within tests - check RootIndex#myRootInfos
-  EdtTestUtil.runInEdtAndWait(ThrowableRunnable {
-    WriteAction.run<RuntimeException> {
+  runInEdtAndWait {
+    runWriteAction {
       ProjectRootManagerEx.getInstanceEx(project)
         .makeRootsChange(EmptyRunnable.getInstance(), false, true)
     }
-  })
+  }
 }
 
 enum class VueTestModule(val folder: String, vararg packageNames: String) {
