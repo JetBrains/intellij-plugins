@@ -61,7 +61,7 @@ public class ComponentDeclarationNavigationTest extends Angular2CodeInsightFixtu
 
   @Override
   @After
-  public void tearDown() {
+  public void tearDown() throws Exception {
     EdtTestUtil.runInEdtAndWait(() -> super.tearDown());
   }
 

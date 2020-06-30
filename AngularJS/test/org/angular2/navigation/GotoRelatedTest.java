@@ -65,7 +65,7 @@ public class GotoRelatedTest extends Angular2CodeInsightFixtureTestCase {
 
   @Override
   @After
-  public void tearDown() {
+  public void tearDown() throws Exception {
     EdtTestUtil.runInEdtAndWait(() -> super.tearDown());
   }
 

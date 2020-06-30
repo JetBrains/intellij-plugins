@@ -54,7 +54,7 @@ public class AngularConfigTest extends BasePlatformTestCase {
 
   @Override
   @After
-  public void tearDown() {
+  public void tearDown() throws Exception {
     EdtTestUtil.runInEdtAndWait(() -> super.tearDown());
   }
 
@@ -79,7 +79,7 @@ public class AngularConfigTest extends BasePlatformTestCase {
   }
 
   @Test
-  public void testTsLintConfigSelection() {
+  public void testTsLintConfigSelection() throws Exception {
     EdtTestUtil.runInEdtAndWait(() -> {
       VirtualFile rootDir = myFixture.copyDirectoryToProject(myDirName, "./");
 
