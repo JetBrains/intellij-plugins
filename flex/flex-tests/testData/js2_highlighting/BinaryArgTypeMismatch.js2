@@ -59,7 +59,7 @@ if (b == a) {}
 var s:String = "1";
 s+= 500; // similar to s+= 500
 
-var f: String = <error>function(): int { return 0; }</error>;
+var f: String = <error>function</error>(): int { return 0; };
 var flag:Boolean = false;
 var l:String = flag ? "aa" : <error>123</error>;
 var l2:String = flag ? <error>123</error>: "aa";

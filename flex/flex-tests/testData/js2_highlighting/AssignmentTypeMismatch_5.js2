@@ -1,1 +1,1 @@
-var x:int = <error>function() {}</error>;
+var x:int = <error>function</error>() {};
