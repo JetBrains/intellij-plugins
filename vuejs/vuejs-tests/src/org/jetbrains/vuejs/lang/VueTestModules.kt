@@ -1,7 +1,12 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang
 
+import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.roots.ex.ProjectRootManagerEx
+import com.intellij.openapi.util.EmptyRunnable
+import com.intellij.testFramework.EdtTestUtil
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
+import com.intellij.util.ThrowableRunnable
 
 fun CodeInsightTestFixture.configureDependencies(vararg modules: VueTestModule) {
   createPackageJsonWithVueDependency(
@@ -12,6 +17,13 @@ fun CodeInsightTestFixture.configureDependencies(vararg modules: VueTestModule) 
   for (module in modules) {
     tempDirFixture.copyAll("${getVueTestDataPath()}/modules/${module.folder}/node_modules", "node_modules")
   }
+  // TODO - this shouldn't be needed, something's wrong with how roots are set within tests - check RootIndex#myRootInfos
+  EdtTestUtil.runInEdtAndWait(ThrowableRunnable {
+    WriteAction.run<RuntimeException> {
+      ProjectRootManagerEx.getInstanceEx(project)
+        .makeRootsChange(EmptyRunnable.getInstance(), false, true)
+    }
+  })
 }
 
 enum class VueTestModule(val folder: String, vararg packageNames: String) {
@@ -21,6 +33,7 @@ enum class VueTestModule(val folder: String, vararg packageNames: String) {
   ELEMENT_UI_2_0_5("element-ui"),
   IVIEW_2_8_0("iview"),
   MINT_UI_2_2_3("mint-ui"),
+  NUXT_2_8_1("nuxt/2.8.1", "nuxt"),
   SHARDS_VUE_1_0_5("shards-vue", "@shards/vue"),
   VUE_2_5_3("vue/2.5.3", "vue"),
   VUE_2_6_10("vue/2.6.10", "vue"),
