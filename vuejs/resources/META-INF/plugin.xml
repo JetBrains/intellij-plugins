@@ -225,6 +225,8 @@ Learn more about Vue.js support in the <a href="https://www.jetbrains.com/help/w
                                             implementationClass="org.jetbrains.vuejs.codeInsight.VueJSLanguageConfigurableProvider"/>
     <dialectSpecificHandlersFactory language="VueJS" implementationClass="org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory"/>
     <frameworkSpecificHandler language="JavaScript"
+                              implementationClass="org.jetbrains.vuejs.libraries.nuxtJs.codeInsight.NuxtJsFrameworkSpecificHandler"/>
+    <frameworkSpecificHandler language="JavaScript"
                               implementationClass="org.jetbrains.vuejs.codeInsight.VueFrameworkInsideScriptSpecificHandler"/>
     <frameworkSpecificHandler language="JavaScript"
                               implementationClass="org.jetbrains.vuejs.libraries.vuex.codeInsight.VuexFrameworkSpecificHandler"/>
