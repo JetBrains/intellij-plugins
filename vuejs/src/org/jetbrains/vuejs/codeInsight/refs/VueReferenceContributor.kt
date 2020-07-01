@@ -82,7 +82,7 @@ class VueReferenceContributor : PsiReferenceContributor() {
     }
 
     private fun createSrcAttrValuePattern(tagName: String): XmlAttributeValuePattern =
-      XmlPatterns.xmlAttributeValue(SRC_ATTRIBUTE_NAME).inside(XmlPatterns.xmlTag().withLocalName(tagName))
+      XmlPatterns.xmlAttributeValue(SRC_ATTRIBUTE_NAME).withAncestor(2, XmlPatterns.xmlTag().withLocalName(tagName))
 
     private class VueStylesheetFileReferenceSet(element: PsiElement, referenceText: String,
                                                 textRange: TextRange, vararg suitableFileTypes: FileType)

@@ -7,6 +7,7 @@ import org.junit.runners.Suite
 @RunWith(Suite::class)
 @Suite.SuiteClasses(
   NuxtConfigTest::class,
-  NuxtExtensionsTest::class
+  NuxtCompletionTest::class,
+  NuxtHighlightingTest::class
 )
 class NuxtTestSuite

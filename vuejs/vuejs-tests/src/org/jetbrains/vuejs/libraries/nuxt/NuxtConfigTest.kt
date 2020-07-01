@@ -27,7 +27,6 @@ class NuxtConfigTest : BasePlatformTestCase() {
     TestCase.assertEquals(
       listOf("\"http-equiv\"", "charset", "content", "name", "vmid"),
       myFixture.renderLookupItems(false, false))
-
   }
 
 }
