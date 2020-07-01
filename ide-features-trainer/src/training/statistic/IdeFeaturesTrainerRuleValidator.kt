@@ -3,11 +3,11 @@ package training.statistic
 
 import com.intellij.internal.statistic.eventLog.validator.ValidationResultType
 import com.intellij.internal.statistic.eventLog.validator.rules.EventContext
-import com.intellij.internal.statistic.eventLog.validator.rules.impl.CustomWhiteListRule
+import com.intellij.internal.statistic.eventLog.validator.rules.impl.CustomValidationRule
 import training.learn.CourseManager
 import training.statistic.FeatureUsageStatisticConsts.LESSON_ID
 
-class IdeFeaturesTrainerRuleValidator : CustomWhiteListRule() {
+class IdeFeaturesTrainerRuleValidator : CustomValidationRule() {
 
   override fun acceptRuleId(ruleId: String?): Boolean = (ruleId == LESSON_ID)
 

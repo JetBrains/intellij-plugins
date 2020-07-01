@@ -35,9 +35,9 @@
     <actionPromoter implementation="training.editor.actions.LearnActionPromoter"/>
     <!-- groupId should be same to StatisticBase.GROUP_ID and version to StatisticBase.VERSION -->
     <statistics.counterUsagesCollector groupId="ideFeaturesTrainer" version="4"/>
-    <statistics.validation.customWhiteListRule
+    <statistics.validation.customValidationRule
       implementation="training.statistic.IdeFeaturesTrainerRuleValidator"/>
-    <statistics.validation.customWhiteListRule
+    <statistics.validation.customValidationRule
       implementation="training.statistic.IdeFeaturesTrainerModuleRuleValidator"/>
     <applicationService serviceImplementation="training.ui.welcomeScreen.recentProjects.IFTRecentProjectListActionProvider"/>
     <welcomeFrameProvider implementation="training.ui.welcomeScreen.recentProjects.IFTFlatWelcomeFrameProvider" order="first"/>
