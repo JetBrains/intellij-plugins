@@ -306,11 +306,6 @@ class LearnPanel(private val learnToolWindow: LearnToolWindow, val lesson: Lesso
   fun clearLessonPanel() {
     lessonNameLabel.icon = null
     lessonMessagePane.clear()
-    //remove links from lessonMessagePane
-    val mouseListeners = lessonMessagePane.mouseListeners
-    for (mouseListener in mouseListeners) {
-      lessonMessagePane.removeMouseListener(mouseListener)
-    }
     revalidate()
     repaint()
   }

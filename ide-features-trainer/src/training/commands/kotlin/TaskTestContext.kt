@@ -1,12 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.commands.kotlin
 
-import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.actionSystem.ActionPlaces
-import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.ex.ActionUtil
-import com.intellij.openapi.application.TransactionGuard
 import com.intellij.testGuiFramework.cellReader.ExtendedJListCellReader
 import com.intellij.testGuiFramework.fixtures.ComponentFixture
 import com.intellij.testGuiFramework.fixtures.IdeFrameFixture
@@ -20,6 +15,7 @@ import org.fest.swing.core.Robot
 import org.fest.swing.fixture.ContainerFixture
 import org.fest.swing.fixture.JListFixture
 import org.fest.swing.timing.Timeout
+import training.util.invokeActionForFocusContext
 import java.awt.Component
 import java.awt.Container
 import javax.swing.JList
@@ -37,12 +33,7 @@ class TaskTestContext(rt: TaskRuntimeContext): TaskRuntimeContext(rt) {
   fun actions(vararg actionIds: String) {
     for (actionId in actionIds) {
       val action = ActionManager.getInstance().getAction(actionId) ?: error("Action $actionId is non found")
-      DataManager.getInstance().dataContextFromFocusAsync.onSuccess { dataContext ->
-        TransactionGuard.submitTransaction(project, Runnable {
-          val event = AnActionEvent.createFromAnAction(action, null, ActionPlaces.UNKNOWN, dataContext)
-          ActionUtil.performActionDumbAwareWithCallbacks(action, event, dataContext)
-        })
-      }
+      invokeActionForFocusContext(action)
     }
   }
 
