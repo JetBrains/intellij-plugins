@@ -66,6 +66,7 @@ Learn more about Vue.js support in the <a href="https://www.jetbrains.com/help/w
     <psi.referenceContributor language="JavaScript" implementation="org.jetbrains.vuejs.codeInsight.refs.VueJSReferenceContributor"/>
     <psi.referenceContributor language="Vue" implementation="org.jetbrains.vuejs.codeInsight.refs.VueReferenceContributor"/>
     <psi.referenceContributor language="JavaScript" implementation="org.jetbrains.vuejs.libraries.vuex.codeInsight.refs.VuexReferenceContributor"/>
+    <psi.fileReferenceHelper implementation="org.jetbrains.vuejs.libraries.nuxtJs.codeInsight.NuxtFileReferenceHelper"/>
 
     <lang.syntaxHighlighterFactory language="Vue"
                                    implementationClass="org.jetbrains.vuejs.lang.html.highlighting.VueSyntaxHighlighterFactory"/>

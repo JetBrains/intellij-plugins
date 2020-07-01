@@ -5,7 +5,7 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureDependencies
 
-class NuxtExtensionsTest : BasePlatformTestCase() {
+class NuxtCompletionTest : BasePlatformTestCase() {
 
   fun testNuxtExtensionsBasic() {
     myFixture.configureDependencies(VueTestModule.NUXT_2_8_1, VueTestModule.VUE_2_6_10)
