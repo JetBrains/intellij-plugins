@@ -26,16 +26,7 @@ class VueJSParserTest : LightPlatformCodeInsightTestCase(), FileBasedTestCaseHel
 
   @Test
   fun runSingle() {
-    var throwable: Throwable? = null
-    invokeTestRunnable {
-      try {
-        doSingleTest(myFileSuffix, myTestDataPath)
-      }
-      catch (e: Throwable) {
-        throwable = e
-      }
-    }
-    throwable?.let { throw it }
+    doSingleTest(myFileSuffix, myTestDataPath)
   }
 
   private fun doSingleTest(suffix: String, path: String) {

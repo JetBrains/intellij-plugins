@@ -36,20 +36,7 @@ public class AngularJSParserTest extends LightPlatformCodeInsightTestCase implem
 
   @Test
   public void runSingle() throws Throwable {
-    final Throwable[] throwables = new Throwable[1];
-
-    invokeTestRunnable(() -> {
-      try {
-        doSingleTest(myFileSuffix, myTestDataPath);
-      }
-      catch (Throwable e) {
-        throwables[0] = e;
-      }
-    });
-
-    if (throwables[0] != null) {
-      throw throwables[0];
-    }
+    doSingleTest(myFileSuffix, myTestDataPath);
   }
 
   private void doSingleTest(String suffix, String path) throws Throwable{
