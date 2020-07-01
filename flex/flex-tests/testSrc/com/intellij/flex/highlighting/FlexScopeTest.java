@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.highlighting;
 
 import com.intellij.flex.codeInsight.FlexNavigationTest;
@@ -231,7 +232,7 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
     WriteAction.run(() -> {
       final ModifiableModuleModel m1 = ModuleManager.getInstance(myProject).getModifiableModel();
       final VirtualFile moduleDir = myProject.getBaseDir().createChildDirectory(this, "module2");
-      final Module module2 = m1.newModule(moduleDir.getPath(), FlexModuleType.getInstance().getId());
+      final Module module2 = m1.newModule(moduleDir.toNioPath(), FlexModuleType.getInstance().getId());
       m1.commit();
 
       PsiTestUtil.addSourceRoot(module2, moduleDir);

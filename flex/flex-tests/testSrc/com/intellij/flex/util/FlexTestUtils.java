@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.util;
 
 import com.intellij.execution.RunManager;
@@ -222,7 +222,7 @@ public class FlexTestUtils {
     return WriteAction.compute(() -> {
       final ModifiableModuleModel m1 = ModuleManager.getInstance(project).getModifiableModel();
       final VirtualFile moduleDir = project.getBaseDir().createChildDirectory(JSTestUtils.class, moduleName);
-      final Module result = m1.newModule(moduleDir.getPath() + "/" + moduleName + ".iml", FlexModuleType.getInstance().getId());
+      final Module result = m1.newModule(moduleDir.toNioPath().resolve(moduleName + ".iml"), FlexModuleType.getInstance().getId());
       m1.commit();
 
       if (moduleContent != null) {
