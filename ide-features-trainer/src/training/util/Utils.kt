@@ -2,11 +2,14 @@
 package training.util
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder
+import com.intellij.ide.DataManager
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.lang.Language
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.ex.ActionUtil
+import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.Balloon
@@ -130,3 +133,12 @@ fun isLearningDocumentationMode(project: Project): Boolean =
   (ActionManager.getInstance().getAction("LearningDocumentationModeAction") as? LearningDocumentationModeAction)
     ?.isSelectedInProject(project)
   ?: false
+
+fun invokeActionForFocusContext(action: AnAction) {
+  DataManager.getInstance().dataContextFromFocusAsync.onSuccess { dataContext ->
+    invokeLater {
+      val event = AnActionEvent.createFromAnAction(action, null, "IDE Features Trainer", dataContext)
+      ActionUtil.performActionDumbAwareWithCallbacks(action, event, dataContext)
+    }
+  }
+}
