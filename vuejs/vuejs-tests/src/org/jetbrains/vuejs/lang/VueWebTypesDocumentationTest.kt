@@ -22,17 +22,9 @@ class VueWebTypesDocumentationTest : JSAbstractDocumentationTest() {
   override fun getExtension(): String = "vue"
 
   @Before
-  public override fun setUp() {
-    super.setUp()
-    runInEdtAndWait {
-      createPackageJsonWithVueDependency(myFixture, """"test-lib":"0.0.0"""")
-      myFixture.copyDirectoryToProject("node_modules", "node_modules")
-    }
-  }
-
-  @After
-  public override fun tearDown() {
-    runInEdtAndWait { super.tearDown() }
+  fun before() {
+    createPackageJsonWithVueDependency(myFixture, """"test-lib":"0.0.0"""")
+    myFixture.copyDirectoryToProject("node_modules", "node_modules")
   }
 
   @Parameterized.Parameter
@@ -45,9 +37,7 @@ class VueWebTypesDocumentationTest : JSAbstractDocumentationTest() {
 
   @Test
   fun testTypes() {
-    runInEdtAndWait {
-      defaultTest()
-    }
+    defaultTest()
   }
 
   companion object {

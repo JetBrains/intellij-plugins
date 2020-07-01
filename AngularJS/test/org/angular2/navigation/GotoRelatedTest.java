@@ -12,13 +12,10 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.presentation.java.SymbolPresentationUtil;
-import com.intellij.testFramework.EdtTestUtil;
 import one.util.streamex.StreamEx;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -57,50 +54,36 @@ public class GotoRelatedTest extends Angular2CodeInsightFixtureTestCase {
     return AngularTestUtil.getBaseTestDataPath(getClass()) + "related/" + myTestDir;
   }
 
-  @Override
-  @Before
-  public void setUp() throws Exception {
-    super.setUp();
-  }
-
-  @Override
-  @After
-  public void tearDown() throws Exception {
-    EdtTestUtil.runInEdtAndWait(() -> super.tearDown());
-  }
-
   @Test
   public void singleTest() throws Exception {
     myFixture.setCaresAboutInjection(false);
-    invokeTestRunnable(() -> {
-      myFixture.copyDirectoryToProject(".", ".");
-      VirtualFile testFile = myFixture.findFileInTempDir("test.txt");
-      List<String> result = new ArrayList<>();
-      try {
-        for (String line : StreamUtil.readText(testFile.getInputStream(), "UTF-8").split("[\\n\\r]")) {
-          if (line.trim().isEmpty() || line.startsWith(" ")) {
-            continue;
-          }
-          result.add(line);
-          List<String> input = StringUtil.split(line, "#");
-          assert !input.isEmpty();
-          myFixture.configureFromTempProjectFile(input.get(0));
-          if (input.size() > 1) {
-            AngularTestUtil.moveToOffsetBySignature(input.get(1).replace("{caret}", "<caret>"), myFixture);
-          }
-          StreamEx.of(getStringifiedRelatedItems())
-            .map(str -> " " + str)
-            .into(result);
+    myFixture.copyDirectoryToProject(".", ".");
+    VirtualFile testFile = myFixture.findFileInTempDir("test.txt");
+    List<String> result = new ArrayList<>();
+    try {
+      for (String line : StreamUtil.readText(testFile.getInputStream(), "UTF-8").split("[\\n\\r]")) {
+        if (line.trim().isEmpty() || line.startsWith(" ")) {
+          continue;
         }
+        result.add(line);
+        List<String> input = StringUtil.split(line, "#");
+        assert !input.isEmpty();
+        myFixture.configureFromTempProjectFile(input.get(0));
+        if (input.size() > 1) {
+          AngularTestUtil.moveToOffsetBySignature(input.get(1).replace("{caret}", "<caret>"), myFixture);
+        }
+        StreamEx.of(getStringifiedRelatedItems())
+          .map(str -> " " + str)
+          .into(result);
       }
-      catch (IOException e) {
-        throw new RuntimeException(e);
-      }
-      myFixture.configureFromTempProjectFile("test.txt");
-      WriteAction.runAndWait(
-        () -> myFixture.getDocument(myFixture.getFile()).setText(StringUtil.join(result, "\n")));
-      myFixture.checkResultByFile("test.txt");
-    });
+    }
+    catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    myFixture.configureFromTempProjectFile("test.txt");
+    WriteAction.runAndWait(
+      () -> myFixture.getDocument(myFixture.getFile()).setText(StringUtil.join(result, "\n")));
+    myFixture.checkResultByFile("test.txt");
   }
 
   @NotNull

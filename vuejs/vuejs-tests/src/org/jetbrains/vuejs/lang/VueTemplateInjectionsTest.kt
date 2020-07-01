@@ -7,14 +7,13 @@ import com.intellij.openapi.application.PathManager
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.intellij.testFramework.runInEdtAndWait
 import junit.framework.TestCase
 import one.util.streamex.StreamEx
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpression
 import org.jetbrains.vuejs.lang.html.VueLanguage
-import org.junit.After
-import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TestRule
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import java.io.File
@@ -34,32 +33,18 @@ class VueTemplateInjectionsTest : BasePlatformTestCase() {
 
     val injectedLanguageManager = InjectedLanguageManager.getInstance(project)
 
-    invokeTestRunnable {
-      PsiDocumentManager.getInstance(project).commitAllDocuments()
+    PsiDocumentManager.getInstance(project).commitAllDocuments()
 
-      TestCase.assertEquals(VueLanguage.INSTANCE, injectedLanguageManager.findInjectedElementAt(
-        myFixture.file, myFixture.file.findOffsetBySignature("</<caret>div>"))?.containingFile?.language)
+    TestCase.assertEquals(VueLanguage.INSTANCE, injectedLanguageManager.findInjectedElementAt(
+      myFixture.file, myFixture.file.findOffsetBySignature("</<caret>div>"))?.containingFile?.language)
 
-      val injectedElement = injectedLanguageManager.findInjectedElementAt(
-        myFixture.file, myFixture.file.findOffsetBySignature("<caret>title + foo"))
+    val injectedElement = injectedLanguageManager.findInjectedElementAt(
+      myFixture.file, myFixture.file.findOffsetBySignature("<caret>title + foo"))
 
-      TestCase.assertNotNull(PsiTreeUtil.getParentOfType(injectedElement, VueJSEmbeddedExpression::class.java))
+    TestCase.assertNotNull(PsiTreeUtil.getParentOfType(injectedElement, VueJSEmbeddedExpression::class.java))
 
-      val resolved = (injectedElement!!.parent as JSReferenceExpression).resolve()
-      TestCase.assertTrue(resolved!!.text, resolved.text.contains("Check me"))
-
-    }
-  }
-
-  @Before
-  @Throws(Exception::class)
-  public override fun setUp() {
-    super.setUp()
-  }
-
-  @After
-  public override fun tearDown() {
-    runInEdtAndWait { super.tearDown() }
+    val resolved = (injectedElement!!.parent as JSReferenceExpression).resolve()
+    TestCase.assertTrue(resolved!!.text, resolved.text.contains("Check me"))
   }
 
   override fun getTestDataPath(): String {

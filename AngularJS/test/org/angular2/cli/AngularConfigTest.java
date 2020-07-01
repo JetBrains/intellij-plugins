@@ -4,15 +4,12 @@ package org.angular2.cli;
 import com.google.gson.*;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.testFramework.EdtTestUtil;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import one.util.streamex.StreamEx;
 import org.angular2.cli.config.AngularConfig;
 import org.angular2.cli.config.AngularConfigProvider;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -47,79 +44,63 @@ public class AngularConfigTest extends BasePlatformTestCase {
   }
 
   @Override
-  @Before
-  public void setUp() throws Exception {
-    super.setUp();
-  }
-
-  @Override
-  @After
-  public void tearDown() throws Exception {
-    EdtTestUtil.runInEdtAndWait(() -> super.tearDown());
-  }
-
-  @Override
   protected String getTestDataPath() {
     return AngularTestUtil.getBaseTestDataPath(AngularConfigTest.class) + "config";
   }
 
   @Test
   public void testParsing() {
-    EdtTestUtil.runInEdtAndWait(() -> {
-      VirtualFile vFile = myFixture.copyDirectoryToProject(myDirName, "./");
+    VirtualFile vFile = myFixture.copyDirectoryToProject(myDirName, "./");
 
-      AngularConfig config = ReadAction.compute(() -> AngularConfigProvider.getAngularConfig(getProject(), vFile));
+    AngularConfig config = ReadAction.compute(() -> AngularConfigProvider.getAngularConfig(getProject(), vFile));
 
-      assert config != null;
+    assert config != null;
 
-      myFixture.configureByText("out.txt", config.toString() + "\n");
-      myFixture.checkResultByFile(myDirName + "/" + config.getAngularJsonFile().getName() + ".parsed",
-                                  true);
-    });
+    myFixture.configureByText("out.txt", config.toString() + "\n");
+    myFixture.checkResultByFile(myDirName + "/" + config.getAngularJsonFile().getName() + ".parsed",
+                                true);
   }
 
   @Test
   public void testTsLintConfigSelection() throws Exception {
-    EdtTestUtil.runInEdtAndWait(() -> {
-      VirtualFile rootDir = myFixture.copyDirectoryToProject(myDirName, "./");
+    VirtualFile rootDir = myFixture.copyDirectoryToProject(myDirName, "./");
 
-      AngularConfig config = ReadAction.compute(() -> AngularConfigProvider.getAngularConfig(getProject(), rootDir));
+    AngularConfig config = ReadAction.compute(() -> AngularConfigProvider.getAngularConfig(getProject(), rootDir));
 
-      assert config != null;
+    assert config != null;
 
-      VirtualFile tslintTest = rootDir.findFileByRelativePath("tslint-test.json");
+    VirtualFile tslintTest = rootDir.findFileByRelativePath("tslint-test.json");
 
-      assert tslintTest != null : "no tslint-test.json";
+    assert tslintTest != null : "no tslint-test.json";
 
-      JsonObject tests;
-      try (InputStream in = tslintTest.getInputStream()) {
-        tests = (JsonObject)new JsonParser().parse(new InputStreamReader(in, StandardCharsets.UTF_8));
+    JsonObject tests;
+    try (InputStream in = tslintTest.getInputStream()) {
+      tests = (JsonObject)new JsonParser().parse(new InputStreamReader(in, StandardCharsets.UTF_8));
+    }
+
+    for (Map.Entry<String, JsonElement> entry : tests.entrySet()) {
+      VirtualFile file = myFixture.findFileInTempDir(entry.getKey());
+      assert file != null : entry.getKey();
+      String value = StreamEx.ofNullable(config.getProject(file))
+        .flatCollection(project -> project.getTsLintConfigurations())
+        .map(lintConfig -> lintConfig.getTsLintConfig(file))
+        .nonNull()
+        .findFirst()
+        .map(lintFile -> lintFile.getPath())
+        .orElse(null);
+      if (value != null) {
+        entry.setValue(new JsonPrimitive(value));
       }
-
-      for (Map.Entry<String, JsonElement> entry : tests.entrySet()) {
-        VirtualFile file = myFixture.findFileInTempDir(entry.getKey());
-        assert file != null : entry.getKey();
-        String value = StreamEx.ofNullable(config.getProject(file))
-          .flatCollection(project -> project.getTsLintConfigurations())
-          .map(lintConfig -> lintConfig.getTsLintConfig(file))
-          .nonNull()
-          .findFirst()
-          .map(lintFile -> lintFile.getPath())
-          .orElse(null);
-        if (value != null) {
-          entry.setValue(new JsonPrimitive(value));
-        }
-        else {
-          entry.setValue(null);
-        }
+      else {
+        entry.setValue(null);
       }
-      myFixture.configureByText("out.txt",
-                                new GsonBuilder().setPrettyPrinting()
-                                  .serializeNulls()
-                                  .create()
-                                  .toJson(tests) + "\n");
-      myFixture.checkResultByFile(myDirName + "/tslint-test.json",
-                                  true);
-    });
+    }
+    myFixture.configureByText("out.txt",
+                              new GsonBuilder().setPrettyPrinting()
+                                .serializeNulls()
+                                .create()
+                                .toJson(tests) + "\n");
+    myFixture.checkResultByFile(myDirName + "/tslint-test.json",
+                                true);
   }
 }

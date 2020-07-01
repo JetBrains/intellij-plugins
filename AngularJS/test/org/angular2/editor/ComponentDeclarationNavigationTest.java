@@ -11,13 +11,10 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.testFramework.EdtTestUtil;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -51,18 +48,6 @@ public class ComponentDeclarationNavigationTest extends Angular2CodeInsightFixtu
       new Object[]{false, false, "foo-<caret>dir", "foo-directive"},
       new Object[]{false, true, "foo-<caret>dir", "foo-directive"}
     );
-  }
-
-  @Override
-  @Before
-  public void setUp() throws Exception {
-    super.setUp();
-  }
-
-  @Override
-  @After
-  public void tearDown() throws Exception {
-    EdtTestUtil.runInEdtAndWait(() -> super.tearDown());
   }
 
   @Override
@@ -106,25 +91,23 @@ public class ComponentDeclarationNavigationTest extends Angular2CodeInsightFixtu
                       @Nullable String actionLabel,
                       @Nullable String targetFile,
                       @Nullable String elementText) throws Exception {
-    invokeTestRunnable(() -> {
-      myFixture.configureByFiles(testFile, "custom.html", "custom.ts", "package.json");
+    myFixture.configureByFiles(testFile, "custom.html", "custom.ts", "package.json");
 
-      AngularTestUtil.moveToOffsetBySignature(location, myFixture);
+    AngularTestUtil.moveToOffsetBySignature(location, myFixture);
 
-      Presentation result = myFixture.testAction(action);
-      assertEquals(actionLabel, result.getText());
+    Presentation result = myFixture.testAction(action);
+    assertEquals(actionLabel, result.getText());
 
-      Editor focusedEditor = FileEditorManager.getInstance(myFixture.getProject()).getSelectedTextEditor();
-      PsiFile file = PsiDocumentManager.getInstance(myFixture.getProject()).getPsiFile(focusedEditor.getDocument());
-      assertEquals(targetFile, file.getName());
+    Editor focusedEditor = FileEditorManager.getInstance(myFixture.getProject()).getSelectedTextEditor();
+    PsiFile file = PsiDocumentManager.getInstance(myFixture.getProject()).getPsiFile(focusedEditor.getDocument());
+    assertEquals(targetFile, file.getName());
 
-      if (elementText == null) {
-        return;
-      }
-      int findTargetFlags = TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED | TargetElementUtil.ELEMENT_NAME_ACCEPTED;
-      PsiElement element = TargetElementUtil.findTargetElement(focusedEditor, findTargetFlags);
-      assertNotNull(element);
-      assertEquals(elementText, element.getText());
-    });
+    if (elementText == null) {
+      return;
+    }
+    int findTargetFlags = TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED | TargetElementUtil.ELEMENT_NAME_ACCEPTED;
+    PsiElement element = TargetElementUtil.findTargetElement(focusedEditor, findTargetFlags);
+    assertNotNull(element);
+    assertEquals(elementText, element.getText());
   }
 }
