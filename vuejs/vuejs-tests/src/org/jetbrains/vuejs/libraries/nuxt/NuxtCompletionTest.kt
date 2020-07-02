@@ -28,4 +28,25 @@ class NuxtCompletionTest : BasePlatformTestCase() {
     )
   }
 
+  fun testNuxtExtensionsBasic2_13() {
+    myFixture.configureDependencies(VueTestModule.NUXT_2_13_2, VueTestModule.VUE_2_6_10)
+    myFixture.configureByText("test.vue", "<script>export default {<caret>}</script>")
+    myFixture.completeBasic()
+    assertContainsElements(
+      myFixture.lookupElementStrings!!,
+      "asyncData", "fetch", "head", "key", "layout", "loading", "middleware", "scrollToTop", "transition", "validate",
+      "watchQuery"
+    )
+  }
+
+  fun testNuxtApp2_13() {
+    myFixture.configureDependencies(VueTestModule.NUXT_2_13_2, VueTestModule.VUE_2_6_10)
+    myFixture.configureByText("test.vue", "<template>{{\$nuxt.<caret>}}</template>")
+    myFixture.completeBasic()
+    assertContainsElements(
+      myFixture.lookupElementStrings!!,
+      "\$options", "\$loading", "isOffline", "isOnline", "\$nuxt", "\$fetch"
+    )
+  }
+
 }

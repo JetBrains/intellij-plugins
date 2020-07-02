@@ -34,6 +34,8 @@ enum class VueTestModule(val folder: String, vararg packageNames: String) {
   IVIEW_2_8_0("iview"),
   MINT_UI_2_2_3("mint-ui"),
   NUXT_2_8_1("nuxt/2.8.1", "nuxt"),
+  NUXT_2_9_2("nuxt/2.9.2", "nuxt", "@nuxt/types"),
+  NUXT_2_13_2("nuxt/2.13.2", "nuxt", "@nuxt/types"),
   SHARDS_VUE_1_0_5("shards-vue", "@shards/vue"),
   VUE_2_5_3("vue/2.5.3", "vue"),
   VUE_2_6_10("vue/2.6.10", "vue"),
