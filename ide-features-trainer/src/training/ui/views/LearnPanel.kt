@@ -11,6 +11,7 @@ import com.intellij.util.containers.BidirectionalMap
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import icons.FeaturesTrainerIcons
+import training.actions.LearningDocumentationModeAction
 import training.keymap.KeymapUtil
 import training.learn.CourseManager
 import training.learn.LearnBundle
@@ -107,7 +108,15 @@ class LearnPanel(private val learnToolWindow: LearnToolWindow, val lesson: Lesso
     footer.border = MatteBorder(1, 0, 0, 0, UISettings.instance.separatorColor)
 
     if (documentationMode) {
-      val link = ActionLink("Switch to Interactive Mode", ActionManager.getInstance().getAction("LearningDocumentationModeAction"))
+      val action = ActionManager.getInstance().getAction("LearningDocumentationModeAction") as LearningDocumentationModeAction
+      val link = if (action.isSelectedInProject(learnToolWindow.project)) {
+        ActionLink("Switch to Interactive Mode", action)
+      }
+      else {
+        LinkLabel<Any>("Continue lesson", null) { _, _ ->
+          learnToolWindow.restoreLesson()
+        }
+      }
       setFooterElement(link)
     }
 
@@ -178,8 +187,21 @@ class LearnPanel(private val learnToolWindow: LearnToolWindow, val lesson: Lesso
   private fun setFooterElement(jComponent: JComponent) {
     footer.removeAll()
     footer.add(Box.createHorizontalGlue())
-    jComponent.alignmentX = Component.CENTER_ALIGNMENT
-    footer.add(jComponent)
+    if (lesson?.passed == true && jComponent !is LinkLabel<*>) {
+      val panel = JPanel()
+      panel.layout = BoxLayout(panel, BoxLayout.X_AXIS)
+      panel.add(jComponent)
+      panel.add(Box.createHorizontalGlue())
+      val showSteps = LinkLabel<Any>("Show steps", null) { _, _ ->
+        learnToolWindow.showSteps()
+      }
+      panel.add(showSteps)
+      footer.add(panel)
+    }
+    else {
+      jComponent.alignmentX = Component.CENTER_ALIGNMENT
+      footer.add(jComponent)
+    }
   }
 
   fun updateLessonProgress(all: Int, current: Int) {

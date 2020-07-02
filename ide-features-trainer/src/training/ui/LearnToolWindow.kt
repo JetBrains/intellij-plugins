@@ -36,6 +36,10 @@ class LearnToolWindow internal constructor(val project: Project, private val who
     private set
   private val modulesPanel: ModulesPanel = ModulesPanel(this)
 
+  private var newUiLearnScrollPane: JBScrollPane? = null
+  // If an user want to show all steps we save current "progress" here
+  private var hiddenLearnPanel: LearnPanel? = null
+
   init {
     reinitViewsInternal()
     scrollPane = if (LangManager.getInstance().isLangUndefined()) {
@@ -63,7 +67,9 @@ class LearnToolWindow internal constructor(val project: Project, private val who
       wholeToolWindow.contentManager.addContentManagerListener(object : ContentManagerListener {
         override fun contentRemoved(event: ContentManagerEvent) {
           if (LearningUiManager.activeToolWindow == this@LearnToolWindow) {
-            LessonManager.instance.stopLesson()
+            if (hiddenLearnPanel == null) {
+              LessonManager.instance.stopLesson()
+            }
           }
           learnPanel = null
         }
@@ -86,6 +92,9 @@ class LearnToolWindow internal constructor(val project: Project, private val who
 
   fun setLearnPanel(lesson: Lesson, documentationMode: Boolean = false) {
     if (useNewLearningUi) {
+      if (!documentationMode) {
+        hiddenLearnPanel = null
+      }
       val contentManager = wholeToolWindow.contentManager
       contentManager.contents.filter { it.component != this }.forEach {
         contentManager.removeContent(it, true)
@@ -93,7 +102,7 @@ class LearnToolWindow internal constructor(val project: Project, private val who
       learnPanel = LearnPanel(this, lesson, documentationMode)
       val lessonToolWindowTab = object: SimpleToolWindowPanel(true, true) {
         init {
-          setContent(JBScrollPane(learnPanel))
+          setContent(JBScrollPane(learnPanel).also { newUiLearnScrollPane = it })
         }
       }
       val lessonTab = contentManager.factory.createContent(lessonToolWindowTab, lesson.name, false)
@@ -185,5 +194,18 @@ class LearnToolWindow internal constructor(val project: Project, private val who
     else if (lesson is XmlLesson) {
       LessonProcessor.process(project, lesson, null, true)
     }
+  }
+
+  fun showSteps() {
+    val lesson = learnPanel?.lesson ?: return
+    hiddenLearnPanel = learnPanel
+    openInDocumentationMode(lesson)
+  }
+
+  fun restoreLesson() {
+    if (hiddenLearnPanel == null) return
+    learnPanel = hiddenLearnPanel
+    hiddenLearnPanel = null
+    newUiLearnScrollPane?.setViewportView(learnPanel)
   }
 }
