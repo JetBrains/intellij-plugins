@@ -44,7 +44,7 @@ class LessonMessagePane : JTextPane() {
       override fun mouseClicked(me: MouseEvent) {
         val rangeData = getRangeDataForMouse(me) ?: return
         val middle = (rangeData.range.first + rangeData.range.last) / 2
-        val rectangle = modelToView2D(middle)
+        val rectangle = modelToView(middle)
         rangeData.action(Point(rectangle.x.toInt(), (rectangle.y + rectangle.height).toInt()))
       }
 
@@ -64,11 +64,11 @@ class LessonMessagePane : JTextPane() {
 
   private fun getRangeDataForMouse(me: MouseEvent) : RangeData? {
     val point = Point(me.x, me.y)
-    val offset = viewToModel2D(point)
+    val offset = viewToModel(point)
     val result = ranges.find { offset in it.range } ?: return null
     if (offset < 0 || offset >= document.length) return null
     for (i in result.range) {
-      val rectangle = modelToView2D(i)
+      val rectangle = modelToView(i)
       if (me.x >= rectangle.x && me.y >= rectangle.y && me.y <= rectangle.y + rectangle.height) {
         return result
       }
