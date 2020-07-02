@@ -5,7 +5,6 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureDependencies
-import org.jetbrains.vuejs.lang.renderLookupItems
 
 class NuxtConfigTest : BasePlatformTestCase() {
 
@@ -17,7 +16,7 @@ class NuxtConfigTest : BasePlatformTestCase() {
       listOf("\"vue.config\"", "build", "buildDir", "css", "dev", "env", "fetch", "generate", "globalName", "globals", "head", "hooks",
              "ignore", "ignorePrefix", "layoutTransition", "loading", "loadingIndicator", "mode", "modern", "modules", "modulesDir",
              "plugins", "render", "rootDir", "router", "server", "serverMiddleware", "srcDir", "transition", "watch", "watchers"),
-      myFixture.renderLookupItems(false, false))
+      myFixture.lookupElementStrings)
   }
 
   fun testHeadMeta() {
@@ -26,7 +25,49 @@ class NuxtConfigTest : BasePlatformTestCase() {
     myFixture.completeBasic()
     TestCase.assertEquals(
       listOf("\"http-equiv\"", "charset", "content", "name", "vmid"),
-      myFixture.renderLookupItems(false, false))
+      myFixture.lookupElementStrings)
+  }
+
+  fun testBasic2_9() {
+    myFixture.configureDependencies(VueTestModule.NUXT_2_9_2)
+    myFixture.configureByText("nuxt.config.js", "export default {<caret>}")
+    myFixture.completeBasic()
+    TestCase.assertEquals(
+      listOf("\"vue.config\"", "build", "buildDir", "buildModules", "css", "dev", "dir", "env", "extensions", "fetch", "generate",
+             "globalName", "globals", "head", "hooks", "ignore", "ignorePrefix", "layoutTransition", "loading", "loadingIndicator", "mode",
+             "modern", "modules", "modulesDir", "plugins", "render", "rootDir", "router", "server", "serverMiddleware", "srcDir",
+             "transition", "watch", "watchers"),
+      myFixture.lookupElementStrings)
+  }
+
+  fun testHeadMeta2_9() {
+    myFixture.configureDependencies(VueTestModule.VUE_2_6_10, VueTestModule.NUXT_2_9_2)
+    myFixture.configureByText("nuxt.config.js", "export default { head:{ meta:[{<caret>}] } }")
+    myFixture.completeBasic()
+    TestCase.assertEquals(
+      listOf("body", "charset", "content", "httpEquiv", "itemprop", "name", "once", "pbody", "property", "skip", "template", "vmid"),
+      myFixture.lookupElementStrings)
+  }
+
+  fun testBasic2_13() {
+    myFixture.configureDependencies(VueTestModule.NUXT_2_13_2)
+    myFixture.configureByText("nuxt.config.js", "export default {<caret>}")
+    myFixture.completeBasic()
+    TestCase.assertEquals(
+      listOf("\"vue.config\"", "build", "buildDir", "buildModules", "cli", "css", "dev", "dir", "env", "export", "extensions", "features",
+             "fetch", "generate", "globalName", "globals", "head", "hooks", "ignore", "ignorePrefix", "layoutTransition", "loading",
+             "loadingIndicator", "mode", "modern", "modules", "modulesDir", "plugins", "privateRuntimeConfig", "publicRuntimeConfig",
+             "render", "rootDir", "router", "server", "serverMiddleware", "srcDir", "target", "transition", "watch", "watchers"),
+      myFixture.lookupElementStrings)
+  }
+
+  fun testHeadMeta2_13() {
+    myFixture.configureDependencies(VueTestModule.VUE_2_6_10, VueTestModule.NUXT_2_13_2)
+    myFixture.configureByText("nuxt.config.js", "export default { head:{ meta:[{<caret>}] } }")
+    myFixture.completeBasic()
+    TestCase.assertEquals(
+      listOf("body", "charset", "content", "httpEquiv", "itemprop", "name", "once", "pbody", "property", "skip", "template", "vmid"),
+      myFixture.lookupElementStrings)
   }
 
 }
