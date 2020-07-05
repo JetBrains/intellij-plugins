@@ -1,5 +1,3 @@
-require 'multi_json'
-require 'base64'
 require 'cucumber/formatter/backtrace_filter'
 require 'cucumber/formatter/io'
 require 'cucumber/formatter/ast_lookup'
