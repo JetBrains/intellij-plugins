@@ -9,22 +9,25 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
 import com.intellij.psi.PsiElement
 import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.codeInsight.resolveSymbolFromNodeModule
+import org.jetbrains.vuejs.libraries.nuxtJs.NUXT_CONFIG_FILE
+import org.jetbrains.vuejs.libraries.nuxtJs.NUXT_CONFIG_PKG
+import org.jetbrains.vuejs.libraries.nuxtJs.NUXT_TYPES_PKG
 
 class NuxtJsFrameworkSpecificHandler : JSFrameworkSpecificHandler {
 
   override fun findExpectedType(parent: PsiElement, expectedTypeKind: JSExpectedTypeKind): JSType? {
     if (parent is JSObjectLiteralExpression
-        && parent.containingFile.name == "nuxt.config.js"
+        && parent.containingFile.name == NUXT_CONFIG_FILE
         && (parent.parent is ES6ExportDefaultAssignment
             || parent.parent.castSafelyTo<JSAssignmentExpression>()
               ?.lOperand?.castSafelyTo<JSDefinitionExpression>()
               ?.expression?.castSafelyTo<JSReferenceExpression>()
               ?.referenceName == "exports")) {
-      return resolveSymbolFromNodeModule(parent, "@nuxt/types", "NuxtConfig", TypeScriptTypeAlias::class.java)
+      return resolveSymbolFromNodeModule(parent, NUXT_TYPES_PKG, "NuxtConfig", TypeScriptTypeAlias::class.java)
                ?.parsedTypeDeclaration
-             ?: resolveSymbolFromNodeModule(parent, "@nuxt/types", "Configuration", TypeScriptInterface::class.java)
+             ?: resolveSymbolFromNodeModule(parent, NUXT_TYPES_PKG, "Configuration", TypeScriptInterface::class.java)
                ?.jsType
-             ?: resolveSymbolFromNodeModule(parent, "@nuxt/config", "default", ES6ExportDefaultAssignment::class.java)
+             ?: resolveSymbolFromNodeModule(parent, NUXT_CONFIG_PKG, "default", ES6ExportDefaultAssignment::class.java)
                ?.stubSafeElement?.castSafelyTo<TypeScriptInterface>()?.jsType
     }
     return null
