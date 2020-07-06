@@ -9,11 +9,10 @@ import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValueProvider.Result.create
 import com.intellij.psi.util.CachedValuesManager
+import org.jetbrains.vuejs.libraries.nuxtJs.NUXT_CONFIG_FILE
 import org.jetbrains.vuejs.libraries.nuxtJs.model.impl.NuxtJsApplicationImpl
 
 object NuxtJsModelManager {
-
-  private const val NUXT_JS_CONFIG: String = "nuxt.config.js"
 
   fun getApplication(context: PsiElement): NuxtJsApplication? =
     context.containingFile?.originalFile?.virtualFile?.let {
@@ -23,7 +22,7 @@ object NuxtJsModelManager {
   private fun getNuxtJsApplicationMap(project: Project): Map<VirtualFile, NuxtJsApplication> =
     CachedValuesManager.getManager(project).getCachedValue(project) {
       create<Map<VirtualFile, NuxtJsApplication>>(
-        FilenameIndex.getVirtualFilesByName(project, NUXT_JS_CONFIG, GlobalSearchScope.projectScope(project))
+        FilenameIndex.getVirtualFilesByName(project, NUXT_CONFIG_FILE, GlobalSearchScope.projectScope(project))
           .associateBy({ it.parent }, { NuxtJsApplicationImpl(it, project) }),
         VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
     }

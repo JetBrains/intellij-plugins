@@ -291,16 +291,17 @@ fun <T : PsiElement> resolveSymbolFromNodeModule(scope: PsiElement?, moduleName:
   val key: Key<CachedValue<T>> = resolveSymbolCache.computeIfAbsent("$moduleName/$symbolName/${symbolClass.simpleName}") {
     Key.create(it)
   } as Key<CachedValue<T>>
-  return getCachedValue(scope ?: return null, key) {
-    TypeScriptNodeReference(scope, moduleName, 0).resolve()
+  val file = scope?.containingFile ?: return null
+  return getCachedValue(file, key) {
+    TypeScriptNodeReference(file, moduleName, 0).resolve()
       ?.castSafelyTo<JSElement>()
       ?.let { module ->
-        val symbols = ES6PsiUtil.resolveSymbolInModule(symbolName, scope, module)
+        val symbols = ES6PsiUtil.resolveSymbolInModule(symbolName, file, module)
         if (symbols.isEmpty()) {
           TypeScriptAugmentationUtil.getModuleAugmentations(module)
             .asSequence()
             .filterIsInstance<JSElement>()
-            .flatMap { ES6PsiUtil.resolveSymbolInModule(symbolName, scope, it).asSequence() }
+            .flatMap { ES6PsiUtil.resolveSymbolInModule(symbolName, file, it).asSequence() }
         }
         else {
           symbols.asSequence()

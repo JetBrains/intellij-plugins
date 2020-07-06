@@ -235,5 +235,7 @@ Learn more about Vue.js support in the <a href="https://www.jetbrains.com/help/w
     <tsImportResolver implementation="org.jetbrains.vuejs.lang.typescript.VueTypeScriptImportsResolverProvider" order="first"/>
     <!--suppress PluginXmlValidity -->
     <languageServiceProvider order="first" implementation="org.jetbrains.vuejs.lang.typescript.service.VueLanguageServiceProvider"/>
+    <!--suppress PluginXmlValidity -->
+    <webpackLocator implementation="org.jetbrains.vuejs.libraries.nuxtJs.codeInsight.NuxtWebpackConfigLocator"/>
   </extensions>
 </idea-plugin>
