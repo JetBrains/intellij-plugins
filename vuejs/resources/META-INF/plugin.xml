@@ -66,7 +66,7 @@ Learn more about Vue.js support in the <a href="https://www.jetbrains.com/help/w
     <psi.referenceContributor language="JavaScript" implementation="org.jetbrains.vuejs.codeInsight.refs.VueJSReferenceContributor"/>
     <psi.referenceContributor language="Vue" implementation="org.jetbrains.vuejs.codeInsight.refs.VueReferenceContributor"/>
     <psi.referenceContributor language="JavaScript" implementation="org.jetbrains.vuejs.libraries.vuex.codeInsight.refs.VuexReferenceContributor"/>
-    <psi.fileReferenceHelper implementation="org.jetbrains.vuejs.libraries.nuxtJs.codeInsight.NuxtFileReferenceHelper"/>
+    <psi.fileReferenceHelper implementation="org.jetbrains.vuejs.libraries.nuxt.codeInsight.NuxtFileReferenceHelper"/>
 
     <lang.syntaxHighlighterFactory language="Vue"
                                    implementationClass="org.jetbrains.vuejs.lang.html.highlighting.VueSyntaxHighlighterFactory"/>
@@ -226,7 +226,7 @@ Learn more about Vue.js support in the <a href="https://www.jetbrains.com/help/w
                                             implementationClass="org.jetbrains.vuejs.codeInsight.VueJSLanguageConfigurableProvider"/>
     <dialectSpecificHandlersFactory language="VueJS" implementationClass="org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory"/>
     <frameworkSpecificHandler language="JavaScript"
-                              implementationClass="org.jetbrains.vuejs.libraries.nuxtJs.codeInsight.NuxtJsFrameworkSpecificHandler"/>
+                              implementationClass="org.jetbrains.vuejs.libraries.nuxt.codeInsight.NuxtFrameworkSpecificHandler"/>
     <frameworkSpecificHandler language="JavaScript"
                               implementationClass="org.jetbrains.vuejs.codeInsight.VueFrameworkInsideScriptSpecificHandler"/>
     <frameworkSpecificHandler language="JavaScript"
@@ -236,6 +236,6 @@ Learn more about Vue.js support in the <a href="https://www.jetbrains.com/help/w
     <!--suppress PluginXmlValidity -->
     <languageServiceProvider order="first" implementation="org.jetbrains.vuejs.lang.typescript.service.VueLanguageServiceProvider"/>
     <!--suppress PluginXmlValidity -->
-    <webpackLocator implementation="org.jetbrains.vuejs.libraries.nuxtJs.codeInsight.NuxtWebpackConfigLocator"/>
+    <webpackLocator implementation="org.jetbrains.vuejs.libraries.nuxt.codeInsight.NuxtWebpackConfigLocator"/>
   </extensions>
 </idea-plugin>

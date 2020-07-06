@@ -1,5 +1,5 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.jetbrains.vuejs.libraries.nuxtJs.model
+package org.jetbrains.vuejs.libraries.nuxt.model
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -9,28 +9,28 @@ import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValueProvider.Result.create
 import com.intellij.psi.util.CachedValuesManager
-import org.jetbrains.vuejs.libraries.nuxtJs.NUXT_CONFIG_FILE
-import org.jetbrains.vuejs.libraries.nuxtJs.model.impl.NuxtJsApplicationImpl
+import org.jetbrains.vuejs.libraries.nuxt.NUXT_CONFIG_FILE
+import org.jetbrains.vuejs.libraries.nuxt.model.impl.NuxtApplicationImpl
 
-object NuxtJsModelManager {
+object NuxtModelManager {
 
-  fun getApplication(context: PsiElement): NuxtJsApplication? =
+  fun getApplication(context: PsiElement): NuxtApplication? =
     context.containingFile?.originalFile?.virtualFile?.let {
-      findParentEntry(it, getNuxtJsApplicationMap(context.project))
+      findParentEntry(it, getNuxtApplicationMap(context.project))
     }
 
-  private fun getNuxtJsApplicationMap(project: Project): Map<VirtualFile, NuxtJsApplication> =
+  private fun getNuxtApplicationMap(project: Project): Map<VirtualFile, NuxtApplication> =
     CachedValuesManager.getManager(project).getCachedValue(project) {
-      create<Map<VirtualFile, NuxtJsApplication>>(
+      create<Map<VirtualFile, NuxtApplication>>(
         FilenameIndex.getVirtualFilesByName(project, NUXT_CONFIG_FILE, GlobalSearchScope.projectScope(project))
-          .associateBy({ it.parent }, { NuxtJsApplicationImpl(it, project) }),
+          .associateBy({ it.parent }, { NuxtApplicationImpl(it, project) }),
         VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
     }
 
-  private fun findParentEntry(file: VirtualFile, nuxtJsApplicationMap: Map<VirtualFile, NuxtJsApplication>): NuxtJsApplication? {
+  private fun findParentEntry(file: VirtualFile, nuxtApplicationMap: Map<VirtualFile, NuxtApplication>): NuxtApplication? {
     var tmp: VirtualFile? = file
     while (tmp != null) {
-      nuxtJsApplicationMap[tmp]?.let { return it }
+      nuxtApplicationMap[tmp]?.let { return it }
       tmp = tmp.parent
     }
     return null

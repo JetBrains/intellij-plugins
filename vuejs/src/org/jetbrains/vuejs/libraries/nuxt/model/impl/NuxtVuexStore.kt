@@ -1,5 +1,5 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.jetbrains.vuejs.libraries.nuxtJs.model.impl
+package org.jetbrains.vuejs.libraries.nuxt.model.impl
 
 import com.intellij.javascript.JSFileReference
 import com.intellij.javascript.JSFileReference.IMPLICIT_EXTENSIONS
@@ -9,9 +9,7 @@ import com.intellij.lang.javascript.psi.JSFile
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFileSystemItem
@@ -26,7 +24,7 @@ import org.jetbrains.vuejs.libraries.vuex.model.store.*
 import org.jetbrains.vuejs.model.VueImplicitElement
 import java.util.concurrent.ConcurrentHashMap
 
-abstract class NuxtJsVuexContainer(override val source: PsiFileSystemItem) : VuexContainer {
+abstract class NuxtVuexContainer(override val source: PsiFileSystemItem) : VuexContainer {
 
   override val state: Map<String, VuexStateProperty>
     get() = get(VuexUtils.STATE, ::VuexStatePropertyImpl)
@@ -46,12 +44,12 @@ abstract class NuxtJsVuexContainer(override val source: PsiFileSystemItem) : Vue
         val result = mutableMapOf<String, VuexModule>()
         getJSFiles(source as PsiDirectory).forEach { (name, file) ->
           if (name !in RESERVED_NAMES) {
-            result[name] = NuxtJsVuexModule(name, file)
+            result[name] = NuxtVuexModule(name, file)
           }
         }
         source.processChildren {
           if (it is PsiDirectory) {
-            result[it.name] = NuxtJsVuexModule(it.name, it)
+            result[it.name] = NuxtVuexModule(it.name, it)
           }
           true
         }
@@ -134,11 +132,11 @@ abstract class NuxtJsVuexContainer(override val source: PsiFileSystemItem) : Vue
   }
 }
 
-class NuxtJsVuexStore(storeDir: PsiDirectory) : NuxtJsVuexContainer(storeDir), VuexStore {
+class NuxtVuexStore(storeDir: PsiDirectory) : NuxtVuexContainer(storeDir), VuexStore {
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
-    return other is NuxtJsVuexStore
+    return other is NuxtVuexStore
            && source == other.source
   }
 
@@ -148,7 +146,7 @@ class NuxtJsVuexStore(storeDir: PsiDirectory) : NuxtJsVuexContainer(storeDir), V
 }
 
 
-class NuxtJsVuexModule(override val name: String, source: PsiFileSystemItem) : NuxtJsVuexContainer(source), VuexModule {
+class NuxtVuexModule(override val name: String, source: PsiFileSystemItem) : NuxtVuexContainer(source), VuexModule {
 
   override val isNamespaced: Boolean
     get() = true
@@ -159,7 +157,7 @@ class NuxtJsVuexModule(override val name: String, source: PsiFileSystemItem) : N
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
-    return other is NuxtJsVuexModule
+    return other is NuxtVuexModule
            && source == other.source
            && name == other.name
   }

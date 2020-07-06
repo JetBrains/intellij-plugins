@@ -1,5 +1,5 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.jetbrains.vuejs.libraries.nuxtJs.codeInsight
+package org.jetbrains.vuejs.libraries.nuxt.codeInsight
 
 
 import com.intellij.openapi.module.Module
@@ -9,7 +9,7 @@ import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.impl.source.html.HtmlLikeFile
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceHelper
 import org.jetbrains.vuejs.context.isVueContext
-import org.jetbrains.vuejs.libraries.nuxtJs.model.NuxtJsModelManager
+import org.jetbrains.vuejs.libraries.nuxt.model.NuxtModelManager
 
 class NuxtFileReferenceHelper : FileReferenceHelper() {
 
@@ -17,7 +17,7 @@ class NuxtFileReferenceHelper : FileReferenceHelper() {
     return getPsiFileSystemItem(project, file)?.let {
       it is HtmlLikeFile
       && isVueContext(it)
-      && NuxtJsModelManager.getApplication(it) != null
+      && NuxtModelManager.getApplication(it) != null
     } == true
   }
 
@@ -25,7 +25,7 @@ class NuxtFileReferenceHelper : FileReferenceHelper() {
 
   override fun getRoots(module: Module, file: VirtualFile): Collection<PsiFileSystemItem> =
     getPsiFileSystemItem(module.project, file)
-      ?.let { NuxtJsModelManager.getApplication(it) }
+      ?.let { NuxtModelManager.getApplication(it) }
       ?.getStaticResourcesDir()
       ?.let { listOf(it) }
     ?: emptyList()
