@@ -1,6 +1,6 @@
 VuexStoreContext: {
   stores: [
-    NuxtJsVuexStore <PsiDirectory:/src/store/store> {
+    NuxtVuexStore <PsiDirectory:/src/store/store> {
       state: {
         test: <store/index.js:32:JSProperty>,
       }
@@ -11,7 +11,7 @@ VuexStoreContext: {
         UPDATE_TEST_DATA: <store/index.js:88:JSFunctionProperty>,
       }
       modules: [
-        NuxtJsVuexModule foo [namespaced] <PsiDirectory:/src/store/store/foo> {
+        NuxtVuexModule foo [namespaced] <PsiDirectory:/src/store/store/foo> {
           state: {
             data: <foo/index.js:32:JSProperty>,
           }
