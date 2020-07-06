@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.projectView;
 
 import com.intellij.flex.util.FlexTestUtils;
@@ -58,7 +59,7 @@ public class FlexProjectViewTest extends BaseProjectViewTestCase {
     myStructure.setFlattenPackages(flattenPackages);
 
     PlatformTestUtil.expandAll(myPane.getTree());
-    PlatformTestUtil.assertTreeEqual(myPane.getTree(), expected + "\n" + getRootFiles() + " External Libraries\n", true);
+    PlatformTestUtil.assertTreeEqual(myPane.getTree(), expected + "\n" + " External Libraries\n", true);
   }
 
   public void testSwfSortByName() {

@@ -86,7 +86,7 @@ public class FlexPullUpTest extends MultiFileTestCase {
     }
     else {
       String rootBefore = filePath + "/before";
-      VirtualFile rootDir = PsiTestUtil.createTestProjectStructure(myProject, myModule, rootBefore, myFilesToDelete, false);
+      VirtualFile rootDir = createTestProjectStructure(myProject, myModule, rootBefore, false);
       prepareProject(rootDir);
       PsiDocumentManager.getInstance(myProject).commitAllDocuments();
     }
@@ -112,7 +112,7 @@ public class FlexPullUpTest extends MultiFileTestCase {
                                            JSInterfaceContainmentVerifier.create(memberInfos),
                                            JSVisibilityUtil.DEFAULT_OPTIONS);
 
-    ArrayList<String> messages = new ArrayList<>(conflicts.values());
+    List<String> messages = new ArrayList<>(conflicts.values());
     for (int i = 0; i < messages.size(); i++) {
       messages.set(i, messages.get(i).replaceAll("<[^>]+>", ""));
     }

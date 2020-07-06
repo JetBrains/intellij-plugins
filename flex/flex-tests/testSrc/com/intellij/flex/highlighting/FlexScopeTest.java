@@ -98,7 +98,7 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
     // module uses classes from other (non-existing) module
     doHighlightingTest("_1");
 
-    final Module module2 = FlexTestUtils.createModule(myProject, "module2", getVirtualFile(getBasePath() + "Module2"));
+    final Module module2 = FlexTestUtils.createModule(myProject, "module2", findVirtualFile(getBasePath() + "Module2"));
 
     // create other module, don't add dependency
     doHighlightingTest("_1");
@@ -228,11 +228,11 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
   }
 
   public void testCircularDependency() throws Exception {
-    final Sdk sdk = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, true, getTestRootDisposable());
+    Sdk sdk = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, true, getTestRootDisposable());
     WriteAction.run(() -> {
-      final ModifiableModuleModel m1 = ModuleManager.getInstance(myProject).getModifiableModel();
-      final VirtualFile moduleDir = myProject.getBaseDir().createChildDirectory(this, "module2");
-      final Module module2 = m1.newModule(moduleDir.toNioPath(), FlexModuleType.getInstance().getId());
+      ModifiableModuleModel m1 = ModuleManager.getInstance(myProject).getModifiableModel();
+      VirtualFile moduleDir = getOrCreateProjectBaseDir().createChildDirectory(this, "module2");
+      Module module2 = m1.newModule(moduleDir.toNioPath(), FlexModuleType.getInstance().getId());
       m1.commit();
 
       PsiTestUtil.addSourceRoot(module2, moduleDir);
@@ -263,8 +263,8 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
   }
 
   public void testTransitiveDependency() throws Exception {
-    final Module module2 = FlexTestUtils.createModule(myProject, "module2", getVirtualFile(getBasePath() + "m2"));
-    final Module module3 = FlexTestUtils.createModule(myProject, "module3", getVirtualFile(getBasePath() + "m3"));
+    final Module module2 = FlexTestUtils.createModule(myProject, "module2", findVirtualFile(getBasePath() + "m2"));
+    final Module module3 = FlexTestUtils.createModule(myProject, "module3", findVirtualFile(getBasePath() + "m3"));
 
     FlexTestUtils.modifyConfigs(myProject, editor -> {
       final ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
@@ -330,8 +330,8 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
   }
 
   public void testTransitiveDependency2() throws Exception {
-    final Module module2 = FlexTestUtils.createModule(myProject, "module2", getVirtualFile(getBasePath() + "m2"));
-    final Module module3 = FlexTestUtils.createModule(myProject, "module3", getVirtualFile(getBasePath() + "m3"));
+    final Module module2 = FlexTestUtils.createModule(myProject, "module2", findVirtualFile(getBasePath() + "m2"));
+    final Module module3 = FlexTestUtils.createModule(myProject, "module3", findVirtualFile(getBasePath() + "m3"));
 
     FlexTestUtils.modifyConfigs(myProject, editor -> {
       final ModifiableFlexBuildConfiguration bc1a = editor.getConfigurations(myModule)[0];
@@ -388,8 +388,8 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
 
   public void testTestScope() throws Exception {
     final Sdk sdk46 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, true, getTestRootDisposable());
-    final Module module2 = FlexTestUtils.createModule(myProject, "module2", getVirtualFile(getBasePath() + "m2"));
-    final Module module3 = FlexTestUtils.createModule(myProject, "module3", getVirtualFile(getBasePath() + "m3"));
+    final Module module2 = FlexTestUtils.createModule(myProject, "module2", findVirtualFile(getBasePath() + "m2"));
+    final Module module3 = FlexTestUtils.createModule(myProject, "module3", findVirtualFile(getBasePath() + "m3"));
 
     FlexTestUtils.addFlexLibrary(false, myModule, "Lib", true, getTestDataPath() + getBasePath(), "Lib", null, null, LinkageType.Test);
     FlexTestUtils.addFlexLibrary(false, myModule, "Lib2", true, getTestDataPath() + getBasePath(), "Lib2", null, null);
@@ -422,7 +422,7 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
   }
 
   public void testLibraryScope() throws Exception {
-    final Module module2 = FlexTestUtils.createModule(myProject, "module2", getVirtualFile(getBasePath() + "m2"));
+    final Module module2 = FlexTestUtils.createModule(myProject, "module2", findVirtualFile(getBasePath() + "m2"));
     FlexTestUtils.addFlexLibrary(false, myModule, "Flex Lib", true, FlexTestUtils.getTestDataPath("flexlib"), "flexlib.swc", null, null);
 
     FlexTestUtils.modifyConfigs(myProject, editor -> {

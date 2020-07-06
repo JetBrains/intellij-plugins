@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.highlighting;
 
 import com.intellij.application.options.CodeStyle;
@@ -1821,7 +1821,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   public void testNoImportSuggestForTestClass() {
     myAfterCommitRunnable = () -> {
-      final VirtualFile testsRoot = getVirtualFile(BASE_PATH + getTestName(false) + "_2");
+      final VirtualFile testsRoot = findVirtualFile(BASE_PATH + getTestName(false) + "_2");
       PsiTestUtil.addSourceContentToRoots(myModule, testsRoot, true);
     };
     final Collection<HighlightInfo> infos = doTestFor(true, getTestName(false) + ".as");
@@ -1834,7 +1834,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
       final VirtualFile file = contentEntries[0].getFile();
       PsiTestUtil.removeContentEntry(myModule, contentEntries[0].getFile());
       PsiTestUtil.addSourceContentToRoots(myModule, file, true);
-      final VirtualFile productionRoot = getVirtualFile(BASE_PATH + getTestName(false) + "_2");
+      final VirtualFile productionRoot = findVirtualFile(BASE_PATH + getTestName(false) + "_2");
       PsiTestUtil.addSourceContentToRoots(myModule, productionRoot, false);
     };
     final Collection<HighlightInfo> infos = doTestFor(true, getTestName(false) + ".as");
@@ -2072,7 +2072,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   private VirtualFile copyFileToModule(Module module, String filePath) {
     try {
-      VirtualFile dir = myProject.getBaseDir().createChildDirectory(this, "module2");
+      VirtualFile dir = getOrCreateProjectBaseDir().createChildDirectory(this, "module2");
       PsiTestUtil.addSourceRoot(module, dir);
       VirtualFile f = LocalFileSystem.getInstance().findFileByPath(filePath);
       return VfsUtilCore.copyFile(this, f, dir);

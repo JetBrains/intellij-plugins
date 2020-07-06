@@ -54,6 +54,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.*;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
+import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.util.Consumer;
 import com.intellij.util.containers.ContainerUtil;
@@ -218,16 +219,15 @@ public class FlexTestUtils {
     bc.getDependencies().setTargetPlayer(FlexCommonUtils.getMaximumTargetPlayer(sdk.getHomePath()));
   }
 
-  public static Module createModule(Project project, final String moduleName, final VirtualFile moduleContent) throws IOException {
+  public static Module createModule(@NotNull Project project, String moduleName, VirtualFile moduleContent) throws IOException {
     return WriteAction.compute(() -> {
-      final ModifiableModuleModel m1 = ModuleManager.getInstance(project).getModifiableModel();
-      final VirtualFile moduleDir = project.getBaseDir().createChildDirectory(JSTestUtils.class, moduleName);
-      final Module result = m1.newModule(moduleDir.toNioPath().resolve(moduleName + ".iml"), FlexModuleType.getInstance().getId());
+      ModifiableModuleModel m1 = ModuleManager.getInstance(project).getModifiableModel();
+      VirtualFile moduleDir = PlatformTestUtil.getOrCreateProjectBaseDir(project).createChildDirectory(JSTestUtils.class, moduleName);
+      Module result = m1.newModule(moduleDir.toNioPath().resolve(moduleName + ".iml"), FlexModuleType.getInstance().getId());
       m1.commit();
 
       if (moduleContent != null) {
         VfsUtil.copyDirectory(JSTestUtils.class, moduleContent, moduleDir, null);
-
         PsiTestUtil.addSourceRoot(result, moduleDir);
       }
       return result;

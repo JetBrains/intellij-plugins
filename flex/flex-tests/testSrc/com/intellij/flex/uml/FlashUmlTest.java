@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.uml;
 
 import com.intellij.codeInsight.JavaCodeInsightTestCase;
@@ -110,7 +110,7 @@ public class FlashUmlTest extends JavaCodeInsightTestCase {
                                     @Nullable String expectedFileNamePrefix) throws Exception {
     List<VirtualFile> vFiles = new ArrayList<>(files.length);
     for (String file : files) {
-      vFiles.add(getVirtualFile(BASE_PATH + file));
+      vFiles.add(findVirtualFile(BASE_PATH + file));
     }
     ApplicationManager.getApplication().runWriteAction(() -> {
       final ModuleRootManager rootManager = ModuleRootManager.getInstance(myModule);
@@ -199,7 +199,7 @@ public class FlashUmlTest extends JavaCodeInsightTestCase {
                            final DiagramDataModel<Object> model) throws Exception {
     String expectedDataFileName =
       getTestName(false) + (StringUtil.isEmpty(expectedPrefix) ? ".expected.xml" : ".expected." + expectedPrefix + ".xml");
-    CharSequence expectedText = LoadTextUtil.loadText(getVirtualFile(BASE_PATH + expectedDataFileName));
+    CharSequence expectedText = LoadTextUtil.loadText(findVirtualFile(BASE_PATH + expectedDataFileName));
     final Element expected = JDOMUtil.load(expectedText);
     final String expectedOriginFqn = expected.getAttributeValue("origin");
     assertEquals(expectedDataFileName + ": Invalid origin element", expectedOriginFqn, actualOriginFqn);
@@ -291,7 +291,7 @@ public class FlashUmlTest extends JavaCodeInsightTestCase {
   }
 
   public void testExpandCollapse() throws Exception {
-    File projectRoot = new File(getVirtualFile(BASE_PATH + getTestName(false)).getPath());
+    File projectRoot = new File(findVirtualFile(BASE_PATH + getTestName(false)).getPath());
     String[] files = {getTestName(false) + "/Classes.as",
       getTestName(false) + "/com/test/MyButton.mxml",
       getTestName(false) + "/com/test/MyButton2.mxml"};
@@ -315,7 +315,7 @@ public class FlashUmlTest extends JavaCodeInsightTestCase {
   }
 
   public void testExpandCollapse2() throws Exception {
-    File projectRoot = new File(getVirtualFile(BASE_PATH + getTestName(false)).getPath());
+    File projectRoot = new File(findVirtualFile(BASE_PATH + getTestName(false)).getPath());
     String[] files = {getTestName(false) + "/com/test/MyButton.mxml"};
 
     DiagramBuilder builder = doTestImpl(projectRoot, files,

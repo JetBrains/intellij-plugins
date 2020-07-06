@@ -123,7 +123,7 @@ import static com.intellij.codeInsight.daemon.impl.HighlightInfoFilter.EXTENSION
 public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   @NonNls static final String BASE_PATH = "flex_highlighting";
 
-  protected Runnable myAfterCommitRunnable = null;
+  private Runnable myAfterCommitRunnable = null;
 
   {
     myTestsWithJSSupportLoader.addAll(
@@ -2165,7 +2165,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     FileDocumentManager.getInstance().saveAllDocuments();
     VirtualFile f = ContainerUtil.find(FileEditorManager.getInstance(myProject).getOpenFiles(),
                                        virtualFile -> virtualFile.getName().endsWith("as"));
-    VirtualFile expectedFile = getVirtualFile(BASE_PATH + "/" + testName + "_2_after.as");
+    VirtualFile expectedFile = findVirtualFile(BASE_PATH + "/" + testName + "_2_after.as");
     assertEquals(StringUtil.convertLineSeparators(VfsUtilCore.loadText(expectedFile)), StringUtil.convertLineSeparators(
       VfsUtilCore.loadText(f)));
   }

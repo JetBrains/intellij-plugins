@@ -1,14 +1,14 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.highlighting;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzerSettings;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.flex.util.ActionScriptDaemonAnalyzerTestCase;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JSTestUtils;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
 import com.intellij.lang.javascript.psi.JSFunction;
@@ -217,7 +217,7 @@ public class ActionScriptLineMarkersTest extends ActionScriptDaemonAnalyzerTestC
       @Override
       public void run() {
         VirtualFile file = ModuleRootManager.getInstance(myModule).getContentEntries()[0].getFile();
-        VirtualFile fakeClassFile = getVirtualFile(BASE_PATH + "/" + getTestName(false) + "_2.js2");
+        VirtualFile fakeClassFile = findVirtualFile(BASE_PATH + "/" + getTestName(false) + "_2.js2");
         try {
           VirtualFile classesDir = file.createChildDirectory(this, "classes");
           VfsUtilCore.copyFile(this, fakeClassFile, classesDir);

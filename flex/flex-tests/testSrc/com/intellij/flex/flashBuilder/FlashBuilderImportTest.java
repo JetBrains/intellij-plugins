@@ -57,7 +57,7 @@ public class FlashBuilderImportTest extends HeavyPlatformTestCase {
   }
 
   private VirtualFile prepareFlashBuilderProjectDir() {
-    final VirtualFile baseDir = myProject.getBaseDir();
+    final VirtualFile baseDir = getOrCreateProjectBaseDir();
     assert baseDir != null;
     final VirtualFile tempDataDir = baseDir.findChild(FB_PROJECT_DIR_NAME);
     if (tempDataDir != null) {

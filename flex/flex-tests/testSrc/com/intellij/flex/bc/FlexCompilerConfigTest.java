@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.bc;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -55,6 +43,8 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -173,11 +163,12 @@ public class FlexCompilerConfigTest extends HeavyPlatformTestCase {
   @NotNull
   @Override
   protected Module createMainModule() throws IOException {
-    final Module module = super.createMainModule();
+    Module module = super.createMainModule();
     WriteCommandAction.writeCommandAction(myProject).run(() -> {
-      VirtualFile moduleDir = module.getModuleFile().getParent();
-      VirtualFile src = moduleDir.createChildDirectory(this, "src");
-      PsiTestUtil.addContentRoot(module, moduleDir);
+      Path dir = module.getModuleNioFile().getParent().resolve("src");
+      Files.createDirectories(dir);
+      VirtualFile src = LocalFileSystem.getInstance().refreshAndFindFileByNioFile(dir);
+      PsiTestUtil.addContentRoot(module, src.getParent());
       PsiTestUtil.addSourceRoot(module, src);
     });
     return module;
@@ -433,9 +424,8 @@ public class FlexCompilerConfigTest extends HeavyPlatformTestCase {
       VirtualFile additionalConfigFile;
       try {
         additionalConfigFile = FlexUtils.addFileWithContent(f.getName(),
-                                                            replaceMacros(VfsUtilCore.loadText(f), createTestSdk(sdkVersion),
-                                                                          null),
-                                                            myModule.getModuleFile().getParent());
+                                                            replaceMacros(VfsUtilCore.loadText(f), createTestSdk(sdkVersion), null),
+                                                            LocalFileSystem.getInstance().refreshAndFindFileByNioFile(myModule.getModuleNioFile().getParent()));
       }
       catch (IOException e) {
         throw new RuntimeException(e);
@@ -450,7 +440,7 @@ public class FlexCompilerConfigTest extends HeavyPlatformTestCase {
   }
 
   private String replaceMacros(String text, final Sdk sdk, @Nullable Map<String, String> additionalMacros) {
-    text = text.replace(PathMacroUtil.DEPRECATED_MODULE_DIR, myModule.getModuleFile().getParent().getPath());
+    text = text.replace(PathMacroUtil.DEPRECATED_MODULE_DIR, FileUtil.toSystemIndependentName(myModule.getModuleNioFile().getParent().toString()));
     text = text.replace("$FLEX_SDK$", sdk.getHomePath());
     if (additionalMacros != null) {
       for (String key : additionalMacros.keySet()) {
@@ -464,7 +454,7 @@ public class FlexCompilerConfigTest extends HeavyPlatformTestCase {
     final Module module2 = FlexTestUtils.createModule(myProject, "module2", getVirtualFile("m2"));
     final Module module3 = FlexTestUtils.createModule(myProject, "module3", getVirtualFile("m3"));
 
-    VirtualFile moduleDir = myModule.getModuleFile().getParent();
+    VirtualFile moduleDir = LocalFileSystem.getInstance().refreshAndFindFileByNioFile(myModule.getModuleNioFile().getParent());
     FlexTestUtils.addFlexLibrary(false, myModule, "Lib", true, getTestDataPath(), "Lib", null, null, LinkageType.Test, moduleDir);
     FlexTestUtils.addFlexLibrary(false, myModule, "Lib2", true, getTestDataPath(), "Lib2", null, null, LinkageType.Merged, moduleDir);
     FlexTestUtils.addFlexLibrary(true, myModule, "Lib3", true, getTestDataPath(), "Lib3", null, null, LinkageType.Test, moduleDir);
