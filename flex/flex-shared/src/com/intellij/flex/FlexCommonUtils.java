@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex;
 
 import com.intellij.execution.configurations.CommandLineTokenizer;
@@ -636,7 +636,7 @@ public class FlexCommonUtils {
     final URL url = FlexCommonUtils.class.getResource("");
     if ("jar".equals(url.getProtocol())) {
       // running from build
-      return FileUtil.toSystemDependentName(PathManager.getHomePath() + "/plugins/flex/lib/" + filename);
+      return FileUtil.toSystemDependentName(PathManager.getPluginsPath() + "/flex/lib/" + filename);
     }
     else {
       final File dir1 = new File("../lib");
