@@ -319,8 +319,7 @@ public class DartServerData {
       ApplicationManager.getApplication()
         .invokeLater(() -> {
                        if (clearCache) {
-                         ResolveCache.getInstance(project).clearCache(true);
-                         ((PsiModificationTrackerImpl)PsiManager.getInstance(project).getModificationTracker()).incCounter();
+                         PsiManager.getInstance(project).dropPsiCaches();
                        }
                        DaemonCodeAnalyzer.getInstance(project).restart();
                      },
