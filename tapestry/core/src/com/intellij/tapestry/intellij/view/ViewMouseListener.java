@@ -67,7 +67,7 @@ class ViewMouseListener extends MouseInputAdapter {
 
             // If the file in editor isn't writable or isn't part of the module where the drag is from don't drag
             Module moduleForFile = ProjectRootManager.getInstance(_tapestryProjectViewPane.getProject()).getFileIndex().getModuleForFile(fileInEditor.getVirtualFile());
-            if (!fileInEditor.isWritable() || moduleForFile == null || !moduleForFile.getModuleNioFile().equals(module.getModuleNioFile())) {
+            if (!fileInEditor.isWritable() || moduleForFile == null || !moduleForFile.equals(module)) {
                 return;
             }
 
