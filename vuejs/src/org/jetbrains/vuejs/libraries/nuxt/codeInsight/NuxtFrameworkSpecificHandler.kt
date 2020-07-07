@@ -12,6 +12,7 @@ import org.jetbrains.vuejs.codeInsight.resolveSymbolFromNodeModule
 import org.jetbrains.vuejs.libraries.nuxt.NUXT_CONFIG_FILE
 import org.jetbrains.vuejs.libraries.nuxt.NUXT_CONFIG_PKG
 import org.jetbrains.vuejs.libraries.nuxt.NUXT_TYPES_PKG
+import org.jetbrains.vuejs.libraries.nuxt.model.NuxtModelManager
 
 class NuxtFrameworkSpecificHandler : JSFrameworkSpecificHandler {
 
@@ -23,12 +24,7 @@ class NuxtFrameworkSpecificHandler : JSFrameworkSpecificHandler {
               ?.lOperand?.castSafelyTo<JSDefinitionExpression>()
               ?.expression?.castSafelyTo<JSReferenceExpression>()
               ?.referenceName == "exports")) {
-      return resolveSymbolFromNodeModule(parent, NUXT_TYPES_PKG, "NuxtConfig", TypeScriptTypeAlias::class.java)
-               ?.parsedTypeDeclaration
-             ?: resolveSymbolFromNodeModule(parent, NUXT_TYPES_PKG, "Configuration", TypeScriptInterface::class.java)
-               ?.jsType
-             ?: resolveSymbolFromNodeModule(parent, NUXT_CONFIG_PKG, "default", ES6ExportDefaultAssignment::class.java)
-               ?.stubSafeElement?.castSafelyTo<TypeScriptInterface>()?.jsType
+      return NuxtModelManager.getApplication(parent)?.getNuxtConfigType(parent)
     }
     return null
   }

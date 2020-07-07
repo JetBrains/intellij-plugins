@@ -14,9 +14,12 @@ import org.jetbrains.vuejs.libraries.nuxt.model.impl.NuxtApplicationImpl
 
 object NuxtModelManager {
 
+  fun getApplication(project:Project, context: VirtualFile): NuxtApplication? =
+    findParentEntry(context, getNuxtApplicationMap(project))
+
   fun getApplication(context: PsiElement): NuxtApplication? =
     context.containingFile?.originalFile?.virtualFile?.let {
-      findParentEntry(it, getNuxtApplicationMap(context.project))
+      getApplication(context.project, it)
     }
 
   private fun getNuxtApplicationMap(project: Project): Map<VirtualFile, NuxtApplication> =
