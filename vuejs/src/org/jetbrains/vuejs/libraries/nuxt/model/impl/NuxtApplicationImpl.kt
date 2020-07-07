@@ -57,7 +57,7 @@ class NuxtApplicationImpl(override val configFile: VirtualFile, override val pro
   }
 
   private fun hasBeenNotifiedAboutTypes(): Boolean {
-    return PropertiesComponent.getInstance(project).getBoolean(NUXT_TYPES_NOTIFICATION_SHOWN, false)
+    return PropertiesComponent.getInstance(project).isTrueValue(NUXT_TYPES_NOTIFICATION_SHOWN)
   }
 
   override val packageJson: VirtualFile?
@@ -102,8 +102,12 @@ class NuxtApplicationImpl(override val configFile: VirtualFile, override val pro
     packageJson?.let {
       notification.addAction(InstallNuxtTypesAction(project, it, notification))
     }
-    notification.notify(project)
+    if (hasBeenNotifiedAboutTypes()) {
+      return
+    }
     PropertiesComponent.getInstance(project).setValue(NUXT_TYPES_NOTIFICATION_SHOWN, true)
+    notification.notify(project)
+
     AlarmFactory.getInstance().create().addRequest(
       Runnable { notification.hideBalloon() },
       TimeUnit.SECONDS.toMillis(30)
