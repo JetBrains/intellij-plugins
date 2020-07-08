@@ -135,13 +135,6 @@ class VueCliProjectGenerator : NpmPackageProjectGenerator() {
     super.onGettingSmartAfterProjectGeneration(project, baseDir)
     CreateRunConfigurationUtil.debugConfiguration(project, 8080)
     CreateRunConfigurationUtil.npmConfiguration(project, "serve")
-    setupWebpackConfigFile(project, baseDir)
   }
 
-  private fun setupWebpackConfigFile(project: Project, baseDir: VirtualFile) {
-    val configPath = baseDir.path + "/node_modules/@vue/cli-service/webpack.config.js"
-    if (File(configPath).isFile) {
-      WebPackConfigManager.getInstance(project).loadState(WebPackConfiguration(configPath))
-    }
-  }
 }
