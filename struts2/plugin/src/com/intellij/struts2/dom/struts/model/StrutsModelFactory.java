@@ -16,6 +16,7 @@
 package com.intellij.struts2.dom.struts.model;
 
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
 import com.intellij.psi.PsiElement;
@@ -38,8 +39,8 @@ import java.util.Set;
  */
 class StrutsModelFactory extends DomModelFactory<StrutsRoot, StrutsModel, PsiElement> {
 
-  protected StrutsModelFactory() {
-    super(StrutsRoot.class, "struts2");
+  protected StrutsModelFactory(final Project project) {
+    super(StrutsRoot.class, project, "struts2");
   }
 
   @Override
