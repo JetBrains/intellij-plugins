@@ -218,7 +218,7 @@ class LessonMessagePane : JTextPane() {
     repaint()
   }
 
-  private fun redrawMessages(): List<LessonMessage> {
+  fun redrawMessages() {
     val copy = lessonMessages.toList()
     clear()
     for (lessonMessage in copy) {
@@ -228,7 +228,6 @@ class LessonMessagePane : JTextPane() {
       it.passed = copy[index].passed
       if (it.passed) setPassedStyle(it)
     }
-    return copy
   }
 
   fun clear() {
@@ -271,7 +270,6 @@ class LessonMessagePane : JTextPane() {
       })
       jPanel.add(LinkLabel<Any>("Add shortcut", null) { _, _ ->
         KeymapPanel.addKeyboardShortcut(actionName, ActionShortcutRestrictions.getInstance().getForActionId(actionName), KeymapManager.getInstance().activeKeymap, this)
-        redrawMessages()
         balloon.hide()
         repaint()
       })
