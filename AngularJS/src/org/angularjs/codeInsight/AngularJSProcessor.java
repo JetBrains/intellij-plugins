@@ -288,13 +288,13 @@ public class AngularJSProcessor {
                                             PsiLanguageInjectionHost declarationContainer,
                                             PsiLanguageInjectionHost elementContainer) {
     PsiElement parent = declarationContainer.getParent();
-    if (parent instanceof XmlAttribute && "ngRepeatStart".equals(normalizeAttributeName(((XmlAttribute)parent).getName(), false))) {
+    if (parent instanceof XmlAttribute && "ngRepeatStart".contentEquals(normalizeAttributeName(((XmlAttribute)parent).getName(), false))) {
       XmlTagChild next = declarationTag.getNextSiblingInTag();
       while (next != null) {
         if (PsiTreeUtil.isAncestor(next, elementContainer, true)) return true;
         if (next instanceof XmlTag
             && ContainerUtil.find(((XmlTag)next).getAttributes(),
-                                  attr -> "ngRepeatEnd".equals(normalizeAttributeName(attr.getName(), false))) != null) {
+                                  attr -> "ngRepeatEnd".contentEquals(normalizeAttributeName(attr.getName(), false))) != null) {
           break;
         }
         next = next.getNextSiblingInTag();

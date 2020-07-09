@@ -19,6 +19,7 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.*;
@@ -210,8 +211,8 @@ public class AngularIndexUtil {
     return Collections.emptyList();
   }
 
-  public static @NotNull String convertRestrictions(final @NotNull Project project, @NotNull String restrictions) {
-    if (AngularJSIndexingHandler.DEFAULT_RESTRICTIONS.equals(restrictions)) {
+  public static @NotNull CharSequence convertRestrictions(final @NotNull Project project, @NotNull CharSequence restrictions) {
+    if (StringUtil.equals(AngularJSIndexingHandler.DEFAULT_RESTRICTIONS, restrictions)) {
       return getAngularJSVersion(project) >= 13 ? "E" : "_";
     }
     return restrictions;

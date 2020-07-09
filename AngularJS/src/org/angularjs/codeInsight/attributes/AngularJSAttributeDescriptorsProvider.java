@@ -6,12 +6,14 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.util.text.Strings;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.stubs.StubIndexKey;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.util.text.CharSequenceSubSequence;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlAttributeDescriptorsProvider;
 import org.angularjs.codeInsight.DirectiveUtil;
@@ -24,7 +26,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.angularjs.codeInsight.attributes.AngularAttributesRegistry.createDescriptor;
@@ -101,12 +102,19 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
 
     final String restrictions = directive.getTypeString();
     if (restrictions != null) {
-      final String[] split = restrictions.split(";", -1);
-      final String restrict = AngularIndexUtil.convertRestrictions(project, split[0]);
-      final String requiredTagAndAttr = split[1];
-      if (!StringUtil.isEmpty(restrict) && !StringUtil.containsIgnoreCase(restrict, "A")) {
+      int semicolon = restrictions.indexOf(';');
+      if (semicolon < 0) {
+        return true;
+      }
+      CharSequence restrict = AngularIndexUtil.convertRestrictions(project, new CharSequenceSubSequence(restrictions, 0, semicolon));
+      if (!StringUtil.isEmpty(restrict) && Strings.indexOfIgnoreCase(restrict, "A", 0) < 0) {
         return false;
       }
+      int secondSemicolon = restrictions.indexOf(';', semicolon + 1);
+      if (secondSemicolon < 0) {
+        secondSemicolon = restrictions.length();
+      }
+      final CharSequence requiredTagAndAttr = new CharSequenceSubSequence(restrictions, semicolon + 1, secondSemicolon);
       if (!tagAndAttrMatches(tag, requiredTagAndAttr)) {
         return false;
       }
@@ -114,42 +122,48 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
     return true;
   }
 
-  private static boolean tagAndAttrMatches(XmlTag tag, String requiredTagAndDirective) {
-    List<String> tagAndDirectiveSplit = StringUtil.split(requiredTagAndDirective, "=");
-    if (tagAndDirectiveSplit.isEmpty()) {
+  private static boolean tagAndAttrMatches(XmlTag tag, CharSequence requiredTagAndDirective) {
+    if (requiredTagAndDirective.length() == 0) {
       return true;
     }
-    if (!tagMatches(tag, tagAndDirectiveSplit.get(0))) {
+    int indexOfEquals = Strings.indexOf(requiredTagAndDirective, '=');
+    if (indexOfEquals < 0) {
+      return tagMatches(tag, requiredTagAndDirective);
+    }
+    else if (!tagMatches(tag, new CharSequenceSubSequence(requiredTagAndDirective, 0, indexOfEquals))) {
       return false;
     }
-    if (tagAndDirectiveSplit.size() == 1) {
-      return true;
-    }
-    String requiredAttr = tagAndDirectiveSplit.get(1).trim();
-    if (requiredAttr.isEmpty()) {
+    CharSequence requiredAttr =
+      StringUtil.trim(new CharSequenceSubSequence(requiredTagAndDirective, indexOfEquals + 1, requiredTagAndDirective.length()));
+    if (requiredAttr.length() == 0) {
       return true;
     }
     for (XmlAttribute attr : tag.getAttributes()) {
-      if (requiredAttr.equals(DirectiveUtil.normalizeAttributeName(attr.getName()))) {
+      if (StringUtil.equals(requiredAttr, DirectiveUtil.normalizeAttributeName(attr.getName(), true))) {
         return true;
       }
     }
     return false;
   }
 
-  private static boolean tagMatches(XmlTag tag, String requiredTag) {
+  private static boolean tagMatches(XmlTag tag, CharSequence requiredTag) {
     if (StringUtil.isEmpty(requiredTag) || StringUtil.equalsIgnoreCase(requiredTag, "ANY")) {
       return true;
     }
-    String normalizedTag = DirectiveUtil.normalizeAttributeName(tag.getName());
-    for (String s : StringUtil.split(requiredTag, ",")) {
-      String requirement = s.trim();
+    CharSequence normalizedTag = DirectiveUtil.normalizeAttributeName(tag.getName(), true);
+    int last = -1;
+    do {
+      int nextIndex = Strings.indexOf(requiredTag, ',', last + 1);
+      CharSequence requirement =
+        StringUtil.trim(new CharSequenceSubSequence(requiredTag, last + 1, nextIndex > 0 ? nextIndex : requiredTag.length()));
       if (StringUtil.equals(normalizedTag, requirement)
           || StringUtil.equalsIgnoreCase(tag.getName(), requirement)) {
         return true;
       }
+      last = nextIndex;
     }
-    if ("input".equalsIgnoreCase(requiredTag)) {
+    while (last > 0);
+    if (StringUtil.equalsIgnoreCase("input", requiredTag)) {
       PsiElement parent = tag;
       while (parent != null && !(parent instanceof PsiFile)) {
         parent = parent.getParent();

@@ -28,6 +28,7 @@ import org.junit.runners.Suite;
   NgRepeatTest.class,
   RoutingTest.class,
   TagsTest.class,
+  DirectivesTest.class,
   AngularTypedHandlerTest.class,
   FindUsagesTest.class,
   AngularDirectiveCommentParsingTest.class,
