@@ -19,7 +19,8 @@ import training.learn.lesson.LessonListener
 import training.learn.lesson.LessonManager
 import training.learn.lesson.LessonProcessor
 import training.learn.lesson.XmlLesson
-import training.learn.lesson.kimpl.DocumentationModeLessonContext
+import training.learn.lesson.kimpl.ApplyTaskLessonContext
+import training.learn.lesson.kimpl.DocumentationModeTaskContext
 import training.learn.lesson.kimpl.KLesson
 import training.ui.views.LanguageChoosePanel
 import training.ui.views.LearnPanel
@@ -189,7 +190,7 @@ class LearnToolWindow internal constructor(val project: Project, private val who
     learnPanel?.setModuleName(lesson.module.name)
     learnPanel?.modulePanel?.init(lesson)
     if (lesson is KLesson) {
-      lesson.lessonContent(DocumentationModeLessonContext(project))
+      lesson.lessonContent(ApplyTaskLessonContext(DocumentationModeTaskContext(project)))
     }
     else if (lesson is XmlLesson) {
       LessonProcessor.process(project, lesson, null, true)

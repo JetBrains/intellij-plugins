@@ -1,42 +1,49 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package training.learn.lesson.kimpl
+package training.actions
 
-import com.intellij.openapi.project.Project
+import com.intellij.ide.CopyPasteManagerEx
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
 import training.commands.kotlin.TaskContext
 import training.commands.kotlin.TaskRuntimeContext
 import training.commands.kotlin.TaskTestContext
+import training.learn.CourseManager
+import training.learn.lesson.kimpl.ApplyTaskLessonContext
+import training.learn.lesson.kimpl.KLesson
 import java.awt.Component
+import java.awt.datatransfer.StringSelection
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
 
-internal class DocumentationModeLessonContext(project: Project) : LessonContext() {
-  private val documentationModeTaskContext = DocumentationModeTaskContext(project)
-
-  override fun task(taskContent: TaskContext.() -> Unit) {
-    taskContent(documentationModeTaskContext)
+@Suppress("HardCodedStringLiteral")
+class DumpFeaturesTrainerText : AnAction("Copy IFT Course Text to Clipboard") {
+  override fun actionPerformed(e: AnActionEvent) {
+    val lessonsForModules = CourseManager.instance.lessonsForModules
+    val buffer = StringBuffer()
+    for (x in lessonsForModules) {
+      if (x is KLesson) {
+        buffer.append(x.name)
+        buffer.append(":\n")
+        x.lessonContent(ApplyTaskLessonContext(TextCollector(buffer)))
+        buffer.append('\n')
+      }
+    }
+    CopyPasteManagerEx.getInstance().setContents(StringSelection(buffer.toString()))
   }
-
-  override fun caret(offset: Int) = Unit // do nothing
-
-  override fun caret(line: Int, column: Int) = Unit // do nothing
-
-  override fun caret(text: String) = Unit // do nothing
-
-  override fun caret(position: LessonSamplePosition) = Unit // do nothing
-
-  override fun waitBeforeContinue(delayMillis: Int) = Unit // do nothing
-
-  override fun prepareSample(sample: LessonSample) = Unit // do nothing
 }
 
-private class DocumentationModeTaskContext(private val project: Project) : TaskContext() {
+
+private class TextCollector(private val buffer: StringBuffer) : TaskContext() {
   override fun before(preparation: TaskRuntimeContext.() -> Unit) = Unit // do nothing
 
   override fun restoreState(delayMillis: Int, checkState: TaskRuntimeContext.() -> Boolean) = Unit // do nothing
 
   override fun proposeRestore(restoreCheck: TaskRuntimeContext.() -> RestoreProposal) = Unit // do nothing
 
-  override fun text(text: String) = LessonExecutorUtil.addTextToLearnPanel(text, project)
+  override fun text(text: String) {
+    buffer.append(text)
+    buffer.append('\n')
+  }
 
   override fun trigger(actionId: String) = Unit // do nothing
 
