@@ -251,7 +251,7 @@ class LearnPanel(private val learnToolWindow: LearnToolWindow, val lesson: Lesso
 
   fun addMessages(messages: Array<Message>) {
     for (message in messages) {
-      if (message.type == Message.MessageType.LINK) {
+      if (message.type == Message.MessageType.LINK && message.runnable == null) {
         //add link handler
         message.runnable = Runnable {
           val link = message.link

@@ -61,8 +61,6 @@
                 factoryClass="training.ui.LearnToolWindowFactory"
     />
 
-    <editorNotificationProvider implementation="training.ui.IncorrectLearningStateNotificationProvider"/>
-
     <registryKey key="ideFeaturesTrainer.welcomeScreen.tutorialsTree" defaultValue="FALSE" restartRequired="true"
                  description="When this option is enabled, welcome screen shows Tutorials along the Projects in the recent projects list, additional action link Learn IDE is disabled"/>
 

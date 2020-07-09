@@ -18,7 +18,7 @@ import training.commands.kotlin.TaskContext
 import training.commands.kotlin.TaskRuntimeContext
 import training.commands.kotlin.TaskTestContext
 import training.learn.ActionsRecorder
-import training.ui.IncorrectLearningStateNotificationProvider
+import training.learn.lesson.LessonManager
 import java.awt.Component
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
@@ -48,25 +48,22 @@ internal class TaskContextImpl(private val lessonExecutor: LessonExecutor,
   }
 
   override fun proposeRestore(restoreCheck: TaskRuntimeContext.() -> RestoreProposal) {
-    val key = IncorrectLearningStateNotificationProvider.INCORRECT_LEARNING_STATE_NOTIFICATION
     var restoreResult = false
     restoreState {
       val file = lessonExecutor.virtualFile
       val type = restoreCheck(runtimeContext)
-      if (type == RestoreProposal.Force) {
-        return@restoreState true
-      }
       if (type == RestoreProposal.None) {
-        if (file.getUserData(key) != null) {
-          IncorrectLearningStateNotificationProvider.clearMessage(file, runtimeContext.project)
+        if (LessonManager.instance.shownRestoreType != RestoreProposal.None) {
+          LessonManager.instance.clearRestoreMessage()
         }
       }
-      else if (type != file.getUserData(key)?.type) {
-        val proposal = IncorrectLearningStateNotificationProvider.RestoreNotification(type) {
+      else if (type != LessonManager.instance.shownRestoreType) {
+        val proposal = RestoreNotification(type) {
           restoreResult = true
+          lessonExecutor.tryToCheckRestore()
         }
-        file.putUserData(key, proposal)
         EditorNotifications.getInstance(runtimeContext.project).updateNotifications(file)
+        LessonManager.instance.addRestoreNotification(proposal)
       }
       return@restoreState restoreResult
     }
