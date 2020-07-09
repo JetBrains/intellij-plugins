@@ -17,4 +17,13 @@ object LearningUiManager {
     activeToolWindow?.setModulesPanel()
     activeToolWindow = null
   }
+
+  fun getIconIndex(icon: Icon): String {
+    var index = iconMap.getKeysByValue(icon)?.firstOrNull()
+    if (index == null) {
+      index = iconMap.size.toString()
+      iconMap[index] = icon
+    }
+    return index
+  }
 }

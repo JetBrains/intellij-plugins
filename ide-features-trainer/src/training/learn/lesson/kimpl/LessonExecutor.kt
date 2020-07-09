@@ -27,7 +27,6 @@ import training.commands.kotlin.TaskContext
 import training.commands.kotlin.TaskTestContext
 import training.learn.ActionsRecorder
 import training.learn.lesson.LessonManager
-import training.ui.IncorrectLearningStateNotificationProvider
 import training.ui.LearnToolWindowFactory
 import training.ui.LearningUiManager
 import java.awt.Component
@@ -144,7 +143,7 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
   }
 
   private fun processNextTask2(taskIndex: Int) {
-    IncorrectLearningStateNotificationProvider.clearMessage(virtualFile, project)
+    LessonManager.instance.clearRestoreMessage()
     assert(ApplicationManager.getApplication().isDispatchThread)
     if (taskIndex == taskActions.size) {
       lesson.pass()
@@ -199,6 +198,10 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
     chainNextTask(taskContext, taskIndex, recorder, taskCallbackData)
 
     processTestActions(taskContext)
+  }
+
+  fun tryToCheckRestore() {
+    currentRestoreRecorder?.tryToCheckCallback()
   }
 
   /** @return a callback to clear resources used to track restore */
