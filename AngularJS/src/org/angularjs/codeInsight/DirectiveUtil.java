@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.util.text.Strings;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.StubIndexKey;
 import com.intellij.util.Processor;
@@ -84,11 +85,11 @@ public class DirectiveUtil {
 
   @Contract("null -> null")
   public static String normalizeAttributeName(String name) {
-    return normalizeAttributeName(name, true);
+    return name == null ? null : normalizeAttributeName(name, true).toString();
   }
 
   @Contract("null,_ -> null")
-  public static String normalizeAttributeName(String name, boolean stripStartEnd) {
+  public static CharSequence normalizeAttributeName(String name, boolean stripStartEnd) {
     if (name == null) return null;
     int index = 0;
     if (name.startsWith(HtmlUtil.HTML5_DATA_ATTR_PREFIX)) {
@@ -97,7 +98,7 @@ public class DirectiveUtil {
     else if (name.startsWith("x-")) {
       index = 2;
     }
-    StringBuilder result = new StringBuilder();
+    StringBuilder result = new StringBuilder(name.length());
     boolean upperCase = false;
     for (; index < name.length(); index++) {
       char ch = name.charAt(index);
@@ -120,7 +121,7 @@ public class DirectiveUtil {
         result.setLength(result.length() - 3);
       }
     }
-    return result.toString();
+    return result;
   }
 
   public static boolean isAngular2Directive(final @Nullable PsiElement directive) {
@@ -177,9 +178,8 @@ public class DirectiveUtil {
     JSImplicitElement directive = AngularIndexUtil.resolve(project, index, name);
     final String restrictions = directive != null ? directive.getTypeString() : null;
     if (restrictions != null) {
-      final String[] split = restrictions.split(";", -1);
-      final String restrict = AngularIndexUtil.convertRestrictions(project, split[0]);
-      if (!StringUtil.isEmpty(restrict) && StringUtil.containsIgnoreCase(restrict, "E")) {
+      final CharSequence restrict = AngularIndexUtil.convertRestrictions(project, restrictions.subSequence(0, restrictions.indexOf(';')));
+      if (!StringUtil.isEmpty(restrict) && Strings.indexOfIgnoreCase(restrict, "E", 0) >= 0) {
         return directive;
       }
     }
