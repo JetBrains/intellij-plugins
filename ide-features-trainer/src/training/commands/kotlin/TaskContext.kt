@@ -37,9 +37,10 @@ abstract class TaskContext {
   enum class RestoreProposal {
     None,
     Caret,
-    Modification,
-    Force
+    Modification
   }
+
+  data class RestoreNotification(val type: RestoreProposal, val callback: () -> Unit)
 
   abstract fun proposeRestore(restoreCheck: TaskRuntimeContext.() -> RestoreProposal)
 
@@ -181,11 +182,7 @@ abstract class TaskContext {
 
   /** Show an [icon] inside lesson step message */
   open fun icon(icon: Icon): String  {
-    var index = LearningUiManager.iconMap.getKeysByValue(icon)?.firstOrNull()
-    if (index == null) {
-      index = LearningUiManager.iconMap.size.toString()
-      LearningUiManager.iconMap[index] = icon
-    }
+    val index = LearningUiManager.getIconIndex(icon)
     return "<icon_idx>$index</icon_idx>"
   }
 

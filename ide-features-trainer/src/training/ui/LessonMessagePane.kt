@@ -163,6 +163,7 @@ class LessonMessagePane : JTextPane() {
           Message.MessageType.LINK -> appendLink(message)
           Message.MessageType.ICON -> message.toIcon()?.let { addPlaceholderForIcon(it) }
           Message.MessageType.ICON_IDX -> LearningUiManager.iconMap[message.text]?.let { addPlaceholderForIcon(it) }
+          Message.MessageType.PROPOSE_RESTORE -> document.insertString(document.length, message.text, BOLD)
         }
         message.endOffset = document.endPosition.offset
       }

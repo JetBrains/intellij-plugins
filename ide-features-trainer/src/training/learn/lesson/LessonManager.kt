@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.lesson
 
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
@@ -14,6 +15,7 @@ import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.awt.RelativePoint
 import org.jdom.Element
+import training.commands.kotlin.TaskContext
 import training.editor.MouseListenerHolder
 import training.editor.actions.BlockCaretAction
 import training.editor.actions.LearnActions
@@ -41,6 +43,9 @@ class LessonManager {
     get() = LearningUiManager.activeToolWindow?.learnPanel
 
   private var currentLessonExecutor: LessonExecutor? = null
+
+  var shownRestoreType : TaskContext.RestoreProposal = TaskContext.RestoreProposal.None
+    private set
 
   val testActionsExecutor: Executor by lazy {
     externalTestActionsExecutor ?: createNamedSingleThreadExecutor("TestLearningPlugin")
@@ -141,6 +146,7 @@ class LessonManager {
   }
 
   fun resetMessagesNumber(number: Int) {
+    shownRestoreType = TaskContext.RestoreProposal.None
     learnPanel?.resetMessagesNumber(number)
   }
 
@@ -274,6 +280,28 @@ class LessonManager {
   fun removeLessonListener(lessonListener: LessonListener) {
     lessonListeners.remove(lessonListener)
   }
+
+  fun clearRestoreMessage() {
+    if (shownRestoreType != TaskContext.RestoreProposal.None) {
+      resetMessagesNumber(messagesNumber() - 1)
+    }
+  }
+
+  fun addRestoreNotification(proposal: TaskContext.RestoreNotification) {
+    val proposalText = when (proposal.type) {
+      TaskContext.RestoreProposal.Modification -> LearnBundle.message("learn.restore.notification.modification.message")
+      TaskContext.RestoreProposal.Caret -> LearnBundle.message("learn.restore.notification.caret.message")
+      else -> return
+    }
+    val warningIconIndex = LearningUiManager.getIconIndex(AllIcons.General.NotificationWarning)
+    learnPanel?.addMessages(arrayOf(Message(warningIconIndex, Message.MessageType.ICON_IDX),
+                                    Message(" ${proposalText} ", Message.MessageType.TEXT_BOLD),
+                                    Message("Restore", Message.MessageType.LINK).also { it.runnable = Runnable { proposal.callback() } }
+    ))
+    LearningUiManager.activeToolWindow?.updateScrollPane()
+    shownRestoreType = proposal.type
+  }
+
 
   companion object {
     @Volatile
