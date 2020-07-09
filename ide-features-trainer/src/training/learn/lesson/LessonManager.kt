@@ -8,6 +8,8 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.components.serviceIfCreated
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.keymap.Keymap
+import com.intellij.openapi.keymap.KeymapManagerListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.project.ProjectManagerListener
@@ -71,10 +73,19 @@ class LessonManager {
   }
 
   init {
-    ApplicationManager.getApplication().messageBus.connect().subscribe(ProjectManager.TOPIC, object : ProjectManagerListener {
-
+    val connect = ApplicationManager.getApplication().messageBus.connect()
+    connect.subscribe(ProjectManager.TOPIC, object : ProjectManagerListener {
       override fun projectClosed(project: Project) {
         serviceIfCreated<LessonManager>()?.clearAllListeners()
+      }
+    })
+    connect.subscribe(KeymapManagerListener.TOPIC, object : KeymapManagerListener {
+      override fun activeKeymapChanged(keymap: Keymap?) {
+        learnPanel?.lessonMessagePane?.redrawMessages()
+      }
+
+      override fun shortcutChanged(keymap: Keymap, actionId: String) {
+        learnPanel?.lessonMessagePane?.redrawMessages()
       }
     })
   }

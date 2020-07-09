@@ -55,7 +55,7 @@ class LearnPanel(private val learnToolWindow: LearnToolWindow, val lesson: Lesso
   private val allTopicsLabel: LinkLabel<Any> = LinkLabel(LearnBundle.message("learn.ui.alltopics"), null)
 
   private val lessonNameLabel = JLabel() //Name of the current lesson
-  private val lessonMessagePane = LessonMessagePane()
+  val lessonMessagePane = LessonMessagePane()
   private val buttonPanel = JPanel()
   private val button = JButton(LearnBundle.message("learn.ui.button.skip"))
 
