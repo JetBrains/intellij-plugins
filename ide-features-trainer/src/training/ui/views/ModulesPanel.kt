@@ -22,12 +22,13 @@ import training.lang.LangManager
 import training.learn.CourseManager
 import training.learn.LearnBundle
 import training.learn.interfaces.Module
-import training.learn.lesson.LessonStateManager
 import training.ui.LearnToolWindow
 import training.ui.UISettings
-import training.util.*
+import training.util.DataLoader
+import training.util.createAnAction
+import training.util.createBalloon
+import training.util.useNewLearningUi
 import java.awt.*
-import java.awt.event.ActionEvent
 import java.awt.event.MouseEvent
 import java.awt.event.MouseListener
 import javax.swing.*
@@ -84,10 +85,6 @@ class ModulesPanel(private val learnToolWindow: LearnToolWindow?) : JPanel() {
       CourseManager.instance.clearModules()
       CourseManager.instance.initXmlModules()
       module2linklabel.clear()
-    }
-
-    if (featureTrainerMode == TrainingMode.DEVELOPMENT) {
-      addDevelopmentTools()
     }
 
     if (modulesPanel is LearningItems) {
@@ -197,25 +194,6 @@ class ModulesPanel(private val learnToolWindow: LearnToolWindow?) : JPanel() {
       add(Box.createHorizontalGlue())
       add(settingsButton)
     }
-  }
-
-  @Suppress("HardCodedStringLiteral")
-  private fun addDevelopmentTools() {
-    modulesPanel.add(JButton().apply {
-      action = object : AbstractAction() {
-        override fun actionPerformed(actionEvent: ActionEvent) {
-          LessonStateManager.resetPassedStatus()
-          LearningLessonsAutoExecutor.runAllLessons(guessCurrentProject(modulesPanel))
-        }
-      }
-      margin = JBUI.emptyInsets()
-      isFocusable = true
-      isVisible = true
-      isSelected = true
-      isEnabled = true
-      isOpaque = false
-      text = "Run all lessons"
-    })
   }
 
   private fun delegateToLinkLabel(descriptionPane: ModuleDescriptionPane, moduleName: LinkLabel<*>): MouseListener {

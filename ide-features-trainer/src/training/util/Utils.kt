@@ -27,7 +27,6 @@ import training.learn.lesson.LessonStateManager
 import training.ui.LearnToolWindowFactory
 import training.ui.LearningUiManager
 import java.awt.Point
-import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import javax.swing.Icon
@@ -61,21 +60,6 @@ fun createBalloon(text: String, delay: Long): Balloon =
     .setAnimationCycle(0)
     .setFadeoutTime(delay)
     .createBalloon()
-
-val featureTrainerMode: TrainingMode
-  get() =
-    @Suppress("InvalidBundleOrProperty")
-    try {
-      when (Registry.stringValue("ide.features.trainer.mode")) {
-        "public-demo" -> TrainingMode.DEMO
-        "development" -> TrainingMode.DEVELOPMENT
-        "" -> TrainingMode.NORMAL
-        else -> TrainingMode.NORMAL
-      }
-    }
-    catch (e: MissingResourceException) {
-      TrainingMode.NORMAL
-    }
 
 const val trainerPluginConfigName: String = "ide-features-trainer.xml"
 
