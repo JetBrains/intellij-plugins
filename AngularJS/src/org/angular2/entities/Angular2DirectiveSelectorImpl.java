@@ -134,7 +134,7 @@ public class Angular2DirectiveSelectorImpl implements Angular2DirectiveSelector 
     private final List<Angular2DirectiveSelectorPsiElement> myAttributes = new SmartList<>();
     private final List<SimpleSelectorWithPsi> myNotSelectors = new SmartList<>();
 
-    SimpleSelectorWithPsiImpl(Angular2DirectiveSimpleSelectorWithRanges selectorWithRanges) {
+    SimpleSelectorWithPsiImpl(@NotNull Angular2DirectiveSimpleSelectorWithRanges selectorWithRanges) {
       if (selectorWithRanges.getElementRange() != null) {
         myElement = convert(selectorWithRanges.getElementRange(), true);
       }
@@ -155,17 +155,17 @@ public class Angular2DirectiveSelectorImpl implements Angular2DirectiveSelector 
     }
 
     @Override
-    public @NotNull List<Angular2DirectiveSelectorPsiElement> getAttributes() {
+    public @NotNull List<@NotNull Angular2DirectiveSelectorPsiElement> getAttributes() {
       return myAttributes;
     }
 
     @Override
-    public @NotNull List<SimpleSelectorWithPsi> getNotSelectors() {
+    public @NotNull List<@NotNull SimpleSelectorWithPsi> getNotSelectors() {
       return myNotSelectors;
     }
 
     @Override
-    public Angular2DirectiveSelectorPsiElement getElementAt(int offset) {
+    public @Nullable Angular2DirectiveSelectorPsiElement getElementAt(int offset) {
       return JBIterable.from(myAttributes)
         .append(JBIterable.from(myNotSelectors).flatMap(sel -> sel.getAttributes()))
         .append(myElement)

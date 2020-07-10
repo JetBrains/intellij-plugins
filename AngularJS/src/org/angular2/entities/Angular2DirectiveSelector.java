@@ -8,29 +8,22 @@ import java.util.List;
 
 public interface Angular2DirectiveSelector {
 
-  @NotNull
-  String getText();
+  @NotNull String getText();
 
-  @NotNull
-  List<Angular2DirectiveSimpleSelector> getSimpleSelectors();
+  @NotNull List<@NotNull Angular2DirectiveSimpleSelector> getSimpleSelectors();
 
-  @NotNull
-  List<SimpleSelectorWithPsi> getSimpleSelectorsWithPsi();
+  @NotNull List<@NotNull  SimpleSelectorWithPsi> getSimpleSelectorsWithPsi();
 
-  @NotNull
-  Angular2DirectiveSelectorPsiElement getPsiElementForElement(@NotNull String elementName);
+  @NotNull Angular2DirectiveSelectorPsiElement getPsiElementForElement(@NotNull String elementName);
 
   interface SimpleSelectorWithPsi {
 
-    @Nullable
-    Angular2DirectiveSelectorPsiElement getElement();
+    @Nullable Angular2DirectiveSelectorPsiElement getElement();
 
-    @NotNull
-    List<Angular2DirectiveSelectorPsiElement> getAttributes();
+    @NotNull List<@NotNull Angular2DirectiveSelectorPsiElement> getAttributes();
 
-    @NotNull
-    List<SimpleSelectorWithPsi> getNotSelectors();
+    @NotNull List<@NotNull SimpleSelectorWithPsi> getNotSelectors();
 
-    Angular2DirectiveSelectorPsiElement getElementAt(int offset);
+    @Nullable Angular2DirectiveSelectorPsiElement getElementAt(int offset);
   }
 }
