@@ -72,6 +72,8 @@
   <actions>
     <group popup="true" id="IFTInternalActions">
       <action id="DumpFeaturesTrainerText" class="training.actions.DumpFeaturesTrainerText"/>
+      <action id="AutorunAllLessons" class="training.actions.AutorunAllLessons"/>
+      <action id="AutorunCurrentLesson" class="training.actions.AutorunCurrentLesson"/>
       <add-to-group group-id="Internal"/>
     </group>
 
@@ -94,10 +96,6 @@
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
-    <registryKey key="ide.features.trainer.mode"
-                 description="This is internal option to use different development modes"
-                 defaultValue="normal"
-                 restartRequired="false"/>
     <registryKey key="ide.features.trainer.new.ui"
                  description="Turn on it to look at new developing UI for IFT"
                  defaultValue="FALSE"
