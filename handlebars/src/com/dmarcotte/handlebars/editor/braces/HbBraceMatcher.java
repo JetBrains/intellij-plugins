@@ -29,18 +29,18 @@ public class HbBraceMatcher implements BraceMatcher {
   }
 
   @Override
-  public boolean isPairBraces(IElementType tokenType1, IElementType tokenType2) {
+  public boolean isPairBraces(@NotNull IElementType tokenType1, @NotNull IElementType tokenType2) {
     return LEFT_BRACES.contains(tokenType1) && RIGHT_BRACES.contains(tokenType2)
            || RIGHT_BRACES.contains(tokenType1) && LEFT_BRACES.contains(tokenType2);
   }
 
   @Override
-  public boolean isLBraceToken(HighlighterIterator iterator, CharSequence fileText, FileType fileType) {
+  public boolean isLBraceToken(@NotNull HighlighterIterator iterator, @NotNull CharSequence fileText, @NotNull FileType fileType) {
     return LEFT_BRACES.contains(iterator.getTokenType());
   }
 
   @Override
-  public boolean isRBraceToken(HighlighterIterator iterator, CharSequence fileText, FileType fileType) {
+  public boolean isRBraceToken(@NotNull HighlighterIterator iterator, @NotNull CharSequence fileText, @NotNull FileType fileType) {
     if (!RIGHT_BRACES.contains(iterator.getTokenType())) {
       // definitely not a right brace
       return false;
@@ -100,12 +100,12 @@ public class HbBraceMatcher implements BraceMatcher {
   }
 
   @Override
-  public int getBraceTokenGroupId(IElementType tokenType) {
+  public int getBraceTokenGroupId(@NotNull IElementType tokenType) {
     return 1;
   }
 
   @Override
-  public boolean isStructuralBrace(HighlighterIterator iterator, CharSequence text, FileType fileType) {
+  public boolean isStructuralBrace(@NotNull HighlighterIterator iterator, @NotNull CharSequence text, @NotNull FileType fileType) {
     return false;
   }
 
@@ -121,7 +121,7 @@ public class HbBraceMatcher implements BraceMatcher {
   }
 
   @Override
-  public int getCodeConstructStart(PsiFile file, int openingBraceOffset) {
+  public int getCodeConstructStart(@NotNull PsiFile file, int openingBraceOffset) {
     return openingBraceOffset;
   }
 }
