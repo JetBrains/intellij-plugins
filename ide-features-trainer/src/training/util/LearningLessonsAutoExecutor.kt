@@ -1,16 +1,11 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.util
 
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.runBackgroundableTask
-import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
-import com.intellij.testGuiFramework.fixtures.ComponentFixture
-import com.intellij.testGuiFramework.fixtures.CustomToolWindowFixture
-import com.intellij.testGuiFramework.fixtures.IdeFrameFixture
-import com.intellij.testGuiFramework.impl.GuiTestCase
-import com.intellij.testGuiFramework.impl.linkLabel
 import org.jetbrains.concurrency.AsyncPromise
 import training.commands.kotlin.TaskTestContext
 import training.learn.CourseManager
@@ -22,46 +17,37 @@ import java.util.concurrent.TimeoutException
 
 private val LOG: Logger = Logger.getInstance(LearningLessonsAutoExecutor::class.java)
 
+@Suppress("HardCodedStringLiteral")
 class LearningLessonsAutoExecutor(val project: Project, private val progress: ProgressIndicator) {
-  private fun runAllLessons() {
-    with(TaskTestContext.guiTestCase) {
-      runAllModules()
-    }
-  }
-
   private fun runSingleLesson(lesson: Lesson) {
-    with(TaskTestContext.guiTestCase) {
-      ideFrame {
-        executeLesson(lesson, this)
+    invokeAndWaitIfNeeded {
+      CourseManager.instance.openLesson(project, lesson)
+    }
+    executeLesson(lesson)
+  }
+
+  private fun runAllLessons() {
+    val lessons = CourseManager.instance.lessonsForModules
+
+    for (lesson in lessons) {
+      if (lesson !is KLesson) continue
+      progress.checkCanceled()
+      invokeAndWaitIfNeeded {
+        CourseManager.instance.openLesson(project, lesson)
+      }
+      try {
+        executeLesson(lesson)
+      }
+      catch (e: TimeoutException) {
+        // Check lesson state later
+      }
+      if (!lesson.passed) {
+        LOG.error("Can't pass lesson " + lesson.name)
       }
     }
   }
 
-  private fun GuiTestCase.runAllModules() {
-    val courseManager = CourseManager.instance
-    ideFrame {
-      for (module in courseManager.modules) {
-        progress.checkCanceled()
-        if (module.lessons.isEmpty()) continue
-        linkAtLearnPanel { linkLabel(module.name).click() }
-        for (lesson in module.lessons) {
-          if (lesson !is KLesson) continue
-          try {
-            executeLesson(lesson, this)
-          }
-          catch (e: TimeoutException) {
-            // Check lesson state later
-          }
-          if (!lesson.passed) {
-            LOG.error("Can't pass lesson " + lesson.name)
-          }
-        }
-        linkAtLearnPanel { linkLabel("All Topics").click() }
-      }
-    }
-  }
-
-  private fun GuiTestCase.executeLesson(lesson: Lesson, ideFrameFixture: IdeFrameFixture) {
+  private fun executeLesson(lesson: Lesson) {
     val lessonPromise = AsyncPromise<Boolean>()
     lesson.addLessonListener(object : LessonListener {
       override fun lessonPassed(lesson: Lesson) {
@@ -71,7 +57,6 @@ class LearningLessonsAutoExecutor(val project: Project, private val progress: Pr
     progress.checkCanceled()
     TaskTestContext.inTestMode = true
     try {
-      linkAtLearnPanel { ideFrameFixture.linkLabel(lesson.name).click() }
       val passedStatus = lessonPromise.blockingGet(lesson.testScriptProperties.duration, TimeUnit.SECONDS)
       if (passedStatus == null || !passedStatus) {
         LOG.error("Can't pass lesson " + lesson.name)
@@ -85,20 +70,9 @@ class LearningLessonsAutoExecutor(val project: Project, private val progress: Pr
     }
   }
 
-  private fun GuiTestCase.linkAtLearnPanel(link: () -> ComponentFixture<*, *>) {
-    DumbService.getInstance(project).waitForSmartMode()
-    ideFrame {
-      with(CustomToolWindowFixture("Learn", this)) {
-        content {
-          link()
-        }
-      }
-    }
-  }
-
   companion object {
     fun runAllLessons(project: Project) {
-      runBackgroundableTask("Run all lessons", project) {
+      runBackgroundableTask("Running all lessons", project) {
         try {
           val learningLessonsAutoExecutor = LearningLessonsAutoExecutor(project, it)
           learningLessonsAutoExecutor.runAllLessons()
@@ -110,7 +84,7 @@ class LearningLessonsAutoExecutor(val project: Project, private val progress: Pr
     }
 
     fun runSingleLesson(project: Project, lesson: Lesson) {
-      runBackgroundableTask("Run lesson", project) {
+      runBackgroundableTask("Running lesson ${lesson.name}", project) {
         try {
           val learningLessonsAutoExecutor = LearningLessonsAutoExecutor(project, it)
           learningLessonsAutoExecutor.runSingleLesson(lesson)

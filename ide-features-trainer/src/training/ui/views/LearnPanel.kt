@@ -17,11 +17,7 @@ import training.learn.CourseManager
 import training.learn.LearnBundle
 import training.learn.interfaces.Lesson
 import training.learn.lesson.LessonManager
-import training.learn.lesson.kimpl.KLesson
 import training.ui.*
-import training.util.LearningLessonsAutoExecutor
-import training.util.TrainingMode
-import training.util.featureTrainerMode
 import training.util.useNewLearningUi
 import java.awt.*
 import java.awt.event.ActionEvent
@@ -430,24 +426,6 @@ class LearnPanel(private val learnToolWindow: LearnToolWindow, val lesson: Lesso
       allTopicsLabel.alignmentX = Component.CENTER_ALIGNMENT
       moduleNamePanel.add(Box.createHorizontalGlue())
       moduleNamePanel.add(allTopicsLabel)
-
-      if (featureTrainerMode == TrainingMode.DEVELOPMENT && lesson is KLesson) {
-        moduleNamePanel.add(JButton().apply {
-          action = object : AbstractAction() {
-            override fun actionPerformed(actionEvent: ActionEvent) {
-              LearningLessonsAutoExecutor.runSingleLesson(guessCurrentProject(moduleNamePanel), lesson)
-            }
-          }
-          margin = JBUI.emptyInsets()
-          isFocusable = false
-          isVisible = true
-          isSelected = false
-          isEnabled = true
-          isOpaque = false
-          @Suppress("HardCodedStringLiteral")
-          text = "Run"
-        })
-      }
 
       moduleLessons.text = lesson.module.name
       moduleLessons.font = UISettings.instance.boldFont
