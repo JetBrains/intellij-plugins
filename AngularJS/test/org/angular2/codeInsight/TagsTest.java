@@ -131,12 +131,7 @@ public class TagsTest extends Angular2CodeInsightFixtureTestCase {
     PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
     assertNotNull(ref);
     PsiElement resolve = ref.resolve();
-    assertNotNull(resolve);
-    assertEquals("noNormalized.ts", resolve.getContainingFile().getName());
-    assertEquals("@Component({\n" +
-                 "    selector: 'app_hello',\n" +
-                 "    template: '<app_hello></app_hello>',\n" +
-                 "})", AngularTestUtil.getDirectiveDefinitionText(resolve));
+    assertNull(resolve);
   }
 
   public void testTagClassTypes() {

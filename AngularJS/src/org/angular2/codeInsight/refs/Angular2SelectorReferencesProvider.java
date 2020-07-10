@@ -25,7 +25,6 @@ import org.angular2.lang.html.psi.Angular2HtmlNgContentSelector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
 import java.util.List;
 
 import static com.intellij.util.ObjectUtils.doIfNotNull;
@@ -102,18 +101,16 @@ public class Angular2SelectorReferencesProvider extends PsiReferenceProvider {
     @Override
     public @Nullable PsiElement resolve() {
       XmlElementDescriptor descriptor = getElementDescriptor(mySelectorPsiElement.getName(), getElement().getContainingFile());
-      return descriptor != null ? descriptor.getDeclaration() : mySelectorPsiElement;
+      return descriptor != null ? descriptor.getDeclaration() : null;
     }
   }
 
   private static class HtmlAttributeReference extends PsiPolyVariantReferenceBase<PsiElement> {
 
-    private final Angular2DirectiveSelectorPsiElement mySelectorPsiElement;
     private final String myElementName;
 
     private HtmlAttributeReference(@NotNull Angular2DirectiveSelectorPsiElement element, @Nullable String elementName) {
       super(element.getParent(), element.getTextRangeInParent(), true);
-      mySelectorPsiElement = element;
       myElementName = elementName;
     }
 
@@ -125,9 +122,9 @@ public class Angular2SelectorReferencesProvider extends PsiReferenceProvider {
         descriptor = getElementDescriptor("div", getElement().getContainingFile());
       }
       XmlAttributeDescriptor attributeDescriptor = descriptor != null ? descriptor.getAttributeDescriptor(getValue(), null) : null;
-      return PsiElementResolveResult.createResults(attributeDescriptor != null
-                                                   ? attributeDescriptor.getDeclarations()
-                                                   : Collections.singleton(mySelectorPsiElement));
+      return attributeDescriptor != null
+             ? PsiElementResolveResult.createResults(attributeDescriptor.getDeclarations())
+             : ResolveResult.EMPTY_ARRAY;
     }
   }
 }
