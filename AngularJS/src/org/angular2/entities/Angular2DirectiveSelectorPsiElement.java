@@ -3,14 +3,13 @@ package org.angular2.entities;
 import com.intellij.icons.AllIcons;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.navigation.NavigationItem;
-import com.intellij.openapi.util.AtomicNotNullLazyValue;
-import com.intellij.openapi.util.NotNullFactory;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.pom.PsiDeclaredTarget;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.FakePsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.SearchScope;
+import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,16 +19,16 @@ import static org.angular2.Angular2DecoratorUtil.getClassForDecoratorElement;
 
 public class Angular2DirectiveSelectorPsiElement extends FakePsiElement implements PsiDeclaredTarget, NavigationItem {
 
-  private final AtomicNotNullLazyValue<PsiElement> myParent;
+  private final Angular2DirectiveSelectorImpl myParent;
   private final TextRange myRange;
   private final String myName;
   private final boolean myIsElement;
 
-  public Angular2DirectiveSelectorPsiElement(@NotNull NotNullFactory<PsiElement> parent,
+  public Angular2DirectiveSelectorPsiElement(@NotNull Angular2DirectiveSelectorImpl parent,
                                              @NotNull TextRange range,
                                              @NotNull String name,
                                              boolean isElement) {
-    myParent = AtomicNotNullLazyValue.createValue(parent);
+    myParent = parent;
     myRange = range;
     myName = name;
     myIsElement = isElement;
@@ -41,18 +40,26 @@ public class Angular2DirectiveSelectorPsiElement extends FakePsiElement implemen
   }
 
   @Override
+  public PsiElement setName(@NotNull String name) throws IncorrectOperationException {
+    if (myRange.getLength() > 0) {
+      myParent.replaceText(myRange, name);
+    }
+    return this;
+  }
+
+  @Override
   public PsiElement getParent() {
-    return myParent.getValue();
+    return myParent.getPsiParent();
   }
 
   @Override
   public int getTextOffset() {
-    return myParent.getValue().getTextOffset() + myRange.getStartOffset();
+    return myParent.getPsiParent().getTextOffset() + myRange.getStartOffset();
   }
 
   @Override
   public @Nullable TextRange getTextRange() {
-    int startOffset = myParent.getValue().getTextOffset() + myRange.getStartOffset();
+    int startOffset = myParent.getPsiParent().getTextOffset() + myRange.getStartOffset();
     return new TextRange(startOffset, startOffset + myName.length());
   }
 
@@ -93,7 +100,7 @@ public class Angular2DirectiveSelectorPsiElement extends FakePsiElement implemen
 
   @Override
   public @Nullable String getLocationString() {
-    PsiElement parent = myParent.getValue();
+    PsiElement parent = myParent.getPsiParent();
     TypeScriptClass clazz = getClassForDecoratorElement(parent);
     return clazz != null ? "(" + clazz.getName() + ", " + parent.getContainingFile().getName() + ")"
                          : parent.getContainingFile().getName() + ":" + getTextOffset();

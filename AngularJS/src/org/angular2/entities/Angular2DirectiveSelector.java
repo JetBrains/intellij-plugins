@@ -30,5 +30,7 @@ public interface Angular2DirectiveSelector {
 
     @NotNull
     List<SimpleSelectorWithPsi> getNotSelectors();
+
+    Angular2DirectiveSelectorPsiElement getElementAt(int offset);
   }
 }
