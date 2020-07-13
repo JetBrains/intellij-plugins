@@ -64,14 +64,16 @@ abstract class NuxtVuexContainer(override val source: PsiFileSystemItem) : VuexC
     get() = null
 
   @Suppress("UNCHECKED_CAST")
-  private fun <T> getFromCache(key: String, provider: () -> Map<String, T>): Map<String, T> =
-    CachedValuesManager.getCachedValue(source) {
+  private fun <T> getFromCache(key: String, provider: () -> Map<String, T>): Map<String, T> {
+    val source = source
+    return CachedValuesManager.getCachedValue(source) {
       val dependencies = mutableListOf<Any>(PsiModificationTracker.MODIFICATION_COUNT)
       if (source is PsiDirectory) {
         dependencies.add(VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
       }
       CachedValueProvider.Result.create(ConcurrentHashMap<String, Map<String, *>>(), dependencies.toTypedArray())
     }.computeIfAbsent(key) { provider() } as Map<String, T>
+  }
 
   private fun <T> get(symbolKind: String, constructor: (name: String, source: JSProperty) -> T): Map<String, T> {
     @Suppress("UNCHECKED_CAST")
