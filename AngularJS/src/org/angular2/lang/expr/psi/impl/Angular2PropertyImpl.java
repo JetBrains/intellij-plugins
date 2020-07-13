@@ -18,7 +18,7 @@ public class Angular2PropertyImpl extends JSPropertyImpl {
   @NonNls private static final Key<ParameterizedCachedValue<PsiReference[], Angular2PropertyImpl>> REFERENCES_KEY =
     new Key<>("ng.property.references");
   private static final ParameterizedCachedValueProvider<PsiReference[], Angular2PropertyImpl> REFERENCES_PROVIDER =
-    param -> CachedValueProvider.Result.create(param.createRefs(), PsiModificationTracker.MODIFICATION_COUNT);
+    param -> CachedValueProvider.Result.create(param.createRefs(), param, PsiModificationTracker.MODIFICATION_COUNT);
 
   public Angular2PropertyImpl(ASTNode node) {
     super(node);
