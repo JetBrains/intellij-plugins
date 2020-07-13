@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.modules.InstallNodeModuleQuickFix
 import com.intellij.lang.javascript.modules.PackageInstaller
 import com.intellij.notification.Notification
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
@@ -30,8 +31,10 @@ class InstallNuxtTypesAction(val project: Project, val packageJson: VirtualFile,
     ProgressManager.getInstance().run(object : Task.Backgroundable(project, JavaScriptBundle.message(
       "node.js.quickfix.install.node.module.with.dev.dependencies.text", NUXT_TYPES_PKG), true) {
       override fun run(indicator: ProgressIndicator) {
-        val expectedVersion = NuxtModelManager.getApplication(project, packageJson)
-          ?.nuxtVersion?.let { getMatchingTypesVersion(it) }
+        val expectedVersion = ReadAction.compute<String?, Throwable> {
+          NuxtModelManager.getApplication(project, packageJson)
+            ?.nuxtVersion?.let { getMatchingTypesVersion(it) }
+        }
         val extraOptions = InstallNodeModuleQuickFix.buildExtraOptions(project, true)
         val listener = InstallNodeModuleQuickFix.createListener(project, packageJson, NUXT_TYPES_PKG)
         PackageInstaller(project, interpreter, NUXT_TYPES_PKG, expectedVersion, File(parent.path), listener, extraOptions)
