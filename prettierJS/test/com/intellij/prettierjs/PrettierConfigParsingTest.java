@@ -6,16 +6,16 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.intellij.util.LineSeparator;
 
 public class PrettierConfigParsingTest extends BasePlatformTestCase {
-  
+
   public void testDefaultConfigs() {
-    doTest(PrettierUtil.Config.DEFAULT, "package.json", "{\n" +
-                                                        "  \"devDependencies\":{\n" +
-                                                        "    \"prettier\":\"latest\"\n" +
-                                                        "  },\n" +
-                                                        "  \"prettier\": {}\n" +
-                                                        "}");
-    doTest(PrettierUtil.Config.DEFAULT, ".prettierrc.json", "{}");
-    doTest(PrettierUtil.Config.DEFAULT, ".prettierrc.yml", "#comment");
+    doTest(PrettierConfig.DEFAULT, "package.json", "{\n" +
+                                                   "  \"devDependencies\":{\n" +
+                                                   "    \"prettier\":\"latest\"\n" +
+                                                   "  },\n" +
+                                                   "  \"prettier\": {}\n" +
+                                                   "}");
+    doTest(PrettierConfig.DEFAULT, ".prettierrc.json", "{}");
+    doTest(PrettierConfig.DEFAULT, ".prettierrc.yml", "#comment");
   }
 
   public void testNoConfigIfPackageNotInDependencies() {
@@ -23,8 +23,9 @@ public class PrettierConfigParsingTest extends BasePlatformTestCase {
   }
 
   public void testJsonConfig() {
-    doTest(new PrettierUtil.Config(true, false, 120, false, true, 3, PrettierUtil.TrailingCommaOption.all, true, 
-                                   LineSeparator.CRLF.getSeparatorString()),
+    doTest(new PrettierConfig(true, false, 120, false, true,
+                              3, PrettierUtil.TrailingCommaOption.all, true,
+                              LineSeparator.CRLF.getSeparatorString(), true),
            ".prettierrc.json",
            "{\n" +
            "  \"semi\": false,\n" +
@@ -36,22 +37,24 @@ public class PrettierConfigParsingTest extends BasePlatformTestCase {
            "  \"useTabs\": true,\n" +
            "  \"trailingComma\": \"all\",\n" +
            "  \"parser\": \"babylon\",\n" +
-           "  \"endOfLine\": \"crlf\"\n" +
+           "  \"endOfLine\": \"crlf\",\n" +
+           "  \"vueIndentScriptAndStyle\": true\n" +
            "}");
   }
 
   public void testJsonWithAutoLineSeparator() {
-    PrettierUtil.Config parsed = doParse(".prettierrc.json",
-                                         "{\n" +
-                                         "  \"printWidth\": 113,\n" +
-                                         "  \"endOfLine\": \"auto\"\n" +
-                                         "}");
+    PrettierConfig parsed = doParse(".prettierrc.json",
+                                    "{\n" +
+                                    "  \"printWidth\": 113,\n" +
+                                    "  \"endOfLine\": \"auto\"\n" +
+                                    "}");
     assertEquals(113, parsed.printWidth);
     assertNull(parsed.lineSeparator);
   }
 
   public void testPackageJsonConfig() {
-    doTest(new PrettierUtil.Config(true, false, 120, false, true, 3, PrettierUtil.TrailingCommaOption.all, true, null),
+    doTest(new PrettierConfig(true, false, 120, false, true,
+                              3, PrettierUtil.TrailingCommaOption.all, true, null, null),
            "package.json",
            "{\n" +
            "  \"devDependencies\": {\n" +
@@ -69,12 +72,11 @@ public class PrettierConfigParsingTest extends BasePlatformTestCase {
            "    \"parser\": \"babylon\"\n" +
            "  }\n" +
            "}");
-
   }
 
   public void testYamlConfig() {
-    doTest(new PrettierUtil.Config(true, false, 120, false, true, 3, PrettierUtil.TrailingCommaOption.es5, true,
-                                   LineSeparator.CRLF.getSeparatorString()),
+    doTest(new PrettierConfig(true, false, 120, false, true, 3, PrettierUtil.TrailingCommaOption.es5, true,
+                              LineSeparator.CRLF.getSeparatorString(), true),
            ".prettierrc.yml",
            "semi: false\n" +
            "bracketSpacing: false\n" +
@@ -85,11 +87,12 @@ public class PrettierConfigParsingTest extends BasePlatformTestCase {
            "useTabs: true\n" +
            "trailingComma: es5\n" +
            "parser: babylon\n" +
-           "endOfLine: crlf"
+           "endOfLine: crlf\n" +
+           "vueIndentScriptAndStyle: true"
     );
   }
 
-  private static void assertSameConfig(PrettierUtil.Config expected, PrettierUtil.Config actual) {
+  private static void assertSameConfig(PrettierConfig expected, PrettierConfig actual) {
     if (expected == null || actual == null) {
       assertEquals(expected, actual);
       return;
@@ -97,11 +100,11 @@ public class PrettierConfigParsingTest extends BasePlatformTestCase {
     assertEquals(JSLanguageServiceQueue.GSON.toJson(expected), JSLanguageServiceQueue.GSON.toJson(actual));
   }
 
-  private void doTest(PrettierUtil.Config expected, String fileName, String fileContent) {
+  private void doTest(PrettierConfig expected, String fileName, String fileContent) {
     assertSameConfig(expected, doParse(fileName, fileContent));
   }
 
-  private PrettierUtil.Config doParse(String fileName, String fileContent) {
+  private PrettierConfig doParse(String fileName, String fileContent) {
     PsiFile psiFile = myFixture.configureByText(fileName, fileContent);
     return PrettierUtil.parseConfig(psiFile.getProject(), psiFile.getVirtualFile());
   }

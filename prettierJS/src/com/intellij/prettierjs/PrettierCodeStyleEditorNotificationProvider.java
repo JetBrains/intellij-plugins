@@ -6,14 +6,17 @@ import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.lang.javascript.library.JSLibraryUtil;
 import com.intellij.lang.javascript.psi.util.JSProjectUtil;
 import com.intellij.openapi.editor.colors.EditorColors;
+import com.intellij.openapi.extensions.ExtensionPointUtil;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.prettierjs.codeStyle.PrettierCodeStyleInstaller;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
+import com.intellij.ui.EditorNotificationsImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,6 +30,9 @@ public final class PrettierCodeStyleEditorNotificationProvider extends EditorNot
 
   public PrettierCodeStyleEditorNotificationProvider(@NotNull Project project) {
     myProject = project;
+    PrettierCodeStyleInstaller.EP_NAME.addChangeListener(() -> {
+      EditorNotifications.getInstance(myProject).updateNotifications(this);
+    }, ExtensionPointUtil.createExtensionDisposable(this, EditorNotificationsImpl.EP_PROJECT.getPoint(myProject)));
   }
 
   private boolean isNotificationDismissed(@NotNull VirtualFile file) {
@@ -58,7 +64,7 @@ public final class PrettierCodeStyleEditorNotificationProvider extends EditorNot
       return null;
     }
 
-    PrettierUtil.Config config = null;
+    PrettierConfig config = null;
     if (PrettierUtil.isConfigFile(file)) {
       config = PrettierUtil.parseConfig(project, file);
     }

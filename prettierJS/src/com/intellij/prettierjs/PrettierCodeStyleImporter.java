@@ -19,7 +19,7 @@ import java.util.List;
 
 import static com.intellij.lang.javascript.service.JSLanguageServiceUtil.getPluginDirectory;
 
-public class PrettierCodeStyleImporter extends JSLinterCodeStyleImporter<PrettierUtil.Config> {
+public class PrettierCodeStyleImporter extends JSLinterCodeStyleImporter<PrettierConfig> {
   public PrettierCodeStyleImporter(boolean isForInitialImport) {
     super(isForInitialImport);
   }
@@ -49,21 +49,21 @@ public class PrettierCodeStyleImporter extends JSLinterCodeStyleImporter<Prettie
   }
 
   @Override
-  protected boolean isDirectlyImportable(@NotNull PsiFile configPsi, @Nullable PrettierUtil.Config parsedConfig) {
+  protected boolean isDirectlyImportable(@NotNull PsiFile configPsi, @Nullable PrettierConfig parsedConfig) {
     return parsedConfig != null;
   }
 
   @Nullable
   @Override
-  protected PrettierUtil.Config parseConfigFromFile(@NotNull PsiFile configPsi) {
+  protected PrettierConfig parseConfigFromFile(@NotNull PsiFile configPsi) {
     return PrettierUtil.parseConfig(configPsi.getProject(), configPsi.getVirtualFile());
   }
 
   @Nullable
   @Override
-  protected PrettierUtil.Config computeEffectiveConfig(@NotNull PsiFile configPsi,
-                                                       @NotNull NodeJsInterpreter interpreter,
-                                                       @NotNull NodePackage linterPackage) throws ExecutionException {
+  protected PrettierConfig computeEffectiveConfig(@NotNull PsiFile configPsi,
+                                                  @NotNull NodeJsInterpreter interpreter,
+                                                  @NotNull NodePackage linterPackage) throws ExecutionException {
     String configFilePath = FileUtil.toSystemDependentName(configPsi.getVirtualFile().getPath());
     String convertConfigScriptPath = getPluginDirectory(PrettierCodeStyleImporter.class, "prettierLanguageService/convert-prettier-config.js").getAbsolutePath();
     String absPkgPathToRequire = linterPackage.getAbsolutePackagePathToRequire(configPsi.getProject());
@@ -80,7 +80,7 @@ public class PrettierCodeStyleImporter extends JSLinterCodeStyleImporter<Prettie
 
   @NotNull
   @Override
-  protected ImportResult importConfig(@NotNull PsiFile configPsi, @NotNull PrettierUtil.Config config) {
+  protected ImportResult importConfig(@NotNull PsiFile configPsi, @NotNull PrettierConfig config) {
     if (config.isInstalled(configPsi.getProject())) {
       return ImportResult.alreadyImported();
     }

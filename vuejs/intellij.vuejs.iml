@@ -31,11 +31,12 @@
     <orderEntry type="module" module-name="intellij.css" />
     <orderEntry type="module" module-name="intellij.platform.builtInServer.impl" />
     <orderEntry type="module" module-name="intellij.platform.webide.impl" />
-    <orderEntry type="library" name="gson" level="project" />
+    <orderEntry type="module" module-name="intellij.prettierJS" />
     <orderEntry type="library" name="jackson" level="project" />
     <orderEntry type="library" name="jackson-databind" level="project" />
     <orderEntry type="library" name="Guava" level="project" />
     <orderEntry type="library" name="commons-compress" level="project" />
     <orderEntry type="library" name="StreamEx" level="project" />
+    <orderEntry type="library" name="gson" level="project" />
   </component>
 </module>
