@@ -22,18 +22,25 @@ Please report any issues in the <a href="https://youtrack.jetbrains.com/issues/W
 
   <depends>JavaScript</depends>
   <depends>com.intellij.modules.platform</depends>
+
   <resource-bundle>messages.PrettierBundle</resource-bundle>
+
+  <extensionPoints>
+    <extensionPoint qualifiedName="com.intellij.prettierjs.codeStyleInstaller"
+                    interface="com.intellij.prettierjs.codeStyle.PrettierCodeStyleInstaller"
+                    dynamic="true"/>
+  </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
     <projectService serviceInterface="com.intellij.prettierjs.PrettierLanguageService"
                     serviceImplementation="com.intellij.prettierjs.PrettierLanguageServiceImpl"/>
     <projectService serviceImplementation="com.intellij.prettierjs.PrettierConfiguration"/>
     <projectConfigurable
-        parentId="Settings.JavaScript"
-        id="settings.javascript.prettier"
-        bundle="messages.PrettierBundle"
-        key="configurable.PrettierConfigurable.display.name"
-        instance="com.intellij.prettierjs.PrettierConfigurable"/>
+      parentId="Settings.JavaScript"
+      id="settings.javascript.prettier"
+      bundle="messages.PrettierBundle"
+      key="configurable.PrettierConfigurable.display.name"
+      instance="com.intellij.prettierjs.PrettierConfigurable"/>
 
     <fileType name="JSON" language="JSON" fileNames=".prettierrc"/>
     <lang.substitutor language="JSON" implementationClass="com.intellij.prettierjs.config.PrettierConfigLanguageSubstitutor"/>
@@ -42,13 +49,17 @@ Please report any issues in the <a href="https://youtrack.jetbrains.com/issues/W
     <directoryProjectConfigurator implementation="com.intellij.prettierjs.PrettierCompatibleCodeStyleInstaller"/>
     <javascript.json.schema.provider implementation="com.intellij.prettierjs.config.PrettierConfigJsonSchemaInJsProvider"/>
     <postFormatProcessor implementation="com.intellij.prettierjs.PrettierPostFormatProcessor"/>
+
+    <prettierjs.codeStyleInstaller implementation="com.intellij.prettierjs.codeStyle.JSPrettierCodeStyleInstaller"/>
+    <prettierjs.codeStyleInstaller implementation="com.intellij.prettierjs.codeStyle.HtmlPrettierCodeStyleInstaller"/>
+    <prettierjs.codeStyleInstaller implementation="com.intellij.prettierjs.codeStyle.CommonPrettierCodeStyleInstaller"/>
   </extensions>
   <actions>
     <action id="ReformatWithPrettierAction" class="com.intellij.prettierjs.ReformatWithPrettierAction">
       <add-to-group group-id="EditorPopupMenu" anchor="last"/>
       <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
       <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt shift P"/>
-      <keyboard-shortcut keymap="Mac OS X" first-keystroke="meta alt shift P" />
+      <keyboard-shortcut keymap="Mac OS X" first-keystroke="meta alt shift P"/>
       <keyboard-shortcut keymap="Mac OS X 10.5+" first-keystroke="meta alt shift P"/>
     </action>
     <action id="PrettierImportCodeStyleAction" class="com.intellij.prettierjs.PrettierImportCodeStyleAction">

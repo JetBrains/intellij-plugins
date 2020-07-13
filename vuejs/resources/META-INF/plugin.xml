@@ -36,6 +36,7 @@ Learn more about Vue.js support in the <a href="https://www.jetbrains.com/help/w
   <depends>com.intellij.css</depends>
   <depends optional="true" config-file="js-debugger.xml">JavaScriptDebugger</depends>
   <depends optional="true" config-file="vue-copyright.xml">com.intellij.copyright</depends>
+  <depends optional="true" config-file="prettier.xml">intellij.prettierJS</depends>
 
   <extensionPoints>
     <!--suppress PluginXmlValidity -->
