@@ -254,7 +254,7 @@ class VueModelManager {
             ?: PsiTreeUtil.getStubChildOfType(script, JSEmbeddedContent::class.java)
           )?.let { return it }
         }
-        if (element.containingFile.originalFile.virtualFile.fileType == VueFileType.INSTANCE)
+        if (element.containingFile.originalFile.virtualFile?.fileType == VueFileType.INSTANCE)
           return VueSourceEntityDescriptor(source = element.containingFile)
       }
       return null
