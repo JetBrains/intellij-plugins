@@ -55,18 +55,32 @@ public class ErrorProneJavaCompilingTool extends JavaCompilingTool {
     //Error Prone should register itself as a plugin, see http://errorprone.info/docs/installation#command-line
     Iterator<String> iterator = options.iterator();
     List<String> errorProneOptions = new ArrayList<>();
+    String processorPathOption = null;
     while (iterator.hasNext()) {
       String option = iterator.next();
       if (option.startsWith("-Xep")) {
         iterator.remove();
         errorProneOptions.add(option);
       }
+      if (option.equals("-processorpath")) {
+        iterator.remove();
+        if (iterator.hasNext()) {
+          processorPathOption = iterator.next();
+          iterator.remove();
+        }
+      }
     }
-    String compilerPath = System.getProperty(COMPILER_PATH_PROPERTY);
-    LOG.assertTrue(compilerPath != null);
+
+    String compilerPathProperty = System.getProperty(COMPILER_PATH_PROPERTY);
+    LOG.assertTrue(compilerPathProperty != null);
+    StringBuilder compilerPath = new StringBuilder(compilerPathProperty);
+    if (processorPathOption != null) {
+      compilerPath.append(File.pathSeparator).append(processorPathOption);
+    }
+
     options.add("-XDcompilePolicy=simple");
     options.add("-processorpath");
-    options.add(compilerPath);
+    options.add(compilerPath.toString());
     options.add(("-Xplugin:ErrorProne " + StringUtil.join(errorProneOptions, " ")).trim());
   }
 }
