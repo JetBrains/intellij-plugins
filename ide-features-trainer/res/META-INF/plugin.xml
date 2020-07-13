@@ -70,10 +70,10 @@
   </extensions>
 
   <actions>
-    <group popup="true" id="IFTInternalActions">
-      <action id="DumpFeaturesTrainerText" class="training.actions.DumpFeaturesTrainerText"/>
-      <action id="AutorunAllLessons" class="training.actions.AutorunAllLessons"/>
-      <action id="AutorunCurrentLesson" class="training.actions.AutorunCurrentLesson"/>
+    <group internal="true" id="IFTInternalActions">
+      <action internal="true" id="DumpFeaturesTrainerText" class="training.actions.DumpFeaturesTrainerText"/>
+      <action internal="true" id="AutorunAllLessons" class="training.actions.AutorunAllLessons"/>
+      <action internal="true" id="AutorunCurrentLesson" class="training.actions.AutorunCurrentLesson"/>
       <add-to-group group-id="Internal"/>
     </group>
 
