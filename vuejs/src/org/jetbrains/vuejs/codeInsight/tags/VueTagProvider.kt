@@ -6,6 +6,7 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.library.JSLibraryUtil
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.util.text.StringUtil
@@ -35,12 +36,16 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
         || !isVueContext(tag)) return null
 
     val tagName = fromAsset(tag.name)
+    val containingFile = tag.containingFile.originalFile
 
     val components = mutableListOf<VueComponent>()
     VueModelManager.findEnclosingContainer(tag)?.acceptEntities(object : VueModelProximityVisitor() {
       override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
         return acceptSameProximity(proximity, fromAsset(name) == tagName) {
-          components.add(component)
+          // Cannot self refer without export declaration with component name
+          if ((component.source as? JSImplicitElement)?.context != containingFile) {
+            components.add(component)
+          }
         }
       }
     }, VueModelVisitor.Proximity.GLOBAL)
@@ -61,9 +66,14 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
     else
       { name -> listOf(fromAsset(name)) }
 
+    val containingFile = tag.containingFile.originalFile
     val providedNames = mutableSetOf<String>()
     VueModelManager.findEnclosingContainer(tag)?.acceptEntities(object : VueModelVisitor() {
       override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
+        // Cannot self refer without export declaration with component name
+        if ((component.source as? JSImplicitElement)?.context == containingFile) {
+          return true
+        }
         val moduleName: String? = if (component.parents.size == 1) {
           (component.parents.first() as? VuePlugin)?.moduleName
         }

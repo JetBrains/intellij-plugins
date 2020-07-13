@@ -238,6 +238,32 @@ export default {
     })
   }
 
+  fun testCompleteWithImportCreateScriptNoExport() {
+    myFixture.configureByText("toImport.vue", """
+""")
+    myFixture.configureByText("CompleteWithImportCreateScript.vue", """
+<template>
+<to<caret>
+</template>
+""")
+
+    noAutoComplete(Runnable {
+      myFixture.completeBasic()
+      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "to-import")
+      myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
+      myFixture.checkResult("""
+<template>
+<to-import
+</template>
+<script>
+import ToImport from "./toImport";
+export default {
+  components: {ToImport}
+}
+</script>""")
+    })
+  }
+
   fun testCompleteWithoutImportForRenamedGlobalComponent() {
     myFixture.configureByText("libComponent.vue", """
 <template>text here</template>
