@@ -217,7 +217,7 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase<RunConfigu
       return;
     }
     Project project = getProject();
-    if (!KarmaUtil.isPathUnderContentRoots(project, newKarmaPackage)) {
+    if (!project.isDefault() && !KarmaUtil.isPathUnderContentRoots(project, newKarmaPackage)) {
       KarmaProjectSettings.setKarmaPackage(project, newKarmaPackage);
       newKarmaPackage = new NodePackage("");
     }
