@@ -10,7 +10,8 @@ import com.intellij.uiDesigner.core.*
 import com.intellij.util.ui.*
 import javax.swing.*
 
-class MakeConfigurable(project: Project?, private val settings: MakefileProjectSettings) : Configurable {
+class MakeConfigurable(project: Project?) : Configurable {
+  private val settings = project?.getService(MakefileProjectSettings::class.java)
   private val pathField = TextFieldWithBrowseButton()
   private val cygwinField = JBCheckBox("Use Cygwin${if (!SystemInfo.isWindows) " (Windows only)" else ""}")
 
@@ -19,14 +20,14 @@ class MakeConfigurable(project: Project?, private val settings: MakefileProjectS
   }
 
   override fun isModified(): Boolean {
-    return settings.settings?.path != pathField.text ||
+    return settings?.settings?.path != pathField.text ||
            settings.settings?.useCygwin != cygwinField.isSelected
   }
 
   override fun getDisplayName() = "Make"
   override fun apply() {
-    settings.settings?.path = pathField.text
-    settings.settings?.useCygwin = cygwinField.isSelected
+    settings?.settings?.path = pathField.text
+    settings?.settings?.useCygwin = cygwinField.isSelected
   }
 
   override fun createComponent(): JComponent {
@@ -41,8 +42,8 @@ class MakeConfigurable(project: Project?, private val settings: MakefileProjectS
   }
 
   override fun reset() {
-    pathField.text = settings.settings?.path ?: ""
-    cygwinField.isSelected = settings.settings?.useCygwin ?: false
+    pathField.text = settings?.settings?.path ?: ""
+    cygwinField.isSelected = settings?.settings?.useCygwin ?: false
   }
 
   override fun getHelpTopic(): String? = null
