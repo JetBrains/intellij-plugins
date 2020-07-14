@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.libraries
 
 import org.jetbrains.vuejs.libraries.nuxt.NuxtTestSuite
 import org.jetbrains.vuejs.libraries.templateLoader.TemplateLoaderCompletionTest
+import org.jetbrains.vuejs.libraries.vueLoader.VueLoaderTest
 import org.jetbrains.vuejs.libraries.vuelidate.VuelidateTest
 import org.jetbrains.vuejs.libraries.vuex.VuexTestSuite
 import org.junit.runner.RunWith
@@ -12,6 +13,7 @@ import org.junit.runners.Suite
 @Suite.SuiteClasses(
   NuxtTestSuite::class,
   VuexTestSuite::class,
+  VueLoaderTest::class,
   TemplateLoaderCompletionTest::class,
   VuelidateTest::class
 )
