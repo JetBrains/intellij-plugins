@@ -7,20 +7,17 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
-import com.intellij.psi.impl.source.html.HtmlFileImpl
-import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScopesCore
 import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.util.castSafelyTo
+import com.intellij.util.indexing.FileBasedIndex
 import one.util.streamex.EntryStream
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.index.*
-import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.webtypes.registry.VueWebTypesRegistry
 import java.util.*
@@ -101,17 +98,15 @@ class VueSourceGlobal(override val project: Project, private val packageJsonUrl:
 
       // Add Vue files without <script> section as possible imports
       val psiManager = PsiManager.getInstance(project)
-      FileTypeIndex.getFiles(VueFileType.INSTANCE, scope).forEach { file ->
+      FileBasedIndex.getInstance().getFilesWithKey(VueNoScriptFilesIndex.VUE_NO_SCRIPT_FILES_INDEX, setOf(true), { file ->
         val componentName = fromAsset(file.nameWithoutExtension)
         if (!localComponents.containsKey(componentName)) {
-          val psiFile = psiManager.findFile(file).castSafelyTo<HtmlFileImpl>()
-          if (psiFile != null && findScriptTag(psiFile) == null) {
-            VueModelManager.getComponent(VueSourceEntityDescriptor(source = psiFile))?.let {
-              localComponents[componentName] = it
-            }
-          }
+          psiManager.findFile(file)
+            ?.let { psiFile -> VueModelManager.getComponent(VueSourceEntityDescriptor(source = psiFile)) }
+            ?.let { localComponents[componentName] = it }
         }
-      }
+        true
+      }, scope)
 
       sortedMapOf(Pair(true, globalComponents),
                   Pair(false, localComponents))
