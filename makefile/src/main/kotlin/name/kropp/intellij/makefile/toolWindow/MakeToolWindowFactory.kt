@@ -8,7 +8,6 @@ import com.intellij.openapi.ui.*
 import com.intellij.openapi.wm.*
 import com.intellij.ui.*
 import com.intellij.ui.treeStructure.*
-import name.kropp.intellij.makefile.*
 import java.awt.*
 import java.awt.event.*
 import java.awt.event.MouseEvent.*
@@ -20,14 +19,10 @@ class MakeToolWindowFactory : ToolWindowFactory {
     toolWindow.title = "make"
     toolWindow.isAutoHide = true
 
-    DumbService.getInstance(project).runWhenSmart {
-      val files = MakefileTargetIndex.allTargets(project).filterNot { it.isSpecialTarget || it.isPatternTarget }.groupBy {
-        it.containingFile
-      }.map {
-        MakefileFileNode(it.key, it.value.map(::MakefileTargetNode))
-      }
+    val options = MakefileToolWindowOptions(project)
 
-      val model = DefaultTreeModel(MakefileRootNode(files))
+    DumbService.getInstance(project).runWhenSmart {
+      val model = DefaultTreeModel(options.getRootNode())
 
       val panel = SimpleToolWindowPanel(true)
 
@@ -60,6 +55,8 @@ class MakeToolWindowFactory : ToolWindowFactory {
       val treeExpander = DefaultTreeExpander(tree)
       group.add(CommonActionsManager.getInstance().createExpandAllAction(treeExpander, tree))
       group.add(CommonActionsManager.getInstance().createCollapseAllAction(treeExpander, tree))
+      group.addSeparator()
+      group.addAction(MakefileToolWindowShowSpecialAction(options, model))
 
       toolBarPanel.add(ActionManager.getInstance().createActionToolbar("MakeToolWindowToolbar", group, true).component)
 
