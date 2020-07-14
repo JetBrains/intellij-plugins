@@ -10,6 +10,7 @@ import com.intellij.ui.treeStructure.*
 import name.kropp.intellij.makefile.*
 import java.awt.*
 import java.awt.event.*
+import java.awt.event.MouseEvent.*
 import javax.swing.*
 import javax.swing.tree.*
 
@@ -42,6 +43,13 @@ class MakeToolWindowFactory : ToolWindowFactory {
 
       val runTargetAction = MakefileToolWindowRunTargetAction(tree, project, runManager)
       runTargetAction.registerCustomShortcutSet(CustomShortcutSet(KeyEvent.VK_ENTER), panel)
+      tree.addMouseListener(object : MouseAdapter() {
+        override fun mousePressed(e: MouseEvent?) {
+          if (e?.clickCount == 2 && e.button == BUTTON1) {
+            ActionManager.getInstance().tryToExecute(runTargetAction, e, tree, "", true)
+          }
+        }
+      })
 
       val goToTargetAction = MakefileToolWindowGoToTargetAction(tree, project)
       goToTargetAction.registerCustomShortcutSet(CustomShortcutSet(KeyEvent.VK_F4), panel)
@@ -49,7 +57,7 @@ class MakeToolWindowFactory : ToolWindowFactory {
       actionGroup.add(runTargetAction)
       toolBarPanel.add(ActionManager.getInstance().createActionToolbar("MakeToolWindowToolbar", actionGroup, true).component)
 
-      panel.setToolbar(toolBarPanel)
+      panel.toolbar = toolBarPanel
 
       toolWindow.component.add(panel)
     }

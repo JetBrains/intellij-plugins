@@ -3,7 +3,6 @@ package name.kropp.intellij.makefile.toolWindow
 import name.kropp.intellij.makefile.*
 import name.kropp.intellij.makefile.psi.*
 import java.util.*
-import java.util.Collections.*
 import javax.swing.*
 import javax.swing.tree.*
 
@@ -13,7 +12,7 @@ class MakefileTargetNode(target: MakefileTarget) : MakefileTreeNode(target.name)
 
   internal lateinit var parent: MakefileFileNode
 
-  override fun children(): Enumeration<out TreeNode>? = emptyEnumeration<TreeNode>()
+  override fun children(): Enumeration<out TreeNode>? = null
 
   override fun isLeaf() = true
 
