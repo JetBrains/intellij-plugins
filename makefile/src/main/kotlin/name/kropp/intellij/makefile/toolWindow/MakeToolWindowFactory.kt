@@ -1,6 +1,7 @@
 package name.kropp.intellij.makefile.toolWindow
 
 import com.intellij.execution.impl.*
+import com.intellij.ide.*
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.project.*
 import com.intellij.openapi.ui.*
@@ -38,7 +39,6 @@ class MakeToolWindowFactory : ToolWindowFactory {
 
       val toolBarPanel = JPanel(GridLayout())
 
-      val actionGroup = DefaultActionGroup()
       val runManager = RunManagerImpl.getInstanceImpl(project)
 
       val runTargetAction = MakefileToolWindowRunTargetAction(tree, project, runManager)
@@ -54,8 +54,14 @@ class MakeToolWindowFactory : ToolWindowFactory {
       val goToTargetAction = MakefileToolWindowGoToTargetAction(tree, project)
       goToTargetAction.registerCustomShortcutSet(CustomShortcutSet(KeyEvent.VK_F4), panel)
 
-      actionGroup.add(runTargetAction)
-      toolBarPanel.add(ActionManager.getInstance().createActionToolbar("MakeToolWindowToolbar", actionGroup, true).component)
+      val group = DefaultActionGroup()
+      group.add(runTargetAction)
+      group.addSeparator()
+      val treeExpander = DefaultTreeExpander(tree)
+      group.add(CommonActionsManager.getInstance().createExpandAllAction(treeExpander, tree))
+      group.add(CommonActionsManager.getInstance().createCollapseAllAction(treeExpander, tree))
+
+      toolBarPanel.add(ActionManager.getInstance().createActionToolbar("MakeToolWindowToolbar", group, true).component)
 
       panel.toolbar = toolBarPanel
 
