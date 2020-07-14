@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys.*
 import com.intellij.openapi.project.*
 import com.intellij.openapi.ui.*
 import com.intellij.openapi.wm.*
+import com.intellij.psi.search.*
 import com.intellij.ui.*
 import com.intellij.ui.treeStructure.*
 import name.kropp.intellij.makefile.*
@@ -43,6 +44,7 @@ class MakeToolWindowFactory : ToolWindowFactory {
         cellRenderer = MakefileCellRenderer()
         selectionModel.selectionMode = TreeSelectionModel.SINGLE_TREE_SELECTION
       }
+      TreeSpeedSearch(tree)
       panel.add(ScrollPaneFactory.createScrollPane(tree))
 
       val toolBarPanel = JPanel(GridLayout())
