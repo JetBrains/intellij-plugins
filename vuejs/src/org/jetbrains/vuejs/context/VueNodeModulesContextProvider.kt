@@ -13,7 +13,7 @@ class VueNodeModulesContextProvider : VueContextProvider {
     var result = false
     for (dir in manager.nodeModulesDirectories) {
       val nodeModules = dir.nodeModulesDir
-      if (dirPath.startsWith(nodeModules.parent.path + "/") && nodeModules.isValid) {
+      if (dirPath.startsWith(nodeModules.parent.path + "/")) {
         val child = nodeModules.findFileByRelativePath(VUE_MODULE)
         if (child != null && child.isValid && child.isDirectory) {
           result = true
