@@ -18,7 +18,7 @@ public class Angular2NodeModulesContextProvider implements Angular2ContextProvid
     boolean result = false;
     for (NodeModulesLibraryDirectory dir : manager.getNodeModulesDirectories()) {
       VirtualFile nodeModules = dir.getNodeModulesDir();
-      if (VfsUtilCore.isAncestor(nodeModules.getParent(), psiDir.getVirtualFile(), false) && nodeModules.isValid()) {
+      if (VfsUtilCore.isAncestor(nodeModules.getParent(), psiDir.getVirtualFile(), false)) {
         VirtualFile child = nodeModules.findFileByRelativePath(ANGULAR_CORE_PACKAGE);
         if (child != null && child.isValid() && child.isDirectory()) {
           result = true;
