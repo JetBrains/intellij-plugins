@@ -66,7 +66,8 @@ Learn more about Vue.js support in the <a href="https://www.jetbrains.com/help/w
     <annotator language="VueJS" implementationClass="com.intellij.lang.javascript.validation.JSAnnotator"/>
     <psi.referenceContributor language="JavaScript" implementation="org.jetbrains.vuejs.codeInsight.refs.VueJSReferenceContributor"/>
     <psi.referenceContributor language="Vue" implementation="org.jetbrains.vuejs.codeInsight.refs.VueReferenceContributor"/>
-    <psi.referenceContributor language="JavaScript" implementation="org.jetbrains.vuejs.libraries.vuex.codeInsight.refs.VuexReferenceContributor"/>
+    <psi.referenceContributor language="JavaScript"
+                              implementation="org.jetbrains.vuejs.libraries.vuex.codeInsight.refs.VuexReferenceContributor"/>
     <psi.fileReferenceHelper implementation="org.jetbrains.vuejs.libraries.nuxt.codeInsight.NuxtFileReferenceHelper"/>
 
     <lang.syntaxHighlighterFactory language="Vue"
@@ -86,6 +87,7 @@ Learn more about Vue.js support in the <a href="https://www.jetbrains.com/help/w
     <stubIndex implementation="org.jetbrains.vuejs.index.VueIdIndex"/>
     <stubIndex implementation="org.jetbrains.vuejs.index.VueGlobalFiltersIndex"/>
     <stubIndex implementation="org.jetbrains.vuejs.libraries.vuex.index.VuexStoreIndex"/>
+    <fileBasedIndex implementation="org.jetbrains.vuejs.index.VueNoScriptFilesIndex"/>
 
     <stubElementTypeHolder class="org.jetbrains.vuejs.lang.expr.parser.VueJSStubElementTypes"/>
     <stubElementTypeHolder class="org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes"/>
