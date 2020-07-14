@@ -70,13 +70,6 @@
   </extensions>
 
   <actions>
-    <group internal="true" id="IFTInternalActions">
-      <action internal="true" id="DumpFeaturesTrainerText" class="training.actions.DumpFeaturesTrainerText"/>
-      <action internal="true" id="AutorunAllLessons" class="training.actions.AutorunAllLessons"/>
-      <action internal="true" id="AutorunCurrentLesson" class="training.actions.AutorunCurrentLesson"/>
-      <add-to-group group-id="Internal"/>
-    </group>
-
     <action id="learn.next.lesson" class="training.actions.NextNonPassedLessonAction">
       <keyboard-shortcut first-keystroke="alt shift RIGHT" keymap="$default"/>
       <keyboard-shortcut first-keystroke="control shift RIGHT" keymap="Mac OS X 10.5+"/>
