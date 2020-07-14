@@ -11,6 +11,10 @@ class MakefileToolWindowOptions(val project: Project) {
     get() = settings?.settings?.showHiddenInToolWindow ?: false
     set(value) { settings?.settings?.showHiddenInToolWindow = value }
 
+  var autoScrollToSource: Boolean
+    get() = settings?.settings?.autoScrollToSourceInToolWindow ?: false
+    set(value) { settings?.settings?.autoScrollToSourceInToolWindow = value }
+
   fun getRootNode(): TreeNode {
     val files = MakefileTargetIndex.allTargets(project).filterNot { (it.isSpecialTarget && !showSpecialTargets) || it.isPatternTarget }.groupBy {
       it.containingFile

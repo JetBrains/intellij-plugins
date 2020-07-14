@@ -3,11 +3,13 @@ package name.kropp.intellij.makefile.toolWindow
 import com.intellij.execution.impl.*
 import com.intellij.ide.*
 import com.intellij.openapi.actionSystem.*
+import com.intellij.openapi.actionSystem.CommonDataKeys.*
 import com.intellij.openapi.project.*
 import com.intellij.openapi.ui.*
 import com.intellij.openapi.wm.*
 import com.intellij.ui.*
 import com.intellij.ui.treeStructure.*
+import name.kropp.intellij.makefile.*
 import java.awt.*
 import java.awt.event.*
 import java.awt.event.MouseEvent.*
@@ -26,7 +28,18 @@ class MakeToolWindowFactory : ToolWindowFactory {
 
       val panel = SimpleToolWindowPanel(true)
 
-      val tree = Tree(model).apply {
+      val tree = object : Tree(model), DataProvider {
+        override fun getData(dataId: String): Any? {
+          if (PSI_ELEMENT.`is`(dataId)) {
+            val selectedNodes = getSelectedNodes(MakefileTargetNode::class.java, {true})
+            if (selectedNodes.any()) {
+              val selected = selectedNodes.first()
+              return MakefileTargetIndex.get(selected.name, project, GlobalSearchScope.fileScope(selected.parent.psiFile)).firstOrNull()
+            }
+          }
+          return null
+        }
+      }.apply {
         cellRenderer = MakefileCellRenderer()
         selectionModel.selectionMode = TreeSelectionModel.SINGLE_TREE_SELECTION
       }
@@ -35,6 +48,14 @@ class MakeToolWindowFactory : ToolWindowFactory {
       val toolBarPanel = JPanel(GridLayout())
 
       val runManager = RunManagerImpl.getInstanceImpl(project)
+
+      val autoScrollHandler = object : AutoScrollToSourceHandler() {
+        override fun isAutoScrollMode(): Boolean = options.autoScrollToSource
+        override fun setAutoScrollMode(state: Boolean) {
+          options.autoScrollToSource = state
+        }
+      }
+      autoScrollHandler.install(tree)
 
       val runTargetAction = MakefileToolWindowRunTargetAction(tree, project, runManager)
       runTargetAction.registerCustomShortcutSet(CustomShortcutSet(KeyEvent.VK_ENTER), panel)
@@ -55,6 +76,7 @@ class MakeToolWindowFactory : ToolWindowFactory {
       val treeExpander = DefaultTreeExpander(tree)
       group.add(CommonActionsManager.getInstance().createExpandAllAction(treeExpander, tree))
       group.add(CommonActionsManager.getInstance().createCollapseAllAction(treeExpander, tree))
+      group.addAction(MakefileToolWindowAutoscrollToSourceAction(options, autoScrollHandler, tree))
       group.addSeparator()
       group.addAction(MakefileToolWindowShowSpecialAction(options, model))
 
