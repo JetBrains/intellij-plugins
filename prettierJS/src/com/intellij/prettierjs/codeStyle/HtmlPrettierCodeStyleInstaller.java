@@ -8,10 +8,13 @@ import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.formatter.xml.HtmlCodeStyleSettings;
 import org.jetbrains.annotations.NotNull;
 
+import static com.intellij.prettierjs.codeStyle.PrettierCodeStyleInstaller.applyCommonPrettierSettings;
+import static com.intellij.prettierjs.codeStyle.PrettierCodeStyleInstaller.commonPrettierSettingsApplied;
+
 public class HtmlPrettierCodeStyleInstaller implements PrettierCodeStyleInstaller {
   @Override
   public void install(@NotNull Project project, @NotNull PrettierConfig config, @NotNull CodeStyleSettings settings) {
-    CodeStyleInstallerUtils.applyCommonPrettierSettings(config, settings, HTMLLanguage.INSTANCE);
+    applyCommonPrettierSettings(config, settings, HTMLLanguage.INSTANCE);
 
     HtmlCodeStyleSettings htmlSettings = settings.getCustomSettings(HtmlCodeStyleSettings.class);
     // Default prettier settings
@@ -22,6 +25,6 @@ public class HtmlPrettierCodeStyleInstaller implements PrettierCodeStyleInstalle
   public boolean isInstalled(@NotNull Project project, @NotNull PrettierConfig config, @NotNull CodeStyleSettings settings) {
     HtmlCodeStyleSettings htmlSettings = settings.getCustomSettings(HtmlCodeStyleSettings.class);
     return htmlSettings.HTML_SPACE_INSIDE_EMPTY_TAG
-           && CodeStyleInstallerUtils.commonPrettierSettingsApplied(config, settings, HTMLLanguage.INSTANCE);
+           && commonPrettierSettingsApplied(config, settings, HTMLLanguage.INSTANCE);
   }
 }
