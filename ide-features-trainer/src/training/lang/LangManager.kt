@@ -10,6 +10,7 @@ import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.service
 import com.intellij.openapi.extensions.ExtensionPointName
 import training.ui.LearnToolWindowFactory
+import training.util.WeakReferenceDelegator
 import training.util.findLanguageByID
 import training.util.trainerPluginConfigName
 
@@ -19,12 +20,12 @@ import training.util.trainerPluginConfigName
 @State(name = "LangManager", storages = [Storage(value = trainerPluginConfigName)])
 class LangManager : PersistentStateComponent<LangManager.State> {
 
-  val supportedLanguagesExtensions: List<LanguageExtensionPoint<LangSupport>> = ExtensionPointName<LanguageExtensionPoint<LangSupport>>(
-    LangSupport.EP_NAME).extensions.toList().sortedBy { it.language }
+  val supportedLanguagesExtensions: List<LanguageExtensionPoint<LangSupport>>
+    get() = ExtensionPointName<LanguageExtensionPoint<LangSupport>>(LangSupport.EP_NAME).extensions.toList()
 
   private var myState = State(null)
 
-  private var myLangSupport: LangSupport? = null
+  private var myLangSupport: LangSupport? by WeakReferenceDelegator()
 
   init {
     val languages = supportedLanguagesExtensions.filter { Language.findLanguageByID(it.language) != null }

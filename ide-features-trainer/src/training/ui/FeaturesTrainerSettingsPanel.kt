@@ -20,7 +20,7 @@ class FeaturesTrainerSettingsPanel : BoundConfigurable(LearnBundle.message("lear
                { GroupManager.instance.showTutorialsOnWelcomeFrame },
                { updateWelcomeFrame(it) })
     }
-    val languagesExtensions = LangManager.getInstance().supportedLanguagesExtensions
+    val languagesExtensions = LangManager.getInstance().supportedLanguagesExtensions.sortedBy { it.language }
     if (languagesExtensions.isNotEmpty()) {
       row {
         label(LearnBundle.message("learn.option.main.language"))
@@ -30,7 +30,7 @@ class FeaturesTrainerSettingsPanel : BoundConfigurable(LearnBundle.message("lear
           val languageName = LangManager.getInstance().state.languageName
           options.find { it.id == languageName } ?: options[0]
         }, { language ->
-                             val chosen = LangManager.getInstance().supportedLanguagesExtensions.first { it.language == language?.id }
+                             val chosen = languagesExtensions.first { it.language == language?.id }
                              resetPrimaryLanguage(chosen.instance)
                            })
       }
