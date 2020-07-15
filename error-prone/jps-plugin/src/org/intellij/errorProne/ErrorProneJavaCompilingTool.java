@@ -62,7 +62,7 @@ public class ErrorProneJavaCompilingTool extends JavaCompilingTool {
         iterator.remove();
         errorProneOptions.add(option);
       }
-      if (option.equals("-processorpath")) {
+      else if (option.equals("-processorpath")) {
         iterator.remove();
         if (iterator.hasNext()) {
           processorPathOption = iterator.next();
@@ -74,8 +74,11 @@ public class ErrorProneJavaCompilingTool extends JavaCompilingTool {
     String compilerPathProperty = System.getProperty(COMPILER_PATH_PROPERTY);
     LOG.assertTrue(compilerPathProperty != null);
     StringBuilder compilerPath = new StringBuilder(compilerPathProperty);
-    if (processorPathOption != null) {
-      compilerPath.append(File.pathSeparator).append(processorPathOption);
+    if (processorPathOption != null && !processorPathOption.isEmpty()) {
+      if (!compilerPathProperty.endsWith(File.pathSeparator)) {
+        compilerPath.append(File.pathSeparator);
+      }
+      compilerPath.append(processorPathOption);
     }
 
     options.add("-XDcompilePolicy=simple");
