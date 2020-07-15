@@ -12,6 +12,9 @@ import com.intellij.prettierjs.PrettierUtil;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import org.jetbrains.annotations.NotNull;
 
+import static com.intellij.prettierjs.codeStyle.PrettierCodeStyleInstaller.applyCommonPrettierSettings;
+import static com.intellij.prettierjs.codeStyle.PrettierCodeStyleInstaller.commonPrettierSettingsApplied;
+
 public class JSPrettierCodeStyleInstaller implements PrettierCodeStyleInstaller {
   @Override
   public void install(@NotNull Project project, @NotNull PrettierConfig config, @NotNull CodeStyleSettings settings) {
@@ -39,14 +42,14 @@ public class JSPrettierCodeStyleInstaller implements PrettierCodeStyleInstaller 
            customSettings.SPACES_WITHIN_OBJECT_TYPE_BRACES == config.bracketSpacing &&
            customSettings.SPACES_WITHIN_IMPORTS == config.bracketSpacing &&
            customSettings.ENFORCE_TRAILING_COMMA == convertTrailingCommaOption(config.trailingComma) &&
-           CodeStyleInstallerUtils.commonPrettierSettingsApplied(config, settings, language);
+           commonPrettierSettingsApplied(config, settings, language);
   }
 
   private static void installJSDialectSettings(@NotNull PrettierConfig config,
                                                @NotNull CodeStyleSettings settings,
                                                @NotNull Language language,
                                                @NotNull Class<? extends JSCodeStyleSettings> settingsClass) {
-    CodeStyleInstallerUtils.applyCommonPrettierSettings(config, settings, language);
+    applyCommonPrettierSettings(config, settings, language);
 
     JSCodeStyleSettings customSettings = settings.getCustomSettings(settingsClass);
     customSettings.USE_DOUBLE_QUOTES = !config.singleQuote;

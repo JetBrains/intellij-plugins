@@ -4,10 +4,12 @@ package org.jetbrains.vuejs.libraries.prettier
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.prettierjs.PrettierConfig
-import com.intellij.prettierjs.codeStyle.CodeStyleInstallerUtils
 import com.intellij.prettierjs.codeStyle.PrettierCodeStyleInstaller
+import com.intellij.prettierjs.codeStyle.PrettierCodeStyleInstaller.applyCommonPrettierSettings
+import com.intellij.prettierjs.codeStyle.PrettierCodeStyleInstaller.commonPrettierSettingsApplied
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings
+import org.jetbrains.annotations.NotNull
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.lang.html.psi.formatter.VueCodeStyleSettings
 
@@ -15,10 +17,7 @@ class VuePrettierCodeStyleInstaller : PrettierCodeStyleInstaller {
 
   override fun install(project: Project, config: PrettierConfig, settings: CodeStyleSettings) {
     settings.getCustomSettings(VueCodeStyleSettings::class.java).let {
-      it.INDENT_CHILDREN_OF_TOP_LEVEL = it.INDENT_CHILDREN_OF_TOP_LEVEL
-        .split(',')
-        .asSequence()
-        .map { StringUtil.toLowerCase(it.trim()) }
+      it.INDENT_CHILDREN_OF_TOP_LEVEL = getIndentChildrenOfTopLevelSequence(it)
         .plus("template")
         .let { tags ->
           if (config.vueIndentScriptAndStyle) {
@@ -38,7 +37,7 @@ class VuePrettierCodeStyleInstaller : PrettierCodeStyleInstaller {
       it.INTERPOLATION_NEW_LINE_BEFORE_END_DELIMITER = false
       it.INTERPOLATION_WRAP = CommonCodeStyleSettings.DO_NOT_WRAP
     }
-    CodeStyleInstallerUtils.applyCommonPrettierSettings(config, settings, VueLanguage.INSTANCE)
+    applyCommonPrettierSettings(config, settings, VueLanguage.INSTANCE)
   }
 
   override fun isInstalled(project: Project, config: PrettierConfig, settings: CodeStyleSettings): Boolean {
@@ -49,10 +48,7 @@ class VuePrettierCodeStyleInstaller : PrettierCodeStyleInstaller {
                && !it.INTERPOLATION_NEW_LINE_AFTER_START_DELIMITER
                && !it.INTERPOLATION_NEW_LINE_BEFORE_END_DELIMITER
                && it.INTERPOLATION_WRAP == CommonCodeStyleSettings.DO_NOT_WRAP
-               && it.INDENT_CHILDREN_OF_TOP_LEVEL
-                 .split(',')
-                 .asSequence()
-                 .map { StringUtil.toLowerCase(it.trim()) }
+               && getIndentChildrenOfTopLevelSequence(it)
                  .toSet()
                  .let { tags ->
                    if (config.vueIndentScriptAndStyle) {
@@ -64,6 +60,13 @@ class VuePrettierCodeStyleInstaller : PrettierCodeStyleInstaller {
                    && tags.contains("template")
                  }
              }
-           && CodeStyleInstallerUtils.commonPrettierSettingsApplied(config, settings, VueLanguage.INSTANCE)
+           && commonPrettierSettingsApplied(config, settings, VueLanguage.INSTANCE)
+  }
+
+  private fun getIndentChildrenOfTopLevelSequence(settings: @NotNull VueCodeStyleSettings): Sequence<String> {
+    return settings.INDENT_CHILDREN_OF_TOP_LEVEL
+      .split(',')
+      .asSequence()
+      .map { StringUtil.toLowerCase(it.trim()) }
   }
 }
