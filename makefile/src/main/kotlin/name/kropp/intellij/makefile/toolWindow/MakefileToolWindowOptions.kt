@@ -15,11 +15,24 @@ class MakefileToolWindowOptions(val project: Project) {
     get() = settings?.settings?.autoScrollToSourceInToolWindow ?: false
     set(value) { settings?.settings?.autoScrollToSourceInToolWindow = value }
 
+  var sortAlphabetically: Boolean
+    get() = settings?.settings?.sortAlphabeticallyInToolWindow ?: false
+    set(value) { settings?.settings?.sortAlphabeticallyInToolWindow = value }
+
   fun getRootNode(): TreeNode {
     val files = MakefileTargetIndex.allTargets(project).filterNot { (it.isSpecialTarget && !showSpecialTargets) || it.isPatternTarget }.groupBy {
       it.containingFile
     }.map {
-      MakefileFileNode(it.key, it.value.map(::MakefileTargetNode))
+      val targets = if (sortAlphabetically) {
+        it.value.map(::MakefileTargetNode).sortedWith(MakefileTreeNode.Comparator)
+      } else {
+        it.value.map(::MakefileTargetNode)
+      }
+      MakefileFileNode(it.key, targets)
+    }.let {
+      if (sortAlphabetically) {
+        it.sortedWith(MakefileTreeNode.Comparator)
+      } else it
     }
     return MakefileRootNode(files)
   }

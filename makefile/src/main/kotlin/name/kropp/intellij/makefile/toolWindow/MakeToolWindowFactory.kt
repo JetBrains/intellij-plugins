@@ -80,6 +80,7 @@ class MakeToolWindowFactory : ToolWindowFactory {
       group.add(CommonActionsManager.getInstance().createCollapseAllAction(treeExpander, tree))
       group.addAction(MakefileToolWindowAutoscrollToSourceAction(options, autoScrollHandler, tree))
       group.addSeparator()
+      group.addAction(MakefileToolWindowSortAlphabeticallyAction(options, model))
       group.addAction(MakefileToolWindowShowSpecialAction(options, model))
 
       toolBarPanel.add(ActionManager.getInstance().createActionToolbar("MakeToolWindowToolbar", group, true).component)

@@ -5,4 +5,5 @@ class MakeSettings {
   var useCygwin: Boolean = false
   var showHiddenInToolWindow = false
   var autoScrollToSourceInToolWindow = false
+  var sortAlphabeticallyInToolWindow = false
 }
