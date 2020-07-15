@@ -48,7 +48,7 @@ Eliminated deprecated IntelliJ API usages.
     <stubElementTypeHolder class="name.kropp.intellij.makefile.psi.MakefileTypes" />
     <stubIndex implementation="name.kropp.intellij.makefile.MakefileTargetIndex" />
 
-    <toolWindow id="make" anchor="right" factoryClass="name.kropp.intellij.makefile.toolWindow.MakeToolWindowFactory"/>
+    <toolWindow id="make" anchor="right" factoryClass="name.kropp.intellij.makefile.toolWindow.MakeToolWindowFactory" secondary="true"/>
 
     <internalFileTemplate name="Makefile" />
   </extensions>

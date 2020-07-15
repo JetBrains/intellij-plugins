@@ -9,7 +9,9 @@ import com.intellij.openapi.ui.*
 import com.intellij.openapi.wm.*
 import com.intellij.psi.search.*
 import com.intellij.ui.*
+import com.intellij.ui.content.impl.*
 import com.intellij.ui.treeStructure.*
+import com.intellij.util.ui.tree.*
 import name.kropp.intellij.makefile.*
 import java.awt.*
 import java.awt.event.*
@@ -20,7 +22,8 @@ import javax.swing.tree.*
 class MakeToolWindowFactory : ToolWindowFactory {
   override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
     toolWindow.title = "make"
-    toolWindow.isAutoHide = true
+
+    val contentManager = toolWindow.contentManager
 
     val options = MakefileToolWindowOptions(project)
 
@@ -43,7 +46,10 @@ class MakeToolWindowFactory : ToolWindowFactory {
       }.apply {
         cellRenderer = MakefileCellRenderer()
         selectionModel.selectionMode = TreeSelectionModel.SINGLE_TREE_SELECTION
+        isRootVisible = false
+        showsRootHandles = true
       }
+      TreeUtil.installActions(tree)
       TreeSpeedSearch(tree)
       panel.add(ScrollPaneFactory.createScrollPane(tree))
 
@@ -87,7 +93,7 @@ class MakeToolWindowFactory : ToolWindowFactory {
 
       panel.toolbar = toolBarPanel
 
-      toolWindow.component.add(panel)
+      contentManager.addContent(ContentImpl(panel, "", true))
     }
   }
 }
