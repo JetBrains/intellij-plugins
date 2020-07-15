@@ -2,6 +2,7 @@
 package training.learn
 
 import com.intellij.ide.DataManager
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
@@ -22,10 +23,10 @@ import training.ui.LearnToolWindowFactory
 import training.ui.LearningUiManager
 import training.util.isLearningDocumentationMode
 
-class CourseManager internal constructor() {
-  val mapModuleVirtualFile = mutableMapOf<Module, VirtualFile>()
+class CourseManager internal constructor() : Disposable {
+  val mapModuleVirtualFile: MutableMap<Module, VirtualFile> = ContainerUtil.createWeakMap()
 
-  private val allModules: MutableList<Module> = mutableListOf()
+  private var allModules: List<Module>? = null
 
   val modules: List<Module>
     get() = LangManager.getInstance().getLangSupport()?.let { filterByLanguage(it) } ?: emptyList()
@@ -33,15 +34,24 @@ class CourseManager internal constructor() {
   val lessonsForModules: List<Lesson>
     get() = modules.map { it.lessons }.flatten()
 
+  override fun dispose() {
+  }
+
   init {
-    initXmlModules()
+    TrainingModules.EP_NAME.addChangeListener(Runnable {
+      clearModules()
+      for (toolWindow in LearnToolWindowFactory.learnWindowPerProject.values) {
+        toolWindow.reinitViews()
+      }
+    }, this)
   }
 
   fun clearModules() {
-    allModules.clear()
+    allModules = null
   }
 
-  fun initXmlModules() {
+  private fun loadXmlModules(): List<Module> {
+    val result: MutableList<Module> = mutableListOf()
     val trainingModules = TrainingModules.EP_NAME.extensions
     for (modules in trainingModules) {
       val primaryLanguage = LangManager.getInstance().getLangSupportById(modules.language) ?:
@@ -51,9 +61,10 @@ class CourseManager internal constructor() {
         val moduleFilename = module.xmlPath
         val xmlModule = XmlModule.initModule(moduleFilename, primaryLanguage, classLoader)
                         ?: throw Exception("Unable to init module (is null) from file: $moduleFilename")
-        allModules.add(xmlModule)
+        result.add(xmlModule)
       }
     }
+    return result
   }
 
   //TODO: remove this method or convert XmlModule to a Module
@@ -148,6 +159,7 @@ class CourseManager internal constructor() {
   }
 
   private fun filterByLanguage(primaryLangSupport: LangSupport): List<Module> {
+    val allModules = allModules ?: loadXmlModules().also { this.allModules = it }
     return allModules.filter { it.primaryLanguage == primaryLangSupport }
   }
 
