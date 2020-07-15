@@ -83,7 +83,6 @@ class ModulesPanel(private val learnToolWindow: LearnToolWindow?) : JPanel() {
     val modules = CourseManager.instance.modules
     if (DataLoader.liveMode) {
       CourseManager.instance.clearModules()
-      CourseManager.instance.initXmlModules()
       module2linklabel.clear()
     }
 

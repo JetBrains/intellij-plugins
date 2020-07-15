@@ -17,12 +17,11 @@ import javax.swing.JComponent
 class ChooseProgrammingLanguageForLearningAction(private val learnToolWindow: LearnToolWindow) : ComboBoxAction() {
   override fun createPopupActionGroup(button: JComponent?): DefaultActionGroup {
     val allActionsGroup = DefaultActionGroup()
-    val supportedLanguagesExtensions = LangManager.getInstance().supportedLanguagesExtensions
+    val supportedLanguagesExtensions = LangManager.getInstance().supportedLanguagesExtensions.sortedBy { it.language }
     for (langSupportExt: LanguageExtensionPoint<LangSupport> in supportedLanguagesExtensions) {
-      val langSupport = langSupportExt.instance
       val languageId = langSupportExt.language
       val displayName = Language.findLanguageByID(languageId)?.displayName ?: continue
-      allActionsGroup.add(SelectLanguageAction(langSupport, displayName))
+      allActionsGroup.add(SelectLanguageAction(languageId, displayName))
     }
     return allActionsGroup
   }
@@ -35,10 +34,11 @@ class ChooseProgrammingLanguageForLearningAction(private val learnToolWindow: Le
     e.presentation.description = LearnBundle.message("learn.choose.language.description.combo.box")
   }
 
-  private inner class SelectLanguageAction(private val language: LangSupport,
+  private inner class SelectLanguageAction(private val languageId: String,
                                            displayName: String) : AnAction(displayName) {
     override fun actionPerformed(e: AnActionEvent) {
-      resetPrimaryLanguage(language)
+      val ep = LangManager.getInstance().supportedLanguagesExtensions.singleOrNull { it.language == languageId } ?: return
+      resetPrimaryLanguage(ep.instance)
       learnToolWindow.setModulesPanel()
     }
   }

@@ -12,12 +12,11 @@ import com.intellij.openapi.vfs.VirtualFile
 import training.lang.LangSupport
 import training.learn.LearnBundle
 import training.util.findLanguageSupport
+import java.lang.ref.WeakReference
 
 class LearnProjectFileEditorListener(project: Project) : FileEditorManagerListener {
-  private val langSupport: LangSupport?
-  init {
-    langSupport = findLanguageSupport(project)
-  }
+  private val ref by lazy { WeakReference(findLanguageSupport(project)) }
+  private val langSupport: LangSupport? get() = ref.get()
 
   override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
     val langSupport = langSupport?: return
