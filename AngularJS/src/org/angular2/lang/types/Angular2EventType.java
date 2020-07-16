@@ -14,7 +14,6 @@ import org.jetbrains.annotations.Nullable;
 import static com.intellij.util.ObjectUtils.tryCast;
 import static com.intellij.util.containers.ContainerUtil.isEmpty;
 import static org.angular2.lang.html.parser.Angular2AttributeType.EVENT;
-import static org.angular2.lang.types.Angular2TypeUtils.getEventVariableType;
 
 public class Angular2EventType extends Angular2BaseType<XmlAttribute> {
 
@@ -41,7 +40,7 @@ public class Angular2EventType extends Angular2BaseType<XmlAttribute> {
     XmlAttribute attribute = getSourceElement();
     Angular2AttributeDescriptor descriptor = tryCast(attribute.getDescriptor(), Angular2AttributeDescriptor.class);
     if (descriptor != null && isEmpty(descriptor.getSourceDirectives())) {
-      return getEventVariableType(descriptor.getJSType());
+      return descriptor.getEventVariableType();
     }
     return BindingsTypeResolver.resolve(attribute,
                                         Angular2EventType::isEventAttribute,

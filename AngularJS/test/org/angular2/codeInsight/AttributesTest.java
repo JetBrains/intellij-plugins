@@ -711,6 +711,9 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
       "(complex-event)#MyEvent|MouseEvent",
       "(click)#MouseEvent",
       "(blur)#FocusEvent",
+      "(focusin)#FocusEvent",
+      "(copy)#ClipboardEvent",
+      "(transitionend)#TransitionEvent",
       "[innerHTML]#string"
     );
   }
@@ -1056,4 +1059,15 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.type("pansta\n");
     myFixture.checkResult("<div (pan)=\"\" on-panstart=\"<caret>\"");
   }
+
+  public void testTransitionEvents() {
+    myFixture.configureByFile("package.json");
+    myFixture.configureByText("test.html", "<div (tr<caret>");
+    myFixture.completeBasic();
+    assertContainsElements(myFixture.getLookupElementStrings(), "(transitionend)", "(transitionstart)");
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.configureByText("test.html", "<div (transitionend)='<error descr=\"Unresolved function or method call()\">call</error>($event)'></div>");
+    myFixture.checkHighlighting();
+  }
+
 }

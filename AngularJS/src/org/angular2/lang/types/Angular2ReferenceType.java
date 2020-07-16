@@ -36,10 +36,9 @@ import static com.intellij.psi.util.CachedValueProvider.Result.create;
 import static com.intellij.psi.util.CachedValuesManager.getCachedValue;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.isTemplateTag;
-import static org.angular2.codeInsight.template.Angular2TemplateScopesResolver.getHtmlElementClassType;
 import static org.angular2.entities.Angular2EntityUtils.TEMPLATE_REF;
 import static org.angular2.lang.Angular2LangUtil.ANGULAR_CORE_PACKAGE;
-import static org.angular2.lang.types.Angular2TypeUtils.getNgTemplateTagContextType;
+import static org.angular2.lang.types.Angular2TypeUtils.*;
 
 public class Angular2ReferenceType extends Angular2BaseType<Angular2HtmlAttrVariableImpl> {
 
@@ -99,7 +98,7 @@ public class Angular2ReferenceType extends Angular2BaseType<Angular2HtmlAttrVari
                                    : isTemplateTag(tag)
                                      ? getTemplateRefType(Angular2ComponentLocator.findComponentClass(tag),
                                                           getNgTemplateTagContextType(tag))
-                                     : getHtmlElementClassType(reference, tag.getName()));
+                                     : getHtmlElementClassType(createJSTypeSourceForXmlElement(tag), tag.getName()));
     }
     return null;
   }
