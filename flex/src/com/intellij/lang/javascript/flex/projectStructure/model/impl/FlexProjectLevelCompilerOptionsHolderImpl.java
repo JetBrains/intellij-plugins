@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
@@ -5,18 +6,11 @@ import com.intellij.lang.javascript.flex.projectStructure.model.ModuleOrProjectC
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.xmlb.annotations.Property;
 import org.jetbrains.annotations.NotNull;
 
-@State(
-  name = "FlexIdeProjectLevelCompilerOptionsHolder",
-  storages = {
-    @Storage("flexCompiler.xml"),
-    @Storage(value = StoragePathMacros.WORKSPACE_FILE, deprecated = true)
-  }
-)
+@State(name = "FlexIdeProjectLevelCompilerOptionsHolder", storages = @Storage("flexCompiler.xml"))
 public class FlexProjectLevelCompilerOptionsHolderImpl extends FlexProjectLevelCompilerOptionsHolder
   implements PersistentStateComponent<FlexProjectLevelCompilerOptionsHolderImpl.State> {
 
