@@ -10,7 +10,7 @@ import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.parseLessonSample
 
-class MultipleSelectionHtmlLesson(module: Module) : KLesson("Multiple Selections", module, "HTML") {
+class MultipleSelectionHtmlLesson(module: Module) : KLesson("Multiple selections", module, "HTML") {
   private val sample = parseLessonSample("""<!doctype html>
 <html lang="en">
     <head>

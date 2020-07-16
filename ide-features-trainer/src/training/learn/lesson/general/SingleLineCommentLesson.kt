@@ -11,7 +11,7 @@ import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 
 class SingleLineCommentLesson(module: Module, lang: String, private val sample: LessonSample) :
-  KLesson("Comment Line", module, lang) {
+  KLesson("Comment line", module, lang) {
 
   override val lessonContent: LessonContext.() -> Unit
     get() = {

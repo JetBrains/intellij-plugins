@@ -7,7 +7,7 @@ import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 
 abstract class CompletionWithTabLesson(module: Module, lang: String, private val proposal: String) :
-  KLesson("Completion with Tab", module, lang) {
+  KLesson("Completion with tab", module, lang) {
 
   abstract val sample: LessonSample
 

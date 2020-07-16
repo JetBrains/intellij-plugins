@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Parameter Info" id="CodeAssistance.ParameterInfo" lang="JAVA">
+<xml type="Scenario" name="Parameter info" id="CodeAssistance.ParameterInfo" lang="JAVA">
     <MouseBlock><CopyText><![CDATA[import javax.swing.*;
 
 class FrameDemo {
