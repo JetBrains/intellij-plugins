@@ -26,6 +26,7 @@ import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.scale.JBUIScale;
 import com.intellij.ui.table.TableView;
 import com.intellij.util.EditSourceOnDoubleClickHandler;
+import com.intellij.util.EditSourceOnEnterKeyHandler;
 import com.intellij.util.OpenSourceUtil;
 import com.intellij.util.SmartList;
 import com.jetbrains.lang.dart.DartBundle;
@@ -42,8 +43,6 @@ import javax.swing.*;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -81,16 +80,8 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
   private @NotNull TableView<DartProblem> createTable() {
     TableView<DartProblem> table = new TableView<>(new DartProblemsTableModel(myProject, myPresentationHelper));
 
-    table.addKeyListener(new KeyAdapter() {
-      @Override
-      public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-          navigate(false); // as in NewErrorTreeViewPanel
-        }
-      }
-    });
-
     EditSourceOnDoubleClickHandler.install(table);
+    EditSourceOnEnterKeyHandler.install(table);
 
     table.addMouseListener(new PopupHandler() {
       @Override

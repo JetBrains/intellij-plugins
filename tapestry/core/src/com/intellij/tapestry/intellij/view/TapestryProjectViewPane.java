@@ -1,7 +1,6 @@
 package com.intellij.tapestry.intellij.view;
 
 import com.intellij.ProjectTopics;
-import com.intellij.ide.DataManager;
 import com.intellij.ide.PsiCopyPasteManager;
 import com.intellij.ide.SelectInTarget;
 import com.intellij.ide.projectView.ProjectView;
@@ -45,7 +44,7 @@ import com.intellij.ui.treeStructure.SimpleNode;
 import com.intellij.ui.treeStructure.SimpleTreeBuilder;
 import com.intellij.ui.treeStructure.actions.CollapseAllAction;
 import com.intellij.util.EditSourceOnDoubleClickHandler;
-import com.intellij.util.OpenSourceUtil;
+import com.intellij.util.EditSourceOnEnterKeyHandler;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.tree.TreeUtil;
 import icons.TapestryIcons;
@@ -434,6 +433,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
 
     myTree.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
     EditSourceOnDoubleClickHandler.install(myTree);
+    EditSourceOnEnterKeyHandler.install(myTree);
     TreeUtil.installActions(myTree);
 
     myTree.setTransferHandler(new ViewTransferHandler(this));
@@ -549,11 +549,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
     myTree.addKeyListener(new KeyAdapter() {
       @Override
       public void keyPressed(KeyEvent e) {
-        if (KeyEvent.VK_ENTER == e.getKeyCode()) {
-          DataContext dataContext = DataManager.getInstance().getDataContext(myTree);
-          OpenSourceUtil.openSourcesFrom(dataContext, false);
-        }
-        else if (KeyEvent.VK_ESCAPE == e.getKeyCode()) {
+        if (KeyEvent.VK_ESCAPE == e.getKeyCode()) {
           if (e.isConsumed()) {
             return;
           }
