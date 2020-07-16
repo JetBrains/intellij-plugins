@@ -49,7 +49,7 @@ import static com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelatio
 import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.containers.ContainerUtil.*;
 import static org.angular2.entities.Angular2EntityUtils.TEMPLATE_REF;
-import static org.angular2.lang.types.Angular2TypeUtils.getEventVariableType;
+import static org.angular2.lang.types.Angular2TypeUtils.extractEventVariableType;
 
 class BindingsTypeResolver {
 
@@ -79,7 +79,7 @@ class BindingsTypeResolver {
       if (myScope.contains(directive)
           && (property = find(directive.getOutputs(), output -> output.getName().equals(name))) != null) {
         types.add(Angular2LibrariesHacks.hackNgModelChangeType(
-          getEventVariableType(property.getType()), name));
+          extractEventVariableType(property.getType()), name));
       }
     }
     return processAndMerge(types);

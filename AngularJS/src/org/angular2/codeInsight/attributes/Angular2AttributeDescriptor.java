@@ -5,10 +5,7 @@ import com.intellij.codeInsight.completion.PrefixMatcher;
 import com.intellij.codeInsight.completion.PrioritizedLookupElement;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.lang.javascript.psi.JSFunction;
-import com.intellij.lang.javascript.psi.JSParameterListElement;
-import com.intellij.lang.javascript.psi.JSType;
-import com.intellij.lang.javascript.psi.JSTypeUtils;
+import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.types.*;
 import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelations;
 import com.intellij.lang.javascript.psi.types.primitives.JSBooleanType;
@@ -416,21 +413,18 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   @NonNls
   @Override
   public String getTypeName() {
+    if (myInfo instanceof Angular2AttributeNameParser.EventInfo
+        && ((Angular2AttributeNameParser.EventInfo)myInfo).eventType == Angular2HtmlEvent.EventType.REGULAR) {
+      return doIfNotNull(this.getEventVariableType(), JSType::getTypeText);
+    }
+
     JSType type = getJSType();
-    if (type != null) {
-      if ((myInfo instanceof Angular2AttributeNameParser.PropertyBindingInfo
-           && ((Angular2AttributeNameParser.PropertyBindingInfo)myInfo).bindingType == PropertyBindingType.PROPERTY)
-          || type instanceof JSPrimitiveType
-          || isEnumerated()) {
-        return StringUtil.shortenTextWithEllipsis(type.getTypeText(), 25, 0, true);
-      }
-      else if (myInfo instanceof Angular2AttributeNameParser.EventInfo
-               && ((Angular2AttributeNameParser.EventInfo)myInfo).eventType == Angular2HtmlEvent.EventType.REGULAR) {
-        type = Angular2TypeUtils.getEventVariableType(type);
-        if (type != null) {
-          return type.getTypeText();
-        }
-      }
+    if (type != null
+        && ((myInfo instanceof Angular2AttributeNameParser.PropertyBindingInfo
+             && ((Angular2AttributeNameParser.PropertyBindingInfo)myInfo).bindingType == PropertyBindingType.PROPERTY)
+            || type instanceof JSPrimitiveType
+            || isEnumerated())) {
+      return StringUtil.shortenTextWithEllipsis(type.getTypeText(), 25, 0, true);
     }
     return null;
   }
@@ -548,6 +542,24 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     if (type == null) return null;
     type = TypeScriptTypeRelations.expandAndOptimizeTypeRecursive(type);
     return type.transformTypeHierarchy(toApply -> toApply instanceof JSPrimitiveType ? STRING_TYPE : toApply);
+  }
+
+  public @Nullable JSType getEventVariableType() {
+    if (myInfo instanceof Angular2AttributeNameParser.EventInfo
+        && ((Angular2AttributeNameParser.EventInfo)myInfo).eventType == Angular2HtmlEvent.EventType.REGULAR) {
+
+      JSType eventMap = Angular2TypeUtils.getElementEventMap(
+        Angular2TypeUtils.createJSTypeSourceForXmlElement(myResolver.getScope()));
+      if (eventMap != null) {
+        JSRecordType.PropertySignature signature = eventMap.asRecordType().findPropertySignature(myInfo.name);
+        JSType type = signature != null ? signature.getJSType() : null;
+        if (type != null) {
+          return type;
+        }
+      }
+      return Angular2TypeUtils.extractEventVariableType(getJSType());
+    }
+    return null;
   }
 
   public enum AttributePriority {

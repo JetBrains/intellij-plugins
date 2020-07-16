@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
+import com.intellij.lang.javascript.psi.types.JSTypeSource;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.ModificationTracker;
@@ -34,6 +35,7 @@ import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor;
 import org.angular2.lang.html.psi.Angular2HtmlLet;
 import org.angular2.lang.html.psi.Angular2HtmlReference;
+import org.angular2.lang.types.Angular2TypeUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,7 +49,6 @@ import java.util.function.Predicate;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.isTemplateTag;
-import static org.angular2.codeInsight.template.Angular2TemplateScopesResolver.getHtmlElementClassType;
 import static org.angular2.lang.html.parser.Angular2AttributeType.*;
 
 public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescriptorsProvider {
@@ -279,9 +280,13 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
   private static @NotNull Collection<XmlAttributeDescriptor> getStandardPropertyAndEventDescriptors(@NotNull XmlTag xmlTag) {
     return CachedValuesManager.getCachedValue(xmlTag, STANDARD_PROPERTIES_KEY, () -> {
       Set<String> allowedElementProperties = new HashSet<>(DomElementSchemaRegistry.getElementProperties(xmlTag));
-      allowedElementProperties.addAll(ContainerUtil.map(
-        getStandardTagEventAttributeNames(xmlTag), eventName -> EVENT.buildName(eventName.substring(2))));
-      JSType tagClass = getHtmlElementClassType(xmlTag, xmlTag.getName());
+
+      JSTypeSource typeSource = Angular2TypeUtils.createJSTypeSourceForXmlElement(xmlTag);
+      JSType tagClass = Angular2TypeUtils.getHtmlElementClassType(typeSource, xmlTag.getName());
+      JSType elementEventMap = Angular2TypeUtils.getElementEventMap(typeSource);
+
+      Set<String> eventNames = getPossibleEventNames(xmlTag, allowedElementProperties, elementEventMap);
+
       List<XmlAttributeDescriptor> result = new ArrayList<>();
       Set<Object> dependencies = new HashSet<>();
       if (tagClass != null) {
@@ -298,17 +303,19 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
             String name;
             if (property.getMemberName().startsWith(EVENT_ATTR_PREFIX)) {
               name = EVENT.buildName(property.getMemberName().substring(2));
+              eventNames.remove(name);
             }
             else {
               name = PROPERTY_BINDING.buildName(property.getMemberName());
+              if (!allowedElementProperties.remove(name)) {
+                continue;
+              }
             }
-            if (allowedElementProperties.remove(name)) {
-              result.add(Angular2AttributeDescriptor.create(xmlTag, name, propertyDeclaration));
-            }
+            result.add(Angular2AttributeDescriptor.create(xmlTag, name, propertyDeclaration));
           }
         }
       }
-      for (String name : allowedElementProperties) {
+      for (String name : ContainerUtil.concat(allowedElementProperties, eventNames)) {
         result.add(new Angular2AttributeDescriptor(xmlTag, name, emptyList(), true));
       }
       if (dependencies.isEmpty()) {
@@ -320,6 +327,24 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
       }
       return CachedValueProvider.Result.create(Collections.unmodifiableList(result), dependencies);
     });
+  }
+
+  @NotNull
+  private static Set<String> getPossibleEventNames(@NotNull XmlTag xmlTag,
+                                                   @NotNull Set<String> allowedElementProperties,
+                                                   @Nullable JSType elementEventMap) {
+    Set<String> eventNames = new HashSet<>();
+    allowedElementProperties.forEach(name -> {
+      if (name.startsWith("(")) eventNames.add(name);
+    });
+    allowedElementProperties.removeAll(eventNames);
+    getStandardTagEventAttributeNames(xmlTag).forEach(
+      eventName -> allowedElementProperties.add(EVENT.buildName(eventName.substring(2))));
+    if (elementEventMap != null) {
+      elementEventMap.asRecordType().getPropertyNames().forEach(
+        name -> allowedElementProperties.add(EVENT.buildName(name)));
+    }
+    return eventNames;
   }
 
   private static @NotNull List<XmlAttributeDescriptor> getExistingVarsAndRefsDescriptors(@NotNull XmlTag xmlTag) {
