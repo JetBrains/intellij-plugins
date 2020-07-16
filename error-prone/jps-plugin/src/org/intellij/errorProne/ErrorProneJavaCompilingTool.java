@@ -71,19 +71,26 @@ public class ErrorProneJavaCompilingTool extends JavaCompilingTool {
       }
     }
 
-    String compilerPathProperty = System.getProperty(COMPILER_PATH_PROPERTY);
-    LOG.assertTrue(compilerPathProperty != null);
-    StringBuilder compilerPath = new StringBuilder(compilerPathProperty);
-    if (processorPathOption != null && !processorPathOption.isEmpty()) {
-      if (!compilerPathProperty.endsWith(File.pathSeparator)) {
-        compilerPath.append(File.pathSeparator);
-      }
-      compilerPath.append(processorPathOption);
-    }
+    String compilerPath = getCompilerPath(processorPathOption);
 
     options.add("-XDcompilePolicy=simple");
     options.add("-processorpath");
-    options.add(compilerPath.toString());
+    options.add(compilerPath);
     options.add(("-Xplugin:ErrorProne " + StringUtil.join(errorProneOptions, " ")).trim());
+  }
+
+  @NotNull
+  protected String getCompilerPath(String processorPathOption) {
+    String compilerPathProperty = System.getProperty(COMPILER_PATH_PROPERTY);
+    LOG.assertTrue(compilerPathProperty != null);
+    if (processorPathOption == null || processorPathOption.isEmpty()) {
+      return compilerPathProperty;
+    }
+    StringBuilder compilerPath = new StringBuilder(compilerPathProperty);
+    if (!compilerPathProperty.endsWith(File.pathSeparator)) {
+      compilerPath.append(File.pathSeparator);
+    }
+    compilerPath.append(processorPathOption);
+    return compilerPath.toString();
   }
 }
