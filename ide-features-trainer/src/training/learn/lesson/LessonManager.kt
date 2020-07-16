@@ -169,6 +169,7 @@ class LessonManager {
   }
 
   fun passLesson(project: Project, cLesson: Lesson) {
+    cLesson.pass()
     LearningUiHighlightingManager.clearHighlights()
     val learnPanel = learnPanel ?: return
     learnPanel.setLessonPassed()

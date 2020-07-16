@@ -146,7 +146,6 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
     LessonManager.instance.clearRestoreMessage()
     assert(ApplicationManager.getApplication().isDispatchThread)
     if (taskIndex == taskActions.size) {
-      lesson.pass()
       LessonManager.instance.passLesson(project, lesson)
       disposeRecorders()
       return

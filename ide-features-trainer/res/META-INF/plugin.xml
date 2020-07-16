@@ -74,6 +74,7 @@
       <action internal="true" id="DumpFeaturesTrainerText" class="training.actions.DumpFeaturesTrainerText"/>
       <action internal="true" id="AutorunAllLessons" class="training.actions.AutorunAllLessons"/>
       <action internal="true" id="AutorunCurrentLesson" class="training.actions.AutorunCurrentLesson"/>
+      <action internal="true" id="SetCurrentLessonAsPassed" class="training.actions.SetCurrentLessonAsPassed"/>
       <add-to-group group-id="Internal" anchor="last"/>
     </group>
 
