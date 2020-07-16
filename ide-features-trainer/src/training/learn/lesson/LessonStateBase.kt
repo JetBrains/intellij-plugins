@@ -14,7 +14,7 @@ class LessonStateBase : PersistentStateComponent<LessonStateBase> {
   override fun getState(): LessonStateBase = this
 
   override fun loadState(persistedState: LessonStateBase) {
-    map = persistedState.map
+    map = persistedState.map.mapKeys { it.key.toLowerCase() }.toMutableMap()
   }
 
   var map: MutableMap<String, LessonState> = mutableMapOf()
@@ -28,7 +28,7 @@ class LessonStateBase : PersistentStateComponent<LessonStateBase> {
 object LessonStateManager {
 
   fun setPassed(lesson: Lesson) {
-    LessonStateBase.instance.map[lesson.id] = LessonState.PASSED
+    LessonStateBase.instance.map[lesson.id.toLowerCase()] = LessonState.PASSED
   }
 
   fun resetPassedStatus() {
@@ -37,5 +37,5 @@ object LessonStateManager {
     }
   }
 
-  fun getStateFromBase(lessonId: String): LessonState = LessonStateBase.instance.map.getOrPut(lessonId, { LessonState.NOT_PASSED })
+  fun getStateFromBase(lessonId: String): LessonState = LessonStateBase.instance.map.getOrPut(lessonId.toLowerCase(), { LessonState.NOT_PASSED })
 }
