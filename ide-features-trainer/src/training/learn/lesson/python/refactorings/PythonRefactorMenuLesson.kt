@@ -11,7 +11,7 @@ import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.parseLessonSample
 import javax.swing.JList
 
-class PythonRefactorMenuLesson(module: Module) : KLesson("Refactoring Menu", module, "Python") {
+class PythonRefactorMenuLesson(module: Module) : KLesson("Refactoring menu", module, "Python") {
   private val sample = parseLessonSample("""
     # Need to think about better sample!
     import random

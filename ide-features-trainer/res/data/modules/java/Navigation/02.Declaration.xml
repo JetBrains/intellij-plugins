@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Declaration/Implementation" id="Navigation.Declaration/Implementation" lang="JAVA">
+<xml type="Scenario" name="Declaration/implementation" id="Navigation.Declaration/Implementation" lang="JAVA">
         <CopyText><![CDATA[import java.util.LinkedList;
 import java.util.List;
 

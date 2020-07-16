@@ -44,7 +44,7 @@ import java.lang.Thread.sleep
 import java.util.concurrent.TimeUnit
 import javax.swing.text.JTextComponent
 
-class JavaDebugLesson(module: Module) : KLesson("Debug Workflow", module, "JAVA") {
+class JavaDebugLesson(module: Module) : KLesson("Debug workflow", module, "JAVA") {
   private val demoClassName = JavaRunLessonsUtils.demoClassName
   private val sample = JavaRunLessonsUtils.demoSample
 

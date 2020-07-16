@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Quick Popups" id="CodeAssistance.QuickPopups" lang="JAVA">
+<xml type="Scenario" name="Quick popups" id="CodeAssistance.QuickPopups" lang="JAVA">
     <MouseBlock><CopyText><![CDATA[import java.text.*;
 
 class DecimalFormatDemo {

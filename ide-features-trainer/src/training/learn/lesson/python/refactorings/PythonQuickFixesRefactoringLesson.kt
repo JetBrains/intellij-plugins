@@ -13,7 +13,7 @@ import training.learn.lesson.kimpl.parseLessonSample
 import javax.swing.JDialog
 import javax.swing.JLabel
 
-class PythonQuickFixesRefactoringLesson(module: Module) : KLesson("quick-fix-refactoring", "Quick Fix Refactoring", module, "Python") {
+class PythonQuickFixesRefactoringLesson(module: Module) : KLesson("quick-fix-refactoring", "Quick fix refactoring", module, "Python") {
   private val sample = parseLessonSample("""
     def foo(x):
         print("Hello ", x)

@@ -9,7 +9,7 @@ import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonUtil
 import training.learn.lesson.kimpl.parseLessonSample
 
-class RubyPostfixCompletionLesson(module: Module) : KLesson("Postfix Completion", module, "ruby") {
+class RubyPostfixCompletionLesson(module: Module) : KLesson("Postfix completion", module, "ruby") {
   private val sample = parseLessonSample("""class SomeExampleClass
   # @param string_array [Array<String>]
   def second_value(string_array)

@@ -20,7 +20,7 @@ import training.ui.LearningUiHighlightingManager
 import java.awt.Rectangle
 import javax.swing.JButton
 
-class JavaRunConfigurationLesson(module: Module) : KLesson("Run Configuration", module, "JAVA") {
+class JavaRunConfigurationLesson(module: Module) : KLesson("Run configuration", module, "JAVA") {
   private val demoClassName = JavaRunLessonsUtils.demoClassName
 
   private fun TaskRuntimeContext.runManager() = RunManager.getInstance(project)

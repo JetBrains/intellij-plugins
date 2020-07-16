@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Extract Method" id="Refactorings.ExtractMethod" lang="JAVA">
+<xml type="Scenario" name="Extract method" id="Refactorings.ExtractMethod" lang="JAVA">
         <CopyText><![CDATA[import javax.swing.*;
 import java.awt.*;
 

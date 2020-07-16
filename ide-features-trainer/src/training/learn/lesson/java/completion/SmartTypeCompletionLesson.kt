@@ -7,7 +7,7 @@ import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.parseLessonSample
 
-class SmartTypeCompletionLesson(module: Module) : KLesson("Smart Type Completion", module, JavaLangSupport.lang) {
+class SmartTypeCompletionLesson(module: Module) : KLesson("Smart type completion", module, JavaLangSupport.lang) {
 
   val sample = parseLessonSample("""import java.lang.String;
 import java.util.HashSet;
