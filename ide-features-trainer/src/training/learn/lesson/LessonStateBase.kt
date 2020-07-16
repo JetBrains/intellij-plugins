@@ -6,7 +6,6 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import training.learn.interfaces.Lesson
-import training.migration.MigrationManager
 import training.util.trainerPluginConfigName
 
 @State(name = "LessonStateBase", storages = [Storage(value = trainerPluginConfigName)])
@@ -21,13 +20,8 @@ class LessonStateBase : PersistentStateComponent<LessonStateBase> {
   var map: MutableMap<String, LessonState> = mutableMapOf()
 
   companion object {
-    internal val instance: LessonStateBase by lazy {
-      val service = ServiceManager.getService(LessonStateBase::class.java)
-      if (service.map.values.none { it == LessonState.PASSED }) {
-        MigrationManager.processLegacyStates(service)
-      }
-      service
-    }
+    internal val instance: LessonStateBase
+    get() = ServiceManager.getService(LessonStateBase::class.java)
   }
 }
 
