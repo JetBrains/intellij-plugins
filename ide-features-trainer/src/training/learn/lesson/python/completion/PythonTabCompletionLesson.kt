@@ -9,7 +9,7 @@ import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.*
 import javax.swing.JList
 
-class PythonTabCompletionLesson(module: Module) : KLesson("Tab Completion", module, "Python") {
+class PythonTabCompletionLesson(module: Module) : KLesson("Tab completion", module, "Python") {
   private val template = parseLessonSample("""
     class Calculator:
         def __init__(self):

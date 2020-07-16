@@ -9,7 +9,7 @@ import training.learn.lesson.kimpl.*
 import javax.swing.JLabel
 import javax.swing.JPanel
 
-class PythonInPlaceRefactoringLesson(module: Module) : KLesson("In Place Refactoring", module, "Python") {
+class PythonInPlaceRefactoringLesson(module: Module) : KLesson("In place refactoring", module, "Python") {
   private val template = """
     def fibonacci(stop):
         first = 0

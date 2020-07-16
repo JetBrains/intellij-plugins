@@ -7,7 +7,7 @@ import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.parseLessonSample
 
-class BasicCompletionLesson(module: Module) : KLesson("Basic Completion", module, JavaLangSupport.lang) {
+class BasicCompletionLesson(module: Module) : KLesson("Basic completion", module, JavaLangSupport.lang) {
 
   val sample = parseLessonSample("""import java.lang.*;
 import java.util.*;

@@ -9,7 +9,7 @@ import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 
 abstract class SurroundAndUnwrapLesson(module: Module, lang: String) :
-  KLesson("Surround and Unwrap", module, lang) {
+  KLesson("Surround and unwrap", module, lang) {
 
   protected abstract val sample: LessonSample
 
