@@ -107,4 +107,11 @@ public class InspectionsTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureByFiles("nested-classes.html", "nested-classes.ts","package.json");
     myFixture.checkHighlighting();
   }
+
+  public void testEmptyVarDefinition() {
+    myFixture.enableInspections(new JSUnusedLocalSymbolsInspection());
+    myFixture.configureByFiles("package.json");
+    myFixture.configureByText("template.html", "<ng-template ngFor let- ></ng-template>");
+    myFixture.checkHighlighting();
+  }
 }

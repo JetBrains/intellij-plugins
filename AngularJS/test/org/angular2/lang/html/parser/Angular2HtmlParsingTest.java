@@ -348,4 +348,8 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
                "<ng-content select=[header-content]></ng-content>\n");
   }
 
+  public void testEmptyLetAndRef() throws Exception {
+    doTestHtml("<ng-template let-/><div let-/><div #/><div ref-/>");
+  }
+
 }
