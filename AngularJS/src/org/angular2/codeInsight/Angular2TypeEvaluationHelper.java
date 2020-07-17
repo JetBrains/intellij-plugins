@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight;
 
-import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluationHelper;
 import com.intellij.lang.javascript.psi.types.JSUnionType;
@@ -17,7 +16,7 @@ public class Angular2TypeEvaluationHelper extends TypeScriptTypeEvaluationHelper
 
   @Override
   public @Nullable JSType getTypeFromTypeGuard(@NotNull PsiElement namedElement,
-                                               @Nullable JSReferenceExpression expression,
+                                               @Nullable PsiElement place,
                                                @Nullable JSType type,
                                                @Nullable PsiElement resolvedElement) {
     // Angular template syntax doesn't support type guards, so we need to remove strictness from union types

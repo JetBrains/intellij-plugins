@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.resolve;
 
-import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.resolve.JSGenericTypesEvaluator;
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluationHelper;
@@ -21,7 +20,7 @@ public class ActionScriptTypeEvaluationHelper extends JSTypeEvaluationHelper {
   @Override
   @Nullable
   public JSType getTypeFromTypeGuard(@NotNull PsiElement namedElement,
-                                     @Nullable JSReferenceExpression expression,
+                                     @Nullable PsiElement place,
                                      @Nullable JSType preprocessedType,
                                      @Nullable PsiElement resolvedElement) {
     return preprocessedType;
