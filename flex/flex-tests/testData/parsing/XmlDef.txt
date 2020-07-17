@@ -9,8 +9,7 @@ JSFile:XmlDef.js2
     PsiWhiteSpace(' ')
     PsiElement(JS:CLASS_KEYWORD)('class')
     PsiWhiteSpace(' ')
-    JSReferenceExpression
-      PsiElement(JS:IDENTIFIER)('XML')
+    PsiElement(JS:IDENTIFIER)('XML')
     PsiWhiteSpace(' ')
     PsiElement(JS:LBRACE)('{')
     PsiWhiteSpace('\n  ')

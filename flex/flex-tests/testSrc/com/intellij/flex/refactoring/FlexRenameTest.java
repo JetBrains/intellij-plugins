@@ -103,7 +103,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
 
   public void testJSClass() {
     doTest("BBB", "js2");
-    assertEquals(2, findRenamedRefsToReferencedElementAtCaret().length);
+    assertEquals(1, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
   public void testJSClass4() {
@@ -206,7 +206,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
   public void testClassRename() {
     final String name = getTestName(false);
     doTest("ClassRename2", name + "_after.as", name + ".as", getTestName(false) + "_2.as");
-    assertEquals(4, findRenamedRefsToReferencedElementAtCaret().length);
+    assertEquals(3, findRenamedRefsToReferencedElementAtCaret().length);
     assertEquals(0, JSDaemonAnalyzerTestCase.filterUnwantedInfos(myFixture.doHighlighting(), true, false, false).size());
   }
 
@@ -214,7 +214,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
   public void testMxmlComponentRename2() {
     final String name = getTestName(false);
     doTest("RenamedClazz", name + "_after.mxml", name + ".mxml", "Clazz.as");
-    assertEquals(4, findRenamedRefsToReferencedElementAtCaret().length);
+    assertEquals(3, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
@@ -228,7 +228,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
   public void testMxmlComponentRename4() {
     String name = getTestName(false);
     doTest("RenamedComponent4", true, name + ".as", "MxmlComponentRename4_2.mxml", "MxmlComponentRename4_3.xml");
-    assertEquals(7, findRenamedRefsToReferencedElementAtCaret().length);
+    assertEquals(6, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
@@ -388,14 +388,14 @@ public class FlexRenameTest extends JSAbstractRenameTest {
     String name = getTestName(false);
     doTest("Ambiguous", name + "_after.as", name + ".as", name + "_2.as", name + "_3.as");
 
-    assertEquals(3, findRenamedRefsToReferencedElementAtCaret().length);
+    assertEquals(2, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
   public void testAmbiguity2() {
     String name = getTestName(false);
     doTest("Ambiguous", name + "_after.as", name + ".as", name + "_2.as", name + "_3.as");
 
-    assertEquals(3, findRenamedRefsToReferencedElementAtCaret().length);
+    assertEquals(2, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
@@ -502,34 +502,34 @@ public class FlexRenameTest extends JSAbstractRenameTest {
   public void testLiteralReference5() {
     final String name = getTestName(false);
     doTest("Bar", name + "_after.as", false, false, false, name + ".as", name + "_2.as");
-    assertEquals(2, findRenamedRefsToReferencedElementAtCaret().length);
+    assertEquals(1, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
   public void testLiteralReference6() {
     final String name = getTestName(false);
     doTest("Bar", name + "_after.as", true, false, false, name + ".as");
-    assertEquals(1, findRenamedRefsToReferencedElementAtCaret().length);
+    assertEquals(0, findRenamedRefsToReferencedElementAtCaret().length);
     assertEquals("Bar.as", myFixture.getFile().getName());
   }
 
   public void testLiteralReference7() {
     final String name = getTestName(false);
     doTest("Bar", name + "_after.as", true, true, false, name + ".as");
-    assertEquals(2, findRenamedRefsToReferencedElementAtCaret().length);
+    assertEquals(1, findRenamedRefsToReferencedElementAtCaret().length);
     assertEquals("Bar.as", myFixture.getFile().getName());
   }
 
   public void testLiteralReference8() {
     final String name = getTestName(false);
     doTest("Bar", name + "_after.as", false, false, false, name + ".as");
-    assertEquals(1, findRenamedRefsToReferencedElementAtCaret().length);
+    assertEquals(0, findRenamedRefsToReferencedElementAtCaret().length);
     assertEquals("Bar.as", myFixture.getFile().getName());
   }
 
   public void testLiteralReference9() {
     final String name = getTestName(false);
     doTest("Bar", name + "_after.as", false, true, false, name + ".as");
-    assertEquals(2, findRenamedRefsToReferencedElementAtCaret().length);
+    assertEquals(1, findRenamedRefsToReferencedElementAtCaret().length);
     assertEquals("Bar.as", myFixture.getFile().getName());
   }
 

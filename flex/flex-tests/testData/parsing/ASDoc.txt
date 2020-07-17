@@ -4,8 +4,7 @@ JSFile:ASDoc.js2
       <empty list>
     PsiElement(JS:CLASS_KEYWORD)('class')
     PsiWhiteSpace(' ')
-    JSReferenceExpression
-      PsiElement(JS:IDENTIFIER)('U')
+    PsiElement(JS:IDENTIFIER)('U')
     PsiWhiteSpace(' ')
     PsiElement(JS:LBRACE)('{')
     PsiElement(JS:RBRACE)('}')
@@ -23,8 +22,7 @@ JSFile:ASDoc.js2
         <empty list>
       PsiElement(JS:CLASS_KEYWORD)('class')
       PsiWhiteSpace(' ')
-      JSReferenceExpression
-        PsiElement(JS:IDENTIFIER)('V')
+      PsiElement(JS:IDENTIFIER)('V')
       PsiWhiteSpace(' ')
       PsiElement(JS:LBRACE)('{')
       PsiElement(JS:RBRACE)('}')
@@ -45,8 +43,7 @@ JSFile:ASDoc.js2
         <empty list>
       PsiElement(JS:CLASS_KEYWORD)('class')
       PsiWhiteSpace(' ')
-      JSReferenceExpression
-        PsiElement(JS:IDENTIFIER)('A')
+      PsiElement(JS:IDENTIFIER)('A')
       PsiWhiteSpace(' ')
       PsiElement(JS:LBRACE)('{')
       PsiElement(JS:RBRACE)('}')
@@ -68,8 +65,7 @@ JSFile:ASDoc.js2
       PsiWhiteSpace(' ')
       PsiElement(JS:CLASS_KEYWORD)('class')
       PsiWhiteSpace(' ')
-      JSReferenceExpression
-        PsiElement(JS:IDENTIFIER)('B')
+      PsiElement(JS:IDENTIFIER)('B')
       PsiWhiteSpace(' ')
       PsiElement(JS:LBRACE)('{')
       PsiElement(JS:RBRACE)('}')
@@ -104,8 +100,7 @@ JSFile:ASDoc.js2
       PsiWhiteSpace(' ')
       PsiElement(JS:CLASS_KEYWORD)('class')
       PsiWhiteSpace(' ')
-      JSReferenceExpression
-        PsiElement(JS:IDENTIFIER)('C')
+      PsiElement(JS:IDENTIFIER)('C')
       PsiWhiteSpace(' ')
       PsiElement(JS:LBRACE)('{')
       PsiElement(JS:RBRACE)('}')
@@ -133,8 +128,7 @@ JSFile:ASDoc.js2
       PsiWhiteSpace(' ')
       PsiElement(JS:CLASS_KEYWORD)('class')
       PsiWhiteSpace(' ')
-      JSReferenceExpression
-        PsiElement(JS:IDENTIFIER)('D')
+      PsiElement(JS:IDENTIFIER)('D')
       PsiWhiteSpace(' ')
       PsiElement(JS:LBRACE)('{')
       PsiElement(JS:RBRACE)('}')
@@ -162,8 +156,7 @@ JSFile:ASDoc.js2
       PsiWhiteSpace(' ')
       PsiElement(JS:CLASS_KEYWORD)('class')
       PsiWhiteSpace(' ')
-      JSReferenceExpression
-        PsiElement(JS:IDENTIFIER)('E')
+      PsiElement(JS:IDENTIFIER)('E')
       PsiWhiteSpace(' ')
       PsiElement(JS:LBRACE)('{')
       PsiWhiteSpace('\n\n')
@@ -419,8 +412,7 @@ JSFile:ASDoc.js2
       <empty list>
     PsiElement(JS:CLASS_KEYWORD)('class')
     PsiWhiteSpace(' ')
-    JSReferenceExpression
-      PsiElement(JS:IDENTIFIER)('H')
+    PsiElement(JS:IDENTIFIER)('H')
     PsiWhiteSpace(' ')
     PsiElement(JS:LBRACE)('{')
     PsiElement(JS:RBRACE)('}')

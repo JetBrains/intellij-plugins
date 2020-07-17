@@ -1315,4 +1315,11 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     lookupElements = myFixture.getLookupElements();
     checkWeHaveInCompletion(lookupElements, "Array");
   }
+
+  public final void testAnnotatedWithObjectGetsAnyCompletion() {
+    String [] vFiles = new String[]{
+      getTestName(false) + ".js2"
+    };
+    doTestForFiles(vFiles, "", "js2");
+  }
 }

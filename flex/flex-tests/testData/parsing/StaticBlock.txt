@@ -10,8 +10,7 @@ JSFile:StaticBlock.js2
       PsiWhiteSpace(' ')
       PsiElement(JS:CLASS_KEYWORD)('class')
       PsiWhiteSpace(' ')
-      JSReferenceExpression
-        PsiElement(JS:IDENTIFIER)('TTT')
+      PsiElement(JS:IDENTIFIER)('TTT')
       PsiWhiteSpace(' ')
       PsiElement(JS:LBRACE)('{')
       PsiWhiteSpace('\n    ')

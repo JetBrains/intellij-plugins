@@ -1,4 +1,4 @@
-class com.<TYPO>xmxmxm</TYPO>.manager.clazz {
+class com.xmxmxm.manager.clazz {
   var <TYPO>ty<caret>ppo</TYPO>:uint;
   var x:String = "A string with spelling <TYPO>errrror</TYPO>";
   function foo():void {

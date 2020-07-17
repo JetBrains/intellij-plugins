@@ -1,0 +1,5 @@
+function xxx() {
+  var a:Object;
+
+  a.arguments<caret>
+}

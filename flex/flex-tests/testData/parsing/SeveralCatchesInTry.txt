@@ -4,8 +4,7 @@ JSFile:SeveralCatchesInTry.js2
       <empty list>
     PsiElement(JS:CLASS_KEYWORD)('class')
     PsiWhiteSpace(' ')
-    JSReferenceExpression
-      PsiElement(JS:IDENTIFIER)('A')
+    PsiElement(JS:IDENTIFIER)('A')
     PsiWhiteSpace(' ')
     PsiElement(JS:LBRACE)('{')
     PsiWhiteSpace('\n  ')

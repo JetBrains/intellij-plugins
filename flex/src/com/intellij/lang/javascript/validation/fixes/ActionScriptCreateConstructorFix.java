@@ -5,8 +5,8 @@ import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.template.Template;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.DialectDetector;
-import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JSTokenTypes;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.ECMAScriptImportOptimizer;
 import com.intellij.lang.javascript.flex.ImportUtils;
@@ -34,6 +34,7 @@ import com.intellij.refactoring.changeSignature.MemberNodeBase;
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.util.Consumer;
+import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,17 +44,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 public final class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionAction {
 
   @NotNull private final SmartPsiElementPointer<JSClass> myClass;
-  @NotNull private final SmartPsiElementPointer<JSReferenceExpression> myRefExpr;
   @NotNull private final SmartPsiElementPointer<JSCallExpression> myNode;
   @NotNull private final String myName;
 
   private ActionScriptCreateConstructorFix(@NotNull JSClass clazz,
-                                           @NotNull JSReferenceExpression refExpr,
                                            @NotNull JSCallExpression node) {
     super(clazz.getName(), true, false);
     SmartPointerManager manager = SmartPointerManager.getInstance(clazz.getProject());
     myClass = manager.createSmartPsiElementPointer(clazz);
-    myRefExpr = manager.createSmartPsiElementPointer(refExpr);
     myNode = manager.createSmartPsiElementPointer(node);
     myName = StringUtil.notNullize(clazz.getName());
   }
@@ -65,9 +63,8 @@ public final class ActionScriptCreateConstructorFix extends CreateJSFunctionInte
   @Nullable
   public static ActionScriptCreateConstructorFix createIfApplicable(@NotNull JSCallExpression node) {
     final JSClass clazz;
-    final JSReferenceExpression reference;
+    JSExpression methodExpression = node.getMethodExpression();
     if (node instanceof JSNewExpression) {
-      JSExpression methodExpression = node.getMethodExpression();
       if (!(methodExpression instanceof JSReferenceExpression)) {
         return null;
       }
@@ -76,10 +73,8 @@ public final class ActionScriptCreateConstructorFix extends CreateJSFunctionInte
         return null;
       }
       clazz = (JSClass)resolved;
-      reference = (JSReferenceExpression)methodExpression;
     }
     else {
-      JSExpression methodExpression = node.getMethodExpression();
       if (!(methodExpression instanceof JSSuperExpression)) {
         return null;
       }
@@ -91,10 +86,9 @@ public final class ActionScriptCreateConstructorFix extends CreateJSFunctionInte
       if (clazz.isInterface()) {
         return null;
       }
-      reference = (JSReferenceExpression)clazz.findNameIdentifier().getPsi();
     }
 
-    return new ActionScriptCreateConstructorFix(clazz, reference, node);
+    return new ActionScriptCreateConstructorFix(clazz, node);
   }
 
   @NotNull
@@ -104,7 +98,9 @@ public final class ActionScriptCreateConstructorFix extends CreateJSFunctionInte
     if (element == null) return Pair.create(null, null);
 
     ASTNode lbrace = element.getNode().findChildByType(JSTokenTypes.LBRACE);
-    return Pair.create(myRefExpr.getElement(), lbrace.getPsi());
+    JSCallExpression callExpression = myNode.getElement();
+    JSExpression methodExpression = callExpression != null ? callExpression.getMethodExpression() : null;
+    return Pair.create(ObjectUtils.tryCast(methodExpression, JSReferenceExpression.class), lbrace.getPsi());
   }
 
   @Override

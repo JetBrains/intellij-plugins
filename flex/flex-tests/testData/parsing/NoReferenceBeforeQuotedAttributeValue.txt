@@ -10,8 +10,7 @@ JSFile:NoReferenceBeforeQuotedAttributeValue.js2
       PsiWhiteSpace(' ')
       PsiElement(JS:CLASS_KEYWORD)('class')
       PsiWhiteSpace(' ')
-      JSReferenceExpression
-        PsiElement(JS:IDENTIFIER)('Abc')
+      PsiElement(JS:IDENTIFIER)('Abc')
       PsiWhiteSpace(' ')
       PsiElement(JS:LBRACE)('{')
       PsiWhiteSpace('\n    ')

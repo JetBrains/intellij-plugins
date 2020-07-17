@@ -19,8 +19,7 @@ JSFile:Complex.js2
       PsiWhiteSpace(' ')
       PsiElement(JS:CLASS_KEYWORD)('class')
       PsiWhiteSpace(' ')
-      JSReferenceExpression
-        PsiElement(JS:IDENTIFIER)('Foo')
+      PsiElement(JS:IDENTIFIER)('Foo')
       PsiWhiteSpace(' ')
       PsiElement(JS:LBRACE)('{')
       PsiWhiteSpace('\n  ')

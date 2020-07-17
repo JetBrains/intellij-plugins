@@ -148,8 +148,7 @@ JSFile:MiscGotchas.js2
         <empty list>
       PsiElement(JS:CLASS_KEYWORD)('class')
       PsiWhiteSpace(' ')
-      JSReferenceExpression
-        PsiElement(JS:IDENTIFIER)('XXX')
+      PsiElement(JS:IDENTIFIER)('XXX')
       PsiWhiteSpace(' ')
       PsiElement(JS:LBRACE)('{')
       PsiWhiteSpace('\n    ')
@@ -306,8 +305,7 @@ JSFile:MiscGotchas.js2
     PsiWhiteSpace('\n')
     PsiElement(JS:CLASS_KEYWORD)('class')
     PsiWhiteSpace(' ')
-    JSReferenceExpression
-      PsiElement(JS:IDENTIFIER)('XXX')
+    PsiElement(JS:IDENTIFIER)('XXX')
     PsiWhiteSpace(' ')
     PsiElement(JS:LBRACE)('{')
     PsiElement(JS:RBRACE)('}')

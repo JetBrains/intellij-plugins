@@ -7,6 +7,7 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.actionscript.highlighting.ActionScriptSemanticHighlightingUtil;
+import com.intellij.lang.annotation.AnnotationBuilder;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.lang.javascript.*;
@@ -547,6 +548,24 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   public void visitJSClass(JSClass jsClass) {
     super.visitJSClass(jsClass);
     checkPackageElement(jsClass);
+
+    final JSFunction constructor = jsClass.getConstructor();
+    if (constructor == null) createConstructorChecker().checkMissedConstructor(jsClass);
+
+    PsiElement clazzParent = jsClass.getParent();
+    final PsiElement context = clazzParent.getContext();
+    boolean clazzParentIsInjectedJsFile = clazzParent instanceof JSFile &&
+                                          (context instanceof XmlAttributeValue || context instanceof XmlText) &&
+                                          !XmlBackedJSClassImpl.isImplementsAttribute((JSFile)clazzParent);
+
+    if (PsiTreeUtil.getParentOfType(jsClass, JSFunction.class, JSClass.class) != null || clazzParentIsInjectedJsFile) {
+      String message = JavaScriptBundle.message("javascript.validation.message.nested.classes.are.not.allowed");
+      AnnotationBuilder builder = myHolder.newAnnotation(HighlightSeverity.ERROR, message);
+      PsiElement nameIdentifier = jsClass.getNameIdentifier();
+      if (nameIdentifier != null) builder = builder.range(nameIdentifier);
+      builder.create();
+    }
+    checkClass(jsClass);
   }
 
   private static boolean isNative(final JSFunction function) {
@@ -732,24 +751,6 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         }
         else if (parent instanceof JSNamespaceDeclaration) {
           checkDuplicates((JSNamespaceDeclaration)parent);
-        }
-
-        if (parent instanceof JSClass) {
-          final JSClass jsClass = (JSClass)parent;
-          final JSFunction constructor = jsClass.getConstructor();
-          if (constructor == null) createConstructorChecker().checkMissedConstructor(jsClass);
-
-          PsiElement clazzParent = jsClass.getParent();
-          final PsiElement context = clazzParent.getContext();
-          boolean clazzParentIsInjectedJsFile = clazzParent instanceof JSFile &&
-                                                (context instanceof XmlAttributeValue || context instanceof XmlText) &&
-                                                !XmlBackedJSClassImpl.isImplementsAttribute((JSFile)clazzParent);
-
-          if (PsiTreeUtil.getParentOfType(jsClass, JSFunction.class, JSClass.class) != null || clazzParentIsInjectedJsFile) {
-            myHolder.newAnnotation(HighlightSeverity.ERROR, JavaScriptBundle
-              .message("javascript.validation.message.nested.classes.are.not.allowed")).create();
-          }
-          checkClass(jsClass);
         }
       }
     }

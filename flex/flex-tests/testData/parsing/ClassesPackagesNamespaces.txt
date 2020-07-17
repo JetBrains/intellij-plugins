@@ -52,8 +52,7 @@ JSFile:ClassesPackagesNamespaces.js2
       PsiWhiteSpace(' ')
       PsiElement(JS:CLASS_KEYWORD)('class')
       PsiWhiteSpace(' ')
-      JSReferenceExpression
-        PsiElement(JS:IDENTIFIER)('HelloWorld2')
+      PsiElement(JS:IDENTIFIER)('HelloWorld2')
       PsiWhiteSpace(' ')
       JSReferenceList
         PsiElement(JS:EXTENDS_KEYWORD)('extends')
@@ -137,8 +136,7 @@ JSFile:ClassesPackagesNamespaces.js2
       PsiWhiteSpace('\n  ')
       PsiElement(JS:INTERFACE_KEYWORD)('interface')
       PsiWhiteSpace(' ')
-      JSReferenceExpression
-        PsiElement(JS:IDENTIFIER)('I')
+      PsiElement(JS:IDENTIFIER)('I')
       PsiWhiteSpace(' ')
       PsiElement(JS:LBRACE)('{')
       PsiWhiteSpace('\n    ')
@@ -214,8 +212,7 @@ JSFile:ClassesPackagesNamespaces.js2
         <empty list>
       PsiElement(JS:CLASS_KEYWORD)('class')
       PsiWhiteSpace(' ')
-      JSReferenceExpression
-        PsiElement(JS:IDENTIFIER)('A')
+      PsiElement(JS:IDENTIFIER)('A')
       PsiWhiteSpace(' ')
       JSReferenceList
         PsiElement(JS:IMPLEMENTS_KEYWORD)('implements')
@@ -576,8 +573,7 @@ JSFile:ClassesPackagesNamespaces.js2
     PsiWhiteSpace('\n')
     PsiElement(JS:CLASS_KEYWORD)('class')
     PsiWhiteSpace(' ')
-    JSReferenceExpression
-      PsiElement(JS:IDENTIFIER)('A')
+    PsiElement(JS:IDENTIFIER)('A')
     PsiWhiteSpace('\n')
     PsiElement(JS:LBRACE)('{')
     PsiWhiteSpace('\n  \n')
@@ -588,8 +584,7 @@ JSFile:ClassesPackagesNamespaces.js2
       <empty list>
     PsiElement(JS:CLASS_KEYWORD)('class')
     PsiWhiteSpace(' ')
-    JSReferenceExpression
-      PsiElement(JS:IDENTIFIER)('Foo')
+    PsiElement(JS:IDENTIFIER)('Foo')
     PsiWhiteSpace(' ')
     JSReferenceList
       PsiElement(JS:EXTENDS_KEYWORD)('extends')
@@ -609,8 +604,7 @@ JSFile:ClassesPackagesNamespaces.js2
       <empty list>
     PsiElement(JS:CLASS_KEYWORD)('class')
     PsiWhiteSpace(' ')
-    JSReferenceExpression
-      PsiElement(JS:IDENTIFIER)('Foo')
+    PsiElement(JS:IDENTIFIER)('Foo')
     PsiWhiteSpace(' ')
     JSReferenceList
       PsiElement(JS:EXTENDS_KEYWORD)('extends')
@@ -635,8 +629,7 @@ JSFile:ClassesPackagesNamespaces.js2
       <empty list>
     PsiElement(JS:CLASS_KEYWORD)('class')
     PsiWhiteSpace(' ')
-    JSReferenceExpression
-      PsiElement(JS:IDENTIFIER)('Foo')
+    PsiElement(JS:IDENTIFIER)('Foo')
     PsiWhiteSpace(' ')
     JSReferenceList
       PsiElement(JS:EXTENDS_KEYWORD)('extends')
@@ -668,8 +661,7 @@ JSFile:ClassesPackagesNamespaces.js2
       <empty list>
     PsiElement(JS:CLASS_KEYWORD)('class')
     PsiWhiteSpace(' ')
-    JSReferenceExpression
-      PsiElement(JS:IDENTIFIER)('Foo')
+    PsiElement(JS:IDENTIFIER)('Foo')
     PsiWhiteSpace(' ')
     JSReferenceList
       PsiElement(JS:IMPLEMENTS_KEYWORD)('implements')

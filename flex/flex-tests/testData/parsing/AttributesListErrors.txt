@@ -36,8 +36,7 @@ JSFile:AttributesListErrors.js2
     PsiWhiteSpace(' ')
     PsiElement(JS:CLASS_KEYWORD)('class')
     PsiWhiteSpace(' ')
-    JSReferenceExpression
-      PsiElement(JS:IDENTIFIER)('C')
+    PsiElement(JS:IDENTIFIER)('C')
     PsiWhiteSpace(' ')
     PsiElement(JS:LBRACE)('{')
     PsiElement(JS:RBRACE)('}')
@@ -55,8 +54,7 @@ JSFile:AttributesListErrors.js2
     PsiWhiteSpace(' ')
     PsiElement(JS:CLASS_KEYWORD)('class')
     PsiWhiteSpace(' ')
-    JSReferenceExpression
-      PsiElement(JS:IDENTIFIER)('C')
+    PsiElement(JS:IDENTIFIER)('C')
     PsiWhiteSpace(' ')
     PsiElement(JS:LBRACE)('{')
     PsiElement(JS:RBRACE)('}')
@@ -71,8 +69,7 @@ JSFile:AttributesListErrors.js2
     PsiWhiteSpace(' ')
     PsiElement(JS:CLASS_KEYWORD)('class')
     PsiWhiteSpace(' ')
-    JSReferenceExpression
-      PsiElement(JS:IDENTIFIER)('C')
+    PsiElement(JS:IDENTIFIER)('C')
     PsiWhiteSpace(' ')
     PsiElement(JS:LBRACE)('{')
     PsiElement(JS:RBRACE)('}')
@@ -90,8 +87,7 @@ JSFile:AttributesListErrors.js2
     PsiWhiteSpace(' ')
     PsiElement(JS:CLASS_KEYWORD)('class')
     PsiWhiteSpace(' ')
-    JSReferenceExpression
-      PsiElement(JS:IDENTIFIER)('C')
+    PsiElement(JS:IDENTIFIER)('C')
     PsiWhiteSpace(' ')
     PsiElement(JS:LBRACE)('{')
     PsiElement(JS:RBRACE)('}')
@@ -113,8 +109,7 @@ JSFile:AttributesListErrors.js2
     PsiWhiteSpace(' ')
     PsiElement(JS:CLASS_KEYWORD)('class')
     PsiWhiteSpace(' ')
-    JSReferenceExpression
-      PsiElement(JS:IDENTIFIER)('C')
+    PsiElement(JS:IDENTIFIER)('C')
     PsiWhiteSpace(' ')
     PsiElement(JS:LBRACE)('{')
     PsiElement(JS:RBRACE)('}')
@@ -136,8 +131,7 @@ JSFile:AttributesListErrors.js2
     PsiWhiteSpace(' ')
     PsiElement(JS:CLASS_KEYWORD)('class')
     PsiWhiteSpace(' ')
-    JSReferenceExpression
-      PsiElement(JS:IDENTIFIER)('C')
+    PsiElement(JS:IDENTIFIER)('C')
     PsiWhiteSpace(' ')
     PsiElement(JS:LBRACE)('{')
     PsiElement(JS:RBRACE)('}')
@@ -165,8 +159,7 @@ JSFile:AttributesListErrors.js2
       <empty list>
     PsiElement(JS:CLASS_KEYWORD)('class')
     PsiWhiteSpace(' ')
-    JSReferenceExpression
-      PsiElement(JS:IDENTIFIER)('C')
+    PsiElement(JS:IDENTIFIER)('C')
     PsiWhiteSpace(' ')
     PsiElement(JS:LBRACE)('{')
     PsiElement(JS:RBRACE)('}')

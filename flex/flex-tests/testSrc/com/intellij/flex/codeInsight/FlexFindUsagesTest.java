@@ -42,7 +42,7 @@ public class FlexFindUsagesTest extends JSAbstractFindUsagesTest {
 
   public void testFindClassUsages() {
     PsiReference[] references = findElementAtCaret("ClassUsages.js2");
-    assertEquals("Class references", 3, references.length);
+    assertEquals("Class references", 2, references.length);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
@@ -62,7 +62,7 @@ public class FlexFindUsagesTest extends JSAbstractFindUsagesTest {
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
   public void testFindMxmlComponentsFileReferences2() {
     PsiReference[] references = findElementAtCaret("19.mxml", "19_2.as", "19_3.mxml");
-    assertEquals("Mxml component files references", 4, references.length);
+    assertEquals("Mxml component files references", 3, references.length);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})

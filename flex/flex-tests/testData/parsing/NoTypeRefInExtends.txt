@@ -4,8 +4,7 @@ JSFile:NoTypeRefInExtends.js2
       <empty list>
     PsiElement(JS:CLASS_KEYWORD)('class')
     PsiWhiteSpace(' ')
-    JSReferenceExpression
-      PsiElement(JS:IDENTIFIER)('Foo')
+    PsiElement(JS:IDENTIFIER)('Foo')
     PsiWhiteSpace(' ')
     JSReferenceList
       PsiElement(JS:EXTENDS_KEYWORD)('extends')
@@ -20,8 +19,7 @@ JSFile:NoTypeRefInExtends.js2
       <empty list>
     PsiElement(JS:CLASS_KEYWORD)('class')
     PsiWhiteSpace(' ')
-    JSReferenceExpression
-      PsiElement(JS:IDENTIFIER)('Foo2')
+    PsiElement(JS:IDENTIFIER)('Foo2')
     PsiWhiteSpace(' ')
     JSReferenceList
       PsiElement(JS:IMPLEMENTS_KEYWORD)('implements')

@@ -5,10 +5,9 @@ JSFile:OldAs2Code.js2
     PsiElement(JS:CLASS_KEYWORD)('class')
     PsiWhiteSpace(' ')
     JSReferenceExpression
-      JSReferenceExpression
-        PsiElement(JS:IDENTIFIER)('mypackage')
-      PsiElement(JS:DOT)('.')
-      PsiElement(JS:IDENTIFIER)('myclass')
+      PsiElement(JS:IDENTIFIER)('mypackage')
+    PsiElement(JS:DOT)('.')
+    PsiElement(JS:IDENTIFIER)('myclass')
     PsiWhiteSpace(' ')
     PsiElement(JS:LBRACE)('{')
     PsiElement(JS:RBRACE)('}')

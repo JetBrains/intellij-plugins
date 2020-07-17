@@ -4,8 +4,7 @@ JSFile:IncompleteNewJS2.js2
       <empty list>
     PsiElement(JS:CLASS_KEYWORD)('class')
     PsiWhiteSpace(' ')
-    JSReferenceExpression
-      PsiElement(JS:IDENTIFIER)('MyClass')
+    PsiElement(JS:IDENTIFIER)('MyClass')
     PsiWhiteSpace(' ')
     PsiElement(JS:LBRACE)('{')
     PsiWhiteSpace('\n  ')
