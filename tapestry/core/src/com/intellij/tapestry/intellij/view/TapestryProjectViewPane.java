@@ -58,8 +58,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.util.Collections;
 import java.util.List;
 
@@ -546,22 +544,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
         }
       }
     });
-    myTree.addKeyListener(new KeyAdapter() {
-      @Override
-      public void keyPressed(KeyEvent e) {
-        if (KeyEvent.VK_ESCAPE == e.getKeyCode()) {
-          if (e.isConsumed()) {
-            return;
-          }
-          PsiCopyPasteManager copyPasteManager = PsiCopyPasteManager.getInstance();
-          boolean[] isCopied = new boolean[1];
-          if (copyPasteManager.getElements(isCopied) != null && !isCopied[0]) {
-            copyPasteManager.clear();
-            e.consume();
-          }
-        }
-      }
-    });
+    myTree.addKeyListener(new PsiCopyPasteManager.EscapeHandler());
   }//addTreeListeners
 
   private void modulesChanged() {
