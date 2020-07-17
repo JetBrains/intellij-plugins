@@ -7,6 +7,7 @@ import com.intellij.openapi.editor.ex.EditorSettingsExternalizable
 import com.intellij.openapi.editor.impl.EditorComponentImpl
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.testGuiFramework.framework.GuiTestUtil
+import com.intellij.testGuiFramework.impl.jList
 import com.intellij.testGuiFramework.util.Key
 import com.intellij.ui.components.fields.ExtendableTextField
 import training.commands.kotlin.TaskRuntimeContext
@@ -57,8 +58,10 @@ class GotoActionLesson(module: Module, lang: String, private val sample: LessonS
         "${action(it)} can also be used to change the settings, invoke it again now."
       }
       task("show line") {
-        text("Type <strong>$it</strong> and toggle the <strong>Show line number</strong> option.")
-        stateCheck { checkWordInSearch(it) }
+        text("Type <strong>$it</strong> to see <strong>Show Line Number</strong> selector.")
+        triggerByListItemAndHighlight { item ->
+          item.toString().contains("Show Line Numbers")
+        }
         test {
           waitComponent(SearchEverywhereUIBase::class.java)
           type(it)
@@ -69,17 +72,20 @@ class GotoActionLesson(module: Module, lang: String, private val sample: LessonS
       task {
         text("Switch the line numbers ${if (lineNumbersShown) "off" else "on"}.")
         stateCheck { isLineNumbersShown() == !lineNumbersShown }
+        restoreByUi()
         test {
-          Thread.sleep(300) // there could be a more proper wait solution
-          GuiTestUtil.shortcut(Key.ENTER)
+          ideFrame {
+            jList("Show Line Numbers").item("Show Line Numbers").click()
+          }
         }
       }
       task {
         text("Now switch the line numbers back ${if (lineNumbersShown) "on" else "off"}.")
         stateCheck { isLineNumbersShown() == lineNumbersShown }
         test {
-          Thread.sleep(300) // there could be a more proper wait solution
-          GuiTestUtil.shortcut(Key.ENTER)
+          ideFrame {
+            jList("Show Line Numbers").item("Show Line Numbers").click()
+          }
         }
       }
 
