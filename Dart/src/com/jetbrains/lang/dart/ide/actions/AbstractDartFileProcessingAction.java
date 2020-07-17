@@ -17,6 +17,7 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
@@ -29,6 +30,7 @@ import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -67,10 +69,10 @@ public abstract class AbstractDartFileProcessingAction extends AnAction implemen
   }
 
   @NotNull
-  protected abstract String getActionTextForEditor();
+  protected abstract @Nls String getActionTextForEditor();
 
   @NotNull
-  protected abstract String getActionTextForFiles();
+  protected abstract @Nls String getActionTextForFiles();
 
   protected abstract void runOverEditor(@NotNull final Project project,
                                         @NotNull final Editor editor,
@@ -113,7 +115,7 @@ public abstract class AbstractDartFileProcessingAction extends AnAction implemen
     presentation.setText(getActionTextForFiles());
   }
 
-  public static void showHintLater(@NotNull final Editor editor, @NotNull final String text, final boolean error) {
+  public static void showHintLater(@NotNull final Editor editor, @NotNull final @NlsContexts.HintText String text, final boolean error) {
     ApplicationManager.getApplication().invokeLater(() -> {
       final JComponent component = error ? HintUtil.createErrorLabel(text) : HintUtil.createInformationLabel(text);
       final LightweightHint hint = new LightweightHint(component);

@@ -23,7 +23,7 @@ public class AirDesktopPackagingConfigurable extends AirPackagingConfigurableBas
     return "BuildConfigurationPage.AIRPackage";
   }
 
-  public static String getTabName() {
+  public static @Nls String getTabName() {
     return FlexBundle.message("bc.tab.air.desktop.display.name");
   }
 }
