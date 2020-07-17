@@ -1,7 +1,7 @@
 package com.dmarcotte.handlebars.format;
 
 import com.dmarcotte.handlebars.config.HbConfig;
-import com.intellij.openapi.fileTypes.StdFileTypes;
+import com.intellij.ide.highlighter.HtmlFileType;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.formatter.xml.HtmlCodeStyleSettings;
 
@@ -23,8 +23,8 @@ public class FormatterTestSettings {
     myPrevFormatSetting = HbConfig.isFormattingEnabled();
     HbConfig.setFormattingEnabled(true);
 
-    myPrevIndentSize = mySettings.getIndentOptions(StdFileTypes.HTML).INDENT_SIZE;
-    mySettings.getIndentOptions(StdFileTypes.HTML).INDENT_SIZE = 4;
+    myPrevIndentSize = mySettings.getIndentOptions(HtmlFileType.INSTANCE).INDENT_SIZE;
+    mySettings.getIndentOptions(HtmlFileType.INSTANCE).INDENT_SIZE = 4;
 
     myPrevDoNotIndentSetting = mySettings.getCustomSettings(HtmlCodeStyleSettings.class).HTML_DO_NOT_INDENT_CHILDREN_OF;
     mySettings.getCustomSettings(HtmlCodeStyleSettings.class).HTML_DO_NOT_INDENT_CHILDREN_OF = "";
@@ -32,7 +32,7 @@ public class FormatterTestSettings {
 
   public void tearDown() {
     HbConfig.setFormattingEnabled(myPrevFormatSetting);
-    mySettings.getIndentOptions(StdFileTypes.HTML).INDENT_SIZE = myPrevIndentSize;
+    mySettings.getIndentOptions(HtmlFileType.INSTANCE).INDENT_SIZE = myPrevIndentSize;
     mySettings.getCustomSettings(HtmlCodeStyleSettings.class).HTML_DO_NOT_INDENT_CHILDREN_OF = myPrevDoNotIndentSetting;
   }
 }

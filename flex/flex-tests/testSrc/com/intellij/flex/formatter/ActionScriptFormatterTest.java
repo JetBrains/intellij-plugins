@@ -1,13 +1,13 @@
 package com.intellij.flex.formatter;
 
 import com.intellij.flex.util.FlexTestUtils;
+import com.intellij.ide.highlighter.XmlFileType;
 import com.intellij.lang.javascript.JavaScriptFormatterTestBase;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.formatter.ECMA4CodeStyleSettings;
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
@@ -93,17 +93,17 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
   public void testCdataDamaged() {
     final CodeStyleSettings styleSettings = CodeStyleSettingsManager.getSettings(getProject());
     final XmlCodeStyleSettings xmlSettings = styleSettings.getCustomSettings(XmlCodeStyleSettings.class);
-    int before = styleSettings.getTabSize(StdFileTypes.XML);
+    int before = styleSettings.getTabSize(XmlFileType.INSTANCE);
     int aroundCDataBefore = xmlSettings.XML_WHITE_SPACE_AROUND_CDATA;
 
     try {
-      styleSettings.getIndentOptions(StdFileTypes.XML).TAB_SIZE = 4;
+      styleSettings.getIndentOptions(XmlFileType.INSTANCE).TAB_SIZE = 4;
       xmlSettings.XML_WHITE_SPACE_AROUND_CDATA = XmlCodeStyleSettings.WS_AROUND_CDATA_NEW_LINES;
       myUseReformatText = true;
       doTestFromFile("mxml");
     }
     finally {
-      styleSettings.getIndentOptions(StdFileTypes.XML).TAB_SIZE = before;
+      styleSettings.getIndentOptions(XmlFileType.INSTANCE).TAB_SIZE = before;
       xmlSettings.XML_WHITE_SPACE_AROUND_CDATA = aroundCDataBefore;
       myUseReformatText = false;
     }
