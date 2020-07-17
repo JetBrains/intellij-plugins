@@ -13,39 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.intellij.aws.cloudformation
 
 import com.intellij.internal.statistic.fileTypes.FileTypeStatisticProvider
 import com.intellij.json.JsonFileType
 import com.intellij.openapi.diagnostic.logger
-import com.intellij.openapi.editor.event.EditorFactoryEvent
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.psi.PsiManager
 import org.jetbrains.yaml.YAMLFileType
 
-class CloudFormationFileTypeStatisticProvider : FileTypeStatisticProvider {
-  private val LOG = logger<CloudFormationFileTypeStatisticProvider>()
+private val LOG = logger<CloudFormationFileTypeStatisticProvider>()
 
+internal class CloudFormationFileTypeStatisticProvider : FileTypeStatisticProvider {
   override fun getPluginId(): String = "AWSCloudFormation"
 
-  override fun accept(event: EditorFactoryEvent, fileType: FileType): Boolean {
+  override fun accept(editor: Editor, fileType: FileType): Boolean {
     if (fileType === YamlCloudFormationFileType.INSTANCE ||
         fileType === JsonCloudFormationFileType.INSTANCE) {
       return true
     }
 
-    return checkYamlOrJson(fileType, event)
+    return checkYamlOrJson(editor, fileType)
   }
 
-  private fun checkYamlOrJson(fileType: FileType,
-                              event: EditorFactoryEvent): Boolean {
+  private fun checkYamlOrJson(editor: Editor, fileType: FileType): Boolean {
     if (!(fileType === YAMLFileType.YML || fileType === JsonFileType.INSTANCE)) return false
 
-    val document = event.editor.document
+    val document = editor.document
     val file = FileDocumentManager.getInstance().getFile(document) ?: return false
-    val project = event.editor.project ?: return false
+    val project = editor.project ?: return false
 
     return try {
       val psiFile = PsiManager.getInstance(project).findFile(file)
