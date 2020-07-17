@@ -4,7 +4,6 @@ package training.actions
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import training.learn.lesson.LessonManager
-import training.learn.lesson.LessonStateManager
 import training.util.LearningLessonsAutoExecutor
 
 @Suppress("HardCodedStringLiteral")
@@ -12,7 +11,6 @@ class AutorunCurrentLesson: AnAction("Autorun Current Lesson") {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     val currentLesson = LessonManager.instance.currentLesson ?: return
-    LessonStateManager.resetPassedStatus()
     LearningLessonsAutoExecutor.runSingleLesson(project, currentLesson)
   }
 
