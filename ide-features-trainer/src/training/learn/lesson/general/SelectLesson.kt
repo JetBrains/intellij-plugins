@@ -24,7 +24,7 @@ class SelectLesson(module: Module, lang: String, private val sample: LessonSampl
           editor.selectionModel.selectionStart == 0 && editor.document.textLength == editor.selectionModel.selectionEnd
         }
         test {
-          for (i in 1..7) {
+          for (i in 1..9) {
             actions(it)
           }
         }
