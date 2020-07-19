@@ -23,17 +23,17 @@ import static name.kropp.intellij.makefile.psi.MakefileTypes.*;
 %type IElementType
 %unicode
 
-EOL=\n|\r\n
+EOL=\n
 SPACES=" "+
-BACKSLASHCRLF="\\"(\r|\n|\r\n)(" "|\t)*
-DOCCOMMENT="##"[^\r\n]*
-COMMENT="#"[^\r\n]*
-MULTILINECOMMENT="#"[^\r\n\\]*(("\\"\r?\n[^\r\n\\]*|"\\"[^\r\n\\]*))+
+BACKSLASHCRLF="\\"(\n)(" "|\t)*
+DOCCOMMENT="##"[^\n]*
+COMMENT="#"[^\n]*
+MULTILINECOMMENT="#"[^\n\\]*(("\\"\n[^\n\\]*|"\\"[^\n\\]*))+
 FUNCTIONS=("error"|"warning"|"info"|"shell"|"subst"|"patsubst"|"strip"|"findstring"|
   "filter"|"filter-out"|"sort"|"word"|"wordlist"|"words"|"firstword"|"lastword"|"dir"|"notdir"|"suffix"|
   "basename"|"addsuffix"|"addprefix"|"join"|"wildcard"|"realpath"|"abspath"|"if"|"or"|"and"|
   "foreach"|"file"|"call"|"value"|"eval"|"origin"|"flavor"|"guile")
-MACRO="@"[^@ \r\n]+"@"
+MACRO="@"[^@ \n]+"@"
 ASSIGN=("="|":="|"::="|"?="|"!="|"+=")
 
 CHARS = [0-9a-zA-Z.!\-?%@/_\[\]+~*\^&+<>]
@@ -58,6 +58,7 @@ CHARS = [0-9a-zA-Z.!\-?%@/_\[\]+~*\^&+<>]
 \\"#"                  { return CHARS; }
 
 <YYINITIAL> {
+  ^[ ]*{COMMENT}\n           { return COMMENT; }
   {DOCCOMMENT}           { return DOC_COMMENT; }
   {MULTILINECOMMENT}     { return COMMENT; }
   {COMMENT}              { return COMMENT; }
