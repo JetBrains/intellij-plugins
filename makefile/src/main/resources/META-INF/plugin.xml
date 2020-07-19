@@ -36,7 +36,8 @@ Eliminated deprecated IntelliJ API usages.
                          instance="name.kropp.intellij.makefile.MakeConfigurable"/>
     <runLineMarkerContributor language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileTargetRunLineMarkerContributor"/>
     <runConfigurationProducer implementation="name.kropp.intellij.makefile.MakefileRunConfigurationProducer"/>
-    <langCodeStyleSettingsProvider implementation="name.kropp.intellij.makefile.MakefileCodeStyleSettingsProvider"/>
+    <codeStyleSettingsProvider implementation="name.kropp.intellij.makefile.MakefileCodeStyleSettingsProvider"/>
+    <langCodeStyleSettingsProvider implementation="name.kropp.intellij.makefile.MakefileLangCodeStyleSettingsProvider"/>
     <lang.elementManipulator implementationClass="name.kropp.intellij.makefile.psi.MakefilePrerequisiteManipulator"
                              forClass="name.kropp.intellij.makefile.psi.impl.MakefilePrerequisiteImpl"/>
     <lang.elementManipulator implementationClass="name.kropp.intellij.makefile.psi.MakefileVariableUsageManipulator"

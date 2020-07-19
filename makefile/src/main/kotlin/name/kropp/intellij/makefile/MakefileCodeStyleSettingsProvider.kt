@@ -1,30 +1,24 @@
-package name.kropp.intellij.makefile
+package name.kropp.intellij.makefile;
 
+import com.intellij.application.options.*
+import com.intellij.lang.*
+import com.intellij.openapi.options.*
 import com.intellij.psi.codeStyle.*
 
-class MakefileCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
-  override fun customizeDefaults(commonSettings: CommonCodeStyleSettings, indentOptions: CommonCodeStyleSettings.IndentOptions) {
-    indentOptions.TAB_SIZE = 4
-    indentOptions.USE_TAB_CHARACTER = true
+class MakefileCodeStyleSettingsProvider : CodeStyleSettingsProvider() {
+  override fun createSettingsPage(settings: CodeStyleSettings, originalSettings: CodeStyleSettings?): Configurable {
+    return object : CodeStyleAbstractConfigurable(settings, originalSettings, "Makefile") {
+      override fun createPanel(settings: CodeStyleSettings): CodeStyleAbstractPanel {
+        return object : TabbedLanguageCodeStylePanel(MakefileLanguage, currentSettings, settings) {
+          override fun initTabs(settings: CodeStyleSettings) {
+            addIndentOptionsTab(settings)
+          }
+        }
+      }
+      override fun getHelpTopic(): String? = null
+    }
   }
 
-  override fun getCodeSample(settingsType: SettingsType): String {
-    return """# Simple Makefile
-include make.mk
-
-all: hello
-
-GCC = gcc \
-           -O2
-
-<target>.o.c</target>:
-ifeq ($(FOO),'bar')
-${'\t'}$(GCC) -c qwe \
-              -Wall
-else
-${'\t'}echo "Hello World"
-endif"""
-  }
-
-  override fun getLanguage() = MakefileLanguage
+  override fun getLanguage(): Language = MakefileLanguage
+  override fun createCustomSettings(settings: CodeStyleSettings?): CustomCodeStyleSettings = MakefileCodeStyleSettings(settings)
 }
