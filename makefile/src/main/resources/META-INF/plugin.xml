@@ -18,7 +18,7 @@ Eliminated deprecated IntelliJ API usages.
   <depends>com.intellij.modules.lang</depends>
 
   <extensions defaultExtensionNs="com.intellij">
-    <fileType name="Makefile" language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileFileType" fieldName="INSTANCE" extensions="mk" fileNamesCaseInsensitive="makefile;GNUmakefile" patterns="Makefile.*"/>
+    <fileType name="Makefile" language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileFileType" fieldName="INSTANCE" extensions="mk" fileNamesCaseInsensitive="makefile;GNUmakefile"/>
     <lang.parserDefinition language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileParserDefinition"/>
     <lang.syntaxHighlighterFactory language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileSyntaxHighlighterFactory"/>
     <lang.foldingBuilder language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileFoldingBuilder"/>
