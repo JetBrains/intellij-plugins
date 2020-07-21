@@ -1,8 +1,9 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.mxunit;
 
 import com.intellij.execution.filters.Filter;
 import com.intellij.execution.filters.OpenFileHyperlinkInfo;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.colors.CodeInsightColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.markup.TextAttributes;
@@ -12,17 +13,15 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.GuiUtils;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CfmlStackTraceFilterProvider implements Filter {
+public final class CfmlStackTraceFilterProvider implements Filter {
   private final Project myProject;
 
   public CfmlStackTraceFilterProvider(Project project) {
@@ -79,12 +78,9 @@ public class CfmlStackTraceFilterProvider implements Filter {
     }
 
     try {
-      GuiUtils.runOrInvokeAndWait(() -> vFile.set(LocalFileSystem.getInstance().refreshAndFindFileByIoFile(file)));
+      ApplicationManager.getApplication().invokeAndWait(() -> vFile.set(LocalFileSystem.getInstance().refreshAndFindFileByIoFile(file)));
     }
-    catch (InvocationTargetException e) {
-      // skip
-    }
-    catch (InterruptedException e) {
+    catch (RuntimeException e) {
       // skip
     }
 
