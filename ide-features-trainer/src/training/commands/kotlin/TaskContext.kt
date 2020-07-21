@@ -49,6 +49,9 @@ abstract class TaskContext {
    */
   abstract fun text(@Language("HTML") text: String)
 
+  /** Write a text to the learn panel (panel with a learning tasks). */
+  abstract fun runtimeText(callback: TaskRuntimeContext.() -> String?)
+
   /** Simply wait until an user perform particular action */
   abstract fun trigger(actionId: String)
 
