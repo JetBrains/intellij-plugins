@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.dmarcotte.handlebars.format;
 
 import com.dmarcotte.handlebars.config.HbConfig;
@@ -8,7 +8,6 @@ import com.intellij.formatting.*;
 import com.intellij.formatting.templateLanguages.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
@@ -54,29 +53,28 @@ public class HbFormattingModelBuilder extends TemplateLanguageFormattingModelBui
    * causing an stack-overflowing loop of polite format-delegation.
    */
   @Override
-  @NotNull
-  public FormattingModel createModel(PsiElement element, CodeStyleSettings settings) {
-
+  public @NotNull FormattingModel createModel(@NotNull FormattingContext formattingContext) {
     if (!HbConfig.isFormattingEnabled()) {
       // formatting is disabled, return the no-op formatter (note that this still delegates formatting
       // to the templated language, which lets the users manage that separately)
-      return new SimpleTemplateLanguageFormattingModelBuilder().createModel(element, settings);
+      return new SimpleTemplateLanguageFormattingModelBuilder().createModel(formattingContext);
     }
 
-    final PsiFile file = element.getContainingFile();
+    final PsiFile file = formattingContext.getContainingFile();
     Block rootBlock;
 
-    ASTNode node = element.getNode();
+    ASTNode node = formattingContext.getNode();
 
     if (node.getElementType() == HbTokenTypes.OUTER_ELEMENT_TYPE) {
       // If we're looking at a HbTokenTypes.OUTER_ELEMENT_TYPE element, then we've been invoked by our templated
       // language.  Make a dummy block to allow that formatter to continue
-      return new SimpleTemplateLanguageFormattingModelBuilder().createModel(element, settings);
+      return new SimpleTemplateLanguageFormattingModelBuilder().createModel(formattingContext);
     }
     else {
-      rootBlock = getRootBlock(file, file.getViewProvider(), settings);
+      rootBlock = getRootBlock(file, file.getViewProvider(), formattingContext.getCodeStyleSettings());
     }
-    return new DocumentBasedFormattingModel(rootBlock, element.getProject(), settings, file.getFileType(), file);
+    return new DocumentBasedFormattingModel(
+      rootBlock, formattingContext.getProject(), formattingContext.getCodeStyleSettings(), file.getFileType(), file);
   }
 
   /**

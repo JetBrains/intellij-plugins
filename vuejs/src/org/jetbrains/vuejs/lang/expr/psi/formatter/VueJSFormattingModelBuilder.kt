@@ -7,21 +7,19 @@ import com.intellij.lang.javascript.JSLanguageUtil
 import com.intellij.lang.javascript.formatter.JSBlockContext
 import com.intellij.lang.javascript.formatter.JavascriptFormattingModelBuilder
 import com.intellij.lang.javascript.formatter.blocks.CompositeJSBlock
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.formatter.WrappingUtil
 import com.intellij.psi.xml.XmlText
 import com.intellij.webcore.formatter.SpacingStrategy
 import org.jetbrains.vuejs.lang.html.psi.formatter.VueCodeStyleSettings
-import org.jetbrains.vuejs.lang.html.psi.formatter.VueSyntheticBlock
 
 class VueJSFormattingModelBuilder : JavascriptFormattingModelBuilder() {
-
-  override fun createModel(element: PsiElement, settings: CodeStyleSettings, mode: FormattingMode): FormattingModel {
+  override fun createModel(formattingContext: FormattingContext): FormattingModel {
+    val element = formattingContext.psiElement
+    val settings = formattingContext.codeStyleSettings
     val dialect = JSLanguageUtil.getLanguageDialect(element)
     val alignment = element.node.getUserData(BLOCK_ALIGNMENT)
-    val jsBlockContext: JSBlockContext = createBlockFactory(settings, dialect, mode)
+    val jsBlockContext: JSBlockContext = createBlockFactory(settings, dialect, formattingContext.formattingMode)
     var rootBlock: Block
     val host = InjectedLanguageManager.getInstance(element.project).getInjectionHost(element)
     if (host is XmlText) {
