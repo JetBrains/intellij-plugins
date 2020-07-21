@@ -18,6 +18,8 @@ internal class DocumentationModeTaskContext(private val project: Project) : Task
 
   override fun text(text: String) = LessonExecutorUtil.addTextToLearnPanel(text, project)
 
+  override fun runtimeText(callback: TaskRuntimeContext.() -> String?) = Unit // do not show this text in documentation mode
+
   override fun trigger(actionId: String) = Unit // do nothing
 
   override fun trigger(checkId: (String) -> Boolean) = Unit // do nothing

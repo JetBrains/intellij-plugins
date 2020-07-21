@@ -53,6 +53,8 @@ private class FakeTaskContext : TaskContext() {
     hasText = true
   }
 
+  override fun runtimeText(callback: TaskRuntimeContext.() -> String?) = Unit // do nothing
+
   override fun trigger(actionId: String) {
     hasDetection = true
   }
