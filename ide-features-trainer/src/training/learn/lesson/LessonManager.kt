@@ -97,6 +97,7 @@ class LessonManager {
 
   /** Save to use in any moment (from AWT thread) */
   internal fun stopLesson() {
+    shownRestoreType = TaskContext.RestoreProposal.None
     currentLessonExecutor?.stopLesson()
     currentLessonExecutor?.lesson?.onStop()
     LessonProcessor.currentExecutionList?.lesson?.onStop()
@@ -299,6 +300,7 @@ class LessonManager {
   }
 
   fun addRestoreNotification(proposal: TaskContext.RestoreNotification) {
+    clearRestoreMessage()
     val proposalText = when (proposal.type) {
       TaskContext.RestoreProposal.Modification -> LearnBundle.message("learn.restore.notification.modification.message")
       TaskContext.RestoreProposal.Caret -> LearnBundle.message("learn.restore.notification.caret.message")
