@@ -225,7 +225,8 @@ metadata ::= '@' simpleQualifiedReferenceExpression <<argumentsWrapper>>?
 
 uriElement ::= stringLiteralExpression {mixin="com.jetbrains.lang.dart.psi.impl.DartUriElementBase"   methods = [ getUriStringAndItsRange ]}
 
-varAccessDeclaration ::= metadata* 'static'? ('covariant'? 'late'? finalOrConst type               componentName |
+varAccessDeclaration ::= metadata* 'external'? 'abstract'? 'static'?
+                                             ('covariant'? 'late'? finalOrConst type               componentName |
                                               'covariant'? 'late'? finalOrConst                    componentName <<failIfItLooksLikeConstantObjectExpression>> |
                                               'covariant'? 'late'? 'var'                           componentName |
                                               'covariant'  'late'               type !asExpression componentName |
