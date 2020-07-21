@@ -4,4 +4,5 @@
   <lesson-kt implementationClass="training.learn.lesson.python.completion.PythonTabCompletionLesson"/>
   <lesson-kt implementationClass="training.learn.lesson.python.completion.PythonPostfixCompletionLesson"/>
   <lesson-kt implementationClass="training.learn.lesson.python.completion.PythonSmartCompletionLesson"/>
+  <lesson-kt implementationClass="training.learn.lesson.python.completion.FStringCompletionLesson"/>
 </module>
