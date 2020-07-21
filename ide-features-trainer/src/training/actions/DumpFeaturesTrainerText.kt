@@ -45,6 +45,10 @@ private class TextCollector(private val buffer: StringBuffer) : TaskContext() {
     buffer.append('\n')
   }
 
+  override fun runtimeText(callback: TaskRuntimeContext.() -> String?) {
+    // TODO: think how to dump it
+  }
+
   override fun trigger(actionId: String) = Unit // do nothing
 
   override fun trigger(checkId: (String) -> Boolean) = Unit // do nothing

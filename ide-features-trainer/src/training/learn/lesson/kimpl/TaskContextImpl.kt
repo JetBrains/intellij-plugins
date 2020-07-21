@@ -71,6 +71,11 @@ internal class TaskContextImpl(private val lessonExecutor: LessonExecutor,
 
   override fun text(@Language("HTML") text: String) = LessonExecutorUtil.addTextToLearnPanel(text, runtimeContext.project)
 
+  override fun runtimeText(callback: TaskRuntimeContext.() -> String?) {
+    val text = callback(runtimeContext)
+    if (text != null) LessonExecutorUtil.addTextToLearnPanel(text, runtimeContext.project)
+  }
+
   override fun trigger(actionId: String) {
     addStep(recorder.futureAction(actionId))
   }
