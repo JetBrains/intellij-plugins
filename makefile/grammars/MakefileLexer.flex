@@ -36,7 +36,7 @@ FUNCTIONS=("error"|"warning"|"info"|"shell"|"subst"|"patsubst"|"strip"|"findstri
 MACRO="@"[^@ \n]+"@"
 ASSIGN=("="|":="|"::="|"?="|"!="|"+=")
 
-CHARS = [0-9a-zA-Z.!\-?%@/_\[\]+~*\^&+<>]
+CHARS = [0-9\p{L}.!\-?%@/_\[\]+~*\^&+<>]
 
 
 %state SQSTRING DQSTRING

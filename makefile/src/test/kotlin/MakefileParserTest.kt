@@ -35,6 +35,7 @@ class MakefileParserTest : ParsingTestCase("parser", "mk", MakefileParserDefinit
   fun testSimpleVar() = doTest(true)
   fun testWhitespace() = doTest(true)
   fun testShellWithCurly() = doTest(true)
+  fun testNonAscii() = doTest(true)
 
   fun testIssue7() = doTest(true)
   fun testIssue9() = doTest(true)
