@@ -80,6 +80,7 @@ class MakefileParserTest : ParsingTestCase("parser", "mk", MakefileParserDefinit
   fun testIssue160() = doTest(true)
   fun testIssue167() = doTest(true)
   fun testIssue170() = doTest(true)
+  fun testIssue175() = doTest(true)
 
   fun testFunctionForeach() = doTest(true)
   fun testFunctionCall() = doTest(true)
