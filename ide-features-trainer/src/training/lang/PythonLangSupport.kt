@@ -83,5 +83,5 @@ class PythonLangSupport : AbstractLangSupport() {
     ZipUtil.unzipWithProgressSynchronously(null, "Unzip demo project", zipFile, projectDirectory, true)
   }
 
-  override val projectSandboxRelativePath = "app/sandbox.rb"
+  override val projectSandboxRelativePath = "sandbox.py"
 }

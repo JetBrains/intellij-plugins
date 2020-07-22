@@ -8,6 +8,7 @@
       <module path="modules/python/Completions.xml"/>
       <module path="modules/python/Navigation.xml"/>
       <module path="modules/python/Refactorings.xml"/>
+      <module path="modules/python/Run.xml"/>
     </ift.modules>
   </extensions>
 </idea-plugin>
