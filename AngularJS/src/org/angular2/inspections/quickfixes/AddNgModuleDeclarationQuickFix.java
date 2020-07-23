@@ -11,7 +11,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
-import com.intellij.util.containers.Queue;
 import org.angular2.codeInsight.Angular2DeclarationsScope;
 import org.angular2.entities.Angular2Declaration;
 import org.angular2.entities.Angular2Entity;
@@ -84,7 +83,7 @@ public final class AddNgModuleDeclarationQuickFix extends LocalQuickFixAndIntent
   }
 
   public static @NotNull List<Angular2Module> getCandidates(@NotNull PsiElement context) {
-    Queue<Angular2Module> processingQueue = new Queue<>(20);
+    Deque<Angular2Module> processingQueue = new ArrayDeque<>(20);
     Angular2DeclarationsScope scope = new Angular2DeclarationsScope(context);
     Angular2Module contextModule = scope.getModule();
     if (contextModule == null || !scope.isInSource(contextModule)) {
@@ -94,7 +93,7 @@ public final class AddNgModuleDeclarationQuickFix extends LocalQuickFixAndIntent
     Set<Angular2Module> processed = new HashSet<>();
     List<Angular2Module> result = new ArrayList<>();
     while (!processingQueue.isEmpty()) {
-      Angular2Module module = processingQueue.pullFirst();
+      Angular2Module module = processingQueue.removeFirst();
       if (processed.add(module) && scope.isInSource(module)) {
         result.add(module);
         module.getImports().forEach(processingQueue::addLast);
