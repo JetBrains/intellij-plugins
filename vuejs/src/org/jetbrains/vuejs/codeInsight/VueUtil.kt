@@ -245,7 +245,7 @@ fun getJSTypeFromPropOptions(expression: JSExpression?): JSType? {
 
 private fun getJSTypeFromVueType(reference: JSReferenceExpression): JSType? {
   return JSApplyNewType(JSTypeofTypeImpl(reference, JSTypeSourceFactory.createTypeSource(reference, false)),
-                        JSTypeSourceFactory.createTypeSource(reference, false))
+                        JSTypeSourceFactory.createTypeSource(reference.containingFile, false))
 }
 
 fun getRequiredFromPropOptions(expression: JSExpression?): Boolean {
