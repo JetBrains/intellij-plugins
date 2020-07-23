@@ -9,8 +9,9 @@ Support for editing and running UNIX Makefiles
     ]]></description>
 
   <change-notes><![CDATA[
-Improved variable parsing and completion inside strings and variable values.
-Eliminated deprecated IntelliJ API usages.
+The new version comes with a number of improvements to parser and new Code Style settings page.
+Tool window got a toolbar with handy collapse all/expand all buttons, filter for special targets,
+option to sort targets and automatically scroll to source on focus.
 ]]></change-notes>
 
   <idea-version since-build="201.3119"/>

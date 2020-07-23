@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "name.kropp.intellij"
-version = "3.1.1"
+version = "3.5"
 
 repositories {
   mavenCentral()
