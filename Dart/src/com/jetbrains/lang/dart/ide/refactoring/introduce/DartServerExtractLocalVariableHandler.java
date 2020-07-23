@@ -45,7 +45,6 @@ public class DartServerExtractLocalVariableHandler implements RefactoringActionH
   public void invoke(final @NotNull Project project, final Editor editor, PsiFile file, DataContext dataContext) {
     final DartSdk sdk = DartSdk.getDartSdk(project);
     if (sdk == null || StringUtil.compareVersionNumbers(sdk.getVersion(), "1.14") < 0) {
-      new DartIntroduceVariableHandler().invoke(project, editor, file, dataContext);
       return;
     }
 
@@ -213,8 +212,8 @@ class DartServerExtractLocalVariableDialog extends ServerRefactoringDialog<Serve
   private final NameSuggestionsField myVariableNameField;
 
   DartServerExtractLocalVariableDialog(@NotNull Project project,
-                                              @NotNull Editor editor,
-                                              @NotNull ServerExtractLocalVariableRefactoring refactoring) {
+                                       @NotNull Editor editor,
+                                       @NotNull ServerExtractLocalVariableRefactoring refactoring) {
     super(project, editor, refactoring);
     myRefactoring = refactoring;
 
