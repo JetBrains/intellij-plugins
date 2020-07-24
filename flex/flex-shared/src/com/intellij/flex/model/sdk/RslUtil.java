@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.model.sdk;
 
 import com.intellij.openapi.diagnostic.Logger;
@@ -6,22 +7,18 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.PathUtilRt;
-import gnu.trove.THashMap;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class RslUtil {
+public final class RslUtil {
   private static final Logger LOG = Logger.getInstance(RslUtil.class.getName());
 
   private static final Map<String, Pair<Long, Map<String, List<String>>>> ourConfigFilePathToTimestampAndSwcPathToRslUrls =
-    new THashMap<>();
+    new HashMap<>();
 
   public static boolean canBeRsl(final String sdkHome, final String swcPath) {
     final List<String> rslUrls = getRslUrls(sdkHome, swcPath);
@@ -57,7 +54,7 @@ public class RslUtil {
     if (cachedTimestamp == null || !cachedTimestamp.equals(currentTimestamp)) {
       ourConfigFilePathToTimestampAndSwcPathToRslUrls.remove(configFilePath);
 
-      final Map<String, List<String>> swcPathToRslMap = new THashMap<>();
+      final Map<String, List<String>> swcPathToRslMap = new HashMap<>();
       try {
         final Element rootElement = JDOMUtil.load(configFile);
         for (Element rslElement : rootElement.getChildren("runtime-shared-library-path",

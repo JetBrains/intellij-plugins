@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.model.bc.impl;
 
 import com.intellij.flex.model.bc.CompilerOptionInfo;
@@ -6,18 +7,17 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.xmlb.annotations.MapAnnotation;
 import com.intellij.util.xmlb.annotations.Property;
 import com.intellij.util.xmlb.annotations.Tag;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.ex.JpsElementBase;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
-public class JpsFlexCompilerOptionsImpl extends JpsElementBase<JpsFlexCompilerOptionsImpl> implements JpsFlexCompilerOptions {
-
-  private @NotNull final Map<String, String> myOptions = new THashMap<>();
+public final class JpsFlexCompilerOptionsImpl extends JpsElementBase<JpsFlexCompilerOptionsImpl> implements JpsFlexCompilerOptions {
+  private @NotNull final Map<String, String> myOptions = new HashMap<>();
   private @NotNull ResourceFilesMode myResourceFilesMode = ResourceFilesMode.All;
   private @NotNull String myFilesToIncludeInSWC = "";
   private @NotNull String myAdditionalConfigFilePath = "";
@@ -142,7 +142,7 @@ public class JpsFlexCompilerOptionsImpl extends JpsElementBase<JpsFlexCompilerOp
   public static class State {
     @Property(surroundWithTag = false)
     @MapAnnotation
-    public Map<String, String> options = new THashMap<>();
+    public Map<String, String> options = new HashMap<>();
     public ResourceFilesMode resourceFilesMode = ResourceFilesMode.All;
     public String filesToIncludeInSWC = "";
     public String additionalConfigFilePath = "";

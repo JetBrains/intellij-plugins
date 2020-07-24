@@ -6,7 +6,6 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.util.PathUtilRt;
-import gnu.trove.THashMap;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
@@ -17,13 +16,13 @@ import org.jetbrains.jps.util.JpsPathUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 public final class InfoFromConfigFile {
-
   public static InfoFromConfigFile DEFAULT = new InfoFromConfigFile(null, null, null, null, null);
 
-  private static final Map<String, Pair<Long, InfoFromConfigFile>> ourCache = new THashMap<>();
+  private static final Map<String, Pair<Long, InfoFromConfigFile>> ourCache = new HashMap<>();
 
   private final @Nullable File myConfigFile;
   private final @Nullable String myMainClassPath;

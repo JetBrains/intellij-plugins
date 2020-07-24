@@ -19,7 +19,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.*;
-import gnu.trove.THashMap;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.Namespace;
@@ -46,8 +45,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class FlexCommonUtils {
-
+public final class FlexCommonUtils {
   public static final String AIR_NAMESPACE_BASE = "http://ns.adobe.com/air/application/";
 
   //keep in sync with OutputLogger.ERROR_PATTERN from BuiltInFlexCompiler project !!!
@@ -97,7 +95,7 @@ public class FlexCommonUtils {
   public static final boolean KEEP_TEMP_FILES = Boolean.parseBoolean(System.getProperty("idea.keep.flex.temporary.files"));
   public static final Pattern AIR_VERSION_PATTERN = Pattern.compile("[0-9]+\\.[0-9]+(\\.[0-9]+)*");
 
-  private static final Map<Pair<String, Long>, String> ourAdtJarPathAndTimestampToVersion = new THashMap<>();
+  private static final Map<Pair<String, Long>, String> ourAdtJarPathAndTimestampToVersion = new HashMap<>();
 
   public static boolean isSourceFile(final String fileName) {
     final String ext = FileUtilRt.getExtension(fileName);

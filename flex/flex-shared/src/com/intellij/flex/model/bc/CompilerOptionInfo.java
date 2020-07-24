@@ -6,16 +6,13 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.xmlb.Constants;
-import gnu.trove.THashMap;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-
 public final class CompilerOptionInfo {
-
   public enum OptionType {Group, Boolean, String, Int, File, List, IncludeClasses, IncludeFiles}
 
   public enum ListElementType {String, File, FileOrFolder, Class, Boolean, Locale}
@@ -50,7 +47,7 @@ public final class CompilerOptionInfo {
   private static final Logger LOG = Logger.getInstance(CompilerOptionInfo.class.getName());
 
   private static volatile CompilerOptionInfo[] ourRootInfos;
-  private static final Map<String, CompilerOptionInfo> ourIdToInfoMap = new THashMap<>(50);
+  private static final Map<String, CompilerOptionInfo> ourIdToInfoMap = new HashMap<>(50);
   private static final Collection<CompilerOptionInfo> ourOptionsWithSpecialValues = new LinkedList<>();
 
   public static final CompilerOptionInfo DEBUG_INFO =

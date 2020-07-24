@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.intellij.struts2.dom.inspection;
 
 import com.intellij.codeInspection.LocalInspectionTool;
@@ -32,11 +31,11 @@ import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.dom.validator.ValidatorManager;
 import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.util.containers.FactoryMap;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -45,8 +44,7 @@ import java.util.Set;
  *
  * @author Yann C&eacute;bron
  */
-public class ValidatorModelValidator extends ValidatorBase {
-
+final class ValidatorModelValidator extends ValidatorBase {
   @NonNls
   private static final String FILENAME_EXTENSION_VALIDATION_XML = "-validation.xml";
 
@@ -67,7 +65,7 @@ public class ValidatorModelValidator extends ValidatorBase {
                                    StrutsFacet.getInstance(module1) != null);
 
     // collect all validation.xml files located in sources of S2-modules
-    final Set<VirtualFile> files = new THashSet<>();
+    final Set<VirtualFile> files = new HashSet<>();
     for (final VirtualFile file : context.getProjectCompileScope().getFiles(StdFileTypes.XML, true)) {
       if (StringUtil.endsWith(file.getName(), FILENAME_EXTENSION_VALIDATION_XML)) {
         final PsiFile psiFile = psiManager.findFile(file);
@@ -83,7 +81,7 @@ public class ValidatorModelValidator extends ValidatorBase {
     }
 
     // add validator-config.xml if not default one from xwork.jar
-    final Set<VirtualFile> descriptorFiles = new THashSet<>();
+    final Set<VirtualFile> descriptorFiles = new HashSet<>();
     for (final Module module : ModuleManager.getInstance(project).getModules()) {
       if (enabledForModule.get(module)) {
         final PsiFile psiFile = validatorManager.getValidatorConfigFile(module);

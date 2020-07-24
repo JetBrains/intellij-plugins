@@ -30,10 +30,10 @@ import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FactoryMap;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -42,8 +42,7 @@ import java.util.Set;
  *
  * @author Yann C&eacute;bron
  */
-public class Struts2ModelValidator extends ValidatorBase {
-
+final class Struts2ModelValidator extends ValidatorBase {
   public Struts2ModelValidator() {
     super("Struts 2 Model Validator", StrutsBundle.message("inspections.struts2.model.validator"),
           StrutsBundle.message("inspections.struts2.model.validator.progress"));
@@ -58,7 +57,7 @@ public class Struts2ModelValidator extends ValidatorBase {
     final Map<Module, Boolean> enabledForModule =
       FactoryMap.create(module1 -> isEnabledForModule(module1));
 
-    final Set<VirtualFile> files = new THashSet<>();
+    final Set<VirtualFile> files = new HashSet<>();
     for (final VirtualFile file : context.getCompileScope().getFiles(StdFileTypes.XML, false)) {
       final Module module = context.getModuleByFile(file);
       if (module != null &&
