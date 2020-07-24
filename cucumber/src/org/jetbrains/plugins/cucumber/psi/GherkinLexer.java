@@ -34,7 +34,7 @@ public class GherkinLexer extends LexerBase {
   private final static int STATE_PARAMETER_INSIDE_PYSTRING = 6;
   private final static int STATE_PARAMETER_INSIDE_STEP = 7;
 
-  private static final String PYSTRING_MARKER = "\"\"\"";
+  public static final String PYSTRING_MARKER = "\"\"\"";
   private final GherkinKeywordProvider myKeywordProvider;
   private String myCurLanguage;
 

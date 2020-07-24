@@ -1,4 +1,6 @@
 package org.jetbrains.plugins.cucumber.psi;
 
-public interface GherkinPystring extends GherkinPsiElement {
+import com.intellij.psi.PsiLanguageInjectionHost;
+
+public interface GherkinPystring extends GherkinPsiElement, PsiLanguageInjectionHost {
 }
