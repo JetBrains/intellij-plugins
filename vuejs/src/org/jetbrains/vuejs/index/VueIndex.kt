@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.index
 
+import com.intellij.javascript.nodejs.PackageJsonData
 import com.intellij.javascript.nodejs.packages.NodePackageUtil
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider
@@ -65,7 +66,7 @@ fun hasVueClassComponentLibrary(project: Project): Boolean {
   return CachedValuesManager.getManager(project).getCachedValue(project) {
     val packageJsonFiles = FilenameIndex.getVirtualFilesByName(project, PackageJsonUtil.FILE_NAME, GlobalSearchScope.projectScope(project))
 
-    var recordedDependency = packageJsonFiles.any { PackageJsonUtil.getOrCreateData(it).isDependencyOfAnyType(VUE_CLASS_COMPONENT_MODULE) }
+    var recordedDependency = packageJsonFiles.any { PackageJsonData.getOrCreate(it).isDependencyOfAnyType(VUE_CLASS_COMPONENT_MODULE) }
     if (!recordedDependency) {
       val psiManager = PsiManager.getInstance(project)
       recordedDependency = packageJsonFiles.any {

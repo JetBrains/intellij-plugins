@@ -13,6 +13,7 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.icons.AllIcons;
 import com.intellij.javascript.nodejs.CompletionModuleInfo;
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil;
+import com.intellij.javascript.nodejs.PackageJsonData;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager;
 import com.intellij.javascript.nodejs.npm.registry.NpmRegistryService;
@@ -133,7 +134,7 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
       return;
     }
 
-    Set<String> existingPackages = PackageJsonUtil.getOrCreateData(packageJson).getAllDependencies();
+    Set<String> existingPackages = PackageJsonData.getOrCreate(packageJson).getAllDependencies();
 
     SortedListModel<NodePackageBasicInfo> model = new SortedListModel<>(
       Comparator.comparing((NodePackageBasicInfo p) -> p == OTHER ? 1 : 0)

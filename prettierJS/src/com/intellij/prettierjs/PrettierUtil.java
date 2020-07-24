@@ -158,7 +158,7 @@ public final class PrettierUtil {
   public static VirtualFile findSingleConfigInContentRoots(@NotNull Project project) {
     return JSLinterConfigFileUtil.findDistinctConfigInContentRoots(project, CONFIG_FILE_NAMES_WITH_PACKAGE_JSON, file -> {
       if (PackageJsonUtil.isPackageJsonFile(file)) {
-        return PackageJsonUtil.getOrCreateData(file).getTopLevelProperties().contains(CONFIG_SECTION_NAME);
+        return PackageJsonData.getOrCreate(file).getTopLevelProperties().contains(CONFIG_SECTION_NAME);
       }
       return true;
     });
@@ -196,7 +196,7 @@ public final class PrettierUtil {
   private static PrettierConfig parseConfigInternal(@NotNull VirtualFile virtualFile, @NotNull PsiFile file) {
     try {
       if (PackageJsonUtil.isPackageJsonFile(file)) {
-        PackageJsonData packageJsonData = PackageJsonUtil.getOrCreateData(virtualFile);
+        PackageJsonData packageJsonData = PackageJsonData.getOrCreate(virtualFile);
         if (!packageJsonData.isDependencyOfAnyType(PACKAGE_NAME)) {
           return null;
         }

@@ -3,7 +3,6 @@ package org.angular2.lang;
 
 import com.intellij.javascript.nodejs.PackageJsonData;
 import com.intellij.javascript.nodejs.packageJson.PackageJsonFileManager;
-import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
@@ -19,7 +18,7 @@ public class Angular2PackageJsonContextProvider implements Angular2ContextProvid
     boolean result = false;
     for (VirtualFile config : manager.getValidPackageJsonFiles()) {
       if (VfsUtilCore.isAncestor(config.getParent(), psiDir.getVirtualFile(), false)) {
-        PackageJsonData data = PackageJsonUtil.getOrCreateData(config);
+        PackageJsonData data = PackageJsonData.getOrCreate(config);
         if (data.isDependencyOfAnyType(ANGULAR_CORE_PACKAGE)) {
           result = true;
           break;

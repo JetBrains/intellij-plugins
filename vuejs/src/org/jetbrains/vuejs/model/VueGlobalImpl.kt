@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model
 
+import com.intellij.javascript.nodejs.PackageJsonData
 import com.intellij.javascript.nodejs.library.NodeModulesDirectoryManager
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
@@ -195,7 +196,7 @@ internal class VueGlobalImpl(override val project: Project, private val packageJ
     }
 
     private fun isVueLibrary(it: VirtualFile, enabledPackages: Set<String>): Boolean {
-      val data = PackageJsonUtil.getOrCreateData(it)
+      val data = PackageJsonData.getOrCreate(it)
       return data.name == "vue"
              || enabledPackages.contains(data.name)
              || data.containsOneOfDependencyOfAnyType("vue-loader", "vue-latest", "vue", "vue-template-compiler")

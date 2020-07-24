@@ -12,7 +12,6 @@ import com.intellij.javaee.ExternalResourceManager
 import com.intellij.javascript.nodejs.PackageJsonData
 import com.intellij.javascript.nodejs.npm.registry.NpmRegistryService
 import com.intellij.javascript.nodejs.packageJson.NodePackageBasicInfo
-import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
@@ -77,7 +76,7 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
       }
 
     fun createWebTypesPlugin(project: Project, packageJsonFile: VirtualFile, owner: VuePlugin): Result<VuePlugin?> {
-      val data = PackageJsonUtil.getOrCreateData(packageJsonFile)
+      val data = PackageJsonData.getOrCreate(packageJsonFile)
       loadWebTypes(packageJsonFile, data)?.let { (webTypes, file) ->
         return Result.create(VueWebTypesPlugin(project, packageJsonFile, webTypes, owner),
                              packageJsonFile, file, MODIFICATION_TRACKER)
@@ -93,7 +92,7 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
     }
 
     private fun loadWebTypes(packageJsonFile: VirtualFile,
-                             packageJson: PackageJsonData = PackageJsonUtil.getOrCreateData(packageJsonFile))
+                             packageJson: PackageJsonData = PackageJsonData.getOrCreate(packageJsonFile))
       : Pair<WebTypes, VirtualFile>? {
       val webTypesFile = packageJson.webTypes?.let {
         packageJsonFile.parent?.findFileByRelativePath(it)
