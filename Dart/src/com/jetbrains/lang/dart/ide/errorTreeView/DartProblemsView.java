@@ -12,6 +12,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsContexts.TabTitle;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
@@ -126,7 +127,7 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
     return content != null ? (DartProblemsViewPanel)content.getComponent() : null;
   }
 
-  void setHeaderText(@NotNull String headerText) {
+  void setHeaderText(@TabTitle @NotNull String headerText) {
     ToolWindow toolWindow = getDartAnalysisToolWindow();
     Content content = toolWindow != null ? toolWindow.getContentManager().getContent(0) : null;
     if (content != null) {
