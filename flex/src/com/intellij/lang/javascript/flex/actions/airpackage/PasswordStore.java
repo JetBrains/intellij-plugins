@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.flex.actions.airpackage;
 
 import com.intellij.lang.javascript.flex.projectStructure.model.AirSigningOptions;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsContexts.DialogMessage;
 import com.intellij.util.xmlb.annotations.Transient;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.Nullable;
@@ -18,11 +19,11 @@ public class PasswordStore {
     public final boolean wrongKeystorePassword;
     public final boolean wrongKeyPassword;
 
-    public SigningOptionsException(final String message) {
+    public SigningOptionsException(@DialogMessage String message) {
       this(message, false, false);
     }
 
-    public SigningOptionsException(final String message, final boolean wrongKeystorePassword, final boolean wrongKeyPassword) {
+    public SigningOptionsException(@DialogMessage String message, final boolean wrongKeystorePassword, final boolean wrongKeyPassword) {
       super(message);
       this.wrongKeystorePassword = wrongKeystorePassword;
       this.wrongKeyPassword = wrongKeyPassword;
