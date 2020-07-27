@@ -5,15 +5,17 @@ import com.intellij.testGuiFramework.framework.GuiTestUtil
 import com.intellij.testGuiFramework.impl.button
 import com.intellij.testGuiFramework.util.Key
 import com.jetbrains.python.inspections.quickfix.PyChangeSignatureQuickFix
+import training.commands.kotlin.TaskContext
 import training.commands.kotlin.TaskTestContext
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
+import training.learn.lesson.kimpl.LessonUtil
 import training.learn.lesson.kimpl.parseLessonSample
 import javax.swing.JDialog
 import javax.swing.JLabel
 
-class PythonQuickFixesRefactoringLesson(module: Module) : KLesson("quick-fix-refactoring", "Quick fix refactoring", module, "Python") {
+class PythonQuickFixesRefactoringLesson(module: Module) : KLesson("refactoring.quick.fix", "Quick fix refactoring", module, "Python") {
   private val sample = parseLessonSample("""
     def foo(x):
         print("Hello ", x)
@@ -31,6 +33,7 @@ class PythonQuickFixesRefactoringLesson(module: Module) : KLesson("quick-fix-ref
       stateCheck {
         editor.document.text == StringBuilder(sample.text).insert(sample.startOffset, ", y").toString()
       }
+      proposeMyRestore()
       test { type(", y") }
     }
 
@@ -39,18 +42,27 @@ class PythonQuickFixesRefactoringLesson(module: Module) : KLesson("quick-fix-ref
       triggerByListItemAndHighlight(highlightBorder = false, highlightInside = false) { item ->
         item.toString().contains("string=y")
       }
+      proposeMyRestore()
     }
 
     task {
       text("For now, we don't want to apply any completion. Close the list (${action("EditorEscape")}).")
       stateCheck { previous.ui?.isShowing != true }
+      proposeMyRestore()
       test { GuiTestUtil.shortcut(Key.ESCAPE) }
+    }
+
+    prepareRuntimeTask { // restore point
+      prepareSample(previous.sample)
     }
 
     task("ShowIntentionActions") {
       text("As you may notice, IDE is showing you a warning here. Let's invoke intentions by ${action(it)}.")
       triggerByListItemAndHighlight(highlightBorder = true, highlightInside = false) { item ->
         item.toString().contains("Change signature of")
+      }
+      proposeRestore {
+        LessonUtil.checkExpectedStateOfEditor(editor, previous.sample) { change -> change.isEmpty() }
       }
       test {
         Thread.sleep(500) // need to check the intention is ready
@@ -63,12 +75,8 @@ class PythonQuickFixesRefactoringLesson(module: Module) : KLesson("quick-fix-ref
       triggerByUiComponentAndHighlight(highlightBorder = false, highlightInside = false) { dialog: JDialog ->
         dialog.title == "Change Signature"
       }
+      restoreByUi(500)
       test {
-        if (false) {
-          ideFrame {
-            jListContains("Change signature of").item("Change signature of").doubleClick()
-          }
-        }
         GuiTestUtil.shortcut(Key.DOWN)
         GuiTestUtil.shortcut(Key.ENTER)
       }
@@ -80,6 +88,7 @@ class PythonQuickFixesRefactoringLesson(module: Module) : KLesson("quick-fix-ref
       triggerByUiComponentAndHighlight(highlightBorder = false, highlightInside = false) { label: JLabel ->
         label.text == "Default value:"
       }
+      restoreByUi()
       test {
         GuiTestUtil.shortcut(Key.TAB)
         GuiTestUtil.shortcut(Key.ENTER)
@@ -101,6 +110,7 @@ class PythonQuickFixesRefactoringLesson(module: Module) : KLesson("quick-fix-ref
           it.className == PyChangeSignatureQuickFix::class.java.name
         }
       }
+      restoreByUi(500)
 
       test {
         GuiTestUtil.shortcut(Key.TAB)
@@ -112,6 +122,14 @@ class PythonQuickFixesRefactoringLesson(module: Module) : KLesson("quick-fix-ref
             button("Refactor").click()
           }
         }
+      }
+    }
+  }
+
+  private fun TaskContext.proposeMyRestore() {
+    proposeRestore {
+      LessonUtil.checkExpectedStateOfEditor(editor, sample) { change ->
+        ", y".startsWith(change)
       }
     }
   }
