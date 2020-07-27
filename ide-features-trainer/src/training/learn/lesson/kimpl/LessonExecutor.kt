@@ -32,7 +32,7 @@ import training.ui.LearningUiManager
 import java.awt.Component
 import java.util.concurrent.CompletableFuture
 
-class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Project) {
+class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Project) : Disposable {
   private data class TaskInfo(val content: (Int) -> Unit,
                               var restoreIndex: Int,
                               val realTaskIndex: Int?,
@@ -59,6 +59,10 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
   @Volatile
   var hasBeenStopped = false
     private set
+
+  init {
+    Disposer.register(parentDisposable, this)
+  }
 
   private fun addTaskAction(realTaskIndex: Int? = null, content: (Int) -> Unit) {
     taskActions.add(TaskInfo(content, taskActions.size - 1, realTaskIndex))
@@ -89,11 +93,18 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
     addTaskAction(realTaskNumber) { processTask(taskContent, it) }
   }
 
+  override fun dispose() {
+    if (!hasBeenStopped) {
+      assert(ApplicationManager.getApplication().isDispatchThread)
+      disposeRecorders()
+      hasBeenStopped = true
+      taskActions.clear()
+      Disposer.dispose(this)
+    }
+  }
+
   fun stopLesson() {
-    assert(ApplicationManager.getApplication().isDispatchThread)
-    disposeRecorders()
-    hasBeenStopped = true
-    taskActions.clear()
+    dispose()
   }
 
   private fun disposeRecorders() {
@@ -183,7 +194,7 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
   private fun processTask(taskContent: TaskContext.() -> Unit, taskIndex: Int) {
     assert(ApplicationManager.getApplication().isDispatchThread)
     disposeRecorders()
-    val recorder = ActionsRecorder(project, editor.document, parentDisposable)
+    val recorder = ActionsRecorder(project, editor.document, this)
     currentRecorder = recorder
     val taskCallbackData = TaskCallbackData()
     val taskContext = TaskContextImpl(this, recorder, taskIndex, taskCallbackData)
@@ -224,7 +235,7 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
       return {}
     }
 
-    val restoreRecorder = ActionsRecorder(project, editor.document, parentDisposable)
+    val restoreRecorder = ActionsRecorder(project, editor.document, this)
     currentRestoreRecorder = restoreRecorder
     lateinit var clearRestore: () -> Unit
     val checkRestoreCondition = restoreRecorder.futureCheck {
