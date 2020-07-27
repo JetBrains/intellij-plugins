@@ -31,6 +31,7 @@ internal class TaskContextImpl(private val lessonExecutor: LessonExecutor,
                                                   lessonExecutor.editor,
                                                   lessonExecutor.project,
                                                   recorder,
+                                                  lessonExecutor,
                                                   { lessonExecutor.getUserVisibleInfo(taskIndex) })
 
   val steps: MutableList<CompletableFuture<Boolean>> = mutableListOf()
