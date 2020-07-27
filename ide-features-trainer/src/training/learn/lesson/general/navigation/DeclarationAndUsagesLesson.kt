@@ -34,7 +34,7 @@ abstract class DeclarationAndUsagesLesson(module: Module, lang: String) : KLesso
       }
 
       task("GotoDeclaration") {
-        text("Now the caret is on the attribute accessor declaration. " +
+        text("Now the caret is at the attribute accessor declaration. " +
              "Use the same shortcut ${action(it)} to see all of its usages, then select one of them.")
         trigger(it, { state() }) l@{ before, now ->
           if (before == null || now == null) {

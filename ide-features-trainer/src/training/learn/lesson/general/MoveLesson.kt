@@ -14,15 +14,15 @@ class MoveLesson(module: Module, lang: String, private val sample: LessonSample)
       prepareSample(sample)
 
       actionTask("MoveLineDown") {
-        "Rearranging lines usually takes two actions: cut and paste. In this IDE, you can do it with just one: " +
-        "pressing ${action(it)} will pull down the current line."
+        "Rearranging lines usually takes two actions: cut and paste. In this IDE, you can do it with just one. " +
+        "Press ${action(it)} to pull down the current line."
       }
       actionTask("MoveLineUp") {
         "Similarly, to pull a line up, use ${action(it)}."
       }
       if (lang == JavaLangSupport.lang) caret(9, 5)
       task("MoveStatementUp") {
-        text("Now try moving the whole method up with ${action(it)}.")
+        text("Now try to move the whole method up with ${action(it)}.")
         trigger(it, { editor.document.text }, { before, now ->
           checkSwapMoreThan2Lines(before, now)
         })

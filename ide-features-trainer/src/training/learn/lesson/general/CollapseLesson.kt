@@ -13,7 +13,7 @@ class CollapseLesson(module: Module, lang: String, private val sample: LessonSam
       prepareSample(sample)
 
       actionTask("CollapseRegion") {
-        "Sometimes you need to collapse a piece of code for better readability. Try collapsing code with ${action(it)}."
+        "Sometimes you need to collapse a piece of code for better readability. Try to collapse a code fragment with ${action(it)}."
       }
       actionTask("ExpandRegion") {
         "To expand a code region, hit ${action(it)}."

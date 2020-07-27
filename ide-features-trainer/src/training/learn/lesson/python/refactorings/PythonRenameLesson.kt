@@ -91,7 +91,7 @@ class PythonRenameLesson(module: Module) : KLesson("Rename", module, "Python") {
           TreeUtil.collapseAll(tree, 1)
         }
       }
-      text("In simple case PyCharm will just rename without confirmation. But in this sample PyCharm see two calls of  " +
+      text("In simple cases PyCharm will just rename without confirmation. But in this sample PyCharm sees two calls of  " +
            "${code("teams")} method for objects with unknown type. Expand <strong>Dynamic references</strong> item.")
 
       triggerByFoundPathAndHighlight { _: JTree, path: TreePath ->
@@ -140,7 +140,7 @@ class PythonRenameLesson(module: Module) : KLesson("Rename", module, "Python") {
 
     task {
       val result = replace?.let { template.replace("<name>", it).replace("<caret>", "") }
-      text("Now just finish rename with <strong>Do Refactor</strong> button.")
+      text("Now just finish the rename with the <strong>Do Refactor</strong> button.")
       stateCheck { editor.document.text == result }
       test {
         ideFrame {
