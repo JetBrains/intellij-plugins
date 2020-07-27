@@ -9,7 +9,7 @@ import training.learn.lesson.kimpl.*
 import javax.swing.JLabel
 import javax.swing.JPanel
 
-class PythonInPlaceRefactoringLesson(module: Module) : KLesson("In place refactoring", module, "Python") {
+class PythonInPlaceRefactoringLesson(module: Module) : KLesson("refactoring.in.place", "In-place refactoring", module, "Python") {
   private val template = """
     def fibonacci(stop):
         first = 0
@@ -29,7 +29,7 @@ class PythonInPlaceRefactoringLesson(module: Module) : KLesson("In place refacto
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
     task {
-      text("Let's consider an alternative approach to perform refactorings. Suppose we want to rename local variable ${code(variableName)} " +
+      text("Let's consider an alternative approach to performing refactorings. Suppose we want to rename local variable ${code(variableName)} " +
            "to ${code("second")}. Just start typing the new name.")
       stateCheck {
         editor.document.text != sample.text
@@ -39,7 +39,7 @@ class PythonInPlaceRefactoringLesson(module: Module) : KLesson("In place refacto
 
     task("ShowIntentionActions") {
       text("IDE is guessing that you are going to rename the variable. " +
-           "You can notice it by the icon ${icon(AllIcons.Gutter.SuggestedRefactoringBulb)} at the left editor gutter. " +
+           "You can notice it by the icon ${icon(AllIcons.Gutter.SuggestedRefactoringBulb)} in the left editor gutter. " +
            "Invoke intentions by ${action(it)} when you finish to type the new name.")
       triggerByListItemAndHighlight(highlightBorder = true, highlightInside = false) { ui -> // no highlighting
         ui.toString().contains("Rename usages")
@@ -72,7 +72,7 @@ class PythonInPlaceRefactoringLesson(module: Module) : KLesson("In place refacto
 
     task {
       text("Let's add an argument to this method. We place the editor caret just after the first parameter. " +
-           "Now type comma and parameter name: ${code(", start")} .")
+           "Now type comma and parameter's name: ${code(", start")} .")
       stateCheck {
         val text = editor.document.text
         val parameter = text.substring(secondSample.startOffset, text.indexOf(')'))
@@ -85,7 +85,7 @@ class PythonInPlaceRefactoringLesson(module: Module) : KLesson("In place refacto
     task("ShowIntentionActions") {
       text("IDE is guessing that you are going to change the method signature. " +
            "You can notice it by the same icon ${icon(AllIcons.Gutter.SuggestedRefactoringBulb)} at the left editor gutter. " +
-           "Invoke intentions by ${action(it)} when you finish to type the new parameter.")
+           "Invoke intentions by ${action(it)} when you finish typing the new parameter.")
       triggerByListItemAndHighlight(highlightBorder = true, highlightInside = false) { item ->
         item.toString().contains("Update usages to")
       }
@@ -116,7 +116,7 @@ class PythonInPlaceRefactoringLesson(module: Module) : KLesson("In place refacto
       before {
         beforeSecondRefactoring = editor.document.text
       }
-      text("Now you need to type the value which will be inserted as an argument to the each call. " +
+      text("Now you need to type the value which will be inserted as an argument into the each call. " +
            "You can choose ${code("0")} for this sample. Then press ${action("EditorEnter")} to continue.")
       stateCheck {
         editor.document.text != beforeSecondRefactoring && Thread.currentThread().stackTrace.any {

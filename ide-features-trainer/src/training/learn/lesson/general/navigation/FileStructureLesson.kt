@@ -37,7 +37,7 @@ abstract class FileStructureLesson(module: Module, lang: String) : KLesson("File
         }
       }
       task {
-        text("Only the one item remains. Now press <strong>Enter</strong> to jump to the selected item.")
+        text("Only one item remains. Now press <strong>Enter</strong> to jump to the selected item.")
         stateCheck { focusOwner is EditorComponentImpl }
         test { GuiTestUtil.shortcut(Key.ENTER) }
       }

@@ -15,7 +15,7 @@ class DuplicateLesson(module: Module, lang: String, private val sample: LessonSa
       actionTask("EditorDuplicate") { "Duplicate any line with ${action(it)}." }
 
       task("EditorDuplicate") {
-        text("You can do the same thing with multiple lines, too. Simply select two or more lines and duplicate them with ${action(it)}.")
+        text("You can do the same action with multiple lines, too. Simply select two or more lines and duplicate them with ${action(it)}.")
         trigger(it, {
           val selection = editor.selectionModel
           val start = selection.selectionStartPosition?.line ?: 0
@@ -25,7 +25,7 @@ class DuplicateLesson(module: Module, lang: String, private val sample: LessonSa
         test { actions("EditorUp", "EditorLineStart", "EditorDownWithSelection", "EditorDownWithSelection", it) }
       }
       actionTask("EditorDeleteLine") {
-        "To delete current line you can use action ${action(it)}."
+        "To delete the current line you can use action ${action(it)}."
       }
     }
 }

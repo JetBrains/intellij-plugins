@@ -48,7 +48,7 @@ abstract class BasicCompletionLessonBase(module: Module, lang: String) : KLesson
         }
       }
       task {
-        text("Continue typing <code>$item1Completion</code> unless it become the first item.")
+        text("Continue typing <code>$item1Completion</code> unless it becomes the first item.")
         stateCheck {
           (previous.ui as? JList<*>)?.let {
             isTheFirstVariant(it)
