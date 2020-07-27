@@ -139,7 +139,7 @@ class GroupsPanel(val app: Application) : NewRecentProjectPanel(app) {
     return object : RecentProjectPanel.RecentProjectItemRenderer() {
       private var nameCell: GridBagConstraints? = null
       private var pathCell: GridBagConstraints? = null
-      private var closeButtonCell: GridBagConstraints? = null
+      private var rightButtonCell: GridBagConstraints? = null
       val spacer: JComponent = object : NonOpaquePanel() {
         override fun getPreferredSize(): Dimension {
           return Dimension(JBUIScale.scale(22), super.getPreferredSize().height)
@@ -149,7 +149,7 @@ class GroupsPanel(val app: Application) : NewRecentProjectPanel(app) {
       private fun initConstraints() {
         nameCell = GridBagConstraints()
         pathCell = GridBagConstraints()
-        closeButtonCell = GridBagConstraints()
+        rightButtonCell = GridBagConstraints()
 
         nameCell!!.gridx = 0
         nameCell!!.gridy = 0
@@ -167,11 +167,11 @@ class GroupsPanel(val app: Application) : NewRecentProjectPanel(app) {
         pathCell!!.anchor = GridBagConstraints.LAST_LINE_START
 
 
-        closeButtonCell!!.gridx = 1
-        closeButtonCell!!.gridy = 0
-        closeButtonCell!!.anchor = GridBagConstraints.FIRST_LINE_END
-        closeButtonCell!!.insets = JBUI.insets(7, 7, 7, 7)
-        closeButtonCell!!.gridheight = 2
+        rightButtonCell!!.gridx = 1
+        rightButtonCell!!.gridy = 0
+        rightButtonCell!!.anchor = GridBagConstraints.FIRST_LINE_END
+        rightButtonCell!!.insets = JBUI.insets(7, 7, 7, 7)
+        rightButtonCell!!.gridheight = 2
 
         //closeButtonCell.anchor = GridBagConstraints.WEST;
       }
