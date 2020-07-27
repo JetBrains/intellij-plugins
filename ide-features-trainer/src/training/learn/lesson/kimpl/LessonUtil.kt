@@ -66,7 +66,7 @@ fun TaskContext.toolWindowShowed(toolWindowId: String) {
 }
 
 fun <L> TaskRuntimeContext.subscribeForMessageBus(topic: Topic<L>, handler: L) {
-  project.messageBus.connect(disposable).subscribe(topic, handler)
+  project.messageBus.connect(taskDisposable).subscribe(topic, handler)
 }
 
 fun TaskRuntimeContext.lineWithBreakpoints(): Set<Int> {

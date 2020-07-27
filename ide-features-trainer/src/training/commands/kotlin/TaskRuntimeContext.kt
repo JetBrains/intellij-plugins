@@ -8,8 +8,13 @@ import com.intellij.openapi.wm.IdeFocusManager
 import training.learn.lesson.kimpl.KLesson
 import java.awt.Component
 
-open class TaskRuntimeContext(val lesson: KLesson, val editor: Editor, val project: Project, val disposable: Disposable, private val previousGetter: () -> PreviousTaskInfo) {
-  constructor(base: TaskRuntimeContext) : this(base.lesson, base.editor, base.project, base.disposable, base.previousGetter)
+open class TaskRuntimeContext(private val lesson: KLesson,
+                              val editor: Editor,
+                              val project: Project,
+                              val taskDisposable: Disposable,
+                              val lessonDisposable: Disposable,
+                              private val previousGetter: () -> PreviousTaskInfo) {
+  constructor(base: TaskRuntimeContext) : this(base.lesson, base.editor, base.project, base.taskDisposable, base.lessonDisposable, base.previousGetter)
 
   val focusOwner: Component?
     get() = IdeFocusManager.getInstance(project).focusOwner
