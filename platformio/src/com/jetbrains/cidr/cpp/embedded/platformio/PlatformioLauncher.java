@@ -16,6 +16,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.*;
 import com.intellij.ui.content.Content;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
 import com.intellij.xdebugger.ui.XDebugTabLayouter;
@@ -226,12 +227,8 @@ public class PlatformioLauncher extends CLionLauncher {
     }
 
     String profileName = selectedBuildProfile.getProfileName();
-    CMakeModelConfigurationData configurationData = model
-      .getConfigurationData()
-      .stream()
-      .filter(confData -> profileName.equals(confData.getConfigName()))
-      .findAny()
-      .orElse(null);
+    CMakeModelConfigurationData configurationData = ContainerUtil.find(
+      model.getConfigurationData(), confData -> profileName.equals(confData.getConfigName()));
 
     if (configurationData == null) return null;
     try {
