@@ -4,6 +4,8 @@ package training.learn.lesson.python.refactorings
 import com.intellij.icons.AllIcons
 import com.intellij.testGuiFramework.framework.GuiTestUtil
 import com.intellij.testGuiFramework.util.Key
+import training.commands.kotlin.TaskContext
+import training.commands.kotlin.TaskRuntimeContext
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.*
 import javax.swing.JLabel
@@ -28,11 +30,17 @@ class PythonInPlaceRefactoringLesson(module: Module) : KLesson("refactoring.in.p
 
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
+    fun TaskRuntimeContext.checkFirstChange() =
+      LessonUtil.checkExpectedStateOfEditor(editor, sample) { change -> "econd".startsWith(change) }
+
     task {
       text("Let's consider an alternative approach to performing refactorings. Suppose we want to rename local variable ${code(variableName)} " +
            "to ${code("second")}. Just start typing the new name.")
       stateCheck {
-        editor.document.text != sample.text
+        editor.document.text != sample.text && checkFirstChange() == TaskContext.RestoreProposal.None
+      }
+      proposeRestore {
+        checkFirstChange()
       }
       test { type("econd") }
     }
@@ -44,6 +52,9 @@ class PythonInPlaceRefactoringLesson(module: Module) : KLesson("refactoring.in.p
       triggerByListItemAndHighlight(highlightBorder = true, highlightInside = false) { ui -> // no highlighting
         ui.toString().contains("Rename usages")
       }
+      proposeRestore {
+        checkFirstChange()
+      }
       test {
         Thread.sleep(500) // need to check the intention is ready
         actions(it)
@@ -53,6 +64,7 @@ class PythonInPlaceRefactoringLesson(module: Module) : KLesson("refactoring.in.p
     task {
       val prefix = template.indexOf("<name>")
       text("Press ${action("EditorEnter")} to finish rename.")
+      restoreByUi(500)
       stateCheck {
         val newName = newName(editor.document.charsSequence, prefix)
         val expected = template.replace("<caret>", "").replace("<name>", newName)
@@ -66,8 +78,16 @@ class PythonInPlaceRefactoringLesson(module: Module) : KLesson("refactoring.in.p
     caret(template.indexOf("stop") + 4)
 
     lateinit var secondSample: LessonSample
+
+    fun TaskRuntimeContext.checkSecondChange() =
+      LessonUtil.checkExpectedStateOfEditor(editor, secondSample) { change -> ", start".startsWith(change) }
+
     prepareRuntimeTask {
       secondSample = prepareSampleFromCurrentState(editor)
+    }
+
+    prepareRuntimeTask { // restore point
+      prepareSample(previous.sample)
     }
 
     task {
@@ -79,6 +99,9 @@ class PythonInPlaceRefactoringLesson(module: Module) : KLesson("refactoring.in.p
         val parts = parameter.split(" ")
         parts.size == 2 && parts[0] == "," && parts[1].isNotEmpty() && parts[1].all { it.isJavaIdentifierPart() }
       }
+      proposeRestore {
+        checkSecondChange()
+      }
       test { type(", start") }
     }
 
@@ -89,6 +112,9 @@ class PythonInPlaceRefactoringLesson(module: Module) : KLesson("refactoring.in.p
       triggerByListItemAndHighlight(highlightBorder = true, highlightInside = false) { item ->
         item.toString().contains("Update usages to")
       }
+      proposeRestore {
+        checkSecondChange()
+      }
       test {
         Thread.sleep(500) // need to check the intention is ready
         actions(it)
@@ -97,18 +123,19 @@ class PythonInPlaceRefactoringLesson(module: Module) : KLesson("refactoring.in.p
 
     task {
       text("Press ${action("EditorEnter")} to update the callers.")
-      triggerByUiComponentAndHighlight<JPanel>(highlightBorder = false, highlightInside = false) { ui -> // no highlighting
+      triggerByUiComponentAndHighlight(highlightBorder = false, highlightInside = false) { ui: JPanel -> // no highlighting
         ui.javaClass.name.contains("ChangeSignaturePopup")
       }
+      restoreByUi(500)
       test { GuiTestUtil.shortcut(Key.ENTER) }
     }
 
-
     task {
       text("IDE is showing you the short signature preview. Press ${action("EditorEnter")} to continue.")
-      triggerByUiComponentAndHighlight<JLabel>(highlightBorder = false, highlightInside = false) { ui -> // no highlighting
+      triggerByUiComponentAndHighlight(highlightBorder = false, highlightInside = false) { ui: JLabel -> // no highlighting
         ui.text == "Add values for new parameters:"
       }
+      restoreByUi()
       test { GuiTestUtil.shortcut(Key.ENTER) }
     }
     task {
@@ -118,6 +145,7 @@ class PythonInPlaceRefactoringLesson(module: Module) : KLesson("refactoring.in.p
       }
       text("Now you need to type the value which will be inserted as an argument into the each call. " +
            "You can choose ${code("0")} for this sample. Then press ${action("EditorEnter")} to continue.")
+      restoreByUi()
       stateCheck {
         editor.document.text != beforeSecondRefactoring && Thread.currentThread().stackTrace.any {
           it.className.contains("PySuggestedRefactoringExecution") && it.methodName == "performChangeSignature"
