@@ -32,7 +32,7 @@ class PythonTabCompletionLesson(module: Module) : KLesson("Tab completion", modu
       return {
         prepareSample(sample)
         task("CodeCompletion") {
-          text("Suppose you want to replace ${code("current")} by ${code("total")}. Invoke completion by pressing ${action(it)}.")
+          text("Suppose you want to replace ${code("current")} with ${code("total")}. Invoke completion by pressing ${action(it)}.")
           triggerByListItemAndHighlight(checkList = { ui -> isTotalItem(ui) })
           proposeRestoreMe()
           test { actions(it) }
@@ -56,7 +56,7 @@ class PythonTabCompletionLesson(module: Module) : KLesson("Tab completion", modu
         task {
           val result = LessonUtil.insertIntoSample(template, "total")
           text("If you press ${action("EditorEnter")} you will insert ${code("total")} before ${code("current")}. " +
-               "Instead press ${action("EditorTab")} to replace ${code("current")} by ${code("total")}")
+               "Instead press ${action("EditorTab")} to replace ${code("current")} with ${code("total")}")
 
           trigger("EditorChooseLookupItemReplace") {
             editor.document.text == result

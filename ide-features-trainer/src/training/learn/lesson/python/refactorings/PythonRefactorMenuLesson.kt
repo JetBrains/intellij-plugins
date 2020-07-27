@@ -28,7 +28,7 @@ class PythonRefactorMenuLesson(module: Module) : KLesson("Refactoring menu", mod
       "But for rare refactorings you can use ${action(it)} and see a partial list of them."
     }
     task("Introduce Parameter") {
-      text("Suppose we want to replace this expression by parameter. So we need to choose <strong>$it...</strong>. " +
+      text("Suppose we want to replace this expression with a parameter. So we need to choose <strong>$it...</strong>. " +
            "Now simply type ${code("pa")} (as prefix of Parameter) to reduce proposed list.")
       triggerByUiComponentAndHighlight(highlightBorder = false, highlightInside = false) { ui: JList<*> ->
         ui.model.size > 0 && ui.model.getElementAt(0).toString().contains(it)
@@ -48,7 +48,7 @@ class PythonRefactorMenuLesson(module: Module) : KLesson("Refactoring menu", mod
     }
 
     task {
-      text("To complete refactoring you need to choose some name or leave it as default and press ${action("EditorEnter")}.")
+      text("To complete refactoring, you need to choose some name or leave it as default and press ${action("EditorEnter")}.")
       stateCheck {
         !hasInplaceRename()
       }

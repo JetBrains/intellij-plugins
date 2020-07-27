@@ -21,7 +21,7 @@ class ExtractVariableFromBubbleLesson(module: Module, lang: String, private val 
 
       task {
         text("This code block contains 3 occurrences of the selected expression. " +
-             "Choose the second item in the list to replace both of them.")
+             "Choose the second item on the list to replace all of them.")
 
         stateCheck {
           editor.document.text.split("i + 1").size == 2

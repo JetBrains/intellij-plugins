@@ -19,7 +19,7 @@ class SelectLesson(module: Module, lang: String, private val sample: LessonSampl
         "Press ${action(it)} to extend the selection to the next code block."
       }
       task("EditorSelectWord") {
-        text("Try increasing your selection with ${action(it)} until your whole file is selected.")
+        text("Try to increase your selection with ${action(it)} until your whole file is selected.")
         trigger(it) {
           editor.selectionModel.selectionStart == 0 && editor.document.textLength == editor.selectionModel.selectionEnd
         }

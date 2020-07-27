@@ -34,7 +34,7 @@ class GotoActionLesson(module: Module, lang: String, private val sample: LessonS
                         "refer to <a href=\"$FIND_ACTION_WORKAROUND\">this article</a>." else ""
       }
       actionTask("About") {
-        "Let's say you want to read about the IDE, type <strong>about</strong> and press ${action("EditorEnter")}."
+        "Let's say you want to learn about the IDE, type <strong>about</strong> and press ${action("EditorEnter")}."
       }
       task {
         text("Hit ${action("EditorEscape")} to return to the editor.")

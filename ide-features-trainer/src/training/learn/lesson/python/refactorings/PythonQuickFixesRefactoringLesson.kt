@@ -35,20 +35,20 @@ class PythonQuickFixesRefactoringLesson(module: Module) : KLesson("quick-fix-ref
     }
 
     task {
-      text("Wait a little bit for completion list...")
+      text("Wait a little bit for the completion list...")
       triggerByListItemAndHighlight(highlightBorder = false, highlightInside = false) { item ->
         item.toString().contains("string=y")
       }
     }
 
     task {
-      text("But we do not need completion now. Close it (${action("EditorEscape")}).")
+      text("For now, we don't want to apply any completion. Close the list (${action("EditorEscape")}).")
       stateCheck { previous.ui?.isShowing != true }
       test { GuiTestUtil.shortcut(Key.ESCAPE) }
     }
 
     task("ShowIntentionActions") {
-      text("As you may notice IDE is showing you a warning here. Let's invoke intentions by ${action(it)}.")
+      text("As you may notice, IDE is showing you a warning here. Let's invoke intentions by ${action(it)}.")
       triggerByListItemAndHighlight(highlightBorder = true, highlightInside = false) { item ->
         item.toString().contains("Change signature of")
       }
@@ -75,7 +75,7 @@ class PythonQuickFixesRefactoringLesson(module: Module) : KLesson("quick-fix-ref
     }
     task {
       text("Let's set the default value for the new parameter. Click at the new parameter line. " +
-           "Alternatively you can set focus to the parameter without mouse by ${action("EditorTab")} and then ${action("EditorEnter")}.")
+           "Alternatively, you can set focus to the parameter without mouse by ${action("EditorTab")} and then ${action("EditorEnter")}.")
 
       triggerByUiComponentAndHighlight(highlightBorder = false, highlightInside = false) { label: JLabel ->
         label.text == "Default value:"
@@ -90,9 +90,9 @@ class PythonQuickFixesRefactoringLesson(module: Module) : KLesson("quick-fix-ref
       before {
         beforeRefactoring = editor.document.text
       }
-      text("You may navigate through the fields (and the checkbox) by ${action("EditorTab")}. " +
-           "By the checkbox you can choose whether IDE will inline the default values to the other callers or set it as default value for the new parameter. " +
-           "The Signature Preview will help to understand the difference. Now set the default value as 0 and press <raw_action>Ctrl + Enter</raw_action> " +
+      text("You may navigate through the fields (and the checkbox) by using ${action("EditorTab")}. " +
+           "With the checkbox you can let IDE inline the default value to the other callers or set it as the default value for the new parameter. " +
+           "The Signature Preview will help understand the difference. Now set the default value as 0 and press <raw_action>Ctrl + Enter</raw_action> " +
            "(or click <strong>Do Refactor</strong>) to finish the refactoring.")
 
       stateCheck {

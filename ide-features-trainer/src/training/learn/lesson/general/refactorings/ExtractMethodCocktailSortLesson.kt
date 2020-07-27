@@ -39,7 +39,7 @@ class ExtractMethodCocktailSortLesson(module: Module, lang: String, private val 
       }
 
       task {
-        text("Cocktail Sort has 2 swap places. The first fragment has just been extracted. Click <strong>Yes</strong> to extract both of them.")
+        text("Cocktail Sort has two swap places. The first fragment has just been extracted. Click <strong>Yes</strong> to extract both of them.")
 
         // Wait until the third dialog
         triggerByUiComponentAndHighlight(highlightBorder = false, highlightInside = false) { dialog : JDialog ->
@@ -55,7 +55,7 @@ class ExtractMethodCocktailSortLesson(module: Module, lang: String, private val 
         }
       }
       task {
-        text("Now you can confirm or reject replacement of the second fragment.")
+        text("Now you can confirm or reject the replacement of the second fragment.")
 
         stateCheck {
           previous.ui?.isShowing?.not() ?: true
