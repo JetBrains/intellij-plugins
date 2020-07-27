@@ -8,14 +8,13 @@ import com.intellij.ide.ReopenProjectAction
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.Application
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.ui.panel.ComponentPanelBuilder
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.UniqueNameBuilder
 import com.intellij.openapi.wm.impl.welcomeScreen.FlatWelcomeFrame
 import com.intellij.openapi.wm.impl.welcomeScreen.NewRecentProjectPanel
 import com.intellij.openapi.wm.impl.welcomeScreen.RecentProjectPanel
 import com.intellij.openapi.wm.impl.welcomeScreen.WelcomeScreenUIManager
-import com.intellij.ui.ColorUtil
-import com.intellij.ui.JBColor
 import com.intellij.ui.ListUtil
 import com.intellij.ui.PopupHandler
 import com.intellij.ui.components.JBList
@@ -197,9 +196,9 @@ class GroupsPanel(val app: Application) : NewRecentProjectPanel(app) {
         val fore = getListForeground(selected, list.hasFocus())
         val back = getListBackground(selected, list.hasFocus())
         val name = JLabel()
-        val path = JLabel()
+        val path = ComponentPanelBuilder.createNonWrappingCommentComponent("")
         name.foreground = fore
-        path.foreground = if (selected) fore else UIUtil.getInactiveTextColor()
+        path.foreground = UIUtil.getInactiveTextColor()
 
         background = back
 
@@ -295,7 +294,7 @@ class GroupsPanel(val app: Application) : NewRecentProjectPanel(app) {
               val nameComponent: JComponent = name
 
               if (!renderableAction.isValid) {
-                path.foreground = ColorUtil.mix(path.foreground, JBColor.red, .5)
+                name.foreground = UIUtil.getInactiveTextColor()
               }
               if (renderableAction.description.isNullOrEmpty()) {
                 p.add(nameComponent, BorderLayout.CENTER)
@@ -315,11 +314,7 @@ class GroupsPanel(val app: Application) : NewRecentProjectPanel(app) {
 
               val projectIcon = object : JLabel("", icon, SwingConstants.LEFT) {
                 override fun paintComponent(g: Graphics) {
-                  val y = if (value is ModuleActionGroup)
-                    0
-                  else
-                    (height - getIcon().iconHeight) / 2
-                  getIcon().paintIcon(this, g, 0, y)
+                  getIcon().paintIcon(this, g, 0, 0)
                 }
               }
               projectIcon.border = JBUI.Borders.emptyRight(8)
