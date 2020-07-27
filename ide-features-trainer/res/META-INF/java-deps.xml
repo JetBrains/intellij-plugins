@@ -9,7 +9,6 @@
       <module path="modules/java/Refactorings.xml"/>
       <module path="modules/java/CodeAssistance.xml"/>
       <module path="modules/java/Navigation.xml"/>
-      <module path="modules/java/Run.xml"/>
     </ift.modules>
   </extensions>
 </idea-plugin>
