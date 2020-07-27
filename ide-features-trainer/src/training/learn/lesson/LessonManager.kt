@@ -305,6 +305,7 @@ class LessonManager {
     val proposalText = when (proposal.type) {
       TaskContext.RestoreProposal.Modification -> LearnBundle.message("learn.restore.notification.modification.message")
       TaskContext.RestoreProposal.Caret -> LearnBundle.message("learn.restore.notification.caret.message")
+      TaskContext.RestoreProposal.Custom -> proposal.message
       else -> return
     }
     val warningIconIndex = LearningUiManager.getIconIndex(AllIcons.General.NotificationWarning)

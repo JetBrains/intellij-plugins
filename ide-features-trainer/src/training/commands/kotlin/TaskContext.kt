@@ -36,11 +36,14 @@ abstract class TaskContext {
 
   enum class RestoreProposal {
     None,
+    Custom,
     Caret,
     Modification
   }
 
-  data class RestoreNotification(val type: RestoreProposal, val callback: () -> Unit)
+  data class RestoreNotification(val type: RestoreProposal, val message: String? = null, val callback: () -> Unit) {
+    constructor(message: String, callback: () -> Unit): this(RestoreProposal.Custom, message, callback)
+  }
 
   abstract fun proposeRestore(restoreCheck: TaskRuntimeContext.() -> RestoreProposal)
 
