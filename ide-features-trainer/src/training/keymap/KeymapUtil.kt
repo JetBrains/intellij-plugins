@@ -104,6 +104,7 @@ object KeymapUtil {
         val stringForMacSymbol = getStringForMacSymbol(c)
         if (stringForMacSymbol != null) {
           buffer.append(stringForMacSymbol)
+          shouldInsertPlus = true
         }
         else {
           buffer.append(c)
