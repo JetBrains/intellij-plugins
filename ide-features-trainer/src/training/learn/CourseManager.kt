@@ -8,14 +8,12 @@ import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.util.containers.ContainerUtil
 import training.actions.OpenLessonAction
 import training.lang.LangManager
 import training.lang.LangSupport
-import training.learn.exceptons.InvalidSdkException
 import training.learn.interfaces.Lesson
 import training.learn.interfaces.Module
 import training.learn.lesson.LessonManager
@@ -97,19 +95,6 @@ class CourseManager internal constructor() : Disposable {
     val context = SimpleDataContext.getSimpleContext(data, parent)
     val event = AnActionEvent.createFromAnAction(openLessonAction, null, "", context)
     ActionUtil.performActionDumbAware(openLessonAction, event)
-  }
-
-  /**
-   * checking environment to start learning plugin. Checking SDK.
-
-   * @param project where lesson should be started
-   * *
-   * @throws InvalidSdkException - if project SDK is not suitable for module
-   */
-  @Throws(InvalidSdkException::class)
-  fun checkEnvironment(project: Project) {
-    val sdk = ProjectRootManager.getInstance(project).projectSdk
-    LangManager.getInstance().getLangSupport()?.checkSdk(sdk, project) ?: throw Exception("Language for learning plugin is not defined")
   }
 
   fun findLesson(lessonName: String): Lesson? {

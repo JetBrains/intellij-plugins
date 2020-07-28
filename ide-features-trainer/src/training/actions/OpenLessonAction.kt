@@ -27,7 +27,10 @@ import training.lang.LangSupport
 import training.learn.CourseManager
 import training.learn.LearnBundle
 import training.learn.NewLearnProjectUtil
-import training.learn.exceptons.*
+import training.learn.exceptons.BadLessonException
+import training.learn.exceptons.BadModuleException
+import training.learn.exceptons.InvalidSdkException
+import training.learn.exceptons.LessonIsOpenedException
 import training.learn.interfaces.Lesson
 import training.learn.interfaces.ModuleType
 import training.learn.lesson.LessonManager
@@ -99,7 +102,6 @@ class OpenLessonAction(val lesson: Lesson) : AnAction(lesson.name) {
 
       if (lesson.module.moduleType == ModuleType.SCRATCH) {
         LOG.debug("${projectWhereToStartLesson.name}: scratch based lesson")
-        CourseManager.instance.checkEnvironment(projectWhereToStartLesson)
         vf = getScratchFile(projectWhereToStartLesson, lesson, langSupport.filename)
       }
       else { //if this file should be opened in LearnProject
@@ -196,16 +198,9 @@ class OpenLessonAction(val lesson: Lesson) : AnAction(lesson.name) {
       }
 
     }
-    catch (noSdkException: NoSdkException) {
+    catch (invalidSdkException: InvalidSdkException) {
       Messages.showMessageDialog(projectWhereToStartLesson,
-                                 LearnBundle.message("dialog.noSdk.message", LangManager.getInstance().getLanguageDisplayName()),
-                                 LearnBundle.message("dialog.noSdk.title"), Messages.getErrorIcon())
-      if (ProjectSettingsService.getInstance(projectWhereToStartLesson).chooseAndSetSdk() != null) openLesson(projectWhereToStartLesson,
-                                                                                                              lesson)
-    }
-    catch (noSdkException: InvalidSdkException) {
-      Messages.showMessageDialog(projectWhereToStartLesson,
-                                 LearnBundle.message("dialog.noSdk.message", LangManager.getInstance().getLanguageDisplayName()),
+                                 invalidSdkException.message,
                                  LearnBundle.message("dialog.noSdk.title"), Messages.getErrorIcon())
       if (ProjectSettingsService.getInstance(projectWhereToStartLesson).chooseAndSetSdk() != null) openLesson(projectWhereToStartLesson,
                                                                                                               lesson)
