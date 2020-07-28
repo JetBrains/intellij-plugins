@@ -12,12 +12,9 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.impl.PsiModificationTrackerImpl;
-import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.SmartList;
-import gnu.trove.THashMap;
 import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -25,8 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class DartServerData {
-
+public final class DartServerData {
   public interface OutlineListener extends EventListener {
     void outlineUpdated(@NotNull final String filePath);
   }
@@ -35,15 +31,15 @@ public class DartServerData {
 
   private final EventDispatcher<OutlineListener> myEventDispatcher = EventDispatcher.create(OutlineListener.class);
 
-  private final Map<String, List<DartError>> myErrorData = Collections.synchronizedMap(new THashMap<>());
-  private final Map<String, List<DartHighlightRegion>> myHighlightData = Collections.synchronizedMap(new THashMap<>());
-  private final Map<String, List<DartNavigationRegion>> myNavigationData = Collections.synchronizedMap(new THashMap<>());
-  private final Map<String, List<DartOverrideMember>> myOverrideData = Collections.synchronizedMap(new THashMap<>());
-  private final Map<String, List<DartRegion>> myImplementedClassData = Collections.synchronizedMap(new THashMap<>());
-  private final Map<String, List<DartRegion>> myImplementedMemberData = Collections.synchronizedMap(new THashMap<>());
-  private final Map<String, Outline> myOutlineData = Collections.synchronizedMap(new THashMap<>());
-  private final Map<Integer, AvailableSuggestionSet> myAvailableSuggestionSetMap = Collections.synchronizedMap(new THashMap<>());
-  private final Map<String, Map<String, Map<String, Set<String>>>> myExistingImports = Collections.synchronizedMap(new THashMap<>());
+  private final Map<String, List<DartError>> myErrorData = Collections.synchronizedMap(new HashMap<>());
+  private final Map<String, List<DartHighlightRegion>> myHighlightData = Collections.synchronizedMap(new HashMap<>());
+  private final Map<String, List<DartNavigationRegion>> myNavigationData = Collections.synchronizedMap(new HashMap<>());
+  private final Map<String, List<DartOverrideMember>> myOverrideData = Collections.synchronizedMap(new HashMap<>());
+  private final Map<String, List<DartRegion>> myImplementedClassData = Collections.synchronizedMap(new HashMap<>());
+  private final Map<String, List<DartRegion>> myImplementedMemberData = Collections.synchronizedMap(new HashMap<>());
+  private final Map<String, Outline> myOutlineData = Collections.synchronizedMap(new HashMap<>());
+  private final Map<Integer, AvailableSuggestionSet> myAvailableSuggestionSetMap = Collections.synchronizedMap(new HashMap<>());
+  private final Map<String, Map<String, Map<String, Set<String>>>> myExistingImports = Collections.synchronizedMap(new HashMap<>());
 
   private final Set<String> myFilePathsWithUnsentChanges = Sets.newConcurrentHashSet();
 

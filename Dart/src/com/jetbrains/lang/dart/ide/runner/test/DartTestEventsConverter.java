@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.test;
 
 import com.google.gson.*;
@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
  * event followed some time later by an 'error' event for that same test. That should
  * convert a successful test into a failure. That case is not being handled.
  */
-public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter {
+public final class DartTestEventsConverter extends OutputToGeneralTestEventsConverter {
   private static final Logger LOG = Logger.getInstance(DartTestEventsConverter.class.getName());
 
   private static final String TYPE_START = "start";

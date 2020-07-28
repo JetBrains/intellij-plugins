@@ -23,7 +23,6 @@ import com.intellij.util.Alarm;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerMessages;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
-import gnu.trove.THashMap;
 import icons.DartIcons;
 import org.dartlang.analysis.server.protocol.AnalysisError;
 import org.jetbrains.annotations.NonNls;
@@ -32,6 +31,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,8 +39,7 @@ import java.util.Map;
   name = "DartProblemsView",
   storages = @Storage(StoragePathMacros.WORKSPACE_FILE)
 )
-public class DartProblemsView implements PersistentStateComponent<DartProblemsViewSettings>, Disposable {
-
+public final class DartProblemsView implements PersistentStateComponent<DartProblemsViewSettings>, Disposable {
   @NonNls public static final String TOOLWINDOW_ID = "Dart Analysis"; // the same as in plugin.xml, this is not a user-visible string
 
   private static final NotificationGroup NOTIFICATION_GROUP =
@@ -52,7 +51,7 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
   private final DartProblemsPresentationHelper myPresentationHelper;
 
   private final Object myLock = new Object(); // use this lock to access myScheduledFilePathToErrors and myAlarm
-  private final Map<String, List<? extends AnalysisError>> myScheduledFilePathToErrors = new THashMap<>();
+  private final Map<String, List<? extends AnalysisError>> myScheduledFilePathToErrors = new HashMap<>();
   private final Alarm myAlarm;
 
   @NotNull
@@ -77,7 +76,7 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
 
       final Map<String, List<? extends AnalysisError>> filePathToErrors;
       synchronized (myLock) {
-        filePathToErrors = new THashMap<>(myScheduledFilePathToErrors);
+        filePathToErrors = new HashMap<>(myScheduledFilePathToErrors);
         myScheduledFilePathToErrors.clear();
       }
 
