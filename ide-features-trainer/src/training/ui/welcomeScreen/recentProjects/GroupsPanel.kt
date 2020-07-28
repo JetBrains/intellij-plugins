@@ -220,7 +220,7 @@ class GroupsPanel(val app: Application) : NewRecentProjectPanel(app) {
               }
             }
 
-            border = JBUI.Borders.empty(5, 7)
+            border = JBUI.Borders.empty(8, 7)
             if (isInsideGroup) {
               add(spacer, BorderLayout.WEST)
             }
@@ -329,7 +329,7 @@ class GroupsPanel(val app: Application) : NewRecentProjectPanel(app) {
           }
 
           override fun getPreferredSize(): Dimension {
-            return Dimension(super.getPreferredSize().width, JBUIScale.scale(44))
+            return Dimension(super.getPreferredSize().width, JBUIScale.scale(if (value is ProjectGroupActionGroup) 32 else 50))
           }
         }
       }
