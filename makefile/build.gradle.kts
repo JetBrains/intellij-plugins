@@ -38,5 +38,4 @@ tasks.withType<KotlinCompile> {
 }
 
 dependencies {
-  testImplementation("org.hamcrest", "hamcrest", "2.2")
 }

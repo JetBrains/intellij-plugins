@@ -2,7 +2,6 @@ import com.intellij.codeInsight.*
 import com.intellij.find.*
 import com.intellij.find.impl.*
 import com.intellij.testFramework.fixtures.*
-import org.hamcrest.collection.IsCollectionWithSize.*
 import org.hamcrest.core.IsNull.*
 import org.junit.Assert.*
 
@@ -10,7 +9,7 @@ class MakefileFindUsagesTest : BasePlatformTestCase() {
   fun testSimple() {
     val usages = myFixture.testFindUsages("$basePath/${getTestName(true)}.mk")
 
-    assertThat(usages, hasSize(2))
+    assertEquals(2, usages.size)
   }
 
   fun testPhony() = notSearchableForUsages()
