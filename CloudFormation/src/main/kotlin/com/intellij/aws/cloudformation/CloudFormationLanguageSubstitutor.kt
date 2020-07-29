@@ -7,15 +7,14 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.newvfs.ArchiveFileSystem
 import com.intellij.psi.LanguageSubstitutor
+import com.intellij.util.indexing.FileBasedIndex
 import org.jetbrains.yaml.YAMLLanguage
 import java.io.FileNotFoundException
 
 class CloudFormationLanguageSubstitutor: LanguageSubstitutor() {
   override fun getLanguage(file: VirtualFile, project: Project): Language? {
-    if (file.extension != "template") return null
-    if (file.fileSystem is ArchiveFileSystem) return null
+    if (file == FileBasedIndex.getInstance().fileBeingCurrentlyIndexed) return null
     val bytes = try {
       FileUtil.loadFirstAndClose(file.inputStream, 10 * 1024)
     } catch (_: FileNotFoundException) {
