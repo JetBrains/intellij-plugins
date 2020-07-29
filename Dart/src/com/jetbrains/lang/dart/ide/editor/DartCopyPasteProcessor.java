@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.editor;
 
 import com.intellij.codeInsight.CodeInsightSettings;
@@ -14,7 +14,7 @@ import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.ui.MessageDialogBuilder;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -39,7 +39,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-public class DartCopyPasteProcessor extends CopyPastePostProcessor<DartCopyPasteProcessor.DartImportsTransferableData> {
+public final class DartCopyPasteProcessor extends CopyPastePostProcessor<DartCopyPasteProcessor.DartImportsTransferableData> {
   private static final DataFlavor FLAVOR = new DataFlavor(DartImportsTransferableData.class, "Dart imports");
 
   @NotNull
@@ -131,7 +131,7 @@ public class DartCopyPasteProcessor extends CopyPastePostProcessor<DartCopyPaste
           }
         };
 
-        if (Messages.showYesNoDialog(project, message, title, Messages.getQuestionIcon(), doNotAskOption) != Messages.YES) {
+        if (!MessageDialogBuilder.yesNo(title, message).doNotAsk(doNotAskOption).ask(project)) {
           return;
         }
       }

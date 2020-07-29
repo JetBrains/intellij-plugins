@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.appcode.reveal;
 
 import com.intellij.execution.ExecutionException;
@@ -14,7 +14,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.ui.MessageDialogBuilder;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
@@ -218,44 +218,42 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     if (!settings.autoInstall) {
       if (!settings.askToEnableAutoInstall) return null;
 
-      final int[] response = new int[1];
+      boolean[] response = new boolean[1];
+      UIUtil.invokeAndWaitIfNeeded((Runnable)() -> {
+        response[0] = MessageDialogBuilder.yesNo("Reveal", "Project is not configured with Reveal library.<br><br>" +
+                                                           "Would you like to enable automatic library upload for this run configuration?")
+          .doNotAsk(new DialogWrapper.DoNotAskOption() {
+            @Override
+            public boolean isToBeShown() {
+              return true;
+            }
 
-      UIUtil.invokeAndWaitIfNeeded(
-        (Runnable)() -> response[0] = Messages.showYesNoDialog("Project is not configured with Reveal library.<br><br>" +
-                                                             "Would you like to enable automatic library upload for this run configuration?",
-                                                             "Reveal",
-                                                             Messages.getYesButton(),
-                                                             Messages.getNoButton(),
-                                                             Messages.getQuestionIcon(),
-                                                             new DialogWrapper.DoNotAskOption() {
-                  @Override
-                  public boolean isToBeShown() {
-                    return true;
-                  }
+            @Override
+            public void setToBeShown(boolean value, int exitCode) {
+              settings.askToEnableAutoInstall = value;
+            }
 
-                  @Override
-                  public void setToBeShown(boolean value, int exitCode) {
-                    settings.askToEnableAutoInstall = value;
-                  }
+            @Override
+            public boolean canBeHidden() {
+              return true;
+            }
 
-                  @Override
-                  public boolean canBeHidden() {
-                    return true;
-                  }
+            @Override
+            public boolean shouldSaveOptionsOnCancel() {
+              return false;
+            }
 
-                  @Override
-                  public boolean shouldSaveOptionsOnCancel() {
-                    return false;
-                  }
-
-                  @NotNull
-                  @Override
-                  public String getDoNotShowMessage() {
-                    return UIBundle.message("dialog.options.do.not.show");
-                  }
-                }
-        ));
-      if (response[0] != Messages.YES) return null;
+            @NotNull
+            @Override
+            public String getDoNotShowMessage() {
+              return UIBundle.message("dialog.options.do.not.show");
+            }
+          })
+          .ask(configuration.getProject());
+      });
+      if (!response[0]) {
+        return null;
+      }
 
       settings.autoInstall = true;
       settings.askToEnableAutoInstall = true; // is user changes autoInstall in future, ask him/her again
