@@ -84,8 +84,8 @@
 
     <action id="learn.next.lesson" class="training.actions.NextNonPassedLessonAction">
       <keyboard-shortcut first-keystroke="alt shift RIGHT" keymap="$default"/>
-      <keyboard-shortcut first-keystroke="control shift RIGHT" keymap="Mac OS X 10.5+"/>
-      <keyboard-shortcut first-keystroke="control shift RIGHT" keymap="Mac OS X"/>
+      <keyboard-shortcut first-keystroke="control shift RIGHT" keymap="Mac OS X 10.5+" replace-all="true"/>
+      <keyboard-shortcut first-keystroke="control shift RIGHT" keymap="Mac OS X" replace-all="true"/>
     </action>
 
     <action id="PreviousLessonAction" class="training.actions.PreviousLessonAction"/>
