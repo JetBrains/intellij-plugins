@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.documentation;
 
 import com.intellij.codeInsight.documentation.AbstractExternalFilter;
@@ -189,7 +189,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
 
       @Override
       protected void doBuildFromStream(String url, Reader reader, StringBuilder result) throws IOException {
-        String input = StreamUtil.readTextFrom(reader);
+        String input = StreamUtil.readText(reader);
 
         Matcher anchorMatcher = ourAnchorSuffix.matcher(url);
 

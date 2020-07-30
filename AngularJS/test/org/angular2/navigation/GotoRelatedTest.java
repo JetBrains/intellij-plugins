@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.navigation;
 
 import com.intellij.ide.actions.GotoRelatedSymbolAction;
@@ -6,7 +6,6 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -20,8 +19,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -55,13 +57,14 @@ public class GotoRelatedTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   @Test
-  public void singleTest() throws Exception {
+  public void singleTest() {
     myFixture.setCaresAboutInjection(false);
     myFixture.copyDirectoryToProject(".", ".");
     VirtualFile testFile = myFixture.findFileInTempDir("test.txt");
     List<String> result = new ArrayList<>();
-    try {
-      for (String line : StreamUtil.readText(testFile.getInputStream(), "UTF-8").split("[\\n\\r]")) {
+    try (BufferedReader reader = new BufferedReader(new InputStreamReader(testFile.getInputStream(), StandardCharsets.UTF_8))) {
+      String line;
+      while ((line = reader.readLine()) != null) {
         if (line.trim().isEmpty() || line.startsWith(" ")) {
           continue;
         }
