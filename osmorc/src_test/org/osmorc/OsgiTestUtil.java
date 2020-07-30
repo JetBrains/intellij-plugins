@@ -29,19 +29,22 @@ import com.intellij.util.io.ZipUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.junit.Assert.assertTrue;
 
 /**
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
-public class OsgiTestUtil {
+public final class OsgiTestUtil {
   public static File extractProject(String projectName, String projectDirPath) throws IOException {
-    File projectZip = new File(getTestDataDir(), projectName + ".zip");
-    assertTrue(projectZip.getPath(), projectZip.isFile());
-    File projectDir = new File(projectDirPath);
+    Path projectZip = getTestDataDir().toPath().resolve(projectName + ".zip");
+    assertTrue(projectZip.toString(), Files.isRegularFile(projectZip));
+    Path projectDir = Paths.get(projectDirPath);
     ZipUtil.extract(projectZip, projectDir, null);
-    return projectDir;
+    return projectDir.toFile();
   }
 
   private static File ourTestDataDir;
