@@ -27,6 +27,7 @@ import com.intellij.psi.css.inspections.RemoveUnusedSymbolIntentionAction
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
+import com.intellij.util.castSafelyTo
 import com.intellij.xml.util.HtmlUtil.STYLE_TAG_NAME
 import com.intellij.xml.util.HtmlUtil.TEMPLATE_TAG_NAME
 import org.jetbrains.vuejs.codeInsight.detectLanguage
@@ -300,12 +301,12 @@ export default {
   private class RefData(val ref: PsiReference, val tag: XmlTag, val offset: Int) {
     fun getRefName(): String {
       val jsRef = ref as? JSReferenceExpression ?: return ref.canonicalText
-      return JSResolveUtil.getLeftmostQualifier(jsRef).referenceName ?: ref.canonicalText
+      return JSResolveUtil.getLeftmostQualifier(jsRef).castSafelyTo<JSReferenceExpression>()?.referenceName ?: ref.canonicalText
     }
 
     fun resolve(): PsiElement? {
       val jsRef = ref as? JSReferenceExpression ?: return ref.resolve()
-      return JSResolveUtil.getLeftmostQualifier(jsRef).resolve()
+      return JSResolveUtil.getLeftmostQualifier(jsRef).castSafelyTo<JSReferenceExpression>()?.resolve()
     }
 
     fun getReplaceRange(): TextRange? {
