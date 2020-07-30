@@ -14,9 +14,10 @@ Tool window got a toolbar with handy collapse all/expand all buttons, filter for
 option to sort targets and automatically scroll to source on focus.
 ]]></change-notes>
 
-  <idea-version since-build="201.3119"/>
+  <idea-version since-build="202.6397"/>
 
   <depends>com.intellij.modules.lang</depends>
+  <depends optional="true" config-file="terminal-config.xml">org.jetbrains.plugins.terminal</depends>
 
   <extensions defaultExtensionNs="com.intellij">
     <fileType name="Makefile" language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileFileType" fieldName="INSTANCE" extensions="mk" fileNamesCaseInsensitive="makefile;GNUmakefile"/>

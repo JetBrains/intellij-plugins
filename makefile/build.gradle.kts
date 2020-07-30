@@ -16,6 +16,9 @@ intellij {
   version = "2020.2"
   pluginName = rootProject.name
   updateSinceUntilBuild = false
+
+  setPlugins("org.jetbrains.plugins.sh:202.6397.21")
+  setPlugins("org.jetbrains.plugins.terminal:202.6397.21")
 }
 
 sourceSets["main"].java.srcDir("gen")

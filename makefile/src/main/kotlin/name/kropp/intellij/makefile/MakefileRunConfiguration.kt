@@ -9,6 +9,7 @@ import com.intellij.openapi.components.*
 import com.intellij.openapi.project.*
 import com.intellij.util.*
 import org.jdom.*
+import org.jetbrains.plugins.terminal.*
 import java.io.*
 
 class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurationFactory, name: String) : LocatableConfigurationBase<RunProfileState>(project, factory, name) {
@@ -63,17 +64,33 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
         val macroManager = PathMacroManager.getInstance(project)
         val path = macroManager.expandPath(filename)
         params.addAll("-f", path)
-        if (!target.isEmpty()) {
+        if (target.isNotEmpty()) {
           params.addParametersString(target)
         }
+
         val workDirectory = if (workingDirectory.isNotEmpty()) macroManager.expandPath(workingDirectory) else File(path).parent
+
+        val envs = environmentVariables.envs.toMutableMap()
+        var command = arrayOf(makePath) + params.array
+        try {
+          for (customizer in LocalTerminalCustomizer.EP_NAME.extensions) {
+            try {
+              command = customizer.customizeCommandAndEnvironment(project, command, envs)
+            } catch (e: Throwable) {
+            }
+          }
+        } catch (e: Throwable) {
+          // optional dependency
+        }
+
         val cmd = PtyCommandLine()
             .withUseCygwinLaunch(makeSettings?.useCygwin ?: false)
-            .withExePath(makePath)
+            .withExePath(command[0])
             .withWorkDirectory(workDirectory)
-            .withEnvironment(environmentVariables.envs)
+            .withEnvironment(envs)
             .withParentEnvironmentType(if (environmentVariables.isPassParentEnvs) GeneralCommandLine.ParentEnvironmentType.CONSOLE else GeneralCommandLine.ParentEnvironmentType.NONE)
-            .withParameters(params.list)
+            .withParameters(command.slice(1 until command.size))
+
         val processHandler = ColoredProcessHandler(cmd)
         processHandler.setShouldKillProcessSoftly(true)
         ProcessTerminatedListener.attach(processHandler)
