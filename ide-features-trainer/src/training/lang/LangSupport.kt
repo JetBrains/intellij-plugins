@@ -8,6 +8,7 @@ import com.intellij.openapi.wm.ToolWindowAnchor
 import training.learn.exceptons.InvalidSdkException
 import training.learn.exceptons.NoSdkException
 import java.io.File
+import java.nio.file.Path
 
 interface LangSupport {
   /** Is should be a language ID */
@@ -21,7 +22,7 @@ interface LangSupport {
     get() = null
 
   /** Callback should download and install demo project */
-  val installRemoteProject: ((projectDirectory: File) -> Unit)?
+  val installRemoteProject: ((projectDirectory: Path) -> Unit)?
     get() = null
 
   /** Relative path inside plugin resources. Used iff [installRemoteProject] is null*/

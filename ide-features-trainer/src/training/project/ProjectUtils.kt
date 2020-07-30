@@ -12,10 +12,12 @@ import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.progress.runBackgroundableTask
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
-import com.intellij.openapi.vfs.VfsUtil.findFileByIoFile
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Consumer
+import com.intellij.util.io.delete
+import com.intellij.util.io.exists
 import training.lang.LangManager
 import training.lang.LangSupport
 import training.learn.LearnBundle
@@ -24,10 +26,11 @@ import java.io.File
 import java.io.PrintWriter
 import java.net.URL
 import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 import java.util.concurrent.CompletableFuture
 
 object ProjectUtils {
-
   private val ideProjectsBasePath by lazy {
     val ideaProjectsPath = WizardContext(null, null).projectFileDirectory
     val ideaProjects = File(ideaProjectsPath)
@@ -44,12 +47,11 @@ object ProjectUtils {
   fun importOrOpenProject(langSupport: LangSupport, projectToClose: Project?, postInitCallback: (learnProject: Project) -> Unit) {
     runBackgroundableTask(LearnBundle.message("learn.project.initializing.process"), project = projectToClose) {
       val path = LangManager.getInstance().state.languageToProjectMap[langSupport.primaryLanguage]
-      val canonicalPlace = File(ideProjectsBasePath, langSupport.defaultProjectName)
-      var dest = if (path != null) File(path) else canonicalPlace
-
+      val canonicalPlace = File(ideProjectsBasePath, langSupport.defaultProjectName).toPath()
+      var dest = if (path == null) canonicalPlace else Paths.get(path)
       if (!isSameVersion(dest)) {
         if (dest.exists()) {
-          dest.deleteRecursively()
+          dest.delete()
         }
         else {
           dest = canonicalPlace
@@ -72,7 +74,7 @@ object ProjectUtils {
           val inputUrl: URL = langSupport.javaClass.classLoader.getResource(langSupport.projectResourcePath)
           ?: throw IllegalArgumentException("No project ${langSupport.projectResourcePath} in resources for ${langSupport.primaryLanguage} IDE learning course")
 
-          if (!FileUtils.copyResourcesRecursively(inputUrl, dest)) {
+          if (!FileUtils.copyResourcesRecursively(inputUrl, dest.toFile())) {
             val directories = invokeAndWaitIfNeeded {
               val descriptor = FileChooserDescriptor(false, true, false, false, false, false)
                 .withTitle(LearnBundle.message("learn.project.initializing.choose.place"))
@@ -85,8 +87,8 @@ object ProjectUtils {
               return@runBackgroundableTask
             val chosen = directories.single()
             val canonicalPath = chosen.canonicalPath ?: error("No canonical path for $chosen")
-            dest = File(canonicalPath, langSupport.defaultProjectName)
-            if (!FileUtils.copyResourcesRecursively(inputUrl, dest)) {
+            dest = File(canonicalPath, langSupport.defaultProjectName).toPath()
+            if (!FileUtils.copyResourcesRecursively(inputUrl, dest.toFile())) {
               invokeLater {
                 Messages.showInfoMessage(LearnBundle.message("learn.project.initializing.cannot.create.message"),
                                          LearnBundle.message("learn.project.initializing.cannot.create.title"))
@@ -96,12 +98,12 @@ object ProjectUtils {
           }
         }
 
-        LangManager.getInstance().state.languageToProjectMap[langSupport.primaryLanguage] = dest.absolutePath
-        PrintWriter(versionFile(dest), "UTF-8").use {
+        LangManager.getInstance().state.languageToProjectMap[langSupport.primaryLanguage] = dest.toAbsolutePath().toString()
+        PrintWriter(versionFile(dest).toFile(), "UTF-8").use {
           it.println(featureTrainerVersion)
         }
       }
-      val toSelect = findFileByIoFile(dest, true) ?: throw Exception("Copied Learn project folder is null")
+      val toSelect = LocalFileSystem.getInstance().refreshAndFindFileByNioFile(dest) ?: throw Exception("Copied Learn project folder is null")
       invokeLater {
         val openOrImport = ProjectUtil.openOrImport(toSelect.toNioPath(), OpenProjectTask(projectToClose = projectToClose))
                            ?: error("Could not create project for " + langSupport.primaryLanguage)
@@ -110,7 +112,7 @@ object ProjectUtils {
     }
   }
 
-  private fun isSameVersion(dest: File): Boolean {
+  private fun isSameVersion(dest: Path): Boolean {
     if (!dest.exists()) {
       return false
     }
@@ -118,15 +120,14 @@ object ProjectUtils {
     if (!versionFile.exists()) {
       return false
     }
-    val res = Files.lines(versionFile.toPath()).findFirst()
+    val res = Files.lines(versionFile).findFirst()
     if (res.isPresent) {
       return featureTrainerVersion == res.get()
     }
     return false
   }
 
-  private fun versionFile(dest: File) = File(dest, "feature-trainer-version.txt")
-
+  private fun versionFile(dest: Path) = dest.resolve("feature-trainer-version.txt")
 
   fun closeAllEditorsInProject(project: Project) {
     FileEditorManagerEx.getInstanceEx(project).windows.forEach {

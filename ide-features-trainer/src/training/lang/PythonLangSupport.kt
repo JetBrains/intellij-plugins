@@ -16,8 +16,8 @@ import com.jetbrains.python.sdk.PyDetectedSdk
 import com.jetbrains.python.sdk.PythonSdkType
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor
 import com.jetbrains.python.sdk.flavors.VirtualEnvSdkFlavor
-import java.io.File
 import java.nio.file.Files
+import java.nio.file.Path
 
 /**
  * @author Sergey Karashevich
@@ -68,7 +68,7 @@ class PythonLangSupport : AbstractLangSupport() {
     return file.path != "${project.basePath}${VfsUtilCore.VFS_SEPARATOR_CHAR}${projectSandboxRelativePath}"
   }
 
-  override val installRemoteProject: ((File) -> Unit)? = { projectDirectory ->
+  override val installRemoteProject: ((Path) -> Unit)? = { projectDirectory ->
     val service = DownloadableFileService.getInstance()
     val zipName = "project.zip"
     val url = "https://github.com/pallets/jinja/archive/2.11.1.zip"
@@ -80,7 +80,7 @@ class PythonLangSupport : AbstractLangSupport() {
       error("Cannot download $url into $tempDir/$zipName")
     }
     val zipFile = files[0].first
-    ZipUtil.unzipWithProgressSynchronously(null, "Unzip demo project", zipFile, projectDirectory, true)
+    ZipUtil.unzipWithProgressSynchronously(null, "Unzip demo project", zipFile.toPath(), projectDirectory, true)
   }
 
   override val projectSandboxRelativePath = "sandbox.py"
