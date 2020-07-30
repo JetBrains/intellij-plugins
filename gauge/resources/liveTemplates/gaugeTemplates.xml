@@ -1,0 +1,138 @@
+<!--
+  ~ Copyright (C) 2020 ThoughtWorks, Inc.
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  -->
+
+<templateSet group="Gauge">
+  <template name="table:2"
+            value="&#10;    |$header1$|$header2$|&#10;    |$value1$|$value2$|&#10;    |$value3$|$value4$|"
+            description="table of 2 columns" toReformat="true" toShortenFQNames="true">
+    <variable name="header1" expression="" defaultValue="&quot;HEADER&quot;" alwaysStopAt="true"/>
+    <variable name="header2" expression="" defaultValue="&quot;HEADER&quot;" alwaysStopAt="true"/>
+    <variable name="value1" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <variable name="value2" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <variable name="value3" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <variable name="value4" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="GAUGE" value="true"/>
+    </context>
+  </template>
+  <template name="table:3"
+            value="&#10;    |$header1$|$header2$|$header3$|&#10;    |$value1$|$value2$|$value3$|&#10;    |$value4$|$value5$|$value6$|"
+            description="table of 3 columns" toReformat="true" toShortenFQNames="true">
+    <variable name="header1" expression="" defaultValue="&quot;HEADER&quot;" alwaysStopAt="true"/>
+    <variable name="header2" expression="" defaultValue="&quot;HEADER&quot;" alwaysStopAt="true"/>
+    <variable name="header3" expression="" defaultValue="&quot;HEADER&quot;" alwaysStopAt="true"/>
+    <variable name="value1" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <variable name="value2" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <variable name="value3" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <variable name="value4" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <variable name="value5" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <variable name="value6" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="GAUGE" value="true"/>
+    </context>
+  </template>
+  <template name="table:1" value="&#10;    |$header1$|&#10;    |$value1$|&#10;    |$value2$|"
+            description="table of 1 column" toReformat="true" toShortenFQNames="true">
+    <variable name="header1" expression="" defaultValue="&quot;HEADER&quot;" alwaysStopAt="true"/>
+    <variable name="value1" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <variable name="value2" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="GAUGE" value="true"/>
+    </context>
+  </template>
+  <template name="table:4"
+            value="&#10;    |$header1$|$header2$|$header3$|$header4$|&#10;    |$value1$|$value2$|$value3$|$value4$|&#10;    |$value5$|$value6$|$value7$|$value8$|"
+            description="table of 4 columns" toReformat="true" toShortenFQNames="true">
+    <variable name="header1" expression="" defaultValue="&quot;HEADER&quot;" alwaysStopAt="true"/>
+    <variable name="header2" expression="" defaultValue="&quot;HEADER&quot;" alwaysStopAt="true"/>
+    <variable name="header3" expression="" defaultValue="&quot;HEADER&quot;" alwaysStopAt="true"/>
+    <variable name="header4" expression="" defaultValue="&quot;HEADER&quot;" alwaysStopAt="true"/>
+    <variable name="value1" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <variable name="value2" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <variable name="value3" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <variable name="value4" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <variable name="value5" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <variable name="value6" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <variable name="value7" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <variable name="value8" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="GAUGE" value="true"/>
+    </context>
+  </template>
+  <template name="table:5"
+            value="&#10;    |$header1$|$header2$|$header3$|$header4$|$header5$|&#10;    |$value1$|$value2$|$value3$|$value4$|$value5$|&#10;    |$value6$|$value7$|$value8$|$value9$|$value10$|"
+            description="table of 5 columns" toReformat="true" toShortenFQNames="true">
+    <variable name="header1" expression="" defaultValue="&quot;HEADER&quot;" alwaysStopAt="true"/>
+    <variable name="header2" expression="" defaultValue="&quot;HEADER&quot;" alwaysStopAt="true"/>
+    <variable name="header3" expression="" defaultValue="&quot;HEADER&quot;" alwaysStopAt="true"/>
+    <variable name="header4" expression="" defaultValue="&quot;HEADER&quot;" alwaysStopAt="true"/>
+    <variable name="header5" expression="" defaultValue="&quot;HEADER&quot;" alwaysStopAt="true"/>
+    <variable name="value1" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <variable name="value2" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <variable name="value3" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <variable name="value4" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <variable name="value5" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <variable name="value6" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <variable name="value7" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <variable name="value8" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <variable name="value9" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <variable name="value10" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="GAUGE" value="true"/>
+    </context>
+  </template>
+  <template name="table:6"
+            value="&#10;    |$header1$|$header2$|$header3$|$header4$|$header5$|$header6$|&#10;    |$value1$|$value2$|$value3$|$value4$|$value5$|$value6$|&#10;    |$value7$|$value8$|$value9$|$value10$|$value11$|$value12$|"
+            description="table of 6 columns" toReformat="true" toShortenFQNames="true">
+    <variable name="header1" expression="" defaultValue="&quot;HEADER&quot;" alwaysStopAt="true"/>
+    <variable name="header2" expression="" defaultValue="&quot;HEADER&quot;" alwaysStopAt="true"/>
+    <variable name="header3" expression="" defaultValue="&quot;HEADER&quot;" alwaysStopAt="true"/>
+    <variable name="header4" expression="" defaultValue="&quot;HEADER&quot;" alwaysStopAt="true"/>
+    <variable name="header5" expression="" defaultValue="&quot;HEADER&quot;" alwaysStopAt="true"/>
+    <variable name="header6" expression="" defaultValue="&quot;HEADER&quot;" alwaysStopAt="true"/>
+    <variable name="value1" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <variable name="value2" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <variable name="value3" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <variable name="value4" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <variable name="value5" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <variable name="value6" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <variable name="value7" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <variable name="value8" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <variable name="value9" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <variable name="value10" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <variable name="value11" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <variable name="value12" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="GAUGE" value="true"/>
+    </context>
+  </template>
+  <template name="spec" value="$SPECIFICATION_HEADING$&#10;=====================" description="Specification Heading"
+            toReformat="false" toShortenFQNames="true">
+    <variable name="SPECIFICATION_HEADING" expression="" defaultValue="&quot;SPECIFICATION_HEADING&quot;"
+              alwaysStopAt="true"/>
+    <context>
+      <option name="GAUGE" value="true"/>
+    </context>
+  </template>
+  <template name="sce" value="$SCENARIO_HEADING$&#10;----------------" description="Scenario Heading"
+            toReformat="false" toShortenFQNames="true">
+    <variable name="SCENARIO_HEADING" expression="" defaultValue="&quot;SCENARIO_HEADING&quot;"
+              alwaysStopAt="true"/>
+    <context>
+      <option name="GAUGE" value="true"/>
+    </context>
+  </template>
+</templateSet>

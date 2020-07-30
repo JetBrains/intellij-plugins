@@ -1,0 +1,6 @@
+Specification File(0,49)
+  SpecDetailImpl(SPEC_DETAIL)(0,49)
+    PsiElement(Specification.SPEC_HEADING)('My Specification Heading\n=====================\n')(0,47)
+    SpecStepImpl(Specification.STEP)(47,49)
+      PsiElement(Specification.STEP_IDENTIFIER)('*')(47,48)
+      PsiElement(Specification.STEP)('T')(48,49)

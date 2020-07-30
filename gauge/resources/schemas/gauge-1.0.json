@@ -1,0 +1,20 @@
+{
+  "title": "JSON Schema for Gauge 1.0 manifest.json.",
+  "id": "https://docs.gauge.org/writing-specifications.html#manifest-file",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "required": [
+    "Language"
+  ],
+  "properties": {
+    "Language": {
+      "type": "string"
+    },
+    "Plugins": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

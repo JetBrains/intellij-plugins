@@ -1,0 +1,14 @@
+# Create a user <name> with <description> and <id>
+* create <name> user
+* add <description> and <id> to <name> user
+* click "save"
+
+
+Search and verify product <pname> under <category> category
+===============================================
+
+* open <category> of products
+
+* search for <pname>
+
+* verify <pname> is in <category>
