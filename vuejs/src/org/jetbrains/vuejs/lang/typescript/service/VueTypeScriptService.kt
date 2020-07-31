@@ -113,7 +113,12 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
     val arguments = ConfigureRequestArguments()
     val fileExtensionInfo = FileExtensionInfo()
     fileExtensionInfo.extension = ".vue"
-    fileExtensionInfo.scriptKind = 3
+    
+    //see ts.getSupportedExtensions
+    //x.scriptKind === ScriptKind.Deferred(7) || needJsExtensions && isJSLike(x.scriptKind) ? x.extension : undefined
+    //so only "ScriptKind.Deferred" kinds are accepted for file searching
+    fileExtensionInfo.scriptKind = 7
+    
     fileExtensionInfo.isMixedContent = false
     arguments.extraFileExtensions = arrayOf(fileExtensionInfo)
 
