@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.service.JSLanguageServiceBase
 import com.intellij.lang.javascript.service.JSLanguageServiceProvider
 import com.intellij.lang.javascript.typescript.service.TypeScriptServiceTestBase
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.testFramework.EditorTestUtil
 import com.intellij.testFramework.JSUnit38AssumeSupportRunner
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.ui.UIUtil
@@ -105,6 +106,25 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
     checkHighlightingByOptions(false)
   }
 
+  @TypeScriptVersion(TypeScriptVersions.TS28)
+  fun testConfigScope() {
+    doTestWithCopyDirectory()
+  }
+
+  @TypeScriptVersion(TypeScriptVersions.TS28)
+  fun testSimpleVueTsToTsx() {
+    doTestWithCopyDirectory()
+    myFixture.type('x')
+    checkAfterFile("vue")
+  }
+
+  @TypeScriptVersion(TypeScriptVersions.TS28)
+  fun testSimpleVueTsxToTs() {
+    doTestWithCopyDirectory()
+    myFixture.type('\b')
+    checkAfterFile("vue")
+  }
+  
   companion object {
     private const val BASE_PATH = "/ts_ls_highlighting"
   }
