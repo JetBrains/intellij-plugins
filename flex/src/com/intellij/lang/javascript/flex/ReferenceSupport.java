@@ -49,7 +49,7 @@ public class ReferenceSupport {
     final RelativeToWhat relativeToWhat = relativeToWhat(str, elt, lookupOptions);
     final boolean startsWithSlash = str.startsWith("/");
 
-    final FileReferenceSet base = new FileReferenceSet(str, elt, offset, null, SystemInfo.isFileSystemCaseSensitive) {
+    final FileReferenceSet base = new FileReferenceSet(str, elt, offset, null, elt.getContainingFile().getViewProvider().getVirtualFile().isCaseSensitive()) {
       @Override
       public boolean isAbsolutePathReference() {
         return relativeToWhat == RelativeToWhat.Absolute;
