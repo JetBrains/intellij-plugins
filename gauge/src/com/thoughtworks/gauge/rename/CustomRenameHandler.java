@@ -31,7 +31,6 @@ import com.thoughtworks.gauge.GaugeBundle;
 import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
 import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
 import com.thoughtworks.gauge.util.GaugeUtil;
-import com.thoughtworks.gauge.util.StepUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -39,27 +38,26 @@ import java.util.List;
 import static com.thoughtworks.gauge.util.StepUtil.*;
 
 final class CustomRenameHandler implements RenameHandler {
-
-  private PsiElement psiElement;
-  private Editor editor;
-
   @Override
   public boolean isAvailableOnDataContext(@NotNull DataContext dataContext) {
     PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
     Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
     VirtualFile file = CommonDataKeys.VIRTUAL_FILE.getData(dataContext);
-    if (file != null && !GaugeUtil.isGaugeFile(file)) return false;
-    this.editor = editor;
+
+    if (file == null || !GaugeUtil.isGaugeFile(file)) return false;
+
     if (element == null) {
       if (editor == null) return false;
       int offset = editor.getCaretModel().getOffset();
       if (offset > 0 && offset == editor.getDocument().getTextLength()) offset--;
+
       PsiFile data = CommonDataKeys.PSI_FILE.getData(dataContext);
       if (data == null) return false;
-      psiElement = getStepElement(data.findElementAt(offset));
+      PsiElement psiElement = getStepElement(data.findElementAt(offset));
       return isConcept(psiElement) || isStep(psiElement);
     }
-    return CommonDataKeys.PROJECT.getData(dataContext) != null && (isMethod(element) || isConcept(element) || isStep(element));
+    return CommonDataKeys.PROJECT.getData(dataContext) != null
+           && (isMethod(element) || isConcept(element) || isStep(element));
   }
 
   @Override
@@ -69,14 +67,21 @@ final class CustomRenameHandler implements RenameHandler {
 
   @Override
   public void invoke(@NotNull Project project, Editor editor, PsiFile file, DataContext dataContext) {
+    if (editor == null) return;
+
+    int offset = editor.getCaretModel().getOffset();
+    if (offset > 0 && offset == editor.getDocument().getTextLength()) offset--;
+
+    PsiElement psiStepElement = getStepElement(file.findElementAt(offset));
+
     PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
-    if (element == null) element = psiElement;
-    psiElement = element;
+    if (element == null) element = psiStepElement;
+
     String text = element.toString();
 
     //Finding text from annotation
     if (isMethod(element)) {
-      List<String> values = StepUtil.getGaugeStepAnnotationValues((PsiMethod)element);
+      List<String> values = getGaugeStepAnnotationValues((PsiMethod)element);
       if (values.size() == 0) {
         return;
       }
@@ -95,7 +100,7 @@ final class CustomRenameHandler implements RenameHandler {
     else if (isConcept(element)) {
       text = removeIdentifiers(((ConceptStepImpl)element).getStepValue().getStepAnnotationText());
     }
-    final RefactoringDialog form = new RefactoringDialog(this.editor.getProject(), file, this.editor, text);
+    RefactoringDialog form = new RefactoringDialog(editor.getProject(), file, editor, text);
     form.show();
   }
 
@@ -106,7 +111,6 @@ final class CustomRenameHandler implements RenameHandler {
 
   @Override
   public void invoke(@NotNull Project project, PsiElement @NotNull [] elements, DataContext dataContext) {
-    invoke(project, null, null, dataContext);
   }
 
   private static PsiElement getStepElement(PsiElement selectedElement) {
