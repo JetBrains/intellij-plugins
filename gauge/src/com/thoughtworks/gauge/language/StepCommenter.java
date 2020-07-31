@@ -20,7 +20,6 @@ import com.intellij.lang.Commenter;
 import org.jetbrains.annotations.Nullable;
 
 public final class StepCommenter implements Commenter {
-  @Nullable
   @Override
   public String getLineCommentPrefix() {
     return "//";

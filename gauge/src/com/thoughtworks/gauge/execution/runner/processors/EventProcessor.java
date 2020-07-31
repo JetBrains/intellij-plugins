@@ -21,7 +21,7 @@ import com.thoughtworks.gauge.execution.runner.event.ExecutionEvent;
 import java.text.ParseException;
 
 public interface EventProcessor {
-  Boolean canProcess(ExecutionEvent event) throws ParseException;
+  boolean canProcess(ExecutionEvent event) throws ParseException;
 
-  Boolean process(ExecutionEvent event) throws ParseException;
+  boolean process(ExecutionEvent event) throws ParseException;
 }

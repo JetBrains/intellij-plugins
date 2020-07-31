@@ -29,12 +29,12 @@ public final class UnexpectedEndProcessor extends GaugeEventProcessor {
   }
 
   @Override
-  protected Boolean onStart(ExecutionEvent event) {
+  protected boolean onStart(ExecutionEvent event) {
     return true;
   }
 
   @Override
-  protected Boolean onEnd(ExecutionEvent event) throws ParseException {
+  protected boolean onEnd(ExecutionEvent event) throws ParseException {
     String name = "Failed";
     ServiceMessageBuilder msg = ServiceMessageBuilder.testFailed(name);
     if (event.result.skipped()) {
@@ -49,12 +49,12 @@ public final class UnexpectedEndProcessor extends GaugeEventProcessor {
   }
 
   @Override
-  public Boolean process(ExecutionEvent event) throws ParseException {
+  public boolean process(ExecutionEvent event) throws ParseException {
     return onEnd(event);
   }
 
   @Override
-  public Boolean canProcess(ExecutionEvent event) {
+  public boolean canProcess(ExecutionEvent event) {
     return getCache().getCurrentId() == SuiteEventProcessor.SUITE_ID;
   }
 }

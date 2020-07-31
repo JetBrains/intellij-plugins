@@ -82,7 +82,7 @@ final class StepCompletionProvider extends CompletionProvider<CompletionParamete
           PsiDocumentManager.getInstance(context1.getProject()).commitDocument(context1.getDocument());
         }
         PsiElement stepElement = context1.getFile().findElementAt(context1.getStartOffset()).getParent();
-        final TemplateBuilder templateBuilder = TemplateBuilderFactory.getInstance().createTemplateBuilder(stepElement);
+        TemplateBuilder templateBuilder = TemplateBuilderFactory.getInstance().createTemplateBuilder(stepElement);
         replaceStepParamElements(prefix, context1, stepElement, templateBuilder);
         templateBuilder.run(context1.getEditor(), false);
       });

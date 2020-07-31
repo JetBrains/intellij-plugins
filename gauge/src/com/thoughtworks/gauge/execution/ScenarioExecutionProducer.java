@@ -18,8 +18,8 @@ package com.thoughtworks.gauge.execution;
 
 import com.intellij.execution.Location;
 import com.intellij.execution.actions.ConfigurationContext;
-import com.intellij.execution.actions.RunConfigurationProducer;
-import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.execution.actions.LazyRunConfigurationProducer;
+import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -36,27 +36,35 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.thoughtworks.gauge.util.GaugeUtil.isSpecFile;
 
-final class ScenarioExecutionProducer extends RunConfigurationProducer {
+final class ScenarioExecutionProducer extends LazyRunConfigurationProducer<GaugeRunConfiguration> {
   private static final Logger LOG = Logger.getInstance(ScenarioExecutionProducer.class);
 
   private static final int NO_SCENARIOS = -1;
   private static final int NON_SCENARIO_CONTEXT = -2;
 
   ScenarioExecutionProducer() {
-    super(new GaugeRunTaskConfigurationType());
+  }
+
+  @NotNull
+  @Override
+  public ConfigurationFactory getConfigurationFactory() {
+    return new GaugeRunTaskConfigurationType().getConfigurationFactories()[0];
   }
 
   @Override
-  protected boolean setupConfigurationFromContext(@NotNull RunConfiguration configuration, ConfigurationContext context,
-                                                  @NotNull Ref sourceElement) {
+  protected boolean setupConfigurationFromContext(@NotNull GaugeRunConfiguration configuration, @NotNull ConfigurationContext context,
+                                                  @NotNull Ref<PsiElement> sourceElement) {
     VirtualFile[] selectedFiles = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(context.getDataContext());
     if (selectedFiles == null || selectedFiles.length > 1) {
       return false;
     }
+
+    if (context.getPsiLocation() == null) return false;
     Module module = GaugeUtil.moduleForPsiElement(context.getPsiLocation());
     if (module == null) {
       return false;
     }
+
     if (context.getPsiLocation() == null ||
         !(isSpecFile(context.getPsiLocation().getContainingFile())) ||
         context.getPsiLocation().getContainingFile().getVirtualFile() == null) {
@@ -71,9 +79,9 @@ final class ScenarioExecutionProducer extends RunConfigurationProducer {
       else {
         String scenarioName = getScenarioName(context);
         configuration.setName(scenarioName);
-        ((GaugeRunConfiguration)configuration).setSpecsToExecute(name + Constants.SPEC_SCENARIO_DELIMITER + scenarioIdentifier);
+        configuration.setSpecsToExecute(name + Constants.SPEC_SCENARIO_DELIMITER + scenarioIdentifier);
       }
-      ((GaugeRunConfiguration)configuration).setModule(module);
+      configuration.setModule(module);
       return true;
     }
     catch (Exception ex) {
@@ -83,12 +91,12 @@ final class ScenarioExecutionProducer extends RunConfigurationProducer {
   }
 
   @Override
-  public boolean isConfigurationFromContext(RunConfiguration configuration, @NotNull ConfigurationContext context) {
+  public boolean isConfigurationFromContext(GaugeRunConfiguration configuration, @NotNull ConfigurationContext context) {
     if (!(configuration.getType() instanceof GaugeRunTaskConfigurationType)) return false;
 
     Location<?> location = context.getLocation();
     if (location == null || location.getVirtualFile() == null || context.getPsiLocation() == null) return false;
-    String specsToExecute = ((GaugeRunConfiguration)configuration).getSpecsToExecute();
+    String specsToExecute = configuration.getSpecsToExecute();
     int identifier = getScenarioIdentifier(context, context.getPsiLocation().getContainingFile());
     return specsToExecute != null &&
            specsToExecute.equals(location.getVirtualFile().getPath() + Constants.SPEC_SCENARIO_DELIMITER + identifier);
@@ -118,7 +126,7 @@ final class ScenarioExecutionProducer extends RunConfigurationProducer {
     return scenarioName.contains("\n") ? scenarioName.substring(0, scenarioName.indexOf("\n")) : scenarioName;
   }
 
-  private int getScenarioIdentifier(ConfigurationContext context, PsiFile file) {
+  private static int getScenarioIdentifier(ConfigurationContext context, PsiFile file) {
     int count = NO_SCENARIOS;
     PsiElement selectedElement = context.getPsiLocation();
     if (selectedElement == null) return NON_SCENARIO_CONTEXT;

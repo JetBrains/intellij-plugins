@@ -54,6 +54,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public final class CreateStepImplFix extends BaseIntentionAction {
@@ -157,90 +158,87 @@ public final class CreateStepImplFix extends BaseIntentionAction {
   }
 
   private void addImpl(Project project, VirtualFile file) {
-    ApplicationManager.getApplication().invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        WriteCommandAction.runWriteCommandAction(project, () -> {
-          PsiFile psifile = PsiManager.getInstance(project).findFile(file);
-          if (!FileModificationService.getInstance().prepareFileForWrite(psifile)) {
-            return;
-          }
-          PsiMethod addedStepImpl = addStepImplMethod(psifile);
-          if (addedStepImpl == null) return;
-
-          TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(addedStepImpl);
-          templateMethodName(addedStepImpl, builder);
-          templateParams(addedStepImpl, builder);
-          templateBody(addedStepImpl, builder);
-          userTemplateModify(builder);
-        });
-      }
-
-      @Nullable
-      private PsiMethod addStepImplMethod(PsiFile psifile) {
-        PsiClass psiClass = PsiTreeUtil.getChildOfType(psifile, PsiClass.class);
-        if (psiClass == null) return null;
-
-        PsiDocumentManager.getInstance(project).commitAllDocuments();
-
-        StepValue stepValue = step.getStepValue();
-        StringBuilder text = new StringBuilder(String.format("@" + Step.class.getName() + "(\"%s\")\n", stepValue.getStepAnnotationText()));
-        text.append(String.format("public void %s(%s){\n\n", getMethodName(psiClass), getParamList(stepValue.getParameters())));
-        text.append("}\n");
-
-        PsiMethod stepMethod = JavaPsiFacade.getElementFactory(project).createMethodFromText(text.toString(), psiClass);
-        PsiMethod addedElement = (PsiMethod)psiClass.add(stepMethod);
-        JavaCodeStyleManager.getInstance(project).shortenClassReferences(addedElement);
-        CodeStyleManager.getInstance(project).reformat(psiClass);
-        addedElement = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(addedElement);
-        return addedElement;
-      }
-
-      private String getParamList(List<String> params) {
-        StringBuilder paramlistBuilder = new StringBuilder();
-        for (int i = 0; i < params.size(); i++) {
-          paramlistBuilder.append("Object arg").append(i);
-          if (i != params.size() - 1) {
-            paramlistBuilder.append(", ");
-          }
+    ApplicationManager.getApplication().invokeLater(() -> {
+      PsiFile psifile = PsiManager.getInstance(project).findFile(file);
+      WriteCommandAction.runWriteCommandAction(project, GaugeBundle.message("gauge.create.step.fix"), "Gauge", () -> {
+        if (!FileModificationService.getInstance().prepareFileForWrite(psifile)) {
+          return;
         }
-        return paramlistBuilder.toString();
-      }
+        PsiMethod addedStepImpl = addStepImplMethod(psifile, project);
+        if (addedStepImpl == null) return;
 
-      private void templateMethodName(PsiMethod addedStepImpl, TemplateBuilder builder) {
-        PsiIdentifier methodName = addedStepImpl.getNameIdentifier();
-        builder.replaceElement(methodName, methodName.getText());
-      }
-
-      private void templateParams(PsiMethod addedElement, TemplateBuilder builder) {
-        PsiParameterList paramsList = addedElement.getParameterList();
-        PsiParameter[] parameters = paramsList.getParameters();
-        for (PsiParameter parameter : parameters) {
-          PsiElement nameIdentifier = parameter.getNameIdentifier();
-          PsiTypeElement typeElement = parameter.getTypeElement();
-          if (nameIdentifier != null) {
-            builder.replaceElement(typeElement, typeElement.getText());
-            builder.replaceElement(nameIdentifier, nameIdentifier.getText());
-          }
-        }
-      }
-
-      private void templateBody(PsiMethod addedElement, TemplateBuilder builder) {
-        final PsiCodeBlock body = addedElement.getBody();
-        if (body != null) {
-          builder.replaceElement(body, new TextRange(2, 2), "");
-        }
-      }
-
-      private void userTemplateModify(TemplateBuilder builder) {
-        Editor editor = FileEditorManager.getInstance(project).openTextEditor(new OpenFileDescriptor(project, file, 0), true);
-        final PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
-        if (editor != null) {
-          documentManager.doPostponedOperationsAndUnblockDocument(editor.getDocument());
-          builder.run(editor, false);
-        }
-      }
+        TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(addedStepImpl);
+        templateMethodName(addedStepImpl, builder);
+        templateParams(addedStepImpl, builder);
+        templateBody(addedStepImpl, builder);
+        userTemplateModify(builder, project, file);
+      }, psifile);
     });
+  }
+
+  @Nullable
+  private PsiMethod addStepImplMethod(PsiFile psifile, Project project) {
+    PsiClass psiClass = PsiTreeUtil.getChildOfType(psifile, PsiClass.class);
+    if (psiClass == null) return null;
+
+    PsiDocumentManager.getInstance(project).commitAllDocuments();
+
+    StepValue stepValue = step.getStepValue();
+    StringBuilder text = new StringBuilder(String.format("@" + Step.class.getName() + "(\"%s\")\n", stepValue.getStepAnnotationText()));
+    text.append(String.format("public void %s(%s){\n\n", getMethodName(psiClass), getParamList(stepValue.getParameters())));
+    text.append("}\n");
+
+    PsiMethod stepMethod = JavaPsiFacade.getElementFactory(project).createMethodFromText(text.toString(), psiClass);
+    PsiMethod addedElement = (PsiMethod)psiClass.add(stepMethod);
+    JavaCodeStyleManager.getInstance(project).shortenClassReferences(addedElement);
+    CodeStyleManager.getInstance(project).reformat(psiClass);
+    addedElement = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(addedElement);
+    return addedElement;
+  }
+
+  private static String getParamList(List<String> params) {
+    StringBuilder paramListBuilder = new StringBuilder();
+    for (int i = 0; i < params.size(); i++) {
+      paramListBuilder.append("Object arg").append(i);
+      if (i != params.size() - 1) {
+        paramListBuilder.append(", ");
+      }
+    }
+    return paramListBuilder.toString();
+  }
+
+  private static void templateMethodName(PsiMethod addedStepImpl, TemplateBuilder builder) {
+    PsiIdentifier methodName = addedStepImpl.getNameIdentifier();
+    builder.replaceElement(Objects.requireNonNull(methodName), methodName.getText());
+  }
+
+  private static void templateParams(PsiMethod addedElement, TemplateBuilder builder) {
+    PsiParameterList paramsList = addedElement.getParameterList();
+    PsiParameter[] parameters = paramsList.getParameters();
+    for (PsiParameter parameter : parameters) {
+      PsiElement nameIdentifier = parameter.getNameIdentifier();
+      PsiTypeElement typeElement = parameter.getTypeElement();
+      if (nameIdentifier != null) {
+        builder.replaceElement(Objects.requireNonNull(typeElement), typeElement.getText());
+        builder.replaceElement(nameIdentifier, nameIdentifier.getText());
+      }
+    }
+  }
+
+  private static void templateBody(PsiMethod addedElement, TemplateBuilder builder) {
+    final PsiCodeBlock body = addedElement.getBody();
+    if (body != null) {
+      builder.replaceElement(body, new TextRange(2, 2), "");
+    }
+  }
+
+  private static void userTemplateModify(TemplateBuilder builder, Project project, VirtualFile file) {
+    Editor editor = FileEditorManager.getInstance(project).openTextEditor(new OpenFileDescriptor(project, file, 0), true);
+    final PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
+    if (editor != null) {
+      documentManager.doPostponedOperationsAndUnblockDocument(editor.getDocument());
+      builder.run(editor, false);
+    }
   }
 
   @NotNull

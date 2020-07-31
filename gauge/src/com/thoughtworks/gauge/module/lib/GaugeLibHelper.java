@@ -67,7 +67,7 @@ public final class GaugeLibHelper extends AbstractLibHelper {
     ApplicationManager.getApplication().runWriteAction(modifiableModel::commit);
   }
 
-  private void checkProjectSourceAndOutputDirectory(ModifiableRootModel modifiableModel) {
+  private static void checkProjectSourceAndOutputDirectory(ModifiableRootModel modifiableModel) {
     VirtualFile[] sourceRoots = modifiableModel.getSourceRoots();
     if (sourceRoots.length < 1) {
       ContentEntry contentEntry = modifiableModel.addContentEntry(modifiableModel.getProject().getBaseDir());
@@ -83,7 +83,7 @@ public final class GaugeLibHelper extends AbstractLibHelper {
     }
   }
 
-  private VirtualFile testOutputPath(Module module) {
+  private static VirtualFile testOutputPath(Module module) {
     File outputDir =
       new File(String.format("%s%sout%stest%s%s", moduleDirPath(module), File.separator, File.separator, File.separator, module.getName()));
     //noinspection ResultOfMethodCallIgnored
@@ -91,7 +91,7 @@ public final class GaugeLibHelper extends AbstractLibHelper {
     return LocalFileSystem.getInstance().refreshAndFindFileByIoFile(outputDir);
   }
 
-  private VirtualFile outputPath(Module module) {
+  private static VirtualFile outputPath(Module module) {
     File outputDir = new File(
       String.format("%s%sout%sproduction%s%s", moduleDirPath(module), File.separator, File.separator, File.separator, module.getName()));
     //noinspection ResultOfMethodCallIgnored
@@ -99,18 +99,18 @@ public final class GaugeLibHelper extends AbstractLibHelper {
     return LocalFileSystem.getInstance().refreshAndFindFileByIoFile(outputDir);
   }
 
-  private VirtualFile srcPath(ModifiableRootModel modifiableModel) {
+  private static VirtualFile srcPath(ModifiableRootModel modifiableModel) {
     return LocalFileSystem.getInstance().refreshAndFindFileByIoFile(new File(moduleDir(modifiableModel.getModule()), SRC_DIR));
   }
 
-  private void addProjectLibIfNeeded(ModifiableRootModel model) {
+  private static void addProjectLibIfNeeded(ModifiableRootModel model) {
     Library library = model.getModuleLibraryTable().getLibraryByName(PROJECT_LIB);
     if (library == null) {
       addProjectLib(model);
     }
   }
 
-  private void updateGaugeJavaLibIfNeeded(ModifiableRootModel model) {
+  private static void updateGaugeJavaLibIfNeeded(ModifiableRootModel model) {
     LibraryTable libraryTable = model.getModuleLibraryTable();
     Library library = libraryTable.getLibraryByName(GAUGE_LIB);
     ProjectLib latestGaugeLib = gaugeLib(model.getModule());
@@ -119,7 +119,7 @@ public final class GaugeLibHelper extends AbstractLibHelper {
     }
   }
 
-  private void updateLibrary(Library library, ProjectLib newLib) {
+  private static void updateLibrary(Library library, ProjectLib newLib) {
     VirtualFile lib = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(newLib.getDir());
     Library.ModifiableModel model = library.getModifiableModel();
     if (lib != null) {
@@ -129,16 +129,16 @@ public final class GaugeLibHelper extends AbstractLibHelper {
     model.commit();
   }
 
-  private String getClassesRootFrom(Library.ModifiableModel model) {
+  private static String getClassesRootFrom(Library.ModifiableModel model) {
     return model.getUrls(CLASSES)[0];
   }
 
-  private boolean gaugeJavaLibIsAdded(ModifiableRootModel model) {
+  private static boolean gaugeJavaLibIsAdded(ModifiableRootModel model) {
     Library library = model.getModuleLibraryTable().getLibraryByName(GAUGE_LIB);
     return !(library == null);
   }
 
-  private void addGaugeJavaLib(ModifiableRootModel modifiableRootModel) {
+  private static void addGaugeJavaLib(ModifiableRootModel modifiableRootModel) {
     Module module = modifiableRootModel.getModule();
     ProjectLib gaugeLib = gaugeLib(module);
     if (gaugeLib != null) {
@@ -146,11 +146,11 @@ public final class GaugeLibHelper extends AbstractLibHelper {
     }
   }
 
-  private void addProjectLib(ModifiableRootModel modifiableRootModel) {
+  private static void addProjectLib(ModifiableRootModel modifiableRootModel) {
     addLib(projectLib(modifiableRootModel.getModule()), modifiableRootModel);
   }
 
-  private void addLib(ProjectLib lib, ModifiableRootModel modifiableRootModel) {
+  private static void addLib(ProjectLib lib, ModifiableRootModel modifiableRootModel) {
     final Library library = modifiableRootModel.getModuleLibraryTable().createLibrary(lib.getLibName());
     final VirtualFile libDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(lib.getDir());
     if (libDir != null) {
@@ -160,11 +160,11 @@ public final class GaugeLibHelper extends AbstractLibHelper {
     }
   }
 
-  private ProjectLib projectLib(Module module) {
+  private static ProjectLib projectLib(Module module) {
     return new ProjectLib(PROJECT_LIB, new File(moduleDir(module), LIBS));
   }
 
-  private ProjectLib gaugeLib(Module module) {
+  private static ProjectLib gaugeLib(Module module) {
     String libRoot;
     try {
       GaugeService gaugeService = Gauge.getGaugeService(module, true);
@@ -178,8 +178,7 @@ public final class GaugeLibHelper extends AbstractLibHelper {
       libRoot = gaugeConnection.getLibPath("java");
     }
     catch (IOException e) {
-      System.err.println("Could not add gauge lib, add it manually: " + e.getMessage());
-      LOG.debug("Could not add gauge lib, add it manually: " + e.getMessage());
+      LOG.warn("Could not add gauge lib, add it manually: " + e.getMessage());
       return null;
     }
     catch (PluginNotInstalledException e) {
@@ -192,7 +191,7 @@ public final class GaugeLibHelper extends AbstractLibHelper {
     private final String libName;
     public File dir;
 
-    public ProjectLib(String libName, File dir) {
+    private ProjectLib(String libName, File dir) {
       this.libName = libName;
       this.dir = dir;
     }

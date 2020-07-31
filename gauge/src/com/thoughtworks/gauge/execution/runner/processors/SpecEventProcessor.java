@@ -33,7 +33,7 @@ public final class SpecEventProcessor extends GaugeEventProcessor {
   }
 
   @Override
-  protected Boolean onStart(ExecutionEvent event) throws ParseException {
+  protected boolean onStart(ExecutionEvent event) throws ParseException {
     if (getCache().getCurrentId() == SuiteEventProcessor.SUITE_ID) getProcessor().processLineBreak();
     getCache().setId(event.id);
     if (getCache().getId(event.id.split(Constants.SPEC_SCENARIO_DELIMITER)[0]) == null) {
@@ -45,7 +45,7 @@ public final class SpecEventProcessor extends GaugeEventProcessor {
   }
 
   @Override
-  protected Boolean onEnd(ExecutionEvent event) throws ParseException {
+  protected boolean onEnd(ExecutionEvent event) throws ParseException {
     super.addHooks(event, BEFORE_SPEC, AFTER_SPEC, event.id, getCache().getId(event.id));
     ServiceMessageBuilder msg = ServiceMessageBuilder.testSuiteFinished(event.name);
     msg.addAttribute("duration", String.valueOf(event.result.time));
@@ -53,7 +53,7 @@ public final class SpecEventProcessor extends GaugeEventProcessor {
   }
 
   @Override
-  public Boolean canProcess(ExecutionEvent event) {
+  public boolean canProcess(ExecutionEvent event) {
     return event.type.equalsIgnoreCase(ExecutionEvent.SPEC_START) ||
            event.type.equalsIgnoreCase(ExecutionEvent.SPEC_END);
   }

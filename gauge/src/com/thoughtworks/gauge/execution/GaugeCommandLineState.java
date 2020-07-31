@@ -64,7 +64,7 @@ public final class GaugeCommandLineState extends CommandLineState {
 
   @NotNull
   @Override
-  public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
+  public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner<?> runner) throws ExecutionException {
     addProjectClasspath();
     if (GaugeVersion.isGreaterOrEqual(GaugeRunConfiguration.TEST_RUNNER_SUPPORT_VERSION, false)
         && GaugeSettingsService.getSettings().useIntelliJTestRunner()) {
@@ -74,10 +74,8 @@ public final class GaugeCommandLineState extends CommandLineState {
       DefaultExecutionResult result = new DefaultExecutionResult(console, handler, createActions(console, handler));
       if (ActionManager.getInstance().getAction("RerunFailedTests") != null) {
         AbstractRerunFailedTestsAction action = properties.createRerunFailedTestsAction(console);
-        if (action != null) {
-          action.setModelProvider(((SMTRunnerConsoleView)console)::getResultsViewer);
-          result.setRestartActions(action);
-        }
+        action.setModelProvider(((SMTRunnerConsoleView)console)::getResultsViewer);
+        result.setRestartActions(action);
       }
       return result;
     }

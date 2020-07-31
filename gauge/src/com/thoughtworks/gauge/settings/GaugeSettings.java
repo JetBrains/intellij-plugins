@@ -17,7 +17,6 @@
 package com.thoughtworks.gauge.settings;
 
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.util.Disposer;
 import com.thoughtworks.gauge.GaugeBundle;

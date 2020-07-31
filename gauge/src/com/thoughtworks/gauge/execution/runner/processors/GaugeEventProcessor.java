@@ -35,12 +35,12 @@ abstract class GaugeEventProcessor implements EventProcessor {
     this.cache = cache;
   }
 
-  protected abstract Boolean onStart(ExecutionEvent event) throws ParseException;
+  protected abstract boolean onStart(ExecutionEvent event) throws ParseException;
 
-  protected abstract Boolean onEnd(ExecutionEvent event) throws ParseException;
+  protected abstract boolean onEnd(ExecutionEvent event) throws ParseException;
 
   @Override
-  public Boolean process(ExecutionEvent event) throws ParseException {
+  public boolean process(ExecutionEvent event) throws ParseException {
     return event.type.endsWith("Start") ? onStart(event) : onEnd(event);
   }
 

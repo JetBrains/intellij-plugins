@@ -22,7 +22,6 @@ import com.thoughtworks.gauge.Constants;
 import com.thoughtworks.gauge.GaugeBundle;
 import com.thoughtworks.gauge.idea.icon.GaugeIcon;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
@@ -51,7 +50,6 @@ public final class ConceptFileType extends LanguageFileType {
     return Constants.CONCEPT_EXTENSION;
   }
 
-  @Nullable
   @Override
   public Icon getIcon() {
     return GaugeIcon.GAUGE_CONCEPT_FILE_ICON;

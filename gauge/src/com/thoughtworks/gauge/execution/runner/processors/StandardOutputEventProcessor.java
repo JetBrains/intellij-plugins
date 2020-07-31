@@ -27,12 +27,12 @@ public final class StandardOutputEventProcessor extends GaugeEventProcessor {
   }
 
   @Override
-  protected Boolean onStart(ExecutionEvent event) {
+  protected boolean onStart(ExecutionEvent event) {
     return true;
   }
 
   @Override
-  protected Boolean onEnd(ExecutionEvent event) {
+  protected boolean onEnd(ExecutionEvent event) {
     String msg = event.message;
     if (!msg.endsWith("\n")) {
       msg += "\n";
@@ -44,7 +44,7 @@ public final class StandardOutputEventProcessor extends GaugeEventProcessor {
   }
 
   @Override
-  public Boolean canProcess(ExecutionEvent event) {
+  public boolean canProcess(ExecutionEvent event) {
     return event.type.equalsIgnoreCase(ExecutionEvent.STANDARD_OUTPUT);
   }
 }

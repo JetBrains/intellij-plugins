@@ -36,7 +36,6 @@ import com.intellij.psi.PsiManager;
 import com.thoughtworks.gauge.Constants;
 import com.thoughtworks.gauge.execution.GaugeRunConfiguration;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;

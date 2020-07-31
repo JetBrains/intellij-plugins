@@ -17,14 +17,15 @@
 package com.thoughtworks.gauge.execution;
 
 import com.intellij.execution.actions.ConfigurationContext;
-import com.intellij.execution.actions.RunConfigurationProducer;
-import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.execution.actions.LazyRunConfigurationProducer;
+import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.thoughtworks.gauge.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -34,18 +35,23 @@ import java.util.List;
 
 import static com.thoughtworks.gauge.util.GaugeUtil.isSpecFile;
 
-final class SpecsExecutionProducer extends RunConfigurationProducer {
+final class SpecsExecutionProducer extends LazyRunConfigurationProducer<GaugeRunConfiguration> {
 
   public static final String DEFAULT_CONFIGURATION_NAME = "Specifications";
 
   SpecsExecutionProducer() {
-    super(new GaugeRunTaskConfigurationType());
+  }
+
+  @NotNull
+  @Override
+  public ConfigurationFactory getConfigurationFactory() {
+    return new GaugeRunTaskConfigurationType().getConfigurationFactories()[0];
   }
 
   @Override
-  protected boolean setupConfigurationFromContext(@NotNull RunConfiguration configuration,
-                                                  ConfigurationContext configurationContext,
-                                                  @NotNull Ref ref) {
+  protected boolean setupConfigurationFromContext(@NotNull GaugeRunConfiguration configuration,
+                                                  @NotNull ConfigurationContext configurationContext,
+                                                  @NotNull Ref<PsiElement> ref) {
     VirtualFile[] selectedFiles = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(configurationContext.getDataContext());
     Module module = configurationContext.getModule();
     if (selectedFiles == null || module == null) {
@@ -57,7 +63,7 @@ final class SpecsExecutionProducer extends RunConfigurationProducer {
       }
       else if (selectedFiles[0].getPath().equals(configurationContext.getProject().getBasePath())) {
         configuration.setName(DEFAULT_CONFIGURATION_NAME);
-        ((GaugeRunConfiguration)configuration).setModule(module);
+        configuration.setModule(module);
         return true;
       }
     }
@@ -67,20 +73,20 @@ final class SpecsExecutionProducer extends RunConfigurationProducer {
       return false;
     }
     configuration.setName(DEFAULT_CONFIGURATION_NAME);
-    ((GaugeRunConfiguration)configuration).setModule(module);
-    ((GaugeRunConfiguration)configuration).setSpecsArrayToExecute(specsToExecute);
+    configuration.setModule(module);
+    configuration.setSpecsArrayToExecute(specsToExecute);
     return true;
   }
 
   @Override
-  public boolean isConfigurationFromContext(RunConfiguration config, @NotNull ConfigurationContext context) {
+  public boolean isConfigurationFromContext(GaugeRunConfiguration config, @NotNull ConfigurationContext context) {
     if (!(config.getType() instanceof GaugeRunTaskConfigurationType)) return false;
     if (!(context.getPsiLocation() instanceof PsiDirectory) && !(context.getPsiLocation() instanceof PsiFile)) {
       return false;
     }
     VirtualFile[] selectedFiles = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(context.getDataContext());
     if (selectedFiles == null) return false;
-    String specs = ((GaugeRunConfiguration)config).getSpecsToExecute();
+    String specs = config.getSpecsToExecute();
     return StringUtil.join(getSpecs(selectedFiles), Constants.SPEC_FILE_DELIMITER).equals(specs);
   }
 

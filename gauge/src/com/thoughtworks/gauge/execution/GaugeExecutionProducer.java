@@ -43,7 +43,7 @@ public final class GaugeExecutionProducer extends RunConfigurationProducer<RunCo
 
   @Override
   protected boolean setupConfigurationFromContext(@NotNull RunConfiguration configuration, ConfigurationContext context,
-                                                  @NotNull Ref sourceElement) {
+                                                  @NotNull Ref<PsiElement> sourceElement) {
     VirtualFile[] selectedFiles = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(context.getDataContext());
     if (selectedFiles == null || selectedFiles.length > 1) return false;
     Module module = context.getModule();

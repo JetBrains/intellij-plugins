@@ -32,17 +32,17 @@ public final class SuiteEventProcessor extends GaugeEventProcessor {
   }
 
   @Override
-  protected Boolean onStart(ExecutionEvent event) {
+  protected boolean onStart(ExecutionEvent event) {
     return getProcessor().processLineBreak();
   }
 
   @Override
-  protected Boolean onEnd(ExecutionEvent event) throws ParseException {
+  protected boolean onEnd(ExecutionEvent event) throws ParseException {
     return super.addHooks(event, BEFORE_SUITE, AFTER_SUITE, "", SUITE_ID);
   }
 
   @Override
-  public Boolean canProcess(ExecutionEvent event) {
+  public boolean canProcess(ExecutionEvent event) {
     return event.type.equalsIgnoreCase(ExecutionEvent.SUITE_START) ||
            event.type.equalsIgnoreCase(ExecutionEvent.SUITE_END);
   }

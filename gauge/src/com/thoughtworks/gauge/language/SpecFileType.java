@@ -21,7 +21,6 @@ import com.thoughtworks.gauge.Constants;
 import com.thoughtworks.gauge.GaugeBundle;
 import com.thoughtworks.gauge.idea.icon.GaugeIcon;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 

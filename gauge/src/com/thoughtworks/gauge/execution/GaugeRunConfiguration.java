@@ -18,7 +18,6 @@ package com.thoughtworks.gauge.execution;
 
 import com.google.common.base.Strings;
 import com.intellij.execution.CommonProgramRunConfigurationParameters;
-import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.application.ApplicationConfiguration;
 import com.intellij.execution.application.ApplicationConfigurationType;
@@ -38,7 +37,6 @@ import com.thoughtworks.gauge.settings.GaugeSettingsService;
 import kotlin.text.StringsKt;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.HashMap;
@@ -74,9 +72,8 @@ public final class GaugeRunConfiguration extends LocatableConfigurationBase<Gaug
     return new GaugeExecutionConfigurationSettingsEditor();
   }
 
-  @Nullable
   @Override
-  public RunProfileState getState(@NotNull Executor executor, @NotNull final ExecutionEnvironment env) throws ExecutionException {
+  public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) {
     GeneralCommandLine commandLine = GaugeCommandLine.getInstance(getModule(), getProject());
     addFlags(commandLine, env);
     return new GaugeCommandLineState(commandLine, getProject(), env, this);

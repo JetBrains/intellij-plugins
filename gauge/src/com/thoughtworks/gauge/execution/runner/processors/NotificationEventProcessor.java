@@ -30,12 +30,12 @@ public final class NotificationEventProcessor extends GaugeEventProcessor {
   }
 
   @Override
-  protected Boolean onStart(ExecutionEvent event) {
+  protected boolean onStart(ExecutionEvent event) {
     return true;
   }
 
   @Override
-  protected Boolean onEnd(ExecutionEvent event) {
+  protected boolean onEnd(ExecutionEvent event) {
     String title = event.notification.title;
     String message = event.notification.message;
     Notification notification =
@@ -45,7 +45,7 @@ public final class NotificationEventProcessor extends GaugeEventProcessor {
   }
 
   @Override
-  public Boolean canProcess(ExecutionEvent event) {
+  public boolean canProcess(ExecutionEvent event) {
     return event.type.equalsIgnoreCase(ExecutionEvent.NOTIFICATION);
   }
 }
