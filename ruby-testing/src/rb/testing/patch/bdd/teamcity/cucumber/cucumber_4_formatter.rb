@@ -218,7 +218,12 @@ module Teamcity
       end
 
       def step_node_name(test_step)
-        "#{@ast_lookup.step_source(test_step).step.keyword}#{test_step.text}"
+        step_name_prefix = ''
+        if test_step.instance_of? ::Cucumber::Core::Test::Step
+          step_name_prefix = @ast_lookup.step_source(test_step).step.keyword
+
+        end
+        "#{step_name_prefix}#{test_step.text}"
       end
 
       def print_summary(features)
