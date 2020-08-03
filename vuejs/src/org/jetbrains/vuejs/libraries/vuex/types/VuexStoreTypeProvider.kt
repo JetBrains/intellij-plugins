@@ -23,20 +23,20 @@ object VuexStoreTypeProvider {
       val typeConstructor = getTypeConstructor(result.name) ?: return false
       if (result.containingFile.parent?.parent?.name != VUEX_PACKAGE) return false
       if (!isVueContext(result)) return false
-      evaluator.addType(typeConstructor(result, VuexStaticNamespace.EMPTY), result, true)
+      evaluator.addType(typeConstructor(result, VuexStaticNamespace.EMPTY), result)
       return true
     }
     else if (result is JSParameter) {
       if (isActionContextParameter(result)) {
         if (!isVueContext(result)) return false
-        evaluator.addType(VuexActionContextType(result), result, true)
+        evaluator.addType(VuexActionContextType(result), result)
         return true
       }
       val name = result.name
       val typeConstructor = getTypeConstructor(name) ?: return false
       val namespace: VuexStoreNamespace = getNamespaceForGettersOrState(result, name!!) ?: return false
       if (!isVueContext(result)) return false
-      evaluator.addType(typeConstructor(result, namespace), result, true)
+      evaluator.addType(typeConstructor(result, namespace), result)
       return true
     }
     return false

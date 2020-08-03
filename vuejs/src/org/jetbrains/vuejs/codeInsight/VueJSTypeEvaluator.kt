@@ -105,7 +105,7 @@ class VueJSTypeEvaluator(context: JSEvaluateContext, processor: JSTypeProcessor,
     val typeSource = JSTypeSourceFactory.createTypeSource(source, false)
     val commonType = (JSTupleTypeImpl(typeSource, types.toMutableList(), emptyList(), false, 0, false).toArrayType(
       false) as JSArrayType).type
-    addType(commonType, source, true)
+    addType(commonType, source)
   }
 
   companion object {
