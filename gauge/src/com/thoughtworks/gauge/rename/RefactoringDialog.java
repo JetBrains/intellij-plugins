@@ -141,8 +141,4 @@ public final class RefactoringDialog extends DialogWrapper {
     this.contentPane.setSize(new Dimension(stringWidth + 30, height));
     this.contentPane.setMinimumSize(new Dimension(stringWidth + 30, height));
   }
-
-  private void createUIComponents() {
-    this.inputText = new EditorTextField();
-  }
 }
