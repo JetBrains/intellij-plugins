@@ -25,10 +25,10 @@
 
     <implicitUsageProvider implementation="org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaImplicitUsageProvider"/>
 
-    <localInspection language="JAVA" shortName="CucumberJavaStepDefClassIsPublic" displayName="Step definition class is not public"
+    <localInspection language="JAVA" shortName="CucumberJavaStepDefClassIsPublic" bundle="messages.CucumberJavaBundle" key="cucumber.java.inspections.step.def.class.is.public.title"
                      groupBundle="messages.CucumberBundle" groupKey="cucumber.inspection.group.name" enabledByDefault="true"
                      level="WARNING" implementationClass="org.jetbrains.plugins.cucumber.java.inspections.CucumberJavaStepDefClassIsPublicInspections"/>
-    <localInspection language="JAVA" shortName="CucumberJavaStepDefClassInDefaultPackage" displayName="Step definition class is in default package"
+    <localInspection language="JAVA" shortName="CucumberJavaStepDefClassInDefaultPackage" bundle="messages.CucumberJavaBundle" key="cucumber.java.inspections.step.def.class.in.default.package.title"
                      groupBundle="messages.CucumberBundle" groupKey="cucumber.inspection.group.name" enabledByDefault="true"
                      level="WARNING" implementationClass="org.jetbrains.plugins.cucumber.java.inspections.CucumberJavaStepDefClassInDefaultPackageInspection"/>
 
