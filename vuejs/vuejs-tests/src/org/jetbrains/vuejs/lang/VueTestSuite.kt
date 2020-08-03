@@ -66,6 +66,7 @@ import org.junit.runners.Suite
   VueTypeScriptDuplicateTest::class,
   VueIntroduceVariableTest::class,
   VueTypeScriptLineMarkersTest::class,
-  VueTypeScriptHighlightingTest::class
+  VueTypeScriptHighlightingTest::class,
+  VueMoveTest::class
 )
 class VueTestSuite 
