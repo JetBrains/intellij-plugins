@@ -1,0 +1,32 @@
+<xml type="Scenario" name="Change Signature" id="swift.refactorings.change.signature" lang="Swift">
+  <CopyText><![CDATA[import UIKit
+
+class ChangeSignature: UIViewController {
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        let x = 0
+        let y = 50
+
+        let tableView = UITableView()
+        method(tableView: tableView, x: x, y: y)
+        self.view.addSubview(tableView)
+    }
+
+    private func method(tableView: UITableView, x: Int, y: Int) {
+        let header = UILabel()
+        header.text = "AppCode"
+        header.sizeToFit()
+
+        tableView.frame = CGRect(x: x, y: y, width: 320, height: 400)
+        tableView.tableHeaderView = header
+    }
+}]]></CopyText>
+  <MoveCaret position="16:22"/>
+  <Text><strong>Change Signature</strong> is a refactoring that lets you change the names of methods and functions, edit internal and external parameter names, change their order, and change the visibility of methods and functions – all at once.</Text>
+  <Try triggers="ChangeSignature">Press <action>ChangeSignature</action> to change the <code>method</code> name to <code>setup</code>.</Try>
+  <Try triggers="ChangeSignature">Press <action>ChangeSignature</action> again. Click the row with the <code>tableView</code> parameter and change it to <code>table</code>, or add an internal parameter name.</Try>
+  <Try triggers="ChangeSignature">Finally, invoke <strong>Change Signature</strong> again to change the parameter order using <icon>AllIcons.General.ArrowUp</icon>/<icon>AllIcons.General.ArrowDown</icon> buttons or <shortcut>⌥↑</shortcut>/<shortcut>⌥↓</shortcut> shortcuts.</Try>
+  <Win/>
+</xml>

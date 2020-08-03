@@ -4,4 +4,5 @@
   <lesson filename="02.Extract variable.xml"/>
   <lesson filename="03.Extract method.xml"/>
   <lesson filename="04.Extract closure.xml"/>
+  <lesson filename="05.Change Signature.xml"/>
 </module>
