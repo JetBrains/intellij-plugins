@@ -126,8 +126,8 @@ public class DartCommandLineRunningState extends CommandLineState {
     try {
       final DartRunConfiguration dartRunConfiguration = (DartRunConfiguration)getEnvironment().getRunProfile();
       final VirtualFile launchFile = dartRunConfiguration.getRunnerParameters().getDartFileOrDirectory();
-      final String message = ("<a href='" + DartProblemsView.OPEN_DART_ANALYSIS_LINK + "'>Analysis issues</a> may affect " +
-                              "the execution of '" + dartRunConfiguration.getName() + "'.");
+      final String message = DartBundle.message("analysis.issues.may.affect.the.execution", 
+                                                DartProblemsView.OPEN_DART_ANALYSIS_LINK, dartRunConfiguration.getName());
       DartExecutionHelper.displayIssues(project, launchFile, message, dartRunConfiguration.getIcon());
     }
     catch (RuntimeConfigurationError error) {
