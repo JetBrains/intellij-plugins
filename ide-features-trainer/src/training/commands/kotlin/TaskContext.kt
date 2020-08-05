@@ -117,12 +117,14 @@ abstract class TaskContext {
     }
   }
 
-  inline fun <reified T: Component> triggerByPartOfComponent(highlightBorder: Boolean = true, highlightInside: Boolean = false, crossinline rectangle: TaskRuntimeContext.(T) -> Rectangle?) {
+  inline fun <reified T: Component> triggerByPartOfComponent(highlightBorder: Boolean = true, highlightInside: Boolean = false,
+                                                             noinline selector: ((candidates: Collection<T>) -> T?)? = null,
+                                                             crossinline rectangle: TaskRuntimeContext.(T) -> Rectangle?) {
     val options = LearningUiHighlightingManager.HighlightingOptions(highlightBorder, highlightInside)
     @Suppress("DEPRECATION")
     triggerByUiComponentAndHighlight {
       val delay = Timeout.timeout(500, TimeUnit.MILLISECONDS)
-      val whole = LearningUiUtil.findShowingComponentWithTimeout(null, T::class.java, delay) {
+      val whole = LearningUiUtil.findShowingComponentWithTimeout(null, T::class.java, delay, selector) {
         rectangle(it) != null
       }
       return@triggerByUiComponentAndHighlight {
@@ -157,12 +159,14 @@ abstract class TaskContext {
   }
 
   inline fun <reified ComponentType : Component> triggerByUiComponentAndHighlight(
-    highlightBorder: Boolean = true, highlightInside: Boolean = true, crossinline finderFunction: TaskRuntimeContext.(ComponentType) -> Boolean
+    highlightBorder: Boolean = true, highlightInside: Boolean = true,
+    noinline selector: ((candidates: Collection<ComponentType>) -> ComponentType?)? = null,
+    crossinline finderFunction: TaskRuntimeContext.(ComponentType) -> Boolean
   ) {
     @Suppress("DEPRECATION")
     triggerByUiComponentAndHighlight l@{
       val delay = Timeout.timeout(500, TimeUnit.MILLISECONDS)
-      val component = LearningUiUtil.findShowingComponentWithTimeout(null, ComponentType::class.java, delay) {
+      val component = LearningUiUtil.findShowingComponentWithTimeout(null, ComponentType::class.java, delay, selector) {
         finderFunction(it)
       }
       return@l {

@@ -90,9 +90,20 @@ object LearningUiUtil {
   fun <ComponentType : Component> findShowingComponentWithTimeout(container: Container?,
                                                                   componentClass: Class<ComponentType>,
                                                                   timeout: Timeout = Timeout.timeout(10, TimeUnit.SECONDS),
+                                                                  selector: ((candidates: Collection<ComponentType>) -> ComponentType?)? = null,
                                                                   finderFunction: (ComponentType) -> Boolean = { true }): ComponentType {
     try {
-      return waitUntilFound(robot, container, typeMatcher(componentClass) { it.isShowing && finderFunction(it) }, timeout)
+      if (selector != null) {
+        val result = waitUntilFoundAll(robot, container, typeMatcher(componentClass) { it.isShowing && finderFunction(it) }, timeout)
+        val single = selector(result)
+        if (single== null) {
+          throw ComponentLookupException("Cannot filter result component from: $result")
+        }
+        return single
+      }
+      else {
+        return waitUntilFound(robot, container, typeMatcher(componentClass) { it.isShowing && finderFunction(it) }, timeout)
+      }
     }
     catch (e: WaitTimedOutError) {
       throw ComponentLookupException(
