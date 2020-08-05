@@ -25,6 +25,7 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.text.HtmlBuilder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Consumer;
 import com.intellij.util.PathUtil;
@@ -174,21 +175,21 @@ public class AirPackageAction extends DumbAwareAction {
                            onSuccessRunnable, createFailureConsumer(project, packagePath, task));
       }
       else {
-        final StringBuilder hrefs = new StringBuilder();
+        final HtmlBuilder hrefs = new HtmlBuilder();
         for (Map.Entry<String, List<String>> entry : packagePathsToWarnings.entrySet()) {
           final String packagePath = entry.getKey();
           final List<String> warnings = entry.getValue();
 
-          if (hrefs.length() > 0) {
-            hrefs.append("<br>");
+          if (!hrefs.isEmpty()) {
+            hrefs.br();
           }
 
-          hrefs.append("<a href='").append(packagePath).append("'>").append(PathUtil.getFileName(packagePath)).append("</a>");
+          hrefs.appendLink(packagePath, PathUtil.getFileName(packagePath));
 
           if (!warnings.isEmpty()) {
-            hrefs.append("<br>");
+            hrefs.br();
             for (String warning : warnings) {
-              hrefs.append(warning).append("<br>");
+              hrefs.append(warning).br();
             }
           }
         }
