@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.java.integration;
 
 import com.intellij.execution.ExecutionException;
@@ -117,7 +117,7 @@ public abstract class JavaTestFrameworkIntegrationTest extends HeavyPlatformTest
 
     RunConfiguration runConfiguration = getRunConfiguration();
 
-    RunContentDescriptor runContentDescriptor = PlatformTestUtil.executeConfiguration(runConfiguration).getContentToReuse();
+    RunContentDescriptor runContentDescriptor = PlatformTestUtil.executeConfigurationAndWait(runConfiguration).getContentToReuse();
 
     SMTRunnerTestTreeView smtRunnerTestTreeView = UITestUtil.getTreeOfTests(runContentDescriptor);
     assertTreeEqual(smtRunnerTestTreeView, expectedTreeOfTests);
