@@ -12,6 +12,7 @@ import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.ui.*;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.DefaultLibraryRootsComponentDescriptor;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditor;
+import com.intellij.openapi.util.NlsActions;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.UIBundle;
 import com.intellij.util.IconUtil;
@@ -54,7 +55,7 @@ public class FlexLibraryRootsComponentDescriptor extends LibraryRootsComponentDe
   }
 
   @Override
-  public String getAttachFilesActionName() {
+  public @NlsActions.ActionText String getAttachFilesActionName() {
     return FlexBundle.message("add.library.components.action.name");
   }
 

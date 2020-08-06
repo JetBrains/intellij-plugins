@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import icons.FlexIcons;
@@ -82,7 +83,7 @@ public class FlexmojosSdkType extends SdkType {
 
   @Override
   @NotNull
-  public String getHomeFieldLabel() {
+  public @NlsContexts.Label String getHomeFieldLabel() {
     return "Flex Compiler POM:";
   }
 
