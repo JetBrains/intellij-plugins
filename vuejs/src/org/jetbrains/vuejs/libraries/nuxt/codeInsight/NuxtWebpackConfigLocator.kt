@@ -13,7 +13,7 @@ class NuxtWebpackConfigLocator : WebpackConfigLocator {
   override fun detectConfig(project: Project): String? =
     PackageJsonFileManager.getInstance(project).validPackageJsonFiles
       .asSequence()
-      .filter { it.isValid && PackageJsonData.getOrCreateSafe(project, it).isDependencyOfAnyType(NUXT_PKG) }
+      .filter { it.isValid && PackageJsonData.getOrCreateWithPreferredProject(project, it).isDependencyOfAnyType(NUXT_PKG) }
       .mapNotNull {
         NodeModuleSearchUtil.resolveModuleFromNodeModulesDir(
           it.parent, NUXT_PKG, NodeModuleDirectorySearchProcessor.PROCESSOR)

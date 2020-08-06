@@ -12,7 +12,7 @@ class VueCliWebpackConfigLocator : WebpackConfigLocator {
   override fun detectConfig(project: Project): String? =
     PackageJsonFileManager.getInstance(project).validPackageJsonFiles
       .asSequence()
-      .filter { it.isValid && PackageJsonData.getOrCreateSafe(project, it).isDependencyOfAnyType(VUE_CLI_SERVICE_PKG) }
+      .filter { it.isValid && PackageJsonData.getOrCreateWithPreferredProject(project, it).isDependencyOfAnyType(VUE_CLI_SERVICE_PKG) }
       .mapNotNull {
         NodeModuleSearchUtil.resolveModuleFromNodeModulesDir(
           it.parent, VUE_CLI_SERVICE_PKG, NodeModuleDirectorySearchProcessor.PROCESSOR)
