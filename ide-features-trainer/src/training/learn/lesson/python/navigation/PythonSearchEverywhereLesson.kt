@@ -30,12 +30,21 @@ class PythonSearchEverywhereLesson(module: Module) : KLesson("Search everywhere"
       text("Suppose you are looking for a class with ${code("cache")} and ${code("extension")} words in the name. " +
            "Type ${code(it)} (prefixes of required words) to the search field.")
       stateCheck { checkWordInSearch(it) }
-      test { type(it) }
+      test {
+        Thread.sleep(500)
+        type(it)
+      }
     }
 
     actionTask("QuickImplementations") {
+      test {
+        //Filter just one item
+        GuiTestUtil.shortcut(Key.HOME)
+        type("f")
+        Thread.sleep(500)
+      }
       "We found ${code("FragmentCacheExtension")}. " +
-      "Now you can preview the found item. Just select it by arrows (or mouse single-click) and press ${action(it)}."
+      "Now you can preview the found item. Just select it by keyboard arrows and press ${action(it)}."
     }
 
     task {
