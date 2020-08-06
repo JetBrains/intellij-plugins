@@ -35,7 +35,7 @@ import java.util.concurrent.CompletableFuture
 class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Project) : Disposable {
   private data class TaskInfo(val content: (Int) -> Unit,
                               var restoreIndex: Int,
-                              val realTaskIndex: Int?,
+                              val shownTaskIndex: Int?,
                               var messagesNumberBeforeStart: Int = 0,
                               var rehighlightComponent: (() -> Component)? = null,
                               var userVisibleInfo: PreviousTaskInfo? = null)
@@ -43,7 +43,8 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
   data class TaskCallbackData(var restoreCondition: (() -> Boolean)? = null,
                               var delayMillis: Int = 0)
 
-  private var currentRealTaskNumber = 0
+  // Just tasks with messages to the panel. Do not count technical intermediate tasks.
+  private var currentProgressTaskNumber = 0
 
   private var isUnderTaskProcessing = false
   private val taskActions: MutableList<TaskInfo> = ArrayList()
@@ -64,8 +65,8 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
     Disposer.register(parentDisposable, this)
   }
 
-  private fun addTaskAction(realTaskIndex: Int? = null, content: (Int) -> Unit) {
-    taskActions.add(TaskInfo(content, taskActions.size - 1, realTaskIndex))
+  private fun addTaskAction(shownTaskIndex: Int? = null, content: (Int) -> Unit) {
+    taskActions.add(TaskInfo(content, taskActions.size - 1, shownTaskIndex))
   }
 
   fun getUserVisibleInfo(index: Int): PreviousTaskInfo {
@@ -89,8 +90,8 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
     }
 
     val isRealTask = LessonExecutorUtil.isRealTask(taskContent)
-    val realTaskNumber = if (isRealTask) currentRealTaskNumber++ else null
-    addTaskAction(realTaskNumber) { processTask(taskContent, it) }
+    val shownTaskNumber = if (isRealTask) currentProgressTaskNumber++ else null
+    addTaskAction(shownTaskNumber) { processTask(taskContent, it) }
   }
 
   override fun dispose() {
@@ -162,8 +163,8 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
       return
     }
     val taskInfo = taskActions[taskIndex]
-    taskInfo.realTaskIndex?.let {
-      LearningUiManager.activeToolWindow?.learnPanel?.updateLessonProgress(currentRealTaskNumber, it)
+    taskInfo.shownTaskIndex?.let {
+      LearningUiManager.activeToolWindow?.learnPanel?.updateLessonProgress(currentProgressTaskNumber, it)
     }
     taskInfo.messagesNumberBeforeStart = LessonManager.instance.messagesNumber()
     setUserVisibleInfo(taskIndex)

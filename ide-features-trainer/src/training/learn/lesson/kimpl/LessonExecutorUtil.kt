@@ -17,6 +17,7 @@ import java.util.concurrent.Future
 import javax.swing.Icon
 
 internal object LessonExecutorUtil {
+  /** This task is a real task with some event required and corresponding text. Used for progress indication. */
   fun isRealTask(taskContent: TaskContext.() -> Unit): Boolean {
     val fakeTaskContext = FakeTaskContext()
     taskContent(fakeTaskContext)
