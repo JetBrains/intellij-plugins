@@ -37,6 +37,10 @@ object DenoUtil {
   }
 
   private fun getDenoDirPath(): String {
+    val denoDir = System.getenv("DENO_DIR");
+    if (denoDir != null) {
+      return denoDir
+    }
     val userHome = SystemProperties.getUserHome()
     if (SystemInfoRt.isMac) {
       return "$userHome/Library/Caches/deno"
