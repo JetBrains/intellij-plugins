@@ -25,7 +25,7 @@ import java.util.concurrent.Future
 
 internal class TaskContextImpl(private val lessonExecutor: LessonExecutor,
                                private val recorder: ActionsRecorder,
-                               private val taskIndex: Int,
+                               val taskIndex: Int,
                                private val callbackData: LessonExecutor.TaskCallbackData) : TaskContext() {
   private val runtimeContext = TaskRuntimeContext(lessonExecutor.lesson,
                                                   lessonExecutor.editor,
@@ -49,8 +49,8 @@ internal class TaskContextImpl(private val lessonExecutor: LessonExecutor,
   }
 
   override fun proposeRestore(restoreCheck: TaskRuntimeContext.() -> RestoreProposal) {
-    var restoreResult = false
     restoreState {
+      // restoreState is used to trigger by any IDE state change and check restore proposal is needed
       val file = lessonExecutor.virtualFile
       val type = restoreCheck(runtimeContext)
       if (type == RestoreProposal.None) {
@@ -60,13 +60,12 @@ internal class TaskContextImpl(private val lessonExecutor: LessonExecutor,
       }
       else if (type != LessonManager.instance.shownRestoreType) {
         val proposal = RestoreNotification(type) {
-          restoreResult = true
-          lessonExecutor.tryToCheckRestore()
+          lessonExecutor.applyRestore(this@TaskContextImpl)
         }
         EditorNotifications.getInstance(runtimeContext.project).updateNotifications(file)
         LessonManager.instance.addRestoreNotification(proposal)
       }
-      return@restoreState restoreResult
+      return@restoreState false
     }
   }
 

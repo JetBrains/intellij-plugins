@@ -213,21 +213,20 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
     processTestActions(taskContext)
   }
 
-  fun tryToCheckRestore() {
-    currentRestoreRecorder?.tryToCheckCallback()
+  internal fun applyRestore(taskContext: TaskContextImpl) {
+    taskContext.steps.forEach { it.cancel(true) }
+    val restoreIndex = taskActions[taskContext.taskIndex].restoreIndex
+    val restoreInfo = taskActions[restoreIndex]
+    restoreInfo.rehighlightComponent?.let { it() }
+    LessonManager.instance.resetMessagesNumber(restoreInfo.messagesNumberBeforeStart)
+    processNextTask(restoreIndex)
   }
 
   /** @return a callback to clear resources used to track restore */
   private fun checkForRestore(taskContext: TaskContextImpl,
-                              taskIndex: Int,
                               taskCallbackData: TaskCallbackData): () -> Unit {
     fun restoreTask() {
-      taskContext.steps.forEach { it.cancel(true) }
-      val restoreIndex = taskActions[taskIndex].restoreIndex
-      val restoreInfo = taskActions[restoreIndex]
-      restoreInfo.rehighlightComponent?.let { it() }
-      LessonManager.instance.resetMessagesNumber(restoreInfo.messagesNumberBeforeStart)
-      processNextTask(restoreIndex)
+      applyRestore(taskContext)
     }
 
     val restoreCondition = taskCallbackData.restoreCondition ?: return {}
@@ -282,7 +281,7 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
   private fun chainNextTask(taskContext: TaskContextImpl,
                             recorder: ActionsRecorder,
                             taskCallbackData: TaskCallbackData) {
-    val clearRestore = checkForRestore(taskContext, currentTaskIndex, taskCallbackData)
+    val clearRestore = checkForRestore(taskContext, taskCallbackData)
 
     recorder.tryToCheckCallback()
 
