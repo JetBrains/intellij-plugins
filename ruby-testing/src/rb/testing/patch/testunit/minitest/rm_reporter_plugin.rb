@@ -1,3 +1,6 @@
+# This file is the main entrypoint in the process of injection of RubyMine output formatter into minitest / minitest-reporters
+# infrastructure. It sets up the runner and reporter for minitest.
+
 begin
   require 'teamcity/runner_common'
   require 'teamcity/utils/service_message_factory'
@@ -256,4 +259,6 @@ else
       end
     end
   end
+
+  require 'minitest/rubymine_minitest_initializer'
 end
