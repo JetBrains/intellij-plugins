@@ -65,7 +65,7 @@ class PythonLangSupport : AbstractLangSupport() {
     PythonSdkFlavor.getFlavor(sdk)?.getLanguageLevel(sdk)?.isAtLeast(LanguageLevel.PYTHON27) ?: false
 
   override fun blockProjectFileModification(project: Project, file: VirtualFile): Boolean {
-    return file.path != "${project.basePath}${VfsUtilCore.VFS_SEPARATOR_CHAR}${projectSandboxRelativePath}"
+    return file.name != projectSandboxRelativePath
   }
 
   override val installRemoteProject: ((Path) -> Unit)? = { projectDirectory ->

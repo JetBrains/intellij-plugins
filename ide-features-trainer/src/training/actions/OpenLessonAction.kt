@@ -330,10 +330,11 @@ class OpenLessonAction(val lesson: Lesson) : AnAction(lesson.name) {
         val manager = ProjectRootManager.getInstance(learnProject)
         if (existedFile != null) {
           val root = manager.contentRoots[0]
-          return root.findFileByRelativePath(existedFile)!!
+          val findFileByRelativePath = root?.findFileByRelativePath(existedFile)
+          if (findFileByRelativePath != null) return findFileByRelativePath
         }
 
-        val fileName = lesson.fileName
+        val fileName = existedFile ?: lesson.fileName
 
         var lessonVirtualFile: VirtualFile? = null
         var roots = manager.contentSourceRoots
