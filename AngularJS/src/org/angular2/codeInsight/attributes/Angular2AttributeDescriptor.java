@@ -548,6 +548,11 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     if (myInfo instanceof Angular2AttributeNameParser.EventInfo
         && ((Angular2AttributeNameParser.EventInfo)myInfo).eventType == Angular2HtmlEvent.EventType.REGULAR) {
 
+      JSType extractedType = Angular2TypeUtils.extractEventVariableType(getJSType());
+      if (extractedType != null) {
+        return extractedType;
+      }
+
       JSType eventMap = Angular2TypeUtils.getElementEventMap(
         Angular2TypeUtils.createJSTypeSourceForXmlElement(myResolver.getScope()));
       if (eventMap != null) {
@@ -557,7 +562,6 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
           return type;
         }
       }
-      return Angular2TypeUtils.extractEventVariableType(getJSType());
     }
     return null;
   }

@@ -1070,4 +1070,11 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.checkHighlighting();
   }
 
+  public void testElementShims() {
+    myFixture.copyDirectoryToProject("element_shims", ".");
+    myFixture.configureFromTempProjectFile("selectChangeEvent.html");
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.checkHighlighting();
+  }
+
 }

@@ -85,6 +85,9 @@ public class Angular2TypeUtils {
       .ofNullable(JSTypeUtils.createType(HTML_ELEMENT_TAG_NAME_MAP_CLASS_NAME, typeSource))
       .map(tagNameMap -> tagNameMap.asRecordType().findPropertySignature(StringUtil.toLowerCase(tagName)))
       .map(JSRecordType.PropertySignature::getJSType)
+      // We should keep the original type source,
+      // otherwise we are not getting any project specific shims.
+      .map(type -> type.withNewSource(typeSource))
       .orElseGet(() -> JSTypeUtils.createType(HTML_ELEMENT_CLASS_NAME, typeSource));
   }
 
