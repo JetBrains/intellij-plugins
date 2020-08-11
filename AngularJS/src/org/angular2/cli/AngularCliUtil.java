@@ -24,6 +24,7 @@ import one.util.streamex.StreamEx;
 import org.angular2.cli.config.AngularConfig;
 import org.angular2.cli.config.AngularConfigProvider;
 import org.angular2.lang.Angular2Bundle;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -81,7 +82,7 @@ public class AngularCliUtil {
     return ANGULAR_JSON_NAMES.contains(fileName);
   }
 
-  public static void notifyAngularCliNotInstalled(@NotNull Project project, @NotNull VirtualFile cliFolder, @NotNull String message) {
+  public static void notifyAngularCliNotInstalled(@NotNull Project project, @NotNull VirtualFile cliFolder, @NotNull @Nls String message) {
     VirtualFile packageJson = PackageJsonUtil.findChildPackageJsonFile(cliFolder);
     Notification notification = ANGULAR_CLI_NOTIFICATIONS.createNotification(
       message,
@@ -137,7 +138,6 @@ public class AngularCliUtil {
                                                                                  @NotNull String packageJsonPath,
                                                                                  @NotNull @NonNls String label,
                                                                                  @NotNull String scriptName) {
-    //noinspection HardCodedStringLiteral
     return createIfNoSimilar("npm", project, label, null, packageJsonPath,
                              ContainerUtil.newHashMap(pair("run-script", scriptName)));
   }

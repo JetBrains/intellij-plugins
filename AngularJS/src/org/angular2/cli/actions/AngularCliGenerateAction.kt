@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.cli.actions
 
+import com.intellij.CommonBundle
 import com.intellij.execution.configurations.CommandLineTokenizer
 import com.intellij.icons.AllIcons
 import com.intellij.javascript.nodejs.CompletionModuleInfo
@@ -31,6 +32,7 @@ import com.intellij.util.ui.JBScalableIcon
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import org.angular2.cli.*
+import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.Angular2LangUtil.ANGULAR_CLI_PACKAGE
 import java.awt.BorderLayout
 import java.awt.Component
@@ -54,7 +56,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
     val cli = AngularCliUtil.findAngularCliFolder(project, file) ?: return
 
     if (!AngularCliUtil.hasAngularCLIPackageInstalled(project, cli)) {
-      AngularCliUtil.notifyAngularCliNotInstalled(project, cli, "Can't generate code from Angular Schematics")
+      AngularCliUtil.notifyAngularCliNotInstalled(project, cli, Angular2Bundle.message("angular.action.ng-generate.cant-generate-code"))
       return
     }
 
@@ -79,7 +81,8 @@ class AngularCliGenerateAction : DumbAwareAction() {
         icon = JBUIScale.scaleIcon(EmptyIcon.create(5) as JBScalableIcon)
         if (value.error != null) {
           append(value.name!!, SimpleTextAttributes.ERROR_ATTRIBUTES, true)
-          append(" - Error: " + value.error!!.decapitalize(), SimpleTextAttributes.GRAY_ATTRIBUTES, false)
+          append(Angular2Bundle.message("angular.action.ng-generate.error-label", value.error!!.decapitalize()),
+                 SimpleTextAttributes.GRAY_ATTRIBUTES, false)
         }
         else {
           append(value.name!!, SimpleTextAttributes.REGULAR_ATTRIBUTES, true)
@@ -129,13 +132,13 @@ class AngularCliGenerateAction : DumbAwareAction() {
       .setCancelOnOtherWindowOpen(true)
       .setMovable(true)
       .setResizable(true)
-      .setTitle("Generate Code with Angular Schematics")
+      .setTitle(Angular2Bundle.message("angular.action.ng-generate.title"))
       .setSettingButtons(toolbarComponent)
       .setCancelOnWindowDeactivation(false)
       .setCancelOnClickOutside(true)
       .setDimensionServiceKey(project, "org.angular.cli.generate", true)
       .setMinSize(Dimension(JBUI.scale(350), JBUI.scale(300)))
-      .setCancelButton(IconButton("Close", AllIcons.Actions.Close, AllIcons.Actions.CloseHovered))
+      .setCancelButton(IconButton(CommonBundle.message("action.text.close"), AllIcons.Actions.Close, AllIcons.Actions.CloseHovered))
     val popup = builder.createPopup()
     list.addKeyListener(object : KeyAdapter() {
       override fun keyPressed(e: KeyEvent?) {
@@ -199,7 +202,8 @@ class AngularCliGenerateAction : DumbAwareAction() {
         panel.add(JLabel(schematic.description), BorderLayout.NORTH)
         editor = SchematicOptionsTextField(project, schematic.options)
         editor.setPreferredWidth(250)
-        panel.add(LabeledComponent.create(editor, "Parameters" + paramsDesc(schematic)), BorderLayout.SOUTH)
+        panel.add(LabeledComponent.create(
+          editor, Angular2Bundle.message("angular.action.ng-generate.label.parameters", paramsDesc(schematic))), BorderLayout.SOUTH)
         return panel
       }
 
@@ -209,7 +213,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
 
       fun paramsDesc(b: Schematic): String {
         val argDisplay = b.arguments.joinToString(" ") { "<" + it.name + ">" }
-        val optionsDisplay = if (b.options.isEmpty()) "" else "<options...>"
+        val optionsDisplay = if (b.options.isEmpty()) "" else Angular2Bundle.message("angular.action.ng-generate.params.options")
 
         val display = listOf(argDisplay, optionsDisplay).filter { it.isNotEmpty() }
         if (display.isEmpty()) {

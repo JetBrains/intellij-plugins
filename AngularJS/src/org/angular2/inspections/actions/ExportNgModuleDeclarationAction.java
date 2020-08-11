@@ -20,6 +20,7 @@ import org.angular2.entities.Angular2EntityUtils;
 import org.angular2.entities.source.Angular2SourceDeclaration;
 import org.angular2.entities.source.Angular2SourceModule;
 import org.angular2.inspections.quickfixes.Angular2FixesPsiUtil;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,14 +33,14 @@ public class ExportNgModuleDeclarationAction implements QuestionAction {
   private final @Nullable Editor myEditor;
   private final @NotNull PsiElement myContext;
   private final @NotNull SmartPsiElementPointer<ES6Decorator> myDecorator;
-  private final @NotNull String myName;
+  private final @NotNull @Nls String myName;
   private final boolean myCodeCompletion;
   private final NotNullLazyValue<NgModuleImportAction> myImportAction;
 
   ExportNgModuleDeclarationAction(@Nullable Editor editor,
                                   @NotNull PsiElement context,
                                   @NotNull SmartPsiElementPointer<ES6Decorator> decorator,
-                                  @NotNull String actionName,
+                                  @NotNull @Nls String actionName,
                                   boolean codeCompletion) {
     myEditor = editor;
     myContext = context;

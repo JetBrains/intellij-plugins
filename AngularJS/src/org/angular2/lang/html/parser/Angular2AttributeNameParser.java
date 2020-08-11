@@ -10,6 +10,7 @@ import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.html.psi.Angular2HtmlEvent.AnimationPhase;
 import org.angular2.lang.html.psi.Angular2HtmlEvent.EventType;
 import org.angular2.lang.html.psi.PropertyBindingType;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -193,7 +194,7 @@ public class Angular2AttributeNameParser {
   public static class AttributeInfo {
 
     public final @NotNull String name;
-    public final @Nullable String error;
+    public final @Nullable @Nls String error;
     public final @NotNull Angular2AttributeType type;
     public final boolean isCanonical;
 
@@ -201,7 +202,7 @@ public class Angular2AttributeNameParser {
       this(name, isCanonical, type, null);
     }
 
-    public AttributeInfo(@NotNull String name, boolean isCanonical, @NotNull Angular2AttributeType type, @Nullable String error) {
+    public AttributeInfo(@NotNull String name, boolean isCanonical, @NotNull Angular2AttributeType type, @Nullable @Nls String error) {
       this.name = name;
       this.error = error;
       this.type = type;
@@ -282,7 +283,7 @@ public class Angular2AttributeNameParser {
       this(name, isCanonical, animationPhase, null);
     }
 
-    public EventInfo(@NotNull String name, boolean isCanonical, @NotNull AnimationPhase animationPhase, @Nullable String error) {
+    public EventInfo(@NotNull String name, boolean isCanonical, @NotNull AnimationPhase animationPhase, @Nullable @Nls String error) {
       super(name, isCanonical, Angular2AttributeType.EVENT, error);
       this.animationPhase = animationPhase;
       this.eventType = EventType.ANIMATION;

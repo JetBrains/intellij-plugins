@@ -15,6 +15,7 @@ import com.intellij.refactoring.rename.RenameUtil;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.usageView.UsageViewTypeLocation;
 import com.intellij.util.IncorrectOperationException;
+import org.angularjs.AngularJSBundle;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -82,7 +83,7 @@ public class AngularJSDirectiveRenameProcessor extends JSDefaultRenameProcessor 
     public @Nullable String getElementDescription(@NotNull PsiElement element, @NotNull ElementDescriptionLocation location) {
       JSImplicitElement directive = DirectiveUtil.getDirective(element);
       if (directive != null) {
-        if (location instanceof UsageViewTypeLocation) return "directive";
+        if (location instanceof UsageViewTypeLocation) return AngularJSBundle.message("angularjs.symbol.directive");
         return directive.getName();
       }
       return null;

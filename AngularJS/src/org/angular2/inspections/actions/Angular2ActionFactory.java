@@ -9,6 +9,7 @@ import com.intellij.psi.SmartPsiElementPointer;
 import org.angular2.entities.Angular2Declaration;
 import org.angular2.entities.source.Angular2SourceDeclaration;
 import org.angular2.lang.Angular2Bundle;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -71,7 +72,7 @@ public class Angular2ActionFactory {
   public static @NotNull ExportNgModuleDeclarationAction createExportNgModuleDeclarationAction(@Nullable Editor editor,
                                                                                                @NotNull PsiElement element,
                                                                                                @NotNull SmartPsiElementPointer<ES6Decorator> declarationDecorator,
-                                                                                               @NotNull String actionName,
+                                                                                               @NotNull @Nls String actionName,
                                                                                                boolean codeCompletion) {
     return new ExportNgModuleDeclarationAction(editor, element, declarationDecorator, actionName, codeCompletion);
   }
