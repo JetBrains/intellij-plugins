@@ -51,8 +51,8 @@ public class PlatformioBoardsParserTest extends UsefulTestCase {
                                                                       "framework=arduino")));
   }
 
-  @SuppressWarnings({"unchecked", "rawtypes"})
+  @SuppressWarnings("unchecked")
   private static Stream<DeviceTreeNode> childrenStream(TreeNode treeNode) {
-    return Collections.list((Enumeration)treeNode.children()).stream();
+    return Collections.list(treeNode.children()).stream();
   }
 }
