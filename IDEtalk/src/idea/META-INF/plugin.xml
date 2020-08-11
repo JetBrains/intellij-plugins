@@ -28,7 +28,7 @@
     <customPortServerManager implementation="jetbrains.communicator.p2p.P2PTransport$P2PCustomPortServerManager"/>
   </extensions>
   <extensions defaultExtensionNs="com.intellij">
-    <notificationAllowlist groupIds="IDETalk XmlRpc Server"/>
+    <notificationGroup id="IDETalk XmlRpc Server" displayType="STICKY_BALLOON"/>
   </extensions>
 
   <application-components>
