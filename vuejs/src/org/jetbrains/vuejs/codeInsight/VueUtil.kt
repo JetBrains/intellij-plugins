@@ -40,6 +40,7 @@ import com.intellij.util.ObjectUtils.tryCast
 import com.intellij.util.castSafelyTo
 import icons.VuejsIcons
 import one.util.streamex.StreamEx
+import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpression
 import org.jetbrains.vuejs.lang.html.VueLanguage
@@ -58,7 +59,7 @@ const val ATTR_ARGUMENT_PREFIX = ':'
 const val ATTR_MODIFIER_PREFIX = '.'
 
 val VUE_NOTIFICATIONS =  NotificationGroup("Vue", NotificationDisplayType.BALLOON, true, null,
-                                            VuejsIcons.Vue, "Vue", null)
+                                           VuejsIcons.Vue, VueBundle.message("vue.documentation.vue"), null)
 
 fun fromAsset(name: String): String {
   // TODO ensure that this conversion conforms to Vue.js rules

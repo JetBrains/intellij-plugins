@@ -22,6 +22,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.AlarmFactory
 import com.intellij.util.castSafelyTo
 import com.intellij.util.text.SemVer
+import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.VUE_NOTIFICATIONS
 import org.jetbrains.vuejs.codeInsight.resolveSymbolFromNodeModule
 import org.jetbrains.vuejs.libraries.nuxt.NUXT_2_9_0
@@ -96,8 +97,8 @@ class NuxtApplicationImpl(override val configFile: VirtualFile, override val pro
 
   private fun notifyNuxtTypesNotInstalled() {
     val notification = VUE_NOTIFICATIONS.createNotification(
-      "Nuxt.js Support",
-      "For better code completion suggestions please add @nuxt/types to project dependencies",
+      VueBundle.message("nuxt.support.notification.title"),
+      VueBundle.message("nuxt.support.notification.contents"),
       NotificationType.INFORMATION)
     packageJson?.let {
       notification.addAction(InstallNuxtTypesAction(project, it, notification))
