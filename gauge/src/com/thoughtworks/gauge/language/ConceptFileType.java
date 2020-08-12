@@ -20,7 +20,7 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.thoughtworks.gauge.Constants;
 import com.thoughtworks.gauge.GaugeBundle;
-import com.thoughtworks.gauge.idea.icon.GaugeIcon;
+import icons.GaugeIcons;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -52,6 +52,6 @@ public final class ConceptFileType extends LanguageFileType {
 
   @Override
   public Icon getIcon() {
-    return GaugeIcon.GAUGE_CONCEPT_FILE_ICON;
+    return GaugeIcons.Gauge;
   }
 }

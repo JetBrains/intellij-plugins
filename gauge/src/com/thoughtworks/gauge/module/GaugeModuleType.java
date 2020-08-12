@@ -16,17 +16,16 @@
 
 package com.thoughtworks.gauge.module;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleTypeManager;
 import com.thoughtworks.gauge.GaugeBundle;
-import com.thoughtworks.gauge.idea.icon.GaugeIcon;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
 public final class GaugeModuleType extends ModuleType<GaugeModuleBuilder> {
   public static final String MODULE_TYPE_ID = "Gauge_Module";
-  private static final String GAUGE_MODULE = "Gauge Module";
 
   public GaugeModuleType() {
     super(MODULE_TYPE_ID);
@@ -45,7 +44,7 @@ public final class GaugeModuleType extends ModuleType<GaugeModuleBuilder> {
   @NotNull
   @Override
   public String getName() {
-    return GAUGE_MODULE;
+    return GaugeBundle.message("gauge.module.type.name");
   }
 
   @NotNull
@@ -56,6 +55,6 @@ public final class GaugeModuleType extends ModuleType<GaugeModuleBuilder> {
 
   @Override
   public @NotNull Icon getNodeIcon(@Deprecated boolean isOpened) {
-    return GaugeIcon.GAUGE_LOGO;
+    return AllIcons.Nodes.Module;
   }
 }

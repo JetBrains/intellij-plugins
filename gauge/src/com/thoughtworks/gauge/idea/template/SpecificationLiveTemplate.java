@@ -19,14 +19,14 @@ package com.thoughtworks.gauge.idea.template;
 import com.intellij.ide.fileTemplates.FileTemplateDescriptor;
 import com.intellij.ide.fileTemplates.FileTemplateGroupDescriptor;
 import com.intellij.ide.fileTemplates.FileTemplateGroupDescriptorFactory;
-import com.thoughtworks.gauge.idea.icon.GaugeIcon;
 import com.thoughtworks.gauge.language.ConceptFileType;
 import com.thoughtworks.gauge.language.SpecFileType;
+import icons.GaugeIcons;
 
 final class SpecificationLiveTemplate implements FileTemplateGroupDescriptorFactory {
   @Override
   public FileTemplateGroupDescriptor getFileTemplatesDescriptor() {
-    FileTemplateGroupDescriptor descriptor = new FileTemplateGroupDescriptor("Specification", GaugeIcon.GAUGE_SPEC_FILE_ICON);
+    FileTemplateGroupDescriptor descriptor = new FileTemplateGroupDescriptor("Specification", GaugeIcons.Gauge);
     descriptor.addTemplate(new FileTemplateDescriptor("Specification.spec", SpecFileType.INSTANCE.getIcon()));
     descriptor.addTemplate(new FileTemplateDescriptor("Concept.cpt", ConceptFileType.INSTANCE.getIcon()));
     return descriptor;

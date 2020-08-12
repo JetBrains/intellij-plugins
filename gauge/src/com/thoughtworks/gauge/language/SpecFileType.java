@@ -19,7 +19,7 @@ package com.thoughtworks.gauge.language;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.thoughtworks.gauge.Constants;
 import com.thoughtworks.gauge.GaugeBundle;
-import com.thoughtworks.gauge.idea.icon.GaugeIcon;
+import icons.GaugeIcons;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -51,6 +51,6 @@ public final class SpecFileType extends LanguageFileType {
 
   @Override
   public Icon getIcon() {
-    return GaugeIcon.GAUGE_SPEC_FILE_ICON;
+    return GaugeIcons.Gauge;
   }
 }
