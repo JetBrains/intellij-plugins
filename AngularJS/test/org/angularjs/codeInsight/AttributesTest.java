@@ -213,6 +213,7 @@ public class AttributesTest extends BasePlatformTestCase {
   }
 
   public void testIncorrectJSDoc() {
+    //noinspection NonAsciiCharacters
     myFixture.configureByText(System.currentTimeMillis() + ".js",
                               "/**\n" +
                               " * @ngdoc directive\n" +
@@ -307,6 +308,12 @@ public class AttributesTest extends BasePlatformTestCase {
     assertNotNull(resolve);
     assertEquals("component15.js", resolve.getContainingFile().getName());
     assertEquals("hero: '<'", getDirectiveDefinitionText(resolve));
+  }
+
+  public void testNgOptionsHighlighting() {
+    myFixture.configureByFiles("ng-options.html", "angular.js");
+    myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
+    myFixture.checkHighlighting();
   }
 
 }
