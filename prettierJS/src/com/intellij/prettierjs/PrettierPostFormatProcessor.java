@@ -1,6 +1,11 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.prettierjs;
 
+import com.intellij.codeInsight.template.Template;
+import com.intellij.codeInsight.template.TemplateManager;
+import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -30,9 +35,17 @@ public class PrettierPostFormatProcessor implements PostFormatProcessor {
     Project project = psiFile.getProject();
     PrettierConfiguration configuration = PrettierConfiguration.getInstance(project);
     if (!configuration.isRunOnReformat()) return false;
+
     VirtualFile file = psiFile.getVirtualFile();
+    if (file == null) return false;
+
+    FileEditor fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(file);
+    if (fileEditor instanceof TextEditor) {
+      Template template = TemplateManager.getInstance(psiFile.getProject()).getActiveTemplate(((TextEditor)fileEditor).getEditor());
+      if (template != null) return false;
+    }
+
     String pattern = configuration.getFilesPattern();
-    return file != null &&
-           PrettierSaveAction.getFilesMatchingGlobPattern(project, pattern, Collections.singletonList(file)).size() == 1;
+    return PrettierSaveAction.getFilesMatchingGlobPattern(project, pattern, Collections.singletonList(file)).size() == 1;
   }
 }
