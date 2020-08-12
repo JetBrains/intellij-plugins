@@ -151,6 +151,7 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
     // ModalityState.current() or without argument - cannot be used: dialog steps can stop to work.
     // Good example: track of rename refactoring
     invokeLater(ModalityState.any()) {
+      disposeRecorders()
       currentTaskIndex = taskIndex
       processNextTask2()
     }
@@ -196,7 +197,6 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
 
   private fun processTask(taskContent: TaskContext.() -> Unit) {
     assert(ApplicationManager.getApplication().isDispatchThread)
-    disposeRecorders()
     val recorder = ActionsRecorder(project, editor.document, this)
     currentRecorder = recorder
     val taskCallbackData = TaskCallbackData()
@@ -324,7 +324,7 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
     }
   }
 
-  private fun setSample(sample: LessonSample) {
+  fun setSample(sample: LessonSample) {
     invokeLater(ModalityState.NON_MODAL) {
       setDocumentCode(sample.text)
       setCaret(sample.getPosition(0))

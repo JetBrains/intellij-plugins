@@ -7,6 +7,7 @@ import com.intellij.ui.tree.TreeVisitor
 import com.intellij.util.ui.tree.TreeUtil
 import org.fest.swing.timing.Timeout
 import org.intellij.lang.annotations.Language
+import training.learn.LearnBundle
 import training.learn.lesson.kimpl.LessonUtil
 import training.ui.LearningUiHighlightingManager
 import training.ui.LearningUiManager
@@ -34,18 +35,9 @@ abstract class TaskContext {
     }
   }
 
-  enum class RestoreProposal {
-    None,
-    Custom,
-    Caret,
-    Modification
-  }
+  data class RestoreNotification(val message: String, val callback: () -> Unit)
 
-  data class RestoreNotification(val type: RestoreProposal, val message: String? = null, val callback: () -> Unit) {
-    constructor(message: String, callback: () -> Unit): this(RestoreProposal.Custom, message, callback)
-  }
-
-  abstract fun proposeRestore(restoreCheck: TaskRuntimeContext.() -> RestoreProposal)
+  abstract fun proposeRestore(restoreCheck: TaskRuntimeContext.() -> RestoreNotification?)
 
   /**
    * Write a text to the learn panel (panel with a learning tasks).
@@ -203,5 +195,12 @@ abstract class TaskContext {
         future.complete(true)
       }
     }
+  }
+
+  companion object {
+    val CaretRestoreProposal: String
+      get() = LearnBundle.message("learn.restore.notification.caret.message")
+    val ModificationRestoreProposal: String
+      get() = LearnBundle.message("learn.restore.notification.modification.message")
   }
 }

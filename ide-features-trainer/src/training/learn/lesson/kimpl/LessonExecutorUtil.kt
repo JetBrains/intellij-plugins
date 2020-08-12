@@ -48,7 +48,7 @@ private class FakeTaskContext : TaskContext() {
 
   override fun restoreState(delayMillis: Int, checkState: TaskRuntimeContext.() -> Boolean) = Unit // do nothing
 
-  override fun proposeRestore(restoreCheck: TaskRuntimeContext.() -> RestoreProposal) = Unit // do nothing
+  override fun proposeRestore(restoreCheck: TaskRuntimeContext.() -> RestoreNotification?) = Unit // do nothing
 
   override fun text(text: String) {
     hasText = true

@@ -7,6 +7,7 @@ import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
+import training.learn.lesson.kimpl.LessonUtil.checkExpectedStateOfEditor
 
 abstract class SurroundAndUnwrapLesson(module: Module, lang: String) :
   KLesson("Surround and unwrap", module, lang) {
@@ -92,11 +93,8 @@ abstract class SurroundAndUnwrapLesson(module: Module, lang: String) :
 
   private fun TaskContext.proposeIfModified(checkCaret: TaskRuntimeContext.() -> Boolean) {
     proposeRestore {
-      when {
-        editor.document.text != previous.text -> TaskContext.RestoreProposal.Modification
-        checkCaret() -> TaskContext.RestoreProposal.Caret
-        else -> TaskContext.RestoreProposal.None
-      }
+      checkExpectedStateOfEditor(previous.sample, false)
+      ?: if (checkCaret()) TaskContext.RestoreNotification(TaskContext.CaretRestoreProposal, restorePreviousTaskCallback) else null
     }
   }
 }

@@ -6,6 +6,7 @@ import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonUtil
+import training.learn.lesson.kimpl.LessonUtil.checkExpectedStateOfEditor
 import training.learn.lesson.kimpl.parseLessonSample
 
 class PythonSmartCompletionLesson(module: Module) : KLesson("Smart completion", module, "Python") {
@@ -52,9 +53,7 @@ class PythonSmartCompletionLesson(module: Module) : KLesson("Smart completion", 
 
   private fun TaskContext.proposeRestoreMe() {
     proposeRestore {
-      LessonUtil.checkExpectedStateOfEditor(editor, sample) { change ->
-        change.isEmpty()
-      }
+      checkExpectedStateOfEditor(sample)
     }
   }
 }

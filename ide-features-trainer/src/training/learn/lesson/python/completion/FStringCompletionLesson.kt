@@ -3,11 +3,11 @@ package training.learn.lesson.python.completion
 
 import com.intellij.testGuiFramework.framework.GuiTestUtil
 import com.intellij.testGuiFramework.util.Key
-import training.commands.kotlin.TaskContext
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonUtil
+import training.learn.lesson.kimpl.LessonUtil.checkExpectedStateOfEditor
 import training.learn.lesson.kimpl.parseLessonSample
 
 class FStringCompletionLesson(module: Module) : KLesson("completion.f.string", "F-string completion", module, "Python") {
@@ -52,16 +52,16 @@ class FStringCompletionLesson(module: Module) : KLesson("completion.f.string", "
     task("\${my") {
       text("PyCharm supports automatic f-string conversion. Just start to type ${code(it)}")
       runtimeText {
-        val prefixTyped = LessonUtil.checkExpectedStateOfEditor(editor, sample) { change ->
+        val prefixTyped = checkExpectedStateOfEditor(sample) { change ->
           "\${my_car".startsWith(change) && change.startsWith(it)
-        } == TaskContext.RestoreProposal.None
+        } == null
         if (prefixTyped) "You can invoke completion manually with ${action("CodeCompletion")}" else null
       }
       triggerByListItemAndHighlight(highlightBorder = false) { item ->
         item.toString().contains(completionItem)
       }
       proposeRestore {
-        LessonUtil.checkExpectedStateOfEditor(editor, sample) { change ->
+        checkExpectedStateOfEditor(sample) { change ->
           "\${my_car".startsWith(change)
         }
       }

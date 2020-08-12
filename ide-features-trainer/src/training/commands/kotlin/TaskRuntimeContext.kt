@@ -3,22 +3,34 @@ package training.commands.kotlin
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.IdeFocusManager
 import training.learn.lesson.kimpl.KLesson
+import training.learn.lesson.kimpl.LessonExecutor
+import training.learn.lesson.kimpl.LessonSample
 import java.awt.Component
 
-open class TaskRuntimeContext(private val lesson: KLesson,
-                              val editor: Editor,
-                              val project: Project,
+open class TaskRuntimeContext(private val lessonExecutor: LessonExecutor,
                               val taskDisposable: Disposable,
-                              val lessonDisposable: Disposable,
+                              val restorePreviousTaskCallback: () -> Unit,
                               private val previousGetter: () -> PreviousTaskInfo) {
-  constructor(base: TaskRuntimeContext) : this(base.lesson, base.editor, base.project, base.taskDisposable, base.lessonDisposable, base.previousGetter)
+  constructor(base: TaskRuntimeContext)
+    : this(base.lessonExecutor, base.taskDisposable, base.restorePreviousTaskCallback, base.previousGetter)
+
+  val editor: Editor = lessonExecutor.editor
+  val project: Project = lessonExecutor.project
+  val lessonDisposable: Disposable = lessonExecutor
 
   val focusOwner: Component?
     get() = IdeFocusManager.getInstance(project).focusOwner
 
   val previous: PreviousTaskInfo
     get() = previousGetter()
+
+  val virtualFile: VirtualFile
+    get() = FileDocumentManager.getInstance().getFile(editor.document) ?: error("No virtual file for ${editor.document}")
+
+  fun setSample(sample: LessonSample) = lessonExecutor.setSample(sample)
 }

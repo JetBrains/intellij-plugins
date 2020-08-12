@@ -7,6 +7,7 @@ import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonUtil
+import training.learn.lesson.kimpl.LessonUtil.checkExpectedStateOfEditor
 import training.learn.lesson.kimpl.parseLessonSample
 
 class RubyPostfixCompletionLesson(module: Module) : KLesson("Postfix completion", module, "ruby") {
@@ -36,9 +37,7 @@ end
           it.toString() == ".if"
         }
         proposeRestore {
-          LessonUtil.checkExpectedStateOfEditor(editor, sample) {
-            ".if".startsWith(it)
-          }
+          checkExpectedStateOfEditor(sample) { ".if".startsWith(it) }
         }
         test {
           ideFrame {

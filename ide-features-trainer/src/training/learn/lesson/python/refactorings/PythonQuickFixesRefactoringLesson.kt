@@ -18,6 +18,7 @@ import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonUtil
+import training.learn.lesson.kimpl.LessonUtil.checkExpectedStateOfEditor
 import training.learn.lesson.kimpl.parseLessonSample
 import javax.swing.JDialog
 import javax.swing.JTable
@@ -69,7 +70,7 @@ class PythonQuickFixesRefactoringLesson(module: Module) : KLesson("refactoring.q
         item.toString().contains("Change signature of")
       }
       proposeRestore {
-        LessonUtil.checkExpectedStateOfEditor(editor, previous.sample) { change -> change.isEmpty() }
+        checkExpectedStateOfEditor(previous.sample)
       }
       test {
         Thread.sleep(500) // need to check the intention is ready
@@ -166,9 +167,7 @@ class PythonQuickFixesRefactoringLesson(module: Module) : KLesson("refactoring.q
 
   private fun TaskContext.proposeMyRestore() {
     proposeRestore {
-      LessonUtil.checkExpectedStateOfEditor(editor, sample) { change ->
-        ", y".startsWith(change)
-      }
+      checkExpectedStateOfEditor(sample) { ", y".startsWith(it) }
     }
   }
 }

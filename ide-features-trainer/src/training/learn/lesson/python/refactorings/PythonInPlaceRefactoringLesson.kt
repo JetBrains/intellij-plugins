@@ -4,10 +4,10 @@ package training.learn.lesson.python.refactorings
 import com.intellij.icons.AllIcons
 import com.intellij.testGuiFramework.framework.GuiTestUtil
 import com.intellij.testGuiFramework.util.Key
-import training.commands.kotlin.TaskContext
 import training.commands.kotlin.TaskRuntimeContext
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.*
+import training.learn.lesson.kimpl.LessonUtil.checkExpectedStateOfEditor
 import javax.swing.JLabel
 import javax.swing.JPanel
 
@@ -31,13 +31,13 @@ class PythonInPlaceRefactoringLesson(module: Module) : KLesson("refactoring.in.p
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
     fun TaskRuntimeContext.checkFirstChange() =
-      LessonUtil.checkExpectedStateOfEditor(editor, sample) { change -> "econd".startsWith(change) }
+      checkExpectedStateOfEditor(sample) { change -> "econd".startsWith(change) }
 
     task {
       text("Let's consider an alternative approach to performing refactorings. Suppose we want to rename local variable ${code(variableName)} " +
            "to ${code("second")}. Just start typing the new name.")
       stateCheck {
-        editor.document.text != sample.text && checkFirstChange() == TaskContext.RestoreProposal.None
+        editor.document.text != sample.text && checkFirstChange() == null
       }
       proposeRestore {
         checkFirstChange()
@@ -80,7 +80,7 @@ class PythonInPlaceRefactoringLesson(module: Module) : KLesson("refactoring.in.p
     lateinit var secondSample: LessonSample
 
     fun TaskRuntimeContext.checkSecondChange() =
-      LessonUtil.checkExpectedStateOfEditor(editor, secondSample) { change -> ", start".startsWith(change) }
+      checkExpectedStateOfEditor(secondSample) { change -> ", start".startsWith(change) }
 
     prepareRuntimeTask {
       secondSample = prepareSampleFromCurrentState(editor)

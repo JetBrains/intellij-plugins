@@ -8,6 +8,7 @@ import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 import training.learn.lesson.kimpl.LessonUtil
+import training.learn.lesson.kimpl.LessonUtil.checkExpectedStateOfEditor
 import javax.swing.JList
 
 abstract class BasicCompletionLessonBase(module: Module, lang: String) : KLesson("Basic completion", module, lang) {
@@ -38,7 +39,7 @@ abstract class BasicCompletionLessonBase(module: Module, lang: String) : KLesson
           it.toString().contains(item1Completion)
         }
         proposeRestore {
-          LessonUtil.checkExpectedStateOfEditor(editor, sample1) {
+          checkExpectedStateOfEditor(sample1) {
             val change = if (it.endsWith(item1CompletionSuffix)) it.subSequence(0, it.length - item1CompletionSuffix.length) else it
             item1CompletionPrefix.substring(0, item1CompletionPrefix.length - 2).startsWith(change)
           }
@@ -80,7 +81,7 @@ abstract class BasicCompletionLessonBase(module: Module, lang: String) : KLesson
           item.toString().contains(item2Completion)
         }
         proposeRestore {
-          LessonUtil.checkExpectedStateOfEditor(editor, sample2) { change ->
+          checkExpectedStateOfEditor(sample2) { change ->
             change.isEmpty()
           }
         }

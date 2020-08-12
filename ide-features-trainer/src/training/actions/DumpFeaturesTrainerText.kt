@@ -38,7 +38,7 @@ private class TextCollector(private val buffer: StringBuffer) : TaskContext() {
 
   override fun restoreState(delayMillis: Int, checkState: TaskRuntimeContext.() -> Boolean) = Unit // do nothing
 
-  override fun proposeRestore(restoreCheck: TaskRuntimeContext.() -> RestoreProposal) = Unit // do nothing
+  override fun proposeRestore(restoreCheck: TaskRuntimeContext.() -> RestoreNotification?) = Unit // do nothing
 
   override fun text(text: String) {
     buffer.append(text)

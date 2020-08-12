@@ -1,7 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.lesson.kimpl
 
-import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ex.ToolWindowManagerListener
@@ -16,32 +15,51 @@ object LessonUtil {
     return sample.text.substring(0, sample.startOffset) + inserted + sample.text.substring(sample.startOffset)
   }
 
-  fun checkExpectedStateOfEditor(editor: Editor,
-                                 sample: LessonSample,
-                                 checkModification: (String) -> Boolean): TaskContext.RestoreProposal {
+  fun TaskRuntimeContext.checkPositionOfEditor(sample: LessonSample): TaskContext.RestoreNotification? {
+    fun invalidCaret(): Boolean {
+      val selection = sample.selection
+      val currentCaret = editor.caretModel.currentCaret
+      return if (selection != null && selection.first != selection.second) {
+        currentCaret.selectionStart != selection.first || currentCaret.selectionEnd != selection.second
+      }
+      else currentCaret.offset != sample.startOffset
+    }
+
+    return checkExpectedStateOfEditor(sample, false)
+           ?: if (invalidCaret()) sampleRestoreNotification(TaskContext.CaretRestoreProposal, sample) else null
+  }
+
+  fun TaskRuntimeContext.checkExpectedStateOfEditor(sample: LessonSample,
+                                                    checkPosition: Boolean = true,
+                                                    checkModification: (String) -> Boolean = { it.isEmpty() }): TaskContext.RestoreNotification? {
     val prefix = sample.text.substring(0, sample.startOffset)
     val postfix = sample.text.substring(sample.startOffset)
 
     val docText = editor.document.charsSequence
-    return if (docText.startsWith(prefix) && docText.endsWith(postfix)) {
+    val message = if (docText.startsWith(prefix) && docText.endsWith(postfix)) {
       val middle = docText.subSequence(prefix.length, docText.length - postfix.length).toString()
       if (checkModification(middle)) {
         val offset = editor.caretModel.offset
-        if (prefix.length <= offset && offset <= prefix.length + middle.length) {
-          TaskContext.RestoreProposal.None
+        if (!checkPosition || (prefix.length <= offset && offset <= prefix.length + middle.length)) {
+          null
         }
         else {
-          TaskContext.RestoreProposal.Caret
+          TaskContext.CaretRestoreProposal
         }
       }
       else {
-        TaskContext.RestoreProposal.Modification
+        TaskContext.ModificationRestoreProposal
       }
     }
     else {
-      TaskContext.RestoreProposal.Modification
+      TaskContext.ModificationRestoreProposal
     }
+
+    return if (message != null) sampleRestoreNotification(message, sample) else null
   }
+
+  fun TaskRuntimeContext.sampleRestoreNotification(message: String, sample: LessonSample) =
+    TaskContext.RestoreNotification(message) { setSample(sample) }
 
   fun findItem(ui: JList<*>, checkList: (item: Any) -> Boolean): Int? {
     for (i in 0 until ui.model.size) {

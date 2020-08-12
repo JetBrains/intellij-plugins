@@ -27,11 +27,9 @@ internal class TaskContextImpl(private val lessonExecutor: LessonExecutor,
                                private val recorder: ActionsRecorder,
                                val taskIndex: Int,
                                private val callbackData: LessonExecutor.TaskCallbackData) : TaskContext() {
-  private val runtimeContext = TaskRuntimeContext(lessonExecutor.lesson,
-                                                  lessonExecutor.editor,
-                                                  lessonExecutor.project,
+  private val runtimeContext = TaskRuntimeContext(lessonExecutor,
                                                   recorder,
-                                                  lessonExecutor,
+                                                  { lessonExecutor.applyRestore(this) },
                                                   { lessonExecutor.getUserVisibleInfo(taskIndex) })
 
   val steps: MutableList<CompletableFuture<Boolean>> = mutableListOf()
@@ -48,22 +46,21 @@ internal class TaskContextImpl(private val lessonExecutor: LessonExecutor,
     callbackData.restoreCondition = { checkState(runtimeContext) }
   }
 
-  override fun proposeRestore(restoreCheck: TaskRuntimeContext.() -> RestoreProposal) {
+  override fun proposeRestore(restoreCheck: TaskRuntimeContext.() -> RestoreNotification?) {
     restoreState {
       // restoreState is used to trigger by any IDE state change and check restore proposal is needed
       val file = lessonExecutor.virtualFile
-      val type = restoreCheck(runtimeContext)
-      if (type == RestoreProposal.None) {
-        if (LessonManager.instance.shownRestoreType != RestoreProposal.None) {
+      val proposal = restoreCheck(runtimeContext)
+      if (proposal == null) {
+        if (LessonManager.instance.shownRestoreNotification != null) {
           LessonManager.instance.clearRestoreMessage()
         }
       }
-      else if (type != LessonManager.instance.shownRestoreType) {
-        val proposal = RestoreNotification(type) {
-          lessonExecutor.applyRestore(this@TaskContextImpl)
+      else {
+        if (proposal.message != LessonManager.instance.shownRestoreNotification?.message) {
+          EditorNotifications.getInstance(runtimeContext.project).updateNotifications(file)
+          LessonManager.instance.setRestoreNotification(proposal)
         }
-        EditorNotifications.getInstance(runtimeContext.project).updateNotifications(file)
-        LessonManager.instance.addRestoreNotification(proposal)
       }
       return@restoreState false
     }

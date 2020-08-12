@@ -7,6 +7,7 @@ import training.commands.kotlin.TaskContext
 import training.commands.kotlin.TaskRuntimeContext
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.*
+import training.learn.lesson.kimpl.LessonUtil.checkExpectedStateOfEditor
 import javax.swing.JList
 
 class PythonTabCompletionLesson(module: Module) : KLesson("Tab completion", module, "Python") {
@@ -79,9 +80,7 @@ class PythonTabCompletionLesson(module: Module) : KLesson("Tab completion", modu
 
   private fun TaskContext.proposeRestoreMe() {
     proposeRestore {
-      LessonUtil.checkExpectedStateOfEditor(editor, sample) { change ->
-        change.isEmpty()
-      }
+      checkExpectedStateOfEditor(sample)
     }
   }
 }
