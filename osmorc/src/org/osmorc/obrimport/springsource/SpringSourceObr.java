@@ -33,6 +33,7 @@ import org.osmorc.obrimport.Obr;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -64,7 +65,7 @@ public class SpringSourceObr implements Obr {
       indicator.setText("Connecting to " + getDisplayName() + "...");
       // http://www.springsource.com/repository/app/search?query=log4j
       // http://www.springsource.com/repository/app/bundle/version/detail?name=com.springsource.org.apache.log4j&version=1.2.15&searchType=bundlesByName&searchQuery=log4j
-      String url = "http://www.springsource.com/repository/app/search?query=" + URLEncoder.encode(queryString, "utf-8");
+      String url = "http://www.springsource.com/repository/app/search?query=" + URLEncoder.encode(queryString, StandardCharsets.UTF_8);
       String contents = HttpRequests.request(url).readString(indicator);
 
       indicator.setText("Search completed. Getting results.");

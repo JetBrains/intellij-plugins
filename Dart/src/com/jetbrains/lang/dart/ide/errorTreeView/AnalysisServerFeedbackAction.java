@@ -16,8 +16,8 @@ import com.jetbrains.lang.dart.sdk.DartSdk;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 public class AnalysisServerFeedbackAction extends DumbAwareAction {
   public AnalysisServerFeedbackAction() {
@@ -67,12 +67,6 @@ public class AnalysisServerFeedbackAction extends DumbAwareAction {
   }
 
   private static String urlEncode(String input) {
-    try {
-      return URLEncoder.encode(input, "UTF-8");
-    }
-    catch (UnsupportedEncodingException e) {
-      // Unreachable - UTF-8 is always supported.
-      return input;
-    }
+    return URLEncoder.encode(input, StandardCharsets.UTF_8);
   }
 }
