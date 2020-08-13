@@ -4,6 +4,7 @@ import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.openapi.projectRoots.Sdk;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,7 +51,7 @@ public interface FlexBuildConfiguration {
   String UNNAMED = "Unnamed";
 
   @NotNull
-  String getName();
+  @Nls(capitalization = Nls.Capitalization.Sentence) String getName();
 
   @NotNull
   TargetPlatform getTargetPlatform();

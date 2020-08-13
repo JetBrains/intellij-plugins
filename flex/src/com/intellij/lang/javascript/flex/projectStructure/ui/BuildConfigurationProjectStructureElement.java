@@ -37,6 +37,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.navigation.Place;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,18 +58,18 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
   }
 
   @Override
-  public String getPresentableName() {
+  public @Nls(capitalization = Nls.Capitalization.Sentence) String getPresentableName() {
     return myBc.getName();
   }
 
   @NotNull
   @Override
-  public String getPresentableText() {
+  public @Nls(capitalization = Nls.Capitalization.Sentence) String getPresentableText() {
     return FlexCommonBundle.message("bc.0.module.1", myBc.getName(), myModule.getName());
   }
 
   @Override
-  public String getTypeName() {
+  public @Nls(capitalization = Nls.Capitalization.Sentence) String getTypeName() {
     return FlexBundle.message("bc.structure.element.type.name");
   }
 
@@ -82,28 +83,6 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
     final FlexBCConfigurator configurator = FlexBuildConfigurationsExtension.getInstance().getConfigurator();
     final FlexProjectConfigurationEditor editor = configurator.getConfigEditor();
     assert editor != null;
-
-    /*
-    final SdkEntry sdkEntry = myBc.getDependencies().getSdkEntry();
-    if (sdkEntry == null) {
-      Pair<String, Object> location =
-        Pair.<String, Object>create(FlexBCConfigurable.LOCATION_ON_TAB, DependenciesConfigurable.Location.SDK);
-
-      PlaceInProjectStructure place = new PlaceInBuildConfiguration(this, DependenciesConfigurable.TAB_NAME, location);
-      problemsHolder.registerProblem(FlexBundle.message("bc.problem.no.sdk"), null, ProjectStructureProblemType.error("sdk"),
-                                     place, null);
-    }
-    else {
-      if (FlexSdkUtils.findFlexOrFlexmojosSdk(sdkEntry.getName()) == null) {
-        Pair<String, Object> location =
-          Pair.<String, Object>create(FlexBCConfigurable.LOCATION_ON_TAB, DependenciesConfigurable.Location.SDK);
-
-        PlaceInProjectStructure place = new PlaceInBuildConfiguration(this, DependenciesConfigurable.TAB_NAME, location);
-        problemsHolder.registerProblem(FlexBundle.message("bc.problem.sdk.not.found", sdkEntry.getName()), null,
-                                       ProjectStructureProblemType.error("flex-bc-sdk"), place, null);
-      }
-    }
-    */
 
     checkDependencies(problemsHolder, editor);
 
