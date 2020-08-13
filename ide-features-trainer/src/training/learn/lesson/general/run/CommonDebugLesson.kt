@@ -18,14 +18,18 @@ import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.LogicalPosition
 import com.intellij.openapi.editor.ex.EditorGutterComponentEx
 import com.intellij.openapi.editor.impl.EditorComponentImpl
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.testGuiFramework.framework.GuiTestUtil
 import com.intellij.testGuiFramework.util.Key
 import com.intellij.ui.tabs.impl.JBTabsImpl
 import com.intellij.util.ui.UIUtil
 import com.intellij.xdebugger.*
+import com.intellij.xdebugger.breakpoints.XBreakpoint
+import com.intellij.xdebugger.breakpoints.XBreakpointListener
 import com.intellij.xdebugger.impl.XDebugSessionImpl
 import com.intellij.xdebugger.impl.XDebuggerManagerImpl
+import com.intellij.xdebugger.impl.breakpoints.XBreakpointUtil
 import com.intellij.xdebugger.impl.frame.XDebuggerFramesList
 import com.intellij.xdebugger.impl.ui.tree.XDebuggerTree
 import org.fest.swing.timing.Timeout
@@ -57,15 +61,14 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
 
   protected var mayBeStopped: Boolean = false
 
+  private val incorrectBreakPointsMessage = "Breakpoints are set incorrect for this lesson."
+
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
 
     var needToRun = false
     prepareRuntimeTask {
       runWriteAction {
-        val breakpointManager = XDebuggerManager.getInstance(project).breakpointManager
-        breakpointManager.allBreakpoints.forEach { breakpointManager.removeBreakpoint(it) }
-
         needToRun = !selectedNeedConfiguration() && !configureDebugConfiguration()
       }
     }
@@ -86,7 +89,6 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
       }
     }
 
-
     lateinit var logicalPosition: LogicalPosition
     task {
       before {
@@ -99,12 +101,33 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
       }
     }
 
+    prepareRuntimeTask {
+      runWriteAction {
+        val breakpointManager = XDebuggerManager.getInstance(project).breakpointManager
+        breakpointManager.allBreakpoints.forEach { breakpointManager.removeBreakpoint(it) }
+      }
+    }
+
     task("ToggleLineBreakpoint") {
-      text("So there is a problem. Let's start investigation with placing breakpoint. To toggle a breakpoint you should click left editor gutter or just press ${action(it)}.")
+      text(
+        "So there is a problem. Let's start investigation with placing breakpoint. To toggle a breakpoint you should click left editor gutter or just press ${
+          action(it)
+        }.")
       stateCheck {
         lineWithBreakpoints() == setOf(logicalPosition.line)
       }
+      proposeRestore {
+        val breakpoints = lineWithBreakpoints()
+        if (breakpoints.isNotEmpty() && breakpoints != setOf(logicalPosition.line)) {
+          incorrectBreakPointsMessage
+        }
+        else null
+      }
       test { actions(it) }
+    }
+
+    prepareRuntimeTask {
+      setRestoreForBreakpoints(logicalPosition)
     }
 
     highlightButtonById("Debug")
@@ -130,10 +153,10 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
               override fun sessionStopped() {
                 val activeToolWindow = LearningUiManager.activeToolWindow
                 if (activeToolWindow != null && !mayBeStopped && LessonManager.instance.currentLesson == this@CommonDebugLesson) {
-                  LessonManager.instance.addRestoreNotification(TaskContext.RestoreNotification(
-                    "Debug session has been stopped. Need to restart lesson.") {
+                  val notification = TaskContext.RestoreNotification("Debug session has been stopped. Need to restart lesson.") {
                     CourseManager.instance.openLesson(activeToolWindow.project, this@CommonDebugLesson)
-                  })
+                  }
+                  LessonManager.instance.setRestoreNotification(notification)
                 }
               }
             }, lessonDisposable)
@@ -318,6 +341,42 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
       "It will be a correct answer! Lets close the dialog and stop debugging by ${action(it)}" +
       "or button ${icon(AllIcons.Actions.Suspend)}."
     }
+  }
+
+  private fun TaskRuntimeContext.setRestoreForBreakpoints(logicalPosition: LogicalPosition) {
+    fun check() {
+      invokeLater {
+        if (lineWithBreakpoints() != setOf(logicalPosition.line)) {
+          val notification = TaskContext.RestoreNotification(incorrectBreakPointsMessage) {
+            runWriteAction {
+              LessonManager.instance.clearRestoreMessage()
+              val breakpointManager = XDebuggerManager.getInstance(project).breakpointManager
+              breakpointManager.allBreakpoints.forEach { breakpointManager.removeBreakpoint(it) }
+              FileDocumentManager.getInstance().getFile(editor.document)
+              val line = logicalPosition.line
+              val createPosition = XDebuggerUtil.getInstance().createPosition(virtualFile, line)
+                                   ?: error("Can't create source position: $line at $virtualFile")
+              XBreakpointUtil.toggleLineBreakpoint(project, createPosition, editor, false, false, true)
+              //breakpointManager.addLineBreakpoint()
+            }
+          }
+          LessonManager.instance.setRestoreNotification(notification)
+        }
+      }
+    }
+    project.messageBus.connect(lessonDisposable).subscribe(XBreakpointListener.TOPIC, object : XBreakpointListener<XBreakpoint<*>> {
+      override fun breakpointAdded(breakpoint: XBreakpoint<*>) {
+        check()
+      }
+
+      override fun breakpointRemoved(breakpoint: XBreakpoint<*>) {
+        check()
+      }
+
+      override fun breakpointChanged(breakpoint: XBreakpoint<*>) {
+        check()
+      }
+    })
   }
 
   protected abstract fun LessonContext.applyProgramChange()
