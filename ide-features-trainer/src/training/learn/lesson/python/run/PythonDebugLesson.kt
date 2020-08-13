@@ -17,7 +17,7 @@ class PythonDebugLesson(module: Module) : CommonDebugLesson(module, "python.debu
   override val methodForStepInto = "extract_number"
   override val stepIntoDirection = "←"
 
-  override fun LessonContext.applyProgramChange() {
+  override fun LessonContext.applyProgramChangeTasks() {
     highlightButtonById("Rerun")
 
     actionTask("Rerun") {

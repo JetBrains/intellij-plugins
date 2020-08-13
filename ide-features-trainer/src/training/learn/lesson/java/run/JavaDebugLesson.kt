@@ -20,7 +20,7 @@ class JavaDebugLesson(module: Module) : CommonDebugLesson(module, "java.debug.wo
   override val methodForStepInto: String = "extractNumber"
   override val stepIntoDirection = "→"
 
-  override fun LessonContext.applyProgramChange() {
+  override fun LessonContext.applyProgramChangeTasks() {
     highlightButtonById("CompileDirty")
 
     task("CompileDirty") {

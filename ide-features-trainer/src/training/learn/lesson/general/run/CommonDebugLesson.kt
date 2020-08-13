@@ -44,6 +44,7 @@ import training.learn.lesson.kimpl.*
 import training.ui.LearningUiHighlightingManager
 import training.ui.LearningUiManager
 import training.ui.LearningUiUtil
+import training.util.WeakReferenceDelegator
 import java.awt.Rectangle
 import java.util.concurrent.TimeUnit
 import javax.swing.JDialog
@@ -60,12 +61,57 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
   protected abstract val stepIntoDirection: String
 
   protected var mayBeStopped: Boolean = false
+  private var debugSession: XDebugSession? by WeakReferenceDelegator()
 
   private val incorrectBreakPointsMessage = "Breakpoints are set incorrect for this lesson."
 
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
 
+    prepareTask()
+
+    toggleBreakpointTask()
+
+    startDebugTask()
+
+    returnToEditorTask()
+
+    waitBeforeContinue(500)
+
+    addToWatchTask()
+
+    stepIntoTasks()
+
+    waitBeforeContinue(500)
+
+    quickEvaluateTask()
+
+    fixTheErrorTask()
+
+    applyProgramChangeTasks()
+
+    stepOverTask()
+
+    if (TaskTestContext.inTestMode) waitBeforeContinue(1000)
+
+    resumeTask()
+
+    muteBreakpointsTask()
+
+    waitBeforeContinue(500)
+
+    caret(sample.getPosition(3))
+
+    runToCursorTask()
+
+    if (TaskTestContext.inTestMode) waitBeforeContinue(1000)
+
+    evaluateExpressionTasks()
+
+    stopTask()
+  }
+
+  private fun LessonContext.prepareTask() {
     var needToRun = false
     prepareRuntimeTask {
       runWriteAction {
@@ -88,7 +134,9 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
         }
       }
     }
+  }
 
+  private fun LessonContext.toggleBreakpointTask() {
     lateinit var logicalPosition: LogicalPosition
     task {
       before {
@@ -110,9 +158,8 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
 
     task("ToggleLineBreakpoint") {
       text(
-        "So there is a problem. Let's start investigation with placing breakpoint. To toggle a breakpoint you should click left editor gutter or just press ${
-          action(it)
-        }.")
+        "So there is a problem. Let's start investigation with placing breakpoint." +
+        "To toggle a breakpoint you should click left editor gutter or just press ${action(it)}.")
       stateCheck {
         lineWithBreakpoints() == setOf(logicalPosition.line)
       }
@@ -129,11 +176,12 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
     prepareRuntimeTask {
       setRestoreForBreakpoints(logicalPosition)
     }
+  }
 
+  private fun LessonContext.startDebugTask() {
     highlightButtonById("Debug")
 
     mayBeStopped = false
-    lateinit var debugSession: XDebugSession
     task("Debug") {
       text("To start debug selected run configuration you need to click at ${icon(AllIcons.Actions.StartDebugger)}. " +
            "Or you can just press ${action(it)}.")
@@ -141,7 +189,9 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
         project.messageBus.connect(lessonDisposable).subscribe(XDebuggerManager.TOPIC, object : XDebuggerManagerListener {
           override fun processStarted(debugProcess: XDebugProcess) {
             mayBeStopped = false
-            debugSession = debugProcess.session
+            val debugSession = debugProcess.session
+            (this@CommonDebugLesson).debugSession = debugSession
+
             debugSession.setBreakpointMuted(false)
             (debugSession as XDebugSessionImpl).setWatchExpressions(emptyList())
             debugSession.addSessionListener(object : XDebugSessionListener {
@@ -171,7 +221,9 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
         focusOwner is XDebuggerFramesList
       }
     }
+  }
 
+  private fun LessonContext.returnToEditorTask() {
     task("EditorEscape") {
       before {
         LearningUiHighlightingManager.clearHighlights()
@@ -185,9 +237,9 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
         GuiTestUtil.shortcut(Key.ESCAPE)
       }
     }
+  }
 
-    waitBeforeContinue(500)
-
+  private fun LessonContext.addToWatchTask() {
     highlightButtonById("XDebugger.NewWatch")
 
     task("Debugger.AddToWatch") {
@@ -197,7 +249,9 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
       caret(position)
       val hasShortcut = KeymapUtil.getShortcutByActionId(it) != null
       text("IDE has several ways to show values. For this step, we selected the call. Lets add it to <strong>Watches</strong>. " +
-           "You can copy the expression into clipboard, use ${icon(AllIcons.General.Add)} button on the debug panel and paste copied text. " +
+           "You can copy the expression into clipboard, use ${
+             icon(AllIcons.General.Add)
+           } button on the debug panel and paste copied text. " +
            "Or you can just use action ${action(it)} ${if (hasShortcut) "" else " (consider to add a shortcut for it later)"}.")
       stateCheck {
         val watches = (XDebuggerManager.getInstance(project) as XDebuggerManagerImpl).watchesManager.getWatches(confNameForWatches)
@@ -205,7 +259,9 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
       }
       test { actions(it) }
     }
+  }
 
+  private fun LessonContext.stepIntoTasks() {
     highlightButtonById("StepInto")
 
     actionTask("StepInto") {
@@ -217,10 +273,10 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
         LearningUiHighlightingManager.clearHighlights()
       }
       text("In most cases you will want to skip argument calculating so Smart Step Into feature suggest by default the wrapping method. " +
-           "But here we need to choose the second one: ${code(methodForStepInto)}. " +
-           "You can choose it by keyboard <raw_action>$stepIntoDirection</raw_action> and press ${action("EditorEnter")} or you can click the call by mouse.")
+           "But here we need to choose the second one: ${code(methodForStepInto)}. You can choose it by keyboard " +
+           "<raw_action>$stepIntoDirection</raw_action> and press ${action("EditorEnter")} or you can click the call by mouse.")
       stateCheck {
-        val debugLine = debugSession.currentStackFrame?.sourcePosition?.line
+        val debugLine = debugSession?.currentStackFrame?.sourcePosition?.line
         val sampleLine = editor.offsetToLogicalPosition(sample.getPosition(2).startOffset).line
         debugLine == sampleLine
       }
@@ -230,9 +286,9 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
         GuiTestUtil.shortcut(Key.ENTER)
       }
     }
+  }
 
-    waitBeforeContinue(500)
-
+  private fun LessonContext.quickEvaluateTask() {
     task("QuickEvaluateExpression") {
       before {
         LearningUiHighlightingManager.clearHighlights()
@@ -243,8 +299,10 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
       trigger(it)
       test { actions(it) }
     }
+  }
 
-    task("EditorSelectWord") {
+  private fun LessonContext.fixTheErrorTask() {
+    task {
       text("Oh, we made a mistake in the array index! Lets fix it right now. " +
            "Close popup (${action("EditorEscape")}) and change 0 to 1.")
       val needed = sample.text.replaceFirst("[0]", "[1]")
@@ -263,36 +321,36 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
         }
       }
     }
+  }
 
-    applyProgramChange()
-
+  private fun LessonContext.stepOverTask() {
     highlightButtonById("StepOver")
 
     actionTask("StepOver") {
       "Let's check that the call of ${code("extract_number")} will not throw an exception now. " +
       "Use Step Over action ${action(it)} or click the button ${icon(AllIcons.Actions.TraceOver)}."
     }
+  }
 
-    if (TaskTestContext.inTestMode) waitBeforeContinue(1000)
-
+  private fun LessonContext.resumeTask() {
     highlightButtonById("Resume")
 
     actionTask("Resume") {
       "Seems no exceptions by now. Let's continue execution with ${action(it)} or" +
       "click the button ${icon(AllIcons.Actions.Resume)}."
     }
+  }
 
+  private fun LessonContext.muteBreakpointsTask() {
     highlightButtonById("XDebugger.MuteBreakpoints")
 
     actionTask("XDebugger.MuteBreakpoints") {
       "Ups, same breakpoint again. Now we don't need to stop at this breakpoint. " +
       "So let's mute breakpoints by the button ${icon(AllIcons.Debugger.MuteBreakpoints)} or by action ${action(it)}."
     }
+  }
 
-    waitBeforeContinue(500)
-
-    caret(sample.getPosition(3))
-
+  private fun LessonContext.runToCursorTask() {
     highlightButtonById("RunToCursor")
 
     actionTask("RunToCursor") {
@@ -301,10 +359,10 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
       "Lets use <strong>Run to Cursor</strong> action ${action(it)} or click ${icon(AllIcons.Actions.RunToCursor)}. " +
       "Note that <strong>Run to Cursor</strong> works even if breakpoints are muted."
     }
+  }
 
+  private fun LessonContext.evaluateExpressionTasks() {
     highlightButtonById("EvaluateExpression")
-
-    if (TaskTestContext.inTestMode) waitBeforeContinue(1000)
 
     actionTask("EvaluateExpression") {
       "It seems the ${code("result")} is not an average we want to find. " +
@@ -333,7 +391,9 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
       }
       test { GuiTestUtil.shortcut(Key.ENTER) }
     }
+  }
 
+  private fun LessonContext.stopTask() {
     highlightButtonById("Stop")
 
     actionTask("Stop") {
@@ -379,7 +439,7 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
     })
   }
 
-  protected abstract fun LessonContext.applyProgramChange()
+  protected abstract fun LessonContext.applyProgramChangeTasks()
 
   protected fun LessonContext.highlightButtonById(actionId: String) {
     val needToFindButton = ActionManager.getInstance().getAction(actionId)
