@@ -97,6 +97,9 @@ Learn more about Vue.js support in the <a href="https://www.jetbrains.com/help/w
     <fileIndentOptionsProvider implementation="org.jetbrains.vuejs.lang.html.psi.formatter.VueFileIndentOptionsProvider"
                                id="vue" order="before html"/>
 
+
+    <postStartupActivity implementation="org.jetbrains.vuejs.lang.html.psi.arrangement.VueArrangementSettingsMigration"/>
+
     <directoryIndexExcludePolicy implementation="org.jetbrains.vuejs.libraries.nuxt.index.NuxtIndexExcludePolicy"/>
 
     <directoryProjectGenerator
@@ -151,6 +154,7 @@ Learn more about Vue.js support in the <a href="https://www.jetbrains.com/help/w
       implementation="org.jetbrains.vuejs.lang.typescript.service.VueTypeScriptServiceHighlightingPassFactoryRegistrar"/>
     <lang.formatter language="Vue" implementationClass="org.jetbrains.vuejs.lang.html.psi.formatter.VueFormattingModelBuilder"/>
     <lang.formatter language="VueJS" implementationClass="org.jetbrains.vuejs.lang.expr.psi.formatter.VueJSFormattingModelBuilder"/>
+    <lang.rearranger language="Vue" implementationClass="org.jetbrains.vuejs.lang.html.psi.arrangement.VueRearranger"/>
 
     <lang.syntaxHighlighterFactory language="VueJS"
                                    implementationClass="org.jetbrains.vuejs.lang.expr.highlighting.VueJSHighlighterFactory"/>
