@@ -5,6 +5,8 @@ import com.intellij.codeInsight.navigation.actions.GotoDeclarationOrUsageHandler
 import com.intellij.injected.editor.EditorWindow;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.ex.RangeHighlighterEx;
+import com.intellij.openapi.editor.markup.RangeHighlighter;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
@@ -15,6 +17,7 @@ import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -31,6 +34,16 @@ public class FindUsagesTest extends Angular2CodeInsightFixtureTestCase {
                 "foo <private.html:(3,6):(0,3)>",
                 "foo <private.html:(69,72):(0,3)>",
                 "this.foo <private.ts:(350,358):(5,8)>");
+  }
+
+  public void testPrivateComponentFieldLocalHighlighting() {
+    RangeHighlighter[] highlighters = myFixture.testHighlightUsages("private_highlighting.ts", "private.html", "package.json");
+    String fileText = myFixture.getFile().getText();
+    String[] actualHighlightWords = Arrays.stream(highlighters).map(highlighter -> {
+      RangeHighlighterEx highlighterEx = (RangeHighlighterEx)highlighter;
+      return fileText.substring(highlighterEx.getAffectedAreaStartOffset(), highlighterEx.getAffectedAreaEndOffset());
+    }).toArray(String[]::new);
+    assertSameElements(actualHighlightWords, "foo");
   }
 
   public void testPrivateComponentMethod() {
