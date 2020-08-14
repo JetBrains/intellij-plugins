@@ -23,6 +23,7 @@
     <fileType name="Handlebars/Mustache" implementationClass="com.dmarcotte.handlebars.file.HbFileType" fieldName="INSTANCE" language="Handlebars" extensions="handlebars;hbs;mustache"/>
     <html.scriptContentProvider language="Handlebars" implementationClass="com.dmarcotte.handlebars.HbScriptContentProvider"/>
     <lang.parserDefinition language="Handlebars" implementationClass="com.dmarcotte.handlebars.parsing.HbParseDefinition"/>
+    <lang.ast.factory language="Handlebars" implementationClass="com.dmarcotte.handlebars.parsing.HbAstFactory"/>
     <lang.formatter language="Handlebars" implementationClass="com.dmarcotte.handlebars.format.HbFormattingModelBuilder"/>
     <colorSettingsPage implementation="com.dmarcotte.handlebars.pages.HbColorsPage"/>
     <lang.fileViewProviderFactory language="Handlebars" implementationClass="com.dmarcotte.handlebars.file.HbFileViewProviderFactory"/>

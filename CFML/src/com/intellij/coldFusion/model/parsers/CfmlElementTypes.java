@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.model.parsers;
 
 import com.intellij.coldFusion.model.CfmlLanguage;
@@ -11,6 +11,7 @@ import com.intellij.psi.CommonClassNames;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.templateLanguages.TemplateDataElementType;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.OuterLanguageElementType;
 import com.intellij.psi.tree.TokenSet;
 
 /**
@@ -22,7 +23,7 @@ public interface CfmlElementTypes extends CfmlStubElementTypes {
 
   IElementType TEMPLATE_TEXT = new CfmlLeafElementType("CFML_TEMPLATE_TEXT");
 
-  IElementType OUTER_ELEMENT_TYPE = new CfmlElementType("CFML_FRAGMENT");
+  IElementType OUTER_ELEMENT_TYPE = new OuterLanguageElementType("CFML_FRAGMENT", CfmlLanguage.INSTANCE);
 
   IElementType SQL = new CfmlElementType("SQL");
 
