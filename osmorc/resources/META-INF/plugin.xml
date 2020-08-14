@@ -135,9 +135,7 @@
                     key="configurable.LibraryBundlingEditor.display.name"
                     instance="org.osmorc.settings.LibraryBundlingEditor"/>
     </applicationConfigurable>
-    <notificationGroup id="OSGi Bnd Notifications" displayType="STICKY_BALLOON"/>
-    <notificationGroup id="OSGi" displayType="BALLOON"/>
-    <notificationGroup id="OSGi Important Messages" displayType="STICKY_BALLOON"/>
+    <notificationAllowlist groupIds="OSGi Bnd Notifications;OSGi;OSGi Important Messages"/>
   </extensions>
 
   <extensions defaultExtensionNs="Osmorc">

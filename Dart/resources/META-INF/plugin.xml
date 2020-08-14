@@ -242,13 +242,7 @@
 
     <lang.syntaxHighlighter language="Dart in Html" implementationClass="com.jetbrains.lang.dart.highlight.DartSyntaxHighlighter"/>
     <lang.parserDefinition language="Dart in Html" implementationClass="com.jetbrains.lang.dart.DartParserDefinition"/>
-    <notificationGroup id="Dart Support" displayType="BALLOON"/>
-    <notificationGroup id="Dart Analysis" displayType="TOOL_WINDOW" toolWindowId="Dart Analysis" isLogByDefault="false"/>
-    <notificationGroup id="Dart Webdev" displayType="TOOL_WINDOW" toolWindowId="Dart Webdev" isLogByDefault="false"/>
-    <notificationGroup id="Dart Analysis Server" displayType="BALLOON"/>
-    <notificationGroup id="Dart Pub Tool" displayType="BALLOON"/>
-    <notificationGroup id="pubspec.yaml inspection" displayType="BALLOON"/>
-    <notificationGroup id="Dart analysis issue" displayType="NONE"/>
+    <notificationAllowlist groupIds="Dart analysis issue;Dart Support;Dart Analysis;Dart Webdev;Dart Pub Tool;Dart Analysis Server;pubspec.yaml inspection"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains">

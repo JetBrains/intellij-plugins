@@ -209,13 +209,6 @@
 
     <properties.implicitPropertyUsageProvider
       implementation="com.thoughtworks.gauge.properties.GaugeImplicitPropertyUsageProvider"/>
-    <notificationGroup id="Error" displayType="BALLOON"/>
-    <notificationGroup id="Gauge Exception" displayType="BALLOON"/>
-    <notificationGroup id="Gauge" displayType="BALLOON"/>
-    <notificationGroup id="Spec Formatting" displayType="BALLOON"/>
-    <notificationGroup id="Specification Preview" displayType="BALLOON"/>
-    <notificationGroup id="Installing" displayType="BALLOON"/>
-    <notificationGroup id="Successful" displayType="BALLOON"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript.JsonSchema">
