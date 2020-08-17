@@ -49,6 +49,7 @@ import com.jetbrains.cidr.execution.BuildTargetAndConfigurationData;
 import com.jetbrains.cidr.execution.BuildTargetData;
 import com.jetbrains.cidr.execution.ExecutableData;
 import icons.ClionEmbeddedPlatformioIcons;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,6 +58,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static com.jetbrains.cidr.cpp.embedded.stm32cubemx.CMakeSTM32CubeMXProjectGenerator.EMBEDDED_PROJECTS_GROUP_NAME;
+import static com.jetbrains.cidr.cpp.embedded.stm32cubemx.CMakeSTM32CubeMXProjectGenerator.EMBEDDED_PROJECTS_GROUP_DISPLAY_NAME;
 
 public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<BoardInfo>>
   implements CustomStepProjectGenerator<Ref<BoardInfo>> {
@@ -77,6 +79,13 @@ public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<BoardI
   @Override
   public String getGroupName() {
     return EMBEDDED_PROJECTS_GROUP_NAME;
+  }
+
+  @Nls
+  @NotNull
+  @Override
+  public   String getGroupDisplayName() {
+    return EMBEDDED_PROJECTS_GROUP_DISPLAY_NAME.get();
   }
 
   @NotNull
