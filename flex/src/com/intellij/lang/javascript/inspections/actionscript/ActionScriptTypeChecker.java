@@ -257,8 +257,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
             continue;
           }
 
-          checkTypeIs(typeElement, typeElement, "XMLList".equals(expressionType) ? "XML" : "String",
-                      "javascript.incorrect.variable.type.mismatch");
+          checkTypeIs(typeElement, typeElement, "XMLList".equals(expressionType) ? "XML" : "String");
         }
       }
     }
@@ -271,31 +270,30 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
            "Number".equals(type);
   }
 
-  private void checkTypeIs(PsiElement type, PsiElement node, String typeName, String key) {
+  private void checkTypeIs(PsiElement type, PsiElement node, String typeName) {
     if (type instanceof JSReferenceExpression) {
-      checkTypeIs((JSExpression)type, node, typeName, key);
+      checkTypeIs((JSExpression)type, node, typeName);
     }
     else if (type != null) {
-      myReporter.registerProblem(node, null, JavaScriptBundle.message(key, typeName, type.getText()),
+      myReporter.registerProblem(node, null, JavaScriptBundle.message("javascript.incorrect.variable.type.mismatch", typeName, type.getText()),
                                  getHighlightTypeForTypeOrSignatureProblem(node));
     }
   }
 
-  private void checkTypeIs(JSExpression rOperand, PsiElement node, String typeName, String key) {
+  private void checkTypeIs(JSExpression rOperand, PsiElement node, String typeName) {
     String expressionType = ActionScriptResolveUtil.getQualifiedExpressionType(rOperand, rOperand.getContainingFile());
     if (!typeName.equals(expressionType) && !ANY_TYPE.equals(expressionType)) {
-      myReporter.registerProblem(node, null, JavaScriptBundle.message(key, typeName, expressionType),
+      myReporter.registerProblem(node, null, JavaScriptBundle.message("javascript.incorrect.variable.type.mismatch", typeName, expressionType),
                                  getHighlightTypeForTypeOrSignatureProblem(node));
     }
   }
 
   @Override
   public void checkIfProperTypeReference(JSExpression rOperand) {
-    checkTypeIs(
-      rOperand,
-      rOperand,
-      "Class",
-      "actionscript.binary.operand.type.mismatch"
-    );
+    String expressionType = ActionScriptResolveUtil.getQualifiedExpressionType(rOperand, rOperand.getContainingFile());
+    if (!"Class".equals(expressionType) && !ANY_TYPE.equals(expressionType)) {
+      myReporter.registerProblem(rOperand, null, JavaScriptBundle.message("actionscript.binary.operand.type.mismatch", "Class", expressionType),
+                                 getHighlightTypeForTypeOrSignatureProblem(rOperand));
+    }
   }
 }
