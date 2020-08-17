@@ -87,6 +87,7 @@ public final class OsmorcFacetConfiguration implements FacetConfiguration, Modif
   private static final String ADDITIONAL_PROPERTIES = "additionalProperties";
   private static final String IGNORE_FILE_PATTERN = "ignoreFilePattern";
   private static final String ALWAYS_REBUILD_BUNDLE_JAR = "alwaysRebuildBundleJAR";
+  private static final String EXTRACT_META_INF_OSGI_INF_TO_TARGET_CLASSES = "extractMetaInfOsgiInfToTargetClasses";
   private static final String DO_NOT_SYNCHRONIZE_WITH_MAVEN = "doNotSynchronizeWithMaven";
   private static final String OUTPUT_PATH_TYPE = "outputPathType";
   private static final String PROPERTY = "property";
@@ -107,6 +108,7 @@ public final class OsmorcFacetConfiguration implements FacetConfiguration, Modif
   private String myBundlorFileLocation;
   private String myIgnoreFilePattern;
   private boolean myAlwaysRebuildBundleJAR;
+  private boolean myExtractMetaInfOsgIInfToTargetClasses = true;
   private OutputPathType myOutputPathType;
   private ManifestGenerationMode myManifestGenerationMode = ManifestGenerationMode.OsmorcControlled;
 
@@ -175,6 +177,7 @@ public final class OsmorcFacetConfiguration implements FacetConfiguration, Modif
     setIgnoreFilePattern(element.getAttributeValue(IGNORE_FILE_PATTERN));
     setUseProjectDefaultManifestFileLocation(Boolean.parseBoolean(element.getAttributeValue(USE_PROJECT_DEFAULT_MANIFEST_FILE_LOCATION, "true")));
     setAlwaysRebuildBundleJAR(Boolean.parseBoolean(element.getAttributeValue(ALWAYS_REBUILD_BUNDLE_JAR, "false")));
+    setExtractMetaInfOsgIInfToTargetClasses(Boolean.parseBoolean(element.getAttributeValue(EXTRACT_META_INF_OSGI_INF_TO_TARGET_CLASSES, "true")));
     setDoNotSynchronizeWithMaven(Boolean.parseBoolean(element.getAttributeValue(DO_NOT_SYNCHRONIZE_WITH_MAVEN, "false")));
 
     Element props = element.getChild(ADDITIONAL_PROPERTIES);
@@ -223,6 +226,7 @@ public final class OsmorcFacetConfiguration implements FacetConfiguration, Modif
     element.setAttribute(IGNORE_FILE_PATTERN, getIgnoreFilePattern());
     element.setAttribute(USE_PROJECT_DEFAULT_MANIFEST_FILE_LOCATION, String.valueOf(isUseProjectDefaultManifestFileLocation()));
     element.setAttribute(ALWAYS_REBUILD_BUNDLE_JAR, String.valueOf(isAlwaysRebuildBundleJAR()));
+    element.setAttribute(EXTRACT_META_INF_OSGI_INF_TO_TARGET_CLASSES, String.valueOf(isExtractMetaInfOsgIInfToTargetClasses()));
     element.setAttribute(DO_NOT_SYNCHRONIZE_WITH_MAVEN, String.valueOf(myDoNotSynchronizeWithMaven));
 
     Element props = new Element(ADDITIONAL_PROPERTIES);
@@ -556,6 +560,15 @@ public final class OsmorcFacetConfiguration implements FacetConfiguration, Modif
   public void setAlwaysRebuildBundleJAR(boolean alwaysRebuildBundleJAR) {
     myAlwaysRebuildBundleJAR = alwaysRebuildBundleJAR;
     myModificationCount++;
+  }
+
+  public boolean isExtractMetaInfOsgIInfToTargetClasses() {
+      return myExtractMetaInfOsgIInfToTargetClasses;
+  }
+
+  public void setExtractMetaInfOsgIInfToTargetClasses(boolean extractMetaInfOsgIInfToTargetClasses) {
+      myExtractMetaInfOsgIInfToTargetClasses = extractMetaInfOsgIInfToTargetClasses;
+      myModificationCount++;
   }
 
   public boolean isDoNotSynchronizeWithMaven() {

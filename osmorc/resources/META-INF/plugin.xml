@@ -34,6 +34,7 @@
     <li>Add the OSGi framework that you want to work with (Equinox, Felix, etc.).</li>
     <li>Add the OSGi facet to any module that should be an OSGi bundle.</li>
     <li>You can either write your own manifest or let the plugin calculate the manifest for you.</li>
+    <li>Introduced option to extract META-INF and OSGI-INF folder from generated jar file into modules output folder.</li>
     </ol>
 
     <p>

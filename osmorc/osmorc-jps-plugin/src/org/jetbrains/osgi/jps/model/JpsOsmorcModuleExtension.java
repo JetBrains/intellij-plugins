@@ -68,6 +68,8 @@ public interface JpsOsmorcModuleExtension extends JpsElement {
 
   boolean isAlwaysRebuildBundleJar();
 
+  boolean isExtractMetaInfOsgIInfToTargetClasses();
+
   @NotNull
   List<OsmorcJarContentEntry> getAdditionalJarContents();
 

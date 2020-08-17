@@ -218,6 +218,11 @@ public class JpsOsmorcModuleExtensionImpl extends JpsElementBase<JpsOsmorcModule
     return myProperties.myAlwaysRebuildBundleJar;
   }
 
+  @Override
+  public boolean isExtractMetaInfOsgIInfToTargetClasses() {
+    return myProperties.myExtractMetaInfOsgIInfToTargetClasses;
+  }
+
   @NotNull
   @Override
   public List<OsmorcJarContentEntry> getAdditionalJarContents() {
