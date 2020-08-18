@@ -155,7 +155,7 @@ public class PhoneGapConfigurable implements Configurable {
     setUpListener(myWorkingDirectory.getChildComponent(), Ref.create(StringUtil.notNullize(workDirValue.getText())));
   }
 
-  private void setVersion(String version) {
+  private void setVersion(@Nls String version) {
     myVersion.setText(version);
   }
 
@@ -194,7 +194,7 @@ public class PhoneGapConfigurable implements Configurable {
   private PhoneGapPluginsView.VersionCallback getVersionCallback() {
     return new PhoneGapPluginsView.VersionCallback() {
       @Override
-      public void forVersion(String version) {
+      public void forVersion(@Nls String version) {
         setVersion(version);
       }
     };

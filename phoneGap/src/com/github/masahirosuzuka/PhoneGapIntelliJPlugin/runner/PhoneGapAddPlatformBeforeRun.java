@@ -22,6 +22,7 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.content.Content;
@@ -169,7 +170,7 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
   private static void createViewForOutput(ConsoleViewImpl console,
                                           @NotNull final JComponent component,
                                           @NotNull final Project myProject,
-                                          @NotNull final String tabDisplayName) {
+                                          @NotNull @NlsContexts.TabTitle final String tabDisplayName) {
     CommandProcessor commandProcessor = CommandProcessor.getInstance();
     commandProcessor.executeCommand(myProject, () -> {
       final MessageView messageView = ServiceManager.getService(myProject, MessageView.class);
@@ -178,7 +179,7 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
       messageView.getContentManager().setSelectedContent(content);
       Disposer.register(content, console);
       removeContents(messageView, content, tabDisplayName);
-    }, "Open " + tabDisplayName, null);
+    }, PhoneGapBundle.message("command.name.open", tabDisplayName), null);
   }
 
   private static void removeContents(@NotNull MessageView messageView,

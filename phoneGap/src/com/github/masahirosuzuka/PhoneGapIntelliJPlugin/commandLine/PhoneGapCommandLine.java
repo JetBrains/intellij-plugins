@@ -8,6 +8,7 @@ import com.intellij.execution.process.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
 import com.intellij.util.ThreeState;
@@ -116,6 +117,7 @@ public class PhoneGapCommandLine {
     return myIsCorrect;
   }
 
+  @NlsSafe
   public String version() {
     return myVersion;
   }
