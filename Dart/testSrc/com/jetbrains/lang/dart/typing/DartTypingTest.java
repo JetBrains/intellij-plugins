@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.typing;
 
 import com.intellij.ide.highlighter.HtmlFileType;
@@ -733,5 +733,11 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                           "  ${''' \n" +
                           "     '''\n" +
                           "}\"\"\";\n", false);
+  }
+
+  public void testLineCommentIndent() {
+    myFixture.configureByText("foo.dart", "main() {\n  foo();<caret>\n}");
+    myFixture.performEditorAction(IdeActions.ACTION_COMMENT_LINE);
+    myFixture.checkResult("main() {\n  // foo();\n}");
   }
 }
