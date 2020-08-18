@@ -15,6 +15,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.CucumberUtil;
 import org.jetbrains.plugins.cucumber.psi.*;
 import org.jetbrains.plugins.cucumber.psi.refactoring.GherkinChangeUtil;
@@ -224,7 +225,7 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
   @Override
   public void checkSetName(final String name) {
     if (!isRenameAllowed(name)) {
-      throw new IncorrectOperationException(RENAME_BAD_SYMBOLS_MESSAGE);
+      throw new IncorrectOperationException(CucumberBundle.message("cucumber.refactor.rename.bad_symbols"));
     }
   }
 }

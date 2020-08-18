@@ -36,7 +36,7 @@ public class ScenarioToOutlineIntention implements IntentionAction {
   @Override
   @NotNull
   public String getFamilyName() {
-    return "Cucumber";
+    return CucumberBundle.message("intention.family.name.cucumber");
   }
 
   @Override

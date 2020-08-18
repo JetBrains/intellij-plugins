@@ -24,6 +24,7 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.PathUtil;
@@ -62,7 +63,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
 
   @Override
   public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) {
-    return new JavaApplicationCommandLineState<CucumberJavaRunConfiguration>(this, env) {
+    return new JavaApplicationCommandLineState<>(this, env) {
       private final Collection<Filter> myConsoleFilters = new ArrayList<>();
 
       @Override
@@ -111,7 +112,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
 
       @NotNull
       private ConsoleView createConsole(@NotNull final Executor executor, ProcessHandler processHandler) throws ExecutionException {
-        @NonNls  String testFrameworkName = "cucumber";
+        @NonNls String testFrameworkName = "cucumber";
         final CucumberJavaRunConfiguration runConfiguration = CucumberJavaRunConfiguration.this;
         final SMTRunnerConsoleProperties consoleProperties = new SMTRunnerConsoleProperties(runConfiguration, testFrameworkName, executor) {
           @NotNull
@@ -250,7 +251,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
     myCucumberGlueProvider = cucumberGlueProvider;
   }
 
-  public String getFilePath() {
+  public @NlsSafe String getFilePath() {
     return getOptions().getFilePath();
   }
 

@@ -5,19 +5,14 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.psi.GherkinElementFactory;
 
-/**
- * @author Dennis.Ushakov
- */
 public class CucumberAddExamplesColonFix implements LocalQuickFix {
-
   @Override
-  @NotNull
-  public String getFamilyName() {
-    return "Add missing ':' after examples keyword";
+  public @NotNull String getFamilyName() {
+    return CucumberBundle.message("intention.family.name.add.missing.after.examples.keyword");
   }
-
 
   @Override
   public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {

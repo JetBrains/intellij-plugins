@@ -13,6 +13,7 @@ import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.JavaCodeFragment;
 import com.intellij.psi.PsiClass;
@@ -68,7 +69,7 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
     myShortenClasspathModeCombo.setComponent(new ShortenCommandLineModeCombo(myProject, myJrePathEditor, moduleComponent));
   }
 
-  public void setFeatureOrFolder(String path) {
+  public void setFeatureOrFolder(@NlsSafe String path) {
     myFeatureOrFolder.getComponent().setText(path);
   }
 

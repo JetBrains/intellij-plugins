@@ -14,6 +14,7 @@ import com.intellij.refactoring.rename.RenameDialog;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.cucumber.psi.GherkinTable;
 
@@ -32,7 +33,7 @@ public final class GherkinStepRenameHandler extends PsiElementRenameHandler {
     }
 
     if (!step.isRenameAllowed(null)) {
-      CommonRefactoringUtil.showErrorHint(project, editor, GherkinStep.RENAME_DISABLED_MESSAGE, "", null);
+      CommonRefactoringUtil.showErrorHint(project, editor, CucumberBundle.message("cucumber.refactor.rename.disabled"), "", null);
       return;
     }
 

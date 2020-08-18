@@ -19,6 +19,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.psi.GherkinTable;
 import org.jetbrains.plugins.cucumber.psi.GherkinTableRow;
 
@@ -37,7 +38,7 @@ public class RemoveTableColumnFix implements LocalQuickFix {
   @Override
   @NotNull
   public String getName() {
-    return "Remove unused column";
+    return CucumberBundle.message("intention.name.remove.unused.column");
   }
 
   @Override

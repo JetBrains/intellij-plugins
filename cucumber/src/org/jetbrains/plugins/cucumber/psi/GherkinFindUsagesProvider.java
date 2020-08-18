@@ -37,7 +37,7 @@ public class GherkinFindUsagesProvider implements FindUsagesProvider {
     } else if (element instanceof GherkinStepParameter) {
       return CucumberBundle.message("cucumber.step.parameter");
     }
-    return element.toString();
+    return CucumberBundle.message("gherkin.find.usages.unknown.element.type");
   }
 
   @NotNull

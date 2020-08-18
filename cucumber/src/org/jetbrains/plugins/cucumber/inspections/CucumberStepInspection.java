@@ -51,7 +51,7 @@ public class CucumberStepInspection extends GherkinInspection {
               createAllStepsFix = new CucumberCreateAllStepsFix();
             }
             holder.registerProblem(reference.getElement(), reference.getRangeInElement(),
-                                   CucumberBundle.message("cucumber.inspection.undefined.step.msg.name") + " #loc #ref",
+                                   CucumberBundle.message("cucumber.inspection.undefined.step.msg.name"),
                                    createStepFix, createAllStepsFix);
           }
         }
