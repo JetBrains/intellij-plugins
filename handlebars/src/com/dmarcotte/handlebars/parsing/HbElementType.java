@@ -3,6 +3,7 @@ package com.dmarcotte.handlebars.parsing;
 import com.dmarcotte.handlebars.HbBundle;
 import com.dmarcotte.handlebars.HbLanguage;
 import com.intellij.psi.tree.IElementType;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,6 +24,7 @@ class HbElementType extends IElementType {
     return "[Hb] " + super.toString();
   }
 
+  @Nls
   public String parseExpectedMessage() {
     return HbBundle.message(_parseExpectedMessageKey);
   }
