@@ -4,6 +4,7 @@ package com.intellij.javascript.flex.mxml.schema;
 import com.intellij.codeInsight.daemon.IdeValidationHost;
 import com.intellij.codeInsight.daemon.Validator;
 import com.intellij.codeInsight.intention.IntentionAction;
+import com.intellij.codeInspection.util.InspectionMessage;
 import com.intellij.ide.IconProvider;
 import com.intellij.javascript.flex.FlexAnnotationNames;
 import com.intellij.javascript.flex.FlexMxmlLanguageAttributeNames;
@@ -1137,13 +1138,13 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     }
 
     @Override
-    public void reportError(final ASTNode nameIdentifier, final String s, ProblemKind kind, final IntentionAction @NotNull ... fixes) {
+    public void reportError(ASTNode nameIdentifier, @NotNull @InspectionMessage String message, ProblemKind kind, final IntentionAction @NotNull ... fixes) {
       final ValidationHost.ErrorType errorType = kind == ProblemKind.ERROR ? ValidationHost.ErrorType.ERROR: ValidationHost.ErrorType.WARNING;
       if (myHost instanceof IdeValidationHost) {
-        ((IdeValidationHost) myHost).addMessageWithFixes(nameIdentifier.getPsi(), s, errorType, fixes);
+        ((IdeValidationHost) myHost).addMessageWithFixes(nameIdentifier.getPsi(), message, errorType, fixes);
       }
       else {
-        myHost.addMessage(nameIdentifier.getPsi(), s, errorType);
+        myHost.addMessage(nameIdentifier.getPsi(), message, errorType);
       }
     }
   }
