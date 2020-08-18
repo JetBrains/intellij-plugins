@@ -30,6 +30,7 @@ class JavaDebugLesson(module: Module) : CommonDebugLesson(module, "java.debug.wo
       stateCheck {
         inHotSwapDialog()
       }
+      proposeModificationRestore(afterFixText)
       test { actions(it) }
     }
 
@@ -38,6 +39,7 @@ class JavaDebugLesson(module: Module) : CommonDebugLesson(module, "java.debug.wo
       stateCheck {
         !inHotSwapDialog()
       }
+      proposeModificationRestore(afterFixText)
       test {
         with(TaskTestContext.guiTestCase) {
           dialog(null, needToKeepDialog = true) {
@@ -50,10 +52,9 @@ class JavaDebugLesson(module: Module) : CommonDebugLesson(module, "java.debug.wo
     highlightButtonById("Debugger.PopFrame")
 
     actionTask("Debugger.PopFrame") {
-      "We patched our method, but right now we are still executing old obsolete ${
-        code("extractNumber")
-      } and it will throw the exception again. " +
-      "Let's drop the frame and return to the state before ${code("extractNumber")} call. " +
+      proposeModificationRestore(afterFixText)
+      "We patched our method, but right now we are still executing old obsolete ${code("extractNumber")} and it will throw " +
+      "the exception again. Let's drop the frame and return to the state before ${code("extractNumber")} call. " +
       "Click ${icon(AllIcons.Actions.PopFrame)} at the debug panel or use ${action(it)}."
     }
   }

@@ -16,6 +16,8 @@ import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.LogicalPosition
+import com.intellij.openapi.editor.event.DocumentEvent
+import com.intellij.openapi.editor.event.DocumentListener
 import com.intellij.openapi.editor.ex.EditorGutterComponentEx
 import com.intellij.openapi.editor.impl.EditorComponentImpl
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -25,8 +27,6 @@ import com.intellij.testGuiFramework.util.Key
 import com.intellij.ui.tabs.impl.JBTabsImpl
 import com.intellij.util.ui.UIUtil
 import com.intellij.xdebugger.*
-import com.intellij.xdebugger.breakpoints.XBreakpoint
-import com.intellij.xdebugger.breakpoints.XBreakpointListener
 import com.intellij.xdebugger.impl.XDebugSessionImpl
 import com.intellij.xdebugger.impl.XDebuggerManagerImpl
 import com.intellij.xdebugger.impl.breakpoints.XBreakpointUtil
@@ -41,18 +41,22 @@ import training.learn.CourseManager
 import training.learn.interfaces.Module
 import training.learn.lesson.LessonManager
 import training.learn.lesson.kimpl.*
+import training.learn.lesson.kimpl.LessonUtil.checkExpectedStateOfEditor
+import training.learn.lesson.kimpl.LessonUtil.checkPositionOfEditor
+import training.learn.lesson.kimpl.LessonUtil.sampleRestoreNotification
 import training.ui.LearningUiHighlightingManager
 import training.ui.LearningUiManager
 import training.ui.LearningUiUtil
 import training.util.WeakReferenceDelegator
+import training.util.invokeActionForFocusContext
 import java.awt.Rectangle
 import java.util.concurrent.TimeUnit
 import javax.swing.JDialog
 import javax.swing.text.JTextComponent
 
 abstract class CommonDebugLesson(module: Module, id: String, languageId: String) : KLesson(id, "Debug workflow", module, languageId) {
-  protected abstract val configurationName: String
   protected abstract val sample: LessonSample
+  protected abstract val configurationName: String
   protected abstract val quickEvaluationArgument: String
   protected abstract val expressionToBeEvaluated: String
   protected abstract val confNameForWatches: String
@@ -60,13 +64,26 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
   protected abstract val methodForStepInto: String
   protected abstract val stepIntoDirection: String
 
+  protected val afterFixText: String by lazy { sample.text.replaceFirst("[0]", "[1]") }
+
   protected var mayBeStopped: Boolean = false
   private var debugSession: XDebugSession? by WeakReferenceDelegator()
+  private var logicalPosition: LogicalPosition = LogicalPosition(0, 0)
 
   private val incorrectBreakPointsMessage = "Breakpoints are set incorrect for this lesson."
 
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
+
+    if (false) {
+      prepareRuntimeTask {
+        editor.document.addDocumentListener(object : DocumentListener {
+          override fun documentChanged(event: DocumentEvent) {
+
+          }
+        }, lessonDisposable)
+      }
+    }
 
     prepareTask()
 
@@ -100,8 +117,6 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
 
     waitBeforeContinue(500)
 
-    caret(sample.getPosition(3))
-
     runToCursorTask()
 
     if (TaskTestContext.inTestMode) waitBeforeContinue(1000)
@@ -114,6 +129,8 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
   private fun LessonContext.prepareTask() {
     var needToRun = false
     prepareRuntimeTask {
+      val stopAction = ActionManager.getInstance().getAction("Stop")
+      invokeActionForFocusContext(stopAction)
       runWriteAction {
         needToRun = !selectedNeedConfiguration() && !configureDebugConfiguration()
       }
@@ -132,12 +149,14 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
             }
           })
         }
+        proposeRestore {
+          checkExpectedStateOfEditor(sample, false)
+        }
       }
     }
   }
 
   private fun LessonContext.toggleBreakpointTask() {
-    lateinit var logicalPosition: LogicalPosition
     task {
       before {
         logicalPosition = editor.offsetToLogicalPosition(sample.startOffset)
@@ -165,16 +184,13 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
       }
       proposeRestore {
         val breakpoints = lineWithBreakpoints()
-        if (breakpoints.isNotEmpty() && breakpoints != setOf(logicalPosition.line)) {
-          incorrectBreakPointsMessage
+        checkExpectedStateOfEditor(sample)
+        ?: if (breakpoints.isNotEmpty() && breakpoints != setOf(logicalPosition.line)) {
+          TaskContext.RestoreNotification(incorrectBreakPointsMessage, restorePreviousTaskCallback)
         }
         else null
       }
       test { actions(it) }
-    }
-
-    prepareRuntimeTask {
-      setRestoreForBreakpoints(logicalPosition)
     }
   }
 
@@ -213,6 +229,7 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
           }
         })
       }
+      proposeModificationRestore(sample.text)
       test { actions(it) }
     }
 
@@ -232,6 +249,7 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
       stateCheck {
         focusOwner is EditorComponentImpl
       }
+      proposeModificationRestore(sample.text)
       test {
         Thread.sleep(500)
         GuiTestUtil.shortcut(Key.ESCAPE)
@@ -249,13 +267,14 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
       caret(position)
       val hasShortcut = KeymapUtil.getShortcutByActionId(it) != null
       text("IDE has several ways to show values. For this step, we selected the call. Lets add it to <strong>Watches</strong>. " +
-           "You can copy the expression into clipboard, use ${
-             icon(AllIcons.General.Add)
-           } button on the debug panel and paste copied text. " +
+           "You can copy the expression into clipboard, use ${icon(AllIcons.General.Add)} button on the debug panel and paste copied text. " +
            "Or you can just use action ${action(it)} ${if (hasShortcut) "" else " (consider to add a shortcut for it later)"}.")
       stateCheck {
         val watches = (XDebuggerManager.getInstance(project) as XDebuggerManagerImpl).watchesManager.getWatches(confNameForWatches)
         watches.any { watch -> watch.expression == needAddToWatch }
+      }
+      proposeRestore {
+        checkPositionOfEditor(LessonSample(sample.text, position)) ?: checkForBreakpoints()
       }
       test { actions(it) }
     }
@@ -265,6 +284,7 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
     highlightButtonById("StepInto")
 
     actionTask("StepInto") {
+      proposeModificationRestore(sample.text)
       "Lets step into. You can use action ${action(it)} or the button ${icon(AllIcons.Actions.TraceInto)} at the debug panel."
     }
 
@@ -280,6 +300,7 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
         val sampleLine = editor.offsetToLogicalPosition(sample.getPosition(2).startOffset).line
         debugLine == sampleLine
       }
+      proposeModificationRestore(sample.text)
       test {
         Thread.sleep(500)
         GuiTestUtil.shortcut(if (stepIntoDirection == "→") Key.RIGHT else Key.LEFT)
@@ -293,10 +314,14 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
       before {
         LearningUiHighlightingManager.clearHighlights()
       }
-      caret(sample.getPosition(2))
+      val position = sample.getPosition(2)
+      caret(position)
       text("Lets see what we are going to pass to ${code(quickEvaluationArgument)}. We selected the argument. " +
            "Invoke Quick Evaluate Expression ${action(it)}.")
       trigger(it)
+      proposeRestore {
+        checkPositionOfEditor(LessonSample(sample.text, position)) ?: checkForBreakpoints()
+      }
       test { actions(it) }
     }
   }
@@ -305,9 +330,16 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
     task {
       text("Oh, we made a mistake in the array index! Lets fix it right now. " +
            "Close popup (${action("EditorEscape")}) and change 0 to 1.")
-      val needed = sample.text.replaceFirst("[0]", "[1]")
+      val intermediate = sample.text.replaceFirst("[0]", "[]")
+      val restorePosition = sample.text.indexOf("[0]") + 2
       stateCheck {
-        editor.document.text == needed
+        editor.document.text == afterFixText
+      }
+      proposeRestore {
+        val editorText = editor.document.text
+        if (editorText != afterFixText && editorText != intermediate && editorText != sample.text)
+          sampleRestoreNotification(TaskContext.ModificationRestoreProposal, LessonSample(sample.text, restorePosition))
+        else checkForBreakpoints()
       }
       test {
         GuiTestUtil.shortcut(Key.ESCAPE)
@@ -327,6 +359,7 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
     highlightButtonById("StepOver")
 
     actionTask("StepOver") {
+      proposeModificationRestore(afterFixText)
       "Let's check that the call of ${code("extract_number")} will not throw an exception now. " +
       "Use Step Over action ${action(it)} or click the button ${icon(AllIcons.Actions.TraceOver)}."
     }
@@ -336,6 +369,7 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
     highlightButtonById("Resume")
 
     actionTask("Resume") {
+      proposeModificationRestore(afterFixText)
       "Seems no exceptions by now. Let's continue execution with ${action(it)} or" +
       "click the button ${icon(AllIcons.Actions.Resume)}."
     }
@@ -345,15 +379,22 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
     highlightButtonById("XDebugger.MuteBreakpoints")
 
     actionTask("XDebugger.MuteBreakpoints") {
+      proposeModificationRestore(afterFixText)
       "Ups, same breakpoint again. Now we don't need to stop at this breakpoint. " +
       "So let's mute breakpoints by the button ${icon(AllIcons.Debugger.MuteBreakpoints)} or by action ${action(it)}."
     }
   }
 
   private fun LessonContext.runToCursorTask() {
+    val position = sample.getPosition(3)
+    caret(position)
+
     highlightButtonById("RunToCursor")
 
     actionTask("RunToCursor") {
+      proposeRestore {
+        checkPositionOfEditor(LessonSample(afterFixText, position))
+      }
       "Let's check the result of ${code(debuggingMethodName)}. " +
       "We've moved the editor cursor to the ${code("return")} statement. " +
       "Lets use <strong>Run to Cursor</strong> action ${action(it)} or click ${icon(AllIcons.Actions.RunToCursor)}. " +
@@ -365,6 +406,7 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
     highlightButtonById("EvaluateExpression")
 
     actionTask("EvaluateExpression") {
+      proposeModificationRestore(afterFixText)
       "It seems the ${code("result")} is not an average we want to find. " +
       "We forgot to divide by length. Seems we need to return ${code(expressionToBeEvaluated)}. " +
       "Let's calculate this expresion. Invoke the <strong>Evaluate Expression</strong> action by pressing ${action(it)} or " +
@@ -374,6 +416,7 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
     task(expressionToBeEvaluated) {
       text("Type ${code(it)} into the <strong>Expression</strong> field, completion works.")
       stateCheck { checkWordInTextField(it) }
+      proposeModificationRestore(afterFixText)
       test {
         type(it)
       }
@@ -389,6 +432,7 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
         val root = debugTree.root
         dialog?.title == "Evaluate" && root?.children?.size == 1
       }
+      proposeModificationRestore(afterFixText)
       test { GuiTestUtil.shortcut(Key.ENTER) }
     }
   }
@@ -403,40 +447,23 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
     }
   }
 
-  private fun TaskRuntimeContext.setRestoreForBreakpoints(logicalPosition: LogicalPosition) {
-    fun check() {
-      invokeLater {
-        if (lineWithBreakpoints() != setOf(logicalPosition.line)) {
-          val notification = TaskContext.RestoreNotification(incorrectBreakPointsMessage) {
-            runWriteAction {
-              LessonManager.instance.clearRestoreMessage()
-              val breakpointManager = XDebuggerManager.getInstance(project).breakpointManager
-              breakpointManager.allBreakpoints.forEach { breakpointManager.removeBreakpoint(it) }
-              FileDocumentManager.getInstance().getFile(editor.document)
-              val line = logicalPosition.line
-              val createPosition = XDebuggerUtil.getInstance().createPosition(virtualFile, line)
-                                   ?: error("Can't create source position: $line at $virtualFile")
-              XBreakpointUtil.toggleLineBreakpoint(project, createPosition, editor, false, false, true)
-              //breakpointManager.addLineBreakpoint()
-            }
-          }
-          LessonManager.instance.setRestoreNotification(notification)
+  private fun TaskRuntimeContext.checkForBreakpoints(): TaskContext.RestoreNotification? {
+    return if (lineWithBreakpoints() != setOf(logicalPosition.line)) {
+      TaskContext.RestoreNotification(incorrectBreakPointsMessage) {
+        runWriteAction {
+          LessonManager.instance.clearRestoreMessage()
+          val breakpointManager = XDebuggerManager.getInstance(project).breakpointManager
+          breakpointManager.allBreakpoints.forEach { breakpointManager.removeBreakpoint(it) }
+          FileDocumentManager.getInstance().getFile(editor.document)
+          val line = logicalPosition.line
+          val createPosition = XDebuggerUtil.getInstance().createPosition(virtualFile, line)
+                               ?: error("Can't create source position: $line at $virtualFile")
+          XBreakpointUtil.toggleLineBreakpoint(project, createPosition, editor, false, false, true)
+          //breakpointManager.addLineBreakpoint()
         }
       }
     }
-    project.messageBus.connect(lessonDisposable).subscribe(XBreakpointListener.TOPIC, object : XBreakpointListener<XBreakpoint<*>> {
-      override fun breakpointAdded(breakpoint: XBreakpoint<*>) {
-        check()
-      }
-
-      override fun breakpointRemoved(breakpoint: XBreakpoint<*>) {
-        check()
-      }
-
-      override fun breakpointChanged(breakpoint: XBreakpoint<*>) {
-        check()
-      }
-    })
+    else null
   }
 
   protected abstract fun LessonContext.applyProgramChangeTasks()
@@ -482,4 +509,13 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
 
   private fun TaskRuntimeContext.checkWordInTextField(expected: String): Boolean =
     (focusOwner as? JTextComponent)?.text?.replace(" ", "")?.toLowerCase() == expected.toLowerCase().replace(" ", "")
+
+  protected fun TaskContext.proposeModificationRestore(restoreText: String) = proposeRestore {
+    val caretOffset = editor.caretModel.offset
+    val textLength = editor.document.textLength
+    val restoreLength = restoreText.length
+    val offset = caretOffset - (if (restoreLength <= textLength) 0 else restoreLength - textLength)
+
+    checkExpectedStateOfEditor(LessonSample(restoreText, offset), false) ?: checkForBreakpoints()
+  }
 }

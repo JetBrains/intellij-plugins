@@ -24,6 +24,7 @@ class PythonDebugLesson(module: Module) : CommonDebugLesson(module, "python.debu
       before {
         mayBeStopped = true
       }
+      proposeModificationRestore(afterFixText)
       "Let's rerun our program. Just click again at ${icon(AllIcons.Actions.Restart)} or use ${action(it)}."
     }
   }
