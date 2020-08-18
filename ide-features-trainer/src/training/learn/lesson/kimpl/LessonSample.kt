@@ -7,6 +7,10 @@ data class LessonSamplePosition(val id: Int, val startOffset: Int, val selection
 
 class LessonSample(val text: String,
                    private val positions: Map<Int, LessonSamplePosition>) {
+  constructor(text: String, position: LessonSamplePosition) :
+    this(text, mapOf(Pair(0, LessonSamplePosition(0, position.startOffset, position.selection))))
+  constructor(text: String, startOffset: Int) : this(text, LessonSamplePosition(0, startOffset))
+
   val startOffset: Int
     get() = getPosition(0).startOffset
   val selection: Pair<Int, Int>?
