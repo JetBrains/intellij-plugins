@@ -16,12 +16,13 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.castSafelyTo
+import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.model.webtypes.json.Source
 
 class WebTypesSourceSymbolResolver(private val context: PsiFile, private val pluginName: String) {
 
   fun resolve(source: Source): Result<PsiElement?> {
-    val properties: Map<String, *> = source.getAdditionalProperties()
+    val properties: Map<String, *> = source.additionalProperties
     val symbolName = properties["symbol"]
     val moduleName = properties["module"]
     val file = properties["file"]
@@ -42,7 +43,11 @@ class WebTypesSourceSymbolResolver(private val context: PsiFile, private val plu
 
       if (modules != null) {
         for (module in modules) {
-          JSResolveResult.resolve(ES6PsiUtil.resolveSymbolInModule(symbolName, context, module as JSElement))
+          val jsModule = when (module) {
+            is JSElement -> module
+            else -> findModule(module)
+          } ?: continue
+          JSResolveResult.resolve(ES6PsiUtil.resolveSymbolInModule(symbolName, context, jsModule))
             ?.let { return Result.create(it, context, module, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS) }
         }
       }
