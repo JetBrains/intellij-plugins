@@ -1,5 +1,6 @@
 package org.angularjs.codeInsight.router;
 
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
@@ -60,7 +61,7 @@ public class DiagramObject {
     return myType;
   }
 
-  public @NotNull String getName() {
+  public @NotNull @NlsSafe String getName() {
     return myName;
   }
 
@@ -106,7 +107,7 @@ public class DiagramObject {
     myTooltip = tooltip;
   }
 
-  public void setType(Type type) {
+  public void setType(@NotNull Type type) {
     myType = type;
   }
 

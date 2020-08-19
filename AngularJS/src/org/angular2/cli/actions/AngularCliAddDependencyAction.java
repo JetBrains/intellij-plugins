@@ -141,7 +141,7 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
         .thenComparing(NodePackageBasicInfo::getName)
     );
     JBList<NodePackageBasicInfo> list = new JBList<>(model);
-    list.setCellRenderer(new ColoredListCellRenderer<NodePackageBasicInfo>() {
+    list.setCellRenderer(new ColoredListCellRenderer<>() {
       @Override
       protected void customizeCellRenderer(@NotNull JList<? extends NodePackageBasicInfo> list,
                                            NodePackageBasicInfo value,
@@ -151,7 +151,7 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
         if (!selected && index % 2 == 0) {
           setBackground(UIUtil.getDecoratedRowColor());
         }
-        setIcon(JBUI.scale(EmptyIcon.create(5)));
+        setIcon(JBUIScale.scaleIcon(EmptyIcon.create(5)));
         append(value.getName(), value != OTHER ? SimpleTextAttributes.REGULAR_ATTRIBUTES : SimpleTextAttributes.LINK_ATTRIBUTES, true);
         if (value.getDescription() != null) {
           append(" - " + value.getDescription(), SimpleTextAttributes.GRAY_ATTRIBUTES, false);
@@ -237,7 +237,7 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
       List<CompletionModuleInfo> modules = new ArrayList<>();
       NodeModuleSearchUtil.findModulesWithName(modules, ANGULAR_CLI_PACKAGE, cli, null);
       if (modules.isEmpty() || modules.get(0).getVirtualFile() == null) {
-        throw new ExecutionException("Angular CLI package is not installed.");
+        throw new ExecutionException(Angular2Bundle.message("angular.action.ng-add.pacakge-not-installed"));
       }
       CompletionModuleInfo module = modules.get(0);
       ProcessHandler handler = NpmPackageProjectGenerator.generate(

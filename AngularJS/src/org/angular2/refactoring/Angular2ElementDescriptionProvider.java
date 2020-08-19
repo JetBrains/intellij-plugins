@@ -2,6 +2,7 @@
 package org.angular2.refactoring;
 
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
+import com.intellij.openapi.util.NlsContexts.DetailedDescription;
 import com.intellij.psi.ElementDescriptionLocation;
 import com.intellij.psi.ElementDescriptionProvider;
 import com.intellij.psi.PsiElement;
@@ -32,7 +33,7 @@ public class Angular2ElementDescriptionProvider implements ElementDescriptionPro
     return null;
   }
 
-  private static String getTypeDescription(@NotNull PsiElement element) {
+  private static @DetailedDescription String getTypeDescription(@NotNull PsiElement element) {
     if (element instanceof Angular2DirectiveSelectorPsiElement) {
       return ((Angular2DirectiveSelectorPsiElement)element).isElementSelector()
              ? Angular2Bundle.message("angular.description.element-selector")

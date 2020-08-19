@@ -1,5 +1,6 @@
 package org.angularjs.codeInsight;
 
+import com.intellij.codeInspection.util.InspectionMessage;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
@@ -73,7 +74,7 @@ public class AngularJSMessageFormatAnnotator extends AngularJSElementVisitor imp
                                               List<String> keywords,
                                               List<PsiElement> elements) {
     if (AngularJSMessageFormatParser.ExtensionType.plural.equals(type)) {
-      final Map<String, String> errors = new HashMap<>();
+      final Map<String, @InspectionMessage String> errors = new HashMap<>();
       for (String keyword : keywords) {
         if (keyword.startsWith("=")) {
           try {
