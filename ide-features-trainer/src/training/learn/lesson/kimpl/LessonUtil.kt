@@ -1,6 +1,9 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.lesson.kimpl
 
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.EditorModificationUtil
+import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ex.ToolWindowManagerListener
@@ -8,6 +11,7 @@ import com.intellij.util.messages.Topic
 import com.intellij.xdebugger.XDebuggerManager
 import training.commands.kotlin.TaskContext
 import training.commands.kotlin.TaskRuntimeContext
+import training.learn.LearnBundle
 import javax.swing.JList
 
 object LessonUtil {
@@ -69,6 +73,12 @@ object LessonUtil {
       }
     }
     return null
+  }
+
+  fun setEditorReadOnly(editor: Editor) {
+    if (editor !is EditorEx) return
+    editor.isViewer = true
+    EditorModificationUtil.setReadOnlyHint(editor, LearnBundle.message("learn.task.read.only.hint"))
   }
 }
 

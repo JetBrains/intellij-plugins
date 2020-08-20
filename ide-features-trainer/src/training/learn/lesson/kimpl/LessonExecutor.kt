@@ -13,6 +13,7 @@ import com.intellij.openapi.command.undo.DocumentReferenceManager
 import com.intellij.openapi.command.undo.UndoManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.LogicalPosition
+import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.editor.ex.EditorGutterComponentEx
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
@@ -326,6 +327,7 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
 
   fun setSample(sample: LessonSample) {
     invokeLater(ModalityState.NON_MODAL) {
+      (editor as? EditorEx)?.isViewer = false
       setDocumentCode(sample.text)
       setCaret(sample.getPosition(0))
     }
