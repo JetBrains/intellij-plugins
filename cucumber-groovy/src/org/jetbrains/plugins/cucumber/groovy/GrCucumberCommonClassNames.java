@@ -10,13 +10,16 @@ public final class GrCucumberCommonClassNames {
   @NonNls private static final String CUCUMBER_RUNTIME_GROOVY_HOOKS_1_1 = "cucumber.api.groovy.Hooks";
   @NonNls private static final String CUCUMBER_RUNTIME_GROOVY_1_1 = "cucumber.api.groovy";
 
+  @NonNls private static final String CUCUMBER_RUNTIME_GROOVY_HOOKS_5_0 = "io.cucumber.groovy.Hooks";
+  @NonNls private static final String CUCUMBER_RUNTIME_GROOVY_5_0 = "io.cucumber.groovy";
+
 
   public static boolean isHookClassName(String qname) {
-    return CUCUMBER_RUNTIME_GROOVY_HOOKS_1_0.equals(qname) || CUCUMBER_RUNTIME_GROOVY_HOOKS_1_1.equals(qname);
+    return CUCUMBER_RUNTIME_GROOVY_HOOKS_1_0.equals(qname) || CUCUMBER_RUNTIME_GROOVY_HOOKS_1_1.equals(qname) || CUCUMBER_RUNTIME_GROOVY_HOOKS_5_0.equals(qname);
   }
 
   public  static boolean isCucumberRuntimeGroovyPackage(String packageName) {
-    return CUCUMBER_RUNTIME_GROOVY_1_0.equals(packageName) || CUCUMBER_RUNTIME_GROOVY_1_1.equals(packageName);
+    return CUCUMBER_RUNTIME_GROOVY_1_0.equals(packageName) || CUCUMBER_RUNTIME_GROOVY_1_1.equals(packageName) || CUCUMBER_RUNTIME_GROOVY_5_0.equals(packageName);
   }
 
   private GrCucumberCommonClassNames() {}
