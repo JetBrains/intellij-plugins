@@ -150,7 +150,7 @@ public final class MxmlLanguageTagsUtil {
     }
 
     if (tag.getAttribute(NAME_ATTRIBUTE) == null) {
-      addErrorMessage(tag, XmlAnalysisBundle.message("element.doesnt.have.required.attribute", tag.getName(), NAME_ATTRIBUTE), host);
+      addErrorMessage(tag, XmlAnalysisBundle.message("xml.inspections.element.doesnt.have.required.attribute", tag.getName(), NAME_ATTRIBUTE), host);
       return;
     }
 
@@ -162,7 +162,7 @@ public final class MxmlLanguageTagsUtil {
 
   static void validateFxReparentTag(final XmlTag tag, final Validator.ValidationHost host) {
     if (tag.getAttribute(CodeContext.TARGET_ATTR_NAME) == null) {
-      addErrorMessage(tag, XmlAnalysisBundle.message("element.doesnt.have.required.attribute", tag.getName(), CodeContext.TARGET_ATTR_NAME),
+      addErrorMessage(tag, XmlAnalysisBundle.message("xml.inspections.element.doesnt.have.required.attribute", tag.getName(), CodeContext.TARGET_ATTR_NAME),
                       host);
       return;
     }
@@ -316,7 +316,7 @@ public final class MxmlLanguageTagsUtil {
     @Override
     @NotNull
     public String getFamilyName() {
-      return XmlAnalysisBundle.message("remove.attribute.quickfix.family");
+      return XmlAnalysisBundle.message("xml.quickfix.remove.attribute.family");
     }
 
     @Override
