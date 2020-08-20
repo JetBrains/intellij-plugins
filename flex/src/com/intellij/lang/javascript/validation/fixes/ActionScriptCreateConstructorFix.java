@@ -25,6 +25,7 @@ import com.intellij.lang.javascript.refactoring.changeSignature.*;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
@@ -240,7 +241,7 @@ public final class ActionScriptCreateConstructorFix extends CreateJSFunctionInte
   }
 
   private class MyCallerChooser extends JSCallerChooser {
-    MyCallerChooser(JSFunction method, String title, Tree treeToReuse, Consumer<Set<JSFunction>> callback) {
+    MyCallerChooser(JSFunction method, @NlsContexts.DialogTitle String title, Tree treeToReuse, Consumer<Set<JSFunction>> callback) {
       super(method, method.getProject(), title, treeToReuse, callback);
     }
 
