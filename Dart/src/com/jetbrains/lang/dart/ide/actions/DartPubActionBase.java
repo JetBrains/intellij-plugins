@@ -30,6 +30,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -111,7 +112,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
   }
 
   @NotNull
-  protected abstract String getTitle(@NotNull final Project project, @NotNull final VirtualFile pubspecYamlFile);
+  protected abstract @NlsContexts.DialogTitle String getTitle(@NotNull final Project project, @NotNull final VirtualFile pubspecYamlFile);
 
   protected abstract String @Nullable [] calculatePubParameters(@NotNull final Project project, @NotNull final VirtualFile pubspecYamlFile);
 

@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.actions;
 
 import com.intellij.ide.actions.CreateFileFromTemplateAction;
@@ -17,7 +18,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class CreateDartFileAction extends CreateFileFromTemplateAction {
   public CreateDartFileAction() {
-    super(DartBundle.messagePointer("dart.file"), DartBundle.messagePointer("dart.file"), DartIcons.Dart_file);
+    super(DartBundle.messagePointer("action.title.dart.file"),
+          DartBundle.messagePointer("action.description.create.dart.file"),
+          DartIcons.Dart_file);
   }
 
   @Override
@@ -31,13 +34,15 @@ public class CreateDartFileAction extends CreateFileFromTemplateAction {
 
   @Override
   protected String getActionName(PsiDirectory directory, @NotNull String newName, String templateName) {
-    return DartBundle.message("create.dart.file.0", newName);
+    return DartBundle.message("title.create.dart.file.0", newName);
   }
 
   @Override
-  protected void buildDialog(Project project, PsiDirectory directory, CreateFileFromTemplateDialog.Builder builder) {
+  protected void buildDialog(@NotNull Project project,
+                             @NotNull PsiDirectory directory,
+                             @NotNull CreateFileFromTemplateDialog.Builder builder) {
     builder
       .setTitle(DartBundle.message("new.dart.file.title"))
-      .addKind(DartBundle.message("dart.file"), DartIcons.Dart_file, "Dart File");
+      .addKind(DartBundle.message("list.item.dart.file"), DartIcons.Dart_file, "Dart File");
   }
 }

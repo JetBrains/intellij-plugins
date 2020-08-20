@@ -127,7 +127,7 @@ public class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, Defini
     if (hierarchyItems.isEmpty()) return Collections.emptySet();
 
     final Set<DartComponent> result = new THashSet<>(hierarchyItems.size());
-    addSubClasses(project, scope, new HashSet<TypeHierarchyItem>(), hierarchyItems, result, hierarchyItems.get(0), false);
+    addSubClasses(project, scope, new HashSet<>(), hierarchyItems, result, hierarchyItems.get(0), false);
     return result;
   }
 
@@ -138,7 +138,7 @@ public class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, Defini
     if (hierarchyItems.isEmpty()) return Collections.emptySet();
 
     final Set<DartComponent> result = new THashSet<>(hierarchyItems.size());
-    addSubMembers(project, scope, new HashSet<TypeHierarchyItem>(), hierarchyItems, result, hierarchyItems.get(0), false);
+    addSubMembers(project, scope, new HashSet<>(), hierarchyItems, result, hierarchyItems.get(0), false);
     return result;
   }
 

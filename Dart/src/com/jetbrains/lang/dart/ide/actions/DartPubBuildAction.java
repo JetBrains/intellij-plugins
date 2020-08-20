@@ -4,6 +4,7 @@ package com.jetbrains.lang.dart.ide.actions;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.pubServer.DartWebdev;
@@ -28,8 +29,7 @@ public class DartPubBuildAction extends DartPubActionBase {
   }
 
   @Override
-  @NotNull
-  protected String getTitle(@NotNull final Project project, @NotNull final VirtualFile pubspecYamlFile) {
+  protected @NotNull @NlsContexts.DialogTitle String getTitle(@NotNull final Project project, @NotNull final VirtualFile pubspecYamlFile) {
     final String projectName = PubspecYamlUtil.getDartProjectName(pubspecYamlFile);
     final String prefix = projectName == null ? "" : ("[" + projectName + "] ");
     return prefix + DartBundle

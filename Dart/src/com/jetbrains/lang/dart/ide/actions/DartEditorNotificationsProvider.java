@@ -14,6 +14,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -82,14 +83,9 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
         if (DartSdkUtil.isDartSdkHome(sdkPath)) {
           return createNotificationToEnableDartSupport(module);
         }
-
-        final String message = DartBundle.message("dart.sdk.is.not.configured");
-        final String downloadUrl = DartSdkUpdateChecker.SDK_STABLE_DOWNLOAD_URL;
-
-        final EditorNotificationPanel panel = new EditorNotificationPanel().icon(DartIcons.Dart_16).text(message);
-        panel.createActionLabel(DartBundle.message("download.dart.sdk"), new OpenWebPageRunnable(downloadUrl));
-        panel.createActionLabel(DartBundle.message("open.dart.settings"), new OpenDartSettingsRunnable(project));
-        return panel;
+        else {
+          return createNoDartSdkPanel(project, DartBundle.message("dart.sdk.is.not.configured"));
+        }
       }
 
       // SDK not enabled for this module
@@ -98,17 +94,22 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
       }
 
       if (!DartAnalysisServerService.isDartSdkVersionSufficient(sdk)) {
-        final String message = DartBundle.message("old.dart.sdk.configured", DartAnalysisServerService.MIN_SDK_VERSION, sdk.getVersion());
-        final String downloadUrl = DartSdkUpdateChecker.SDK_STABLE_DOWNLOAD_URL;
-
-        final EditorNotificationPanel panel = new EditorNotificationPanel().icon(DartIcons.Dart_16).text(message);
-        panel.createActionLabel(DartBundle.message("download.dart.sdk"), new OpenWebPageRunnable(downloadUrl));
-        panel.createActionLabel(DartBundle.message("open.dart.settings"), new OpenDartSettingsRunnable(project));
-        return panel;
+        String message = DartBundle.message("old.dart.sdk.configured", DartAnalysisServerService.MIN_SDK_VERSION, sdk.getVersion());
+        return createNoDartSdkPanel(project, message);
       }
     }
 
     return null;
+  }
+
+  @NotNull
+  public EditorNotificationPanel createNoDartSdkPanel(@NotNull Project project, @NlsContexts.Label String message) {
+    final String downloadUrl = DartSdkUpdateChecker.SDK_STABLE_DOWNLOAD_URL;
+
+    final EditorNotificationPanel panel = new EditorNotificationPanel().icon(DartIcons.Dart_16).text(message);
+    panel.createActionLabel(DartBundle.message("download.dart.sdk"), new OpenWebPageRunnable(downloadUrl));
+    panel.createActionLabel(DartBundle.message("open.dart.settings"), new OpenDartSettingsRunnable(project));
+    return panel;
   }
 
   @NotNull
