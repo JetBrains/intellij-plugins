@@ -1,10 +1,12 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.refactoring;
 
 import com.google.common.collect.ImmutableList;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtilRt;
+import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +25,7 @@ public class ServerExtractMethodRefactoring extends ServerRefactoring {
                                         @NotNull final VirtualFile file,
                                         final int offset,
                                         final int length) {
-    super(project, "Extract Method", RefactoringKind.EXTRACT_METHOD, file, offset, length);
+    super(project, DartBundle.message("progress.title.extract.method"), RefactoringKind.EXTRACT_METHOD, file, offset, length);
   }
 
   public boolean canExtractGetter() {
@@ -56,8 +58,7 @@ public class ServerExtractMethodRefactoring extends ServerRefactoring {
     return options.getParameters();
   }
 
-  @NotNull
-  public String getSignature() {
+  public @NotNull @NlsSafe String getSignature() {
     // TODO(scheglov) consider moving to server
     StringBuilder sb = new StringBuilder();
     sb.append(options.getReturnType());

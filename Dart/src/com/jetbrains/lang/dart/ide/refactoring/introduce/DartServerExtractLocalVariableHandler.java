@@ -22,6 +22,7 @@ import com.intellij.util.ui.JBUI;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.assists.AssistUtils;
 import com.jetbrains.lang.dart.assists.DartSourceEditException;
+import com.jetbrains.lang.dart.ide.refactoring.DartInlineHandler;
 import com.jetbrains.lang.dart.ide.refactoring.ServerExtractLocalVariableRefactoring;
 import com.jetbrains.lang.dart.ide.refactoring.ServerRefactoringDialog;
 import com.jetbrains.lang.dart.ide.refactoring.status.RefactoringStatus;
@@ -96,7 +97,7 @@ class ExtractLocalVariableProcessor {
       performOnExpression(expressions.get(0));
     }
     else if (expressions.size() > 1) {
-      IntroduceTargetChooser.showChooser(editor, expressions, new Pass<DartExpression>() {
+      IntroduceTargetChooser.showChooser(editor, expressions, new Pass<>() {
         @Override
         public void pass(DartExpression expression) {
           performOnExpression(expression);
@@ -108,7 +109,7 @@ class ExtractLocalVariableProcessor {
   private void createRefactoring(int offset, int length) {
     refactoring = new ServerExtractLocalVariableRefactoring(project, file.getVirtualFile(), offset, length);
     final RefactoringStatus initialStatus = refactoring.checkInitialConditions();
-    if (showMessageIfError(initialStatus)) {
+    if (DartInlineHandler.showMessageIfError(project, editor, initialStatus)) {
       refactoring = null;
     }
   }
@@ -139,7 +140,7 @@ class ExtractLocalVariableProcessor {
     // validate final status
     {
       final RefactoringStatus finalConditions = refactoring.checkFinalConditions();
-      if (showMessageIfError(finalConditions)) {
+      if (DartInlineHandler.showMessageIfError(project, editor, finalConditions)) {
         return;
       }
     }
@@ -183,27 +184,13 @@ class ExtractLocalVariableProcessor {
       }
     }
     // handle occurrences
-    OccurrencesChooser.<DartExpression>simpleChooser(editor)
-      .showChooser(expression, occurrences, new Pass<OccurrencesChooser.ReplaceChoice>() {
-        @Override
-        public void pass(OccurrencesChooser.ReplaceChoice replaceChoice) {
-          refactoring.setExtractAll(replaceChoice == OccurrencesChooser.ReplaceChoice.ALL);
-          performOnElementOccurrences();
-        }
-      });
-  }
-
-  private boolean showMessageIfError(@Nullable final RefactoringStatus status) {
-    if (status == null) {
-      return true;
-    }
-    if (status.hasError()) {
-      final String message = status.getMessage();
-      assert message != null;
-      CommonRefactoringUtil.showErrorHint(project, editor, message, CommonBundle.getErrorTitle(), null);
-      return true;
-    }
-    return false;
+    OccurrencesChooser.<DartExpression>simpleChooser(editor).showChooser(expression, occurrences, new Pass<>() {
+      @Override
+      public void pass(OccurrencesChooser.ReplaceChoice replaceChoice) {
+        refactoring.setExtractAll(replaceChoice == OccurrencesChooser.ReplaceChoice.ALL);
+        performOnElementOccurrences();
+      }
+    });
   }
 }
 

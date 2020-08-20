@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.refactoring;
 
 import com.intellij.find.findUsages.PsiElement2UsageTargetAdapter;
@@ -31,6 +32,7 @@ import gnu.trove.THashSet;
 import org.dartlang.analysis.server.protocol.SourceChange;
 import org.dartlang.analysis.server.protocol.SourceEdit;
 import org.dartlang.analysis.server.protocol.SourceFileEdit;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -110,8 +112,7 @@ class DartRenameDialog extends ServerRefactoringDialog<ServerRenameRefactoring> 
     myNameSuggestionsField.addDataChangedListener(this::processNewNameChanged);
   }
 
-  @NotNull
-  private String getLabelText() {
+  private @NotNull @Nls String getLabelText() {
     final String kindName = StringUtil.toLowerCase(myRefactoring.getElementKindName());
     final String name = myRefactoring.getOldName().isEmpty() ? kindName : kindName + " " + myRefactoring.getOldName();
     return RefactoringBundle.message("rename.0.and.its.usages.to", name);

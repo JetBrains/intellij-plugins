@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.refactoring;
 
 import com.intellij.CommonBundle;
@@ -30,6 +16,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.inline.InlineOptionsDialog;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
+import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.analyzer.DartServerData.DartNavigationRegion;
@@ -52,6 +39,7 @@ public class DartInlineHandler extends InlineActionHandler {
 
   @Override
   public boolean canInlineElementInEditor(PsiElement element, Editor editor) {
+    if (editor == null) return false;
     final InlineRefactoringContext context = findContext(editor);
     if (context == null) return false;
     final String kind = context.kind;
@@ -64,10 +52,11 @@ public class DartInlineHandler extends InlineActionHandler {
 
   @Override
   public void inlineElement(@NotNull final Project project, @Nullable final Editor editor, PsiElement element) {
+    if (editor == null) return;
+
     final InlineRefactoringContext context = findContext(editor);
-    if (context == null) {
-      return;
-    }
+    if (context == null) return;
+
     // create refactoring
     final ServerRefactoring refactoring;
     if (ElementKind.LOCAL_VARIABLE.equals(context.kind)) {
@@ -79,7 +68,7 @@ public class DartInlineHandler extends InlineActionHandler {
     // validate initial status
     {
       final RefactoringStatus initialConditions = refactoring.checkInitialConditions();
-      if (showMessageIfError(editor, initialConditions)) {
+      if (showMessageIfError(project, editor, initialConditions)) {
         return;
       }
     }
@@ -93,7 +82,7 @@ public class DartInlineHandler extends InlineActionHandler {
     // validate final status
     {
       final RefactoringStatus finalConditions = refactoring.checkFinalConditions();
-      if (showMessageIfError(editor, finalConditions)) {
+      if (showMessageIfError(project, editor, finalConditions)) {
         return;
       }
     }
@@ -121,10 +110,7 @@ public class DartInlineHandler extends InlineActionHandler {
   }
 
   @Nullable
-  static private InlineRefactoringContext findContext(@Nullable Editor editor) {
-    if (editor == null) {
-      return null;
-    }
+  static private InlineRefactoringContext findContext(@NotNull Editor editor) {
     // prepare project
     final Project project = editor.getProject();
     if (project == null) {
@@ -152,16 +138,13 @@ public class DartInlineHandler extends InlineActionHandler {
     return null;
   }
 
-  private static boolean showMessageIfError(@Nullable Editor editor, @Nullable final RefactoringStatus status) {
-    if (status == null) {
-      return true;
-    }
+  public static boolean showMessageIfError(@NotNull Project project, @NotNull Editor editor, @Nullable final RefactoringStatus status) {
+    if (status == null) return true;
+
     if (status.hasError()) {
       final String message = status.getMessage();
       assert message != null;
-      if (editor != null) {
-        CommonRefactoringUtil.showErrorHint(editor.getProject(), editor, message, CommonBundle.getErrorTitle(), null);
-      }
+      CommonRefactoringUtil.showErrorHint(project, editor, message, CommonBundle.getErrorTitle(), null);
       return true;
     }
     return false;
@@ -186,7 +169,7 @@ class InlineMethodDialog extends InlineOptionsDialog {
   protected InlineMethodDialog(Project project, PsiElement element, ServerInlineMethodRefactoring refactoring) {
     super(project, true, element);
     this.refactoring = refactoring;
-    setTitle(getRefactoringName());
+    setTitle(RefactoringBundle.message("inline.method.title"));
     myInvokedOnReference = !refactoring.isDeclaration();
     init();
   }
@@ -207,17 +190,17 @@ class InlineMethodDialog extends InlineOptionsDialog {
 
   @Override
   protected String getInlineAllText() {
-    return "Inline all references and remove the method";
+    return DartBundle.message("radio.inline.all.references.remove.method");
   }
 
   @Override
   protected String getInlineThisText() {
-    return "Inline this reference and leave the method";
+    return DartBundle.message("radio.inline.this.reference.leave.method");
   }
 
   @Override
   protected String getNameLabelText() {
-    return "Method " + refactoring.getFullName();
+    return DartBundle.message("label.method.0", refactoring.getFullName());
   }
 
   @Override
@@ -228,9 +211,5 @@ class InlineMethodDialog extends InlineOptionsDialog {
   @Override
   protected boolean isInlineThis() {
     return !refactoring.isDeclaration();
-  }
-
-  public static String getRefactoringName() {
-    return RefactoringBundle.message("inline.method.title");
   }
 }

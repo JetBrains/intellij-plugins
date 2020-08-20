@@ -4,6 +4,7 @@ package com.jetbrains.lang.dart.ide.refactoring.moveFile;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
@@ -101,7 +102,7 @@ public class DartServerMoveDartFileHandler extends MoveFileHandler {
     // the Dart Analysis Server would now be pointing to incorrect file paths if we tried to use them at this point.
   }
 
-  private static void showMoveFileExceptionDialog(@NotNull final Project project, @NotNull String message) {
+  private static void showMoveFileExceptionDialog(@NotNull final Project project, @NotNull @NlsContexts.DialogMessage String message) {
     ApplicationManager.getApplication()
       .invokeLater(() -> Messages.showErrorDialog(project, message, DartBundle.message("dart.refactoring.move.file.dialog.title")));
   }

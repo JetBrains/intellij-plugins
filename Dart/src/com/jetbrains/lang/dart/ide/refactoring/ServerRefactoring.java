@@ -8,6 +8,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
@@ -15,6 +16,7 @@ import com.jetbrains.lang.dart.ide.refactoring.status.RefactoringStatus;
 import com.jetbrains.lang.dart.ide.refactoring.status.RefactoringStatusEntry;
 import com.jetbrains.lang.dart.ide.refactoring.status.RefactoringStatusSeverity;
 import org.dartlang.analysis.server.protocol.*;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,52 +30,49 @@ import java.util.concurrent.TimeUnit;
  * The LTK wrapper around an Analysis Server refactoring.
  */
 public abstract class ServerRefactoring {
-  @NotNull private final Project myProject;
-  @NotNull private final String refactoringName;
-  @NotNull private final String kind;
+  private final @NotNull Project myProject;
+  private final @NotNull @NlsContexts.DialogTitle String myRefactoringProgressTitle;
+  private final @NotNull @NonNls String kind;
 
-  @NotNull private final VirtualFile file;
+  private final @NotNull VirtualFile file;
   private final int offset;
   private final int length;
 
-  private final Set<Integer> pendingRequestIds = new HashSet<Integer>();
-  @Nullable private RefactoringStatus serverErrorStatus;
-  @Nullable private RefactoringStatus initialStatus;
-  @Nullable private RefactoringStatus optionsStatus;
-  @Nullable private RefactoringStatus finalStatus;
-  @Nullable private SourceChange change;
-  @NotNull private final Set<String> potentialEdits = new HashSet<String>();
+  private final Set<Integer> pendingRequestIds = new HashSet<>();
+  private @Nullable RefactoringStatus serverErrorStatus;
+  private @Nullable RefactoringStatus initialStatus;
+  private @Nullable RefactoringStatus optionsStatus;
+  private @Nullable RefactoringStatus finalStatus;
+  private @Nullable SourceChange change;
+  private final @NotNull Set<String> potentialEdits = new HashSet<>();
 
   private int lastId = 0;
-  @Nullable private ServerRefactoringListener listener;
+  private @Nullable ServerRefactoringListener listener;
 
-  public ServerRefactoring(@NotNull final Project project,
-                           @NotNull final String refactoringName,
-                           @NotNull final String kind,
-                           @NotNull final VirtualFile file,
-                           final int offset,
-                           final int length) {
+  public ServerRefactoring(@NotNull Project project,
+                           @NotNull @NlsContexts.DialogTitle String refactoringProgressTitle,
+                           @NotNull @NonNls String kind,
+                           @NotNull VirtualFile file,
+                           int offset,
+                           int length) {
     myProject = project;
-    this.refactoringName = refactoringName;
+    myRefactoringProgressTitle = refactoringProgressTitle;
     this.kind = kind;
     this.file = file;
     this.offset = offset;
     this.length = length;
   }
 
-  @NotNull
-  protected Project getProject() {
+  protected @NotNull Project getProject() {
     return myProject;
   }
 
-  @NotNull
-  protected VirtualFile getFile() {
+  protected @NotNull VirtualFile getFile() {
     return file;
   }
 
-  @Nullable
-  public RefactoringStatus checkFinalConditions() {
-    ProgressManager.getInstance().run(new Task.Modal(null, refactoringName, true) {
+  public @Nullable RefactoringStatus checkFinalConditions() {
+    ProgressManager.getInstance().run(new Task.Modal(null, myRefactoringProgressTitle, true) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
         indicator.setText(DartBundle.message("progress.text.validating.the.specified.parameters"));
@@ -93,9 +92,8 @@ public abstract class ServerRefactoring {
     return result;
   }
 
-  @Nullable
-  public RefactoringStatus checkInitialConditions() {
-    ProgressManager.getInstance().run(new Task.Modal(null, refactoringName, true) {
+  public @Nullable RefactoringStatus checkInitialConditions() {
+    ProgressManager.getInstance().run(new Task.Modal(null, myRefactoringProgressTitle, true) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
         indicator.setText(DartBundle.message("progress.text.checking.availability.at.the.selection"));
@@ -109,19 +107,16 @@ public abstract class ServerRefactoring {
     return initialStatus;
   }
 
-  @Nullable
-  public SourceChange getChange() {
+  public @Nullable SourceChange getChange() {
     return change;
   }
 
   /**
    * Returns this {@link RefactoringOptions} subclass instance.
    */
-  @Nullable
-  protected abstract RefactoringOptions getOptions();
+  protected abstract @Nullable RefactoringOptions getOptions();
 
-  @NotNull
-  public Set<String> getPotentialEdits() {
+  public @NotNull Set<String> getPotentialEdits() {
     return potentialEdits;
   }
 
