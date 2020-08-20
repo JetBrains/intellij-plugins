@@ -79,8 +79,8 @@ class Struts2ModelInspectionVisitor implements DomElementVisitor {
       if (entry.getValue().size() == 1) continue;
 
       for (Result result : entry.getValue()) {
-        holder.createProblem(result.getName(), XmlDomBundle.message("model.highlighting.identity",
-                                                                 ElementPresentationManager.getTypeNameForObject(result)));
+        holder.createProblem(result.getName(), XmlDomBundle.message("dom.inspections.identity",
+                                                                    ElementPresentationManager.getTypeNameForObject(result)));
       }
     }
   }
