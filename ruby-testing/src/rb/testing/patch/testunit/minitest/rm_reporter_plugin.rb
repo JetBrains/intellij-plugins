@@ -112,6 +112,8 @@ else
         io.puts 'Started'
         io.puts
 
+        DRb.start_service
+
         # Setup test runner's MessageFactory
         set_message_factory(Rake::TeamCity::MessageFactory)
         log_test_reporter_attached()
@@ -154,7 +156,6 @@ else
       def before_test(test)
         fqn = get_fqn_from_test(test)
         tests = DRbObject.new_with_uri(Minitest.my_drb_url)
-        DRb.start_service
 
         my_mutex.synchronize {
           unless tests.include? test.class.to_s
