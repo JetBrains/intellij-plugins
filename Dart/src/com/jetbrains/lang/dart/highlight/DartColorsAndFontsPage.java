@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.highlight;
 
 import com.intellij.openapi.editor.colors.TextAttributesKey;
@@ -144,7 +145,7 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.valid.string.escape"), VALID_STRING_ESCAPE),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.invalid.string.escape"), INVALID_STRING_ESCAPE),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.operator"), OPERATION_SIGN),
-      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.parenths"), PARENTHS),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.parentheses"), PARENTHS),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.brackets"), BRACKETS),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.braces"), BRACES),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.comma"), COMMA),
@@ -232,8 +233,7 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
   }
 
   @Override
-  @NotNull
-  public String getDisplayName() {
+  public @NotNull String getDisplayName() {
     return DartBundle.message("dart.title");
   }
 
@@ -253,14 +253,12 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
   }
 
   @Override
-  @NotNull
-  public SyntaxHighlighter getHighlighter() {
+  public @NotNull SyntaxHighlighter getHighlighter() {
     return new DartSyntaxHighlighter();
   }
 
   @Override
-  @NotNull
-  public String getDemoText() {
+  public @NotNull String getDemoText() {
     return PREVIEW_TEXT;
   }
 

@@ -359,7 +359,7 @@ public class DartAnnotator implements Annotator {
         holder.newSilentAnnotation(HighlightSeverity.INFORMATION).range(range).textAttributes(attribute).create();
       }
       else {
-        holder.newAnnotation(HighlightSeverity.ERROR, DartBundle.message("dart.color.settings.description.invalid.string.escape"))
+        holder.newAnnotation(HighlightSeverity.ERROR, DartBundle.message("error.label.invalid.string.escape"))
           .range(range)
           .textAttributes(attribute)
           .create();
