@@ -96,7 +96,8 @@ class VueCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
                                   "INTERPOLATION_WRAP",
                                   VueBundle.message("vue.formatting.wrapping.interpolations"),
                                   null,
-                                  CodeStyleSettingsCustomizable.WRAP_OPTIONS, CodeStyleSettingsCustomizable.WRAP_VALUES)
+                                  CodeStyleSettingsCustomizableOptions.getInstance().WRAP_OPTIONS,
+                                  CodeStyleSettingsCustomizable.WRAP_VALUES)
         consumer.showCustomOption(VueCodeStyleSettings::class.java,
                                   "INTERPOLATION_NEW_LINE_AFTER_START_DELIMITER",
                                   VueBundle.message("vue.formatting.wrapping.new-line-after-start-delimiter"),
