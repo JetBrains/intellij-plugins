@@ -129,11 +129,11 @@ public final class DartProblemsView implements PersistentStateComponent<DartProb
     return content != null ? (DartProblemsViewPanel)content.getComponent() : null;
   }
 
-  void setHeaderText(@TabTitle @NotNull String headerText) {
+  void setTabTitle(@TabTitle @NotNull String tabTitle) {
     ToolWindow toolWindow = getDartAnalysisToolWindow();
     Content content = toolWindow != null ? toolWindow.getContentManager().getContent(0) : null;
     if (content != null) {
-      content.setDisplayName(headerText);
+      content.setDisplayName(tabTitle);
     }
   }
 

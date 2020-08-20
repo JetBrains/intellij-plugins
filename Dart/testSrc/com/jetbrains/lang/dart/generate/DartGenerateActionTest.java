@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.generate;
 
 import com.intellij.openapi.util.io.FileUtil;
@@ -133,19 +134,19 @@ public class DartGenerateActionTest extends DartGenerateActionTestBase {
   }
 
   public void testGetterSetter1() {
-    doGetterSetterTest(CreateGetterSetterFix.Strategy.GETTERSETTER);
+    doGetterSetterTest(CreateGetterSetterFix.Strategy.GETTER_SETTER);
   }
 
   public void testGetterSetter2() {
-    doGetterSetterTest(CreateGetterSetterFix.Strategy.GETTERSETTER);
+    doGetterSetterTest(CreateGetterSetterFix.Strategy.GETTER_SETTER);
   }
 
   public void testGetterSetter3() {
-    doGetterSetterTest(CreateGetterSetterFix.Strategy.GETTERSETTER);
+    doGetterSetterTest(CreateGetterSetterFix.Strategy.GETTER_SETTER);
   }
 
   public void testGetterSetter4() {
-    doGetterSetterTest(CreateGetterSetterFix.Strategy.GETTERSETTER);
+    doGetterSetterTest(CreateGetterSetterFix.Strategy.GETTER_SETTER);
   }
 
   public void testOverrideOperator() {
