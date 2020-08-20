@@ -8,6 +8,7 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -16,9 +17,7 @@ import com.intellij.psi.search.SearchScope;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.SmartList;
 import org.dartlang.analysis.server.protocol.*;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.*;
 
 import java.util.*;
 
@@ -522,11 +521,11 @@ public final class DartServerData {
   }
 
   public static final class DartError extends DartRegion {
-    @NotNull private final String mySeverity;
-    @Nullable private final String myCode;
-    @NotNull private final String myMessage;
-    @Nullable private final String myCorrection;
-    @Nullable private final String myUrl;
+    private final @NotNull @NonNls String mySeverity;
+    private final @Nullable @NonNls String myCode;
+    private final @NotNull @NlsSafe String myMessage;
+    private final @Nullable @NlsSafe String myCorrection;
+    private final @Nullable @NonNls String myUrl;
 
     @Contract(pure = true)
     @NotNull
@@ -545,11 +544,11 @@ public final class DartServerData {
 
     private DartError(int offset,
                       int length,
-                      @NotNull String severity,
-                      @Nullable String code,
-                      @NotNull String message,
-                      @Nullable String correction,
-                      @Nullable String url) {
+                      @NotNull @NonNls String severity,
+                      @Nullable @NonNls String code,
+                      @NotNull @Nls String message,
+                      @Nullable @Nls String correction,
+                      @Nullable @NonNls String url) {
       super(offset, length);
       mySeverity = severity;
       myCode = code;
@@ -558,8 +557,7 @@ public final class DartServerData {
       myUrl = url;
     }
 
-    @NotNull
-    public String getSeverity() {
+    public @NotNull @NonNls String getSeverity() {
       return mySeverity;
     }
 
@@ -567,23 +565,19 @@ public final class DartServerData {
       return mySeverity.equals(AnalysisErrorSeverity.ERROR);
     }
 
-    @Nullable
-    public String getCode() {
+    public @Nullable @NonNls String getCode() {
       return myCode;
     }
 
-    @NotNull
-    public String getMessage() {
+    public @NotNull @NlsSafe String getMessage() {
       return myMessage;
     }
 
-    @Nullable
-    public String getCorrection() {
+    public @Nullable @NlsSafe String getCorrection() {
       return myCorrection;
     }
 
-    @Nullable
-    public String getUrl() {
+    public @Nullable @NonNls String getUrl() {
       return myUrl;
     }
   }
