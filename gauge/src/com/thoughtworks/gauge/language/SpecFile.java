@@ -19,6 +19,8 @@ package com.thoughtworks.gauge.language;
 import com.intellij.extapi.psi.PsiFileBase;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.FileViewProvider;
+import com.intellij.psi.PsiElementVisitor;
+import com.thoughtworks.gauge.language.psi.SpecVisitor;
 import org.jetbrains.annotations.NotNull;
 
 public final class SpecFile extends PsiFileBase {
@@ -35,5 +37,15 @@ public final class SpecFile extends PsiFileBase {
   @Override
   public String toString() {
     return "Specification File";
+  }
+
+  @Override
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof SpecVisitor) {
+      ((SpecVisitor)visitor).visitSpecFile(this);
+      return;
+    }
+
+    visitor.visitFile(this);
   }
 }
