@@ -28,7 +28,7 @@ import javax.swing.text.BadLocationException
 import javax.swing.text.SimpleAttributeSet
 import javax.swing.text.StyleConstants
 
-class LessonMessagePane : JTextPane() {
+class LessonMessagePane(private val learnToolWindow: LearnToolWindow) : JTextPane() {
   private data class RangeData(val range: IntRange, val action: (Point) -> Unit)
 
   private val lessonMessages = CopyOnWriteArrayList<LessonMessage>()
@@ -138,7 +138,7 @@ class LessonMessagePane : JTextPane() {
       document.insertString(document.length, text, REGULAR)
       val end = document.length
       lessonMessages.add(LessonMessage(text, start, end))
-
+      learnToolWindow.scrollToTheEnd()
     }
     catch (e: BadLocationException) {
       LOG.warn(e)
@@ -169,6 +169,7 @@ class LessonMessagePane : JTextPane() {
       }
       val end = document.length
       lessonMessages.add(LessonMessage(messages, start, end))
+      learnToolWindow.scrollToTheEnd()
     }
     catch (e: BadLocationException) {
       LOG.warn(e)

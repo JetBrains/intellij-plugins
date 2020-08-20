@@ -209,4 +209,9 @@ class LearnToolWindow internal constructor(val project: Project, private val who
     hiddenLearnPanel = null
     newUiLearnScrollPane?.setViewportView(learnPanel)
   }
+
+  fun scrollToTheEnd() {
+    val vertical = scrollPane.verticalScrollBar
+    vertical.value = vertical.maximum
+  }
 }
