@@ -46,7 +46,7 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
 
   @NonNls private static final String BUNDLE_ATTR_NAME = "bundle";
   private static final FlexPropertiesSupport.PropertyReferenceInfoProvider<JSAttributeNameValuePairImpl> ourPropertyInfoProvider =
-    new FlexPropertiesSupport.PropertyReferenceInfoProvider<JSAttributeNameValuePairImpl>() {
+    new FlexPropertiesSupport.PropertyReferenceInfoProvider<>() {
       @Override
       @Nullable
       public TextRange getReferenceRange(JSAttributeNameValuePairImpl element) {
@@ -66,7 +66,7 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
     };
   private static final Key<ActionScriptReferenceSet> METADATA_REFERENCE_KEY = Key.create("com.intellij.lang.javascript.METADATA_REFERENCE_KEY");
   private static final FlexPropertiesSupport.BundleReferenceInfoProvider<JSAttributeNameValuePairImpl> ourBundleInfoProvider =
-    new FlexPropertiesSupport.BundleReferenceInfoProvider<JSAttributeNameValuePairImpl>() {
+    new FlexPropertiesSupport.BundleReferenceInfoProvider<>() {
       @Override
       public TextRange getReferenceRange(JSAttributeNameValuePairImpl element) {
         return getValueRange(element);
@@ -343,7 +343,7 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
     @Override
     @NotNull
     public String getUnresolvedMessagePattern() {
-      return XmlPsiBundle.message("wrong.value", "attribute");
+      return XmlPsiBundle.message("xml.inspections.wrong.value", "attribute");
     }
   }
 }

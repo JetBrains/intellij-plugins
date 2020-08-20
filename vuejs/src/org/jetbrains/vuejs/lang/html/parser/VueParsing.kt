@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang.html.parser
 
-import com.intellij.codeInsight.daemon.XmlErrorBundle
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.html.HtmlParsing
 import com.intellij.psi.tree.IElementType
@@ -108,7 +107,7 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
           XmlTokenType.XML_BAD_CHARACTER -> {
             val error = mark()
             advance()
-            error.error(XmlPsiBundle.message("unescaped.ampersand.or.nonterminated.character.entity.reference"))
+            error.error(XmlPsiBundle.message("xml.parsing.unescaped.ampersand.or.nonterminated.character.entity.reference"))
           }
           XmlTokenType.XML_ENTITY_REF_TOKEN -> parseReference()
           INTERPOLATION_EXPR -> parseInterpolationExpr()
