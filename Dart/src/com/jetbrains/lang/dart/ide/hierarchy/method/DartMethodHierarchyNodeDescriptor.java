@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.hierarchy.method;
 
 import com.intellij.icons.AllIcons;
@@ -13,6 +13,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.IconManager;
 import com.jetbrains.lang.dart.psi.DartClass;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -70,7 +71,7 @@ public class DartMethodHierarchyNodeDescriptor extends HierarchyNodeDescriptor {
         myHighlightedText.getEnding().addText(" (" + file.getName() + ")", HierarchyNodeDescriptor.getPackageNameAttributes());
       }
       baseIcon = presentation.getIcon(false);
-      stateIcon = calculateStateIcon(dartClass);
+      stateIcon = calculateStateIcon();
     }
 
     if (changes || baseIcon != myRawIcon || stateIcon != myStateIcon) {
@@ -94,7 +95,7 @@ public class DartMethodHierarchyNodeDescriptor extends HierarchyNodeDescriptor {
     return changes;
   }
 
-  private Icon calculateStateIcon(final DartClass dartClass) {
+  private Icon calculateStateIcon() {
     if (myIsImplementor) {
       return AllIcons.Hierarchy.MethodDefined;
     }
@@ -107,7 +108,7 @@ public class DartMethodHierarchyNodeDescriptor extends HierarchyNodeDescriptor {
     return null;
   }
 
-  private static String getInvalidPrefix() {
+  private static @Nls String getInvalidPrefix() {
     return IdeBundle.message("node.hierarchy.invalid");
   }
 }

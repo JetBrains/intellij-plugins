@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.ide.generation;
 
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.TemplateManager;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartBundle;
@@ -60,9 +61,23 @@ public class CreateGetterSetterFix extends BaseCreateMethodsFix<DartComponent> {
 
   private final @NotNull Strategy myStrategy;
 
-  public CreateGetterSetterFix(@NotNull final DartClass dartClass, @NotNull Strategy strategy) {
+  public CreateGetterSetterFix(@NotNull DartClass dartClass, @NotNull Strategy strategy) {
     super(dartClass);
     myStrategy = strategy;
+  }
+
+  @Override
+  protected @NotNull @NlsContexts.Command String getCommandName() {
+    switch (myStrategy) {
+      case GETTER:
+        return DartBundle.message("command.generate.getters");
+      case SETTER:
+        return DartBundle.message("command.generate.setters");
+      case GETTER_SETTER:
+        return DartBundle.message("command.generate.getters.and.setters");
+      default:
+        return "";
+    }
   }
 
   @Override

@@ -1,9 +1,10 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.editor;
 
 import com.intellij.application.options.editor.AutoImportOptionsProvider;
 import com.intellij.openapi.application.ApplicationBundle;
-import com.intellij.openapi.options.ConfigurationException;
 import com.jetbrains.lang.dart.ide.codeInsight.DartCodeInsightSettings;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -34,7 +35,7 @@ public class DartAutoImportOptionsProvider implements AutoImportOptionsProvider 
   }
 
   @Override
-  public void apply() throws ConfigurationException {
+  public void apply() {
     DartCodeInsightSettings.getInstance().ADD_IMPORTS_ON_PASTE = getSmartPasteValue();
   }
 
@@ -48,15 +49,15 @@ public class DartAutoImportOptionsProvider implements AutoImportOptionsProvider 
     return getInsertImportsAlways().equals(item) ? YES : getInsertImportsNone().equals(item) ? NO : ASK;
   }
 
-  private static String getInsertImportsAlways() {
+  private static @Nls String getInsertImportsAlways() {
     return ApplicationBundle.message("combobox.insert.imports.all");
   }
 
-  private static String getInsertImportsAsk() {
+  private static @Nls String getInsertImportsAsk() {
     return ApplicationBundle.message("combobox.insert.imports.ask");
   }
 
-  private static String getInsertImportsNone() {
+  private static @Nls String getInsertImportsNone() {
     return ApplicationBundle.message("combobox.insert.imports.none");
   }
 }

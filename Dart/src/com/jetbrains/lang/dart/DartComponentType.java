@@ -1,17 +1,19 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.psi.*;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.function.Supplier;
 
 public enum DartComponentType {
-  CLASS(AllIcons.Nodes.Class) {
+  CLASS(AllIcons.Nodes.Class, DartBundle.messagePointer("find.usages.type.class")) {
     @Override
     public Icon getIcon(@NotNull DartComponent component) {
       return component instanceof DartEnumDefinition ? AllIcons.Nodes.Enum
@@ -19,7 +21,7 @@ public enum DartComponentType {
                                                                               : getIcon();
     }
   },
-  FUNCTION(AllIcons.Nodes.Lambda) {
+  FUNCTION(AllIcons.Nodes.Lambda, DartBundle.messagePointer("find.usages.type.function")) {
     @Override
     public Icon getIcon(@NotNull DartComponent component) {
       if (component.isGetter()) {
@@ -31,7 +33,7 @@ public enum DartComponentType {
       return getIcon();
     }
   },
-  METHOD(AllIcons.Nodes.Method) {
+  METHOD(AllIcons.Nodes.Method, DartBundle.messagePointer("find.usages.type.method")) {
     @Override
     public Icon getIcon(@NotNull DartComponent component) {
       if (component.isGetter()) {
@@ -43,20 +45,21 @@ public enum DartComponentType {
       return component.isAbstract() ? AllIcons.Nodes.AbstractMethod : getIcon();
     }
   },
-  LOCAL_VARIABLE(AllIcons.Nodes.Variable),
-  GLOBAL_VARIABLE(AllIcons.Nodes.Variable),
-  FIELD(AllIcons.Nodes.Field),
-  PARAMETER(AllIcons.Nodes.Parameter),
-  TYPEDEF(AllIcons.Nodes.Annotationtype),
-  CONSTRUCTOR(AllIcons.Nodes.Method),
-  OPERATOR(AllIcons.Nodes.ClassInitializer),
-  LABEL(AllIcons.Nodes.Variable);
-
+  LOCAL_VARIABLE(AllIcons.Nodes.Variable, DartBundle.messagePointer("find.usages.type.local.variable")),
+  GLOBAL_VARIABLE(AllIcons.Nodes.Variable, DartBundle.messagePointer("find.usages.type.top.level.variable")),
+  FIELD(AllIcons.Nodes.Field, DartBundle.messagePointer("find.usages.type.field")),
+  PARAMETER(AllIcons.Nodes.Parameter, DartBundle.messagePointer("find.usages.type.parameter")),
+  TYPEDEF(AllIcons.Nodes.Annotationtype, DartBundle.messagePointer("find.usages.type.typedef")),
+  CONSTRUCTOR(AllIcons.Nodes.Method, DartBundle.messagePointer("find.usages.type.constructor")),
+  OPERATOR(AllIcons.Nodes.ClassInitializer, DartBundle.messagePointer("find.usages.type.operator")),
+  LABEL(AllIcons.Nodes.Variable, DartBundle.messagePointer("find.usages.type.label"));
 
   private final Icon myIcon;
+  private final Supplier<@Nls String> myUsageTypeSupplier;
 
-  DartComponentType(final Icon icon) {
+  DartComponentType(final Icon icon, Supplier<@Nls String> supplier) {
     myIcon = icon;
+    myUsageTypeSupplier = supplier;
   }
 
   public int getKey() {
@@ -70,6 +73,10 @@ public enum DartComponentType {
   public Icon getIcon(@NotNull DartComponent component) {
     // Overridden in appropriate subclasses
     return getIcon();
+  }
+
+  public @NotNull @Nls String getUsageType() {
+    return myUsageTypeSupplier.get();
   }
 
   @Nullable

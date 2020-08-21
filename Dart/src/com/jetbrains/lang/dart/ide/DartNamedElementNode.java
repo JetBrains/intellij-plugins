@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide;
 
 import com.intellij.codeInsight.generation.ClassMember;
@@ -8,6 +9,7 @@ import com.intellij.openapi.util.Iconable;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.Nullable;
 
 public class DartNamedElementNode extends PsiElementMemberChooserObject implements ClassMember {
@@ -15,24 +17,21 @@ public class DartNamedElementNode extends PsiElementMemberChooserObject implemen
     super(dartComponent, buildPresentationText(dartComponent), dartComponent.getIcon(Iconable.ICON_FLAG_VISIBILITY));
   }
 
-  @Nullable
-  private static String buildPresentationText(DartComponent dartComponent) {
+  private static @Nullable @Nls String buildPresentationText(DartComponent dartComponent) {
     final ItemPresentation presentation = dartComponent.getPresentation();
     if (presentation == null) {
       return dartComponent.getName();
     }
-    final StringBuilder result = new StringBuilder();
     if (dartComponent instanceof DartClass) {
-      result.append(dartComponent.getName());
       final String location = presentation.getLocationString();
       if (location != null && !location.isEmpty()) {
-        result.append(" ").append(location);
+        return dartComponent.getName() + " " + location;
       }
+      return dartComponent.getName();
     }
     else {
-      result.append(presentation.getPresentableText());
+      return presentation.getPresentableText();
     }
-    return result.toString();
   }
 
   @Nullable
