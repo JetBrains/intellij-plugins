@@ -32,6 +32,7 @@ import aQute.service.reporter.Report;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.osgi.jps.model.LibraryBundlificationRule;
@@ -44,13 +45,13 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * Class which wraps bnd and integrates it into IntelliJ.
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
+@SuppressWarnings("HardCodedStringLiteral" /*IDEA-240279*/)
 public class BndWrapper {
   private final Reporter myReporter;
 
@@ -303,7 +304,7 @@ public class BndWrapper {
       builder.setPedantic(false);
       List<Builder> subs = builder.getSubBuilders();
       if (subs.size() > 0 && subs.get(0) != builder) {
-        return subs.stream().map(sub -> sub.getBsn() + ".jar").collect(Collectors.toList());
+        return ContainerUtil.map(subs, sub -> sub.getBsn() + ".jar");
       }
     }
     catch (Exception e) {

@@ -24,6 +24,7 @@
  */
 package org.osmorc.frameworkintegration;
 
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.run.ui.SelectedBundle;
@@ -39,12 +40,10 @@ public interface FrameworkInstanceManager {
   /**
    * Returns framework bundles of a specific role.
    */
-  @NotNull
-  Collection<SelectedBundle> getFrameworkBundles(@NotNull FrameworkInstanceDefinition instance, @NotNull FrameworkBundleType type);
+  @NotNull Collection<SelectedBundle> getFrameworkBundles(@NotNull FrameworkInstanceDefinition instance, @NotNull FrameworkBundleType type);
 
   /**
    * Returns null if the instance definition is valid, an error message otherwise.
    */
-  @Nullable
-  String checkValidity(@NotNull FrameworkInstanceDefinition instance);
+  @Nullable @Nls(capitalization = Nls.Capitalization.Sentence) String checkValidity(@NotNull FrameworkInstanceDefinition instance);
 }

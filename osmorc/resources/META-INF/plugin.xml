@@ -50,6 +50,8 @@
   <depends>com.intellij.modules.java</depends>
   <depends optional="true" config-file="osgi-maven-support.xml">org.jetbrains.idea.maven</depends>
 
+  <resource-bundle>messages.OsmorcBundle</resource-bundle>
+
   <extensionPoints>
     <extensionPoint name="frameworkIntegrator" interface="org.osmorc.frameworkintegration.FrameworkIntegrator"/>
   </extensionPoints>
@@ -98,7 +100,6 @@
                      groupBundle="messages.OsmorcBundle" groupKey="inspection.group"
                      enabledByDefault="true" level="ERROR"
                      implementationClass="org.osmorc.inspection.PackageAccessibilityInspection"/>
-
     <localInspection bundle="messages.OsmorcBundle" key="WrongImportPackageInspection.name"
                      groupBundle="messages.OsmorcBundle" groupKey="inspection.group"
                      language="Manifest" enabledByDefault="true" level="ERROR"
@@ -119,23 +120,20 @@
     <refactoring.elementListenerProvider implementation="org.osmorc.facet.OsmorcFacetRefactoringListenerProvider"/>
 
     <projectConfigurable groupId="language" id="reference.settings.project.osgi.project.settings"
-                         bundle="messages.OsmorcBundle"
-                         key="configurable.ProjectSettingsEditor.display.name"
+                         bundle="messages.OsmorcBundle" key="settings.project"
                          instance="org.osmorc.settings.ProjectSettingsEditor"/>
 
     <applicationConfigurable groupId="language" id="osmorc.ide.settings"
-                             bundle="messages.OsmorcBundle"
-                             key="configurable.ApplicationSettingsEditor.display.name"
+                             bundle="messages.OsmorcBundle" key="settings.application"
                              instance="org.osmorc.settings.ApplicationSettingsEditor">
-
       <configurable id="reference.settings.project.osgi.library.bundling"
-                    bundle="messages.OsmorcBundle"
-                    key="configurable.LibraryBundlingEditor.display.name"
+                    bundle="messages.OsmorcBundle" key="settings.application.bundling"
                     instance="org.osmorc.settings.LibraryBundlingEditor"/>
     </applicationConfigurable>
-    <notificationGroup id="OSGi Bnd Notifications" displayType="STICKY_BALLOON"/>
-    <notificationGroup id="OSGi" displayType="BALLOON"/>
-    <notificationGroup id="OSGi Important Messages" displayType="STICKY_BALLOON"/>
+
+    <notificationGroup id="OSGi" displayType="BALLOON" bundle="messages.OsmorcBundle" key="notification.group.main"/>
+    <notificationGroup id="OSGi-important" displayType="STICKY_BALLOON" bundle="messages.OsmorcBundle" key="notification.group.important"/>
+    <notificationGroup id="OSGi-bnd" displayType="STICKY_BALLOON" bundle="messages.OsmorcBundle" key="notification.group.bnd" />
   </extensions>
 
   <extensions defaultExtensionNs="Osmorc">
@@ -153,26 +151,23 @@
   </projectListeners>
 
   <actions>
-    <action id="osgi.bnd.reimport" icon="OsmorcIdeaIcons.Bnd" text="Reload Projects"
-            description="Reload selected Bnd/Bndtools projects"
+    <action id="osgi.bnd.reimport" icon="OsmorcIdeaIcons.Bnd"
             class="org.jetbrains.osgi.bnd.imp.ReimportProjectsAction">
       <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
     </action>
-    <action id="osgi.bnd.reimport.all" icon="OsmorcIdeaIcons.Bnd" text="Reload Workspace"
-            description="Reload entire Bnd/Bndtools workspace"
+
+    <action id="osgi.bnd.reimport.all" icon="OsmorcIdeaIcons.Bnd"
             class="org.jetbrains.osgi.bnd.imp.ReimportWorkspaceAction">
       <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
     </action>
 
-    <action id="osgi.bnd.resolve.bndrun" icon="OsmorcIdeaIcons.Bnd" text="Resolve .bndrun"
-            description="Resolves requirements and updates '-runbundles' directive"
+    <action id="osgi.bnd.resolve.bndrun" icon="OsmorcIdeaIcons.Bnd"
             class="org.jetbrains.osgi.bnd.resolve.ResolveAction">
       <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
       <add-to-group group-id="EditorPopupMenu" anchor="last"/>
     </action>
 
-    <group id="osmorc.viewGeneratedManifests" text="View Generated Manifest" popup="true"
-           description="View the manifest of a recently generated OSGi bundle"
+    <group id="osmorc.viewGeneratedManifests" popup="true"
            class="org.osmorc.make.ViewGeneratedManifestGroup">
       <add-to-group group-id="ToolsMenu" anchor="last"/>
     </group>

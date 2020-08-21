@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.osgi.bnd.resolve;
 
 import com.intellij.icons.AllIcons;
@@ -137,14 +137,13 @@ class ResolutionSucceedDialog extends DialogWrapper {
         setIcon(AllIcons.Nodes.PpLib);
       }
       else if (userObject instanceof Wire) {
-        append("REQUIRED BY: ", SimpleTextAttributes.GRAYED_ATTRIBUTES, true);
+        append(message("bnd.resolve.tree.by") + ' ', SimpleTextAttributes.GRAYED_ATTRIBUTES, true);
         renderResource(((Wire)userObject).getRequirer(), this);
 
         Capability capability = ((Wire)userObject).getCapability();
         if (capability != null) {
           String namespace = capability.getNamespace();
-
-          append(" VIA: ", SimpleTextAttributes.GRAYED_ATTRIBUTES, true);
+          append(' ' + message("bnd.resolve.tree.via") + ' ', SimpleTextAttributes.GRAYED_ATTRIBUTES, true);
           append(namespace, SimpleTextAttributes.GRAYED_ATTRIBUTES, true);
           Map<String, Object> attributes = capability.getAttributes();
           append("=", SimpleTextAttributes.GRAYED_ATTRIBUTES, true);
@@ -182,15 +181,15 @@ class ResolutionSucceedDialog extends DialogWrapper {
         renderVersion(attributes, renderer);
       }
       else {
-        renderer.append(resource.toString(), SimpleTextAttributes.REGULAR_ATTRIBUTES, true);
+        renderer.append(resource.toString(), SimpleTextAttributes.REGULAR_ATTRIBUTES, true); //NON-NLS (safe)
       }
     }
 
     private static void renderVersion(Map<String, Object> attributes, SimpleColoredComponent renderer) {
       Object version = attributes.get(CAPABILITY_VERSION_ATTRIBUTE);
       if (version != null) {
-        renderer.append(", version ", SimpleTextAttributes.GRAYED_ATTRIBUTES, true);
-        renderer.append(version.toString(), SimpleTextAttributes.REGULAR_ATTRIBUTES, true);
+        renderer.append(", " + message("bnd.resolve.tree.version") + ' ', SimpleTextAttributes.GRAYED_ATTRIBUTES, true);
+        renderer.append(version.toString(), SimpleTextAttributes.REGULAR_ATTRIBUTES, true); //NON-NLS (safe)
       }
     }
   }

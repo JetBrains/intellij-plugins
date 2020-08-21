@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.osmorc.facet;
 
 import com.intellij.facet.impl.ui.FacetEditorsFactoryImpl;
@@ -21,6 +21,7 @@ import icons.OsmorcIdeaIcons;
 import org.jetbrains.annotations.NotNull;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
+import org.osmorc.i18n.OsmorcBundle;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -34,7 +35,7 @@ public class OsgiCoreLibraryType extends DownloadableLibraryType {
   private static final String DETECTOR_CLASS = "org.osgi.framework.Constants";
 
   public OsgiCoreLibraryType() {
-    super("OSGi Core API", ID, ID, OsgiCoreLibraryType.class.getResource("osgi.core.xml"));
+    super(OsmorcBundle.message("facet.library.name"), ID, ID, OsgiCoreLibraryType.class.getResource("osgi.core.xml"));
   }
 
   @Override

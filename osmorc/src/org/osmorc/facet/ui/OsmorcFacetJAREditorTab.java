@@ -36,6 +36,7 @@ import com.intellij.openapi.fileTypes.FileTypes;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
@@ -155,7 +156,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
           Pair<String, String> additionalJARContent = myAdditionalJARContentsTableModel.getAdditionalJARContent(row);
           VirtualFile preselectedPath = LocalFileSystem.getInstance().findFileByPath(additionalJARContent.getFirst());
           String destinationName = preselectedPath != null ? determineMostLikelyLocationInJar(preselectedPath) : "";
-          myAdditionalJARContentsTableModel.changeAdditionalJARConent(row, additionalJARContent.first, destinationName);
+          myAdditionalJARContentsTableModel.changeAdditionalJARContent(row, additionalJARContent.first, destinationName);
           myAdditionalJARContentsTable.editCellAt(row, 1);
           IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> IdeFocusManager.getGlobalInstance().requestFocus(myAdditionalJARContentsTable.getEditorComponent(), true));
         }
@@ -207,17 +208,18 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
             preselectedPath = contentRoots[0];
           }
         }
-        else if (project.getBaseDir() != null) {
-          preselectedPath = project.getBaseDir();
+        else {
+          preselectedPath = ProjectUtil.guessProjectDir(project);
         }
       }
       VirtualFile[] files = FileChooser.chooseFiles(descriptor, project, preselectedPath);
       if (files.length > 0) {
         String sourcePath = files[0].getPath();
         String destPath = determineMostLikelyLocationInJar(files[0]);
-        myAdditionalJARContentsTableModel.changeAdditionalJARConent(row, sourcePath, destPath);
+        myAdditionalJARContentsTableModel.changeAdditionalJARContent(row, sourcePath, destPath);
         myAdditionalJARContentsTable.editCellAt(row, 1);
-        IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> IdeFocusManager.getGlobalInstance().requestFocus(myAdditionalJARContentsTable.getEditorComponent(), true));
+        IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(
+          () -> IdeFocusManager.getGlobalInstance().requestFocus(myAdditionalJARContentsTable.getEditorComponent(), true));
       }
     }
   }
@@ -236,20 +238,21 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
   private void onAddAdditionalJarContent() {
     Project project = myEditorContext.getProject();
     FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createAllButJarContentsDescriptor().withTitle(OsmorcBundle.message("facet.editor.select.source.title"));
-    VirtualFile rootFolder = null;
+    VirtualFile rootFolder;
     VirtualFile[] contentRoots = ModuleRootManager.getInstance(myEditorContext.getModule()).getContentRoots();
     if (contentRoots.length > 0) {
       rootFolder = contentRoots[0];
     }
-    else if (project.getBaseDir() != null) {
-      rootFolder = project.getBaseDir();
+    else {
+      rootFolder = ProjectUtil.guessProjectDir(project);
     }
     VirtualFile[] files = FileChooser.chooseFiles(descriptor, project, rootFolder);
     for (VirtualFile file : files) {
       String destFile = determineMostLikelyLocationInJar(file);
       int row = myAdditionalJARContentsTableModel.addAdditionalJARContent(file.getPath(), destFile);
       myAdditionalJARContentsTable.editCellAt(row, 1);
-      IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> IdeFocusManager.getGlobalInstance().requestFocus(myAdditionalJARContentsTable.getEditorComponent(), true));
+      IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(
+        () -> IdeFocusManager.getGlobalInstance().requestFocus(myAdditionalJARContentsTable.getEditorComponent(), true));
     }
   }
 
@@ -260,7 +263,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
         return VfsUtilCore.getRelativePath(file, contentRoot);
       }
     }
-    VirtualFile projectBaseFolder = myEditorContext.getProject().getBaseDir();
+    VirtualFile projectBaseFolder = ProjectUtil.guessProjectDir(myEditorContext.getProject());
     if (projectBaseFolder != null && VfsUtilCore.isAncestor(projectBaseFolder, file, false)) {
       return VfsUtilCore.getRelativePath(file, projectBaseFolder);
     }
@@ -300,7 +303,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
   @Nls
   @Override
   public String getDisplayName() {
-    return OsmorcBundle.message("configurable.OsmorcFacetJAREditorTab.display.name");
+    return OsmorcBundle.message("facet.tab.jar");
   }
 
   @NotNull

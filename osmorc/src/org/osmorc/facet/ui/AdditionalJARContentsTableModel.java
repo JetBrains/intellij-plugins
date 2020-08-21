@@ -22,11 +22,11 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.facet.ui;
 
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
+import org.osmorc.i18n.OsmorcBundle;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
@@ -36,47 +36,49 @@ import java.util.List;
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 class AdditionalJARContentsTableModel extends AbstractTableModel {
+  private final List<Pair<String, String>> myAdditionalContents;
+
   AdditionalJARContentsTableModel() {
-    _additionalContents = new ArrayList<>();
+    myAdditionalContents = new ArrayList<>();
   }
 
   public void replaceContent(@NotNull List<Pair<String, String>> content) {
-    _additionalContents.clear();
-    _additionalContents.addAll(content);
+    myAdditionalContents.clear();
+    myAdditionalContents.addAll(content);
     fireTableDataChanged();
   }
 
   @NotNull
   public List<Pair<String, String>> getAdditionalContents() {
-    return new ArrayList<>(_additionalContents);
+    return new ArrayList<>(myAdditionalContents);
   }
 
   public Pair<String, String> getAdditionalJARContent(int row) {
-    Pair<String, String> pair = _additionalContents.get(row);
+    Pair<String, String> pair = myAdditionalContents.get(row);
     return Pair.create(pair.getFirst(), pair.getSecond());
   }
 
-  public void changeAdditionalJARConent(int row, @NotNull String sourcePath, String destPath) {
+  public void changeAdditionalJARContent(int row, @NotNull String sourcePath, String destPath) {
     Pair<String, String> changedContent = Pair.create(sourcePath, destPath);
-    _additionalContents.set(row, changedContent);
+    myAdditionalContents.set(row, changedContent);
     fireTableRowsUpdated(row, row);
   }
 
   public void deleteAdditionalJARContent(int row) {
-    _additionalContents.remove(row);
+    myAdditionalContents.remove(row);
     fireTableRowsDeleted(row, row);
   }
 
   public int addAdditionalJARContent(@NotNull String sourcePath, @NotNull String destPath) {
-    _additionalContents.add(Pair.create(sourcePath, destPath));
-    int lastRow = _additionalContents.size() - 1;
+    myAdditionalContents.add(Pair.create(sourcePath, destPath));
+    int lastRow = myAdditionalContents.size() - 1;
     fireTableRowsInserted(lastRow, lastRow);
     return lastRow;
   }
 
   @Override
   public int getRowCount() {
-    return _additionalContents.size();
+    return myAdditionalContents.size();
   }
 
   @Override
@@ -86,9 +88,7 @@ class AdditionalJARContentsTableModel extends AbstractTableModel {
 
   @Override
   public String getColumnName(int column) {
-    return column == 0
-           ? "Source File/Folder"
-           : "Destination File/Folder (relative to JAR root)";
+    return OsmorcBundle.message(column == 0 ? "facet.editor.jar.src" : "facet.editor.jar.dst");
   }
 
   @Override
@@ -98,24 +98,22 @@ class AdditionalJARContentsTableModel extends AbstractTableModel {
 
   @Override
   public boolean isCellEditable(int rowIndex, int columnIndex) {
-    return true;  //columnIndex == 1;
+    return true;
   }
 
   @Override
   public Object getValueAt(int rowIndex, int columnIndex) {
-    Pair<String, String> row = _additionalContents.get(rowIndex);
+    Pair<String, String> row = myAdditionalContents.get(rowIndex);
     return columnIndex == 0 ? row.getFirst() : row.getSecond();
   }
 
   @Override
   public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-    Pair<String, String> row = _additionalContents.get(rowIndex);
+    Pair<String, String> row = myAdditionalContents.get(rowIndex);
     Pair<String, String> updatedRow = Pair.create(
       columnIndex == 0 ? (String)aValue : row.getFirst(),
       columnIndex == 1 ? (String)aValue : row.getSecond());
-    _additionalContents.set(rowIndex, updatedRow);
+    myAdditionalContents.set(rowIndex, updatedRow);
     fireTableCellUpdated(rowIndex, columnIndex);
   }
-
-  private final List<Pair<String, String>> _additionalContents;
 }

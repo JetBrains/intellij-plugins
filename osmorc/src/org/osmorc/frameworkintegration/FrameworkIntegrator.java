@@ -25,6 +25,7 @@
 package org.osmorc.frameworkintegration;
 
 import com.intellij.openapi.extensions.ExtensionPointName;
+import com.intellij.openapi.util.NlsSafe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.run.ui.FrameworkRunPropertiesEditor;
@@ -40,24 +41,20 @@ public interface FrameworkIntegrator {
   /**
    * Returns the display name of the framework.
    */
-  @NotNull
-  String getDisplayName();
+  @NotNull @NlsSafe String getDisplayName();
 
   /**
-   * Creates the {@link org.osmorc.frameworkintegration.FrameworkInstanceManager} that controls data about a specific framework instance.
+   * Creates the {@link FrameworkInstanceManager} that controls data about a specific framework instance.
    */
-  @NotNull
-  FrameworkInstanceManager getFrameworkInstanceManager();
+  @NotNull FrameworkInstanceManager getFrameworkInstanceManager();
 
   /**
    * Creates the framework runner which is used to get runtime specific information about a framework.
    */
-  @NotNull
-  FrameworkRunner createFrameworkRunner();
+  @NotNull FrameworkRunner createFrameworkRunner();
 
   /**
    * Creates an editor for framework specific run properties.
    */
-  @Nullable
-  FrameworkRunPropertiesEditor createRunPropertiesEditor();
+  @Nullable FrameworkRunPropertiesEditor createRunPropertiesEditor();
 }

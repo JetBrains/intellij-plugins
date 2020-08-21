@@ -37,6 +37,7 @@ import org.jetbrains.osgi.jps.build.BndWrapper;
 import org.jetbrains.osgi.jps.build.OsgiBuildException;
 import org.jetbrains.osgi.jps.build.Reporter;
 import org.jetbrains.osgi.jps.model.LibraryBundlificationRule;
+import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.settings.ApplicationSettings;
 
 import java.io.File;
@@ -64,7 +65,7 @@ public class BundleCompiler implements Reporter {
    */
   @NotNull
   public List<String> bundlifyLibraries(@NotNull Module module) throws OsgiBuildException {
-    myIndicator.setText("Bundling non-OSGi libraries for module '" + module.getName() + "'");
+    myIndicator.setText(OsmorcBundle.message("compiler.progress.bundling.libraries", module.getName()));
 
     File outputDir = BndWrapper.getOutputDir(getModuleOutputDir(module));
     List<LibraryBundlificationRule> libRules = ApplicationSettings.getInstance().getLibraryBundlificationRules();

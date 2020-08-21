@@ -27,8 +27,8 @@ package org.osmorc.i18n;
 import com.intellij.AbstractBundle;
 import com.intellij.DynamicBundle;
 import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationGroup;
+import com.intellij.notification.NotificationGroupManager;
 import com.intellij.notification.NotificationType;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -58,8 +58,7 @@ public final class OsmorcBundle extends DynamicBundle {
     return INSTANCE.getLazyMessage(key, params);
   }
 
-  private static final NotificationGroup NOTIFICATIONS =
-    new NotificationGroup("OSGi", NotificationDisplayType.BALLOON, true, message("notification.group"));
+  private static final NotificationGroup NOTIFICATIONS = NotificationGroupManager.getInstance().requireNotificationGroup("OSGi");
 
   public static Notification notification(@NotNull @Nls(capitalization = Nls.Capitalization.Title) String title,
                                           @NotNull @Nls String message,

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.osgi.jps.build;
 
 import aQute.bnd.osgi.Constants;
@@ -7,7 +7,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.SmartList;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.builders.logging.ProjectBuilderLogger;
@@ -36,6 +35,7 @@ import java.util.regex.PatternSyntaxException;
 
 import static com.intellij.util.ObjectUtils.coalesce;
 
+@SuppressWarnings("HardCodedStringLiteral" /*IDEA-240279*/)
 public class OsgiBuildSession implements Reporter {
   private static final Logger LOG = Logger.getInstance(OsgiBuildSession.class);
 

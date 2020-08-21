@@ -1,0 +1,5 @@
+<root>
+  <item name='org.osgi.resource.Capability java.lang.String getNamespace()'>
+    <annotation name='com.intellij.openapi.util.NlsSafe'/>
+  </item>
+</root>

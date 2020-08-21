@@ -22,7 +22,6 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.facet.ui;
 
 import com.intellij.openapi.fileChooser.FileChooser;
@@ -30,10 +29,12 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ui.AbstractTableCellEditor;
+import org.osmorc.i18n.OsmorcBundle;
 
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
@@ -43,51 +44,45 @@ import java.awt.event.ActionListener;
 
 /**
  * @author <a href="janthomae@janthomae.de">Jan Thomä</a>
- * @version $Id:$
  */
 public class FileSelectorTableCellEditor extends AbstractTableCellEditor {
+  private final TextFieldWithBrowseButton myEditor;
 
-  private final TextFieldWithBrowseButton editor;
-
-  public FileSelectorTableCellEditor(final Project project, final Module module) {
-    editor = new TextFieldWithBrowseButton(new ActionListener() {
+  public FileSelectorTableCellEditor(Project project, Module module) {
+    myEditor = new TextFieldWithBrowseButton(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
         FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createAllButJarContentsDescriptor();
-        descriptor.setTitle("Choose source file or folder");
-        VirtualFile rootFolder = null;
+        descriptor.setTitle(OsmorcBundle.message("facet.editor.select.source.title"));
+        VirtualFile rootDir;
         VirtualFile[] contentRoots = ModuleRootManager.getInstance(module).getContentRoots();
         if (contentRoots.length > 0) {
-          rootFolder = contentRoots[0];
+          rootDir = contentRoots[0];
         }
-        else if (project.getBaseDir() != null) {
-          rootFolder = project.getBaseDir();
+        else {
+          rootDir = ProjectUtil.guessProjectDir(project);
         }
-        VirtualFile[] files = FileChooser.chooseFiles(descriptor, project, rootFolder);
+        VirtualFile[] files = FileChooser.chooseFiles(descriptor, project, rootDir);
         if (files.length > 0) {
-          editor.setText(files[0].getPath());
+          myEditor.setText(files[0].getPath());
         }
       }
     });
   }
 
-
   @Override
   public Object getCellEditorValue() {
-    return editor.getText();
+    return myEditor.getText();
   }
 
   @Override
   public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
     TableCellRenderer renderer = table.getCellRenderer(row, column);
-    Component c = renderer.getTableCellRendererComponent(table, value,
-                                                         isSelected, true, row, column);
-    if (c != null) {
-      if (c instanceof JComponent) {
-        editor.getTextField().setBorder(((JComponent)c).getBorder());
-      }
+    Component c = renderer.getTableCellRendererComponent(table, value, isSelected, true, row, column);
+    if (c instanceof JComponent) {
+      myEditor.getTextField().setBorder(((JComponent)c).getBorder());
     }
-    editor.setText(value.toString());
-    return editor;
+    myEditor.setText(value.toString());
+    return myEditor;
   }
 }

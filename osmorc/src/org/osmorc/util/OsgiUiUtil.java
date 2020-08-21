@@ -1,29 +1,31 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.osmorc.util;
 
-import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationGroup;
+import com.intellij.notification.NotificationGroupManager;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
+import org.osmorc.i18n.OsmorcBundle;
 
 import javax.swing.*;
 
 public class OsgiUiUtil {
   public static final NotificationGroup IMPORTANT_NOTIFICATIONS =
-    new NotificationGroup("OSGi Important Messages", NotificationDisplayType.STICKY_BALLOON, true);
+    NotificationGroupManager.getInstance().requireNotificationGroup("OSGi-important");
 
   public static class FrameworkInstanceRenderer extends ColoredListCellRenderer<FrameworkInstanceDefinition> {
-    private final String myDefaultText;
+    private final @Nls String myDefaultText;
 
     public FrameworkInstanceRenderer() {
       this(null);
     }
 
-    public FrameworkInstanceRenderer(@Nullable String defaultText) {
+    public FrameworkInstanceRenderer(@Nullable @Nls String defaultText) {
       myDefaultText = defaultText;
     }
 
@@ -37,11 +39,11 @@ public class OsgiUiUtil {
         append(instance.getName());
         if (isInstanceDefined(instance)) {
           String version = instance.getVersion();
-          if (StringUtil.isEmptyOrSpaces(version)) version = "unknown";
+          if (StringUtil.isEmptyOrSpaces(version)) version = OsmorcBundle.message("framework.version.unknown");
           append(" [" + instance.getFrameworkIntegratorName() + ", " + version + "]", SimpleTextAttributes.GRAY_ATTRIBUTES);
         }
         else {
-          append(" [invalid]", SimpleTextAttributes.ERROR_ATTRIBUTES);
+          append(" [" + OsmorcBundle.message("framework.undefined") + "]", SimpleTextAttributes.ERROR_ATTRIBUTES);
         }
       }
       else if (myDefaultText != null) {

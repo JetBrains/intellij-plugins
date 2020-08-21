@@ -115,7 +115,7 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab {
 
   @Override
   public String getDisplayName() {
-    return OsmorcBundle.message("configurable.OsmorcFacetManifestGenerationEditorTab.display.name");
+    return OsmorcBundle.message("facet.tab.manifest");
   }
 
   @NotNull

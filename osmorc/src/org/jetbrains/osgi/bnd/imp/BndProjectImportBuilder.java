@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.osgi.bnd.imp;
 
 import aQute.bnd.build.Project;
@@ -7,7 +7,6 @@ import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.packaging.artifacts.ModifiableArtifactModel;
@@ -15,6 +14,7 @@ import com.intellij.projectImport.ProjectImportBuilder;
 import com.intellij.util.containers.ContainerUtil;
 import icons.OsmorcIdeaIcons;
 import org.jetbrains.annotations.NotNull;
+import org.osmorc.i18n.OsmorcBundle;
 
 import javax.swing.*;
 import java.io.File;
@@ -29,7 +29,7 @@ public class BndProjectImportBuilder extends ProjectImportBuilder<Project> {
   @NotNull
   @Override
   public String getName() {
-    return "Bnd/Bndtools";
+    return OsmorcBundle.message("bnd.importer.name");
   }
 
   @Override
@@ -52,7 +52,7 @@ public class BndProjectImportBuilder extends ProjectImportBuilder<Project> {
   }
 
   @Override
-  public void setList(List<Project> list) throws ConfigurationException {
+  public void setList(List<Project> list) {
     myChosenProjects = new HashSet<>(list);
   }
 

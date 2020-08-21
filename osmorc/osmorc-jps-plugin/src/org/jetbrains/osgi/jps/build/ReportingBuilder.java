@@ -26,6 +26,7 @@ package org.jetbrains.osgi.jps.build;
 
 import aQute.bnd.osgi.Builder;
 import com.intellij.openapi.diagnostic.Logger;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -51,7 +52,8 @@ public class ReportingBuilder extends Builder {
   }
 
   @Override
-  public void progress(float progress, String format, Object... args) {
+  @SuppressWarnings("deprecation")
+  public void progress(float progress, @Nls(capitalization = Nls.Capitalization.Sentence) String format, Object... args) {
     myReporter.progress(formatArrays(format, args));
   }
 

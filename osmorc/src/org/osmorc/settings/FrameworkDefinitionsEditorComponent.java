@@ -77,7 +77,7 @@ public class FrameworkDefinitionsEditorComponent {
     myBus = ApplicationManager.getApplication().getMessageBus();
     myModified = new ArrayList<>();
 
-    myContentPanel.setBorder(IdeBorderFactory.createTitledBorder("Framework instances:", false, JBUI.insetsTop(8)).setShowLine(false));
+    myContentPanel.setBorder(IdeBorderFactory.createTitledBorder(OsmorcBundle.message("frameworks.title"), false, JBUI.insetsTop(8)).setShowLine(false));
 
     myFrameworkInstances = new JBList<>(myModel);
     myFrameworkInstances.getEmptyText().setText(OsmorcBundle.message("frameworks.empty"));
@@ -194,7 +194,7 @@ public class FrameworkDefinitionsEditorComponent {
   private final class AddAction extends AnAction implements DumbAware, Comparable<AddAction> {
     private final FrameworkIntegrator myIntegrator;
 
-    private AddAction(FrameworkIntegrator integrator) {
+    AddAction(FrameworkIntegrator integrator) {
       super(integrator.getDisplayName());
       myIntegrator = integrator;
     }

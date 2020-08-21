@@ -11,8 +11,8 @@ import com.intellij.compiler.CompilerConfiguration;
 import com.intellij.compiler.impl.javaCompiler.javac.JavacConfiguration;
 import com.intellij.facet.impl.FacetUtil;
 import com.intellij.ide.highlighter.ModuleFileType;
-import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationGroup;
+import com.intellij.notification.NotificationGroupManager;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -70,7 +70,7 @@ public final class BndProjectImporter {
   public static final String BND_LIB_PREFIX = "bnd:";
 
   public static final NotificationGroup NOTIFICATIONS =
-    new NotificationGroup("OSGi Bnd Notifications", NotificationDisplayType.STICKY_BALLOON, true);
+    NotificationGroupManager.getInstance().requireNotificationGroup("OSGi-bnd");
 
   private static final Logger LOG = Logger.getInstance(BndProjectImporter.class);
 
@@ -81,7 +81,7 @@ public final class BndProjectImporter {
   private static final String SRC_ROOT = "OSGI-OPT/src";
   private static final String JDK_DEPENDENCY = "ee.j2se";
 
-  private static final Comparator<OrderEntry> ORDER_ENTRY_COMPARATOR = new Comparator<OrderEntry>() {
+  private static final Comparator<OrderEntry> ORDER_ENTRY_COMPARATOR = new Comparator<>() {
     @Override
     public int compare(OrderEntry o1, OrderEntry o2) {
       return weight(o1) - weight(o2);
@@ -364,7 +364,7 @@ public final class BndProjectImporter {
                                Collection<Container> classpath,
                                boolean tests,
                                Set<Container> excluded,
-                               List<String> warnings) throws Exception {
+                               List<String> warnings) {
     DependencyScope scope = tests ? DependencyScope.TEST : DependencyScope.COMPILE;
     for (Container dependency : classpath) {
       if (excluded.contains(dependency)) {
@@ -518,7 +518,7 @@ public final class BndProjectImporter {
   }
 
   @NotNull
-  public static Collection<Project> getWorkspaceProjects(@NotNull Workspace workspace) throws Exception {
+  public static Collection<Project> getWorkspaceProjects(@NotNull Workspace workspace) {
     return ContainerUtil.filter(workspace.getAllProjects(), Conditions.notNull());
   }
 

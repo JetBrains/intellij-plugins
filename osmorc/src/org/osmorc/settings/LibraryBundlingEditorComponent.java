@@ -24,6 +24,7 @@
  */
 package org.osmorc.settings;
 
+import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
@@ -34,7 +35,6 @@ import com.intellij.util.PlatformIcons;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.osgi.jps.model.LibraryBundlificationRule;
-import org.osmorc.i18n.OsmorcBundle;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -50,7 +50,7 @@ public class LibraryBundlingEditorComponent {
   private final Project myProject;
   private JPanel myMainPanel;
   private JPanel myRulesPanel;
-  private JBList myRulesList;
+  private JBList<LibraryBundlificationRule> myRulesList;
   private JTextField myLibraryRegex;
   private ManifestEditor myManifestEditor;
   private JCheckBox myNeverBundle;
@@ -109,7 +109,7 @@ public class LibraryBundlingEditorComponent {
             updateFields();
           }
         })
-        .addExtraAction(new AnActionButton(OsmorcBundle.messagePointer("action.AnActionButton.text.copy"), PlatformIcons.COPY_ICON) {
+        .addExtraAction(new AnActionButton(IdeBundle.message("button.copy"), PlatformIcons.COPY_ICON) {
           @Override
           public void actionPerformed(@NotNull AnActionEvent e) {
             updateCurrentRule();
@@ -130,7 +130,6 @@ public class LibraryBundlingEditorComponent {
     );
 
     myRulesModel = new CollectionListModel<>();
-    //noinspection unchecked
     myRulesList.setModel(myRulesModel);
     myRulesList.addListSelectionListener(new ListSelectionListener() {
       @Override

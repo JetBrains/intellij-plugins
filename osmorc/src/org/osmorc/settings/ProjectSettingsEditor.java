@@ -24,7 +24,6 @@
  */
 package org.osmorc.settings;
 
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.Nls;
@@ -47,7 +46,7 @@ public class ProjectSettingsEditor implements SearchableConfigurable {
   @Nls
   @Override
   public String getDisplayName() {
-    return OsmorcBundle.message("configurable.ProjectSettingsEditor.display.name");
+    return OsmorcBundle.message("settings.project");
   }
 
   @NotNull
@@ -81,7 +80,7 @@ public class ProjectSettingsEditor implements SearchableConfigurable {
   }
 
   @Override
-  public void apply() throws ConfigurationException {
+  public void apply() {
     component.applyTo(ProjectSettings.getInstance(myProject));
   }
 

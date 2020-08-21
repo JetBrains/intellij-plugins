@@ -35,6 +35,7 @@ import icons.OsmorcIdeaIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.osgi.jps.model.OutputPathType;
+import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.settings.ProjectSettings;
 
 import javax.swing.*;
@@ -53,7 +54,7 @@ public class OsmorcFacetType extends FacetType<OsmorcFacet, OsmorcFacetConfigura
   }
 
   protected OsmorcFacetType() {
-    super(ID, "Osmorc", "OSGi");
+    super(ID, "Osmorc", OsmorcBundle.message("facet.type.name"));
   }
 
   @Override

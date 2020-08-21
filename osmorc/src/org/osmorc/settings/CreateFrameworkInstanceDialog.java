@@ -56,10 +56,10 @@ public class CreateFrameworkInstanceDialog extends DialogWrapper {
   private JBLabel myVersionLabel;
 
   private final FrameworkInstanceDefinition myInstance;
-  private final DefaultListModel myModel;
+  private final DefaultListModel<FrameworkInstanceDefinition> myModel;
   private final FrameworkIntegrator myIntegrator;
 
-  public CreateFrameworkInstanceDialog(@NotNull FrameworkInstanceDefinition instance, @NotNull DefaultListModel model) {
+  public CreateFrameworkInstanceDialog(@NotNull FrameworkInstanceDefinition instance, @NotNull DefaultListModel<FrameworkInstanceDefinition> model) {
     super(true);
 
     myInstance = instance;
@@ -104,7 +104,7 @@ public class CreateFrameworkInstanceDialog extends DialogWrapper {
 
     if (message == null) {
       for (int i = 0; i < myModel.size(); i++) {
-        FrameworkInstanceDefinition instance = (FrameworkInstanceDefinition)myModel.get(i);
+        FrameworkInstanceDefinition instance = myModel.get(i);
         if (newInstance.equals(instance) && instance != myInstance) {
           message = OsmorcBundle.message("framework.name.duplicate");
         }

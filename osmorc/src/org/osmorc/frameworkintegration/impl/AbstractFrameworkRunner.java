@@ -37,6 +37,7 @@ import com.intellij.util.net.HttpConfigurable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.osgi.jps.build.CachingBundleInfoProvider;
 import org.osmorc.frameworkintegration.*;
+import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.run.OsgiRunConfiguration;
 import org.osmorc.run.ui.SelectedBundle;
 
@@ -84,7 +85,7 @@ public abstract class AbstractFrameworkRunner implements FrameworkRunner {
       myWorkingDir = new File(myRunConfiguration.getWorkingDir());
     }
     if (!myWorkingDir.isDirectory() && !myWorkingDir.mkdirs()) {
-      throw new CantRunException("Cannot create work directory '" + myWorkingDir.getPath() + "'");
+      throw new CantRunException(OsmorcBundle.message("run.configuration.working.dir.create.failed", myWorkingDir.getPath()));
     }
     params.setWorkingDirectory(myWorkingDir);
 
@@ -96,7 +97,7 @@ public abstract class AbstractFrameworkRunner implements FrameworkRunner {
 
     Collection<SelectedBundle> systemBundles = myInstanceManager.getFrameworkBundles(myInstance, FrameworkBundleType.SYSTEM);
     if (systemBundles.isEmpty()) {
-      throw new CantRunException("Libraries required to start the framework not found - please check the installation");
+      throw new CantRunException(OsmorcBundle.message("run.configuration.no.system.libs"));
     }
     for (SelectedBundle bundle : systemBundles) {
       String path = bundle.getBundlePath();
@@ -107,7 +108,7 @@ public abstract class AbstractFrameworkRunner implements FrameworkRunner {
     if (GenericRunProperties.isStartConsole(myAdditionalProperties)) {
       Collection<SelectedBundle> shellBundles = myInstanceManager.getFrameworkBundles(myInstance, FrameworkBundleType.SHELL);
       if (shellBundles.isEmpty()) {
-        throw new CantRunException("Console requested but no shell bundles can be found - please check the installation");
+        throw new CantRunException(OsmorcBundle.message("run.configuration.no.shell.bundles"));
       }
       List<SelectedBundle> allBundles = new ArrayList<>(shellBundles);
       allBundles.addAll(myBundles);

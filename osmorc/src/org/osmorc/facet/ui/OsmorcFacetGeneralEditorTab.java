@@ -24,13 +24,11 @@
  */
 package org.osmorc.facet.ui;
 
-import com.intellij.CommonBundle;
 import com.intellij.facet.ui.*;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Key;
@@ -43,6 +41,7 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.osgi.jps.model.ManifestGenerationMode;
 import org.osmorc.facet.OsmorcFacetConfiguration;
+import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.settings.ProjectSettings;
 
 import javax.swing.*;
@@ -131,19 +130,19 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
           String location = myUseModuleSpecificManifestFileLocation.isSelected() ? myManifestFileChooser.getText() :
                             ProjectSettings.getInstance(myModule.getProject()).getDefaultManifestFileLocation();
           if (findFileInContentRoots(location, myModule) == null) {
-            return new ValidationResult("No manifest file '" + location + "' found in module");
+            return new ValidationResult(OsmorcBundle.message("facet.editor.manifest.not.found", location));
           }
         }
         if (myUseBndFileRadioButton.isSelected()) {
           String location = myBndFile.getText();
           if (findFileInContentRoots(location, myModule) == null) {
-            return new ValidationResult("No Bnd file '" + location + "' found in module");
+            return new ValidationResult(OsmorcBundle.message("facet.editor.bnd.not.found", location));
           }
         }
         if (myUseBundlorFileRadioButton.isSelected()) {
           String location = myBundlorFile.getText();
           if (findFileInContentRoots(location, myModule) == null) {
-            return new ValidationResult("No Bundlor file '" + location + "' found in module");
+            return new ValidationResult(OsmorcBundle.message("facet.editor.bundlor.not.found", location));
           }
         }
         return ValidationResult.OK;
@@ -181,7 +180,7 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
         String relativePath = VfsUtilCore.getRelativePath(file, root, File.separatorChar);
         if (relativePath != null) {
           if (field == myManifestFileChooser && file.isDirectory()) {
-            relativePath += "/MANIFEST.MF";
+            relativePath += "/MANIFEST.MF"; //NON-NLS
           }
           field.setText(relativePath);
           break;
@@ -198,7 +197,7 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
   @Nls
   @Override
   public String getDisplayName() {
-    return CommonBundle.message("tab.title.general");
+    return OsmorcBundle.message("facet.tab.general");
   }
 
   @Override
@@ -218,7 +217,7 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
   }
 
   @Override
-  public void apply() throws ConfigurationException {
+  public void apply() {
     OsmorcFacetConfiguration configuration = (OsmorcFacetConfiguration)myEditorContext.getFacet().getConfiguration();
     configuration.setManifestGenerationMode(
       myControlledByOsmorcRadioButton.isSelected() ? ManifestGenerationMode.OsmorcControlled :

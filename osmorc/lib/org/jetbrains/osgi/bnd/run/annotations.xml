@@ -1,0 +1,5 @@
+<root>
+  <item name='org.jetbrains.osgi.bnd.run.BndRunConfigurationOptions java.lang.String getBndRunFile()'>
+    <annotation name='com.intellij.openapi.util.NlsSafe'/>
+  </item>
+</root>

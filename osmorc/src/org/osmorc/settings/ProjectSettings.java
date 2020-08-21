@@ -30,6 +30,7 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.CompilerProjectExtension;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
@@ -109,8 +110,7 @@ public final class ProjectSettings implements PersistentStateComponent<ProjectSe
     myDispatcher.getMulticaster().projectSettingsChanged();
   }
 
-  @NotNull
-  public String getDefaultManifestFileLocation() {
+  public @NotNull @NlsSafe String getDefaultManifestFileLocation() {
     return myDefaultManifestFileLocation;
   }
 
