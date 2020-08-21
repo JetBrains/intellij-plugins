@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex.flashbuilder;
 
 import com.intellij.ide.util.projectWizard.ModuleWizardStep;
 import com.intellij.ide.util.projectWizard.WizardContext;
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.projectImport.ProjectImportBuilder;
@@ -35,6 +36,6 @@ final class FlashBuilderImportProvider extends ProjectImportProvider {
   @NotNull
   @Override
   public String getFileSample() {
-    return "<b>Flash Builder</b> project file (" + StringUtil.join(myProcessor.getSupportedExtensions(), ", ") + ")";
+    return FlexBundle.message("flash.builder.project.file", StringUtil.join(myProcessor.getSupportedExtensions(), ", "));
   }
 }
