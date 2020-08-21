@@ -6,14 +6,16 @@ buildscript {
     mavenCentral()
     maven { url 'https://dl.bintray.com/jetbrains/intellij-plugin-service' }
   }
-
-  dependencies {
-    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-  }
 }
 
 plugins {
-  id "org.jetbrains.intellij" version "0.4.10"
+  id 'java'
+  id 'org.jetbrains.intellij' version '0.4.9'
+  id 'org.jetbrains.kotlin.jvm' version '1.3.72'
+}
+
+dependencies {
+  compileOnly 'org.jetbrains:annotations:20.0.0'
 }
 
 sourceSets {
@@ -31,7 +33,8 @@ sourceSets {
 apply plugin: "kotlin"
 apply plugin: 'org.jetbrains.intellij'
 
-version="163.7000"
+version="202"
+
 intellij {
   version 'IU-LATEST-EAP-SNAPSHOT'
   pluginName 'tslint'
@@ -42,8 +45,4 @@ intellij {
 
 repositories {
   mavenCentral()
-}
-
-dependencies {
-  compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
