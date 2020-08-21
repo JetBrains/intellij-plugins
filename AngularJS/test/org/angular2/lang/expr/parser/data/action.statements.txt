@@ -30,7 +30,7 @@ JSFile:test.statements.action
 JSFile:test.statements.action
   Angular2Action
     Angular2Chain
-      PsiErrorElement:expression expected
+      PsiErrorElement:Expression expected
         <empty list>
       PsiElement(JS:SEMICOLON)(';')
       PsiElement(JS:SEMICOLON)(';')

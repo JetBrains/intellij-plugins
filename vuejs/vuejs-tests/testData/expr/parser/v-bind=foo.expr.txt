@@ -248,7 +248,7 @@ JSFile:test.js.v-bind:foo.expr
 ------
 JSFile:test.js.v-bind:foo.expr
   VueJSEmbeddedExpression
-    PsiErrorElement:expression expected
+    PsiErrorElement:Expression expected
       <empty list>
 ------
 JSFile:test.js.v-bind:foo.expr
@@ -273,7 +273,7 @@ JSFile:test.js.v-bind:foo.expr
     PsiErrorElement:Statements are not allowed in Vue expressions
       PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
-    PsiErrorElement:expression expected
+    PsiErrorElement:Expression expected
       PsiElement(JS:LT)('<')
     PsiWhiteSpace(' ')
     PsiErrorElement:Statements are not allowed in Vue expressions
@@ -292,7 +292,7 @@ JSFile:test.js.v-bind:foo.expr
     JSAttributeList
       ES6Decorator
         PsiElement(JS:AT)('@')
-    PsiErrorElement:class expected
+    PsiErrorElement:'class' expected
       <empty list>
     PsiElement(JS:SHARP)('#')
 ------
@@ -325,21 +325,21 @@ JSFile:test.js.v-bind:foo.expr
 ------
 JSFile:test.js.v-bind:foo.expr
   VueJSEmbeddedExpression
-    PsiErrorElement:expression expected
+    PsiErrorElement:Expression expected
       PsiElement(JS:SHARP)('#')
 ------
 JSFile:test.js.v-bind:foo.expr
   VueJSEmbeddedExpression
-    PsiErrorElement:expression expected
+    PsiErrorElement:Expression expected
       PsiElement(JS:SHARP)('#')
-    PsiErrorElement:expression expected
+    PsiErrorElement:Expression expected
       PsiElement(JS:SHARP)('#')
 ------
 JSFile:test.js.v-bind:foo.expr
   VueJSEmbeddedExpression
-    PsiErrorElement:expression expected
+    PsiErrorElement:Expression expected
       PsiElement(JS:SHARP)('#')
-    PsiErrorElement:expression expected
+    PsiErrorElement:Expression expected
       PsiElement(JS:SHARP)('#')
-    PsiErrorElement:expression expected
+    PsiErrorElement:Expression expected
       PsiElement(JS:SHARP)('#')

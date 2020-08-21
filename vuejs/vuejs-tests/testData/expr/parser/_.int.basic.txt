@@ -119,7 +119,7 @@ JSFile:test.js._.int
       JSProperty
         PsiElement(JS:IDENTIFIER)('c')
         PsiElement(JS:COLON)(':')
-        PsiErrorElement:expression expected
+        PsiErrorElement:Expression expected
           <empty list>
       PsiWhiteSpace(' ')
       ES6Property
@@ -154,21 +154,21 @@ JSFile:test.js._.int
 ------
 JSFile:test.js._.int
   VueJSEmbeddedExpression
-    PsiErrorElement:expression expected
+    PsiErrorElement:Expression expected
       PsiElement(JS:SHARP)('#')
 ------
 JSFile:test.js._.int
   VueJSEmbeddedExpression
-    PsiErrorElement:expression expected
+    PsiErrorElement:Expression expected
       PsiElement(JS:SHARP)('#')
-    PsiErrorElement:expression expected
+    PsiErrorElement:Expression expected
       PsiElement(JS:SHARP)('#')
 ------
 JSFile:test.js._.int
   VueJSEmbeddedExpression
-    PsiErrorElement:expression expected
+    PsiErrorElement:Expression expected
       PsiElement(JS:SHARP)('#')
-    PsiErrorElement:expression expected
+    PsiErrorElement:Expression expected
       PsiElement(JS:SHARP)('#')
-    PsiErrorElement:expression expected
+    PsiErrorElement:Expression expected
       PsiElement(JS:SHARP)('#')

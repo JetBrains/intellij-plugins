@@ -43,7 +43,7 @@ HtmlFile:test.html
           ASTWrapperPsiElement(NG:TEMPLATE_BINDINGS_EXPR)
             Angular2TemplateBindings
               Angular2TemplateBinding <ngIf, false, null>
-                PsiErrorElement:expression expected
+                PsiErrorElement:Expression expected
                   <empty list>
               Angular2TemplateBinding <ngIf, false, null>
                 PsiElement(JS:SHARP)('#')

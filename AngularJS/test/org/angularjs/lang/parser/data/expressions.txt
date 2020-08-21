@@ -238,7 +238,7 @@ ASTWrapperPsiElement(FILE)
     AngularJSRepeatExpression
       JSVarStatement
         PsiElement(JS:LET_KEYWORD)('let')
-        PsiErrorElement:identifier expected
+        PsiErrorElement:Identifier expected
           <empty list>
       PsiWhiteSpace(' ')
       PsiElement(JS:OF_KEYWORD)('of')

@@ -71,7 +71,7 @@ JSFile:QualifiedNsReference.js2
             PsiElement(JS:DOT)('.')
             PsiElement(JS:IDENTIFIER)('z')
           PsiElement(JS:DOT)('.')
-        PsiErrorElement:name expected
+        PsiErrorElement:Name expected
           <empty list>
       PsiWhiteSpace(' ')
       PsiElement(JS:FUNCTION_KEYWORD)('function')

@@ -156,9 +156,9 @@ public class Angular2ParserSpecTest {
           });
 
           it("should only allow identifier or keyword as member names", () -> {
-            expectActionError("x.(", "name expected");
-            expectActionError("x. 1234", "name expected");
-            expectActionError("x.\"foo\"", "name expected");
+            expectActionError("x.(", "Name expected");
+            expectActionError("x. 1234", "Name expected");
+            expectActionError("x.\"foo\"", "Name expected");
           });
 
           it("should parse safe field access", () -> {
@@ -237,7 +237,7 @@ public class Angular2ParserSpecTest {
 
         it("should report reasonable error for unconsumed tokens",
            () -> {
-             expectActionError(")", "expression expected");
+             expectActionError(")", "Expression expected");
            });
 
         it("should report a missing expected token", () -> {

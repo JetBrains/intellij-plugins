@@ -379,9 +379,9 @@ JSFile:MiscGotchas.js2
       PsiElement(JS:IDENTIFIER)('SomeObject')
   JSExpressionStatement
     JSConditionalExpression
-      PsiErrorElement:expression expected
+      PsiErrorElement:Expression expected
         <empty list>
       PsiElement(JS:QUEST)('?')
-      PsiErrorElement:expression expected
+      PsiErrorElement:Expression expected
         <empty list>
     PsiElement(JS:SEMICOLON)(';')

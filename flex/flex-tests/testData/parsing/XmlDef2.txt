@@ -20,11 +20,11 @@ JSFile:XmlDef2.js2
           JSEmbeddedContent:XML_JS_SCRIPT
             JSEmbeddedContent:JS:EMBEDDED_EXPRESSION
               PsiElement(JS:LBRACE)('{')
-              PsiErrorElement:expression expected
+              PsiErrorElement:Expression expected
                 <empty list>
               PsiElement(JS:RBRACE)('}')
           PsiWhiteSpace(' ')
-          PsiErrorElement:xml element expected
+          PsiErrorElement:XML element expected
             PsiElement(BAD_CHARACTER)('&')
           XmlText
             XmlToken:XML_DATA_CHARACTERS('t')

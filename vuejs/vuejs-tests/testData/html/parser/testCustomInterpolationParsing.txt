@@ -25,7 +25,7 @@ HtmlFile:test.{%.%}.#@injected@#.html
             VueJSEmbeddedExpression
               JSObjectLiteralExpression
                 PsiElement(JS:LBRACE)('{')
-                PsiErrorElement:identifier or string literal or numeric literal expected
+                PsiErrorElement:Identifier or string literal or numeric literal expected
                   <empty list>
               JSObjectLiteralExpression
                 PsiElement(JS:LBRACE)('{')

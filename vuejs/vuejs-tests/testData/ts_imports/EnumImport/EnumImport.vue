@@ -4,7 +4,7 @@ import {Hello} from './enum'
  
 export default {
    accept(e: Hello) {
-      if (e ==<caret><error descr="expression expected"> </error>  ) {}
+      if (e ==<caret><error descr="Expression expected"> </error>  ) {}
    }
 }
 </script>

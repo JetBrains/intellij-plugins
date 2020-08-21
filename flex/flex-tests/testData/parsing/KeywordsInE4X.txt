@@ -68,10 +68,10 @@ JSFile:KeywordsInE4X.js2
         JSReferenceExpression
           PsiElement(JS:IDENTIFIER)('err')
         PsiElement(JS:DOT)('.')
-      PsiErrorElement:name expected
+      PsiErrorElement:Name expected
         <empty list>
     PsiElement(JS:FUNCTION_KEYWORD)('function')
-    PsiErrorElement:function name expected
+    PsiErrorElement:Function name expected
       <empty list>
     PsiWhiteSpace(' ')
     JSParameterList

@@ -34,6 +34,6 @@ JSFile:IncorrectGenerics.js2
           JSReferenceExpression
             PsiElement(JS:IDENTIFIER)('CompletionCollector')
         PsiElement(JS:GT)('>')
-        PsiErrorElement:expression expected
+        PsiErrorElement:Expression expected
           <empty list>
     PsiElement(JS:SEMICOLON)(';')

@@ -86,7 +86,7 @@ class VueHighlightingTest : BasePlatformTestCase() {
       myFixture.configureByText("ShorthandArrowFunctionInTemplate.vue", """
   <template>
       <div id="app">
-          <div @event="val =<error descr="expression expected">></error> bar = val"></div>
+          <div @event="val =<error descr="Expression expected">></error> bar = val"></div>
           {{bar}}
       </div>
   </template>
@@ -646,7 +646,7 @@ Vue.component('global-comp-literal', {
   fun testVBindVOnHighlighting() {
     myFixture.configureByText("VBindHighlighting.vue", """
 <template>
-    <for-v-bind :class="2" v-bind:style="<error descr="expression expected">"</error> :test-prop.camel="1" v-on:click="callMe" @copy="onCopy" ></for-v-bind>
+    <for-v-bind :class="2" v-bind:style="<error descr="Expression expected">"</error> :test-prop.camel="1" v-on:click="callMe" @copy="onCopy" ></for-v-bind>
     <for-v-bind class="" style="" v-on:submit.prevent></for-v-bind>
     <div <warning descr="Attribute @ is not allowed here">@</warning>="<weak_warning descr="Unresolved variable or type foo">foo</weak_warning>"></div>
     <div <warning descr="Attribute : is not allowed here">:</warning>="<weak_warning descr="Unresolved variable or type foo">foo</weak_warning>"></div>

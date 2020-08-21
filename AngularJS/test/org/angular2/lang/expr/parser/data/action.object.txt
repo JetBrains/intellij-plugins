@@ -152,7 +152,7 @@ JSFile:test.object.action
             <empty list>
           PsiWhiteSpace(' ')
           JSAssignmentExpression
-            PsiErrorElement:expression expected
+            PsiErrorElement:Expression expected
               <empty list>
             PsiElement(JS:EQ)('=')
             PsiWhiteSpace(' ')
