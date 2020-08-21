@@ -155,14 +155,14 @@ public class FlexHierarchyTest extends JSHierarchyTestBase {
     setUpJdk();
     final String testName = getTestName(false);
     doJSCallHierarchyTest(CallHierarchyBrowserBase.getCalleeType(), "pack.subpack.Class1", "someFunction",
-                          HierarchyBrowserBaseEx.getScopeAll(),
+                          HierarchyBrowserBaseEx.SCOPE_ALL,
                           testName + ".as", testName + ".mxml");
   }
 
   @JSTestOptions(JSTestOption.WithFlexFacet)
   public void testMethodCallerHierarchy() throws Exception {
     final String testName = getTestName(false);
-    doJSCallHierarchyTest(CallHierarchyBrowserBase.getCallerType(), "pack.Class1", "bar", HierarchyBrowserBaseEx.getScopeProject(),
+    doJSCallHierarchyTest(CallHierarchyBrowserBase.getCallerType(), "pack.Class1", "bar", HierarchyBrowserBaseEx.SCOPE_PROJECT,
                           testName + ".as");
   }
 }
