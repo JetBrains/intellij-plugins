@@ -43,12 +43,13 @@
       to the OSGi container and start/stop bundles.
     </p>
   ]]></description>
+
   <category>JVM Frameworks</category>
   <vendor>JetBrains</vendor>
 
-  <depends>com.intellij.javaee</depends>
   <depends>com.intellij.modules.java</depends>
   <depends optional="true" config-file="osgi-maven-support.xml">org.jetbrains.idea.maven</depends>
+  <depends optional="true" config-file="with-ultimate.xml">com.intellij.javaee</depends>
 
   <resource-bundle>messages.OsmorcBundle</resource-bundle>
 
@@ -57,8 +58,6 @@
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
-    <javaee.legacy.project.wizard/>
-
     <postStartupActivity implementation="org.jetbrains.osgi.bnd.imp.ReimportPostStartupActivity"/>
     <vfs.asyncListener implementation="org.jetbrains.osgi.bnd.imp.ReimportPostStartupActivity$FileListener"/>
 
