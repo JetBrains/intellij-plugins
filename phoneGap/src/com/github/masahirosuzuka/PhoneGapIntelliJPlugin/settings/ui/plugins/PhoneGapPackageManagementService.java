@@ -5,6 +5,7 @@ import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapPlug
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.ui.PhoneGapConfigurable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.util.CatchingConsumer;
@@ -94,7 +95,7 @@ public class PhoneGapPackageManagementService extends PackageManagementServiceEx
                              boolean installToUser) {
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
       listener.operationStarted(repoPackage.getName());
-      final Ref<String> errorMessage = new Ref<>();
+      final Ref<@NlsSafe String> errorMessage = new Ref<>();
       try {
         String appendVersion = version == null ? "" : "@" + version;
         myCommands.pluginAdd(repoPackage.getName() + appendVersion);
@@ -116,7 +117,7 @@ public class PhoneGapPackageManagementService extends PackageManagementServiceEx
   public void uninstallPackages(final List<InstalledPackage> installedPackages, final Listener listener) {
     ApplicationManager.getApplication().executeOnPooledThread((Runnable)() -> ContainerUtil.process(installedPackages, aPackage -> {
       listener.operationStarted(aPackage.getName());
-      final Ref<String> errorMessage = new Ref<>();
+      final Ref<@NlsSafe String> errorMessage = new Ref<>();
       try {
         myCommands.pluginRemove(aPackage.getName());
       }
