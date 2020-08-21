@@ -3,7 +3,7 @@ package training.learn.lesson.kimpl
 
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.invokeLater
-import org.jetbrains.annotations.CalledInAwt
+import org.jetbrains.annotations.RequiresEdt
 import training.commands.kotlin.TaskContext
 import training.commands.kotlin.TaskRuntimeContext
 
@@ -11,7 +11,7 @@ abstract class LessonContext {
   /**
    * Start a new task in a lesson context
    */
-  @CalledInAwt
+  @RequiresEdt
   abstract fun task(taskContent: TaskContext.() -> Unit)
 
   /** Describe a simple task: just one action required */
