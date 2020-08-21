@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.surroundWith.expression;
 
 import com.intellij.lang.surroundWith.Surrounder;
@@ -11,9 +12,6 @@ import com.jetbrains.lang.dart.util.DartElementGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author: Fedor.Korotkov
- */
 public abstract class DartWithExpressionSurrounder implements Surrounder {
   @Override
   public boolean isApplicable(PsiElement @NotNull [] elements) {

@@ -25,7 +25,7 @@
             </constraints>
             <properties>
               <labelFor value="785ae"/>
-              <text value="Update imports on paste:"/>
+              <text resource-bundle="messages/DartBundle" key="label.update.imports.on.paste"/>
             </properties>
           </component>
           <component id="d40a6" class="javax.swing.JComboBox" binding="mySmartPasteCombo">

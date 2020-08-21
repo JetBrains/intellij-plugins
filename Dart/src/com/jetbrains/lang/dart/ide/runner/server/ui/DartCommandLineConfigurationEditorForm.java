@@ -1,12 +1,10 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server.ui;
 
-import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.configuration.EnvironmentVariablesComponent;
 import com.intellij.ide.util.TreeFileChooser;
 import com.intellij.ide.util.TreeFileChooserFactory;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
@@ -40,7 +38,7 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
   public DartCommandLineConfigurationEditorForm(final Project project) {
     initDartFileTextWithBrowse(project, myFileField);
 
-    myWorkingDirectory.addBrowseFolderListener(ExecutionBundle.message("select.working.directory.message"), null, project,
+    myWorkingDirectory.addBrowseFolderListener(DartBundle.message("dialog.title.select.working.directory"), null, project,
                                                FileChooserDescriptorFactory.createSingleFolderDescriptor());
 
     final DartSdk sdk = DartSdk.getDartSdk(project);
@@ -93,7 +91,7 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
   }
 
   @Override
-  protected void applyEditorTo(@NotNull final DartCommandLineRunConfiguration configuration) throws ConfigurationException {
+  protected void applyEditorTo(@NotNull final DartCommandLineRunConfiguration configuration) {
     final DartCommandLineRunnerParameters parameters = configuration.getRunnerParameters();
 
     parameters.setFilePath(StringUtil.nullize(FileUtil.toSystemIndependentName(myFileField.getText().trim()), true));

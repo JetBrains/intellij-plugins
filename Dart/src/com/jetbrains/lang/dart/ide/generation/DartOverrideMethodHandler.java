@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.generation;
 
 import com.intellij.openapi.util.Pair;
@@ -17,7 +18,7 @@ public class DartOverrideMethodHandler extends BaseDartGenerateHandler {
   @Override
   @NotNull
   protected String getTitle() {
-    return DartBundle.message("dart.override.method");
+    return DartBundle.message("dialog.title.choose.methods.to.override");
   }
 
   @Override

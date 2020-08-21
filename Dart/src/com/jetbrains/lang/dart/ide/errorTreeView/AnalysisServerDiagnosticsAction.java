@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.google.dart.server.GetServerPortConsumer;
@@ -9,6 +9,7 @@ import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsSafe;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import org.dartlang.analysis.server.protocol.RequestError;
@@ -50,11 +51,9 @@ public class AnalysisServerDiagnosticsAction extends DumbAwareAction {
 
       @Override
       public void onError(RequestError requestError) {
-        Notification notification = new Notification(
-          GROUP_DISPLAY_ID,
-          DartBundle.message("analysis.server.show.diagnostics.error"),
-          requestError.getMessage(),
-          NotificationType.ERROR);
+        String title = DartBundle.message("analysis.server.show.diagnostics.error");
+        @NlsSafe String message = requestError.getMessage();
+        Notification notification = new Notification(GROUP_DISPLAY_ID, title, message, NotificationType.ERROR);
         Notifications.Bus.notify(notification);
       }
     });
