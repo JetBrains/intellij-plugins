@@ -17,7 +17,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.openapi.util.NlsContexts;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.io.FileUtilRt;
+import com.intellij.openapi.util.text.HtmlBuilder;
+import com.intellij.openapi.util.text.HtmlChunk;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.*;
@@ -27,7 +31,6 @@ import com.intellij.ui.treeStructure.treetable.TreeColumnInfo;
 import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
-import com.intellij.xml.util.XmlStringUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.flutter.FlutterUtil;
 import gnu.trove.THashSet;
@@ -100,8 +103,9 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
 
   private void initEnableDartSupportCheckBox() {
     myEnableDartSupportCheckBox.setText(DartSdkLibUtil.isIdeWithMultipleModuleSupport()
-                                        ? DartBundle.message("enable.dart.support.for.project.0", myProject.getName())
-                                        : DartBundle.message("enable.dart.support.check.box"));
+                                        ? DartBundle
+                                          .message("settings.page.checkbox.enable.dart.support.for.project.0", myProject.getName())
+                                        : DartBundle.message("settings.page.checkbox.enable.dart.support.check.box"));
     myEnableDartSupportCheckBox.addActionListener(e -> {
       updateControlsEnabledState();
       updateErrorLabel();
@@ -186,8 +190,8 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
     }
 
     myModulesPanelLabel.setText(DartSdkLibUtil.isIdeWithMultipleModuleSupport()
-                                ? DartBundle.message("enable.dart.support.for.following.modules")
-                                : DartBundle.message("enable.dart.support.for.following.projects"));
+                                ? DartBundle.message("settings.page.label.enable.dart.support.for.following.modules")
+                                : DartBundle.message("settings.page.label.enable.dart.support.for.following.projects"));
 
     final Module[] modules = ModuleManager.getInstance(myProject).getModules();
     Arrays.sort(modules, Comparator.comparing(module -> StringUtil.toLowerCase(module.getName())));
@@ -214,7 +218,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
   @Override
   @Nls
   public String getDisplayName() {
-    return getDartSettingsPageName();
+    return DartBundle.message("dart.title");
   }
 
   @Override
@@ -291,7 +295,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
 
     // reset UI
     myEnableDartSupportCheckBox.setSelected(myDartSupportEnabledInitial);
-    final String sdkInitialPath = mySdkInitial == null ? "" : FileUtilRt.toSystemDependentName(mySdkInitial.getHomePath());
+    @NlsSafe String sdkInitialPath = mySdkInitial == null ? "" : FileUtilRt.toSystemDependentName(mySdkInitial.getHomePath());
     mySdkPathComboWithBrowse.getComboBox().getEditor().setItem(sdkInitialPath);
     if (!sdkInitialPath.isEmpty()) {
       ensureComboModelContainsCurrentItem(mySdkPathComboWithBrowse.getComboBox());
@@ -419,13 +423,20 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
 
   private void updateErrorLabel() {
     final String message = getErrorMessage();
-    myErrorLabel
-      .setText(XmlStringUtil.wrapInHtml("<font color='#" + ColorUtil.toHex(JBColor.RED) + "'><left>" + message + "</left></font>"));
-    myErrorLabel.setVisible(message != null);
+    if (message == null) {
+      myErrorLabel.setText("");
+      myErrorLabel.setVisible(false);
+      return;
+    }
+
+    HtmlChunk.Element html = new HtmlBuilder().append(message)
+      .wrapWith("font").attr("color", "#" + ColorUtil.toHex(JBColor.RED))
+      .wrapWith("html");
+    myErrorLabel.setText(html.toString());
+    myErrorLabel.setVisible(true);
   }
 
-  @Nullable
-  private String getErrorMessage() {
+  private @Nullable @NlsContexts.Label String getErrorMessage() {
     if (!myEnableDartSupportCheckBox.isSelected()) {
       return null;
     }
@@ -479,7 +490,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
     };
 
     myModulesCheckboxTreeTable = new CheckboxTreeTable(null, checkboxTreeCellRenderer, new ColumnInfo[]{new TreeColumnInfo("")});
-    myModulesCheckboxTreeTable.addCheckboxTreeListener(new CheckboxTreeAdapter() {
+    myModulesCheckboxTreeTable.addCheckboxTreeListener(new CheckboxTreeListener() {
       @Override
       public void nodeStateChanged(@NotNull CheckedTreeNode node) {
         updateErrorLabel();
@@ -516,9 +527,5 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
 
   private static void setMLCodeCompletionEnabled(@NotNull Project project, boolean enabled) {
     PropertiesComponent.getInstance(project).setValue(ML_CODE_COMPLETION_PROPERTY_NAME, enabled, ML_CODE_COMPLETION_DEFAULT_VALUE);
-  }
-
-  private static String getDartSettingsPageName() {
-    return DartBundle.message("dart.title");
   }
 }

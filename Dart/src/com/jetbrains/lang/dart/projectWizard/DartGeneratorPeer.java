@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.projectWizard;
 
 import com.intellij.icons.AllIcons;
@@ -9,6 +9,8 @@ import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.HtmlBuilder;
+import com.intellij.openapi.util.text.HtmlChunk;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.platform.WebProjectGenerator;
 import com.intellij.ui.ColorUtil;
@@ -20,7 +22,6 @@ import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBList;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.util.ui.AsyncProcessIcon;
-import com.intellij.xml.util.XmlStringUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import org.jetbrains.annotations.NotNull;
@@ -208,8 +209,10 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
     }
     else {
       myErrorLabel.setVisible(true);
-      myErrorLabel
-        .setText(XmlStringUtil.wrapInHtml("<font color='#" + ColorUtil.toHex(JBColor.RED) + "'><left>" + info.message + "</left></font>"));
+      HtmlChunk.Element html = new HtmlBuilder().append(info.message)
+        .wrapWith("font").attr("color", "#" + ColorUtil.toHex(JBColor.RED))
+        .wrapWith("html");
+      myErrorLabel.setText(html.toString());
 
       if (!myIntellijLiveValidationEnabled) {
         myIntellijLiveValidationEnabled = true;

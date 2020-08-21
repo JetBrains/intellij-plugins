@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.sdk;
 
 import com.intellij.ide.util.PropertiesComponent;
@@ -6,6 +6,7 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComponentWithBrowseButton;
 import com.intellij.openapi.ui.TextComponentAccessor;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
@@ -101,7 +102,8 @@ public class DartSdkUtil {
     };
 
     final ComponentWithBrowseButton.BrowseFolderActionListener<JComboBox> browseFolderListener =
-      new ComponentWithBrowseButton.BrowseFolderActionListener<>(DartBundle.message("button.browse.dialog.title.select.dart.sdk.path"), null, dartSdkPathComponent, project,
+      new ComponentWithBrowseButton.BrowseFolderActionListener<>(DartBundle.message("button.browse.dialog.title.select.dart.sdk.path"),
+                                                                 null, dartSdkPathComponent, project,
                                                                  FileChooserDescriptorFactory.createSingleFolderDescriptor(),
                                                                  textComponentAccessor);
     dartSdkPathComponent.addActionListener(browseFolderListener);
@@ -142,7 +144,7 @@ public class DartSdkUtil {
 
     final String[] knownPaths = PropertiesComponent.getInstance().getValues(propertyKey);
     if (knownPaths != null && knownPaths.length > 0) {
-      for (String path: knownPaths) {
+      for (String path : knownPaths) {
         final String pathSD = FileUtil.toSystemDependentName(path);
         if (!pathSD.equals(currentPath) && pathChecker.fun(path)) {
           validPathsForUI.add(pathSD);
@@ -182,8 +184,7 @@ public class DartSdkUtil {
     }
   }
 
-  @Nullable
-  public static String getErrorMessageIfWrongSdkRootPath(final @NotNull String sdkRootPath) {
+  public static @Nullable @NlsContexts.Label String getErrorMessageIfWrongSdkRootPath(final @NotNull String sdkRootPath) {
     if (sdkRootPath.isEmpty()) return DartBundle.message("error.path.to.sdk.not.specified");
 
     final File sdkRoot = new File(sdkRootPath);

@@ -15,6 +15,8 @@ import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunnerParameters
 import com.jetbrains.lang.dart.ide.runner.server.webdev.DartWebdevConfiguration;
 import com.jetbrains.lang.dart.ide.runner.server.webdev.DartWebdevConfigurationType;
 import com.jetbrains.lang.dart.projectWizard.Stagehand.StagehandDescriptor;
+import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -29,27 +31,25 @@ public abstract class DartProjectTemplate {
 
   private static final Logger LOG = Logger.getInstance(DartProjectTemplate.class.getName());
 
-  @NotNull private final String myName;
-  @NotNull private final String myDescription;
+  private final @NotNull @Nls String myName;
+  private final @NotNull @Nls String myDescription;
 
-  public DartProjectTemplate(@NotNull final String name, @NotNull final String description) {
+  public DartProjectTemplate(@NotNull @Nls String name, @NotNull @Nls String description) {
     myName = name;
     myDescription = description;
   }
 
-  @NotNull
-  public String getName() {
+  public @NotNull @Nls String getName() {
     return myName;
   }
 
-  @NotNull
-  public String getDescription() {
+  public @NotNull @Nls String getDescription() {
     return myDescription;
   }
 
-  public abstract Collection<VirtualFile> generateProject(@NotNull final String sdkRoot,
-                                                          @NotNull final Module module,
-                                                          @NotNull final VirtualFile baseDir)
+  public abstract Collection<VirtualFile> generateProject(@NotNull String sdkRoot,
+                                                          @NotNull Module module,
+                                                          @NotNull VirtualFile baseDir)
     throws IOException;
 
 
@@ -75,8 +75,7 @@ public abstract class DartProjectTemplate {
     }
   }
 
-  @NotNull
-  private static List<DartProjectTemplate> getStagehandTemplates(@NotNull final String sdkRoot) {
+  private static @NotNull List<DartProjectTemplate> getStagehandTemplates(@NotNull String sdkRoot) {
     if (ourTemplateCache != null) {
       return ourTemplateCache;
     }

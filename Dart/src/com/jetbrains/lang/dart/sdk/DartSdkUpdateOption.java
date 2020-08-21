@@ -1,28 +1,31 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.sdk;
 
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.openapi.util.NlsContexts;
+import com.jetbrains.lang.dart.DartBundle;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Supplier;
+
 public enum DartSdkUpdateOption {
-  DoNotCheck("-- doesn't matter --"),
-  Stable("Stable channel"),
-  // Dev("Dev channel"),
-  StableAndDev("Stable and Dev channels");
+  DoNotCheck(() -> ""),
+  Stable(DartBundle.messagePointer("settings.page.check.updates.combobox.item.stable.channel")),
+  StableAndDev(DartBundle.messagePointer("settings.page.check.updates.combobox.item.stable.and.dev.channels"));
 
   public static final DartSdkUpdateOption[] OPTIONS_TO_SHOW_IN_COMBO = {Stable, StableAndDev};
 
   private static final String DART_CHECK_SDK_UPDATE_KEY = "DART_CHECK_SDK_UPDATE_KEY";
   private static final DartSdkUpdateOption DART_CHECK_SDK_UPDATE_DEFAULT = Stable;
 
-  @NotNull private final String myPresentableName;
+  private final @NotNull Supplier<@NlsContexts.Label String> myPresentableNameSupplier;
 
-  DartSdkUpdateOption(@NotNull final String presentableName) {
-    myPresentableName = presentableName;
+  DartSdkUpdateOption(@NotNull Supplier<@NlsContexts.Label String> presentableNameSupplier) {
+    myPresentableNameSupplier = presentableNameSupplier;
   }
 
-  @NotNull
-  public String getPresentableName() {
-    return myPresentableName;
+  public @NotNull @NlsContexts.Label String getPresentableName() {
+    return myPresentableNameSupplier.get();
   }
 
   @NotNull

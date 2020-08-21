@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.projectWizard;
 
 import com.intellij.execution.ExecutionException;
@@ -5,12 +6,15 @@ import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.CapturingProcessHandler;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.SystemProperties;
 import com.jetbrains.lang.dart.ide.actions.DartPubActionBase;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,12 +26,15 @@ import java.util.List;
 public class Stagehand {
 
   public static class StagehandDescriptor {
-    public final String myId;
-    public final String myLabel;
-    public final String myDescription;
-    public final String myEntrypoint;
+    public final @NotNull @NonNls String myId;
+    public final @NotNull @NlsSafe String myLabel;
+    public final @NotNull @NlsSafe String myDescription;
+    public final @Nullable @NonNls String myEntrypoint;
 
-    public StagehandDescriptor(String id, String label, String description, String entrypoint) {
+    public StagehandDescriptor(@NotNull @NonNls String id,
+                               @NotNull @NlsSafe String label,
+                               @NotNull @NlsSafe String description,
+                               @Nullable @NonNls String entrypoint) {
       myId = id;
       myLabel = label;
       myDescription = description;
@@ -50,7 +57,7 @@ public class Stagehand {
     }
   }
 
-  private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.projectWizard.Stagehand");
+  private static final Logger LOG = Logger.getInstance(Stagehand.class);
   private static final List<StagehandDescriptor> EMPTY = new ArrayList<>();
 
   private static final class PubRunner {
@@ -113,7 +120,7 @@ public class Stagehand {
 
         result.add(new StagehandDescriptor(
           obj.getString("name"),
-          obj.optString("label"),
+          obj.getString("label"),
           obj.getString("description"),
           obj.optString("entrypoint")));
       }

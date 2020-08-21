@@ -1,9 +1,9 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.projectWizard;
 
 import com.intellij.ide.highlighter.HtmlFileType;
 import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
@@ -21,13 +21,9 @@ class StagehandTemplate extends DartProjectTemplate {
   @NotNull private final Stagehand.StagehandDescriptor myTemplate;
 
   StagehandTemplate(@NotNull final Stagehand stagehand, @NotNull final Stagehand.StagehandDescriptor template) {
-    super(getLabel(template), template.myDescription);
+    super(template.myLabel, template.myDescription);
     myStagehand = stagehand;
     myTemplate = template;
-  }
-
-  private static String getLabel(final Stagehand.StagehandDescriptor descriptor) {
-    return !StringUtil.isEmptyOrSpaces(descriptor.myLabel) ? descriptor.myLabel : descriptor.myId;
   }
 
   @Override
