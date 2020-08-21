@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.execution.ExecutionException;
@@ -19,6 +19,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.SkipDefaultValuesSerializationFilters;
 import com.intellij.util.xmlb.XmlSerializer;
+import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.server.ui.DartRemoteDebugConfigurationEditor;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -42,16 +43,17 @@ public class DartRemoteDebugConfiguration extends RunConfigurationBase<Element> 
   public void checkConfiguration() throws RuntimeConfigurationError {
     final String path = myParameters.getDartProjectPath();
     if (path.isEmpty()) {
-      throw new RuntimeConfigurationError("Dart project path is not specified");
+      throw new RuntimeConfigurationError(DartBundle.message("dialog.message.dart.project.path.not.specified"));
     }
 
     final VirtualFile dir = LocalFileSystem.getInstance().findFileByPath(path);
     if (dir == null || !dir.isDirectory()) {
-      throw new RuntimeConfigurationError("Folder not found: " + FileUtil.toSystemDependentName(path));
+      throw new RuntimeConfigurationError(DartBundle.message("dialog.message.folder.not.found", FileUtil.toSystemDependentName(path)));
     }
 
     if (!ProjectRootManager.getInstance(getProject()).getFileIndex().isInContent(dir)) {
-      throw new RuntimeConfigurationError("Folder is not in project content: " + FileUtil.toSystemDependentName(path));
+      throw new RuntimeConfigurationError(
+        DartBundle.message("dialog.message.folder.not.in.project.content", FileUtil.toSystemDependentName(path)));
     }
   }
 

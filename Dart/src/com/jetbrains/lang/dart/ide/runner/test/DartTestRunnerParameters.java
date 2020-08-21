@@ -1,11 +1,17 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.test;
 
 import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.text.StringUtil;
+import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunnerParameters;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Supplier;
 
 public class DartTestRunnerParameters extends DartCommandLineRunnerParameters implements Cloneable {
 
@@ -66,7 +72,7 @@ public class DartTestRunnerParameters extends DartCommandLineRunnerParameters im
     super.check(project);
 
     if (myScope == Scope.GROUP_OR_TEST_BY_NAME && StringUtil.isEmpty(myTestName)) {
-      throw new RuntimeConfigurationError("Group or test name is not specified");
+      throw new RuntimeConfigurationError(DartBundle.message("dialog.message.group.or.test.name.not.specified"));
     }
   }
 
@@ -76,23 +82,23 @@ public class DartTestRunnerParameters extends DartCommandLineRunnerParameters im
   }
 
   public enum Scope {
-    FOLDER("All in folder"),
-    FILE("All in file"),
+    FOLDER(DartBundle.messagePointer("test.mode.all.in.folder")),
+    FILE(DartBundle.messagePointer("test.mode.all.in.file")),
     @Deprecated // GROUP_OR_TEST_BY_NAME used instead
-      GROUP("Test group"),
+    GROUP(new Computable.PredefinedValueComputable<>("Test group")),
     @Deprecated // GROUP_OR_TEST_BY_NAME used instead
-      METHOD("Test name"),
-    GROUP_OR_TEST_BY_NAME("Group or test by name"),
-    MULTIPLE_NAMES("Multiple names"); // Used by test re-runner action; not visible in UI
+    METHOD(new Computable.PredefinedValueComputable<>("Test name")),
+    GROUP_OR_TEST_BY_NAME(DartBundle.messagePointer("test.mode.test.group.or.test.by.name")),
+    MULTIPLE_NAMES(new Computable.PredefinedValueComputable<>("")); // Used by test re-runner action; not visible in UI
 
-    private final String myPresentableName;
+    private final Supplier<@NlsContexts.Label String> myPresentableNameSupplier;
 
-    Scope(final String name) {
-      myPresentableName = name;
+    Scope(Supplier<@NlsContexts.Label String> nameSupplier) {
+      myPresentableNameSupplier = nameSupplier;
     }
 
     public String getPresentableName() {
-      return myPresentableName;
+      return myPresentableNameSupplier.get();
     }
   }
 }

@@ -170,7 +170,9 @@ public final class DartProblemsView implements PersistentStateComponent<DartProb
   }
 
   @SuppressWarnings("unused")
-  public void showWarningNotification(@NotNull @NlsContexts.NotificationTitle String title, @Nullable @NlsContexts.NotificationContent String content, @Nullable Icon icon) {
+  public void showWarningNotification(@NotNull @NlsContexts.NotificationTitle String title,
+                                      @Nullable @NlsContexts.NotificationContent String content,
+                                      @Nullable Icon icon) {
     showNotification(NotificationType.WARNING, title, content, icon, false);
   }
 
@@ -178,7 +180,9 @@ public final class DartProblemsView implements PersistentStateComponent<DartProb
     showNotification(NotificationType.ERROR, title, null, null, true);
   }
 
-  public void showErrorNotification(@NotNull @NlsContexts.NotificationTitle String title, @Nullable @NlsContexts.NotificationContent String content, @Nullable Icon icon) {
+  public void showErrorNotification(@NotNull @NlsContexts.NotificationTitle String title,
+                                    @Nullable @NlsContexts.NotificationContent String content,
+                                    @Nullable Icon icon) {
     showNotification(NotificationType.ERROR, title, content, icon, false);
   }
 
@@ -205,9 +209,9 @@ public final class DartProblemsView implements PersistentStateComponent<DartProb
       if (!content.endsWith("<br>")) content += "<br>";
       content +=
         new HtmlBuilder().br()
-          .appendLink("disable.for.session", "Don't show for this session")
+          .appendLink("disable.for.session", DartBundle.message("notification.link.don.t.show.for.this.session"))
           .append(HtmlChunk.nbsp(7))
-          .appendLink("never.show.again", "Never show again");
+          .appendLink("never.show.again", DartBundle.message("notification.link.never.show.again"));
     }
 
     myNotification = NOTIFICATION_GROUP.createNotification(title, content, notificationType, new NotificationListener.Adapter() {

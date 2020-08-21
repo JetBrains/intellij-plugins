@@ -1,8 +1,10 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.template;
 
 import com.intellij.codeInsight.template.EverywhereContextType;
 import com.intellij.codeInsight.template.TemplateContextType;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -17,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class DartTemplateContextType extends TemplateContextType {
   protected DartTemplateContextType(@NotNull @NonNls String id,
-                                    @NotNull String presentableName,
+                                    @NotNull @NlsContexts.Label String presentableName,
                                     @Nullable Class<? extends TemplateContextType> baseContextType) {
     super(id, presentableName, baseContextType);
   }
@@ -41,7 +43,7 @@ public abstract class DartTemplateContextType extends TemplateContextType {
 
   public static class Generic extends DartTemplateContextType {
     public Generic() {
-      super("DART", DartBundle.message("dart.language.id"), EverywhereContextType.class);
+      super("DART", DartBundle.message("template.context.type.dart"), EverywhereContextType.class);
     }
 
     @Override
@@ -52,7 +54,7 @@ public abstract class DartTemplateContextType extends TemplateContextType {
 
   public static class Statement extends DartTemplateContextType {
     public Statement() {
-      super("DART_STATEMENT", "Statement", Generic.class);
+      super("DART_STATEMENT", DartBundle.message("template.context.type.dart.statement"), Generic.class);
     }
 
     @Override

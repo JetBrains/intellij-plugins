@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.fixes;
 
 import com.intellij.CommonBundle;
@@ -10,6 +10,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -63,7 +64,10 @@ public final class DartQuickFix implements IntentionAction, Comparable<Intention
       return mySuppressActionDelegate.getText();
     }
 
-    return mySourceChange == null ? "" : mySourceChange.getMessage();
+    if (mySourceChange == null) return "";
+
+    @NlsSafe String message = mySourceChange.getMessage();
+    return message;
   }
 
   @Override

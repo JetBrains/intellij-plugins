@@ -7,10 +7,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComponentWithBrowseButton;
 import com.intellij.openapi.ui.TextComponentAccessor;
 import com.intellij.openapi.util.NlsContexts;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.ui.ComboboxWithBrowseButton;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.components.JBLabel;
@@ -33,8 +33,7 @@ public class DartSdkUtil {
   private static final Map<Pair<File, Long>, String> ourVersions = new HashMap<>();
   private static final String DART_SDK_KNOWN_PATHS = "DART_SDK_KNOWN_PATHS";
 
-  @Nullable
-  public static String getSdkVersion(final @NotNull String sdkHomePath) {
+  public static @Nullable @NlsSafe String getSdkVersion(final @NotNull String sdkHomePath) {
     final File versionFile = new File(sdkHomePath + "/version");
     if (versionFile.isFile()) {
       final String cachedVersion = ourVersions.get(Pair.create(versionFile, versionFile.lastModified()));
@@ -75,13 +74,14 @@ public class DartSdkUtil {
     addKnownPathsToCombo(dartSdkPathComponent.getComboBox(), DART_SDK_KNOWN_PATHS, DartSdkUtil::isDartSdkHome);
     if (SystemInfo.isMac && getItemFromCombo(dartSdkPathComponent.getComboBox()).isEmpty()) {
       // no need to check folder presence here; even if it doesn't exist - that's the best we can suggest
-      dartSdkPathComponent.getComboBox().getEditor().setItem("/usr/local/opt/dart/libexec");
+      @NlsSafe String path = "/usr/local/opt/dart/libexec";
+      dartSdkPathComponent.getComboBox().getEditor().setItem(path);
     }
 
     final String sdkHomePath = getItemFromCombo(dartSdkPathComponent.getComboBox());
     versionLabel.setText(sdkHomePath.isEmpty() ? "" : getSdkVersion(sdkHomePath));
 
-    final TextComponentAccessor<JComboBox> textComponentAccessor = new TextComponentAccessor<JComboBox>() {
+    final TextComponentAccessor<JComboBox> textComponentAccessor = new TextComponentAccessor<>() {
       @Override
       public String getText(final JComboBox component) {
         return getItemFromCombo(component);
@@ -92,12 +92,12 @@ public class DartSdkUtil {
         if (!text.isEmpty() && !isDartSdkHome(text)) {
           final String probablySdkPath = text + "/dart-sdk";
           if (isDartSdkHome(probablySdkPath)) {
-            component.getEditor().setItem(FileUtilRt.toSystemDependentName(probablySdkPath));
+            component.getEditor().setItem(FileUtil.toSystemDependentName(probablySdkPath));
             return;
           }
         }
 
-        component.getEditor().setItem(FileUtilRt.toSystemDependentName(text));
+        component.getEditor().setItem(FileUtil.toSystemDependentName(text));
       }
     };
 

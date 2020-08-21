@@ -27,6 +27,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.base.DartRunConfiguration;
@@ -98,7 +99,7 @@ public class DartTestRunningState extends DartCommandLineRunningState {
     Project project = getEnvironment().getProject();
 
     DartSdk sdk = DartSdk.getDartSdk(project);
-    if (sdk == null) throw new ExecutionException("Dart SDK cannot be found"); // can't happen, already checked
+    if (sdk == null) throw new ExecutionException(DartBundle.message("dart.sdk.is.not.configured")); // can't happen, already checked
 
     DartTestRunnerParameters params = getParameters();
 
@@ -141,7 +142,7 @@ public class DartTestRunningState extends DartCommandLineRunningState {
         final String regex = StringUtil.notNullize(params.getTestName());
         // may be empty only in case of Rerun Failed Tests when there are no failed ones yet
         if (regex.isEmpty()) {
-          throw new ExecutionException("No tests to run");
+          throw new ExecutionException(DartBundle.message("dialog.message.no.tests.to.run"));
         }
         builder.append(" -n \"").append(regex).append("\"");
       }

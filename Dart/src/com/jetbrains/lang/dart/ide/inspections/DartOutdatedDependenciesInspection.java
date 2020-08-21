@@ -3,6 +3,8 @@ package com.jetbrains.lang.dart.ide.inspections;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInspection.*;
+import com.intellij.codeInspection.util.InspectionMessage;
+import com.intellij.codeInspection.util.IntentionName;
 import com.intellij.ide.util.PsiNavigationSupport;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -26,6 +28,7 @@ import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.util.DotPackagesFileUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import gnu.trove.THashSet;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,7 +38,9 @@ public class DartOutdatedDependenciesInspection extends LocalInspectionTool {
   private final Set<String> myIgnoredPubspecPaths = new THashSet<>(); // remember for the current session only, do not serialize
 
   @Override
-  public ProblemDescriptor @Nullable [] checkFile(@NotNull final PsiFile psiFile, @NotNull final InspectionManager manager, final boolean isOnTheFly) {
+  public ProblemDescriptor @Nullable [] checkFile(@NotNull final PsiFile psiFile,
+                                                  @NotNull final InspectionManager manager,
+                                                  final boolean isOnTheFly) {
     if (!isOnTheFly) return null;
 
     if (!(psiFile instanceof DartFile)) return null;
@@ -74,10 +79,10 @@ public class DartOutdatedDependenciesInspection extends LocalInspectionTool {
     return null;
   }
 
-  private ProblemDescriptor @NotNull [] createProblemDescriptors(@NotNull final InspectionManager manager,
-                                                                 @NotNull final PsiFile psiFile,
-                                                                 @NotNull final VirtualFile pubspecFile,
-                                                                 @NotNull final String errorMessage) {
+  private ProblemDescriptor @NotNull [] createProblemDescriptors(@NotNull InspectionManager manager,
+                                                                 @NotNull PsiFile psiFile,
+                                                                 @NotNull VirtualFile pubspecFile,
+                                                                 @NotNull @InspectionMessage String errorMessage) {
     final LocalQuickFix[] fixes = new LocalQuickFix[]{
       new RunPubFix(DartBundle.message("pub.get"), "Dart.pub.get"),
       new RunPubFix(DartBundle.message("pub.upgrade"), "Dart.pub.upgrade"),
@@ -89,10 +94,10 @@ public class DartOutdatedDependenciesInspection extends LocalInspectionTool {
   }
 
   private static final class RunPubFix extends IntentionAndQuickFixAction {
-    private final String myFixName;
+    private final @IntentionName String myFixName;
     private final String myActionId;
 
-    private RunPubFix(@NotNull final String fixName, @NotNull final String actionId) {
+    private RunPubFix(@NotNull @IntentionName String fixName, @NotNull @NonNls String actionId) {
       myFixName = fixName;
       myActionId = actionId;
     }
