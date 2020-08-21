@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.options
 
 import com.intellij.application.options.SmartIndentOptionsEditor
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings
 import com.intellij.ui.ContextHelpLabel
@@ -32,8 +33,7 @@ class VueIndentOptionsEditor : SmartIndentOptionsEditor() {
     myBlockSpecificIndentPanel.add(myBlockSpecificIndentRadioButton)
     myBlockSpecificIndentPanel.add(Box.createRigidArea(Dimension(10, 0)))
     myBlockSpecificIndentPanel.add(ContextHelpLabel.create(
-      message("options.indent.radio.block-specific.tooltip")
-        .replace("<", "&lt;")))
+      StringUtil.replace(message("options.indent.radio.block-specific.tooltip"), "<", "&lt;")))
     add(myBlockSpecificIndentPanel)
     myUniformIndentRadioButton.addActionListener {
       myBlockSpecificIndentRadioButton.isSelected = !myUniformIndentRadioButton.isSelected

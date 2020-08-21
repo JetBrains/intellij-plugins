@@ -106,12 +106,12 @@ Learn more about Vue.js support in the <a href="https://www.jetbrains.com/help/w
       implementation="org.jetbrains.vuejs.cli.VueCliProjectGenerator"/>  <!-- works in WebStorm and other SmallIDEs -->
     <projectTemplatesFactory implementation="org.jetbrains.vuejs.cli.VueProjectTemplateFactory"/> <!-- works in IntelliJ IDEA -->
 
-    <localInspection language="Vue" groupName="Vue" shortName="VueDataFunction"
+    <localInspection language="Vue" groupKey="vue.inspection.group.name" shortName="VueDataFunction"
                      enabledByDefault="true" level="WARNING"
                      implementationClass="org.jetbrains.vuejs.inspections.DataFunctionInspection"
                      key="vue.inspection.display.name.data.function"
                      bundle="messages.VueBundle"/>
-    <localInspection language="Vue" groupName="Vue" shortName="VueDuplicateTag"
+    <localInspection language="Vue" groupKey="vue.inspection.group.name" shortName="VueDuplicateTag"
                      enabledByDefault="true" level="WARNING"
                      implementationClass="org.jetbrains.vuejs.inspections.DuplicateTagInspection"
                      key="vue.inspection.display.name.duplicate.tag" bundle="messages.VueBundle"/>
