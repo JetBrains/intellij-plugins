@@ -52,7 +52,6 @@
 
   <extensionPoints>
     <extensionPoint name="frameworkIntegrator" interface="org.osmorc.frameworkintegration.FrameworkIntegrator"/>
-    <extensionPoint name="obr" interface="org.osmorc.obrimport.Obr"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -66,7 +65,6 @@
 
     <applicationService serviceImplementation="org.osmorc.settings.ApplicationSettings"/>
     <applicationService serviceImplementation="org.osmorc.frameworkintegration.FrameworkIntegratorRegistry"/>
-    <applicationService serviceImplementation="org.osmorc.obrimport.ObrProvider"/>
 
     <projectService serviceImplementation="org.jetbrains.osgi.project.BundleManifestCache"/>
     <projectService serviceImplementation="org.osmorc.settings.ProjectSettings"/>
@@ -145,8 +143,6 @@
     <frameworkIntegrator implementation="org.osmorc.frameworkintegration.impl.knopflerfish.KnopflerfishIntegrator"/>
     <frameworkIntegrator implementation="org.osmorc.frameworkintegration.impl.felix.FelixIntegrator"/>
     <frameworkIntegrator implementation="org.osmorc.frameworkintegration.impl.concierge.ConciergeIntegrator"/>
-
-    <obr implementation="org.osmorc.obrimport.springsource.SpringSourceObr"/>
   </extensions>
 
   <projectListeners>
