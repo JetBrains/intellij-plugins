@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class RestartDartAnalysisServerAction extends DumbAwareAction {
   public RestartDartAnalysisServerAction() {
+    //noinspection DialogTitleCapitalization
     super(DartBundle.messagePointer("dart.restart.server.action.name"),
           DartBundle.messagePointer("dart.restart.server.action.name"),
           AllIcons.Actions.ForceRefresh);

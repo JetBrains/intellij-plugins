@@ -426,6 +426,7 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
 
   private class AnalysisServerSettingsAction extends DumbAwareAction implements Toggleable {
     AnalysisServerSettingsAction() {
+      //noinspection DialogTitleCapitalization
       super(DartBundle.messagePointer("dart.problems.view.action.name.analysis.server.settings"),
             DartBundle.messagePointer("dart.problems.view.action.description.analysis.server.settings"),
             AllIcons.General.GearPlain);
