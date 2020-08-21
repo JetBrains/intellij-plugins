@@ -1,9 +1,10 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server.vmService.frame;
 
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -16,6 +17,7 @@ import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.evaluation.ExpressionInfo;
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
 import com.intellij.xdebugger.frame.XValue;
+import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.DartVmServiceDebugProcess;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.VmServiceWrapper;
 import com.jetbrains.lang.dart.psi.*;
@@ -23,6 +25,7 @@ import com.jetbrains.lang.dart.util.DartResolveUtil;
 import gnu.trove.THashSet;
 import org.dartlang.vm.service.consumer.GetObjectConsumer;
 import org.dartlang.vm.service.element.*;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,16 +38,16 @@ import java.util.regex.Pattern;
 public class DartVmServiceEvaluator extends XDebuggerEvaluator {
   private static final Pattern ERROR_PATTERN = Pattern.compile("Error:.* line \\d+ pos \\d+: (.+)");
 
-  @NotNull protected final DartVmServiceDebugProcess myDebugProcess;
+  protected final @NotNull DartVmServiceDebugProcess myDebugProcess;
 
-  public DartVmServiceEvaluator(@NotNull final DartVmServiceDebugProcess debugProcess) {
+  public DartVmServiceEvaluator(@NotNull DartVmServiceDebugProcess debugProcess) {
     myDebugProcess = debugProcess;
   }
 
   @Override
-  public void evaluate(@NotNull final String expression,
-                       @NotNull final XEvaluationCallback callback,
-                       @Nullable final XSourcePosition expressionPosition) {
+  public void evaluate(@NotNull String expression,
+                       @NotNull XEvaluationCallback callback,
+                       @Nullable XSourcePosition expressionPosition) {
     final String isolateId = myDebugProcess.getCurrentIsolateId();
     final Project project = myDebugProcess.getSession().getProject();
     final FileEditorManager manager = FileEditorManager.getInstance(project);
@@ -56,7 +59,7 @@ public class DartVmServiceEvaluator extends XDebuggerEvaluator {
     final VmServiceWrapper vmService = myDebugProcess.getVmServiceWrapper();
     if (vmService == null) {
       // not connected to the VM yet
-      callback.errorOccurred("No connection to the Dart VM");
+      callback.errorOccurred(DartBundle.message("debugger.error.no.connection.to.dart.vm"));
       return;
     }
 
@@ -103,7 +106,7 @@ public class DartVmServiceEvaluator extends XDebuggerEvaluator {
     }
 
     if (isolateId == null) {
-      wrappedCallback.errorOccurred("No running isolate.");
+      wrappedCallback.errorOccurred(DartBundle.message("debugger.error.no.running.isolate"));
       return;
     }
     final DartClass dartClass = element != null ? PsiTreeUtil.getParentOfType(element, DartClass.class) : null;
@@ -117,7 +120,7 @@ public class DartVmServiceEvaluator extends XDebuggerEvaluator {
 
       LibraryRef libraryRef = isolate != null ? findMatchingLibrary(isolate, libraryFiles) : null;
       if (libraryRef == null) {
-        wrappedCallback.errorOccurred("Can't evaluate.");
+        wrappedCallback.errorOccurred(DartBundle.message("debugger.error.cannot.evaluate"));
         return;
       }
 
@@ -126,7 +129,8 @@ public class DartVmServiceEvaluator extends XDebuggerEvaluator {
 
           @Override
           public void onError(RPCError error) {
-            wrappedCallback.errorOccurred(error.getMessage());
+            @NlsSafe String message = error.getMessage();
+            wrappedCallback.errorOccurred(message);
           }
 
           @Override
@@ -145,7 +149,8 @@ public class DartVmServiceEvaluator extends XDebuggerEvaluator {
 
           @Override
           public void received(Sentinel response) {
-            wrappedCallback.errorOccurred(response.getValueAsString());
+            @NlsSafe String errorMessage = response.getValueAsString();
+            wrappedCallback.errorOccurred(errorMessage);
           }
         });
       }
@@ -155,8 +160,7 @@ public class DartVmServiceEvaluator extends XDebuggerEvaluator {
     });
   }
 
-  @Nullable
-  private LibraryRef findMatchingLibrary(@NotNull Isolate isolate, @NotNull List<VirtualFile> libraryFiles) {
+  private @Nullable LibraryRef findMatchingLibrary(@NotNull Isolate isolate, @NotNull List<VirtualFile> libraryFiles) {
     if (!libraryFiles.isEmpty()) {
       Set<String> uris = new THashSet<>();
 
@@ -173,19 +177,17 @@ public class DartVmServiceEvaluator extends XDebuggerEvaluator {
     return isolate.getRootLib();
   }
 
-  @Nullable
   @Override
-  public ExpressionInfo getExpressionInfoAtOffset(@NotNull final Project project,
-                                                  @NotNull final Document document,
-                                                  final int offset,
-                                                  final boolean sideEffectsAllowed) {
+  public @Nullable ExpressionInfo getExpressionInfoAtOffset(@NotNull Project project,
+                                                            @NotNull Document document,
+                                                            int offset,
+                                                            boolean sideEffectsAllowed) {
     final PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document);
     final PsiElement contextElement = psiFile == null ? null : psiFile.findElementAt(offset);
     return contextElement == null ? null : getExpressionInfo(contextElement);
   }
 
-  @NotNull
-  public static String getPresentableError(@NotNull final String rawError) {
+  public static @NotNull @Nls String getPresentableError(@NotNull String rawError) {
     //Error: Unhandled exception:
     //No top-level getter 'foo' declared.
     //
@@ -211,11 +213,10 @@ public class DartVmServiceEvaluator extends XDebuggerEvaluator {
       }
     }
 
-    return "Cannot evaluate";
+    return DartBundle.message("debugger.error.cannot.evaluate");
   }
 
-  @Nullable
-  public static ExpressionInfo getExpressionInfo(@NotNull final PsiElement contextElement) {
+  public static @Nullable ExpressionInfo getExpressionInfo(@NotNull PsiElement contextElement) {
     // todo if sideEffectsAllowed return method call like "foo()", not only "foo"
     /* WEB-11715
      dart psi: notes.text
@@ -228,7 +229,6 @@ public class DartVmServiceEvaluator extends XDebuggerEvaluator {
     // find topmost reference, but stop if argument list found
     DartReference reference = null;
     PsiElement element = contextElement;
-    //noinspection ConditionalBreakInInfiniteLoop
     while (true) {
       if (element instanceof DartReference) {
         reference = (DartReference)element;

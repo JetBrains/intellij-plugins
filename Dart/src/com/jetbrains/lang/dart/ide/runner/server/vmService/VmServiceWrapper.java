@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server.vmService;
 
 import com.google.common.collect.Lists;
@@ -6,6 +6,7 @@ import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.Ref;
 import com.intellij.util.Alarm;
 import com.intellij.util.concurrency.Semaphore;
@@ -46,13 +47,13 @@ public class VmServiceWrapper implements Disposable {
 
   private long myVmServiceReceiverThreadId;
 
-  @Nullable private StepOption myLatestStep;
+  private @Nullable StepOption myLatestStep;
 
-  public VmServiceWrapper(@NotNull final DartVmServiceDebugProcess debugProcess,
-                          @NotNull final VmService vmService,
-                          @NotNull final DartVmServiceListener vmServiceListener,
-                          @NotNull final IsolatesInfo isolatesInfo,
-                          @NotNull final DartVmServiceBreakpointHandler breakpointHandler) {
+  public VmServiceWrapper(@NotNull DartVmServiceDebugProcess debugProcess,
+                          @NotNull VmService vmService,
+                          @NotNull DartVmServiceListener vmServiceListener,
+                          @NotNull IsolatesInfo isolatesInfo,
+                          @NotNull DartVmServiceBreakpointHandler breakpointHandler) {
     myDebugProcess = debugProcess;
     myVmService = vmService;
     myVmServiceListener = vmServiceListener;
@@ -65,14 +66,13 @@ public class VmServiceWrapper implements Disposable {
   public void dispose() {
   }
 
-  private void addRequest(@NotNull final Runnable runnable) {
+  private void addRequest(@NotNull Runnable runnable) {
     if (!myRequestsScheduler.isDisposed()) {
       myRequestsScheduler.addRequest(runnable, 0);
     }
   }
 
-  @Nullable
-  public StepOption getLatestStep() {
+  public @Nullable StepOption getLatestStep() {
     return myLatestStep;
   }
 
@@ -149,16 +149,15 @@ public class VmServiceWrapper implements Disposable {
     }
   }
 
-  private void streamListen(@NotNull final String streamId, @NotNull final SuccessConsumer consumer) {
+  private void streamListen(@NotNull String streamId, @NotNull SuccessConsumer consumer) {
     addRequest(() -> myVmService.streamListen(streamId, consumer));
   }
 
-  private void getVm(@NotNull final VMConsumer consumer) {
+  private void getVm(@NotNull VMConsumer consumer) {
     addRequest(() -> myVmService.getVM(consumer));
   }
 
-  @NotNull
-  public CompletableFuture<Isolate> getCachedIsolate(@NotNull final String isolateId) {
+  public @NotNull CompletableFuture<Isolate> getCachedIsolate(@NotNull String isolateId) {
     return myIsolatesInfo.getCachedIsolate(isolateId, () -> {
       CompletableFuture<Isolate> isolateFuture = new CompletableFuture<>();
       getIsolate(isolateId, new GetIsolateConsumer() {
@@ -183,11 +182,11 @@ public class VmServiceWrapper implements Disposable {
     });
   }
 
-  private void getIsolate(@NotNull final String isolateId, @NotNull final GetIsolateConsumer consumer) {
+  private void getIsolate(@NotNull String isolateId, @NotNull GetIsolateConsumer consumer) {
     addRequest(() -> myVmService.getIsolate(isolateId, consumer));
   }
 
-  public void handleIsolate(@NotNull final IsolateRef isolateRef, final boolean isolatePausedStart) {
+  public void handleIsolate(@NotNull IsolateRef isolateRef, boolean isolatePausedStart) {
     // We should auto-resume on a StartPaused event, if we're not remote debugging, and after breakpoints have been set.
 
     final boolean newIsolate = myIsolatesInfo.addIsolate(isolateRef);
@@ -218,7 +217,7 @@ public class VmServiceWrapper implements Disposable {
     }
   }
 
-  private void setInitialBreakpointsAndResume(@NotNull final IsolateRef isolateRef) {
+  private void setInitialBreakpointsAndResume(@NotNull IsolateRef isolateRef) {
     if (myDebugProcess.isRemoteDebug()) {
       if (myDebugProcess.myRemoteProjectRootUri == null) {
         // need to detect remote project root path before setting breakpoints
@@ -239,16 +238,16 @@ public class VmServiceWrapper implements Disposable {
     }
   }
 
-  private void doSetInitialBreakpointsAndResume(@NotNull final IsolateRef isolateRef) {
+  private void doSetInitialBreakpointsAndResume(@NotNull IsolateRef isolateRef) {
     doSetBreakpointsForIsolate(myBreakpointHandler.getXBreakpoints(), isolateRef.getId(), () -> {
       myIsolatesInfo.setBreakpointsSet(isolateRef);
       checkInitialResume(isolateRef);
     });
   }
 
-  private void doSetBreakpointsForIsolate(@NotNull final Set<XLineBreakpoint<XBreakpointProperties>> xBreakpoints,
-                                          @NotNull final String isolateId,
-                                          @Nullable final Runnable onFinished) {
+  private void doSetBreakpointsForIsolate(@NotNull Set<XLineBreakpoint<XBreakpointProperties>> xBreakpoints,
+                                          @NotNull String isolateId,
+                                          @Nullable Runnable onFinished) {
     if (xBreakpoints.isEmpty()) {
       if (onFinished != null) {
         onFinished.run();
@@ -286,9 +285,9 @@ public class VmServiceWrapper implements Disposable {
     }
   }
 
-  public void addBreakpoint(@NotNull final String isolateId,
-                            @Nullable final XSourcePosition position,
-                            @NotNull final VmServiceConsumers.BreakpointConsumerWrapper consumer) {
+  public void addBreakpoint(@NotNull String isolateId,
+                            @Nullable XSourcePosition position,
+                            @NotNull VmServiceConsumers.BreakpointConsumerWrapper consumer) {
     if (position == null || position.getFile().getFileType() != DartFileType.INSTANCE) {
       consumer.sourcePositionNotApplicable();
       return;
@@ -302,8 +301,8 @@ public class VmServiceWrapper implements Disposable {
     });
   }
 
-  public void addBreakpointForIsolates(@NotNull final XLineBreakpoint<XBreakpointProperties> xBreakpoint,
-                                       @NotNull final Collection<IsolatesInfo.IsolateInfo> isolateInfos) {
+  public void addBreakpointForIsolates(@NotNull XLineBreakpoint<XBreakpointProperties> xBreakpoint,
+                                       @NotNull Collection<IsolatesInfo.IsolateInfo> isolateInfos) {
     for (final IsolatesInfo.IsolateInfo isolateInfo : isolateInfos) {
       addBreakpoint(isolateInfo.getIsolateId(), xBreakpoint.getSourcePosition(), new VmServiceConsumers.BreakpointConsumerWrapper() {
         @Override
@@ -325,7 +324,7 @@ public class VmServiceWrapper implements Disposable {
   /**
    * Reloaded scripts need to have their breakpoints re-applied; re-set all existing breakpoints.
    */
-  public void restoreBreakpointsForIsolate(@NotNull final String isolateId, @Nullable final Runnable onFinished) {
+  public void restoreBreakpointsForIsolate(@NotNull String isolateId, @Nullable Runnable onFinished) {
     // Cached information about the isolate may now be stale.
     myIsolatesInfo.invalidateCache(isolateId);
 
@@ -335,8 +334,7 @@ public class VmServiceWrapper implements Disposable {
     doSetBreakpointsForIsolate(myBreakpointHandler.getXBreakpoints(), isolateId, onFinished);
   }
 
-  public void addTemporaryBreakpoint(@NotNull final XSourcePosition position,
-                                     @NotNull final String isolateId) {
+  public void addTemporaryBreakpoint(@NotNull XSourcePosition position, @NotNull String isolateId) {
     addBreakpoint(isolateId, position, new VmServiceConsumers.BreakpointConsumerWrapper() {
       @Override
       void sourcePositionNotApplicable() {
@@ -353,18 +351,18 @@ public class VmServiceWrapper implements Disposable {
     });
   }
 
-  public void removeBreakpoint(@NotNull final String isolateId, @NotNull final String vmBreakpointId) {
+  public void removeBreakpoint(@NotNull String isolateId, @NotNull String vmBreakpointId) {
     addRequest(() -> myVmService.removeBreakpoint(isolateId, vmBreakpointId, VmServiceConsumers.EMPTY_SUCCESS_CONSUMER));
   }
 
-  public void resumeIsolate(@NotNull final String isolateId, @Nullable final StepOption stepOption) {
+  public void resumeIsolate(@NotNull String isolateId, @Nullable StepOption stepOption) {
     addRequest(() -> {
       myLatestStep = stepOption;
       myVmService.resume(isolateId, stepOption, null, VmServiceConsumers.EMPTY_SUCCESS_CONSUMER);
     });
   }
 
-  public void setExceptionPauseMode(@NotNull final ExceptionPauseMode mode) {
+  public void setExceptionPauseMode(@NotNull ExceptionPauseMode mode) {
     for (final IsolatesInfo.IsolateInfo isolateInfo : myIsolatesInfo.getIsolateInfos()) {
       addRequest(() -> myVmService.setExceptionPauseMode(isolateInfo.getIsolateId(), mode, VmServiceConsumers.EMPTY_SUCCESS_CONSUMER));
     }
@@ -376,7 +374,7 @@ public class VmServiceWrapper implements Disposable {
    * frameIndex specifies the stack frame to rewind to. Stack frame 0 is the currently executing
    * function, so frameIndex must be at least 1.
    */
-  public void dropFrame(@NotNull final String isolateId, int frameIndex) {
+  public void dropFrame(@NotNull String isolateId, int frameIndex) {
     addRequest(() -> {
       myLatestStep = StepOption.Rewind;
       myVmService.resume(isolateId, StepOption.Rewind, frameIndex, new SuccessConsumer() {
@@ -393,14 +391,14 @@ public class VmServiceWrapper implements Disposable {
     });
   }
 
-  public void pauseIsolate(@NotNull final String isolateId) {
+  public void pauseIsolate(@NotNull String isolateId) {
     addRequest(() -> myVmService.pause(isolateId, VmServiceConsumers.EMPTY_SUCCESS_CONSUMER));
   }
 
-  public void computeStackFrames(@NotNull final String isolateId,
-                                 final int firstFrameIndex,
-                                 @NotNull final XExecutionStack.XStackFrameContainer container,
-                                 @Nullable final InstanceRef exception) {
+  public void computeStackFrames(@NotNull String isolateId,
+                                 int firstFrameIndex,
+                                 @NotNull XExecutionStack.XStackFrameContainer container,
+                                 @Nullable InstanceRef exception) {
     addRequest(() -> myVmService.getStack(isolateId, new StackConsumer() {
       @Override
       public void received(final Stack vmStack) {
@@ -440,13 +438,13 @@ public class VmServiceWrapper implements Disposable {
 
       @Override
       public void onError(final RPCError error) {
-        container.errorOccurred(error.getMessage());
+        @NlsSafe String message = error.getMessage();
+        container.errorOccurred(message);
       }
     }));
   }
 
-  @Nullable
-  public Script getScriptSync(@NotNull final String isolateId, @NotNull final String scriptId) {
+  public @Nullable Script getScriptSync(@NotNull String isolateId, @NotNull String scriptId) {
     assertSyncRequestAllowed();
 
     final Semaphore semaphore = new Semaphore();
@@ -476,22 +474,22 @@ public class VmServiceWrapper implements Disposable {
     return resultRef.get();
   }
 
-  public void getObject(@NotNull final String isolateId, @NotNull final String objectId, @NotNull final GetObjectConsumer consumer) {
+  public void getObject(@NotNull String isolateId, @NotNull String objectId, @NotNull GetObjectConsumer consumer) {
     addRequest(() -> myVmService.getObject(isolateId, objectId, consumer));
   }
 
-  public void getCollectionObject(@NotNull final String isolateId,
-                                  @NotNull final String objectId,
-                                  final int offset,
-                                  final int count,
-                                  @NotNull final GetObjectConsumer consumer) {
+  public void getCollectionObject(@NotNull String isolateId,
+                                  @NotNull String objectId,
+                                  int offset,
+                                  int count,
+                                  @NotNull GetObjectConsumer consumer) {
     addRequest(() -> myVmService.getObject(isolateId, objectId, offset, count, consumer));
   }
 
-  public void evaluateInFrame(@NotNull final String isolateId,
-                              @NotNull final Frame vmFrame,
-                              @NotNull final String expression,
-                              @NotNull final XDebuggerEvaluator.XEvaluationCallback callback) {
+  public void evaluateInFrame(@NotNull String isolateId,
+                              @NotNull Frame vmFrame,
+                              @NotNull String expression,
+                              @NotNull XDebuggerEvaluator.XEvaluationCallback callback) {
     addRequest(() -> myVmService.evaluateInFrame(isolateId, vmFrame.getIndex(), expression, new EvaluateInFrameConsumer() {
       @Override
       public void received(InstanceRef instanceRef) {
@@ -500,7 +498,8 @@ public class VmServiceWrapper implements Disposable {
 
       @Override
       public void received(Sentinel sentinel) {
-        callback.errorOccurred(sentinel.getValueAsString());
+        @NlsSafe String message = sentinel.getValueAsString();
+        callback.errorOccurred(message);
       }
 
       @Override
@@ -510,23 +509,24 @@ public class VmServiceWrapper implements Disposable {
 
       @Override
       public void onError(RPCError error) {
-        callback.errorOccurred(error.getMessage());
+        @NlsSafe String message = error.getMessage();
+        callback.errorOccurred(message);
       }
     }));
   }
 
   @SuppressWarnings("SameParameterValue")
-  public void evaluateInTargetContext(@NotNull final String isolateId,
-                                      @NotNull final String targetId,
-                                      @NotNull final String expression,
-                                      @NotNull final EvaluateConsumer consumer) {
+  public void evaluateInTargetContext(@NotNull String isolateId,
+                                      @NotNull String targetId,
+                                      @NotNull String expression,
+                                      @NotNull EvaluateConsumer consumer) {
     addRequest(() -> myVmService.evaluate(isolateId, targetId, expression, consumer));
   }
 
-  public void evaluateInTargetContext(@NotNull final String isolateId,
-                                      @NotNull final String targetId,
-                                      @NotNull final String expression,
-                                      @NotNull final XDebuggerEvaluator.XEvaluationCallback callback) {
+  public void evaluateInTargetContext(@NotNull String isolateId,
+                                      @NotNull String targetId,
+                                      @NotNull String expression,
+                                      @NotNull XDebuggerEvaluator.XEvaluationCallback callback) {
     evaluateInTargetContext(isolateId, targetId, expression, new EvaluateConsumer() {
       @Override
       public void received(InstanceRef instanceRef) {
@@ -535,7 +535,8 @@ public class VmServiceWrapper implements Disposable {
 
       @Override
       public void received(Sentinel sentinel) {
-        callback.errorOccurred(sentinel.getValueAsString());
+        @NlsSafe String message = sentinel.getValueAsString();
+        callback.errorOccurred(message);
       }
 
       @Override
@@ -545,14 +546,15 @@ public class VmServiceWrapper implements Disposable {
 
       @Override
       public void onError(RPCError error) {
-        callback.errorOccurred(error.getMessage());
+        @NlsSafe String message = error.getMessage();
+        callback.errorOccurred(message);
       }
     });
   }
 
-  public void callToString(@NotNull final String isolateId,
-                           @NotNull final String targetId,
-                           @NotNull final InvokeConsumer callback) {
+  public void callToString(@NotNull String isolateId,
+                           @NotNull String targetId,
+                           @NotNull InvokeConsumer callback) {
     // For 3.11 and after we use "invoke"; before that, we use "eval";
     if (supportsInvoke()) {
       addRequest(() -> myVmService.invoke(isolateId, targetId, "toString", Collections.emptyList(), true, callback));

@@ -67,8 +67,8 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
   private static final String ORG_DARTLANG_APP_PREFIX = "org-dartlang-app://";
 
-  @Nullable private final ExecutionResult myExecutionResult;
-  @NotNull private final DartUrlResolver myDartUrlResolver;
+  private final @Nullable ExecutionResult myExecutionResult;
+  private final @NotNull DartUrlResolver myDartUrlResolver;
 
   private boolean myVmConnected = false;
 
@@ -76,21 +76,21 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   private final IsolatesInfo myIsolatesInfo;
   private VmServiceWrapper myVmServiceWrapper;
 
-  @NotNull private final Set<String> mySuspendedIsolateIds = Collections.synchronizedSet(new THashSet<>());
+  private final @NotNull Set<String> mySuspendedIsolateIds = Collections.synchronizedSet(new THashSet<>());
   private String myLatestCurrentIsolateId;
 
   private final Map<String, LightVirtualFile> myScriptIdToContentMap = new THashMap<>();
   private final Map<String, TIntObjectHashMap<Pair<Integer, Integer>>> myScriptIdToLinesAndColumnsMap =
     new THashMap<>();
 
-  @Nullable private final String myDASExecutionContextId;
-  @NotNull private final DebugType myDebugType;
+  private final @Nullable String myDASExecutionContextId;
+  private final @NotNull DebugType myDebugType;
   private final int myTimeout;
-  @Nullable private final VirtualFile myCurrentWorkingDirectory;
-  @Nullable protected String myRemoteProjectRootUri;
-  @Nullable private String myBazelWorkspacePath;
+  private final @Nullable VirtualFile myCurrentWorkingDirectory;
+  protected @Nullable String myRemoteProjectRootUri;
+  private @Nullable String myBazelWorkspacePath;
 
-  @NotNull private final OpenDartObservatoryUrlAction myOpenObservatoryAction =
+  private final @NotNull OpenDartObservatoryUrlAction myOpenObservatoryAction =
     new OpenDartObservatoryUrlAction(null, () -> myVmConnected && !getSession().isStopped());
 
   public enum DebugType {
@@ -101,25 +101,25 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
    * @deprecated use another constructor
    */
   @Deprecated
-  public DartVmServiceDebugProcess(@NotNull final XDebugSession session,
-                                   @NotNull final String debuggingHost,
-                                   final int observatoryPort,
-                                   @Nullable final ExecutionResult executionResult,
-                                   @NotNull final DartUrlResolver dartUrlResolver,
-                                   @Nullable final String dasExecutionContextId,
-                                   @NotNull final DebugType debugType,
-                                   final int timeout,
-                                   @Nullable final VirtualFile currentWorkingDirectory) {
+  public DartVmServiceDebugProcess(@NotNull XDebugSession session,
+                                   @NotNull String debuggingHost,
+                                   int observatoryPort,
+                                   @Nullable ExecutionResult executionResult,
+                                   @NotNull DartUrlResolver dartUrlResolver,
+                                   @Nullable String dasExecutionContextId,
+                                   @NotNull DebugType debugType,
+                                   int timeout,
+                                   @Nullable VirtualFile currentWorkingDirectory) {
     this(session, executionResult, dartUrlResolver, dasExecutionContextId, debugType, timeout, currentWorkingDirectory);
   }
 
-  public DartVmServiceDebugProcess(@NotNull final XDebugSession session,
-                                   @Nullable final ExecutionResult executionResult,
-                                   @NotNull final DartUrlResolver dartUrlResolver,
-                                   @Nullable final String dasExecutionContextId,
-                                   @NotNull final DebugType debugType,
-                                   final int timeout,
-                                   @Nullable final VirtualFile currentWorkingDirectory) {
+  public DartVmServiceDebugProcess(@NotNull XDebugSession session,
+                                   @Nullable ExecutionResult executionResult,
+                                   @NotNull DartUrlResolver dartUrlResolver,
+                                   @Nullable String dasExecutionContextId,
+                                   @NotNull DebugType debugType,
+                                   int timeout,
+                                   @Nullable VirtualFile currentWorkingDirectory) {
     super(session);
     myExecutionResult = executionResult;
     myDartUrlResolver = dartUrlResolver;
@@ -196,7 +196,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
       if (debugUrl == null) {
         // Cancel button pressed
-        throw new ExecutionException("Cancelled");
+        throw new ExecutionException(DartBundle.message("debugger.dialog.message.cancelled"));
       }
 
       debugUrl = debugUrl.trim();
@@ -229,7 +229,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     else if (DebugType.CLI == myDebugType) {
       getProcessHandler().addProcessListener(new ProcessAdapter() {
         @Override
-        public void onTextAvailable(@NotNull final ProcessEvent event, @NotNull final Key outputType) {
+        public void onTextAvailable(@NotNull ProcessEvent event, @NotNull Key outputType) {
           final String prefix = DartConsoleFilter.OBSERVATORY_LISTENING_ON + "http://";
           if (event.getText().startsWith(prefix)) {
             getProcessHandler().removeProcessListener(this);
@@ -244,7 +244,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     else if (DebugType.WEBDEV == myDebugType) {
       getProcessHandler().addProcessListener(new ProcessAdapter() {
         @Override
-        public void onTextAvailable(@NotNull final ProcessEvent event, @NotNull final Key outputType) {
+        public void onTextAvailable(@NotNull ProcessEvent event, @NotNull Key outputType) {
           try {
             String wsUri = DartDaemonParserUtil.getWsUri(event.getText().trim());
             if (wsUri != null) {
@@ -311,7 +311,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     });
   }
 
-  protected void scheduleConnect(@NotNull final String url) {
+  protected void scheduleConnect(@NotNull String url) {
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
       long startTime = System.currentTimeMillis();
 
@@ -349,7 +349,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     });
   }
 
-  private void connect(@NotNull final String url) throws IOException {
+  private void connect(@NotNull String url) throws IOException {
     final VmService vmService = VmService.connect(url);
     final DartVmServiceListener vmServiceListener =
       new DartVmServiceListener(this, (DartVmServiceBreakpointHandler)myBreakpointHandlers[0]);
@@ -368,15 +368,13 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     return myExecutionResult == null ? super.doGetProcessHandler() : myExecutionResult.getProcessHandler();
   }
 
-  @NotNull
   @Override
-  public ExecutionConsole createConsole() {
+  public @NotNull ExecutionConsole createConsole() {
     return myExecutionResult == null ? super.createConsole() : myExecutionResult.getExecutionConsole();
   }
 
-  @NotNull
   @Override
-  public XDebuggerEditorsProvider getEditorsProvider() {
+  public @NotNull XDebuggerEditorsProvider getEditorsProvider() {
     return new DartDebuggerEditorsProvider();
   }
 
@@ -393,7 +391,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     return DebugType.WEBDEV == myDebugType;
   }
 
-  public void guessRemoteProjectRoot(@NotNull final ElementList<LibraryRef> libraries) {
+  public void guessRemoteProjectRoot(@NotNull ElementList<LibraryRef> libraries) {
     final VirtualFile pubspec = myDartUrlResolver.getPubspecYamlFile();
     final VirtualFile projectRoot = pubspec != null ? pubspec.getParent() : myCurrentWorkingDirectory;
 
@@ -496,15 +494,15 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     }
   }
 
-  public void isolateSuspended(@NotNull final IsolateRef isolateRef) {
+  public void isolateSuspended(@NotNull IsolateRef isolateRef) {
     mySuspendedIsolateIds.add(isolateRef.getId());
   }
 
-  public boolean isIsolateSuspended(@NotNull final String isolateId) {
+  public boolean isIsolateSuspended(@NotNull String isolateId) {
     return mySuspendedIsolateIds.contains(isolateId);
   }
 
-  public boolean isIsolateAlive(@NotNull final String isolateId) {
+  public boolean isIsolateAlive(@NotNull String isolateId) {
     for (IsolatesInfo.IsolateInfo isolateInfo : myIsolatesInfo.getIsolateInfos()) {
       if (isolateId.equals(isolateInfo.getIsolateId())) {
         return true;
@@ -513,11 +511,11 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     return false;
   }
 
-  public void isolateResumed(@NotNull final IsolateRef isolateRef) {
+  public void isolateResumed(@NotNull IsolateRef isolateRef) {
     mySuspendedIsolateIds.remove(isolateRef.getId());
   }
 
-  public void isolateExit(@NotNull final IsolateRef isolateRef) {
+  public void isolateExit(@NotNull IsolateRef isolateRef) {
     myIsolatesInfo.deleteIsolate(isolateRef);
     mySuspendedIsolateIds.remove(isolateRef.getId());
 
@@ -541,17 +539,16 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   }
 
   @Override
-  public void registerAdditionalActions(@NotNull final DefaultActionGroup leftToolbar,
-                                        @NotNull final DefaultActionGroup topToolbar,
-                                        @NotNull final DefaultActionGroup settings) {
+  public void registerAdditionalActions(@NotNull DefaultActionGroup leftToolbar,
+                                        @NotNull DefaultActionGroup topToolbar,
+                                        @NotNull DefaultActionGroup settings) {
     // For Run tool window this action is added in DartCommandLineRunningState.createActions()
     topToolbar.addSeparator();
     topToolbar.addAction(myOpenObservatoryAction);
     topToolbar.addAction(new DartPopFrameAction());
   }
 
-  @NotNull
-  public Collection<String> getUrisForFile(@NotNull final VirtualFile file) {
+  public @NotNull Collection<String> getUrisForFile(@NotNull VirtualFile file) {
     final Set<String> result = new HashSet<>();
     String uriByIde = myDartUrlResolver.getDartUrlForFile(file);
 
@@ -619,8 +616,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     return result;
   }
 
-  @Nullable
-  public XSourcePosition getSourcePosition(@NotNull final String isolateId, @NotNull final ScriptRef scriptRef, int tokenPos) {
+  public @Nullable XSourcePosition getSourcePosition(@NotNull String isolateId, @NotNull ScriptRef scriptRef, int tokenPos) {
     VirtualFile file = ReadAction.compute(() -> {
       String uri = scriptRef.getUri();
 
@@ -696,13 +692,12 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     return XDebuggerUtil.getInstance().createPosition(file, lineAndColumn.first, lineAndColumn.second);
   }
 
-  private static boolean isDartPatchUri(@NotNull final String uri) {
+  private static boolean isDartPatchUri(@NotNull String uri) {
     // dart:_builtin or dart:core-patch/core_patch.dart
     return uri.startsWith("dart:_") || uri.startsWith("dart:") && uri.contains("-patch/");
   }
 
-  @NotNull
-  private static TIntObjectHashMap<Pair<Integer, Integer>> createTokenPosToLineAndColumnMap(@NotNull final List<List<Integer>> tokenPosTable) {
+  private static @NotNull TIntObjectHashMap<Pair<Integer, Integer>> createTokenPosToLineAndColumnMap(@NotNull List<List<Integer>> tokenPosTable) {
     // Each subarray consists of a line number followed by (tokenPos, columnNumber) pairs
     // see https://github.com/dart-lang/vm_service_drivers/blob/master/dart/tool/service.md#script
     final TIntObjectHashMap<Pair<Integer, Integer>> result = new TIntObjectHashMap<>();
@@ -720,8 +715,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     return result;
   }
 
-  @Nullable
-  public String getCurrentIsolateId() {
+  public @Nullable String getCurrentIsolateId() {
     if (myLatestCurrentIsolateId != null) {
       return myLatestCurrentIsolateId;
     }
@@ -729,8 +723,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   }
 
   @Override
-  @Nullable
-  public XDebuggerEvaluator getEvaluator() {
+  public @Nullable XDebuggerEvaluator getEvaluator() {
     XStackFrame frame = getSession().getCurrentStackFrame();
     if (frame != null) {
       return frame.getEvaluator();
@@ -738,8 +731,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     return new DartVmServiceEvaluator(this);
   }
 
-  @NotNull
-  private static String threeSlashize(@NotNull final String uri) {
+  private static @NotNull String threeSlashize(@NotNull String uri) {
     if (!uri.startsWith("file:")) return uri;
     if (uri.startsWith("file:///")) return uri;
     if (uri.startsWith("file://")) return "file:///" + uri.substring("file://".length());
