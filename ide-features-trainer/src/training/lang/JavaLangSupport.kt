@@ -10,6 +10,7 @@ import com.intellij.openapi.projectRoots.impl.JavaSdkImpl
 import com.intellij.openapi.roots.impl.LanguageLevelProjectExtensionImpl
 import com.intellij.openapi.util.Computable
 import com.intellij.pom.java.LanguageLevel
+import training.learn.LearnBundle
 import training.learn.exceptons.InvalidSdkException
 import training.learn.exceptons.NoSdkException
 import training.util.JdkSetupUtil
@@ -79,7 +80,7 @@ class JavaLangSupport : AbstractLangSupport() {
     if (sdkTypeId is JavaSdk) {
       val version = sdkTypeId.getVersion(sdk)
       if (version != null && !version.isAtLeast(JavaSdkVersion.JDK_1_6)) {
-        throw InvalidSdkException("Please use at least JDK 1.6 or IDEA SDK with corresponding JDK")
+        throw InvalidSdkException(LearnBundle.message("dialog.message.jdk.java.1.6.required"))
       }
     }
     else {

@@ -17,6 +17,7 @@ import org.jetbrains.plugins.ruby.ruby.RModuleUtil
 import org.jetbrains.plugins.ruby.ruby.sdk.RubySdkType
 import org.jetbrains.plugins.ruby.ruby.sdk.RubyVersionUtil
 import org.jetbrains.plugins.ruby.version.management.SdkRefresher
+import training.learn.LearnBundle
 import training.learn.exceptons.InvalidSdkException
 import training.learn.exceptons.NoSdkException
 import java.io.File
@@ -32,12 +33,12 @@ class RubyLangSupport : AbstractLangSupport() {
       throw NoSdkException()
     }
     if (sdk.sdkType !is RubySdkType) {
-      throw InvalidSdkException("Selected SDK should be Ruby SDK")
+      throw InvalidSdkException(LearnBundle.message("dialog.message.jdk.ruby.required"))
     }
     val rubyVersion = RubyVersionUtil.getShortVersion(
-      sdk.versionString ?: throw InvalidSdkException("SDK should have a version"))
+      sdk.versionString ?: throw InvalidSdkException(LearnBundle.message("dialog.message.jdk.ruby.version.missed")))
     if (VersionComparatorUtil.compare(rubyVersion, "2.3.0") < 0) {
-      throw InvalidSdkException("Ruby version should be at least 2.3")
+      throw InvalidSdkException(LearnBundle.message("dialog.message.jdk.ruby.version.required"))
     }
   }
 
