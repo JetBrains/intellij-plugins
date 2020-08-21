@@ -2,20 +2,20 @@ app.component.ts#tit{caret}le =
  2. Template (app.component.html) <app.component.html, /src>
  3. Tests (app.component.spec.ts) <app.component.spec.ts, /src>
  4. Styles (app.component.css) <app.component.css, /src>
- 5. Module Class (app.module.ts) <AppModule, (app.module.ts)>
+ 5. Module class (app.module.ts) <AppModule, (app.module.ts)>
 app.component.ts#imp{caret}ort
 app.component.spec.ts
- 1. Component Class (app.component.ts) <AppComponent, (app.component.ts)>
+ 1. Component class (app.component.ts) <AppComponent, (app.component.ts)>
  2. Template (app.component.html) <app.component.html, /src>
  4. Styles (app.component.css) <app.component.css, /src>
- 5. Module Class (app.module.ts) <AppModule, (app.module.ts)>
+ 5. Module class (app.module.ts) <AppModule, (app.module.ts)>
 app.component.html
- 1. Component Class (app.component.ts) <AppComponent, (app.component.ts)>
+ 1. Component class (app.component.ts) <AppComponent, (app.component.ts)>
  3. Tests (app.component.spec.ts) <app.component.spec.ts, /src>
  4. Styles (app.component.css) <app.component.css, /src>
- 5. Module Class (app.module.ts) <AppModule, (app.module.ts)>
+ 5. Module class (app.module.ts) <AppModule, (app.module.ts)>
 app.component.css
- 1. Component Class (app.component.ts) <AppComponent, (app.component.ts)>
+ 1. Component class (app.component.ts) <AppComponent, (app.component.ts)>
  2. Template (app.component.html) <app.component.html, /src>
  3. Tests (app.component.spec.ts) <app.component.spec.ts, /src>
- 5. Module Class (app.module.ts) <AppModule, (app.module.ts)>
+ 5. Module class (app.module.ts) <AppModule, (app.module.ts)>
