@@ -212,7 +212,7 @@ public class PostCssParser extends CssParser2 {
       addSingleToken();
     }
     else {
-      createErrorElement(CssBundle.message("expected", PostCssBundle.message("postcss.operator.sign")));
+      createErrorElement(PostCssBundle.message("parsing.error.operator.sign.expected"));
     }
   }
 
@@ -273,7 +273,9 @@ public class PostCssParser extends CssParser2 {
     parseSelectorList();
 
     if (!parseDeclarationBlock()) {
-      expect(CssElementTypes.CSS_LBRACE, "'{");
+      if (getTokenType() != CssElementTypes.CSS_LBRACE) {
+        createErrorElement(CssBundle.message("parsing.error.opening.brace.expected"));
+      }
     }
     nest.done(PostCssElementTypes.POST_CSS_NEST);
     return true;
@@ -374,7 +376,9 @@ public class PostCssParser extends CssParser2 {
     PsiBuilder.Marker ruleset = createCompositeElement();
     parseSelectorList();
     if (!parseDeclarationBlock()) {
-      expect(CssElementTypes.CSS_LBRACE, "'{");
+      if (getTokenType() != CssElementTypes.CSS_LBRACE) {
+        createErrorElement(CssBundle.message("parsing.error.opening.brace.expected"));
+      }
     }
     ruleset.done(CssElementTypes.CSS_RULESET);
     return true;

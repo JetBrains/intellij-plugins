@@ -11,7 +11,7 @@ PostCSS File:NestAtRuleIncorrectSelectorList.pcss
                 PsiElement(CSS_IDENT)('p')
                 PsiElement(CSS_SELECTOR_SUFFIX_LIST)
                   <empty list>
-          PsiErrorElement:'{ expected
+          PsiErrorElement:'{' expected
             <empty list>
         PsiWhiteSpace(' ')
         PsiElement(POST_CSS_NEST)
