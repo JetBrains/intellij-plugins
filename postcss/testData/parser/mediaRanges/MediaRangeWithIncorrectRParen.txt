@@ -25,7 +25,7 @@ PostCSS File:MediaRangeWithIncorrectRParen.pcss
                 PsiElement(CSS_MEDIA_EXPRESSION)
                   PsiErrorElement:'(' expected
                     <empty list>
-                  PsiErrorElement:media feature expected
+                  PsiErrorElement:Media feature expected
                     <empty list>
                   PsiElement(CSS_RPAREN)(')')
           PsiElement(CSS_DECLARATION_BLOCK)
