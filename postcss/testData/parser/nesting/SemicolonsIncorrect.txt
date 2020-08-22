@@ -20,14 +20,14 @@ PostCSS File:SemicolonsIncorrect.pcss
               PsiElement(CSS_TERM_LIST)
                 PsiElement(CSS_TERM)
                   PsiElement(CSS_IDENT)('green')
-                PsiErrorElement:a term expected
+                PsiErrorElement:Term expected
                   <empty list>
                 PsiWhiteSpace('\n    ')
                 PsiElement(POST_CSS_AMPERSAND)('&')
                 PsiWhiteSpace(' ')
                 PsiElement(CSS_TERM)
                   PsiElement(CSS_IDENT)('span')
-                PsiErrorElement:a term expected
+                PsiErrorElement:Term expected
                   <empty list>
                 PsiWhiteSpace(' ')
                 PsiElement(CSS_LBRACE)('{')

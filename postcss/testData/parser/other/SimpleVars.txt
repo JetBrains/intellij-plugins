@@ -10,7 +10,7 @@ PostCSS File:SimpleVars.pcss
                   PsiElement(POST_CSS_SIMPLE_VARIABLE_TOKEN)('$dir')
           PsiErrorElement:'{ expected
             <empty list>
-        PsiErrorElement:unexpected token
+        PsiErrorElement:Unexpected token
           <empty list>
         PsiElement(CSS_SEMICOLON)(';')
         PsiWhiteSpace('\n')
@@ -19,7 +19,7 @@ PostCSS File:SimpleVars.pcss
             PsiElement(POST_CSS_SIMPLE_VARIABLE_TOKEN)('$blue')
           PsiElement(CSS_COLON)(':')
           PsiElement(CSS_TERM_LIST)
-            PsiErrorElement:a term expected
+            PsiErrorElement:Term expected
               <empty list>
           PsiElement(CSS_SEMICOLON)(';')
         PsiWhiteSpace('\n')

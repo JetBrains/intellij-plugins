@@ -20,7 +20,7 @@ PostCSS File:AmpersandInPropertyValue.pcss
               PsiElement(CSS_TERM_LIST)
                 PsiElement(CSS_TERM)
                   PsiElement(CSS_IDENT)('r')
-                PsiErrorElement:a term expected
+                PsiErrorElement:Term expected
                   <empty list>
                 PsiElement(POST_CSS_AMPERSAND)('&')
                 PsiElement(CSS_TERM)

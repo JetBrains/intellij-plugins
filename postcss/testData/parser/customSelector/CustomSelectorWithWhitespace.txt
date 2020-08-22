@@ -35,7 +35,7 @@ PostCSS File:CustomSelectorWithWhitespace.pcss
                 PsiElement(CSS_SELECTOR_SUFFIX_LIST)
                   PsiElement(CSS_PSEUDO_CLASS)
                     PsiElement(CSS_COLON)(':')
-                    PsiErrorElement:an identifier expected
+                    PsiErrorElement:Identifier expected
                       <empty list>
               PsiWhiteSpace(' ')
               PsiElement(CSS_SIMPLE_SELECTOR)
@@ -56,7 +56,7 @@ PostCSS File:CustomSelectorWithWhitespace.pcss
                 PsiElement(CSS_SELECTOR_SUFFIX_LIST)
                   PsiElement(CSS_PSEUDO_CLASS)
                     PsiElement(CSS_COLON)(':')
-                    PsiErrorElement:an identifier expected
+                    PsiErrorElement:Identifier expected
                       <empty list>
               PsiWhiteSpace(' ')
               PsiElement(CSS_SIMPLE_SELECTOR)

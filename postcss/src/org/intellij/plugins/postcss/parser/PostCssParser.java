@@ -173,7 +173,7 @@ public class PostCssParser extends CssParser2 {
       customMedia.done(PostCssElementTypes.POST_CSS_CUSTOM_MEDIA);
     }
     else {
-      createErrorElement(CssBundle.message("expected", CssBundle.message("an.identifier")));
+      createErrorElement(CssBundle.message("parsing.error.identifier.expected"));
     }
     parseMediumList();
     if (getTokenType() != CssElementTypes.CSS_RBRACE) {
@@ -223,7 +223,7 @@ public class PostCssParser extends CssParser2 {
 
   private void parseNumberTerm() {
     if (!isNumberTermStart()) {
-      createErrorElement(CssBundle.message("a.term.expected"));
+      createErrorElement(CssBundle.message("parsing.error.term.expected"));
       return;
     }
     PsiBuilder.Marker numberTerm = createCompositeElement();
@@ -493,7 +493,7 @@ public class PostCssParser extends CssParser2 {
       }
       else if (!parseAttribute() && !parsePseudo() && !parseClass()) {
         if (tokenType != null) {
-          createErrorElement(CssBundle.message("unexpected.token"));
+          createErrorElement(CssBundle.message("parsing.error.unexpected.token"));
           addToken();
         }
       }

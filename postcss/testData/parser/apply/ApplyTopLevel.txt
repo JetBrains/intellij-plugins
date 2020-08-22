@@ -6,6 +6,6 @@ PostCSS File:ApplyTopLevel.pcss
           PsiElement(CSS_APPLY_SYM)('@apply')
           PsiWhiteSpace(' ')
           PsiElement(CSS_IDENT)('--my')
-        PsiErrorElement:unexpected token
+        PsiErrorElement:Unexpected token
           <empty list>
         PsiElement(CSS_SEMICOLON)(';')

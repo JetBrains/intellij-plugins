@@ -4,7 +4,7 @@ PostCSS File:ApplyWithoutIdent.pcss
       PsiElement(CSS_RULESET_LIST)
         PsiElement(CSS_APPLY)
           PsiElement(CSS_APPLY_SYM)('@apply')
-        PsiErrorElement:unexpected token
+        PsiErrorElement:Unexpected token
           <empty list>
         PsiWhiteSpace(' ')
         PsiElement(CSS_SEMICOLON)(';')
