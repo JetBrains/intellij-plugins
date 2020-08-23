@@ -191,7 +191,7 @@ module Test
           # Test fault
           def add_fault(fault)
             # test_spec framework : attached and loaded
-            test_name, qualified_test_name = get_test_name_and_fqn(@my_running_test_name)
+            test_name, qualified_test_name = get_test_name_and_fqn(fault.test_name)
             if Rake::TeamCity.is_framework_used(:test_spec) && (defined? Test::Spec) &&
                  (Test::Spec::Disabled === fault || Test::Spec::Empty === fault)
               # test_name = fault.short_display
