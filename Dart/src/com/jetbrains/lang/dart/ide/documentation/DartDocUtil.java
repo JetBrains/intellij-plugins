@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.documentation;
 
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
@@ -72,7 +73,7 @@ public class DartDocUtil {
   }
 
   @NotNull
-  private static String formatSignature(@NotNull final String signature) {
+  private static String formatSignature(@NotNull @NlsSafe String signature) {
     // Match the first open paren, "(", but ignore a starting "(new)" or "(const)" patterns.
     final int offsetToOpenParen = signature.indexOf('(', 1);
 
@@ -133,13 +134,13 @@ public class DartDocUtil {
   }
 
   @NotNull
-  public static String generateDoc(@Nullable final String signature,
-                                   final boolean signatureIsHtml,
-                                   @Nullable String docText,
-                                   @Nullable final String containingLibraryName,
-                                   @Nullable final String containingClassDescription,
-                                   @Nullable final String staticType,
-                                   final boolean compactPresentation) {
+  public static String generateDoc(@Nullable @NlsSafe String signature,
+                                   boolean signatureIsHtml,
+                                   @Nullable @NlsSafe String docText,
+                                   @Nullable @NlsSafe String containingLibraryName,
+                                   @Nullable @NlsSafe String containingClassDescription,
+                                   @Nullable @NlsSafe String staticType,
+                                   boolean compactPresentation) {
     final boolean hasContainingLibraryName = StringUtil.isNotEmpty(containingLibraryName);
     final boolean hasContainingClassDescription = StringUtil.isNotEmpty(containingClassDescription);
     final boolean hasStaticType = StringUtil.isNotEmpty(staticType);
