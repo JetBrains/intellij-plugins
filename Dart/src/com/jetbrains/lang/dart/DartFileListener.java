@@ -400,7 +400,7 @@ public class DartFileListener implements AsyncFileListener {
 
             final Module module = ModuleUtilCore.findModuleForFile(pubspec, project);
             if (module != null) {
-              DartStartupActivity.excludeBuildAndPackagesFolders(module, pubspec);
+              DartStartupActivity.excludeBuildAndToolCacheFolders(module, pubspec);
             }
           }
         }
