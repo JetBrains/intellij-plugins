@@ -58,13 +58,13 @@ public final class PlatformioService {
       null,
       ClionEmbeddedPlatformioBundle.message("please.check.system.path"),
       NotificationType.ERROR);
-    notification.addAction(new AnAction(ClionEmbeddedPlatformioBundle.message("install.guide")) {
+    notification.addAction(new AnAction(ClionEmbeddedPlatformioBundle.messagePointer("install.guide")) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         openInstallGuide();
       }
     });
-    notification.addAction(new AnAction(ClionEmbeddedPlatformioBundle.message("open.settings.link")) {
+    notification.addAction(new AnAction(ClionEmbeddedPlatformioBundle.messagePointer("open.settings.link")) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         openSettings(project);
