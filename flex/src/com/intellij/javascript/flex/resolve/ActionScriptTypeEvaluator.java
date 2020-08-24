@@ -179,9 +179,21 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
         (source == null || source == EXPLICIT_TYPE_MARKER_ELEMENT)
       ) {
       // TODO [ksafonov] enforced scope (and context) should internal part of JSType.resolve()
-      JSClass jsClass = JSInheritanceUtil.withEnforcedScope(() -> _type.resolveClass(), JSResolveUtil.getResolveScope(myContext.targetFile));
-      if (jsClass != null) {
-        source = jsClass;
+      if (myContext.targetFile == null) {
+        Logger.getInstance(ActionScriptTypeEvaluator.class).error("targetFile can't be null");
+      }
+      else {
+        JSClass jsClass =
+          JSInheritanceUtil.withEnforcedScope(() -> _type.resolveClass(), JSResolveUtil.getResolveScope(myContext.targetFile));
+        if (jsClass != null) {
+          source = jsClass;
+        }
+      }
+    }
+    if (_type instanceof JSPsiBasedTypeOfType) {
+      PsiElement element = ((JSPsiBasedTypeOfType)_type).getElement();
+      if (element instanceof JSReferenceExpression && ((JSReferenceExpression)element).resolve() == element) {
+        return;
       }
     }
     super.addType(_type, source);

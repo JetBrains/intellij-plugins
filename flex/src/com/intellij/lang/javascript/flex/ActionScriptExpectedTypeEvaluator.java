@@ -72,7 +72,7 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
 
   @Override
   protected JSType getQualifiedExpressionType(JSExpression qualifier) {
-    return ActionScriptResolveUtil.getQualifiedExpressionJSType(qualifier, qualifier.getContainingFile());
+    return ActionScriptResolveUtil.getQualifiedExpressionJSType(qualifier);
   }
 
   @Override

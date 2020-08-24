@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.inspections.JSUndeclaredVariableInspection;
 import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
+import com.intellij.lang.javascript.psi.resolve.JSEvaluatorComplexityTracker;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.angularjs.AngularTestUtil;
 
@@ -61,6 +62,7 @@ public class ComponentsTest extends BasePlatformTestCase {
   }
 
   public void testEditableFieldContentAssistOnCtrl() {
+    JSEvaluatorComplexityTracker.setMaxComplexity(80, getTestRootDisposable());
     myFixture.configureByFiles("editableField.html", "editableField.js", "angular.js");
     AngularTestUtil.moveToOffsetBySignature("\"$ctrl.<caret>editMode\"", myFixture);
     myFixture.completeBasic();

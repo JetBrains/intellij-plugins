@@ -7,7 +7,6 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.testFramework.PlatformTestUtil
-import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.createPackageJsonWithVueDependency
@@ -642,8 +641,9 @@ class VuexCompletionTest : BasePlatformTestCase() {
           myFixture.checkResultByFile(checkFileName, true)
         }
         else {
-          val items = myFixture.configureByFile(checkFileName).text.split('\n').filter { !it.isEmpty() }
-          UsefulTestCase.assertContainsElements(list, items)
+          val expected = myFixture.configureByFile(checkFileName).text.split('\n').filter { it.isNotEmpty() }.toMutableSet()
+          expected.removeAll(list)
+          assertEmpty("$expected not found in $list", expected)
         }
       }
     PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()

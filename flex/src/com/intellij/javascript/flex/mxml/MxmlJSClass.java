@@ -7,14 +7,10 @@ import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.JSField;
 import com.intellij.lang.javascript.psi.JSFile;
-import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.resolve.ImplicitJSFieldImpl;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
-import com.intellij.lang.javascript.psi.types.JSContext;
-import com.intellij.lang.javascript.psi.types.JSNamedType;
-import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
@@ -97,8 +93,7 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
     @Override
     protected void doComputeVars(List<JSField> vars, XmlFile xmlFile) {
       JSClass cls = XmlBackedJSClassFactory.getXmlBackedClass(xmlFile);
-      final JSType type = JSNamedType.createType(cls.getQualifiedName(), JSTypeSourceFactory.createTypeSource(cls, true), JSContext.INSTANCE);
-      vars.add(new ImplicitJSFieldImpl("outerDocument", type, xmlFile));
+      vars.add(new ImplicitJSFieldImpl("outerDocument", cls.getQualifiedName(), JSAttributeList.AccessType.PRIVATE, xmlFile));
     }
   };
 

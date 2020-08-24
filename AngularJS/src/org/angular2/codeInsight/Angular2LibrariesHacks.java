@@ -142,7 +142,7 @@ public class Angular2LibrariesHacks {
   public static boolean hackSlicePipeType(Angular2TypeEvaluator evaluator,
                                           JSEvaluateContext context,
                                           JSFunction function) {
-    Angular2PipeExpression pipeExpression = Optional.ofNullable(context.getJSElementsToApply().peekFirst())
+    Angular2PipeExpression pipeExpression = Optional.ofNullable(context.peekJSElementToApply())
       .map(e -> tryCast(e, JSApplyCallElement.class))
       .map(JSApplyCallElement::getMethodExpression)
       .map(e -> tryCast(e, Angular2PipeReferenceExpression.class))

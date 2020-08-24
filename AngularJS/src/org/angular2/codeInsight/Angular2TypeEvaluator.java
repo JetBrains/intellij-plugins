@@ -40,7 +40,7 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
   }
 
   @Override
-  protected boolean addTypeFromResolveResult(String referenceName, ResolveResult resolveResult) {
+  public boolean addTypeFromResolveResult(String referenceName, ResolveResult resolveResult) {
     PsiElement psiElement = resolveResult.getElement();
     if (resolveResult instanceof Angular2ComponentPropertyResolveResult && psiElement != null) {
       myContext.setSource(psiElement);
