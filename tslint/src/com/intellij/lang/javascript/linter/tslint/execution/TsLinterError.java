@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.linter.tslint.execution;
 
+import com.intellij.codeInspection.util.InspectionMessage;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.lang.javascript.linter.JSLinterError;
 import com.intellij.lang.javascript.linter.tslint.highlight.TsLintFixInfo;
@@ -24,7 +25,7 @@ public final class TsLinterError extends JSLinterError {
                        int column,
                        int endLine,
                        int endColumn,
-                       @NotNull String description,
+                       @NotNull @InspectionMessage String description,
                        @Nullable String code,
                        boolean isWarning,
                        @Nullable TsLintFixInfo fixInfo) {
@@ -36,7 +37,7 @@ public final class TsLinterError extends JSLinterError {
     myIsGlobal = false;
   }
 
-  private TsLinterError(final @NotNull String description) {
+  private TsLinterError(final @NotNull @InspectionMessage String description) {
     super(1, 1, description, null);
     myPath = null;
     myEndLine = 1;
@@ -84,7 +85,7 @@ public final class TsLinterError extends JSLinterError {
            '}';
   }
 
-  public static TsLinterError createGlobalError(final @NotNull String description) {
+  public static TsLinterError createGlobalError(final @NotNull @InspectionMessage String description) {
     return new TsLinterError(description);
   }
 }

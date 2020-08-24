@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.linter.tslint.highlight;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.intention.IntentionAction;
+import com.intellij.codeInspection.util.InspectionMessage;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.lang.annotation.AnnotationHolder;
@@ -160,7 +161,7 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
   @NotNull
   private static JSLinterAnnotationResult createGlobalErrorMessage(@NotNull TsLinterInput collectedInfo,
                                                                    @Nullable VirtualFile config,
-                                                                   @NotNull String error) {
+                                                                   @NotNull @InspectionMessage String error) {
     final ProcessOutput output = new ProcessOutput();
     output.appendStderr(error);
     final IntentionAction detailsAction = JSLinterUtil.createDetailsAction(collectedInfo.getProject(), collectedInfo.getVirtualFile(),

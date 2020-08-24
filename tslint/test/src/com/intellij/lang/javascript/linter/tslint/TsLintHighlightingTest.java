@@ -1,8 +1,8 @@
 package com.intellij.lang.javascript.linter.tslint;
 
 import com.intellij.codeInspection.InspectionProfileEntry;
-import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JSTestUtils;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.linter.AutodetectLinterPackage;
 import com.intellij.lang.javascript.linter.LinterHighlightingTest;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
@@ -125,23 +125,23 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
   }
 
   public void testSuppressRuleForLine() {
-    doFixTest("main", JavaScriptBundle.message("javascript.linter.suppress.rules.for.line.description", "'quotemark'"));
+    doFixTest("main", JavaScriptBundle.message("javascript.linter.suppress.rule.for.line.description", "'quotemark'"));
   }
 
   public void testSuppressRuleForLineAddsToExistingComment() {
-    doFixTest("main", JavaScriptBundle.message("javascript.linter.suppress.rules.for.line.description", "'quotemark'"));
+    doFixTest("main", JavaScriptBundle.message("javascript.linter.suppress.rule.for.line.description", "'quotemark'"));
   }
 
   public void testSuppressRuleForFileAddsToExistingComment() {
-    doFixTest("main", JavaScriptBundle.message("javascript.linter.suppress.rules.for.file.description", "'quotemark'"));
+    doFixTest("main", JavaScriptBundle.message("javascript.linter.suppress.rule.for.file.description", "'quotemark'"));
   }
 
   public void testSuppressAllRulesForLine() {
-    doFixTest("main", JavaScriptBundle.message("javascript.linter.suppress.rules.for.line.description", "all TSLint rules"));
+    doFixTest("main", JavaScriptBundle.message("javascript.linter.suppress.rule.for.line.description", "all TSLint rules"));
   }
 
   public void testSuppressAllRulesForLineOverwritesExistingSuppressionForRule() {
-    doFixTest("main", JavaScriptBundle.message("javascript.linter.suppress.rules.for.line.description", "all TSLint rules"));
+    doFixTest("main", JavaScriptBundle.message("javascript.linter.suppress.rule.for.line.description", "all TSLint rules"));
   }
 
   private void doFixTest(String mainFileName, String intentionDescription) {

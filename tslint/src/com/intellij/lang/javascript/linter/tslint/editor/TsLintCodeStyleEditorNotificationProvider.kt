@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.linter.tslint.editor
 
+import com.intellij.CommonBundle
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.lang.javascript.linter.tslint.TsLintBundle
 import com.intellij.lang.javascript.linter.tslint.TslintUtil
@@ -48,8 +49,8 @@ class TsLintCodeStyleEditorNotificationProvider(private val project: Project) : 
     return object : EditorNotificationPanel(EditorColors.GUTTER_BACKGROUND) {
       init {
         text = TsLintBundle.message("tslint.code.style.apply.message")
-        createActionLabel(TsLintBundle.message("tslint.code.style.apply.text"), TsLintImportCodeStyleAction.ACTION_ID, false)
-        createActionLabel(TsLintBundle.message("tslint.code.style.dismiss.text"), Runnable { dismissNotification() }, false)
+        createActionLabel(CommonBundle.message("button.without.mnemonic.yes"), TsLintImportCodeStyleAction.ACTION_ID, false)
+        createActionLabel(CommonBundle.message("button.without.mnemonic.no"), Runnable { dismissNotification() }, false)
       }
     }
   }

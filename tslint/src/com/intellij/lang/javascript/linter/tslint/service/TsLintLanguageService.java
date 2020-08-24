@@ -8,6 +8,7 @@ import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.linter.AutodetectLinterPackage;
 import com.intellij.lang.javascript.linter.ExtendedLinterState;
+import com.intellij.lang.javascript.linter.tslint.TsLintBundle;
 import com.intellij.lang.javascript.linter.tslint.TslintUtil;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
@@ -30,10 +31,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiFunction;
 
 
 public final class TsLintLanguageService extends JSLanguageServiceBase {
-  @NotNull private final static Logger LOG = RareLogger.wrap(Logger.getInstance("#com.intellij.lang.javascript.linter.tslint.service.TsLintLanguageService"), false);
+  @NotNull private final static Logger LOG = RareLogger.wrap(Logger.getInstance(TsLintLanguageService.class), false);
   @NotNull private final VirtualFile myWorkingDirectory;
   @NotNull private final NodePackage myNodePackage;
 
@@ -53,38 +55,28 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
                                                                 @Nullable VirtualFile config,
                                                                 @Nullable String content,
                                                                 @NotNull TsLintState state) {
-    String configFilePath = JSLanguageServiceUtil.normalizePathDoNotFollowSymlinks(config);
-    if (configFilePath == null) {
-      if (state.getNodePackageRef() == AutodetectLinterPackage.INSTANCE) {
-        return CompletableFuture.completedFuture(ContainerUtil.emptyList());
-      }
-      return CompletableFuture.completedFuture(Collections.singletonList(TsLinterError.createGlobalError("Config file was not found.")));
-    }
-    String path = JSLanguageServiceUtil.normalizePathDoNotFollowSymlinks(virtualFile);
-    if (path == null) {
-      return null;
-    }
-
-    final JSLanguageServiceQueue process = getProcess();
-    if (process == null) {
-      return CompletableFuture.completedFuture(Collections.singletonList(
-        TsLinterError.createGlobalError(JSLanguageServiceUtil.getLanguageServiceCreationError(this))));
-    }
-    GetErrorsCommand command = new GetErrorsCommand(LocalFilePath.create(path),
-                                                    LocalFilePath.create(configFilePath),
-                                                    StringUtil.notNullize(content));
-    return process.execute(command, createHighlightProcessor(path));
+    return createHighlightFuture(virtualFile, config, state,
+                                 (filePath, configPath) -> new GetErrorsCommand(filePath, configPath,StringUtil.notNullize(content)));
   }
 
   @Nullable
   public final CompletableFuture<List<TsLinterError>> highlightAndFix(@NotNull VirtualFile virtualFile, @NotNull TsLintState state) {
     VirtualFile config = TslintUtil.getConfig(state, myProject, virtualFile);
+    //doesn't pass content (file should be saved before)
+    return createHighlightFuture(virtualFile, config, state, FixErrorsCommand::new);
+  }
+
+  private CompletableFuture<List<TsLinterError>> createHighlightFuture(@NotNull VirtualFile virtualFile,
+                                                                       @Nullable VirtualFile config,
+                                                                       @NotNull TsLintState state,
+                                                                       @NotNull BiFunction<LocalFilePath,LocalFilePath, BaseCommand> commandProvider) {
     String configFilePath = JSLanguageServiceUtil.normalizePathDoNotFollowSymlinks(config);
     if (configFilePath == null) {
       if (state.getNodePackageRef() == AutodetectLinterPackage.INSTANCE) {
         return CompletableFuture.completedFuture(ContainerUtil.emptyList());
       }
-      return CompletableFuture.completedFuture(Collections.singletonList(TsLinterError.createGlobalError("Config file was not found.")));
+      return CompletableFuture.completedFuture(Collections.singletonList(TsLinterError.createGlobalError(
+        TsLintBundle.message("tslint.inspection.message.config.file.was.not.found"))));
     }
     String path = JSLanguageServiceUtil.normalizePathDoNotFollowSymlinks(virtualFile);
     if (path == null) {
@@ -98,7 +90,7 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
     }
 
     //doesn't pass content (file should be saved before)
-    FixErrorsCommand command = new FixErrorsCommand(LocalFilePath.create(path),
+    BaseCommand command = commandProvider.apply(LocalFilePath.create(path),
                                                     LocalFilePath.create(configFilePath));
     return process.execute(command, createHighlightProcessor(path));
   }
@@ -113,7 +105,7 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
     final JsonObject element = answer.getElement();
     final JsonElement error = element.get("error");
     if (error != null) {
-      return Collections.singletonList(TsLinterError.createGlobalError(error.getAsString()));
+      return Collections.singletonList(TsLinterError.createGlobalError(error.getAsString())); //NON-NLS
     }
     final JsonElement body = parseBody(element);
     if (body == null) return null;
@@ -134,7 +126,7 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
         final String bodyContent = StringUtil.unquoteString(body.getAsJsonPrimitive().getAsString());
         if (!StringUtil.isEmptyOrSpaces(bodyContent)) {
           try {
-            return new JsonParser().parse(bodyContent);
+            return JsonParser.parseString(bodyContent);
           } catch (JsonParseException e) {
             LOG.info(String.format("Problem parsing body: '%s'\n%s", body, e.getMessage()), e);
           }

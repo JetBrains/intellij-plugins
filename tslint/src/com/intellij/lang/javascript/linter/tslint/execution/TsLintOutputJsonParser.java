@@ -101,7 +101,7 @@ public final class TsLintOutputJsonParser {
                                  start.getSecond(),
                                  end.getFirst(),
                                  end.getSecond(),
-                                 failure.getAsString(),
+                                 failure.getAsString(), //NON-NLS
                                  ruleName.getAsString(),
                                  StringUtil.equalsIgnoreCase(severityStr, "warning"),
                                  createTsLintFixInfo(element)));
