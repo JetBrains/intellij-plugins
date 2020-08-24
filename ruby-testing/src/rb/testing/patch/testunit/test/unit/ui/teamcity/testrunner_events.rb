@@ -220,7 +220,6 @@ module Test
             elsif Test::Unit::Error === fault
               backtrace = filter_backtrace(fault.exception.backtrace).join("\n    ")
               message = "#{fault.exception.class.name}: #{fault.exception.message.to_s}"
-              test_name = convert_test_name_according_framework(fault.test_name)
 
               debug_log("Add error for #{test_name}, \n    Backtrace:    \n#{backtrace}")
 
