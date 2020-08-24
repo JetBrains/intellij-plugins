@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.dart.analysisServer;
 
 import com.intellij.codeInsight.completion.CompletionType;
@@ -166,7 +166,7 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
                               "}");
     myFixture.doHighlighting();
     myFixture.completeBasic();
-    myFixture.assertPreferredCompletionItems(0, "AXX.one", "AXX.two", "main", "const", "false", "new", "null", "true",
+    myFixture.assertPreferredCompletionItems(0, "AXX.one", "AXX.two", "main", "const", "false", "null", "true",
                                              "AXB", "AXB.four", "AXB.three", "AXX",
                                              "AbstractClassInstantiationError", "AbstractClassInstantiationError", "ArgumentError",
                                              "ArgumentError", "ArgumentError.notNull", "ArgumentError.value", "AssertionError",
