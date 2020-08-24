@@ -203,7 +203,7 @@ public abstract class DartPubActionBase extends AnAction implements DumbAware {
 
             ApplicationManager.getApplication().invokeLater(() -> {
               if (!module.isDisposed()) {
-                DartStartupActivity.excludeBuildAndPackagesFolders(module, pubspecYamlFile);
+                DartStartupActivity.excludeBuildAndToolCacheFolders(module, pubspecYamlFile);
                 // refresh later than exclude, otherwise IDE may start indexing excluded folders
                 VfsUtil.markDirtyAndRefresh(true, true, true, pubspecYamlFile.getParent());
 
