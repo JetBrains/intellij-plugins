@@ -40,7 +40,6 @@ import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
@@ -174,7 +173,7 @@ public class DartPathPackageReferenceInspection extends LocalInspectionTool {
         final VirtualFile otherPubspec = myContentRoot.findChild(PubspecYamlUtil.PUBSPEC_YAML);
         if (otherPubspec != null) {
           // exclude before indexing started
-          DartStartupActivity.excludeBuildAndPackagesFolders(myModule, otherPubspec);
+          DartStartupActivity.excludeBuildAndToolCacheFolders(myModule, otherPubspec);
 
           final AnAction pubGetAction = ActionManager.getInstance().getAction("Dart.pub.get");
           if (pubGetAction instanceof DartPubGetAction) {
@@ -195,7 +194,7 @@ public class DartPathPackageReferenceInspection extends LocalInspectionTool {
 
       final VirtualFile yamlFile = DartResolveUtil.getRealVirtualFile(psiFile);
       if (yamlFile != null && PubspecYamlUtil.PUBSPEC_YAML.equals(yamlFile.getName())) {
-        DartStartupActivity.excludeBuildAndPackagesFolders(myModule, yamlFile);
+        DartStartupActivity.excludeBuildAndToolCacheFolders(myModule, yamlFile);
       }
     }
 
