@@ -180,7 +180,6 @@ public class DartDocUtil {
     if (docText != null) {
       List<String> lines = StringUtil.split(docText, "\n", true, false);
       MarkdownUtil.replaceCodeBlock(lines);
-      MarkdownUtil.removeImages(lines);
       MarkdownUtil.replaceHeaders(lines);
       MarkdownUtil.generateLists(lines);
 
