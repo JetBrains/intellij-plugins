@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.inspections;
 
 import com.intellij.CommonBundle;
@@ -181,7 +181,7 @@ public class DartPathPackageReferenceInspection extends LocalInspectionTool {
         final VirtualFile otherPubspec = myContentRoot.findChild(PubspecYamlUtil.PUBSPEC_YAML);
         if (otherPubspec != null) {
           // exclude before indexing started
-          DartStartupActivity.excludeBuildAndPackagesFolders(myModule, otherPubspec);
+          DartStartupActivity.excludeBuildAndToolCacheFolders(myModule, otherPubspec);
 
           final AnAction pubGetAction = ActionManager.getInstance().getAction("Dart.pub.get");
           if (pubGetAction instanceof DartPubGetAction) {
@@ -202,7 +202,7 @@ public class DartPathPackageReferenceInspection extends LocalInspectionTool {
 
       final VirtualFile yamlFile = DartResolveUtil.getRealVirtualFile(psiFile);
       if (yamlFile != null && PubspecYamlUtil.PUBSPEC_YAML.equals(yamlFile.getName())) {
-        DartStartupActivity.excludeBuildAndPackagesFolders(myModule, yamlFile);
+        DartStartupActivity.excludeBuildAndToolCacheFolders(myModule, yamlFile);
       }
     }
 
