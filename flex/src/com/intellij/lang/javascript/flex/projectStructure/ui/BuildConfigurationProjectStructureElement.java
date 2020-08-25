@@ -37,7 +37,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.navigation.Place;
 import com.intellij.util.containers.ContainerUtil;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,18 +57,18 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
   }
 
   @Override
-  public @Nls(capitalization = Nls.Capitalization.Sentence) String getPresentableName() {
+  public String getPresentableName() {
     return myBc.getName();
   }
 
   @NotNull
   @Override
-  public @Nls(capitalization = Nls.Capitalization.Sentence) String getPresentableText() {
+  public String getPresentableText() {
     return FlexCommonBundle.message("bc.0.module.1", myBc.getName(), myModule.getName());
   }
 
   @Override
-  public @Nls(capitalization = Nls.Capitalization.Sentence) String getTypeName() {
+  public String getTypeName() {
     return FlexBundle.message("bc.structure.element.type.name");
   }
 
