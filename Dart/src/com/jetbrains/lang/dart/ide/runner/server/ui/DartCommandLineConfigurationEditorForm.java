@@ -43,11 +43,11 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
 
     final DartSdk sdk = DartSdk.getDartSdk(project);
     if (sdk != null && StringUtil.compareVersionNumbers(sdk.getVersion(), "2") < 0) {
-      myCheckedModeOrEnableAssertsCheckBox.setText(DartBundle.message("checkbox.text.checked.mode"));
+      myCheckedModeOrEnableAssertsCheckBox.setText(DartBundle.message("command.line.run.config.checkbox.checked.mode"));
       myCheckedModeOrEnableAssertsCheckBox.setMnemonic('c');
     }
     else {
-      myCheckedModeOrEnableAssertsCheckBox.setText(DartBundle.message("checkbox.text.enable.asserts"));
+      myCheckedModeOrEnableAssertsCheckBox.setText(DartBundle.message("command.line.run.config.checkbox.enable.asserts"));
       myCheckedModeOrEnableAssertsCheckBox.setMnemonic('l');
     }
 

@@ -225,7 +225,8 @@
     <programRunner implementation="com.jetbrains.lang.dart.ide.runner.DartRunner"/>
 
     <localInspection bundle="messages.DartBundle" key="outdated.dependencies.inspection.name"
-                     groupName="Dart" enabledByDefault="true" level="WARNING" language="Dart"
+                     groupBundle="messages.DartBundle" groupKey="inspections.group.name"
+                     enabledByDefault="true" level="WARNING" language="Dart"
                      implementationClass="com.jetbrains.lang.dart.ide.inspections.DartOutdatedDependenciesInspection"/>
     <lineIndentProvider implementation="com.jetbrains.lang.dart.ide.editor.DartLineIndentProvider"/>
     <testSourcesFilter implementation="com.jetbrains.lang.dart.test.DartTestSourcesFilter"/>

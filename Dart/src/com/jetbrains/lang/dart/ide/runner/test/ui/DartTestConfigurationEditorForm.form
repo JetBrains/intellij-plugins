@@ -20,7 +20,7 @@
         </constraints>
         <properties>
           <labelFor value="253f8"/>
-          <text value="Test &amp;file:"/>
+          <text resource-bundle="messages/DartBundle" key="test.run.config.label.test.file"/>
         </properties>
       </component>
       <component id="e91ff" class="javax.swing.JLabel" binding="myTestNameLabel">
@@ -29,7 +29,7 @@
         </constraints>
         <properties>
           <labelFor value="49d21"/>
-          <text value="Group or test &amp;name:"/>
+          <text resource-bundle="messages/DartBundle" key="test.run.config.label.group.or.test.name"/>
         </properties>
       </component>
       <component id="49d21" class="javax.swing.JTextField" binding="myTestNameField">
@@ -65,7 +65,7 @@
         </constraints>
         <properties>
           <labelFor value="54f57"/>
-          <text value="Test &amp;mode:"/>
+          <text resource-bundle="messages/DartBundle" key="test.run.config.label.test.mode"/>
         </properties>
       </component>
       <vspacer id="f1014">
@@ -85,7 +85,7 @@
         </constraints>
         <properties>
           <labelFor value="ad4e9"/>
-          <text value="Test &amp;folder:"/>
+          <text resource-bundle="messages/DartBundle" key="test.run.config.label.test.folder"/>
         </properties>
       </component>
       <component id="3ea6e" class="javax.swing.JLabel" binding="myTargetNameLabel">
@@ -94,7 +94,7 @@
         </constraints>
         <properties>
           <labelFor value="4b799"/>
-          <text value="&amp;Target name:"/>
+          <text resource-bundle="messages/DartBundle" key="test.run.config.label.target.name"/>
         </properties>
       </component>
       <component id="4b799" class="javax.swing.JTextField" binding="myTargetNameField">
@@ -111,7 +111,7 @@
         </constraints>
         <properties>
           <labelFor value="5ac1f"/>
-          <text value="Test &amp;runner options:"/>
+          <text resource-bundle="messages/DartBundle" key="test.run.config.label.test.runner.options"/>
         </properties>
       </component>
       <component id="5ac1f" class="javax.swing.JTextField" binding="myTestRunnerOptionsField">
@@ -124,4 +124,7 @@
       </component>
     </children>
   </grid>
+  <inspectionSuppressions>
+    <suppress inspection="DuplicateMnemonic" id="77444"/>
+  </inspectionSuppressions>
 </form>

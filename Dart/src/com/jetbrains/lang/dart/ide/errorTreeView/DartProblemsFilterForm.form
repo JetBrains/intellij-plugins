@@ -18,7 +18,7 @@
           <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text resource-bundle="messages/DartBundle" key="reset.filter"/>
+          <text resource-bundle="messages/DartBundle" key="dart.problems.filter.popup.link.reset.filter"/>
         </properties>
       </component>
       <component id="9b806" class="com.intellij.ui.components.JBRadioButton" binding="myWholeProjectRadioButton" default-binding="true">
@@ -27,7 +27,7 @@
         </constraints>
         <properties>
           <margin top="0" left="2" bottom="0" right="2"/>
-          <text value="Wh&amp;ole project"/>
+          <text resource-bundle="messages/DartBundle" key="dart.problems.filter.popup.radio.whole.project"/>
         </properties>
       </component>
       <component id="5d338" class="com.intellij.ui.components.JBRadioButton" binding="myCurrentContentRootRadioButton">
@@ -36,7 +36,7 @@
         </constraints>
         <properties>
           <margin top="0" left="2" bottom="0" right="2"/>
-          <text value="Current &amp;content root"/>
+          <text resource-bundle="messages/DartBundle" key="dart.problems.filter.popup.radio.current.content.root"/>
         </properties>
       </component>
       <component id="6d10f" class="com.intellij.ui.components.JBRadioButton" binding="myCurrentDirectoryRadioButton">
@@ -45,7 +45,7 @@
         </constraints>
         <properties>
           <margin top="0" left="2" bottom="0" right="2"/>
-          <text value="Current &amp;directory"/>
+          <text resource-bundle="messages/DartBundle" key="dart.problems.filter.popup.radio.current.directory"/>
         </properties>
       </component>
       <component id="37329" class="com.intellij.ui.components.JBRadioButton" binding="myCurrentFileRadioButton" default-binding="true">
@@ -54,7 +54,7 @@
         </constraints>
         <properties>
           <margin top="0" left="2" bottom="0" right="2"/>
-          <text value="Current &amp;file"/>
+          <text resource-bundle="messages/DartBundle" key="dart.problems.filter.popup.radio.current.file"/>
         </properties>
       </component>
       <component id="a2144" class="com.intellij.ui.components.JBCheckBox" binding="myErrorsCheckBox" default-binding="true">
@@ -62,7 +62,7 @@
           <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="&amp;Errors"/>
+          <text resource-bundle="messages/DartBundle" key="dart.problems.filter.popup.check.box.errors"/>
         </properties>
       </component>
       <component id="bd59e" class="com.intellij.ui.components.JBCheckBox" binding="myWarningsCheckBox" default-binding="true">
@@ -70,7 +70,7 @@
           <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="&amp;Warnings"/>
+          <text resource-bundle="messages/DartBundle" key="dart.problems.filter.popup.check.box.warnings"/>
         </properties>
       </component>
       <component id="39c09" class="com.intellij.ui.TitledSeparator">
@@ -78,7 +78,7 @@
           <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Files"/>
+          <text resource-bundle="messages/DartBundle" key="dart.problems.filter.popup.title.files"/>
         </properties>
       </component>
       <component id="e508d" class="com.intellij.ui.TitledSeparator">
@@ -86,7 +86,7 @@
           <grid row="0" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Severity"/>
+          <text resource-bundle="messages/DartBundle" key="dart.problems.filter.popup.title.severity"/>
         </properties>
       </component>
       <vspacer id="ce541">
@@ -127,7 +127,7 @@
         </constraints>
         <properties>
           <margin top="0" left="2" bottom="0" right="2"/>
-          <text value="Current Dart &amp;package"/>
+          <text resource-bundle="messages/DartBundle" key="dart.problems.filter.popup.radio.current.dart.package"/>
         </properties>
       </component>
       <component id="b56c4" class="com.intellij.ui.components.JBCheckBox" binding="myHintsCheckBox" default-binding="true">
@@ -135,7 +135,7 @@
           <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="&amp;Hints"/>
+          <text resource-bundle="messages/DartBundle" key="dart.problems.filter.popup.check.box.hints"/>
         </properties>
       </component>
     </children>

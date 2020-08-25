@@ -28,7 +28,7 @@
         <properties>
           <inheritsPopupMenu value="true"/>
           <labelFor value="17e7a"/>
-          <text value="HTML &amp;file:"/>
+          <text resource-bundle="messages/DartBundle" key="web.run.config.label.html.file"/>
         </properties>
       </component>
       <component id="13533" class="javax.swing.JLabel">
@@ -36,7 +36,8 @@
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Webdev &amp;port:"/>
+          <labelFor value="663cc"/>
+          <text resource-bundle="messages/DartBundle" key="web.run.config.label.webdev.port"/>
         </properties>
       </component>
       <component id="663cc" class="com.intellij.ui.PortField" binding="myWebdevPortField">

@@ -50,12 +50,6 @@ public class DartPathPackageReferenceInspection extends LocalInspectionTool {
 
   private static final String GROUP_DISPLAY_ID = "pubspec.yaml inspection";
 
-  @Override
-  @NotNull
-  public String getGroupDisplayName() {
-    return DartBundle.message("inspections.group.name");
-  }
-
   @NotNull
   @Override
   public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
