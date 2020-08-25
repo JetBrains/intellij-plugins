@@ -16,7 +16,6 @@ import org.jetbrains.idea.maven.model.MavenArtifactNode;
 import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.osgi.jps.build.FakeAnalyzer;
 import org.osmorc.i18n.OsmorcBundle;
-import org.osmorc.util.OsgiUiUtil;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -165,7 +164,7 @@ public final class ImporterUtil {
     }
     catch (DependencyEmbedderException e) {
       String message = OsmorcBundle.message("maven.import.embed.error", mavenProject.getPath(), e.getMessage());
-      OsgiUiUtil.IMPORTANT_NOTIFICATIONS.createNotification(message, NotificationType.ERROR).notify(project);
+      OsmorcBundle.important("", message, NotificationType.ERROR).notify(project);
     }
 
     ResourceCollector.includeMavenResources(mavenProject, analyzer);

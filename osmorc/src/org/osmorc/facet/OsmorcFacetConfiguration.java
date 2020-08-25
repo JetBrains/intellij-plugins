@@ -51,7 +51,6 @@ import org.osmorc.facet.ui.OsmorcFacetJAREditorTab;
 import org.osmorc.facet.ui.OsmorcFacetManifestGenerationEditorTab;
 import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.settings.ProjectSettings;
-import org.osmorc.util.OsgiUiUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -153,7 +152,7 @@ public final class OsmorcFacetConfiguration implements FacetConfiguration, Modif
       }
       else {
         String message = OsmorcBundle.message("facet.config.reset");
-        OsgiUiUtil.IMPORTANT_NOTIFICATIONS.createNotification(message, NotificationType.WARNING).notify(myFacet.getModule().getProject());
+        OsmorcBundle.important("", message, NotificationType.WARNING).notify(myFacet.getModule().getProject());
       }
     }
     else {

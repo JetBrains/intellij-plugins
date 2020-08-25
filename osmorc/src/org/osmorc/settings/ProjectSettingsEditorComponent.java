@@ -45,7 +45,7 @@ import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.i18n.OsmorcBundle;
-import org.osmorc.util.OsgiUiUtil;
+import org.osmorc.util.FrameworkInstanceRenderer;
 
 import javax.swing.*;
 import java.util.List;
@@ -70,10 +70,12 @@ public class ProjectSettingsEditorComponent {
   public ProjectSettingsEditorComponent(Project project) {
     myProject = project;
 
-    myFrameworkInstance.setRenderer(new OsgiUiUtil.FrameworkInstanceRenderer('[' + OsmorcBundle.message("framework.not.specified") + ']') {
+    myFrameworkInstance.setRenderer(new FrameworkInstanceRenderer('[' + OsmorcBundle.message("framework.not.specified") + ']') {
+      private final List<FrameworkInstanceDefinition> myActiveInstances = ApplicationSettings.getInstance().getActiveFrameworkInstanceDefinitions();
+
       @Override
       protected boolean isInstanceDefined(@NotNull FrameworkInstanceDefinition instance) {
-        return ApplicationSettings.getInstance().getActiveFrameworkInstanceDefinitions().contains(instance);
+        return myActiveInstances.contains(instance);
       }
     });
 
@@ -152,11 +154,10 @@ public class ProjectSettingsEditorComponent {
     myFrameworkInstance.removeAllItems();
     myFrameworkInstance.addItem(null);
 
-    List<FrameworkInstanceDefinition> instanceDefinitions = ApplicationSettings.getInstance().getActiveFrameworkInstanceDefinitions();
     String frameworkInstanceName = mySettings.getFrameworkInstanceName();
 
     FrameworkInstanceDefinition projectFrameworkInstance = null;
-    for (FrameworkInstanceDefinition instanceDefinition : instanceDefinitions) {
+    for (FrameworkInstanceDefinition instanceDefinition : ApplicationSettings.getInstance().getActiveFrameworkInstanceDefinitions()) {
       myFrameworkInstance.addItem(instanceDefinition);
       if (instanceDefinition.getName().equals(frameworkInstanceName)) {
         projectFrameworkInstance = instanceDefinition;

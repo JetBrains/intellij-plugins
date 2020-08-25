@@ -11,8 +11,6 @@ import com.intellij.compiler.CompilerConfiguration;
 import com.intellij.compiler.impl.javaCompiler.javac.JavacConfiguration;
 import com.intellij.facet.impl.FacetUtil;
 import com.intellij.ide.highlighter.ModuleFileType;
-import com.intellij.notification.NotificationGroup;
-import com.intellij.notification.NotificationGroupManager;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -52,6 +50,7 @@ import org.jetbrains.osgi.jps.model.OutputPathType;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.facet.OsmorcFacetType;
+import org.osmorc.i18n.OsmorcBundle;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,9 +67,6 @@ public final class BndProjectImporter {
   public static final String BUILD_FILE = Workspace.BUILDFILE;
   public static final String BND_FILE = Project.BNDFILE;
   public static final String BND_LIB_PREFIX = "bnd:";
-
-  public static final NotificationGroup NOTIFICATIONS =
-    NotificationGroupManager.getInstance().requireNotificationGroup("OSGi-bnd");
 
   private static final Logger LOG = Logger.getInstance(BndProjectImporter.class);
 
@@ -484,7 +480,7 @@ public final class BndProjectImporter {
       String text;
       LOG.warn(e);
       text = message("bnd.import.resolve.error", project.getName(), e.getMessage());
-      NOTIFICATIONS.createNotification(message("bnd.import.error.title"), text, NotificationType.ERROR, null).notify(myProject);
+      OsmorcBundle.bnd(message("bnd.import.error.title"), text, NotificationType.ERROR).notify(myProject);
     }
     else {
       throw new AssertionError(e);
@@ -497,7 +493,7 @@ public final class BndProjectImporter {
         LOG.warn(warnings.toString());
         String text = message("bnd.import.warn.text", project.getName(), "<br>" + StringUtil.join(warnings, "<br>"));
         NotificationType type = error ? NotificationType.ERROR : NotificationType.WARNING;
-        NOTIFICATIONS.createNotification(message("bnd.import.warn.title"), text, type, null).notify(myProject);
+        OsmorcBundle.bnd(message("bnd.import.warn.title"), text, type).notify(myProject);
       }
       else {
         throw new AssertionError(warnings.toString());

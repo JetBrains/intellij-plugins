@@ -54,7 +54,7 @@
   <resource-bundle>messages.OsmorcBundle</resource-bundle>
 
   <extensionPoints>
-    <extensionPoint name="frameworkIntegrator" interface="org.osmorc.frameworkintegration.FrameworkIntegrator"/>
+    <extensionPoint name="frameworkIntegrator" interface="org.osmorc.frameworkintegration.FrameworkIntegrator" dynamic="true"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">

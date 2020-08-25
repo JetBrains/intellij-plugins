@@ -47,7 +47,7 @@ import org.osmorc.run.OsgiRunConfiguration;
 import org.osmorc.run.OsgiRunConfigurationChecker;
 import org.osmorc.run.OsgiRunConfigurationCheckerProvider;
 import org.osmorc.settings.ApplicationSettings;
-import org.osmorc.util.OsgiUiUtil;
+import org.osmorc.util.FrameworkInstanceRenderer;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -108,7 +108,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     }
     myFrameworkInstances.setModel(model);
     myFrameworkInstances.addActionListener((e) -> onFrameworkChange());
-    myFrameworkInstances.setRenderer(new OsgiUiUtil.FrameworkInstanceRenderer('[' + message("framework.project.default") + ']'));
+    myFrameworkInstances.setRenderer(new FrameworkInstanceRenderer('[' + message("framework.project.default") + ']'));
 
     myBundlesTable.setModel(new RunConfigurationTableModel());
     myBundlesTable.setRowSelectionAllowed(true);

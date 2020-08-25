@@ -99,7 +99,7 @@ public class ResolveAction extends DumbAwareAction {
           new ResolutionFailedDialog(project, (ResolutionException)cause).show();
         }
         else {
-          OsmorcBundle.notification(message("bnd.resolve.failed.title"), cause.getMessage(), NotificationType.ERROR).notify(project);
+          OsmorcBundle.notification(message("bnd.resolve.failed.notification"), cause.getMessage(), NotificationType.ERROR).notify(project);
         }
       }
     }.queue();

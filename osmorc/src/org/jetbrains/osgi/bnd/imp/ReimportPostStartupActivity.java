@@ -69,8 +69,8 @@ final class ReimportPostStartupActivity implements StartupActivity.DumbAware {
 
             String title = OsmorcBundle.message("bnd.reimport.title");
             String text = OsmorcBundle.message("bnd.reimport.text");
-            BndProjectImporter.NOTIFICATIONS
-              .createNotification(title, text, NotificationType.INFORMATION, new NotificationListener.Adapter() {
+            OsmorcBundle.bnd(title, text, NotificationType.INFORMATION)
+              .setListener(new NotificationListener.Adapter() {
                 @Override
                 protected void hyperlinkActivated(@NotNull Notification notification, @NotNull HyperlinkEvent e) {
                   notification.expire();

@@ -44,7 +44,7 @@ import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkIntegrator;
 import org.osmorc.frameworkintegration.FrameworkIntegratorRegistry;
 import org.osmorc.i18n.OsmorcBundle;
-import org.osmorc.util.OsgiUiUtil;
+import org.osmorc.util.FrameworkInstanceRenderer;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -81,7 +81,7 @@ public class FrameworkDefinitionsEditorComponent {
 
     myFrameworkInstances = new JBList<>(myModel);
     myFrameworkInstances.getEmptyText().setText(OsmorcBundle.message("frameworks.empty"));
-    myFrameworkInstances.setCellRenderer(new OsgiUiUtil.FrameworkInstanceRenderer());
+    myFrameworkInstances.setCellRenderer(new FrameworkInstanceRenderer());
 
     List<AddAction> addActions = FrameworkIntegratorRegistry.getInstance().getFrameworkIntegrators().stream()
       .map(AddAction::new)
