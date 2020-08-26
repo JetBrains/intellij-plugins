@@ -6,9 +6,10 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.wm.impl.welcomeScreen.RecentProjectsWelcomeScreenActionBase
+import org.jetbrains.annotations.Nls
 import training.statistic.StatisticBase
 
-abstract class CommonActionGroup(val name: String, val children: List<AnAction>) : DefaultActionGroup(name, children), DumbAware {
+abstract class CommonActionGroup(val name: @Nls String, val children: List<AnAction>) : DefaultActionGroup(name, children), DumbAware {
 
   var isExpanded = true
 

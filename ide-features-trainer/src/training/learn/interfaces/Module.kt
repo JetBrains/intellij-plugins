@@ -1,7 +1,9 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.interfaces
 
+import org.jetbrains.annotations.Nls
 import training.lang.LangSupport
+import training.learn.LearnBundle
 
 interface Module {
 
@@ -28,6 +30,7 @@ interface Module {
 
   fun hasNotPassedLesson(): Boolean
 
+  @Nls
   fun calcProgress(): String? {
     val total = lessons.size
     var done = 0
@@ -38,7 +41,7 @@ interface Module {
       if (done == total)
         ""
       else
-        "$done of $total done"
+        LearnBundle.message("learn.module.progress", done, total)
     }
     else {
       null

@@ -16,6 +16,7 @@ import com.intellij.ui.scale.JBUIScale
 import com.intellij.util.IconUtil
 import com.intellij.util.PathUtil
 import training.actions.ModuleActionGroup
+import training.learn.LearnBundle
 import training.ui.welcomeScreen.recentProjects.actionGroups.CommonActionGroup
 import java.awt.Dimension
 import java.awt.Graphics
@@ -33,7 +34,7 @@ class ActionList(listData: Array<out AnAction>, private val groupsPanel: GroupsP
 
   init {
     setExpandableItemsEnabled(false)
-    setEmptyText("  No Project Open Yet  ")
+    setEmptyText(IdeBundle.message("empty.text.no.project.open.yet"))
     selectionMode = ListSelectionModel.MULTIPLE_INTERVAL_SELECTION
     getAccessibleContext().accessibleName = RecentProjectPanel.RECENT_PROJECTS_LABEL
     val handler = MouseHandler()
@@ -71,7 +72,7 @@ class ActionList(listData: Array<out AnAction>, private val groupsPanel: GroupsP
         val path = elem.projectPath
         val valid: Boolean = groupsPanel.validatePath(path)
         if (!valid || IFTRecentProjectListActionProvider.instance.projectsWithLongPaths.contains(elem)) {
-          val suffix = if (valid) "" else " (unavailable)"
+          val suffix = if (valid) "" else " " + LearnBundle.message("deprecated.old.recent.project.unavailable")
           return PathUtil.toSystemDependentName(path) + suffix
         }
       }

@@ -106,10 +106,10 @@ class LearnPanel(private val learnToolWindow: LearnToolWindow, val lesson: Lesso
     if (documentationMode) {
       val action = ActionManager.getInstance().getAction("LearningDocumentationModeAction") as LearningDocumentationModeAction
       val link = if (action.isSelectedInProject(learnToolWindow.project)) {
-        ActionLink("Switch to Interactive Mode", action)
+        ActionLink(LearnBundle.message("experimental.tabbed.ui.switch.to.interactive.mode"), action)
       }
       else {
-        LinkLabel<Any>("Continue lesson", null) { _, _ ->
+        LinkLabel<Any>(LearnBundle.message("experimental.tabbed.ui.continue.lesson"), null) { _, _ ->
           learnToolWindow.restoreLesson()
         }
       }
@@ -188,7 +188,7 @@ class LearnPanel(private val learnToolWindow: LearnToolWindow, val lesson: Lesso
       panel.layout = BoxLayout(panel, BoxLayout.X_AXIS)
       panel.add(jComponent)
       panel.add(Box.createHorizontalGlue())
-      val showSteps = LinkLabel<Any>("Show steps", null) { _, _ ->
+      val showSteps = LinkLabel<Any>(LearnBundle.message("experimental.tabbed.ui.show.steps"), null) { _, _ ->
         learnToolWindow.showSteps()
       }
       panel.add(showSteps)
@@ -329,14 +329,11 @@ class LearnPanel(private val learnToolWindow: LearnToolWindow, val lesson: Lesso
   }
 
   fun setButtonNextAction(notPassedLesson: Lesson?, text: String?, runnable: () -> Unit) {
-    val buttonAction = object : AbstractAction() {
+    button.action = object : AbstractAction() {
       override fun actionPerformed(actionEvent: ActionEvent) {
         runnable()
       }
     }
-    buttonAction.putValue(Action.NAME, "Next")
-    buttonAction.isEnabled = true
-    button.action = buttonAction
     val keyStroke = getNextLessonKeyStrokeText()
     button.text = if (text != null) {
       "$text ($keyStroke)"
@@ -353,14 +350,11 @@ class LearnPanel(private val learnToolWindow: LearnToolWindow, val lesson: Lesso
 
   fun setButtonSkipActionAndText(runnable: Runnable?, text: String?, visible: Boolean) {
     rootPane?.defaultButton = null
-    val buttonAction = object : AbstractAction() {
+    button.action = object : AbstractAction() {
       override fun actionPerformed(actionEvent: ActionEvent) {
         runnable?.run()
       }
     }
-
-    buttonAction.isEnabled = true
-    button.action = buttonAction
     val keyStroke = getNextLessonKeyStrokeText()
     if (text == null || text.isEmpty()) {
       button.text = "${LearnBundle.message("learn.ui.button.skip")} ($keyStroke)"

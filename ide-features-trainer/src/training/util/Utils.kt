@@ -17,6 +17,7 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.ui.UIUtil
+import org.jetbrains.annotations.Nls
 import training.actions.LearningDocumentationModeAction
 import training.lang.LangManager
 import training.lang.LangSupport
@@ -50,8 +51,8 @@ fun editorPointForBalloon(myEditor: Editor): Point {
   return myEditor.visualPositionToXY(position)
 }
 
-fun createBalloon(text: String): Balloon = createBalloon(text, 3000)
-fun createBalloon(text: String, delay: Long): Balloon =
+fun createBalloon(text: @Nls String): Balloon = createBalloon(text, 3000)
+fun createBalloon(text: @Nls String, delay: Long): Balloon =
   JBPopupFactory.getInstance()
     .createHtmlTextBalloonBuilder(text, null, UIUtil.getToolTipBackground(), null)
     .setHideOnClickOutside(true)

@@ -1,10 +1,8 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.ui.welcomeScreen.recentProjects
 
-import com.intellij.ide.ProjectGroupActionGroup
-import com.intellij.ide.RecentProjectsManager
-import com.intellij.ide.RecentProjectsManagerBase
-import com.intellij.ide.ReopenProjectAction
+import com.intellij.CommonBundle
+import com.intellij.ide.*
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.Application
 import com.intellij.openapi.ui.Messages
@@ -117,13 +115,12 @@ class GroupsPanel(val app: Application) : NewRecentProjectPanel(app) {
     val selection = myList.selectedValuesList
     if (selection.any { it is ModuleActionGroup || it is CommonActionGroup }) return
     if (selection != null && selection.size > 0) {
+      val projectName = selection.joinToString("'\n'") { action: Any -> (action as AnAction).templatePresentation.text
+      }
       val rc: Int = Messages.showOkCancelDialog(this as Component,
-                                                "Remove '${
-                                                selection.joinToString("'\n'")
-                                                { action: Any -> (action as AnAction).templatePresentation.text }}' from recent projects list?",
-                                                "Remove Recent Project",
-                                                "OK",
-                                                "Cancel",
+                                                IdeBundle.message("dialog.message.remove.0.from.recent.projects.list", projectName),
+                                                IdeBundle.message("dialog.title.remove.recent.project"),
+                                                CommonBundle.getOkButtonText(), CommonBundle.getCancelButtonText(),
                                                 Messages.getQuestionIcon())
       if (rc == Messages.OK) {
         for (projectAction: Any in selection) {
@@ -192,7 +189,11 @@ class GroupsPanel(val app: Application) : NewRecentProjectPanel(app) {
         add(myPath, pathCell)
       }
 
-      override fun getListCellRendererComponent(list: JList<out AnAction>, value: AnAction?, index: Int, selected: Boolean, focused: Boolean): Component {
+      override fun getListCellRendererComponent(list: JList<out AnAction>,
+                                                value: AnAction?,
+                                                index: Int,
+                                                selected: Boolean,
+                                                focused: Boolean): Component {
         val fore = getListForeground(selected, list.hasFocus())
         val back = getListBackground(selected, list.hasFocus())
         val name = JLabel()

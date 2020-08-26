@@ -169,7 +169,7 @@ class ModulesPanel(private val learnToolWindow: LearnToolWindow?) : JPanel() {
   private fun createSettingsButtonPanel(): JPanel {
     val settingsAction = createAnAction(AllIcons.General.Settings) { learnToolWindow?.setChooseLanguageView() }
     val settingsButton = ActionButton(settingsAction,
-                                      Presentation("Settings").apply {
+                                      Presentation(LearnBundle.message("deprecated.action.settings.text")).apply {
                                         icon = AllIcons.Nodes.Editorconfig
                                         isEnabled = true
                                       },

@@ -155,7 +155,7 @@ class LanguageChoosePanel(private val toolWindow: LearnToolWindow?,
 
     val supportedLanguagesExtensions = LangManager.getInstance().supportedLanguagesExtensions
     if (supportedLanguagesExtensions.isEmpty()) {
-      val message = "No supported languages found"
+      val message = LearnBundle.message("no.supported.languages.found")
       LOG.error(message)
       mainPanel.add(JLabel().apply {
         text = message
@@ -194,14 +194,18 @@ class LanguageChoosePanel(private val toolWindow: LearnToolWindow?,
     val lessonsCount = CourseManager.instance.calcLessonsForLanguage(langSupportExt.instance)
     val lang: Language = Language.findLanguageByID(langSupportExt.language) ?: return null
     val passedLessons = CourseManager.instance.calcPassedLessonsForLanguage(langSupportExt.instance)
-    val buttonName = "${lang.displayName} ($lessonsCount lesson${if (lessonsCount != 1) "s" else ""}${if (passedLessons > 0) ", $passedLessons passed" else ""}) "
+    val passedString = if (passedLessons > 0) LearnBundle.message("language.specific.course.passed", passedLessons) else ""
+    val buttonName = LearnBundle.message("language.specific.course.description",
+                                         lang.displayName,
+                                         lessonsCount, lessonsCount,
+                                         passedString)
     val radioButton = JRadioButton(buttonName)
     radioButton.border = UISettings.instance.radioButtonBorder
     radioButton.isOpaque = false
     return radioButton
   }
 
-  private inner class MyJTextPane internal constructor(private val widthOfText: Int) : JTextPane() {
+  private inner class MyJTextPane(private val widthOfText: Int) : JTextPane() {
 
     override fun getPreferredSize(): Dimension {
       return Dimension(widthOfText, super.getPreferredSize().height)

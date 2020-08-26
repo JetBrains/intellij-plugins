@@ -11,6 +11,7 @@ import com.intellij.openapi.wm.ex.ToolWindowEx
 import com.intellij.openapi.wm.impl.content.ToolWindowContentUi
 import com.intellij.util.containers.ContainerUtil
 import training.lang.LangManager
+import training.learn.LearnBundle
 import training.util.findLanguageSupport
 import training.util.useNewLearningUi
 
@@ -35,7 +36,7 @@ internal class LearnToolWindowFactory : ToolWindowFactoryEx, DumbAware {
     val learnToolWindow = LearnToolWindow(project, toolWindow)
     if (useNewLearningUi) {
       val contentManager = toolWindow.contentManager
-      val menu = contentManager.factory.createContent(learnToolWindow, "All Topics", false)
+      val menu = contentManager.factory.createContent(learnToolWindow, LearnBundle.message("learn.ui.alltopics"), false)
       menu.isCloseable = false
       contentManager.addContent(menu)
     }

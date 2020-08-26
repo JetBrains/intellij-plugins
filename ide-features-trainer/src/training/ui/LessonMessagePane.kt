@@ -16,6 +16,7 @@ import com.intellij.ui.components.labels.LinkLabel
 import com.intellij.util.ui.JBUI
 import icons.FeaturesTrainerIcons
 import training.keymap.KeymapUtil
+import training.learn.LearnBundle
 import training.util.invokeActionForFocusContext
 import training.util.useNewLearningUi
 import java.awt.*
@@ -198,7 +199,7 @@ class LessonMessagePane(private val learnToolWindow: LearnToolWindow) : JTextPan
   }
 
   private fun setPassedStyle(lessonMessage: LessonMessage) {
-    val passedStyle = this.addStyle("PassedStyle", null)
+    val passedStyle = this.addStyle(null, null)
     StyleConstants.setForeground(passedStyle, UISettings.instance.passedColor)
     styledDocument.setCharacterAttributes(0, lessonMessage.end, passedStyle, false)
   }
@@ -213,7 +214,7 @@ class LessonMessagePane(private val learnToolWindow: LearnToolWindow) : JTextPan
       it.passed = copy[index].passed
     }
     addMessage(arrayOf(Message("Completed!", Message.MessageType.TEXT_BOLD)))
-    val completedStyle = this.addStyle("Completed", null)
+    val completedStyle = this.addStyle(null, null)
     StyleConstants.setForeground(completedStyle, UISettings.instance.completedColor)
     styledDocument.setCharacterAttributes(lessonMessages.last().start, lessonMessages.last().end, completedStyle, false)
     repaint()
@@ -265,11 +266,11 @@ class LessonMessagePane(private val learnToolWindow: LearnToolWindow) : JTextPan
     val action = actionName?.let { ActionManager.getInstance().getAction(it) }
     if (action != null) {
       jPanel.add(JLabel(action.templatePresentation.text))
-      jPanel.add(LinkLabel<Any>("Apply this action", null) { _, _ ->
+      jPanel.add(LinkLabel<Any>(LearnBundle.message("shortcut.balloon.apply.this.action"), null) { _, _ ->
         invokeActionForFocusContext(action)
         balloon.hide()
       })
-      jPanel.add(LinkLabel<Any>("Add shortcut", null) { _, _ ->
+      jPanel.add(LinkLabel<Any>(LearnBundle.message("shortcut.balloon.add.shortcut"), null) { _, _ ->
         KeymapPanel.addKeyboardShortcut(actionName, ActionShortcutRestrictions.getInstance().getForActionId(actionName), KeymapManager.getInstance().activeKeymap, this)
         balloon.hide()
         repaint()

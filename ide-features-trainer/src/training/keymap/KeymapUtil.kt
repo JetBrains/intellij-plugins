@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.KeyboardShortcut
 import com.intellij.openapi.keymap.KeymapManager
 import com.intellij.openapi.keymap.MacKeymapUtil
+import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.SystemInfo
 import org.jetbrains.annotations.NonNls
 import java.awt.event.KeyEvent
@@ -85,6 +86,7 @@ object KeymapUtil {
 
   private fun String.replaceSpacesWithNonBreakSpace(): String = this.replace(" ", "\u00A0")
 
+  @NlsSafe
   fun decryptMacShortcut(shortcut: String): String {
     if (shortcut.contains('→')) {
       val split = shortcut.split('→')
