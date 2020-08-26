@@ -20,6 +20,7 @@ class VueArrangementSettingsMigration : StartupActivity, StartupActivity.DumbAwa
 
       WriteAction.runAndWait<Throwable> {
         val codeStyleSchemesModel = CodeStyleSchemesModel(project)
+        var changed = false
         codeStyleSchemesModel.schemes.asSequence()
           .map { it.codeStyleSettings }
           .forEach { codeStyleSettings ->
@@ -30,11 +31,15 @@ class VueArrangementSettingsMigration : StartupActivity, StartupActivity.DumbAwa
               ?.let {
                 val vueSettings = codeStyleSettings
                   .getCommonSettings(VueLanguage.INSTANCE)
-                if (vueSettings.arrangementSettings == null)
+                if (vueSettings.arrangementSettings == null) {
                   vueSettings.setArrangementSettings(it)
+                  changed = true
+                }
               }
           }
-        codeStyleSchemesModel.apply()
+        if (changed) {
+          codeStyleSchemesModel.apply()
+        }
       }
     }
   }
