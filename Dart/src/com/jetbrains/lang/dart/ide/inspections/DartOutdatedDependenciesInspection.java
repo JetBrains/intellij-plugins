@@ -58,13 +58,14 @@ public class DartOutdatedDependenciesInspection extends LocalInspectionTool {
     final DartSdk sdk = DartSdk.getDartSdk(project);
     final Module module = ModuleUtilCore.findModuleForFile(file, project);
     if (module == null || sdk == null || !DartSdkLibUtil.isDartSdkEnabled(module)) return null;
-    if (FlutterUtil.isFlutterPluginInstalled() && FlutterUtil.isFlutterModule(module)) return null;
 
     final VirtualFile pubspecFile = PubspecYamlUtil.findPubspecYamlFile(project, file);
     if (pubspecFile == null || myIgnoredPubspecPaths.contains(pubspecFile.getPath())) return null;
 
     final String projectName = PubspecYamlUtil.getDartProjectName(pubspecFile);
     if (projectName == null || !StringUtil.isJavaIdentifier(projectName)) return null; // 'pub get' will fail anyway
+
+    if (FlutterUtil.isPubspecDeclaringFlutter(pubspecFile)) return null; // 'pub get' will fail anyway
 
     final VirtualFile dotPackagesFile = pubspecFile.getParent().findChild(DotPackagesFileUtil.DOT_PACKAGES);
 
