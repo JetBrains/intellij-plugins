@@ -9,8 +9,8 @@ import training.learn.lesson.javascript.setLanguageLevel
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 
-class DebuggingFirstPart(module: Module) : KLesson("Debugging Code. Part I", module, JavaScriptLangSupport.lang) {
-
+class DebuggingFirstPart(module: Module)
+  : KLesson("Debugging Code. Part I", "Debugging Code. Part I", module, JavaScriptLangSupport.lang) {
 
   override val lessonContent: LessonContext.() -> Unit
     get() {

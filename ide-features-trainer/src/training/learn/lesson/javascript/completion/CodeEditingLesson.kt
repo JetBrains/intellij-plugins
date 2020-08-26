@@ -11,7 +11,8 @@ import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.parseLessonSample
 
-class CodeEditingLesson(module: Module) : KLesson("Code Editing Tips and Tricks", module, "HTML") {
+class CodeEditingLesson(module: Module)
+  : KLesson("Code Editing Tips and Tricks", "Code Editing Tips and Tricks", module, "HTML") {
 
   val sample = parseLessonSample(""" 
         <!doctype html><html lang="en">

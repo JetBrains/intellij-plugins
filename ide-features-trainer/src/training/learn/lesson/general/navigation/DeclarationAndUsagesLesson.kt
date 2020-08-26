@@ -16,7 +16,8 @@ import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 
-abstract class DeclarationAndUsagesLesson(module: Module, lang: String) : KLesson("Declaration and usages", module, lang) {
+abstract class DeclarationAndUsagesLesson(module: Module, lang: String)
+  : KLesson("Declaration and usages", "Declaration and usages", module, lang) {
   abstract fun LessonContext.setInitialPosition()
   abstract val typeOfEntity: String
   abstract override val existedFile: String

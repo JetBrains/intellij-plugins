@@ -7,7 +7,8 @@ import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.parseLessonSample
 
-class PostfixCompletionLesson(module: Module) : KLesson("Postfix completion", module, JavaLangSupport.lang) {
+class PostfixCompletionLesson(module: Module)
+  : KLesson("Postfix completion", "Postfix completion", module, JavaLangSupport.lang) {
 
   val sample = parseLessonSample("""class PostfixCompletionDemo{
 

@@ -22,7 +22,8 @@ import javax.swing.JButton
 import javax.swing.JTree
 import javax.swing.tree.TreePath
 
-class PythonRenameLesson(module: Module) : KLesson("Rename", module, "Python") {
+class PythonRenameLesson(module: Module)
+  : KLesson("Rename", "Rename", module, "Python") {
   private val template = """
       class Championship:
           def __init__(self):

@@ -9,7 +9,8 @@ import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.parseLessonSample
 
-class BasicCompletionLesson(module: Module) : KLesson("The Nuts and Bolts of Code Completion", module, JavaScriptLangSupport.lang) {
+class BasicCompletionLesson(module: Module)
+  : KLesson("The Nuts and Bolts of Code Completion", "The Nuts and Bolts of Code Completion", module, JavaScriptLangSupport.lang) {
 
   val sample = parseLessonSample("""
         let favoriteAnimals = ['dog', 'cat', 'unicorn'];

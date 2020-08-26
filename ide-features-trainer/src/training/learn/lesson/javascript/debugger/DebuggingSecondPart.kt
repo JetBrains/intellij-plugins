@@ -8,7 +8,8 @@ import training.learn.lesson.javascript.textOnLine
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 
-class DebuggingSecondPart(module: Module) : KLesson("Debugging Code. Part II", module, JavaScriptLangSupport.lang) {
+class DebuggingSecondPart(module: Module)
+  : KLesson("Debugging Code. Part II", "Debugging Code. Part II", module, JavaScriptLangSupport.lang) {
 
   override val lessonContent: LessonContext.() -> Unit
     get() {

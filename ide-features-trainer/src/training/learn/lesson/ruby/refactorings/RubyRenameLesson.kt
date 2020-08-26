@@ -12,7 +12,9 @@ import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 
-class RubyRenameLesson(module: Module) : KLesson("Rename", module, "ruby") {
+class RubyRenameLesson(module: Module)
+  : KLesson("Rename", "Rename", module, "ruby") {
+
   private val template = """
     class Championship
       attr_accessor :<name>

@@ -10,7 +10,8 @@ import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 
-class RubyClassSearchLesson(module: Module) : KLesson("Class Search", module, "ruby") {
+class RubyClassSearchLesson(module: Module)
+  : KLesson("Class Search", "Class Search", module, "ruby") {
   override val lessonContent: LessonContext.() -> Unit
     get() = {
       caret(0)

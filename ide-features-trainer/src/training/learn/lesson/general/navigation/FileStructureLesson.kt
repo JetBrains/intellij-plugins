@@ -11,7 +11,8 @@ import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 
-abstract class FileStructureLesson(module: Module, lang: String) : KLesson("File structure", module, lang) {
+abstract class FileStructureLesson(module: Module, lang: String)
+  : KLesson("File structure", "File structure", module, lang) {
   abstract override val existedFile: String
   abstract val searchSubstring : String
   abstract val firstWord : String

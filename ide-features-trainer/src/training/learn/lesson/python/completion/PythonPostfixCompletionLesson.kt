@@ -12,7 +12,8 @@ import training.learn.lesson.kimpl.parseLessonSample
 
 private const val completionSuffix = ".ifnn"
 
-class PythonPostfixCompletionLesson(module: Module) : KLesson("Postfix completion", module, "Python") {
+class PythonPostfixCompletionLesson(module: Module)
+  : KLesson("Postfix completion", "Postfix completion", module, "Python") {
   private val sample = parseLessonSample("""
     movies_dict = {
         'title': 'Aviator',

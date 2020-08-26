@@ -9,7 +9,8 @@ import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 import javax.swing.JDialog
 
-class ExtractMethodCocktailSortLesson(module: Module, lang: String, private val sample: LessonSample) : KLesson("Extract method", module, lang) {
+class ExtractMethodCocktailSortLesson(module: Module, lang: String, private val sample: LessonSample)
+  : KLesson("Extract method", "Extract method", module, lang) {
   override val lessonContent: LessonContext.() -> Unit
     get() = {
       prepareSample(sample)

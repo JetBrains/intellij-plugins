@@ -13,7 +13,9 @@ import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.parseLessonSample
 
-class RubyRefactorMenuLesson(module: Module) : KLesson("Refactoring menu", module, "ruby") {
+class RubyRefactorMenuLesson(module: Module)
+  : KLesson("Refactoring menu", "Refactoring menu", module, "ruby") {
+
   private val sample = parseLessonSample("""
     class Animal
       def legs_number

@@ -11,7 +11,8 @@ import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.parseLessonSample
 
-class StatementCompletionLesson(module: Module) : KLesson("Statement completion", module, JavaLangSupport.lang) {
+class StatementCompletionLesson(module: Module)
+  : KLesson("Statement completion", "Statement completion", module, JavaLangSupport.lang) {
 
   val sample = parseLessonSample("""class PrimeNumbers {
     public static void main(String[] args) {

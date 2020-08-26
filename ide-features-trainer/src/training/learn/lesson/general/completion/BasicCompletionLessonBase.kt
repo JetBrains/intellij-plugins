@@ -11,7 +11,8 @@ import training.learn.lesson.kimpl.LessonUtil
 import training.learn.lesson.kimpl.LessonUtil.checkExpectedStateOfEditor
 import javax.swing.JList
 
-abstract class BasicCompletionLessonBase(module: Module, lang: String) : KLesson("Basic completion", module, lang) {
+abstract class BasicCompletionLessonBase(module: Module, lang: String)
+  : KLesson("Basic completion", "Basic completion", module, lang) {
   protected abstract val sample1: LessonSample
   protected abstract val sample2: LessonSample
 

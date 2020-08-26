@@ -9,8 +9,8 @@ import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 import training.learn.lesson.kimpl.LessonUtil.checkExpectedStateOfEditor
 
-abstract class SurroundAndUnwrapLesson(module: Module, lang: String) :
-  KLesson("Surround and unwrap", module, lang) {
+abstract class SurroundAndUnwrapLesson(module: Module, lang: String)
+  : KLesson("Surround and unwrap", "Surround and unwrap", module, lang) {
 
   protected abstract val sample: LessonSample
 

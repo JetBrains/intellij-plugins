@@ -12,7 +12,8 @@ import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.parseLessonSample
 import javax.swing.tree.DefaultMutableTreeNode
 
-class BeforeDebugging(module: Module) : KLesson("Before Debugging: Run/Debug Configurations", module, JavaScriptLangSupport.lang) {
+class BeforeDebugging(module: Module)
+  : KLesson("Before Debugging: Run/Debug Configurations", "Before Debugging: Run/Debug Configurations", module, JavaScriptLangSupport.lang) {
 
   companion object {
     val jsDebuggerSample = parseLessonSample("""

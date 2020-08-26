@@ -10,7 +10,8 @@ import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.parseLessonSample
 
-class CodeInspectionLesson(module: Module) : KLesson("The Power of Code Inspections", module, JavaScriptLangSupport.lang) {
+class CodeInspectionLesson(module: Module)
+  : KLesson("The Power of Code Inspections", "The Power of Code Inspections", module, JavaScriptLangSupport.lang) {
 
   val sample = parseLessonSample("""
         function listBookAuthors(books) {

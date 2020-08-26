@@ -7,8 +7,8 @@ import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 
-class MoveLesson(module: Module, lang: String, private val sample: LessonSample) :
-  KLesson("Move", module, lang) {
+class MoveLesson(module: Module, lang: String, private val sample: LessonSample)
+  : KLesson("Move", "Move", module, lang) {
   override val lessonContent: LessonContext.() -> Unit
     get() = {
       prepareSample(sample)

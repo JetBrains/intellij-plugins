@@ -10,6 +10,7 @@ abstract class KLesson(final override val id: String,
                        override var module: Module,
                        override val lang: String) : Lesson {
 
+  @Deprecated("Use full form with explicit ID: it is necessary for i18n")
   constructor(name: String, module: Module, lang: String) : this(name, name, module, lang)
 
   abstract val lessonContent: LessonContext.() -> Unit

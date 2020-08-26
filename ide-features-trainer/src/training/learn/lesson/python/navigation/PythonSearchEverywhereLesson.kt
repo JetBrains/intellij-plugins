@@ -18,7 +18,8 @@ import training.ui.LearningUiHighlightingManager
 import java.awt.event.InputEvent
 import java.awt.event.KeyEvent
 
-class PythonSearchEverywhereLesson(module: Module) : KLesson("Search everywhere", module, "Python") {
+class PythonSearchEverywhereLesson(module: Module)
+  : KLesson("Search everywhere", "Search everywhere", module, "Python") {
   override val lessonContent: LessonContext.() -> Unit = {
     caret(0)
 

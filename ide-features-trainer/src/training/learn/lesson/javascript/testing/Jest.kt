@@ -19,7 +19,8 @@ import training.learn.lesson.kimpl.parseLessonSample
 import javax.swing.SwingConstants
 import javax.swing.tree.DefaultMutableTreeNode
 
-class Jest(module: Module) : KLesson("Fundamentals of Testing in WebStorm", module, JavaScriptLangSupport.lang){
+class Jest(module: Module)
+  : KLesson("Fundamentals of Testing in WebStorm", "Fundamentals of Testing in WebStorm", module, JavaScriptLangSupport.lang){
   override val lessonContent: LessonContext.() -> Unit
     get() {
       return {

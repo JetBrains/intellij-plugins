@@ -7,7 +7,8 @@ import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 
-class ExtractVariableFromBubbleLesson(module: Module, lang: String, private val sample: LessonSample) : KLesson("Extract variable", module, lang) {
+class ExtractVariableFromBubbleLesson(module: Module, lang: String, private val sample: LessonSample)
+  : KLesson("Extract variable", "Extract variable", module, lang) {
   override val lessonContent: LessonContext.() -> Unit
     get() = {
       prepareSample(sample)

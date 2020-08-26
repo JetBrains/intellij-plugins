@@ -12,7 +12,8 @@ import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.parseLessonSample
 
-class RefactoringLesson(module: Module) : KLesson("Refactorings in a Nutshell", module, JavaScriptLangSupport.lang) {
+class RefactoringLesson(module: Module)
+  : KLesson("Refactorings in a Nutshell", "Refactorings in a Nutshell", module, JavaScriptLangSupport.lang) {
 
   val sample = parseLessonSample(""" 
         function listBookAuthors(<caret>books) {

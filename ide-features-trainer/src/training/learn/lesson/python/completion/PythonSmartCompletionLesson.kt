@@ -9,7 +9,8 @@ import training.learn.lesson.kimpl.LessonUtil
 import training.learn.lesson.kimpl.LessonUtil.checkExpectedStateOfEditor
 import training.learn.lesson.kimpl.parseLessonSample
 
-class PythonSmartCompletionLesson(module: Module) : KLesson("Smart completion", module, "Python") {
+class PythonSmartCompletionLesson(module: Module)
+  : KLesson("Smart completion", "Smart completion", module, "Python") {
   private val sample = parseLessonSample("""
     def f(x, file):
       x.append(file)

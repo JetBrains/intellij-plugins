@@ -6,8 +6,8 @@ import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 
-class CollapseLesson(module: Module, lang: String, private val sample: LessonSample) :
-  KLesson("Collapse", module, lang) {
+class CollapseLesson(module: Module, lang: String, private val sample: LessonSample)
+  : KLesson("Collapse", "Collapse", module, lang) {
   override val lessonContent: LessonContext.() -> Unit
     get() = {
       prepareSample(sample)

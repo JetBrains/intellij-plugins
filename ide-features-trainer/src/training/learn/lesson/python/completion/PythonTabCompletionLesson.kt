@@ -10,7 +10,8 @@ import training.learn.lesson.kimpl.*
 import training.learn.lesson.kimpl.LessonUtil.checkExpectedStateOfEditor
 import javax.swing.JList
 
-class PythonTabCompletionLesson(module: Module) : KLesson("Tab completion", module, "Python") {
+class PythonTabCompletionLesson(module: Module)
+  : KLesson("Tab completion", "Tab completion", module, "Python") {
   private val template = parseLessonSample("""
     class Calculator:
         def __init__(self):

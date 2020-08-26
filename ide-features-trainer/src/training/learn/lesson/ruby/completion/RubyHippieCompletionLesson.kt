@@ -6,7 +6,9 @@ import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.parseLessonSample
 
-class RubyHippieCompletionLesson(module: Module) : KLesson("Hippie Completion", module, "ruby") {
+class RubyHippieCompletionLesson(module: Module)
+  : KLesson("Hippie Completion", "Hippie Completion", module, "ruby") {
+
   private val sample = parseLessonSample("""class SomeExampleClass
   attr_reader :callbacks
 
