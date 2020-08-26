@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.ui.welcomeScreen.recentProjects
 
 import com.intellij.icons.AllIcons
@@ -36,7 +36,7 @@ class ActionList(listData: Array<out AnAction>, private val groupsPanel: GroupsP
     setExpandableItemsEnabled(false)
     setEmptyText(IdeBundle.message("empty.text.no.project.open.yet"))
     selectionMode = ListSelectionModel.MULTIPLE_INTERVAL_SELECTION
-    getAccessibleContext().accessibleName = RecentProjectPanel.RECENT_PROJECTS_LABEL
+    getAccessibleContext().accessibleName = RecentProjectPanel.RECENT_PROJECTS_LABEL.get()
     val handler = MouseHandler()
     addMouseListener(handler)
     addMouseMotionListener(handler)
