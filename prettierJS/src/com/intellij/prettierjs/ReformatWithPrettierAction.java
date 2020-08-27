@@ -424,7 +424,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
                                     boolean isError,
                                     @Nullable HyperlinkListener hyperlinkListener) {
     ApplicationManager.getApplication().invokeLater(() -> {
-      final JComponent component = isError ? HintUtil.createErrorLabel(text, hyperlinkListener, null, null)
+      final JComponent component = isError ? HintUtil.createErrorLabel(text, hyperlinkListener, null)
                                            : HintUtil.createInformationLabel(text, hyperlinkListener, null, null);
       final LightweightHint hint = new LightweightHint(component);
       HintManagerImpl.getInstanceImpl()
