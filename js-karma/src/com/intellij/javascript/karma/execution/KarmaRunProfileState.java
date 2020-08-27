@@ -10,6 +10,7 @@ import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.testframework.autotest.ToggleAutoTestAction;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.javascript.debugger.locationResolving.JSLocationResolver;
+import com.intellij.javascript.karma.KarmaBundle;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerRegistry;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
@@ -83,7 +84,7 @@ public class KarmaRunProfileState implements RunProfileState {
       }
       registry.startServer(
         serverSettings,
-        new CatchingConsumer<KarmaServer, Exception>() {
+        new CatchingConsumer<>() {
           @Override
           public void consume(KarmaServer server) {
             RunnerAndConfigurationSettings configuration = myEnvironment.getRunnerAndConfigurationSettings();
@@ -151,7 +152,7 @@ public class KarmaRunProfileState implements RunProfileState {
     }
     Messages.showErrorDialog(myProject,
                              errorMessage.toString(),
-                             "Karma Server");
+                             KarmaBundle.message("karma.server.tab.title"));
   }
 
 }

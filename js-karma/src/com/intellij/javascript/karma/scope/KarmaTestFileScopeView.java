@@ -1,5 +1,6 @@
 package com.intellij.javascript.karma.scope;
 
+import com.intellij.javascript.karma.KarmaBundle;
 import com.intellij.javascript.karma.execution.KarmaRunSettings;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
@@ -22,12 +23,12 @@ public class KarmaTestFileScopeView extends KarmaScopeView {
     SwingHelper.installFileCompletionAndBrowseDialog(
       project,
       myTestFileTextFieldWithBrowseButton,
-      "Select Test File",
+      KarmaBundle.message("run_configuration.select_test_file.browseTitle"),
       FileChooserDescriptorFactory.createSingleFileDescriptor()
     );
     myPanel = new FormBuilder()
       .setAlignLabelOnRight(false)
-      .addLabeledComponent("&Test file:", myTestFileTextFieldWithBrowseButton)
+      .addLabeledComponent(KarmaBundle.message("run_configuration.test_file.label"), myTestFileTextFieldWithBrowseButton)
       .getPanel();
   }
 

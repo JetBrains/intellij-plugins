@@ -13,6 +13,7 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.execution.runners.GenericProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.javascript.karma.KarmaBundle;
 import com.intellij.javascript.karma.execution.KarmaConsoleView;
 import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
 import com.intellij.javascript.karma.server.KarmaServer;
@@ -95,10 +96,12 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
               processLcovInfoFile(lcovFile, coverageFilePath, env, server, runConfiguration);
             }
             else {
+              //noinspection DialogTitleCapitalization
               int response = Messages.showYesNoDialog(project,
-                                                      "Cannot find karma test coverage report - lcov.info",
-                                                      "Missing Karma Coverage Report",
-                                                      "Select lcov.info", "Cancel",
+                                                      KarmaBundle.message("coverage.cannot_find_lcov.dialog.message"),
+                                                      KarmaBundle.message("coverage.cannot_find_lcov.dialog.title"),
+                                                      KarmaBundle.message("coverage.cannot_find_lcov.select_lcov.button"),
+                                                      KarmaBundle.message("coverage.cannot_find_lcov.cancel.button"),
                                                       Messages.getWarningIcon());
               if (response == Messages.YES) {
                 FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFileDescriptor(),

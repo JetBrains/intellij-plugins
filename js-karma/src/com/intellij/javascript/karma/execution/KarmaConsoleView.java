@@ -24,6 +24,7 @@ import com.intellij.icons.AllIcons;
 import com.intellij.ide.browsers.OpenUrlHyperlinkInfo;
 import com.intellij.javascript.debugger.JSDebugTabLayouter;
 import com.intellij.javascript.debugger.JavaScriptDebugProcess;
+import com.intellij.javascript.karma.KarmaBundle;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerLogComponent;
 import com.intellij.openapi.application.ModalityState;
@@ -72,7 +73,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     ui.getOptions().setMinimizeActionEnabled(false);
     final Content consoleContent = ui.createContent(ExecutionConsole.CONSOLE_CONTENT_ID,
                                                     getComponent(),
-                                                    "Test Run",
+                                                    KarmaBundle.message("console.test_run_tab.name"),
                                                     AllIcons.Debugger.Console,
                                                     getPreferredFocusableComponent());
     ui.addContent(consoleContent, 1, PlaceInGrid.bottom, false);
@@ -170,7 +171,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     if (console instanceof KarmaConsoleView) {
       return (KarmaConsoleView)console;
     }
-    Class consoleClass = console != null ? console.getClass() : null;
+    Class<?> consoleClass = console != null ? console.getClass() : null;
     LOG.info("Cannot cast " + consoleClass + " to " + KarmaConsoleView.class.getSimpleName() +
              ", RunProfileState: " + state.getClass().getName());
     return null;

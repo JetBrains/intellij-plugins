@@ -8,6 +8,7 @@ import com.intellij.execution.filters.Filter;
 import com.intellij.execution.process.*;
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
+import com.intellij.javascript.karma.KarmaBundle;
 import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.scope.KarmaScopeKind;
 import com.intellij.javascript.karma.server.KarmaJsSourcesLocator;
@@ -187,7 +188,7 @@ public class KarmaExecutionSession {
       List<String> topNames = findTopLevelSuiteNames(myProject, myRunSettings.getTestFileSystemIndependentPath());
       String testFileName = PathUtil.getFileName(myRunSettings.getTestFileSystemIndependentPath());
       if (topNames.isEmpty()) {
-        throw new ExecutionException("No tests found in " + testFileName);
+        throw new ExecutionException(KarmaBundle.message("execution.no_tests_found_in_file.dialog.message", testFileName));
       }
       return JSTestRunnerUtil.getTestsPattern(ContainerUtil.map(topNames, name -> Collections.singletonList(name)), true);
     }
@@ -203,13 +204,13 @@ public class KarmaExecutionSession {
   private static List<String> findTopLevelSuiteNames(@NotNull Project project, @NotNull String testFilePath) throws ExecutionException {
     VirtualFile file = LocalFileFinder.findFile(testFilePath);
     if (file == null) {
-      throw new ExecutionException("Cannot find test file by " + testFilePath);
+      throw new ExecutionException(KarmaBundle.message("execution.cannot_find_test_by_path.dialog.message", testFilePath));
     }
     PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
     JSFile jsFile = ObjectUtils.tryCast(psiFile, JSFile.class);
     if (jsFile == null) {
       LOG.info("Not a JavaScript file " + testFilePath + ", " + (psiFile == null ? "null" : psiFile.getClass()));
-      throw new ExecutionException("Not a JavaScript file: " + testFilePath);
+      throw new ExecutionException(KarmaBundle.message("execution.javascript_file_expected.dialog.message", testFilePath));
     }
     JasmineFileStructure jasmine = JasmineFileStructureBuilder.getInstance().fetchCachedTestFileStructure(jsFile);
     List<String> elements = jasmine.getTopLevelElements();
@@ -226,7 +227,7 @@ public class KarmaExecutionSession {
     if (!elements.isEmpty()) {
       return elements;
     }
-    throw new ExecutionException("No tests found in " + testFilePath);
+    throw new ExecutionException(KarmaBundle.message("execution.no_tests_found_in_file.dialog.message", testFilePath));
   }
 
   @NotNull
