@@ -34,6 +34,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.text.StringUtil;
@@ -56,8 +57,8 @@ import java.text.MessageFormat;
 public class ActionScriptGenerateEventHandler extends BaseJSGenerateHandler {
 
   @Override
-  protected String getTitleKey() {
-    return ""; // not used in this action
+  protected @NlsContexts.DialogTitle String getTitle() {
+    return null; // not used in this action
   }
 
   @Override

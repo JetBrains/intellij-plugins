@@ -4,8 +4,8 @@ import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JSTokenTypes;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.generation.JSChooserElementNode;
@@ -23,6 +23,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -79,7 +80,7 @@ public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
     return true;
   }
 
-  private static String getTitle(final JSClass jsClass) {
+  private static @NlsContexts.DialogTitle @NotNull String getTitle(final JSClass jsClass) {
     return jsClass.isInterface()
            ? CodeInsightBundle.message("intention.implement.abstract.class.interface.text")
            : CodeInsightBundle.message("intention.implement.abstract.class.subclass.text");
