@@ -10,9 +10,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfiguration;
 import com.jetbrains.lang.dart.psi.DartFile;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -140,7 +142,7 @@ public class DartCoverageEngine extends CoverageEngine {
   }
 
   @Override
-  public String getPresentableText() {
-    return "Dart Coverage";
+  public @Nls String getPresentableText() {
+    return DartBundle.message("dart.coverage.presentable.text");
   }
 }

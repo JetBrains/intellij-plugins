@@ -28,6 +28,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.source.html.HtmlFileImpl;
 import com.intellij.rt.coverage.data.ProjectData;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -176,7 +177,7 @@ public class KarmaCoverageEngine extends CoverageEngine {
   }
 
   @Override
-  public String getPresentableText() {
+  public @Nls String getPresentableText() {
     return ID;
   }
 
