@@ -28,6 +28,7 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.thoughtworks.gauge.Constants;
 import com.thoughtworks.gauge.GaugeBundle;
+import com.thoughtworks.gauge.NotificationGroups;
 import com.thoughtworks.gauge.core.GaugeVersion;
 import com.thoughtworks.gauge.settings.GaugeSettingsModel;
 import com.thoughtworks.gauge.util.GaugeUtil;
@@ -52,7 +53,7 @@ final class Spectacle {
   private void install() {
     if (installing) {
       Notifications.Bus.notify(
-        new Notification("Installing", GaugeBundle.message("notification.title.installation.in.progress"),
+        new Notification(NotificationGroups.GAUGE_GROUP, GaugeBundle.message("notification.title.installation.in.progress"),
                          GaugeBundle.message("notification.content.installing.plugin.spectacle"), NotificationType.INFORMATION));
       return;
     }
@@ -73,7 +74,7 @@ final class Spectacle {
             throw new RuntimeException(GaugeUtil.getOutput(process.getInputStream(), "\n"));
           }
           Notifications.Bus.notify(new Notification(
-            "Successful",
+            NotificationGroups.GAUGE_GROUP,
             GaugeBundle.message("notification.title.installation.completed"),
             GaugeBundle.message("notification.content.installation.plugin.spectacle.completed"),
             NotificationType.INFORMATION)
@@ -82,7 +83,7 @@ final class Spectacle {
         catch (Exception e) {
           LOG.debug(e);
           Notification notification = new Notification(
-            "Error", GaugeBundle.message("notification.title.installation.failed"), e.getMessage(), NotificationType.ERROR);
+            NotificationGroups.GAUGE_ERROR_GROUP, GaugeBundle.message("notification.title.installation.failed"), e.getMessage(), NotificationType.ERROR);
           Notifications.Bus.notify(notification, project);
         }
         progressIndicator.cancel();

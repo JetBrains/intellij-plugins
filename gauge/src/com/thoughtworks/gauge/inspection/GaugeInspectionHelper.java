@@ -47,7 +47,7 @@ final class GaugeInspectionHelper {
       process.waitFor();
 
       String[] errors = GaugeUtil.getOutput(process.getInputStream(), "\n").split("\n");
-      return Arrays.stream(errors).map(GaugeError::getInstance).filter(Objects::nonNull).collect(Collectors.toList());
+      return Arrays.stream(errors).map(GaugeError::parseCliError).filter(Objects::nonNull).collect(Collectors.toList());
     }
     catch (IOException | InterruptedException | GaugeNotFoundException e) {
       LOG.debug(e);

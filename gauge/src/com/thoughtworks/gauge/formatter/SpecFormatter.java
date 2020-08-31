@@ -32,6 +32,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.thoughtworks.gauge.Constants;
 import com.thoughtworks.gauge.GaugeBundle;
+import com.thoughtworks.gauge.NotificationGroups;
 import com.thoughtworks.gauge.settings.GaugeSettingsModel;
 import com.thoughtworks.gauge.util.GaugeUtil;
 
@@ -71,7 +72,8 @@ public final class SpecFormatter extends AnAction {
         String output =
           String.format("<pre>%s</pre>", GaugeUtil.getOutput(process.getInputStream(), "\n").replace("<", "&lt;").replace(">", "&gt;"));
         Notifications.Bus.notify(
-          new Notification("Spec Formatting", GaugeBundle.message("notification.title.error.spec.formatting"), output,
+          new Notification(NotificationGroups.GAUGE_ERROR_GROUP,
+                           GaugeBundle.message("notification.title.error.spec.formatting"), output,
                            NotificationType.ERROR));
         return;
       }

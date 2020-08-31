@@ -17,19 +17,20 @@
 package com.thoughtworks.gauge.inspection;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.text.StringUtil;
 import com.thoughtworks.gauge.Constants;
+import org.jetbrains.annotations.Nullable;
 
 public final class GaugeError {
-  private static final Logger LOG = Logger.getInstance(GaugeError.class);
-
   private final String fileName;
   private final int lineNumber;
-  private final String message;
+  private final @NlsSafe String message;
 
-  public GaugeError(String type, String fileName, int lineNumber, String message) {
+  public GaugeError(@NlsSafe String type, String fileName, int lineNumber, @NlsSafe String message) {
     this.fileName = fileName;
     this.lineNumber = lineNumber;
+    // here error comes from the Gauge CLI in EN, so we do not extract `line number` to i18n
     this.message = String.format("%s line number: %d, %s", type, lineNumber, message);
   }
 
@@ -37,7 +38,7 @@ public final class GaugeError {
     return this.fileName.equals(fileName);
   }
 
-  public String getMessage() {
+  public @NlsSafe String getMessage() {
     return message;
   }
 
@@ -53,14 +54,14 @@ public final class GaugeError {
     return StringUtil.lineColToOffset(text, lineNumber - 1, 0);
   }
 
-  public static GaugeError getInstance(String error) {
+  public static @Nullable GaugeError parseCliError(@NlsSafe String error) {
     try {
       String[] parts = error.split(" ");
       String[] fileInfo = parts[1].split(Constants.SPEC_SCENARIO_DELIMITER);
       return new GaugeError(parts[0], fileInfo[0], Integer.parseInt(fileInfo[1]), error.split(":\\d+:? ")[1]);
     }
     catch (Exception e) {
-      LOG.debug(e);
+      Logger.getInstance(GaugeError.class).debug("Unable to parse Gauge CLI error", e);
       return null;
     }
   }

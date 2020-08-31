@@ -16,8 +16,10 @@
 
 package com.thoughtworks.gauge.rename;
 
+import org.jetbrains.annotations.Nls;
+
 interface RefactorStatusCallback {
-  void onStatusChange(String statusMessage);
+  void onStatusChange(@Nls String statusMessage);
 
   void onFinish(RefactoringStatus refactoringStatus);
 }

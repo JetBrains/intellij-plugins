@@ -22,6 +22,7 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.EditorTextField;
 import com.thoughtworks.gauge.GaugeBundle;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -53,7 +54,7 @@ public final class RefactoringDialog extends DialogWrapper {
     this.text = text;
     setModal(true);
     setTitle(GaugeBundle.message("gauge.group.refactoring"));
-    this.heading.setText(String.format("Refactoring \"%s\" to :", this.text));
+    this.heading.setText(GaugeBundle.message("refactoring.to", this.text));
     this.inputText.setText(this.text);
     setSize();
     registerActions();
@@ -105,7 +106,7 @@ public final class RefactoringDialog extends DialogWrapper {
     String inputString = inputText.getText();
     new GaugeRefactorHandler(project, file, editor).compileAndRefactor(text, inputString, new RefactorStatusCallback() {
       @Override
-      public void onStatusChange(String statusMessage) {
+      public void onStatusChange(@Nls String statusMessage) {
         infoPane.setText(statusMessage);
       }
 

@@ -61,7 +61,7 @@ public final class GaugeModuleBuilder extends JavaModuleBuilder {
       getGaugeSettings();
       if (!GaugeVersion.isGreaterOrEqual(MIN_GAUGE_VERSION, false)) {
         throw new ConfigurationException(
-          String.format("This version of Gauge Intellij plugin only works with Gauge version >= %s", MIN_GAUGE_VERSION),
+          GaugeBundle.message("dialog.message.gauge.intellij.plugin.only.works.with.version", MIN_GAUGE_VERSION),
           GaugeBundle.message("dialog.title.unsupported.gauge.version"));
       }
     }

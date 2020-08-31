@@ -17,6 +17,7 @@
 package com.thoughtworks.gauge;
 
 import com.intellij.DynamicBundle;
+import com.intellij.openapi.util.NlsSafe;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -25,8 +26,7 @@ import org.jetbrains.annotations.PropertyKey;
 import java.util.function.Supplier;
 
 public final class GaugeBundle extends DynamicBundle {
-  @NonNls
-  public static final String GAUGE = "Gauge";
+  public static final @NlsSafe String GAUGE = "Gauge";
 
   private static final String BUNDLE = "messages.GaugeBundle";
   private static final GaugeBundle INSTANCE = new GaugeBundle();

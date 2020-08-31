@@ -26,9 +26,10 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Url;
-import com.intellij.util.UrlImpl;
+import com.intellij.util.Urls;
 import com.thoughtworks.gauge.Constants;
 import com.thoughtworks.gauge.GaugeBundle;
+import com.thoughtworks.gauge.NotificationGroups;
 import com.thoughtworks.gauge.language.ConceptFileType;
 import com.thoughtworks.gauge.language.SpecFileType;
 import com.thoughtworks.gauge.settings.GaugeSettingsModel;
@@ -70,7 +71,7 @@ final class GaugeWebBrowserPreview extends WebBrowserUrlProvider {
       spectacle.notifyToInstall();
     }
     catch (Exception e) {
-      Messages.showWarningDialog(String.format("Unable to create html file for %s", virtualFile.getName()),
+      Messages.showWarningDialog(GaugeBundle.message("dialog.message.unable.to.create.html.file.for", virtualFile.getName()),
                                  GaugeBundle.message("gauge.error"));
     }
     return null;
@@ -91,12 +92,13 @@ final class GaugeWebBrowserPreview extends WebBrowserUrlProvider {
       String docsOutput =
         String.format("<pre>%s</pre>", GaugeUtil.getOutput(docsProcess.getInputStream(), " ").replace("<", "&lt;").replace(">", "&gt;"));
       Notifications.Bus
-        .notify(new Notification("Specification Preview", GaugeBundle.message("notification.title.error.specification.preview"), docsOutput,
+        .notify(new Notification(NotificationGroups.GAUGE_ERROR_GROUP,
+                                 GaugeBundle.message("notification.title.error.specification.preview"), docsOutput,
                                  NotificationType.ERROR));
       return null;
     }
     String relativePath = FileUtil.getRelativePath(gaugeModuleDir, new File(virtualFile.getParent().getPath()));
-    return new UrlImpl(FileUtil.join(createOrGetTempDirectory(projectName).getPath(), "docs", "html", relativePath,
+    return Urls.newUnparsable(FileUtil.join(createOrGetTempDirectory(projectName).getPath(), "docs", "html", relativePath,
                                      virtualFile.getNameWithoutExtension() + ".html"));
   }
 }

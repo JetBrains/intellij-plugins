@@ -36,10 +36,7 @@ import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
 import com.thoughtworks.gauge.reference.ReferenceCache;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public final class StepUtil {
   private static final Logger LOG = Logger.getInstance(StepUtil.class);

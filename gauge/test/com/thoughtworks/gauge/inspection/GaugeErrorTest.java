@@ -25,7 +25,7 @@ public class GaugeErrorTest {
   public void getInstance() {
     String message =
       "Duplicate scenario definition 'Vowel counts in single word' found in the same specification => 'Vowel counts in single word'";
-    GaugeError error = GaugeError.getInstance("[ParseError] specs/example.spec:37 " + message);
+    GaugeError error = GaugeError.parseCliError("[ParseError] specs/example.spec:37 " + message);
 
     assertNotNull(error);
     assertEquals("[ParseError] line number: 37, " + message, error.getMessage());
@@ -37,7 +37,7 @@ public class GaugeErrorTest {
   public void getInstanceWithErrorInWrongFormat() {
     String message =
       "Duplicate scenario definition 'Vowel counts in single word' found in the same specification => 'Vowel counts in single word'";
-    GaugeError error = GaugeError.getInstance("[ParseError] " + message);
+    GaugeError error = GaugeError.parseCliError("[ParseError] " + message);
 
     assertNull(error);
   }

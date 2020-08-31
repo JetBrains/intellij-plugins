@@ -48,9 +48,9 @@ final class ExtractConceptHandler {
       if (!info.cancelled) {
         VirtualFileManager.getInstance().refreshWithoutFileWatcher(false);
         FileDocumentManager.getInstance().saveAllDocuments();
-        Api.ExtractConceptResponse response = makeExtractConceptRequest(steps, info.fileName, info.conceptName, false, psiFile);
+        Api.ExtractConceptResponse response = makeExtractConceptRequest(steps, info.fileName, info.conceptName, psiFile);
         if (!response.getIsSuccess()) throw new RuntimeException(response.getError());
-        new UndoHandler(response.getFilesChangedList(), project, "Extract Concept").handle();
+        new UndoHandler(response.getFilesChangedList(), project, GaugeBundle.message("command.name.extract.concept")).handle();
       }
     }
     catch (Exception e) {
@@ -59,8 +59,7 @@ final class ExtractConceptHandler {
   }
 
   private Api.ExtractConceptResponse makeExtractConceptRequest(List<PsiElement> specSteps, String fileName,
-                                                               String concept, boolean refactorOtherUsages,
-                                                               PsiFile element) {
+                                                               String concept, PsiFile element) {
     PsiElement firstStep = specSteps.get(0);
     int startLine = StringUtil.offsetToLineNumber(psiFile.getText(), firstStep.getTextOffset()) + 1;
     PsiElement lastStep = specSteps.get(specSteps.size() - 1);
@@ -68,7 +67,7 @@ final class ExtractConceptHandler {
     Api.textInfo textInfo =
       Api.textInfo.newBuilder().setFileName(psiFile.getVirtualFile().getPath()).setStartingLineNo(startLine)
         .setEndLineNo(endLine).build();
-    ExtractConceptRequest request = new ExtractConceptRequest(fileName, concept, refactorOtherUsages, textInfo);
+    ExtractConceptRequest request = new ExtractConceptRequest(fileName, concept, false, textInfo);
     request.convertToSteps(specSteps, builder.getTableMap());
     return request.makeExtractConceptRequest(element);
   }

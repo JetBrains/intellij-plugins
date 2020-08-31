@@ -36,6 +36,7 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
@@ -97,7 +98,7 @@ public final class CreateStepImplFix extends BaseIntentionAction {
           .collect(Collectors.toList());
         javaFiles.add(0, NEW_FILE_HOLDER);
         ListPopup stepImplChooser =
-          JBPopupFactory.getInstance().createListPopup(new BaseListPopupStep<PsiFile>(
+          JBPopupFactory.getInstance().createListPopup(new BaseListPopupStep<>(
             GaugeBundle.message("popup.title.choose.implementation.class"), javaFiles) {
 
             @Override
@@ -125,13 +126,13 @@ public final class CreateStepImplFix extends BaseIntentionAction {
             @NotNull
             @Override
             public String getTextFor(PsiFile value) {
-              return value == null ? "Create new file" : getJavaFileName(value);
+              return value == null ? GaugeBundle.message("create.new.file") : getJavaFileName(value);
             }
           });
         stepImplChooser.showCenteredInCurrentWindow(step.getProject());
       }
 
-      private String getJavaFileName(PsiFile value) {
+      private @NlsSafe String getJavaFileName(PsiFile value) {
         PsiJavaFile javaFile = (PsiJavaFile)value;
         if (!javaFile.getPackageName().isEmpty()) {
           return javaFile.getPackageName() + "." + javaFile.getName();
@@ -184,11 +185,11 @@ public final class CreateStepImplFix extends BaseIntentionAction {
     PsiDocumentManager.getInstance(project).commitAllDocuments();
 
     StepValue stepValue = step.getStepValue();
-    StringBuilder text = new StringBuilder(String.format("@" + Step.class.getName() + "(\"%s\")\n", stepValue.getStepAnnotationText()));
-    text.append(String.format("public void %s(%s){\n\n", getMethodName(psiClass), getParamList(stepValue.getParameters())));
-    text.append("}\n");
 
-    PsiMethod stepMethod = JavaPsiFacade.getElementFactory(project).createMethodFromText(text.toString(), psiClass);
+    String text = String.format("@" + Step.class.getName() + "(\"%s\")\n", stepValue.getStepAnnotationText()) +
+                  String.format("public void %s(%s){\n\n", getMethodName(psiClass), getParamList(stepValue.getParameters())) +
+                  "}\n";
+    PsiMethod stepMethod = JavaPsiFacade.getElementFactory(project).createMethodFromText(text, psiClass);
     PsiMethod addedElement = (PsiMethod)psiClass.add(stepMethod);
     JavaCodeStyleManager.getInstance(project).shortenClassReferences(addedElement);
     CodeStyleManager.getInstance(project).reformat(psiClass);

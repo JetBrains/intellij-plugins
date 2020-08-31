@@ -18,6 +18,7 @@ package com.thoughtworks.gauge.extract;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogBuilder;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.ui.TextFieldWithAutoCompletion;
 import com.intellij.ui.TextFieldWithAutoCompletionListProvider;
 import com.thoughtworks.gauge.Constants;
@@ -71,7 +72,10 @@ final class ExtractConceptDialog extends JDialog {
     this.steps.setRows(10);
     this.steps.setEditable(false);
     this.steps.setText(data);
-    for (String file : files) this.files.addItem(file);
+
+    for (@NlsSafe String file : files) {
+      this.files.addItem(file);
+    }
   }
 
   public ExtractConceptInfo getInfo() {

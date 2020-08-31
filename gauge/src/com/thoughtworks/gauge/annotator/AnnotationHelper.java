@@ -27,6 +27,7 @@ import com.thoughtworks.gauge.language.psi.SpecStep;
 import com.thoughtworks.gauge.util.StepUtil;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 final class AnnotationHelper {
   private static final ModuleHelper helper = new ModuleHelper();
@@ -47,8 +48,8 @@ final class AnnotationHelper {
     return helper.getModule(step);
   }
 
-  List<StepValue> getStepValues(PsiMethod psiElement) {
-    return ContainerUtil.map(StepUtil.getGaugeStepAnnotationValues(psiElement),
-                             s -> SpecPsiImplUtil.getStepValueFor(psiElement, s, false));
+  Stream<StepValue> getStepValues(PsiMethod psiElement) {
+    return StepUtil.getGaugeStepAnnotationValues(psiElement).stream()
+      .map(s -> SpecPsiImplUtil.getStepValueFor(psiElement, s, false));
   }
 }

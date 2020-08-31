@@ -22,6 +22,7 @@ import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.roots.ExternalProjectSystemRegistry;
 import com.intellij.openapi.roots.OrderEnumerator;
 import com.intellij.openapi.roots.ProjectModelExternalSource;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -178,7 +179,7 @@ public final class GaugeUtil {
     return new File(new File(module.getModuleFilePath()).getParent());
   }
 
-  public static String getOutput(InputStream stream, String lineSeparator) throws IOException {
+  public static @NlsSafe String getOutput(InputStream stream, String lineSeparator) throws IOException {
     String lastProcessStdout = "";
 
     try (InputStreamReader in = new InputStreamReader(stream, StandardCharsets.UTF_8);

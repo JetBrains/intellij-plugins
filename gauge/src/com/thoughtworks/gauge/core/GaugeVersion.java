@@ -24,6 +24,7 @@ import com.intellij.notification.Notifications;
 import com.intellij.openapi.diagnostic.Logger;
 import com.thoughtworks.gauge.Constants;
 import com.thoughtworks.gauge.GaugeBundle;
+import com.thoughtworks.gauge.NotificationGroups;
 import com.thoughtworks.gauge.exception.GaugeNotFoundException;
 import com.thoughtworks.gauge.settings.GaugeSettingsModel;
 import com.thoughtworks.gauge.util.GaugeUtil;
@@ -56,9 +57,9 @@ public final class GaugeVersion {
           LOG.error(String.format("Unable to parse <%s %s %s> command's output.\n%s", settings.getGaugePath(), Constants.VERSION,
                                   Constants.MACHINE_READABLE, output));
           Notification notification = new Notification(
-            "Error",
-            String.format("Unable to parse <%s %s %s> command's output.", settings.getGaugePath(), Constants.VERSION,
-                          Constants.MACHINE_READABLE),
+            NotificationGroups.GAUGE_ERROR_GROUP,
+            GaugeBundle.message("notification.title.unable.to.parse.command.output",
+                                settings.getGaugePath(), Constants.VERSION, Constants.MACHINE_READABLE),
             e.getMessage(),
             NotificationType.ERROR
           );
@@ -67,9 +68,11 @@ public final class GaugeVersion {
       }
     }
     catch (InterruptedException | IOException | GaugeNotFoundException e) {
-      String notificationTitle = GaugeBundle.message("notification.title.unable.to.start.gauge.intellij.plugin");
-      LOG.error(String.format("%s%s", notificationTitle, e.getMessage()));
-      Notification notification = new Notification("Error", notificationTitle, e.getMessage(), NotificationType.ERROR);
+      LOG.error("Unable to start Gauge Intellij plugin", e.getMessage());
+
+      Notification notification = new Notification(NotificationGroups.GAUGE_ERROR_GROUP,
+                                                   GaugeBundle.message("notification.title.unable.to.start.gauge.intellij.plugin"),
+                                                   e.getMessage(), NotificationType.ERROR);
       Notifications.Bus.notify(notification);
     }
     versionInfo = gaugeVersionInfo;

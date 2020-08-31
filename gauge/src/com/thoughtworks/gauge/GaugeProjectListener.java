@@ -39,11 +39,15 @@ public final class GaugeProjectListener implements ProjectManagerListener {
   @Override
   public void projectOpened(@NotNull Project project) {
     if (isGaugeProjectDir(new File(project.getBasePath()))) {
-      if (!GaugeVersion.isGreaterOrEqual(MIN_GAUGE_VERSION, false)) {
-        String notificationTitle = String.format("Unsupported Gauge Version(%s)", GaugeVersion.getVersion(false).version);
-        String errorMessage = String.format("This version of Gauge Intellij plugin only works with Gauge version >= %s", MIN_GAUGE_VERSION);
-        LOG.debug(String.format("%s\n%s", notificationTitle, errorMessage));
-        Notification notification = new Notification("Error", notificationTitle, errorMessage, NotificationType.ERROR);
+      if (!GaugeVersion.isGreaterOrEqual(MIN_GAUGE_VERSION, false)) { // todo run this asynchronously
+        String version = GaugeVersion.getVersion(false).version;
+        String notificationTitle = GaugeBundle.message("notification.title.unsupported.gauge.version", version);
+        String errorMessage = GaugeBundle.message("dialog.message.gauge.intellij.plugin.only.works.with.version", MIN_GAUGE_VERSION);
+
+        LOG.warn(String.format("Unsupported Gauge version %s\n%s", version, errorMessage));
+
+        Notification notification =
+          new Notification(NotificationGroups.GAUGE_ERROR_GROUP, notificationTitle, errorMessage, NotificationType.ERROR);
         Notifications.Bus.notify(notification, project);
       }
     }

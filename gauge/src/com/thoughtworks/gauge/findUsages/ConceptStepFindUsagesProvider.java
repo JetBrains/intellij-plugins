@@ -51,7 +51,7 @@ public final class ConceptStepFindUsagesProvider implements FindUsagesProvider {
   @NotNull
   @Override
   public String getDescriptiveName(@NotNull PsiElement psiElement) {
-    return psiElement.toString();
+    return psiElement.getText();
   }
 
   @NotNull

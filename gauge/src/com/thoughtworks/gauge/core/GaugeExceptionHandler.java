@@ -26,6 +26,12 @@ import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsSafe;
+import com.intellij.openapi.util.text.HtmlBuilder;
+import com.intellij.openapi.util.text.HtmlChunk;
+import com.thoughtworks.gauge.Constants;
+import com.thoughtworks.gauge.GaugeBundle;
+import com.thoughtworks.gauge.NotificationGroups;
 import com.thoughtworks.gauge.util.GaugeUtil;
 
 import java.io.IOException;
@@ -35,13 +41,13 @@ public final class GaugeExceptionHandler extends Thread {
   private static final Logger LOG = Logger.getInstance(GaugeExceptionHandler.class);
 
   private static final String LINE_BREAK = "\n";
-  private static final String NOTIFICATION_TEMPLATE = "More details...<br><br>%s%s";
-  private static final String NOTIFICATION_TITLE = "Exception occurred in Gauge plugin";
-  private static final String ISSUE_TEMPLATE =
-    "\n\nPlease log an issue in https://github.com/getgauge/intellij-plugin with following details:<br><br>" +
-    "#### gauge process exited with code %d" +
-    "<pre>```%s```" +
-    "\n* Idea version: %s\n* API version: %s\n* Plugin version: %s\n* Gauge version: %s</pre>";
+
+  private static final @NlsSafe String ISSUE_HEADER = "#### Gauge process exited with code ";
+  private static final @NlsSafe String ISSUE_IDE_VERSION = "* IDE version: ";
+  private static final @NlsSafe String ISSUE_API_VERSION = "* API version: ";
+  private static final @NlsSafe String ISSUE_PLUGIN_VERSION = "* Plugin version: ";
+  private static final @NlsSafe String ISSUE_GAUGE_VERSION = "* Gauge version: ";
+
   private final Process process;
   private final Project project;
 
@@ -74,15 +80,39 @@ public final class GaugeExceptionHandler extends Thread {
     return lines.trim().isEmpty() ? "" : String.format("%s%s%s", output, LINE_BREAK, lines);
   }
 
-  private static Notification createNotification(String stacktrace, int exitValue) {
-    IdeaPluginDescriptor plugin = PluginManagerCore.getPlugin(PluginId.findId("com.thoughtworks.gauge"));
+  private static Notification createNotification(@NlsSafe String stacktrace, int exitValue) {
+    IdeaPluginDescriptor plugin = PluginManagerCore.getPlugin(PluginId.findId(Constants.PLUGIN_ID));
+    @NlsSafe String apiVersion = ApplicationInfo.getInstance().getApiVersion();
+    @NlsSafe String gaugeVersion = GaugeVersion.getVersion(false).version;
     String pluginVersion = plugin == null ? "" : plugin.getVersion();
-    String apiVersion = ApplicationInfo.getInstance().getApiVersion();
     String ideaVersion = ApplicationInfo.getInstance().getFullVersion();
-    String gaugeVersion = GaugeVersion.getVersion(false).version;
-    String body = String.format(ISSUE_TEMPLATE, exitValue, stacktrace, ideaVersion, apiVersion, pluginVersion, gaugeVersion);
-    String content = String.format(NOTIFICATION_TEMPLATE, LINE_BREAK, body);
-    return new Notification("Gauge Exception", NOTIFICATION_TITLE, content, NotificationType.ERROR,
+
+    HtmlChunk.Element issueChunk = new HtmlBuilder()
+      .append(ISSUE_HEADER)
+      .appendRaw("```")
+      .append(Integer.toString(exitValue))
+      .appendRaw("```")
+      .append(stacktrace)
+      .appendRaw(ISSUE_IDE_VERSION)
+      .append(ideaVersion).append("\n")
+      .appendRaw(ISSUE_API_VERSION)
+      .append(apiVersion).append("\n")
+      .appendRaw(ISSUE_PLUGIN_VERSION)
+      .append(pluginVersion).append("\n")
+      .appendRaw(ISSUE_GAUGE_VERSION)
+      .append(gaugeVersion).append("\n")
+      .wrapWith("pre");
+
+    HtmlBuilder builder = new HtmlBuilder();
+    builder.append(GaugeBundle.message("notification.more.details"))
+      .br().br()
+      .append(GaugeBundle.message("notification.please.report.an.issue"))
+      .br().br()
+      .append(issueChunk);
+
+    return new Notification(NotificationGroups.GAUGE_ERROR_GROUP,
+                            GaugeBundle.message("notification.title.exception.occurred.in.gauge.plugin"), builder.toString(),
+                            NotificationType.ERROR,
                             NotificationListener.URL_OPENING_LISTENER);
   }
 }

@@ -16,6 +16,7 @@
 
 package com.thoughtworks.gauge.settings;
 
+import com.intellij.openapi.util.NlsSafe;
 import com.thoughtworks.gauge.Constants;
 
 import java.util.Objects;
@@ -35,7 +36,7 @@ public final class GaugeSettingsModel {
     this("", "", true);
   }
 
-  public String getGaugePath() {
+  public @NlsSafe String getGaugePath() {
     return gaugePath;
   }
 

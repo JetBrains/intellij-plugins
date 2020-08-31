@@ -22,29 +22,28 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.encoding.EncodingManager;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.Nls;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.intellij.openapi.vfs.LocalFileSystem.getInstance;
-
 public final class UndoHandler {
-  private static final Logger LOG = Logger.getInstance(UndoHandler.class);
-
   private final List<String> fileNames;
   private final Project project;
-  private final String name;
+  private final @Nls String name;
 
-  public UndoHandler(List<String> fileNames, Project project, String name) {
+  public UndoHandler(List<String> fileNames, Project project, @NlsContexts.Command String name) {
     this.fileNames = fileNames;
     this.project = project;
     this.name = name;
@@ -83,19 +82,24 @@ public final class UndoHandler {
 
   private static void performUndoableAction(List<String> filesChangedList) {
     for (String fileName : filesChangedList) {
+      LocalFileSystem localFileSystem = LocalFileSystem.getInstance();
       try {
-        VirtualFile virtualFile = getInstance().findFileByIoFile(new File(fileName));
+        VirtualFile virtualFile = localFileSystem.findFileByIoFile(new File(fileName));
         if (virtualFile != null) {
           Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
-          getInstance().refreshAndFindFileByIoFile(new File(fileName));
+          localFileSystem.refreshAndFindFileByIoFile(new File(fileName));
           if (document != null) {
             Charset encoding = EncodingManager.getInstance().getEncoding(virtualFile, true);
+            if (encoding == null) {
+              encoding = StandardCharsets.UTF_8;
+            }
+
             document.setText(StringUtils.join(FileUtils.readLines(new File(fileName), encoding.toString()).toArray(), "\n"));
           }
         }
       }
       catch (Exception ex) {
-        LOG.debug(ex);
+        Logger.getInstance(UndoHandler.class).warn("Error during undo in Gauge", ex);
       }
     }
   }

@@ -16,12 +16,14 @@
 
 package com.thoughtworks.gauge.rename;
 
+import org.jetbrains.annotations.Nls;
+
 public final class RefactoringStatus {
 
-  private String errorMessage;
+  private @Nls String errorMessage;
   private final Boolean isPassed;
 
-  public RefactoringStatus(Boolean isPassed, String errorMessage) {
+  public RefactoringStatus(Boolean isPassed, @Nls String errorMessage) {
     this.errorMessage = errorMessage;
     this.isPassed = isPassed;
   }
@@ -30,7 +32,7 @@ public final class RefactoringStatus {
     this.isPassed = isPassed;
   }
 
-  public String getErrorMessage() {
+  public @Nls String getErrorMessage() {
     return errorMessage;
   }
 

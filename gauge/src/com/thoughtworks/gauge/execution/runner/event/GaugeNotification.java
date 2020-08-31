@@ -17,10 +17,11 @@
 package com.thoughtworks.gauge.execution.runner.event;
 
 import com.intellij.notification.NotificationType;
+import org.jetbrains.annotations.Nls;
 
 public final class GaugeNotification {
-  public String title;
-  public String message;
+  public @Nls String title;
+  public @Nls String message;
   public String type;
 
   public NotificationType getType() {

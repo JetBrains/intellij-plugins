@@ -21,6 +21,8 @@ public final class Constants {
   private Constants() {
   }
 
+  public static final String PLUGIN_ID = "com.thoughtworks.gauge";
+
   public static final String GAUGE = "gauge";
   public static final String SPEC_EXTENSION = "spec";
   public static final String CONCEPT_EXTENSION = "cpt";
