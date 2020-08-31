@@ -9,8 +9,9 @@
   <depends>com.intellij.modules.json</depends>
 
   <description><![CDATA[
-    Plugin for writing <a href="http://gauge.org">Gauge tests</a> (originally developed by Thoughtworks Inc.)
-    <p>Provides the following features:</p>
+    Plugin for writing <a href="http://gauge.org">Gauge tests</a> (originally developed by Thoughtworks Inc.).
+    Supports only steps written in Java.
+    <p>Features:</p>
     <ul>
       <li>Basic language parsing and highlighting</li>
       <li>Project Creation</li>
@@ -117,7 +118,7 @@
   <extensions defaultExtensionNs="com.intellij">
     <fileType name="Specification" language="Specification" fieldName="INSTANCE"
               implementationClass="com.thoughtworks.gauge.language.SpecFileType"
-              extensions="spec;md"/>
+              extensions="spec"/>
     <fileType name="Concept" language="Concept" fieldName="INSTANCE"
               implementationClass="com.thoughtworks.gauge.language.ConceptFileType"
               extensions="cpt"/>
