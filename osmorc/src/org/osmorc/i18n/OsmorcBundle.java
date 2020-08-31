@@ -31,6 +31,7 @@ import com.intellij.notification.NotificationGroupManager;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.util.NlsContexts.NotificationContent;
 import com.intellij.openapi.util.NlsContexts.NotificationTitle;
+import java.util.function.Supplier;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
@@ -50,6 +51,10 @@ public final class OsmorcBundle extends DynamicBundle {
 
   public static @Nls String message(@NotNull @PropertyKey(resourceBundle = PATH_TO_BUNDLE) String key, Object @NotNull ... params) {
     return INSTANCE.getMessage(key, params);
+  }
+
+  public static Supplier<@Nls String> messagePointer(@NotNull @PropertyKey(resourceBundle = PATH_TO_BUNDLE) String key, Object @NotNull ... params) {
+    return INSTANCE.getLazyMessage(key, params);
   }
 
   public static Notification notification(@NotNull @NotificationTitle String title,
