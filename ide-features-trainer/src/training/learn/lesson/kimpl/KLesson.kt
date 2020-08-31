@@ -7,8 +7,8 @@ import training.learn.interfaces.Lesson
 import training.learn.interfaces.Module
 import training.learn.lesson.LessonListener
 
-abstract class KLesson(@NonNls final override val id: String,
-                       @Nls final override val name: String,
+abstract class KLesson(@NonNls override val id: String,
+                       @Nls override val name: String,
                        override var module: Module,
                        override val lang: String) : Lesson {
 
@@ -17,7 +17,5 @@ abstract class KLesson(@NonNls final override val id: String,
 
   abstract val lessonContent: LessonContext.() -> Unit
 
-  @Volatile
-  override var isOpen = false
   override val lessonListeners: MutableList<LessonListener> = mutableListOf()
 }

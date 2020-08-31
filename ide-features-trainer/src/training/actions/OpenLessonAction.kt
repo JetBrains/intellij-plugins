@@ -88,7 +88,6 @@ class OpenLessonAction(val lesson: Lesson) : AnAction(lesson.name) {
       LearningUiManager.activeToolWindow = LearnToolWindowFactory.learnWindowPerProject[projectWhereToStartLesson]
 
       val langSupport = LangManager.getInstance().getLangSupport() ?: throw Exception("Language for learning plugin is not defined")
-      if (lesson.isOpen) throw LessonIsOpenedException(lesson.name + " is opened")
 
       val vf: VirtualFile?
       var learnProject = LearningUiManager.learnProject

@@ -19,15 +19,13 @@ interface Lesson {
   val fileName: String
     get() = module.sanitizedName + "." + findLanguageByID(lang)!!.associatedFileType!!.defaultExtension
 
-  var module: Module
+  val module: Module
 
   val classLoader: ClassLoader
     get() = module.classLoader
 
   val passed: Boolean
     get() = LessonStateManager.getStateFromBase(id) == LessonState.PASSED
-
-  var isOpen: Boolean
 
   val lang: String
 

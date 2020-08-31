@@ -74,7 +74,7 @@ class XmlModule(override val name: String,
   }
 
   override fun giveNotPassedAndNotOpenedLesson(): Lesson? {
-    return lessons.firstOrNull { !it.passed && !it.isOpen }
+    return lessons.firstOrNull { !it.passed  }
   }
 
   override fun hasNotPassedLesson(): Boolean {

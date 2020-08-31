@@ -17,7 +17,6 @@ import java.util.concurrent.ExecutionException
 data class XmlLesson(val scenario: Scenario, override val lang: String, override var module: Module) : Lesson {
 
   override val lessonListeners: MutableList<LessonListener> = mutableListOf()
-  override var isOpen: Boolean = false
   override val name: String = scenario.name
   override val id: String = scenario.id
   override val fileName: String
