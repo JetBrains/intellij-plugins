@@ -160,14 +160,14 @@ else
         my_mutex.synchronize {
           unless tests.include? test.class.to_s
             tests << test.class.to_s
-            log(Rake::TeamCity::MessageFactory.create_suite_started(test.class.to_s, minitest_test_location(test.class.to_s), '0', test.class.to_s))
+            log(Rake::TeamCity::MessageFactory.create_suite_started(test.class.to_s, minitest_test_location(test), '0', test.class.to_s))
           end
         }
 
         @test_start_time = Time.new
         @test_started = true
         test_name = get_test_name(test)
-        log(Rake::TeamCity::MessageFactory.create_test_started(test_name, minitest_test_location(fqn), test.class.to_s, fqn))
+        log(Rake::TeamCity::MessageFactory.create_test_started(test_name, minitest_test_location(test), test.class.to_s, fqn))
       end
 
       def after_test(result)
@@ -246,9 +246,19 @@ else
         msg
       end
 
-      def minitest_test_location(fqn)
-        return nil if (fqn.nil?)
-        "ruby_minitest_qn://#{fqn}"
+      def minitest_test_location(test)
+        begin
+          test_name = get_test_name(test)
+          location = test.class.instance_method(test_name).source_location
+          return "file://#{location[0]}:#{location[1]}"
+        rescue
+          fqn = get_fqn_from_test(test)
+          if fqn.nil?
+            return nil
+          else
+            return "ruby_minitest_qn://#{fqn}"
+          end
+        end
       end
 
       def with_result(result)

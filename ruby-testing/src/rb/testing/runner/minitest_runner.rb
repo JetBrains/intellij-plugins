@@ -6,7 +6,7 @@ if ARGV.length > 0
   file = ARGV.shift
   require file
 else
-  throw Exception("A test file must be provided")
+   raise Exception.new("A test file must be provided")
 end
 
 
