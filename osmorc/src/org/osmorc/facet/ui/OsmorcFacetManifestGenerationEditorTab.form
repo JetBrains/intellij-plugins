@@ -30,7 +30,7 @@
         <clientProperties>
           <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory$PlainSmallWithIndent"/>
         </clientProperties>
-        <border type="none" title="Bundle Settings"/>
+        <border type="none" title-resource-bundle="messages/OsmorcBundle" title-key="facet.form.manifest.group.bundle"/>
         <children>
           <component id="bc774" class="javax.swing.JLabel">
             <constraints>
@@ -39,7 +39,7 @@
             </constraints>
             <properties>
               <labelFor value="6c86c"/>
-              <text value="&amp;Symbolic name:"/>
+              <text resource-bundle="messages/OsmorcBundle" key="facet.form.manifest.bsn"/>
             </properties>
           </component>
           <component id="6c86c" class="javax.swing.JTextField" binding="myBundleSymbolicName">
@@ -57,7 +57,7 @@
               <forms/>
             </constraints>
             <properties>
-              <text value="Bundle &amp;activator:"/>
+              <text resource-bundle="messages/OsmorcBundle" key="facet.form.manifest.activator"/>
             </properties>
           </component>
           <component id="a0ab1" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="myBundleActivator">
@@ -74,7 +74,7 @@
             </constraints>
             <properties>
               <labelFor value="6949d"/>
-              <text value="&amp;Bundle version:"/>
+              <text resource-bundle="messages/OsmorcBundle" key="facet.form.manifest.version"/>
             </properties>
           </component>
           <component id="6949d" class="javax.swing.JTextField" binding="myBundleVersion">
@@ -92,7 +92,7 @@
               <forms defaultalign-vert="false"/>
             </constraints>
             <properties>
-              <text value="Additional &amp;properties:"/>
+              <text resource-bundle="messages/OsmorcBundle" key="facet.form.manifest.additional"/>
               <verticalAlignment value="0"/>
               <verticalTextPosition value="0"/>
             </properties>

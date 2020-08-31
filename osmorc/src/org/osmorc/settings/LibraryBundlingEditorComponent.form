@@ -46,7 +46,7 @@
                 </constraints>
                 <properties>
                   <labelFor value="4e693"/>
-                  <text value="Library name pattern:"/>
+                  <text resource-bundle="messages/OsmorcBundle" key="settings.app.form.name.pattern"/>
                 </properties>
               </component>
               <component id="4e693" class="javax.swing.JTextField" binding="myLibraryRegex">
@@ -65,7 +65,7 @@
                   <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="Manifest entries:"/>
+                  <text resource-bundle="messages/OsmorcBundle" key="settings.app.form.mf.entries"/>
                 </properties>
               </component>
               <component id="c9de1" class="org.osmorc.settings.ManifestEditor" binding="myManifestEditor" custom-create="true">
@@ -81,7 +81,7 @@
                   <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="Never bundle"/>
+                  <text resource-bundle="messages/OsmorcBundle" key="settings.app.form.ignore"/>
                 </properties>
               </component>
               <component id="23f32" class="javax.swing.JCheckBox" binding="myStopAfterThisRule">
@@ -89,7 +89,7 @@
                   <grid row="4" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="Process no further rules"/>
+                  <text resource-bundle="messages/OsmorcBundle" key="settings.app.form.abort"/>
                 </properties>
               </component>
               <vspacer id="60b5f">

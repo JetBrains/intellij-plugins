@@ -16,7 +16,7 @@
         </constraints>
         <properties>
           <labelFor value="81edb"/>
-          <text value="&amp;Home directory:" noi18n="true"/>
+          <text resource-bundle="messages/OsmorcBundle" key="framework.form.path"/>
         </properties>
       </component>
       <component id="81edb" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="myBaseFolderChooser">
@@ -31,7 +31,7 @@
         </constraints>
         <properties>
           <labelFor value="49465"/>
-          <text value="&amp;Name:" noi18n="true"/>
+          <text resource-bundle="messages/OsmorcBundle" key="framework.form.name"/>
         </properties>
       </component>
       <component id="49465" class="javax.swing.JTextField" binding="myNameField">
@@ -52,7 +52,7 @@
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="&amp;Version:"/>
+          <text resource-bundle="messages/OsmorcBundle" key="framework.form.version"/>
         </properties>
       </component>
       <component id="d453e" class="com.intellij.ui.components.JBLabel" binding="myVersionLabel">
