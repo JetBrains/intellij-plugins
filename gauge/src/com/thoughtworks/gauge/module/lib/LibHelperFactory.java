@@ -22,7 +22,14 @@ import com.thoughtworks.gauge.util.GaugeUtil;
 import static com.thoughtworks.gauge.GaugeModuleListener.isGaugeModule;
 
 public final class LibHelperFactory {
-  private static final LibHelper DEFAULT = () -> {
+  private static final LibHelper DEFAULT = new LibHelper() {
+    @Override
+    public void init() {
+    }
+
+    @Override
+    public void checkDeps() {
+    }
   };
 
   // Check if it is a maven module first, java deps will be added via maven so project libs dont need to be changed

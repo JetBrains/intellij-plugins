@@ -28,13 +28,16 @@ public abstract class AbstractLibHelper implements LibHelper {
 
   public AbstractLibHelper(Module module) {
     this.module = module;
-    if (isGaugeProject(module)) {
-      if (!GaugeUtil.isMavenModule(module) && !GaugeUtil.isGradleModule(module)) {
-        GaugeModuleListener.makeGaugeModuleType(module);
-      }
-      if (Gauge.getGaugeService(module, true) == null) {
-        GaugeModuleListener.createGaugeService(module);
-      }
+
+    if (isGaugeProject(module) && !GaugeUtil.isMavenModule(module) && !GaugeUtil.isGradleModule(module)) { // legacy module
+      GaugeModuleListener.makeGaugeModuleType(module);
+    }
+  }
+
+  @Override
+  public void init() {
+    if (isGaugeProject(module) && Gauge.getGaugeService(module, true) == null) {
+      GaugeModuleListener.createGaugeService(module);
     }
   }
 

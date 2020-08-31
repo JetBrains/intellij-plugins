@@ -8,6 +8,9 @@
   <depends>com.intellij.properties</depends>
   <depends>com.intellij.modules.json</depends>
 
+  <depends optional="true" config-file="with-gradle.xml">org.jetbrains.plugins.gradle</depends>
+  <depends optional="true" config-file="with-maven.xml">org.jetbrains.idea.maven</depends>
+
   <description><![CDATA[
     Plugin for writing <a href="http://gauge.org">Gauge tests</a> (originally developed by Thoughtworks Inc.).
     Supports only steps written in Java.
@@ -115,6 +118,11 @@
               topic="com.intellij.openapi.project.ModuleListener"/>
   </projectListeners>
 
+  <extensionPoints>
+    <extensionPoint name="moduleImporter" dynamic="true"
+                    interface="com.thoughtworks.gauge.wizard.GaugeModuleImporter"/>
+  </extensionPoints>
+
   <extensions defaultExtensionNs="com.intellij">
     <fileType name="Specification" language="Specification" fieldName="INSTANCE"
               implementationClass="com.thoughtworks.gauge.language.SpecFileType"
@@ -145,9 +153,11 @@
     <quoteHandler fileType="Specification" className="com.thoughtworks.gauge.autocomplete.ArgQuoteHandler"/>
     <lang.braceMatcher language="Specification"
                        implementationClass="com.thoughtworks.gauge.autocomplete.PairMatcher"/>
+
     <moduleType id="Gauge_Module" implementationClass="com.thoughtworks.gauge.module.GaugeModuleType"/>
     <moduleConfigurationEditorProvider
       implementation="com.thoughtworks.gauge.module.GaugeModuleConfigurationProvider"/>
+
     <configurationType implementation="com.thoughtworks.gauge.execution.GaugeRunTaskConfigurationType"/>
     <programRunner implementation="com.thoughtworks.gauge.execution.GaugeTestRunner"/>
     <runConfigurationProducer implementation="com.thoughtworks.gauge.execution.GaugeExecutionProducer"/>
@@ -210,13 +220,11 @@
 
     <properties.implicitPropertyUsageProvider
       implementation="com.thoughtworks.gauge.properties.GaugeImplicitPropertyUsageProvider"/>
-    <notificationGroup id="Error" displayType="BALLOON"/>
-    <notificationGroup id="Gauge Exception" displayType="BALLOON"/>
+
+    <moduleBuilder builderClass="com.thoughtworks.gauge.wizard.GaugeModuleBuilder"/>
+
+    <notificationGroup id="Gauge Error" displayType="BALLOON"/>
     <notificationGroup id="Gauge" displayType="BALLOON"/>
-    <notificationGroup id="Spec Formatting" displayType="BALLOON"/>
-    <notificationGroup id="Specification Preview" displayType="BALLOON"/>
-    <notificationGroup id="Installing" displayType="BALLOON"/>
-    <notificationGroup id="Successful" displayType="BALLOON"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript.JsonSchema">

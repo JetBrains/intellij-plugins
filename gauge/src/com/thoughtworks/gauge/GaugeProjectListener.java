@@ -22,6 +22,9 @@ import com.intellij.notification.Notifications;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManagerListener;
 import com.thoughtworks.gauge.core.Gauge;
@@ -39,17 +42,24 @@ public final class GaugeProjectListener implements ProjectManagerListener {
   @Override
   public void projectOpened(@NotNull Project project) {
     if (isGaugeProjectDir(new File(project.getBasePath()))) {
-      if (!GaugeVersion.isGreaterOrEqual(MIN_GAUGE_VERSION, false)) { // todo run this asynchronously
-        String version = GaugeVersion.getVersion(false).version;
-        String notificationTitle = GaugeBundle.message("notification.title.unsupported.gauge.version", version);
-        String errorMessage = GaugeBundle.message("dialog.message.gauge.intellij.plugin.only.works.with.version", MIN_GAUGE_VERSION);
+      ProgressManager.getInstance().run(new Task.Backgroundable(project, GaugeBundle.message("gauge.check.supported.version"), false) {
+        @Override
+        public void run(@NotNull ProgressIndicator indicator) {
+          if (!GaugeVersion.isGreaterOrEqual(MIN_GAUGE_VERSION, true)) {
+            String version = GaugeVersion.getVersion(false).version;
+            if (version == null) return;
 
-        LOG.warn(String.format("Unsupported Gauge version %s\n%s", version, errorMessage));
+            String notificationTitle = GaugeBundle.message("notification.title.unsupported.gauge.version", version);
+            String errorMessage = GaugeBundle.message("dialog.message.gauge.intellij.plugin.only.works.with.version", MIN_GAUGE_VERSION);
 
-        Notification notification =
-          new Notification(NotificationGroups.GAUGE_ERROR_GROUP, notificationTitle, errorMessage, NotificationType.ERROR);
-        Notifications.Bus.notify(notification, project);
-      }
+            LOG.warn(String.format("Unsupported Gauge version %s\n%s", version, errorMessage));
+
+            Notification notification =
+              new Notification(NotificationGroups.GAUGE_ERROR_GROUP, notificationTitle, errorMessage, NotificationType.ERROR);
+            Notifications.Bus.notify(notification, project);
+          }
+        }
+      });
     }
   }
 

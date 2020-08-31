@@ -35,9 +35,24 @@ import static com.thoughtworks.gauge.util.GaugeUtil.getGaugeSettings;
 
 public final class GaugeVersion {
   private static final Logger LOG = Logger.getInstance(GaugeVersion.class);
-  private static GaugeVersionInfo versionInfo = getVersion(true);
+
+  private static volatile GaugeVersionInfo versionInfo = null;
 
   public static GaugeVersionInfo getVersion(boolean update) {
+    if (versionInfo == null) {
+      try {
+        versionInfo = getVersionInternal(update);
+      } catch (Exception ignored) {
+      }
+      if (versionInfo == null) {
+        versionInfo = new GaugeVersionInfo();
+      }
+      return versionInfo;
+    }
+    return getVersionInternal(update);
+  }
+
+  static GaugeVersionInfo getVersionInternal(boolean update) {
     if (!update) return versionInfo;
     GaugeVersionInfo gaugeVersionInfo = new GaugeVersionInfo();
     try {
@@ -68,14 +83,13 @@ public final class GaugeVersion {
       }
     }
     catch (InterruptedException | IOException | GaugeNotFoundException e) {
-      LOG.error("Unable to start Gauge Intellij plugin", e.getMessage());
+      LOG.warn("Unable to start Gauge " + e.getMessage());
 
       Notification notification = new Notification(NotificationGroups.GAUGE_ERROR_GROUP,
                                                    GaugeBundle.message("notification.title.unable.to.start.gauge.intellij.plugin"),
                                                    e.getMessage(), NotificationType.ERROR);
       Notifications.Bus.notify(notification);
     }
-    versionInfo = gaugeVersionInfo;
     return gaugeVersionInfo;
   }
 

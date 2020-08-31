@@ -17,5 +17,12 @@
 package com.thoughtworks.gauge.module.lib;
 
 public interface LibHelper {
+  /**
+   * Initializes heavy connection to Gauge CLI process.
+   */
+  void init();
+  /**
+   * Modifies module libraries if Gauge Library is missing.
+   */
   void checkDeps();
 }

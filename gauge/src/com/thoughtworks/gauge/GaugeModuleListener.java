@@ -16,8 +16,14 @@
 
 package com.thoughtworks.gauge;
 
+import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.progress.impl.BackgroundableProcessIndicator;
 import com.intellij.openapi.project.ModuleListener;
 import com.intellij.openapi.project.Project;
 import com.thoughtworks.gauge.connection.GaugeConnection;
@@ -26,6 +32,7 @@ import com.thoughtworks.gauge.core.GaugeExceptionHandler;
 import com.thoughtworks.gauge.core.GaugeService;
 import com.thoughtworks.gauge.exception.GaugeNotFoundException;
 import com.thoughtworks.gauge.module.GaugeModuleType;
+import com.thoughtworks.gauge.module.lib.LibHelper;
 import com.thoughtworks.gauge.module.lib.LibHelperFactory;
 import com.thoughtworks.gauge.settings.GaugeSettingsModel;
 import com.thoughtworks.gauge.util.GaugeUtil;
@@ -35,6 +42,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
 
+import static com.intellij.openapi.progress.PerformInBackgroundOption.ALWAYS_BACKGROUND;
 import static com.thoughtworks.gauge.util.GaugeUtil.*;
 
 public final class GaugeModuleListener implements ModuleListener {
@@ -42,7 +50,30 @@ public final class GaugeModuleListener implements ModuleListener {
 
   @Override
   public void moduleAdded(@NotNull Project project, @NotNull Module module) {
-    new LibHelperFactory().helperFor(module).checkDeps();
+    if (module.getUserData(ExternalSystemDataKeys.NEWLY_CREATED_PROJECT) != null) return;
+
+    LibHelper helper = new LibHelperFactory().helperFor(module);
+
+    Task.Backgroundable task = new Task.Backgroundable(project, GaugeBundle.message("gauge.connecting"), false, ALWAYS_BACKGROUND) {
+      @Override
+      public void run(@NotNull ProgressIndicator indicator) {
+        if (module.isDisposed()) return;
+        helper.init();
+
+        WriteCommandAction.runWriteCommandAction(project, GaugeBundle.message("gauge.check.dependencies"), GaugeBundle.GAUGE, () -> {
+          if (module.isDisposed()) return;
+
+          helper.checkDeps();
+        });
+      }
+    };
+
+    ProgressManager.getInstance().runProcessWithProgressAsynchronously(task, new BackgroundableProcessIndicator(task));
+  }
+
+  @Override
+  public void moduleRemoved(@NotNull Project project, @NotNull Module module) {
+    Gauge.dropModule(module);
   }
 
   /**

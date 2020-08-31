@@ -19,7 +19,7 @@ package com.thoughtworks.gauge.autocomplete;
 import com.intellij.codeInsight.editorActions.SimpleTokenSetQuoteHandler;
 import com.thoughtworks.gauge.language.token.SpecTokenTypes;
 
-final class ArgQuoteHandler extends SimpleTokenSetQuoteHandler {
+public final class ArgQuoteHandler extends SimpleTokenSetQuoteHandler {
   ArgQuoteHandler() {
     super(SpecTokenTypes.ARG_START);
   }

@@ -17,6 +17,7 @@
 package com.thoughtworks.gauge.module;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.util.projectWizard.JavaModuleBuilder;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleTypeManager;
 import com.thoughtworks.gauge.GaugeBundle;
@@ -24,7 +25,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public final class GaugeModuleType extends ModuleType<GaugeModuleBuilder> {
+public final class GaugeModuleType extends ModuleType<JavaModuleBuilder> {
+  // legacy module type, kept for compatibility with old projects
   public static final String MODULE_TYPE_ID = "Gauge_Module";
 
   public GaugeModuleType() {
@@ -37,8 +39,8 @@ public final class GaugeModuleType extends ModuleType<GaugeModuleBuilder> {
 
   @NotNull
   @Override
-  public GaugeModuleBuilder createModuleBuilder() {
-    return new GaugeModuleBuilder();
+  public JavaModuleBuilder createModuleBuilder() {
+    return new JavaModuleBuilder();
   }
 
   @NotNull

@@ -26,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public final class Gauge {
   private static final Map<Module, GaugeService> gaugeProjectHandle = new ConcurrentHashMap<>();
-  private static final HashMap<String, HashSet<Module>> linkedModulesMap = new HashMap<>();
+  private static final Map<String, HashSet<Module>> linkedModulesMap = new ConcurrentHashMap<>();
   private static final Map<Module, ReferenceCache> moduleReferenceCaches = new ConcurrentHashMap<>();
 
   public static void addModule(Module module, GaugeService gaugeService) {
@@ -99,5 +99,12 @@ public final class Gauge {
     linkedModulesMap.remove(value);
     GaugeService service = gaugeProjectHandle.get(module);
     if (service != null && service.getGaugeProcess().isAlive()) service.getGaugeProcess().destroy();
+  }
+
+  public static void dropModule(Module module) {
+    gaugeProjectHandle.remove(module);
+    moduleReferenceCaches.remove(module);
+    String value = getProjectGroupValue(module);
+    linkedModulesMap.remove(value);
   }
 }

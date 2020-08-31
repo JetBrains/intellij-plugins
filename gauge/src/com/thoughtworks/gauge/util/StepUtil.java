@@ -191,6 +191,8 @@ public final class StepUtil {
     if (step != null) {
       Collection<PsiMethod> methods = new ArrayList<>();
       for (Module m : Gauge.getSubModules(module)) {
+        if (m.isDisposed()) continue;
+
         methods.addAll(
           AnnotatedElementsSearch.searchPsiMethods(step, GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(m, true)).findAll());
       }
