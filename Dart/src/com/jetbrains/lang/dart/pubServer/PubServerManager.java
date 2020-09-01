@@ -1,9 +1,8 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.pubServer;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -23,9 +22,8 @@ import org.jetbrains.builtInWebServer.ConsoleManager;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
-public class PubServerManager implements Disposable {
+public final class PubServerManager implements Disposable {
   private static final Logger LOG = Logger.getInstance(PubServerManager.class);
 
   private final Project project;
@@ -33,13 +31,7 @@ public class PubServerManager implements Disposable {
 
   private String myServedSdkVersion;
 
-  private final LoadingCache<VirtualFile, PubServerService> myServedDirToPubService =
-    CacheBuilder.newBuilder().build(new CacheLoader<VirtualFile, PubServerService>() {
-      @Override
-      public PubServerService load(@NotNull VirtualFile key) throws Exception {
-        return new PubServerService(project, consoleManager);
-      }
-    });
+  private final LoadingCache<VirtualFile, PubServerService> myServedDirToPubService;
 
   @NotNull
   public static PubServerManager getInstance(@NotNull Project project) {
@@ -78,6 +70,7 @@ public class PubServerManager implements Disposable {
                                 }
                               },
                               this);
+    myServedDirToPubService = Caffeine.newBuilder().build(key -> new PubServerService(this.project, consoleManager));
   }
 
   private void pubspecYamlChanged(@NotNull final VirtualFile file) {
@@ -109,7 +102,7 @@ public class PubServerManager implements Disposable {
       // servedDir - web or test, direct child of directory containing pubspec.yaml
       myServedDirToPubService.get(servedDir).sendToPubServer(clientChannel, clientRequest, extraHeaders, servedDir, pathForPubServer);
     }
-    catch (ExecutionException e) {
+    catch (Exception e) {
       LOG.error(e);
     }
   }
