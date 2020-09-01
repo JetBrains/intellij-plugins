@@ -9,6 +9,8 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
@@ -28,6 +30,7 @@ import org.angular2.entities.metadata.psi.Angular2MetadataModule;
 import org.angular2.entities.metadata.psi.Angular2MetadataPipe;
 import org.angular2.entities.source.*;
 import org.angular2.index.*;
+import org.angular2.lang.selector.Angular2DirectiveSimpleSelector;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,6 +38,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.intellij.psi.util.CachedValueProvider.Result.create;
 import static com.intellij.util.ObjectUtils.tryCast;
@@ -137,15 +141,22 @@ public class Angular2EntitiesProvider {
 
   public static @NotNull Map<String, List<Angular2Directive>> getAllElementDirectives(@NotNull Project project) {
     return CachedValuesManager.getManager(project).getCachedValue(project, () -> create(
-      StreamEx.of(AngularIndexUtil.getAllKeys(Angular2SourceDirectiveIndex.KEY, project))
-        .append(AngularIndexUtil.getAllKeys(Angular2MetadataDirectiveIndex.KEY, project))
-        .append(AngularIndexUtil.getAllKeys(Angular2IvyDirectiveIndex.KEY, project))
-        .map(name -> isElementDirectiveIndexName(name) ? getElementName(name) : null)
-        .nonNull()
-        .distinct()
-        .collect(toMap(Function.identity(),
-                       name -> findDirectivesCandidates(
-                         project, getElementDirectiveIndexName(name)))),
+      StreamEx.of(findDirectivesCandidates(project, getAnyElementDirectiveIndexName()))
+        .flatCollection(directive -> {
+          List<Pair<String, Angular2Directive>> result = new SmartList<>();
+          Consumer<Angular2DirectiveSimpleSelector> selectorProcessor = sel -> {
+            String elementName = sel.getElementName();
+            if (!StringUtil.isEmpty(elementName) && !"*".equals(elementName)) {
+              result.add(Pair.pair(elementName, directive));
+            }
+          };
+          for (Angular2DirectiveSimpleSelector sel : directive.getSelector().getSimpleSelectors()) {
+            selectorProcessor.accept(sel);
+            sel.getNotSelectors().forEach(selectorProcessor);
+          }
+          return result;
+        })
+        .groupingBy(p -> p.first, Collectors.mapping(p -> p.second, Collectors.toList())),
       PsiModificationTracker.MODIFICATION_COUNT)
     );
   }

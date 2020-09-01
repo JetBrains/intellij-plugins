@@ -53,6 +53,8 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.*;
 
+import static org.angularjs.index.AngularJSDirectivesSupport.getDirectiveIndexKeys;
+
 /**
  * @author Dennis.Ushakov
  */
@@ -379,12 +381,17 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   public boolean indexImplicitElement(@NotNull JSImplicitElementStructure element, @Nullable IndexSink sink) {
     final String userID = element.getUserString();
     final StubIndexKey<String, JSImplicitElementProvider> index = userID != null ? INDEXES.get(userID) : null;
-    if (index != null) {
-      if (sink != null) {
-        sink.occurrence(index, element.getName());
-        if (index != AngularSymbolIndex.KEY) {
-          sink.occurrence(AngularSymbolIndex.KEY, element.getName());
+    if (index != null && sink != null) {
+      if (index == AngularDirectivesIndex.KEY
+          || index == AngularDirectivesDocIndex.KEY) {
+        for (String indexKey: getDirectiveIndexKeys(element)) {
+          sink.occurrence(index, indexKey);
         }
+      }  else {
+        sink.occurrence(index, element.getName());
+      }
+      if (index != AngularSymbolIndex.KEY) {
+        sink.occurrence(AngularSymbolIndex.KEY, element.getName());
       }
     }
     return false;
@@ -553,7 +560,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     final Ref<String> restrict = Ref.create(defaultRestrictions);
     final PsiElement function = findFunction(element);
     if (function != null) {
-      function.accept(new JSRecursiveElementVisitor() {
+      function.accept(new JSRecursiveWalkingElementVisitor() {
         @Override
         public void visitJSProperty(JSProperty node) {
           final String name = node.getName();
@@ -617,7 +624,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
 
       if (qualifier == null) return null;
 
-      final String command = callee.getReferencedName();
+      final String command = callee.getReferenceName();
 
       if (INJECTABLE_METHODS.contains(command)) {
         JSExpression[] arguments = call.getArguments();
@@ -698,7 +705,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   }
 
   private PairProcessor<JSProperty, JSElementIndexingData> createRouterParametersProcessor() {
-    return new PairProcessor<JSProperty, JSElementIndexingData>() {
+    return new PairProcessor<>() {
       @Override
       public boolean process(JSProperty property, JSElementIndexingData outData) {
         if (!(property.getValue() instanceof JSLiteralExpression)) return true;

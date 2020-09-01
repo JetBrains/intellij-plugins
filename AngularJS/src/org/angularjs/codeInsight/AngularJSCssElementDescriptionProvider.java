@@ -9,14 +9,15 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.css.CssElementDescriptorProvider;
 import com.intellij.psi.css.CssSimpleSelector;
-import com.intellij.util.ArrayUtilRt;
 import com.intellij.xml.util.HtmlUtil;
+import one.util.streamex.StreamEx;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.LinkedList;
-import java.util.List;
+import static com.intellij.util.ArrayUtilRt.EMPTY_STRING_ARRAY;
+import static com.intellij.util.ObjectUtils.doIfNotNull;
+import static org.angularjs.index.AngularJSDirectivesSupport.findTagDirectives;
 
 public class AngularJSCssElementDescriptionProvider extends CssElementDescriptorProvider {
 
@@ -38,12 +39,10 @@ public class AngularJSCssElementDescriptionProvider extends CssElementDescriptor
 
   @Override
   public String @NotNull [] getSimpleSelectors(@NotNull PsiElement context) {
-    final List<String> result = new LinkedList<>();
-    DirectiveUtil.processTagDirectives(context.getProject(), proxy -> {
-      result.add(DirectiveUtil.getAttributeName(proxy.getName()));
-      return true;
-    });
-    return ArrayUtilRt.toStringArray(result);
+    return StreamEx.of(findTagDirectives(context.getProject(), null))
+      .map(directive -> doIfNotNull(directive.getName(), DirectiveUtil::getAttributeName))
+      .nonNull()
+      .toArray(EMPTY_STRING_ARRAY);
   }
 
   @Override

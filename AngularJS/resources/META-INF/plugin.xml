@@ -291,7 +291,7 @@
 
   <extensions defaultExtensionNs="JavaScript">
     <intentionAndInspectionFilter language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSInspectionFilter"/>
-    <frameworkIndexingHandler implementation="org.angularjs.index.AngularJSIndexingHandler" version="65"/>
+    <frameworkIndexingHandler implementation="org.angularjs.index.AngularJSIndexingHandler" version="66"/>
     <dialectSpecificHandlersFactory language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSSpecificHandlersFactory"/>
     <analysisHandlersFactory language="AngularJS" implementationClass="org.angularjs.inspections.AngularJSAnalysisHandlersFactory"/>
 
@@ -299,7 +299,7 @@
     <dialectSpecificHandlersFactory language="Angular2Html" implementationClass="org.angular2.codeInsight.Angular2SpecificHandlersFactory"/>
 
     <!-- Angular 2 Expression language contributions -->
-    <frameworkIndexingHandler implementation="org.angular2.index.Angular2IndexingHandler" version="12"/>
+    <frameworkIndexingHandler implementation="org.angular2.index.Angular2IndexingHandler" version="13"/>
     <elementScopeProvider implementation="org.angular2.codeInsight.Angular2ResolveScopeProvider"/>
     <dialectSpecificHandlersFactory language="Angular2" implementationClass="org.angular2.codeInsight.Angular2SpecificHandlersFactory"/>
     <analysisHandlersFactory language="Angular2" implementationClass="org.angular2.inspections.Angular2AnalysisHandlersFactory"/>
