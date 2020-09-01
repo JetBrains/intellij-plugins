@@ -49,11 +49,6 @@ public final class JpsFlexProjectLevelCompilerOptionsExtension extends JpsCompos
       public void loadExtension(@NotNull final JpsProject project, @NotNull final Element componentTag) {
         JpsFlexProjectLevelCompilerOptionsExtension.loadExtension(project, componentTag);
       }
-
-      @Override
-      public void saveExtension(@NotNull final JpsProject project, @NotNull final Element componentTag) {
-        JpsFlexProjectLevelCompilerOptionsExtension.saveExtension(project, componentTag);
-      }
     };
   }
 
@@ -65,11 +60,6 @@ public final class JpsFlexProjectLevelCompilerOptionsExtension extends JpsCompos
       @Override
       public void loadExtension(@NotNull final JpsProject project, @NotNull final Element componentTag) {
         JpsFlexProjectLevelCompilerOptionsExtension.loadExtension(project, componentTag);
-      }
-
-      @Override
-      public void saveExtension(@NotNull final JpsProject project, @NotNull final Element componentTag) {
-        JpsFlexProjectLevelCompilerOptionsExtension.saveExtension(project, componentTag);
       }
     };
   }
@@ -85,13 +75,5 @@ public final class JpsFlexProjectLevelCompilerOptionsExtension extends JpsCompos
     }
 
     project.getContainer().setChild(ROLE, extension);
-  }
-
-  private static void saveExtension(final JpsProject project, final Element componentTag) {
-    final JpsFlexProjectLevelCompilerOptionsExtension extension = project.getContainer().getChild(ROLE);
-    if (extension != null) {
-      final JpsFlexCompilerOptionsImpl compilerOptions = (JpsFlexCompilerOptionsImpl)extension.getProjectLevelCompilerOptions();
-      XmlSerializer.serializeInto(compilerOptions.getState(), componentTag);
-    }
   }
 }

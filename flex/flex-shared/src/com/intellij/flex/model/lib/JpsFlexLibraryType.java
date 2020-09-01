@@ -22,14 +22,6 @@ public class JpsFlexLibraryType extends JpsElementTypeBase<JpsSimpleElement<JpsF
         final String libraryId = propertiesElement == null ? null : propertiesElement.getAttributeValue(ID_ATTR);
         return JpsElementFactory.getInstance().createSimpleElement(new JpsFlexLibraryProperties(libraryId));
       }
-
-      @Override
-      public void saveProperties(final JpsSimpleElement<JpsFlexLibraryProperties> propertiesElement, final Element element) {
-        final String libraryId = propertiesElement.getData().getLibraryId();
-        if (libraryId != null) {
-          element.setAttribute(ID_ATTR, libraryId);
-        }
-      }
     };
   }
 }

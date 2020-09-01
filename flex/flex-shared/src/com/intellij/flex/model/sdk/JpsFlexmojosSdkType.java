@@ -53,27 +53,6 @@ public class JpsFlexmojosSdkType extends JpsSdkType<JpsSimpleElement<JpsFlexmojo
         final JpsFlexmojosSdkProperties properties = new JpsFlexmojosSdkProperties(flexCompilerClasspath, adlPath, airRuntimePath);
         return JpsElementFactory.getInstance().createSimpleElement(properties);
       }
-
-      @Override
-      public void saveProperties(@NotNull final JpsSimpleElement<JpsFlexmojosSdkProperties> propertiesElement,
-                                 @NotNull final Element element) {
-        final JpsFlexmojosSdkProperties properties = propertiesElement.getData();
-
-        final Element compilerClasspathElement = new Element(COMPILER_CLASSPATH_ELEMENT_NAME);
-        for (final String classpathEntry : properties.getFlexCompilerClasspath()) {
-          final Element classpathEntryElement = new Element(CLASSPATH_ENTRY_ELEMENT_NAME);
-          classpathEntryElement.setText(classpathEntry);
-          compilerClasspathElement.addContent(classpathEntryElement);
-        }
-        element.addContent(compilerClasspathElement);
-
-        final Element adlPathElement = new Element(ADL_PATH_ELEMENT_NAME);
-        adlPathElement.setText(properties.getAdlPath());
-        element.addContent(adlPathElement);
-        final Element airRuntimePathElement = new Element(AIR_RUNTIME_PATH_ELEMENT_NAME);
-        airRuntimePathElement.setText(properties.getAirRuntimePath());
-        element.addContent(airRuntimePathElement);
-      }
     };
   }
 }
