@@ -3,7 +3,7 @@ package training.learn.lesson.kimpl
 
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.invokeLater
-import org.jetbrains.annotations.RequiresEdt
+import com.intellij.util.concurrency.annotations.RequiresEdt
 import training.commands.kotlin.TaskContext
 import training.commands.kotlin.TaskRuntimeContext
 
