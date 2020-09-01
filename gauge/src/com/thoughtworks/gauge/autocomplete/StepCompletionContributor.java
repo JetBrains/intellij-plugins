@@ -33,9 +33,9 @@ import com.thoughtworks.gauge.language.token.SpecTokenTypes;
 
 import java.util.List;
 
-final class StepCompletionContributor extends CompletionContributor {
+public final class StepCompletionContributor extends CompletionContributor {
 
-  StepCompletionContributor() {
+  public StepCompletionContributor() {
     extend(CompletionType.BASIC, PlatformPatterns.psiElement(SpecTokenTypes.STEP).withLanguage(Specification.INSTANCE),
            new StepCompletionProvider());
     extend(CompletionType.BASIC, PlatformPatterns.psiElement(SpecTokenTypes.DYNAMIC_ARG).withLanguage(Specification.INSTANCE),

@@ -52,9 +52,7 @@ import static com.thoughtworks.gauge.autocomplete.StepCompletionContributor.getP
 import static com.thoughtworks.gauge.language.psi.SpecPsiImplUtil.getStepValueFor;
 import static com.thoughtworks.gauge.util.StepUtil.getGaugeStepAnnotationValues;
 
-final class StepCompletionProvider extends CompletionProvider<CompletionParameters> {
-  private static final Logger LOG = Logger.getInstance(StepCompletionProvider.class);
-
+public final class StepCompletionProvider extends CompletionProvider<CompletionParameters> {
   public static final String STEP = "step";
   public static final String CONCEPT = "concept";
   private boolean isConcept = false;
@@ -152,7 +150,7 @@ final class StepCompletionProvider extends CompletionProvider<CompletionParamete
       }
     }
     catch (IOException ex) {
-      LOG.debug(ex);
+      Logger.getInstance(StepCompletionProvider.class).debug(ex);
     }
     return steps.values();
   }

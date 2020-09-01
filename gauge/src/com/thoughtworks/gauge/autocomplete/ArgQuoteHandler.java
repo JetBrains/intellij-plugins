@@ -20,7 +20,7 @@ import com.intellij.codeInsight.editorActions.SimpleTokenSetQuoteHandler;
 import com.thoughtworks.gauge.language.token.SpecTokenTypes;
 
 public final class ArgQuoteHandler extends SimpleTokenSetQuoteHandler {
-  ArgQuoteHandler() {
+  public ArgQuoteHandler() {
     super(SpecTokenTypes.ARG_START);
   }
 }

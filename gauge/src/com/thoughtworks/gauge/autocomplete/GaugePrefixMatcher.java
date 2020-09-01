@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 public final class GaugePrefixMatcher extends PrefixMatcher {
   private final Pattern regexPattern;
 
-  protected GaugePrefixMatcher(String prefix) {
+  public GaugePrefixMatcher(String prefix) {
     super(prefix);
     regexPattern = Pattern.compile(toRegex(this.getPrefix()), Pattern.CASE_INSENSITIVE);
   }
