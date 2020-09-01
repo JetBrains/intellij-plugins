@@ -23,6 +23,7 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.JDOMUtil;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.xmlb.annotations.Property;
 import com.intellij.util.xmlb.annotations.Tag;
@@ -128,7 +129,7 @@ public class CfmlProjectConfiguration implements PersistentStateComponent<CfmlPr
 
 
     @Tag("language_level")
-    public String getLanguageLevel() {
+    public @NlsSafe String getLanguageLevel() {
       return myLanguageLevel;
     }
 

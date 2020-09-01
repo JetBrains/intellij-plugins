@@ -74,7 +74,7 @@ public class CfmlRunConfiguration extends RunConfigurationBase<Element> implemen
       new URL(url);
     }
     catch (MalformedURLException ignored) {
-      throw new RuntimeConfigurationError("Incorrect URL");
+      throw new RuntimeConfigurationError("Incorrect URL"); //NON-NLS
     }
   }
 

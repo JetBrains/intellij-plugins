@@ -4,6 +4,7 @@ package com.intellij.coldFusion.model.formatter;
 
 import com.intellij.application.options.IndentOptionsEditor;
 import com.intellij.application.options.SmartIndentOptionsEditor;
+import com.intellij.coldFusion.CfmlBundle;
 import com.intellij.coldFusion.model.CfmlLanguage;
 import com.intellij.lang.Language;
 import com.intellij.psi.codeStyle.CodeStyleSettingsCustomizable;
@@ -75,7 +76,7 @@ public class CfmlLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSett
                                    "SPACE_BEFORE_SEMICOLON",
                                    "SPACE_AROUND_UNARY_OPERATOR"
       );
-      consumer.showCustomOption(CfmlCodeStyleSettings.class, "CONCAT_SPACES", "Concatenation (&)",
+      consumer.showCustomOption(CfmlCodeStyleSettings.class, "CONCAT_SPACES", CfmlBundle.message("settings.code.style.concatenation"),
                                 getInstance().SPACES_AROUND_OPERATORS);
     }
     else if (settingsType == SettingsType.BLANK_LINES_SETTINGS) {

@@ -101,7 +101,7 @@ public class CfmlUnitRemoteTestsRunner {
         final VirtualFile componentFile =
           LocalFileSystem.getInstance().refreshAndFindFileByPath(params.getPath());
         if (componentFile == null) {
-          throw new ExecutionException("File " + params.getPath() + " not found");
+          throw new ExecutionException("File " + params.getPath() + " not found"); //NON-NLS
         }
 
         // creating script files

@@ -126,7 +126,7 @@ public class CfmlUnitRunConfiguration extends LocatableConfigurationBase {
         }
         final PsiFile psiFile = PsiManager.getInstance(getProject()).findFile(file);
         if (!(psiFile instanceof CfmlFile)) {
-          throw new RuntimeConfigurationException("Incorrect file type");
+          throw new RuntimeConfigurationException("Incorrect file type"); //NON-NLS
         }
         /*
         final CfmlFile cfmlFile = (CfmlFile)psiFile;

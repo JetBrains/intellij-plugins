@@ -20,11 +20,13 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 public class CfmlSharpSurrounder implements Surrounder {
 
   @Override
+  @NonNls
   public String getTemplateDescription() {
     return "#expr#";
   }
