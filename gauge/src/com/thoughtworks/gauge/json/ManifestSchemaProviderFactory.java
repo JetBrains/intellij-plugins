@@ -25,6 +25,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.jsonSchema.extension.JsonSchemaFileProvider;
 import com.jetbrains.jsonSchema.extension.JsonSchemaProviderFactory;
 import com.jetbrains.jsonSchema.extension.SchemaType;
+import com.thoughtworks.gauge.GaugeBundle;
 import com.thoughtworks.gauge.util.GaugeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -56,7 +57,7 @@ final class ManifestSchemaProviderFactory implements JsonSchemaProviderFactory {
 
     @Override
     public @NotNull String getName() {
-      return "Gauge 1.0 Manifest";
+      return GaugeBundle.message("gauge.manifest.json.schema");
     }
 
     @Override
