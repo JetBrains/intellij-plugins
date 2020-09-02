@@ -2,7 +2,6 @@
 package org.angular2.codeInsight;
 
 import com.intellij.lang.javascript.ecmascript6.TypeScriptTypeEvaluator;
-import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSThisExpression;
 import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
@@ -48,14 +47,6 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
       return true;
     }
     super.addTypeFromResolveResult(referenceName, resolveResult);
-    return true;
-  }
-
-  @Override
-  protected boolean processFunction(@NotNull JSFunction function) {
-    if (!Angular2LibrariesHacks.hackSlicePipeType(this, this.myContext, function)) {
-      super.processFunction(function);
-    }
     return true;
   }
 

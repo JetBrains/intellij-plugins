@@ -2,16 +2,12 @@ package com.intellij.javascript.flex.resolve;
 
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.psi.*;
-import com.intellij.lang.javascript.psi.e4x.JSE4XNamespaceReference;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSPackageWrapper;
 import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
 import com.intellij.lang.javascript.psi.resolve.*;
-import com.intellij.lang.javascript.psi.resolve.context.JSApplyCallElement;
-import com.intellij.lang.javascript.psi.resolve.context.JSApplyContextElement;
 import com.intellij.lang.javascript.psi.types.*;
 import com.intellij.lang.javascript.psi.types.primitives.JSPrimitiveArrayType;
-import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -45,7 +41,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
   }
 
   @Override
-  protected void evaluateNewExpressionTypes(JSNewExpression newExpression) {
+  protected void evaluateNewExpressionTypes(@NotNull JSNewExpression newExpression) {
     JSExpression methodExpr = newExpression.getMethodExpression();
     if (methodExpr != null) {
       if (methodExpr instanceof JSArrayLiteralExpression) {
@@ -81,25 +77,9 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
     final JSReferenceExpression expression = myContext.getProcessedExpression();
     if (expression == null) return;
 
-    PsiElement parent = expression.getParent();
-    if (parent instanceof JSExpression) parent = JSUtils.unparenthesize((JSExpression)parent);
-    String psiElementType = parent instanceof JSReferenceExpression ||
-                            JSResolveUtil.isExprInStrictTypeContext(expression) ||
-                            PsiTreeUtil.getChildOfType(expression, JSE4XNamespaceReference.class) != null || // TODO avoid it
-                            parent instanceof JSCallExpression ?
-                            resolveResult.getQualifiedName() : "Class";
-    JSTypeSource source = JSTypeSourceFactory.createTypeSource(expression);
-    JSType namedType = JSNamedType.createType(psiElementType, source, JSContext.UNKNOWN);
-    JSType type = JSTypeUtils.isActionScriptVectorType(namedType) ?
-                  JSTypeUtils.createType(JSImportHandlingUtil.resolveTypeName(expression.getText(), expression), source) :
-                  namedType;
-    final JSApplyContextElement peek = myContext.peekJSElementToApply();
-    if (peek instanceof JSApplyCallElement) {
-      // MyClass(anyVar) is cast to MyClass
-      myContext.processWithoutTopJSElementToApply(() -> addType(type, resolveResult));
-    }
-    else {
-      addType(type, resolveResult);
+    JSType typeFromClass = ActionScriptResolveUtil.getTypeFromClass(expression, resolveResult);
+    if (typeFromClass != null) {
+      addType(typeFromClass, resolveResult);
     }
   }
 

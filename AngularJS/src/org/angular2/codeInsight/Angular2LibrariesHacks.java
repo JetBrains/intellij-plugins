@@ -5,14 +5,12 @@ import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil;
 import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.lang.javascript.modules.NodeModuleUtil;
-import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.JSElement;
+import com.intellij.lang.javascript.psi.JSRecordType;
+import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField;
-import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.lang.javascript.psi.resolve.context.JSApplyCallElement;
-import com.intellij.lang.javascript.psi.resolve.context.JSApplyContextElement;
 import com.intellij.lang.javascript.psi.types.JSAnyType;
 import com.intellij.lang.javascript.psi.types.JSCompositeTypeFactory;
 import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
@@ -20,18 +18,13 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilCore;
-import com.intellij.util.ArrayUtil;
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.entities.Angular2DirectiveProperty;
-import org.angular2.entities.Angular2EntitiesProvider;
-import org.angular2.entities.Angular2Entity;
 import org.angular2.entities.ivy.Angular2IvyDirective;
 import org.angular2.entities.metadata.psi.Angular2MetadataDirectiveBase;
 import org.angular2.entities.metadata.psi.Angular2MetadataDirectiveProperty;
 import org.angular2.entities.metadata.psi.Angular2MetadataNodeModule;
-import org.angular2.lang.expr.psi.Angular2PipeExpression;
-import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -132,42 +125,6 @@ public class Angular2LibrariesHacks {
       .map(Angular2MetadataNodeModule::getName)
       .map(name -> IONIC_ANGULAR_PACKAGE.equals(name))
       .orElse(Boolean.FALSE);
-  }
-
-  /**
-   * Hack for WEB-38153. The slice pipe accepts only Strings, [] and Arrays,
-   * but this hack simply mirrors the type of the argument and will not allow
-   * to detect any incorrect typing.
-   */
-  public static boolean hackSlicePipeType(Angular2TypeEvaluator evaluator,
-                                          JSEvaluateContext context,
-                                          JSFunction function) {
-    Angular2PipeExpression pipeExpression = Optional.ofNullable(context.peekJSElementToApply())
-      .map(e -> tryCast(e, JSApplyCallElement.class))
-      .map(JSApplyCallElement::getMethodExpression)
-      .map(e -> tryCast(e, Angular2PipeReferenceExpression.class))
-      // narrow down pipe call to `slice`
-      .filter(pipe -> SLICE_PIPE_NAME.equals(pipe.getReferenceName()))
-      .map(PsiElement::getParent)
-      .map(e -> tryCast(e, Angular2PipeExpression.class))
-      .orElse(null);
-    if (pipeExpression != null
-        // Once the slice pipe is fixed this hack won't execute
-        && function.getReturnType() instanceof JSAnyType
-        && SLICE_PIPE_NAME.equals(doIfNotNull(Angular2EntitiesProvider.getPipe(function), Angular2Entity::getName))) {
-      JSExpression param = ArrayUtil.getFirstElement(pipeExpression.getArguments());
-      if (param != null) {
-        JSApplyContextElement callContext = context.popJSElementToApply();
-        try {
-          evaluator.addType(JSResolveUtil.getExpressionJSType(param), function);
-        }
-        finally {
-          context.pushJSElementToApply(callContext);
-        }
-        return true;
-      }
-    }
-    return false;
   }
 
   /**
