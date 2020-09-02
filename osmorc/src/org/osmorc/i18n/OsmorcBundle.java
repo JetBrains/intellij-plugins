@@ -60,18 +60,18 @@ public final class OsmorcBundle extends DynamicBundle {
   public static Notification notification(@NotNull @NotificationTitle String title,
                                           @NotNull @NotificationContent String message,
                                           @NotNull NotificationType type) {
-    return NotificationGroupManager.getInstance().requireNotificationGroup("OSGi").createNotification(title, message, type, null);
+    return NotificationGroupManager.getInstance().getNotificationGroup("OSGi").createNotification(title, message, type, null);
   }
 
   public static Notification important(@NotNull @NotificationTitle String title,
                                        @NotNull @NotificationContent String message,
                                        @NotNull NotificationType type) {
-    return NotificationGroupManager.getInstance().requireNotificationGroup("OSGi-important").createNotification(title, message, type, null);
+    return NotificationGroupManager.getInstance().getNotificationGroup("OSGi-important").createNotification(title, message, type, null);
   }
 
   public static Notification bnd(@NotNull @NotificationTitle String title,
                                  @NotNull @NotificationContent String message,
                                  @NotNull NotificationType type) {
-    return NotificationGroupManager.getInstance().requireNotificationGroup("OSGi-bnd").createNotification(title, message, type, null);
+    return NotificationGroupManager.getInstance().getNotificationGroup("OSGi-bnd").createNotification(title, message, type, null);
   }
 }
