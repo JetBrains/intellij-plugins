@@ -20,6 +20,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.util.CatchingConsumer;
+import com.intellij.util.ExceptionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -137,21 +138,9 @@ public class KarmaRunProfileState implements RunProfileState {
     return KarmaExecutionType.RUN;
   }
 
-  private void showServerStartupError(@NotNull final Exception serverException) {
-    StringBuilder errorMessage = new StringBuilder("Karma server launching failed");
-    Throwable e = serverException;
-    String prevMessage = null;
-    while (e != null) {
-      String message = e.getMessage();
-      if (message != null && !message.equals(prevMessage)) {
-        errorMessage.append("\n\nCaused by:\n");
-        errorMessage.append(message);
-        prevMessage = message;
-      }
-      e = e.getCause();
-    }
+  private void showServerStartupError(@NotNull Exception serverException) {
     Messages.showErrorDialog(myProject,
-                             errorMessage.toString(),
+                             KarmaBundle.message("karma.server.launching.failed", ExceptionUtil.getMessage(serverException)),
                              KarmaBundle.message("karma.server.tab.title"));
   }
 

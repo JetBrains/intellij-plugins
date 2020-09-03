@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.util.ui.FormBuilder;
 import com.intellij.util.ui.SwingHelper;
 import com.intellij.webcore.ui.PathShortener;
@@ -19,8 +20,8 @@ public class KarmaSuiteOrTestScopeView extends KarmaScopeView {
   private final JPanel myPanel;
 
   public KarmaSuiteOrTestScopeView(@NotNull Project project,
-                                   @NotNull String fullTestNamePopupTitle,
-                                   @NotNull String fullTestNameLabel) {
+                                   @NotNull @NlsContexts.PopupTitle String fullTestNamePopupTitle,
+                                   @NotNull @NlsContexts.Label String fullTestNameLabel) {
     myTestNameView = new TestFullNameView(fullTestNamePopupTitle);
     myTestFileTextFieldWithBrowseButton = new TextFieldWithBrowseButton();
     PathShortener.enablePathShortening(myTestFileTextFieldWithBrowseButton.getTextField(), null);

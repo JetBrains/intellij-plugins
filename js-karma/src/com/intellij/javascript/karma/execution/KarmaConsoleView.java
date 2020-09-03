@@ -33,6 +33,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.content.Content;
 import com.intellij.util.Alarm;
 import com.intellij.util.ObjectUtils;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.debugger.connection.VmConnection;
@@ -192,7 +193,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
       }
     }
 
-    private static void render(@NotNull TestTreeRenderer renderer, @NotNull String msg) {
+    private static void render(@NotNull TestTreeRenderer renderer, @NotNull @Nls String msg) {
       renderer.clear();
       renderer.append(msg);
     }
@@ -200,7 +201,8 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     @Override
     public void format(@NotNull SMTestProxy.SMRootTestProxy testProxy, @NotNull TestTreeRenderer renderer) {
       if (testProxy.isLeaf()) {
-        render(renderer, myTestRunProcessTerminated ? "Stopped" : "Waiting for browser capturing...");
+        render(renderer, myTestRunProcessTerminated ? KarmaBundle.message("test.run.process_terminated.text")
+                                                    : KarmaBundle.message("test.run.waiting_for_browser_capturing.text"));
       }
     }
 
