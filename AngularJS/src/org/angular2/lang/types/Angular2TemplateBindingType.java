@@ -40,8 +40,8 @@ public class Angular2TemplateBindingType extends Angular2BaseType<Angular2Templa
   }
 
   @Override
-  protected int resolvedHashCodeImpl() {
-    return super.hashCode() * 31 + myKey.hashCode();
+  protected int hashCodeImpl() {
+    return super.hashCodeImpl() * 31 + myKey.hashCode();
   }
 
   @Override
