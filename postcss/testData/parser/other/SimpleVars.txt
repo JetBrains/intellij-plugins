@@ -50,7 +50,7 @@ PostCSS File:SimpleVars.pcss
             PsiWhiteSpace(' ')
             PsiElement(CSS_TERM)
               PsiElement(CSS_IDENT)('b')
-            PsiElement(CSS_LINE_NAMES)
+            PsiElement(CSS_BRACKETED_LIST)
               PsiElement(CSS_LBRACKET)('[')
               PsiElement(CSS_RBRACKET)(']')
             PsiWhiteSpace(' ')
