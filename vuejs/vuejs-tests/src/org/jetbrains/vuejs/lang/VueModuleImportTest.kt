@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.lang
 
 import com.intellij.lang.javascript.JSTestOptions
-import com.intellij.lang.javascript.JavaScriptFormatterTest
+import com.intellij.lang.javascript.JavaScriptFormatterTestBase
 import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.modules.JSImportHighlightingAndCompletionLightTestBase
@@ -46,7 +46,7 @@ class VueModuleImportTest : JSImportHighlightingAndCompletionLightTestBase() {
   }
 
   fun testAutoImportFromVueWithJs() {
-    JavaScriptFormatterTest.setTempSettings(project, JavascriptLanguage.INSTANCE, Consumer<JSCodeStyleSettings> {
+    JavaScriptFormatterTestBase.setTempSettings(project, JavascriptLanguage.INSTANCE, Consumer<JSCodeStyleSettings> {
       it.USE_EXPLICIT_JS_EXTENSION = JSCodeStyleSettings.BooleanWithGlobalOption.TRUE
     })
 

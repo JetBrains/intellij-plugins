@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang.html
 
 import com.intellij.html.HtmlParsingTest
@@ -34,7 +34,7 @@ import com.intellij.psi.impl.DebugUtil
 import com.intellij.psi.impl.source.html.TemplateHtmlScriptContentProvider
 import com.intellij.util.ObjectUtils
 import org.jetbrains.vuejs.lang.expr.parser.VueJSParserDefinition
-import org.jetbrains.vuejs.lang.html.parser.VueFileElementType.Companion.INJECTED_FILE_SUFFIX
+import org.jetbrains.vuejs.lang.html.parser.VueFileElementType
 import org.jetbrains.vuejs.lang.html.parser.VueParserDefinition
 
 class VueParserTest : HtmlParsingTest("", "vue",
@@ -91,13 +91,13 @@ class VueParserTest : HtmlParsingTest("", "vue",
 
   override fun doTest(text: String, fileName: String) {
     super.doTest(if (fileName.endsWith(".vue")
-                     || fileName.endsWith(INJECTED_FILE_SUFFIX)
+                     || fileName.endsWith(VueFileElementType.INJECTED_FILE_SUFFIX)
                      || text.trimStart().startsWith("<!DOCTYPE")
                      || text.trimStart().startsWith("<?"))
                    text
                  else
                    "<template>\n$text\n</template>",
-                 if (fileName.endsWith(INJECTED_FILE_SUFFIX))
+                 if (fileName.endsWith(VueFileElementType.INJECTED_FILE_SUFFIX))
                    fileName
                  else
                    "${fileName.substring(0, fileName.lastIndexOf('.'))}.vue")
@@ -193,7 +193,7 @@ class VueParserTest : HtmlParsingTest("", "vue",
       <div v-bind:foo="{{bar}}" foo="{{bar}}" foo2='{{bar}}'>
         {{foo.bar}}
       </div>
-    """.trimIndent(), "test.{{.}}$INJECTED_FILE_SUFFIX")
+    """.trimIndent(), "test.{{.}}${VueFileElementType.INJECTED_FILE_SUFFIX}")
   }
 
   fun testCustomInterpolationParsing() {
@@ -202,7 +202,7 @@ class VueParserTest : HtmlParsingTest("", "vue",
       <div v-bind:foo="{{bar}}" foo="{{bar}}" foo2='{%bar%}'>
         {{foo.bar}}
       </div>
-    """.trimIndent(), "test.{%.%}$INJECTED_FILE_SUFFIX")
+    """.trimIndent(), "test.{%.%}${VueFileElementType.INJECTED_FILE_SUFFIX}")
   }
 
   fun testSrcAttribute() {

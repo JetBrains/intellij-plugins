@@ -7,7 +7,6 @@ import com.intellij.lang.javascript.service.JSLanguageServiceBase
 import com.intellij.lang.javascript.service.JSLanguageServiceProvider
 import com.intellij.lang.javascript.typescript.service.TypeScriptServiceTestBase
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.testFramework.EditorTestUtil
 import com.intellij.testFramework.JSUnit38AssumeSupportRunner
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.ui.UIUtil
@@ -124,7 +123,7 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
     myFixture.type('\b')
     checkAfterFile("vue")
   }
-  
+
   companion object {
     private const val BASE_PATH = "/ts_ls_highlighting"
   }

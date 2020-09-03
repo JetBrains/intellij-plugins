@@ -1,7 +1,6 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang
 
-import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase
 import com.intellij.lang.javascript.typescript.TypeScriptDuplicateTest
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.LocalFileSystem
@@ -23,8 +22,8 @@ class VueTypeScriptDuplicateTest : TypeScriptDuplicateTest() {
   }
 
   override fun checkHighlightingByRelativePath(relativePath: String?) {
-    val text = surroundWithScriptTag(JSDaemonAnalyzerLightTestCase.loadText(relativePath))
-    JSDaemonAnalyzerLightTestCase.checkHighlightByFile(myFixture, relativePath, text)
+    val text = surroundWithScriptTag(loadText(relativePath))
+    checkHighlightByFile(myFixture, relativePath, text)
   }
 
   private fun surroundWithScriptTag(text: Any) = "<script lang=\"ts\">\n$text\n</script>"

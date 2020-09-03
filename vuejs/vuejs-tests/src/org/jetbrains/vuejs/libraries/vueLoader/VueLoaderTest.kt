@@ -2,8 +2,8 @@
 package org.jetbrains.vuejs.libraries.vueLoader
 
 import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection
+import com.intellij.lang.javascript.JSTestUtils.setWebpack
 import com.intellij.lang.javascript.buildTools.webpack.WebPackResolve
-import com.intellij.lang.javascript.modules.JSFrameworkImportTest.setWebpack
 import com.intellij.openapi.application.PathManager
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.css.inspections.invalid.CssUnknownTargetInspection
