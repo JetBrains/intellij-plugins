@@ -121,23 +121,22 @@ public class OsgiRunState extends JavaCommandLineState {
             // the bundles are module names, by now we try to find jar files in the output directory which we can then install
             ModuleManager moduleManager = ModuleManager.getInstance(myRunConfiguration.getProject());
             BundleCompiler bundleCompiler = new BundleCompiler(progressIndicator);
-            int bundleCount = myRunConfiguration.getBundlesToDeploy().size();
-            for (int i = 0; i < bundleCount; i++) {
-              progressIndicator.setFraction((double)i / bundleCount);
 
-              SelectedBundle selectedBundle = myRunConfiguration.getBundlesToDeploy().get(i);
+            List<SelectedBundle> bundlesToDeploy = myRunConfiguration.getBundlesToDeploy();
+            for (int i = 0; i < bundlesToDeploy.size(); i++) {
+              progressIndicator.setFraction((double)i / bundlesToDeploy.size());
+
+              SelectedBundle selectedBundle = bundlesToDeploy.get(i);
               if (selectedBundle.isModule()) {
                 // use the output jar name if it is a module
                 String name = selectedBundle.getName();
                 Module module = moduleManager.findModuleByName(name);
-                if (module == null) {
-                  throw new CantRunException(OsmorcBundle.message("run.configuration.missing.module", name));
-                }
+                if (module == null) throw new CantRunException(OsmorcBundle.message("run.configuration.missing.module", name));
                 OsmorcFacet facet = OsmorcFacet.getInstance(module);
-                if (facet == null) {
-                  throw new CantRunException(OsmorcBundle.message("run.configuration.missing.facet", name));
-                }
-                selectedBundle.setBundlePath(facet.getConfiguration().getJarFileLocation());
+                if (facet == null) throw new CantRunException(OsmorcBundle.message("run.configuration.missing.facet", name));
+                String jar = facet.getConfiguration().getJarFileLocation();
+                if (!new File(jar).exists()) throw new CantRunException(OsmorcBundle.message("run.configuration.missing.bundle", jar));
+                selectedBundle.setBundlePath(jar);
                 selectedBundles.add(selectedBundle);
                 // add all the library dependencies of the bundle
                 List<String> paths = bundleCompiler.bundlifyLibraries(module);
