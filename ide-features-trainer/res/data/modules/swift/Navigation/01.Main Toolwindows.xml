@@ -99,7 +99,7 @@ class Navigation: UITableViewController {
     <Text>By using ↑ and ↓ keys, you can select any code construct here and press <action>EditSource</action> to jump to some place in your code.</Text>
     <Try trigger="FileStructurePopup">Now activate the <strong>Structure</strong> popup by pressing <action>FileStructurePopup</action>.</Try>
     <Text>Dismiss this popup using <action>EditorEscape</action> or press ⏎ to jump to some place in your code.</Text>
-    <Try trigger="FindInPath">The <strong>Find in Path</strong> (<action>FindInPath</action>) dialog provides the same functionality as <strong>Find</strong> navigator in Xcode. Try using it to run a full-text search now.</Try>
+    <Try trigger="FindInPath">The <strong>Find in Files</strong> (<action>FindInPath</action>) dialog provides the same functionality as <strong>Find</strong> navigator in Xcode. Try using it to run a full-text search now.</Try>
     <Try trigger="Build">Let's build our project by invoking <action>Build</action>.</Try>
     <Text>The <strong>Build messages</strong> tool window shows compiler output and allows you to filter build messages by their type (see the <strong>Filter messages</strong> button on the left-hand side). You can always activate this toolwindow by pressing <action>ActivateMessagesToolWindow</action>.</Text>
     <Try trigger="Run">Now let's run our project on the simulator to see the <strong>Run</strong> tool window. Press <action>Run</action>.</Try>
