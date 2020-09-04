@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.ui.plugins;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
@@ -13,6 +14,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.webcore.packaging.InstalledPackage;
 import com.intellij.webcore.packaging.PackageManagementServiceEx;
 import com.intellij.webcore.packaging.RepoPackage;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -145,7 +147,7 @@ public class PhoneGapPackageManagementService extends PackageManagementServiceEx
   }
 
   @Override
-  public void fetchPackageDetails(String packageName, CatchingConsumer<String, Exception> consumer) {
+  public void fetchPackageDetails(String packageName, CatchingConsumer<@Nls String, Exception> consumer) {
     PhoneGapPluginsList.PhoneGapRepoPackage aPackage = PhoneGapPluginsList.getPackage(packageName);
     consumer.consume(aPackage != null ? aPackage.getDesc() : "");
   }
