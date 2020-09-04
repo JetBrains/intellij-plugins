@@ -13,7 +13,7 @@
   <extensions defaultExtensionNs="com.intellij">
     <java.compiler implementation="org.intellij.errorProne.ErrorProneJavaBackendCompiler"/>
     <projectService serviceImplementation="org.intellij.errorProne.ErrorProneCompilerConfiguration"/>
-    <compileServer.plugin classpath="jps/error-prone-jps-plugin.jar"/>
+    <compileServer.plugin classpath="jps/errorProne-jps.jar"/>
     <buildProcess.parametersProvider implementation="org.intellij.errorProne.ErrorProneClasspathProvider"/>
     <compiler.task execute="BEFORE" implementation="org.intellij.errorProne.ErrorProneCompilerDownloadingTask"/>
   </extensions>
