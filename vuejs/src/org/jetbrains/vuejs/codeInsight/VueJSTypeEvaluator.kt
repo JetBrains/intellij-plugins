@@ -37,41 +37,45 @@ class VueJSTypeEvaluator(context: JSEvaluateContext, processor: JSTypeProcessor,
 
     when (vForExpression.getVarStatement()?.declarations?.indexOf(declaration)) {
       0 -> {
-        pushDestructuringContext(jsVariable)
+        val destructuringParents = findDestructuringParents(jsVariable)
         val expression = myContext.processedExpression
-        when (val collectionType = JSResolveUtil.getElementJSType(collectionExpr)?.substitute()) {
-          is JSStringType -> addVForVarType(collectionExpr, ::JSStringType)
-          is JSNumberType -> addVForVarType(collectionExpr, ::JSNumberType)
+        val type = when (val collectionType = JSResolveUtil.getElementJSType(collectionExpr)?.substitute()) {
+          is JSStringType -> getVForVarType(collectionExpr, ::JSStringType)
+          is JSNumberType -> getVForVarType(collectionExpr, ::JSNumberType)
           is JSType -> {
             val type = JSTypeUtils.getIterableComponentType(collectionType)
             when {
-              type != null -> addType(type, expression)
-              useTypeScriptKeyofType(collectionType) -> addType(
+              type != null -> type
+              useTypeScriptKeyofType(collectionType) ->
                 JSCompositeTypeFactory.createIndexedAccessType(collectionType,
                                                                JSCompositeTypeFactory.createKeyOfType(
                                                                  collectionType, collectionType.source),
-                                                               collectionType.source),
-                expression)
-              else -> addVForVarType(
+                                                               collectionType.source)
+              else -> getVForVarType(
                 collectionExpr, *getComponentTypeFromArrayExpression(expression, collectionExpr).toTypedArray())
             }
           }
+          else -> null
+        }
+        if (type != null) {
+          val typeToAdd = destructuringParents.applyToOuterType(type)
+          addType(typeToAdd, null)
         }
         restoreEvaluationContextApplingElementsSize(myContext.jsElementsToApply.size)
         myContext.finishEvaluationWithStrictness(myContext.isStrict)
       }
       1 -> {
         val collectionType = JSResolveUtil.getElementJSType(collectionExpr)?.substitute()
-        if (collectionType == null || JSTypeUtils.isAnyType(collectionType)) {
-          addVForVarType(collectionExpr, ::JSStringType, ::JSNumberType)
+        val type: JSType? = if (collectionType == null || JSTypeUtils.isAnyType(collectionType)) {
+          getVForVarType(collectionExpr, ::JSStringType, ::JSNumberType)
         }
         else if (JSTypeUtils.isArrayLikeType(collectionType) || collectionType is JSPrimitiveType) {
-          addVForVarType(collectionExpr, ::JSNumberType)
+          getVForVarType(collectionExpr, ::JSNumberType)
         }
         else {
           val recordType = collectionType.asRecordType()
           if (recordType.findPropertySignature(JSCommonTypeNames.ITERATOR_SYMBOL) != null) {
-            addVForVarType(collectionExpr, ::JSNumberType)
+            getVForVarType(collectionExpr, ::JSNumberType)
           }
           else {
             val indexerTypes = JSRecordType.IndexSignatureKind.values()
@@ -81,31 +85,31 @@ class VueJSTypeEvaluator(context: JSEvaluateContext, processor: JSTypeProcessor,
               .toList()
 
             when {
-              indexerTypes.isNotEmpty() -> addVForVarType(collectionExpr, *indexerTypes.toTypedArray())
-              useTypeScriptKeyofType(collectionType) -> addType(
-                JSCompositeTypeFactory.createKeyOfType(collectionType,
-                                                                                                                 collectionType.source),
-                collectionExpr)
-              else -> addVForVarType(collectionExpr, ::JSStringType, ::JSNumberType)
+              indexerTypes.isNotEmpty() -> getVForVarType(collectionExpr, *indexerTypes.toTypedArray())
+              useTypeScriptKeyofType(collectionType) ->
+                JSCompositeTypeFactory.createKeyOfType(collectionType, collectionType.source)
+              else -> getVForVarType(collectionExpr, ::JSStringType, ::JSNumberType)
             }
           }
         }
+        addType(type, null)
       }
-      2 -> addVForVarType(collectionExpr, ::JSNumberType)
+      2 -> {
+        addType(getVForVarType(collectionExpr, ::JSNumberType), null)
+      }
     }
     return true
   }
 
-  private fun addVForVarType(source: PsiElement, vararg types: (Boolean, JSTypeSource, JSTypeContext) -> JSType) {
+  private fun getVForVarType(source: PsiElement, vararg types: (Boolean, JSTypeSource, JSTypeContext) -> JSType): JSType? {
     val typeSource = JSTypeSourceFactory.createTypeSource(source, false)
-    addVForVarType(source, *types.map { it(true, typeSource, JSTypeContext.INSTANCE) }.toTypedArray())
+    return getVForVarType(source, *types.map { it(true, typeSource, JSTypeContext.INSTANCE) }.toTypedArray())
   }
 
-  private fun addVForVarType(source: PsiElement, vararg types: JSType) {
+  private fun getVForVarType(source: PsiElement, vararg types: JSType): JSType? {
     val typeSource = JSTypeSourceFactory.createTypeSource(source, false)
-    val commonType = (JSTupleTypeImpl(typeSource, types.toMutableList(), emptyList(), false, 0, false).toArrayType(
+    return (JSTupleTypeImpl(typeSource, types.toMutableList(), emptyList(), false, 0, false).toArrayType(
       false) as JSArrayType).type
-    addType(commonType, source)
   }
 
   companion object {
