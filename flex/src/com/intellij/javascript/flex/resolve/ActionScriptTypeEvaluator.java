@@ -83,11 +83,6 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
     }
   }
 
-  @Override
-  protected boolean useVariableType(JSType type) {
-    return myContext.isJSElementsToApplyEmpty() && super.useVariableType(type);
-  }
-
   /**
    * @deprecated use {@link #addType(JSType, PsiElement)}
    */
@@ -155,7 +150,6 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
   @Override
   public void addType(@Nullable final JSType _type, @Nullable PsiElement source) {
     if (_type != null &&
-        myContext.isJSElementsToApplyEmpty() &&
         (source == null || source == EXPLICIT_TYPE_MARKER_ELEMENT)
       ) {
       // TODO [ksafonov] enforced scope (and context) should internal part of JSType.resolve()

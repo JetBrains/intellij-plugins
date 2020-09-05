@@ -61,7 +61,6 @@ class VueJSTypeEvaluator(context: JSEvaluateContext, processor: JSTypeProcessor,
           val typeToAdd = destructuringParents.applyToOuterType(type)
           addType(typeToAdd, null)
         }
-        restoreEvaluationContextApplingElementsSize(myContext.jsElementsToApply.size)
         myContext.finishEvaluationWithStrictness(myContext.isStrict)
       }
       1 -> {
