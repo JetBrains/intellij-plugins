@@ -2,17 +2,17 @@
 package org.angular2.codeInsight;
 
 import com.intellij.lang.javascript.psi.JSType;
-import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluationHelper;
+import com.intellij.lang.javascript.psi.resolve.JSTypeGuardEvaluator;
 import com.intellij.lang.javascript.psi.types.JSUnionType;
 import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelations;
-import com.intellij.lang.typescript.resolve.TypeScriptTypeEvaluationHelper;
+import com.intellij.lang.typescript.resolve.TypeScriptTypeGuardEvaluator;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class Angular2TypeEvaluationHelper extends TypeScriptTypeEvaluationHelper {
+public class Angular2TypeGuardEvaluator extends TypeScriptTypeGuardEvaluator {
 
-  static final JSTypeEvaluationHelper INSTANCE = new Angular2TypeEvaluationHelper();
+  static final JSTypeGuardEvaluator INSTANCE = new Angular2TypeGuardEvaluator();
 
   @Override
   public @Nullable JSType getTypeFromTypeGuard(@NotNull PsiElement namedElement,

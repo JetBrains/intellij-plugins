@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.ecmascript6.TypeScriptTypeEvaluator
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
-import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluationHelper
+import com.intellij.lang.javascript.psi.resolve.JSTypeGuardEvaluator
 import com.intellij.lang.javascript.psi.resolve.JSTypeProcessor
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.primitives.JSNumberType
@@ -18,8 +18,8 @@ import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.psi.VueJSVForExpression
 import org.jetbrains.vuejs.lang.expr.psi.VueJSVForVariable
 
-class VueJSTypeEvaluator(context: JSEvaluateContext, processor: JSTypeProcessor, helper: JSTypeEvaluationHelper)
-  : TypeScriptTypeEvaluator(context, processor, helper) {
+class VueJSTypeEvaluator(context: JSEvaluateContext, processor: JSTypeProcessor)
+  : TypeScriptTypeEvaluator(context, processor) {
 
   override fun addTypeFromVariableResolveResult(jsVariable: JSFieldVariable) {
     if (evaluateTypeFromVForVariable(jsVariable)) return

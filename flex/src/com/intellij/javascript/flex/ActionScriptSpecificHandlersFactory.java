@@ -30,8 +30,8 @@ public class ActionScriptSpecificHandlersFactory extends JSDialectSpecificHandle
   }
 
   @Override
-  public JSTypeEvaluationHelper getTypeEvaluationHelper() {
-    return ActionScriptTypeEvaluationHelper.INSTANCE;
+  public @NotNull JSTypeGuardEvaluator getTypeGuardEvaluator() {
+    return ActionScriptTypeGuardEvaluator.INSTANCE;
   }
 
   @NotNull

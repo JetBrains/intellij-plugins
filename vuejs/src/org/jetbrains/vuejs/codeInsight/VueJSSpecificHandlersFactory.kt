@@ -4,7 +4,7 @@ package org.jetbrains.vuejs.codeInsight
 import com.intellij.lang.javascript.JavaScriptSpecificHandlersFactory
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext
-import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluationHelper
+import com.intellij.lang.javascript.psi.resolve.JSTypeGuardEvaluator
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator
 import com.intellij.lang.javascript.psi.resolve.JSTypeProcessor
 import com.intellij.psi.impl.source.resolve.ResolveCache
@@ -16,6 +16,6 @@ class VueJSSpecificHandlersFactory : JavaScriptSpecificHandlersFactory() {
     VueJSReferenceExpressionResolver(referenceExpression, ignorePerformanceLimits)
 
   override fun newTypeEvaluator(context: JSEvaluateContext, processor: JSTypeProcessor): JSTypeEvaluator =
-    VueJSTypeEvaluator(context, processor, JSTypeEvaluationHelper.DEFAULT)
+    VueJSTypeEvaluator(context, processor)
 }
 
