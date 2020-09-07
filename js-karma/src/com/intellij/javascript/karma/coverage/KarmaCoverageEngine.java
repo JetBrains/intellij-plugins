@@ -43,7 +43,7 @@ public class KarmaCoverageEngine extends CoverageEngine {
   public static final String ID = "KarmaJavaScriptTestRunnerCoverage";
 
   @Override
-  public boolean isApplicableTo(@Nullable RunConfigurationBase configuration) {
+  public boolean isApplicableTo(@NotNull RunConfigurationBase configuration) {
     RunConfiguration result = configuration;
     if (configuration instanceof WrappingRunConfiguration) {
       result = ((WrappingRunConfiguration)configuration).getPeer();
@@ -52,13 +52,13 @@ public class KarmaCoverageEngine extends CoverageEngine {
   }
 
   @Override
-  public boolean canHavePerTestCoverage(@Nullable RunConfigurationBase configuration) {
+  public boolean canHavePerTestCoverage(@NotNull RunConfigurationBase configuration) {
     return false;
   }
 
   @NotNull
   @Override
-  public CoverageEnabledConfiguration createCoverageEnabledConfiguration(@Nullable RunConfigurationBase configuration) {
+  public CoverageEnabledConfiguration createCoverageEnabledConfiguration(@NotNull RunConfigurationBase configuration) {
     return new KarmaCoverageEnabledConfiguration(configuration);
   }
 

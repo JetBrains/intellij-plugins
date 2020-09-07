@@ -30,18 +30,18 @@ public class DartCoverageEngine extends CoverageEngine {
   }
 
   @Override
-  public boolean isApplicableTo(@Nullable RunConfigurationBase conf) {
+  public boolean isApplicableTo(@NotNull RunConfigurationBase conf) {
     return conf instanceof DartCommandLineRunConfiguration;
   }
 
   @Override
-  public boolean canHavePerTestCoverage(@Nullable RunConfigurationBase conf) {
+  public boolean canHavePerTestCoverage(@NotNull RunConfigurationBase conf) {
     return false;
   }
 
   @NotNull
   @Override
-  public CoverageEnabledConfiguration createCoverageEnabledConfiguration(@Nullable RunConfigurationBase conf) {
+  public CoverageEnabledConfiguration createCoverageEnabledConfiguration(@NotNull RunConfigurationBase conf) {
     return new DartCoverageEnabledConfiguration(conf);
   }
 
