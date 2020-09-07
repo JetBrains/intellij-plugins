@@ -2,7 +2,6 @@
 package com.intellij.javascript.flex.resolve;
 
 import com.intellij.lang.javascript.psi.JSType;
-import com.intellij.lang.javascript.psi.resolve.JSGenericTypesEvaluator;
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluationHelper;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -11,11 +10,6 @@ import org.jetbrains.annotations.Nullable;
 public class ActionScriptTypeEvaluationHelper extends JSTypeEvaluationHelper {
 
   public static final ActionScriptTypeEvaluationHelper INSTANCE = new ActionScriptTypeEvaluationHelper();
-
-  @Override
-  public JSGenericTypesEvaluator getGenericTypeEvaluator() {
-    return JSGenericTypesEvaluator.NO_OP;
-  }
 
   @Override
   @Nullable

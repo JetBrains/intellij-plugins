@@ -95,4 +95,9 @@ public class ActionScriptSpecificHandlersFactory extends JSDialectSpecificHandle
   public <T extends ResultSink> QualifiedItemProcessor<T> createQualifiedItemProcessor(@NotNull T sink, @NotNull PsiElement place) {
     return new QualifiedItemProcessor<>(sink, place.getContainingFile());
   }
+
+  @Override
+  public @NotNull JSGenericTypesEvaluator getGenericTypeEvaluator() {
+    return JSGenericTypesEvaluator.NO_OP;
+  }
 }
