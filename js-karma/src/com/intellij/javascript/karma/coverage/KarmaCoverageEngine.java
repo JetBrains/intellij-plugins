@@ -6,7 +6,6 @@ import com.intellij.coverage.view.CoverageListRootNode;
 import com.intellij.coverage.view.CoverageViewExtension;
 import com.intellij.coverage.view.CoverageViewManager;
 import com.intellij.coverage.view.DirectoryCoverageViewExtension;
-import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RunConfigurationBase;
 import com.intellij.execution.configurations.WrappingRunConfiguration;
 import com.intellij.execution.configurations.coverage.CoverageEnabledConfiguration;
@@ -44,11 +43,7 @@ public class KarmaCoverageEngine extends CoverageEngine {
 
   @Override
   public boolean isApplicableTo(@NotNull RunConfigurationBase configuration) {
-    RunConfiguration result = configuration;
-    if (configuration instanceof WrappingRunConfiguration) {
-      result = ((WrappingRunConfiguration)configuration).getPeer();
-    }
-    return result instanceof KarmaRunConfiguration;
+    return WrappingRunConfiguration.unwrapRunProfile(configuration) instanceof KarmaRunConfiguration;
   }
 
   @Override
