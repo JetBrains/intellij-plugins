@@ -104,5 +104,7 @@ private class FakeTaskContext : TaskContext() {
 
   override fun code(sourceSample: String): String = "" //Doesn't matter what to return
 
+  override fun strong(text: String): String = "" //Doesn't matter what to return
+
   override fun icon(icon: Icon): String = "" //Doesn't matter what to return
 }

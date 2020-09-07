@@ -7,28 +7,28 @@ import com.intellij.testGuiFramework.framework.GuiTestUtil
 import com.intellij.testGuiFramework.util.Key
 import com.intellij.ui.speedSearch.SpeedSearchSupply
 import training.commands.kotlin.TaskRuntimeContext
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
+import training.learn.lesson.kimpl.LessonUtil
 
 abstract class FileStructureLesson(module: Module, lang: String)
-  : KLesson("File structure", "File structure", module, lang) {
+  : KLesson("File structure", LessonsBundle.message("file.structure.lesson.name"), module, lang) {
   abstract override val existedFile: String
-  abstract val searchSubstring : String
-  abstract val firstWord : String
-  abstract val secondWord : String
+  abstract val searchSubstring: String
+  abstract val firstWord: String
+  abstract val secondWord: String
 
   override val lessonContent: LessonContext.() -> Unit
     get() = {
       caret(0)
 
       actionTask("FileStructurePopup") {
-        "A large source file can be difficult to read and navigate, sometimes you only need an overview of the file." +
-        "Use ${action(it)} to see the file structure."
+        LessonsBundle.message("file.structure.open.popup", action(it))
       }
       task(searchSubstring) {
-        text("Suppose you want to find some method with ${code(firstWord)} and ${code(secondWord)} words in its name. " +
-             "Type ${code(searchSubstring)} (prefixes of required words) to filter file structure.")
+        text(LessonsBundle.message("file.structure.request.prefixes", code(firstWord), code(secondWord), code(searchSubstring)))
         stateCheck { checkWordInSearch(it) }
         test {
           ideFrame {
@@ -38,12 +38,12 @@ abstract class FileStructureLesson(module: Module, lang: String)
         }
       }
       task {
-        text("Only one item remains. Now press <strong>Enter</strong> to jump to the selected item.")
+        text(LessonsBundle.message("file.structure.navigate", LessonUtil.rawEnter()))
         stateCheck { focusOwner is EditorComponentImpl }
         test { GuiTestUtil.shortcut(Key.ENTER) }
       }
       task("ActivateStructureToolWindow") {
-        text("The IDE can also show you the file structure as a tool window. Open it with ${action(it)}.")
+        text(LessonsBundle.message("file.structure.toolwindow", action(it)))
         stateCheck { focusOwner?.javaClass?.name?.contains("StructureViewComponent") ?: false }
         test { actions(it) }
       }

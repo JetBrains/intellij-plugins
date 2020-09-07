@@ -7,6 +7,6 @@ import training.learn.lesson.kimpl.LessonContext
 
 class RubyDeclarationAndUsagesLesson(module: Module) : DeclarationAndUsagesLesson(module, "ruby") {
   override fun LessonContext.setInitialPosition() = caret(20, 45)
-  override val typeOfEntity = "an attribute accessor"
+  override val typeOfEntity = 1
   override val existedFile: String = "lib/active_support/core_ext/date/calculations.rb"
 }

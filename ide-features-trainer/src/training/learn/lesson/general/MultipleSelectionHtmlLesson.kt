@@ -5,13 +5,14 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.html.HtmlTag
 import com.intellij.psi.util.PsiTreeUtil
 import training.commands.kotlin.TaskRuntimeContext
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.parseLessonSample
 
 class MultipleSelectionHtmlLesson(module: Module)
-  : KLesson("Multiple selections", "Multiple selections", module, "HTML") {
+  : KLesson("Multiple selections", LessonsBundle.message("multiple.selections.lesson.name"), module, "HTML") {
   private val sample = parseLessonSample("""<!doctype html>
 <html lang="en">
     <head>
@@ -40,19 +41,19 @@ class MultipleSelectionHtmlLesson(module: Module)
       prepareSample(sample)
 
       actionTask("SelectNextOccurrence") {
-        "Press ${action(it)} to select the symbol at the caret."
+        LessonsBundle.message("multiple.selections.select.symbol", action(it))
       }
       actionTask("SelectNextOccurrence") {
-        "Press ${action(it)} again to select the next occurrence of this symbol."
+        LessonsBundle.message("multiple.selections.select.next.symbol", action(it))
       }
       actionTask("UnselectPreviousOccurrence") {
-        "Press ${action(it)} to deselect the last occurrence."
+        LessonsBundle.message("multiple.selections.deselect.symbol", action(it))
       }
       actionTask("SelectAllOccurrences") {
-        "Press ${action(it)} to select all occurrences in the file."
+        LessonsBundle.message("multiple.selections.select.all", action(it))
       }
       task {
-        text("Type <code>td</code> to replace all occurrences of <code>th</code> with <code>td</code>.")
+        text(LessonsBundle.message("multiple.selections.replace", code("td"), code("th")))
         stateCheck { checkMultiChange() }
         test { type("td") }
       }

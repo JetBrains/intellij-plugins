@@ -4,26 +4,26 @@ package training.learn.lesson.python.refactorings
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.editor.impl.EditorComponentImpl
-import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.wm.IdeFocusManager
+import com.intellij.refactoring.RefactoringBundle
 import com.intellij.testGuiFramework.framework.GuiTestUtil
 import com.intellij.testGuiFramework.impl.button
 import com.intellij.testGuiFramework.util.Key
 import com.intellij.util.ui.UIUtil
 import com.intellij.util.ui.table.JBTableRow
+import com.jetbrains.python.PyBundle
 import com.jetbrains.python.inspections.quickfix.PyChangeSignatureQuickFix
 import training.commands.kotlin.TaskContext
 import training.commands.kotlin.TaskTestContext
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
-import training.learn.lesson.kimpl.KLesson
-import training.learn.lesson.kimpl.LessonContext
-import training.learn.lesson.kimpl.LessonUtil
+import training.learn.lesson.kimpl.*
 import training.learn.lesson.kimpl.LessonUtil.checkExpectedStateOfEditor
-import training.learn.lesson.kimpl.parseLessonSample
 import javax.swing.JDialog
 import javax.swing.JTable
 
-class PythonQuickFixesRefactoringLesson(module: Module) : KLesson("refactoring.quick.fix", "Quick fix refactoring", module, "Python") {
+class PythonQuickFixesRefactoringLesson(module: Module)
+  : KLesson("refactoring.quick.fix", LessonsBundle.message("python.quick.fix.refactoring.lesson.name"), module, "Python") {
   private val sample = parseLessonSample("""
     def foo(x):
         print("Hello ", x)
@@ -36,8 +36,7 @@ class PythonQuickFixesRefactoringLesson(module: Module) : KLesson("refactoring.q
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
     task {
-      text("Several refactorings can be performed as quick fixes. Suppose we want to add a parameter to the method ${code("foo")} " +
-           "and pass the variable ${code("y")} to it. Let's type ${code(", y")} after the first argument.")
+      text(LessonsBundle.message("python.quick.fix.refactoring.type.new.argument", code("foo"), code("y"), code(", y")))
       stateCheck {
         editor.document.text == StringBuilder(sample.text).insert(sample.startOffset, ", y").toString()
       }
@@ -46,7 +45,7 @@ class PythonQuickFixesRefactoringLesson(module: Module) : KLesson("refactoring.q
     }
 
     task {
-      text("Wait a little bit for the completion list...")
+      text(LessonsBundle.message("python.quick.fix.refactoring.wait.completion.showed"))
       triggerByListItemAndHighlight(highlightBorder = false, highlightInside = false) { item ->
         item.toString().contains("string=y")
       }
@@ -54,7 +53,7 @@ class PythonQuickFixesRefactoringLesson(module: Module) : KLesson("refactoring.q
     }
 
     task {
-      text("For now, we don't want to apply any completion. Close the list (${action("EditorEscape")}).")
+      text(LessonsBundle.message("python.quick.fix.refactoring.close.completion.list", action("EditorEscape")))
       stateCheck { previous.ui?.isShowing != true }
       proposeMyRestore()
       test { GuiTestUtil.shortcut(Key.ESCAPE) }
@@ -65,7 +64,7 @@ class PythonQuickFixesRefactoringLesson(module: Module) : KLesson("refactoring.q
     }
 
     task("ShowIntentionActions") {
-      text("As you may notice, IDE is showing you a warning here. Let's invoke intentions by ${action(it)}.")
+      text(LessonsBundle.message("python.quick.fix.refactoring.invoke.intentions", action(it)))
       triggerByListItemAndHighlight(highlightBorder = true, highlightInside = false) { item ->
         item.toString().contains("Change signature of")
       }
@@ -78,9 +77,10 @@ class PythonQuickFixesRefactoringLesson(module: Module) : KLesson("refactoring.q
       }
     }
     task {
-      text("Choose <strong>Change signature</strong> quick fix.")
+      text(LessonsBundle.message("python.quick.fix.refactoring.choose.change.signature",
+                                 strong(PyBundle.message("QFIX.NAME.change.signature"))))
 
-      triggerByPartOfComponent { table : JTable ->
+      triggerByPartOfComponent { table: JTable ->
         val model = table.model
         if (model.rowCount >= 2 && (model.getValueAt(1, 0) as? JBTableRow)?.getValueAt(0) == "y") {
           table.getCellRect(1, 0, true)
@@ -94,13 +94,13 @@ class PythonQuickFixesRefactoringLesson(module: Module) : KLesson("refactoring.q
       }
     }
     task {
-      text("Let's set the default value for the new parameter. Click at the new parameter line. " +
-           "Alternatively, you can set focus to the parameter without mouse by ${action("EditorTab")} and then ${action("EditorEnter")}.")
+      text(LessonsBundle.message("python.quick.fix.refactoring.select.new.parameter",
+                                 action("EditorTab"), LessonUtil.rawEnter()))
 
       val selector = { collection: Collection<EditorComponentImpl> ->
         collection.takeIf { it.size > 2 }?.maxBy { it.locationOnScreen.x }
       }
-      triggerByUiComponentAndHighlight(selector = selector) { editor : EditorComponentImpl ->
+      triggerByUiComponentAndHighlight(selector = selector) { editor: EditorComponentImpl ->
         UIUtil.getParentOfType(JDialog::class.java, editor) != null
       }
       restoreByUi()
@@ -113,9 +113,7 @@ class PythonQuickFixesRefactoringLesson(module: Module) : KLesson("refactoring.q
       }
     }
     task {
-      text("You may navigate through the fields (and the checkbox) by using ${action("EditorTab")}. " +
-           "With the checkbox you can let IDE inline the default value to the other callers or set it as the default value for the new parameter. " +
-           "The Signature Preview will help understand the difference. Now set the default value as 0.")
+      text(LessonsBundle.message("python.quick.fix.refactoring.set.default.value", action("EditorTab")))
       restoreByUi()
       stateCheck {
         (previous.ui as? EditorComponentImpl)?.text == "0"
@@ -138,8 +136,8 @@ class PythonQuickFixesRefactoringLesson(module: Module) : KLesson("refactoring.q
       before {
         beforeRefactoring = editor.document.text
       }
-      text("Press <raw_action>${if (SystemInfo.isMacOSMojave) "\u2318\u23CE" else "Ctrl + Enter"}</raw_action> " +
-           "(or click <strong>Refactor</strong>) to finish the refactoring.")
+      text(LessonsBundle.message("python.quick.fix.refactoring.finish.refactoring",
+                                 LessonUtil.rawCtrlEnter(), strong(RefactoringBundle.message("refactor.button").dropMnemonic())))
 
       stateCheck {
         val b = editor.document.text != beforeRefactoring

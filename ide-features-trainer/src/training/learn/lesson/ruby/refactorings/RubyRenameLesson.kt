@@ -1,19 +1,22 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.lesson.ruby.refactorings
 
+import com.intellij.refactoring.RefactoringBundle
 import com.intellij.testGuiFramework.impl.button
 import com.intellij.ui.treeStructure.Tree
 import training.commands.kotlin.TaskTestContext
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
+import training.learn.lesson.kimpl.dropMnemonic
 import training.learn.lesson.kimpl.parseLessonSample
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 
 class RubyRenameLesson(module: Module)
-  : KLesson("Rename", "Rename", module, "ruby") {
+  : KLesson("Rename", LessonsBundle.message("rename.lesson.name"), module, "ruby") {
 
   private val template = """
     class Championship
@@ -47,7 +50,7 @@ class RubyRenameLesson(module: Module)
       prepareSample(sample)
       lateinit var replace: Future<String>
       task("RenameElement") {
-        text("Press ${action(it)} to rename the attribute accessor <code>teams</code> (e.g., to <code>teams_number</code>).")
+        text(LessonsBundle.message("ruby.rename.start.refactoring", action(it), code("teams"), code("teams_number")))
         replace = stateRequired {
           (focusOwner as? Tree)?.model?.root?.toString()?.let { root: String ->
             replacePreviewPattern.matcher(root).takeIf { m -> m.find() }?.group(1)
@@ -63,13 +66,12 @@ class RubyRenameLesson(module: Module)
           }
         }
       }
-      task("Do Refactor") {
+      task(RefactoringBundle.message("usageView.doAction").dropMnemonic()) {
         var result = ""
         before {
           result = template.replace("<name>", replace.get(2, TimeUnit.SECONDS)).replace("<caret>", "")
         }
-        text("In order to be confident about the refactoring, RubyMine lets you preview it before confirming." +
-             "Click <strong>$it</strong> to complete the refactoring.")
+        text(LessonsBundle.message("ruby.rename.confirm", strong(it)))
         stateCheck { editor.document.text == result }
         test {
           ideFrame {

@@ -3,17 +3,17 @@ package training.learn.lesson.python.completion
 
 import com.intellij.testGuiFramework.framework.GuiTestUtil.typeText
 import com.intellij.testGuiFramework.impl.jList
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
-import training.learn.lesson.kimpl.LessonUtil
 import training.learn.lesson.kimpl.LessonUtil.checkExpectedStateOfEditor
 import training.learn.lesson.kimpl.parseLessonSample
 
 private const val completionSuffix = ".ifnn"
 
 class PythonPostfixCompletionLesson(module: Module)
-  : KLesson("Postfix completion", "Postfix completion", module, "Python") {
+  : KLesson("Postfix completion", LessonsBundle.message("postfix.completion.lesson.name"), module, "Python") {
   private val sample = parseLessonSample("""
     movies_dict = {
         'title': 'Aviator',
@@ -40,7 +40,7 @@ class PythonPostfixCompletionLesson(module: Module)
     get() = {
       prepareSample(sample)
       task {
-        text("The IDE can offer postfix shortcuts. Type ${code(completionSuffix)}.")
+        text(LessonsBundle.message("postfix.completion.type.template", code(completionSuffix)))
         triggerByListItemAndHighlight {
           it.toString() == completionSuffix
         }
@@ -54,7 +54,7 @@ class PythonPostfixCompletionLesson(module: Module)
         }
       }
       task {
-        text("Select ${code(completionSuffix)} item from completion list.")
+        text(LessonsBundle.message("python.postfix.completion.select.item", code(completionSuffix)))
         stateCheck { editor.document.text == result }
         restoreByUi()
         test {

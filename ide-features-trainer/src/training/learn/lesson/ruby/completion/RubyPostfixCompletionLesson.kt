@@ -3,15 +3,15 @@ package training.learn.lesson.ruby.completion
 
 import com.intellij.testGuiFramework.framework.GuiTestUtil.typeText
 import com.intellij.testGuiFramework.impl.jList
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
-import training.learn.lesson.kimpl.LessonUtil
 import training.learn.lesson.kimpl.LessonUtil.checkExpectedStateOfEditor
 import training.learn.lesson.kimpl.parseLessonSample
 
 class RubyPostfixCompletionLesson(module: Module)
-  : KLesson("Postfix completion", "Postfix completion", module, "ruby") {
+  : KLesson("Postfix completion", LessonsBundle.message("postfix.completion.lesson.name"), module, "ruby") {
 
   private val sample = parseLessonSample("""class SomeExampleClass
   # @param string_array [Array<String>]
@@ -34,7 +34,7 @@ end
     get() = {
       prepareSample(sample)
       task {
-        text("The IDE can offer postfix shortcuts. Type ${code(".if")}.")
+        text(LessonsBundle.message("postfix.completion.type.template", code(".if")))
         triggerByListItemAndHighlight {
           it.toString() == ".if"
         }
@@ -48,7 +48,7 @@ end
         }
       }
       task {
-        text("Now just press ${action("EditorEnter")} to choose the first postfix template.")
+        text(LessonsBundle.message("ruby.postfix.completion.apply", action("EditorChooseLookupItem")))
         triggerByListItemAndHighlight {
           it.toString() == "string_array.length > 1"
         }
@@ -61,7 +61,7 @@ end
       }
 
       task("string_array.length > 1") {
-        text("Now choose the second item, ${code(it)}.")
+        text(LessonsBundle.message("ruby.postfix.completion.choose.target", code(it)))
         stateCheck { editor.document.text == result }
         restoreByUi()
         test {

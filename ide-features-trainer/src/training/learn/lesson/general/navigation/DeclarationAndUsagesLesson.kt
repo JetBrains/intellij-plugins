@@ -10,16 +10,18 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.testGuiFramework.framework.GuiTestUtil.shortcut
 import com.intellij.testGuiFramework.util.Key
+import com.intellij.ui.UIBundle
 import com.intellij.ui.table.JBTable
 import training.commands.kotlin.TaskRuntimeContext
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 
 abstract class DeclarationAndUsagesLesson(module: Module, lang: String)
-  : KLesson("Declaration and usages", "Declaration and usages", module, lang) {
+  : KLesson("Declaration and usages", LessonsBundle.message("declaration.and.usages.lesson.name"), module, lang) {
   abstract fun LessonContext.setInitialPosition()
-  abstract val typeOfEntity: String
+  abstract val typeOfEntity: Int // 0 - method, 1 - attribute accessor
   abstract override val existedFile: String
 
   override val lessonContent: LessonContext.() -> Unit
@@ -27,7 +29,7 @@ abstract class DeclarationAndUsagesLesson(module: Module, lang: String)
       setInitialPosition()
 
       task("GotoDeclaration") {
-        text("Use ${action(it)} to jump to the declaration of $typeOfEntity")
+        text(LessonsBundle.message("declaration.and.usages.jump.to.declaration", action(it), typeOfEntity))
         trigger(it, { state() }) { before, _ ->
           before != null && !isInsidePsi(before.target.navigationElement, before.position)
         }
@@ -35,8 +37,7 @@ abstract class DeclarationAndUsagesLesson(module: Module, lang: String)
       }
 
       task("GotoDeclaration") {
-        text("Now the caret is at the attribute accessor declaration. " +
-             "Use the same shortcut ${action(it)} to see all of its usages, then select one of them.")
+        text(LessonsBundle.message("declaration.and.usages.show.usages", typeOfEntity, action(it)))
         trigger(it, { state() }) l@{ before, now ->
           if (before == null || now == null) {
             return@l false
@@ -57,7 +58,7 @@ abstract class DeclarationAndUsagesLesson(module: Module, lang: String)
       }
 
       task("FindUsages") {
-        text("Use ${action(it)} to see a more detailed view of usages. You can invoke ${action(it)} on either a declaration or usage.")
+        text(LessonsBundle.message("declaration.and.usages.find.usages", action(it)))
 
         triggerByUiComponentAndHighlight { ui: BaseLabel ->
           ui.text?.contains("Usages of") ?: false
@@ -67,6 +68,7 @@ abstract class DeclarationAndUsagesLesson(module: Module, lang: String)
         }
       }
 
+      val pinTabText = UIBundle.message("tabbed.pane.pin.tab.action.name")
       task {
         test {
           ideFrame {
@@ -74,19 +76,18 @@ abstract class DeclarationAndUsagesLesson(module: Module, lang: String)
           }
         }
         triggerByUiComponentAndHighlight(highlightInside = false) { ui: ActionMenuItem ->
-          ui.text?.contains("Pin Tab") ?: false
+          ui.text?.contains(pinTabText) ?: false
         }
         restoreByUi()
-        text("From the <strong>Find view</strong> you can navigate to both usages and declarations. " +
-             "The next search will override these results in the <strong>Find view</strong> window. " +
-             "To prevent it, pin the results: ")
-        text("Right click the tab title, <strong>Usages of</strong>.")
+        text(LessonsBundle.message("declaration.and.usages.pin.motivation", strong(UIBundle.message("tool.window.name.find"))))
+        text(LessonsBundle.message("declaration.and.usages.right.click.tab",
+                                   strong(LessonsBundle.message("declaration.and.usages.tab.name"))))
       }
 
       task("PinToolwindowTab") {
         trigger(it)
         restoreByUi()
-        text("Select <strong>Pin tab</strong>.")
+        text(LessonsBundle.message("declaration.and.usages.select.pin.item", strong(pinTabText)))
         test {
           ideFrame {
             jComponent(previous.ui!!).click()
@@ -95,11 +96,12 @@ abstract class DeclarationAndUsagesLesson(module: Module, lang: String)
       }
 
       actionTask("HideActiveWindow") {
-        "When you have finished browsing usages, use ${action(it)} to hide the view."
+        LessonsBundle.message("declaration.and.usages.hide.view", action(it))
       }
 
       actionTask("ActivateFindToolWindow") {
-        "Press ${action(it)} to open the <strong>Find view</strong> again."
+        LessonsBundle.message("declaration.and.usages.open.find.view",
+                              action(it), strong(UIBundle.message("tool.window.name.find")))
       }
     }
 

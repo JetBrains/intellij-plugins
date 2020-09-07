@@ -1,28 +1,33 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.lesson.general.run
 
+import com.intellij.execution.ExecutionBundle
 import com.intellij.execution.RunManager
+import com.intellij.idea.ActionsBundle
 import com.intellij.openapi.editor.impl.EditorComponentImpl
 import com.intellij.testGuiFramework.impl.button
 import com.intellij.testGuiFramework.impl.jList
+import com.intellij.ui.UIBundle
 import com.intellij.ui.components.JBCheckBox
+import training.commands.kotlin.TaskContext
 import training.commands.kotlin.TaskRuntimeContext
 import training.commands.kotlin.TaskTestContext
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
-import training.learn.lesson.kimpl.KLesson
-import training.learn.lesson.kimpl.LessonContext
-import training.learn.lesson.kimpl.LessonSample
-import training.learn.lesson.kimpl.LessonUtil
+import training.learn.lesson.kimpl.*
 import training.ui.LearningUiHighlightingManager
 import javax.swing.JButton
 
-abstract class CommonRunConfigurationLesson(module: Module, id: String, languageId: String) : KLesson(id, "Run configuration", module, languageId) {
+abstract class CommonRunConfigurationLesson(module: Module, id: String, languageId: String)
+  : KLesson(id, LessonsBundle.message("run.configuration.lesson.name"), module, languageId) {
   protected abstract val sample: LessonSample
   protected abstract val demoConfigurationName: String
 
   private fun TaskRuntimeContext.runManager() = RunManager.getInstance(project)
   protected fun TaskRuntimeContext.configurations() =
     runManager().allSettings.filter { it.name.contains(demoConfigurationName) }
+
+  private fun TaskContext.runToolWindow() = strong(UIBundle.message("tool.window.name.run"))
 
   override val lessonContent: LessonContext.() -> Unit
     get() = {
@@ -37,8 +42,7 @@ abstract class CommonRunConfigurationLesson(module: Module, id: String, language
 
       actionTask("HideActiveWindow") {
         LearningUiHighlightingManager.clearHighlights()
-        "IDE automatically opened <strong>Run</strong> tool window. Just a tip, at the top of <strong>Run</strong> tool window you can see the full runned command." +
-        " Now let’s hide the tool window with ${action(it)}."
+        LessonsBundle.message("run.configuration.hide.toolwindow", runToolWindow(), action(it))
       }
 
       task {
@@ -47,11 +51,12 @@ abstract class CommonRunConfigurationLesson(module: Module, id: String, language
         }
       }
 
+      val saveConfigurationItemName = ExecutionBundle.message("save.temporary.run.configuration.action.name", demoConfigurationName)
+        .dropMnemonic()
       task {
-        text("For each new run IDE create temporary run configuration. Temporary configurations are automatically deleted if the default limit of 5 is reached. " +
-             "Lets convert temporary configuration into permanent one. Open the drop-down menu with run configuration.")
+        text(LessonsBundle.message("run.configuration.temporary.to.permanent"))
         triggerByListItemAndHighlight { item ->
-          item.toString() == "Save '$demoConfigurationName' Configuration"
+          item.toString() == saveConfigurationItemName
         }
         test {
           ideFrame {
@@ -61,7 +66,7 @@ abstract class CommonRunConfigurationLesson(module: Module, id: String, language
       }
 
       task {
-        text("Select <strong>Save '$demoConfigurationName' Configuration</strong>.")
+        text(LessonsBundle.message("run.configuration.select.save.configuration", strong(saveConfigurationItemName)))
         restoreByUi()
         stateCheck {
           val selectedConfiguration = RunManager.getInstance(project).selectedConfiguration ?: return@stateCheck false
@@ -69,17 +74,18 @@ abstract class CommonRunConfigurationLesson(module: Module, id: String, language
         }
         test {
           ideFrame {
-            jList("Save '$demoConfigurationName' Configuration").click()
+            jList(saveConfigurationItemName).click()
           }
         }
       }
 
       task("editRunConfigurations") {
         LearningUiHighlightingManager.clearHighlights()
-        text("Suppose you want to change configuration or create another one manually. Then you need to open the the drop-down menu again and click <strong>Edit Configurations</strong>. " +
-             "Alternatively you can use ${action(it)} action.")
+        text(LessonsBundle.message("run.configuration.edit.configuration",
+                                   strong(ActionsBundle.message("action.editRunConfigurations.text").dropMnemonic()),
+                                   action(it)))
         triggerByUiComponentAndHighlight<JBCheckBox>(highlightInside = false) { ui ->
-          ui.text == "Store as project file"
+          ui.text == ExecutionBundle.message("run.configuration.store.as.project.file").dropMnemonic()
         }
         test {
           actions(it)
@@ -87,10 +93,8 @@ abstract class CommonRunConfigurationLesson(module: Module, id: String, language
       }
 
       task {
-        text("This is a place for managing run/debug configurations. You can set here program parameters, JVM arguments, environment variables and so on.")
-        text("Just a tip. Sometimes you may want to save configuration to its own file. " +
-             "Such configurations will be easy to share between colleagues (usually by version control system)." +
-             "Now close the settings dialog to finish this lesson.")
+        text(LessonsBundle.message("run.configuration.settings.description"))
+        text(LessonsBundle.message("run.configuration.tip.about.save.configuration.into.file"))
         stateCheck {
           focusOwner is EditorComponentImpl
         }

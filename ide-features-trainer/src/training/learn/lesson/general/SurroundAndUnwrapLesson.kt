@@ -3,6 +3,7 @@ package training.learn.lesson.general
 
 import training.commands.kotlin.TaskContext
 import training.commands.kotlin.TaskRuntimeContext
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
@@ -10,7 +11,7 @@ import training.learn.lesson.kimpl.LessonSample
 import training.learn.lesson.kimpl.LessonUtil.checkExpectedStateOfEditor
 
 abstract class SurroundAndUnwrapLesson(module: Module, lang: String)
-  : KLesson("Surround and unwrap", "Surround and unwrap", module, lang) {
+  : KLesson("Surround and unwrap", LessonsBundle.message("surround.and.unwrap.lesson.name"), module, lang) {
 
   protected abstract val sample: LessonSample
 
@@ -29,7 +30,7 @@ abstract class SurroundAndUnwrapLesson(module: Module, lang: String)
           editor.caretModel.currentCaret.selectionStart != previous.sample.selection?.first ||
           editor.caretModel.currentCaret.selectionEnd != previous.sample.selection?.second
         }
-        text("Press ${action(it)} to surround the selected code fragment with some template code.")
+        text(LessonsBundle.message("surround.and.unwrap.invoke.surround", action(it)))
         triggerByListItemAndHighlight { item ->
           surroundItems.all { need -> wordIsPresent(item.toString(), need) }
         }
@@ -37,7 +38,7 @@ abstract class SurroundAndUnwrapLesson(module: Module, lang: String)
       }
 
       task {
-        text("Choose <code>$surroundItemName</code> item.")
+        text(LessonsBundle.message("surround.and.unwrap.choose.surround.item", code(surroundItemName)))
         stateCheck {
           editor.document.charsSequence.let { sequence ->
             surroundItems.all { sequence.contains(it) }
@@ -59,7 +60,7 @@ abstract class SurroundAndUnwrapLesson(module: Module, lang: String)
         proposeIfModified {
           editor.caretModel.currentCaret.logicalPosition.line != previous.position.line
         }
-        text("Let's return to the initial file with unwrapping action by ${action(it)}.")
+        text(LessonsBundle.message("surround.and.unwrap.invoke.unwrap", action(it)))
         triggerByListItemAndHighlight { item ->
           wordIsPresent(item.toString(), surroundItems[0])
         }
@@ -67,7 +68,8 @@ abstract class SurroundAndUnwrapLesson(module: Module, lang: String)
       }
       task {
         restoreByUi()
-        text("Choose <code>Unwrap ${surroundItems[0]}</code> item.")
+        text(LessonsBundle.message("surround.and.unwrap.choose.unwrap.item",
+                                   strong(LessonsBundle.message("surround.and.unwrap.item", surroundItems[0]))))
         stateCheck {
           editor.document.charsSequence.let { sequence ->
             !surroundItems.any { sequence.contains(it) }

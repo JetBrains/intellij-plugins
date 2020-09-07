@@ -1,28 +1,29 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.lesson.general
 
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 
 class CollapseLesson(module: Module, lang: String, private val sample: LessonSample)
-  : KLesson("Collapse", "Collapse", module, lang) {
+  : KLesson("Collapse", LessonsBundle.message("collapse.lesson.name"), module, lang) {
   override val lessonContent: LessonContext.() -> Unit
     get() = {
       prepareSample(sample)
 
       actionTask("CollapseRegion") {
-        "Sometimes you need to collapse a piece of code for better readability. Try to collapse a code fragment with ${action(it)}."
+        LessonsBundle.message("collapse.try.collapse", action(it))
       }
       actionTask("ExpandRegion") {
-        "To expand a code region, hit ${action(it)}."
+        LessonsBundle.message("collapse.hit.expand", action(it))
       }
       actionTask("CollapseAllRegions") {
-        "If you want to collapse all regions in the file, use ${action(it)}."
+        LessonsBundle.message("collapse.all.collapse", action(it))
       }
       actionTask("ExpandAllRegions") {
-        "Similarly, press ${action(it)} to expand all available regions."
+        LessonsBundle.message("collapse.all.expand", action(it))
       }
     }
 }

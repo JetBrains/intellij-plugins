@@ -16,12 +16,11 @@ import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.LogicalPosition
-import com.intellij.openapi.editor.event.DocumentEvent
-import com.intellij.openapi.editor.event.DocumentListener
 import com.intellij.openapi.editor.ex.EditorGutterComponentEx
 import com.intellij.openapi.editor.impl.EditorComponentImpl
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.tasks.TaskBundle
 import com.intellij.testGuiFramework.framework.GuiTestUtil
 import com.intellij.testGuiFramework.util.Key
 import com.intellij.ui.tabs.impl.JBTabsImpl
@@ -33,11 +32,13 @@ import com.intellij.xdebugger.impl.breakpoints.XBreakpointUtil
 import com.intellij.xdebugger.impl.frame.XDebuggerFramesList
 import com.intellij.xdebugger.impl.ui.tree.XDebuggerTree
 import org.fest.swing.timing.Timeout
+import org.jetbrains.annotations.Nls
 import training.commands.kotlin.TaskContext
 import training.commands.kotlin.TaskRuntimeContext
 import training.commands.kotlin.TaskTestContext
 import training.keymap.KeymapUtil
 import training.learn.CourseManager
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.LessonManager
 import training.learn.lesson.kimpl.*
@@ -54,7 +55,8 @@ import java.util.concurrent.TimeUnit
 import javax.swing.JDialog
 import javax.swing.text.JTextComponent
 
-abstract class CommonDebugLesson(module: Module, id: String, languageId: String) : KLesson(id, "Debug workflow", module, languageId) {
+abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
+  : KLesson(id, LessonsBundle.message("debug.workflow.lesson.name"), module, languageId) {
   protected abstract val sample: LessonSample
   protected abstract val configurationName: String
   protected abstract val quickEvaluationArgument: String
@@ -70,20 +72,11 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
   private var debugSession: XDebugSession? by WeakReferenceDelegator()
   private var logicalPosition: LogicalPosition = LogicalPosition(0, 0)
 
-  private val incorrectBreakPointsMessage = "Breakpoints are set incorrect for this lesson."
+  @Nls
+  private val incorrectBreakPointsMessage = LessonsBundle.message("debug.workflow.incorrect.breakpoints")
 
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
-
-    if (false) {
-      prepareRuntimeTask {
-        editor.document.addDocumentListener(object : DocumentListener {
-          override fun documentChanged(event: DocumentEvent) {
-
-          }
-        }, lessonDisposable)
-      }
-    }
 
     prepareTask()
 
@@ -139,7 +132,7 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
     if (needToRun) {
       // Normally this step should not be shown!
       task {
-        text("Before debugging let's run the program and see what is going wrong ${action("RunClass")}.")
+        text(LessonsBundle.message("debug.workflow.run.program", action("RunClass")))
         addFutureStep {
           subscribeForMessageBus(RunManagerListener.TOPIC, object : RunManagerListener {
             override fun runConfigurationSelected(settings: RunnerAndConfigurationSettings?) {
@@ -176,9 +169,7 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
     }
 
     task("ToggleLineBreakpoint") {
-      text(
-        "So there is a problem. Let's start investigation with placing breakpoint." +
-        "To toggle a breakpoint you should click left editor gutter or just press ${action(it)}.")
+      text(LessonsBundle.message("debug.workflow.toggle.breakpoint", action(it)))
       stateCheck {
         lineWithBreakpoints() == setOf(logicalPosition.line)
       }
@@ -199,8 +190,7 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
 
     mayBeStopped = false
     task("Debug") {
-      text("To start debug selected run configuration you need to click at ${icon(AllIcons.Actions.StartDebugger)}. " +
-           "Or you can just press ${action(it)}.")
+      text(LessonsBundle.message("debug.workflow.start.debug", icon(AllIcons.Actions.StartDebugger), action(it)))
       addFutureStep {
         project.messageBus.connect(lessonDisposable).subscribe(XDebuggerManager.TOPIC, object : XDebuggerManagerListener {
           override fun processStarted(debugProcess: XDebugProcess) {
@@ -245,7 +235,7 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
       before {
         LearningUiHighlightingManager.clearHighlights()
       }
-      text("Many trace actions will focus debug toolwindow. Lets return to the editor with ${action(it)}")
+      text(LessonsBundle.message("debug.workflow.return.to.editor", action(it)))
       stateCheck {
         focusOwner is EditorComponentImpl
       }
@@ -266,9 +256,10 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
                            ?: error("Invalid sample data")
       caret(position)
       val hasShortcut = KeymapUtil.getShortcutByActionId(it) != null
-      text("IDE has several ways to show values. For this step, we selected the call. Lets add it to <strong>Watches</strong>. " +
-           "You can copy the expression into clipboard, use ${icon(AllIcons.General.Add)} button on the debug panel and paste copied text. " +
-           "Or you can just use action ${action(it)} ${if (hasShortcut) "" else " (consider to add a shortcut for it later)"}.")
+      val shortcut = if (hasShortcut) "" else " " + LessonsBundle.message("debug.workflow.consider.to.add.a.shortcut")
+
+      text(LessonsBundle.message("debug.workflow.use.watches",
+                                 strong(TaskBundle.message("debugger.watches")), icon(AllIcons.General.Add), action(it), shortcut))
       stateCheck {
         val watches = (XDebuggerManager.getInstance(project) as XDebuggerManagerImpl).watchesManager.getWatches(confNameForWatches)
         watches.any { watch -> watch.expression == needAddToWatch }
@@ -285,16 +276,17 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
 
     actionTask("StepInto") {
       proposeModificationRestore(sample.text)
-      "Lets step into. You can use action ${action(it)} or the button ${icon(AllIcons.Actions.TraceInto)} at the debug panel."
+      LessonsBundle.message("debug.workflow.step.into", action(it), icon(AllIcons.Actions.TraceInto))
     }
 
     task {
       before {
         LearningUiHighlightingManager.clearHighlights()
       }
-      text("In most cases you will want to skip argument calculating so Smart Step Into feature suggest by default the wrapping method. " +
-           "But here we need to choose the second one: ${code(methodForStepInto)}. You can choose it by keyboard " +
-           "<raw_action>$stepIntoDirection</raw_action> and press ${action("EditorEnter")} or you can click the call by mouse.")
+      text(LessonsBundle.message("debug.workflow.choose.method.to.step.in",
+                                 code(methodForStepInto),
+                                 "<raw_action>$stepIntoDirection</raw_action>",
+                                 action("EditorEnter")))
       stateCheck {
         val debugLine = debugSession?.currentStackFrame?.sourcePosition?.line
         val sampleLine = editor.offsetToLogicalPosition(sample.getPosition(2).startOffset).line
@@ -316,8 +308,7 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
       }
       val position = sample.getPosition(2)
       caret(position)
-      text("Lets see what we are going to pass to ${code(quickEvaluationArgument)}. We selected the argument. " +
-           "Invoke Quick Evaluate Expression ${action(it)}.")
+      text(LessonsBundle.message("debug.workflow.quick.evaluate", code(quickEvaluationArgument), action(it)))
       trigger(it)
       proposeRestore {
         checkPositionOfEditor(LessonSample(sample.text, position)) ?: checkForBreakpoints()
@@ -328,8 +319,7 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
 
   private fun LessonContext.fixTheErrorTask() {
     task {
-      text("Oh, we made a mistake in the array index! Lets fix it right now. " +
-           "Close popup (${action("EditorEscape")}) and change 0 to 1.")
+      text(LessonsBundle.message("debug.workflow.fix.error", action("EditorEscape")))
       val intermediate = sample.text.replaceFirst("[0]", "[]")
       val restorePosition = sample.text.indexOf("[0]") + 2
       stateCheck {
@@ -360,8 +350,7 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
 
     actionTask("StepOver") {
       proposeModificationRestore(afterFixText)
-      "Let's check that the call of ${code("extract_number")} will not throw an exception now. " +
-      "Use Step Over action ${action(it)} or click the button ${icon(AllIcons.Actions.TraceOver)}."
+      LessonsBundle.message("debug.workflow.step.over", code("extract_number"), action(it), icon(AllIcons.Actions.TraceOver))
     }
   }
 
@@ -370,8 +359,7 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
 
     actionTask("Resume") {
       proposeModificationRestore(afterFixText)
-      "Seems no exceptions by now. Let's continue execution with ${action(it)} or" +
-      "click the button ${icon(AllIcons.Actions.Resume)}."
+      LessonsBundle.message("debug.workflow.resume", action(it), icon(AllIcons.Actions.Resume))
     }
   }
 
@@ -380,8 +368,7 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
 
     actionTask("XDebugger.MuteBreakpoints") {
       proposeModificationRestore(afterFixText)
-      "Ups, same breakpoint again. Now we don't need to stop at this breakpoint. " +
-      "So let's mute breakpoints by the button ${icon(AllIcons.Debugger.MuteBreakpoints)} or by action ${action(it)}."
+      LessonsBundle.message("debug.workflow.mute.breakpoints", icon(AllIcons.Debugger.MuteBreakpoints), action(it))
     }
   }
 
@@ -395,10 +382,12 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
       proposeRestore {
         checkPositionOfEditor(LessonSample(afterFixText, position))
       }
-      "Let's check the result of ${code(debuggingMethodName)}. " +
-      "We've moved the editor cursor to the ${code("return")} statement. " +
-      "Lets use <strong>Run to Cursor</strong> action ${action(it)} or click ${icon(AllIcons.Actions.RunToCursor)}. " +
-      "Note that <strong>Run to Cursor</strong> works even if breakpoints are muted."
+      LessonsBundle.message("debug.workflow.run.to.cursor",
+                            code(debuggingMethodName),
+                            code("return"),
+                            action(it),
+                            icon(AllIcons.Actions.RunToCursor),
+                            LessonUtil.actionName(it))
     }
   }
 
@@ -407,14 +396,13 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
 
     actionTask("EvaluateExpression") {
       proposeModificationRestore(afterFixText)
-      "It seems the ${code("result")} is not an average we want to find. " +
-      "We forgot to divide by length. Seems we need to return ${code(expressionToBeEvaluated)}. " +
-      "Let's calculate this expresion. Invoke the <strong>Evaluate Expression</strong> action by pressing ${action(it)} or " +
-      "click button ${icon(AllIcons.Debugger.EvaluateExpression)}. "
+      LessonsBundle.message("debug.workflow.evaluate.expression", code("result"), code(expressionToBeEvaluated), action(it),
+                            icon(AllIcons.Debugger.EvaluateExpression))
     }
 
     task(expressionToBeEvaluated) {
-      text("Type ${code(it)} into the <strong>Expression</strong> field, completion works.")
+      text(LessonsBundle.message("debug.workflow.type.result", code(it),
+                                 strong(XDebuggerBundle.message("xdebugger.evaluate.label.expression"))))
       stateCheck { checkWordInTextField(it) }
       proposeModificationRestore(afterFixText)
       test {
@@ -426,7 +414,8 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
       before {
         LearningUiHighlightingManager.clearHighlights()
       }
-      text("Click <strong>Evaluate</strong> or hit ${action("EditorEnter")}.")
+      text(LessonsBundle.message("debug.workflow.evaluate.it", LessonUtil.rawEnter(),
+                                 strong(XDebuggerBundle.message("xdebugger.button.evaluate").dropMnemonic())))
       triggerByUiComponentAndHighlight(highlightBorder = false, highlightInside = false) { debugTree: XDebuggerTree ->
         val dialog = UIUtil.getParentOfType(JDialog::class.java, debugTree)
         val root = debugTree.root
@@ -442,8 +431,7 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
 
     actionTask("Stop") {
       before { mayBeStopped = true }
-      "It will be a correct answer! Lets close the dialog and stop debugging by ${action(it)}" +
-      "or button ${icon(AllIcons.Actions.Suspend)}."
+      LessonsBundle.message("debug.workflow.stop.debug", action(it), icon(AllIcons.Actions.Suspend))
     }
   }
 

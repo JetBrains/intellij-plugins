@@ -2,12 +2,14 @@
 package training.learn.lesson.java.completion
 
 import training.lang.JavaLangSupport
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.parseLessonSample
 
-class BasicCompletionLesson(module: Module) : KLesson("Basic completion", "Basic completion", module, JavaLangSupport.lang) {
+class BasicCompletionLesson(module: Module)
+  : KLesson("Basic completion", LessonsBundle.message("basic.completion.lesson.name"), module, JavaLangSupport.lang) {
 
   val sample = parseLessonSample("""import java.lang.*;
 import java.util.*;
@@ -36,21 +38,23 @@ class BasicCompletionDemo implements Runnable{
       return {
         prepareSample(sample)
         actionTask("EditorChooseLookupItem") {
-          "By default, IntelliJ IDEA completes your code instantly. Start typing <code>Ran</code> right where the caret is, and you will see the Lookup Menu with matching suggestions. You can choose the first item from the Lookup menu by pressing ${action("EditorEnter")}."
+          LessonsBundle.message("basic.completion.start.typing", code("Run")) + " " +
+          LessonsBundle.message("java.basic.completion.choose.first", action(it))
         }
         caret(18, 36)
         actionTask("CodeCompletion") {
-          "To activate Basic Completion, press ${action(it)} and you will see lookup menu again."
+          LessonsBundle.message("java.basic.completion.activate", action(it))
         }
         actionTask("EditorChooseLookupItem") {
-          "Select <code>i</code> inside the lookup menu and press <action>EditorEnter</action>."
+          LessonsBundle.message("java.basic.completion.choose.item", code("i"), action(it))
         }
         actionTask("EditorCompleteStatement") {
-          "Press ${action(it)} to complete this statement."
+          LessonsBundle.message("java.basic.completion.complete", action(it))
         }
         task("CodeCompletion") {
           caret(13, 27)
-          text("Sometimes you need to see suggestions for static constants or methods. Press ${action(it)} twice to access a deeper level of Code Completion.")
+          text(
+            LessonsBundle.message("java.basic.completion.deeper.level", action(it)))
           triggers(it, it)
         }
 

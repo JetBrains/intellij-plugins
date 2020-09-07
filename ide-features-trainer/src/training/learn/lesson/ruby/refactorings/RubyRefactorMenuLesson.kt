@@ -2,19 +2,21 @@
 package training.learn.lesson.ruby.refactorings
 
 import com.intellij.openapi.project.Project
+import com.intellij.refactoring.RefactoringBundle
 import com.intellij.testGuiFramework.impl.button
 import com.intellij.testGuiFramework.impl.jList
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.Types
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.fqn.FQN
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.SymbolUtil
 import training.commands.kotlin.TaskTestContext
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.parseLessonSample
 
 class RubyRefactorMenuLesson(module: Module)
-  : KLesson("Refactoring menu", "Refactoring menu", module, "ruby") {
+  : KLesson("Refactoring menu", LessonsBundle.message("refactoring.menu.lesson.name"), module, "ruby") {
 
   private val sample = parseLessonSample("""
     class Animal
@@ -35,11 +37,10 @@ class RubyRefactorMenuLesson(module: Module)
     get() = {
       prepareSample(sample)
       actionTask("Refactorings.QuickListPopupAction") {
-        "RubyMine supports a variety of refactorings. Press ${action(it)} to see a partial list of them."
+        LessonsBundle.message("ruby.refactoring.menu.invoke.refactoring.list", action(it))
       }
-      task("Push Members Down") {
-        text("Some refactorings are seldom used and have no shortcut, but you can find them here. " +
-             "Choose <strong>$it...</strong> now and complete the refactoring on <code>meow()</code>.")
+      task(RefactoringBundle.message("push.members.down.title")) {
+        text(LessonsBundle.message("ruby.refactoring.menu.use.push.method.down", strong(it), code("meow()")))
         trigger("MemberPushDown") { checkMethodMoved(project) }
         test {
           ideFrame {

@@ -2,6 +2,7 @@
 package training.learn.lesson.python.completion
 
 import training.commands.kotlin.TaskContext
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
@@ -10,7 +11,7 @@ import training.learn.lesson.kimpl.LessonUtil.checkExpectedStateOfEditor
 import training.learn.lesson.kimpl.parseLessonSample
 
 class PythonSmartCompletionLesson(module: Module)
-  : KLesson("Smart completion", "Smart completion", module, "Python") {
+  : KLesson("Smart completion", LessonsBundle.message("python.smart.completion.lesson.name"), module, "Python") {
   private val sample = parseLessonSample("""
     def f(x, file):
       x.append(file)
@@ -25,11 +26,10 @@ class PythonSmartCompletionLesson(module: Module)
         prepareSample(sample)
         actionTask("CodeCompletion") {
           proposeRestoreMe()
-          "Try to use Basic Completion by pressing ${action(it)}."
+          LessonsBundle.message("python.smart.completion.try.basic.completion", action(it))
         }
         task("SmartTypeCompletion") {
-          text("Unfortunately IDE has no direct information about ${code("x")} type. " +
-               "But sometimes it can guess completion by the context! Use ${action(it)} to invoke Smart Completion.")
+          text(LessonsBundle.message("python.smart.completion.use.smart.completion", code("x"), action(it)))
           triggerByListItemAndHighlight { ui ->
             ui.toString().contains(methodName)
           }
@@ -38,7 +38,7 @@ class PythonSmartCompletionLesson(module: Module)
         }
         task {
           val result = LessonUtil.insertIntoSample(sample, insertedCode)
-          text("Now just choose ${code(methodName)} item to finish this lesson.")
+          text(LessonsBundle.message("python.smart.completion.finish.completion", code(methodName)))
           restoreByUi()
           stateCheck {
             editor.document.text == result

@@ -3,14 +3,15 @@ package training.learn.lesson.python.completion
 
 import com.intellij.testGuiFramework.framework.GuiTestUtil
 import com.intellij.testGuiFramework.util.Key
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
-import training.learn.lesson.kimpl.LessonUtil
 import training.learn.lesson.kimpl.LessonUtil.checkExpectedStateOfEditor
 import training.learn.lesson.kimpl.parseLessonSample
 
-class FStringCompletionLesson(module: Module) : KLesson("completion.f.string", "F-string completion", module, "Python") {
+class FStringCompletionLesson(module: Module)
+  : KLesson("completion.f.string", LessonsBundle.message("python.f.string.completion.lesson.name"), module, "Python") {
   private val template = """
     import sys
     
@@ -50,12 +51,12 @@ class FStringCompletionLesson(module: Module) : KLesson("completion.f.string", "
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
     task("\${my") {
-      text("PyCharm supports automatic f-string conversion. Just start to type ${code(it)}")
+      text(LessonsBundle.message("python.f.string.completion.type.prefix", code(it)))
       runtimeText {
         val prefixTyped = checkExpectedStateOfEditor(sample) { change ->
           "\${my_car".startsWith(change) && change.startsWith(it)
         } == null
-        if (prefixTyped) "You can invoke completion manually with ${action("CodeCompletion")}" else null
+        if (prefixTyped) LessonsBundle.message("python.f.string.completion.invoke.manually", action("CodeCompletion")) else null
       }
       triggerByListItemAndHighlight(highlightBorder = false) { item ->
         item.toString().contains(completionItem)
@@ -68,7 +69,7 @@ class FStringCompletionLesson(module: Module) : KLesson("completion.f.string", "
       test { type(it) }
     }
     task {
-      text("Complete the statement with ${code(completionItem)}. Just press ${action("EditorEnter")} to apply the first item.")
+      text(LessonsBundle.message("python.f.string.completion.complete.it", code(completionItem), action("EditorChooseLookupItem")))
       val result = template.replace("<f-place>", "f").replace("<caret>", "\${$completionItem}")
       restoreByUi()
       stateCheck {
@@ -77,7 +78,7 @@ class FStringCompletionLesson(module: Module) : KLesson("completion.f.string", "
       test { GuiTestUtil.shortcut(Key.ENTER) }
     }
     task {
-      text("You may see that simple Python string was replaced by f-string after the completion.")
+      text(LessonsBundle.message("python.f.string.completion.result.message"))
     }
   }
 }

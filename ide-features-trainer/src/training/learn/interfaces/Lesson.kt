@@ -1,6 +1,8 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.interfaces
 
+import org.jetbrains.annotations.Nls
+import org.jetbrains.annotations.NonNls
 import training.commands.kotlin.TaskTestContext
 import training.learn.lesson.LessonListener
 import training.learn.lesson.LessonState
@@ -9,9 +11,9 @@ import training.util.findLanguageByID
 
 interface Lesson {
 
-  val name: String
+  val name: @Nls String
 
-  val id: String
+  val id: @NonNls String
 
   /** This name will be used for generated file with lesson sample */
   val fileName: String

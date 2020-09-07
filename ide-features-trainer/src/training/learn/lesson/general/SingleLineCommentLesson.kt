@@ -5,13 +5,14 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import training.commands.kotlin.TaskRuntimeContext
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 
 class SingleLineCommentLesson(module: Module, lang: String, private val sample: LessonSample)
-  : KLesson("Comment line", "Comment line", module, lang) {
+  : KLesson("Comment line", LessonsBundle.message("comment.line.lesson.name"), module, lang) {
 
   override val lessonContent: LessonContext.() -> Unit
     get() = {
@@ -21,15 +22,15 @@ class SingleLineCommentLesson(module: Module, lang: String, private val sample: 
       prepareSample(sample)
 
       actionTask("CommentByLineComment") {
-        "Comment out any line with ${action(it)}."
+        LessonsBundle.message("comment.line.comment.any.line", action(it))
       }
       task("CommentByLineComment") {
-        text("Uncomment the commented line with the same shortcut, ${action(it)}.")
+        text(LessonsBundle.message("comment.line.uncomment.that.line", action(it)))
         trigger(it, { countCommentedLines() }, { _, now -> now == 0 })
         test { actions("EditorUp", it) }
       }
       task("CommentByLineComment") {
-        text("Select several lines and then comment them with ${action(it)}.")
+        text(LessonsBundle.message("comment.line.comment.several.lines", action(it)))
         trigger(it, { countCommentedLines() }, { before, now -> now >= before + 2 })
         test { actions("EditorDownWithSelection", "EditorDownWithSelection", it) }
       }

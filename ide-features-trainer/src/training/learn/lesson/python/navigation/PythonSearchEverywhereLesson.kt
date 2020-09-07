@@ -4,6 +4,8 @@ package training.learn.lesson.python.navigation
 import com.intellij.openapi.actionSystem.impl.ActionButtonWithText
 import com.intellij.openapi.editor.impl.EditorComponentImpl
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.psi.search.EverythingGlobalScope
+import com.intellij.psi.search.ProjectScope
 import com.intellij.testGuiFramework.framework.GuiTestUtil
 import com.intellij.testGuiFramework.util.Key
 import com.intellij.testGuiFramework.util.Modifier
@@ -11,25 +13,27 @@ import com.intellij.testGuiFramework.util.Shortcut
 import com.intellij.ui.components.fields.ExtendableTextField
 import training.commands.kotlin.TaskRuntimeContext
 import training.commands.kotlin.TaskTestContext
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
+import training.learn.lesson.kimpl.LessonUtil
 import training.ui.LearningUiHighlightingManager
 import java.awt.event.InputEvent
 import java.awt.event.KeyEvent
 
 class PythonSearchEverywhereLesson(module: Module)
-  : KLesson("Search everywhere", "Search everywhere", module, "Python") {
+  : KLesson("Search everywhere", LessonsBundle.message("python.search.everywhere.lesson.name"), module, "Python") {
   override val lessonContent: LessonContext.() -> Unit = {
     caret(0)
 
     val shift = KeyEvent.getKeyModifiersText(InputEvent.SHIFT_MASK)
     actionTask("SearchEverywhere") {
-      "To open <strong>Search Everywhere</strong> you need to press <shortcut>$shift</shortcut> two times in a row."
+      val shortcut = "<shortcut>$shift</shortcut>"
+      LessonsBundle.message("python.search.everywhere.invoke.search.everywhere", LessonUtil.actionName(it), shortcut)
     }
     task("cae") {
-      text("Suppose you are looking for a class with ${code("cache")} and ${code("extension")} words in the name. " +
-           "Type ${code(it)} (prefixes of required words) to the search field.")
+      text(LessonsBundle.message("python.search.everywhere.type.prefixes", code("cache"), code("extension"), code(it)))
       stateCheck { checkWordInSearch(it) }
       test {
         Thread.sleep(500)
@@ -44,12 +48,11 @@ class PythonSearchEverywhereLesson(module: Module)
         type("f")
         Thread.sleep(500)
       }
-      "We found ${code("FragmentCacheExtension")}. " +
-      "Now you can preview the found item. Just select it by keyboard arrows and press ${action(it)}."
+      LessonsBundle.message("python.search.everywhere.preview", code("FragmentCacheExtension"), action(it))
     }
 
     task {
-      text("Press <strong>Enter</strong> to navigate to ${code("FragmentCacheExtension")}.")
+      text(LessonsBundle.message("python.search.everywhere.navigate.to.class", LessonUtil.rawEnter(), code("FragmentCacheExtension")))
       stateCheck {
         FileEditorManager.getInstance(project).selectedEditor?.file?.name.equals("cache_extension.py")
       }
@@ -61,11 +64,11 @@ class PythonSearchEverywhereLesson(module: Module)
 
     actionTask("GotoClass") {
       // Try to add (class tab in <strong>Search Everywhere</strong>)
-      "Use ${action(it)} to find class faster or in special places."
+      LessonsBundle.message("python.search.everywhere.goto.class", action(it))
     }
 
     task("nodevisitor") {
-      text("Suppose you need some library class responsible for visiting nodes. Type ${code(it)}.")
+      text(LessonsBundle.message("python.search.everywhere.type.node.visitor", code(it)))
       stateCheck { checkWordInSearch(it) }
       test { type(it) }
     }
@@ -74,9 +77,9 @@ class PythonSearchEverywhereLesson(module: Module)
       triggerByUiComponentAndHighlight { _: ActionButtonWithText -> true }
     }
 
-    task("All Places") {
-      text("Now you see a class inside this demo project. " +
-           "Lets Switch <strong>Project Files</strong> filter to <strong>$it</strong> and you will see available library variants.")
+    task(EverythingGlobalScope.getNameText()) {
+      text(LessonsBundle.message("python.search.everywhere.use.all.places",
+                                 strong(ProjectScope.getProjectFilesScopeName()), strong(it)))
       stateCheck {
         (previous.ui as? ActionButtonWithText)?.accessibleContext?.accessibleName == it
       }
@@ -87,12 +90,11 @@ class PythonSearchEverywhereLesson(module: Module)
 
     actionTask("QuickJavaDoc") {
       LearningUiHighlightingManager.clearHighlights()
-      "Use ${action(it)} to quickly look at available documentation."
+      LessonsBundle.message("python.search.everywhere.quick.documentation", action(it))
     }
 
     task {
-      text("<strong>Done!</strong> In the same way you can use ${action("GotoSymbol")} to look for a method or global variable " +
-           "and use ${action("GotoFile")} to look for a file.")
+      text(LessonsBundle.message("python.search.everywhere.finish", action("GotoSymbol"), action("GotoFile")))
     }
 
     if (TaskTestContext.inTestMode) task {

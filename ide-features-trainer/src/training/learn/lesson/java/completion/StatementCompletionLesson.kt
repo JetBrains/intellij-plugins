@@ -6,13 +6,14 @@ import com.intellij.psi.PsiForStatement
 import com.intellij.psi.util.PsiTreeUtil
 import training.commands.kotlin.TaskRuntimeContext
 import training.lang.JavaLangSupport
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.parseLessonSample
 
 class StatementCompletionLesson(module: Module)
-  : KLesson("Statement completion", "Statement completion", module, JavaLangSupport.lang) {
+  : KLesson("Statement completion", LessonsBundle.message("java.statement.completion.lesson.name"), module, JavaLangSupport.lang) {
 
   val sample = parseLessonSample("""class PrimeNumbers {
     public static void main(String[] args) {
@@ -34,19 +35,19 @@ class StatementCompletionLesson(module: Module)
     prepareSample(sample)
     caret(8, 40)
     actionTask("EditorCompleteStatement") {
-      "Press ${action(it)} to complete the <code>for</code> statement."
+      LessonsBundle.message("java.statement.completion.complete.for", action(it), code("for"))
     }
     task("EditorCompleteStatement") {
-      text("Write <code>if</code> and press ${action(it)} to generate the statement.")
+      text(LessonsBundle.message("java.statement.completion.complete.if", code("if"), action(it)))
       stateCheck {
         return@stateCheck checkIfAppended()
       }
     }
     actionTask("EditorCompleteStatement") {
-      "Add a condition inside parentheses <code>i % j == 0</code> and press ${action(it)} to jump inside the <code>if</code> statement."
+      LessonsBundle.message("java.statement.completion.complete.condition", code("i % j == 0"), action(it), code("if"))
     }
     actionTask("EditorCompleteStatement") {
-      "Write on one line: <code>isPrime = false; break</code> and then press ${action(it)} to complete the entered statement and apply formatting."
+      LessonsBundle.message("java.statement.completion.complete.finish.body", code("isPrime = false; break"), action(it))
     }
   }
 

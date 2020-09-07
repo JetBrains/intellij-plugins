@@ -6,38 +6,38 @@ import com.intellij.testGuiFramework.framework.GuiTestUtil
 import com.intellij.testGuiFramework.util.Key
 import com.intellij.ui.components.fields.ExtendableTextField
 import training.commands.kotlin.TaskRuntimeContext
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
+import training.learn.lesson.kimpl.LessonUtil
 
 class RubyClassSearchLesson(module: Module)
-  : KLesson("Class Search", "Class Search", module, "ruby") {
+  : KLesson("Class Search", LessonsBundle.message("ruby.class.search.lesson.name"), module, "ruby") {
   override val lessonContent: LessonContext.() -> Unit
     get() = {
       caret(0)
 
       actionTask("GotoClass") {
-        "Try to find a class with ${action(it)}"
+        LessonsBundle.message("ruby.class.search.invoke.goto.class", action(it))
       }
       task("date") {
-        text("Type <code>$it</code> to see classes that contain the word <strong>$it</strong>.")
+        text(LessonsBundle.message("ruby.class.search.type.word", code(it), strong(it)))
         stateCheck { checkWordInSearch(it) }
         test { type(it) }
       }
       task("datebe") {
-        text("You can search for a class by part of its name. Type <code>be</code> (the search string will be <code>$it</code>) " +
-             "to see classes that contain the words <strong>date</strong> and <strong>be</strong>.")
+        text(LessonsBundle.message("ruby.class.search.type.second.prefix", code("be"), code(it), strong("date"), strong("be")))
         stateCheck { checkWordInSearch(it) }
         test { type("be") }
       }
       task("QuickImplementations") {
-        text("To check the selected class before navigating to it, you can use ${action(it)} to see its quick definition.")
+        text(LessonsBundle.message("ruby.class.search.preview", action(it)))
         trigger(it)
         test { actions(it) }
       }
       task {
-        text("Suppose you are looking for ${code("DateAndTimeBehavior")}." +
-             "Choose it and then press <strong>Enter</strong> to navigate.")
+        text(LessonsBundle.message("ruby.class.search.navigate.to.target", code("DateAndTimeBehavior"), LessonUtil.rawEnter()))
         stateCheck {
           FileEditorManager.getInstance(project).selectedEditor?.file?.name.equals("date_and_time_behavior.rb")
         }

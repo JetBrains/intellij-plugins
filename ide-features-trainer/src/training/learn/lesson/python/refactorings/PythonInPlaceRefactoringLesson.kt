@@ -5,13 +5,15 @@ import com.intellij.icons.AllIcons
 import com.intellij.testGuiFramework.framework.GuiTestUtil
 import com.intellij.testGuiFramework.util.Key
 import training.commands.kotlin.TaskRuntimeContext
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.*
 import training.learn.lesson.kimpl.LessonUtil.checkExpectedStateOfEditor
 import javax.swing.JLabel
 import javax.swing.JPanel
 
-class PythonInPlaceRefactoringLesson(module: Module) : KLesson("refactoring.in.place", "In-place refactoring", module, "Python") {
+class PythonInPlaceRefactoringLesson(module: Module)
+  : KLesson("refactoring.in.place", LessonsBundle.message("python.in.place.refactoring.lesson.name"), module, "Python") {
   private val template = """
     def fibonacci(stop):
         first = 0
@@ -34,8 +36,7 @@ class PythonInPlaceRefactoringLesson(module: Module) : KLesson("refactoring.in.p
       checkExpectedStateOfEditor(sample) { change -> "econd".startsWith(change) }
 
     task {
-      text("Let's consider an alternative approach to performing refactorings. Suppose we want to rename local variable ${code(variableName)} " +
-           "to ${code("second")}. Just start typing the new name.")
+      text(LessonsBundle.message("python.in.place.refactoring.start.type.new.name", code(variableName), code("second")))
       stateCheck {
         editor.document.text != sample.text && checkFirstChange() == null
       }
@@ -46,9 +47,9 @@ class PythonInPlaceRefactoringLesson(module: Module) : KLesson("refactoring.in.p
     }
 
     task("ShowIntentionActions") {
-      text("IDE is guessing that you are going to rename the variable. " +
-           "You can notice it by the icon ${icon(AllIcons.Gutter.SuggestedRefactoringBulb)} in the left editor gutter. " +
-           "Invoke intentions by ${action(it)} when you finish to type the new name.")
+      text(
+        LessonsBundle.message("python.in.place.refactoring.invoke.intentions",
+                              icon(AllIcons.Gutter.SuggestedRefactoringBulb), action(it)))
       triggerByListItemAndHighlight(highlightBorder = true, highlightInside = false) { ui -> // no highlighting
         ui.toString().contains("Rename usages")
       }
@@ -63,7 +64,7 @@ class PythonInPlaceRefactoringLesson(module: Module) : KLesson("refactoring.in.p
 
     task {
       val prefix = template.indexOf("<name>")
-      text("Press ${action("EditorEnter")} to finish rename.")
+      text(LessonsBundle.message("python.in.place.refactoring.finish.rename", action("EditorChooseLookupItem")))
       restoreByUi(500)
       stateCheck {
         val newName = newName(editor.document.charsSequence, prefix)
@@ -91,8 +92,7 @@ class PythonInPlaceRefactoringLesson(module: Module) : KLesson("refactoring.in.p
     }
 
     task {
-      text("Let's add an argument to this method. We place the editor caret just after the first parameter. " +
-           "Now type comma and parameter's name: ${code(", start")} .")
+      text(LessonsBundle.message("python.in.place.refactoring.add.parameter", code(", start")))
       stateCheck {
         val text = editor.document.text
         val parameter = text.substring(secondSample.startOffset, text.indexOf(')'))
@@ -106,9 +106,8 @@ class PythonInPlaceRefactoringLesson(module: Module) : KLesson("refactoring.in.p
     }
 
     task("ShowIntentionActions") {
-      text("IDE is guessing that you are going to change the method signature. " +
-           "You can notice it by the same icon ${icon(AllIcons.Gutter.SuggestedRefactoringBulb)} at the left editor gutter. " +
-           "Invoke intentions by ${action(it)} when you finish typing the new parameter.")
+      text(LessonsBundle.message("python.in.place.refactoring.invoke.intention.for.parameter",
+                                 icon(AllIcons.Gutter.SuggestedRefactoringBulb), action(it)))
       triggerByListItemAndHighlight(highlightBorder = true, highlightInside = false) { item ->
         item.toString().contains("Update usages to")
       }
@@ -122,7 +121,7 @@ class PythonInPlaceRefactoringLesson(module: Module) : KLesson("refactoring.in.p
     }
 
     task {
-      text("Press ${action("EditorEnter")} to update the callers.")
+      text(LessonsBundle.message("python.in.place.refactoring.update.callers", action("EditorChooseLookupItem")))
       triggerByUiComponentAndHighlight(highlightBorder = false, highlightInside = false) { ui: JPanel -> // no highlighting
         ui.javaClass.name.contains("ChangeSignaturePopup")
       }
@@ -131,7 +130,7 @@ class PythonInPlaceRefactoringLesson(module: Module) : KLesson("refactoring.in.p
     }
 
     task {
-      text("IDE is showing you the short signature preview. Press ${action("EditorEnter")} to continue.")
+      text(LessonsBundle.message("python.in.place.refactoring.signature.preview", LessonUtil.rawEnter()))
       triggerByUiComponentAndHighlight(highlightBorder = false, highlightInside = false) { ui: JLabel -> // no highlighting
         ui.text == "Add values for new parameters:"
       }
@@ -143,8 +142,7 @@ class PythonInPlaceRefactoringLesson(module: Module) : KLesson("refactoring.in.p
       before {
         beforeSecondRefactoring = editor.document.text
       }
-      text("Now you need to type the value which will be inserted as an argument into the each call. " +
-           "You can choose ${code("0")} for this sample. Then press ${action("EditorEnter")} to continue.")
+      text(LessonsBundle.message("python.in.place.refactoring.set.default.value", code("0"),LessonUtil.rawEnter()))
       restoreByUi()
       stateCheck {
         editor.document.text != beforeSecondRefactoring && Thread.currentThread().stackTrace.any {
@@ -156,8 +154,7 @@ class PythonInPlaceRefactoringLesson(module: Module) : KLesson("refactoring.in.p
         GuiTestUtil.shortcut(Key.ENTER)
       }
     }
-    task { text("A small note for the end. In-place refactoring may be applied only in the definition point whiles direct invocation" +
-                " of rename or change-signature refactorings may be called from both definition and usage.") }
+    task { text(LessonsBundle.message("python.in.place.refactoring.remark.about.application.scope")) }
   }
 
   private fun newName(text: CharSequence, prefix: Int): String {

@@ -4,6 +4,7 @@ package training.learn.lesson.python.refactorings
 import com.intellij.ide.DataManager
 import com.intellij.ide.actions.exclusion.ExclusionHandler
 import com.intellij.openapi.application.runReadAction
+import com.intellij.refactoring.RefactoringBundle
 import com.intellij.testGuiFramework.framework.GuiTestUtil
 import com.intellij.testGuiFramework.framework.Timeouts
 import com.intellij.testGuiFramework.impl.button
@@ -13,9 +14,11 @@ import com.intellij.ui.tree.TreeVisitor
 import com.intellij.util.ui.tree.TreeUtil
 import org.jetbrains.annotations.Nullable
 import training.commands.kotlin.TaskTestContext
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
+import training.learn.lesson.kimpl.dropMnemonic
 import training.learn.lesson.kimpl.parseLessonSample
 import java.util.regex.Pattern
 import javax.swing.JButton
@@ -23,7 +26,7 @@ import javax.swing.JTree
 import javax.swing.tree.TreePath
 
 class PythonRenameLesson(module: Module)
-  : KLesson("Rename", "Rename", module, "Python") {
+  : KLesson("Rename", LessonsBundle.message("rename.lesson.name"), module, "Python") {
   private val template = """
       class Championship:
           def __init__(self):
@@ -66,7 +69,7 @@ class PythonRenameLesson(module: Module)
     prepareSample(sample)
     var replace: String? = null
     task("RenameElement") {
-      text("Press ${action(it)} to rename field <code>teams</code> (e.g., to <code>teams_number</code>).")
+      text(LessonsBundle.message("python.rename.press.rename", action(it), code("teams"), code("teams_number")))
       triggerByFoundPathAndHighlight { tree: JTree, path: TreePath ->
         if (path.pathCount == 2 && path.getPathComponent(1).toString().contains("Dynamic")) {
           replace = replacePreviewPattern.matcher(tree.model.root.toString()).takeIf { m -> m.find() }?.group(1)
@@ -92,8 +95,9 @@ class PythonRenameLesson(module: Module)
           TreeUtil.collapseAll(tree, 1)
         }
       }
-      text("In simple cases PyCharm will just rename without confirmation. But in this sample PyCharm sees two calls of  " +
-           "${code("teams")} method for objects with unknown type. Expand <strong>Dynamic references</strong> item.")
+      val dynamicReferencesString = LessonsBundle.message("python.rename.dynamic.references.prefix")
+      text(LessonsBundle.message("python.rename.expand.dynamic.references",
+                                 code("teams"), strong("dynamicReferencesString")))
 
       triggerByFoundPathAndHighlight { _: JTree, path: TreePath ->
         path.pathCount == 6 && path.getPathComponent(5).toString().contains("company_members")
@@ -101,7 +105,7 @@ class PythonRenameLesson(module: Module)
       test {
         ideFrame {
           val jTree = runReadAction {
-            jTree("Dynamic references", timeout = Timeouts.seconds03, predicate = substringPredicate)
+            jTree(dynamicReferencesString, timeout = Timeouts.seconds03, predicate = substringPredicate)
           }
           // WARNING: several exception will be here because of UsageNode#toString inside info output during this operation
           jTree.doubleClickPath()
@@ -110,8 +114,7 @@ class PythonRenameLesson(module: Module)
     }
 
     task {
-      text("It seems ${code("company_members")} should be excluded from rename. " +
-           "Select it and press ${action("EditorDelete")}.")
+      text(LessonsBundle.message("python.rename.exclude.item", code("company_members"), action("EditorDelete")))
 
       stateCheck {
         val tree = previous.ui as? JTree ?: return@stateCheck false
@@ -133,19 +136,20 @@ class PythonRenameLesson(module: Module)
       }
     }
 
+    val confirmRefactoringButton = RefactoringBundle.message("usageView.doAction").dropMnemonic()
     task {
       triggerByUiComponentAndHighlight(highlightInside = false) { button: JButton ->
-        button.text == "Do Refactor"
+        button.text == confirmRefactoringButton
       }
     }
 
     task {
       val result = replace?.let { template.replace("<name>", it).replace("<caret>", "") }
-      text("Now just finish the rename with the <strong>Do Refactor</strong> button.")
+      text(LessonsBundle.message("python.rename.finish.refactoring", strong(confirmRefactoringButton)))
       stateCheck { editor.document.text == result }
       test {
         ideFrame {
-          button("Do Refactor").click()
+          button(confirmRefactoringButton).click()
         }
       }
     }

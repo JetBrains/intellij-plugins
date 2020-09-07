@@ -5,13 +5,14 @@ import com.intellij.testGuiFramework.framework.GuiTestUtil
 import com.intellij.testGuiFramework.util.Key
 import training.commands.kotlin.TaskContext
 import training.commands.kotlin.TaskRuntimeContext
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.*
 import training.learn.lesson.kimpl.LessonUtil.checkExpectedStateOfEditor
 import javax.swing.JList
 
 class PythonTabCompletionLesson(module: Module)
-  : KLesson("Tab completion", "Tab completion", module, "Python") {
+  : KLesson("Tab completion", LessonsBundle.message("python.tab.completion.lesson.name"), module, "Python") {
   private val template = parseLessonSample("""
     class Calculator:
         def __init__(self):
@@ -34,13 +35,14 @@ class PythonTabCompletionLesson(module: Module)
       return {
         prepareSample(sample)
         task("CodeCompletion") {
-          text("Suppose you want to replace ${code("current")} with ${code("total")}. Invoke completion by pressing ${action(it)}.")
+          text(LessonsBundle.message("python.tab.completion.start.completion",
+                                     code("current"), code("total"), action(it)))
           triggerByListItemAndHighlight(checkList = { ui -> isTotalItem(ui) })
           proposeRestoreMe()
           test { actions(it) }
         }
         task {
-          text("Select item ${code("total")} by keyboard arrows or just start typing it.")
+          text(LessonsBundle.message("python.tab.completion.select.item", code("total")))
           restoreState {
             (previous.ui as? JList<*>)?.let { ui ->
               !ui.isShowing || LessonUtil.findItem(ui, isTotalItem) == null
@@ -57,8 +59,9 @@ class PythonTabCompletionLesson(module: Module)
         }
         task {
           val result = LessonUtil.insertIntoSample(template, "total")
-          text("If you press ${action("EditorEnter")} you will insert ${code("total")} before ${code("current")}. " +
-               "Instead press ${action("EditorTab")} to replace ${code("current")} with ${code("total")}")
+          text(LessonsBundle.message("python.tab.completion.use.tab.completion",
+                                     action("EditorEnter"), code("total"), code("current"),
+                                     action("EditorTab")))
 
           trigger("EditorChooseLookupItemReplace") {
             editor.document.text == result

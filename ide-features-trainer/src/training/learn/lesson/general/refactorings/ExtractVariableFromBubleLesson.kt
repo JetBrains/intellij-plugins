@@ -2,18 +2,20 @@
 package training.learn.lesson.general.refactorings
 
 import com.intellij.testGuiFramework.impl.jList
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
+import training.learn.lesson.kimpl.LessonUtil
 
 class ExtractVariableFromBubbleLesson(module: Module, lang: String, private val sample: LessonSample)
-  : KLesson("Extract variable", "Extract variable", module, lang) {
+  : KLesson("Extract variable", LessonsBundle.message("extract.variable.lesson.name"), module, lang) {
   override val lessonContent: LessonContext.() -> Unit
     get() = {
       prepareSample(sample)
       task("IntroduceVariable") {
-        text("Press ${action(it)} to extract a local variable from the selected expression ${code("i + 1")}.")
+        text(LessonsBundle.message("extract.variable.start.refactoring", action(it), code("i + 1")))
         triggerStart("IntroduceVariable")
         test {
           actions(it)
@@ -21,8 +23,7 @@ class ExtractVariableFromBubbleLesson(module: Module, lang: String, private val 
       }
 
       task {
-        text("This code block contains 3 occurrences of the selected expression. " +
-             "Choose the second item on the list to replace all of them.")
+        text(LessonsBundle.message("extract.variable.replace.all"))
 
         stateCheck {
           editor.document.text.split("i + 1").size == 2
@@ -36,8 +37,8 @@ class ExtractVariableFromBubbleLesson(module: Module, lang: String, private val 
       }
 
       actionTask("NextTemplateVariable") {
-        "Choose a name for the new variable or leave it as it is. " +
-        "Press <strong>Enter</strong> to complete the refactoring."
+        //TODO: fix the shortcut: it should be ${action(it)} but with preference for Enter
+        LessonsBundle.message("extract.variable.choose.name", LessonUtil.rawEnter())
       }
     }
 }

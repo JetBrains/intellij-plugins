@@ -7,6 +7,7 @@ import com.intellij.ui.tree.TreeVisitor
 import com.intellij.util.ui.tree.TreeUtil
 import org.fest.swing.timing.Timeout
 import org.intellij.lang.annotations.Language
+import org.jetbrains.annotations.Nls
 import training.learn.LearnBundle
 import training.learn.lesson.kimpl.LessonUtil
 import training.ui.LearningUiHighlightingManager
@@ -42,10 +43,10 @@ abstract class TaskContext {
   /**
    * Write a text to the learn panel (panel with a learning tasks).
    */
-  abstract fun text(@Language("HTML") text: String)
+  abstract fun text(@Language("HTML") @Nls text: String)
 
   /** Write a text to the learn panel (panel with a learning tasks). */
-  abstract fun runtimeText(callback: TaskRuntimeContext.() -> String?)
+  abstract fun runtimeText(@Nls callback: TaskRuntimeContext.() -> String?)
 
   /** Simply wait until an user perform particular action */
   abstract fun trigger(actionId: String)
@@ -180,6 +181,11 @@ abstract class TaskContext {
   /** Highlight as code inside lesson step message */
   open fun code(sourceSample: String): String  {
     return "<code>${StringUtil.escapeXmlEntities(sourceSample)}</code>"
+  }
+
+  /** Highlight some [text] */
+  open fun strong(text: String): String  {
+    return "<strong>${StringUtil.escapeXmlEntities(text)}</strong>"
   }
 
   /** Show an [icon] inside lesson step message */

@@ -3,6 +3,7 @@ package training.learn.lesson.python.run
 
 import com.intellij.icons.AllIcons
 import training.commands.kotlin.TaskTestContext
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.general.run.CommonDebugLesson
 import training.learn.lesson.kimpl.LessonContext
@@ -25,7 +26,7 @@ class PythonDebugLesson(module: Module) : CommonDebugLesson(module, "python.debu
         mayBeStopped = true
       }
       proposeModificationRestore(afterFixText)
-      "Let's rerun our program. Just click again at ${icon(AllIcons.Actions.Restart)} or use ${action(it)}."
+      LessonsBundle.message("python.debug.workflow.rerun", icon(AllIcons.Actions.Restart), action(it))
     }
   }
 

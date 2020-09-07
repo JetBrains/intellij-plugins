@@ -3,6 +3,7 @@ package training.learn.lesson.general.completion
 
 import com.intellij.testGuiFramework.framework.GuiTestUtil
 import com.intellij.testGuiFramework.util.Key
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
@@ -12,7 +13,7 @@ import training.learn.lesson.kimpl.LessonUtil.checkExpectedStateOfEditor
 import javax.swing.JList
 
 abstract class BasicCompletionLessonBase(module: Module, lang: String)
-  : KLesson("Basic completion", "Basic completion", module, lang) {
+  : KLesson("Basic completion", LessonsBundle.message("basic.completion.lesson.name"), module, lang) {
   protected abstract val sample1: LessonSample
   protected abstract val sample2: LessonSample
 
@@ -34,8 +35,7 @@ abstract class BasicCompletionLessonBase(module: Module, lang: String)
       val result1 = LessonUtil.insertIntoSample(sample1, item1Completion)
       prepareSample(sample1)
       task {
-        text("By default, the IDE proposes completion for your code instantly. Start typing <code>$item1Completion</code> right where " +
-             "the caret is, and you will see the Lookup Menu with matching suggestions.")
+        text(LessonsBundle.message("basic.completion.start.typing", code(item1Completion)))
         triggerByListItemAndHighlight(highlightBorder = false, highlightInside = false) { // no highlighting
           it.toString().contains(item1Completion)
         }
@@ -50,7 +50,7 @@ abstract class BasicCompletionLessonBase(module: Module, lang: String)
         }
       }
       task {
-        text("Continue typing <code>$item1Completion</code> unless it becomes the first item.")
+        text(LessonsBundle.message("basic.completion.continue.typing", code(item1Completion)))
         stateCheck {
           (previous.ui as? JList<*>)?.let {
             isTheFirstVariant(it)
@@ -58,9 +58,9 @@ abstract class BasicCompletionLessonBase(module: Module, lang: String)
         }
         restoreByUi()
       }
-      task {
-        text("Now just press <action>EditorEnter</action> to complete this statement.")
-        trigger("EditorChooseLookupItem") {
+      task("EditorChooseLookupItem") {
+        text(LessonsBundle.message("basic.completion.just.press.to.complete", action(it)))
+        trigger(it) {
           editor.document.text == result1
         }
         restoreState {
@@ -76,7 +76,7 @@ abstract class BasicCompletionLessonBase(module: Module, lang: String)
       val result2 = LessonUtil.insertIntoSample(sample2, item2Inserted)
       prepareSample(sample2)
       task("CodeCompletion") {
-        text("To activate Basic Completion explicitly, press ${action(it)}.")
+        text(LessonsBundle.message("basic.completion.activate.explicitly", action(it)))
         trigger(it)
         triggerByListItemAndHighlight { item ->
           item.toString().contains(item2Completion)
@@ -91,7 +91,8 @@ abstract class BasicCompletionLessonBase(module: Module, lang: String)
         }
       }
       task {
-        text("Select <code>$item2Completion</code> and press <action>EditorEnter</action>.")
+        text(LessonsBundle.message("basic.completion.finish.explicit.completion",
+                                   code(item2Completion), action("EditorChooseLookupItem")))
         stateCheck {
           editor.document.text == result2
         }

@@ -3,6 +3,7 @@ package training.learn.lesson.kimpl
 
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.invokeLater
+import org.jetbrains.annotations.Nls
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import training.commands.kotlin.TaskContext
 import training.commands.kotlin.TaskRuntimeContext
@@ -15,7 +16,7 @@ abstract class LessonContext {
   abstract fun task(taskContent: TaskContext.() -> Unit)
 
   /** Describe a simple task: just one action required */
-  fun actionTask(action: String, getText: TaskContext.(action: String) -> String) {
+  fun actionTask(action: String, @Nls getText: TaskContext.(action: String) -> String) {
     task {
       text(getText(action))
       trigger(action)

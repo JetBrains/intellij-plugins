@@ -1,25 +1,26 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.lesson.general
 
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 
 class SelectLesson(module: Module, lang: String, private val sample: LessonSample) :
-  KLesson("Select", "Expand and shrink the code selection", module, lang) {
+  KLesson("Select", LessonsBundle.message("selection.lesson.name"), module, lang) {
   override val lessonContent: LessonContext.() -> Unit
     get() = {
       prepareSample(sample)
 
       actionTask("EditorNextWordWithSelection") {
-        "Place the caret before any word. Press ${action(it)} to move the caret to the next word and select everything in between."
+        LessonsBundle.message("selection.select.word", action(it))
       }
       actionTask("EditorSelectWord") {
-        "Press ${action(it)} to extend the selection to the next code block."
+        LessonsBundle.message("selection.extend.selection", action(it))
       }
       task("EditorSelectWord") {
-        text("Try to increase your selection with ${action(it)} until your whole file is selected.")
+        text(LessonsBundle.message("selection.extend.until.whole.file", action(it)))
         trigger(it) {
           editor.selectionModel.selectionStart == 0 && editor.document.textLength == editor.selectionModel.selectionEnd
         }
@@ -30,7 +31,7 @@ class SelectLesson(module: Module, lang: String, private val sample: LessonSampl
         }
       }
       actionTask("EditorUnSelectWord") {
-        "${action(it)} shrinks selection. Try pressing it."
+        LessonsBundle.message("selection.shrink.selection", action(it))
       }
     }
 }

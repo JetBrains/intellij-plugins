@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.lesson.general
 
+import com.intellij.ide.IdeBundle
 import com.intellij.ide.actions.AboutPopup
 import com.intellij.ide.actions.searcheverywhere.SearchEverywhereUIBase
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable
@@ -9,16 +10,16 @@ import com.intellij.openapi.util.SystemInfo
 import com.intellij.testGuiFramework.framework.GuiTestUtil
 import com.intellij.testGuiFramework.impl.jList
 import com.intellij.testGuiFramework.util.Key
-import com.intellij.ui.components.fields.ExtendableTextField
-import training.commands.kotlin.TaskRuntimeContext
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
+import training.learn.lesson.kimpl.LessonUtil
 import javax.swing.JPanel
 
 class GotoActionLesson(module: Module, lang: String, private val sample: LessonSample) :
-  KLesson("Actions", "Search for actions", module, lang) {
+  KLesson("Actions", LessonsBundle.message("goto.action.lesson.name"), module, lang) {
 
   companion object {
     private const val FIND_ACTION_WORKAROUND: String = "https://intellij-support.jetbrains.com/hc/en-us/articles/360005137400-Cmd-Shift-A-hotkey-opens-Terminal-with-apropos-search-instead-of-the-Find-Action-dialog"
@@ -28,16 +29,17 @@ class GotoActionLesson(module: Module, lang: String, private val sample: LessonS
     get() = {
       prepareSample(sample)
       actionTask("GotoAction") {
-        "One of the most useful shortcuts is <strong>Find Action</strong>. It lets you search through all available actions " +
-                "without having to know their individual shortcuts.\nTry it now with ${action(it)}." +
-                if (SystemInfo.isMacOSMojave) "\nIf <strong>Terminal</strong> search opens instead of <strong>Find Action</strong>, " +
-                        "refer to <a href=\"$FIND_ACTION_WORKAROUND\">this article</a>." else ""
+        val macOsWorkaround = if (SystemInfo.isMacOSMojave)
+          LessonsBundle.message("goto.action.mac.workaround", LessonUtil.actionName(it), FIND_ACTION_WORKAROUND)
+        else ""
+        LessonsBundle.message("goto.action.use.find.action", LessonUtil.actionName(it), action(it)) + macOsWorkaround
       }
       actionTask("About") {
-        "Let's say you want to learn about the IDE, type <strong>about</strong> and press ${action("EditorEnter")}."
+        LessonsBundle.message("goto.action.invoke.about.action",
+                              strong(LessonsBundle.message("goto.action.about.word")), LessonUtil.rawEnter())
       }
       task {
-        text("Hit ${action("EditorEscape")} to return to the editor.")
+        text(LessonsBundle.message("goto.action.to.return.to.the.editor", action("EditorEscape")))
         var aboutHasBeenFocused = false
         stateCheck {
           aboutHasBeenFocused = aboutHasBeenFocused || focusOwner is AboutPopup.PopupPanel
@@ -55,12 +57,13 @@ class GotoActionLesson(module: Module, lang: String, private val sample: LessonS
         }
       }
       actionTask("GotoAction") {
-        "${action(it)} can also be used to change the settings, invoke it again now."
+        LessonsBundle.message("goto.action.invoke.again", code("Ran"), action(it))
       }
-      task("show line") {
-        text("Type <strong>$it</strong> to see <strong>Show Line Number</strong> selector.")
+      val showLineNumbersName = IdeBundle.message("label.show.line.numbers")
+      task(LessonsBundle.message("goto.action.show.line.input.required")) {
+        text(LessonsBundle.message("goto.action.show.line.numbers.request", strong(it), strong(showLineNumbersName)))
         triggerByListItemAndHighlight { item ->
-          item.toString().contains("Show Line Numbers")
+          item.toString().contains(showLineNumbersName)
         }
         test {
           waitComponent(SearchEverywhereUIBase::class.java)
@@ -70,32 +73,29 @@ class GotoActionLesson(module: Module, lang: String, private val sample: LessonS
 
       val lineNumbersShown = isLineNumbersShown()
       task {
-        text("Switch the line numbers ${if (lineNumbersShown) "off" else "on"}.")
+        text(LessonsBundle.message("goto.action.first.lines.toggle", if (lineNumbersShown) 0 else 1))
         stateCheck { isLineNumbersShown() == !lineNumbersShown }
         restoreByUi()
         test {
           ideFrame {
-            jList("Show Line Numbers").item("Show Line Numbers").click()
+            jList(showLineNumbersName).item(showLineNumbersName).click()
           }
         }
       }
       task {
-        text("Now switch the line numbers back ${if (lineNumbersShown) "on" else "off"}.")
+        text(LessonsBundle.message("goto.action.second.lines.toggle", if (lineNumbersShown) 0 else 1))
         stateCheck { isLineNumbersShown() == lineNumbersShown }
         test {
           ideFrame {
-            jList("Show Line Numbers").item("Show Line Numbers").click()
+            jList(showLineNumbersName).item(showLineNumbersName).click()
           }
         }
       }
 
       task {
-        text("Awesome! Click the button below to start the next lesson, or use ${action("learn.next.lesson")}.")
+        text(LessonsBundle.message("goto.action.propose.to.go.next", action("learn.next.lesson")))
       }
     }
 
   private fun isLineNumbersShown() = EditorSettingsExternalizable.getInstance().isLineNumbersShown
-
-  private fun TaskRuntimeContext.checkWordInSearch(expected: String): Boolean =
-    (focusOwner as? ExtendableTextField)?.text?.toLowerCase()?.contains(expected.toLowerCase()) == true
 }

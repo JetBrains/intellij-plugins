@@ -1,18 +1,18 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.lesson.python.refactorings
 
+import com.intellij.idea.ActionsBundle
 import com.intellij.refactoring.rename.inplace.InplaceRefactoring
 import com.intellij.testGuiFramework.framework.GuiTestUtil
 import com.intellij.testGuiFramework.util.Key
 import training.commands.kotlin.TaskRuntimeContext
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
-import training.learn.lesson.kimpl.KLesson
-import training.learn.lesson.kimpl.LessonContext
-import training.learn.lesson.kimpl.parseLessonSample
+import training.learn.lesson.kimpl.*
 import javax.swing.JList
 
 class PythonRefactorMenuLesson(module: Module)
-  : KLesson("Refactoring menu", "Refactoring menu", module, "Python") {
+  : KLesson("Refactoring menu", LessonsBundle.message("refactoring.menu.lesson.name"), module, "Python") {
   private val sample = parseLessonSample("""
     # Need to think about better sample!
     import random
@@ -25,22 +25,21 @@ class PythonRefactorMenuLesson(module: Module)
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
     actionTask("Refactorings.QuickListPopupAction") {
-      "PyCharm supports a variety of refactorings. Many of them have own shortcuts. " +
-      "But for rare refactorings you can use ${action(it)} and see a partial list of them."
+      LessonsBundle.message("python.refactoring.menu.show.refactoring.list", action(it))
     }
-    task("Introduce Parameter") {
-      text("Suppose we want to replace this expression with a parameter. So we need to choose <strong>$it...</strong>. " +
-           "Now simply type ${code("pa")} (as prefix of Parameter) to reduce proposed list.")
+    task(ActionsBundle.message("action.IntroduceParameter.text").dropMnemonic()) {
+      val prefix = LessonsBundle.message("python.refactoring.menu.required.prefix")
+      text(LessonsBundle.message("python.refactoring.menu.introduce.parameter", strong(it), strong(prefix)))
       triggerByUiComponentAndHighlight(highlightBorder = false, highlightInside = false) { ui: JList<*> ->
         ui.model.size > 0 && ui.model.getElementAt(0).toString().contains(it)
       }
       test {
-        type("pa")
+        type(prefix)
       }
     }
 
     task {
-      text("Press ${action("EditorEnter")} to start Introduce Parameter refactoring.")
+      text(LessonsBundle.message("python.refactoring.menu.start.refactoring", action("EditorChooseLookupItem")))
       trigger("IntroduceParameter")
       stateCheck { hasInplaceRename() }
       test {
@@ -49,7 +48,7 @@ class PythonRefactorMenuLesson(module: Module)
     }
 
     task {
-      text("To complete refactoring, you need to choose some name or leave it as default and press ${action("EditorEnter")}.")
+      text(LessonsBundle.message("python.refactoring.menu.finish.refactoring", LessonUtil.rawEnter()))
       stateCheck {
         !hasInplaceRename()
       }
