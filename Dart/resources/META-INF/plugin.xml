@@ -72,6 +72,7 @@
     <psi.referenceContributor language="XML" implementation="com.jetbrains.lang.dart.psi.DartReferenceContributor"/>
     <xml.elementDescriptorProvider implementation="com.jetbrains.lang.dart.xml.DartHtmlElementDescriptorProvider"/>
     <xml.attributeDescriptorsProvider implementation="com.jetbrains.lang.dart.xml.DartHtmlAttributeDescriptorProvider"/>
+    <xml.xmlTypedHandlersAdditionalSupport implementation="com.jetbrains.lang.dart.xml.DartXmlTypedHandlersAdditionalSupport" />
     <include.provider implementation="com.jetbrains.lang.dart.psi.DartPackageAwareFileIncludeProvider" order="first"/>
     <typeHierarchyProvider language="Dart" implementationClass="com.jetbrains.lang.dart.ide.hierarchy.type.DartTypeHierarchyProvider"/>
     <callHierarchyProvider language="Dart" implementationClass="com.jetbrains.lang.dart.ide.hierarchy.call.DartCallHierarchyProvider"/>
