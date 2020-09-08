@@ -89,6 +89,7 @@ else
       attr_accessor :reporter, :my_mutex, :already_run_tests
 
       def initialize(reporter)
+        GC.disable
         self.reporter = reporter
         self.my_mutex = Mutex.new
         self.already_run_tests = []
@@ -118,6 +119,7 @@ else
             reporter.log(Rake::TeamCity::MessageFactory.create_suite_finished(already_run_tests[i], already_run_tests[i]))
           end
           already_run_tests.clear()
+          GC.enable
         end
     end
 
