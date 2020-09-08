@@ -44,10 +44,10 @@ import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
+import com.thoughtworks.gauge.GaugeBootstrapService;
 import com.thoughtworks.gauge.GaugeBundle;
 import com.thoughtworks.gauge.Step;
 import com.thoughtworks.gauge.StepValue;
-import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.language.psi.SpecStep;
 import com.thoughtworks.gauge.util.GaugeUtil;
 import org.jetbrains.annotations.NotNull;
@@ -88,11 +88,13 @@ public final class CreateStepImplFix extends BaseIntentionAction {
   }
 
   @Override
-  public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
+  public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
     ApplicationManager.getApplication().invokeLater(new Runnable() {
       @Override
       public void run() {
-        List<PsiFile> javaFiles = Gauge.getSubModules(GaugeUtil.moduleForPsiElement(file)).stream()
+        GaugeBootstrapService bootstrapService = GaugeBootstrapService.getInstance(project);
+
+        List<PsiFile> javaFiles = bootstrapService.getSubModules(GaugeUtil.moduleForPsiElement(file)).stream()
           .map(FileManager::getAllJavaFiles)
           .flatMap(List::stream)
           .collect(Collectors.toList());

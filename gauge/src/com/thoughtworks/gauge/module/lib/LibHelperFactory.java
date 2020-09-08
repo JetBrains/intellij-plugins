@@ -20,36 +20,31 @@ import com.intellij.openapi.module.Module;
 import com.thoughtworks.gauge.util.GaugeUtil;
 
 import static com.thoughtworks.gauge.GaugeModuleListener.isGaugeModule;
+import static com.thoughtworks.gauge.GaugeModuleListener.isGaugeProject;
 
 public final class LibHelperFactory {
-  private static final LibHelper DEFAULT = new LibHelper() {
+  public static final LibHelper NO_GAUGE_MODULE = new LibHelper() {
     @Override
-    public void init() {
-    }
-
-    @Override
-    public void checkDeps() {
+    public void initConnection() {
     }
   };
 
   // Check if it is a maven module first, java deps will be added via maven so project libs dont need to be changed
   public LibHelper helperFor(Module module) {
+    if (!isGaugeProject(module)) return NO_GAUGE_MODULE;
+
     if (GaugeUtil.isMavenModule(module) || GaugeUtil.isGradleModule(module)) {
       return new GaugeModuleLibHelper(module);
     }
     else if (isGaugeModule(module)) {
       return new GaugeLibHelper(module);
     }
-    return DEFAULT;
+    return NO_GAUGE_MODULE;
   }
 
   private static class GaugeModuleLibHelper extends AbstractLibHelper {
     private GaugeModuleLibHelper(Module module) {
       super(module);
-    }
-
-    @Override
-    public void checkDeps() {
     }
   }
 }

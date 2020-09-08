@@ -18,11 +18,11 @@ package com.thoughtworks.gauge.core;
 
 import com.thoughtworks.gauge.connection.GaugeConnection;
 
-public final class GaugeService {
+public final class GaugeCli {
   private final Process gaugeProcess;
   private final GaugeConnection gaugeConnection;
 
-  public GaugeService(Process gaugeProcess, GaugeConnection gaugeConnection) {
+  public GaugeCli(Process gaugeProcess, GaugeConnection gaugeConnection) {
     this.gaugeProcess = gaugeProcess;
     this.gaugeConnection = gaugeConnection;
   }

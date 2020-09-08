@@ -74,7 +74,9 @@ final class GaugeGradleImporter implements GaugeModuleImporter {
     if (buildGradle != null) {
       try {
         String buildText = VfsUtilCore.loadText(buildGradle)
-          .replace("'Gradle_example'", "'org.example'");
+          .replace("'Gradle_example'", "'org.example'")
+          .replace("'com.thoughtworks.gauge:gauge-java:0.7.2'",
+                   "'com.thoughtworks.gauge:gauge-java:" + MINIMAL_GAUGE_JAVA_VERSION + "'"); // patch version
         VfsUtil.saveText(buildGradle, buildText);
       }
       catch (IOException e) {

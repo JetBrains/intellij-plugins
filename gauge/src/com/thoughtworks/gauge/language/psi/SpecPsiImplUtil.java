@@ -20,10 +20,10 @@ import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiElement;
+import com.thoughtworks.gauge.GaugeBootstrapService;
 import com.thoughtworks.gauge.StepValue;
 import com.thoughtworks.gauge.connection.GaugeConnection;
-import com.thoughtworks.gauge.core.Gauge;
-import com.thoughtworks.gauge.core.GaugeService;
+import com.thoughtworks.gauge.core.GaugeCli;
 import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
 import com.thoughtworks.gauge.util.GaugeUtil;
 import com.thoughtworks.gauge.util.StepUtil;
@@ -52,11 +52,13 @@ public final class SpecPsiImplUtil {
   }
 
   public static StepValue getStepValueFor(Module module, PsiElement element, String stepText, Boolean hasInlineTable) {
-    GaugeService gaugeService = Gauge.getGaugeService(module, false);
-    if (gaugeService == null) {
+    GaugeBootstrapService bootstrapService = GaugeBootstrapService.getInstance(module.getProject());
+
+    GaugeCli gaugeCli = bootstrapService.getGaugeCli(module, false);
+    if (gaugeCli == null) {
       return getDefaultStepValue(element);
     }
-    GaugeConnection apiConnection = gaugeService.getGaugeConnection();
+    GaugeConnection apiConnection = gaugeCli.getGaugeConnection();
     if (apiConnection == null) {
       return getDefaultStepValue(element);
     }

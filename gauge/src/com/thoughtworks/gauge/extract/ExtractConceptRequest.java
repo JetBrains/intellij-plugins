@@ -19,8 +19,9 @@ package com.thoughtworks.gauge.extract;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.PsiElement;
-import com.thoughtworks.gauge.core.Gauge;
-import com.thoughtworks.gauge.core.GaugeService;
+import com.thoughtworks.gauge.GaugeBootstrapService;
+import com.thoughtworks.gauge.GaugeBundle;
+import com.thoughtworks.gauge.core.GaugeCli;
 import com.thoughtworks.gauge.language.psi.ConceptTable;
 import com.thoughtworks.gauge.language.psi.SpecTable;
 import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
@@ -97,14 +98,16 @@ public final class ExtractConceptRequest {
   }
 
   public Api.ExtractConceptResponse makeExtractConceptRequest(PsiElement element) {
-    GaugeService gaugeService = Gauge.getGaugeService(ModuleUtilCore.findModuleForPsiElement(element), true);
-    String message = "Cannot connect to gauge service.";
-    if (gaugeService != null) {
+    GaugeBootstrapService bootstrapService = GaugeBootstrapService.getInstance(element.getProject());
+
+    GaugeCli gaugeCli = bootstrapService.getGaugeCli(ModuleUtilCore.findModuleForPsiElement(element), true);
+    String message = GaugeBundle.message("gauge.cannot.connect");
+    if (gaugeCli != null) {
       try {
-        return gaugeService.getGaugeConnection().sendGetExtractConceptRequest(steps, concept, refactorOtherUsages, fileName, textInfo);
+        return gaugeCli.getGaugeConnection().sendGetExtractConceptRequest(steps, concept, refactorOtherUsages, fileName, textInfo);
       }
       catch (Exception ex) {
-        message = "Something went wrong during extract concept request.";
+        message = GaugeBundle.message("gauge.unable.to.extract.concept");
         LOG.debug(ex);
       }
     }

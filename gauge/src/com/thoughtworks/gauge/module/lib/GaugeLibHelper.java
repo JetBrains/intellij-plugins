@@ -27,11 +27,10 @@ import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.thoughtworks.gauge.GaugeModuleListener;
+import com.thoughtworks.gauge.GaugeBootstrapService;
 import com.thoughtworks.gauge.PluginNotInstalledException;
 import com.thoughtworks.gauge.connection.GaugeConnection;
-import com.thoughtworks.gauge.core.Gauge;
-import com.thoughtworks.gauge.core.GaugeService;
+import com.thoughtworks.gauge.core.GaugeCli;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,8 +52,10 @@ public final class GaugeLibHelper extends AbstractLibHelper {
     super(module);
   }
 
-  @Override
-  public void checkDeps() {
+  /**
+   * Modifies module libraries if Gauge Library is missing.
+   */
+  public void checkModuleDependencies() {
     ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(getModule()).getModifiableModel();
     if (!gaugeJavaLibIsAdded(modifiableModel)) {
       addGaugeJavaLib(modifiableModel);
@@ -167,11 +168,13 @@ public final class GaugeLibHelper extends AbstractLibHelper {
   private static ProjectLib gaugeLib(Module module) {
     String libRoot;
     try {
-      GaugeService gaugeService = Gauge.getGaugeService(module, true);
-      if (gaugeService == null) {
-        gaugeService = GaugeModuleListener.createGaugeService(module);
+      GaugeBootstrapService bootstrapService = GaugeBootstrapService.getInstance(module.getProject());
+
+      GaugeCli gaugeCli = bootstrapService.getGaugeCli(module, true);
+      if (gaugeCli == null) {
+        gaugeCli = bootstrapService.startGaugeCli(module);
       }
-      GaugeConnection gaugeConnection = gaugeService.getGaugeConnection();
+      GaugeConnection gaugeConnection = gaugeCli.getGaugeConnection();
       if (gaugeConnection == null) {
         throw new IOException("Gauge api connection not established");
       }

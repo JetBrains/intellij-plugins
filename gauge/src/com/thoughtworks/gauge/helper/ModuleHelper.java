@@ -17,8 +17,10 @@
 package com.thoughtworks.gauge.helper;
 
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.thoughtworks.gauge.util.GaugeUtil;
@@ -26,11 +28,23 @@ import com.thoughtworks.gauge.util.GaugeUtil;
 public final class ModuleHelper {
   public boolean isGaugeModule(PsiElement element) {
     Module module = GaugeUtil.moduleForPsiElement(element);
-    return module != null && GaugeUtil.isGaugeModule(module);
+    if (module == null) return false;
+
+    return isGaugeModule(module);
   }
 
   public boolean isGaugeModule(Module module) {
-    return GaugeUtil.isGaugeModule(module);
+    if (GaugeUtil.isGaugeModule(module)) return true;
+
+    String moduleName = module.getName();
+    if (moduleName.endsWith(".test") || moduleName.endsWith(".main")) {
+      String parentModuleName = StringUtil.substringBeforeLast(moduleName, ".");
+      ModuleManager moduleManager = ModuleManager.getInstance(module.getProject());
+      Module parentModule = moduleManager.findModuleByName(parentModuleName);
+
+      return parentModule != null && GaugeUtil.isGaugeModule(parentModule);
+    }
+    return false;
   }
 
   public Module getModule(PsiElement step) {

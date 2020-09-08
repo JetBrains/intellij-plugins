@@ -32,10 +32,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
+import com.thoughtworks.gauge.GaugeBootstrapService;
 import com.thoughtworks.gauge.StepValue;
 import com.thoughtworks.gauge.connection.GaugeConnection;
-import com.thoughtworks.gauge.core.Gauge;
-import com.thoughtworks.gauge.core.GaugeService;
+import com.thoughtworks.gauge.core.GaugeCli;
 import com.thoughtworks.gauge.language.psi.ConceptArg;
 import com.thoughtworks.gauge.language.psi.SpecArg;
 import com.thoughtworks.gauge.util.GaugeUtil;
@@ -141,9 +141,11 @@ public final class StepCompletionProvider extends CompletionProvider<CompletionP
   private static Collection<Type> getStepsInModule(Module module) {
     Map<String, Type> steps = getImplementedSteps(module);
     try {
-      GaugeService gaugeService = Gauge.getGaugeService(module, true);
-      if (gaugeService == null) return steps.values();
-      GaugeConnection gaugeConnection = gaugeService.getGaugeConnection();
+      GaugeBootstrapService bootstrapService = GaugeBootstrapService.getInstance(module.getProject());
+      GaugeCli gaugeCli = bootstrapService.getGaugeCli(module, true);
+      if (gaugeCli == null) return steps.values();
+
+      GaugeConnection gaugeConnection = gaugeCli.getGaugeConnection();
       if (gaugeConnection != null) {
         gaugeConnection.fetchAllSteps().forEach(s -> addStep(steps, s, STEP));
         gaugeConnection.fetchAllConcepts().forEach(concept -> addStep(steps, concept.getStepValue(), CONCEPT));

@@ -27,9 +27,9 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.psi.PsiFile;
+import com.thoughtworks.gauge.GaugeBootstrapService;
 import com.thoughtworks.gauge.GaugeBundle;
-import com.thoughtworks.gauge.core.Gauge;
-import com.thoughtworks.gauge.core.GaugeService;
+import com.thoughtworks.gauge.core.GaugeCli;
 import com.thoughtworks.gauge.inspection.GaugeError;
 import com.thoughtworks.gauge.undo.UndoHandler;
 import com.thoughtworks.gauge.util.GaugeUtil;
@@ -75,9 +75,11 @@ final class GaugeRefactorHandler {
       Api.PerformRefactoringResponse response;
       FileDocumentManager.getInstance().saveAllDocuments();
       FileDocumentManager.getInstance().saveDocumentAsIs(editor.getDocument());
-      GaugeService gaugeService = Gauge.getGaugeService(module, true);
+      GaugeBootstrapService bootstrapService = GaugeBootstrapService.getInstance(project);
+
+      GaugeCli gaugeCli = bootstrapService.getGaugeCli(module, true);
       try {
-        response = gaugeService.getGaugeConnection().sendPerformRefactoringRequest(currentStepText, newStepText);
+        response = gaugeCli.getGaugeConnection().sendPerformRefactoringRequest(currentStepText, newStepText);
       }
       catch (Exception e) {
         refactorStatusCallback

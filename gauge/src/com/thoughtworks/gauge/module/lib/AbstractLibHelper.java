@@ -17,8 +17,8 @@
 package com.thoughtworks.gauge.module.lib;
 
 import com.intellij.openapi.module.Module;
+import com.thoughtworks.gauge.GaugeBootstrapService;
 import com.thoughtworks.gauge.GaugeModuleListener;
-import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.util.GaugeUtil;
 
 import static com.thoughtworks.gauge.GaugeModuleListener.isGaugeProject;
@@ -29,15 +29,21 @@ public abstract class AbstractLibHelper implements LibHelper {
   public AbstractLibHelper(Module module) {
     this.module = module;
 
-    if (isGaugeProject(module) && !GaugeUtil.isMavenModule(module) && !GaugeUtil.isGradleModule(module)) { // legacy module
+    if (isGaugeProject(module)
+        && !GaugeUtil.isMavenModule(module)
+        && !GaugeUtil.isGradleModule(module)) { // legacy module
       GaugeModuleListener.makeGaugeModuleType(module);
     }
   }
 
   @Override
-  public void init() {
-    if (isGaugeProject(module) && Gauge.getGaugeService(module, true) == null) {
-      GaugeModuleListener.createGaugeService(module);
+  public void initConnection() {
+    if (isGaugeProject(module)) {
+      GaugeBootstrapService bootstrapService = GaugeBootstrapService.getInstance(module.getProject());
+
+      if (bootstrapService.getGaugeCli(module, true) == null) {
+        bootstrapService.startGaugeCli(module);
+      }
     }
   }
 

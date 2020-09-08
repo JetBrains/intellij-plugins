@@ -24,10 +24,10 @@ import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.AnnotatedElementsSearch;
 import com.thoughtworks.gauge.Constants;
+import com.thoughtworks.gauge.GaugeBootstrapService;
 import com.thoughtworks.gauge.Step;
 import com.thoughtworks.gauge.StepValue;
 import com.thoughtworks.gauge.connection.GaugeConnection;
-import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.language.psi.SpecPsiImplUtil;
 import com.thoughtworks.gauge.language.psi.SpecStep;
 import com.thoughtworks.gauge.language.psi.impl.ConceptConceptImpl;
@@ -46,7 +46,9 @@ public final class StepUtil {
     if (module == null) {
       return null;
     }
-    ReferenceCache cache = Gauge.getReferenceCache(module);
+    GaugeBootstrapService bootstrapService = GaugeBootstrapService.getInstance(module.getProject());
+
+    ReferenceCache cache = bootstrapService.getReferenceCache(module);
     PsiElement reference = cache.searchReferenceFor(step);
     if (reference == null) {
       reference = findStepReference(step, module);
@@ -72,7 +74,8 @@ public final class StepUtil {
   }
 
   private static void addReferenceToCache(SpecStep step, PsiElement referenceElement, Module module) {
-    Gauge.getReferenceCache(module).addStepReference(step, referenceElement);
+    GaugeBootstrapService bootstrapService = GaugeBootstrapService.getInstance(module.getProject());
+    bootstrapService.getReferenceCache(module).addStepReference(step, referenceElement);
   }
 
   private static PsiElement searchConceptsForImpl(SpecStep step, Module module) {
@@ -189,8 +192,10 @@ public final class StepUtil {
     final PsiClass step = JavaPsiFacade.getInstance(module.getProject())
       .findClass("com.thoughtworks.gauge.Step", GlobalSearchScope.allScope(module.getProject()));
     if (step != null) {
+      GaugeBootstrapService bootstrapService = GaugeBootstrapService.getInstance(module.getProject());
+
       Collection<PsiMethod> methods = new ArrayList<>();
-      for (Module m : Gauge.getSubModules(module)) {
+      for (Module m : bootstrapService.getSubModules(module)) {
         if (m.isDisposed()) continue;
 
         methods.addAll(

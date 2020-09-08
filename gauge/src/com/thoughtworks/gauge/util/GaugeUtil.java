@@ -19,9 +19,7 @@ package com.thoughtworks.gauge.util;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.roots.ExternalProjectSystemRegistry;
-import com.intellij.openapi.roots.OrderEnumerator;
-import com.intellij.openapi.roots.ProjectModelExternalSource;
+import com.intellij.openapi.roots.*;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -29,7 +27,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiMethod;
 import com.intellij.util.EnvironmentUtil;
 import com.thoughtworks.gauge.Constants;
-import com.thoughtworks.gauge.core.Gauge;
+import com.thoughtworks.gauge.GaugeBootstrapService;
 import com.thoughtworks.gauge.exception.GaugeNotFoundException;
 import com.thoughtworks.gauge.language.ConceptFileType;
 import com.thoughtworks.gauge.language.SpecFile;
@@ -38,6 +36,7 @@ import com.thoughtworks.gauge.settings.GaugeSettingsModel;
 import com.thoughtworks.gauge.settings.GaugeSettingsService;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.serialization.PathMacroUtil;
 
 import java.io.*;
@@ -114,7 +113,8 @@ public final class GaugeUtil {
 
   public static File moduleDir(Module module) {
     if (module == null) return null;
-    if (isGradleModule(module)) return getProjectDirForGradleProject(module);
+    if (isGradleModule(module)) return getContentEntryDirForGradleProject(module);
+
     String pathname = moduleDirPath(module);
     if (pathname != null) return new File(pathname);
     String basePath = module.getProject().getBasePath();
@@ -128,7 +128,9 @@ public final class GaugeUtil {
   public static String classpathForModule(Module module) {
     if (isGradleModule(module)) {
       StringBuilder cp = new StringBuilder();
-      for (Module subModule : Gauge.getSubModules(module)) {
+      GaugeBootstrapService bootstrapService = GaugeBootstrapService.getInstance(module.getProject());
+
+      for (Module subModule : bootstrapService.getSubModules(module)) {
         cp.append(OrderEnumerator.orderEntries(subModule).recursively().getPathsList().getPathsString())
           .append(Constants.CLASSPATH_DELIMITER);
       }
@@ -168,15 +170,19 @@ public final class GaugeUtil {
            : (StepUtil.isConcept(element) || StepUtil.isStep(element));
   }
 
-  @NotNull
-  public static File getProjectDirForGradleProject(Module module) {
-    if (module.getModuleFilePath().contains(".idea/modules")) {
-      final String[] parts = module.getModuleFilePath().split("[.]\\bidea/modules\\b");
+  @Nullable
+  public static File getContentEntryDirForGradleProject(Module module) {
+    ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
 
-      return new File(parts[0] + parts[1].replaceAll("/[^/]+[.]\\biml\\b", ""));
+    ContentEntry[] contentEntries = moduleRootManager.getContentEntries();
+    if (contentEntries.length > 0) {
+      VirtualFile contentEntryFile = contentEntries[0].getFile();
+      if (contentEntryFile != null) {
+        return new File(contentEntryFile.getPath());
+      }
     }
 
-    return new File(new File(module.getModuleFilePath()).getParent());
+    return null;
   }
 
   public static @NlsSafe String getOutput(InputStream stream, String lineSeparator) throws IOException {

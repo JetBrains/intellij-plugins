@@ -27,7 +27,6 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManagerListener;
-import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.core.GaugeVersion;
 import org.jetbrains.annotations.NotNull;
 
@@ -64,9 +63,10 @@ public final class GaugeProjectListener implements ProjectManagerListener {
   }
 
   @Override
-  public void projectClosed(@NotNull Project project) {
+  public void projectClosing(@NotNull Project project) {
+    GaugeBootstrapService bootstrapService = GaugeBootstrapService.getInstance(project);
     for (Module module : ModuleManager.getInstance(project).getModules()) {
-      Gauge.disposeComponent(module);
+      bootstrapService.disposeComponent(module);
     }
   }
 }
