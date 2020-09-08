@@ -61,7 +61,6 @@ class VueJSTypeEvaluator(context: JSEvaluateContext, processor: JSTypeProcessor)
           val typeToAdd = destructuringParents.applyToOuterType(type)
           addType(typeToAdd, null)
         }
-        myContext.finishEvaluationWithStrictness(myContext.isStrict)
       }
       1 -> {
         val collectionType = JSResolveUtil.getElementJSType(collectionExpr)?.substitute()
