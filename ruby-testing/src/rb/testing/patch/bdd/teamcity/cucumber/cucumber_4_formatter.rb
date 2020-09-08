@@ -156,7 +156,7 @@ module Teamcity
         gherkin_document = @ast_lookup.gherkin_document(test_case.location.file)
         feature = gherkin_document.feature
 
-        feature.children.map(&:rule).reject(&:nil?).filter do |rule|
+        feature.children.map(&:rule).reject(&:nil?).select do |rule|
           rule.location.line <= test_case.location.lines.min
         end.last
       end
