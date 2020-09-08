@@ -16,6 +16,7 @@ import com.intellij.openapi.editor.LogicalPosition
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.editor.ex.EditorGutterComponentEx
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
@@ -33,13 +34,16 @@ import training.ui.LearningUiManager
 import java.awt.Component
 import java.util.concurrent.CompletableFuture
 
-class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Project) : Disposable {
+class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
   private data class TaskInfo(val content: () -> Unit,
                               var restoreIndex: Int,
                               val shownTaskIndex: Int?,
                               var messagesNumberBeforeStart: Int = 0,
                               var rehighlightComponent: (() -> Component)? = null,
                               var userVisibleInfo: PreviousTaskInfo? = null)
+
+  val editor: Editor
+    get() = FileEditorManager.getInstance(project).selectedTextEditor ?: error("no editor selected now")
 
   data class TaskCallbackData(var restoreCondition: (() -> Boolean)? = null,
                               var delayMillis: Int = 0)

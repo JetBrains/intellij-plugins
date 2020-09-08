@@ -19,9 +19,9 @@ open class TaskRuntimeContext(private val lessonExecutor: LessonExecutor,
   constructor(base: TaskRuntimeContext)
     : this(base.lessonExecutor, base.taskDisposable, base.restorePreviousTaskCallback, base.previousGetter)
 
-  val editor: Editor = lessonExecutor.editor
-  val project: Project = lessonExecutor.project
-  val lessonDisposable: Disposable = lessonExecutor
+  val editor: Editor get() = lessonExecutor.editor
+  val project: Project get() = lessonExecutor.project
+  val lessonDisposable: Disposable get() = lessonExecutor
 
   val focusOwner: Component?
     get() = IdeFocusManager.getInstance(project).focusOwner
