@@ -127,7 +127,7 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
 
   @Nullable
   private static String getDeviceName(@NotNull BuildDestination destination) throws ExecutionException {
-    if (Xcode.getVersion().is(8)) {
+    if (XcodeBase.getVersion().is(8)) {
       // Xcode 8's simulators use the host computer's name
       return ExecUtil.execAndReadLine(new GeneralCommandLine("scutil", "--get", "ComputerName"));
     } else if (destination.isDevice()) {
