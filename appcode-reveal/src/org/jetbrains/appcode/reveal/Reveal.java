@@ -137,7 +137,7 @@ public class Reveal {
   }
 
   public static void refreshReveal(@NotNull Project project, @NotNull File revealBundle, @NotNull String bundleID, @Nullable String deviceName) throws ExecutionException {
-    RevealUsageTriggerCollector.Companion.trigger(project, "showInReveal");
+    RevealUsageTriggerCollector.trigger(project, "showInReveal");
 
     if (isCompatibleWithRevealOnePointSixOrHigher(revealBundle)) {
       refreshRevealPostOnePointSix(revealBundle, bundleID, deviceName);

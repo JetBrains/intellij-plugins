@@ -180,7 +180,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     File toInject = installReveal(configuration, buildConfiguration, mainExecutable, settings);
     if (toInject == null) return;
 
-    RevealUsageTriggerCollector.Companion.trigger(configuration.getProject(), "inject");
+    RevealUsageTriggerCollector.trigger(configuration.getProject(), "inject");
 
     environment.putUserData(FILE_TO_INJECT, toInject);
   }
@@ -260,7 +260,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
       setRevealSettings(configuration, settings);
     }
 
-    RevealUsageTriggerCollector.Companion.trigger(configuration.getProject(), "installOnDevice");
+    RevealUsageTriggerCollector.trigger(configuration.getProject(), "installOnDevice");
 
     return signAndInstall(libReveal, buildConfiguration, mainExecutable);
   }
