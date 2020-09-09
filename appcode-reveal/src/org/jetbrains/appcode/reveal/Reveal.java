@@ -23,6 +23,7 @@ import com.jetbrains.cidr.xcode.frameworks.AppleSdk;
 import com.jetbrains.cidr.xcode.plist.Plist;
 import com.jetbrains.cidr.xcode.plist.PlistDriver;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -150,7 +151,7 @@ public class Reveal {
     // Reveal 1.6 and later bundle the refresh script with the application - execute it using osascript
     File inspectionScript = getRevealInspectionScript(revealBundle);
     if (inspectionScript == null) {
-      throw new ExecutionException("Cannot refresh Reveal. Inspection script could not be found.");
+      throw new ExecutionException(RevealBundle.message("dialog.message.cannot.refresh.reveal.inspection.script.could.not.be.found"));
     }
 
     try {
@@ -171,13 +172,13 @@ public class Reveal {
       handler.startNotify();
     }
     catch (Exception e) {
-      throw new ExecutionException("Cannot refresh Reveal: " + e.getMessage(), e);
+      throw new ExecutionException(RevealBundle.message("dialog.message.cannot.refresh.reveal", e.getMessage()), e);
     }
   }
 
   private static void refreshRevealPreOnePointSix(@NotNull String bundleID, @Nullable String deviceName) throws ExecutionException {
     // Pre Reveal 1.6, the refresh script was not bundled with the application
-    String script = "activate\n" +
+    @NonNls String script = "activate\n" +
             "repeat with doc in documents\n" +
             " refresh doc " +
             "   application bundle identifier \"" + StringUtil.escapeQuotes(bundleID) + "\"";
@@ -198,7 +199,7 @@ public class Reveal {
     }
     catch (IdeScriptException e) {
       LOG.info("Reveal script failed:\n" + script);
-      throw new ExecutionException("Cannot refresh Reveal: " + e.getMessage(), e);
+      throw new ExecutionException(RevealBundle.message("dialog.message.cannot.refresh.reveal", e.getMessage()), e);
     }
   }
 }

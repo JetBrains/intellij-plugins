@@ -17,8 +17,12 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.MessageDialogBuilder;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.HtmlBuilder;
+import com.intellij.openapi.util.text.HtmlChunk;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.ui.ColorUtil;
 import com.intellij.ui.HyperlinkLabel;
 import com.intellij.ui.UIBundle;
 import com.intellij.ui.components.JBCheckBox;
@@ -106,7 +110,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
   @Nullable
   @Override
   protected String getEditorTitle() {
-    return "Reveal";
+    return RevealBundle.message("dialog.title.reveal");
   }
 
   @Override
@@ -195,10 +199,10 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
                                     @NotNull File mainExecutable,
                                     @NotNull final RevealSettings settings) throws ExecutionException {
     File appBundle = Reveal.getDefaultRevealApplicationBundle();
-    if (appBundle == null) throw new ExecutionException("Reveal application bundle not found");
+    if (appBundle == null) throw new ExecutionException(RevealBundle.message("dialog.message.reveal.application.bundle.not.found"));
 
     File libReveal = Reveal.getRevealLib(appBundle, getSdk(configuration));
-    if (libReveal == null) throw new ExecutionException("Reveal library not found");
+    if (libReveal == null) throw new ExecutionException(RevealBundle.message("dialog.message.reveal.library.not.found"));
 
     Reveal.LOG.info("Reveal lib found at " + libReveal);
 
@@ -220,8 +224,8 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
 
       boolean[] response = new boolean[1];
       UIUtil.invokeAndWaitIfNeeded((Runnable)() -> {
-        response[0] = MessageDialogBuilder.yesNo("Reveal", "Project is not configured with Reveal library.<br><br>" +
-                                                           "Would you like to enable automatic library upload for this run configuration?")
+        response[0] = MessageDialogBuilder.yesNo(RevealBundle.message("dialog.title.reveal"),
+                                                 RevealBundle.message("project.is.not.configured.with.reveal.library"))
           .doNotAsk(new DialogWrapper.DoNotAskOption() {
             @Override
             public boolean isToBeShown() {
@@ -297,7 +301,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
       FileUtil.copy(libReveal, libRevealCopy);
     }
     catch (IOException e) {
-      throw new ExecutionException("Cannot create a temporary copy of Reveal library", e);
+      throw new ExecutionException(RevealBundle.message("dialog.message.cannot.create.temporary.copy.reveal.library"), e);
     }
 
     AppCodeInstaller.codesignBinary(buildConfiguration, mainExecutable, frameworksDir.getAbsolutePath(), libRevealCopy.getName());
@@ -318,10 +322,10 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     }
 
     Plist plist = PlistDriver.readAnyFormatSafe(plistFile);
-    if (plist == null) throw new ExecutionException("Info.plist not found at " + plistFile);
+    if (plist == null) throw new ExecutionException(RevealBundle.message("dialog.message.info.plist.not.found.at", plistFile));
 
     result = plist.getString("CFBundleIdentifier");
-    if (result == null) throw new ExecutionException("CFBundleIdentifier not found in " + plistFile);
+    if (result == null) throw new ExecutionException(RevealBundle.message("dialog.message.cfbundleidentifier.not.found.in", plistFile));
 
     environment.putUserData(BUNDLE_ID_KEY, result);
     return result;
@@ -373,13 +377,13 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
       }
 
       if (!found) {
-        notFoundText = "Reveal.app not found. You can install it from ";
+        notFoundText = RevealBundle.message("link.label.reveal.app.not.found");
       }
       else if (!compatible) {
-        notFoundText = "Incompatible version of Reveal.app. You can download the latest one from ";
+        notFoundText = RevealBundle.message("link.label.incompatible.version.reveal.app");
       }
       if (notFoundText != null) {
-        myRevealNotFoundOrIncompatible.setHyperlinkText(notFoundText, "revealapp.com", "");
+        myRevealNotFoundOrIncompatible.setTextWithHyperlink(notFoundText);
       }
 
       isFound = found && compatible;
@@ -407,10 +411,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
       myRevealNotFoundOrIncompatible.setIcon(AllIcons.General.BalloonError);
       myRevealNotFoundOrIncompatible.setHyperlinkTarget("https://revealapp.com");
 
-      myNotAvailable = new JBLabel("<html>" +
-              "Reveal integration is only available for iOS applications.<br>" +
-              "OS X targets are not yet supported.<br>" +
-              "</html>");
+      myNotAvailable = new JBLabel(RevealBundle.message("label.reveal.integration.only.available.for.ios.applications"));
 
       myInjectCheckBox = new JBCheckBox(IdeBundle.message("checkbox.inject.reveal.library.on.launch"));
       myInstallCheckBox = new JBCheckBox(IdeBundle.message("checkbox.upload.reveal.library.on.the.device.if.necessary"));
@@ -449,27 +450,31 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
       myRevealNotFoundOrIncompatible.setVisible(!isFound);
       myNotAvailable.setVisible(!isAvailable);
 
-      updateStatusAndHint(myInjectCheckBox, myInjectHint,
-              controlsEnabled,
-              "Library is injected on launch using DYLD_INSERT_LIBRARIES variable");
+      updateStatusAndHint(
+        myInjectCheckBox, myInjectHint, controlsEnabled,
+        RevealBundle.message("label.library.injected.on.launch.using.dyld.insert.libraries.variable")
+      );
 
       boolean installButtonEnabled = controlsEnabled && myInjectCheckBox.isSelected();
-      updateStatusAndHint(myInstallCheckBox, myInstallHint,
-              installButtonEnabled,
-              "It's not necessary to configure the project manually,<br>" +
-                      "library is signed and uploaded automatically"
+      updateStatusAndHint(
+        myInstallCheckBox, myInstallHint, installButtonEnabled,
+        RevealBundle.message("label.it.s.not.necessary.to.configure.project.manually.br.library.signed.uploaded.automatically")
       );
     }
 
-    private static void updateStatusAndHint(JComponent comp, JBLabel label, boolean enabled, String text) {
+    private static void updateStatusAndHint(JComponent comp, JBLabel label, boolean enabled, @NlsContexts.Label String text) {
       comp.setEnabled(enabled);
       label.setEnabled(enabled);
-      StringBuilder fontString = new StringBuilder();
+
       Color color = enabled ? UIUtil.getLabelForeground() : UIUtil.getLabelDisabledForeground();
-      fontString.append("<font color=#");
-      UIUtil.appendColor(color, fontString);
-      fontString.append(">");
-      label.setText("<html>" + fontString + text + "</html>");
+
+      label.setText(
+        new HtmlBuilder()
+          .append(text)
+          .wrapWith(HtmlChunk.font("#" + ColorUtil.toHex(color)))
+          .wrapWith(HtmlChunk.html())
+          .toString()
+      );
     }
   }
 
