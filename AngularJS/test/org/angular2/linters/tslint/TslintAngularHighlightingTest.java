@@ -39,7 +39,7 @@ public class TslintAngularHighlightingTest extends LinterHighlightingTest {
   }
 
   @Override
-  protected @NotNull Map<String, String> getPackageVersionsToInstall() {
+  protected @NotNull Map<String, String> getGlobalPackageVersionsToInstall() {
     HashMap<String, String> map = new HashMap<>();
     map.put("tslint", null);
     map.put("typescript", null);
