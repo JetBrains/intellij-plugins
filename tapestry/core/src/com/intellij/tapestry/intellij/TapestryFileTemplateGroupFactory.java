@@ -4,12 +4,13 @@ import com.intellij.ide.fileTemplates.FileTemplateDescriptor;
 import com.intellij.ide.fileTemplates.FileTemplateGroupDescriptor;
 import com.intellij.ide.fileTemplates.FileTemplateGroupDescriptorFactory;
 import com.intellij.openapi.fileTypes.StdFileTypes;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.tapestry.core.TapestryConstants;
 import icons.TapestryIcons;
 
 public class TapestryFileTemplateGroupFactory implements FileTemplateGroupDescriptorFactory {
 
-    private static final String TEMPLATE_GROUP_NAME = "Tapestry";
+    private static final @NlsSafe String TEMPLATE_GROUP_NAME = "Tapestry";
 
     @Override
     public FileTemplateGroupDescriptor getFileTemplatesDescriptor() {
