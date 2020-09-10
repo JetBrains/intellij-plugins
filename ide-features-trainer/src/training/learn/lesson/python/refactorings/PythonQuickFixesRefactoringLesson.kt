@@ -145,7 +145,7 @@ class PythonQuickFixesRefactoringLesson(module: Module)
         val b = editor.document.text != beforeRefactoring
         b && stackInsideDialogRefactoring()
       }
-      restoreState(500) {
+      restoreState(delayMillis = 500) {
         !stackInsideDialogRefactoring()
       }
 

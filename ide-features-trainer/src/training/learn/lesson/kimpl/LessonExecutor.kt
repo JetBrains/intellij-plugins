@@ -32,7 +32,6 @@ import training.learn.lesson.LessonManager
 import training.ui.LearnToolWindowFactory
 import training.ui.LearningUiManager
 import java.awt.Component
-import java.util.concurrent.CompletableFuture
 
 class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
   private data class TaskInfo(val content: () -> Unit,
@@ -45,7 +44,7 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
   val editor: Editor
     get() = FileEditorManager.getInstance(project).selectedTextEditor ?: error("no editor selected now")
 
-  data class TaskCallbackData(var restoreCondition: (() -> Boolean)? = null,
+  data class TaskCallbackData(var shouldRestoreToTask: (() -> TaskContext.TaskId?)? = null,
                               var delayMillis: Int = 0)
 
   // Just tasks with messages to the panel. Do not count technical intermediate tasks.
@@ -218,9 +217,9 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
     processTestActions(taskContext)
   }
 
-  internal fun applyRestore(taskContext: TaskContextImpl) {
+  internal fun applyRestore(taskContext: TaskContextImpl, restoreId: TaskContext.TaskId? = null) {
     taskContext.steps.forEach { it.cancel(true) }
-    val restoreIndex = taskActions[taskContext.taskIndex].restoreIndex
+    val restoreIndex = restoreId?.idx ?: taskActions[taskContext.taskIndex].restoreIndex
     val restoreInfo = taskActions[restoreIndex]
     restoreInfo.rehighlightComponent?.let { it() }
     LessonManager.instance.resetMessagesNumber(restoreInfo.messagesNumberBeforeStart)
@@ -230,54 +229,46 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
   /** @return a callback to clear resources used to track restore */
   private fun checkForRestore(taskContext: TaskContextImpl,
                               taskCallbackData: TaskCallbackData): () -> Unit {
-    fun restoreTask() {
-      applyRestore(taskContext)
-    }
-
-    val restoreCondition = taskCallbackData.restoreCondition ?: return {}
-
-    if (restoreCondition()) {
-      // check restore condition
-      restoreTask()
-      return {}
-    }
-
-    val restoreRecorder = ActionsRecorder(project, editor.document, this)
-    currentRestoreRecorder = restoreRecorder
     lateinit var clearRestore: () -> Unit
-    val checkRestoreCondition = restoreRecorder.futureCheck {
-      if (hasBeenStopped) {
-        // Strange situation
-        clearRestore()
-        return@futureCheck false
-      }
-      restoreCondition()
+    fun restoreTask(restoreId: TaskContext.TaskId) {
+      applyRestore(taskContext, restoreId)
     }
-    val restoreFuture = if (taskCallbackData.delayMillis != 0) {
-      val waited = CompletableFuture<Boolean>()
-      // we need to wait some times and only then restore if the task has not been passed
-      checkRestoreCondition.thenAccept {
-        Alarm().addRequest({ waited.complete(true) }, taskCallbackData.delayMillis)
-      }
-      waited
-    }
-    else {
-      checkRestoreCondition
-    }
-    clearRestore = {
-      if (!restoreFuture.isDone) {
-        restoreFuture.cancel(true)
-      }
-      if (!checkRestoreCondition.isDone && checkRestoreCondition != restoreFuture) {
-        restoreFuture.cancel(true)
-      }
-    }
-    restoreFuture.thenAccept {
+    fun restore(restoreId: TaskContext.TaskId) {
       clearRestore()
       invokeLater(ModalityState.any()) { // restore check must be done after pass conditions (and they will be done during current event processing)
         if (!isTaskCompleted(taskContext)) {
-          restoreTask()
+          restoreTask(restoreId)
         }
+      }
+    }
+
+    val shouldRestoreToTask = taskCallbackData.shouldRestoreToTask ?: return {}
+
+    fun checkFunction(): Boolean {
+      if (hasBeenStopped) {
+        // Strange situation
+        clearRestore()
+        return false
+      }
+      val restoreId = shouldRestoreToTask()
+      return if (restoreId != null) {
+        if (taskCallbackData.delayMillis == 0) restore(restoreId)
+        else Alarm().addRequest({ restore(restoreId) }, taskCallbackData.delayMillis)
+        true
+      }
+      else false
+    }
+
+    // Not sure about use-case when we need to check restore at the start of current task
+    // But it theoretically can be needed in case of several restores of dependent steps
+    if (checkFunction()) return {}
+
+    val restoreRecorder = ActionsRecorder(project, editor.document, this)
+    currentRestoreRecorder = restoreRecorder
+    val restoreFuture = restoreRecorder.futureCheck { checkFunction() }
+    clearRestore = {
+      if (!restoreFuture.isDone) {
+        restoreFuture.cancel(true)
       }
     }
     return clearRestore

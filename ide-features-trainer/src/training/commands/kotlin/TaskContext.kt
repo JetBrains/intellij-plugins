@@ -24,10 +24,19 @@ import javax.swing.JTree
 import javax.swing.tree.TreePath
 
 abstract class TaskContext {
+  open val taskId: TaskId = TaskId(0)
+
   /** Put here some initialization for the task */
   abstract fun before(preparation: TaskRuntimeContext.() -> Unit)
 
-  abstract fun restoreState(delayMillis: Int = 0, checkState: TaskRuntimeContext.() -> Boolean)
+  /**
+   * @param [restoreId] where to restore, `null` means the previous task
+   * @param [delayMillis] the delay before restore actions can be applied.
+   *                      Delay may be needed to give pass condition take place.
+   *                      It is a hack solution because of possible race conditions.
+   * @param [restoreRequired] returns true iff restore is needed
+   */
+  abstract fun restoreState(restoreId: TaskId? = null, delayMillis: Int = 0, restoreRequired: TaskRuntimeContext.() -> Boolean)
 
   /** Shortcut */
   fun restoreByUi(delayMillis: Int = 0) {
@@ -202,6 +211,8 @@ abstract class TaskContext {
       }
     }
   }
+
+  data class TaskId(val idx: Int)
 
   companion object {
     val CaretRestoreProposal: String

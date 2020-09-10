@@ -9,7 +9,6 @@ import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.NlsActions
 import com.intellij.openapi.util.SystemInfo
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.util.text.TextWithMnemonic
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ex.ToolWindowManagerListener
@@ -131,6 +130,18 @@ fun TaskRuntimeContext.lineWithBreakpoints(): Set<Int> {
   }.mapNotNull {
     it.sourcePosition?.line
   }.toSet()
+}
+
+/**
+ * @param [restoreId] where to restore, `null` means the previous task
+ * @param [restoreRequired] returns true iff restore is needed
+ */
+fun TaskContext.restoreAfterStateBecomeFalse(restoreId: TaskContext.TaskId? = null, restoreRequired: TaskRuntimeContext.() -> Boolean) {
+  var restoreIsPossible = false
+  restoreState(restoreId) {
+    val required = restoreRequired()
+    (restoreIsPossible && required).also { restoreIsPossible = restoreIsPossible || !required }
+  }
 }
 
 fun String.dropMnemonic(): String {

@@ -27,6 +27,8 @@ internal class TaskContextImpl(private val lessonExecutor: LessonExecutor,
                                private val recorder: ActionsRecorder,
                                val taskIndex: Int,
                                private val callbackData: LessonExecutor.TaskCallbackData) : TaskContext() {
+  override val taskId = TaskId(taskIndex)
+
   private val runtimeContext = TaskRuntimeContext(lessonExecutor,
                                                   recorder,
                                                   { lessonExecutor.applyRestore(this) },
@@ -40,10 +42,11 @@ internal class TaskContextImpl(private val lessonExecutor: LessonExecutor,
     preparation(runtimeContext) // just call it here
   }
 
-  override fun restoreState(delayMillis: Int, checkState: TaskRuntimeContext.() -> Boolean) {
-    if (callbackData.restoreCondition != null) throw IllegalStateException("Only one restore context per task is allowed")
+  override fun restoreState(restoreId: TaskId?, delayMillis: Int, restoreRequired: TaskRuntimeContext.() -> Boolean) {
     callbackData.delayMillis = delayMillis
-    callbackData.restoreCondition = { checkState(runtimeContext) }
+    val previous = callbackData.shouldRestoreToTask
+    val actualId = restoreId ?: TaskId(taskIndex - 1)
+    callbackData.shouldRestoreToTask = { previous?.let { it() } ?: if (restoreRequired(runtimeContext)) actualId else null }
   }
 
   override fun proposeRestore(restoreCheck: TaskRuntimeContext.() -> RestoreNotification?) {
