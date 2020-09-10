@@ -1,12 +1,14 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.lesson.general
 
+import com.intellij.openapi.application.ApplicationNamesInfo
 import training.lang.JavaLangSupport
 import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
+import training.learn.lesson.kimpl.LessonUtil
 
 class MoveLesson(module: Module, lang: String, private val sample: LessonSample)
   : KLesson("Move", LessonsBundle.message("move.lesson.name"), module, lang) {
@@ -15,7 +17,7 @@ class MoveLesson(module: Module, lang: String, private val sample: LessonSample)
       prepareSample(sample)
 
       actionTask("MoveLineDown") {
-        LessonsBundle.message("move.pull.down", action(it))
+        LessonsBundle.message("move.pull.down", LessonUtil.productName, action(it))
       }
       actionTask("MoveLineUp") {
         LessonsBundle.message("move.pull.up", action(it))

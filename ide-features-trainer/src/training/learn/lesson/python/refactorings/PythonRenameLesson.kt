@@ -94,7 +94,7 @@ class PythonRenameLesson(module: Module)
       }
       val dynamicReferencesString = LessonsBundle.message("python.rename.dynamic.references.prefix")
       text(LessonsBundle.message("python.rename.expand.dynamic.references",
-                                 code("teams"), strong(dynamicReferencesString)))
+                                 LessonUtil.productName, code("teams"), strong(dynamicReferencesString)))
 
       triggerByFoundPathAndHighlight { _: JTree, path: TreePath ->
         path.pathCount == 6 && path.getPathComponent(5).toString().contains("company_members")

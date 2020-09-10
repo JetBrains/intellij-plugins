@@ -25,7 +25,7 @@ class PythonRefactorMenuLesson(module: Module)
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
     actionTask("Refactorings.QuickListPopupAction") {
-      LessonsBundle.message("python.refactoring.menu.show.refactoring.list", action(it))
+      LessonsBundle.message("python.refactoring.menu.show.refactoring.list", LessonUtil.productName, action(it))
     }
     task(ActionsBundle.message("action.IntroduceParameter.text").dropMnemonic()) {
       val prefix = LessonsBundle.message("python.refactoring.menu.required.prefix")

@@ -2,6 +2,7 @@
 package training.learn.lesson.general.navigation
 
 import com.intellij.ide.dnd.aware.DnDAwareTree
+import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.editor.impl.EditorComponentImpl
 import com.intellij.testGuiFramework.framework.GuiTestUtil
 import com.intellij.testGuiFramework.util.Key
@@ -43,7 +44,7 @@ abstract class FileStructureLesson(module: Module, lang: String)
         test { GuiTestUtil.shortcut(Key.ENTER) }
       }
       task("ActivateStructureToolWindow") {
-        text(LessonsBundle.message("file.structure.toolwindow", action(it)))
+        text(LessonsBundle.message("file.structure.toolwindow", LessonUtil.productName, action(it)))
         stateCheck { focusOwner?.javaClass?.name?.contains("StructureViewComponent") ?: false }
         test { actions(it) }
       }

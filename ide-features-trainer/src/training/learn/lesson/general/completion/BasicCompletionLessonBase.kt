@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.lesson.general.completion
 
+import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.testGuiFramework.framework.GuiTestUtil
 import com.intellij.testGuiFramework.util.Key
 import training.learn.LessonsBundle
@@ -35,7 +36,8 @@ abstract class BasicCompletionLessonBase(module: Module, lang: String)
       val result1 = LessonUtil.insertIntoSample(sample1, item1Completion)
       prepareSample(sample1)
       task {
-        text(LessonsBundle.message("basic.completion.start.typing", code(item1Completion)))
+        text(LessonsBundle.message("basic.completion.start.typing",
+                                   LessonUtil.productName, code(item1Completion)))
         triggerByListItemAndHighlight(highlightBorder = false, highlightInside = false) { // no highlighting
           it.toString().contains(item1Completion)
         }

@@ -1,12 +1,14 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.lesson.python.completion
 
+import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.testGuiFramework.framework.GuiTestUtil.typeText
 import com.intellij.testGuiFramework.impl.jList
 import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
+import training.learn.lesson.kimpl.LessonUtil
 import training.learn.lesson.kimpl.LessonUtil.checkExpectedStateOfEditor
 import training.learn.lesson.kimpl.parseLessonSample
 
@@ -40,7 +42,8 @@ class PythonPostfixCompletionLesson(module: Module)
     get() = {
       prepareSample(sample)
       task {
-        text(LessonsBundle.message("postfix.completion.type.template", code(completionSuffix)))
+        text(LessonsBundle.message("postfix.completion.type.template",
+                                   LessonUtil.productName, code(completionSuffix)))
         triggerByListItemAndHighlight {
           it.toString() == completionSuffix
         }

@@ -2,6 +2,7 @@
 package training.learn.lesson.kimpl
 
 import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorModificationUtil
 import com.intellij.openapi.editor.ex.EditorEx
@@ -23,6 +24,9 @@ import javax.swing.JList
 import javax.swing.KeyStroke
 
 object LessonUtil {
+  val productName: String
+    get() = ApplicationNamesInfo.getInstance().fullProductName
+
   fun insertIntoSample(sample: LessonSample, inserted: String): String {
     return sample.text.substring(0, sample.startOffset) + inserted + sample.text.substring(sample.startOffset)
   }

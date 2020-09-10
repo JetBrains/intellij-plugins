@@ -4,6 +4,7 @@ package training.learn.lesson.general
 import com.intellij.ide.IdeBundle
 import com.intellij.ide.actions.AboutPopup
 import com.intellij.ide.actions.searcheverywhere.SearchEverywhereUIBase
+import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable
 import com.intellij.openapi.editor.impl.EditorComponentImpl
 import com.intellij.openapi.util.SystemInfo
@@ -35,7 +36,7 @@ class GotoActionLesson(module: Module, lang: String, private val sample: LessonS
         LessonsBundle.message("goto.action.use.find.action", LessonUtil.actionName(it), action(it)) + macOsWorkaround
       }
       actionTask("About") {
-        LessonsBundle.message("goto.action.invoke.about.action",
+        LessonsBundle.message("goto.action.invoke.about.action", LessonUtil.productName,
                               strong(LessonsBundle.message("goto.action.about.word")), LessonUtil.rawEnter())
       }
       task {

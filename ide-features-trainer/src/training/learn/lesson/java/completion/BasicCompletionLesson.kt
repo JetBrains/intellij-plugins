@@ -6,6 +6,7 @@ import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
+import training.learn.lesson.kimpl.LessonUtil
 import training.learn.lesson.kimpl.parseLessonSample
 
 class BasicCompletionLesson(module: Module)
@@ -38,8 +39,8 @@ class BasicCompletionDemo implements Runnable{
       return {
         prepareSample(sample)
         actionTask("EditorChooseLookupItem") {
-          LessonsBundle.message("basic.completion.start.typing", code("Run")) + " " +
-          LessonsBundle.message("java.basic.completion.choose.first", action(it))
+          LessonsBundle.message("basic.completion.start.typing", LessonUtil.productName, code("Run")) +
+          " " + LessonsBundle.message("java.basic.completion.choose.first", action(it))
         }
         caret(18, 36)
         actionTask("CodeCompletion") {

@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.lesson.python.refactorings
 
+import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.editor.impl.EditorComponentImpl
@@ -64,7 +65,7 @@ class PythonQuickFixesRefactoringLesson(module: Module)
     }
 
     task("ShowIntentionActions") {
-      text(LessonsBundle.message("python.quick.fix.refactoring.invoke.intentions", action(it)))
+      text(LessonsBundle.message("python.quick.fix.refactoring.invoke.intentions", LessonUtil.productName, action(it)))
       triggerByListItemAndHighlight(highlightBorder = true, highlightInside = false) { item ->
         item.toString().contains("Change signature of")
       }
@@ -113,7 +114,8 @@ class PythonQuickFixesRefactoringLesson(module: Module)
       }
     }
     task {
-      text(LessonsBundle.message("python.quick.fix.refactoring.set.default.value", action("EditorTab")))
+      text(LessonsBundle.message("python.quick.fix.refactoring.set.default.value",
+                                 action("EditorTab"), LessonUtil.productName))
       restoreByUi()
       stateCheck {
         (previous.ui as? EditorComponentImpl)?.text == "0"
