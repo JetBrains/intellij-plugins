@@ -57,7 +57,7 @@ class GotoActionLesson(module: Module, lang: String, private val sample: LessonS
         }
       }
       actionTask("GotoAction") {
-        LessonsBundle.message("goto.action.invoke.again", code("Ran"), action(it))
+        LessonsBundle.message("goto.action.invoke.again", action(it))
       }
       val showLineNumbersName = IdeBundle.message("label.show.line.numbers")
       task(LessonsBundle.message("goto.action.show.line.input.required")) {

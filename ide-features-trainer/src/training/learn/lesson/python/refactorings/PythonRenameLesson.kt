@@ -16,10 +16,7 @@ import org.jetbrains.annotations.Nullable
 import training.commands.kotlin.TaskTestContext
 import training.learn.LessonsBundle
 import training.learn.interfaces.Module
-import training.learn.lesson.kimpl.KLesson
-import training.learn.lesson.kimpl.LessonContext
-import training.learn.lesson.kimpl.dropMnemonic
-import training.learn.lesson.kimpl.parseLessonSample
+import training.learn.lesson.kimpl.*
 import java.util.regex.Pattern
 import javax.swing.JButton
 import javax.swing.JTree
@@ -97,7 +94,7 @@ class PythonRenameLesson(module: Module)
       }
       val dynamicReferencesString = LessonsBundle.message("python.rename.dynamic.references.prefix")
       text(LessonsBundle.message("python.rename.expand.dynamic.references",
-                                 code("teams"), strong("dynamicReferencesString")))
+                                 code("teams"), strong(dynamicReferencesString)))
 
       triggerByFoundPathAndHighlight { _: JTree, path: TreePath ->
         path.pathCount == 6 && path.getPathComponent(5).toString().contains("company_members")
