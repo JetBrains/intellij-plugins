@@ -573,9 +573,9 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     return attributeList != null && attributeList.hasModifier(JSAttributeList.ModifierType.NATIVE);
   }
 
-  private void reportStaticMethodProblem(JSAttributeList attributeList, String key) {
+  private void reportStaticMethodProblem(JSAttributeList attributeList, @PropertyKey(resourceBundle = "messages.FlexBundle") String key) {
     final ASTNode astNode = attributeList.getNode().findChildByType(JSTokenTypes.STATIC_KEYWORD);
-    myHolder.newAnnotation(HighlightSeverity.ERROR, JavaScriptBundle.message(key)).range(astNode)
+    myHolder.newAnnotation(HighlightSeverity.ERROR, FlexBundle.message(key)).range(astNode)
     .withFix(new RemoveASTNodeFix("javascript.fix.remove.static.modifier", astNode.getPsi())).create();
   }
 
