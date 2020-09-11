@@ -830,7 +830,7 @@ public final class CompilerConfigGeneratorRt {
   /**
    * The difference from FileUtil.processFilesRecursively() is that if processor returns false children processing is cancelled, but overall processing doesn't stop
    */
-  private static boolean processFilesRecursively(@NotNull File root, @NotNull Processor<File> processor) {
+  private static boolean processFilesRecursively(@NotNull File root, @NotNull Processor<? super File> processor) {
     final LinkedList<File> queue = new LinkedList<>();
     queue.add(root);
     while (!queue.isEmpty()) {

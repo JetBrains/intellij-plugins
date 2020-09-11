@@ -123,7 +123,7 @@ public class FlexResolveHelper implements JSResolveHelper {
   }
 
   @Override
-  public boolean processPackage(String packageQualifierText, String resolvedName, Processor<VirtualFile> processor, GlobalSearchScope globalSearchScope,
+  public boolean processPackage(String packageQualifierText, String resolvedName, Processor<? super VirtualFile> processor, GlobalSearchScope globalSearchScope,
                                 Project project) {
     for(VirtualFile vfile: DirectoryIndex.getInstance(project).getDirectoriesByPackageName(packageQualifierText, globalSearchScope.isSearchInLibraries())) {
       if (!globalSearchScope.contains(vfile)) continue;
@@ -289,7 +289,7 @@ public class FlexResolveHelper implements JSResolveHelper {
     });
   }
 
-  private static boolean processInlineComponentsInScope(XmlBackedJSClassImpl context, Processor<XmlBackedJSClass> processor) {
+  private static boolean processInlineComponentsInScope(XmlBackedJSClassImpl context, Processor<? super XmlBackedJSClass> processor) {
     XmlTag rootTag = ((XmlFile)context.getContainingFile()).getDocument().getRootTag();
     boolean recursive =
       context.getParent().getParentTag() != null && XmlBackedJSClassImpl.isComponentTag(context.getParent().getParentTag());
