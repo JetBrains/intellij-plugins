@@ -3,6 +3,7 @@ package com.intellij.javascript.flex.refactoring.extractSuper;
 
 import com.intellij.ide.util.PlatformPackageUtil;
 import com.intellij.lang.javascript.JavaScriptBundle;
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.refactoring.extractSuper.JSExtractSuperMode;
@@ -138,7 +139,7 @@ public abstract class FlexExtractSuperBaseDialog extends ExtractSuperBaseDialog<
 
   @Override
   protected String getDocCommentPanelName() {
-    return JavaScriptBundle.message("asdoc");
+    return FlexBundle.message("asdoc");
   }
 
   @Override

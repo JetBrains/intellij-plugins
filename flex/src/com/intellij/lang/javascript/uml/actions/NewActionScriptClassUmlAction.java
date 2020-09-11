@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.uml.actions;
 
 import com.intellij.diagram.DiagramDataModel;
 import com.intellij.lang.javascript.JavaScriptBundle;
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSIconProvider;
 import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrInterfaceFix;
@@ -20,14 +21,14 @@ import java.util.HashMap;
 public class NewActionScriptClassUmlAction extends NewJSClassUmlActionBase {
 
   public NewActionScriptClassUmlAction() {
-    super(JavaScriptBundle.messagePointer("new.actionscript.class.uml.action.text"), JavaScriptBundle
+    super(FlexBundle.messagePointer("new.actionscript.class.uml.action.text"), FlexBundle
             .messagePointer("new.actionscript.class.action.description"),
           JSIconProvider.AS_INSTANCE.getClassIcon());
   }
 
   @Override
   public String getActionName() {
-    return JavaScriptBundle.message("new.actionscript.class.command.name");
+    return FlexBundle.message("new.actionscript.class.command.name");
   }
 
   @Nullable
@@ -57,7 +58,7 @@ public class NewActionScriptClassUmlAction extends NewJSClassUmlActionBase {
       catch (Exception e) {
         throw new IncorrectOperationException(e);
       }
-    }, JavaScriptBundle.message(JavaScriptBundle.message("new.actionscript.class.command.name")), null);
+    }, JavaScriptBundle.message(FlexBundle.message("new.actionscript.class.command.name")), null);
     return clazz.get();
   }
 }

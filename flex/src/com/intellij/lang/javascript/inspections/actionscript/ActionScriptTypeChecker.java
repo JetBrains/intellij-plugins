@@ -5,6 +5,7 @@ import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.JavaScriptBundle;
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.completion.ActionScriptSmartCompletionContributor;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -88,7 +89,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
           }
           registerProblem(
             expr_,
-            JavaScriptBundle.message("javascript.callback.signature.mismatch"),
+            FlexBundle.message("javascript.callback.signature.mismatch"),
             ProblemHighlightType.WEAK_WARNING,
             getChangeSignatureFixForEventListener(fun, expr)
           );
@@ -104,7 +105,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
                 !ActionScriptResolveUtil.isAssignableType(FlexCommonTypeNames.STARLING_EVENT_FQN, actualParameterType, parameters[0])) {
               registerProblem(
                 expr instanceof JSFunctionExpression ? parameters[0] : expr,
-                JavaScriptBundle.message("javascript.callback.signature.mismatch"),
+                FlexBundle.message("javascript.callback.signature.mismatch"),
                 ProblemHighlightType.WEAK_WARNING,
                 getChangeSignatureFixForEventListener(fun, expr)
               );
@@ -115,7 +116,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
             if (!ActionScriptResolveUtil.isAssignableType(actualParameterType, expectedEventClass.getQualifiedName(), parameters[0])) {
               registerProblem(
                 expr instanceof JSFunctionExpression ? parameters[0] : expr,
-                JavaScriptBundle.message("javascript.callback.signature.mismatch.event.class", expectedEventClass.getQualifiedName()),
+                FlexBundle.message("javascript.callback.signature.mismatch.event.class", expectedEventClass.getQualifiedName()),
                 ProblemHighlightType.WEAK_WARNING,
                 getChangeSignatureFixForEventListener(fun, expr)
               );
@@ -292,7 +293,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
   public void checkIfProperTypeReference(JSExpression rOperand) {
     String expressionType = ActionScriptResolveUtil.getQualifiedExpressionType(rOperand, rOperand.getContainingFile());
     if (!"Class".equals(expressionType) && !ANY_TYPE.equals(expressionType)) {
-      myReporter.registerProblem(rOperand, null, JavaScriptBundle.message("actionscript.binary.operand.type.mismatch", "Class", expressionType),
+      myReporter.registerProblem(rOperand, null, FlexBundle.message("actionscript.binary.operand.type.mismatch", "Class", expressionType),
                                  getHighlightTypeForTypeOrSignatureProblem(rOperand));
     }
   }

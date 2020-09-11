@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.ECMAScriptImportOptimizer;
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.ImportUtils;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
@@ -212,7 +213,7 @@ public final class ActionScriptCreateConstructorFix extends CreateJSFunctionInte
   @NotNull
   @Override
   public String getName() {
-    return JavaScriptBundle.message("actionscript.create.constructor.intention.name", myName);
+    return FlexBundle.message("actionscript.create.constructor.intention.name", myName);
   }
 
   private class MyDialog extends JSChangeSignatureDialog {

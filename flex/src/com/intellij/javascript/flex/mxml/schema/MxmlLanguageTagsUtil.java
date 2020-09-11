@@ -9,7 +9,6 @@ import com.intellij.javascript.flex.FlexStateElementNames;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.javascript.flex.mxml.MxmlLanguageInjector;
 import com.intellij.lang.ASTNode;
-import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.openapi.editor.Editor;
@@ -114,7 +113,7 @@ public final class MxmlLanguageTagsUtil {
     if (parentTag == null ||
         !(parentTag.getParent() instanceof XmlDocument) ||
         tag != parentTag.getSubTags()[parentTag.getSubTags().length - 1]) {
-      addErrorMessage(tag, JavaScriptBundle.message("javascript.validation.tag.must.be.last.child.of.root.tag", tag.getName()), host);
+      addErrorMessage(tag, FlexBundle.message("javascript.validation.tag.must.be.last.child.of.root.tag", tag.getName()), host);
       //return;
     }
   }
@@ -122,7 +121,7 @@ public final class MxmlLanguageTagsUtil {
   static void validateFxLibraryTag(final XmlTag tag, final Validator.ValidationHost host) {
     final XmlTag parentTag = tag.getParentTag();
     if (parentTag == null || !(parentTag.getParent() instanceof XmlDocument) || tag != parentTag.getSubTags()[0]) {
-      addErrorMessage(tag, JavaScriptBundle.message("javascript.validation.tag.must.be.first.child.of.root.tag", tag.getName()), host);
+      addErrorMessage(tag, FlexBundle.message("javascript.validation.tag.must.be.first.child.of.root.tag", tag.getName()), host);
       return;
     }
 
@@ -131,7 +130,7 @@ public final class MxmlLanguageTagsUtil {
         final String prefix = tag.getNamespacePrefix();
         final String fxDefinitionTag =
           StringUtil.isEmpty(prefix) ? CodeContext.DEFINITION_TAG_NAME : (prefix + ":" + CodeContext.DEFINITION_TAG_NAME);
-        addErrorMessage(subTag, JavaScriptBundle.message("javascript.validation.only.this.tag.is.allowed.here", fxDefinitionTag), host);
+        addErrorMessage(subTag, FlexBundle.message("javascript.validation.only.this.tag.is.allowed.here", fxDefinitionTag), host);
       }
     }
   }
@@ -143,7 +142,7 @@ public final class MxmlLanguageTagsUtil {
       final String fxLibraryTag = StringUtil.isEmpty(prefix) ? FlexPredefinedTagNames.LIBRARY
                                                              : (prefix + ":" + FlexPredefinedTagNames.LIBRARY);
       addErrorMessage(tag,
-                      JavaScriptBundle
+                      FlexBundle
                         .message("javascript.validation.tag.must.be.direct.child.of.fx.library.tag", tag.getName(), fxLibraryTag),
                       host);
       return;
@@ -155,7 +154,7 @@ public final class MxmlLanguageTagsUtil {
     }
 
     if (tag.getSubTags().length != 1) {
-      addErrorMessage(tag, JavaScriptBundle.message("javascript.validation.tag.must.have.exactly.one.child.tag", tag.getName()), host);
+      addErrorMessage(tag, FlexBundle.message("javascript.validation.tag.must.have.exactly.one.child.tag", tag.getName()), host);
       //return;
     }
   }
@@ -169,7 +168,7 @@ public final class MxmlLanguageTagsUtil {
 
     if (tag.getAttribute(FlexStateElementNames.INCLUDE_IN) == null &&
         tag.getAttribute(FlexStateElementNames.EXCLUDE_FROM) == null) {
-      addErrorMessage(tag, JavaScriptBundle.message("javascript.validation.tag.must.have.attribute.includein.or.excludefrom", tag.getName()), host);
+      addErrorMessage(tag, FlexBundle.message("javascript.validation.tag.must.have.attribute.includein.or.excludefrom", tag.getName()), host);
       //return;
     }
   }

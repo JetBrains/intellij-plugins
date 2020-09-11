@@ -20,6 +20,7 @@ import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
@@ -837,7 +838,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
 
     final PsiElement declaration = getDeclaration();
     if ((declaration instanceof JSClass) && !CodeContext.hasDefaultConstructor((JSClass)declaration)) {
-      host.addMessage(tag, JavaScriptBundle.message("class.0.does.not.have.default.constructor", ((JSClass)declaration).getQualifiedName()),
+      host.addMessage(tag, FlexBundle.message("class.0.does.not.have.default.constructor", ((JSClass)declaration).getQualifiedName()),
                       Validator.ValidationHost.ErrorType.ERROR);
     }
 
@@ -882,7 +883,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
       if (tag.getSubTags().length == 0) {
         host.addMessage(
           tag,
-          JavaScriptBundle.message("javascript.validation.empty.component.type"),
+          FlexBundle.message("javascript.validation.empty.component.type"),
           ValidationHost.ErrorType.ERROR
         );
       }
@@ -1397,7 +1398,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     @Override
     public String validateValue(XmlElement context, String value) {
       if (!LanguageNamesValidation.isIdentifier(JavascriptLanguage.INSTANCE, value, context.getProject())) {
-        return JavaScriptBundle.message("invalid.identifier.value");
+        return FlexBundle.message("invalid.identifier.value");
       }
       return null;
     }
