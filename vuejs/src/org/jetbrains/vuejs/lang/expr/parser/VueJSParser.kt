@@ -130,7 +130,7 @@ class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
     fun parseSlotPropsExpression() {
       val slotPropsParameterList = builder.mark()
       val functionParser = object : ES6FunctionParser<VueJSParser>(this@VueJSParser) {
-        override fun getParameterType(): JSStubElementType<JSParameterStub, JSParameter>? {
+        override fun getParameterType(): IElementType {
           return VueJSStubElementTypes.SLOT_PROPS_PARAMETER
         }
       }
