@@ -11,11 +11,11 @@ import javax.swing.*;
  * DO NOT EDIT IT BY HAND, run "Generate icon classes" configuration instead
  */
 public final class CFMLIcons {
-  private static @NotNull Icon load(@NotNull String path) {
-    return IconManager.getInstance().getIcon(path, CFMLIcons.class);
+  private static @NotNull Icon load(@NotNull String path, long cacheKey) {
+    return IconManager.getInstance().loadRasterizedIcon(path, CFMLIcons.class, cacheKey);
   }
 
-  /** 16x16 */ public static final @NotNull Icon Cfml = load("/icons/cfml.svg");
-  /** 16x16 */ public static final @NotNull Icon Cfunit = load("/icons/cfunit.svg");
-  /** 16x16 */ public static final @NotNull Icon Remote_access = load("/icons/remote_access.svg");
+  /** 16x16 */ public static final @NotNull Icon Cfml = load("/icons/cfml.svg", -5411237988760943219L);
+  /** 16x16 */ public static final @NotNull Icon Cfunit = load("/icons/cfunit.svg", 2587947925589159379L);
+  /** 16x16 */ public static final @NotNull Icon Remote_access = load("/icons/remote_access.svg", -1720134310533852098L);
 }

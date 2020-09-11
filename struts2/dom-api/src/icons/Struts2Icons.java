@@ -11,11 +11,11 @@ import javax.swing.*;
  * DO NOT EDIT IT BY HAND, run "Generate icon classes" configuration instead
  */
 public final class Struts2Icons {
-  private static @NotNull Icon load(@NotNull String path) {
-    return IconManager.getInstance().getIcon(path, Struts2Icons.class);
+  private static @NotNull Icon load(@NotNull String path, long cacheKey) {
+    return IconManager.getInstance().loadRasterizedIcon(path, Struts2Icons.class, cacheKey);
   }
 
-  /** 16x16 */ public static final @NotNull Icon Action = load("/resources/icons/action.svg");
-  /** 10x10 */ public static final @NotNull Icon Action_small = load("/resources/icons/action_small.svg");
-  /** 10x10 */ public static final @NotNull Icon Edit_small = load("/resources/icons/edit_small.svg");
+  /** 16x16 */ public static final @NotNull Icon Action = load("/resources/icons/action.svg", 2782502296728944510L);
+  /** 10x10 */ public static final @NotNull Icon Action_small = load("/resources/icons/action_small.svg", -6400116197098802950L);
+  /** 10x10 */ public static final @NotNull Icon Edit_small = load("/resources/icons/edit_small.svg", 7194010604706053500L);
 }

@@ -11,21 +11,21 @@ import javax.swing.*;
  * DO NOT EDIT IT BY HAND, run "Generate icon classes" configuration instead
  */
 public final class FlexIcons {
-  private static @NotNull Icon load(@NotNull String path) {
-    return IconManager.getInstance().getIcon(path, FlexIcons.class);
+  private static @NotNull Icon load(@NotNull String path, long cacheKey) {
+    return IconManager.getInstance().loadRasterizedIcon(path, FlexIcons.class, cacheKey);
   }
 
-  /** 16x16 */ public static final @NotNull Icon Flash_remote_debug = load("/images/flash_remote_debug.svg");
-  /** 16x16 */ public static final @NotNull Icon Flash_run_config = load("/images/flash_run_config.svg");
+  /** 16x16 */ public static final @NotNull Icon Flash_remote_debug = load("/images/flash_remote_debug.svg", 1015233172753295035L);
+  /** 16x16 */ public static final @NotNull Icon Flash_run_config = load("/images/flash_run_config.svg", -90562106045272699L);
 
   public final static class Flex {
-    /** 16x16 */ public static final @NotNull Icon Flash_builder = load("/images/flex/flash_builder.svg");
-    /** 16x16 */ public static final @NotNull Icon Flash_module_closed = load("/images/flex/flash_module_closed.svg");
-    /** 16x16 */ public static final @NotNull Icon Flexunit = load("/images/flex/flexunit.svg");
+    /** 16x16 */ public static final @NotNull Icon Flash_builder = load("/images/flex/flash_builder.svg", 6969717578698900899L);
+    /** 16x16 */ public static final @NotNull Icon Flash_module_closed = load("/images/flex/flash_module_closed.svg", 4913662560730674990L);
+    /** 16x16 */ public static final @NotNull Icon Flexunit = load("/images/flex/flexunit.svg", 4351297636749174440L);
 
     public final static class Sdk {
-      /** 16x16 */ public static final @NotNull Icon Flex_sdk = load("/images/flex/sdk/flex_sdk.svg");
-      /** 16x16 */ public static final @NotNull Icon MavenFlex = load("/images/flex/sdk/mavenFlex.svg");
+      /** 16x16 */ public static final @NotNull Icon Flex_sdk = load("/images/flex/sdk/flex_sdk.svg", -1843705114774859869L);
+      /** 16x16 */ public static final @NotNull Icon MavenFlex = load("/images/flex/sdk/mavenFlex.svg", 2203397772655200888L);
 
     }
 

@@ -12,9 +12,9 @@ import javax.swing.*;
  * DO NOT EDIT IT BY HAND, run "Generate icon classes" configuration instead
  */
 public final class KarmaIcons {
-  private static @NotNull Icon load(@NotNull String path) {
-    return IconManager.getInstance().getIcon(path, KarmaIcons.class);
+  private static @NotNull Icon load(@NotNull String path, long cacheKey) {
+    return IconManager.getInstance().loadRasterizedIcon(path, KarmaIcons.class, cacheKey);
   }
 
-  /** 16x16 */ public static final @NotNull Icon Karma2 = load("/icons/karma2.svg");
+  /** 16x16 */ public static final @NotNull Icon Karma2 = load("/icons/karma2.svg", 4622287270670062906L);
 }

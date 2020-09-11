@@ -11,12 +11,12 @@ import javax.swing.*;
  * DO NOT EDIT IT BY HAND, run "Generate icon classes" configuration instead
  */
 public final class OsmorcIdeaIcons {
-  private static @NotNull Icon load(@NotNull String path) {
-    return IconManager.getInstance().getIcon(path, OsmorcIdeaIcons.class);
+  private static @NotNull Icon load(@NotNull String path, long cacheKey) {
+    return IconManager.getInstance().loadRasterizedIcon(path, OsmorcIdeaIcons.class, cacheKey);
   }
 
-  /** 16x16 */ public static final @NotNull Icon Bnd = load("/icons/bnd.svg");
-  /** 16x16 */ public static final @NotNull Icon BndLaunch = load("/icons/bndLaunch.svg");
-  /** 16x16 */ public static final @NotNull Icon BndTest = load("/icons/bndTest.svg");
-  /** 16x16 */ public static final @NotNull Icon Osgi = load("/icons/osgi.svg");
+  /** 16x16 */ public static final @NotNull Icon Bnd = load("/icons/bnd.svg", -8107277034273211418L);
+  /** 16x16 */ public static final @NotNull Icon BndLaunch = load("/icons/bndLaunch.svg", -1151944274490314772L);
+  /** 16x16 */ public static final @NotNull Icon BndTest = load("/icons/bndTest.svg", 6989970954963454224L);
+  /** 16x16 */ public static final @NotNull Icon Osgi = load("/icons/osgi.svg", -6894089753674617016L);
 }
