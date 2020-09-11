@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="Build Dart.jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/Build_Dart_jar</output-path>
-    <root id="archive" name="Dart-plugin.jar">
-      <element id="module-output" name="Dart-plugin" />
-    </root>
-  </artifact>
-</component>
