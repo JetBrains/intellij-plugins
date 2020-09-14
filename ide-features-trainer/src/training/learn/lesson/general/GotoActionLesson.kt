@@ -11,6 +11,7 @@ import com.intellij.openapi.util.SystemInfo
 import com.intellij.testGuiFramework.framework.GuiTestUtil
 import com.intellij.testGuiFramework.impl.jList
 import com.intellij.testGuiFramework.util.Key
+import training.learn.LearnBundle
 import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
@@ -37,7 +38,7 @@ class GotoActionLesson(module: Module, lang: String, private val sample: LessonS
       }
       actionTask("About") {
         LessonsBundle.message("goto.action.invoke.about.action", LessonUtil.productName,
-                              strong(LessonsBundle.message("goto.action.about.word")), LessonUtil.rawEnter())
+                              LessonUtil.actionName(it).toLowerCase(), LessonUtil.rawEnter())
       }
       task {
         text(LessonsBundle.message("goto.action.to.return.to.the.editor", action("EditorEscape")))
@@ -61,7 +62,7 @@ class GotoActionLesson(module: Module, lang: String, private val sample: LessonS
         LessonsBundle.message("goto.action.invoke.again", action(it))
       }
       val showLineNumbersName = IdeBundle.message("label.show.line.numbers")
-      task(LessonsBundle.message("goto.action.show.line.input.required")) {
+      task(LearnBundle.message("show.line.number.prefix.to.show.first")) {
         text(LessonsBundle.message("goto.action.show.line.numbers.request", strong(it), strong(showLineNumbersName)))
         triggerByListItemAndHighlight { item ->
           item.toString().contains(showLineNumbersName)

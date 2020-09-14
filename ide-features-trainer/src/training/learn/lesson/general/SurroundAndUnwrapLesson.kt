@@ -3,6 +3,7 @@ package training.learn.lesson.general
 
 import training.commands.kotlin.TaskContext
 import training.commands.kotlin.TaskRuntimeContext
+import training.learn.LearnBundle
 import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
@@ -69,7 +70,7 @@ abstract class SurroundAndUnwrapLesson(module: Module, lang: String)
       task {
         restoreByUi()
         text(LessonsBundle.message("surround.and.unwrap.choose.unwrap.item",
-                                   strong(LessonsBundle.message("surround.and.unwrap.item", surroundItems[0]))))
+                                   strong(LearnBundle.message("surround.and.unwrap.item", surroundItems[0]))))
         stateCheck {
           editor.document.charsSequence.let { sequence ->
             !surroundItems.any { sequence.contains(it) }

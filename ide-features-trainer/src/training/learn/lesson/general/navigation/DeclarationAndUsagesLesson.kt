@@ -13,6 +13,7 @@ import com.intellij.testGuiFramework.util.Key
 import com.intellij.ui.UIBundle
 import com.intellij.ui.table.JBTable
 import training.commands.kotlin.TaskRuntimeContext
+import training.learn.LearnBundle
 import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
@@ -80,8 +81,7 @@ abstract class DeclarationAndUsagesLesson(module: Module, lang: String)
         }
         restoreByUi()
         text(LessonsBundle.message("declaration.and.usages.pin.motivation", strong(UIBundle.message("tool.window.name.find"))))
-        text(LessonsBundle.message("declaration.and.usages.right.click.tab",
-                                   strong(LessonsBundle.message("declaration.and.usages.tab.name"))))
+        text(LessonsBundle.message("declaration.and.usages.right.click.tab", strong(LearnBundle.message("usages.tab.name"))))
       }
 
       task("PinToolwindowTab") {

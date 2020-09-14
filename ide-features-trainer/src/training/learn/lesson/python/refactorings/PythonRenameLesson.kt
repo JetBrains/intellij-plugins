@@ -14,6 +14,7 @@ import com.intellij.ui.tree.TreeVisitor
 import com.intellij.util.ui.tree.TreeUtil
 import org.jetbrains.annotations.Nullable
 import training.commands.kotlin.TaskTestContext
+import training.learn.LearnBundle
 import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.*
@@ -92,7 +93,7 @@ class PythonRenameLesson(module: Module)
           TreeUtil.collapseAll(tree, 1)
         }
       }
-      val dynamicReferencesString = LessonsBundle.message("python.rename.dynamic.references.prefix")
+      val dynamicReferencesString = LearnBundle.message("refactoring.dynamic.references.prefix")
       text(LessonsBundle.message("python.rename.expand.dynamic.references",
                                  LessonUtil.productName, code("teams"), strong(dynamicReferencesString)))
 

@@ -6,6 +6,7 @@ import com.intellij.refactoring.rename.inplace.InplaceRefactoring
 import com.intellij.testGuiFramework.framework.GuiTestUtil
 import com.intellij.testGuiFramework.util.Key
 import training.commands.kotlin.TaskRuntimeContext
+import training.learn.LearnBundle
 import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.*
@@ -28,13 +29,13 @@ class PythonRefactorMenuLesson(module: Module)
       LessonsBundle.message("python.refactoring.menu.show.refactoring.list", LessonUtil.productName, action(it))
     }
     task(ActionsBundle.message("action.IntroduceParameter.text").dropMnemonic()) {
-      val prefix = LessonsBundle.message("python.refactoring.menu.required.prefix")
-      text(LessonsBundle.message("python.refactoring.menu.introduce.parameter", strong(it), strong(prefix)))
+      val filter = LearnBundle.message("refactoring.menu.introduce.parameter.filter")
+      text(LessonsBundle.message("python.refactoring.menu.introduce.parameter", strong(it), strong(filter)))
       triggerByUiComponentAndHighlight(highlightBorder = false, highlightInside = false) { ui: JList<*> ->
         ui.model.size > 0 && ui.model.getElementAt(0).toString().contains(it)
       }
       test {
-        type(prefix)
+        type(filter)
       }
     }
 
