@@ -5,8 +5,6 @@ import com.intellij.psi.css.CssBundle;
 import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.css.impl.parsing.CssMathParser;
 import com.intellij.psi.css.impl.parsing.CssParser2;
-import com.intellij.psi.css.impl.stubs.CssStylesheetStubElementType;
-import com.intellij.psi.css.impl.util.CssStylesheetLazyElementType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.ArrayUtil;
@@ -29,12 +27,12 @@ public class PostCssParser extends CssParser2 {
   }
 
   @Override
-  protected CssStylesheetLazyElementType getStylesheetLazyElementType() {
+  protected IElementType getStylesheetLazyElementType() {
     return PostCssElementTypes.POST_CSS_LAZY_STYLESHEET;
   }
 
   @Override
-  protected CssStylesheetStubElementType getStylesheetElementType() {
+  protected IElementType getStylesheetElementType() {
     return PostCssElementTypes.POST_CSS_STYLESHEET;
   }
 
