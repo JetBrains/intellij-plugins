@@ -13,6 +13,7 @@
  */
 package org.dartlang.vm.service.internal;
 
+import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
 
 import java.util.LinkedList;
@@ -30,7 +31,7 @@ public class BlockingRequestSink implements RequestSink {
   /**
    * A queue of requests.
    */
-  private final LinkedList<JsonObject> queue = new LinkedList<>();
+  private final LinkedList<JsonObject> queue = Lists.newLinkedList();
 
   public BlockingRequestSink(RequestSink base) {
     this.base = base;
