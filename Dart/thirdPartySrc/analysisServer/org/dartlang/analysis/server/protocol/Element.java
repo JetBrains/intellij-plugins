@@ -8,15 +8,20 @@
  */
 package org.dartlang.analysis.server.protocol;
 
+import java.util.Arrays;
 import java.util.List;
-
+import java.util.Map;
+import com.google.common.collect.Lists;
+import com.google.dart.server.utilities.general.JsonUtilities;
 import com.google.dart.server.utilities.general.ObjectUtilities;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.util.ArrayList;
 import java.util.Iterator;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Information about an element (something that can be declared in code).
@@ -28,7 +33,7 @@ public class Element {
 
   public static final Element[] EMPTY_ARRAY = new Element[0];
 
-  public static final List<Element> EMPTY_LIST = new ArrayList<>();
+  public static final List<Element> EMPTY_LIST = Lists.newArrayList();
 
   private static final int ABSTRACT = 0x01;
 

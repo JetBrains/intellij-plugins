@@ -42,7 +42,7 @@ public class RequestUtilities {
   private static final String INCLUDED = "included";
   private static final String INCLUDED_FIXES = "includedFixes";
   private static final String INCLUDED_PEDANTIC_FIXES = "includePedanticFixes";
-  private static final String INCLUDED_REQUIRED_FIXES = "includeRequiredFixes";
+  private static final String PORT = "port";
   private static final String LABEL = "label";
   private static final String LENGTH = "length";
   private static final String LINE_LENGTH = "lineLength";
@@ -511,8 +511,8 @@ public class RequestUtilities {
                                                List<String> included,
                                                List<String> includedFixes,
                                                boolean includePedanticFixes,
-                                               boolean includeRequiredFixes,
                                                List<String> excludedFixes,
+                                               int port,
                                                String outputDir) {
     JsonObject params = new JsonObject();
     params.add(INCLUDED, buildJsonElement(included));
@@ -520,10 +520,10 @@ public class RequestUtilities {
       params.add(INCLUDED_FIXES, buildJsonElement(includedFixes));
     }
     params.addProperty(INCLUDED_PEDANTIC_FIXES, includePedanticFixes);
-    params.addProperty(INCLUDED_REQUIRED_FIXES, includeRequiredFixes);
     if (excludedFixes != null) {
       params.add(EXCLUDED_FIXES, buildJsonElement(excludedFixes));
     }
+    params.addProperty(PORT, port);
     if (outputDir != null) {
       params.addProperty(OUTPUT_DIR, outputDir);
     }

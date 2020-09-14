@@ -18,9 +18,11 @@ import com.intellij.codeInsight.template.postfix.templates.PostfixTemplateProvid
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiFile;
+
 import java.util.HashSet;
+
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
-import org.dartlang.analysis.server.protocol.PostfixCompletionTemplate;
+import org.dartlang.analysis.server.protocol.PostfixTemplateDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,11 +50,11 @@ public class DartPostfixTemplateProvider implements PostfixTemplateProvider {
     String version = service.getSdkVersion();
     if (TEMPLATE_CACHE.get(version) != null) return;
 
-    PostfixCompletionTemplate[] templates = service.edit_listPostfixCompletionTemplates();
+    PostfixTemplateDescriptor[] templates = service.edit_listPostfixCompletionTemplates();
     Set<PostfixTemplate> set = new HashSet<>();
     if (templates != null) {
       try {
-        for (PostfixCompletionTemplate template : templates) {
+        for (PostfixTemplateDescriptor template : templates) {
           set.add(DartRemotePostfixTemplate.createTemplate(template));
         }
         TEMPLATE_CACHE.put(version, set);

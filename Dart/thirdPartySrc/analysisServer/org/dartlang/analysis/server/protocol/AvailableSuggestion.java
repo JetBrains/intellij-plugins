@@ -10,7 +10,8 @@ package org.dartlang.analysis.server.protocol;
 
 import java.util.Arrays;
 import java.util.List;
-
+import java.util.Map;
+import com.google.common.collect.Lists;
 import com.google.dart.server.utilities.general.JsonUtilities;
 import com.google.dart.server.utilities.general.ObjectUtilities;
 import com.google.gson.JsonArray;
@@ -33,7 +34,7 @@ public class AvailableSuggestion {
 
   public static final AvailableSuggestion[] EMPTY_ARRAY = new AvailableSuggestion[0];
 
-  public static final List<AvailableSuggestion> EMPTY_LIST = new ArrayList<>();
+  public static final List<AvailableSuggestion> EMPTY_LIST = Lists.newArrayList();
 
   /**
    * The identifier to present to the user for code completion.
@@ -121,7 +122,7 @@ public class AvailableSuggestion {
 
   public static AvailableSuggestion fromJson(JsonObject jsonObject) {
     String label = jsonObject.get("label").getAsString();
-    String declaringLibraryUri = jsonObject.get("declaringLibraryUri") != null ? jsonObject.get("declaringLibraryUri").getAsString() : null;
+    String declaringLibraryUri = jsonObject.get("declaringLibraryUri").getAsString();
     Element element = Element.fromJson(jsonObject.get("element").getAsJsonObject());
     String defaultArgumentListString = jsonObject.get("defaultArgumentListString") == null ? null : jsonObject.get("defaultArgumentListString").getAsString();
     int[] defaultArgumentListTextRanges = jsonObject.get("defaultArgumentListTextRanges") == null ? null : JsonUtilities.decodeIntArray(jsonObject.get("defaultArgumentListTextRanges").getAsJsonArray());

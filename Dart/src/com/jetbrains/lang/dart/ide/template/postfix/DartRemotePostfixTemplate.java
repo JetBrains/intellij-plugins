@@ -26,7 +26,7 @@ import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.assists.AssistUtils;
 import com.jetbrains.lang.dart.assists.DartSourceEditException;
 import org.dartlang.analysis.server.protocol.Position;
-import org.dartlang.analysis.server.protocol.PostfixCompletionTemplate;
+import org.dartlang.analysis.server.protocol.PostfixTemplateDescriptor;
 import org.dartlang.analysis.server.protocol.SourceChange;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,7 +36,7 @@ import java.util.Set;
 
 public class DartRemotePostfixTemplate extends PostfixTemplate {
 
-  protected DartRemotePostfixTemplate(PostfixCompletionTemplate template) {
+  protected DartRemotePostfixTemplate(PostfixTemplateDescriptor template) {
     this(template.getName(), template.getKey(), template.getExample());
   }
 
@@ -44,7 +44,7 @@ public class DartRemotePostfixTemplate extends PostfixTemplate {
     super(name, key, example);
   }
 
-  public static DartRemotePostfixTemplate createTemplate(PostfixCompletionTemplate template) {
+  public static DartRemotePostfixTemplate createTemplate(PostfixTemplateDescriptor template) {
     // TODO Automatically generate documentation subclasses from server data during build.
     try {
       String prefix = StringUtil.capitalize(template.getName());
@@ -52,7 +52,7 @@ public class DartRemotePostfixTemplate extends PostfixTemplate {
         prefix = "Bang";
       }
       Class<?> templateClass = Class.forName("com.jetbrains.lang.dart.ide.template.postfix." + prefix + "PostfixTemplate");
-      Constructor<?> constructor = templateClass.getDeclaredConstructor(PostfixCompletionTemplate.class);
+      Constructor<?> constructor = templateClass.getDeclaredConstructor(PostfixTemplateDescriptor.class);
       return (DartRemotePostfixTemplate)constructor.newInstance(template);
     }
     catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException ex) {
@@ -113,103 +113,103 @@ public class DartRemotePostfixTemplate extends PostfixTemplate {
 }
 
 class AssertPostfixTemplate extends DartRemotePostfixTemplate {
-  AssertPostfixTemplate(PostfixCompletionTemplate template) {
+  AssertPostfixTemplate(PostfixTemplateDescriptor template) {
     super(template);
   }
 }
 
 class BangPostfixTemplate extends DartRemotePostfixTemplate {
-  BangPostfixTemplate(PostfixCompletionTemplate template) {
+  BangPostfixTemplate(PostfixTemplateDescriptor template) {
     super(template);
   }
 }
 
 class ForPostfixTemplate extends DartRemotePostfixTemplate {
-  ForPostfixTemplate(PostfixCompletionTemplate template) {
+  ForPostfixTemplate(PostfixTemplateDescriptor template) {
     super(template);
   }
 }
 
 class ForiPostfixTemplate extends DartRemotePostfixTemplate {
-  ForiPostfixTemplate(PostfixCompletionTemplate template) {
+  ForiPostfixTemplate(PostfixTemplateDescriptor template) {
     super(template);
   }
 }
 
 class IterPostfixTemplate extends DartRemotePostfixTemplate {
-  IterPostfixTemplate(PostfixCompletionTemplate template) {
+  IterPostfixTemplate(PostfixTemplateDescriptor template) {
     super(template);
   }
 }
 
 class ElsePostfixTemplate extends DartRemotePostfixTemplate {
-  ElsePostfixTemplate(PostfixCompletionTemplate template) {
+  ElsePostfixTemplate(PostfixTemplateDescriptor template) {
     super(template);
   }
 }
 
 class NotPostfixTemplate extends DartRemotePostfixTemplate {
-  NotPostfixTemplate(PostfixCompletionTemplate template) {
+  NotPostfixTemplate(PostfixTemplateDescriptor template) {
     super(template);
   }
 }
 
 class IfPostfixTemplate extends DartRemotePostfixTemplate {
-  IfPostfixTemplate(PostfixCompletionTemplate template) {
+  IfPostfixTemplate(PostfixTemplateDescriptor template) {
     super(template);
   }
 }
 
 class NnPostfixTemplate extends DartRemotePostfixTemplate {
-  NnPostfixTemplate(PostfixCompletionTemplate template) {
+  NnPostfixTemplate(PostfixTemplateDescriptor template) {
     super(template);
   }
 }
 
 class NotnullPostfixTemplate extends DartRemotePostfixTemplate {
-  NotnullPostfixTemplate(PostfixCompletionTemplate template) {
+  NotnullPostfixTemplate(PostfixTemplateDescriptor template) {
     super(template);
   }
 }
 
 class NullPostfixTemplate extends DartRemotePostfixTemplate {
-  NullPostfixTemplate(PostfixCompletionTemplate template) {
+  NullPostfixTemplate(PostfixTemplateDescriptor template) {
     super(template);
   }
 }
 
 class ParPostfixTemplate extends DartRemotePostfixTemplate {
-  ParPostfixTemplate(PostfixCompletionTemplate template) {
+  ParPostfixTemplate(PostfixTemplateDescriptor template) {
     super(template);
   }
 }
 
 class ReturnPostfixTemplate extends DartRemotePostfixTemplate {
-  ReturnPostfixTemplate(PostfixCompletionTemplate template) {
+  ReturnPostfixTemplate(PostfixTemplateDescriptor template) {
     super(template);
   }
 }
 
 class SwitchPostfixTemplate extends DartRemotePostfixTemplate {
-  SwitchPostfixTemplate(PostfixCompletionTemplate template) {
+  SwitchPostfixTemplate(PostfixTemplateDescriptor template) {
     super(template);
   }
 }
 
 class TryPostfixTemplate extends DartRemotePostfixTemplate {
-  TryPostfixTemplate(PostfixCompletionTemplate template) {
+  TryPostfixTemplate(PostfixTemplateDescriptor template) {
     super(template);
   }
 }
 
 class TryonPostfixTemplate extends DartRemotePostfixTemplate {
-  TryonPostfixTemplate(PostfixCompletionTemplate template) {
+  TryonPostfixTemplate(PostfixTemplateDescriptor template) {
     super(template);
   }
 }
 
 class WhilePostfixTemplate extends DartRemotePostfixTemplate {
-  WhilePostfixTemplate(PostfixCompletionTemplate template) {
+  WhilePostfixTemplate(PostfixTemplateDescriptor template) {
     super(template);
   }
 }
