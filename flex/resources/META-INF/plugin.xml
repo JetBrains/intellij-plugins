@@ -270,6 +270,9 @@
 
     <xml.undefinedElementFixProvider implementation="com.intellij.javascript.flex.mxml.schema.FlexUndefinedElementFixProvider"/>
     <completion.contributor language="ECMA Script Level 4" id="ActionScriptMethodsCompletionContributor" order="before JSPatternBasedCompletionContributor" implementationClass="com.intellij.lang.javascript.flex.completion.ActionScriptMethodsCompletionContributor"/>
+    <completion.contributor language="XML" implementationClass="com.intellij.javascript.flex.completion.FlexTextReferenceCompletionProvider"
+                            id="FlexTextReferenceCompletionProvider"
+                            order="after JSCompletionContributor"/>
 
     <projectService serviceImplementation="com.intellij.javascript.flex.mxml.schema.CodeContextHolder"/>
     <notificationGroup id="AIR Packaging" displayType="BALLOON"/>
