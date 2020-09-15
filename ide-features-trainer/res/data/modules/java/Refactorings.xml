@@ -3,5 +3,5 @@
   <lesson-kt implementationClass="training.learn.lesson.java.refactorings.JavaRenameLesson"/>
   <lesson-kt sample="ExtractVariable.java.sample" implementationClass="training.learn.lesson.general.refactorings.ExtractVariableFromBubbleLesson" lang="JAVA"/>
   <lesson-kt implementationClass="training.learn.lesson.java.refactorings.JavaExtractMethodCocktailSortLesson"/>
-  <lesson filename="04.RefactoringBasics.xml"/>
+  <lesson-kt implementationClass="training.learn.lesson.java.refactorings.JavaRefactoringMenuLesson"/>
 </module>
