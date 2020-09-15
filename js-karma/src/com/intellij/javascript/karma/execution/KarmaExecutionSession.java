@@ -170,9 +170,7 @@ public class KarmaExecutionSession {
     }
     String testNamesPattern = getTestNamesPattern();
     if (testNamesPattern != null) {
-      // Name pattern should be surrounded with '/' to be in compliance with karma-jasmine:
-      // https://github.com/karma-runner/karma-jasmine/blob/39b1582987f4b82d6da4775414f208a8433ec794/src/adapter.js#L298
-      commandLine.addParameter("--testName=/" + testNamesPattern + "/");
+      commandLine.addParameter("--testNamePattern=" + testNamesPattern);
       myFolder.addLastParameterFrom(commandLine);
     }
     NodeCommandLineConfigurator.find(interpreter).configure(commandLine, NodeCommandLineConfigurator.defaultOptions(myProject));
