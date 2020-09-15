@@ -38,5 +38,6 @@
     <orderEntry type="module" module-name="intellij.groovy.psi" />
     <orderEntry type="module" module-name="intellij.xml.structureView.impl" />
     <orderEntry type="module" module-name="intellij.xml.impl" />
+    <orderEntry type="module" module-name="intellij.platform.core.ui" />
   </component>
 </module>

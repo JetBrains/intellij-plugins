@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.psi.impl;
 
 import com.intellij.icons.AllIcons;
@@ -64,14 +64,14 @@ abstract public class AbstractDartComponentImpl extends DartPsiCompositeElementI
 
   private Icon doOverlays(Icon icon) {
     if (isStatic() && !isGetter() && !isSetter()) {
-      icon = overlayIcons(icon, AllIcons.Nodes.StaticMark);
+      icon = IconManager.getInstance().createOverlayIcon(icon, AllIcons.Nodes.StaticMark);
     }
     if (isFinal()) {
-      icon = overlayIcons(icon, AllIcons.Nodes.FinalMark);
+      icon = IconManager.getInstance().createOverlayIcon(icon, AllIcons.Nodes.FinalMark);
     }
     if (isConst()) {
       //TODO: find a distinct const icon
-      icon = overlayIcons(icon, AllIcons.Nodes.FinalMark);
+      icon = IconManager.getInstance().createOverlayIcon(icon, AllIcons.Nodes.FinalMark);
     }
 
     return icon;

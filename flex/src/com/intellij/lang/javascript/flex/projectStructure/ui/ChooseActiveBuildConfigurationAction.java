@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -24,7 +24,6 @@ import com.intellij.ui.navigation.Place;
 import com.intellij.ui.popup.PopupFactoryImpl;
 import com.intellij.ui.popup.list.PopupListElementRenderer;
 import com.intellij.util.PlatformIcons;
-import com.intellij.util.ui.EmptyIcon;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -32,11 +31,10 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.Arrays;
 
-public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
-
+public final class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
   private static final Icon ICON_ACTIVE = PlatformIcons.CHECK_ICON;
   private static final Icon ICON_ACTIVE_SELECTED = PlatformIcons.CHECK_ICON_SELECTED;
-  private static final Icon ICON_EMPTY = EmptyIcon.create(ICON_ACTIVE);
+  private static final Icon ICON_EMPTY = IconManager.getInstance().createEmptyIcon(ICON_ACTIVE);
 
   @Override
   public void update(@NotNull final AnActionEvent e) {
