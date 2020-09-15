@@ -356,15 +356,18 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   public void edit_dartfix(List<String> included,
                            List<String> includedFixes,
                            boolean includePedanticFixes,
-                           boolean includeRequiredFixes,
                            List<String> excludedFixes,
+                           int port,
                            String outputDir,
                            DartfixConsumer consumer) {
     String id = generateUniqueId();
     sendRequestToServer(id, RequestUtilities
-                          .generateEditDartfix(id, included, includedFixes, includePedanticFixes, includeRequiredFixes, excludedFixes, outputDir),
+                          .generateEditDartfix(id, included, includedFixes, includePedanticFixes, excludedFixes, port, outputDir),
                         consumer);
   }
+
+  @Override
+  public void edit_bulkFixes(List<String> included, BulkFixesConsumer consumer) {}
 
   @Override
   public void edit_format(String file, int selectionOffset, int selectionLength, int lineLength, FormatConsumer consumer) {

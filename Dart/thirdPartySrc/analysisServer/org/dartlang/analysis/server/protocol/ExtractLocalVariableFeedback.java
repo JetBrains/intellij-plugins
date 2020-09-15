@@ -10,7 +10,8 @@ package org.dartlang.analysis.server.protocol;
 
 import java.util.Arrays;
 import java.util.List;
-
+import java.util.Map;
+import com.google.common.collect.Lists;
 import com.google.dart.server.utilities.general.JsonUtilities;
 import com.google.dart.server.utilities.general.ObjectUtilities;
 import com.google.gson.JsonArray;
@@ -30,7 +31,7 @@ public class ExtractLocalVariableFeedback extends RefactoringFeedback {
 
   public static final ExtractLocalVariableFeedback[] EMPTY_ARRAY = new ExtractLocalVariableFeedback[0];
 
-  public static final List<ExtractLocalVariableFeedback> EMPTY_LIST = new ArrayList<>();
+  public static final List<ExtractLocalVariableFeedback> EMPTY_LIST = Lists.newArrayList();
 
   /**
    * The offsets of the expressions that cover the specified selection, from the down most to the up

@@ -8,15 +8,20 @@
  */
 package org.dartlang.analysis.server.protocol;
 
+import java.util.Arrays;
 import java.util.List;
-
+import java.util.Map;
+import com.google.common.collect.Lists;
+import com.google.dart.server.utilities.general.JsonUtilities;
 import com.google.dart.server.utilities.general.ObjectUtilities;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.util.ArrayList;
 import java.util.Iterator;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * A reference to an AvailableSuggestionSet noting that the library's members which match the kind
@@ -29,7 +34,7 @@ public class IncludedSuggestionSet {
 
   public static final IncludedSuggestionSet[] EMPTY_ARRAY = new IncludedSuggestionSet[0];
 
-  public static final List<IncludedSuggestionSet> EMPTY_LIST = new ArrayList<>();
+  public static final List<IncludedSuggestionSet> EMPTY_LIST = Lists.newArrayList();
 
   /**
    * Clients should use it to access the set of precomputed completions to be displayed to the user.

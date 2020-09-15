@@ -17,7 +17,7 @@ import com.google.dart.server.ListPostfixCompletionTemplatesConsumer;
 import com.google.dart.server.utilities.general.JsonUtilities;
 import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
-import org.dartlang.analysis.server.protocol.PostfixCompletionTemplate;
+import org.dartlang.analysis.server.protocol.PostfixTemplateDescriptor;
 import org.dartlang.analysis.server.protocol.RequestError;
 import org.jetbrains.io.JsonUtil;
 
@@ -35,12 +35,12 @@ public class ListPostfixCompletionTemplatesProcessor extends ResultProcessor {
     if (resultObject != null) {
       try {
         JsonArray items = resultObject.get("templates").getAsJsonArray();
-        ArrayList<PostfixCompletionTemplate> templates = new ArrayList<>();
+        ArrayList<PostfixTemplateDescriptor> templates = new ArrayList<>();
         items.forEach(item -> {
           JsonObject temp = item.getAsJsonObject();
-          templates.add(PostfixCompletionTemplate.fromJson(temp));
+          templates.add(PostfixTemplateDescriptor.fromJson(temp));
         });
-        consumer.postfixCompletionTemplates(templates.toArray(new PostfixCompletionTemplate[items.size()]));
+        consumer.postfixCompletionTemplates(templates.toArray(new PostfixTemplateDescriptor[items.size()]));
       }
       catch (Exception exception) {
         // catch any exceptions in the formatting of this response

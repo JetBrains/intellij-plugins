@@ -10,7 +10,8 @@ package org.dartlang.analysis.server.protocol;
 
 import java.util.Arrays;
 import java.util.List;
-
+import java.util.Map;
+import com.google.common.collect.Lists;
 import com.google.dart.server.utilities.general.JsonUtilities;
 import com.google.dart.server.utilities.general.ObjectUtilities;
 import com.google.gson.JsonArray;
@@ -33,7 +34,7 @@ public class ImportedElementSet {
 
   public static final ImportedElementSet[] EMPTY_ARRAY = new ImportedElementSet[0];
 
-  public static final List<ImportedElementSet> EMPTY_LIST = new ArrayList<>();
+  public static final List<ImportedElementSet> EMPTY_LIST = Lists.newArrayList();
 
   /**
    * The list of unique strings in this object.
