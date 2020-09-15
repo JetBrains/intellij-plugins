@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.completion;
 
 import com.intellij.CommonBundle;
@@ -222,12 +222,12 @@ public class DartServerCompletionContributor extends CompletionContributor {
     final int codeOffset = parameters.getOffset();
 
     final DartAnalysisServerService das = DartAnalysisServerService.getInstance(project);
-    final RuntimeCompletionResult completionResult =
+    final Pair<List<CompletionSuggestion>, List<RuntimeCompletionExpression>> completionResult =
       das.execution_getSuggestions(code, codeOffset,
                                    contextFile, contextOffset,
                                    Collections.emptyList(), Collections.emptyList());
-    if (completionResult != null && completionResult.suggestions != null) {
-      for (CompletionSuggestion suggestion : completionResult.suggestions) {
+    if (completionResult != null && completionResult.getFirst() != null) {
+      for (CompletionSuggestion suggestion : completionResult.getFirst()) {
         LookupElementBuilder lookupElement = createLookupElement(project, suggestion);
         resultSet.addElement(lookupElement);
       }
@@ -455,15 +455,15 @@ public class DartServerCompletionContributor extends CompletionContributor {
     if (isNotYetImported) {
       lookup = lookup.withInsertHandler((context, item) -> {
         final DartAnalysisServerService das = DartAnalysisServerService.getInstance(project);
-        final GetCompletionDetailsResult result =
+        final Pair<String, SourceChange> result =
           das.completion_getSuggestionDetails(file, suggestionSetId, suggestion.getCompletion(), context.getStartOffset());
         if (result == null) {
           return;
         }
 
-        context.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), result.completion);
+        context.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), result.getFirst());
 
-        @Nullable final SourceChange change = result.change;
+        @Nullable final SourceChange change = result.getSecond();
         if (change == null) {
           return;
         }

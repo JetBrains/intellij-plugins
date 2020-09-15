@@ -17,7 +17,6 @@ import com.google.dart.server.GetSuggestionDetailsConsumer;
 import com.google.dart.server.GetSuggestionsConsumer;
 import com.google.gson.JsonObject;
 
-import org.dartlang.analysis.server.protocol.GetCompletionDetailsResult;
 import org.dartlang.analysis.server.protocol.RequestError;
 import org.dartlang.analysis.server.protocol.SourceChange;
 
@@ -44,7 +43,7 @@ public class GetSuggestionDetailsProcessor extends ResultProcessor {
     try {
       String completion = resultObject.get("completion").getAsString();
       SourceChange change = SourceChange.fromJson(resultObject.get("change").getAsJsonObject());
-      consumer.computedDetails(new GetCompletionDetailsResult(completion, change));
+      consumer.computedDetails(completion, change);
     } catch (Exception exception) {
       // Catch any exceptions in the formatting of this response.
       consumer.onError(generateRequestError(exception));

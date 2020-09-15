@@ -8,15 +8,20 @@
  */
 package org.dartlang.analysis.server.protocol;
 
+import java.util.Arrays;
 import java.util.List;
-
+import java.util.Map;
+import com.google.common.collect.Lists;
+import com.google.dart.server.utilities.general.JsonUtilities;
 import com.google.dart.server.utilities.general.ObjectUtilities;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.util.ArrayList;
 import java.util.Iterator;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * A "fix" that can be specified in an edit.dartfix request.
@@ -28,7 +33,7 @@ public class DartFix {
 
   public static final DartFix[] EMPTY_ARRAY = new DartFix[0];
 
-  public static final List<DartFix> EMPTY_LIST = new ArrayList<>();
+  public static final List<DartFix> EMPTY_LIST = Lists.newArrayList();
 
   /**
    * The name of the fix.
@@ -41,17 +46,11 @@ public class DartFix {
   private final String description;
 
   /**
-   * `true` if the fix is in the "required" fixes group.
-   */
-  private final Boolean isRequired;
-
-  /**
    * Constructor for {@link DartFix}.
    */
-  public DartFix(String name, String description, Boolean isRequired) {
+  public DartFix(String name, String description) {
     this.name = name;
     this.description = description;
-    this.isRequired = isRequired;
   }
 
   @Override
@@ -60,8 +59,7 @@ public class DartFix {
       DartFix other = (DartFix) obj;
       return
         ObjectUtilities.equals(other.name, name) &&
-        ObjectUtilities.equals(other.description, description) &&
-        ObjectUtilities.equals(other.isRequired, isRequired);
+        ObjectUtilities.equals(other.description, description);
     }
     return false;
   }
@@ -69,8 +67,7 @@ public class DartFix {
   public static DartFix fromJson(JsonObject jsonObject) {
     String name = jsonObject.get("name").getAsString();
     String description = jsonObject.get("description") == null ? null : jsonObject.get("description").getAsString();
-    Boolean isRequired = jsonObject.get("isRequired") == null ? null : jsonObject.get("isRequired").getAsBoolean();
-    return new DartFix(name, description, isRequired);
+    return new DartFix(name, description);
   }
 
   public static List<DartFix> fromJsonArray(JsonArray jsonArray) {
@@ -93,13 +90,6 @@ public class DartFix {
   }
 
   /**
-   * `true` if the fix is in the "required" fixes group.
-   */
-  public Boolean getIsRequired() {
-    return isRequired;
-  }
-
-  /**
    * The name of the fix.
    */
   public String getName() {
@@ -111,7 +101,6 @@ public class DartFix {
     HashCodeBuilder builder = new HashCodeBuilder();
     builder.append(name);
     builder.append(description);
-    builder.append(isRequired);
     return builder.toHashCode();
   }
 
@@ -120,9 +109,6 @@ public class DartFix {
     jsonObject.addProperty("name", name);
     if (description != null) {
       jsonObject.addProperty("description", description);
-    }
-    if (isRequired != null) {
-      jsonObject.addProperty("isRequired", isRequired);
     }
     return jsonObject;
   }
@@ -134,9 +120,7 @@ public class DartFix {
     builder.append("name=");
     builder.append(name + ", ");
     builder.append("description=");
-    builder.append(description + ", ");
-    builder.append("isRequired=");
-    builder.append(isRequired);
+    builder.append(description);
     builder.append("]");
     return builder.toString();
   }

@@ -36,6 +36,7 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
@@ -1157,21 +1158,21 @@ public final class DartAnalysisServerService implements Disposable {
     return resultRef.get();
   }
 
-  public PostfixCompletionTemplate @Nullable [] edit_listPostfixCompletionTemplates() {
+  public PostfixTemplateDescriptor @Nullable [] edit_listPostfixCompletionTemplates() {
     final AnalysisServer server = myServer;
     if (server == null) {
       return null;
     }
 
     if (StringUtil.compareVersionNumbers(mySdkVersion, "1.25") < 0) {
-      return PostfixCompletionTemplate.EMPTY_ARRAY;
+      return PostfixTemplateDescriptor.EMPTY_ARRAY;
     }
 
-    final Ref<PostfixCompletionTemplate[]> resultRef = Ref.create();
+    final Ref<PostfixTemplateDescriptor[]> resultRef = Ref.create();
     final CountDownLatch latch = new CountDownLatch(1);
     server.edit_listPostfixCompletionTemplates(new ListPostfixCompletionTemplatesConsumer() {
       @Override
-      public void postfixCompletionTemplates(PostfixCompletionTemplate[] templates) {
+      public void postfixCompletionTemplates(PostfixTemplateDescriptor[] templates) {
         resultRef.set(templates);
         latch.countDown();
       }
@@ -1405,23 +1406,23 @@ public final class DartAnalysisServerService implements Disposable {
   }
 
   @Nullable
-  public GetCompletionDetailsResult completion_getSuggestionDetails(@NotNull final VirtualFile file,
-                                                                    final int id,
-                                                                    final String label,
-                                                                    final int _offset) {
+  public Pair<String, SourceChange> completion_getSuggestionDetails(@NotNull VirtualFile file,
+                                                                    int id,
+                                                                    String label,
+                                                                    int _offset) {
     final AnalysisServer server = myServer;
     if (server == null) {
       return null;
     }
 
     final String filePath = FileUtil.toSystemDependentName(file.getPath());
-    final Ref<GetCompletionDetailsResult> resultRef = new Ref<>();
+    final Ref<Pair<String, SourceChange>> resultRef = new Ref<>();
     final CountDownLatch latch = new CountDownLatch(1);
     final int offset = getOriginalOffset(file, _offset);
     server.completion_getSuggestionDetails(filePath, id, label, offset, new GetSuggestionDetailsConsumer() {
       @Override
-      public void computedDetails(GetCompletionDetailsResult result) {
-        resultRef.set(result);
+      public void computedDetails(String completion, SourceChange change) {
+        resultRef.set(new Pair<>(completion, change));
         latch.countDown();
       }
 
@@ -1493,7 +1494,7 @@ public final class DartAnalysisServerService implements Disposable {
     final Ref<List<SourceFileEdit>> resultRef = new Ref<>();
 
     final CountDownLatch latch = new CountDownLatch(1);
-    server.edit_dartfix(filePaths, includedFixes, false, false, Collections.emptyList(), null, new DartfixConsumer() {
+    server.edit_dartfix(filePaths, includedFixes, false, Collections.emptyList(), 0, null, new DartfixConsumer() {
       @Override
       public void computedDartfix(List<DartFixSuggestion> suggestions,
                                   List<DartFixSuggestion> otherSuggestions,
@@ -1831,28 +1832,28 @@ public final class DartAnalysisServerService implements Disposable {
   }
 
   @Nullable
-  public RuntimeCompletionResult execution_getSuggestions(@NotNull final String code,
-                                                          final int offset,
-                                                          @NotNull final VirtualFile contextFile,
-                                                          final int contextOffset,
-                                                          @NotNull final List<RuntimeCompletionVariable> variables,
-                                                          @NotNull final List<RuntimeCompletionExpression> expressions) {
+  public Pair<List<CompletionSuggestion>, List<RuntimeCompletionExpression>> execution_getSuggestions(@NotNull String code,
+                                                                                                      int offset,
+                                                                                                      @NotNull VirtualFile contextFile,
+                                                                                                      int contextOffset,
+                                                                                                      @NotNull List<RuntimeCompletionVariable> variables,
+                                                                                                      @NotNull List<RuntimeCompletionExpression> expressions) {
     final AnalysisServer server = myServer;
     if (server == null) {
-      return new RuntimeCompletionResult(new ArrayList<CompletionSuggestion>(), new ArrayList<RuntimeCompletionExpression>());
+      return new Pair(new ArrayList<CompletionSuggestion>(), new ArrayList<RuntimeCompletionExpression>());
     }
 
     final String contextFilePath = FileUtil.toSystemDependentName(contextFile.getPath());
     final CountDownLatch latch = new CountDownLatch(1);
-    final Ref<RuntimeCompletionResult> refResult = Ref.create();
+    final Ref<Pair<List<CompletionSuggestion>, List<RuntimeCompletionExpression>>> refResult = Ref.create();
     server.execution_getSuggestions(
       code, offset,
       contextFilePath, contextOffset,
       variables, expressions,
       new GetRuntimeCompletionConsumer() {
         @Override
-        public void computedResult(RuntimeCompletionResult result) {
-          refResult.set(result);
+        public void computedResult(List<CompletionSuggestion> suggestions, List<RuntimeCompletionExpression> expressions) {
+          refResult.set(new Pair(suggestions, expressions));
           latch.countDown();
         }
 
