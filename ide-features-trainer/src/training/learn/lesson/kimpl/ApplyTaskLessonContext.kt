@@ -7,16 +7,4 @@ internal class ApplyTaskLessonContext(private val taskContext: TaskContext) : Le
   override fun task(taskContent: TaskContext.() -> Unit) {
     taskContent(taskContext)
   }
-
-  override fun caret(offset: Int) = Unit // do nothing
-
-  override fun caret(line: Int, column: Int) = Unit // do nothing
-
-  override fun caret(text: String) = Unit // do nothing
-
-  override fun caret(position: LessonSamplePosition) = Unit // do nothing
-
-  override fun waitBeforeContinue(delayMillis: Int) = Unit // do nothing
-
-  override fun prepareSample(sample: LessonSample) = Unit // do nothing
 }

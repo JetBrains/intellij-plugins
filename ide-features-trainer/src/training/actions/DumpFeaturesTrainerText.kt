@@ -6,14 +6,10 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import training.commands.kotlin.TaskContext
 import training.commands.kotlin.TaskRuntimeContext
-import training.commands.kotlin.TaskTestContext
 import training.learn.CourseManager
 import training.learn.lesson.kimpl.ApplyTaskLessonContext
 import training.learn.lesson.kimpl.KLesson
-import java.awt.Component
 import java.awt.datatransfer.StringSelection
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.Future
 
 @Suppress("HardCodedStringLiteral")
 class DumpFeaturesTrainerText : AnAction("Copy IFT Course Text to Clipboard") {
@@ -34,12 +30,6 @@ class DumpFeaturesTrainerText : AnAction("Copy IFT Course Text to Clipboard") {
 
 
 private class TextCollector(private val buffer: StringBuffer) : TaskContext() {
-  override fun before(preparation: TaskRuntimeContext.() -> Unit) = Unit // do nothing
-
-  override fun restoreState(restoreId: TaskId?, delayMillis: Int, restoreRequired: TaskRuntimeContext.() -> Boolean) = Unit // do nothing
-
-  override fun proposeRestore(restoreCheck: TaskRuntimeContext.() -> RestoreNotification?) = Unit // do nothing
-
   override fun text(text: String) {
     buffer.append(text)
     buffer.append('\n')
@@ -48,29 +38,4 @@ private class TextCollector(private val buffer: StringBuffer) : TaskContext() {
   override fun runtimeText(callback: TaskRuntimeContext.() -> String?) {
     // TODO: think how to dump it
   }
-
-  override fun trigger(actionId: String) = Unit // do nothing
-
-  override fun trigger(checkId: (String) -> Boolean) = Unit // do nothing
-
-  override fun <T> trigger(actionId: String, calculateState: TaskRuntimeContext.() -> T, checkState: TaskRuntimeContext.(T, T) -> Boolean) = Unit // do nothing
-
-  override fun triggerStart(actionId: String, checkState: TaskRuntimeContext.() -> Boolean) = Unit // do nothing
-
-  override fun triggers(vararg actionIds: String) = Unit // do nothing
-
-  override fun stateCheck(checkState: TaskRuntimeContext.() -> Boolean): CompletableFuture<Boolean> = CompletableFuture<Boolean>()
-
-  override fun <T : Any> stateRequired(requiredState: TaskRuntimeContext.() -> T?): Future<T> {
-    return CompletableFuture()
-  }
-
-  override fun addFutureStep(p: DoneStepContext.() -> Unit)= Unit // do nothing
-
-  override fun addStep(step: CompletableFuture<Boolean>)= Unit // do nothing
-
-  @Suppress("OverridingDeprecatedMember")
-  override fun triggerByUiComponentAndHighlight(findAndHighlight: TaskRuntimeContext.() -> () -> Component) = Unit // do nothing
-
-  override fun test(action: TaskTestContext.() -> Unit) = Unit // do nothing
 }

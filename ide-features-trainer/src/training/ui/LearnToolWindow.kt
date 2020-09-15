@@ -13,6 +13,7 @@ import com.intellij.ui.content.ContentManagerEvent
 import com.intellij.ui.content.ContentManagerListener
 import icons.FeaturesTrainerIcons
 import training.actions.ChooseProgrammingLanguageForLearningAction
+import training.commands.kotlin.TaskContext
 import training.lang.LangManager
 import training.learn.interfaces.Lesson
 import training.learn.lesson.LessonListener
@@ -20,8 +21,8 @@ import training.learn.lesson.LessonManager
 import training.learn.lesson.LessonProcessor
 import training.learn.lesson.XmlLesson
 import training.learn.lesson.kimpl.ApplyTaskLessonContext
-import training.learn.lesson.kimpl.DocumentationModeTaskContext
 import training.learn.lesson.kimpl.KLesson
+import training.learn.lesson.kimpl.LessonExecutorUtil
 import training.ui.views.LanguageChoosePanel
 import training.ui.views.LearnPanel
 import training.ui.views.ModulesPanel
@@ -214,4 +215,8 @@ class LearnToolWindow internal constructor(val project: Project, private val who
     val vertical = scrollPane.verticalScrollBar
     vertical.value = vertical.maximum
   }
+}
+
+private class DocumentationModeTaskContext(private val project: Project) : TaskContext() {
+  override fun text(text: String) = LessonExecutorUtil.addTextToLearnPanel(text, project)
 }

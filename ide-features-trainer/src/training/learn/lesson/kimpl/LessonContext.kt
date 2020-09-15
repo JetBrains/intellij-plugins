@@ -3,8 +3,8 @@ package training.learn.lesson.kimpl
 
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.invokeLater
-import org.jetbrains.annotations.Nls
 import com.intellij.util.concurrency.annotations.RequiresEdt
+import org.jetbrains.annotations.Nls
 import training.commands.kotlin.TaskContext
 import training.commands.kotlin.TaskRuntimeContext
 
@@ -13,7 +13,7 @@ abstract class LessonContext {
    * Start a new task in a lesson context
    */
   @RequiresEdt
-  abstract fun task(taskContent: TaskContext.() -> Unit)
+  open fun task(taskContent: TaskContext.() -> Unit) = Unit
 
   /** Describe a simple task: just one action required */
   fun actionTask(action: String, @Nls getText: TaskContext.(action: String) -> String) {
@@ -45,20 +45,20 @@ abstract class LessonContext {
     }
   }
 
-  abstract fun caret(offset: Int)
+  open fun caret(offset: Int) = Unit
 
-    /** NOTE:  [line] and [column] starts from 1 not from zero. So these parameters should be same as in editors. */
-    abstract fun caret(line: Int, column: Int)
+  /** NOTE:  [line] and [column] starts from 1 not from zero. So these parameters should be same as in editors. */
+  open fun caret(line: Int, column: Int) = Unit
 
-  abstract fun caret(text: String)
+  open fun caret(text: String) = Unit
 
-  abstract fun caret(position: LessonSamplePosition)
+  open fun caret(position: LessonSamplePosition) = Unit
 
   /**
    * There will not be any freeze in GUI thread.
    * The continue of the script will be scheduled with the [delayMillis]
    */
-  abstract fun waitBeforeContinue(delayMillis: Int)
+  open fun waitBeforeContinue(delayMillis: Int) = Unit
 
-  abstract fun prepareSample(sample: LessonSample)
+  open fun prepareSample(sample: LessonSample) = Unit
 }

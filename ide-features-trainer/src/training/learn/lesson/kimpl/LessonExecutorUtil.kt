@@ -44,17 +44,9 @@ private class FakeTaskContext : TaskContext() {
   var hasText = false
   var hasDetection = false
 
-  override fun before(preparation: TaskRuntimeContext.() -> Unit) = Unit // do nothing
-
-  override fun restoreState(restoreId: TaskId?, delayMillis: Int, restoreRequired: TaskRuntimeContext.() -> Boolean) = Unit // do nothing
-
-  override fun proposeRestore(restoreCheck: TaskRuntimeContext.() -> RestoreNotification?) = Unit // do nothing
-
   override fun text(text: String) {
     hasText = true
   }
-
-  override fun runtimeText(callback: TaskRuntimeContext.() -> String?) = Unit // do nothing
 
   override fun trigger(actionId: String) {
     hasDetection = true

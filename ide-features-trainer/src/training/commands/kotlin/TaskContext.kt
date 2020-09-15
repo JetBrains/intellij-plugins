@@ -27,7 +27,7 @@ abstract class TaskContext {
   open val taskId: TaskId = TaskId(0)
 
   /** Put here some initialization for the task */
-  abstract fun before(preparation: TaskRuntimeContext.() -> Unit)
+  open fun before(preparation: TaskRuntimeContext.() -> Unit) = Unit
 
   /**
    * @param [restoreId] where to restore, `null` means the previous task
@@ -36,7 +36,7 @@ abstract class TaskContext {
    *                      It is a hack solution because of possible race conditions.
    * @param [restoreRequired] returns true iff restore is needed
    */
-  abstract fun restoreState(restoreId: TaskId? = null, delayMillis: Int = 0, restoreRequired: TaskRuntimeContext.() -> Boolean)
+  open fun restoreState(restoreId: TaskId? = null, delayMillis: Int = 0, restoreRequired: TaskRuntimeContext.() -> Boolean)= Unit
 
   /** Shortcut */
   fun restoreByUi(delayMillis: Int = 0) {
@@ -47,29 +47,30 @@ abstract class TaskContext {
 
   data class RestoreNotification(val message: String, val callback: () -> Unit)
 
-  abstract fun proposeRestore(restoreCheck: TaskRuntimeContext.() -> RestoreNotification?)
+  open fun proposeRestore(restoreCheck: TaskRuntimeContext.() -> RestoreNotification?) = Unit
 
   /**
    * Write a text to the learn panel (panel with a learning tasks).
    */
-  abstract fun text(@Language("HTML") @Nls text: String)
+  open fun text(@Language("HTML") @Nls text: String) = Unit
 
   /** Write a text to the learn panel (panel with a learning tasks). */
-  abstract fun runtimeText(@Nls callback: TaskRuntimeContext.() -> String?)
+  open fun runtimeText(@Nls callback: TaskRuntimeContext.() -> String?) = Unit
 
   /** Simply wait until an user perform particular action */
-  abstract fun trigger(actionId: String)
+  open fun trigger(actionId: String) = Unit
 
   /** Simply wait until an user perform actions */
-  abstract fun trigger(checkId: (String) -> Boolean)
+  open fun trigger(checkId: (String) -> Boolean) = Unit
 
   /** Trigger on actions start. Needs if you want to split long actions into several tasks. */
-  abstract fun triggerStart(actionId: String, checkState: TaskRuntimeContext.() -> Boolean = { true })
+  open fun triggerStart(actionId: String, checkState: TaskRuntimeContext.() -> Boolean = { true }) = Unit
 
-  abstract fun triggers(vararg actionIds: String)
+  /** [actionIds] these actions required for the current task */
+  open fun triggers(vararg actionIds: String) = Unit
 
   /** An user need to rice an action which leads to necessary state change */
-  abstract fun <T : Any?> trigger(actionId: String, calculateState: TaskRuntimeContext.() -> T, checkState: TaskRuntimeContext.(T, T) -> Boolean)
+  open fun <T : Any?> trigger(actionId: String, calculateState: TaskRuntimeContext.() -> T, checkState: TaskRuntimeContext.(T, T) -> Boolean) = Unit
 
   /** An user need to rice an action which leads to appropriate end state */
   fun trigger(actionId: String, checkState: TaskRuntimeContext.() -> Boolean) {
@@ -80,19 +81,20 @@ abstract class TaskContext {
    * Check that IDE state is as expected
    * In some rare cases DSL could wish to complete a future by itself
    */
-  abstract fun stateCheck(checkState: TaskRuntimeContext.() -> Boolean): CompletableFuture<Boolean>
+  open fun stateCheck(checkState: TaskRuntimeContext.() -> Boolean): CompletableFuture<Boolean> = CompletableFuture()
 
   /**
    * Check that IDE state is fit
    * @return A feature with value associated with fit state
    */
-  abstract fun <T : Any> stateRequired(requiredState: TaskRuntimeContext.() -> T?): Future<T>
+  open fun <T : Any> stateRequired(requiredState: TaskRuntimeContext.() -> T?): Future<T> = CompletableFuture()
 
-  abstract fun addFutureStep(p: DoneStepContext.() -> Unit)
+  open fun addFutureStep(p: DoneStepContext.() -> Unit) = Unit
 
-  abstract fun addStep(step: CompletableFuture<Boolean>)
+  open fun addStep(step: CompletableFuture<Boolean>) = Unit
 
-  abstract fun test(action: TaskTestContext.() -> Unit)
+  /** [action] What should be done to pass the current task */
+  open fun test(action: TaskTestContext.() -> Unit) = Unit
 
   fun triggerByFoundPathAndHighlight(highlightBorder: Boolean = true, highlightInside: Boolean = false, checkPath: TaskRuntimeContext.(tree: JTree, path: TreePath) -> Boolean) {
     triggerByFoundPathAndHighlight(LearningUiHighlightingManager.HighlightingOptions(highlightBorder, highlightInside)) { tree ->
@@ -180,7 +182,7 @@ abstract class TaskContext {
   }
 
   @Deprecated("It is auxiliary method with explicit class parameter. Use inlined short form instead")
-  abstract fun triggerByUiComponentAndHighlight(findAndHighlight: TaskRuntimeContext.() -> (() -> Component))
+  open fun triggerByUiComponentAndHighlight(findAndHighlight: TaskRuntimeContext.() -> (() -> Component)) = Unit
 
   /** Show shortcut for [actionId] inside lesson step message */
   open fun action(actionId: String): String  {
