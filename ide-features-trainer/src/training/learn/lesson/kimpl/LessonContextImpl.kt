@@ -16,8 +16,8 @@ class LessonContextImpl(private val executor: LessonExecutor): LessonContext() {
     executor.caret(line, column)
   }
 
-  override fun caret(text: String) {
-    executor.caret(text)
+  override fun caret(text: String, select: Boolean) {
+    executor.caret(text, select)
   }
 
   override fun caret(position: LessonSamplePosition) {

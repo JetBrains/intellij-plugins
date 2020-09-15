@@ -50,7 +50,7 @@ abstract class LessonContext {
   /** NOTE:  [line] and [column] starts from 1 not from zero. So these parameters should be same as in editors. */
   open fun caret(line: Int, column: Int) = Unit
 
-  open fun caret(text: String) = Unit
+  open fun caret(text: String, select: Boolean = false) = Unit
 
   open fun caret(position: LessonSamplePosition) = Unit
 

@@ -1,8 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.lesson.kimpl
 
-import com.intellij.find.FindManager
-import com.intellij.find.FindResult
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
@@ -140,10 +138,13 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
     addSimpleTaskAction { OpenFileDescriptor(project, virtualFile, line - 1, column - 1).navigateIn(editor) }
   }
 
-  fun caret(text: String) {
-    addSimpleTaskAction {
-      val start = getStartOffsetForText(text, editor, project)
-      editor.caretModel.moveToOffset(start.startOffset)
+  fun caret(text: String, select: Boolean) {
+    addSimpleTaskAction l@{
+      val start = getStartOffsetForText(text, editor, project) ?: return@l
+      editor.caretModel.moveToOffset(start)
+      if (select) {
+        editor.selectionModel.setSelection(start, start + text.length)
+      }
     }
   }
 
@@ -345,15 +346,14 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
     updateGutter(editor)
   }
 
-  private fun getStartOffsetForText(text: String, editor: Editor, project: Project): FindResult {
+  private fun getStartOffsetForText(text: String, editor: Editor, project: Project): Int? {
     val document = editor.document
 
-    val findManager = FindManager.getInstance(project)
-    val model = findManager.findInFileModel.clone()
-    model.isGlobal = false
-    model.isReplaceState = false
-    model.stringToFind = text
-    return FindManager.getInstance(project).findString(document.charsSequence, 0, model)
+    val indexOf = document.charsSequence.indexOf(text)
+    if (indexOf != -1) {
+      return indexOf
+    }
+    return null
   }
 
   private fun doUndoableAction(project: Project) {
