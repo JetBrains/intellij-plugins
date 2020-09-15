@@ -23,6 +23,7 @@ import com.intellij.javascript.testFramework.jasmine.JasmineFileStructure;
 import com.intellij.javascript.testFramework.jasmine.JasmineFileStructureBuilder;
 import com.intellij.javascript.testFramework.qunit.QUnitFileStructure;
 import com.intellij.javascript.testFramework.qunit.QUnitFileStructureBuilder;
+import com.intellij.javascript.testFramework.util.JSTestNamePattern;
 import com.intellij.javascript.testing.JSTestRunnerUtil;
 import com.intellij.lang.javascript.ConsoleCommandLineFolder;
 import com.intellij.lang.javascript.psi.JSFile;
@@ -41,7 +42,7 @@ import org.jetbrains.io.LocalFileFinder;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 public class KarmaExecutionSession {
@@ -183,12 +184,12 @@ public class KarmaExecutionSession {
       return JSTestRunnerUtil.getTestsPattern(myFailedTestNames, false);
     }
     if (myRunSettings.getScopeKind() == KarmaScopeKind.TEST_FILE) {
-      List<String> topNames = findTopLevelSuiteNames(myProject, myRunSettings.getTestFileSystemIndependentPath());
+      List<List<JSTestNamePattern>> allFileTests = findAllFileTests(myProject, myRunSettings.getTestFileSystemIndependentPath());
       String testFileName = PathUtil.getFileName(myRunSettings.getTestFileSystemIndependentPath());
-      if (topNames.isEmpty()) {
+      if (allFileTests.isEmpty()) {
         throw new ExecutionException(KarmaBundle.message("execution.no_tests_found_in_file.dialog.message", testFileName));
       }
-      return JSTestRunnerUtil.getTestsPattern(ContainerUtil.map(topNames, name -> Collections.singletonList(name)), true);
+      return JSTestRunnerUtil.getTestNamesPattern(allFileTests, false);
     }
     if (myRunSettings.getScopeKind() == KarmaScopeKind.SUITE || myRunSettings.getScopeKind() == KarmaScopeKind.TEST) {
       return JSTestRunnerUtil.buildTestNamesPattern(myProject,
@@ -199,7 +200,8 @@ public class KarmaExecutionSession {
     return null;
   }
 
-  private static List<String> findTopLevelSuiteNames(@NotNull Project project, @NotNull String testFilePath) throws ExecutionException {
+  private static @NotNull List<List<JSTestNamePattern>> findAllFileTests(@NotNull Project project,
+                                                                         @NotNull String testFilePath) throws ExecutionException {
     VirtualFile file = LocalFileFinder.findFile(testFilePath);
     if (file == null) {
       throw new ExecutionException(KarmaBundle.message("execution.cannot_find_test_by_path.dialog.message", testFilePath));
@@ -211,19 +213,27 @@ public class KarmaExecutionSession {
       throw new ExecutionException(KarmaBundle.message("execution.javascript_file_expected.dialog.message", testFilePath));
     }
     JasmineFileStructure jasmine = JasmineFileStructureBuilder.getInstance().fetchCachedTestFileStructure(jsFile);
-    List<String> elements = jasmine.getTopLevelElements();
-    if (!elements.isEmpty()) {
-      return elements;
-    }
-    QUnitFileStructure qunit = QUnitFileStructureBuilder.getInstance().fetchCachedTestFileStructure(jsFile);
-    elements = qunit.getTopLevelElements();
-    if (!elements.isEmpty()) {
-      return elements;
+    List<List<JSTestNamePattern>> allTestsPatterns = new ArrayList<>();
+    jasmine.forEachTest(spec -> {
+      allTestsPatterns.add(spec.getTestTreePathPatterns());
+    });
+    if (!allTestsPatterns.isEmpty()) {
+      return allTestsPatterns;
     }
     MochaTddFileStructure mochaTdd = MochaTddFileStructureBuilder.getInstance().fetchCachedTestFileStructure(jsFile);
-    elements = mochaTdd.getTopLevelElements();
-    if (!elements.isEmpty()) {
-      return elements;
+    mochaTdd.forEachTest(test -> {
+      allTestsPatterns.add(test.getTestTreePathPatterns());
+    });
+    if (!allTestsPatterns.isEmpty()) {
+      return allTestsPatterns;
+    }
+    QUnitFileStructure qunit = QUnitFileStructureBuilder.getInstance().fetchCachedTestFileStructure(jsFile);
+    qunit.forEachTest(test -> {
+      allTestsPatterns.add(ContainerUtil.newArrayList(JSTestNamePattern.literalPattern(test.getModuleStructure().getName()),
+                                                      JSTestNamePattern.literalPattern(test.getName())));
+    });
+    if (!allTestsPatterns.isEmpty()) {
+      return allTestsPatterns;
     }
     throw new ExecutionException(KarmaBundle.message("execution.no_tests_found_in_file.dialog.message", testFilePath));
   }
