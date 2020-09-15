@@ -7,7 +7,6 @@ import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
-import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.templates.github.ZipUtil
 import com.intellij.util.download.DownloadableFileService
@@ -16,6 +15,7 @@ import com.jetbrains.python.sdk.PyDetectedSdk
 import com.jetbrains.python.sdk.PythonSdkType
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor
 import com.jetbrains.python.sdk.flavors.VirtualEnvSdkFlavor
+import training.learn.LearnBundle
 import java.nio.file.Files
 import java.nio.file.Path
 
@@ -80,7 +80,7 @@ class PythonLangSupport : AbstractLangSupport() {
       error("Cannot download $url into $tempDir/$zipName")
     }
     val zipFile = files[0].first
-    ZipUtil.unzipWithProgressSynchronously(null, "Unzip demo project", zipFile.toPath(), projectDirectory, true)
+    ZipUtil.unzipWithProgressSynchronously(null, LearnBundle.message("progress.title.unzip.demo.project"), zipFile.toPath(), projectDirectory, true)
   }
 
   override val projectSandboxRelativePath = "sandbox.py"

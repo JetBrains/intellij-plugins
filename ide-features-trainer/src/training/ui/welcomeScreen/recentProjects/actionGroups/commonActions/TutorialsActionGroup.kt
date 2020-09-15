@@ -5,9 +5,10 @@ import com.intellij.openapi.actionSystem.AnAction
 import training.actions.ModuleActionGroup
 import training.lang.LangManager
 import training.learn.CourseManager
+import training.learn.LearnBundle
 import training.ui.welcomeScreen.recentProjects.actionGroups.CommonActionGroup
 
-class TutorialsActionGroup : CommonActionGroup("Tutorials", emptyList()) {
+class TutorialsActionGroup : CommonActionGroup(LearnBundle.message("welcome.screen.tutorials.title"), emptyList()) {
 
   init {
     isExpanded = true

@@ -7,7 +7,6 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.actionSystem.ex.ComboBoxAction
-import com.intellij.openapi.util.NlsActions
 import com.intellij.openapi.util.NlsSafe
 import training.lang.LangManager
 import training.lang.LangSupport
@@ -36,7 +35,7 @@ class ChooseProgrammingLanguageForLearningAction(private val learnToolWindow: Le
     e.presentation.description = LearnBundle.message("learn.choose.language.description.combo.box")
   }
 
-  private inner class SelectLanguageAction(private val languageId: String, displayName: @NlsSafe String) : AnAction(displayName) {
+  private inner class SelectLanguageAction(private val languageId: String, @NlsSafe displayName: String) : AnAction(displayName) {
     override fun actionPerformed(e: AnActionEvent) {
       val ep = LangManager.getInstance().supportedLanguagesExtensions.singleOrNull { it.language == languageId } ?: return
       resetPrimaryLanguage(ep.instance)
@@ -45,7 +44,8 @@ class ChooseProgrammingLanguageForLearningAction(private val learnToolWindow: Le
   }
 }
 
+@NlsSafe
 private fun getDisplayName(language: LangSupport) =
-  Language.findLanguageByID(language.primaryLanguage)?.displayName ?: "unknown"
+  Language.findLanguageByID(language.primaryLanguage)?.displayName ?: LearnBundle.message("unknown.language.name")
 
 

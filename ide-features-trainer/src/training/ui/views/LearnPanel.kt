@@ -11,6 +11,7 @@ import com.intellij.util.containers.BidirectionalMap
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import icons.FeaturesTrainerIcons
+import org.jetbrains.annotations.Nls
 import training.actions.LearningDocumentationModeAction
 import training.keymap.KeymapUtil
 import training.learn.CourseManager
@@ -225,7 +226,7 @@ class LearnPanel(private val learnToolWindow: LearnToolWindow, val lesson: Lesso
     footer.repaint()
   }
 
-  fun setLessonName(lessonName: String) {
+  fun setLessonName(@Nls lessonName: String) {
     lessonNameLabel.text = lessonName
     lessonNameLabel.foreground = if (useNewLearningUi && lesson?.passed == true) UISettings.instance.completedColor else UISettings.instance.defaultTextColor
     lessonNameLabel.isFocusable = false
@@ -233,7 +234,7 @@ class LearnPanel(private val learnToolWindow: LearnToolWindow, val lesson: Lesso
     this.repaint()
   }
 
-  fun setModuleName(moduleName: String) {
+  fun setModuleName(@Nls moduleName: String) {
     moduleNameLabel.text = moduleName
     moduleNameLabel.foreground = UISettings.instance.defaultTextColor
     moduleNameLabel.isFocusable = false
@@ -496,7 +497,7 @@ class LearnPanel(private val learnToolWindow: LearnToolWindow, val lesson: Lesso
     }
 
 
-    internal inner class MyLinkLabel(text: String) : LinkLabel<Any>(text, null) {
+    internal inner class MyLinkLabel(@Nls text: String) : LinkLabel<Any>(text, null) {
 
       private var userTextColor: Color? = null
 

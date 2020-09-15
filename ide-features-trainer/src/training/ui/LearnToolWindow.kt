@@ -15,6 +15,7 @@ import icons.FeaturesTrainerIcons
 import training.actions.ChooseProgrammingLanguageForLearningAction
 import training.commands.kotlin.TaskContext
 import training.lang.LangManager
+import training.learn.LearnBundle
 import training.learn.interfaces.Lesson
 import training.learn.lesson.LessonListener
 import training.learn.lesson.LessonManager
@@ -150,11 +151,10 @@ class LearnToolWindow internal constructor(val project: Project, private val who
 
     group.add(object : AnAction(FeaturesTrainerIcons.FeatureTrainer) {
       override fun actionPerformed(e: AnActionEvent) {
-        System.err.println("click!")
       }
 
       override fun update(e: AnActionEvent) {
-        e.presentation.text = "Continue Learning"
+        e.presentation.text = LearnBundle.message("experimental.tabbed.ui.continue.learning")
       }
     })
 

@@ -9,7 +9,8 @@ import com.intellij.openapi.wm.impl.welcomeScreen.RecentProjectsWelcomeScreenAct
 import org.jetbrains.annotations.Nls
 import training.statistic.StatisticBase
 
-abstract class CommonActionGroup(val name: @Nls String, val children: List<AnAction>) : DefaultActionGroup(name, children), DumbAware {
+abstract class CommonActionGroup(@Nls val name: String, val children: List<AnAction>)
+  : DefaultActionGroup(name, children), DumbAware {
 
   var isExpanded = true
 
