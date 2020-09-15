@@ -34,7 +34,7 @@ else
         alias_method :original_status, :status
 
         def status(io = nil)
-          Minitest.rubymine_reporter.test_case_manager.end_execution()
+          Minitest.rubymine_reporter.test_case_manager.end_execution
           if io.nil?
             original_status
           else
@@ -97,8 +97,8 @@ else
         Minitest.my_drb_url = DRb.start_service(nil, self.already_run_tests).uri
       end
 
-      def end_execution()
-        close_all_suites()
+      def end_execution
+        close_all_suites
       end
 
       def process_test(test)
@@ -118,7 +118,7 @@ else
           (0...already_run_tests.count).each do |i|
             reporter.log(Rake::TeamCity::MessageFactory.create_suite_finished(already_run_tests[i], already_run_tests[i]))
           end
-          already_run_tests.clear()
+          already_run_tests.clear
           GC.enable
         end
     end
@@ -139,7 +139,7 @@ else
 
       def process_test(test)
         if test.class.to_s != running_test_case
-          unless self.running_test_case.nil?
+          unless running_test_case.nil?
             reporter.log(Rake::TeamCity::MessageFactory.create_suite_finished(running_test_case, running_test_case))
           end
           reporter.log(Rake::TeamCity::MessageFactory.create_suite_started(test.class.to_s, reporter.minitest_test_location(test), '0', test.class.to_s))
@@ -165,8 +165,8 @@ else
         self.errors = 0
         self.skips = 0
 
-        self.parallel_run = is_parallel_run()
-        if self.parallel_run
+        self.parallel_run = parallel_run?
+        if parallel_run
           self.test_case_manager = RubyMineMinitestParallelTestCaseManager.new(self)
         else
           self.test_case_manager = RubyMineMinitestSequenceTestCaseManager.new(self)
@@ -193,7 +193,7 @@ else
       end
 
       def report
-        test_case_manager.end_execution()
+        test_case_manager.end_execution
         []
       end
 
@@ -267,14 +267,10 @@ else
         begin
           test_name = get_test_name(test)
           location = test.class.instance_method(test_name).source_location
-          return "file://#{location[0]}:#{location[1]}"
+          "file://#{location[0]}:#{location[1]}"
         rescue
           fqn = get_fqn_from_test(test)
-          if fqn.nil?
-            return nil
-          else
-            return "ruby_minitest_qn://#{fqn}"
-          end
+          "ruby_minitest_qn://#{fqn}" if fqn
         end
       end
 
@@ -283,24 +279,14 @@ else
         io.puts("\n#{msg}")
         io.flush
 
-        # returns:
         msg
       end
 
       private
-      def is_parallel_run
-        begin
-          if Minitest.parallel_executor.respond_to?(:start)
-            return true
-          end
-        rescue
-          begin
-            if MiniTest::Unit::TestCase.test_order == :parallel
-              return true
-            end
-          end
-        end
-        false
+      def parallel_run?
+        Minitest.parallel_executor.respond_to?(:start)
+      rescue
+        MiniTest::Unit::TestCase.test_order == :parallel
       end
 
       def get_test_name(test)
