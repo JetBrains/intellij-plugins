@@ -7,6 +7,7 @@ import com.intellij.execution.configurations.RuntimeConfigurationException;
 import com.intellij.execution.configurations.TargetAwareRunProfile;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsActions;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.jetbrains.cidr.cpp.cmake.model.CMakeTarget;
@@ -28,14 +29,14 @@ public abstract class PlatformioBaseConfiguration extends CMakeAppRunConfigurati
   implements CidrExecutableDataHolder, TargetAwareRunProfile {
 
   private final String myBuildTargetName;
-  private final Supplier<String> mySuggestedName;
+  private final Supplier<@NlsActions.ActionText String> mySuggestedName;
   private final String[] cliParameters;
 
 
   private volatile CPPToolchains.Toolchain myToolchain;
 
   public PlatformioBaseConfiguration(@NotNull Project project, @NotNull ConfigurationFactory configurationFactory,
-                                     @NotNull String myBuildTargetName, @NotNull Supplier<String> name, String @Nullable [] cliParameters) {
+                                     @NotNull String myBuildTargetName, @NotNull Supplier<@NlsActions.ActionText String> name, String @Nullable [] cliParameters) {
     super(project, configurationFactory, name.get());
     this.myBuildTargetName = myBuildTargetName;
     this.mySuggestedName = name;

@@ -7,7 +7,6 @@ import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.javascript.debugger.JSDebuggerBundle;
 import com.intellij.javascript.debugger.execution.DebuggableProcessRunConfiguration;
 import com.intellij.javascript.debugger.execution.DebuggableProcessRunConfigurationBase;
 import com.intellij.javascript.debugger.execution.DebuggableProcessRunConfigurationEditor;
@@ -15,7 +14,7 @@ import com.intellij.javascript.nodejs.NodeCommandLineUtil;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.util.PathUtilRt;
 import com.intellij.util.net.NetUtils;
 import com.intellij.xdebugger.XDebugProcess;
@@ -26,7 +25,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
@@ -52,7 +50,9 @@ public class DenoRunConfiguration extends DebuggableProcessRunConfigurationBase 
 
   @Override
   public String suggestedName() {
-    return "Deno: " + PathUtilRt.getFileName(getInputPath());
+    String inputPath = getInputPath();
+    @NlsSafe String fileToRun = PathUtilRt.getFileName(inputPath);
+    return DenoBundle.message("deno.run.configuration.default.name", fileToRun);
   }
 
   @Override

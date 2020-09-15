@@ -189,7 +189,7 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase impleme
 
   @Override
   public String suggestedName() {
-    return "Run PhoneGap";
+    return PhoneGapBundle.message("phonegap.run.default.label");
   }
 
   @Override

@@ -3,6 +3,7 @@ package com.jetbrains.cidr.cpp.embedded.platformio;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.RunConfigurationWithSuppressedDefaultDebugAction;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsActions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,7 +15,7 @@ public class PlatformioToolConfiguration extends PlatformioBaseConfiguration
 
   public PlatformioToolConfiguration(@NotNull Project project,
                                      @NotNull ConfigurationFactory configurationFactory,
-                                     @NotNull Supplier<String> name,
+                                     @NotNull Supplier<@NlsActions.ActionText String> name,
                                      String @Nullable ... cliParameters) {
     super(project, configurationFactory, "Production", name, cliParameters);
   }

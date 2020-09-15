@@ -5,6 +5,7 @@ import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RunConfigurationSingletonPolicy;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsActions;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.jetbrains.cidr.cpp.embedded.platformio.ui.EmptyEditor;
 import com.jetbrains.cidr.cpp.execution.CMakeAppRunConfiguration;
@@ -96,7 +97,7 @@ public class PlatformioConfigurationType extends CMakeRunConfigurationType {
     private final Supplier<String> name;
     private final String myId;
 
-    ToolConfigurationFactory(@NonNls @NotNull String id, @NotNull Supplier<String> name, String... cliParameters) {
+    ToolConfigurationFactory(@NonNls @NotNull String id, @NotNull Supplier<@NlsActions.ActionText String> name, String... cliParameters) {
       super(PlatformioConfigurationType.this);
       this.myId = id;
       this.name = name;
