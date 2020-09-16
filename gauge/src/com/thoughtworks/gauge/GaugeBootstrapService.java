@@ -2,8 +2,6 @@ package com.thoughtworks.gauge;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -13,6 +11,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.progress.impl.BackgroundableProcessIndicator;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Computable;
 import com.intellij.util.ui.update.MergingUpdateQueue;
 import com.intellij.util.ui.update.Update;
 import com.thoughtworks.gauge.connection.GaugeConnection;
@@ -36,6 +35,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import static com.intellij.openapi.command.WriteCommandAction.runWriteCommandAction;
 import static com.intellij.openapi.progress.PerformInBackgroundOption.ALWAYS_BACKGROUND;
 
 @Service
@@ -86,25 +86,28 @@ public final class GaugeBootstrapService implements Disposable {
     while ((mRef = modulesQueue.poll()) != null) {
       Module module = mRef.get();
       if (module != null && !module.isDisposed()) {
-        LibHelper helper = ReadAction.compute(() -> new LibHelperFactory().helperFor(module));
+        LibHelper helper = runWriteCommandAction(module.getProject(), new Computable<>() {
+          @Override
+          public LibHelper compute() {
+            return new LibHelperFactory().helperFor(module);
+          }
+        });
         if (helper == LibHelperFactory.NO_GAUGE_MODULE) continue;
 
         indicator.setText(GaugeBundle.message("gauge.init.connection.for", module.getName()));
         helper.initConnection();
 
         if (helper instanceof GaugeLibHelper) {
-          WriteCommandAction.runWriteCommandAction(myProject,
-                                                   GaugeBundle.message("gauge.check.dependencies"),
-                                                   GaugeBundle.GAUGE, () -> {
-              if (module.isDisposed()) return;
+          runWriteCommandAction(myProject, GaugeBundle.message("gauge.check.dependencies"), GaugeBundle.GAUGE, () -> {
+            if (module.isDisposed()) return;
 
-              ((GaugeLibHelper)helper).checkModuleDependencies();
-            });
+            ((GaugeLibHelper)helper).checkModuleDependencies();
+          });
         }
       }
     }
 
-    WriteCommandAction.runWriteCommandAction(myProject, GaugeBundle.message("gauge.restart.inspections"), GaugeBundle.GAUGE, () -> {
+    runWriteCommandAction(myProject, GaugeBundle.message("gauge.restart.inspections"), GaugeBundle.GAUGE, () -> {
       DaemonCodeAnalyzer.getInstance(myProject).restart();
     });
   }
@@ -123,9 +126,13 @@ public final class GaugeBootstrapService implements Disposable {
    */
   public GaugeCli startGaugeCli(Module module) {
     int freePortForApi = SocketUtils.findFreePortForApi();
-    Process gaugeProcess = initializeGaugeProcess(freePortForApi, module);
+    GaugeProcessResources resources = initializeGaugeProcess(freePortForApi, module);
+    if (resources == null) {
+      throw new RuntimeException("Unable to start Gauge");
+    }
+
     GaugeConnection gaugeConnection = initializeGaugeConnection(freePortForApi);
-    GaugeCli gaugeCli = new GaugeCli(gaugeProcess, gaugeConnection);
+    GaugeCli gaugeCli = new GaugeCli(resources.process, resources.exceptionWatcher, gaugeConnection);
     addModule(module, gaugeCli);
     return gaugeCli;
   }
@@ -158,7 +165,7 @@ public final class GaugeBootstrapService implements Disposable {
     }
   }
 
-  private static Process initializeGaugeProcess(int apiPort, Module module) {
+  private static @Nullable GaugeProcessResources initializeGaugeProcess(int apiPort, Module module) {
     try {
       GaugeSettingsModel settings = GaugeUtil.getGaugeSettings();
       String port = String.valueOf(apiPort);
@@ -171,13 +178,26 @@ public final class GaugeBootstrapService implements Disposable {
       LOG.info(String.format("Using `%s` as api port to connect to gauge API for project %s", port, dir));
       gauge.directory(dir);
       Process process = gauge.start();
-      new GaugeExceptionHandler(process, module.getProject()).start();
-      return process;
+
+      GaugeExceptionHandler exceptionWatcher = new GaugeExceptionHandler(process, module.getProject());
+      exceptionWatcher.start();
+
+      return new GaugeProcessResources(process, exceptionWatcher);
     }
     catch (IOException | GaugeNotFoundException e) {
       LOG.error("An error occurred while starting gauge api. \n" + e);
     }
     return null;
+  }
+
+  private static class GaugeProcessResources {
+    final Process process;
+    final GaugeExceptionHandler exceptionWatcher;
+
+    private GaugeProcessResources(Process process, GaugeExceptionHandler thread) {
+      this.process = process;
+      this.exceptionWatcher = thread;
+    }
   }
 
   public GaugeCli getGaugeCli(@Nullable Module module, boolean moduleDependent) {
@@ -246,17 +266,38 @@ public final class GaugeBootstrapService implements Disposable {
     String value = getProjectGroupValue(module);
     linkedModulesMap.remove(value);
     moduleReferenceCaches.remove(module);
-    GaugeCli service = gaugeProjectHandle.get(module);
+    GaugeCli gaugeCli = gaugeProjectHandle.get(module);
 
-    if (service != null && service.getGaugeProcess().isAlive()) {
-      LOG.info("Stopping Gauge PID: " + service.getGaugeProcess().pid());
+    if (gaugeCli != null) {
+      // always try to interrupt watcher
+      gaugeCli.getExceptionWatcher().interrupt();
 
-      service.getGaugeProcess().destroy();
+      if (gaugeCli.getGaugeProcess().isAlive()) {
+        LOG.info("Stopping Gauge PID: " + gaugeCli.getGaugeProcess().pid());
+
+        gaugeCli.getGaugeProcess().destroy();
+      }
+
+      try {
+        Thread.sleep(1000);
+      }
+      catch (InterruptedException ignored) {
+      }
+      LOG.debug("Exception Watcher isAlive: " + gaugeCli.getExceptionWatcher().isAlive());
+      LOG.debug("Process isAlive: " + gaugeCli.getGaugeProcess().isAlive());
     }
   }
 
   @Override
   public void dispose() {
+    ArrayList<Module> modules = new ArrayList<>(gaugeProjectHandle.keySet());
+    for (Module module : modules) {
+      disposeComponent(module);
+    }
+
+    gaugeProjectHandle.clear();
     modulesQueue.clear();
+    linkedModulesMap.clear();
+    moduleReferenceCaches.clear();
   }
 }

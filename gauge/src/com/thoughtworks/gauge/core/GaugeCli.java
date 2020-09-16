@@ -20,11 +20,17 @@ import com.thoughtworks.gauge.connection.GaugeConnection;
 
 public final class GaugeCli {
   private final Process gaugeProcess;
+  private final Thread gaugeExceptionWatcher;
   private final GaugeConnection gaugeConnection;
 
-  public GaugeCli(Process gaugeProcess, GaugeConnection gaugeConnection) {
+  public GaugeCli(Process gaugeProcess, Thread watcher, GaugeConnection gaugeConnection) {
     this.gaugeProcess = gaugeProcess;
+    gaugeExceptionWatcher = watcher;
     this.gaugeConnection = gaugeConnection;
+  }
+
+  public Thread getExceptionWatcher() {
+    return gaugeExceptionWatcher;
   }
 
   public GaugeConnection getGaugeConnection() {

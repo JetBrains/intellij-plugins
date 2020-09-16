@@ -36,6 +36,7 @@ import com.thoughtworks.gauge.util.GaugeUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InterruptedIOException;
 
 public final class GaugeExceptionHandler extends Thread {
   private static final Logger LOG = Logger.getInstance(GaugeExceptionHandler.class);
@@ -60,6 +61,10 @@ public final class GaugeExceptionHandler extends Thread {
   public void run() {
     String output = "";
     try {
+      if (Thread.currentThread().isInterrupted()) {
+        return;
+      }
+
       do {
         output = getOutput(output, process.getErrorStream());
         output = getOutput(output, process.getInputStream());
@@ -69,6 +74,8 @@ public final class GaugeExceptionHandler extends Thread {
         LOG.debug(output);
         Notifications.Bus.notify(createNotification(output, process.exitValue()), project);
       }
+    }
+    catch (InterruptedIOException ignored) {
     }
     catch (Exception ex) {
       LOG.debug(ex);
