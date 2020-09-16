@@ -1,19 +1,23 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package training.learn.lesson.javascript.completion
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+package training.learn.lesson.javascript.editor
 
 import com.intellij.codeInsight.template.TemplateManager
+import com.intellij.idea.ActionsBundle
 import com.intellij.ui.components.JBList
 import training.lang.JavaScriptLangSupport
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.javascript.setLanguageLevel
 import training.learn.lesson.javascript.textAtCaretEqualsTo
 import training.learn.lesson.javascript.textOnLine
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
+import training.learn.lesson.kimpl.LessonUtil.productName
+import training.learn.lesson.kimpl.dropMnemonic
 import training.learn.lesson.kimpl.parseLessonSample
 
 class RefactoringLesson(module: Module)
-  : KLesson("Refactorings in a Nutshell", "Refactorings in a Nutshell", module, JavaScriptLangSupport.lang) {
+  : KLesson("Refactorings in a Nutshell", LessonsBundle.message("js.editor.refactorings.title"), module, JavaScriptLangSupport.lang) {
 
   val sample = parseLessonSample(""" 
         function listBookAuthors(<caret>books) {
@@ -43,7 +47,7 @@ class RefactoringLesson(module: Module)
         setLanguageLevel()
         prepareSample(sample)
         task("Refactorings.QuickListPopupAction") {
-          text("WebStorm has a <a href='https://www.jetbrains.com/help/webstorm/refactoring-source-code.html#ws_supported_refactorings'>number of refactorings</a> that can automatically restructure existing code without changing its behavior across the entire project. Let's look up the list of refactorings available for the <strong>books</strong> parameter. To do this, press ${action(it)} or go to <strong>Refactor > Refactor This</strong> from the main menu.")
+          text(LessonsBundle.message("js.editor.refactorings.this", productName, strong("books"), action(it), strong(ActionsBundle.message("group.RefactoringMenu.text").dropMnemonic() + " > " + ActionsBundle.message("action.Refactorings.QuickListPopupAction.text"))))
           stateCheck {
             textAtCaretEqualsTo("books")
           }
@@ -51,34 +55,36 @@ class RefactoringLesson(module: Module)
         }
 
         task("RenameElement") {
-          text("With <strong>Refactor This</strong>, you don't need to memorize all the refactorings the IDE has, or their shortcuts. Let's click <strong>Rename</strong> to see one of the most popular refactorings in action.")
+          text(LessonsBundle.message("js.editor.refactorings.rename", strong(ActionsBundle.message("action.Refactorings.QuickListPopupAction.text")), strong(ActionsBundle.message("action.RenameAction.text"))))
           trigger(it) {
             textAtCaretEqualsTo("books")
           }
         }
 
         task {
-          text("Rename the <strong>books</strong> parameter to <strong>listOfBooks</strong> and hit <action>EditorEnter</action>. This will apply the changes across all files in the project.")
+          text(
+            LessonsBundle.message("js.editor.refactorings.rename.apply", strong("books"), strong("listOfBooks"), action("EditorEnter")))
           stateCheck {
             textOnLine(0, "function listBookAuthors(listOfBooks) {") &&
             TemplateManager.getInstance(project).getActiveTemplate(editor) == null
           }
         }
         task("IntroduceVariable") {
-          text("Well done! Let's try refactoring code the other way – by using a shortcut. Place the caret on the <strong>author</strong> property (line 4) and press ${action(it)}.")
+          text(LessonsBundle.message("js.editor.refactorings.shortcut", strong("author"), action(it)))
           stateCheck {
             textAtCaretEqualsTo("author")
           }
           trigger(it)
         }
         task {
-          text("Let's create a new variable, <strong>author</strong>, which will contain <strong>book.author</strong>. Select the <strong>book.author</strong> expression from the list and hit <action>EditorEnter</action>.")
+          text(
+            LessonsBundle.message("js.editor.refactoring.select.expression", strong("author"), strong("book.author"), action("EditorEnter")))
           stateCheck {
             focusOwner is JBList<*> && (focusOwner as JBList<*>).model.getElementAt(0).toString() == "NO"
           }
         }
         task {
-          text("Now replace all 2 occurrences with the <strong>let</strong> variable named <strong>author</strong>.")
+          text(LessonsBundle.message("js.editor.refactoring.replace", strong("let"), strong("author")))
           stateCheck {
             textOnLine(3, "let author = book.author;") &&
             textOnLine(4, "if (!listOfAuthors.includes(author)) {") &&
@@ -87,7 +93,8 @@ class RefactoringLesson(module: Module)
           }
         }
         task {
-          text("We've just explored two ways to refactor code in WebStorm. Print out the <a href=\"https://resources.jetbrains.com/storage/products/webstorm/docs/WebStorm_ReferenceCard.pdf\">keymap reference</a> if you prefer using shortcuts, or simply keep using the <strong>Refactor This</strong> menu. Click the button below to start the next lesson or use ${action("learn.next.lesson")}.")
+          text(
+            LessonsBundle.message("js.editor.refactorings.next", productName, strong(ActionsBundle.message("group.RefactoringMenu.text").dropMnemonic()), action("learn.next.lesson")))
         }
       }
     }
