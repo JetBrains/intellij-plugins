@@ -2,7 +2,6 @@
 package com.jetbrains.lang.dart.ide.runner.server.ui;
 
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -46,14 +45,16 @@ public class DartRemoteDebugConfigurationEditor extends SettingsEditor<DartRemot
   private void initDartProjectsCombo(@NotNull final Project project) {
     myDartProjectCombo.getComboBox().setRenderer(SimpleListCellRenderer.create("", NameAndPath::getPresentableText));
 
-    for (VirtualFile pubspecFile : FilenameIndex.getVirtualFilesByName(project, PUBSPEC_YAML, GlobalSearchScope.projectScope(project))) {
-      myComboItems.add(new NameAndPath(PubspecYamlUtil.getDartProjectName(pubspecFile), pubspecFile.getParent().getPath()));
-    }
+    if (!project.isDefault()) {
+      for (VirtualFile pubspecFile : FilenameIndex.getVirtualFilesByName(project, PUBSPEC_YAML, GlobalSearchScope.projectScope(project))) {
+        myComboItems.add(new NameAndPath(PubspecYamlUtil.getDartProjectName(pubspecFile), pubspecFile.getParent().getPath()));
+      }
 
-    if (myComboItems.isEmpty()) {
-      for (VirtualFile contentRoot : ProjectRootManager.getInstance(project).getContentRoots()) {
-        if (FileTypeIndex.containsFileOfType(DartFileType.INSTANCE, GlobalSearchScopesCore.directoryScope(project, contentRoot, true))) {
-          myComboItems.add(new NameAndPath(null, contentRoot.getPath()));
+      if (myComboItems.isEmpty()) {
+        for (VirtualFile contentRoot : ProjectRootManager.getInstance(project).getContentRoots()) {
+          if (FileTypeIndex.containsFileOfType(DartFileType.INSTANCE, GlobalSearchScopesCore.directoryScope(project, contentRoot, true))) {
+            myComboItems.add(new NameAndPath(null, contentRoot.getPath()));
+          }
         }
       }
     }
@@ -61,7 +62,7 @@ public class DartRemoteDebugConfigurationEditor extends SettingsEditor<DartRemot
     myDartProjectCombo.getComboBox().setModel(new DefaultComboBoxModel<>(myComboItems.toArray()));
 
     myDartProjectCombo.addBrowseFolderListener(null, null, project, FileChooserDescriptorFactory.createSingleFolderDescriptor(),
-                                               new TextComponentAccessor<JComboBox>() {
+                                               new TextComponentAccessor<>() {
                                                  @Override
                                                  public String getText(final JComboBox combo) {
                                                    final Object item = combo.getSelectedItem();
@@ -103,7 +104,7 @@ public class DartRemoteDebugConfigurationEditor extends SettingsEditor<DartRemot
   }
 
   @Override
-  protected void applyEditorTo(@NotNull final DartRemoteDebugConfiguration config) throws ConfigurationException {
+  protected void applyEditorTo(@NotNull final DartRemoteDebugConfiguration config) {
     final DartRemoteDebugParameters params = config.getParameters();
     final Object selectedItem = myDartProjectCombo.getComboBox().getSelectedItem();
     params.setDartProjectPath(selectedItem instanceof NameAndPath ? ((NameAndPath)selectedItem).myPath : "");
