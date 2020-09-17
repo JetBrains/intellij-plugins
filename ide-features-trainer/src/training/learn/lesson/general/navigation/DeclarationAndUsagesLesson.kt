@@ -62,7 +62,7 @@ abstract class DeclarationAndUsagesLesson(module: Module, lang: String)
         text(LessonsBundle.message("declaration.and.usages.find.usages", action(it)))
 
         triggerByUiComponentAndHighlight { ui: BaseLabel ->
-          ui.text?.contains("Usages of") ?: false
+          ui.text?.contains(LearnBundle.message("usages.tab.name")) ?: false
         }
         test {
           actions(it)
