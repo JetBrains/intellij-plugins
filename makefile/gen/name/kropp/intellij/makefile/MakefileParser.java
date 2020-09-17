@@ -377,7 +377,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // define|include|undefine|override|export|privatevar|vpath
+  // define|include|undefine|override|export|unexport|privatevar|vpath
   public static boolean directive(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "directive")) return false;
     boolean r;
@@ -387,6 +387,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     if (!r) r = undefine(b, l + 1);
     if (!r) r = override(b, l + 1);
     if (!r) r = export(b, l + 1);
+    if (!r) r = unexport(b, l + 1);
     if (!r) r = privatevar(b, l + 1);
     if (!r) r = vpath(b, l + 1);
     exit_section_(b, l, m, r, false, null);
@@ -1542,6 +1543,57 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   // EOL?
   private static boolean undefine_2(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "undefine_2")) return false;
+    consumeToken(b, EOL);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // 'unexport' (EOL | (variable-assignment|variable) EOL?)
+  public static boolean unexport(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "unexport")) return false;
+    if (!nextTokenIs(b, KEYWORD_UNEXPORT)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, KEYWORD_UNEXPORT);
+    r = r && unexport_1(b, l + 1);
+    exit_section_(b, m, UNEXPORT, r);
+    return r;
+  }
+
+  // EOL | (variable-assignment|variable) EOL?
+  private static boolean unexport_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "unexport_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, EOL);
+    if (!r) r = unexport_1_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // (variable-assignment|variable) EOL?
+  private static boolean unexport_1_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "unexport_1_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = unexport_1_1_0(b, l + 1);
+    r = r && unexport_1_1_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // variable-assignment|variable
+  private static boolean unexport_1_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "unexport_1_1_0")) return false;
+    boolean r;
+    r = variable_assignment(b, l + 1);
+    if (!r) r = variable(b, l + 1);
+    return r;
+  }
+
+  // EOL?
+  private static boolean unexport_1_1_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "unexport_1_1_1")) return false;
     consumeToken(b, EOL);
     return true;
   }

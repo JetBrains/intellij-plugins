@@ -94,6 +94,7 @@ CHARS = [0-9\p{L}.!\-?%@/_\[\]+~*\^&+<>]
 "endif"            { return KEYWORD_ENDIF; }
 "override"         { return KEYWORD_OVERRIDE; }
 "export"           { return KEYWORD_EXPORT; }
+"unexport"         { return KEYWORD_UNEXPORT; }
 "private"          { return KEYWORD_PRIVATE; }
 "$"                { return DOLLAR; }
 {FUNCTIONS}        { return FUNCTION_NAME; }

@@ -1,11 +1,11 @@
 // This is a generated file. Not intended for manual editing.
 package name.kropp.intellij.makefile.psi;
 
-import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.PsiElement;
 import com.intellij.lang.ASTNode;
-import name.kropp.intellij.makefile.stub.MakefileTargetStubElementType;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.IElementType;
 import name.kropp.intellij.makefile.psi.impl.*;
+import name.kropp.intellij.makefile.stub.MakefileTargetStubElementType;
 
 public interface MakefileTypes {
 
@@ -43,6 +43,7 @@ public interface MakefileTypes {
   IElementType TARGET_LINE = new MakefileElementType("TARGET_LINE");
   IElementType TARGET_PATTERN = new MakefileElementType("TARGET_PATTERN");
   IElementType UNDEFINE = new MakefileElementType("UNDEFINE");
+  IElementType UNEXPORT = new MakefileElementType("UNEXPORT");
   IElementType VARIABLE = new MakefileElementType("VARIABLE");
   IElementType VARIABLE_ASSIGNMENT = new MakefileElementType("VARIABLE_ASSIGNMENT");
   IElementType VARIABLE_USAGE = new MakefileElementType("VARIABLE_USAGE");
@@ -73,6 +74,7 @@ public interface MakefileTypes {
   IElementType KEYWORD_OVERRIDE = new MakefileTokenType("override");
   IElementType KEYWORD_PRIVATE = new MakefileTokenType("private");
   IElementType KEYWORD_UNDEFINE = new MakefileTokenType("undefine");
+  IElementType KEYWORD_UNEXPORT = new MakefileTokenType("unexport");
   IElementType KEYWORD_VPATH = new MakefileTokenType("vpath");
   IElementType MACRO = new MakefileTokenType("macro");
   IElementType OPEN_CURLY = new MakefileTokenType("{");
@@ -187,6 +189,9 @@ public interface MakefileTypes {
       }
       else if (type == UNDEFINE) {
         return new MakefileUndefineImpl(node);
+      }
+      else if (type == UNEXPORT) {
+        return new MakefileUnexportImpl(node);
       }
       else if (type == VARIABLE) {
         return new MakefileVariableImpl(node);

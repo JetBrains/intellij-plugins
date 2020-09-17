@@ -42,6 +42,7 @@
     KEYWORD_UNDEFINE = "undefine"
     KEYWORD_OVERRIDE = "override"
     KEYWORD_EXPORT = "export"
+    KEYWORD_UNEXPORT = "unexport"
     KEYWORD_PRIVATE = "private"
     KEYWORD_VPATH = "vpath"
   ]
@@ -55,7 +56,7 @@ private stmt ::= (directive|conditional|variable-assignment|rule|command|functio
 private recover ::= !(any)
 private any ::= !<<eof>> stmt {pin=1 recoverWhile=recover}
 
-directive ::= define|include|undefine|override|export|privatevar|vpath
+directive ::= define|include|undefine|override|export|unexport|privatevar|vpath
 
 rule ::= target_line recipe? {methods=[getTargets]}
 recipe ::= (command|conditional)+ (command|conditional|EOL)* {methods=[isEmpty] implements=["com.intellij.psi.PsiLanguageInjectionHost"] mixin="name.kropp.intellij.makefile.psi.impl.MakefileRecipeElementImpl"}
@@ -99,6 +100,7 @@ define ::= 'define' variable assignment? EOL (defline EOL)* 'endef' {pin=1 metho
 undefine ::= 'undefine' variable EOL? {pin=1}
 override ::= 'override' (undefine|variable-assignment) {pin=1}
 export ::= 'export' (EOL | (variable-assignment|variable) EOL?)
+unexport ::= 'unexport' (EOL | (variable-assignment|variable) EOL?)
 private exportvar ::= 'export' variable-assignment {pin=1}
 privatevar ::= 'private' variable-assignment {pin=1}
 
