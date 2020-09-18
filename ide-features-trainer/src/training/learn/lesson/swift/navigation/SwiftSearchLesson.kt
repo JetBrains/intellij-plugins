@@ -42,7 +42,7 @@ class AnotherTest: Test {
     task {
       triggers("Find")
       text("This sample file has lots of code constructs containing the word ${code("test")}. The caret is on the variable named ${
-          code("test")
+        code("test")
       }. Press ${action("Find")} to find all the text occurrences of the word ${code("test")}.")
     }
     task { select(16, 14, 16, 14) }
@@ -50,9 +50,9 @@ class AnotherTest: Test {
     task {
       triggers("FindUsages")
       text("This is not very helpful, is it? In real code, we probably want to search for the ${
-          code("test")
+        code("test")
       } variable, without including class names, method names, or any other code constructs. Try pressing ${
-          action("EditorEscape")
+        action("EditorEscape")
       } and then ${action("FindUsages")}.")
     }
     task { text("Now, AppCode shows us only actual usages of the ${code("test")} variable.") }
@@ -60,14 +60,14 @@ class AnotherTest: Test {
     task {
       triggers("FindUsages")
       text("The same applies to any other code construct. Press ${action("EditorEscape")} → ${
-          action("FindUsages")
+        action("FindUsages")
       } to find all the usages of the ${code("Test")} protocol in the project.")
     }
     task { caret(17, 17) }
     task {
       triggers("FindUsages")
       text("Now let's find all usages of the method ${
-          code("test(containsTest test: Int, anotherContainingTest test1: String)")
+        code("test(containsTest test: Int, anotherContainingTest test1: String)")
       }. Press ${action("EditorEscape")} → ${action("FindUsages")} again.")
     }
     task {
@@ -77,7 +77,7 @@ class AnotherTest: Test {
     task {
       text(
         "Of course, sometimes you don't know what exactly you're looking for, and you want to find as many matches as possible by searching for some text. In this case, use ${
-            action("Find")
+          action("Find")
         } to search in the current file, or use ${action("FindInPath")} to search in the whole project.")
     }
     task {
@@ -88,7 +88,7 @@ class AnotherTest: Test {
     task {
       triggers("GotoAction")
       text("Finally, try using <strong>Find Action</strong> (${
-          action("GotoAction")
+        action("GotoAction")
       }) to quickly find an IDE action and execute it. For example, type 'plugins' to open <strong>Preferences | Plugins</strong>.")
     }
 

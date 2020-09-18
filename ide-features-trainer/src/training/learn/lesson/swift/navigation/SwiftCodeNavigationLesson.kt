@@ -43,7 +43,7 @@ class AppCode: JetBrainsIDE {}""".trimIndent())
     task {
       triggers("GotoClass", "DetailViewController.swift")
       text("Let's navigate to the ${code("DetailViewController")} class. Press ${action("GotoClass")}, type ${
-          code("dvc")
+        code("dvc")
       }, and then press ${LessonUtil.rawEnter()}.")
     }
     task {
@@ -53,13 +53,13 @@ class AppCode: JetBrainsIDE {}""".trimIndent())
     task {
       triggers("GotoFile", "AppDelegate.swift")
       text("Nice! Now let's open the ${code("AppDelegate.swift")} file: press ${action("GotoFile")}, type ${
-          code("ad")
+        code("ad")
       } and press ${LessonUtil.rawEnter()}.")
     }
     task {
       triggers("GotoSymbol", "MasterViewController.swift")
       text("Let's jump directly to the ${code("detailViewController")} declaration in the ${
-          code("MasterViewController")
+        code("MasterViewController")
       } class. Press ${action("GotoSymbol")}, type ${code("dvc")}, and then press ${LessonUtil.rawEnter()}.")
     }
     task {
@@ -70,14 +70,14 @@ class AppCode: JetBrainsIDE {}""".trimIndent())
     task {
       triggers("GotoDeclaration", "DetailViewController.swift")
       text("Another important action from the <strong>Go to...</strong> family is <strong>Go to Declaration</strong>. Place the caret at ${
-          code("DetailViewController?")
+        code("DetailViewController?")
       } and press ${action("GotoDeclaration")} to jump to its declaration.")
     }
     task { caret(3, 33) }
     task {
       triggers("GotoImplementation")
       text("If a method or class has several implementations, ${action("GotoDeclaration")} will get you to the first one. Try using ${
-          action("GotoImplementation")
+        action("GotoImplementation")
       } to see all the definitions of ${code("UIViewController")}.")
     }
     task {
@@ -88,7 +88,7 @@ class AppCode: JetBrainsIDE {}""".trimIndent())
     task {
       triggers("GotoSuperMethod")
       text("<strong>Go to Super Definition</strong> navigates you to the parent class declaration. Press ${
-          action("GotoSuperMethod")
+        action("GotoSuperMethod")
       } to jump to the ${code("JetBrainsIDE")} class.")
     }
     task {
@@ -99,14 +99,14 @@ class AppCode: JetBrainsIDE {}""".trimIndent())
       triggers("RecentFiles")
       text(
         "Finally, there are two very useful and frequently used navigation actions that can help you quickly switch between recent files and toolwindows. First up is the <strong>Recent files</strong> popup. Open it via ${
-            action("RecentFiles")
+          action("RecentFiles")
         } and select what you need using the arrow keys on the keyboard.")
     }
     task {
       triggers("Switcher")
       text(
         "The second is <strong>Switcher</strong>, which looks the same but immediately disappears after you select something. Hold the <shortcut>⌃</shortcut> key while pressing ${
-            action("Switcher")
+          action("Switcher")
         }, and press it again to switch to select some file or toolwindow. Release the <shortcut>⌃</shortcut> key after you've selected what you wanted.")
     }
 

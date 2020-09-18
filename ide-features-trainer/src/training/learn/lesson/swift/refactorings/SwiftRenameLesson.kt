@@ -39,7 +39,7 @@ class Rename: UIViewController {
     task {
       triggers("RenameElement", "NextTemplateVariable")
       text("Let's start with something simple like renaming the ${code("objects")} field to ${code("array")}. Press ${
-          action("RenameElement")
+        action("RenameElement")
       }, enter a new name, and then press ${LessonUtil.rawEnter()}")
     }
     task { caret(5, 39) }
@@ -50,7 +50,7 @@ class Rename: UIViewController {
     task {
       triggers("FindUsages")
       text("Press ${
-          action("FindUsages")
+        action("FindUsages")
       }. As you can see, the rename works globally, even renaming occurrences in .xib and .storyboard files.")
     }
 

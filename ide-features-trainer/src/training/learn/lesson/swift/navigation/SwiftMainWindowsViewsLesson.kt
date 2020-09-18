@@ -107,7 +107,7 @@ class Navigation: UITableViewController {
       triggers("ActivateProjectToolWindow")
       text(
         "The <strong>Project</strong> view is similar to the Project navigator in Xcode. It shows all the projects included in a particular workspace, and all the files and groups inside them. Open the <strong>Project</strong> view by pressing (${
-            action("ActivateProjectToolWindow")
+          action("ActivateProjectToolWindow")
         }).")
     }
     task {
@@ -117,7 +117,7 @@ class Navigation: UITableViewController {
     task {
       triggers("ProjectView.ManualOrder")
       text("Click the ${
-          icon(AllIcons.General.GearPlain)
+        icon(AllIcons.General.GearPlain)
       } icon in the project view options menu, and then select <strong>Xcode order</strong> to set the same order of files as in Xcode (if you selected Xcode behavior when setting up <ide/>, this option will be enabled automatically).")
     }
     task {
@@ -127,7 +127,7 @@ class Navigation: UITableViewController {
     task {
       text(
         "The <strong>Files</strong> view is an additional helpful mode for <ide/>’s <strong>Project</strong> view. It shows all the files inside the directory where ${
-            code(".xcworkspace")
+          code(".xcworkspace")
         } or ${code(".xcproject")} is located. With this view, you can easily open any file not included in your project and view it.")
     }
     task {
@@ -139,9 +139,9 @@ class Navigation: UITableViewController {
     task {
       text(
         "The <strong>Structure</strong> view and the <strong>Structure</strong> popup show you the structure of a particular file together with all the ${
-            code("//TODO")
+          code("//TODO")
         }, ${code("//FIXME")} and ${code("#pragma mark")} or ${
-            code("//MARK")
+          code("//MARK")
         } comments in your code. They work similarly to the <strong>Symbol</strong> navigator in Xcode.")
     }
     task {
@@ -150,7 +150,7 @@ class Navigation: UITableViewController {
     }
     task {
       text("By using ↑ and ↓ keys, you can select any code construct here and press ${
-          action("EditSource")
+        action("EditSource")
       } to jump to some place in your code.")
     }
     task {
@@ -161,7 +161,7 @@ class Navigation: UITableViewController {
     task {
       triggers("FindInPath")
       text("The <strong>Find in Files</strong> (${
-          action("FindInPath")
+        action("FindInPath")
       }) dialog provides the same functionality as <strong>Find</strong> navigator in Xcode. Try using it to run a full-text search now.")
     }
     task {
@@ -171,7 +171,7 @@ class Navigation: UITableViewController {
     task {
       text(
         "The <strong>Build messages</strong> tool window shows compiler output and allows you to filter build messages by their type (see the <strong>Filter messages</strong>(${
-            icon(AllIcons.General.Filter)
+          icon(AllIcons.General.Filter)
         }) button on the left-hand side).")
     }
     task {
@@ -181,7 +181,7 @@ class Navigation: UITableViewController {
     task {
       text(
         "This tool window shows the console, where you can view the output of your application (or <strong>Tests runner</strong> if you are running the <strong>Test</strong> Run Configuration). You can always activate it via (${
-            action("ActivateRunToolWindow")
+          action("ActivateRunToolWindow")
         }).")
     }
     task {
@@ -191,7 +191,7 @@ class Navigation: UITableViewController {
     task {
       triggers("GotoFile", "MasterViewController.swift")
       text("Let's switch back from the emulator window to the IDE and navigate to ${code("MasterViewController.swift")} by pressing ${
-          action("GotoFile")
+        action("GotoFile")
       }.")
     }
     task { caret(11, 9) }
@@ -201,7 +201,7 @@ class Navigation: UITableViewController {
     }
     task {
       text("The <strong>Debug</strong> tool window (${
-          action("ActivateDebugToolWindow")
+        action("ActivateDebugToolWindow")
       }) is similar to Xcode's <strong>Debug</strong> navigator. It shows all the watches, local variables on the right-hand side, and the list of threads on the left-hand side.")
     }
     task {
@@ -213,15 +213,15 @@ class Navigation: UITableViewController {
       triggers("ViewBreakpoints")
       text(
         "The <strong>Breakpoints</strong> dialog has the same functionality as <strong>Breakpoint</strong> navigator in Xcode - it shows the list of all breakpoints in your project. Activate it by using ${
-            action("ViewBreakpoints")
+          action("ViewBreakpoints")
         }.")
     }
     task {
       triggers("ActivateVersionControlToolWindow")
       text("Init the GIT repository via ${
-          action("Vcs.QuickListPopupAction")
+        action("Vcs.QuickListPopupAction")
       }→<strong>Create Git Repository</strong>. Now activate the <strong>VCS</strong> toolwindow with the ${
-          action("ActivateVersionControlToolWindow")
+        action("ActivateVersionControlToolWindow")
       } shortcut.")
     }
     task {

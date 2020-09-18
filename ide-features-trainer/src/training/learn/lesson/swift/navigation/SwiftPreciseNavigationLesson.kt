@@ -56,7 +56,7 @@ class PreciseNavigationController : UIViewController {
     task {
       triggers("CommentByLineComment", "GotoNextError", "CommentByLineComment")
       text("Now comment each of these lines by pressing ${action("CommentByLineComment")} - ${action("GotoNextError")} - ${
-          action("CommentByLineComment")
+        action("CommentByLineComment")
       }.")
     }
     task {
@@ -78,7 +78,7 @@ class PreciseNavigationController : UIViewController {
     task {
       triggers("JumpToLastChange")
       text("Imagine you have a long file and you can't quite remember what you've changed in it and where. Simply press ${
-          action("JumpToLastChange")
+        action("JumpToLastChange")
       } to jump to the most recent change in the file.")
     }
     task {

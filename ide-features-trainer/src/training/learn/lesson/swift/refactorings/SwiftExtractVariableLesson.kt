@@ -44,7 +44,7 @@ class ExtractVariable: UIViewController {
     task {
       triggers("IntroduceVariable", "NextTemplateVariable")
       text("Now, press ${action("IntroduceVariable")} and extract ${code("CGRect")} to the variable ${
-          code("frame")
+        code("frame")
       }, by selecting it from the list.")
     }
 

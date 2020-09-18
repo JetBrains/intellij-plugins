@@ -81,8 +81,8 @@ class TestExample: UIViewController {
     }
     task { caret(18, 97) }
     task { type("\n") }
-    task { caret(19, 9)}
-    task { type("\t\tXCTAssert(false)")}
+    task { caret(19, 9) }
+    task { type("\t\tXCTAssert(false)") }
     task { caret(5, 5) }
     task {
       triggers("RunClass")

@@ -3,9 +3,10 @@ package training.learn.lesson.swift.codegeneration
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.*
 
-class SwiftOverrideImplementLesson(module: Module): KLesson("swift.codegeneration.overrideimplement", "Override / Implement", module, "Swift") {
+class SwiftOverrideImplementLesson(module: Module) : KLesson("swift.codegeneration.overrideimplement", "Override / Implement", module,
+                                                             "Swift") {
 
-    private val sample: LessonSample = parseLessonSample("""
+  private val sample: LessonSample = parseLessonSample("""
 import UIKit
 
 class OverrideImplement: UIViewController, UITableViewDataSource {
@@ -29,21 +30,32 @@ class OverrideImplement: UIViewController, UITableViewDataSource {
     }
 
 }""".trimIndent())
-override val lessonContent: LessonContext.() -> Unit = {
-prepareSample(sample)
+  override val lessonContent: LessonContext.() -> Unit = {
+    prepareSample(sample)
 
-    task { caret(22,5)}
-    task { text("You can override any method of a parent class or implement any protocols, by using the <strong>Override/Implement</strong> actions (${action("OverrideMethods")}/${action("ImplementMethods")})")}
+    task { caret(22, 5) }
     task {
-triggers("ImplementMethods")
-text("Press ${action("ImplementMethods")} → ${LessonUtil.rawEnter()} and add stubs for all required methods from ${code("UITableViewDataSource")}")
-}
-    task { caret(22,5)}
+      text(
+        "You can override any method of a parent class or implement any protocols, by using the <strong>Override/Implement</strong> actions (${
+            action("OverrideMethods")
+        }/${action("ImplementMethods")})")
+    }
     task {
-triggers("OverrideMethods")
-text("Now let's try overriding several methods at once. Press ${action("OverrideMethods")} and start typing ${code("viewAppear")}. The list of methods and properties you can override should be filtered down to just two methods. Press ${action("\$SelectAll")}→ ${LessonUtil.rawEnter()} to override them.")
-}
-    
+      triggers("ImplementMethods")
+      text("Press ${action("ImplementMethods")} → ${LessonUtil.rawEnter()} and add stubs for all required methods from ${
+          code("UITableViewDataSource")
+      }")
+    }
+    task { caret(22, 5) }
+    task {
+      triggers("OverrideMethods")
+      text("Now let's try overriding several methods at once. Press ${action("OverrideMethods")} and start typing ${
+          code("viewAppear")
+      }. The list of methods and properties you can override should be filtered down to just two methods. Press ${
+          action("\$SelectAll")
+      }→ ${LessonUtil.rawEnter()} to override them.")
+    }
 
-}
+
+  }
 }
