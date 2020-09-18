@@ -2,14 +2,14 @@
 package com.jetbrains.lang.dart.ide.info;
 
 import com.intellij.codeInsight.CodeInsightBundle;
-import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.lang.parameterInfo.*;
+import com.intellij.lang.parameterInfo.CreateParameterInfoContext;
+import com.intellij.lang.parameterInfo.ParameterInfoHandler;
+import com.intellij.lang.parameterInfo.ParameterInfoUIContext;
+import com.intellij.lang.parameterInfo.UpdateParameterInfoContext;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.containers.ContainerUtil;
-import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
@@ -25,19 +25,6 @@ public class DartParameterInfoHandler implements ParameterInfoHandler<PsiElement
   @Override
   public boolean couldShowInLookup() {
     return true;
-  }
-
-  @Override
-  public Object[] getParametersForLookup(LookupElement item, ParameterInfoContext context) {
-    final Object o = item.getObject();
-    if (o instanceof PsiElement) {
-      final PsiElement element = (PsiElement)o;
-      final DartComponentType type = DartComponentType.typeOf(element.getParent());
-      if (type == DartComponentType.METHOD || type == DartComponentType.CONSTRUCTOR) {
-        return new Object[]{element.getParent()};
-      }
-    }
-    return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
   }
 
   @Nullable
