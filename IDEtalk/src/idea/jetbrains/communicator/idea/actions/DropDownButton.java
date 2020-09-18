@@ -1,10 +1,11 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package jetbrains.communicator.idea.actions;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.JBPopupMenu;
 import com.intellij.util.ui.JBUI;
 import jetbrains.communicator.util.icons.CompositeIcon;
 
@@ -95,7 +96,7 @@ public class DropDownButton extends JButton {
     repaint();
 
     myForcePressed = true;
-    menuComponent.show(this, 0, getHeight());
+    JBPopupMenu.showBelow(this, menuComponent);
   }
 
   public static JComponent wrap(final DropDownButton optionsButton) {
