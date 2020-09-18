@@ -2,6 +2,7 @@
 package training.commands.kotlin
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.ui.tree.TreeVisitor
 import com.intellij.util.ui.tree.TreeUtil
@@ -24,6 +25,8 @@ import javax.swing.JTree
 import javax.swing.tree.TreePath
 
 abstract class TaskContext {
+  abstract val project: Project
+
   open val taskId: TaskId = TaskId(0)
 
   /** Put here some initialization for the task */

@@ -4,6 +4,7 @@ package training.actions
 import com.intellij.ide.CopyPasteManagerEx
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.project.Project
 import training.commands.kotlin.TaskContext
 import training.commands.kotlin.TaskRuntimeContext
 import training.learn.CourseManager
@@ -14,13 +15,14 @@ import java.awt.datatransfer.StringSelection
 @Suppress("HardCodedStringLiteral")
 class DumpFeaturesTrainerText : AnAction("Copy IFT Course Text to Clipboard") {
   override fun actionPerformed(e: AnActionEvent) {
+    val project = e.project ?: return
     val lessonsForModules = CourseManager.instance.lessonsForModules
     val buffer = StringBuffer()
     for (x in lessonsForModules) {
       if (x is KLesson) {
         buffer.append(x.name)
         buffer.append(":\n")
-        x.lessonContent(ApplyTaskLessonContext(TextCollector(buffer)))
+        x.lessonContent(ApplyTaskLessonContext(TextCollector(buffer, project)))
         buffer.append('\n')
       }
     }
@@ -29,7 +31,7 @@ class DumpFeaturesTrainerText : AnAction("Copy IFT Course Text to Clipboard") {
 }
 
 
-private class TextCollector(private val buffer: StringBuffer) : TaskContext() {
+private class TextCollector(private val buffer: StringBuffer, override val project: Project) : TaskContext() {
   override fun text(text: String) {
     buffer.append(text)
     buffer.append('\n')

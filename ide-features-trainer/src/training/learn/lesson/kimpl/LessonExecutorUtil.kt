@@ -18,8 +18,8 @@ import javax.swing.Icon
 
 internal object LessonExecutorUtil {
   /** This task is a real task with some event required and corresponding text. Used for progress indication. */
-  fun isRealTask(taskContent: TaskContext.() -> Unit): Boolean {
-    val fakeTaskContext = FakeTaskContext()
+  fun isRealTask(taskContent: TaskContext.() -> Unit, project: Project): Boolean {
+    val fakeTaskContext = FakeTaskContext(project)
     taskContent(fakeTaskContext)
     return fakeTaskContext.hasDetection && fakeTaskContext.hasText
   }
@@ -40,7 +40,7 @@ internal object LessonExecutorUtil {
   }
 }
 
-private class FakeTaskContext : TaskContext() {
+private class FakeTaskContext(override val project: Project) : TaskContext() {
   var hasText = false
   var hasDetection = false
 

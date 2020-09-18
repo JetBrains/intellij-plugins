@@ -92,7 +92,7 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
       throw IllegalStateException("Nested tasks are not permitted!")
     }
 
-    val isRealTask = LessonExecutorUtil.isRealTask(taskContent)
+    val isRealTask = LessonExecutorUtil.isRealTask(taskContent, project)
     val shownTaskNumber = if (isRealTask) currentProgressTaskNumber++ else null
     addTaskAction(shownTaskNumber) { processTask(taskContent) }
   }

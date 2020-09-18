@@ -217,6 +217,6 @@ class LearnToolWindow internal constructor(val project: Project, private val who
   }
 }
 
-private class DocumentationModeTaskContext(private val project: Project) : TaskContext() {
+private class DocumentationModeTaskContext(override val project: Project) : TaskContext() {
   override fun text(text: String) = LessonExecutorUtil.addTextToLearnPanel(text, project)
 }

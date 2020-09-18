@@ -27,6 +27,9 @@ internal class TaskContextImpl(private val lessonExecutor: LessonExecutor,
                                private val recorder: ActionsRecorder,
                                val taskIndex: Int,
                                private val callbackData: LessonExecutor.TaskCallbackData) : TaskContext() {
+  override val project: Project
+    get() = lessonExecutor.project
+
   override val taskId = TaskId(taskIndex)
 
   private val runtimeContext = TaskRuntimeContext(lessonExecutor,
