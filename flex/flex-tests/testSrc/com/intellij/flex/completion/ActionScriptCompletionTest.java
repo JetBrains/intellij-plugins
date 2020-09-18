@@ -607,12 +607,6 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     assertEquals(2, elements.length);
   }
 
-  @NeedsJavaModule
-  public void testCompleteStyleNameInString() {
-    final String base = getTestName(false);
-    doTestForFiles(base + ".js2", base + "_2.js2");
-  }
-
   public void testCompleteAfterUnknownVariable() {
     doTest("");
   }
