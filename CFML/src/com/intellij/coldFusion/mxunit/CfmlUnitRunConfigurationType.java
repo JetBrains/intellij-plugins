@@ -40,12 +40,12 @@ public final class CfmlUnitRunConfigurationType implements ConfigurationType {
   @NotNull
   @Override
   public String getDisplayName() {
-    return "MXUnit";
+    return "MXUnit"; //NON-NLS
   }
 
   @Override
   public String getConfigurationTypeDescription() {
-    return "MXUnit";
+    return "MXUnit"; //NON-NLS
   }
 
   @Override

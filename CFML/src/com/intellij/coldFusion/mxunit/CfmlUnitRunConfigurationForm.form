@@ -19,7 +19,7 @@
         </constraints>
         <properties>
           <labelFor value="95134"/>
-          <text value="&amp;Web path:"/>
+          <text resource-bundle="messages/CfmlBundle" key="unit.run.configuration.form.path"/>
         </properties>
       </component>
       <component id="95134" class="javax.swing.JTextField" binding="myWebPathTextField">
@@ -44,7 +44,7 @@
             </constraints>
             <properties>
               <labelFor value=""/>
-              <text value="&amp;File:"/>
+              <text resource-bundle="messages/CfmlBundle" key="unit.run.configuration.form.file"/>
             </properties>
           </component>
           <component id="374f6" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="myDirectoryOrFileField">
@@ -69,7 +69,7 @@
             </constraints>
             <properties>
               <labelFor value="40b18"/>
-              <text value="&amp;Method:"/>
+              <text resource-bundle="messages/CfmlBundle" key="unit.run.configuration.form.label.method"/>
             </properties>
           </component>
           <component id="e926c" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="myMethodField">
@@ -93,7 +93,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Test:"/>
+              <text resource-bundle="messages/CfmlBundle" key="unit.run.configuration.form.label.test"/>
             </properties>
           </component>
           <grid id="46789" layout-manager="GridLayoutManager" row-count="1" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
@@ -110,7 +110,7 @@
                 </constraints>
                 <properties>
                   <enabled value="true"/>
-                  <text value="&amp;Directory"/>
+                  <text resource-bundle="messages/CfmlBundle" key="unit.run.configuration.form.directory"/>
                 </properties>
               </component>
               <hspacer id="86343">
@@ -124,7 +124,7 @@
                 </constraints>
                 <properties>
                   <enabled value="true"/>
-                  <text value="Me&amp;thod"/>
+                  <text resource-bundle="messages/CfmlBundle" key="unit.run.configuration.form.radio.button.method"/>
                 </properties>
               </component>
               <component id="760a" class="javax.swing.JRadioButton" binding="myComponentRadioButton" default-binding="true">
@@ -133,7 +133,7 @@
                 </constraints>
                 <properties>
                   <selected value="false"/>
-                  <text value="&amp;Component"/>
+                  <text resource-bundle="messages/CfmlBundle" key="unit.run.configuration.form.component"/>
                 </properties>
               </component>
             </children>

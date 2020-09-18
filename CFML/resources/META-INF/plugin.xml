@@ -110,9 +110,7 @@ To configure path mappings, open the <b>Settings / Preferences</b> dialog and se
   </extensions>
 
   <actions>
-    <action id="NewCfmlFile" class="com.intellij.coldFusion.UI.CfmlCreateFileAction"
-            text="CFML/CFC File"
-            description="Create new CFML/CFC file">
+    <action id="NewCfmlFile" class="com.intellij.coldFusion.UI.CfmlCreateFileAction">
       <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
     </action>
   </actions>
