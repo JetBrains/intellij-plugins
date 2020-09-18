@@ -58,8 +58,7 @@ public class TmlParserDefinition implements ParserDefinition {
 
   @Override
   public SpaceRequirements spaceExistenceTypeBetweenTokens(ASTNode left, ASTNode right) {
-    final Lexer lexer = createLexer(left.getPsi().getProject());
-    return XMLParserDefinition.canStickTokensTogetherByLexerInXml(left, right, lexer, 0);
+    return XMLParserDefinition.canStickTokensTogether(left, right);
   }
 
   @Override
