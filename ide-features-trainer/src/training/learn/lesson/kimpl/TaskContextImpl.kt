@@ -6,6 +6,7 @@ import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.LogicalPosition
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
@@ -73,6 +74,14 @@ internal class TaskContextImpl(private val lessonExecutor: LessonExecutor,
   }
 
   override fun text(@Language("HTML") text: String) = LessonExecutorUtil.addTextToLearnPanel(text, runtimeContext.project)
+
+  override fun select(startLine: Int, startColumn: Int, endLine: Int, endColumn: Int) {
+    lessonExecutor.select(startLine,startColumn, endLine, endColumn)
+  }
+
+  override fun type(text: String) {
+    lessonExecutor.type(text)
+  }
 
   override fun runtimeText(callback: TaskRuntimeContext.() -> String?) {
     val text = callback(runtimeContext)

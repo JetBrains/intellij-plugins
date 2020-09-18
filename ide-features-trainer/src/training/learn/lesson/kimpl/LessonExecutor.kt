@@ -6,6 +6,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.command.CommandProcessor
+import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.command.undo.BasicUndoableAction
 import com.intellij.openapi.command.undo.DocumentReferenceManager
 import com.intellij.openapi.command.undo.UndoManager
@@ -144,6 +145,28 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
       editor.caretModel.moveToOffset(start)
       if (select) {
         editor.selectionModel.setSelection(start, start + text.length)
+      }
+    }
+  }
+
+  fun select(startLine: Int, startColumn: Int, endLine: Int, endColumn: Int) {
+    addSimpleTaskAction l@{
+      val blockStart = LogicalPosition(startLine, startColumn)
+      val blockEnd = LogicalPosition(endLine, endColumn)
+
+      val startPosition = editor.logicalPositionToOffset(blockStart)
+      val endPosition = editor.logicalPositionToOffset(blockEnd)
+      editor.caretModel.moveToOffset(startPosition)
+      editor.selectionModel.setSelection(startPosition, endPosition)
+    }
+  }
+
+  fun type(text:String){
+    addSimpleTaskAction l@{
+      WriteCommandAction.runWriteCommandAction(project) {
+        val startOffset = editor.caretModel.offset
+        editor.document.insertString(startOffset, text)
+        editor.caretModel.moveToOffset(startOffset + text.length)
       }
     }
   }

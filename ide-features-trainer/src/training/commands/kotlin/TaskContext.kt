@@ -57,6 +57,11 @@ abstract class TaskContext {
    */
   open fun text(@Language("HTML") @Nls text: String) = Unit
 
+  /** Select text in editor */
+  open fun select(startLine:Int, startColumn:Int, endLine:Int, endColumn:Int) = Unit
+
+  /** Insert text in the current position */
+  open fun type(text: String) = Unit
   /** Write a text to the learn panel (panel with a learning tasks). */
   open fun runtimeText(@Nls callback: TaskRuntimeContext.() -> String?) = Unit
 
