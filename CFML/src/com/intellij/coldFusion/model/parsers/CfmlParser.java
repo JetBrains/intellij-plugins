@@ -209,13 +209,6 @@ public class CfmlParser implements PsiParser {
         PsiBuilder.Marker attrMarker = builder.mark();
         // PsiBuilder.Marker attrNameMarker = myBuilder.mark();
         builder.advanceLexer();
-        /*
-        if (!CfmlUtil.isAttribute(tagName, attributeName)) {
-            attrNameMarker.error(CfmlBundle.message("cfml.parsing.no.such.attribute", tagName));
-        } else {
-            attrNameMarker.drop();
-        }
-        */
         if (builder.getTokenType() != ASSIGN) {
           attrMarker.done(CfmlElementTypes.ATTRIBUTE);
           builder.error(CfmlBundle.message("cfml.parsing.no.value"));
@@ -243,11 +236,7 @@ public class CfmlParser implements PsiParser {
           readValue(builder, CfmlElementTypes.ATTRIBUTE_VALUE);
           attrMarker.done(CfmlElementTypes.ATTRIBUTE);
         }
-      } /*else if (myBuilder.getTokenType() == IDENTIFIER && hasAttrs) {
-                PsiBuilder.Marker attrMarker = myBuilder.mark();
-                advance();
-                attrMarker.error(CfmlBundle.message("cfml.parsing.no.such.attribute", tagName));
-            } */
+      }
       else {
         if (strict) {
           return;
