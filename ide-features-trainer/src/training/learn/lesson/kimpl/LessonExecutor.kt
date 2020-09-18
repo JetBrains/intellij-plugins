@@ -161,12 +161,14 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
     }
   }
 
-  fun type(text:String){
+  fun type(text: String) {
     addSimpleTaskAction l@{
-      WriteCommandAction.runWriteCommandAction(project) {
-        val startOffset = editor.caretModel.offset
-        editor.document.insertString(startOffset, text)
-        editor.caretModel.moveToOffset(startOffset + text.length)
+      invokeLater(ModalityState.current()) {
+        WriteCommandAction.runWriteCommandAction(project) {
+          val startOffset = editor.caretModel.offset
+          editor.document.insertString(startOffset, text)
+          editor.caretModel.moveToOffset(startOffset + text.length)
+        }
       }
     }
   }
