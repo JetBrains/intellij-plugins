@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module name="Navigation" lessonsPath="Navigation/" version="0.3" id="navigation" fileType="PROJECT" description="Jump to source, declaration/implementation, file structure and next/prev occurrences navigation">
   <lesson-kt implementationClass="training.learn.lesson.java.navigation.JavaFileStructureLesson"/>
-  <lesson filename="02.Declaration.xml" solution="training.training.solutions.Navigation.DeclarationSolution"/>
+  <lesson-kt implementationClass="training.learn.lesson.java.navigation.JavaDeclarationAndUsagesLesson"/>
+  <lesson-kt implementationClass="training.learn.lesson.java.navigation.JavaInheritanceHierarchyLesson"/>
   <lesson filename="04.Occurrences.xml" solution="training.training.solutions.Navigation.OccurrencesSolution"/>
 </module>
 
