@@ -25,7 +25,6 @@ import org.dartlang.vm.service.VmService;
 import org.dartlang.vm.service.consumer.*;
 import org.dartlang.vm.service.element.Stack;
 import org.dartlang.vm.service.element.*;
-import org.dartlang.vm.service.logging.Logging;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -99,10 +98,6 @@ public class VmServiceWrapper implements Disposable {
             getVm(new VmServiceConsumers.VmConsumerWrapper() {
               @Override
               public void received(final VM vm) {
-                if (vm.getIsolates().size() == 0) {
-                  Logging.getLogger().logError("No isolates found after VM start: " + vm.getIsolates().size());
-                }
-
                 for (final IsolateRef isolateRef : vm.getIsolates()) {
                   getIsolate(isolateRef.getId(), new VmServiceConsumers.GetIsolateConsumerWrapper() {
                     @Override
