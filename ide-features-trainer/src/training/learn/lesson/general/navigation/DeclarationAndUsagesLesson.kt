@@ -18,6 +18,7 @@ import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
+import training.learn.lesson.kimpl.closeAllFindTabs
 
 abstract class DeclarationAndUsagesLesson(module: Module, lang: String)
   : KLesson("Declaration and usages", LessonsBundle.message("declaration.and.usages.lesson.name"), module, lang) {
@@ -59,6 +60,9 @@ abstract class DeclarationAndUsagesLesson(module: Module, lang: String)
       }
 
       task("FindUsages") {
+        before {
+          closeAllFindTabs()
+        }
         text(LessonsBundle.message("declaration.and.usages.find.usages", action(it)))
 
         triggerByUiComponentAndHighlight { ui: BaseLabel ->

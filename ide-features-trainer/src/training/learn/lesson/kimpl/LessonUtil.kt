@@ -12,6 +12,8 @@ import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.text.TextWithMnemonic
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ex.ToolWindowManagerListener
+import com.intellij.ui.content.Content
+import com.intellij.usageView.UsageViewContentManager
 import com.intellij.util.messages.Topic
 import com.intellij.xdebugger.XDebuggerManager
 import training.commands.kotlin.TaskContext
@@ -141,6 +143,14 @@ fun TaskContext.restoreAfterStateBecomeFalse(restoreId: TaskContext.TaskId? = nu
   restoreState(restoreId) {
     val required = restoreRequired()
     (restoreIsPossible && required).also { restoreIsPossible = restoreIsPossible || !required }
+  }
+}
+
+fun TaskRuntimeContext.closeAllFindTabs() {
+  val usageViewManager = UsageViewContentManager.getInstance(project)
+  var selectedContent: Content?
+  while (usageViewManager.selectedContent.also { selectedContent = it } != null) {
+    usageViewManager.closeContent(selectedContent!!)
   }
 }
 
