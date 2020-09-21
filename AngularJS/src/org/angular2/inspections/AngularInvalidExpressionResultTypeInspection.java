@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.inspections;
 
 import com.intellij.codeInspection.LocalInspectionTool;
@@ -82,7 +82,7 @@ public class AngularInvalidExpressionResultTypeInspection extends LocalInspectio
         }
         JSType actualType = JSResolveUtil.getElementJSType(expression, true);
         if (actualType != null
-            && !expectedType.isDirectlyAssignableType(actualType, JSTypeComparingContextService.getProcessingContextWithCache(binding))) {
+            && !expectedType.isDirectlyAssignableType(actualType, JSTypeComparingContextService.createProcessingContextWithCache(binding))) {
           holder.registerProblem(expression, Angular2Bundle.message("angular.inspection.invalid-expr-result-type.message",
                                                                     actualType.getTypeText(JSType.TypeTextFormat.PRESENTABLE),
                                                                     expectedType.getTypeText(JSType.TypeTextFormat.PRESENTABLE)));

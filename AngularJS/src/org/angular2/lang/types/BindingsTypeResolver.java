@@ -184,7 +184,7 @@ final class BindingsTypeResolver {
         templateContextTypes.add(templateContextType);
       }
       final ProcessingContext processingContext =
-        JSTypeComparingContextService.getProcessingContextWithCache(clazz);
+        JSTypeComparingContextService.createProcessingContextWithCache(clazz);
       directive.getInputs().forEach(property -> {
         JSExpression inputExpression = inputsMap.get(property.getName());
         JSType propertyType;
