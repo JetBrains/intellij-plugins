@@ -284,8 +284,8 @@ else
 
       private
       def parallel_run?
-        defined?(Minitest) and Minitest.respond_to?(parallel_executor) andMinitest.parallel_executor.respond_to?(:start)
-        or defined?(MiniTest::Unit::TestCase) and MiniTest::Unit::TestCase.respond_to?(test_order) and MiniTest::Unit::TestCase.test_order == :parallel
+        defined?(Minitest) and Minitest.respond_to?(:parallel_executor) and Minitest.parallel_executor.respond_to?(:start) or
+            defined?(MiniTest::Unit::TestCase) and MiniTest::Unit::TestCase.respond_to?(:test_order) and MiniTest::Unit::TestCase.test_order == :parallel
       end
 
       def get_test_name(test)
