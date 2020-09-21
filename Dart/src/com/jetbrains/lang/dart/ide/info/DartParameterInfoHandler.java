@@ -22,11 +22,6 @@ import java.util.List;
 public class DartParameterInfoHandler implements ParameterInfoHandler<PsiElement, DartFunctionDescription> {
   private String myParametersListPresentableText = "";
 
-  @Override
-  public boolean couldShowInLookup() {
-    return true;
-  }
-
   @Nullable
   @Override
   public PsiElement findElementForParameterInfo(@NotNull CreateParameterInfoContext context) {

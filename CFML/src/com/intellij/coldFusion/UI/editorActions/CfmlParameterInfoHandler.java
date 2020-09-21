@@ -26,11 +26,6 @@ public class CfmlParameterInfoHandler implements ParameterInfoHandler<PsiElement
   // for test purposes
   private String myText;
 
-  @Override
-  public boolean couldShowInLookup() {
-    return true;
-  }
-
   private static boolean isEmbraced(@Nullable PsiElement element, int offset) {
     if (element == null) {
       return false;
