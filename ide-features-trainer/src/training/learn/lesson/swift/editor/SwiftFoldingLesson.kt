@@ -53,10 +53,7 @@ class FoldingDemo {
       triggers("ExpandAllRegions")
       text("Similarly, press ${action("ExpandAllRegions")} to expand all available regions.")
     }
-    task { caret(10, 13) }
     task { select(7, 9, 8, 24) }
-
-    task { caret(8, 24) }
     task {
       triggers("CollapseSelection")
       text("In <ide/>, there's a way to fold any sequence of statements or declarations. Try folding the selected region with ${action("CollapseSelection")}.")

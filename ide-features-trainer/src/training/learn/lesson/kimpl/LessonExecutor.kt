@@ -151,8 +151,8 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
 
   fun select(startLine: Int, startColumn: Int, endLine: Int, endColumn: Int) {
     addSimpleTaskAction l@{
-      val blockStart = LogicalPosition(startLine, startColumn)
-      val blockEnd = LogicalPosition(endLine, endColumn)
+      val blockStart = LogicalPosition(startLine - 1, startColumn - 1)
+      val blockEnd = LogicalPosition(endLine - 1, endColumn - 1)
 
       val startPosition = editor.logicalPositionToOffset(blockStart)
       val endPosition = editor.logicalPositionToOffset(blockEnd)
@@ -259,6 +259,7 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
     fun restoreTask(restoreId: TaskContext.TaskId) {
       applyRestore(taskContext, restoreId)
     }
+
     fun restore(restoreId: TaskContext.TaskId) {
       clearRestore()
       invokeLater(ModalityState.any()) { // restore check must be done after pass conditions (and they will be done during current event processing)
@@ -314,8 +315,8 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
         if (taskHasBeenDone) {
           clearRestore()
           LessonManager.instance.passExercise()
-          if(foundComponent == null) foundComponent = taskActions[currentTaskIndex].userVisibleInfo?.ui
-          if(rehighlightComponent == null) rehighlightComponent = taskActions[currentTaskIndex].rehighlightComponent
+          if (foundComponent == null) foundComponent = taskActions[currentTaskIndex].userVisibleInfo?.ui
+          if (rehighlightComponent == null) rehighlightComponent = taskActions[currentTaskIndex].rehighlightComponent
           processNextTask(currentTaskIndex + 1)
         }
       }
