@@ -35,8 +35,6 @@ class Select: UIViewController {
 }""".trimIndent())
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
-
-
     task { caret(12, 13) }
     task {
       triggers("EditorNextWordWithSelection")
@@ -60,7 +58,5 @@ class Select: UIViewController {
       triggers("\$SelectAll")
       text("Now select the whole file instantly with ${action("\$SelectAll")}.")
     }
-
-
   }
 }

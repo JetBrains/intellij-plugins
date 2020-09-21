@@ -46,11 +46,7 @@ class Duplicate: UIViewController {
 
     task {
       triggers("EditorDuplicate")
-      text("You can do the same thing with multiple lines, too. Simply select two or more lines and duplicate them with ${
-        action("EditorDuplicate")
-      }.")
+      text("You can do the same thing with multiple lines, too. Simply select two or more lines and duplicate them with ${action("EditorDuplicate")}.")
     }
-
-
   }
 }

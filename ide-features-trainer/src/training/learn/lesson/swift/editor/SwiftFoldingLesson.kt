@@ -59,9 +59,7 @@ class FoldingDemo {
     task { caret(8, 24) }
     task {
       triggers("CollapseSelection")
-      text("In <ide/>, there's a way to fold any sequence of statements or declarations. Try folding the selected region with ${
-              action("CollapseSelection")
-      }.")
+      text("In <ide/>, there's a way to fold any sequence of statements or declarations. Try folding the selected region with ${action("CollapseSelection")}.")
     }
     task {
       triggers("ExpandRegion")
@@ -72,7 +70,5 @@ class FoldingDemo {
       triggers("CollapseBlock")
       text("And finally, use ${action("CollapseBlock")} to fold the control flow statements.")
     }
-
-
   }
 }

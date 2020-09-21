@@ -54,9 +54,7 @@ class DebugExample: UIViewController {
     }
     task {
       triggers("EditorSelectWord", "EditorSelectWord", "EvaluateExpression")
-      text("Select ${code("controllers[controllers.count-1]")} using ${
-          action("EditorSelectWord")
-      } and use <strong>Evaluate Expression</strong> (${action("EvaluateExpression")} → ${LessonUtil.rawEnter()}).")
+      text("Select ${code("controllers[controllers.count-1]")} using ${action("EditorSelectWord")} and use <strong>Evaluate Expression</strong> (${action("EvaluateExpression")} → ${LessonUtil.rawEnter()}).")
     }
     task {
       triggers("EditorChooseLookupItem")

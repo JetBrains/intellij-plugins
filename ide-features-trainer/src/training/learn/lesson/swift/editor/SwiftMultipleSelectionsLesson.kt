@@ -6,8 +6,7 @@ import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 import training.learn.lesson.kimpl.parseLessonSample
 
-class SwiftMultipleSelectionsLesson(module: Module) : KLesson("swift.editorbasics.multipleselections", "Multiple Selections", module,
-                                                              "Swift") {
+class SwiftMultipleSelectionsLesson(module: Module) : KLesson("swift.editorbasics.multipleselections", "Multiple Selections", module, "Swift") {
 
   private val sample: LessonSample = parseLessonSample("""import Foundation
 
@@ -49,8 +48,6 @@ SIX
 """.trimIndent())
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
-
-
     task { caret(14, 18) }
     task {
       triggers("SelectNextOccurrence")
@@ -74,10 +71,8 @@ SIX
     }
     task { caret(29, 1) }
     task {
-      triggers("EditorToggleColumnMode", "EditorDownWithSelection", "EditorDownWithSelection", "EditorDownWithSelection",
-               "EditorDownWithSelection", "EditorDownWithSelection")
-      text(
-        "Toggle Column Selection using ${action("EditorToggleColumnMode")} and select all the lines from ${code("ONE")} to ${code("SIX")}.")
+      triggers("EditorToggleColumnMode", "EditorDownWithSelection", "EditorDownWithSelection", "EditorDownWithSelection", "EditorDownWithSelection", "EditorDownWithSelection")
+      text("Toggle Column Selection using ${action("EditorToggleColumnMode")} and select all the lines from ${code("ONE")} to ${code("SIX")}.")
     }
     task {
       triggers("EditorNextWordWithSelection")
@@ -85,15 +80,11 @@ SIX
     }
     task {
       triggers("EditorToggleCase", "EditorToggleColumnMode")
-      text("Press ${action("EditorToggleCase")} to toggle the case, and then exit the Column Selection mode by pressing ${
-        action("EditorToggleColumnMode")
-      } again.")
+      text("Press ${action("EditorToggleCase")} to toggle the case, and then exit the Column Selection mode by pressing ${action("EditorToggleColumnMode")} again.")
     }
     task {
       triggers("ReformatCode")
       text("Press ${action("EditorEscape")}, reformat the code with ${action("ReformatCode")} and that's it!")
     }
-
-
   }
 }

@@ -8,7 +8,6 @@ import training.learn.lesson.kimpl.parseLessonSample
 
 class SwiftQuickPopupsLesson(module: Module) : KLesson("swift.codeassistance.quickpopups", "Quick Popups", module, "Swift") {
 
-
   private val sample: LessonSample = parseLessonSample("""
 import Foundation
 import UIKit
@@ -35,8 +34,6 @@ class Duplicate: UIViewController {
 }""".trimIndent())
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
-
-
     task { caret(18, 34) }
     task {
       triggers("ParameterInfo")
@@ -56,7 +53,5 @@ class Duplicate: UIViewController {
       triggers("QuickImplementations")
       text("Press ${action("QuickImplementations")} to see the definition of the symbol at the caret.")
     }
-
-
   }
 }

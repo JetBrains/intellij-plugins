@@ -35,22 +35,15 @@ class Move: UIViewController {
 }""".trimIndent())
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
-
-
-
     task { caret(18, 9) }
     task {
       triggers("MoveLineDown", "MoveLineDown")
-      text("Rearranging lines usually takes two actions: cut and paste. In <ide/>, you can do it with just one, as pressing ${
-        action("MoveLineDown")
-      } will pull the current line down. Move the current line to the end of the ${code("viewDidLoad")} function.")
+      text("Rearranging lines usually takes two actions: cut and paste. In <ide/>, you can do it with just one, as pressing ${action("MoveLineDown")} will pull the current line down. Move the current line to the end of the ${code("viewDidLoad")} function.")
     }
     task { caret(16, 9) }
     task {
       triggers("MoveLineUp", "MoveLineUp")
       text("Similarly, to pull a line up, use ${action("MoveLineUp")}. Move the ${code("header")} declaration so it precedes its setup.")
     }
-
-
   }
 }

@@ -38,8 +38,7 @@ class PreciseNavigationController : UIViewController {
 
     task { caret(5, 19) }
     task {
-      text(
-        "Several shortcuts for navigating within a code file can make your development much more efficient. Let's take a quick look at these.")
+      text("Several shortcuts for navigating within a code file can make your development much more efficient. Let's take a quick look at these.")
     }
     task {
       triggers("GotoNextError")
@@ -55,9 +54,7 @@ class PreciseNavigationController : UIViewController {
     }
     task {
       triggers("CommentByLineComment", "GotoNextError", "CommentByLineComment")
-      text("Now comment each of these lines by pressing ${action("CommentByLineComment")} - ${action("GotoNextError")} - ${
-        action("CommentByLineComment")
-      }.")
+      text("Now comment each of these lines by pressing ${action("CommentByLineComment")} - ${action("GotoNextError")} - ${action("CommentByLineComment")}.")
     }
     task {
       triggers("GotoNextError")
@@ -77,15 +74,11 @@ class PreciseNavigationController : UIViewController {
     }
     task {
       triggers("JumpToLastChange")
-      text("Imagine you have a long file and you can't quite remember what you've changed in it and where. Simply press ${
-        action("JumpToLastChange")
-      } to jump to the most recent change in the file.")
+      text("Imagine you have a long file and you can't quite remember what you've changed in it and where. Simply press ${action("JumpToLastChange")} to jump to the most recent change in the file.")
     }
     task {
       triggers("GotoLine")
       text("Finally, when you need to jump to a specific line/column in your code, just press ${action("GotoLine")}.")
     }
-
-
   }
 }

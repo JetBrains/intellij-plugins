@@ -63,36 +63,26 @@ class QuickFixes: NSObject {
     task { caret(6, 17) }
     task {
       triggers("ShowIntentionActions")
-      text(
-        "Press ${action("ShowIntentionActions")} and select <strong>Apply Fix-it</strong> to replace the unused variable with ${code("_")}")
+      text("Press ${action("ShowIntentionActions")} and select <strong>Apply Fix-it</strong> to replace the unused variable with ${code("_")}")
     }
     task {
       triggers("CodeInspection.OnEditor")
-      text(
-        "AppCode also integrates SourceKit as a separate inspection. This means you can run it on the whole file and fix all the problems at once if several fix-its are available. Press ${
+      text("AppCode also integrates SourceKit as a separate inspection. This means you can run it on the whole file and fix all the problems at once if several fix-its are available. Press ${
             action("CodeInspection.OnEditor")
         }.")
     }
     task {
-      text(
-        "As you can see, we have several problems in this piece of code. Let's fix some of them. Select <strong>Swift → SourceKit inspections</strong> and click the <strong>Apply Fix-it</strong> button on the right. This should correct all the problems in this group.")
+      text("As you can see, we have several problems in this piece of code. Let's fix some of them. Select <strong>Swift → SourceKit inspections</strong> and click the <strong>Apply Fix-it</strong> button on the right. This should correct all the problems in this group.")
     }
     task { caret(15, 19) }
     task {
       triggers("ShowIntentionActions", "EditorChooseLookupItem")
-      text("Now press ${
-          action("EditorEscape")
-      } to return to the editor window, place the caret on the incorrectly spelled variable name, and then press ${
-          action("ShowIntentionActions")
-      }. Select <strong>Typo: Rename to...</strong>, choose the correct option, and then press ${LessonUtil.rawEnter()}")
+      text("Now press ${action("EditorEscape")} to return to the editor window, place the caret on the incorrectly spelled variable name, and then press ${action("ShowIntentionActions")}. Select <strong>Typo: Rename to...</strong>, choose the correct option, and then press ${LessonUtil.rawEnter()}")
     }
     task { caret(15, 41) }
     task {
       triggers("ShowIntentionActions", "ShowIntentionActions")
-      text(
-        "Note how only the needed part was corrected and all variable usages were automatically renamed. Now, repeat the same actions twice to fix the ${
-            code("incorrctlySpeled")
-        } string.")
+      text("Note how only the needed part was corrected and all variable usages were automatically renamed. Now, repeat the same actions twice to fix the ${code("incorrctlySpeled")} string.")
     }
     task {
       triggers("GotoNextError")
@@ -100,9 +90,7 @@ class QuickFixes: NSObject {
     }
     task {
       triggers("ShowIntentionActions")
-      text("Error handling intentions can help you add ${code("try/catch/throws")} where needed. Press ${action("EditorEscape")}→${
-          action("ShowIntentionActions")
-      } and select one of the quick-fixes.")
+      text("Error handling intentions can help you add ${code("try/catch/throws")} where needed. Press ${action("EditorEscape")}→${action("ShowIntentionActions")} and select one of the quick-fixes.")
     }
     task {
       triggers("GotoNextError")
@@ -114,11 +102,7 @@ class QuickFixes: NSObject {
     }
     task {
       triggers("ShowIntentionActions")
-      text("If you need to add or remove an explicit type to/from some variable, simply press ${
-          action("ShowIntentionActions")
-      } and select <strong>Add/Remove explicit type</strong>. Try it now with the ${code("fileManager")} variable.")
+      text("If you need to add or remove an explicit type to/from some variable, simply press ${action("ShowIntentionActions")} and select <strong>Add/Remove explicit type</strong>. Try it now with the ${code("fileManager")} variable.")
     }
-
-
   }
 }

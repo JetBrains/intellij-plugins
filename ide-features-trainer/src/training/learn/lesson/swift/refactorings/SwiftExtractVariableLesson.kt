@@ -31,23 +31,17 @@ class ExtractVariable: UIViewController {
 }""".trimIndent())
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
-
     task { caret(8, 61) }
     task {
       triggers("IntroduceVariable", "NextTemplateVariable")
       text("Press ${action("IntroduceVariable")} to extract the constant ${code("50")} to the variable or field ${code("y")}.")
     }
     task {
-      text(
-        "Extract Variable does not require you to select the exact code you want to extract. You can simply place the caret on the statement you want to extract and then select the needed expression.")
+      text("Extract Variable does not require you to select the exact code you want to extract. You can simply place the caret on the statement you want to extract and then select the needed expression.")
     }
     task {
       triggers("IntroduceVariable", "NextTemplateVariable")
-      text("Now, press ${action("IntroduceVariable")} and extract ${code("CGRect")} to the variable ${
-        code("frame")
-      }, by selecting it from the list.")
+      text("Now, press ${action("IntroduceVariable")} and extract ${code("CGRect")} to the variable ${code("frame")}, by selecting it from the list.")
     }
-
-
   }
 }

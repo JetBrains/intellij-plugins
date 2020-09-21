@@ -39,8 +39,7 @@ class ChangeSignature: UIViewController {
 
     task { caret(16, 22) }
     task {
-      text(
-        "<strong>Change Signature</strong> is a refactoring that lets you change the names of methods and functions, edit internal and external parameter names, change their order, and change the visibility of methods and functions – all at once.")
+      text("<strong>Change Signature</strong> is a refactoring that lets you change the names of methods and functions, edit internal and external parameter names, change their order, and change the visibility of methods and functions – all at once.")
     }
     task {
       triggers("ChangeSignature")
@@ -48,17 +47,11 @@ class ChangeSignature: UIViewController {
     }
     task {
       triggers("ChangeSignature")
-      text("Press ${action("ChangeSignature")} again. Click the row with the ${code("tableView")} parameter and change it to ${
-        code("table")
-      }, or add an internal parameter name.")
+      text("Press ${action("ChangeSignature")} again. Click the row with the ${code("tableView")} parameter and change it to ${code("table")}, or add an internal parameter name.")
     }
     task {
       triggers("ChangeSignature")
-      text("Finally, invoke <strong>Change Signature</strong> again to change the parameter order using ${
-        icon(AllIcons.General.ArrowUp)
-      }/${icon(AllIcons.General.ArrowDown)} buttons or <shortcut>⌥↑</shortcut>/<shortcut>⌥↓</shortcut> shortcuts.")
+      text("Finally, invoke <strong>Change Signature</strong> again to change the parameter order using ${icon(AllIcons.General.ArrowUp)}/${icon(AllIcons.General.ArrowDown)} buttons or <shortcut>⌥↑</shortcut>/<shortcut>⌥↓</shortcut> shortcuts.")
     }
-
-
   }
 }

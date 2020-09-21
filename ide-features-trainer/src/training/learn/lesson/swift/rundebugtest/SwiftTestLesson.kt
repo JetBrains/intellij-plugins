@@ -39,12 +39,10 @@ class TestExample: UIViewController {
       text("Navigate to ${code("LearnProjectTests.swift")} by using ${action("GotoFile")}.")
     }
     task {
-      text(
-        "<ide/> supports many testing frameworks including XCTest, Quick, Kiwi, Catch, Boost.Test, and Google Test. Let's take a look at all the common features you can use when testing your application.")
+      text("<ide/> supports many testing frameworks including XCTest, Quick, Kiwi, Catch, Boost.Test, and Google Test. Let's take a look at all the common features you can use when testing your application.")
     }
     task {
-      text(
-        "<ide/> automatically identifies the test scope based on the caret position. When caret is somewhere in the test file, all tests in this file can be executed. The same applies to a single test - to run a single test, just place the caret inside the test method.")
+      text("<ide/> automatically identifies the test scope based on the caret position. When caret is somewhere in the test file, all tests in this file can be executed. The same applies to a single test - to run a single test, just place the caret inside the test method.")
     }
     task { caret(5, 5) }
     task {
@@ -63,9 +61,7 @@ class TestExample: UIViewController {
     task { caret(13, 9) }
     task {
       triggers("ToggleLineBreakpoint", "DebugClass")
-      text("Now let's debug our test. Toggle the line breakpoint by using ${
-        action("ToggleLineBreakpoint")
-      } and then debug the test with ${action("DebugClass")}.")
+      text("Now let's debug our test. Toggle the line breakpoint by using ${action("ToggleLineBreakpoint")} and then debug the test with ${action("DebugClass")}.")
     }
     task {
       triggers("Resume")
@@ -104,24 +100,14 @@ class TestExample: UIViewController {
     task { caret(5, 5) }
     task {
       triggers("RunClass", "com.intellij.execution.testframework.ToolbarPanel\$SortByDurationAction")
-      text("Great! Additional controls in the <strong>Test Runner</strong> toolwindow allow you to sort tests by duration (${
-        icon(AllIcons.RunConfigurations.SortbyDuration)
-      }) or alphabetically (${icon(AllIcons.ObjectBrowser.Sorted)}). Run all the tests again by pressing ${
-        action("RunClass")
-      } and then try sorting them by duration.")
+      text("Great! Additional controls in the <strong>Test Runner</strong> toolwindow allow you to sort tests by duration (${icon(AllIcons.RunConfigurations.SortbyDuration)}) or alphabetically (${icon(AllIcons.ObjectBrowser.Sorted)}). Run all the tests again by pressing ${action("RunClass")} and then try sorting them by duration.")
     }
     task {
       triggers("com.intellij.execution.testframework.sm.runner.history.actions.ImportTestsFromHistoryAction")
-      text(
-        "Built-in test history automatically saves the results of several most recent rest runs and can also load them in the test runner toolwindow. Try loading one of the previous test runs by clicking the ${
-          icon(AllIcons.Vcs.History)
-        } icon and selecting one of the items in the list.")
+      text("Built-in test history automatically saves the results of several most recent rest runs and can also load them in the test runner toolwindow. Try loading one of the previous test runs by clicking the ${icon(AllIcons.Vcs.History)} icon and selecting one of the items in the list.")
     }
     task {
-      text(
-        "That's it! For some of the frameworks, such as <strong>Quick</strong>, <ide/> offers even more enhanced rendering of test results. For an overview of all test frameworks supported in <ide/>, watch <a href=\"https://www.youtube.com/watch?v=DXvx6xNG_jc\">this video</a>.")
+      text("That's it! For some of the frameworks, such as <strong>Quick</strong>, <ide/> offers even more enhanced rendering of test results. For an overview of all test frameworks supported in <ide/>, watch <a href=\"https://www.youtube.com/watch?v=DXvx6xNG_jc\">this video</a>.")
     }
-
-
   }
 }

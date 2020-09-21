@@ -46,7 +46,5 @@ class Delete: UIViewController {
       triggers("\$Undo")
       text("To restore the deleted line, press ${action("\$Undo")}.")
     }
-
-
   }
 }

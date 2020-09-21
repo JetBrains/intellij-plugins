@@ -36,14 +36,11 @@ class ExtractClosure: UIViewController {
     task { select(14, 1, 19, 1) }
 
     task {
-      text(
-        "Extract Closure allows you to encapsulate a code selection into a new closure, with customizable parameters and return type. It works similarly to the Extract Method refactoring.")
+      text("Extract Closure allows you to encapsulate a code selection into a new closure, with customizable parameters and return type. It works similarly to the Extract Method refactoring.")
     }
     task {
       triggers("Refactorings.QuickListPopupAction", "SwiftIntroduceClosureVariable")
       text("Press ${action("Refactorings.QuickListPopupAction")} and then select <strong>Closure...</strong>.")
     }
-
-
   }
 }

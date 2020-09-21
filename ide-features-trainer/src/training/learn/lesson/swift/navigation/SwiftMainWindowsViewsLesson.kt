@@ -98,37 +98,25 @@ class Navigation: UITableViewController {
 }""".trimIndent())
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
-
     task {
-      text(
-        "There are plenty of navigation views in <ide/>. Knowing which one to call in a given situation will help you use the IDE more efficiently.")
+      text("There are plenty of navigation views in <ide/>. Knowing which one to call in a given situation will help you use the IDE more efficiently.")
     }
     task {
       triggers("ActivateProjectToolWindow")
-      text(
-        "The <strong>Project</strong> view is similar to the Project navigator in Xcode. It shows all the projects included in a particular workspace, and all the files and groups inside them. Open the <strong>Project</strong> view by pressing (${
-          action("ActivateProjectToolWindow")
-        }).")
+      text("The <strong>Project</strong> view is similar to the Project navigator in Xcode. It shows all the projects included in a particular workspace, and all the files and groups inside them. Open the <strong>Project</strong> view by pressing (${action("ActivateProjectToolWindow")}).")
     }
     task {
-      text(
-        "By default, the <strong>Project</strong> view in <ide/> shows files and folders in the same order as they are stored on the filesystem.")
+      text("By default, the <strong>Project</strong> view in <ide/> shows files and folders in the same order as they are stored on the filesystem.")
     }
     task {
       triggers("ProjectView.ManualOrder")
-      text("Click the ${
-        icon(AllIcons.General.GearPlain)
-      } icon in the project view options menu, and then select <strong>Xcode order</strong> to set the same order of files as in Xcode (if you selected Xcode behavior when setting up <ide/>, this option will be enabled automatically).")
+      text("Click the ${icon(AllIcons.General.GearPlain)} icon in the project view options menu, and then select <strong>Xcode order</strong> to set the same order of files as in Xcode (if you selected Xcode behavior when setting up <ide/>, this option will be enabled automatically).")
     }
     task {
-      text(
-        "Other features include <strong>Open Files with Single Click</strong> and <strong>Always Select Opened File</strong>. The former allows you to automatically open the code of a file when selecting it, while the latter automatically sets the focus on the file name in the <strong>Project</strong> view when the editor area is in focus.")
+      text("Other features include <strong>Open Files with Single Click</strong> and <strong>Always Select Opened File</strong>. The former allows you to automatically open the code of a file when selecting it, while the latter automatically sets the focus on the file name in the <strong>Project</strong> view when the editor area is in focus.")
     }
     task {
-      text(
-        "The <strong>Files</strong> view is an additional helpful mode for <ide/>’s <strong>Project</strong> view. It shows all the files inside the directory where ${
-          code(".xcworkspace")
-        } or ${code(".xcproject")} is located. With this view, you can easily open any file not included in your project and view it.")
+      text("The <strong>Files</strong> view is an additional helpful mode for <ide/>’s <strong>Project</strong> view. It shows all the files inside the directory where ${code(".xcworkspace")} or ${code(".xcproject")} is located. With this view, you can easily open any file not included in your project and view it.")
     }
     task {
       triggers("com.intellij.ui.content.tabs.TabbedContentAction\$MyNextTabAction")
@@ -137,20 +125,14 @@ class Navigation: UITableViewController {
     task { caret(1, 1) }
     task { text("Press ${action("EditorEscape")} to return to the editor window.") }
     task {
-      text(
-        "The <strong>Structure</strong> view and the <strong>Structure</strong> popup show you the structure of a particular file together with all the ${
-          code("//TODO")
-        }, ${code("//FIXME")} and ${code("#pragma mark")} or ${
-          code("//MARK")
-        } comments in your code. They work similarly to the <strong>Symbol</strong> navigator in Xcode.")
+      text("The <strong>Structure</strong> view and the <strong>Structure</strong> popup show you the structure of a particular file together with all the ${code("//TODO")}, ${code("//FIXME")} and ${code("#pragma mark")} or ${code("//MARK")} comments in your code. They work similarly to the <strong>Symbol</strong> navigator in Xcode.")
     }
     task {
       triggers("ActivateStructureToolWindow")
       text("Activate the <strong>Structure</strong> view by pressing ${action("ActivateStructureToolWindow")}.")
     }
     task {
-      text("By using ↑ and ↓ keys, you can select any code construct here and press ${
-        action("EditSource")
+      text("By using ↑ and ↓ keys, you can select any code construct here and press ${action("EditSource")
       } to jump to some place in your code.")
     }
     task {
@@ -160,9 +142,7 @@ class Navigation: UITableViewController {
     task { text("Dismiss this popup using ${action("EditorEscape")} or press ⏎ to jump to some place in your code.") }
     task {
       triggers("FindInPath")
-      text("The <strong>Find in Files</strong> (${
-        action("FindInPath")
-      }) dialog provides the same functionality as <strong>Find</strong> navigator in Xcode. Try using it to run a full-text search now.")
+      text("The <strong>Find in Files</strong> (${action("FindInPath")}) dialog provides the same functionality as <strong>Find</strong> navigator in Xcode. Try using it to run a full-text search now.")
     }
     task {
       triggers("Build")
@@ -170,9 +150,7 @@ class Navigation: UITableViewController {
     }
     task {
       text(
-        "The <strong>Build messages</strong> tool window shows compiler output and allows you to filter build messages by their type (see the <strong>Filter messages</strong>(${
-          icon(AllIcons.General.Filter)
-        }) button on the left-hand side).")
+        "The <strong>Build messages</strong> tool window shows compiler output and allows you to filter build messages by their type (see the <strong>Filter messages</strong>(${icon(AllIcons.General.Filter)}) button on the left-hand side).")
     }
     task {
       triggers("Run")
@@ -180,9 +158,7 @@ class Navigation: UITableViewController {
     }
     task {
       text(
-        "This tool window shows the console, where you can view the output of your application (or <strong>Tests runner</strong> if you are running the <strong>Test</strong> Run Configuration). You can always activate it via (${
-          action("ActivateRunToolWindow")
-        }).")
+        "This tool window shows the console, where you can view the output of your application (or <strong>Tests runner</strong> if you are running the <strong>Test</strong> Run Configuration). You can always activate it via (${action("ActivateRunToolWindow")}).")
     }
     task {
       triggers("Stop")
@@ -190,9 +166,7 @@ class Navigation: UITableViewController {
     }
     task {
       triggers("GotoFile", "MasterViewController.swift")
-      text("Let's switch back from the emulator window to the IDE and navigate to ${code("MasterViewController.swift")} by pressing ${
-        action("GotoFile")
-      }.")
+      text("Let's switch back from the emulator window to the IDE and navigate to ${code("MasterViewController.swift")} by pressing ${action("GotoFile")}.")
     }
     task { caret(11, 9) }
     task {
@@ -200,9 +174,7 @@ class Navigation: UITableViewController {
       text("Toggle a breakpoint at line 11 using ${action("ToggleLineBreakpoint")} and then press ${action("Debug")}.")
     }
     task {
-      text("The <strong>Debug</strong> tool window (${
-        action("ActivateDebugToolWindow")
-      }) is similar to Xcode's <strong>Debug</strong> navigator. It shows all the watches, local variables on the right-hand side, and the list of threads on the left-hand side.")
+      text("The <strong>Debug</strong> tool window (${action("ActivateDebugToolWindow")}) is similar to Xcode's <strong>Debug</strong> navigator. It shows all the watches, local variables on the right-hand side, and the list of threads on the left-hand side.")
     }
     task {
       triggers("Stop")
@@ -212,23 +184,14 @@ class Navigation: UITableViewController {
     task {
       triggers("ViewBreakpoints")
       text(
-        "The <strong>Breakpoints</strong> dialog has the same functionality as <strong>Breakpoint</strong> navigator in Xcode - it shows the list of all breakpoints in your project. Activate it by using ${
-          action("ViewBreakpoints")
-        }.")
+        "The <strong>Breakpoints</strong> dialog has the same functionality as <strong>Breakpoint</strong> navigator in Xcode - it shows the list of all breakpoints in your project. Activate it by using ${action("ViewBreakpoints")}.")
     }
     task {
       triggers("ActivateVersionControlToolWindow")
-      text("Init the GIT repository via ${
-        action("Vcs.QuickListPopupAction")
-      }→<strong>Create Git Repository</strong>. Now activate the <strong>VCS</strong> toolwindow with the ${
-        action("ActivateVersionControlToolWindow")
-      } shortcut.")
+      text("Init the GIT repository via ${action("Vcs.QuickListPopupAction")}→<strong>Create Git Repository</strong>. Now activate the <strong>VCS</strong> toolwindow with the ${action("ActivateVersionControlToolWindow")} shortcut.")
     }
     task {
-      text(
-        "The <strong>VCS</strong> tool window provides everything you need to work with version control systems, including the <strong>Changes</strong> view, the <strong>VCS log</strong>, and more.")
+      text("The <strong>VCS</strong> tool window provides everything you need to work with version control systems, including the <strong>Changes</strong> view, the <strong>VCS log</strong>, and more.")
     }
-
-
   }
 }

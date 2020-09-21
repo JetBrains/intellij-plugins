@@ -60,11 +60,7 @@ class Comment: UIViewController {
     task { caret(14, 37) }
     task {
       triggers("EditorSelectWord", "EditorSelectWord", "CommentByBlockComment")
-      text("Press ${action("EditorSelectWord")} twice to select ${
-          code("frame: CGRect.zero")
-      }, and then comment it with a block comment by using ${action("CommentByBlockComment")}.")
+      text("Press ${action("EditorSelectWord")} twice to select ${code("frame: CGRect.zero")}, and then comment it with a block comment by using ${action("CommentByBlockComment")}.")
     }
-
-
   }
 }

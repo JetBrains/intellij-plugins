@@ -41,18 +41,12 @@ class Format: UIViewController {
 
     task {
       triggers("ReformatCode")
-      text("<ide/> can help you correct code formatting with just one action. Try reformatting the selected code with ${
-        action("ReformatCode")
-      }.")
+      text("<ide/> can help you correct code formatting with just one action. Try reformatting the selected code with ${action("ReformatCode")}.")
     }
 
     task {
       triggers("ReformatCode")
-      text("To reformat the whole source file, use ${action("ReformatCode")} when no lines are selected. Press ${
-        action("EditorEscape")
-      } and then ${action("ReformatCode")}.")
+      text("To reformat the whole source file, use ${action("ReformatCode")} when no lines are selected. Press ${action("EditorEscape")} and then ${action("ReformatCode")}.")
     }
-
-
   }
 }

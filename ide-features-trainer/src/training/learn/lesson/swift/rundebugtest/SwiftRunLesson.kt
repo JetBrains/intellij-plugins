@@ -33,10 +33,7 @@ class RunExample: UIViewController {
     task { caret(6, 10) }
     task {
       triggers("Run")
-      text(
-        "<ide/> has two different actions for running the project and for debugging it (because in general, debugging is slower). Try running your application by pressing ${
-            action("Run")
-        }.")
+      text("<ide/> has two different actions for running the project and for debugging it (because in general, debugging is slower). Try running your application by pressing ${action("Run")}.")
     }
     task {
       triggers("Stop")
@@ -44,16 +41,11 @@ class RunExample: UIViewController {
     }
     task {
       triggers("ChooseRunConfiguration")
-      text(
-        "Great! To select another Run Configuration or simulator for the current run configuration and quickly run your application, press ${
-            action("ChooseRunConfiguration")
-        }, select needed Run Configuration or simulator, and then press ${LessonUtil.rawEnter()}.")
+      text("Great! To select another Run Configuration or simulator for the current run configuration and quickly run your application, press ${action("ChooseRunConfiguration")}, select needed Run Configuration or simulator, and then press ${LessonUtil.rawEnter()}.")
     }
     task {
       triggers("Stop")
       text("Stop your application by pressing ${action("Stop")}.")
     }
-
-
   }
 }

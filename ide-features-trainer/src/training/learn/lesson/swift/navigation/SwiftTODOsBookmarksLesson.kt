@@ -101,24 +101,17 @@ class Navigation: UITableViewController {
 
     task {
       triggers("ActivateTODOToolWindow")
-      text(
-        "Have you ever wondered how many todos there are in your code? In <ide/>, there is a dedicated <strong>TODO</strong> toolwindow for them. Activate it by using ${
-          action("ActivateTODOToolWindow")
-        }.")
+      text("Have you ever wondered how many todos there are in your code? In <ide/>, there is a dedicated <strong>TODO</strong> toolwindow for them. Activate it by using ${action("ActivateTODOToolWindow")}.")
     }
     task {
       triggers("com.intellij.ide.todo.SetTodoFilterAction$1")
-      text("You can define your own custom <strong>TODO</strong> filters. Open the TODO filters dialog with ${
-        icon(AllIcons.General.Filter)
-      } → <strong>Edit Filters</strong> and then try adding your own filters using RegExps.")
+      text("You can define your own custom <strong>TODO</strong> filters. Open the TODO filters dialog with ${icon(AllIcons.General.Filter)} → <strong>Edit Filters</strong> and then try adding your own filters using RegExps.")
     }
     task { text("Press ${action("EditorEscape")} to return to editor window.") }
     task { caret(20, 9) }
     task {
       triggers("ToggleBookmark")
-      text("Now press ${
-        action("ToggleBookmark")
-      }. This shortcut toggles a bookmark in your code. Bookmarks are saved in the project directory and are useful if you want to point your colleague to a specific place in your code.")
+      text("Now press ${action("ToggleBookmark")}. This shortcut toggles a bookmark in your code. Bookmarks are saved in the project directory and are useful if you want to point your colleague to a specific place in your code.")
     }
     task {
       triggers("ShowBookmarks")
@@ -130,11 +123,7 @@ class Navigation: UITableViewController {
     }
     task {
       triggers("ActivateFavoritesToolWindow")
-      text("Close the <strong>Bookmarks</strong> dialog by using ${action("EditorEscape")}. Press ${
-        action("ActivateFavoritesToolWindow")
-      }. The <strong>Favorites</strong> tool window you see aggregates bookmarks, breakpoints, and favorites.")
+      text("Close the <strong>Bookmarks</strong> dialog by using ${action("EditorEscape")}. Press ${action("ActivateFavoritesToolWindow")}. The <strong>Favorites</strong> tool window you see aggregates bookmarks, breakpoints, and favorites.")
     }
-
-
   }
 }

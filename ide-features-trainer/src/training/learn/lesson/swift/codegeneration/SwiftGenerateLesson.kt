@@ -23,15 +23,11 @@ class IDE {
 
     task { caret(12, 1) }
     task {
-      text("You can generate ${code("equals")}, ${code("hashValue")}, ${code("description")}, and ${
-          code("debugDescription")
-      } properties, as well as initializers by using the <strong>Generate</strong> action.")
+      text("You can generate ${code("equals")}, ${code("hashValue")}, ${code("description")}, and ${code("debugDescription")} properties, as well as initializers by using the <strong>Generate</strong> action.")
     }
     task {
       triggers("Generate", "Swift.Generate.Init")
-      text("Press ${
-          action("Generate")
-      } and select <strong>Initializer</strong> action in the in the <strong>Generate</strong> popup. Select properties to include into the initializer signature and press ${LessonUtil.rawEnter()}")
+      text("Press ${action("Generate")} and select <strong>Initializer</strong> action in the in the <strong>Generate</strong> popup. Select properties to include into the initializer signature and press ${LessonUtil.rawEnter()}")
     }
     task {
       triggers("Swift.Generate.EqualsHashValue")

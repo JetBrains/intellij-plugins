@@ -28,11 +28,7 @@ class CreateFromUsage: UIViewController {
     task { caret(7, 30) }
     task {
       triggers("ShowIntentionActions", "EditorChooseLookupItem")
-      text("In <ide/>, you can create various code constructs from their usages just by pressing ${
-        action("ShowIntentionActions")
-      } on the unresolved entity. Press ${
-        action("ShowIntentionActions")
-      }, select <strong>Create local variable 'label'</strong>, and then press ${LessonUtil.rawEnter()}")
+      text("In <ide/>, you can create various code constructs from their usages just by pressing ${action("ShowIntentionActions")} on the unresolved entity. Press ${action("ShowIntentionActions")}, select <strong>Create local variable 'label'</strong>, and then press ${LessonUtil.rawEnter()}")
     }
     task { type(" = UILabel()") }
 
@@ -45,23 +41,17 @@ class CreateFromUsage: UIViewController {
     task { caret(17, 20) }
     task {
       triggers("ShowIntentionActions", "EditorChooseLookupItem")
-      text("This time we can use the same approach to create a class declaration. Press ${
-        action("ShowIntentionActions")
-      } and select <strong>Create type 'IDE'</strong>. Note that you can automatically create it to be nested in the current class or in a new file.")
+      text("This time we can use the same approach to create a class declaration. Press ${action("ShowIntentionActions")} and select <strong>Create type 'IDE'</strong>. Note that you can automatically create it to be nested in the current class or in a new file.")
     }
     task { caret(22, 27) }
     task {
       triggers("ShowIntentionActions", "NextTemplateVariable")
-      text("Great! Let's repeat the same actions to generate an initializer for our ${code("IDE")} class. Press ${
-        action("ShowIntentionActions")
-      }, select <strong>Create initializer</strong>, and then press ${LessonUtil.rawEnter()}!")
+      text("Great! Let's repeat the same actions to generate an initializer for our ${code("IDE")} class. Press ${action("ShowIntentionActions")}, select <strong>Create initializer</strong>, and then press ${LessonUtil.rawEnter()}!")
     }
     task { caret(22, 21) }
     task {
       triggers("ShowIntentionActions")
       text("Finally, let's use the same actions to add an empty initializer.")
     }
-
-
   }
 }
