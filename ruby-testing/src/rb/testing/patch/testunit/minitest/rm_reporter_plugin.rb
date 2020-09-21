@@ -131,7 +131,7 @@ else
         self.running_test_case = nil
       end
 
-      def end_execution()
+      def end_execution
         unless self.running_test_case.nil?
           reporter.log(Rake::TeamCity::MessageFactory.create_suite_finished(running_test_case, running_test_case))
         end
@@ -139,7 +139,7 @@ else
 
       def process_test(test)
         if test.class.to_s != running_test_case
-          unless running_test_case.nil?
+          if running_test_case
             reporter.log(Rake::TeamCity::MessageFactory.create_suite_finished(running_test_case, running_test_case))
           end
           reporter.log(Rake::TeamCity::MessageFactory.create_suite_started(test.class.to_s, reporter.minitest_test_location(test), '0', test.class.to_s))
@@ -284,9 +284,8 @@ else
 
       private
       def parallel_run?
-        Minitest.parallel_executor.respond_to?(:start)
-      rescue
-        MiniTest::Unit::TestCase.test_order == :parallel
+        defined?(Minitest) and Minitest.respond_to?(parallel_executor) andMinitest.parallel_executor.respond_to?(:start)
+        or defined?(MiniTest::Unit::TestCase) and MiniTest::Unit::TestCase.respond_to?(test_order) and MiniTest::Unit::TestCase.test_order == :parallel
       end
 
       def get_test_name(test)
