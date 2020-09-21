@@ -132,7 +132,7 @@ else
       end
 
       def end_execution
-        unless self.running_test_case.nil?
+        if running_test_case
           reporter.log(Rake::TeamCity::MessageFactory.create_suite_finished(running_test_case, running_test_case))
         end
       end
