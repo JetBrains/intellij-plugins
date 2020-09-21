@@ -134,6 +134,8 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
       new DartExceptionBreakpointHandler(this)
     };
 
+    session.setPauseActionSupported(true);
+
     myDASExecutionContextId = dasExecutionContextId;
 
     if (DebugType.REMOTE == debugType) {
