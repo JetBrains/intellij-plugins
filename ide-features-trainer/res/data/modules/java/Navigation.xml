@@ -3,6 +3,6 @@
   <lesson-kt implementationClass="training.learn.lesson.java.navigation.JavaFileStructureLesson"/>
   <lesson-kt implementationClass="training.learn.lesson.java.navigation.JavaDeclarationAndUsagesLesson"/>
   <lesson-kt implementationClass="training.learn.lesson.java.navigation.JavaInheritanceHierarchyLesson"/>
-  <lesson filename="04.Occurrences.xml" solution="training.training.solutions.Navigation.OccurrencesSolution"/>
+  <lesson-kt implementationClass="training.learn.lesson.java.navigation.JavaOccurrencesLesson"/>
 </module>
 
