@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.model.bc;
 
 import com.intellij.flex.FlexCommonBundle;
@@ -7,8 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class BuildConfigurationNature {
-
+public final class BuildConfigurationNature {
   public final TargetPlatform targetPlatform;
   public final boolean pureAS;
   public final OutputType outputType;
@@ -70,14 +70,14 @@ public class BuildConfigurationNature {
   public Icon getIcon() {
     switch (targetPlatform) {
       case Web:
-        return pureAS ? FlexSharedIcons.Bc_web_as : FlexSharedIcons.Bc_web_flex;
+        return pureAS ? FlexSharedIcons.BcWebAs : FlexSharedIcons.BcWebFlex;
       case Desktop:
-        return pureAS ? FlexSharedIcons.Bc_desktop_as : FlexSharedIcons.Bc_desktop_flex;
+        return pureAS ? FlexSharedIcons.BcDesktopAs : FlexSharedIcons.BcDesktopFlex;
       case Mobile:
-        return pureAS ? FlexSharedIcons.Bc_mobile_as : FlexSharedIcons.Bc_mobile_flex;
+        return pureAS ? FlexSharedIcons.BcMobileAs : FlexSharedIcons.BcMobileFlex;
       default:
         assert false : targetPlatform;
-        return FlexSharedIcons.Bc_web_flex;
+        return FlexSharedIcons.BcWebFlex;
     }
   }
 

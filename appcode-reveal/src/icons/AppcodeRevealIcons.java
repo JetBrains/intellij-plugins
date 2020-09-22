@@ -11,9 +11,8 @@ import javax.swing.*;
  * DO NOT EDIT IT BY HAND, run "Generate icon classes" configuration instead
  */
 public final class AppcodeRevealIcons {
-  private static @NotNull Icon load(@NotNull String path, long cacheKey) {
-    return IconManager.getInstance().loadRasterizedIcon(path, AppcodeRevealIcons.class, cacheKey);
+  private static @NotNull Icon load(@NotNull String path, long cacheKey, int flags) {
+    return IconManager.getInstance().loadRasterizedIcon(path, AppcodeRevealIcons.class, cacheKey, flags);
   }
-
-  /** 16x16 */ public static final @NotNull Icon RunWithReveal = load("/icons/RunWithReveal.svg", -5718100301503485642L);
+  /** 16x16 */ public static final @NotNull Icon RunWithReveal = load("/icons/RunWithReveal.svg", -5718100301503485642L, 0);
 }

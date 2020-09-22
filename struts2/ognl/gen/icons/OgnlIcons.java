@@ -11,9 +11,8 @@ import javax.swing.*;
  * DO NOT EDIT IT BY HAND, run "Generate icon classes" configuration instead
  */
 public final class OgnlIcons {
-  private static @NotNull Icon load(@NotNull String path, long cacheKey) {
-    return IconManager.getInstance().loadRasterizedIcon(path, OgnlIcons.class, cacheKey);
+  private static @NotNull Icon load(@NotNull String path, long cacheKey, int flags) {
+    return IconManager.getInstance().loadRasterizedIcon(path, OgnlIcons.class, cacheKey, flags);
   }
-
-  /** 10x10 */ public static final @NotNull Icon Action_small = load("/icons/action_small.svg", -6400116197098802950L);
+  /** 10x10 */ public static final @NotNull Icon Action_small = load("/icons/action_small.svg", -6400116197098802950L, 0);
 }

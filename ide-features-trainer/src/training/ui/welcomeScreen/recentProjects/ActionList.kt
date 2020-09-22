@@ -58,7 +58,7 @@ class ActionList(listData: Array<out AnAction>, private val groupsPanel: GroupsP
     if (index != -1) {
       if (model.getElementAt(index) is ProjectGroupActionGroup || model.getElementAt(index) is ReopenProjectAction) {
         val iconRect = getCloseIconRect(index)
-        val icon = toSize(if (iconRect.contains(lastMousePoint)) AllIcons.Welcome.Project.Remove_hover else AllIcons.Welcome.Project.Remove)
+        val icon = toSize(if (iconRect.contains(lastMousePoint)) AllIcons.Welcome.Project.RemoveHover else AllIcons.Welcome.Project.Remove)
         icon.paintIcon(this, g, iconRect.x, iconRect.y)
       }
     }

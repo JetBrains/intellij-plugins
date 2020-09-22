@@ -11,9 +11,8 @@ import javax.swing.*;
  * DO NOT EDIT IT BY HAND, run "Generate icon classes" configuration instead
  */
 public final class CucumberJavaIcons {
-  private static @NotNull Icon load(@NotNull String path, long cacheKey) {
-    return IconManager.getInstance().loadRasterizedIcon(path, CucumberJavaIcons.class, cacheKey);
+  private static @NotNull Icon load(@NotNull String path, long cacheKey, int flags) {
+    return IconManager.getInstance().loadRasterizedIcon(path, CucumberJavaIcons.class, cacheKey, flags);
   }
-
-  /** 16x16 */ public static final @NotNull Icon CucumberJavaRunConfiguration = load("/org/jetbrains/plugins/cucumber/cucumberJavaRunConfiguration.png", 0L);
+  /** 16x16 */ public static final @NotNull Icon CucumberJavaRunConfiguration = load("/org/jetbrains/plugins/cucumber/cucumberJavaRunConfiguration.png", 0L, 0);
 }

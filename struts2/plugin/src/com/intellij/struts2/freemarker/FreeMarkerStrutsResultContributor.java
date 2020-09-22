@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.intellij.struts2.freemarker;
 
 import com.intellij.freemarker.psi.files.FtlFileType;
@@ -25,19 +24,19 @@ import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferen
 import com.intellij.struts2.dom.struts.impl.path.FileReferenceSetHelper;
 import com.intellij.struts2.dom.struts.impl.path.StrutsResultContributor;
 import icons.FreemarkerIcons;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Provides path to {@code .ftl}-files.
  *
  * @author peter
  */
-public class FreeMarkerStrutsResultContributor extends StrutsResultContributor {
-
+public final class FreeMarkerStrutsResultContributor extends StrutsResultContributor {
   @NonNls
   public static final String FREEMARKER = "freemarker";
 
@@ -70,6 +69,6 @@ public class FreeMarkerStrutsResultContributor extends StrutsResultContributor {
 
   @Override
   public PathReference getPathReference(@NotNull final String path, @NotNull final PsiElement element) {
-    return createDefaultPathReference(path, element, FreemarkerIcons.Freemarker_icon);
+    return createDefaultPathReference(path, element, FreemarkerIcons.FreemarkerIcon);
   }
 }
