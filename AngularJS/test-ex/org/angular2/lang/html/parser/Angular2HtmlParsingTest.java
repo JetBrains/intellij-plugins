@@ -2,25 +2,22 @@
 package org.angular2.lang.html.parser;
 
 import com.intellij.html.HtmlParsingTest;
-import com.intellij.javascript.HtmlInlineJSScriptTokenTypesProvider;
-import com.intellij.javascript.JSScriptContentProvider;
+import com.intellij.javascript.JSHtmlEmbeddedContentSupport;
 import com.intellij.lang.LanguageASTFactory;
-import com.intellij.lang.LanguageHtmlInlineScriptTokenTypesProvider;
-import com.intellij.lang.LanguageHtmlScriptContentProvider;
 import com.intellij.lang.css.CSSLanguage;
 import com.intellij.lang.css.CSSParserDefinition;
-import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.JavascriptParserDefinition;
 import com.intellij.lang.javascript.dialects.ECMA6ParserDefinition;
 import com.intellij.lang.javascript.dialects.JSLanguageLevel;
 import com.intellij.lexer.EmbeddedTokenTypesProvider;
+import com.intellij.lexer.HtmlEmbeddedContentSupport;
 import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.pom.tree.events.TreeChangeEvent;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.css.CssElementDescriptorProvider;
 import com.intellij.psi.css.CssEmbeddedTokenTypesProvider;
-import com.intellij.psi.css.CssRulesetBlockEmbeddedTokenTypesProvider;
+import com.intellij.psi.css.CssHtmlEmbeddedContentSupport;
 import com.intellij.psi.css.impl.CssTreeElementFactory;
 import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorFactory2;
 import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorProviderImpl;
@@ -32,7 +29,7 @@ import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Collections;
 
 public class Angular2HtmlParsingTest extends HtmlParsingTest {
 
@@ -47,11 +44,10 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    addExplicitExtension(LanguageHtmlInlineScriptTokenTypesProvider.INSTANCE, JavascriptLanguage.INSTANCE,
-                         new HtmlInlineJSScriptTokenTypesProvider());
-    addExplicitExtension(LanguageHtmlScriptContentProvider.INSTANCE, JavascriptLanguage.INSTANCE,
-                         new JSScriptContentProvider());
-    registerExtensions(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, EmbeddedTokenTypesProvider.class, Arrays.asList(new CssEmbeddedTokenTypesProvider(), new CssRulesetBlockEmbeddedTokenTypesProvider()));
+    registerExtensions(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, EmbeddedTokenTypesProvider.class,
+                       Collections.singletonList(new CssEmbeddedTokenTypesProvider()));
+    registerExtension(HtmlEmbeddedContentSupport.EP_NAME, new CssHtmlEmbeddedContentSupport());
+    registerExtension(HtmlEmbeddedContentSupport.EP_NAME, new JSHtmlEmbeddedContentSupport());
 
     addExplicitExtension(LanguageASTFactory.INSTANCE, CSSLanguage.INSTANCE, new CssTreeElementFactory());
     registerExtensionPoint(CssElementDescriptorProvider.EP_NAME, CssElementDescriptorProvider.class);
@@ -62,6 +58,11 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
     // Update parser definition if version is changed
     assert JSLanguageLevel.DEFAULT == JSLanguageLevel.ES6;
     registerParserDefinition(new ECMA6ParserDefinition());
+  }
+
+  @Override
+  protected void registerEmbeddedContentProviders() {
+    super.registerEmbeddedContentProviders();
   }
 
   @Override
