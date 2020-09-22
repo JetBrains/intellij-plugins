@@ -6,6 +6,6 @@ import com.intellij.lexer.Lexer
 import org.jetbrains.vuejs.lang.html.highlighting.VueHighlightingLexer
 
 open class VueHighlightingLexerTest : VueLexerTest() {
-  override fun createLexer(): Lexer = VueHighlightingLexer(JSLanguageLevel.ES6, interpolationConfig)
+  override fun createLexer(): Lexer = VueHighlightingLexer(JSLanguageLevel.ES6, null, interpolationConfig)
   override fun getDirPath() = "/contrib/vuejs/vuejs-tests/testData/html/highlightingLexer"
 }

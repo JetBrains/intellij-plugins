@@ -13,6 +13,7 @@ class VueSyntaxHighlighterFactory : SyntaxHighlighterFactory() {
   override fun getSyntaxHighlighter(project: Project?, virtualFile: VirtualFile?): SyntaxHighlighter {
     return VueFileHighlighter(
       project?.let { JSRootConfiguration.getInstance(it).languageLevel } ?: JSLanguageLevel.JSX,
+      project,
       VueFileElementType.readDelimiters(virtualFile?.name))
   }
 }

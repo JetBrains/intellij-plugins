@@ -39,6 +39,11 @@ public class AngularTestUtil {
     return contribPath + "/AngularJS/test/" + clazz.getPackage().getName().replace('.', '/') + "/data/";
   }
 
+  public static String getBaseTestExDataPath(Class<?> clazz) {
+    String contribPath = getContribPath();
+    return contribPath + "/AngularJS/test-ex/" + clazz.getPackage().getName().replace('.', '/') + "/data/";
+  }
+
   private static String getContribPath() {
     final String homePath = PathManager.getHomePath();
     if (new File(homePath, "contrib/.gitignore").isFile()) {

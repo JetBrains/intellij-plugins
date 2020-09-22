@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight.refs
 
-import com.intellij.lang.Language
 import com.intellij.lang.javascript.modules.NodeModuleUtil.NODE_MODULES
 import com.intellij.lang.javascript.psi.util.JSProjectUtil
 import com.intellij.openapi.fileTypes.FileType
@@ -18,7 +17,7 @@ import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.util.ProcessingContext
 import com.intellij.xml.util.HtmlUtil.*
 import org.jetbrains.vuejs.codeInsight.LANG_ATTRIBUTE_NAME
-import org.jetbrains.vuejs.lang.html.lexer.VueLexerHelper
+import org.jetbrains.vuejs.lang.html.lexer.VueTagEmbeddedContentProvider
 import org.jetbrains.vuejs.model.DEPRECATED_SLOT_ATTRIBUTE
 import org.jetbrains.vuejs.model.getAvailableSlots
 
@@ -62,7 +61,8 @@ class VueReferenceContributor : PsiReferenceContributor() {
               ?.parent
               ?.getAttribute(LANG_ATTRIBUTE_NAME)
               ?.value
-              ?.let { VueLexerHelper.styleViaLang(Language.findLanguageByID("CSS"), it) }
+              ?.trim()
+              ?.let { VueTagEmbeddedContentProvider.styleLanguage(it) }
               ?.associatedFileType
               ?.let { arrayOf(it) }
             ?: emptyArray()

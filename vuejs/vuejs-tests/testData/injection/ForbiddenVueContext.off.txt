@@ -11,7 +11,7 @@ HtmlFile:ForbiddenVueContext.html
         XmlToken:XML_EQ('=')
         PsiElement(XML_ATTRIBUTE_VALUE)
           XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
-          ASTWrapperPsiElement(VueJS:EMBEDDED_EXPR)
+          ASTWrapperPsiElement(VUE_JS:EMBEDDED_EXPR)
             VueJSEmbeddedExpression
               JSFunctionExpression
                 JSAttributeList

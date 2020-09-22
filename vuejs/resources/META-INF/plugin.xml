@@ -77,6 +77,7 @@ Learn more about Vue.js support in the <a href="https://www.jetbrains.com/help/w
     <xml.xmlExtension implementation="org.jetbrains.vuejs.codeInsight.VueXmlExtension" order="before html"/>
     <xml.tagNameProvider implementation="org.jetbrains.vuejs.codeInsight.tags.VueTagProvider"/>
     <xml.elementDescriptorProvider implementation="org.jetbrains.vuejs.codeInsight.tags.VueTagProvider"/>
+    <html.embeddedContentSupport implementation="org.jetbrains.vuejs.lang.html.lexer.VueEmbeddedContentSupport"/>
     <gotoDeclarationHandler implementation="org.jetbrains.vuejs.editor.VueGotoDeclarationHandler"/>
 
     <stubIndex implementation="org.jetbrains.vuejs.index.VueComponentsIndex"/>

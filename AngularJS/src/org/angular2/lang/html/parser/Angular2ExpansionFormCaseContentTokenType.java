@@ -18,7 +18,7 @@ final class Angular2ExpansionFormCaseContentTokenType extends Angular2EmbeddedCo
 
   @Override
   protected @NotNull Lexer createLexer() {
-    return new Angular2HtmlLexer(true, null);
+    return new Angular2HtmlLexer(null,true, null);
   }
 
   @Override

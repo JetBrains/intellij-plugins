@@ -25,6 +25,7 @@ import com.intellij.psi.impl.BlockSupportImpl;
 import com.intellij.psi.impl.DebugUtil;
 import com.intellij.psi.impl.DiffLog;
 import org.angular2.lang.expr.parser.Angular2ParserDefinition;
+import org.angular2.lang.html.lexer.Angular2HtmlEmbeddedContentSupport;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -46,8 +47,9 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
     super.setUp();
     registerExtensions(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, EmbeddedTokenTypesProvider.class,
                        Collections.singletonList(new CssEmbeddedTokenTypesProvider()));
-    registerExtension(HtmlEmbeddedContentSupport.EP_NAME, new CssHtmlEmbeddedContentSupport());
-    registerExtension(HtmlEmbeddedContentSupport.EP_NAME, new JSHtmlEmbeddedContentSupport());
+    HtmlEmbeddedContentSupport.register(getApplication(), getTestRootDisposable(),
+                                        CssHtmlEmbeddedContentSupport.class, JSHtmlEmbeddedContentSupport.class,
+                                        Angular2HtmlEmbeddedContentSupport.class);
 
     addExplicitExtension(LanguageASTFactory.INSTANCE, CSSLanguage.INSTANCE, new CssTreeElementFactory());
     registerExtensionPoint(CssElementDescriptorProvider.EP_NAME, CssElementDescriptorProvider.class);
@@ -58,11 +60,6 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
     // Update parser definition if version is changed
     assert JSLanguageLevel.DEFAULT == JSLanguageLevel.ES6;
     registerParserDefinition(new ECMA6ParserDefinition());
-  }
-
-  @Override
-  protected void registerEmbeddedContentProviders() {
-    super.registerEmbeddedContentProviders();
   }
 
   @Override
@@ -83,7 +80,7 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
 
   @Override
   protected String getTestDataPath() {
-    return AngularTestUtil.getBaseTestDataPath(Angular2HtmlParsingTest.class);
+    return AngularTestUtil.getBaseTestExDataPath(Angular2HtmlParsingTest.class);
   }
 
   public void testNgParseElementsInsideNgTemplate() throws Exception {
@@ -352,5 +349,4 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
   public void testEmptyLetAndRef() throws Exception {
     doTestHtml("<ng-template let-/><div let-/><div #/><div ref-/>");
   }
-
 }

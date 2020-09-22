@@ -14,14 +14,14 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.html.HtmlEmbeddedContentImpl
 import com.intellij.psi.impl.source.html.HtmlFileImpl
 import com.intellij.psi.tree.IFileElementType
-import org.jetbrains.vuejs.lang.html.lexer.VueLexer
+import org.jetbrains.vuejs.lang.html.lexer.VueLexerImpl
 
 class VueParserDefinition : HTMLParserDefinition() {
 
   companion object {
     fun createLexer(project: Project, interpolationConfig: Pair<String, String>?): Lexer {
       val level = JSRootConfiguration.getInstance(project).languageLevel
-      return VueLexer(if (level.isES6Compatible) level else JSLanguageLevel.ES6, interpolationConfig)
+      return VueLexerImpl(if (level.isES6Compatible) level else JSLanguageLevel.ES6, project, interpolationConfig)
     }
   }
 
