@@ -117,7 +117,7 @@ fun CodeInsightTestFixture.checkUsages(signature: String, goldFileName: String, 
   val target = elementAtCaret
   findUsages(target).asSequence()
     // Filter out dynamic references
-    .filter { !JSUsageViewElementsListener.isJavaScriptDynamicUsage(it, listOf(target)) }
+    .filter { !JSUsageViewElementsListener.checkIfJavaScriptDynamicUsage(it, listOf(target)) }
     .map { usage: UsageInfo ->
       "<" + usage.file!!.name +
       ":" + usage.element!!.textRange +
