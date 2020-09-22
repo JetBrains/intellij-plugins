@@ -63,9 +63,12 @@ public class DartServerCompletionContributor extends CompletionContributor {
            or(psiElement().withLanguage(DartLanguage.INSTANCE),
               psiElement().inFile(psiFile().withLanguage(HTMLLanguage.INSTANCE)),
               psiElement().inFile(psiFile().withName(".analysis_options")),
-              psiElement().inFile(psiFile().withName("analysis_options.yaml"))
+              psiElement().inFile(psiFile().withName("analysis_options.yaml")),
+              psiElement().inFile(psiFile().withName("pubspec.yaml")),
+              // TODO(jwren) Update this file name here, and in dart-yaml.xml, with the final name chosen.
+              psiElement().inFile(psiFile().withName("fix_data.yaml"))
            ),
-           new CompletionProvider<CompletionParameters>() {
+           new CompletionProvider<>() {
              @Override
              protected void addCompletions(@NotNull final CompletionParameters parameters,
                                            @NotNull final ProcessingContext context,
