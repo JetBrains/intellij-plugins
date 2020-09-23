@@ -1824,11 +1824,6 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     invokeNamedActionWithExpectedFileCheck(testName + "_2", "OverrideMethods", "as");
   }
 
-  /*@JSTestOptions({JSTestOption.WithoutWarnings, JSTestOption.WithFlexSdk})
-  public void testSqlInjection() throws Exception {
-    doTestFor(false, getTestName(false) + ".mxml");
-  }*/
-
   @JSTestOptions({JSTestOption.WithoutWarnings, JSTestOption.WithFlexSdk})
   public void testSqlInjection1() {
     doTestFor(false, getTestName(false) + ".as");

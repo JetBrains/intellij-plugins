@@ -42,7 +42,7 @@ class VueJSReferenceContributor : PsiReferenceContributor() {
   companion object {
     private val THIS_INSIDE_COMPONENT: ElementPattern<out PsiElement> = createThisInsideComponentPattern()
     private val COMPONENT_NAME: ElementPattern<out PsiElement> = createComponentNamePattern()
-    private val TEMPLATE_ID_REF = JSPatterns.jsLiteralExpression()
+    private val TEMPLATE_ID_REF = JSPatterns.jsLiteral()
       .withParent(JSPatterns.jsProperty().withName(TEMPLATE_PROP))
 
     private fun createThisInsideComponentPattern(): ElementPattern<out PsiElement> {

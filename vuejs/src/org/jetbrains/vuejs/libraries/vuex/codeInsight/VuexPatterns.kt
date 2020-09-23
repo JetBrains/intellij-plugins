@@ -1,7 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.vuex.codeInsight
 
-import com.intellij.lang.javascript.patterns.JSElementPattern
+import com.intellij.lang.javascript.patterns.JSLiteralExpressionPattern
 import com.intellij.lang.javascript.patterns.JSPatterns
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
@@ -66,8 +66,8 @@ object VuexPatterns {
       .withAncestor(4, PlatformPatterns.psiElement(JSCallExpression::class.java)
         .withFirstChild(JSPatterns.jsReferenceExpression().withReferenceNames(COMMIT, DISPATCH)))
 
-  val VUEX_INDEXED_ACCESS_LITERAL: JSElementPattern.Capture<JSLiteralExpression> =
-    JSPatterns.jsLiteralExpression()
+  val VUEX_INDEXED_ACCESS_LITERAL: JSLiteralExpressionPattern =
+    JSPatterns.jsLiteral()
       .withParent(PlatformPatterns.psiElement(JSIndexedPropertyAccessExpression::class.java)
                     .withFirstChild(JSPatterns.jsReferenceExpression().withReferenceNames(GETTERS, ROOT_GETTERS, STATE, ROOT_STATE)))
 }

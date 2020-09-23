@@ -8,10 +8,5 @@ class SqlInjection1 {
         d.text = "SELECT * FROM<error> </error>";
         var a = d;
         a.text = "SELECT * FROM<error> </error>";
-        var c = new SqlInjection1();
-        c.text = "SELECT * FROM";
-        statement.text = "SELECT * FROM<error> </error>";
-        st.text = "SELECT * FROM<error> </error>";
-        p.text = "SELECT * FROM ";
     }
 }
