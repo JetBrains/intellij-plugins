@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="Code Assistance" lessonsPath="CodeAssistance/" version="0.3" id="python.code_assistance" fileType="PROJECT" description="Code format, parameter info and quick popups">
+  <lesson-kt sample="CodeFormat.py.sample" implementationClass="training.learn.lesson.general.assistance.CodeFormatLesson" lang="Python"/>
+  <lesson-kt sample="ParameterInfo.py.sample" implementationClass="training.learn.lesson.general.assistance.ParameterInfoLesson" lang="Python"/>
+  <lesson-kt sample="QuickPopups.py.sample" implementationClass="training.learn.lesson.general.assistance.QuickPopupsLesson" lang="Python"/>
+  <lesson-kt sample="EditorCodingAssistance.py.sample" implementationClass="training.learn.lesson.python.assistance.PythonEditorCodingAssistanceLesson" lang="Python"/>
+</module>
+

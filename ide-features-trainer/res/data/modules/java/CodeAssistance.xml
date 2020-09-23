@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module name="Code Assistance" lessonsPath="CodeAssistance/" version="0.3" id="code_assistance" fileType="PROJECT" description="Code format, parameter info and quick popups">
   <!--<lesson filename="01.Folding.xml" />-->
-  <lesson filename="02.CodeFormat.xml" />
-  <lesson filename="03.ParameterInfo.xml" />
-  <lesson filename="04.QuickPopups.xml" />
-  <lesson filename="05.EditorCodingAssistance.xml" />
+  <lesson-kt sample="CodeFormat.java.sample" implementationClass="training.learn.lesson.general.assistance.CodeFormatLesson" lang="JAVA"/>
+  <lesson-kt sample="ParameterInfo.java.sample" implementationClass="training.learn.lesson.general.assistance.ParameterInfoLesson" lang="JAVA"/>
+  <lesson-kt sample="QuickPopups.java.sample" implementationClass="training.learn.lesson.general.assistance.QuickPopupsLesson" lang="JAVA"/>
+  <lesson-kt sample="EditorCodingAssistance.java.sample" implementationClass="training.learn.lesson.java.assistance.JavaEditorCodingAssistanceLesson" lang="JAVA"/>
 </module>
 

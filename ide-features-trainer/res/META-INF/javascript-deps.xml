@@ -5,6 +5,7 @@
 
     <ift.modules language="JavaScript">
       <module path="modules/javascript/EditorBasics.xml"/>
+      <module path="modules/javascript/WebStormDebugger.xml"/>
       <module path="modules/javascript/WebStormTesting.xml"/>
     </ift.modules>
   </extensions>

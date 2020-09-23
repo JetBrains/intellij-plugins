@@ -1,0 +1,13 @@
+
+class Frame
+  @width = 0
+  @height = 0
+
+  def set_size(width, height)
+    @width = width
+    @height = height
+  end
+end
+
+frame = Frame.new
+frame.set_size(<caret>)

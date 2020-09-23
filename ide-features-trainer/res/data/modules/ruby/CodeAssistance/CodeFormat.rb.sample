@@ -1,0 +1,7 @@
+class CodeFormatDemo
+  attr_reader :a_const, :b_const
+  <select>def calc_and_print
+    print a_const * b_const end</select>
+  def calc_many_times
+    (1..100).each { |i|
+      calc_and_print } end end
