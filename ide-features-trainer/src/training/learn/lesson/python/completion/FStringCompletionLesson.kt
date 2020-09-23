@@ -7,7 +7,6 @@ import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
-import training.learn.lesson.kimpl.LessonUtil
 import training.learn.lesson.kimpl.LessonUtil.checkExpectedStateOfEditor
 import training.learn.lesson.kimpl.parseLessonSample
 
@@ -52,7 +51,7 @@ class FStringCompletionLesson(module: Module)
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
     task("\${my") {
-      text(LessonsBundle.message("python.f.string.completion.type.prefix", LessonUtil.productName, code(it)))
+      text(LessonsBundle.message("python.f.string.completion.type.prefix", code(it)))
       runtimeText {
         val prefixTyped = checkExpectedStateOfEditor(sample) { change ->
           "\${my_car".startsWith(change) && change.startsWith(it)

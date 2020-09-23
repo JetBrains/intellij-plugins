@@ -14,7 +14,7 @@ import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 
 class CodeFormatLesson(module: Module, override val lang: String, private val sample: LessonSample) :
-  KLesson("Code Format", LessonsBundle.message("code.format.lesson.name"), module, lang) {
+  KLesson("CodeAssistance.CodeFormatting", LessonsBundle.message("code.format.lesson.name"), module, lang) {
 
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)

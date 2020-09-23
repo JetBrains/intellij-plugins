@@ -8,7 +8,6 @@ import training.learn.lesson.javascript.setLanguageLevel
 import training.learn.lesson.javascript.textBeforeCaret
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
-import training.learn.lesson.kimpl.LessonUtil.productName
 import training.learn.lesson.kimpl.parseLessonSample
 
 class BasicCompletionLesson(module: Module)
@@ -35,16 +34,16 @@ class BasicCompletionLesson(module: Module)
 
         caret(136)
         task("EditorChooseLookupItem") {
-          text(LessonsBundle.message("js.editor.completion.choose.lookup", productName, strong("Ma"), action("EditorChooseLookupItem"),
-                                     strong("Math")))
+          text(LessonsBundle.message("js.editor.completion.choose.lookup", strong("Ma"), action("EditorChooseLookupItem"),
+                                     code("Math")))
           trigger(it) {
             textBeforeCaret("Math")
           }
         }
 
         task("EditorChooseLookupItem") {
-          text(LessonsBundle.message("js.editor.completion.choose.method", action("EditorEnter"), action("EditorTab"), strong("."), strong("Math"), strong("f"),
-                                     strong("floor")))
+          text(LessonsBundle.message("js.editor.completion.choose.method",
+                                     action("EditorEnter"), action("EditorTab"), code("."), code("Math"), strong("f"), code("floor")))
           trigger(it) {
             textBeforeCaret("Math.floor(")
           }
@@ -52,7 +51,8 @@ class BasicCompletionLesson(module: Module)
 
         task("QuickJavaDoc") {
           text(
-            LessonsBundle.message("js.editor.completion.parameter.info", action("ParameterInfo"), strong("()"), action(it)))
+            LessonsBundle.message("js.editor.completion.parameter.info",
+                                  action("ParameterInfo"), code("()"), action(it)))
           stateCheck {
             val line = editor.caretModel.logicalPosition.line
             val column = editor.caretModel.logicalPosition.column
@@ -61,15 +61,16 @@ class BasicCompletionLesson(module: Module)
           trigger(it)
         }
         task {
-          text(LessonsBundle.message("js.editor.completion.add.parameter", strong("rnd"), strong("()")))
+          text(LessonsBundle.message("js.editor.completion.add.parameter",
+                                     code("rnd"), code("()")))
           stateCheck {
             textBeforeCaret("Math.floor(rnd")
           }
         }
         task("EditorChooseLookupItem") {
           text(
-            LessonsBundle.message("js.editor.completion.console.log.argument", strong("console.log"), strong("()"),
-                                  strong("pickAnimal(favoriteAnimals)")))
+            LessonsBundle.message("js.editor.completion.console.log.argument",
+                                  code("console.log"), code("()"), code("pickAnimal(favoriteAnimals)")))
           trigger(it) {
             textBeforeCaret("pickAnimal(favoriteAnimals")
           }

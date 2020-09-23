@@ -26,8 +26,7 @@ class DebuggingSecondPartLesson(module: Module)
           text(LessonsBundle.message("js.debugger.part.2.step.into", 
                                      action("DebugClass"), 
                                      strong(XDebuggerBundle.message("xdebugger.debugger.tab.title")), 
-                                     productName, 
-                                     ActionsBundle.message("action.Resume.text").dropMnemonic(), 
+                                     ActionsBundle.message("action.Resume.text").dropMnemonic(),
                                      icon(AllIcons.Actions.Resume), 
                                      action(it), ActionsBundle.message("action.StepInto.text").dropMnemonic(), 
                                      icon(AllIcons.Actions.TraceInto)))
@@ -41,14 +40,16 @@ class DebuggingSecondPartLesson(module: Module)
                                      strong(ActionsBundle.message("action.SmartStepInto.text").dropMnemonic()), 
                                      action("SmartStepInto"), 
                                      strong(ActionsBundle.message("action.StepOut.text").dropMnemonic()), 
-                                     action("StepOut"), productName, 
+                                     action("StepOut"),
                                      strong(XDebuggerBundle.message("xdebugger.dialog.title.evaluate.expression")), 
                                      action(it)))
           trigger(it)
         }
 
         task {
-          text(LessonsBundle.message("js.debugger.part.2.evaluate", strong("a === b"), strong(XDebuggerBundle.message("xdebugger.button.evaluate").dropMnemonic()), strong("false"), strong("true (a !== b)"), strong("()"), strong("a === b"), strong("a !== b")))
+          text(LessonsBundle.message("js.debugger.part.2.evaluate",
+                                     code("a === b"), strong(XDebuggerBundle.message("xdebugger.button.evaluate").dropMnemonic()), code("false"), code("true (a !== b)"),
+                                     code("()"), code("a === b"), code("a !== b")))
           stateCheck {
             textOnLine(1, "a !== b")
           }
@@ -60,7 +61,10 @@ class DebuggingSecondPartLesson(module: Module)
         }
 
         task {
-          text(LessonsBundle.message("js.debugger.part.2.end", strong(LessonsBundle.message("js.debugger.module.title", productName))))
+          text(LessonsBundle.message("js.debugger.part.2.end",
+                                     strong(LessonsBundle.message("js.debugger.module.title", productName)),
+                                     "https://www.jetbrains.com/help/webstorm/2019.2/debugging-code.html",
+                                     "https://blog.jetbrains.com/webstorm/tag/debug/"))
         }
       }
     }

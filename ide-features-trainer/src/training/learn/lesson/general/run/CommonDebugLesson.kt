@@ -12,7 +12,6 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.actionSystem.impl.ActionButton
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.WriteCommandAction
@@ -260,8 +259,7 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
       val shortcut = if (hasShortcut) "" else " " + LessonsBundle.message("debug.workflow.consider.to.add.a.shortcut")
 
       text(LessonsBundle.message("debug.workflow.use.watches",
-                                 LessonUtil.productName, strong(TaskBundle.message("debugger.watches")),
-                                 icon(AllIcons.General.Add), action(it), shortcut))
+                                 strong(TaskBundle.message("debugger.watches")), icon(AllIcons.General.Add), action(it), shortcut))
       stateCheck {
         val watches = (XDebuggerManager.getInstance(project) as XDebuggerManagerImpl).watchesManager.getWatches(confNameForWatches)
         watches.any { watch -> watch.expression == needAddToWatch }

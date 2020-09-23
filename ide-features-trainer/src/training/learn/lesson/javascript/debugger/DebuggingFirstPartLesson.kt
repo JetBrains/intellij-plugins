@@ -28,7 +28,7 @@ class DebuggingFirstPartLesson(module: Module)
         }
 
         task {
-          text(LessonsBundle.message("js.debugger.part.1.gutter", strong("10"), strong("-20"), strong("Different!"), strong("Equal!")))
+          text(LessonsBundle.message("js.debugger.part.1.gutter", code("10"), code("-20"), code("Different!"), code("Equal!")))
           stateCheck {
             lineContainsBreakpoint(1)
           }

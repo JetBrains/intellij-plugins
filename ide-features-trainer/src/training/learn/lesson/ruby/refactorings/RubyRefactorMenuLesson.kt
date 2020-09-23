@@ -13,7 +13,6 @@ import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
-import training.learn.lesson.kimpl.LessonUtil
 import training.learn.lesson.kimpl.parseLessonSample
 
 class RubyRefactorMenuLesson(module: Module)
@@ -38,7 +37,7 @@ class RubyRefactorMenuLesson(module: Module)
     get() = {
       prepareSample(sample)
       actionTask("Refactorings.QuickListPopupAction") {
-        LessonsBundle.message("ruby.refactoring.menu.invoke.refactoring.list", LessonUtil.productName, action(it))
+        LessonsBundle.message("ruby.refactoring.menu.invoke.refactoring.list", action(it))
       }
       task(RefactoringBundle.message("push.members.down.title")) {
         text(LessonsBundle.message("ruby.refactoring.menu.use.push.method.down", strong(it), code("meow()")))

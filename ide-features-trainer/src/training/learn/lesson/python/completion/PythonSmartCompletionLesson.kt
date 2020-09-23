@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.lesson.python.completion
 
-import com.intellij.openapi.application.ApplicationNamesInfo
 import training.commands.kotlin.TaskContext
 import training.learn.LessonsBundle
 import training.learn.interfaces.Module
@@ -31,7 +30,7 @@ class PythonSmartCompletionLesson(module: Module)
         }
         task("SmartTypeCompletion") {
           text(LessonsBundle.message("python.smart.completion.use.smart.completion",
-                                     LessonUtil.productName, code("x"), action(it)))
+                                     code("x"), action(it)))
           triggerByListItemAndHighlight { ui ->
             ui.toString().contains(methodName)
           }

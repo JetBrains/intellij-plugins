@@ -10,7 +10,7 @@ import training.learn.lesson.kimpl.LessonSample
 import kotlin.math.min
 
 class ParameterInfoLesson(module: Module, lang: String, private val sample: LessonSample) :
-  KLesson("Parameter Info", LessonsBundle.message("parameter.info.lesson.name"), module, lang) {
+  KLesson("CodeAssistance.ParameterInfo", LessonsBundle.message("parameter.info.lesson.name"), module, lang) {
 
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
@@ -25,7 +25,7 @@ class ParameterInfoLesson(module: Module, lang: String, private val sample: Less
     }
 
     task {
-      text(LessonsBundle.message("parameter.info.add.parameters"))
+      text(LessonsBundle.message("parameter.info.add.parameters", code("175"), code("100")))
       stateCheck { checkParametersAdded(caretOffset) }
       test {
         type("175, 100")

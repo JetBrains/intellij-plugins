@@ -2,7 +2,6 @@
 package training.learn.lesson.python.refactorings
 
 import com.intellij.icons.AllIcons
-import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.testGuiFramework.framework.GuiTestUtil
 import com.intellij.testGuiFramework.util.Key
 import training.commands.kotlin.TaskRuntimeContext
@@ -50,7 +49,6 @@ class PythonInPlaceRefactoringLesson(module: Module)
     task("ShowIntentionActions") {
       text(
         LessonsBundle.message("python.in.place.refactoring.invoke.intentions",
-                              LessonUtil.productName,
                               icon(AllIcons.Gutter.SuggestedRefactoringBulb), action(it)))
       triggerByListItemAndHighlight(highlightBorder = true, highlightInside = false) { ui -> // no highlighting
         ui.toString().contains("Rename usages")
@@ -109,7 +107,6 @@ class PythonInPlaceRefactoringLesson(module: Module)
 
     task("ShowIntentionActions") {
       text(LessonsBundle.message("python.in.place.refactoring.invoke.intention.for.parameter",
-                                 LessonUtil.productName,
                                  icon(AllIcons.Gutter.SuggestedRefactoringBulb), action(it)))
       triggerByListItemAndHighlight(highlightBorder = true, highlightInside = false) { item ->
         item.toString().contains("Update usages to")
@@ -133,7 +130,7 @@ class PythonInPlaceRefactoringLesson(module: Module)
     }
 
     task {
-      text(LessonsBundle.message("python.in.place.refactoring.signature.preview", LessonUtil.productName, LessonUtil.rawEnter()))
+      text(LessonsBundle.message("python.in.place.refactoring.signature.preview", LessonUtil.rawEnter()))
       triggerByUiComponentAndHighlight(highlightBorder = false, highlightInside = false) { ui: JLabel -> // no highlighting
         ui.text == "Add values for new parameters:"
       }

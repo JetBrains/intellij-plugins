@@ -63,10 +63,13 @@ class JestLesson(module: Module)
         }
 
         task("editRunConfigurations") {
-          text(LessonsBundle.message("js.testing.jest.prepare", ActionsBundle.message("group.RunMenu.text").dropMnemonic(),
-                                     ExecutionBundle.message(
-                                       "edit.configuration.action").dropMnemonic(), strong("Jest"), strong("OK"),
-                                     icon(AllIcons.General.Add)))
+          text(LessonsBundle.message("js.testing.jest.prepare",
+                                     "https://jestjs.io/en/",
+                                     "https://github.com/facebook/jest/tree/master/examples/getting-started",
+                                     "https://jestjs.io/docs/en/getting-started",
+                                     ActionsBundle.message("group.RunMenu.text").dropMnemonic(), ExecutionBundle.message(
+            "edit.configuration.action").dropMnemonic(),
+                                     icon(AllIcons.General.Add), strong("Jest"), strong("OK")))
           stateCheck {
             RunManager.getInstance(project).findConfigurationByName(TestRunnerBundle.message("all.tests.scope.presentable.text")) != null
           }
@@ -85,6 +88,7 @@ class JestLesson(module: Module)
                                      icon(AllIcons.RunConfigurations.TestState.Run),
                                      icon(AllIcons.RunConfigurations.RerunFailedTests),
                                      icon(AllIcons.RunConfigurations.ShowPassed),
+                                     "https://blog.jetbrains.com/webstorm/2018/10/testing-with-jest-in-webstorm/#run_tests_in_watch_mode",
                                      strong(SmRunnerBundle.message("sm.test.runner.ui.tests.tree.presentation.labels.test.results")),
                                      strong("add"),
                                      shortcut(KeymapUtil.getKeyText(KeyEvent.VK_ENTER))))
@@ -127,7 +131,9 @@ class JestLesson(module: Module)
         }
 
         task {
-         text(LessonsBundle.message("js.testing.jest.end", productName))
+          text(LessonsBundle.message("js.testing.jest.end",
+                                     "https://blog.jetbrains.com/webstorm/2018/10/testing-with-jest-in-webstorm/",
+                                     "https://www.jetbrains.com/help/webstorm/unit-testing-javascript.html"))
         }
       }
     }

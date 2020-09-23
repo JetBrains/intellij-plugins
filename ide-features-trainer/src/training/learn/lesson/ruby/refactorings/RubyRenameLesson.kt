@@ -7,7 +7,10 @@ import com.intellij.ui.treeStructure.Tree
 import training.commands.kotlin.TaskTestContext
 import training.learn.LessonsBundle
 import training.learn.interfaces.Module
-import training.learn.lesson.kimpl.*
+import training.learn.lesson.kimpl.KLesson
+import training.learn.lesson.kimpl.LessonContext
+import training.learn.lesson.kimpl.dropMnemonic
+import training.learn.lesson.kimpl.parseLessonSample
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
@@ -68,7 +71,7 @@ class RubyRenameLesson(module: Module)
         before {
           result = template.replace("<name>", replace.get(2, TimeUnit.SECONDS)).replace("<caret>", "")
         }
-        text(LessonsBundle.message("ruby.rename.confirm", LessonUtil.productName, strong(it)))
+        text(LessonsBundle.message("ruby.rename.confirm", strong(it)))
         stateCheck { editor.document.text == result }
         test {
           ideFrame {

@@ -39,7 +39,7 @@ abstract class SurroundAndUnwrapLesson(module: Module, lang: String)
       }
 
       task {
-        text(LessonsBundle.message("surround.and.unwrap.choose.surround.item", code(surroundItemName)))
+        text(LessonsBundle.message("surround.and.unwrap.choose.surround.item", strong(surroundItemName)))
         stateCheck {
           editor.document.charsSequence.let { sequence ->
             surroundItems.all { sequence.contains(it) }

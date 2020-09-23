@@ -69,13 +69,13 @@ class NavigationLesson(module: Module)
           }
         }
         task("ActivateStructureToolWindow") {
-          text(LessonsBundle.message("js.editor.navigation.activate.structure", strong(UIBundle.message("tool.window.name.structure")), strong("giveTreat"), action("EditorEnter"), action(it)))
+          text(LessonsBundle.message("js.editor.navigation.activate.structure", strong(UIBundle.message("tool.window.name.structure")), code("giveTreat"), action("EditorEnter"), action(it)))
           stateCheck {
             textAtCaretEqualsTo("giveTreat") && focusOwner is EditorComponentImpl
           }
         }
         task("FindUsages") {
-          text(LessonsBundle.message("js.editor.navigation.find.usages", strong("giveTreat"), action(it)))
+          text(LessonsBundle.message("js.editor.navigation.find.usages", code("giveTreat"), action(it)))
           stateCheck {
             textAtCaretEqualsTo("giveTreat")
           }
@@ -101,14 +101,16 @@ class NavigationLesson(module: Module)
           }
         }
         task("GotoDeclaration") {
-          text(LessonsBundle.message("js.editor.navigation.go.to.declaration", action(it), action(it)))
+          text(LessonsBundle.message("js.editor.navigation.go.to.declaration", action(it), code("snoopy")))
           stateCheck {
             textAtCaretEqualsTo("snoopy")
           }
           trigger(it)
         }
         task {
-          text(LessonsBundle.message("js.editor.navigation.keymap.reference", strong(LessonsBundle.message("js.editor.module.title"))))
+          text(LessonsBundle.message("js.editor.navigation.keymap.reference",
+                                     strong(LessonsBundle.message("js.editor.module.title")),
+                                     "https://resources.jetbrains.com/storage/products/webstorm/docs/WebStorm_ReferenceCard.pdf"))
         }
       }
     }

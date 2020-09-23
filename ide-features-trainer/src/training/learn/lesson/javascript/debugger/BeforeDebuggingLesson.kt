@@ -12,7 +12,6 @@ import training.learn.interfaces.Module
 import training.learn.lesson.javascript.setLanguageLevel
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
-import training.learn.lesson.kimpl.LessonUtil.productName
 import training.learn.lesson.kimpl.dropMnemonic
 import training.learn.lesson.kimpl.parseLessonSample
 import javax.swing.tree.DefaultMutableTreeNode
@@ -41,12 +40,15 @@ class BeforeDebuggingLesson(module: Module)
         setLanguageLevel()
         prepareSample(jsDebuggerSample)
         task("RunClass") {
-          text(LessonsBundle.message("js.debugger.before.intro", productName, strong("Different!"), strong("Equal!"), action(it)))
+          text(LessonsBundle.message("js.debugger.before.intro",
+                                     "https://nodejs.org/en/", strong("Different!"), strong("Equal!"),
+                                     "https://nodejs.org/en/download/", action(it)))
           trigger(it)
         }
         task("HideActiveWindow") {
           text(
-            LessonsBundle.message("js.debugger.before.describe.tool.window", action("RunClass"), strong(UIBundle.message("tool.window.name.run")), productName, action(it)))
+            LessonsBundle.message("js.debugger.before.describe.tool.window",
+                                  action("RunClass"), strong(UIBundle.message("tool.window.name.run")), action(it)))
           trigger(it)
         }
         task {

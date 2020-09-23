@@ -4,13 +4,11 @@ package training.learn.lesson.java.refactorings
 import com.intellij.CommonBundle
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.java.refactoring.JavaRefactoringBundle
-import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.refactoring.rename.RenameProcessor
 import com.intellij.testGuiFramework.impl.button
 import com.intellij.util.ui.UIUtil
 import training.commands.kotlin.TaskContext
 import training.commands.kotlin.TaskRuntimeContext
-import training.commands.kotlin.TaskTestContext
 import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.*
@@ -102,8 +100,7 @@ class JavaRenameLesson(module: Module)
     task {
       val okButtonText = CommonBundle.getOkButtonText()
       text(LessonsBundle.message("java.rename.confirm.accessors.rename",
-                                 ApplicationNamesInfo.getInstance().productName, LessonUtil.rawEnter(),
-                                 strong(okButtonText)))
+                                 LessonUtil.rawEnter(), strong(okButtonText)))
       stateCheck {
         val fieldName = getFieldName()
         val shouldBe = fieldName?.let { replaceTemplate(it).replace("<caret>", "").replace("<caret id=2/>", "") }

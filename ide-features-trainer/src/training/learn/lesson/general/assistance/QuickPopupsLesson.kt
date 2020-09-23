@@ -14,7 +14,7 @@ import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 
 class QuickPopupsLesson(module: Module, lang: String, private val sample: LessonSample) :
-  KLesson("Quick Popups", LessonsBundle.message("quick.popups.lesson.name"), module, lang) {
+  KLesson("CodeAssistance.QuickPopups", LessonsBundle.message("quick.popups.lesson.name"), module, lang) {
 
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)

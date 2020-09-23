@@ -10,7 +10,7 @@ import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 
 abstract class EditorCodingAssistanceLesson(module: Module, lang: String, private val sample: LessonSample) :
-  KLesson("Editor Coding Assistance", LessonsBundle.message("editor.coding.assistance.lesson.name"), module, lang) {
+  KLesson("CodeAssistance.EditorCodingAssistance", LessonsBundle.message("editor.coding.assistance.lesson.name"), module, lang) {
 
   protected abstract fun TaskRuntimeContext.checkErrorFixed(): Boolean
 

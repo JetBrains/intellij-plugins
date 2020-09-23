@@ -42,8 +42,7 @@ abstract class CommonRunConfigurationLesson(module: Module, id: String, language
 
       actionTask("HideActiveWindow") {
         LearningUiHighlightingManager.clearHighlights()
-        LessonsBundle.message("run.configuration.hide.toolwindow",
-                              LessonUtil.productName, runToolWindow(), action(it))
+        LessonsBundle.message("run.configuration.hide.toolwindow", runToolWindow(), action(it))
       }
 
       task {
@@ -55,7 +54,7 @@ abstract class CommonRunConfigurationLesson(module: Module, id: String, language
       val saveConfigurationItemName = ExecutionBundle.message("save.temporary.run.configuration.action.name", demoConfigurationName)
         .dropMnemonic()
       task {
-        text(LessonsBundle.message("run.configuration.temporary.to.permanent", LessonUtil.productName))
+        text(LessonsBundle.message("run.configuration.temporary.to.permanent"))
         triggerByListItemAndHighlight { item ->
           item.toString() == saveConfigurationItemName
         }

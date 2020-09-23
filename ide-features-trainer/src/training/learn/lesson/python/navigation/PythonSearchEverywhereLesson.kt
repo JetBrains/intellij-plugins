@@ -33,7 +33,7 @@ class PythonSearchEverywhereLesson(module: Module)
       LessonsBundle.message("python.search.everywhere.invoke.search.everywhere", LessonUtil.actionName(it), shortcut)
     }
     task("cae") {
-      text(LessonsBundle.message("python.search.everywhere.type.prefixes", code("cache"), code("extension"), code(it)))
+      text(LessonsBundle.message("python.search.everywhere.type.prefixes", strong("cache"), strong("extension"), code(it)))
       stateCheck { checkWordInSearch(it) }
       test {
         Thread.sleep(500)

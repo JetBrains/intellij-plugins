@@ -18,7 +18,7 @@ abstract class RefactoringMenuLessonBase(lessonId: String, module: Module, langu
   : KLesson(lessonId, LessonsBundle.message("refactoring.menu.lesson.name"), module, languageId) {
   fun LessonContext.extractParameterTasks() {
     actionTask("Refactorings.QuickListPopupAction") {
-      LessonsBundle.message("refactoring.menu.show.refactoring.list", LessonUtil.productName, action(it))
+      LessonsBundle.message("refactoring.menu.show.refactoring.list", action(it))
     }
     task(ActionsBundle.message("action.IntroduceParameter.text").dropMnemonic()) {
       text(LessonsBundle.message("refactoring.menu.introduce.parameter", strong(it)))

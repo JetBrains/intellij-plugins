@@ -10,7 +10,6 @@ import training.learn.lesson.javascript.textBeforeOffset
 import training.learn.lesson.javascript.textOnLine
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
-import training.learn.lesson.kimpl.LessonUtil.productName
 import training.learn.lesson.kimpl.parseLessonSample
 
 class CodeEditingLesson(module: Module)
@@ -51,7 +50,7 @@ class CodeEditingLesson(module: Module)
         }
         prepareSample(sample)
         task("ReformatCode") {
-          text(LessonsBundle.message("js.editor.code.editing.reformat.start", productName, action(it)))
+          text(LessonsBundle.message("js.editor.code.editing.reformat.start", action(it)))
           trigger(it)
         }
         waitBeforeContinue(500)
@@ -72,7 +71,8 @@ class CodeEditingLesson(module: Module)
           trigger(it)
         }
         task {
-          text(LessonsBundle.message("js.editor.code.editing.multi.caret", strong("td"), strong("td"), action("SelectNextOccurrence"), strong("td"), strong("th"), action("EditorEscape")))
+          text(LessonsBundle.message("js.editor.code.editing.multi.caret",
+                                     code("td"), code("td"), action("SelectNextOccurrence"), code("td"), code("th"), action("EditorEscape")))
           stateCheck {
             textOnLine(9, "<th>") &&
             textOnLine(10, "<th>") &&

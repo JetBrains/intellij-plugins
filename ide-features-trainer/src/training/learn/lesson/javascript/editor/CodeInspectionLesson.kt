@@ -11,7 +11,6 @@ import training.learn.lesson.javascript.textAtCaretEqualsTo
 import training.learn.lesson.javascript.textOnLine
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
-import training.learn.lesson.kimpl.LessonUtil.productName
 import training.learn.lesson.kimpl.parseLessonSample
 
 class CodeInspectionLesson(module: Module)
@@ -43,13 +42,14 @@ class CodeInspectionLesson(module: Module)
         setLanguageLevel()
         prepareSample(sample)
         task("GotoNextError") {
-          text(LessonsBundle.message("js.editor.code.inspection.intro", productName, action(it)))
+          text(LessonsBundle.message("js.editor.code.inspection.intro", action(it)))
           trigger(it) {
             editor.caretModel.logicalPosition.line == 3 && textAtCaretEqualsTo("book")
           }
         }
         task("ShowIntentionActions") {
-          text(LessonsBundle.message("js.editor.code.inspection.show.intentions", action("GotoNextError"), strong("book"), strong("book"), action(it)))
+          text(LessonsBundle.message("js.editor.code.inspection.show.intentions",
+                                     action("GotoNextError"), code("book"), code("book"), action(it)))
           before { caret(editor.document.getLineEndOffset(3) - 11) }
           
           //handle simple alt+enter and alt+enter for the error tooltip 
@@ -64,7 +64,8 @@ class CodeInspectionLesson(module: Module)
           }
         }
         task("ShowIntentionActions") {
-          text(LessonsBundle.message("js.editor.code.inspection.checkmark", icon(AllIcons.General.InspectionsOK), strong("function"), action(it)))
+          text(LessonsBundle.message("js.editor.code.inspection.checkmark", icon(AllIcons.General.InspectionsOK),
+                                     code("function"), action(it)))
           stateCheck {
             val line = editor.caretModel.logicalPosition.line
             line == 2 && textAtCaretEqualsTo("function")
@@ -72,7 +73,8 @@ class CodeInspectionLesson(module: Module)
           trigger(it)
         }
         task {
-          text(LessonsBundle.message("js.editor.code.inspection.make.shorter", strong(JavaScriptBundle.message("js.convert.to.arrow.function")), action("EditorEnter")))
+          text(LessonsBundle.message("js.editor.code.inspection.make.shorter",
+                                     strong(JavaScriptBundle.message("js.convert.to.arrow.function")), action("EditorEnter")))
           stateCheck {
             textOnLine(2, "books.forEach(book => {")
           }
