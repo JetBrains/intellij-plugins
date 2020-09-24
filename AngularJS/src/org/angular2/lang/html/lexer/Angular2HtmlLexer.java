@@ -2,7 +2,6 @@
 package org.angular2.lang.html.lexer;
 
 import com.intellij.lexer.*;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
@@ -20,9 +19,9 @@ public class Angular2HtmlLexer extends HtmlLexer {
     TokenSet.create(XML_COMMENT_CHARACTERS, XML_WHITE_SPACE, XML_REAL_WHITE_SPACE,
                     XML_ATTRIBUTE_VALUE_TOKEN, XML_DATA_CHARACTERS, XML_TAG_CHARACTERS);
 
-  public Angular2HtmlLexer(@Nullable Project project, boolean tokenizeExpansionForms,
+  public Angular2HtmlLexer(boolean tokenizeExpansionForms,
                            @Nullable Pair<String, String> interpolationConfig) {
-    super(project, new Angular2HtmlMergingLexer(new FlexAdapter(new _Angular2HtmlLexer(
+    super(new Angular2HtmlMergingLexer(new FlexAdapter(new _Angular2HtmlLexer(
       tokenizeExpansionForms, interpolationConfig))), true);
   }
 

@@ -1,16 +1,19 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang.html.lexer
 
+import com.intellij.html.embedding.*
 import com.intellij.lang.Language
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.javascript.JSElementTypes
-import com.intellij.lexer.*
+import com.intellij.lexer.BaseHtmlLexer
+import com.intellij.lexer.EmbeddedTokenTypesProvider
+import com.intellij.lexer.Lexer
 import com.intellij.openapi.fileTypes.FileTypeManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.tree.IElementType
-import com.intellij.psi.tree.TokenSet
-import com.intellij.psi.xml.XmlElementType
+import com.intellij.psi.xml.XmlElementType.HTML_EMBEDDED_CONTENT
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.xml.util.HtmlUtil
 import com.intellij.xml.util.HtmlUtil.TYPE_ATTRIBUTE_NAME
@@ -19,11 +22,8 @@ import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.lang.expr.highlighting.VueJSSyntaxHighlighter
 import org.jetbrains.vuejs.lang.expr.parser.VueJSEmbeddedExprTokenType
 import org.jetbrains.vuejs.lang.html.highlighting.VueHighlightingLexer
-import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_END
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_EXPR
-import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_START
 import org.jetbrains.vuejs.lang.html.parser.VueElementTypes
-import java.util.function.Function
 import java.util.function.Supplier
 
 class VueEmbeddedContentSupport : HtmlEmbeddedContentSupport {
@@ -34,22 +34,13 @@ class VueEmbeddedContentSupport : HtmlEmbeddedContentSupport {
            HtmlTokenEmbeddedContentProvider(
              lexer, INTERPOLATION_EXPR,
              Supplier { VueJSSyntaxHighlighter().highlightingLexer },
-             Supplier { VueJSEmbeddedExprTokenType.createInterpolationExpression(lexer.project) }))
-
-  override fun getCustomAttributeEmbedmentTokens(): TokenSet = ATTRIBUTE_TOKENS
-
-  override fun getCustomTagEmbedmentTokens(): TokenSet = TAG_TOKENS
-
-  companion object {
-    private val ATTRIBUTE_TOKENS = TokenSet.create(INTERPOLATION_START, INTERPOLATION_EXPR, INTERPOLATION_END)
-    private val TAG_TOKENS = TokenSet.create(INTERPOLATION_START)
-  }
-
+             Supplier { VueJSEmbeddedExprTokenType.createInterpolationExpression((lexer as VueLexer).project) }))
 }
 
 class VueAttributeEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlAttributeEmbeddedContentProvider(lexer) {
 
   private var injectEmpty: Boolean = false
+  private val project get() = (lexer as VueLexer).project
 
   override fun handleToken(tokenType: IElementType, range: TextRange) {
     super.handleToken(tokenType, range)
@@ -78,46 +69,62 @@ class VueAttributeEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlAttributeE
       .takeIf { it.injectJS }
       ?.let { attributeInfo ->
         injectEmpty = false
-        HtmlEmbedmentInfo(Function { VueJSEmbeddedExprTokenType.createEmbeddedExpression(attributeInfo, it?.project) },
-                          Function { VueJSSyntaxHighlighter().highlightingLexer })
+        VueEmbeddedExpressionInfo(attributeInfo, project)
       }
+
+  private class VueEmbeddedExpressionInfo(val attributeInfo: VueAttributeNameParser.VueAttributeInfo,
+                                          val project: Project?) : HtmlEmbedmentInfo {
+    override fun getElementType(): IElementType? =
+      VueJSEmbeddedExprTokenType.createEmbeddedExpression(attributeInfo, project)
+
+    override fun createHighlightingLexer(): Lexer? =
+      VueJSSyntaxHighlighter().highlightingLexer
+  }
 }
 
 class VueTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedContentProvider(lexer) {
 
-  override fun createEmbedmentInfo(): HtmlEmbedmentInfo? =
-    tagName?.let { tagName ->
-      val lang = attributeValue?.trim()?.toString()
-      if (namesEqual(tagName, HtmlUtil.STYLE_TAG_NAME)) {
-        styleLanguage(lang)?.let { language ->
-          EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME.extensions()
-            .map { it.elementType }
-            .filter { language.`is`(it.language) }
-            .map { elementType ->
-              HtmlEmbedmentInfo(elementType, language)
-            }
-            .findFirst()
-            .orElse(null)
-        }
+  private val languageLevel get() = (lexer as VueLexer).languageLevel
+  private val project get() = (lexer as VueLexer).project
+  private val interpolationConfig get() = (lexer as VueLexer).interpolationConfig
+
+  override fun createEmbedmentInfo(): HtmlEmbedmentInfo? {
+    val tagName = tagName ?: return null
+    val lang = attributeValue?.trim()?.toString()
+    if (namesEqual(tagName, HtmlUtil.STYLE_TAG_NAME)) {
+      return styleLanguage(lang)?.let { language ->
+        EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME.extensions()
+          .map { it.elementType }
+          .filter { language.`is`(it.language) }
+          .map { elementType ->
+            HtmlLanguageEmbedmentInfo(elementType, language)
+          }
+          .findFirst()
+          .orElse(null)
       }
-      else {
-        if (namesEqual(tagName, HtmlUtil.TEMPLATE_TAG_NAME)) {
-          if (lang == null || lang.equals("html", ignoreCase = true)) return null
+    }
+    else {
+      if (namesEqual(tagName, HtmlUtil.TEMPLATE_TAG_NAME)) {
+        if (lang == null || lang.equals("html", ignoreCase = true)) return null
+      }
+      val provider = scriptContentProvider(lang)
+      return when (val elementType = provider?.getElementType()) {
+        HTML_EMBEDDED_CONTENT -> object : HtmlEmbedmentInfo {
+          override fun getElementType(): IElementType? = VueElementTypes.VUE_EMBEDDED_CONTENT
+          override fun createHighlightingLexer(): Lexer? =
+            VueHighlightingLexer(languageLevel, project, interpolationConfig)
         }
-        val provider = scriptContentProvider(lang)
-        val elementType = provider?.elementTypeProvider?.apply(lexer)
-                          ?: return HtmlEmbedmentInfo(Function { XmlTokenType.XML_DATA_CHARACTERS }, Function { null })
-        when (elementType) {
-          XmlElementType.HTML_EMBEDDED_CONTENT ->
-            HtmlEmbedmentInfo(Function { VueElementTypes.VUE_EMBEDDED_CONTENT },
-                              Function { VueHighlightingLexer(languageLevel, it?.project, null) })
-          else -> HtmlEmbedmentInfo(Function { JSElementTypes.toModuleContentType(elementType) },
-                                    Function { provider.highlightingLexerProvider.apply(it) })
+        null -> object : HtmlEmbedmentInfo {
+          override fun getElementType(): IElementType? = XmlTokenType.XML_DATA_CHARACTERS
+          override fun createHighlightingLexer(): Lexer? = null
+        }
+        else -> object : HtmlEmbedmentInfo {
+          override fun getElementType(): IElementType? = JSElementTypes.toModuleContentType(elementType)
+          override fun createHighlightingLexer(): Lexer? = provider.createHighlightingLexer()
         }
       }
     }
-
-  private val languageLevel get() = (lexer as VueLexer).languageLevel
+  }
 
   private fun scriptContentProvider(language: String?): HtmlEmbedmentInfo? =
     if (language != null)

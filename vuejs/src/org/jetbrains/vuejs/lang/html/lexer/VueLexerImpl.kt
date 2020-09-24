@@ -12,12 +12,25 @@ import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_START
 
 class VueLexerImpl(override val languageLevel: JSLanguageLevel,
-                   project: Project,
-                   interpolationConfig: Pair<String, String>?)
-  : HtmlLexer(project, VueMergingLexer(FlexAdapter(_VueLexer(interpolationConfig))), true), VueLexer {
+                   override val project: Project,
+                   override val interpolationConfig: Pair<String, String>?)
+  : HtmlLexer(VueMergingLexer(FlexAdapter(_VueLexer(interpolationConfig))), true), VueLexer {
 
   override fun isHtmlTagState(state: Int): Boolean {
     return state == _VueLexer.START_TAG_NAME || state == _VueLexer.END_TAG_NAME
+  }
+
+  override fun createAttributeEmbedmentTokenSet(): TokenSet {
+    return TokenSet.orSet(super.createAttributeEmbedmentTokenSet(), ATTRIBUTE_TOKENS)
+  }
+
+  override fun createTagEmbedmentStartTokenSet(): TokenSet {
+    return TokenSet.orSet(super.createTagEmbedmentStartTokenSet(), TAG_TOKENS)
+  }
+
+  companion object {
+    internal val ATTRIBUTE_TOKENS = TokenSet.create(INTERPOLATION_START, INTERPOLATION_EXPR, INTERPOLATION_END)
+    internal val TAG_TOKENS = TokenSet.create(INTERPOLATION_START)
   }
 
   open class VueMergingLexer(original: FlexAdapter) : MergingLexerAdapterBase(original) {

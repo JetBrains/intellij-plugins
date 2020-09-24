@@ -22,7 +22,7 @@ public class Angular2HtmlParserDefinition extends HTMLParserDefinition {
 
   @Override
   public @NotNull Lexer createLexer(Project project) {
-    return new Angular2HtmlLexer(project, true, null);
+    return new Angular2HtmlLexer( true, null);
   }
 
   @Override

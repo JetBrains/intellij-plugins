@@ -266,7 +266,7 @@ public class Angular2HtmlLexerTest extends LexerTestCase {
 
   @Override
   protected Lexer createLexer() {
-    return new Angular2HtmlLexer(myFixture.getProject(), true, null);
+    return new Angular2HtmlLexer(true, null);
   }
 
   @Override

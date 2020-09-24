@@ -7,6 +7,7 @@ import com.intellij.lexer.HtmlHighlightingLexer
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.project.Project
 import com.intellij.psi.tree.IElementType
+import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.psi.xml.XmlTokenType.XML_REAL_WHITE_SPACE
 import org.jetbrains.vuejs.lang.html.lexer.VueLexer
@@ -16,13 +17,21 @@ import org.jetbrains.vuejs.lang.html.lexer.VueLexerImpl.VueMergingLexer.Companio
 import org.jetbrains.vuejs.lang.html.lexer._VueLexer
 
 class VueHighlightingLexer(override val languageLevel: JSLanguageLevel,
-                           project: Project?,
-                           interpolationConfig: Pair<String, String>?)
-  : HtmlHighlightingLexer(project, VueHighlightingMergingLexer(FlexAdapter(_VueLexer(interpolationConfig))),
+                           override val project: Project?,
+                           override val interpolationConfig: Pair<String, String>?)
+  : HtmlHighlightingLexer(VueHighlightingMergingLexer(FlexAdapter(_VueLexer(interpolationConfig))),
                           true, null), VueLexer {
 
   override fun isHtmlTagState(state: Int): Boolean {
     return state == _VueLexer.START_TAG_NAME || state == _VueLexer.END_TAG_NAME
+  }
+
+  override fun createAttributeEmbedmentTokenSet(): TokenSet {
+    return TokenSet.orSet(super.createAttributeEmbedmentTokenSet(), VueLexerImpl.ATTRIBUTE_TOKENS)
+  }
+
+  override fun createTagEmbedmentStartTokenSet(): TokenSet {
+    return TokenSet.orSet(super.createTagEmbedmentStartTokenSet(), VueLexerImpl.TAG_TOKENS)
   }
 
   override fun getTokenType(): IElementType? {

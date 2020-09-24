@@ -3,14 +3,17 @@ package com.dmarcotte.handlebars.parsing;
 
 import com.dmarcotte.handlebars.HbLanguage;
 import com.dmarcotte.handlebars.file.HbFileViewProviderFactory;
+import com.intellij.html.embedding.HtmlEmbeddedContentSupport;
 import com.intellij.javascript.JSHtmlEmbeddedContentSupport;
+import com.intellij.javascript.JSScriptContentProvider;
 import com.intellij.lang.LanguageASTFactory;
+import com.intellij.lang.LanguageHtmlScriptContentProvider;
 import com.intellij.lang.html.HTMLParserDefinition;
+import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.JavascriptParserDefinition;
 import com.intellij.lang.xml.XMLLanguage;
 import com.intellij.lang.xml.XmlASTFactory;
 import com.intellij.lexer.EmbeddedTokenTypesProvider;
-import com.intellij.lexer.HtmlEmbeddedContentSupport;
 import com.intellij.psi.LanguageFileViewProviders;
 
 public class HbHtmlParserTest extends HbParserTest {
@@ -28,6 +31,7 @@ public class HbHtmlParserTest extends HbParserTest {
     addExplicitExtension(LanguageASTFactory.INSTANCE, XMLLanguage.INSTANCE, new XmlASTFactory());
 
     registerExtensionPoint(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, EmbeddedTokenTypesProvider.class);
+    addExplicitExtension(LanguageHtmlScriptContentProvider.INSTANCE, JavascriptLanguage.INSTANCE, new JSScriptContentProvider());
     HtmlEmbeddedContentSupport.register(getApplication(), getTestRootDisposable(), JSHtmlEmbeddedContentSupport.class);
   }
 

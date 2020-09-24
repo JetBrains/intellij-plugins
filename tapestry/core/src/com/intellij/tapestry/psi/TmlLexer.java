@@ -4,6 +4,10 @@ import com.intellij.lexer.XHtmlLexer;
 import com.intellij.lexer.XmlLexer;
 import com.intellij.lexer._XmlLexer;
 import com.intellij.lexer.__XmlLexer;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.tree.IElementType;
+
+import static com.intellij.xml.util.HtmlUtil.STYLE_ATTRIBUTE_NAME;
 
 /**
  * @author Alexey Chmutov
@@ -15,8 +19,9 @@ public class TmlLexer extends XHtmlLexer {
   }
 
   @Override
-  public boolean isElLexer() {
-    return true;
+  protected boolean isAttributeEmbedmentToken(IElementType tokenType, CharSequence attributeName) {
+    return tokenType == TelTokenTypes.TAP5_EL_CONTENT ? !StringUtil.equals(attributeName, STYLE_ATTRIBUTE_NAME)
+                                                      : super.isAttributeEmbedmentToken(tokenType, attributeName);
   }
 
   public static XmlLexer createElAwareXmlLexer() {

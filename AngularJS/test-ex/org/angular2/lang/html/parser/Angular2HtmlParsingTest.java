@@ -2,6 +2,7 @@
 package org.angular2.lang.html.parser;
 
 import com.intellij.html.HtmlParsingTest;
+import com.intellij.html.embedding.HtmlEmbeddedContentSupport;
 import com.intellij.javascript.JSHtmlEmbeddedContentSupport;
 import com.intellij.lang.LanguageASTFactory;
 import com.intellij.lang.css.CSSLanguage;
@@ -10,7 +11,6 @@ import com.intellij.lang.javascript.JavascriptParserDefinition;
 import com.intellij.lang.javascript.dialects.ECMA6ParserDefinition;
 import com.intellij.lang.javascript.dialects.JSLanguageLevel;
 import com.intellij.lexer.EmbeddedTokenTypesProvider;
-import com.intellij.lexer.HtmlEmbeddedContentSupport;
 import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.pom.tree.events.TreeChangeEvent;

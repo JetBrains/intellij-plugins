@@ -916,7 +916,7 @@ public class Angular2HtmlLexerSpecTest {
 
     public static List<Token> create(String input, boolean tokenizeExpansionForms,
                                      Pair<String, String> interpolationConfig) {
-      Angular2HtmlLexer lexer = new Angular2HtmlLexer(null, tokenizeExpansionForms, interpolationConfig);
+      Angular2HtmlLexer lexer = new Angular2HtmlLexer(tokenizeExpansionForms, interpolationConfig);
       List<Token> result = new ArrayList<>();
       lexer.start(input, 0, input.length());
       IElementType tokenType;

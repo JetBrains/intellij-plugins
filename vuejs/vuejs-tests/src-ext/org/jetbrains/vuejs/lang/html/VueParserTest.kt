@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.lang.html
 
 import com.intellij.html.HtmlParsingTest
+import com.intellij.html.embedding.HtmlEmbeddedContentSupport
 import com.intellij.javascript.JSHtmlEmbeddedContentSupport
 import com.intellij.lang.LanguageASTFactory
 import com.intellij.lang.LanguageParserDefinitions
@@ -16,7 +17,6 @@ import com.intellij.lang.javascript.index.FrameworkIndexingHandlerEP
 import com.intellij.lang.javascript.settings.JSRootConfiguration
 import com.intellij.lang.javascript.settings.JSRootConfigurationBase
 import com.intellij.lexer.EmbeddedTokenTypesProvider
-import com.intellij.lexer.HtmlEmbeddedContentSupport
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.openapi.project.Project

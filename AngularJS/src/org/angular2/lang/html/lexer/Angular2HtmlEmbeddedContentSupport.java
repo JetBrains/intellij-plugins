@@ -1,8 +1,13 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.html.lexer;
 
+import com.intellij.html.embedding.*;
 import com.intellij.lang.javascript.JSTokenTypes;
-import com.intellij.lexer.*;
+import com.intellij.lexer.BaseHtmlLexer;
+import com.intellij.lexer.Lexer;
+import com.intellij.lexer.MergeFunction;
+import com.intellij.lexer.MergingLexerAdapterBase;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.util.containers.ContainerUtil;
 import org.angular2.lang.expr.highlighting.Angular2SyntaxHighlighter;
 import org.angular2.lang.html.highlighting.Angular2HtmlHighlightingLexer;
@@ -52,7 +57,13 @@ public class Angular2HtmlEmbeddedContentSupport implements HtmlEmbeddedContentSu
         attributeName.toString(), Objects.requireNonNull(getTagName()).toString());
       if (info.type != Angular2AttributeType.REGULAR
           && NG_EL_ATTRIBUTES.contains(info.type)) {
-        return new HtmlEmbedmentInfo(lexer -> null, lexer -> new Angular2EmbeddedHighlightingLexer());
+        return new HtmlEmbedmentInfo() {
+          @Override
+          public Lexer createHighlightingLexer() { return new Angular2EmbeddedHighlightingLexer(); }
+
+          @Override
+          public IElementType getElementType() { return null; }
+        };
       }
       return null;
     }
