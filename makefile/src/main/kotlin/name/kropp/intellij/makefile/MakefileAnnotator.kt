@@ -1,6 +1,5 @@
 package name.kropp.intellij.makefile
 
-import com.intellij.codeInspection.*
 import com.intellij.lang.*
 import com.intellij.lang.annotation.*
 import com.intellij.lang.annotation.HighlightSeverity.*
@@ -23,9 +22,7 @@ class MakefileAnnotator : Annotator {
   private val lineTokenSet = TokenSet.create(MakefileTypes.IDENTIFIER)
 
   override fun annotate(element: PsiElement, holder: AnnotationHolder) {
-    if (element is MakefileRule && element.isUnused()) {
-      holder.newAnnotation(WEAK_WARNING, "Redundant rule").range(element).highlightType(ProblemHighlightType.LIKE_UNUSED_SYMBOL).withFix(RemoveRuleFix(element)).create()
-    } else if (element is MakefileTarget && !(element.parent.parent.parent as MakefileRule).isUnused()) {
+    if (element is MakefileTarget && !(element.parent.parent.parent as MakefileRule).isUnused()) {
       holder.mark(element, if (element.isSpecialTarget) SPECIAL_TARGET else TARGET)
     } else if (element is MakefilePrerequisite) {
       holder.mark(element, PREREQUISITE)
