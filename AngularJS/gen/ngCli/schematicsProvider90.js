@@ -1,8 +1,8 @@
 "use strict";
 const schematic_command_1 = require("@angular/cli/models/schematic-command");
-const config_1 = require("@angular/cli/utilities/config");
+const project_1 = require("@angular/cli/utilities/project");
 const schematicsProvider = (async function () {
-    let workspace = await config_1.getWorkspace('local');
+    let workspace = await project_1.getWorkspaceDetails();
     let command = new schematic_command_1.SchematicCommand({ workspace: workspace }, null, null);
     let { listSchematicNames } = (await command.createWorkflow({ interactive: false })).engineHost;
     let defaultSchematicCollection = await command.getDefaultSchematicCollection();
