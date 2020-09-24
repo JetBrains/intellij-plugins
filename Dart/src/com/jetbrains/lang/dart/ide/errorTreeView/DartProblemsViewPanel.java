@@ -106,7 +106,6 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
 
     table.setShowVerticalLines(false);
     table.setShowHorizontalLines(false);
-    table.setStriped(true);
     table.setRowHeight(table.getRowHeight() + JBUIScale.scale(4));
 
     JTableHeader tableHeader = table.getTableHeader();
