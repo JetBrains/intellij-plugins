@@ -9,9 +9,8 @@ Support for editing and running UNIX Makefiles
     ]]></description>
 
   <change-notes><![CDATA[
-The new version comes with a number of improvements to parser and new Code Style settings page.
-Tool window got a toolbar with handy collapse all/expand all buttons, filter for special targets,
-option to sort targets and automatically scroll to source on focus.
+The new version comes with another bunch of improvements for parser.
+Make runner now inherits customized environment variables in supported IDEs (e. g. in GoLand)
 ]]></change-notes>
 
   <idea-version since-build="202.6397"/>
