@@ -11,6 +11,7 @@ public class PhoneGapInstalledPluginsPanel extends InstalledPackagesPanel {
   public PhoneGapInstalledPluginsPanel(Project project,
                                        PackagesNotificationPanel area) {
     super(project, area);
+    myPackagesTable.setShowGrid(false);
   }
 
   @Override

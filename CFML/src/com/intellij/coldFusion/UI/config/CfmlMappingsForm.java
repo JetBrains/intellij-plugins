@@ -102,6 +102,7 @@ public class CfmlMappingsForm {
         return new Item("", "");
       }
     };
+    myTableEditor.setShowGrid(false);
     myTableEditor.getEmptyText().setText(CfmlBundle.message("no.mapping"));
 
     myTablePanel.setBorder(IdeBorderFactory.createTitledBorder(CfmlBundle.message("border.text.server.mappings"), false, JBUI.insetsTop(8)).setShowLine(false));
