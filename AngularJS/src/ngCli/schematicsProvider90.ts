@@ -2,10 +2,10 @@
 import {Collection, Schematic} from '@angular-devkit/schematics';
 import {SchematicsProvider} from "./schematicsProvider";
 import {SchematicCommand} from "@angular/cli/models/schematic-command";
-import {getWorkspace} from "@angular/cli/utilities/config"
+import {getWorkspaceDetails} from "@angular/cli/utilities/project"
 
 const schematicsProvider: Promise<SchematicsProvider> = (async function () {
-  let workspace = await getWorkspace('local');
+  let workspace = await getWorkspaceDetails()
   let command = new (SchematicCommand as any)({workspace: workspace}, null, null);
   let {listSchematicNames} = (await command.createWorkflow({interactive: false})).engineHost;
   let defaultSchematicCollection = await command.getDefaultSchematicCollection()
