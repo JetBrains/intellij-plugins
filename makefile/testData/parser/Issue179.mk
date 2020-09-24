@@ -1,0 +1,1 @@
+$(info please define the FOO variable!)

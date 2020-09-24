@@ -93,7 +93,7 @@ CHARS = [0-9\p{L}.!\-?%@/_\[\]+~*\^&+<>]
 "-include"         { return KEYWORD_INCLUDE; }
 "sinclude"         { return KEYWORD_INCLUDE; }
 "vpath"            { return KEYWORD_VPATH; }
-"define"           { yybegin(DEFINE); return KEYWORD_DEFINE; }
+^"define"           { yybegin(DEFINE); return KEYWORD_DEFINE; }
 "undefine"         { return KEYWORD_UNDEFINE; }
 "ifeq"             { return KEYWORD_IFEQ; }
 "ifneq"            { return KEYWORD_IFNEQ; }
