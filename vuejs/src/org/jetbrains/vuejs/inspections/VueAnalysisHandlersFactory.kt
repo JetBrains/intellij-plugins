@@ -63,7 +63,7 @@ class VueAnalysisHandlersFactory : JSAnalysisHandlersFactory() {
     }
   }
 
-  override fun getReferenceChecker(reporter: JSReferenceInspectionProblemReporter): JSReferenceChecker {
+  override fun getReferenceChecker(reporter: JSProblemReporter<*>): JSReferenceChecker {
     return object : JSReferenceChecker((reporter)) {
       override fun addCreateFromUsageFixes(node: JSReferenceExpression?,
                                            resolveResults: Array<out ResolveResult>?,

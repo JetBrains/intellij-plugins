@@ -27,7 +27,7 @@ public class ActionScriptAnalysisHandlersFactory extends JSAnalysisHandlersFacto
 
   @NotNull
   @Override
-  public JSReferenceChecker getReferenceChecker(@NotNull JSReferenceInspectionProblemReporter reporter) {
+  public JSReferenceChecker getReferenceChecker(@NotNull JSProblemReporter<?> reporter) {
     return new ActionScriptReferenceChecker(reporter);
   }
 

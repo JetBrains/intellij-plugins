@@ -9,7 +9,10 @@ import com.intellij.lang.javascript.inspections.JSUnresolvedFunctionInspection;
 import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
-import com.intellij.lang.typescript.inspections.*;
+import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection;
+import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection;
+import com.intellij.lang.typescript.inspections.TypeScriptValidateJSTypesInspection;
+import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection;
 import com.sixrr.inspectjs.validity.ThisExpressionReferencesGlobalObjectJSInspection;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,7 +37,6 @@ public class Angular2TemplateInspectionsProvider implements InspectionToolProvid
       TypeScriptUnresolvedFunctionInspection.class,
       TypeScriptValidateTypesInspection.class,
       TypeScriptValidateJSTypesInspection.class,
-      TypeScriptAccessibilityCheckInspection.class,
 
       ThisExpressionReferencesGlobalObjectJSInspection.class,
       JSUnusedGlobalSymbolsInspection.class,

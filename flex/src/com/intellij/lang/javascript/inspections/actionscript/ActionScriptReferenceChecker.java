@@ -20,7 +20,7 @@ import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.types.JSAnyType;
-import com.intellij.lang.javascript.validation.JSReferenceInspectionProblemReporter;
+import com.intellij.lang.javascript.validation.JSProblemReporter;
 import com.intellij.lang.javascript.validation.TypedJSReferenceChecker;
 import com.intellij.lang.javascript.validation.fixes.CreateFlexMobileViewIntentionAndFix;
 import com.intellij.lang.javascript.validation.fixes.CreateJSEventMethod;
@@ -42,7 +42,7 @@ import java.util.List;
 
 public class ActionScriptReferenceChecker extends TypedJSReferenceChecker {
 
-  public ActionScriptReferenceChecker(@NotNull JSReferenceInspectionProblemReporter reporter) {
+  public ActionScriptReferenceChecker(@NotNull JSProblemReporter<?> reporter) {
     super(reporter);
   }
 

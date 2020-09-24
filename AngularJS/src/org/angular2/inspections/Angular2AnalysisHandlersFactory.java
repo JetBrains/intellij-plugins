@@ -12,8 +12,8 @@ import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.JSThisExpression;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.util.JSClassUtils;
+import com.intellij.lang.javascript.validation.JSProblemReporter;
 import com.intellij.lang.javascript.validation.JSReferenceChecker;
-import com.intellij.lang.javascript.validation.JSReferenceInspectionProblemReporter;
 import com.intellij.lang.javascript.validation.TypeScriptReferenceChecker;
 import com.intellij.lang.javascript.validation.fixes.CreateJSFunctionIntentionAction;
 import com.intellij.lang.javascript.validation.fixes.CreateJSVariableIntentionAction;
@@ -41,7 +41,7 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
   }
 
   @Override
-  public @NotNull JSReferenceChecker getReferenceChecker(@NotNull JSReferenceInspectionProblemReporter reporter) {
+  public @NotNull JSReferenceChecker getReferenceChecker(@NotNull JSProblemReporter<?> reporter) {
     return new TypeScriptReferenceChecker(reporter) {
       @Override
       protected void addCreateFromUsageFixesForCall(@NotNull JSReferenceExpression methodExpression,
