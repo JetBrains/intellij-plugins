@@ -114,7 +114,7 @@ Makefile
       PsiWhiteSpace('    ')
       PsiElement(chars)('some')
       PsiWhiteSpace(' ')
-      PsiElement(FUNCTION_NAME)('value')
+      PsiElement(chars)('value')
       PsiElement(EOL)('\n')
       PsiElement(endef)('endef')
   PsiElement(EOL)('\n')

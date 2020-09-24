@@ -39,7 +39,7 @@ ASSIGN=("="|":="|"::="|"?="|"!="|"+=")
 CHARS = [0-9\p{L}.!\-?%@/_\[\]+~*\^&+<>]
 
 
-%state SQSTRING DQSTRING
+%state SQSTRING DQSTRING DEFINE
 
 %%
 
@@ -55,6 +55,14 @@ CHARS = [0-9\p{L}.!\-?%@/_\[\]+~*\^&+<>]
   "'"   { return CHARS; }
   "#"+  { return CHARS; }
   {EOL} { yybegin(YYINITIAL); return EOL; }
+}
+
+<DEFINE> {
+  "endef"  { yybegin(YYINITIAL); return KEYWORD_ENDEF; }
+  {CHARS}+ { return CHARS; }
+  "\""  { return CHARS; }
+  "'"   { return CHARS; }
+  "#"+  { return CHARS; }
 }
 
 \\"#"                  { return CHARS; }
@@ -85,9 +93,8 @@ CHARS = [0-9\p{L}.!\-?%@/_\[\]+~*\^&+<>]
 "-include"         { return KEYWORD_INCLUDE; }
 "sinclude"         { return KEYWORD_INCLUDE; }
 "vpath"            { return KEYWORD_VPATH; }
-"define"           { return KEYWORD_DEFINE; }
+"define"           { yybegin(DEFINE); return KEYWORD_DEFINE; }
 "undefine"         { return KEYWORD_UNDEFINE; }
-"endef"            { return KEYWORD_ENDEF; }
 "ifeq"             { return KEYWORD_IFEQ; }
 "ifneq"            { return KEYWORD_IFNEQ; }
 "ifdef"            { return KEYWORD_IFDEF; }

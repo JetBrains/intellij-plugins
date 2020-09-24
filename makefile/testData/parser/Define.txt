@@ -90,7 +90,7 @@ Makefile
       PsiWhiteSpace('  ')
       PsiElement(chars)('deferred')
       PsiWhiteSpace(' ')
-      PsiElement(FUNCTION_NAME)('or')
+      PsiElement(chars)('or')
       PsiWhiteSpace(' ')
       PsiElement(chars)('immediate')
       PsiElement(EOL)('\n')
