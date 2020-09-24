@@ -93,7 +93,9 @@ else
         self.reporter = reporter
         self.my_mutex = Mutex.new
         self.already_run_tests = []
+      end
 
+      def init
         Minitest.my_drb_url = DRb.start_service(nil, self.already_run_tests).uri
       end
 
@@ -168,6 +170,7 @@ else
         self.parallel_run = parallel_run?
         if parallel_run
           self.test_case_manager = RubyMineMinitestParallelTestCaseManager.new(self)
+          self.test_case_manager.init
         else
           self.test_case_manager = RubyMineMinitestSequenceTestCaseManager.new(self)
         end
@@ -268,7 +271,7 @@ else
           test_name = get_test_name(test)
           location = test.class.instance_method(test_name).source_location
           "file://#{location[0]}:#{location[1]}"
-        rescue
+        rescue NameError, NoMethodError
           fqn = get_fqn_from_test(test)
           "ruby_minitest_qn://#{fqn}" if fqn
         end
@@ -284,8 +287,8 @@ else
 
       private
       def parallel_run?
-        defined?(Minitest) and Minitest.respond_to?(:parallel_executor) and Minitest.parallel_executor.respond_to?(:start) or
-            defined?(MiniTest::Unit::TestCase) and MiniTest::Unit::TestCase.respond_to?(:test_order) and MiniTest::Unit::TestCase.test_order == :parallel
+        defined?(Minitest) && Minitest.respond_to?(:parallel_executor) && Minitest.parallel_executor.respond_to?(:start) ||
+            defined?(MiniTest::Unit::TestCase) && MiniTest::Unit::TestCase.respond_to?(:test_order) && MiniTest::Unit::TestCase.test_order == :parallel
       end
 
       def get_test_name(test)
