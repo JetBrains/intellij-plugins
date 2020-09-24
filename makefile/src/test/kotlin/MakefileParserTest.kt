@@ -36,6 +36,7 @@ class MakefileParserTest : ParsingTestCase("parser", "mk", MakefileParserDefinit
   fun testWhitespace() = doTest(true)
   fun testShellWithCurly() = doTest(true)
   fun testNonAscii() = doTest(true)
+  fun testStrings() = doTest(true)
 
   fun testIssue7() = doTest(true)
   fun testIssue9() = doTest(true)
@@ -82,6 +83,7 @@ class MakefileParserTest : ParsingTestCase("parser", "mk", MakefileParserDefinit
   fun testIssue167() = doTest(true)
   fun testIssue170() = doTest(true)
   fun testIssue175() = doTest(true)
+  fun testIssue185() = doTest(true)
 
   fun testFunctionForeach() = doTest(true)
   fun testFunctionCall() = doTest(true)

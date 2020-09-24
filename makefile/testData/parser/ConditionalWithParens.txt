@@ -21,7 +21,7 @@ Makefile
     MakefileBlockImpl(BLOCK)
       MakefileCommandImpl(COMMAND)
         PsiElement(\t)('\t')
-        PsiElement(chars)('unexport')
+        PsiElement(unexport)('unexport')
         PsiWhiteSpace(' ')
         PsiElement(chars)('GOFLAGS')
         PsiElement(EOL)('\n')
