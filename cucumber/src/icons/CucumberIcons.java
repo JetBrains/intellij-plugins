@@ -14,5 +14,5 @@ public final class CucumberIcons {
   private static @NotNull Icon load(@NotNull String path, long cacheKey, int flags) {
     return IconManager.getInstance().loadRasterizedIcon(path, CucumberIcons.class, cacheKey, flags);
   }
-  /** 16x16 */ public static final @NotNull Icon Cucumber = load("/org/jetbrains/plugins/cucumber/icons/cucumber.svg", -7386424857737514378L, 0);
+  /** 16x16 */ public static final @NotNull Icon Cucumber = load("/org/jetbrains/plugins/cucumber/icons/cucumber.svg", -8579700482095551739L, 0);
 }

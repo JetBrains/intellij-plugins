@@ -14,5 +14,5 @@ public final class PhoneGapIcons {
   private static @NotNull Icon load(@NotNull String path, long cacheKey, int flags) {
     return IconManager.getInstance().loadRasterizedIcon(path, PhoneGapIcons.class, cacheKey, flags);
   }
-  /** 16x16 */ public static final @NotNull Icon PhonegapIntegration = load("/com/github/masahirosuzuka/PhoneGapIntelliJPlugin/icons/PhonegapIntegration.svg", -5417724664832314418L, 0);
+  /** 16x16 */ public static final @NotNull Icon PhonegapIntegration = load("/com/github/masahirosuzuka/PhoneGapIntelliJPlugin/icons/PhonegapIntegration.svg", 306623214660941190L, 0);
 }

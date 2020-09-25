@@ -13,5 +13,5 @@ public final class ClionEmbeddedPlatformioIcons {
   private static @NotNull Icon load(@NotNull String path, long cacheKey, int flags) {
     return IconManager.getInstance().loadRasterizedIcon(path, ClionEmbeddedPlatformioIcons.class, cacheKey, flags);
   }
-  /** 16x16 */ public static final @NotNull Icon Platformio = load("/icons/platformio.svg", 2142297394321775157L, 0);
+  /** 16x16 */ public static final @NotNull Icon Platformio = load("/icons/platformio.svg", -7305078627391991742L, 0);
 }

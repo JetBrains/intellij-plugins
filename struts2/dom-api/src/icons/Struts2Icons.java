@@ -14,7 +14,7 @@ public final class Struts2Icons {
   private static @NotNull Icon load(@NotNull String path, long cacheKey, int flags) {
     return IconManager.getInstance().loadRasterizedIcon(path, Struts2Icons.class, cacheKey, flags);
   }
-  /** 16x16 */ public static final @NotNull Icon Action = load("/resources/icons/action.svg", 2782502296728944510L, 0);
-  /** 10x10 */ public static final @NotNull Icon Action_small = load("/resources/icons/action_small.svg", -6400116197098802950L, 0);
-  /** 10x10 */ public static final @NotNull Icon Edit_small = load("/resources/icons/edit_small.svg", 7194010604706053500L, 0);
+  /** 16x16 */ public static final @NotNull Icon Action = load("/resources/icons/action.svg", -2108978303873293150L, 0);
+  /** 10x10 */ public static final @NotNull Icon Action_small = load("/resources/icons/action_small.svg", -8020028532505103616L, 0);
+  /** 10x10 */ public static final @NotNull Icon Edit_small = load("/resources/icons/edit_small.svg", 6041440383753005846L, 0);
 }
