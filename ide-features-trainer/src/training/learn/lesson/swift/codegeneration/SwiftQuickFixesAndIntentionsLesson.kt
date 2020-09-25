@@ -1,10 +1,10 @@
 package training.learn.lesson.swift.codegeneration
 
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.*
 
-class SwiftQuickFixesAndIntentionsLesson(module: Module) : KLesson("swift.codegeneration.quickfixes", "Quick-fixes and Intentions", module,
-                                                                   "Swift") {
+class SwiftQuickFixesAndIntentionsLesson(module: Module) : KLesson("swift.codegeneration.quickfixes", LessonsBundle.message("swift.codegeneration.quickfix.name"), module, "Swift") {
 
   private val sample: LessonSample = parseLessonSample("""
 import Foundation
@@ -59,50 +59,48 @@ class QuickFixes: NSObject {
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
 
-    task { text("<ide/> shows all the same ${code("fix-its")} for your Swift code as Xcode does.") }
+    task { text(LessonsBundle.message("swift.codegeneration.quickfix.intro", code("fix-its"))) }
     task { caret(6, 17) }
     task {
       triggers("ShowIntentionActions")
-      text("Press ${action("ShowIntentionActions")} and select <strong>Apply Fix-it</strong> to replace the unused variable with ${code("_")}")
+      text(LessonsBundle.message("swift.codegeneration.quickfix.fixit", action("ShowIntentionActions"), code("_")))
     }
     task {
       triggers("CodeInspection.OnEditor")
-      text("AppCode also integrates SourceKit as a separate inspection. This means you can run it on the whole file and fix all the problems at once if several fix-its are available. Press ${
-            action("CodeInspection.OnEditor")
-        }.")
+      text(LessonsBundle.message("swift.codegeneration.quickfix.sourcekit.inspection", action("CodeInspection.OnEditor")))
     }
     task {
-      text("As you can see, we have several problems in this piece of code. Let's fix some of them. Select <strong>Swift → SourceKit inspections</strong> and click the <strong>Apply Fix-it</strong> button on the right. This should correct all the problems in this group.")
+      text(LessonsBundle.message("swift.codegeneration.quickfix.sourcekit.fixit"))
     }
     task { caret(15, 19) }
     task {
       triggers("ShowIntentionActions", "EditorChooseLookupItem")
-      text("Now press ${action("EditorEscape")} to return to the editor window, place the caret on the incorrectly spelled variable name, and then press ${action("ShowIntentionActions")}. Select <strong>Typo: Rename to...</strong>, choose the correct option, and then press ${LessonUtil.rawEnter()}")
+      text(LessonsBundle.message("swift.codegeneration.quickfix.typo.in.var", action("EditorEscape"), action("ShowIntentionActions"), LessonUtil.rawEnter()))
     }
     task { caret(15, 41) }
     task {
       triggers("ShowIntentionActions", "ShowIntentionActions")
-      text("Note how only the needed part was corrected and all variable usages were automatically renamed. Now, repeat the same actions twice to fix the ${code("incorrctlySpeled")} string.")
+      text(LessonsBundle.message("swift.codegeneration.quickfix.typo.in.string", code("incorrctlySpeled")))
     }
     task {
       triggers("GotoNextError")
-      text("Press ${action("GotoNextError")} to go to the next error.")
+      text(LessonsBundle.message("swift.codegeneration.quickfix.go.next.error", action("GotoNextError")))
     }
     task {
       triggers("ShowIntentionActions")
-      text("Error handling intentions can help you add ${code("try/catch/throws")} where needed. Press ${action("EditorEscape")}→${action("ShowIntentionActions")} and select one of the quick-fixes.")
+      text(LessonsBundle.message("swift.codegeneration.quickfix.error.handling", code("try/catch/throws"), action("EditorEscape"), action("ShowIntentionActions")))
     }
     task {
       triggers("GotoNextError")
-      text("Press ${action("GotoNextError")} to go to the next warning.")
+      text(LessonsBundle.message("swift.codegeneration.quickfix.go.next.warning", action("GotoNextError")))
     }
     task {
       triggers("com.intellij.codeInsight.daemon.impl.DaemonTooltipWithActionRenderer\$addActionsRow$1")
-      text("You can also remove redundant ${code("@objc")} attributes. Press <shortcut>⇧⌥⏎</shortcut>.")
+      text(LessonsBundle.message("swift.codegeneration.quickfix.redundant", code("@objc")))
     }
     task {
       triggers("ShowIntentionActions")
-      text("If you need to add or remove an explicit type to/from some variable, simply press ${action("ShowIntentionActions")} and select <strong>Add/Remove explicit type</strong>. Try it now with the ${code("fileManager")} variable.")
+      text(LessonsBundle.message("swift.codegeneration.quickfix.explicit.type", action("ShowIntentionActions"), code("fileManager")))
     }
   }
 }

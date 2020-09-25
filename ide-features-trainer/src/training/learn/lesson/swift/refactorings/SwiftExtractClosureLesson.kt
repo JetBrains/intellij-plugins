@@ -1,12 +1,13 @@
 package training.learn.lesson.swift.refactorings
 
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 import training.learn.lesson.kimpl.parseLessonSample
 
-class SwiftExtractClosureLesson(module: Module) : KLesson("swift.refactorings.extract.closure", "Extract Closure", module, "Swift") {
+class SwiftExtractClosureLesson(module: Module) : KLesson("swift.refactorings.extract.closure", LessonsBundle.message("swift.refactoring.extract.closure.name"), module, "Swift") {
 
   private val sample: LessonSample = parseLessonSample("""
 import UIKit
@@ -36,11 +37,11 @@ class ExtractClosure: UIViewController {
     task { select(14, 1, 19, 1) }
 
     task {
-      text("Extract Closure allows you to encapsulate a code selection into a new closure, with customizable parameters and return type. It works similarly to the Extract Method refactoring.")
+      text(LessonsBundle.message("swift.refactoring.extract.closure.intro"))
     }
     task {
       triggers("Refactorings.QuickListPopupAction", "SwiftIntroduceClosureVariable")
-      text("Press ${action("Refactorings.QuickListPopupAction")} and then select <strong>Closure...</strong>.")
+      text(LessonsBundle.message("swift.refactoring.extract.closure.exec", action("Refactorings.QuickListPopupAction")))
     }
   }
 }

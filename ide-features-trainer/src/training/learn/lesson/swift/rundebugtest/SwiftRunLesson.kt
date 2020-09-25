@@ -1,9 +1,10 @@
 package training.learn.lesson.swift.rundebugtest
 
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.*
 
-class SwiftRunLesson(module: Module) : KLesson("swift.rdt.run", "Run", module, "Swift") {
+class SwiftRunLesson(module: Module) : KLesson("swift.rdt.run", LessonsBundle.message("swift.rdt.run.name"), module, "Swift") {
 
   private val sample: LessonSample = parseLessonSample("""
 import UIKit
@@ -33,19 +34,19 @@ class RunExample: UIViewController {
     task { caret(6, 10) }
     task {
       triggers("Run")
-      text("<ide/> has two different actions for running the project and for debugging it (because in general, debugging is slower). Try running your application by pressing ${action("Run")}.")
+      text(LessonsBundle.message("swift.rdt.run.actions", action("Run")))
     }
     task {
       triggers("Stop")
-      text("Stop your application by pressing ${action("Stop")}.")
+      text(LessonsBundle.message("swift.rdt.run.stop", action("Stop")))
     }
     task {
       triggers("ChooseRunConfiguration")
-      text("Great! To select another Run Configuration or simulator for the current run configuration and quickly run your application, press ${action("ChooseRunConfiguration")}, select needed Run Configuration or simulator, and then press ${LessonUtil.rawEnter()}.")
+      text(LessonsBundle.message("swift.rdt.run.another", action("ChooseRunConfiguration"), LessonUtil.rawEnter()))
     }
     task {
       triggers("Stop")
-      text("Stop your application by pressing ${action("Stop")}.")
+      text(LessonsBundle.message("swift.rdt.run.final", action("Stop")))
     }
   }
 }

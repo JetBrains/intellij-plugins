@@ -1,12 +1,13 @@
 package training.learn.lesson.swift.editor
 
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 import training.learn.lesson.kimpl.parseLessonSample
 
-class SwiftQuickPopupsLesson(module: Module) : KLesson("swift.codeassistance.quickpopups", "Quick Popups", module, "Swift") {
+class SwiftQuickPopupsLesson(module: Module) : KLesson("swift.codeassistance.quickpopups", LessonsBundle.message("swift.editor.popups.name"), module, "Swift") {
 
   private val sample: LessonSample = parseLessonSample("""
 import Foundation
@@ -37,21 +38,21 @@ class Duplicate: UIViewController {
     task { caret(18, 34) }
     task {
       triggers("ParameterInfo")
-      text("Press ${action("ParameterInfo")} to see the initializer signature.")
+      text(LessonsBundle.message("swift.editor.popups.param.info", action("ParameterInfo")))
     }
     task {
       triggers("EditorEscape")
-      text("Press ${action("EditorEscape")} to close the popup.")
+      text(LessonsBundle.message("swift.editor.popups.close.param.info", action("EditorEscape")))
     }
     task { caret(4, 26) }
     task {
       triggers("QuickJavaDoc")
-      text("Press ${action("QuickJavaDoc")} to see documentation for the symbol at the caret.")
+      text(LessonsBundle.message("swift.editor.popups.doc", action("QuickJavaDoc")))
     }
     task { caret(4, 26) }
     task {
       triggers("QuickImplementations")
-      text("Press ${action("QuickImplementations")} to see the definition of the symbol at the caret.")
+      text(LessonsBundle.message("swift.editor.popups.impl", action("QuickImplementations")))
     }
   }
 }

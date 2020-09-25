@@ -1,12 +1,13 @@
 package training.learn.lesson.swift.editor
 
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 import training.learn.lesson.kimpl.parseLessonSample
 
-class SwiftDuplicateLesson(module: Module) : KLesson("swift.editorbasics.duplicate", "Duplicate", module, "Swift") {
+class SwiftDuplicateLesson(module: Module) : KLesson("swift.editorbasics.duplicate", LessonsBundle.message("swift.editor.duplicate.name"), module, "Swift") {
 
 
   private val sample: LessonSample = parseLessonSample("""
@@ -40,13 +41,13 @@ class Duplicate: UIViewController {
     task { caret(15, 22) }
     task {
       triggers("EditorDuplicate")
-      text("Duplicate any line with ${action("EditorDuplicate")}.")
+      text(LessonsBundle.message("swift.editor.duplicate.line", action("EditorDuplicate")))
     }
     task { select(14, 1, 18, 1) }
 
     task {
       triggers("EditorDuplicate")
-      text("You can do the same thing with multiple lines, too. Simply select two or more lines and duplicate them with ${action("EditorDuplicate")}.")
+      text(LessonsBundle.message("swift.editor.duplicate.several.lines", action("EditorDuplicate")))
     }
   }
 }

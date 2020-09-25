@@ -1,13 +1,14 @@
 package training.learn.lesson.swift.navigation
 
 import com.intellij.icons.AllIcons
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 import training.learn.lesson.kimpl.parseLessonSample
 
-class SwiftTODOsBookmarksLesson(module: Module) : KLesson("swift.navigation.bookmarks", "TODOs & Bookmarks", module, "Swift") {
+class SwiftTODOsBookmarksLesson(module: Module) : KLesson("swift.navigation.bookmarks", LessonsBundle.message("swift.navigation.todo.name"), module, "Swift") {
 
   private val sample: LessonSample = parseLessonSample("""
 import UIKit
@@ -101,29 +102,29 @@ class Navigation: UITableViewController {
 
     task {
       triggers("ActivateTODOToolWindow")
-      text("Have you ever wondered how many todos there are in your code? In <ide/>, there is a dedicated <strong>TODO</strong> toolwindow for them. Activate it by using ${action("ActivateTODOToolWindow")}.")
+      text(LessonsBundle.message("swift.navigation.todo.activate", action("ActivateTODOToolWindow")))
     }
     task {
       triggers("com.intellij.ide.todo.SetTodoFilterAction$1")
-      text("You can define your own custom <strong>TODO</strong> filters. Open the TODO filters dialog with ${icon(AllIcons.General.Filter)} → <strong>Edit Filters</strong> and then try adding your own filters using RegExps.")
+      text(LessonsBundle.message("swift.navigation.todo.custom", icon(AllIcons.General.Filter)))
     }
-    task { text("Press ${action("EditorEscape")} to return to editor window.") }
+    task { text(LessonsBundle.message("swift.navigation.todo.go.back", action("EditorEscape"))) }
     task { caret(20, 9) }
     task {
       triggers("ToggleBookmark")
-      text("Now press ${action("ToggleBookmark")}. This shortcut toggles a bookmark in your code. Bookmarks are saved in the project directory and are useful if you want to point your colleague to a specific place in your code.")
+      text(LessonsBundle.message("swift.navigation.todo.bookmark", action("ToggleBookmark")))
     }
     task {
       triggers("ShowBookmarks")
-      text("View all the bookmarks by using the ${action("ShowBookmarks")} shortcut.")
+      text(LessonsBundle.message("swift.navigation.todo.all.bookmarks", action("ShowBookmarks")))
     }
     task {
       triggers("com.intellij.ide.bookmarks.actions.EditBookmarkDescriptionAction")
-      text("You can change the name of a bookmark. Press ${action("EditorSplitLine")} and enter a new name for it.")
+      text(LessonsBundle.message("swift.navigation.todo.change.bookmark", action("EditorSplitLine")))
     }
     task {
       triggers("ActivateFavoritesToolWindow")
-      text("Close the <strong>Bookmarks</strong> dialog by using ${action("EditorEscape")}. Press ${action("ActivateFavoritesToolWindow")}. The <strong>Favorites</strong> tool window you see aggregates bookmarks, breakpoints, and favorites.")
+      text(LessonsBundle.message("swift.navigation.todo.favorites", action("EditorEscape"), action("ActivateFavoritesToolWindow")))
     }
   }
 }

@@ -1,12 +1,13 @@
 package training.learn.lesson.swift.navigation
 
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 import training.learn.lesson.kimpl.parseLessonSample
 
-class SwiftPreciseNavigationLesson(module: Module) : KLesson("swift.navigation.precise", "Precise Navigation", module, "Swift") {
+class SwiftPreciseNavigationLesson(module: Module) : KLesson("swift.navigation.precise", LessonsBundle.message("swift.navigation.precise.name"), module, "Swift") {
 
   private val sample: LessonSample = parseLessonSample("""
 import UIKit
@@ -38,47 +39,47 @@ class PreciseNavigationController : UIViewController {
 
     task { caret(5, 19) }
     task {
-      text("Several shortcuts for navigating within a code file can make your development much more efficient. Let's take a quick look at these.")
+      text(LessonsBundle.message("swift.navigation.precise.intro"))
     }
     task {
       triggers("GotoNextError")
-      text("There are several warnings and an error in this file. Navigate to the first error by using ${action("GotoNextError")}.")
+      text(LessonsBundle.message("swift.navigation.precise.next.error", action("GotoNextError")))
     }
     task {
       triggers("GotoNextError")
-      text("Now, jump to the next error by using the same shortcut again.")
+      text(LessonsBundle.message("swift.navigation.precise.next.error.again"))
     }
     task {
       triggers("GotoPreviousError")
-      text("Jump back to the first error with ${action("GotoPreviousError")}.")
+      text(LessonsBundle.message("swift.navigation.precise.first.error", action("GotoPreviousError")))
     }
     task {
       triggers("CommentByLineComment", "GotoNextError", "CommentByLineComment")
-      text("Now comment each of these lines by pressing ${action("CommentByLineComment")} - ${action("GotoNextError")} - ${action("CommentByLineComment")}.")
+      text(LessonsBundle.message("swift.navigation.precise.comment.combo", action("CommentByLineComment"), action("GotoNextError"), action("CommentByLineComment")))
     }
     task {
       triggers("GotoNextError")
-      text("Cool! Now try pressing ${action("GotoNextError")} again - it should point you to the first warning in the file.")
+      text(LessonsBundle.message("swift.navigation.precise.first.warning", action("GotoNextError")))
     }
     task {
       triggers("ShowIntentionActions")
-      text("Press ${action("EditorEscape")} and use ${action("ShowIntentionActions")} to fix the first warning.")
+      text(LessonsBundle.message("swift.navigation.precise.fix.warning", action("EditorEscape"), action("ShowIntentionActions")))
     }
     task {
       triggers("MethodDown")
-      text("To quickly jump to the next method in the current file, press ${action("MethodDown")}.")
+      text(LessonsBundle.message("swift.navigation.precise.next.method", action("MethodDown")))
     }
     task {
       triggers("MethodUp")
-      text("Jump to the previous method by using ${action("MethodUp")}.")
+      text(LessonsBundle.message("swift.navigation.precise.prev.method", action("MethodUp")))
     }
     task {
       triggers("JumpToLastChange")
-      text("Imagine you have a long file and you can't quite remember what you've changed in it and where. Simply press ${action("JumpToLastChange")} to jump to the most recent change in the file.")
+      text(LessonsBundle.message("swift.navigation.precise.jump.last.changes", action("JumpToLastChange")))
     }
     task {
       triggers("GotoLine")
-      text("Finally, when you need to jump to a specific line/column in your code, just press ${action("GotoLine")}.")
+      text(LessonsBundle.message("swift.navigation.precise.jump.line", action("GotoLine")))
     }
   }
 }

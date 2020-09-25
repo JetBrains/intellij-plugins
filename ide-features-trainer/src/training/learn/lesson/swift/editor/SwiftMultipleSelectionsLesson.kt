@@ -1,12 +1,13 @@
 package training.learn.lesson.swift.editor
 
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 import training.learn.lesson.kimpl.parseLessonSample
 
-class SwiftMultipleSelectionsLesson(module: Module) : KLesson("swift.editorbasics.multipleselections", "Multiple Selections", module, "Swift") {
+class SwiftMultipleSelectionsLesson(module: Module) : KLesson("swift.editorbasics.multipleselections", LessonsBundle.message("swift.editor.selections.name"), module, "Swift") {
 
   private val sample: LessonSample = parseLessonSample("""import Foundation
 
@@ -51,40 +52,40 @@ SIX
     task { caret(14, 18) }
     task {
       triggers("SelectNextOccurrence")
-      text("Press ${action("SelectNextOccurrence")} to select the symbol at the caret.")
+      text(LessonsBundle.message("swift.editor.selections.next", action("SelectNextOccurrence")))
     }
     task {
       triggers("SelectNextOccurrence")
-      text("Press ${action("SelectNextOccurrence")} again to select the next occurrence of this symbol.")
+      text(LessonsBundle.message("swift.editor.selections.next.again", action("SelectNextOccurrence")))
     }
     task {
       triggers("UnselectPreviousOccurrence")
-      text("Press ${action("UnselectPreviousOccurrence")} to deselect the last occurrence.")
+      text(LessonsBundle.message("swift.editor.selections.unselect", action("UnselectPreviousOccurrence")))
     }
     task {
       triggers("SelectAllOccurrences")
-      text("Press ${action("SelectAllOccurrences")} to select all occurrences in the file.")
+      text(LessonsBundle.message("swift.editor.selections.select.all", action("SelectAllOccurrences")))
     }
     task {
       triggers("EditorEscape")
-      text("Type ${code("td")} to replace all occurrences of ${code("th")} with ${code("td")}, and then press ${action("EditorEscape")}.")
+      text(LessonsBundle.message("swift.editor.selections.replace", code("td"), code("th"), code("td"), action("EditorEscape")))
     }
     task { caret(29, 1) }
     task {
       triggers("EditorToggleColumnMode", "EditorDownWithSelection", "EditorDownWithSelection", "EditorDownWithSelection", "EditorDownWithSelection", "EditorDownWithSelection")
-      text("Toggle Column Selection using ${action("EditorToggleColumnMode")} and select all the lines from ${code("ONE")} to ${code("SIX")}.")
+      text(LessonsBundle.message("swift.editor.selections.column", action("EditorToggleColumnMode"), code("ONE"), code("SIX")))
     }
     task {
       triggers("EditorNextWordWithSelection")
-      text("Now type ${code("case")} and select all case names with ${action("EditorNextWordWithSelection")}")
+      text(LessonsBundle.message("swift.editor.selections.select.sample", code("case"), action("EditorNextWordWithSelection")))
     }
     task {
       triggers("EditorToggleCase", "EditorToggleColumnMode")
-      text("Press ${action("EditorToggleCase")} to toggle the case, and then exit the Column Selection mode by pressing ${action("EditorToggleColumnMode")} again.")
+      text(LessonsBundle.message("swift.editor.selections.select.sample.toggle", action("EditorToggleCase"), action("EditorToggleColumnMode")))
     }
     task {
       triggers("ReformatCode")
-      text("Press ${action("EditorEscape")}, reformat the code with ${action("ReformatCode")} and that's it!")
+      text(LessonsBundle.message("swift.editor.selections.reformat", action("EditorEscape"), action("ReformatCode")))
     }
   }
 }

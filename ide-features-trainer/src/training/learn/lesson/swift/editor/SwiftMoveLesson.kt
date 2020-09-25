@@ -1,12 +1,13 @@
 package training.learn.lesson.swift.editor
 
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 import training.learn.lesson.kimpl.parseLessonSample
 
-class SwiftMoveLesson(module: Module) : KLesson("swift.editorbasics.move", "Move", module, "Swift") {
+class SwiftMoveLesson(module: Module) : KLesson("swift.editorbasics.move", LessonsBundle.message("swift.editor.move.name"), module, "Swift") {
 
 
   private val sample: LessonSample = parseLessonSample("""
@@ -38,12 +39,12 @@ class Move: UIViewController {
     task { caret(18, 9) }
     task {
       triggers("MoveLineDown", "MoveLineDown")
-      text("Rearranging lines usually takes two actions: cut and paste. In <ide/>, you can do it with just one, as pressing ${action("MoveLineDown")} will pull the current line down. Move the current line to the end of the ${code("viewDidLoad")} function.")
+      text(LessonsBundle.message("swift.editor.move.line.down", action("MoveLineDown"), code("viewDidLoad")))
     }
     task { caret(16, 9) }
     task {
       triggers("MoveLineUp", "MoveLineUp")
-      text("Similarly, to pull a line up, use ${action("MoveLineUp")}. Move the ${code("header")} declaration so it precedes its setup.")
+      text(LessonsBundle.message("swift.editor.move.line.up", action("MoveLineUp"), code("header")))
     }
   }
 }

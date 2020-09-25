@@ -1,12 +1,13 @@
 package training.learn.lesson.swift.editor
 
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 import training.learn.lesson.kimpl.parseLessonSample
 
-class SwiftCodeFormattingLesson(module: Module) : KLesson("swift.codeassistance.codeformatting", "Code Formatting", module, "Swift") {
+class SwiftCodeFormattingLesson(module: Module) : KLesson("swift.codeassistance.codeformatting", LessonsBundle.message("swift.editor.format.name"), module, "Swift") {
 
   private val sample: LessonSample = parseLessonSample("""
 
@@ -41,12 +42,12 @@ class Format: UIViewController {
 
     task {
       triggers("ReformatCode")
-      text("<ide/> can help you correct code formatting with just one action. Try reformatting the selected code with ${action("ReformatCode")}.")
+      text(LessonsBundle.message("swift.editor.format.reformat", action("ReformatCode")))
     }
 
     task {
       triggers("ReformatCode")
-      text("To reformat the whole source file, use ${action("ReformatCode")} when no lines are selected. Press ${action("EditorEscape")} and then ${action("ReformatCode")}.")
+      text(LessonsBundle.message("swift.editor.format.reformat.whole.file", action("ReformatCode"), action("EditorEscape"), action("ReformatCode")))
     }
   }
 }

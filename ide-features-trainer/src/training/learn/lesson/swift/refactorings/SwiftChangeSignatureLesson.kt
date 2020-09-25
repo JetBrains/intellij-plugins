@@ -1,13 +1,14 @@
 package training.learn.lesson.swift.refactorings
 
 import com.intellij.icons.AllIcons
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 import training.learn.lesson.kimpl.parseLessonSample
 
-class SwiftChangeSignatureLesson(module: Module) : KLesson("swift.refactorings.change.signature", "Change Signature", module, "Swift") {
+class SwiftChangeSignatureLesson(module: Module) : KLesson("swift.refactorings.change.signature", LessonsBundle.message("swift.refactoring.change.signature.name"), module, "Swift") {
 
   private val sample: LessonSample = parseLessonSample("""
 import UIKit
@@ -39,19 +40,19 @@ class ChangeSignature: UIViewController {
 
     task { caret(16, 22) }
     task {
-      text("<strong>Change Signature</strong> is a refactoring that lets you change the names of methods and functions, edit internal and external parameter names, change their order, and change the visibility of methods and functions – all at once.")
+      text(LessonsBundle.message("swift.refactoring.change.signature.intro"))
     }
     task {
       triggers("ChangeSignature")
-      text("Press ${action("ChangeSignature")} to change the ${code("method")} name to ${code("setup")}.")
+      text(LessonsBundle.message("swift.refactoring.change.signature.exec", action("ChangeSignature"), code("method"), code("setup")))
     }
     task {
       triggers("ChangeSignature")
-      text("Press ${action("ChangeSignature")} again. Click the row with the ${code("tableView")} parameter and change it to ${code("table")}, or add an internal parameter name.")
+      text(LessonsBundle.message("swift.refactoring.change.signature.exec.again", action("ChangeSignature"), code("tableView"), code("table")))
     }
     task {
       triggers("ChangeSignature")
-      text("Finally, invoke <strong>Change Signature</strong> again to change the parameter order using ${icon(AllIcons.General.ArrowUp)}/${icon(AllIcons.General.ArrowDown)} buttons or <shortcut>⌥↑</shortcut>/<shortcut>⌥↓</shortcut> shortcuts.")
+      text(LessonsBundle.message("swift.refactoring.change.signature.final", icon(AllIcons.General.ArrowUp), icon(AllIcons.General.ArrowDown)))
     }
   }
 }

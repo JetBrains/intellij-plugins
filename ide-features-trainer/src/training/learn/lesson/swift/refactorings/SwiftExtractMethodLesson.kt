@@ -1,13 +1,14 @@
 package training.learn.lesson.swift.refactorings
 
 import com.intellij.icons.AllIcons
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 import training.learn.lesson.kimpl.parseLessonSample
 
-class SwiftExtractMethodLesson(module: Module) : KLesson("swift.refactorings.extract.method", "Extract Method", module, "Swift") {
+class SwiftExtractMethodLesson(module: Module) : KLesson("swift.refactorings.extract.method", LessonsBundle.message("swift.refactoring.extract.method.name"), module, "Swift") {
 
   private val sample: LessonSample = parseLessonSample("""
 import UIKit
@@ -37,21 +38,20 @@ class ExtractMethod: UIViewController {
     task { select(11, 9, 18, 43) }
     task {
       triggers("ExtractMethod")
-      text("Extract Method is a refactoring that lets you encapsulate a code selection into a new method, with customizable parameters and return type. Let's extract some lines of code into a new ${code("setup")} function. Press ${action("ExtractMethod")}.")
+      text(LessonsBundle.message("swift.refactoring.extract.method.intro", code("setup"), action("ExtractMethod")))
     }
     task {
       triggers("\$Undo")
-      text("Press ${action("\$Undo")} to undo the changes.")
+      text(LessonsBundle.message("swift.refactoring.extract.method.undo", action("\$Undo")))
     }
     task { select(11, 9, 18, 43) }
 
     task {
-      text(
-        "When extracting a method in <ide/>, you can change its signature. Click one of the parameters in the <strong>Parameters</strong> section and use ${icon(AllIcons.General.ArrowUp)}/${icon(AllIcons.General.ArrowDown)} icons to change the order of parameters. Change their names by clicking the parameter row. ")
+      text(LessonsBundle.message("swift.refactoring.extract.method.change.params", icon(AllIcons.General.ArrowUp), icon(AllIcons.General.ArrowDown)))
     }
     task {
       triggers("ExtractMethod")
-      text("Now press ${action("ExtractMethod")} and try changing the signature of the extracted method.")
+      text(LessonsBundle.message("swift.refactoring.extract.method.exec.again", action("ExtractMethod")))
     }
   }
 }

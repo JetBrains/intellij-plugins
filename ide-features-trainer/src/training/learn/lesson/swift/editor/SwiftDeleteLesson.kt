@@ -1,12 +1,13 @@
 package training.learn.lesson.swift.editor
 
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 import training.learn.lesson.kimpl.parseLessonSample
 
-class SwiftDeleteLesson(module: Module) : KLesson("swift.editorbasics.deleteline", "Delete", module, "Swift") {
+class SwiftDeleteLesson(module: Module) : KLesson("swift.editorbasics.deleteline", LessonsBundle.message("swift.editor.delete.name"), module, "Swift") {
 
 
   private val sample: LessonSample = parseLessonSample("""
@@ -40,11 +41,11 @@ class Delete: UIViewController {
     task { caret(12, 9) }
     task {
       triggers("EditorDeleteLine")
-      text("Delete the current line with ${action("EditorDeleteLine")}.")
+      text(LessonsBundle.message("swift.editor.delete.action", action("EditorDeleteLine")))
     }
     task {
       triggers("\$Undo")
-      text("To restore the deleted line, press ${action("\$Undo")}.")
+      text(LessonsBundle.message("swift.editor.delete.undo", action("\$Undo")))
     }
   }
 }

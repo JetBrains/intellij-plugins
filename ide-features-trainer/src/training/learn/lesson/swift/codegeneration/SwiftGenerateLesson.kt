@@ -1,9 +1,10 @@
 package training.learn.lesson.swift.codegeneration
 
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.*
 
-class SwiftGenerateLesson(module: Module) : KLesson("swift.codegeneration.generate", "Generate", module, "Swift") {
+class SwiftGenerateLesson(module: Module) : KLesson("swift.codegeneration.generate", LessonsBundle.message("swift.codegeneration.generate.name"), module, "Swift") {
 
   private val sample: LessonSample = parseLessonSample("""
 import Foundation
@@ -23,19 +24,19 @@ class IDE {
 
     task { caret(12, 1) }
     task {
-      text("You can generate ${code("equals")}, ${code("hashValue")}, ${code("description")}, and ${code("debugDescription")} properties, as well as initializers by using the <strong>Generate</strong> action.")
+      text(LessonsBundle.message("swift.codegeneration.generate.intro", code("equals"), code("hashValue"), code("description"), code("debugDescription")))
     }
     task {
       triggers("Generate", "Swift.Generate.Init")
-      text("Press ${action("Generate")} and select <strong>Initializer</strong> action in the in the <strong>Generate</strong> popup. Select properties to include into the initializer signature and press ${LessonUtil.rawEnter()}")
+      text(LessonsBundle.message("swift.codegeneration.generate.init", action("Generate"), LessonUtil.rawEnter()))
     }
     task {
       triggers("Swift.Generate.EqualsHashValue")
-      text("Generate ${code("equals")} and ${code("hash")} using ${action("Generate")} → <strong>equals and hash</strong>")
+      text(LessonsBundle.message("swift.codegeneration.generate.hash", code("equals"), code("hash"), action("Generate")))
     }
     task {
       triggers("Swift.Generate.Description")
-      text("Finally, generate ${code("description")} using ${action("Generate")} → <strong>description</strong> action.")
+      text(LessonsBundle.message("swift.codegeneration.generate.description", code("description"), action("Generate")))
     }
 
 

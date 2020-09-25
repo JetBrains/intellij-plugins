@@ -1,9 +1,10 @@
 package training.learn.lesson.swift.rundebugtest
 
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.*
 
-class SwiftDebugLesson(module: Module) : KLesson("swift.rdt.debug", "Debug", module, "Swift") {
+class SwiftDebugLesson(module: Module) : KLesson("swift.rdt.debug", LessonsBundle.message("swift.rdt.debug.name"), module, "Swift") {
 
   private val sample: LessonSample = parseLessonSample("""
 import UIKit
@@ -30,40 +31,39 @@ class DebugExample: UIViewController {
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
 
-    task { text("Now let's learn some debug basics.") }
+    task { text(LessonsBundle.message("swift.rdt.debug.intro")) }
     task {
       triggers("GotoFile", "MasterViewController.swift")
-      text("Navigate to ${code("MasterViewController.swift")} by pressing ${action("GotoFile")}.")
+      text(LessonsBundle.message("swift.rdt.debug.prepare", code("MasterViewController.swift"), action("GotoFile")))
     }
     task { caret(11, 9) }
     task {
       triggers("ToggleLineBreakpoint", "Debug")
-      text("Toggle a breakpoint at line 11 with ${action("ToggleLineBreakpoint")} and then press ${action("Debug")}.")
+      text(LessonsBundle.message("swift.rdt.debug.toggle.break", action("ToggleLineBreakpoint"), action("Debug")))
     }
     task {
       triggers("StepInto", "StepOver")
-      text("Try to step into, by using ${action("StepInto")}, and then step over with ${action("StepOver")}.")
+      text(LessonsBundle.message("swift.rdt.debug.step.into", action("StepInto"), action("StepOver")))
     }
     task {
       triggers("RunToCursor")
-      text("Now, set the caret to line 21 and execute <strong>Run to cursor</strong> - ${action("RunToCursor")}.")
+      text(LessonsBundle.message("swift.rdt.debug.run.cursor", action("RunToCursor")))
     }
     task {
       triggers("StepOver")
-      text("Step over to the next line.")
+      text(LessonsBundle.message("swift.rdt.debug.step.over.next.line"))
     }
     task {
       triggers("EditorSelectWord", "EditorSelectWord", "EvaluateExpression")
-      text("Select ${code("controllers[controllers.count-1]")} using ${action("EditorSelectWord")} and use <strong>Evaluate Expression</strong> (${action("EvaluateExpression")} → ${LessonUtil.rawEnter()}).")
+      text(LessonsBundle.message("swift.rdt.debug.eval", code("controllers[controllers.count-1]"), action("EditorSelectWord"), action("EvaluateExpression"), LessonUtil.rawEnter()))
     }
     task {
       triggers("EditorChooseLookupItem")
-      text(
-        "Enter the dot symbol, select some property, and then press ${LessonUtil.rawEnter()} to evaluate it without switching to LLDB console.")
+      text(LessonsBundle.message("swift.rdt.debug.eval.again", LessonUtil.rawEnter()))
     }
     task {
       triggers("Stop")
-      text("Press ${action("Stop")} to stop debugging the application.")
+      text(LessonsBundle.message("swift.rdt.debug.stop", action("Stop")))
     }
 
 

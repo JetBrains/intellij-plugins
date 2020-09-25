@@ -1,12 +1,13 @@
 package training.learn.lesson.swift.editor
 
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 import training.learn.lesson.kimpl.parseLessonSample
 
-class SwiftSelectionLesson(module: Module) : KLesson("swift.editorbasics.selection", "Selection", module, "Swift") {
+class SwiftSelectionLesson(module: Module) : KLesson("swift.editorbasics.selection", LessonsBundle.message("swift.editor.selection.name"), module, "Swift") {
 
 
   private val sample: LessonSample = parseLessonSample("""
@@ -38,25 +39,23 @@ class Select: UIViewController {
     task { caret(12, 13) }
     task {
       triggers("EditorNextWordWithSelection")
-      text("Place the caret before any word. Press ${
-          action("EditorNextWordWithSelection")
-      } to move the caret to the next word and select everything in between.")
+      text(LessonsBundle.message("swift.editor.selection.word", action("EditorNextWordWithSelection")))
     }
     task {
       triggers("EditorSelectWord")
-      text("Press ${action("EditorSelectWord")} to extend the selection to the next code block.")
+      text(LessonsBundle.message("swift.editor.selection.expand", action("EditorSelectWord")))
     }
     task {
       triggers("EditorSelectWord")
-      text("Try increasing your selection with ${action("EditorSelectWord")} until your whole file is selected.")
+      text(LessonsBundle.message("swift.editor.selection.expand.more", action("EditorSelectWord")))
     }
     task {
       triggers("EditorUnSelectWord")
-      text("${action("EditorUnSelectWord")} shrinks the current selection. Try pressing it.")
+      text(LessonsBundle.message("swift.editor.selection.shrink", action("EditorUnSelectWord")))
     }
     task {
       triggers("\$SelectAll")
-      text("Now select the whole file instantly with ${action("\$SelectAll")}.")
+      text(LessonsBundle.message("swift.editor.selection.all", action("\$SelectAll")))
     }
   }
 }

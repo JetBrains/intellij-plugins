@@ -1,10 +1,10 @@
 package training.learn.lesson.swift.codegeneration
 
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.*
 
-class SwiftOverrideImplementLesson(module: Module) : KLesson("swift.codegeneration.overrideimplement", "Override / Implement", module,
-                                                             "Swift") {
+class SwiftOverrideImplementLesson(module: Module) : KLesson("swift.codegeneration.overrideimplement", LessonsBundle.message("swift.codegeneration.overrideimplement.name"), module, "Swift") {
 
   private val sample: LessonSample = parseLessonSample("""
 import UIKit
@@ -35,16 +35,16 @@ class OverrideImplement: UIViewController, UITableViewDataSource {
 
     task { caret(22, 5) }
     task {
-      text("You can override any method of a parent class or implement any protocols, by using the <strong>Override/Implement</strong> actions (${action("OverrideMethods")}/${action("ImplementMethods")})")
+      text(LessonsBundle.message("swift.codegeneration.overrideimplement.intro", action("OverrideMethods"), action("ImplementMethods")))
     }
     task {
       triggers("ImplementMethods")
-      text("Press ${action("ImplementMethods")} → ${LessonUtil.rawEnter()} and add stubs for all required methods from ${code("UITableViewDataSource")}")
+      text(LessonsBundle.message("swift.codegeneration.overrideimplement.implement", action("ImplementMethods"), LessonUtil.rawEnter(), code("UITableViewDataSource")))
     }
     task { caret(22, 5) }
     task {
       triggers("OverrideMethods")
-      text("Now let's try overriding several methods at once. Press ${action("OverrideMethods")} and start typing ${code("viewAppear")}. The list of methods and properties you can override should be filtered down to just two methods. Press ${action("\$SelectAll")}→ ${LessonUtil.rawEnter()} to override them.")
+      text(LessonsBundle.message("swift.codegeneration.overrideimplement.override", action("OverrideMethods"), code("viewAppear"), action("\$SelectAll"), LessonUtil.rawEnter()))
     }
 
 

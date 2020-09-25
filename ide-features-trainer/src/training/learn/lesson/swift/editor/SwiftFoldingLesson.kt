@@ -1,12 +1,13 @@
 package training.learn.lesson.swift.editor
 
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 import training.learn.lesson.kimpl.parseLessonSample
 
-class SwiftFoldingLesson(module: Module) : KLesson("swift.editorbasics.collapse", "Folding", module, "Swift") {
+class SwiftFoldingLesson(module: Module) : KLesson("swift.editorbasics.collapse", LessonsBundle.message("swift.editor.folding.name"), module, "Swift") {
 
 
   private val sample: LessonSample = parseLessonSample("""
@@ -39,33 +40,33 @@ class FoldingDemo {
     task { caret(13, 9) }
     task {
       triggers("CollapseRegion")
-      text("Sometimes you need to collapse a piece of code for better readability. Try collapsing code with ${action("CollapseRegion")}.")
+      text(LessonsBundle.message("swift.editor.folding.collapse", action("CollapseRegion")))
     }
     task {
       triggers("ExpandRegion")
-      text("To expand a code region, press ${action("ExpandRegion")}.")
+      text(LessonsBundle.message("swift.editor.folding.expand", action("ExpandRegion")))
     }
     task {
       triggers("CollapseAllRegions")
-      text("If you want to collapse all regions in the file, use ${action("CollapseAllRegions")}.")
+      text(LessonsBundle.message("swift.editor.folding.collapse.all", action("CollapseAllRegions")))
     }
     task {
       triggers("ExpandAllRegions")
-      text("Similarly, press ${action("ExpandAllRegions")} to expand all available regions.")
+      text(LessonsBundle.message("swift.editor.folding.expand.all", action("ExpandAllRegions")))
     }
     task { select(7, 9, 8, 24) }
     task {
       triggers("CollapseSelection")
-      text("In <ide/>, there's a way to fold any sequence of statements or declarations. Try folding the selected region with ${action("CollapseSelection")}.")
+      text(LessonsBundle.message("swift.editor.folding.collapse.statement.any", action("CollapseSelection")))
     }
     task {
       triggers("ExpandRegion")
-      text("Now press ${action("ExpandRegion")} to go the other way.")
+      text(LessonsBundle.message("swift.editor.folding.expand.statement", action("ExpandRegion")))
     }
     task { caret(18, 13) }
     task {
       triggers("CollapseBlock")
-      text("And finally, use ${action("CollapseBlock")} to fold the control flow statements.")
+      text(LessonsBundle.message("swift.editor.folding.block", action("CollapseBlock")))
     }
   }
 }

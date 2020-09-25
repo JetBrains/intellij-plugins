@@ -1,9 +1,10 @@
 package training.learn.lesson.swift.refactorings
 
+import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.*
 
-class SwiftRenameLesson(module: Module) : KLesson("swift.refactorings.rename", "Rename", module, "Swift") {
+class SwiftRenameLesson(module: Module) : KLesson("swift.refactorings.rename", LessonsBundle.message("swift.refactoring.rename.name"), module, "Swift") {
 
   private val sample: LessonSample = parseLessonSample("""
 import UIKit
@@ -30,24 +31,24 @@ class Rename: UIViewController {
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
 
-    task { text("You can rename anything by placing the caret on a symbol and using the Rename refactoring.") }
+    task { text(LessonsBundle.message("swift.refactoring.rename.any")) }
     task {
       triggers("GotoFile", "MasterViewController.swift")
-      text("Navigate to ${code("MasterViewController.swift")} by pressing ${action("GotoFile")}")
+      text(LessonsBundle.message("swift.refactoring.rename.go.to.file", code("MasterViewController.swift"), action("GotoFile")))
     }
     task { caret(6, 10) }
     task {
       triggers("RenameElement", "NextTemplateVariable")
-      text("Let's start with something simple like renaming the ${code("objects")} field to ${code("array")}. Press ${action("RenameElement")}, enter a new name, and then press ${LessonUtil.rawEnter()}")
+      text(LessonsBundle.message("swift.refactoring.rename.var", code("objects"), code("array"), action("RenameElement"), LessonUtil.rawEnter()))
     }
     task { caret(5, 39) }
     task {
       triggers("RenameElement", "NextTemplateVariable")
-      text("Now, repeat the same actions and rename the ${code("DetailViewController")} type to something new.")
+      text(LessonsBundle.message("swift.refactoring.rename.class", code("DetailViewController")))
     }
     task {
       triggers("FindUsages")
-      text("Press ${action("FindUsages")}. As you can see, the rename works globally, even renaming occurrences in .xib and .storyboard files.")
+      text(LessonsBundle.message("swift.refactoring.rename.check", action("FindUsages")))
     }
   }
 }
