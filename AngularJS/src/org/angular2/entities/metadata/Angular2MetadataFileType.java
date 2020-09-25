@@ -22,6 +22,9 @@ public final class Angular2MetadataFileType extends MetadataJsonFileType {
   @NonNls public static final String METADATA_SUFFIX = ".metadata.json";
   @NonNls public static final String D_TS_SUFFIX = ".d.ts";
 
+  private Angular2MetadataFileType() {
+  }
+
   @Override
   public boolean isMyFileType(@NotNull VirtualFile file) {
     final CharSequence fileName = file.getNameSequence();

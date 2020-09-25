@@ -9,7 +9,7 @@ public class Angular2SvgFileType extends Angular2HtmlFileType {
 
   public static final Angular2SvgFileType INSTANCE = new Angular2SvgFileType();
 
-  protected Angular2SvgFileType() {
+  private Angular2SvgFileType() {
     super(Angular2SvgLanguage.INSTANCE);
   }
 

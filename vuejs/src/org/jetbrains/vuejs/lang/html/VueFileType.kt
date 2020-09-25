@@ -6,7 +6,7 @@ import icons.VuejsIcons
 import org.jetbrains.vuejs.VueBundle
 import javax.swing.Icon
 
-class VueFileType : LanguageFileType(VueLanguage.INSTANCE) {
+class VueFileType private constructor(): LanguageFileType(VueLanguage.INSTANCE) {
   companion object {
     @JvmField
     val INSTANCE: VueFileType = VueFileType()

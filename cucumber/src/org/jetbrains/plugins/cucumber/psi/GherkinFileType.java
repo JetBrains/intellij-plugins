@@ -13,7 +13,7 @@ import javax.swing.*;
 public class GherkinFileType extends LanguageFileType {
   public static final GherkinFileType INSTANCE = new GherkinFileType();
 
-  protected GherkinFileType() {
+  private GherkinFileType() {
     super(GherkinLanguage.INSTANCE);
   }
 

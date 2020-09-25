@@ -28,7 +28,7 @@ import javax.swing.*;
 public final class ConceptFileType extends LanguageFileType {
   public static final FileType INSTANCE = new ConceptFileType();
 
-  public ConceptFileType() {
+  private ConceptFileType() {
     super(Concept.INSTANCE);
   }
 

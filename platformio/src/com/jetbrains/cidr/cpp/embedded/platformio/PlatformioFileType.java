@@ -17,7 +17,7 @@ public class PlatformioFileType extends LanguageFileType {
   public static final PlatformioFileType INSTANCE = new PlatformioFileType();
   public static final String FILE_NAME = "platformio.ini";
 
-  public PlatformioFileType() {
+  private PlatformioFileType() {
     super(findLanguage());
   }
 

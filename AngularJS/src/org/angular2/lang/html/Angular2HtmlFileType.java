@@ -10,7 +10,7 @@ public class Angular2HtmlFileType extends HtmlFileType {
 
   public static final Angular2HtmlFileType INSTANCE = new Angular2HtmlFileType();
 
-  protected Angular2HtmlFileType() {
+  private Angular2HtmlFileType() {
     super(Angular2HtmlLanguage.INSTANCE);
   }
 
