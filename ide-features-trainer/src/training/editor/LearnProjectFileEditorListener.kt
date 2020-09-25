@@ -14,7 +14,7 @@ import training.learn.LearnBundle
 import training.util.findLanguageSupport
 import java.lang.ref.WeakReference
 
-class LearnProjectFileEditorListener(project: Project) : FileEditorManagerListener {
+private class LearnProjectFileEditorListener(project: Project) : FileEditorManagerListener {
   private val ref by lazy { WeakReference(findLanguageSupport(project)) }
   private val langSupport: LangSupport? get() = ref.get()
 
