@@ -9,12 +9,11 @@ import org.jetbrains.annotations.PropertyKey;
 
 import java.util.function.Supplier;
 
-public final class Angular2Bundle {
+public final class Angular2Bundle extends DynamicBundle {
   @NonNls public static final String BUNDLE = "messages.Angular2Bundle";
-  private static final DynamicBundle INSTANCE = new DynamicBundle(BUNDLE);
+  private static final Angular2Bundle INSTANCE = new Angular2Bundle();
 
-  private Angular2Bundle() {
-  }
+  private Angular2Bundle() { super(BUNDLE); }
 
   public static @NotNull @Nls String message(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, Object @NotNull ... params) {
     return INSTANCE.getMessage(key, params);
