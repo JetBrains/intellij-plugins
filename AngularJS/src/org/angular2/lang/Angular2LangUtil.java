@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang;
 
 import com.intellij.lang.injection.InjectedLanguageManager;
@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Angular2LangUtil {
+public final class Angular2LangUtil {
 
   @NonNls public static final String ANGULAR_CORE_PACKAGE = "@angular/core";
   @NonNls public static final String ANGULAR_CLI_PACKAGE = "@angular/cli";

@@ -27,7 +27,7 @@ import static com.intellij.psi.util.CachedValueProvider.Result.create;
 import static com.intellij.psi.util.CachedValuesManager.getCachedValue;
 import static com.intellij.util.ObjectUtils.notNull;
 
-public class Angular2TypeUtils {
+public final class Angular2TypeUtils {
 
   @NonNls private static final String HTML_ELEMENT_CLASS_NAME = "HTMLElement";
   @NonNls private static final String HTML_ELEMENT_TAG_NAME_MAP_CLASS_NAME = "HTMLElementTagNameMap";

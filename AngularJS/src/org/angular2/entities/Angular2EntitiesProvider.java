@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.entities;
 
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider;
@@ -50,7 +50,7 @@ import static org.angular2.entities.ivy.Angular2IvyUtil.hasIvyMetadata;
 import static org.angular2.index.Angular2IndexingHandler.*;
 import static org.angular2.lang.Angular2LangUtil.isAngular2Context;
 
-public class Angular2EntitiesProvider {
+public final class Angular2EntitiesProvider {
 
   static final String TRANSFORM_METHOD = "transform";
 

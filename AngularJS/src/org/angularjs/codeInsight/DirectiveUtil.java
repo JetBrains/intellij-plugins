@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs.codeInsight;
 
 import com.intellij.lang.javascript.psi.JSExpression;
@@ -18,7 +18,7 @@ import java.util.Collection;
 
 import static org.angularjs.index.AngularJSDirectivesSupport.isDirective;
 
-public class DirectiveUtil {
+public final class DirectiveUtil {
 
   public static @NotNull String getPropertyAlias(@NotNull String propertyName, final @Nullable JSExpression attributeTypeExpr) {
     if (attributeTypeExpr instanceof JSLiteralExpression) {

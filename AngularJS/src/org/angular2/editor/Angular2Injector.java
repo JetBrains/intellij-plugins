@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.editor;
 
 import com.intellij.lang.Language;
@@ -32,7 +32,7 @@ import static org.angular2.Angular2DecoratorUtil.*;
 import static org.angular2.lang.expr.parser.Angular2PsiParser.*;
 
 public class Angular2Injector implements MultiHostInjector {
-  static class Holder {
+  static final class Holder {
     static final NullableFunction<PsiElement, Pair<String, String>> BRACES_FACTORY = JSInjectionBracesUtil
       .delimitersFactory(Angular2HtmlLanguage.INSTANCE.getDisplayName(),
                          (project, key) -> /* no support for custom delimiters*/ null);

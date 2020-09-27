@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight;
 
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil;
@@ -44,7 +44,7 @@ import static org.angular2.lang.Angular2LangUtil.ANGULAR_CORE_PACKAGE;
 /**
  * This class is intended to be a single point of origin for any hack to support a badly written library.
  */
-public class Angular2LibrariesHacks {
+public final class Angular2LibrariesHacks {
 
   @NonNls private static final String IONIC_ANGULAR_PACKAGE = "@ionic/angular";
   @NonNls private static final String NG_MODEL_CHANGE = "ngModelChange";

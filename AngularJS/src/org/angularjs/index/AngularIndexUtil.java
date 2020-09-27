@@ -52,7 +52,7 @@ import static org.angularjs.index.AngularJSDirectivesSupport.findAttributeDirect
 /**
  * @author Dennis.Ushakov
  */
-public class AngularIndexUtil {
+public final class AngularIndexUtil {
   public static final int BASE_VERSION = 65; // Don't forget to update AngularJSIndexingHandler registration
 
   private static final ConcurrentMap<String, Key<ParameterizedCachedValue<Collection<String>, Pair<Project, ID<String, ?>>>>> ourCacheKeys =

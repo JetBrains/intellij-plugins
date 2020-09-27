@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight;
 
 import com.intellij.codeInsight.completion.InsertHandler;
@@ -30,7 +30,7 @@ import static com.intellij.util.containers.ContainerUtil.find;
 import static java.util.Collections.singletonList;
 import static org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity;
 
-public class Angular2CodeInsightUtils {
+public final class Angular2CodeInsightUtils {
 
   @Contract(pure = true)
   public static @NotNull LookupElementBuilder decorateLookupElementWithModuleSource(@NotNull LookupElementBuilder element,

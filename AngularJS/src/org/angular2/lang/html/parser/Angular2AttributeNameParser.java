@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.html.parser;
 
 import com.intellij.openapi.util.text.StringUtil;
@@ -23,7 +23,7 @@ import static org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider.NG_TE
 import static org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.isTemplateTag;
 import static org.angular2.lang.html.psi.PropertyBindingType.*;
 
-public class Angular2AttributeNameParser {
+public final class Angular2AttributeNameParser {
 
   @NonNls
   private static final Map<String, String> ATTR_TO_PROP_MAPPING = ContainerUtil.newHashMap(

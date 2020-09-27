@@ -44,7 +44,7 @@ import static org.angularjs.index.AngularJSIndexingHandler.unquote;
 /**
  * @author Dennis.Ushakov
  */
-public class AngularJSProcessor {
+public final class AngularJSProcessor {
   private static final Map<String, String> NG_REPEAT_IMPLICITS = new HashMap<>();
 
   private static final Set<String> COMPONENT_LIFECYCLE_EVENTS = ContainerUtil.newHashSet(

@@ -28,7 +28,7 @@ import static java.util.Collections.emptyList;
 import static org.angular2.Angular2DecoratorUtil.*;
 import static org.angular2.index.Angular2IndexingHandler.resolveComponentsFromIndex;
 
-public class Angular2ComponentLocator {
+public final class Angular2ComponentLocator {
 
   public static @Nullable TypeScriptClass findComponentClass(@NotNull PsiElement templateContext) {
     return ContainerUtil.getFirstItem(findComponentClasses(templateContext));

@@ -25,7 +25,7 @@ import java.util.function.Consumer;
 import static org.angularjs.index.AngularJSIndexingHandler.ANGULAR_DIRECTIVES_DOC_INDEX_USER_STRING;
 import static org.angularjs.index.AngularJSIndexingHandler.ANGULAR_DIRECTIVES_INDEX_USER_STRING;
 
-public class AngularJSDirectivesSupport {
+public final class AngularJSDirectivesSupport {
 
   private static final String INDEX_TAG_NAME_PREFIX = ">";
   private static final String INDEX_ANY_TAG_NAME = "T";

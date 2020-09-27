@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.editor;
 
 import com.intellij.openapi.actionSystem.DataContext;
@@ -17,7 +17,7 @@ import static com.intellij.psi.xml.XmlTokenType.XML_NAME;
 import static com.intellij.util.ObjectUtils.tryCast;
 import static org.angular2.Angular2InjectionUtils.getElementAtCaretFromContext;
 
-public class Angular2EditorUtils {
+public final class Angular2EditorUtils {
 
   static @NotNull List<Angular2Directive> getDirectivesAtCaret(@NotNull DataContext context) {
     PsiElement element = getElementAtCaretFromContext(context);

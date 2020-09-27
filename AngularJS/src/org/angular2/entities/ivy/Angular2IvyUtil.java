@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.entities.ivy;
 
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
@@ -18,7 +18,7 @@ import static com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil.proces
 import static com.intellij.psi.util.CachedValueProvider.Result.create;
 import static org.angular2.entities.Angular2EntitiesProvider.isDeclaredClass;
 
-public class Angular2IvyUtil {
+public final class Angular2IvyUtil {
 
   public static boolean hasIvyMetadata(@NotNull PsiElement el) {
     return Optional.ofNullable(PsiUtilCore.getVirtualFile(el))

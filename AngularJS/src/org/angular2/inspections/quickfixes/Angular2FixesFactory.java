@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.inspections.quickfixes;
 
 import com.intellij.codeInsight.hint.QuestionAction;
@@ -54,7 +54,7 @@ import static com.intellij.util.ObjectUtils.*;
 import static com.intellij.util.containers.ContainerUtil.*;
 import static org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity.*;
 
-public class Angular2FixesFactory {
+public final class Angular2FixesFactory {
 
   @TestOnly
   @NonNls public static final Key<String> DECLARATION_TO_CHOOSE = Key.create("declaration.to.choose");

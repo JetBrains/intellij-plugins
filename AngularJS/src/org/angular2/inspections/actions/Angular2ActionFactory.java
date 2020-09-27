@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.inspections.actions;
 
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static com.intellij.util.ObjectUtils.tryCast;
 
-public class Angular2ActionFactory {
+public final class Angular2ActionFactory {
 
   public static @Nullable AddNgModuleDeclarationAction createAddNgModuleDeclarationAction(@Nullable Editor editor,
                                                                                           @NotNull PsiElement element,
