@@ -9,8 +9,7 @@ import com.intellij.javascript.nodejs.NodeModuleSearchUtil;
 import com.intellij.javascript.nodejs.packageJson.notification.PackageJsonGetDependenciesAction;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationDisplayType;
-import com.intellij.notification.NotificationGroup;
+import com.intellij.notification.NotificationGroupManager;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.ModuleManager;
@@ -19,7 +18,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
-import icons.AngularJSIcons;
 import one.util.streamex.StreamEx;
 import org.angular2.cli.config.AngularConfig;
 import org.angular2.cli.config.AngularConfigProvider;
@@ -39,10 +37,7 @@ import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static org.angular2.lang.Angular2LangUtil.ANGULAR_CLI_PACKAGE;
 
 public final class AngularCliUtil {
-
-  private static final NotificationGroup ANGULAR_CLI_NOTIFICATIONS =
-    new NotificationGroup("Angular CLI", NotificationDisplayType.BALLOON, false, null, AngularJSIcons.Angular2,
-                          Angular2Bundle.message("angular.description.angular-cli"), null);
+  private static final String NOTIFICATION_GROUP_ID = "Angular CLI";
 
   @NonNls private static final List<String> ANGULAR_JSON_NAMES = ContainerUtil.newArrayList(
     "angular.json", ".angular-cli.json", "angular-cli.json");
@@ -84,7 +79,7 @@ public final class AngularCliUtil {
 
   public static void notifyAngularCliNotInstalled(@NotNull Project project, @NotNull VirtualFile cliFolder, @NotNull @Nls String message) {
     VirtualFile packageJson = PackageJsonUtil.findChildPackageJsonFile(cliFolder);
-    Notification notification = ANGULAR_CLI_NOTIFICATIONS.createNotification(
+    Notification notification = NotificationGroupManager.getInstance().getNotificationGroup(NOTIFICATION_GROUP_ID).createNotification(
       message,
       Angular2Bundle.message("angular.notify.cli.required-package-not-installed"),
       NotificationType.WARNING, null);
