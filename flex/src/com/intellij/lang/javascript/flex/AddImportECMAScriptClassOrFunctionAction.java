@@ -34,6 +34,7 @@ import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.util.SmartList;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -197,6 +198,11 @@ public class AddImportECMAScriptClassOrFunctionAction implements HintAction, Que
       return true;
     }
     return false;
+  }
+
+  @Override
+  public @Nullable PsiElement getElementToMakeWritable(@NotNull PsiFile currentFile) {
+    return currentFile;
   }
 
   @Override
