@@ -125,8 +125,7 @@ public class FlexResolveHelper implements JSResolveHelper {
   @Override
   public boolean processPackage(String packageQualifierText, String resolvedName, Processor<? super VirtualFile> processor, GlobalSearchScope globalSearchScope,
                                 Project project) {
-    for(VirtualFile vfile: DirectoryIndex.getInstance(project).getDirectoriesByPackageName(packageQualifierText, globalSearchScope.isSearchInLibraries())) {
-      if (!globalSearchScope.contains(vfile)) continue;
+    for (VirtualFile vfile: DirectoryIndex.getInstance(project).getDirectoriesByPackageName(packageQualifierText, globalSearchScope)) {
       if (vfile.getFileSystem() instanceof JarFileSystem) {
         VirtualFile fileForJar = JarFileSystem.getInstance().getVirtualFileForJar(vfile);
         if (fileForJar != null &&

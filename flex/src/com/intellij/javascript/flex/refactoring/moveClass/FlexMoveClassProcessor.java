@@ -144,14 +144,20 @@ public class FlexMoveClassProcessor extends MoveFilesOrDirectoriesProcessor {
   }
 
   @Override
+  protected boolean canPerformRefactoringInBranch() {
+    return true;
+  }
+
+  @Override
   protected void retargetUsages(UsageInfo @NotNull [] usages, @NotNull Map<PsiElement, PsiElement> oldToNewMap) {
     super.retargetUsages(usages, oldToNewMap);
     for (UsageInfo usage : usages) {
       if (usage instanceof JSRefactoringUtil.ConstructorUsageInfo) {
         final JSRefactoringUtil.ConstructorUsageInfo constuctorUsage = (JSRefactoringUtil.ConstructorUsageInfo)usage;
         final JSReferenceExpression ref = constuctorUsage.getElement();
-        if (ref != null && constuctorUsage.getSubject().isValid()) {
-          ref.bindToElement(constuctorUsage.getSubject().getContainingFile());
+        JSClass subject = constuctorUsage.getSubject();
+        if (ref != null && subject != null) {
+          ref.bindToElement(subject.getContainingFile());
         }
       }
     }
