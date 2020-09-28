@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.types.JSTypeSubstitutor;
 import com.intellij.lang.javascript.refactoring.JSVisibilityUtil;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
@@ -19,9 +20,9 @@ import org.jetbrains.annotations.Nullable;
 class FlexQuickNavigateBuilder extends JSQuickNavigateBuilder {
 
   @Override
-  public String getQuickNavigateInfoForNavigationElement(@NotNull PsiElement element,
-                                                         @NotNull PsiElement originalElement,
-                                                         boolean jsDoc) {
+  public @Nullable @NlsSafe String getQuickNavigateInfoForNavigationElement(@NotNull PsiElement element,
+                                                                            @NotNull PsiElement originalElement,
+                                                                            boolean jsDoc) {
     if (element instanceof JSNamespaceDeclaration) {
       return createQuickNavigateForNamespace((JSNamespaceDeclaration)element);
     }
