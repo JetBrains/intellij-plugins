@@ -17,6 +17,7 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -61,35 +62,38 @@ public class FlexSchemaHandler extends XmlSchemaProvider implements DumbAware {
   @Override
   @Nullable
   public XmlFile getSchema(@NotNull @NonNls final String url, final Module module, @NotNull final PsiFile baseFile) {
-    return url.length() > 0 && JavaScriptSupportLoader.isFlexMxmFile(baseFile) ? getFakeSchemaReference(url, module) : null;
+    return url.length() > 0 && JavaScriptSupportLoader.isFlexMxmFile(baseFile)
+           ? getFakeSchemaReference(url, module, baseFile.getResolveScope())
+           : null;
   }
 
-  private static final Key<Map<String, ParameterizedCachedValue<XmlFile, Module>>> DESCRIPTORS_MAP_IN_MODULE =
+  private static final Key<Map<String, ParameterizedCachedValue<XmlFile, Pair<Module, GlobalSearchScope>>>> DESCRIPTORS_MAP_IN_MODULE =
     Key.create("FLEX_DESCRIPTORS_MAP_IN_MODULE");
 
   @Nullable
-  private static synchronized XmlFile getFakeSchemaReference(final String uri, @Nullable final Module module) {
+  private static synchronized XmlFile getFakeSchemaReference(String uri, @Nullable Module module, @NotNull GlobalSearchScope scope) {
     if (module == null) {
       return null;
     }
 
     if (ModuleType.get(module) == FlexModuleType.getInstance() || !CodeContext.isStdNamespace(uri)) {
-      Map<String, ParameterizedCachedValue<XmlFile, Module>> descriptors = module.getUserData(DESCRIPTORS_MAP_IN_MODULE);
+      Map<String, ParameterizedCachedValue<XmlFile, Pair<Module, GlobalSearchScope>>> descriptors = module.getUserData(DESCRIPTORS_MAP_IN_MODULE);
       if (descriptors == null) {
         descriptors = new THashMap<>();
         module.putUserData(DESCRIPTORS_MAP_IN_MODULE, descriptors);
       }
 
-      ParameterizedCachedValue<XmlFile, Module> reference = descriptors.get(uri);
+      ParameterizedCachedValue<XmlFile, Pair<Module, GlobalSearchScope>> reference = descriptors.get(uri);
       if (reference == null) {
         reference = CachedValuesManager.getManager(module.getProject())
-          .createParameterizedCachedValue(module1 -> {
+          .createParameterizedCachedValue(pair -> {
             final URL resource = FlexSchemaHandler.class.getResource("z.xsd");
             final VirtualFile fileByURL = VfsUtil.findFileByURL(resource);
 
-            XmlFile result = (XmlFile)PsiManager.getInstance(module1.getProject()).findFile(fileByURL).copy();
+            XmlFile result = (XmlFile)PsiManager.getInstance(pair.first.getProject()).findFile(fileByURL).copy();
             result.putUserData(FlexMxmlNSDescriptor.NS_KEY, uri);
-            result.putUserData(FlexMxmlNSDescriptor.MODULE_KEY, module1);
+            result.putUserData(FlexMxmlNSDescriptor.MODULE_KEY, pair.first);
+            result.putUserData(FlexMxmlNSDescriptor.SCOPE_KEY, pair.second);
 
             return new CachedValueProvider.Result<>(result, PsiModificationTracker.MODIFICATION_COUNT);
           }, false);
@@ -97,7 +101,7 @@ public class FlexSchemaHandler extends XmlSchemaProvider implements DumbAware {
         descriptors.put(uri, reference);
       }
       assert !module.getProject().isDisposed() : module.getProject() + " already disposed";
-      return reference.getValue(module);
+      return reference.getValue(Pair.create(module, scope));
     }
     return null;
   }
@@ -124,7 +128,7 @@ public class FlexSchemaHandler extends XmlSchemaProvider implements DumbAware {
     final Set<String> result = new THashSet<>();
     final Set<String> componentsThatHaveNotPackageBackedNamespace = new THashSet<>();
 
-    for (final String namespace : CodeContextHolder.getInstance(project).getNamespaces(module)) {
+    for (final String namespace : CodeContextHolder.getInstance(project).getNamespaces(module, _file.getResolveScope())) {
       if (!CodeContext.isPackageBackedNamespace(namespace) && !illegalNamespaces.contains(namespace)) {
         // package backed namespaces will be added later from JSPackageIndex
         if (tagName == null) {

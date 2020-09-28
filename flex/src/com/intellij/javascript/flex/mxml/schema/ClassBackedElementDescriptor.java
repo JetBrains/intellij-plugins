@@ -25,7 +25,6 @@ import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.index.JSTypeEvaluateManager;
-import com.intellij.lang.javascript.index.JavaScriptIndex;
 import com.intellij.lang.javascript.inspections.actionscript.ActionScriptAnnotatingVisitor;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.*;
@@ -44,8 +43,10 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiNamedElement;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.xml.*;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.*;
@@ -1317,7 +1318,8 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
   public PsiElement getDeclaration() {
     String className = predefined ? OBJECT_CLASS_NAME :this.className;
     if (className.equals(CodeContext.AS3_VEC_VECTOR_QUALIFIED_NAME)) className = VECTOR_CLASS_NAME;
-    final PsiElement jsClass = ActionScriptClassResolver.findClassByQName(className, JavaScriptIndex.getInstance(project), context.module);
+    GlobalSearchScope scope = ObjectUtils.notNull(JSInheritanceUtil.getEnforcedScope(), context.scope);
+    PsiElement jsClass = ActionScriptClassResolver.findClassByQNameStatic(className, scope);
     final PsiFile file = jsClass == null ? null : jsClass.getContainingFile();
     // can be MXML file listed as a component in the manifest file
     return (file != null && JavaScriptSupportLoader.isMxmlOrFxgFile(file)) ? file : jsClass;
