@@ -76,7 +76,6 @@ public class DartServerExtractMethodHandler implements RefactoringActionHandler 
 }
 
 class DartServerExtractMethodDialog extends ServerRefactoringDialog<ServerExtractMethodRefactoring> {
-  @NotNull final ServerExtractMethodRefactoring myRefactoring;
   private final JTextField myMethodNameField = new JTextField();
   private final JCheckBox myAllCheckBox = new JCheckBox(DartBundle.message("checkbox.text.extract.all.occurrences"));
   private final JCheckBox myGetterCheckBox = new JCheckBox(DartBundle.message("checkbox.text.extract.getter"));
@@ -86,7 +85,6 @@ class DartServerExtractMethodDialog extends ServerRefactoringDialog<ServerExtrac
                                 @Nullable Editor editor,
                                 @NotNull ServerExtractMethodRefactoring refactoring) {
     super(project, editor, refactoring);
-    myRefactoring = refactoring;
     setTitle(DartBundle.message("dialog.title.extract.method"));
     init();
 

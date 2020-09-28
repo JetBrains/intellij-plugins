@@ -56,7 +56,6 @@ import java.util.Set;
 
 public class ActionScriptMoveMembersDialog extends RefactoringDialog implements JSMoveMembersOptions {
   @NonNls private static final String RECENTS_KEY = "JSMoveMembersDialog.RECENTS_KEY";
-  private final Project myProject;
   private final JSClass mySourceClass;
   private final String mySourceClassName;
   private final List<JSMemberInfo> myMemberInfos = new ArrayList<>();
@@ -73,7 +72,6 @@ public class ActionScriptMoveMembersDialog extends RefactoringDialog implements 
                                        Set<JSElement> preselectMembers,
                                        MoveCallback moveCallback) {
     super(project, true);
-    myProject = project;
     mySourceClass = sourceClass;
     myMoveCallback = moveCallback;
     setTitle(JavaScriptBundle.message("move.members.dialog.title"));

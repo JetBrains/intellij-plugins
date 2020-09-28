@@ -55,7 +55,6 @@ public class FlexMoveClassDialog extends RefactoringDialog {
   private JLabel myPackageLabel;
   private JTextField myClassNameField;
   private JLabel myClassNameLabel;
-  private final Project myProject;
   private final Collection<JSQualifiedNamedElement> myElements;
   @Nullable private final PsiElement myTargetContainer;
   @Nullable private final MoveCallback myCallback;
@@ -66,7 +65,6 @@ public class FlexMoveClassDialog extends RefactoringDialog {
                              @Nullable PsiElement targetContainer,
                              @Nullable MoveCallback callback) {
     super(project, true);
-    myProject = project;
     myElements = elements;
     myTargetContainer = targetContainer;
     myCallback = callback;

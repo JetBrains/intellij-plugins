@@ -195,14 +195,12 @@ class ExtractLocalVariableProcessor {
 }
 
 class DartServerExtractLocalVariableDialog extends ServerRefactoringDialog<ServerExtractLocalVariableRefactoring> {
-  @NotNull final ServerExtractLocalVariableRefactoring myRefactoring;
   private final NameSuggestionsField myVariableNameField;
 
   DartServerExtractLocalVariableDialog(@NotNull Project project,
                                        @NotNull Editor editor,
                                        @NotNull ServerExtractLocalVariableRefactoring refactoring) {
     super(project, editor, refactoring);
-    myRefactoring = refactoring;
 
     final String[] names = refactoring.getNames();
     myVariableNameField = new NameSuggestionsField(names, project);
