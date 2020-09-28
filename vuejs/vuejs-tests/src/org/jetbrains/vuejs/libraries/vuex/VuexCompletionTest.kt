@@ -641,8 +641,10 @@ class VuexCompletionTest : BasePlatformTestCase() {
           myFixture.checkResultByFile(checkFileName, true)
         }
         else {
-          val expected = myFixture.configureByFile(checkFileName).text.split('\n').filter { it.isNotEmpty() }.toMutableSet()
-          expected.removeAll(list)
+          val expected = myFixture.configureByFile(checkFileName).text.splitToSequence('\n')
+            .filter { it.isNotEmpty() }
+            .toMutableSet()
+          expected.removeAll(list.map { it.replace('\\', '/') })
           assertEmpty("$expected not found in $list", expected)
         }
       }

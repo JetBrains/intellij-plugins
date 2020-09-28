@@ -143,7 +143,7 @@ class VuexTestStructure : BasePlatformTestCase() {
         .append(":")
 
     result
-      .append(element)
+      .append(element.toString().replace('\\', '/'))
       .append(">")
   }
 
