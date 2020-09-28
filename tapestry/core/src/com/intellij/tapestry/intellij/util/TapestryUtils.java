@@ -9,6 +9,7 @@ import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
+import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.xml.*;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.TapestryProject;
@@ -290,18 +291,11 @@ public class TapestryUtils {
    */
   @Nullable
   public static TapestryComponent getTypeOfTag(XmlTag tag) {
-    return outTagToComponentMap.get(tag);
+    return CachedValuesManager.getProjectPsiDependentCache(tag, t -> {
+      Module module = ModuleUtilCore.findModuleForPsiElement(tag);
+      return module == null ? null : getTypeOfTag(module, tag);
+    });
   }
-
-  private static final PsiElementBasedCachedUserDataCache<TapestryComponent, XmlTag> outTagToComponentMap =
-    new PsiElementBasedCachedUserDataCache<TapestryComponent, XmlTag>("TapestryTagToComponentMap") {
-      @Override
-      @Nullable
-      protected TapestryComponent computeValue(XmlTag tag) {
-        Module module = ModuleUtilCore.findModuleForPsiElement(tag);
-        return module == null ? null : getTypeOfTag(module, tag);
-      }
-    };
 
   /**
    * Builds the component object that corresponds to a HTML tag.

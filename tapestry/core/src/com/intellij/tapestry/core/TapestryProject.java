@@ -63,9 +63,6 @@ public class TapestryProject {
   private final IJavaTypeCreator myJavaTypeCreator;
   private final TapestryEventsManager myEventsManager;
 
-  private final MappingDataCache mappingData = new MappingDataCache();
-
-
   public TapestryProject(@NotNull Module module,
                          @NotNull IResourceFinder resourceFinder,
                          @NotNull IJavaTypeFinder javaTypeFinder,
@@ -258,7 +255,7 @@ public class TapestryProject {
       myModule.getProject(),
       scope
     )) {
-      addFromMappingData(result, mappingData.compute(psiMethod.getContainingFile()));
+      addFromMappingData(result, MappingDataCache.getMappingData(psiMethod.getContainingFile()));
     }
 
     // method annotated with @Contribute(ComponentClassResolver.class)
@@ -268,7 +265,7 @@ public class TapestryProject {
       if (attributes.length != 1) continue;
       PsiAnnotationMemberValue value = attributes[0].getValue();
       if (value instanceof PsiClassObjectAccessExpression && "ComponentClassResolver".equals(((PsiClassObjectAccessExpression)value).getOperand().getText())) {
-        addFromMappingData(result, mappingData.compute(annotation.getContainingFile()));
+        addFromMappingData(result, MappingDataCache.getMappingData(annotation.getContainingFile()));
       }
     }
 
