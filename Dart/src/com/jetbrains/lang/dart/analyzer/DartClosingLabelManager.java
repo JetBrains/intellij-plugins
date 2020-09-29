@@ -55,7 +55,7 @@ public class DartClosingLabelManager implements @NotNull Disposable {
   }
 
   public void setShowClosingLabels(boolean value) {
-    final DartCodeInsightSettings settings = DartCodeInsightSettings.getInstance();
+    DartCodeInsightSettings settings = DartCodeInsightSettings.getInstance();
     if (settings.SHOW_CLOSING_LABELS != value) {
       settings.SHOW_CLOSING_LABELS = value;
       myEventDispatcher.getMulticaster().closingLabelPreferenceChanged();
@@ -70,25 +70,25 @@ public class DartClosingLabelManager implements @NotNull Disposable {
     myEventDispatcher.addListener(listener, parentDisposable);
   }
 
-  void computedClosingLabels(@NotNull Project project, @NotNull final String filePath, @NotNull final List<ClosingLabel> labels) {
+  void computedClosingLabels(@NotNull Project project, @NotNull String filePath, @NotNull List<ClosingLabel> labels) {
     if (!getShowClosingLabels()) {
       return;
     }
 
-    final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(filePath);
+    VirtualFile file = LocalFileSystem.getInstance().findFileByPath(filePath);
     if (file == null) {
       return;
     }
 
-    final Runnable runnable = () -> {
-      for (final FileEditor fileEditor : FileEditorManager.getInstance(project).getAllEditors(file)) {
+    Runnable runnable = () -> {
+      for (FileEditor fileEditor : FileEditorManager.getInstance(project).getAllEditors(file)) {
         if (!(fileEditor instanceof TextEditor)) {
           continue;
         }
 
-        final TextEditor textEditor = (TextEditor)fileEditor;
-        final Editor editor = textEditor.getEditor();
-        final InlayModel inlayModel = editor.getInlayModel();
+        TextEditor textEditor = (TextEditor)fileEditor;
+        Editor editor = textEditor.getEditor();
+        InlayModel inlayModel = editor.getInlayModel();
 
         clearEditorInlays(editor);
 
@@ -97,19 +97,19 @@ public class DartClosingLabelManager implements @NotNull Disposable {
         // sort the new inlays by starting offset, reversed order
         labels.sort((label1, label2) -> label2.getOffset() - label1.getOffset());
 
-        final DartAnalysisServerService service = DartAnalysisServerService.getInstance(project);
+        DartAnalysisServerService service = DartAnalysisServerService.getInstance(project);
 
         // create the inlay text for each line
         Map<Integer, String> lineText = new HashMap<>();
         for (ClosingLabel label : labels) {
-          final int offset = service.getConvertedOffset(file, label.getOffset() + label.getLength());
+          int offset = service.getConvertedOffset(file, label.getOffset() + label.getLength());
           if (offset >= editor.getDocument().getTextLength()) {
             // probably outdated data from server; up-to-date data will come soon
             lineText.clear();
             break;
           }
 
-          final Integer line = editor.getDocument().getLineNumber(offset);
+          Integer line = editor.getDocument().getLineNumber(offset);
 
           if (lineText.containsKey(line)) {
             lineText.put(line, lineText.get(line) + ", " + label.getLabel());
@@ -121,7 +121,7 @@ public class DartClosingLabelManager implements @NotNull Disposable {
 
         // build inlays from the line labels
         for (Integer line : lineText.keySet()) {
-          inlayModel.addInlineElement(
+          inlayModel.addAfterLineEndElement(
             editor.getDocument().getLineEndOffset(line), true, new TextLabelCustomElementRenderer(lineText.get(line)));
         }
       }
@@ -132,13 +132,13 @@ public class DartClosingLabelManager implements @NotNull Disposable {
   }
 
   private static void clearEditorInlays(@NotNull Editor editor) {
-    editor.getInlayModel().getInlineElementsInRange(0, editor.getDocument().getTextLength(), TextLabelCustomElementRenderer.class)
+    editor.getInlayModel().getAfterLineEndElementsInRange(0, editor.getDocument().getTextLength(), TextLabelCustomElementRenderer.class)
       .forEach(Disposer::dispose);
   }
 
   private static void clearAllInlays() {
     for (Project project : ProjectManager.getInstance().getOpenProjects()) {
-      final FileEditor[] editors = FileEditorManager.getInstance(project).getAllEditors();
+      FileEditor[] editors = FileEditorManager.getInstance(project).getAllEditors();
 
       for (FileEditor fileEditor : editors) {
         if (fileEditor instanceof TextEditor) {
