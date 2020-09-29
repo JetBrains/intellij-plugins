@@ -14,6 +14,7 @@ import com.intellij.lang.javascript.linter.ui.JSLinterConfigFileView;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.util.ui.FormBuilder;
@@ -102,7 +103,7 @@ public final class TslintPanel {
       .setCustomConfigFilePath(myConfigFileView.getCustomConfigFilePath())
       .setAllowJs(myAllowJs.isSelected());
     if (!StringUtil.isEmptyOrSpaces(myRules.getText())) {
-      builder.setRulesDirectory(myRules.getText().trim());
+      builder.setRulesDirectory(FileUtil.toSystemIndependentName(myRules.getText().trim()));
     }
     return builder.build();
   }
@@ -114,7 +115,7 @@ public final class TslintPanel {
     myConfigFileView.setCustomConfigFileUsed(state.isCustomConfigFileUsed());
     myConfigFileView.setCustomConfigFilePath(StringUtil.notNullize(state.getCustomConfigFilePath()));
     if (!StringUtil.isEmptyOrSpaces(state.getRulesDirectory())) {
-      myRules.setText(state.getRulesDirectory());
+      myRules.setText(FileUtil.toSystemDependentName(state.getRulesDirectory()));
     }
     myAllowJs.setSelected(state.isAllowJs());
 
