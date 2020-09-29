@@ -95,7 +95,7 @@ object LessonUtil {
   }
 
   fun actionName(actionId: String): @NlsActions.ActionText String {
-    val name = ActionManager.getInstance().getAction(actionId).templatePresentation.text ?: error("No action with ID $actionId")
+    val name = ActionManager.getInstance().getAction(actionId).templatePresentation.text?.replace("...", "") ?: error("No action with ID $actionId")
     return "<strong>${name}</strong>"
   }
 
