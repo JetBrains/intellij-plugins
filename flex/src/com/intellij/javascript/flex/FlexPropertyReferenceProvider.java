@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex;
 
 import com.intellij.lang.javascript.psi.*;
@@ -10,7 +11,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.util.ProcessingContext;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -21,10 +21,10 @@ import java.util.Set;
 /**
  * @author yole
  */
-public class FlexPropertyReferenceProvider extends PsiReferenceProvider {
-  private static final Set<String> ourMethodsWithPropertyReferences = ContainerUtil
-    .set("findResourceBundleWithResource", "getString", "getObject", "getClass", "getStringArray", "getNumber", "getInt",
-         "getUint", "getBoolean");
+public final class FlexPropertyReferenceProvider extends PsiReferenceProvider {
+  private static final Set<String> ourMethodsWithPropertyReferences =
+    Set.of("findResourceBundleWithResource", "getString", "getObject", "getClass", "getStringArray", "getNumber", "getInt",
+           "getUint", "getBoolean");
 
   @Override
   public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {

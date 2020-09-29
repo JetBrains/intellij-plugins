@@ -17,7 +17,6 @@ import com.intellij.psi.templateLanguages.TemplateDataElementType;
 import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings;
 import com.intellij.psi.templateLanguages.TemplateDataModifications;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -27,7 +26,7 @@ import java.util.concurrent.ConcurrentMap;
 import static com.dmarcotte.handlebars.parsing.HbTokenTypes.CONTENT;
 import static com.dmarcotte.handlebars.parsing.HbTokenTypes.OUTER_ELEMENT_TYPE;
 
-public class HbFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvider
+public final class HbFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvider
   implements ConfigurableTemplateLanguageFileViewProvider {
 
   private final Language myBaseLanguage;
@@ -98,7 +97,7 @@ public class HbFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvi
 
   @Override
   public @NotNull Set<Language> getLanguages() {
-    return ContainerUtil.set(myBaseLanguage, getTemplateDataLanguage());
+    return Set.of(myBaseLanguage, getTemplateDataLanguage());
   }
 
   @Override

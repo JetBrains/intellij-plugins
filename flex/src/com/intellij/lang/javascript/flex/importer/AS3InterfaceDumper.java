@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.importer;
 
 import com.intellij.lang.javascript.JSFlexAdapter;
@@ -6,7 +7,6 @@ import com.intellij.lang.javascript.dialects.ECMAL4LanguageDialect;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -109,7 +109,7 @@ class AS3InterfaceDumper extends AbstractDumpProcessor {
   }
 
   private static @NonNls final Set<String> doNotNeedQoting =
-    ContainerUtil.set("null", "NaN", "undefined", "true", "false", "Infinity", "-Infinity");
+    Set.of("null", "NaN", "undefined", "true", "false", "Infinity", "-Infinity");
   private static boolean needsQuoting(final String value) {
     return !doNotNeedQoting.contains(value);
   }

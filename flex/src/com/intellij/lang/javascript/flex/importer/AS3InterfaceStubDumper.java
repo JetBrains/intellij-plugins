@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.importer;
 
 import com.intellij.lang.actionscript.psi.stubs.impl.ActionScriptFunctionStubImpl;
@@ -20,8 +21,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-class AS3InterfaceStubDumper extends AS3InterfaceDumper {
-  final LinkedList<StubElement> parents;
+final class AS3InterfaceStubDumper extends AS3InterfaceDumper {
+  private final LinkedList<StubElement> parents;
   private static final JSAttributeList.AccessType[] ourAccessTypes = JSAttributeList.AccessType.values();
   private static final JSAttributeList.ModifierType[] ourModifierTypes = JSAttributeList.ModifierType.values();
 
@@ -39,7 +40,7 @@ class AS3InterfaceStubDumper extends AS3InterfaceDumper {
 
   @Override
   public void addMetaDataValue(String s, String s1) {
-    new JSAttributeNameValuePairStubImpl(s, StringUtil.stripQuotesAroundValue(s1), parents.getLast());
+    new JSAttributeNameValuePairStubImpl(s, StringUtil.unquoteString(s1), parents.getLast());
   }
 
   @Override
@@ -122,7 +123,7 @@ class AS3InterfaceStubDumper extends AS3InterfaceDumper {
   }
 
   @NotNull
-  private JSAttributeList.AccessType getAccessType(MemberInfo memberInfo) {
+  private static JSAttributeList.AccessType getAccessType(MemberInfo memberInfo) {
     final String nsName = memberInfo.name.getNsName(memberInfo);
     JSAttributeList.AccessType accessType = JSAttributeList.AccessType.PACKAGE_LOCAL;
     if ("public".equals(nsName)) accessType = JSAttributeList.AccessType.PUBLIC;
