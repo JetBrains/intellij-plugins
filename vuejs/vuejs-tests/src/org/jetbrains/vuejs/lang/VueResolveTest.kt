@@ -8,7 +8,6 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
-import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.util.Trinity
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.xml.XmlAttribute
@@ -23,7 +22,7 @@ import org.jetbrains.vuejs.model.VueNamedSymbol
 import org.jetbrains.vuejs.model.VueRegularComponent
 
 class VueResolveTest : BasePlatformTestCase() {
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/resolve/"
+  override fun getTestDataPath(): String = getVueTestDataPath() + "/resolve/"
 
   fun testResolveInjectionToPropInObject() {
     myFixture.configureByText("ResolveToPropInObject.vue", """

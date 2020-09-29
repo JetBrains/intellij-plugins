@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.lang
 
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.psi.JSReferenceExpression
-import com.intellij.openapi.application.PathManager
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
@@ -11,9 +10,7 @@ import junit.framework.TestCase
 import one.util.streamex.StreamEx
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpression
 import org.jetbrains.vuejs.lang.html.VueLanguage
-import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.TestRule
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import java.io.File
@@ -52,7 +49,7 @@ class VueTemplateInjectionsTest : BasePlatformTestCase() {
   }
 
   companion object {
-    val testDataPath: String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/injection/template/"
+    val testDataPath: String = getVueTestDataPath() + "/injection/template/"
 
     @com.intellij.testFramework.Parameterized.Parameters(name = "{0}")
     @JvmStatic

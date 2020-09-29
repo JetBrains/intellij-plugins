@@ -9,7 +9,6 @@ import com.intellij.lang.javascript.BaseJSCompletionTestCase.*
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.settings.JSApplicationSettings
-import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.util.RecursionManager
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.testFramework.PlatformTestUtil
@@ -26,7 +25,7 @@ import org.jetbrains.vuejs.model.webtypes.registry.VueWebTypesRegistry
 import java.io.StringReader
 
 class VueCompletionTest : BasePlatformTestCase() {
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/completion/"
+  override fun getTestDataPath(): String = getVueTestDataPath() + "/completion/"
 
   fun testCompleteCssClasses() {
     myFixture.configureByText("a.css", ".externalClass {}")

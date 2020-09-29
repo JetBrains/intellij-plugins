@@ -8,7 +8,6 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader
 import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings
-import com.intellij.openapi.application.PathManager
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings
 import com.intellij.psi.css.codeStyle.CssCodeStyleSettings
@@ -23,7 +22,7 @@ import java.nio.file.Paths
 
 class VueFormatterTest : JavaScriptFormatterTestBase() {
 
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/"
+  override fun getTestDataPath(): String = getVueTestDataPath() + "/"
 
   init {
     myUseReformatText = true

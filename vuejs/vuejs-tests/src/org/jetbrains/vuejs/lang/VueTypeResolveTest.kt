@@ -4,13 +4,12 @@ package org.jetbrains.vuejs.lang
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
-import com.intellij.openapi.application.PathManager
 import com.intellij.psi.util.parentOfType
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 
 class VueTypeResolveTest : BasePlatformTestCase() {
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/typeResolve/"
+  override fun getTestDataPath(): String = getVueTestDataPath() + "/typeResolve/"
 
   fun testVForJS() {
     myFixture.configureByFile("vFor-js.vue")

@@ -15,7 +15,7 @@ repositories {
 }
 
 plugins {
-  id("org.jetbrains.intellij") version "0.4.23"
+  id("org.jetbrains.intellij") version "0.5.0"
   java
   kotlin("jvm") version "1.4.0"
 }
@@ -78,7 +78,7 @@ tasks {
     kotlinOptions.freeCompilerArgs = listOf("-Xjvm-default=compatibility")
   }
   test {
-    systemProperty("idea.home.path", File("${projectDir}/../../").absolutePath)
+    systemProperty("idea.home.path", File("${projectDir}/../").absolutePath)
   }
   wrapper {
     gradleVersion = "6.6.1"

@@ -1,10 +1,7 @@
 package org.jetbrains.vuejs.lang
 
 import com.intellij.lang.javascript.JSAbstractDocumentationTest
-import com.intellij.openapi.application.PathManager
-import com.intellij.testFramework.runInEdtAndWait
 import one.util.streamex.StreamEx
-import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -42,7 +39,7 @@ class VueWebTypesDocumentationTest : JSAbstractDocumentationTest() {
 
   companion object {
     @JvmStatic
-    val TEST_DATA_PATH = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/documentation/web-types"
+    val TEST_DATA_PATH = getVueTestDataPath() + "/documentation/web-types"
 
     @JvmStatic
     @com.intellij.testFramework.Parameterized.Parameters(name = "{0}")

@@ -2,10 +2,9 @@
 package org.jetbrains.vuejs.lang
 
 import com.intellij.lang.javascript.JSMoveTestBase
-import com.intellij.openapi.application.PathManager
 
 class VueMoveTest: JSMoveTestBase() {
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/refactoring/move/"
+  override fun getTestDataPath(): String = getVueTestDataPath() + "/refactoring/move/"
 
   override fun getTestRoot(): String {
     return ""

@@ -2,17 +2,17 @@
 package org.jetbrains.vuejs.libraries.vuex
 
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
-import com.intellij.openapi.application.PathManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.assertUnresolvedReference
 import org.jetbrains.vuejs.lang.createPackageJsonWithVueDependency
+import org.jetbrains.vuejs.lang.getVueTestDataPath
 import org.jetbrains.vuejs.lang.resolveReference
 
 class VuexResolveTest : BasePlatformTestCase() {
 
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/libraries/vuex/resolve"
+  override fun getTestDataPath(): String = getVueTestDataPath() + "/libraries/vuex/resolve"
 
   fun testStorefrontComponentStoreAccess() {
     doStorefrontTest(

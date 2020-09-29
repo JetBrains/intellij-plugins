@@ -4,19 +4,15 @@ package org.jetbrains.vuejs.libraries.vueLoader
 import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection
 import com.intellij.lang.javascript.JSTestUtils.setWebpack
 import com.intellij.lang.javascript.buildTools.webpack.WebPackResolve
-import com.intellij.openapi.application.PathManager
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.css.inspections.invalid.CssUnknownTargetInspection
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
-import org.jetbrains.vuejs.lang.VueTestModule
-import org.jetbrains.vuejs.lang.assertUnresolvedReference
-import org.jetbrains.vuejs.lang.configureDependencies
-import org.jetbrains.vuejs.lang.resolveReference
+import org.jetbrains.vuejs.lang.*
 
 class VueLoaderTest  : BasePlatformTestCase() {
 
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/libraries/vueLoader"
+  override fun getTestDataPath(): String = getVueTestDataPath() + "/libraries/vueLoader"
 
   override fun setUp() {
     super.setUp()

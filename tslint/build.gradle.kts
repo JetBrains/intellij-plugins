@@ -36,7 +36,7 @@ sourceSets {
   }
   test {
     java {
-      setSrcDirs(listOf("test"))
+      setSrcDirs(listOf("test/src"))
     }
   }
 }
@@ -50,18 +50,14 @@ val ideVersion = "203-SNAPSHOT"
 
 intellij {
   version = "IU-${ideVersion}"
-  pluginName = "AngularJS"
-  downloadSources = true
+  pluginName = "tslint"
+  downloadSources = false
   updateSinceUntilBuild = false
-  setPlugins("JavaScriptLanguage", "JSIntentionPowerPack", "CSS", "uml", "tslint")
+  setPlugins("JavaScriptLanguage")
 }
 
 dependencies {
   testImplementation("com.jetbrains.intellij.javascript:javascript-test-framework:${ideVersion}")
-  testImplementation("com.jetbrains.intellij.resharper:resharper-test-framework:${ideVersion}")
-  testImplementation("com.jetbrains.intellij.copyright:copyright:${ideVersion}")
-  testImplementation("com.mscharhag.oleaster:oleaster-matcher:0.2.0")
-  testImplementation("com.mscharhag.oleaster:oleaster-runner:0.2.0")
 }
 
 tasks {

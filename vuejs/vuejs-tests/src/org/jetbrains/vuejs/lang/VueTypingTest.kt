@@ -4,8 +4,6 @@ package org.jetbrains.vuejs.lang
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.JavascriptLanguage
-import com.intellij.openapi.application.PathManager
-import com.intellij.testFramework.EditorTestUtil.BACKSPACE_FAKE_CHAR
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.jetbrains.plugins.jade.JadeLanguage
 import org.jetbrains.plugins.sass.SASSLanguage
@@ -16,7 +14,7 @@ import org.jetbrains.vuejs.lang.html.psi.formatter.VueCodeStyleSettings
 
 class VueTypingTest: BasePlatformTestCase() {
 
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/typing"
+  override fun getTestDataPath(): String = getVueTestDataPath() + "/typing"
 
   fun testStylusEnterEnd() {
     JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) { styleSettings ->

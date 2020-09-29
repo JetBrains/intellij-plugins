@@ -13,10 +13,9 @@
 // limitations under the License.
 package org.jetbrains.vuejs.lang
 
-import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.JSTestUtils
+import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
-import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
@@ -28,7 +27,7 @@ class VueIntentionsTest : BasePlatformTestCase() {
     return "" // not used
   }
 
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/intentions"
+  override fun getTestDataPath(): String = getVueTestDataPath() + "/intentions"
 
   fun testComputeConstant() {
     doIntentionTest(JSIntentionBundle.message("string.join-concatenated-string-literals.display-name"))

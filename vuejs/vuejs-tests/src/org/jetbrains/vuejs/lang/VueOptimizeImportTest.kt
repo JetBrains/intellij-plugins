@@ -5,13 +5,12 @@ import com.intellij.ide.DataManager
 import com.intellij.lang.javascript.JavaScriptFormatterTestBase
 import com.intellij.lang.javascript.JavaScriptSupportLoader
 import com.intellij.lang.javascript.refactoring.JSOptimizeImportTestBase
-import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.util.Consumer
 
 class VueOptimizeImportTest : JSOptimizeImportTestBase() {
   override fun getDefaultExtension(): String = "vue"
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/optimize_import/"
+  override fun getTestDataPath(): String = getVueTestDataPath() + "/optimize_import/"
 
 
   fun testVueSimpleOptimize() {

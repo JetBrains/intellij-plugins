@@ -5,7 +5,6 @@ import com.intellij.lang.javascript.JSTestUtils.testWithinLanguageLevel
 import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection
-import com.intellij.openapi.application.PathManager
 import com.intellij.psi.css.inspections.invalid.CssInvalidFunctionInspection
 import com.intellij.psi.css.inspections.invalid.CssInvalidPseudoSelectorInspection
 import com.intellij.spellchecker.inspections.SpellCheckingInspection
@@ -19,7 +18,7 @@ import org.jetbrains.plugins.scss.inspections.SassScssUnresolvedVariableInspecti
 import org.jetbrains.vuejs.lang.html.VueFileType
 
 class VueHighlightingTest : BasePlatformTestCase() {
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/highlighting"
+  override fun getTestDataPath(): String = getVueTestDataPath() + "/highlighting"
 
   override fun setUp() {
     super.setUp()

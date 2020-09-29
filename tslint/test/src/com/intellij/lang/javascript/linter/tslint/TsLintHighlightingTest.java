@@ -13,13 +13,17 @@ import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
 import com.intellij.util.LineSeparator;
 import org.jetbrains.annotations.NotNull;
 
+import static com.intellij.lang.javascript.linter.tslint.TsLintTestUtil.BASE_TEST_DATA_PATH;
+
 /**
  * @author Irina.Chernushina on 6/4/2015.
  */
 public class TsLintHighlightingTest extends LinterHighlightingTest {
+
   @Override
-  protected String getBasePath() {
-    return TsLintTestUtil.getTestDataRelativePath() + "/highlighting/";
+  protected void setUp() throws Exception {
+    super.setUp();
+    myFixture.setTestDataPath(BASE_TEST_DATA_PATH + "/highlighting/");
   }
 
   @NotNull

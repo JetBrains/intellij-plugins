@@ -4,7 +4,6 @@ import com.intellij.codeInsight.completion.PrioritizedLookupElement
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.findUsages.JSUsageViewElementsListener
-import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.*
@@ -13,6 +12,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.UsefulTestCase.assertEmpty
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
+import com.intellij.testFramework.fixtures.IdeaTestExecutionPolicy
 import com.intellij.testFramework.fixtures.TestLookupElementPresentation
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.containers.ContainerUtil
@@ -20,9 +20,18 @@ import junit.framework.TestCase
 import junit.framework.TestCase.assertTrue
 import java.io.File
 
-fun getVueTestDataPath(): String = PathManager.getHomePath() + vueRelativeTestDataPath()
+fun getVueTestDataPath(): String =
+  getContribPath() + vueRelativeTestDataPath()
 
-fun vueRelativeTestDataPath(): String = "/contrib/vuejs/vuejs-tests/testData"
+fun vueRelativeTestDataPath(): String = "/vuejs/vuejs-tests/testData"
+
+private fun getContribPath(): String {
+  val homePath = IdeaTestExecutionPolicy.getHomePathWithPolicy()
+  return if (File(homePath, "contrib/.gitignore").isFile) {
+    homePath + File.separatorChar + "contrib"
+  }
+  else homePath
+}
 
 // TODO remove duplication with AngularTestUtil
 fun CodeInsightTestFixture.renderLookupItems(renderPriority: Boolean, renderTypeText: Boolean, renderTailText: Boolean = false): List<String> {

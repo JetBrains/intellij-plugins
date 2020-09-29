@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.vuex
 
-import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.io.FileUtil
@@ -11,12 +10,13 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.createPackageJsonWithVueDependency
 import org.jetbrains.vuejs.lang.findOffsetBySignature
+import org.jetbrains.vuejs.lang.getVueTestDataPath
 import org.jetbrains.vuejs.lang.renderLookupItems
 import java.io.File
 
 class VuexCompletionTest : BasePlatformTestCase() {
 
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/libraries/vuex/completion"
+  override fun getTestDataPath(): String = getVueTestDataPath() + "/libraries/vuex/completion"
 
   fun testBasicGettersCompletion() {
     createPackageJsonWithVueDependency(myFixture, "\"vuex\": \"^3.0.1\"")

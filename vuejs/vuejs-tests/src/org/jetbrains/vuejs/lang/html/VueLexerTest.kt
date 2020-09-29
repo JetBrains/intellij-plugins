@@ -8,6 +8,7 @@ import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.vuejs.lang.getVueTestDataPath
 import org.jetbrains.vuejs.lang.html.lexer.VueLexerImpl
 import kotlin.properties.Delegates.notNull
 
@@ -411,7 +412,9 @@ open class VueLexerTest : LexerTestCase() {
 
   override fun createLexer(): Lexer = VueLexerImpl(JSLanguageLevel.ES6, fixture.project, interpolationConfig)
 
-  override fun getDirPath() = "/contrib/vuejs/vuejs-tests/testData/html/lexer"
+  override fun getDirPath() = "html/lexer"
+
+  override fun getPathToTestDataFile(extension: String?): String = getVueTestDataPath() + "/$dirPath/" + getTestName(true) + extension
 
   override fun doTest(@NonNls text: String) {
     doTest(text, true)

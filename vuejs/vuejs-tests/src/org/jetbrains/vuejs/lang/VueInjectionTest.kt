@@ -4,7 +4,6 @@ package org.jetbrains.vuejs.lang
 import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.injection.InjectedLanguageManager
-import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.ModificationTracker
@@ -38,7 +37,7 @@ class VueInjectionTest : BasePlatformTestCase() {
     super.tearDown()
   }
 
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/injection/"
+  override fun getTestDataPath(): String = getVueTestDataPath() + "/injection/"
 
   fun testSimpleInterpolationInHtml() {
     createPackageJsonWithVueDependency(myFixture)

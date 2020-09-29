@@ -26,7 +26,6 @@
 // limitations under the License.
 package org.jetbrains.vuejs.lang
 
-import com.intellij.openapi.application.PathManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class VueRenameTest : BasePlatformTestCase() {
@@ -35,7 +34,7 @@ class VueRenameTest : BasePlatformTestCase() {
     return "" // not used
   }
 
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/rename"
+  override fun getTestDataPath(): String = getVueTestDataPath() + "/rename"
 
   fun testComponentFieldFromTemplate() {
     doTest("newName")

@@ -22,6 +22,8 @@ import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings;
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable;
 import org.jetbrains.annotations.NotNull;
 
+import static com.intellij.lang.javascript.linter.tslint.TsLintTestUtil.BASE_TEST_DATA_PATH;
+
 public class TsLintCodeStyleImportIntegrationTest extends LinterHighlightingTest {
   @NotNull
   @Override
@@ -30,8 +32,9 @@ public class TsLintCodeStyleImportIntegrationTest extends LinterHighlightingTest
   }
 
   @Override
-  protected String getBasePath() {
-    return TsLintTestUtil.getTestDataRelativePath() + "/config/import";
+  protected void setUp() throws Exception {
+    super.setUp();
+    myFixture.setTestDataPath(BASE_TEST_DATA_PATH + "/config/import");
   }
 
   @NotNull
