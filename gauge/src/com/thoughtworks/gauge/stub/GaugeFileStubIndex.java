@@ -21,10 +21,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.indexing.*;
-import com.intellij.util.io.DataExternalizer;
-import com.intellij.util.io.EnumeratorStringDescriptor;
-import com.intellij.util.io.IOUtil;
-import com.intellij.util.io.KeyDescriptor;
+import com.intellij.util.io.*;
 import com.thoughtworks.gauge.language.ConceptFileType;
 import com.thoughtworks.gauge.language.SpecFileType;
 import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
@@ -33,69 +30,42 @@ import com.thoughtworks.gauge.util.GaugeUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
 import java.util.*;
 
-public final class GaugeFileStubIndex extends FileBasedIndexExtension<String, Set<Integer>> {
+public final class GaugeFileStubIndex extends SingleEntryFileBasedIndexExtension<Collection<Integer>> {
   @NonNls
-  public static final ID<String, Set<Integer>> NAME = ID.create("GaugeFileStubIndex");
+  public static final ID<Integer, Collection<Integer>> NAME = ID.create("GaugeFileStubIndex");
 
   @NotNull
   @Override
-  public ID<String, Set<Integer>> getName() {
+  public ID<Integer, Collection<Integer>> getName() {
     return NAME;
   }
 
-  @NotNull
   @Override
-  public DataIndexer<String, Set<Integer>, FileContent> getIndexer() {
-    return fileContent -> {
-      Set<Integer> offsets = new HashSet<>();
-      List<PsiElement> steps = new ArrayList<>();
-      PsiFile psiFile = fileContent.getPsiFile();
-      if (fileContent.getFileType() instanceof SpecFileType) {
-        steps = new ArrayList<>(PsiTreeUtil.collectElementsOfType(psiFile, SpecStepImpl.class));
-      }
-      else if (fileContent.getFileType() instanceof ConceptFileType) {
-        steps = new ArrayList<>(PsiTreeUtil.collectElementsOfType(psiFile, ConceptStepImpl.class));
-      }
-      steps.forEach((s) -> offsets.add(s.getTextOffset()));
-      return Collections.singletonMap(fileContent.getFile().getPath(), offsets);
-    };
-  }
-
-  @NotNull
-  @Override
-  public KeyDescriptor<String> getKeyDescriptor() {
-    return EnumeratorStringDescriptor.INSTANCE;
-  }
-
-  @NotNull
-  @Override
-  public DataExternalizer<Set<Integer>> getValueExternalizer() {
-    return new DataExternalizer<>() {
-
+  public @NotNull SingleEntryIndexer<Collection<Integer>> getIndexer() {
+    return new SingleEntryIndexer<>(false) {
       @Override
-      public void save(@NotNull DataOutput dataOutput, Set<Integer> integers) throws IOException {
-        String offsets = "";
-        for (Integer integer : integers) offsets += integer.toString() + ",";
-        IOUtil.writeUTF(dataOutput, offsets);
-      }
-
-      @Override
-      public Set<Integer> read(@NotNull DataInput dataInput) throws IOException {
+      protected @NotNull Collection<Integer> computeValue(@NotNull FileContent fileContent) {
         Set<Integer> offsets = new HashSet<>();
-        String s = IOUtil.readUTF(dataInput);
-        for (String offset : s.split(",")) {
-          if (!offset.isEmpty()) {
-            offsets.add(Integer.parseInt(offset));
-          }
+        List<PsiElement> steps = new ArrayList<>();
+        PsiFile psiFile = fileContent.getPsiFile();
+        if (fileContent.getFileType() instanceof SpecFileType) {
+          steps = new ArrayList<>(PsiTreeUtil.collectElementsOfType(psiFile, SpecStepImpl.class));
         }
+        else if (fileContent.getFileType() instanceof ConceptFileType) {
+          steps = new ArrayList<>(PsiTreeUtil.collectElementsOfType(psiFile, ConceptStepImpl.class));
+        }
+        steps.forEach((s) -> offsets.add(s.getTextOffset()));
         return offsets;
       }
     };
+  }
+
+  @NotNull
+  @Override
+  public DataExternalizer<Collection<Integer>> getValueExternalizer() {
+    return new IntCollectionDataExternalizer();
   }
 
   @NotNull
@@ -110,12 +80,7 @@ public final class GaugeFileStubIndex extends FileBasedIndexExtension<String, Se
   }
 
   @Override
-  public boolean dependsOnFileContent() {
-    return true;
-  }
-
-  @Override
   public int getVersion() {
-    return 1;
+    return 2;
   }
 }
