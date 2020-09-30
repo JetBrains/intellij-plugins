@@ -20,10 +20,12 @@ import junit.framework.TestCase
 import junit.framework.TestCase.assertTrue
 import java.io.File
 
-fun getVueTestDataPath(): String =
-  getContribPath() + vueRelativeTestDataPath()
+private const val VUE_TEST_DATA_PATH = "/vuejs/vuejs-tests/testData"
 
-fun vueRelativeTestDataPath(): String = "/vuejs/vuejs-tests/testData"
+fun getVueTestDataPath(): String =
+  getContribPath() + VUE_TEST_DATA_PATH
+
+fun vueRelativeTestDataPath(): String = "/contrib$VUE_TEST_DATA_PATH"
 
 private fun getContribPath(): String {
   val homePath = IdeaTestExecutionPolicy.getHomePathWithPolicy()

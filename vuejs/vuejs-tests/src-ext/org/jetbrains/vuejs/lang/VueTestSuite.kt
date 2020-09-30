@@ -8,8 +8,10 @@ import org.jetbrains.vuejs.lang.html.VueIndexerTest
 import org.jetbrains.vuejs.lang.html.VueLexerTest
 import org.jetbrains.vuejs.lang.html.VueParserTest
 import org.jetbrains.vuejs.libraries.LibrariesTestSuite
+import org.jetbrains.vuejs.linters.tslint.VueTypeScriptWithTslintTest
 import org.jetbrains.vuejs.pug.PugTemplateTest
 import org.jetbrains.vuejs.pug.VuePugFoldingTest
+import org.jetbrains.vuejs.service.VueTypeScriptServiceTest
 import org.junit.runner.RunWith
 import org.junit.runners.Suite
 
@@ -54,7 +56,9 @@ import org.junit.runners.Suite
   VueTypeScriptDuplicateTest::class,
   VueIntroduceVariableTest::class,
   VueTypeScriptLineMarkersTest::class,
+  VueTypeScriptServiceTest::class,
+  VueMoveTest::class,
+  VueTypeScriptWithTslintTest::class,
   VueTypeScriptHighlightingTest::class,
-  VueMoveTest::class
 )
 class VueTestSuite 
