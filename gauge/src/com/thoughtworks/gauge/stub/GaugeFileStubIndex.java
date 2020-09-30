@@ -57,7 +57,7 @@ public final class GaugeFileStubIndex extends SingleEntryFileBasedIndexExtension
           steps = new ArrayList<>(PsiTreeUtil.collectElementsOfType(psiFile, ConceptStepImpl.class));
         }
         steps.forEach((s) -> offsets.add(s.getTextOffset()));
-        return offsets;
+        return new ArrayList<>(offsets);
       }
     };
   }
