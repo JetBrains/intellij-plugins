@@ -40,37 +40,37 @@ public class Angular2AttributeValueProvider extends HtmlAttributeValueProvider {
 
   @Override
   public @Nullable String getCustomAttributeValues(final XmlTag tag, final String attributeName) {
-    if (Angular2LangUtil.isAngular2Context(tag)) {
-      if (attributeName.equalsIgnoreCase(HtmlUtil.CLASS_ATTRIBUTE_NAME)) {
-        List<String> result = new SmartList<>();
-        String classAttr = null;
-        for (XmlAttribute attribute : tag.getAttributes()) {
-          String attrName = attribute.getName();
-          if (HtmlUtil.CLASS_ATTRIBUTE_NAME.equalsIgnoreCase(attrName)) {
-            classAttr = attribute.getValue();
-          }
-          else {
-            ObjectUtils.doIfNotNull(getCustomAttributeValues(tag, attrName), result::add);
-          }
+    if (attributeName.equalsIgnoreCase(HtmlUtil.CLASS_ATTRIBUTE_NAME)
+        && Angular2LangUtil.isAngular2Context(tag)) {
+      List<String> result = new SmartList<>();
+      String classAttr = null;
+      for (XmlAttribute attribute : tag.getAttributes()) {
+        String attrName = attribute.getName();
+        if (HtmlUtil.CLASS_ATTRIBUTE_NAME.equalsIgnoreCase(attrName)) {
+          classAttr = attribute.getValue();
         }
-        if (!result.isEmpty()) {
-          ObjectUtils.doIfNotNull(classAttr, result::add);
-          return StringUtil.join(result, " ");
+        else {
+          ObjectUtils.doIfNotNull(getCustomAttributeValues(tag, attrName), result::add);
         }
-        return null;
       }
-      else {
-        AttributeInfo info = parse(attributeName, tag);
-        if (isNgClassAttribute(info)) {
-          XmlAttribute attribute = tag.getAttribute(attributeName);
-          if (attribute instanceof Angular2HtmlPropertyBinding) {
-            return getClassNames(((Angular2HtmlPropertyBinding)attribute).getBinding());
-          }
+      if (!result.isEmpty()) {
+        ObjectUtils.doIfNotNull(classAttr, result::add);
+        return StringUtil.join(result, " ");
+      }
+      return null;
+    }
+    else {
+      AttributeInfo info = parse(attributeName, tag);
+      if (isNgClassAttribute(info)) {
+        XmlAttribute attribute = tag.getAttribute(attributeName);
+        if (attribute instanceof Angular2HtmlPropertyBinding) {
+          return getClassNames(((Angular2HtmlPropertyBinding)attribute).getBinding());
         }
-        else if (info instanceof PropertyBindingInfo
-                 && ((PropertyBindingInfo)info).bindingType == CLASS) {
-          return info.name;
-        }
+      }
+      else if (info instanceof PropertyBindingInfo
+               && ((PropertyBindingInfo)info).bindingType == CLASS
+               && Angular2LangUtil.isAngular2Context(tag)) {
+        return info.name;
       }
     }
     return null;
