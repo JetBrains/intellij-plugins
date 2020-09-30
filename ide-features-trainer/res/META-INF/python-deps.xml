@@ -2,14 +2,6 @@
 <idea-plugin>
   <extensions defaultExtensionNs="training">
     <ift.language.extension language="Python" implementationClass="training.lang.PythonLangSupport"/>
-    <ift.modules language="Python">
-      <module path="modules/python/News.xml"/>
-      <module path="modules/python/EditorBasics.xml"/>
-      <module path="modules/python/Completions.xml"/>
-      <module path="modules/python/CodeAssistance.xml"/>
-      <module path="modules/python/Navigation.xml"/>
-      <module path="modules/python/Refactorings.xml"/>
-      <module path="modules/python/Run.xml"/>
-    </ift.modules>
+    <ift.learning.course language="Python" implementationClass="training.learn.course.PythonLearningCourse"/>
   </extensions>
 </idea-plugin>

@@ -2,13 +2,6 @@
 <idea-plugin>
   <extensions defaultExtensionNs="training">
     <ift.language.extension language="Swift" implementationClass="training.lang.SwiftSupport"/>
-
-    <ift.modules language="Swift">
-      <module path="modules/swift/Editor.xml"/>
-      <module path="modules/swift/Navigation.xml"/>
-      <module path="modules/swift/Refactorings.xml"/>
-      <module path="modules/swift/Code Generation.xml"/>
-      <module path="modules/swift/RunDebugTest.xml"/>
-    </ift.modules>
+    <ift.learning.course language="Swift" implementationClass="training.learn.course.SwiftLearningCourse"/>
   </extensions>
 </idea-plugin>

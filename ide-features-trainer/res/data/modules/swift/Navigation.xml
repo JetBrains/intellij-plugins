@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<module name="Navigation" lessonsPath="Navigation/" version="0.3" id="swift.navigation" fileType="PROJECT" description="Windows, views, code navigation, jump to source, declaration/implementation, file structure, and more.">
-  <lesson-kt implementationClass="training.learn.lesson.swift.navigation.SwiftMainWindowsViewsLesson"/>
-  <lesson-kt implementationClass="training.learn.lesson.swift.navigation.SwiftTODOsBookmarksLesson"/>
-  <lesson-kt implementationClass="training.learn.lesson.swift.navigation.SwiftCodeNavigationLesson"/>
-  <lesson-kt implementationClass="training.learn.lesson.swift.navigation.SwiftPreciseNavigationLesson"/>
-  <lesson-kt implementationClass="training.learn.lesson.swift.navigation.SwiftSearchLesson"/>
-</module>
-

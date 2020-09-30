@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<module name="Refactorings" lessonsPath="Refactorings/"  version="0.3" id="ruby.refactoring" fileType="PROJECT" description="Rename, extract, and other refactorings">
-    <lesson-kt implementationClass="training.learn.lesson.ruby.refactorings.RubyRefactorMenuLesson"/>
-    <lesson-kt implementationClass="training.learn.lesson.ruby.refactorings.RubyRenameLesson"/>
-    <lesson-kt sample="ExtractVariable.rb.sample" implementationClass="training.learn.lesson.general.refactorings.ExtractVariableFromBubbleLesson" lang="ruby"/>
-    <lesson-kt sample="ExtractMethod.rb.sample" implementationClass="training.learn.lesson.general.refactorings.ExtractMethodCocktailSortLesson" lang="ruby"/>
-</module>

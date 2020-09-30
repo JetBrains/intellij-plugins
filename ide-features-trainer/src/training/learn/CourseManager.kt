@@ -2,11 +2,13 @@
 package training.learn
 
 import com.intellij.ide.DataManager
+import com.intellij.lang.LanguageExtensionPoint
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.IdeFocusManager
@@ -116,22 +118,6 @@ class CourseManager internal constructor() : Disposable {
     return list.find { !it.passed }
   }
 
-  fun giveNextModule(currentLesson: Lesson): Module? {
-    var nextModule: Module? = null
-    val module = currentLesson.module
-    val size = modules.size
-    if (size == 1) return null
-
-    for (i in 0 until size) {
-      if (modules[i] == module) {
-        if (i + 1 < size) nextModule = modules[i + 1]
-        break
-      }
-    }
-    if (nextModule == null || nextModule.lessons.isEmpty()) return null
-    return nextModule
-  }
-
   fun calcLessonsForLanguage(primaryLangSupport: LangSupport): Int {
     return ContainerUtil.concat(filterByLanguage(primaryLangSupport).map { m -> m.lessons }).size
   }
@@ -143,8 +129,15 @@ class CourseManager internal constructor() : Disposable {
       .size
   }
 
+  private fun initAllModules(): List<Module> {
+    val extensions = ExtensionPointName<LanguageExtensionPoint<LearningCourse>>("training.ift.learning.course").extensions
+    val nonXML = extensions.map { it.instance.modules() }.flatten()
+    return nonXML + loadXmlModules()
+    //return loadXmlModules()
+  }
+
   private fun filterByLanguage(primaryLangSupport: LangSupport): List<Module> {
-    val allModules = allModules ?: loadXmlModules().also { this.allModules = it }
+    val allModules = allModules ?: initAllModules().also { this.allModules = it }
     return allModules.filter { it.primaryLanguage == primaryLangSupport }
   }
 

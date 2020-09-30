@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<module name="New in PyCharm 2020.2" lessonsPath="News/" version="0.3" id="python.news" fileType="SCRATCH" description="Features added in PyCharm 2020.2">
-  <lesson-kt implementationClass="training.learn.lesson.python.refactorings.PythonInPlaceRefactoringLesson"/>
-  <lesson-kt implementationClass="training.learn.lesson.python.completion.FStringCompletionLesson"/>
-</module>

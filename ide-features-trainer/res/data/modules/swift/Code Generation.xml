@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<module name="Code Generation" lessonsPath="Code Generation/" version="0.3" id="swift.code.generation" fileType="PROJECT" description="Create from usage, override/implement, and apply quick-fixes.">
-  <lesson-kt implementationClass="training.learn.lesson.swift.codegeneration.SwiftGenerateLesson" />
-  <lesson-kt implementationClass="training.learn.lesson.swift.codegeneration.SwiftOverrideImplementLesson" />
-  <lesson-kt implementationClass="training.learn.lesson.swift.codegeneration.SwiftCreateFromUsageLesson" />
-  <lesson-kt implementationClass="training.learn.lesson.swift.codegeneration.SwiftQuickFixesAndIntentionsLesson" />
-</module>

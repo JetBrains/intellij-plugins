@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<module name="Run, Debug, Test" lessonsPath="RunDebugTest/" version="0.3" id="swift.rdt" fileType="PROJECT" description="Learn how to run, debug, and test your application.">
-  <lesson-kt implementationClass="training.learn.lesson.swift.rundebugtest.SwiftRunLesson" />
-  <lesson-kt implementationClass="training.learn.lesson.swift.rundebugtest.SwiftDebugLesson" />
-  <lesson-kt implementationClass="training.learn.lesson.swift.rundebugtest.SwiftTestLesson" />
-</module>

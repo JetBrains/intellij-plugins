@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<module name="Refactorings" lessonsPath="Refactorings/" version="0.3" id="refactorings" fileType="PROJECT" description="Rename, extract variable and method and other refactorings">
-  <lesson-kt implementationClass="training.learn.lesson.java.refactorings.JavaRenameLesson"/>
-  <lesson-kt sample="ExtractVariable.java.sample" implementationClass="training.learn.lesson.general.refactorings.ExtractVariableFromBubbleLesson" lang="JAVA"/>
-  <lesson-kt implementationClass="training.learn.lesson.java.refactorings.JavaExtractMethodCocktailSortLesson"/>
-  <lesson-kt implementationClass="training.learn.lesson.java.refactorings.JavaRefactoringMenuLesson"/>
-</module>

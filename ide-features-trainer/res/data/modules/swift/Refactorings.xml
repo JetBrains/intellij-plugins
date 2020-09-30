@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<module name="Refactorings" lessonsPath="Refactorings/" version="0.3" id="swift.refactorings" fileType="PROJECT" description="Rename, extract variable / method, and other refactorings.">
-  <lesson-kt implementationClass="training.learn.lesson.swift.refactorings.SwiftRenameLesson" />
-  <lesson-kt implementationClass="training.learn.lesson.swift.refactorings.SwiftExtractVariableLesson" />
-  <lesson-kt implementationClass="training.learn.lesson.swift.refactorings.SwiftExtractMethodLesson" />
-  <lesson-kt implementationClass="training.learn.lesson.swift.refactorings.SwiftExtractClosureLesson" />
-  <lesson-kt implementationClass="training.learn.lesson.swift.refactorings.SwiftChangeSignatureLesson" />
-</module>

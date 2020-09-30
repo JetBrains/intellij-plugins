@@ -62,7 +62,7 @@ class DebuggingSecondPartLesson(module: Module)
 
         task {
           text(LessonsBundle.message("js.debugger.part.2.end",
-                                     strong(LessonsBundle.message("js.debugger.module.title", productName)),
+                                     strong(LessonsBundle.message("js.debugger.module.name", productName)),
                                      "https://www.jetbrains.com/help/webstorm/2019.2/debugging-code.html",
                                      "https://blog.jetbrains.com/webstorm/tag/debug/"))
         }

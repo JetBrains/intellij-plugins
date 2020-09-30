@@ -2,11 +2,6 @@
 <idea-plugin>
   <extensions defaultExtensionNs="training">
     <ift.language.extension language="JavaScript" implementationClass="training.lang.JavaScriptLangSupport"/>
-
-    <ift.modules language="JavaScript">
-      <module path="modules/javascript/EditorBasics.xml"/>
-      <module path="modules/javascript/WebStormDebugger.xml"/>
-      <module path="modules/javascript/WebStormTesting.xml"/>
-    </ift.modules>
+    <ift.learning.course language="JavaScript" implementationClass="training.learn.course.JavaScriptMainLearningCourse"/>
   </extensions>
 </idea-plugin>

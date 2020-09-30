@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<module name="Navigation" lessonsPath="Navigation/" version="0.3" id="python.navigation" fileType="PROJECT" description="Jump to source, declaration/implementation, file structure and next/prev occurrences navigation">
-  <lesson-kt implementationClass="training.learn.lesson.python.navigation.PythonDeclarationAndUsagesLesson"/>
-  <lesson-kt implementationClass="training.learn.lesson.python.navigation.PythonFileStructureLesson"/>
-  <lesson-kt implementationClass="training.learn.lesson.python.navigation.PythonSearchEverywhereLesson"/>
-</module>

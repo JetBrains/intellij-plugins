@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<module name="Code Assistance" lessonsPath="CodeAssistance/" version="0.3" id="ruby.code_assistance" fileType="PROJECT" description="Code format, parameter info and quick popups">
-  <lesson-kt sample="CodeFormat.rb.sample" implementationClass="training.learn.lesson.general.assistance.CodeFormatLesson" lang="ruby"/>
-  <lesson-kt sample="ParameterInfo.rb.sample" implementationClass="training.learn.lesson.general.assistance.ParameterInfoLesson" lang="ruby"/>
-  <lesson-kt sample="QuickPopups.rb.sample" implementationClass="training.learn.lesson.general.assistance.QuickPopupsLesson" lang="ruby"/>
-  <lesson-kt sample="EditorCodingAssistance.rb.sample" implementationClass="training.learn.lesson.ruby.assistance.RubyEditorCodingAssistanceLesson" lang="ruby"/>
-</module>
-

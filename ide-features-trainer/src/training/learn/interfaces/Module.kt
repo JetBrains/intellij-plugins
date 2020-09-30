@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.interfaces
 
+import com.intellij.openapi.util.NlsSafe
 import org.jetbrains.annotations.Nls
 import training.lang.LangSupport
 import training.learn.LearnBundle
@@ -12,9 +13,7 @@ interface Module {
 
   val lessons: List<Lesson>
 
-  val sanitizedName: String
-
-  var id: String?
+  val sanitizedName: @NlsSafe String
 
   val name: String
 

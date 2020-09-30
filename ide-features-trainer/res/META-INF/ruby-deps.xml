@@ -2,13 +2,6 @@
 <idea-plugin>
   <extensions defaultExtensionNs="training">
     <ift.language.extension language="ruby" implementationClass="training.lang.RubyLangSupport"/>
-
-    <ift.modules language="ruby">
-      <module path="modules/ruby/EditorBasics.xml"/>
-      <module path="modules/ruby/Navigation.xml"/>
-      <module path="modules/ruby/Completions.xml"/>
-      <module path="modules/ruby/Refactorings.xml"/>
-      <module path="modules/ruby/CodeAssistance.xml"/>
-    </ift.modules>
+    <ift.learning.course language="ruby" implementationClass="training.learn.course.RubyLearningCourse"/>
   </extensions>
 </idea-plugin>

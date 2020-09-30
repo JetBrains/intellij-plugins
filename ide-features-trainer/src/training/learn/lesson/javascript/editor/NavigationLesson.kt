@@ -109,7 +109,7 @@ class NavigationLesson(module: Module)
         }
         task {
           text(LessonsBundle.message("js.editor.navigation.keymap.reference",
-                                     strong(LessonsBundle.message("js.editor.module.title")),
+                                     strong(LessonsBundle.message("js.editor.basics.module.name")),
                                      "https://resources.jetbrains.com/storage/products/webstorm/docs/WebStorm_ReferenceCard.pdf"))
         }
       }

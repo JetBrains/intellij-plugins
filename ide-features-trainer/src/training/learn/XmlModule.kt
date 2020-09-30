@@ -37,7 +37,7 @@ class XmlModule(override val name: String,
   override val lessons: MutableList<Lesson> = mutableListOf()
   override val sanitizedName: String
     get() = name.replace("[^\\dA-Za-z ]".toRegex(), "").replace("\\s+".toRegex(), "")
-  override var id: String? = null
+  var id: String? = null
   override lateinit var moduleType: ModuleType
 
   private val answersPath: String?
