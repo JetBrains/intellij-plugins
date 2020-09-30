@@ -5,6 +5,7 @@ import com.intellij.javascript.nodejs.packageJson.PackageJsonFileManager
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.util.CachedValueProvider
+import org.jetbrains.vuejs.index.VUE_CLI_SERVICE_MODULE
 import org.jetbrains.vuejs.index.VUE_MODULE
 
 class VuePackageJsonContextProvider : VueContextProvider {
@@ -15,7 +16,8 @@ class VuePackageJsonContextProvider : VueContextProvider {
     for (config in manager.validPackageJsonFiles) {
       if (dirPath.startsWith(config.parent.path + "/")) {
         val data = PackageJsonUtil.getOrCreateData(config)
-        if (data.isDependencyOfAnyType(VUE_MODULE)) {
+        if (data.isDependencyOfAnyType(VUE_MODULE)
+            || data.isDependencyOfAnyType(VUE_CLI_SERVICE_MODULE)) {
           result = true
           break
         }

@@ -4,11 +4,12 @@ package org.jetbrains.vuejs
 import com.intellij.ide.actions.CreateFileFromTemplateAction
 import com.intellij.ide.actions.CreateFileFromTemplateDialog
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.actionSystem.PlatformDataKeys
+import com.intellij.openapi.actionSystem.PlatformDataKeys.*
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
 import icons.VuejsIcons
+import org.jetbrains.vuejs.context.hasVueFiles
 import org.jetbrains.vuejs.context.isVueContext
 
 class CreateVueSingleFileComponentAction : CreateFileFromTemplateAction(VueBundle.message("vue.create.single.file.component.action.text"),
@@ -21,8 +22,9 @@ class CreateVueSingleFileComponentAction : CreateFileFromTemplateAction(VueBundl
   }
 
   override fun isAvailable(dataContext: DataContext): Boolean {
-    return super.isAvailable(dataContext) && isVueContext(
-      PlatformDataKeys.PSI_ELEMENT.getData(dataContext) ?: return false)
+    return super.isAvailable(dataContext)
+           && (PROJECT.getData(dataContext)?.let { hasVueFiles(it) } == true
+               || (PSI_ELEMENT.getData(dataContext) ?: PSI_FILE.getData(dataContext))?.let { isVueContext(it) } == true)
   }
 
   override fun buildDialog(project: Project, directory: PsiDirectory, builder: CreateFileFromTemplateDialog.Builder) {
