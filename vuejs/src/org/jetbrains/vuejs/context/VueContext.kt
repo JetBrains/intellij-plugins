@@ -76,6 +76,14 @@ private fun isVueContext(directory: PsiDirectory): Boolean {
   }
 }
 
+fun hasVueFiles(project: Project): Boolean =
+  CachedValuesManager.getManager(project).getCachedValue(project) {
+    CachedValueProvider.Result.create(
+      FileTypeIndex.containsFileOfType(VueFileType.INSTANCE, GlobalSearchScope.projectScope(project)),
+      VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS
+    )
+  }
+
 fun enableVueTSService(project: Project): Boolean {
   if (DumbService.isDumb(project)) return false
 

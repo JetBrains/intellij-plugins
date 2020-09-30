@@ -22,6 +22,7 @@ import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.index.VueIndexBase.Companion.createJSKey
 
 const val VUE_MODULE: String = "vue"
+const val VUE_CLI_SERVICE_MODULE: String = "@vue/cli-service"
 const val VUE_INSTANCE_MODULE: String = "vue/types/vue"
 const val VUETIFY_MODULE: String = "vuetify"
 const val BOOTSTRAP_VUE_MODULE: String = "bootstrap-vue"
