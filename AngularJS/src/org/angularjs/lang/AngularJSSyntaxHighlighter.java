@@ -7,15 +7,15 @@ import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.tree.IElementType;
-import gnu.trove.THashMap;
 import org.angularjs.lang.lexer.AngularJSLexer;
 import org.angularjs.lang.lexer.AngularJSTokenTypes;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.Map;
 
-public class AngularJSSyntaxHighlighter extends JSHighlighter {
-  private final Map<IElementType, TextAttributesKey> myKeysMap = new THashMap<>();
+public final class AngularJSSyntaxHighlighter extends JSHighlighter {
+  private final Map<IElementType, TextAttributesKey> myKeysMap = new HashMap<>();
 
   AngularJSSyntaxHighlighter() {
     super(AngularJSLanguage.INSTANCE.getOptionHolder(), false);

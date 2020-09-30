@@ -39,7 +39,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.*;
 import com.intellij.util.containers.BidirectionalMap;
-import gnu.trove.THashSet;
 import org.angular2.index.Angular2IndexingHandler;
 import org.angularjs.codeInsight.AngularJSReferenceExpressionResolver;
 import org.angularjs.codeInsight.DirectiveUtil;
@@ -58,7 +57,7 @@ import static org.angularjs.index.AngularJSDirectivesSupport.getDirectiveIndexKe
 /**
  * @author Dennis.Ushakov
  */
-public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
+public final class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   private static final Map<String, StubIndexKey<String, JSImplicitElementProvider>> INDEXERS =
     new HashMap<>();
   private static final Map<String, Function<String, String>> NAME_CONVERTERS = new HashMap<>();
@@ -118,7 +117,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     INDEXERS.put(FILTER, AngularFilterIndex.KEY);
     INDEXERS.put(STATE, AngularUiRouterStatesIndex.KEY);
 
-    final THashSet<String> allInterestingMethods = new THashSet<>(INTERESTING_METHODS);
+    final Set<String> allInterestingMethods = new HashSet<>(INTERESTING_METHODS);
     allInterestingMethods.addAll(INJECTABLE_METHODS);
     allInterestingMethods.addAll(INDEXERS.keySet());
     allInterestingMethods.add(START_SYMBOL);
