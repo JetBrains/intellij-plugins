@@ -3,6 +3,7 @@ package com.intellij.prettierjs;
 
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.TemplateManager;
+import com.intellij.lang.javascript.linter.GlobPatternUtil;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.TextEditor;
@@ -14,8 +15,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.impl.source.codeStyle.PostFormatProcessor;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collections;
 
 public class PrettierPostFormatProcessor implements PostFormatProcessor {
   @Override
@@ -45,7 +44,6 @@ public class PrettierPostFormatProcessor implements PostFormatProcessor {
       if (template != null) return false;
     }
 
-    String pattern = configuration.getFilesPattern();
-    return PrettierSaveAction.getFilesMatchingGlobPattern(project, pattern, Collections.singletonList(file)).size() == 1;
+    return GlobPatternUtil.isFileMatchingGlobPattern(project, configuration.getFilesPattern(), file);
   }
 }
