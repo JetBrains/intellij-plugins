@@ -43,6 +43,8 @@ class XmlModule(override val name: String,
   private val answersPath: String?
   private var sdkType: ModuleSdkType?
 
+  val lessonsPath: String?
+
   enum class ModuleSdkType {
     JAVA
   }
@@ -62,7 +64,12 @@ class XmlModule(override val name: String,
     //path where module.xml is located and containing lesson dir
     val find = Regex("/[^/]*.xml").find(moduleXmlPath) ?: throw BadLessonException("Unable to parse a modules xml from '$moduleXmlPath'")
     val modulePath = moduleXmlPath.substring(0, find.range.first) + "/"
-    initLessons(modulePath, classLoader)
+
+    val lessonPathAttribute = root.getAttribute(XmlModuleConstants.MODULE_LESSONS_PATH_ATTR)
+    //retrieve list of xml files inside lessonsPath directory
+    lessonsPath = if (lessonPathAttribute != null) modulePath + lessonPathAttribute.value else null
+
+    initLessons(classLoader)
   }
 
   override fun toString(): String {
@@ -81,13 +88,7 @@ class XmlModule(override val name: String,
     return lessons.any { !it.passed }
   }
 
-  private fun initLessons(modulePath: String, classLoader: ClassLoader) {
-    val lessonPathAttribute = root.getAttribute(XmlModuleConstants.MODULE_LESSONS_PATH_ATTR)
-
-    //retrieve list of xml files inside lessonsPath directory
-    val lessonsPath = if (lessonPathAttribute != null) modulePath + lessonPathAttribute.value
-    else null
-
+  private fun initLessons(classLoader: ClassLoader) {
     for (lessonElement in root.children) {
       if (!isFeatureTrainerSnapshot && lessonElement.getAttributeValue(XmlModuleConstants.MODULE_LESSON_UNFINISHED_ATTR) == "true") {
         continue // do not show unfinished lessons in release
