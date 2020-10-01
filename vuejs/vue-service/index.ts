@@ -90,6 +90,25 @@ module.exports = function init(
 
   }
 
+  function myLoadWithLocalCache<T>(names: string[], containingFile: string, redirectedReference: object | undefined, loader: (name: string, containingFile: string, redirectedReference: object | undefined) => T): T[] {
+    if (names.length === 0) {
+      return [];
+    }
+    const resolutions: T[] = [];
+    const cache = new Map<string, T>();
+    for (const name of names) {
+      let result: T;
+      if (cache.has(name)) {
+        result = cache.get(name)!;
+      }
+      else {
+        cache.set(name, result = loader(name, containingFile, redirectedReference));
+      }
+      resolutions.push(result);
+    }
+    return resolutions;
+  }
+
   return {
     create(info: ts.server.PluginCreateInfo): ts.LanguageService {
 
@@ -125,7 +144,7 @@ module.exports = function init(
         return tsResolvedModule
       }
       tsLsHost.resolveModuleNames = (moduleNames: any, containingFile: any, _reusedNames: any, redirectedReference: any) =>
-        (<any>ts_impl).loadWithLocalCache(moduleNames, containingFile, redirectedReference, loader);
+        ((<any>ts_impl).loadWithLocalCache || myLoadWithLocalCache)(moduleNames, containingFile, redirectedReference, loader);
 
       // Strip non-TS content from the script
       const _getScriptSnapshot = tsLsHost.getScriptSnapshot;
