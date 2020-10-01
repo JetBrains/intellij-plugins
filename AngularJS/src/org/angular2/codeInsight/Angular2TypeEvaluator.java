@@ -27,15 +27,16 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
   }
 
   @Override
-  protected boolean addTypeFromDialectSpecificElements(PsiElement resolveResult) {
+  protected void addTypeFromElementResolveResult(@Nullable PsiElement resolveResult) {
     if (resolveResult instanceof Angular2TemplateBindings) {
       JSType type = Angular2TypeUtils.getTemplateBindingsContextType((Angular2TemplateBindings)resolveResult);
       if (type != null) {
         addType(type, resolveResult);
       }
-      return true;
     }
-    return super.addTypeFromDialectSpecificElements(resolveResult);
+    else {
+      super.addTypeFromElementResolveResult(resolveResult);
+    }
   }
 
   @Override

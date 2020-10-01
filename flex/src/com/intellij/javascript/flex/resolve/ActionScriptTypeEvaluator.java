@@ -32,15 +32,6 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
   }
 
   @Override
-  protected boolean addTypeFromDialectSpecificElements(PsiElement resolveResult) {
-    if (resolveResult instanceof JSPackageWrapper) {
-      myTypeProcessor.processResolvedElement(resolveResult, myContext);
-      return true;
-    }
-    return false;
-  }
-
-  @Override
   protected void evaluateNewExpressionTypes(@NotNull JSNewExpression newExpression) {
     JSExpression methodExpr = newExpression.getMethodExpression();
     if (methodExpr != null) {
@@ -131,10 +122,13 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
             }
         }
       }
-      return;
     }
-
-    super.addTypeFromElementResolveResult(resolveResult);
+    else if (resolveResult instanceof JSPackageWrapper) {
+      myTypeProcessor.processResolvedElement(resolveResult, myContext);
+    }
+    else {
+      super.addTypeFromElementResolveResult(resolveResult);
+    }
   }
 
   private static boolean isInsideRepeaterTag(@NotNull final XmlTag xmlTag) {
