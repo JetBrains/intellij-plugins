@@ -10,12 +10,14 @@ import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterface
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
+import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
@@ -24,6 +26,8 @@ import com.intellij.util.castSafelyTo
 import com.intellij.util.text.SemVer
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.VUE_NOTIFICATIONS
+import org.jetbrains.vuejs.codeInsight.findDefaultExport
+import org.jetbrains.vuejs.codeInsight.objectLiteralFor
 import org.jetbrains.vuejs.codeInsight.resolveSymbolFromNodeModule
 import org.jetbrains.vuejs.libraries.nuxt.NUXT_2_9_0
 import org.jetbrains.vuejs.libraries.nuxt.NUXT_CONFIG_PKG
@@ -64,13 +68,20 @@ class NuxtApplicationImpl(override val configFile: VirtualFile, override val pro
   override val packageJson: VirtualFile?
     get() = PackageJsonUtil.findChildPackageJsonFile(configFile.parent)
 
-  override fun getVuexStore(): VuexStore? =
-    configFile.parent.findChild("store")?.let {
+  override val sourceDir: VirtualFile?
+    get() = PsiManager.getInstance(project).findFile(configFile)?.let { file ->
+      CachedValuesManager.getCachedValue(file) {
+        CachedValueProvider.Result.create(findSrcDir(file), file, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
+      }
+    } ?: configFile.parent
+
+  override val vuexStore: VuexStore?
+    get() = sourceDir?.findChild("store")?.let {
       PsiManager.getInstance(project).findDirectory(it)
     }?.let { NuxtVuexStore(it) }
 
-  override fun getStaticResourcesDir(): PsiDirectory? =
-    configFile.parent.findChild("static")?.let {
+  override val staticResourcesDir: PsiDirectory?
+    get() = sourceDir?.findChild("static")?.let {
       PsiManager.getInstance(project).findDirectory(it)
     }
 
@@ -114,6 +125,14 @@ class NuxtApplicationImpl(override val configFile: VirtualFile, override val pro
       TimeUnit.SECONDS.toMillis(30)
     )
   }
+
+  private fun findSrcDir(config: PsiFile): VirtualFile? =
+    objectLiteralFor(findDefaultExport(config))
+      ?.findProperty("srcDir")
+      ?.jsType
+      ?.castSafelyTo<JSStringLiteralTypeImpl>()
+      ?.literal
+      ?.let { config.virtualFile?.parent?.findFileByRelativePath(it) }
 
   companion object {
     private const val NUXT_TYPES_NOTIFICATION_SHOWN = "vuejs.nuxt.types-notification-shown"

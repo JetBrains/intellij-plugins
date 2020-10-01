@@ -29,7 +29,7 @@ object VuexModelManager {
     if (!isVueContext(element)) return null
     var stores = getAllVuexStores(element.project)
     // Introduce extension point if another provider would need to be added
-    NuxtModelManager.getApplication(element)?.getVuexStore()?.let {
+    NuxtModelManager.getApplication(element)?.vuexStore?.let {
       stores = stores + it
     }
     val registeredModules = getRegisteredModules(element.project)

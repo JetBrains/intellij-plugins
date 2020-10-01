@@ -4,11 +4,14 @@ package org.jetbrains.vuejs.codeInsight
 import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.extapi.psi.StubBasedPsiElementBase
+import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.JSStubElementTypes
+import com.intellij.lang.javascript.index.JSSymbolUtil
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
+import com.intellij.lang.javascript.psi.resolve.JSClassResolver
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.evaluable.JSApplyNewType
 import com.intellij.lang.javascript.psi.types.evaluable.JSReturnedExpressionType
@@ -58,8 +61,8 @@ const val ATTR_SLOT_SHORTHAND = '#'
 const val ATTR_ARGUMENT_PREFIX = ':'
 const val ATTR_MODIFIER_PREFIX = '.'
 
-val VUE_NOTIFICATIONS =  NotificationGroup("Vue", NotificationDisplayType.BALLOON, true, null,
-                                           VuejsIcons.Vue, VueBundle.message("vue.documentation.vue"), null)
+val VUE_NOTIFICATIONS = NotificationGroup("Vue", NotificationDisplayType.BALLOON, true, null,
+                                          VuejsIcons.Vue, VueBundle.message("vue.documentation.vue"), null)
 
 fun fromAsset(name: String): String {
   // TODO ensure that this conversion conforms to Vue.js rules
@@ -289,6 +292,20 @@ fun getHostFile(context: PsiElement): PsiFile? {
   val original = CompletionUtil.getOriginalOrSelf(context)
   val hostFile = FileContextUtil.getContextFile(if (original !== context) original else context.containingFile.originalFile)
   return hostFile?.originalFile
+}
+
+fun findDefaultExport(element: PsiElement?): PsiElement? =
+  element?.let {
+    (ES6PsiUtil.findDefaultExport(element) as? JSExportAssignment)?.stubSafeElement
+    ?: findDefaultCommonJSExport(it)
+  }
+
+private fun findDefaultCommonJSExport(element: PsiElement): PsiElement? {
+  return JSClassResolver.getInstance().findElementsByQNameIncludingImplicit(JSSymbolUtil.MODULE_EXPORTS, element.containingFile)
+    .asSequence()
+    .filterIsInstance<JSDefinitionExpression>()
+    .mapNotNull { it.initializerOrStub }
+    .firstOrNull()
 }
 
 private val resolveSymbolCache = ConcurrentHashMap<String, Key<CachedValue<*>>>()

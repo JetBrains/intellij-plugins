@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.libraries.nuxt
 
 import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import org.jetbrains.vuejs.lang.VueInspectionsProvider
 import org.jetbrains.vuejs.lang.getVueTestDataPath
 
 class NuxtHighlightingTest : BasePlatformTestCase() {
@@ -17,4 +18,13 @@ class NuxtHighlightingTest : BasePlatformTestCase() {
     myFixture.configureFromTempProjectFile("b/page/test.vue")
     myFixture.checkHighlighting(true, false, true)
   }
+
+  fun testSrcDir() {
+    myFixture.enableInspections(VueInspectionsProvider())
+    myFixture.enableInspections(HtmlUnknownTargetInspection::class.java)
+    myFixture.copyDirectoryToProject("srcDir", ".")
+    myFixture.configureFromTempProjectFile("client/page/test.vue")
+    myFixture.checkHighlighting(true, false, true)
+  }
+
 }
