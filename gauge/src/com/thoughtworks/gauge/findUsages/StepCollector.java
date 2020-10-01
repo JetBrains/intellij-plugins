@@ -29,6 +29,7 @@ import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
 import com.thoughtworks.gauge.stub.GaugeFileStubIndex;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public final class StepCollector {
   private final Project project;
@@ -41,16 +42,15 @@ public final class StepCollector {
 
   public void collect() {
     List<VirtualFile> conceptFiles = FileManager.getConceptFiles(project);
-    List<VirtualFile> files = FileManager.getAllSpecFiles(project);
-    files.addAll(conceptFiles);
-    for (VirtualFile file : files) {
+    List<VirtualFile> specFiles = FileManager.getAllSpecFiles(project);
+
+    Stream.concat(conceptFiles.stream(), specFiles.stream()).forEach(f -> {
       Collection<Integer> values =
-        ContainerUtil.getFirstItem(FileBasedIndex.getInstance().getFileData(GaugeFileStubIndex.NAME, file, project).values(), Collections.emptyList());
+        ContainerUtil.getFirstItem(FileBasedIndex.getInstance().getFileData(GaugeFileStubIndex.NAME, f, project).values(), Collections.emptyList());
       if (values.size() > 0) {
-        PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
-        getSteps(psiFile, values);
+        getSteps(PsiManager.getInstance(project).findFile(f), values);
       }
-    }
+    });
   }
 
   public List<PsiElement> get(String stepText) {

@@ -20,13 +20,13 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.*;
 import com.thoughtworks.gauge.language.ConceptFileType;
 import com.thoughtworks.gauge.language.SpecFileType;
 import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
 import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
-import com.thoughtworks.gauge.util.GaugeUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -47,17 +47,11 @@ public final class GaugeFileStubIndex extends SingleEntryFileBasedIndexExtension
     return new SingleEntryIndexer<>(false) {
       @Override
       protected @NotNull Collection<Integer> computeValue(@NotNull FileContent fileContent) {
-        Set<Integer> offsets = new HashSet<>();
-        List<PsiElement> steps = new ArrayList<>();
         PsiFile psiFile = fileContent.getPsiFile();
-        if (fileContent.getFileType() instanceof SpecFileType) {
-          steps = new ArrayList<>(PsiTreeUtil.collectElementsOfType(psiFile, SpecStepImpl.class));
-        }
-        else if (fileContent.getFileType() instanceof ConceptFileType) {
-          steps = new ArrayList<>(PsiTreeUtil.collectElementsOfType(psiFile, ConceptStepImpl.class));
-        }
-        steps.forEach((s) -> offsets.add(s.getTextOffset()));
-        return new ArrayList<>(offsets);
+        Collection<? extends PsiElement> steps = fileContent.getFileType().equals(SpecFileType.INSTANCE)
+                                                 ? PsiTreeUtil.collectElementsOfType(psiFile, SpecStepImpl.class)
+                                                 : PsiTreeUtil.collectElementsOfType(psiFile, ConceptStepImpl.class);
+        return ContainerUtil.map(steps, step -> step.getTextOffset());
       }
     };
   }
@@ -74,7 +68,7 @@ public final class GaugeFileStubIndex extends SingleEntryFileBasedIndexExtension
     return new DefaultFileTypeSpecificInputFilter(SpecFileType.INSTANCE, ConceptFileType.INSTANCE) {
       @Override
       public boolean acceptInput(@NotNull VirtualFile virtualFile) {
-        return virtualFile.getExtension() != null && GaugeUtil.isGaugeFile(virtualFile);
+        return virtualFile.getExtension() != null;
       }
     };
   }
