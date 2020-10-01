@@ -65,7 +65,7 @@ class VueComponents {
       val scope = createLocalResolveScope(element)
 
       return JSStubBasedPsiTreeUtil.resolveLocally(reference, scope)
-               ?.let { getVueComponentFromResolve(listOf(it)) }
+               ?.let<PsiElement, VueSourceEntityDescriptor?> { getVueComponentFromResolve(listOf(it)) }
                ?.let { return it }
              ?: getVueComponentFromResolve(ES6QualifiedNameResolver(scope).resolveQualifiedName(reference))
     }
@@ -84,8 +84,8 @@ class VueComponents {
 
     fun getClassComponentDescriptor(clazz: JSClass): VueSourceEntityDescriptor =
       VueSourceEntityDescriptor(
-      initializer = getComponentDecorator(clazz)?.let { getDescriptorFromDecorator(it) },
-      clazz = clazz)
+        initializer = getComponentDecorator(clazz)?.let { getDescriptorFromDecorator(it) },
+        clazz = clazz)
 
     fun getComponentDecorator(element: JSClass): ES6Decorator? {
       element.attributeList
@@ -151,9 +151,12 @@ class VueComponents {
   }
 }
 
-class VueSourceEntityDescriptor(val initializer: JSObjectLiteralExpression? = null,
-                                val clazz: JSClass? = null,
-                                val source: PsiElement = clazz ?: initializer!!) {
+open class VueSourceEntityDescriptor(val initializer: JSElement? /* JSObjectLiteralExpression | JSFile */ = null,
+                                     val clazz: JSClass? = null,
+                                     val source: PsiElement = clazz ?: initializer!!) {
+  init {
+    assert(initializer == null || initializer is JSObjectLiteralExpression || initializer is JSFile)
+  }
 
   fun <T> getCachedValue(provider: (descriptor: VueSourceEntityDescriptor) -> CachedValueProvider.Result<T>): T {
     val providerKey: Key<CachedValue<T>> = CachedValuesManager.getManager(source.project).getKeyForClass(provider::class.java)

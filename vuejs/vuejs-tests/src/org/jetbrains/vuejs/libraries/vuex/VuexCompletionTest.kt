@@ -550,6 +550,13 @@ class VuexCompletionTest : BasePlatformTestCase() {
     checkItems(1, false, true, true, true)
   }
 
+  fun testStarImportCompletion() {
+    myFixture.configureStore(VuexTestStore.StarImport)
+    doItemsTest(0, "...mapGetters({foo:'<caret>'", section = "computed", strict = true, renderPriority = true)
+    doItemsTest(1, "...mapState({foo:'<caret>'", section = "computed", strict = true, renderPriority = true)
+    doItemsTest(2, "...mapActions(['<caret>'", section = "methods", strict = true, renderPriority = true)
+  }
+
   private val namespacedHandlersCode = """
     const {mapState, mapActions, mapGetters, mapMutations} = createNamespacedHelpers('cart')
     const categoryModule = createNamespacedHelpers('category')

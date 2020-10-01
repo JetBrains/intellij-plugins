@@ -100,17 +100,17 @@ class VueInsertHandler : XmlTagInsertHandler() {
       val defaultExportElement = defaultExport.stubSafeElement
       var obj = VueComponents.getComponentDescriptor(defaultExportElement)?.initializer
 
-      if (obj == null) {
+      if (obj !is JSObjectLiteralExpression) {
         if (defaultExportElement !is JSClass) return
         val decorator = VueComponents.getComponentDecorator(defaultExportElement) ?: return
         val newClass = JSPsiElementFactory.createJSClass("@Component({}) class A {}", decorator)
         val newDecorator = VueComponents.getComponentDecorator(newClass)!!
         val replacedDecorator = decorator.replace(newDecorator)
         forReformat(replacedDecorator)
-        obj = VueComponents.getComponentDescriptor(defaultExportElement)?.initializer ?: return
+        obj = VueComponents.getComponentDescriptor(defaultExportElement)?.initializer
       }
 
-      val components = componentProperty(obj).value as? JSObjectLiteralExpression ?: return
+      val components = componentProperty(obj as? JSObjectLiteralExpression ?: return).value as? JSObjectLiteralExpression ?: return
       val decapitalized = toAsset(name).decapitalize()
       val capitalizedName = decapitalized.capitalize()
       if (components.findProperty(decapitalized) != null || components.findProperty(capitalizedName) != null) return

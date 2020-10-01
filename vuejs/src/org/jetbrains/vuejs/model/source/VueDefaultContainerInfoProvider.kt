@@ -31,7 +31,7 @@ import org.jetbrains.vuejs.model.source.VueComponents.Companion.getComponentDesc
 
 class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedContainerInfoProvider(::VueSourceContainerInfo) {
 
-  private class VueSourceContainerInfo(declaration: JSObjectLiteralExpression) : VueInitializedContainerInfo(declaration) {
+  private class VueSourceContainerInfo(declaration: JSElement) : VueInitializedContainerInfo(declaration) {
     override val data: List<VueDataProperty> get() = get(DATA)
     override val computed: List<VueComputedProperty> get() = get(COMPUTED)
     override val methods: List<VueMethod> get() = get(METHODS)
@@ -100,7 +100,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
   }
 
   private class ExtendsCallAccessor : ListAccessor<VueMixin>() {
-    override fun build(declaration: JSObjectLiteralExpression): List<VueMixin> =
+    override fun build(declaration: JSElement): List<VueMixin> =
       declaration.context
         ?.let { if (it is JSArgumentList) it.context else it }
         ?.castSafelyTo<JSCallExpression>()
@@ -118,8 +118,9 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
                                private val indexKey: StubIndexKey<String, JSImplicitElementProvider>)
     : ListAccessor<VueMixin>() {
 
-    override fun build(declaration: JSObjectLiteralExpression): List<VueMixin> {
-      val mixinsProperty = declaration.findProperty(propertyName) ?: return emptyList()
+    override fun build(declaration: JSElement): List<VueMixin> {
+      val mixinsProperty = declaration.castSafelyTo<JSObjectLiteralExpression>()
+                             ?.findProperty(propertyName) ?: return emptyList()
       val original = CompletionUtil.getOriginalOrSelf<PsiElement>(mixinsProperty)
       val referencedMixins: List<VueMixin> =
         resolve(LOCAL, GlobalSearchScope.fileScope(mixinsProperty.containingFile.originalFile), indexKey)
@@ -146,7 +147,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
   }
 
   private class DirectivesAccessor : MapAccessor<VueDirective>() {
-    override fun build(declaration: JSObjectLiteralExpression): Map<String, VueDirective> {
+    override fun build(declaration: JSElement): Map<String, VueDirective> {
       return StreamEx.of(ContainerMember.Directives.readMembers(declaration))
         .mapToEntry({ it.first }, {
           (VueComponents.meaningfulExpression(it.second) ?: it.second)
@@ -164,7 +165,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
   }
 
   private class ComponentsAccessor : MapAccessor<VueComponent>() {
-    override fun build(declaration: JSObjectLiteralExpression): Map<String, VueComponent> {
+    override fun build(declaration: JSElement): Map<String, VueComponent> {
       return StreamEx.of(ContainerMember.Components.readMembers(declaration))
         .mapToEntry({ p -> p.first }, { p -> p.second })
         .mapValues { element ->
@@ -184,7 +185,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
   }
 
   private class ModelAccessor : MemberAccessor<VueModelDirectiveProperties>() {
-    override fun build(declaration: JSObjectLiteralExpression): VueModelDirectiveProperties {
+    override fun build(declaration: JSElement): VueModelDirectiveProperties {
       var prop = VueModelDirectiveProperties.DEFAULT_PROP
       var event = VueModelDirectiveProperties.DEFAULT_EVENT
       ContainerMember.Model.readMembers(declaration).forEach { (name, element) ->
@@ -202,7 +203,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
   }
 
   private class DelimitersAccessor : MemberAccessor<Pair<String, String>?>() {
-    override fun build(declaration: JSObjectLiteralExpression): Pair<String, String>? {
+    override fun build(declaration: JSElement): Pair<String, String>? {
       val delimiters = ContainerMember.Delimiters.readMembers(declaration)
       if (delimiters.size == 2
           && delimiters[0].first.isNotBlank()

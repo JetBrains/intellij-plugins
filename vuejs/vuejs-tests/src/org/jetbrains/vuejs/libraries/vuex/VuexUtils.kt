@@ -10,6 +10,7 @@ enum class VuexTestStore(val dirName: String) {
   NuxtJs("nuxtjs"),
   ShoppingCart("shopping-cart"),
   Storefront("vue-storefront"),
+  StarImport("star-import"),
   SimpleStore("simple-store"),
   FunctionInit("function-init"),
 }

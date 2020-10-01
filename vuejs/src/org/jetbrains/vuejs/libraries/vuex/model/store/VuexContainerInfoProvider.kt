@@ -1,7 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.vuex.model.store
 
-import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.JSElement
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexContainerInfoProvider.VuexContainerInfo
 import org.jetbrains.vuejs.model.source.EntityContainerInfoProvider.InitializedContainerInfoProvider
@@ -39,7 +39,7 @@ class VuexContainerInfoProvider : InitializedContainerInfoProvider<VuexContainer
     private val IS_NAMESPACED = BooleanValueAccessor(VuexUtils.PROP_NAMESPACED)
   }
 
-  private class VuexContainerInfoImpl(declaration: JSObjectLiteralExpression)
+  private class VuexContainerInfoImpl(declaration: JSElement)
     : InitializedContainerInfo(declaration), VuexContainerInfo {
 
     override val state: Map<String, VuexStateProperty> get() = get(STATE)

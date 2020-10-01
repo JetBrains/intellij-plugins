@@ -1,6 +1,8 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model
 
+import com.intellij.lang.javascript.psi.JSFile
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterface
@@ -27,7 +29,8 @@ interface VueInstanceOwner : VueScopeElement {
       CachedValuesManager.getManager(source!!.project).getCachedValue(this) {
         CachedValueProvider.Result.create(buildInstanceType(this), PsiModificationTracker.MODIFICATION_COUNT)
       }
-    } else null ?: JSAnyType.get(source, false)
+    }
+    else null ?: JSAnyType.get(source, false)
 }
 
 private val VUE_INSTANCE_PROPERTIES: List<String> = listOf(
@@ -146,7 +149,7 @@ private fun contributeComponentProperties(instance: VueInstanceOwner,
 private fun buildOptionsType(instance: VueInstanceOwner, originalType: JSType?): JSType? {
   val result = mutableListOf<JSType>()
   originalType?.let(result::add)
-  instance.acceptEntities(object: VueModelVisitor() {
+  instance.acceptEntities(object : VueModelVisitor() {
     override fun visitMixin(mixin: VueMixin, proximity: Proximity): Boolean = visitInstanceOwner(mixin)
 
     override fun visitSelfComponent(component: VueComponent, proximity: Proximity): Boolean = visitInstanceOwner(component)
@@ -154,8 +157,10 @@ private fun buildOptionsType(instance: VueInstanceOwner, originalType: JSType?):
     override fun visitSelfApplication(application: VueApp, proximity: Proximity): Boolean = visitInstanceOwner(application)
 
     fun visitInstanceOwner(instanceOwner: VueInstanceOwner): Boolean {
-      (instanceOwner as? VueSourceEntity)?.initializer?.let {
-        result.add(JSTypeofTypeImpl(it, JSTypeSourceFactory.createTypeSource(it, false)))
+      when (val initializer = (instanceOwner as? VueSourceEntity)?.initializer) {
+        is JSObjectLiteralExpression -> result.add(JSTypeofTypeImpl(
+          initializer, JSTypeSourceFactory.createTypeSource(initializer, false)))
+        is JSFile -> result.add(JSModuleTypeImpl(initializer, false))
       }
       return true
     }

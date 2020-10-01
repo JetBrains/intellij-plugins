@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.source
 
-import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSRecordType.PropertySignature
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.openapi.extensions.ExtensionPointName
@@ -48,10 +48,10 @@ interface VueContainerInfoProvider : EntityContainerInfoProvider<VueContainerInf
   abstract class VueDecoratedContainerInfoProvider(createInfo: (clazz: JSClass) -> VueContainerInfo)
     : DecoratedContainerInfoProvider<VueContainerInfo>(createInfo), VueContainerInfoProvider
 
-  abstract class VueInitializedContainerInfoProvider(createInfo: (initializer: JSObjectLiteralExpression) -> VueContainerInfo)
+  abstract class VueInitializedContainerInfoProvider(createInfo: (initializer: JSElement) -> VueContainerInfo)
     : InitializedContainerInfoProvider<VueContainerInfo>(createInfo), VueContainerInfoProvider {
 
-    protected abstract class VueInitializedContainerInfo(declaration: JSObjectLiteralExpression)
+    protected abstract class VueInitializedContainerInfo(declaration: JSElement)
       : InitializedContainerInfo(declaration), VueContainerInfo
 
   }

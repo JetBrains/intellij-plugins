@@ -24,7 +24,7 @@ import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
 
 class VuexBasicComponentInfoProvider : VueContainerInfoProvider.VueInitializedContainerInfoProvider(::VuexComponentInfo) {
 
-  private class VuexComponentInfo(declaration: JSObjectLiteralExpression) : VueInitializedContainerInfo(declaration) {
+  private class VuexComponentInfo(declaration: JSElement) : VueInitializedContainerInfo(declaration) {
 
     override val computed: List<VueComputedProperty> get() = get(COMPUTED_STATE) + get(COMPUTED_GETTERS)
     override val methods: List<VueMethod> get() = get(METHODS)
@@ -39,7 +39,7 @@ class VuexBasicComponentInfoProvider : VueContainerInfoProvider.VueInitializedCo
                                                            val provider: (String, JSElement) -> T)
       : ListAccessor<T>() {
 
-      override fun build(declaration: JSObjectLiteralExpression): List<T> {
+      override fun build(declaration: JSElement): List<T> {
         return member.readMembers(declaration).map { (name, element) -> provider(name, element) }
       }
     }
@@ -50,8 +50,8 @@ class VuexBasicComponentInfoProvider : VueContainerInfoProvider.VueInitializedCo
       ComputedGetters(COMPUTED_PROP, MAP_GETTERS),
       Methods(METHODS_PROP, MAP_ACTIONS, MAP_MUTATIONS);
 
-      fun readMembers(descriptor: JSObjectLiteralExpression): List<Pair<String, JSElement>> {
-        val property = descriptor.findProperty(propertyName) ?: return emptyList()
+      fun readMembers(descriptor: JSElement): List<Pair<String, JSElement>> {
+        val property = (descriptor as? JSObjectLiteralExpression)?.findProperty(propertyName) ?: return emptyList()
 
         PsiTreeUtil.getStubChildOfType(property, JSCallExpression::class.java)
           ?.let {

@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
+import com.intellij.lang.javascript.psi.types.JSModuleTypeImpl
 import com.intellij.lang.javascript.psi.util.JSClassUtils
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
@@ -20,6 +21,7 @@ import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.codeInsight.collectPropertiesRecursively
 import org.jetbrains.vuejs.codeInsight.getStringLiteralsFromInitializerArray
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
+import org.jetbrains.vuejs.codeInsight.objectLiteralFor
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.function.Function
@@ -46,17 +48,17 @@ interface EntityContainerInfoProvider<T> {
       }
   }
 
-  abstract class InitializedContainerInfoProvider<T>(val createInfo: (initializer: JSObjectLiteralExpression) -> T) : EntityContainerInfoProvider<T> {
+  abstract class InitializedContainerInfoProvider<T>(val createInfo: (initializer: JSElement) -> T) : EntityContainerInfoProvider<T> {
 
     final override fun getInfo(descriptor: VueSourceEntityDescriptor): T? =
       descriptor.initializer?.let {
         val manager = CachedValuesManager.getManager(it.project)
-        manager.getCachedValue(it, manager.getKeyForClass<T>(this::class.java), {
+        manager.getCachedValue(it, manager.getKeyForClass(this::class.java), {
           CachedValueProvider.Result.create(createInfo(it), PsiModificationTracker.MODIFICATION_COUNT)
         }, false)
       }
 
-    protected abstract class InitializedContainerInfo(val declaration: JSObjectLiteralExpression) {
+    protected abstract class InitializedContainerInfo(val declaration: JSElement) {
       private val values: MutableMap<MemberAccessor<*>, Any?> = ConcurrentHashMap()
 
       protected fun <T> get(accessor: MemberAccessor<T>): T {
@@ -66,7 +68,7 @@ interface EntityContainerInfoProvider<T> {
     }
 
     abstract class MemberAccessor<T> {
-      abstract fun build(declaration: JSObjectLiteralExpression): T
+      abstract fun build(declaration: JSElement): T
     }
 
     abstract class ListAccessor<T> : MemberAccessor<List<T>>()
@@ -77,7 +79,7 @@ interface EntityContainerInfoProvider<T> {
                                   private val provider: (String, JSElement) -> T)
       : ListAccessor<T>() {
 
-      override fun build(declaration: JSObjectLiteralExpression): List<T> {
+      override fun build(declaration: JSElement): List<T> {
         return memberReader.readMembers(declaration).map { (name, element) -> provider(name, element) }
       }
     }
@@ -86,7 +88,7 @@ interface EntityContainerInfoProvider<T> {
     class SimpleMemberMapAccessor<T>(private val memberReader: MemberReader,
                                      private val provider: (String, JSElement) -> T) : MapAccessor<T>() {
 
-      override fun build(declaration: JSObjectLiteralExpression): Map<String, T> {
+      override fun build(declaration: JSElement): Map<String, T> {
         return memberReader.readMembers(declaration)
           .asSequence()
           .map {
@@ -99,17 +101,36 @@ interface EntityContainerInfoProvider<T> {
     }
 
     class BooleanValueAccessor(private val propertyName: String) : MemberAccessor<Boolean>() {
-      override fun build(declaration: JSObjectLiteralExpression): Boolean {
-        return declaration.findProperty(propertyName)
-          ?.initializerOrStub?.castSafelyTo<JSLiteralExpression>()
-          ?.significantValue == (JSTokenTypes.TRUE_KEYWORD as JSKeywordElementType).keyword
-      }
+      override fun build(declaration: JSElement): Boolean =
+        when (declaration) {
+          is JSObjectLiteralExpression -> declaration
+            .findProperty(propertyName)
+            ?.initializerOrStub?.castSafelyTo<JSLiteralExpression>()
+            ?.significantValue == (JSTokenTypes.TRUE_KEYWORD as JSKeywordElementType).keyword
+          is JSFile -> JSModuleTypeImpl(declaration, true)
+            .asRecordType()
+            .findPropertySignature(propertyName)
+            ?.memberSource
+            ?.singleElement
+            ?.castSafelyTo<JSInitializerOwner>()
+            ?.initializer
+            ?.castSafelyTo<JSLiteralExpression>()
+            ?.value == true
+          else -> false
+        }
     }
 
     open class MemberReader(private val propertyName: String,
                             private val canBeArray: Boolean = false,
                             private val canBeObject: Boolean = true) {
-      fun readMembers(descriptor: JSObjectLiteralExpression): List<Pair<String, JSElement>> {
+      fun readMembers(descriptor: JSElement): List<Pair<String, JSElement>> =
+        when (descriptor) {
+          is JSObjectLiteralExpression -> readObjectLiteral(descriptor)
+          is JSFile -> readFileExports(descriptor)
+          else -> emptyList()
+        }
+
+      private fun readObjectLiteral(descriptor: JSObjectLiteralExpression): List<Pair<String, JSElement>> {
         val property = descriptor.findProperty(propertyName) ?: return emptyList()
 
         var propsObject = property.objectLiteralExpressionInitializer ?: getObjectLiteral(property)
@@ -139,18 +160,31 @@ interface EntityContainerInfoProvider<T> {
         return if (canBeArray) readPropsFromArray(property) else return emptyList()
       }
 
-      private fun processJSTypeMembers(type: JSType?): List<Pair<String, JSElement>> {
-        return type?.asRecordType()
-                 ?.properties
-                 ?.mapNotNull { prop ->
-                   prop.takeIf { it.hasValidName() }
-                     ?.memberSource
-                     ?.singleElement
-                     ?.castSafelyTo<JSElement>()
-                     ?.let { Pair(prop.memberName, it) }
-                 }
-               ?: emptyList()
-      }
+      private fun readFileExports(file: JSFile): List<Pair<String, JSElement>> =
+        JSModuleTypeImpl(file, true).asRecordType()
+          .findPropertySignature(propertyName)
+          ?.memberSource
+          ?.singleElement
+          ?.let { exportedMember ->
+            val objectLiteral = objectLiteralFor(exportedMember)
+            if (canBeObject && objectLiteral != null)
+              collectPropertiesRecursively(objectLiteral)
+            else if (canBeArray)
+              readPropsFromArray(exportedMember)
+            else null
+          } ?: emptyList()
+
+      private fun processJSTypeMembers(type: JSType?): List<Pair<String, JSElement>> =
+        type?.asRecordType()
+          ?.properties
+          ?.mapNotNull { prop ->
+            prop.takeIf { it.hasValidName() }
+              ?.memberSource
+              ?.singleElement
+              ?.castSafelyTo<JSElement>()
+              ?.let { Pair(prop.memberName, it) }
+          }
+        ?: emptyList()
 
       protected open fun getObjectLiteral(property: JSProperty): JSObjectLiteralExpression? = null
       protected open fun getObjectLiteralFromResolved(resolved: PsiElement): JSObjectLiteralExpression? = null

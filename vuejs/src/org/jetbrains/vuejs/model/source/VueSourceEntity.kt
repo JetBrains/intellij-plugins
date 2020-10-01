@@ -2,8 +2,6 @@
 package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.javascript.psi.JSElement
-import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
-import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.psi.util.PsiTreeUtil
 
 interface VueSourceEntity {
@@ -13,5 +11,5 @@ interface VueSourceEntity {
     || PsiTreeUtil.isContextAncestor(descriptor.clazz, element, false)
 
   val descriptor: VueSourceEntityDescriptor
-  val initializer: JSObjectLiteralExpression? get() = descriptor.initializer
+  val initializer: JSElement? get() = descriptor.initializer
 }

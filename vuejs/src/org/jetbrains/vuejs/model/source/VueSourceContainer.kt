@@ -1,9 +1,11 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.source
 
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.psi.PsiElement
+import com.intellij.util.castSafelyTo
 import one.util.streamex.StreamEx
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.model.*
@@ -16,7 +18,10 @@ abstract class VueSourceContainer(sourceElement: JSImplicitElement,
   override val source: PsiElement = sourceElement
   override val parents: List<VueEntitiesContainer> get() = VueGlobalImpl.getParents(this)
 
-  override val element: String? get() = getTextIfLiteral(descriptor.initializer?.findProperty(EL_PROP)?.literalExpressionInitializer)
+  override val element: String?
+    get() = getTextIfLiteral(
+      descriptor.initializer?.castSafelyTo<JSObjectLiteralExpression>()
+        ?.findProperty(EL_PROP)?.literalExpressionInitializer)
 
   override val data: List<VueDataProperty> get() = get(DATA)
   override val computed: List<VueComputedProperty> get() = get(COMPUTED)

@@ -22,7 +22,7 @@ import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInf
 class VueCompositionInfoProvider : VueContainerInfoProvider {
 
   override fun getInfo(descriptor: VueSourceEntityDescriptor): VueContainerInfo? {
-    return descriptor.initializer?.let { VueCompositionInfo(it) }
+    return descriptor.initializer?.castSafelyTo<JSObjectLiteralExpression>()?.let { VueCompositionInfo(it) }
   }
 
   class VueCompositionInfo(val initializer: JSObjectLiteralExpression) : VueContainerInfo {
