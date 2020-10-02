@@ -27,7 +27,6 @@ class JavaLearningCourse : LearningCourseBase(JavaLanguage.INSTANCE.id) {
   override fun modules() = listOf(
     LearningModule(name = LessonsBundle.message("editor.basics.module.name"),
                    description = LessonsBundle.message("editor.basics.module.description"),
-                   sanitizedName = "Editor",
                    primaryLanguage = langSupport,
                    moduleType = ModuleType.SCRATCH) {
       fun ls(sampleName: String) = loadSample("EditorBasics/$sampleName")
@@ -44,7 +43,6 @@ class JavaLearningCourse : LearningCourseBase(JavaLanguage.INSTANCE.id) {
     },
     LearningModule(name = LessonsBundle.message("code.completion.module.name"),
                    description = LessonsBundle.message("code.completion.module.description"),
-                   sanitizedName = "Completion",
                    primaryLanguage = langSupport,
                    moduleType = ModuleType.SCRATCH) {
       listOf(
@@ -57,7 +55,6 @@ class JavaLearningCourse : LearningCourseBase(JavaLanguage.INSTANCE.id) {
     },
     LearningModule(name = LessonsBundle.message("refactorings.module.name"),
                    description = LessonsBundle.message("refactorings.module.description"),
-                   sanitizedName = "Refactorings",
                    primaryLanguage = langSupport,
                    moduleType = ModuleType.PROJECT) {
       fun ls(sampleName: String) = loadSample("Refactorings/$sampleName")
@@ -70,7 +67,6 @@ class JavaLearningCourse : LearningCourseBase(JavaLanguage.INSTANCE.id) {
     },
     LearningModule(name = LessonsBundle.message("code.assistance.module.name"),
                    description = LessonsBundle.message("code.assistance.module.description"),
-                   sanitizedName = "Assistance",
                    primaryLanguage = langSupport,
                    moduleType = ModuleType.PROJECT) {
       fun ls(sampleName: String) = loadSample("CodeAssistance/$sampleName")
@@ -83,7 +79,6 @@ class JavaLearningCourse : LearningCourseBase(JavaLanguage.INSTANCE.id) {
     },
     LearningModule(name = LessonsBundle.message("navigation.module.name"),
                    description = LessonsBundle.message("navigation.module.description"),
-                   sanitizedName = "Navigation",
                    primaryLanguage = langSupport,
                    moduleType = ModuleType.PROJECT) {
       listOf(
@@ -95,7 +90,6 @@ class JavaLearningCourse : LearningCourseBase(JavaLanguage.INSTANCE.id) {
     },
     LearningModule(name = LessonsBundle.message("run.debug.module.name"),
                    description = LessonsBundle.message("run.debug.module.description"),
-                   sanitizedName = "Run",
                    primaryLanguage = langSupport,
                    moduleType = ModuleType.PROJECT) {
       listOf(

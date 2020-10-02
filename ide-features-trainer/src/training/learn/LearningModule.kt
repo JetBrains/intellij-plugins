@@ -9,10 +9,13 @@ import training.learn.interfaces.ModuleType
 
 class LearningModule(@Nls override val name: String,
                      @Nls override val description: String,
-                     override val sanitizedName: String,
                      override val primaryLanguage: LangSupport,
                      override val moduleType: ModuleType,
+                     private val sampleFileName: String? = null,
                      initLessons: (LearningModule) -> List<Lesson>) : Module {
+
+  override val sanitizedName: String
+    get() = sampleFileName ?: error("Module $name for ${primaryLanguage.primaryLanguage} does not define its default name for samples.")
 
   override val lessons: List<Lesson> = initLessons(this)
 

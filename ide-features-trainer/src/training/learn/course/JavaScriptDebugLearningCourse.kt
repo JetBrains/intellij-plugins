@@ -14,7 +14,6 @@ class JavaScriptDebugLearningCourse : LearningCourseBase(JavascriptLanguage.INST
   override fun modules() = listOf(
     LearningModule(name = LessonsBundle.message("js.debugger.module.name", LessonUtil.productName),
                    description = LessonsBundle.message("js.debugger.module.description"),
-                   sanitizedName = "Debugger",
                    primaryLanguage = langSupport,
                    moduleType = ModuleType.PROJECT) {
       listOf(

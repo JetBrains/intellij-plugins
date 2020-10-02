@@ -19,7 +19,7 @@ class SwiftLearningCourse : LearningCourseBase("Swift") {
   override fun modules() = listOf(
     LearningModule(name = LessonsBundle.message("swift.editor.module.name"),
                    description = LessonsBundle.message("swift.editor.module.description"),
-                   sanitizedName = "Editor",
+                   sampleFileName = "Editor",
                    primaryLanguage = langSupport,
                    moduleType = ModuleType.PROJECT) {
       listOf(
@@ -37,7 +37,7 @@ class SwiftLearningCourse : LearningCourseBase("Swift") {
     },
     LearningModule(name = LessonsBundle.message("swift.code.generations.module.name"),
                    description = LessonsBundle.message("swift.code.generations.module.description"),
-                   sanitizedName = "Generation",
+                   sampleFileName = "Generation",
                    primaryLanguage = langSupport,
                    moduleType = ModuleType.PROJECT) {
       listOf(
@@ -49,7 +49,7 @@ class SwiftLearningCourse : LearningCourseBase("Swift") {
     },
     LearningModule(name = LessonsBundle.message("swift.navigation.module.name"),
                    description = LessonsBundle.message("swift.navigation.module.description"),
-                   sanitizedName = "Navigation",
+                   sampleFileName = "Navigation",
                    primaryLanguage = langSupport,
                    moduleType = ModuleType.PROJECT) {
       listOf(
@@ -62,7 +62,7 @@ class SwiftLearningCourse : LearningCourseBase("Swift") {
     },
     LearningModule(name = LessonsBundle.message("swift.refactorings.module.name"),
                    description = LessonsBundle.message("swift.refactorings.module.description"),
-                   sanitizedName = "Refactorings",
+                   sampleFileName = "Refactorings",
                    primaryLanguage = langSupport,
                    moduleType = ModuleType.PROJECT) {
       listOf(
@@ -75,7 +75,7 @@ class SwiftLearningCourse : LearningCourseBase("Swift") {
     },
     LearningModule(name = LessonsBundle.message("swift.run.debug.test.module.name"),
                    description = LessonsBundle.message("swift.run.debug.test.module.description"),
-                   sanitizedName = "Run",
+                   sampleFileName = "Run",
                    primaryLanguage = langSupport,
                    moduleType = ModuleType.PROJECT) {
       listOf(

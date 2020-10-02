@@ -13,7 +13,6 @@ class JavaScriptMainLearningCourse : LearningCourseBase(JavascriptLanguage.INSTA
   override fun modules() = listOf(
     LearningModule(name = LessonsBundle.message("js.editor.basics.module.name"),
                    description = LessonsBundle.message("js.editor.basics.module.description"),
-                   sanitizedName = "Editor",
                    primaryLanguage = langSupport,
                    moduleType = ModuleType.PROJECT) {
       listOf(
@@ -26,7 +25,6 @@ class JavaScriptMainLearningCourse : LearningCourseBase(JavascriptLanguage.INSTA
     },
     LearningModule(name = LessonsBundle.message("js.getting.started.module.name"),
                    description = LessonsBundle.message("js.getting.started.module.description", LessonUtil.productName),
-                   sanitizedName = "Testing",
                    primaryLanguage = langSupport,
                    moduleType = ModuleType.PROJECT) {
       listOf(

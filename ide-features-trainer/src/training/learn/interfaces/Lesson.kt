@@ -17,7 +17,9 @@ interface Lesson {
 
   /** This name will be used for generated file with lesson sample */
   val fileName: String
-    get() = module.sanitizedName + "." + findLanguageByID(lang)!!.associatedFileType!!.defaultExtension
+    get() {
+      return module.sanitizedName + "." + findLanguageByID(lang)!!.associatedFileType!!.defaultExtension
+    }
 
   val module: Module
 

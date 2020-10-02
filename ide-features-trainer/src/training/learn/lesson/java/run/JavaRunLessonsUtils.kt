@@ -4,7 +4,7 @@ package training.learn.lesson.java.run
 import training.learn.lesson.kimpl.parseLessonSample
 
 object JavaRunLessonsUtils {
-  const val demoClassName = "AverageFinder"
+  const val demoClassName = "Sample"
 
   val demoSample = parseLessonSample("""
     public class $demoClassName {
