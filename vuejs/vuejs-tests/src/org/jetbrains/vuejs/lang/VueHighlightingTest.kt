@@ -2,10 +2,12 @@
 package org.jetbrains.vuejs.lang
 
 import com.intellij.idea.Bombed
+import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.JSTestUtils.testWithinLanguageLevel
 import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection
+import com.intellij.lang.javascript.library.JSCorePredefinedLibrariesProvider
 import com.intellij.psi.css.inspections.invalid.CssInvalidFunctionInspection
 import com.intellij.psi.css.inspections.invalid.CssInvalidPseudoSelectorInspection
 import com.intellij.spellchecker.inspections.SpellCheckingInspection
@@ -1181,8 +1183,9 @@ import BComponent from 'b-component'
     myFixture.checkHighlighting()
   }
 
-  @Bombed(day = 3, month = Calendar.OCTOBER, user = "Konstantin Ulitin")
   fun testFlowJSEmbeddedContent() {
+    // Flow is not used unless there is associated .flowconfig. Instead of it to have 'console' resolved we may enable HTML library.
+    JSTestUtils.setDependencyOnPredefinedJsLibraries(project, testRootDisposable, JSCorePredefinedLibrariesProvider.LIB_HTML)
     testWithinLanguageLevel<Exception>(JSLanguageLevel.FLOW, project) {
       myFixture.configureByText("FlowJSEmbeddedContent.vue", """
 <script>
