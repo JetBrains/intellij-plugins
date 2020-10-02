@@ -30,7 +30,8 @@ public class MxmlTodoIndexer extends XmlTodoIndexer {
                                                                            PlatformIdTableBuilding.getTodoIndexer(file.getFileType());
                                                                          if (indexer != null) {
                                                                            Map<TodoIndexEntry, Integer> injectedMap = indexer.map(
-                                                                             new FileContentImpl(injectedFile, file.getText(), -1));
+                                                                             FileContentImpl.createByText(injectedFile, file.getText(), -1)
+                                                                           );
                                                                            for (Map.Entry<TodoIndexEntry, Integer> e : injectedMap
                                                                              .entrySet()) {
                                                                              Integer integer = map.get(e.getKey());
