@@ -130,6 +130,7 @@ class VueTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedConte
     if (language != null)
       Language.findInstancesByMimeType(language)
         .asSequence()
+        .plus(Language.findInstancesByMimeType("text/$language"))
         .plus(
           Language.getRegisteredLanguages()
             .asSequence()
