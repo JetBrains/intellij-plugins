@@ -155,11 +155,12 @@ else
       include ::Rake::TeamCity::RunnerUtils
       include ::Rake::TeamCity::Utils::UrlFormatter
 
-      attr_accessor :io, :test_count, :assertion_count, :failures, :errors, :skips, :test_case_manager, :parallel_run
+      attr_accessor :io, :options, :test_count, :assertion_count, :failures, :errors, :skips, :test_case_manager, :parallel_run
 
       def initialize(options = {})
         super()
         @passed = true
+        self.options= options
         self.io= options[:io] || $stdout
         self.test_count = 0
         self.assertion_count = 0
@@ -176,17 +177,22 @@ else
         end
       end
 
+      # adds options from minitest
+      # called from <path/to/minitest-reporters>/lib/minitest/minitest_reporter_plugin.rb:52
+      def add_defaults(defaults)
+        self.options = defaults.merge(options)
+      end
+
       def start
         # Setup test runner's MessageFactory
         set_message_factory(Rake::TeamCity::MessageFactory)
         log_test_reporter_attached()
 
         # Report tests count:
-        # todo: get test count
         if ::Rake::TeamCity.is_in_idea_mode
-          log(Rake::TeamCity::MessageFactory.create_tests_count(test_count))
+          log(Rake::TeamCity::MessageFactory.create_tests_count(options[:total_count] || 0))
         elsif ::Rake::TeamCity.is_in_buildserver_mode
-          log(Rake::TeamCity::MessageFactory.create_progress_message("Starting.. (#{self.test_count} tests)"))
+          log(Rake::TeamCity::MessageFactory.create_progress_message("Starting.. (#{options[:total_count] || 0} tests)"))
         end
         @suites_start_time = Time.now
       end
