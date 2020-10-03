@@ -292,6 +292,15 @@ else
       end
 
       def get_test_name(test)
+        if ::Rake::TeamCity.is_in_buildserver_mode
+          # for TeamCity it's necessary to provide FQN
+          get_fqn_from_test(test)
+        else
+          get_short_test_name(test)
+        end
+      end
+
+      def get_short_test_name(test)
         if defined? test.name
           test.name
         else
@@ -300,7 +309,7 @@ else
       end
 
       def get_fqn_from_test(test)
-        test_name = get_test_name(test)
+        test_name = get_short_test_name(test)
 
         if "#{test.class}".end_with?("MiniTest::TestResult")
           "#{test.suite}.#{test_name}"
