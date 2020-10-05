@@ -159,8 +159,8 @@ class VueTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedConte
 
   companion object {
     fun styleLanguage(styleLang: String?): Language? {
+      val cssLanguage = Language.findLanguageByID("CSS")
       if (styleLang != null) {
-        val cssLanguage = Language.findLanguageByID("CSS")
         if (styleLang.equals("text/css", ignoreCase = true)) return cssLanguage
         cssLanguage
           ?.dialects
@@ -170,7 +170,7 @@ class VueTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedConte
           }
           ?.let { return it }
       }
-      return Language.findLanguageByID("PostCSS")
+      return Language.findLanguageByID("PostCSS") ?: cssLanguage
     }
   }
 
