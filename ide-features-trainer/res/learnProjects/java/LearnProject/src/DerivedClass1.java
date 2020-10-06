@@ -10,7 +10,7 @@ public class DerivedClass1 implements SomeInterface {
 class SecondLevelClassA extends DerivedClass1 {
     @Override
     public void foo(FileStructureDemo demo) {
-        demo.boo();
+        demo.foo();
     }
 }
 
