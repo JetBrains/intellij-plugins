@@ -377,6 +377,7 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
     caret(position)
 
     highlightButtonById("RunToCursor")
+    highlightLineNumberByOffset(position.startOffset)
 
     actionTask("RunToCursor") {
       proposeRestore {
@@ -474,6 +475,17 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
             LearningUiHighlightingManager.highlightComponent(button)
           }
         }
+      }
+    }
+  }
+
+  private fun LessonContext.highlightLineNumberByOffset(offset: Int) {
+    task {
+      triggerByPartOfComponent<EditorGutterComponentEx> l@{ ui ->
+        if (CommonDataKeys.EDITOR.getData(ui as DataProvider) != editor) return@l null
+        val line = editor.offsetToVisualLine(offset, true)
+        val y = editor.visualLineToY(line)
+        return@l Rectangle(2, y, ui.width - 60, editor.lineHeight)
       }
     }
   }
