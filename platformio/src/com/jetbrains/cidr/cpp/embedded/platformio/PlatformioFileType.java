@@ -22,11 +22,6 @@ public class PlatformioFileType extends LanguageFileType {
   }
 
   @Override
-  public boolean isReadOnly() {
-    return false;
-  }
-
-  @Override
   public @NotNull
   String getName() {
     return "platformio";
