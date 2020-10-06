@@ -253,6 +253,11 @@ Vue.options.delimiters = ['<%', '%>']
     checkParseTree()
   }
 
+  fun testI18nTag() {
+    myFixture.configureByFile(getTestName(false) + ".vue")
+    checkParseTree()
+  }
+
   fun testStubbedAttribute() {
     myFixture.configureByFile(getTestName(false) + ".vue")
     checkParseTree()

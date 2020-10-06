@@ -55,6 +55,10 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
     doTestFromFile("vue")
   }
 
+  fun testI18nTag() {
+    doTestFromFile("vue")
+  }
+
   fun testPerLangIndent() {
     JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) {
       it.getCustomSettings(VueCodeStyleSettings::class.java).UNIFORM_INDENT = false

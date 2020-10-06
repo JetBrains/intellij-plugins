@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.editor
 
+import com.intellij.lang.Language
 import com.intellij.lang.injection.MultiHostInjector
 import com.intellij.lang.injection.MultiHostRegistrar
 import com.intellij.lang.javascript.JSInjectionBracesUtil
@@ -21,10 +22,13 @@ import com.intellij.psi.impl.source.xml.XmlTextImpl
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
+import com.intellij.psi.xml.XmlTag
 import com.intellij.util.NullableFunction
+import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.es6Unquote
 import org.jetbrains.vuejs.codeInsight.getStringLiteralsFromInitializerArray
+import org.jetbrains.vuejs.codeInsight.tags.CUSTOM_TAGS
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.VueFrameworkHandler
 import org.jetbrains.vuejs.index.VueOptionsIndex
@@ -40,6 +44,7 @@ import org.jetbrains.vuejs.model.source.TEMPLATE_PROP
 import org.jetbrains.vuejs.model.source.VueComponents
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.onlyLocal
 import org.jetbrains.vuejs.model.source.VueSourceContainer
+import java.util.*
 
 class VueInjector : MultiHostInjector {
   companion object {
@@ -113,6 +118,18 @@ class VueInjector : MultiHostInjector {
         }
       }
       return
+    }
+
+    if (context is XmlTextImpl) {
+      val lang = CUSTOM_TAGS[context.parent?.castSafelyTo<XmlTag>()?.name?.toLowerCase(Locale.US)]
+      if (lang != null) {
+        Language.findLanguageByID(lang)?.let {
+          registrar.startInjecting(it)
+            .addPlace(null, null, context, ElementManipulators.getValueTextRange(context))
+            .doneInjecting()
+        }
+        return
+      }
     }
 
     if (context is XmlTextImpl || context is XmlAttributeValueImpl) {

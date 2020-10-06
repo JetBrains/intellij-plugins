@@ -22,12 +22,17 @@ import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.*
+import java.util.*
 
 private const val LOCAL_PRIORITY = 100.0
 private const val APP_PRIORITY = 90.0
 private const val PLUGIN_PRIORITY = 90.0
 private const val GLOBAL_PRIORITY = 80.0
 private const val UNREGISTERED_PRIORITY = 50.0
+
+val CUSTOM_TAGS: Map<String, String> = mapOf(
+  Pair("i18n", "JSON")
+)
 
 class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
   override fun getDescriptor(tag: XmlTag?): XmlElementDescriptor? {
@@ -52,7 +57,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
 
     if (components.isNotEmpty())
       return VueElementDescriptor(tag, components)
-    return null
+    return CUSTOM_TAGS[tag.name.toLowerCase(Locale.US)]?.let { VueElementDescriptor(tag) }
   }
 
   override fun addTagNameVariants(elements: MutableList<LookupElement>?, tag: XmlTag, namespacePrefix: String?) {
