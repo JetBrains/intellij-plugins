@@ -7,6 +7,7 @@ import com.intellij.javascript.JSHtmlEmbeddedContentSupport;
 import com.intellij.lang.LanguageASTFactory;
 import com.intellij.lang.css.CSSLanguage;
 import com.intellij.lang.css.CSSParserDefinition;
+import com.intellij.lang.html.HTMLParserDefinition;
 import com.intellij.lang.javascript.JavascriptParserDefinition;
 import com.intellij.lang.javascript.dialects.ECMA6ParserDefinition;
 import com.intellij.lang.javascript.dialects.JSLanguageLevel;
@@ -39,6 +40,7 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
           new Angular2HtmlParserDefinition(),
           new Angular2ParserDefinition(),
           new JavascriptParserDefinition(),
+          new HTMLParserDefinition(),
           new CSSParserDefinition());
   }
 

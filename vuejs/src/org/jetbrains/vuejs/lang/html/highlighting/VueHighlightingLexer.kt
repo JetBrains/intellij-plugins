@@ -1,9 +1,11 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang.html.highlighting
 
+import com.intellij.html.embedding.HtmlEmbeddedContentProvider
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lexer.FlexAdapter
 import com.intellij.lexer.HtmlHighlightingLexer
+import com.intellij.lexer.HtmlScriptStyleEmbeddedContentProvider
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.project.Project
 import com.intellij.psi.tree.IElementType
@@ -21,6 +23,10 @@ class VueHighlightingLexer(override val languageLevel: JSLanguageLevel,
                            override val interpolationConfig: Pair<String, String>?)
   : HtmlHighlightingLexer(VueHighlightingMergingLexer(FlexAdapter(_VueLexer(interpolationConfig))),
                           true, null), VueLexer {
+
+  override fun acceptEmbeddedContentProvider(provider: HtmlEmbeddedContentProvider?): Boolean {
+    return provider !is HtmlScriptStyleEmbeddedContentProvider
+  }
 
   override fun isHtmlTagState(state: Int): Boolean {
     return state == _VueLexer.START_TAG_NAME || state == _VueLexer.END_TAG_NAME

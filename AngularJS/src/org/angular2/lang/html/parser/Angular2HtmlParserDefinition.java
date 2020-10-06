@@ -11,9 +11,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.html.HtmlFileImpl;
 import com.intellij.psi.tree.IFileElementType;
-import org.angular2.lang.Angular2EmbeddedContentTokenType;
 import org.angular2.lang.html.Angular2HtmlFileElementType;
-import org.angular2.lang.html.XmlASTWrapperPsiElement;
 import org.angular2.lang.html.lexer.Angular2HtmlLexer;
 import org.angular2.lang.html.stub.Angular2HtmlNgContentSelectorElementType;
 import org.jetbrains.annotations.NotNull;
@@ -42,9 +40,6 @@ public class Angular2HtmlParserDefinition extends HTMLParserDefinition {
 
   @Override
   public @NotNull PsiElement createElement(ASTNode node) {
-    if (node.getElementType() instanceof Angular2EmbeddedContentTokenType) {
-      return new XmlASTWrapperPsiElement(node);
-    }
     if (node.getElementType() instanceof Angular2HtmlNgContentSelectorElementType) {
       return ((Angular2HtmlNgContentSelectorElementType)node.getElementType()).createPsi(node);
     }

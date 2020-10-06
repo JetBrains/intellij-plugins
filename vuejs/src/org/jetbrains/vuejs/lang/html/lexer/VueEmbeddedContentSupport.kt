@@ -2,11 +2,11 @@
 package org.jetbrains.vuejs.lang.html.lexer
 
 import com.intellij.html.embedding.*
+import com.intellij.html.embedding.HtmlEmbeddedContentSupport.Companion.getStyleTagEmbedmentInfo
 import com.intellij.lang.Language
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lexer.BaseHtmlLexer
-import com.intellij.lexer.EmbeddedTokenTypesProvider
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.project.Project
@@ -102,10 +102,11 @@ class VueTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedConte
     val tagName = tagName ?: return null
     val lang = attributeValue?.trim()?.toString()
     return when {
-      namesEqual(tagName, HtmlUtil.STYLE_TAG_NAME) -> getStyleTagInfo(lang)
+      namesEqual(tagName, HtmlUtil.STYLE_TAG_NAME) -> styleLanguage(lang)?.let { getStyleTagEmbedmentInfo(it) }
+                                                      ?: HtmlEmbeddedContentProvider.RAW_TEXT_EMBEDMENT
       namesEqual(tagName, HtmlUtil.SCRIPT_TAG_NAME)
       || namesEqual(tagName, HtmlUtil.TEMPLATE_TAG_NAME) -> getScriptOrTemplateTagInfo(tagName, lang)
-      else -> HtmlEmbeddedContentProvider.PLAIN_TEXT_EMBEDMENT
+      else -> HtmlEmbeddedContentProvider.RAW_TEXT_EMBEDMENT
     }
   }
 
@@ -120,25 +121,13 @@ class VueTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedConte
         override fun createHighlightingLexer(): Lexer? =
           VueHighlightingLexer(languageLevel, project, interpolationConfig)
       }
-      null -> HtmlEmbeddedContentProvider.PLAIN_TEXT_EMBEDMENT
+      null -> HtmlEmbeddedContentProvider.RAW_TEXT_EMBEDMENT
       else -> object : HtmlEmbedmentInfo {
         override fun getElementType(): IElementType? = JSElementTypes.toModuleContentType(elementType)
         override fun createHighlightingLexer(): Lexer? = provider.createHighlightingLexer()
       }
     }
   }
-
-  private fun getStyleTagInfo(lang: String?) =
-    styleLanguage(lang)?.let { language ->
-      EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME.extensions()
-        .map { it.elementType }
-        .filter { language.`is`(it.language) }
-        .map { elementType ->
-          HtmlLanguageEmbedmentInfo(elementType, language)
-        }
-        .findFirst()
-        .orElse(null)
-    }
 
   private fun scriptContentProvider(language: String?): HtmlEmbedmentInfo? =
     if (language != null)

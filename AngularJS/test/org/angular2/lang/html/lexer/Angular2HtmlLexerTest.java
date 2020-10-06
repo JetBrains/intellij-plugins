@@ -250,7 +250,7 @@ public class Angular2HtmlLexerTest extends LexerTestCase {
   }
 
   public void testTextarea() {
-    doTest("<textarea>with { some } {{wierd}} <stuff> in it</textarea>");
+    doTest("<textarea>with { some } {{wierd}} &nbsp; <stuff> in it</textarea>");
   }
 
   @Override

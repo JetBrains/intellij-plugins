@@ -1,16 +1,19 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.html.parser;
 
+import com.intellij.html.embedding.HtmlCustomEmbeddedContentTokenType;
 import com.intellij.ide.highlighter.custom.AbstractCustomLexer;
 import com.intellij.ide.highlighter.custom.tokens.TokenParser;
+import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.javascript.psi.JSStubElementType;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.stubs.JSVariableStub;
 import com.intellij.lexer.Lexer;
+import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.ContainerUtil;
-import org.angular2.lang.Angular2EmbeddedContentTokenType;
 import org.angular2.lang.expr.Angular2Language;
+import org.angular2.lang.html.XmlASTWrapperPsiElement;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
@@ -21,7 +24,7 @@ import static com.intellij.psi.xml.XmlTokenType.XML_NAME;
 import static org.angular2.lang.html.stub.Angular2HtmlStubElementTypes.LET_VARIABLE;
 import static org.angular2.lang.html.stub.Angular2HtmlStubElementTypes.REFERENCE_VARIABLE;
 
-public class Angular2HtmlVarAttrTokenType extends Angular2EmbeddedContentTokenType {
+public class Angular2HtmlVarAttrTokenType extends HtmlCustomEmbeddedContentTokenType {
 
   public static final Angular2HtmlVarAttrTokenType REFERENCE = new Angular2HtmlVarAttrTokenType(
     "NG:REFERENCE_TOKEN", REFERENCE_VARIABLE, () -> new RefPrefixTokenParser());
@@ -56,6 +59,11 @@ public class Angular2HtmlVarAttrTokenType extends Angular2EmbeddedContentTokenTy
     var.done(myVarElementType);
     var.precede().done(VAR_STATEMENT);
     start.done(XML_NAME);
+  }
+
+  @Override
+  public @NotNull PsiElement createPsi(@NotNull ASTNode node) {
+    return new XmlASTWrapperPsiElement(node);
   }
 
   private static class VarIdentTokenParser extends TokenParser {

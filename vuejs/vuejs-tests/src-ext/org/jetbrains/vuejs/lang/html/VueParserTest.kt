@@ -5,9 +5,11 @@ import com.intellij.html.HtmlParsingTest
 import com.intellij.html.embedding.HtmlEmbeddedContentSupport
 import com.intellij.javascript.JSHtmlEmbeddedContentSupport
 import com.intellij.lang.LanguageASTFactory
+import com.intellij.lang.LanguageHtmlScriptContentProvider
 import com.intellij.lang.LanguageParserDefinitions
 import com.intellij.lang.css.CSSLanguage
 import com.intellij.lang.css.CSSParserDefinition
+import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.html.HTMLParserDefinition
 import com.intellij.lang.javascript.JavascriptParserDefinition
 import com.intellij.lang.javascript.dialects.ECMA6ParserDefinition
@@ -30,7 +32,13 @@ import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorFactory2
 import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorProviderImpl
 import com.intellij.psi.impl.BlockSupportImpl
 import com.intellij.psi.impl.DebugUtil
+import com.intellij.psi.impl.source.html.TemplateHtmlScriptContentProvider
 import com.intellij.util.ObjectUtils
+import org.intellij.plugins.postcss.PostCssEmbeddedTokenTypesProvider
+import org.intellij.plugins.postcss.PostCssLanguage
+import org.intellij.plugins.postcss.descriptors.PostCssElementDescriptorProvider
+import org.intellij.plugins.postcss.parser.PostCssParserDefinition
+import org.intellij.plugins.postcss.psi.impl.PostCssTreeElementFactory
 import org.jetbrains.vuejs.lang.expr.parser.VueJSParserDefinition
 import org.jetbrains.vuejs.lang.html.lexer.VueEmbeddedContentSupport
 import org.jetbrains.vuejs.lang.html.parser.VueFileElementType
@@ -41,22 +49,27 @@ class VueParserTest : HtmlParsingTest("", "vue",
                                       VueJSParserDefinition(),
                                       HTMLParserDefinition(),
                                       JavascriptParserDefinition(),
-                                      CSSParserDefinition()) {
+                                      CSSParserDefinition(),
+                                      PostCssParserDefinition()) {
 
   override fun setUp() {
     super.setUp()
 
     registerExtensions(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, EmbeddedTokenTypesProvider::class.java,
-                       listOf(CssEmbeddedTokenTypesProvider()))
+                       listOf(CssEmbeddedTokenTypesProvider(), PostCssEmbeddedTokenTypesProvider()))
 
     addExplicitExtension(LanguageASTFactory.INSTANCE, CSSLanguage.INSTANCE, CssTreeElementFactory())
+    addExplicitExtension(LanguageASTFactory.INSTANCE, PostCssLanguage.INSTANCE, PostCssTreeElementFactory())
+
     registerExtensionPoint(CssElementDescriptorProvider.EP_NAME, CssElementDescriptorProvider::class.java)
     registerExtension(CssElementDescriptorProvider.EP_NAME, CssElementDescriptorProviderImpl())
+    registerExtension(CssElementDescriptorProvider.EP_NAME, PostCssElementDescriptorProvider())
     application.registerService(CssElementDescriptorFactory2::class.java, CssElementDescriptorFactory2("css-parsing-tests.xml"))
 
     // Update parser definition if version is changed
     assert(JSLanguageLevel.DEFAULT == JSLanguageLevel.ES6)
     addExplicitExtension(LanguageParserDefinitions.INSTANCE, JSLanguageLevel.ES6.dialect, ECMA6ParserDefinition())
+    addExplicitExtension(LanguageHtmlScriptContentProvider.INSTANCE, HTMLLanguage.INSTANCE, TemplateHtmlScriptContentProvider())
 
     registerExtensionPoint(FrameworkIndexingHandler.EP_NAME, FrameworkIndexingHandlerEP::class.java)
 

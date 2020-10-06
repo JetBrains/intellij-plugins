@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang.html.lexer
 
+import com.intellij.html.embedding.HtmlEmbeddedContentProvider
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lexer.*
 import com.intellij.openapi.project.Project
@@ -18,6 +19,10 @@ class VueLexerImpl(override val languageLevel: JSLanguageLevel,
 
   override fun isHtmlTagState(state: Int): Boolean {
     return state == _VueLexer.START_TAG_NAME || state == _VueLexer.END_TAG_NAME
+  }
+
+  override fun acceptEmbeddedContentProvider(provider: HtmlEmbeddedContentProvider?): Boolean {
+    return provider !is HtmlScriptStyleEmbeddedContentProvider
   }
 
   override fun createAttributeEmbedmentTokenSet(): TokenSet {
