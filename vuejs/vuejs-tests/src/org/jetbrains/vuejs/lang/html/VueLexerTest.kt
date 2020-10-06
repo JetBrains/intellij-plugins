@@ -410,6 +410,10 @@ open class VueLexerTest : LexerTestCase() {
     """, false)
   }
 
+  fun testTextarea() {
+    doTest("<textarea>with { some } {{wierd}} <stuff> in it</textarea>")
+  }
+
   override fun createLexer(): Lexer = VueLexerImpl(JSLanguageLevel.ES6, fixture.project, interpolationConfig)
 
   override fun getDirPath() = "html/lexer"

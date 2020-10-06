@@ -249,6 +249,10 @@ public class Angular2HtmlLexerTest extends LexerTestCase {
            "<div [bar]=\"some\"></div>");
   }
 
+  public void testTextarea() {
+    doTest("<textarea>with { some } {{wierd}} <stuff> in it</textarea>");
+  }
+
   @Override
   protected void doTest(@NonNls String text) {
     doTest(text, true);

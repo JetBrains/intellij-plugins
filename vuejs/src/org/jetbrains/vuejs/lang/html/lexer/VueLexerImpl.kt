@@ -1,7 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang.html.lexer
 
-import com.intellij.html.embedding.HtmlEmbeddedContentSupport
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lexer.*
 import com.intellij.openapi.project.Project
@@ -16,9 +15,6 @@ class VueLexerImpl(override val languageLevel: JSLanguageLevel,
                    override val project: Project,
                    override val interpolationConfig: Pair<String, String>?)
   : HtmlLexer(VueMergingLexer(FlexAdapter(_VueLexer(interpolationConfig))), true), VueLexer {
-
-  override fun getEmbeddedContentSupportList(): List<HtmlEmbeddedContentSupport> =
-    super.getEmbeddedContentSupportList().filter { it !is HtmlDefaultEmbeddedContentSupport }
 
   override fun isHtmlTagState(state: Int): Boolean {
     return state == _VueLexer.START_TAG_NAME || state == _VueLexer.END_TAG_NAME
