@@ -159,7 +159,12 @@ module Test
 
             debug_log("Test started #{test_name}...[#{qualified_test_name}]")
 
-            @my_running_test_name = test_name
+            if ::Rake::TeamCity.is_in_buildserver_mode
+              @my_running_test_name = qualified_test_name
+            else
+              @my_running_test_name = test_name
+            end
+
             @my_running_test_name_runner_original = test_name
             @my_running_test_start_time = get_current_time_in_ms
             log(@message_factory.create_test_started(@my_running_test_name,
