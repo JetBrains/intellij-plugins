@@ -72,7 +72,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
         final JavaRunConfigurationModule module = getConfigurationModule();
 
         final int classPathType = JavaParameters.JDK_AND_CLASSES_AND_TESTS;
-        final String jreHome = isAlternativeJrePathEnabled() ? getAlternativeJrePath() : null;
+        final String jreHome = getTargetEnvironmentRequest() == null && isAlternativeJrePathEnabled() ? getAlternativeJrePath() : null;
         JavaParametersUtil.configureModule(module, params, classPathType, jreHome);
         JavaParametersUtil.configureConfiguration(params, CucumberJavaRunConfiguration.this);
 
