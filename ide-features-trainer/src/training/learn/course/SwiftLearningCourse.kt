@@ -37,7 +37,7 @@ class SwiftLearningCourse : LearningCourseBase("Swift") {
     },
     LearningModule(name = LessonsBundle.message("swift.code.generations.module.name"),
                    description = LessonsBundle.message("swift.code.generations.module.description"),
-                   sampleFileName = "Generation",
+                   sampleFileName = "CodeGeneration",
                    primaryLanguage = langSupport,
                    moduleType = ModuleType.PROJECT) {
       listOf(
@@ -75,7 +75,7 @@ class SwiftLearningCourse : LearningCourseBase("Swift") {
     },
     LearningModule(name = LessonsBundle.message("swift.run.debug.test.module.name"),
                    description = LessonsBundle.message("swift.run.debug.test.module.description"),
-                   sampleFileName = "Run",
+                   sampleFileName = "RunDebugTest",
                    primaryLanguage = langSupport,
                    moduleType = ModuleType.PROJECT) {
       listOf(
