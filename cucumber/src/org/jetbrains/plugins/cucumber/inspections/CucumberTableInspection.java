@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.psi.*;
@@ -52,7 +53,7 @@ public final class CucumberTableInspection extends GherkinInspection {
       return;
     }
     final List<GherkinTableCell> cells = row.getPsiCells();
-    IntArrayList unusedIndices = new IntArrayList();
+    IntList unusedIndices = new IntArrayList();
 
     for (int i = 0, cellsSize = cells.size(); i < cellsSize; i++) {
       String columnName = cells.get(i).getText().trim();
@@ -69,7 +70,7 @@ public final class CucumberTableInspection extends GherkinInspection {
     }
   }
 
-  private static void highlightUnusedColumns(GherkinTableRow row, IntArrayList unusedIndices, ProblemsHolder holder) {
+  private static void highlightUnusedColumns(GherkinTableRow row, IntList unusedIndices, ProblemsHolder holder) {
     final List<GherkinTableCell> cells = row.getPsiCells();
     final int cellsCount = cells.size();
 
