@@ -1907,8 +1907,6 @@ public final class DartAnalysisServerService implements Disposable {
 
       @Override
       public void onError(final RequestError error) {
-        LOG.warn(
-          "execution_mapUri(" + _id + ", " + filePath + ", " + _uri + ") returned error " + error.getCode() + ": " + error.getMessage());
         latch.countDown();
       }
     });
