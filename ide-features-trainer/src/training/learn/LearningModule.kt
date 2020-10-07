@@ -4,34 +4,17 @@ package training.learn
 import org.jetbrains.annotations.Nls
 import training.lang.LangSupport
 import training.learn.interfaces.Lesson
-import training.learn.interfaces.Module
 import training.learn.interfaces.ModuleType
 
-class LearningModule(@Nls override val name: String,
-                     @Nls override val description: String,
-                     override val primaryLanguage: LangSupport,
-                     override val moduleType: ModuleType,
+class LearningModule(@Nls name: String,
+                     @Nls description: String,
+                     primaryLanguage: LangSupport,
+                     moduleType: ModuleType,
                      private val sampleFileName: String? = null,
-                     initLessons: (LearningModule) -> List<Lesson>) : Module {
+                     initLessons: (LearningModule) -> List<Lesson>): LearningModuleBase(name, description, primaryLanguage, moduleType) {
 
   override val sanitizedName: String
     get() = sampleFileName ?: error("Module $name for ${primaryLanguage.primaryLanguage} does not define its default name for samples.")
 
   override val lessons: List<Lesson> = initLessons(this)
-
-  override fun toString(): String {
-    return "($name for $primaryLanguage)"
-  }
-
-  override fun giveNotPassedLesson(): Lesson? {
-    return lessons.firstOrNull { !it.passed }
-  }
-
-  override fun giveNotPassedAndNotOpenedLesson(): Lesson? {
-    return lessons.firstOrNull { !it.passed }
-  }
-
-  override fun hasNotPassedLesson(): Boolean {
-    return lessons.any { !it.passed }
-  }
 }
