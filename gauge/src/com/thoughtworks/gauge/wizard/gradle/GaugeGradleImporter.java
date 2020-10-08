@@ -12,6 +12,7 @@ import com.thoughtworks.gauge.GaugeBundle;
 import com.thoughtworks.gauge.wizard.GaugeModuleImporter;
 import com.thoughtworks.gauge.wizard.GaugeTemplate;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.concurrency.AsyncPromise;
 import org.jetbrains.plugins.gradle.service.project.open.GradleProjectImportUtil;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 
@@ -25,15 +26,15 @@ final class GaugeGradleImporter implements GaugeModuleImporter {
   }
 
   @Override
-  public void importModule(@NotNull Module module, GaugeTemplate selectedTemplate) {
-    runAfterSetup(module);
+  public AsyncPromise<Void> importModule(@NotNull Module module, GaugeTemplate selectedTemplate) {
+    return runAfterSetup(module);
   }
 
-  private static void runAfterSetup(Module module) {
+  private static AsyncPromise<Void> runAfterSetup(Module module) {
     Project project = module.getProject();
 
     File gradleFile = findGradleFile(module);
-    if (gradleFile == null) return;
+    if (gradleFile == null) return new AsyncPromise<>();
 
     String rootDirectory = gradleFile.getParent();
     fixGradlewExecutableFlag(gradleFile.getParentFile());
@@ -42,8 +43,12 @@ final class GaugeGradleImporter implements GaugeModuleImporter {
       fixGroupArtifactId(module);
     });
 
-    if (!GradleProjectImportUtil.canLinkAndRefreshGradleProject(rootDirectory, project)) return;
+    if (!GradleProjectImportUtil.canLinkAndRefreshGradleProject(rootDirectory, project)) return new AsyncPromise<>();
     GradleProjectImportUtil.linkAndRefreshGradleProject(rootDirectory, project);
+
+    AsyncPromise<Void> promise = new AsyncPromise<>();
+    promise.setResult(null);
+    return promise;
   }
 
   private static File findGradleFile(@NotNull Module module) {

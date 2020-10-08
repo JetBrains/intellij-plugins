@@ -50,6 +50,7 @@ import com.intellij.ui.components.panels.VerticalLayout;
 import com.intellij.util.ui.FormBuilder;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
+import com.thoughtworks.gauge.GaugeBootstrapService;
 import com.thoughtworks.gauge.GaugeConstants;
 import com.thoughtworks.gauge.GaugeBundle;
 import com.thoughtworks.gauge.core.GaugeVersion;
@@ -166,7 +167,10 @@ final class GaugeModuleBuilder extends ModuleBuilder {
     if (mySelectedTemplate != null) {
       for (GaugeModuleImporter importer : EP_NAME.getExtensions()) {
         if (Objects.equals(importer.getId(), mySelectedTemplate.importerId)) {
-          importer.importModule(module, selectedTemplate);
+          importer.importModule(module, selectedTemplate).onSuccess(noResult -> {
+            // schedule bootstrap
+            GaugeBootstrapService.getInstance(module.getProject()).moduleAdded(module);
+          });
           return;
         }
       }

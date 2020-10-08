@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.thoughtworks.gauge.wizard.GaugeModuleImporter;
 import com.thoughtworks.gauge.wizard.GaugeTemplate;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.concurrency.AsyncPromise;
 import org.jetbrains.idea.maven.execution.MavenRunner;
 import org.jetbrains.idea.maven.execution.MavenRunnerParameters;
 import org.jetbrains.idea.maven.execution.MavenRunnerSettings;
@@ -33,13 +34,13 @@ final class GaugeMavenImporter implements GaugeModuleImporter {
   }
 
   @Override
-  public void importModule(@NotNull Module module, GaugeTemplate selectedTemplate) {
-    generateFromArchetype(module, selectedTemplate);
+  public AsyncPromise<Void> importModule(@NotNull Module module, GaugeTemplate selectedTemplate) {
+    return generateFromArchetype(module, selectedTemplate);
   }
 
-  private static void generateFromArchetype(@NotNull Module module, GaugeTemplate selectedTemplate) {
+  private static AsyncPromise<Void> generateFromArchetype(@NotNull Module module, GaugeTemplate selectedTemplate) {
     String modulePath = ModuleRootManager.getInstance(module).getContentRoots()[0].getCanonicalPath();
-    if (modulePath == null) return;
+    if (modulePath == null) return new AsyncPromise<>();
 
     File workingDir;
     try {
@@ -47,7 +48,7 @@ final class GaugeMavenImporter implements GaugeModuleImporter {
     }
     catch (IOException e) {
       Logger.getInstance(GaugeMavenImporter.class).error(e);
-      return;
+      return new AsyncPromise<>();
     }
 
     String archetype = null;
@@ -58,7 +59,7 @@ final class GaugeMavenImporter implements GaugeModuleImporter {
       archetype = GAUGE_SELENIUM_ARCHETYPE;
     }
 
-    if (archetype == null) return;
+    if (archetype == null) return new AsyncPromise<>();
 
     MavenRunnerParameters params = new MavenRunnerParameters(
       false, workingDir.getPath(), (String)null,
@@ -77,10 +78,15 @@ final class GaugeMavenImporter implements GaugeModuleImporter {
     props.put("artifactId", ARCHETYPE_ID);
     props.put("version", "1.0-SNAPSHOT");
 
+    AsyncPromise<Void> promise = new AsyncPromise<>();
     runner.run(params, settings, () -> {
       copyGeneratedFiles(workingDir, new File(modulePath));
       runAfterSetup(module);
+
+      promise.setResult(null);
     });
+
+    return promise;
   }
 
   private static void copyGeneratedFiles(File workingDir, File moduleDir) {
