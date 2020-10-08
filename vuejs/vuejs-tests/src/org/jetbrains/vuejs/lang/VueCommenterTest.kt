@@ -2,6 +2,8 @@
 package org.jetbrains.vuejs.lang
 
 import com.intellij.openapi.application.PathManager
+import com.intellij.lang.html.HTMLLanguage
+import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class VueCommenterTest : BasePlatformTestCase() {
@@ -13,11 +15,61 @@ class VueCommenterTest : BasePlatformTestCase() {
   fun testLess() = doTest()
   fun testStylus() = doTest()
 
+  fun testCommentByLineComment() = JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) {
+    val htmlSettings = it.getCommonSettings(HTMLLanguage.INSTANCE)
+    htmlSettings.BLOCK_COMMENT_AT_FIRST_COLUMN = false
+    htmlSettings.LINE_COMMENT_AT_FIRST_COLUMN = false
+    doTest(0, "CommentByLineComment")
+
+    htmlSettings.BLOCK_COMMENT_AT_FIRST_COLUMN = true
+    htmlSettings.LINE_COMMENT_AT_FIRST_COLUMN = false
+    doTest(0, "CommentByLineComment")
+
+    htmlSettings.BLOCK_COMMENT_AT_FIRST_COLUMN = false
+    htmlSettings.LINE_COMMENT_AT_FIRST_COLUMN = true
+    doTest(1, "CommentByLineComment")
+
+    htmlSettings.BLOCK_COMMENT_AT_FIRST_COLUMN = true
+    htmlSettings.LINE_COMMENT_AT_FIRST_COLUMN = true
+    doTest(1, "CommentByLineComment")
+  }
+
+  fun testCommentByBlockComment() = JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) {
+    val htmlSettings = it.getCommonSettings(HTMLLanguage.INSTANCE)
+    htmlSettings.BLOCK_COMMENT_AT_FIRST_COLUMN = false
+    htmlSettings.LINE_COMMENT_AT_FIRST_COLUMN = false
+    doTest(0, "CommentByBlockComment")
+
+    htmlSettings.BLOCK_COMMENT_AT_FIRST_COLUMN = true
+    htmlSettings.LINE_COMMENT_AT_FIRST_COLUMN = false
+    doTest(1, "CommentByBlockComment")
+
+    htmlSettings.BLOCK_COMMENT_AT_FIRST_COLUMN = false
+    htmlSettings.LINE_COMMENT_AT_FIRST_COLUMN = true
+    doTest(0, "CommentByBlockComment")
+
+    htmlSettings.BLOCK_COMMENT_AT_FIRST_COLUMN = true
+    htmlSettings.LINE_COMMENT_AT_FIRST_COLUMN = true
+    doTest(1, "CommentByBlockComment")
+  }
+
   fun doTest() {
     val name = getTestName(true)
     myFixture.configureByFile("$name.vue")
     myFixture.performEditorAction("CommentByLineComment")
     myFixture.checkResultByFile("${name}_after.vue")
+  }
+
+  private fun doTest(id: Int, action: String) {
+    val testName = getTestName(true)
+    myFixture.configureByFile("$testName.vue")
+    try {
+      myFixture.performEditorAction(action)
+      myFixture.checkResultByFile("${testName}_after_$id.vue")
+    }
+    finally {
+      myFixture.configureByFile("$testName.vue")
+    }
   }
 
 }
