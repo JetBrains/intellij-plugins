@@ -13,11 +13,6 @@ public class DartListVariableMacro extends DartFilterByClassMacro {
   }
 
   @Override
-  public String getPresentableName() {
-    return "dartListVariable()";
-  }
-
-  @Override
   protected boolean filter(@NotNull DartClass dartClass) {
     return dartClass.findMemberByName("length") != null && dartClass.findOperator("[]", null) != null;
   }

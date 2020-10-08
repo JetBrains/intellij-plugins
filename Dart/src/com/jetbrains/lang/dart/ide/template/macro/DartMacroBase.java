@@ -6,11 +6,6 @@ import com.jetbrains.lang.dart.ide.template.DartTemplateContextType;
 
 public abstract class DartMacroBase extends Macro {
   @Override
-  public final String getPresentableName() {
-    return getName() + "()";
-  }
-
-  @Override
   public final boolean isAcceptableInContext(final TemplateContextType context) {
     return context instanceof DartTemplateContextType;
   }
