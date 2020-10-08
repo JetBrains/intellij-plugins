@@ -180,21 +180,21 @@
     <elementDescriptionProvider implementation="com.jetbrains.lang.dart.psi.DartElementDescriptionProvider"/>
 
     <applicationService serviceImplementation="com.jetbrains.lang.dart.assists.DartQuickAssistSet"/>
-    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention0</className>  <category>Dart</category> </intentionAction>
-    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention1</className>  <category>Dart</category> </intentionAction>
-    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention2</className>  <category>Dart</category> </intentionAction>
-    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention3</className>  <category>Dart</category> </intentionAction>
-    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention4</className>  <category>Dart</category> </intentionAction>
-    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention5</className>  <category>Dart</category> </intentionAction>
-    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention6</className>  <category>Dart</category> </intentionAction>
-    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention7</className>  <category>Dart</category> </intentionAction>
-    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention8</className>  <category>Dart</category> </intentionAction>
-    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention9</className>  <category>Dart</category> </intentionAction>
-    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention10</className> <category>Dart</category> </intentionAction>
-    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention11</className> <category>Dart</category> </intentionAction>
-    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention12</className> <category>Dart</category> </intentionAction>
-    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention13</className> <category>Dart</category> </intentionAction>
-    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention14</className> <category>Dart</category> </intentionAction>
+    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention0</className>  <category>Dart</category> <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName></intentionAction>
+    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention1</className>  <category>Dart</category> <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName></intentionAction>
+    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention2</className>  <category>Dart</category> <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName></intentionAction>
+    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention3</className>  <category>Dart</category> <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName></intentionAction>
+    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention4</className>  <category>Dart</category> <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName></intentionAction>
+    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention5</className>  <category>Dart</category> <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName></intentionAction>
+    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention6</className>  <category>Dart</category> <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName></intentionAction>
+    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention7</className>  <category>Dart</category> <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName></intentionAction>
+    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention8</className>  <category>Dart</category> <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName></intentionAction>
+    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention9</className>  <category>Dart</category> <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName></intentionAction>
+    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention10</className> <category>Dart</category> <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName></intentionAction>
+    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention11</className> <category>Dart</category> <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName></intentionAction>
+    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention12</className> <category>Dart</category> <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName></intentionAction>
+    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention13</className> <category>Dart</category> <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName></intentionAction>
+    <intentionAction> <className>com.jetbrains.lang.dart.assists.DartQuickAssistIntention$DartQuickAssistIntention14</className> <category>Dart</category> <descriptionDirectoryName>DartQuickAssistIntention</descriptionDirectoryName></intentionAction>
 
     <projectService serviceImplementation="com.jetbrains.lang.dart.analyzer.DartAnalysisServerService"/>
     <projectService serviceImplementation="com.jetbrains.lang.dart.psi.DartClassResolveCache"/>
