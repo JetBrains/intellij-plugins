@@ -17,6 +17,7 @@ import com.intellij.openapi.util.Pair
 import com.intellij.psi.ElementManipulators
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiLanguageInjectionHost
+import com.intellij.psi.impl.source.html.HtmlDocumentImpl
 import com.intellij.psi.impl.source.xml.XmlAttributeValueImpl
 import com.intellij.psi.impl.source.xml.XmlTextImpl
 import com.intellij.psi.search.GlobalSearchScope
@@ -28,7 +29,7 @@ import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.es6Unquote
 import org.jetbrains.vuejs.codeInsight.getStringLiteralsFromInitializerArray
-import org.jetbrains.vuejs.codeInsight.tags.CUSTOM_TAGS
+import org.jetbrains.vuejs.codeInsight.tags.CUSTOM_TOP_LEVEL_TAGS
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.VueFrameworkHandler
 import org.jetbrains.vuejs.index.VueOptionsIndex
@@ -121,8 +122,9 @@ class VueInjector : MultiHostInjector {
     }
 
     if (context is XmlTextImpl) {
-      val lang = CUSTOM_TAGS[context.parent?.castSafelyTo<XmlTag>()?.name?.toLowerCase(Locale.US)]
-      if (lang != null) {
+      val parentTag = context.parent?.castSafelyTo<XmlTag>()
+      val lang = CUSTOM_TOP_LEVEL_TAGS[parentTag?.name?.toLowerCase(Locale.US)]
+      if (lang != null && parentTag?.context is HtmlDocumentImpl) {
         Language.findLanguageByID(lang)?.let {
           registrar.startInjecting(it)
             .addPlace(null, null, context, ElementManipulators.getValueTextRange(context))

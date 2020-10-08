@@ -19,7 +19,6 @@ import com.intellij.xml.util.HtmlUtil
 import com.intellij.xml.util.HtmlUtil.TYPE_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.LANG_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
-import org.jetbrains.vuejs.codeInsight.tags.CUSTOM_TAGS
 import org.jetbrains.vuejs.lang.expr.highlighting.VueJSSyntaxHighlighter
 import org.jetbrains.vuejs.lang.expr.parser.VueJSEmbeddedExprTokenType
 import org.jetbrains.vuejs.lang.html.highlighting.VueHighlightingLexer
@@ -89,7 +88,7 @@ class VueTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedConte
   private val interpolationConfig get() = (lexer as VueLexer).interpolationConfig
 
   private val interestingTags: List<String> = listOf(HtmlUtil.TEMPLATE_TAG_NAME, HtmlUtil.SCRIPT_TAG_NAME,
-                                                     HtmlUtil.STYLE_TAG_NAME) + CUSTOM_TAGS.keys
+                                                     HtmlUtil.STYLE_TAG_NAME)
 
   override fun isInterestedInTag(tagName: CharSequence): Boolean =
     interestingTags.any { namesEqual(tagName, it) }
@@ -106,7 +105,7 @@ class VueTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedConte
                                                       ?: HtmlEmbeddedContentProvider.RAW_TEXT_EMBEDMENT
       namesEqual(tagName, HtmlUtil.SCRIPT_TAG_NAME)
       || namesEqual(tagName, HtmlUtil.TEMPLATE_TAG_NAME) -> getScriptOrTemplateTagInfo(tagName, lang)
-      else -> HtmlEmbeddedContentProvider.RAW_TEXT_EMBEDMENT
+      else -> null
     }
   }
 
