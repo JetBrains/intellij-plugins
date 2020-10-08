@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
-import static com.intellij.lang.javascript.modules.ES6ImportAction.NAME_TO_IMPORT;
+import static com.intellij.lang.javascript.modules.imports.JSImportAction.NAME_TO_IMPORT;
 import static com.intellij.lang.javascript.ui.NodeModuleNamesUtil.PACKAGE_JSON;
 
 public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtureTestCase {
@@ -93,18 +93,18 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
   }
 
   public void testUndeclaredDirectiveCompletion() {
-    doTagCompletionTest("test.html", "MyModule - (module.ts)");
+    doTagCompletionTest("test.html", "MyModule - \"./module\"");
   }
 
   public void testUndeclaredDirectiveDifferentModule() {
     doMultiFileTest("test.html",
                     "Declare MyDirective in Angular module",
-                    "Module2 - (module2.ts)");
+                    "Module2 - \"./module2\"");
   }
 
   public void testUndeclaredDirectiveDifferentModuleCompletion() {
     doTagCompletionTest("test.html",
-                        "Module2 - (module2.ts)");
+                        "Module2 - \"./module2\"");
   }
 
   public void testNotExportedDirectiveNoModuleImport() {
@@ -142,7 +142,7 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
   }
 
   public void testInlineTemplateCompletion() {
-    doTagCompletionTest("component.ts", "MyModule - (module.ts)");
+    doTagCompletionTest("component.ts", "MyModule - \"./module\"");
   }
 
   public void testFormsModule1() {
@@ -261,7 +261,7 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
   public void testLocalLibCompletion() {
     doCompletionTest("localLib", "src/app/app.component.html",
                      "lib-my-lib", "lib-my-l\n",
-                     "MyLibModule - \"my-lib\"");
+                     "MyLibModule - \"../../dist/my-lib\"");
   }
 
   private void doMultiFileTest(@NotNull String mainFile,

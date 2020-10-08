@@ -3,6 +3,7 @@ package org.angular2.inspections.quickfixes;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement;
+import com.intellij.lang.javascript.modules.imports.JSImportCandidate;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.openapi.editor.Editor;
@@ -63,7 +64,7 @@ public final class ExportNgModuleDeclarationQuickFix extends LocalQuickFixAndInt
     if (myDeclarationDecorator.getElement() == null) return;
     ExportNgModuleDeclarationAction action = Angular2ActionFactory.createExportNgModuleDeclarationAction(
       editor, startElement, myDeclarationDecorator, getText(), false);
-    List<JSElement> candidates = action.getCandidates();
+    List<? extends JSImportCandidate> candidates = action.getCandidates();
     if (candidates.size() == 1 || editor != null) {
       action.execute();
     }

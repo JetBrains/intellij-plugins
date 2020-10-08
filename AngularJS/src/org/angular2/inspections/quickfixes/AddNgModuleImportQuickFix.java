@@ -2,7 +2,7 @@
 package org.angular2.inspections.quickfixes;
 
 import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement;
-import com.intellij.lang.javascript.psi.JSElement;
+import com.intellij.lang.javascript.modules.imports.JSImportCandidate;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -61,7 +61,7 @@ public class AddNgModuleImportQuickFix extends LocalQuickFixAndIntentionActionOn
                      @NotNull PsiElement startElement,
                      @NotNull PsiElement endElement) {
     NgModuleImportAction action = Angular2ActionFactory.createNgModuleImportAction(editor, startElement, getText(), false);
-    List<JSElement> candidates = action.getCandidates();
+    List<? extends JSImportCandidate> candidates = action.getRawCandidates();
     if (candidates.size() == 1 || editor != null) {
       action.execute();
     }

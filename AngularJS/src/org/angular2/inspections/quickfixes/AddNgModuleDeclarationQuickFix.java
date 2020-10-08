@@ -3,7 +3,7 @@ package org.angular2.inspections.quickfixes;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement;
-import com.intellij.lang.javascript.psi.JSElement;
+import com.intellij.lang.javascript.modules.imports.JSImportCandidate;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -76,7 +76,7 @@ public final class AddNgModuleDeclarationQuickFix extends LocalQuickFixAndIntent
     if (myDeclarationDecorator.getElement() == null) return;
     AddNgModuleDeclarationAction action = Angular2ActionFactory.createAddNgModuleDeclarationAction(
       editor, startElement, myDeclarationDecorator, myDeclarationName, getText(), false);
-    List<JSElement> candidates = action.getCandidates();
+    List<? extends JSImportCandidate> candidates = action.getRawCandidates();
     if (candidates.size() == 1 || editor != null) {
       action.execute();
     }
