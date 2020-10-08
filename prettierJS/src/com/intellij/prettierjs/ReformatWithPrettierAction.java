@@ -16,7 +16,7 @@ import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.lang.javascript.linter.JSLinterGuesser;
 import com.intellij.lang.javascript.linter.JsqtProcessOutputViewer;
-import com.intellij.lang.javascript.modules.InstallNodeLocalDependenciesAction;
+import com.intellij.javascript.nodejs.npm.InstallNodeLocalDependenciesAction;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
