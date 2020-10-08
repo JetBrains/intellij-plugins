@@ -22,8 +22,8 @@ import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil.isStubBased
 import com.intellij.lang.typescript.modules.TypeScriptNodeReference
 import com.intellij.lang.typescript.resolve.TypeScriptAugmentationUtil
-import com.intellij.notification.NotificationDisplayType
 import com.intellij.notification.NotificationGroup
+import com.intellij.notification.NotificationGroupManager
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
@@ -41,9 +41,7 @@ import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ObjectUtils.tryCast
 import com.intellij.util.castSafelyTo
-import icons.VuejsIcons
 import one.util.streamex.StreamEx
-import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpression
 import org.jetbrains.vuejs.lang.html.VueLanguage
@@ -61,8 +59,8 @@ const val ATTR_SLOT_SHORTHAND = '#'
 const val ATTR_ARGUMENT_PREFIX = ':'
 const val ATTR_MODIFIER_PREFIX = '.'
 
-val VUE_NOTIFICATIONS = NotificationGroup("Vue", NotificationDisplayType.BALLOON, true, null,
-                                          VuejsIcons.Vue, VueBundle.message("vue.documentation.vue"), null)
+val VUE_NOTIFICATIONS: NotificationGroup get() =
+  NotificationGroupManager.getInstance().getNotificationGroup("Vue")
 
 fun fromAsset(name: String): String {
   // TODO ensure that this conversion conforms to Vue.js rules
@@ -247,7 +245,7 @@ fun getJSTypeFromPropOptions(expression: JSExpression?): JSType? {
   }
 }
 
-private fun getJSTypeFromVueType(reference: JSReferenceExpression): JSType? {
+private fun getJSTypeFromVueType(reference: JSReferenceExpression): JSType {
   return JSApplyNewType(JSTypeofTypeImpl(reference, JSTypeSourceFactory.createTypeSource(reference, false)),
                         JSTypeSourceFactory.createTypeSource(reference.containingFile, false))
 }

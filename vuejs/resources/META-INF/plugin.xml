@@ -3,31 +3,31 @@
   <name>Vue.js</name>
   <id>org.jetbrains.plugins.vue</id>
   <description><![CDATA[
-Support for <a href="https://vuejs.org">Vue.js</a> projects.
+    Support for <a href="https://vuejs.org">Vue.js</a> projects.
 
-<h3>Getting started</h3>
+    <h3>Getting started</h3>
 
-<ul>
-    <li>Open your Vue.js project.</li>
-    <li>Make sure you have Vue.js listed in your project dependencies in package.json and it is installed.</li>
-    <li>Now, you will get Vue-specific code completion, navigation, and many other features in .vue files.</li>
-</ul>
+    <ul>
+      <li>Open your Vue.js project.</li>
+      <li>Make sure you have Vue.js listed in your project dependencies in package.json and it is installed.</li>
+      <li>Now, you will get Vue-specific code completion, navigation, and many other features in .vue files.</li>
+    </ul>
 
-<h3>Features</h3>
+    <h3>Features</h3>
 
-<ul>
-    <li>Completion for components, directives, props and methods in templates</li>
-    <li>Navigation from the component, directives and event handlers to their definition</li>
-    <li>Coding assistance for different languages inside template, script and style tags in .vue files</li>
-    <li>Extract component and rename component refactorings</li>
-    <li>Collection of code snippets for Vue.js</li>
-    <li>Create new projects from the IDE Welcome screen using Vue CLI</li>
-</ul>
+    <ul>
+      <li>Completion for components, directives, props and methods in templates</li>
+      <li>Navigation from the component, directives and event handlers to their definition</li>
+      <li>Coding assistance for different languages inside template, script and style tags in .vue files</li>
+      <li>Extract component and rename component refactorings</li>
+      <li>Collection of code snippets for Vue.js</li>
+      <li>Create new projects from the IDE Welcome screen using Vue CLI</li>
+    </ul>
 
 
-Learn more about Vue.js support in the <a href="https://www.jetbrains.com/help/webstorm/vue-js.html">IDE
-    documentation</a>.
-  ]]></description>
+    Learn more about Vue.js support in the <a href="https://www.jetbrains.com/help/webstorm/vue-js.html">IDE
+      documentation</a>.
+    ]]></description>
   <vendor>JetBrains</vendor>
   <category>JavaScript Frameworks and Tools</category>
 
@@ -79,6 +79,8 @@ Learn more about Vue.js support in the <a href="https://www.jetbrains.com/help/w
     <xml.elementDescriptorProvider implementation="org.jetbrains.vuejs.codeInsight.tags.VueTagProvider"/>
     <html.embeddedContentSupport implementation="org.jetbrains.vuejs.lang.html.lexer.VueEmbeddedContentSupport"/>
     <gotoDeclarationHandler implementation="org.jetbrains.vuejs.editor.VueGotoDeclarationHandler"/>
+    <notificationGroup displayType="BALLOON" id="Vue" icon="VuejsIcons.Vue" isLogByDefault="true"
+                       bundle="messages.VueBundle" key="vue.documentation.vue"/>
 
     <stubIndex implementation="org.jetbrains.vuejs.index.VueComponentsIndex"/>
     <stubIndex implementation="org.jetbrains.vuejs.index.VueOptionsIndex"/>
