@@ -33,7 +33,7 @@ import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.thoughtworks.gauge.Constants;
+import com.thoughtworks.gauge.GaugeConstants;
 import com.thoughtworks.gauge.core.GaugeVersion;
 import com.thoughtworks.gauge.execution.runner.GaugeConsoleProperties;
 import com.thoughtworks.gauge.settings.GaugeSettingsService;
@@ -86,8 +86,8 @@ public final class GaugeCommandLineState extends CommandLineState {
     Module module = config.getModule();
     if (module != null) {
       String cp = GaugeUtil.classpathForModule(module);
-      LOG.info(String.format("Setting `%s` to `%s`", Constants.GAUGE_CUSTOM_CLASSPATH, cp));
-      commandLine.getEnvironment().put(Constants.GAUGE_CUSTOM_CLASSPATH, cp);
+      LOG.info(String.format("Setting `%s` to `%s`", GaugeConstants.GAUGE_CUSTOM_CLASSPATH, cp));
+      commandLine.getEnvironment().put(GaugeConstants.GAUGE_CUSTOM_CLASSPATH, cp);
     }
   }
 }

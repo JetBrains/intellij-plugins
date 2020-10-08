@@ -28,7 +28,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.thoughtworks.gauge.Constants;
+import com.thoughtworks.gauge.GaugeConstants;
 import com.thoughtworks.gauge.language.SpecFile;
 import com.thoughtworks.gauge.language.psi.impl.SpecScenarioImpl;
 import com.thoughtworks.gauge.util.GaugeUtil;
@@ -79,7 +79,7 @@ final class ScenarioExecutionProducer extends LazyRunConfigurationProducer<Gauge
       else {
         String scenarioName = getScenarioName(context);
         configuration.setName(scenarioName);
-        configuration.setSpecsToExecute(name + Constants.SPEC_SCENARIO_DELIMITER + scenarioIdentifier);
+        configuration.setSpecsToExecute(name + GaugeConstants.SPEC_SCENARIO_DELIMITER + scenarioIdentifier);
       }
       configuration.setModule(module);
       return true;
@@ -99,7 +99,7 @@ final class ScenarioExecutionProducer extends LazyRunConfigurationProducer<Gauge
     String specsToExecute = configuration.getSpecsToExecute();
     int identifier = getScenarioIdentifier(context, context.getPsiLocation().getContainingFile());
     return specsToExecute != null &&
-           specsToExecute.equals(location.getVirtualFile().getPath() + Constants.SPEC_SCENARIO_DELIMITER + identifier);
+           specsToExecute.equals(location.getVirtualFile().getPath() + GaugeConstants.SPEC_SCENARIO_DELIMITER + identifier);
   }
 
   private static String getScenarioName(ConfigurationContext context) {

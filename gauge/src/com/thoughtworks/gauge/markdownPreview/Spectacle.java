@@ -26,7 +26,7 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
-import com.thoughtworks.gauge.Constants;
+import com.thoughtworks.gauge.GaugeConstants;
 import com.thoughtworks.gauge.GaugeBundle;
 import com.thoughtworks.gauge.NotificationGroups;
 import com.thoughtworks.gauge.core.GaugeVersion;
@@ -65,7 +65,7 @@ final class Spectacle {
         progressIndicator.setIndeterminate(true);
         progressIndicator.setText(GaugeBundle.message("progress.text.installing.plugin.spectacle"));
         try {
-          ProcessBuilder processBuilder = new ProcessBuilder(settings.getGaugePath(), Constants.INSTALL, NAME);
+          ProcessBuilder processBuilder = new ProcessBuilder(settings.getGaugePath(), GaugeConstants.INSTALL, NAME);
           GaugeUtil.setGaugeEnvironmentsTo(processBuilder, settings);
           Process process = processBuilder.start();
           int exitCode = process.waitFor();

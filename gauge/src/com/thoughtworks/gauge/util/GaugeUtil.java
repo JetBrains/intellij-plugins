@@ -26,8 +26,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiMethod;
 import com.intellij.util.EnvironmentUtil;
-import com.thoughtworks.gauge.Constants;
 import com.thoughtworks.gauge.GaugeBootstrapService;
+import com.thoughtworks.gauge.GaugeConstants;
 import com.thoughtworks.gauge.exception.GaugeNotFoundException;
 import com.thoughtworks.gauge.language.ConceptFileType;
 import com.thoughtworks.gauge.language.SpecFile;
@@ -43,6 +43,8 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Map;
+
+import static java.util.Objects.requireNonNullElse;
 
 public final class GaugeUtil {
   private static final Logger LOG = Logger.getInstance(GaugeUtil.class);
@@ -80,7 +82,7 @@ public final class GaugeUtil {
   }
 
   private static String gaugeExecutable() {
-    return isWindows() ? Constants.GAUGE + ".exe" : Constants.GAUGE;
+    return isWindows() ? GaugeConstants.GAUGE + ".exe" : GaugeConstants.GAUGE;
   }
 
   private static boolean isWindows() {
@@ -97,8 +99,7 @@ public final class GaugeUtil {
   }
 
   /**
-   * Returns whether or not the given file is a Gauge project directory. A file is a Gauge project directory if it
-   * is a directory that contains both a manifest file and a specs directory.
+   * Returns whether or not the given file is a Gauge project directory.
    *
    * @param dir the file to be examined.
    * @return whether or not the given file is a Gauge project directory.
@@ -108,7 +109,7 @@ public final class GaugeUtil {
   }
 
   private static boolean containsManifest(File projectDir) {
-    return new File(projectDir, Constants.MANIFEST_FILE).exists();
+    return new File(projectDir, GaugeConstants.MANIFEST_FILE).exists();
   }
 
   public static File moduleDir(Module module) {
@@ -132,7 +133,7 @@ public final class GaugeUtil {
 
       for (Module subModule : bootstrapService.getSubModules(module)) {
         cp.append(OrderEnumerator.orderEntries(subModule).recursively().getPathsList().getPathsString())
-          .append(Constants.CLASSPATH_DELIMITER);
+          .append(GaugeConstants.CLASSPATH_DELIMITER);
       }
       return cp.toString();
     }
@@ -153,10 +154,7 @@ public final class GaugeUtil {
 
   public static Module moduleForPsiElement(PsiElement element) {
     PsiFile file = element.getContainingFile();
-    if (file == null) {
-      return ModuleUtilCore.findModuleForPsiElement(element);
-    }
-    return ModuleUtilCore.findModuleForPsiElement(file);
+    return ModuleUtilCore.findModuleForPsiElement(requireNonNullElse(file, element));
   }
 
   public static boolean isGradleModule(Module module) {
@@ -202,6 +200,6 @@ public final class GaugeUtil {
 
   public static void setGaugeEnvironmentsTo(ProcessBuilder processBuilder, GaugeSettingsModel settings) {
     Map<String, String> env = processBuilder.environment();
-    env.put(Constants.GAUGE_HOME, settings.getHomePath());
+    env.put(GaugeConstants.GAUGE_HOME, settings.getHomePath());
   }
 }

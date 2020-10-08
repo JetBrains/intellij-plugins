@@ -169,11 +169,11 @@ public final class GaugeBootstrapService implements Disposable {
     try {
       GaugeSettingsModel settings = GaugeUtil.getGaugeSettings();
       String port = String.valueOf(apiPort);
-      ProcessBuilder gauge = new ProcessBuilder(settings.getGaugePath(), Constants.DAEMON, port);
+      ProcessBuilder gauge = new ProcessBuilder(settings.getGaugePath(), GaugeConstants.DAEMON, port);
       GaugeUtil.setGaugeEnvironmentsTo(gauge, settings);
       String cp = GaugeUtil.classpathForModule(module);
-      LOG.info(String.format("Setting `%s` to `%s`", Constants.GAUGE_CUSTOM_CLASSPATH, cp));
-      gauge.environment().put(Constants.GAUGE_CUSTOM_CLASSPATH, cp);
+      LOG.info(String.format("Setting `%s` to `%s`", GaugeConstants.GAUGE_CUSTOM_CLASSPATH, cp));
+      gauge.environment().put(GaugeConstants.GAUGE_CUSTOM_CLASSPATH, cp);
       File dir = GaugeUtil.moduleDir(module);
       LOG.info(String.format("Using `%s` as api port to connect to gauge API for project %s", port, dir));
       gauge.directory(dir);

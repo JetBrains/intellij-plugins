@@ -27,7 +27,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.thoughtworks.gauge.Constants;
+import com.thoughtworks.gauge.GaugeConstants;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -87,7 +87,7 @@ final class SpecsExecutionProducer extends LazyRunConfigurationProducer<GaugeRun
     VirtualFile[] selectedFiles = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(context.getDataContext());
     if (selectedFiles == null) return false;
     String specs = config.getSpecsToExecute();
-    return StringUtil.join(getSpecs(selectedFiles), Constants.SPEC_FILE_DELIMITER).equals(specs);
+    return StringUtil.join(getSpecs(selectedFiles), GaugeConstants.SPEC_FILE_DELIMITER).equals(specs);
   }
 
   @NotNull

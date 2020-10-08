@@ -19,7 +19,7 @@ package com.thoughtworks.gauge.inspection;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.text.StringUtil;
-import com.thoughtworks.gauge.Constants;
+import com.thoughtworks.gauge.GaugeConstants;
 import org.jetbrains.annotations.Nullable;
 
 public final class GaugeError {
@@ -57,7 +57,7 @@ public final class GaugeError {
   public static @Nullable GaugeError parseCliError(@NlsSafe String error) {
     try {
       String[] parts = error.split(" ");
-      String[] fileInfo = parts[1].split(Constants.SPEC_SCENARIO_DELIMITER);
+      String[] fileInfo = parts[1].split(GaugeConstants.SPEC_SCENARIO_DELIMITER);
       return new GaugeError(parts[0], fileInfo[0], Integer.parseInt(fileInfo[1]), error.split(":\\d+:? ")[1]);
     }
     catch (Exception e) {

@@ -27,7 +27,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Url;
 import com.intellij.util.Urls;
-import com.thoughtworks.gauge.Constants;
+import com.thoughtworks.gauge.GaugeConstants;
 import com.thoughtworks.gauge.GaugeBundle;
 import com.thoughtworks.gauge.NotificationGroups;
 import com.thoughtworks.gauge.language.ConceptFileType;
@@ -80,7 +80,7 @@ final class GaugeWebBrowserPreview extends WebBrowserUrlProvider {
   @Nullable
   private static Url previewUrl(OpenInBrowserRequest request, VirtualFile virtualFile, GaugeSettingsModel settings)
     throws IOException, InterruptedException {
-    ProcessBuilder builder = new ProcessBuilder(settings.getGaugePath(), Constants.DOCS, Spectacle.NAME, virtualFile.getPath());
+    ProcessBuilder builder = new ProcessBuilder(settings.getGaugePath(), GaugeConstants.DOCS, Spectacle.NAME, virtualFile.getPath());
     String projectName = request.getProject().getName();
     builder.environment().put("spectacle_out_dir", FileUtil.join(createOrGetTempDirectory(projectName).getPath(), "docs"));
     File gaugeModuleDir = GaugeUtil.moduleDir(GaugeUtil.moduleForPsiElement(request.getFile()));

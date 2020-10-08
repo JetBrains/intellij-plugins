@@ -18,7 +18,7 @@ package com.thoughtworks.gauge.language;
 
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.LanguageFileType;
-import com.thoughtworks.gauge.Constants;
+import com.thoughtworks.gauge.GaugeConstants;
 import com.thoughtworks.gauge.GaugeBundle;
 import icons.GaugeIcons;
 import org.jetbrains.annotations.NotNull;
@@ -47,7 +47,7 @@ public final class ConceptFileType extends LanguageFileType {
   @NotNull
   @Override
   public String getDefaultExtension() {
-    return Constants.CONCEPT_EXTENSION;
+    return GaugeConstants.CONCEPT_EXTENSION;
   }
 
   @Override

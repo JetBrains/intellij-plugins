@@ -22,7 +22,7 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.diagnostic.Logger;
-import com.thoughtworks.gauge.Constants;
+import com.thoughtworks.gauge.GaugeConstants;
 import com.thoughtworks.gauge.GaugeBundle;
 import com.thoughtworks.gauge.NotificationGroups;
 import com.thoughtworks.gauge.exception.GaugeNotFoundException;
@@ -57,7 +57,7 @@ public final class GaugeVersion {
     GaugeVersionInfo gaugeVersionInfo = new GaugeVersionInfo();
     try {
       GaugeSettingsModel settings = getGaugeSettings();
-      ProcessBuilder processBuilder = new ProcessBuilder(settings.getGaugePath(), Constants.VERSION, Constants.MACHINE_READABLE);
+      ProcessBuilder processBuilder = new ProcessBuilder(settings.getGaugePath(), GaugeConstants.VERSION, GaugeConstants.MACHINE_READABLE);
       GaugeUtil.setGaugeEnvironmentsTo(processBuilder, settings);
       Process process = processBuilder.start();
       int exitCode = process.waitFor();
@@ -69,12 +69,12 @@ public final class GaugeVersion {
           gaugeVersionInfo = gson.fromJson(output, GaugeVersionInfo.class);
         }
         catch (Exception e) {
-          LOG.error(String.format("Unable to parse <%s %s %s> command's output.\n%s", settings.getGaugePath(), Constants.VERSION,
-                                  Constants.MACHINE_READABLE, output));
+          LOG.error(String.format("Unable to parse <%s %s %s> command's output.\n%s", settings.getGaugePath(), GaugeConstants.VERSION,
+                                  GaugeConstants.MACHINE_READABLE, output));
           Notification notification = new Notification(
             NotificationGroups.GAUGE_ERROR_GROUP,
             GaugeBundle.message("notification.title.unable.to.parse.command.output",
-                                settings.getGaugePath(), Constants.VERSION, Constants.MACHINE_READABLE),
+                                settings.getGaugePath(), GaugeConstants.VERSION, GaugeConstants.MACHINE_READABLE),
             e.getMessage(),
             NotificationType.ERROR
           );

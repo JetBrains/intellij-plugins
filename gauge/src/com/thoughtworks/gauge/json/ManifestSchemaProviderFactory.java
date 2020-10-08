@@ -17,7 +17,6 @@
 package com.thoughtworks.gauge.json;
 
 import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -26,21 +25,20 @@ import com.jetbrains.jsonSchema.extension.JsonSchemaFileProvider;
 import com.jetbrains.jsonSchema.extension.JsonSchemaProviderFactory;
 import com.jetbrains.jsonSchema.extension.SchemaType;
 import com.thoughtworks.gauge.GaugeBundle;
-import com.thoughtworks.gauge.util.GaugeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
 import java.util.List;
+
+import static java.util.Collections.singletonList;
 
 final class ManifestSchemaProviderFactory implements JsonSchemaProviderFactory {
   @Override
   public @NotNull List<JsonSchemaFileProvider> getProviders(@NotNull Project project) {
-    return Collections.singletonList(new ManifestSchemaProvider(project));
+    return singletonList(new ManifestSchemaProvider(project));
   }
 
   private static class ManifestSchemaProvider implements JsonSchemaFileProvider {
-
     private final Project project;
 
     private ManifestSchemaProvider(Project project) {
@@ -50,8 +48,9 @@ final class ManifestSchemaProviderFactory implements JsonSchemaProviderFactory {
     @Override
     public boolean isAvailable(@NotNull VirtualFile file) {
       return "manifest.json".equals(file.getName()) && ReadAction.compute(() -> {
-        Module module = ModuleUtilCore.findModuleForFile(file, project);
-        return module != null && GaugeUtil.isGaugeModule(module);
+        return ModuleUtilCore.findModuleForFile(file, project) != null
+               && file.getParent() != null
+               && file.getParent().findChild("specs") != null;
       });
     }
 

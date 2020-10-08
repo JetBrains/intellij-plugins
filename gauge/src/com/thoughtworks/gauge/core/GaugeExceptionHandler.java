@@ -29,7 +29,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.text.HtmlBuilder;
 import com.intellij.openapi.util.text.HtmlChunk;
-import com.thoughtworks.gauge.Constants;
+import com.thoughtworks.gauge.GaugeConstants;
 import com.thoughtworks.gauge.GaugeBundle;
 import com.thoughtworks.gauge.NotificationGroups;
 import com.thoughtworks.gauge.util.GaugeUtil;
@@ -88,7 +88,7 @@ public final class GaugeExceptionHandler extends Thread {
   }
 
   private static Notification createNotification(@NlsSafe String stacktrace, int exitValue) {
-    IdeaPluginDescriptor plugin = PluginManagerCore.getPlugin(PluginId.findId(Constants.PLUGIN_ID));
+    IdeaPluginDescriptor plugin = PluginManagerCore.getPlugin(PluginId.findId(GaugeConstants.PLUGIN_ID));
     @NlsSafe String apiVersion = ApplicationInfo.getInstance().getApiVersion();
     @NlsSafe String gaugeVersion = GaugeVersion.getVersion(false).version;
     String pluginVersion = plugin == null ? "" : plugin.getVersion();

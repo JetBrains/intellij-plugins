@@ -50,7 +50,7 @@ import com.intellij.ui.components.panels.VerticalLayout;
 import com.intellij.util.ui.FormBuilder;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
-import com.thoughtworks.gauge.Constants;
+import com.thoughtworks.gauge.GaugeConstants;
 import com.thoughtworks.gauge.GaugeBundle;
 import com.thoughtworks.gauge.core.GaugeVersion;
 import com.thoughtworks.gauge.core.GaugeVersionInfo;
@@ -70,7 +70,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import static com.thoughtworks.gauge.Constants.MIN_GAUGE_VERSION;
+import static com.thoughtworks.gauge.GaugeConstants.MIN_GAUGE_VERSION;
 import static com.thoughtworks.gauge.util.GaugeUtil.getGaugeSettings;
 
 final class GaugeModuleBuilder extends ModuleBuilder {
@@ -225,7 +225,7 @@ final class GaugeModuleBuilder extends ModuleBuilder {
             if (mySelectedTemplate.init) {
               String[] init = {
                 settings.getGaugePath(),
-                Constants.INIT_FLAG,
+                GaugeConstants.INIT_FLAG,
                 mySelectedTemplate.templateId
               };
 

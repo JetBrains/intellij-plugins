@@ -32,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
-import static com.thoughtworks.gauge.Constants.MIN_GAUGE_VERSION;
+import static com.thoughtworks.gauge.GaugeConstants.MIN_GAUGE_VERSION;
 import static com.thoughtworks.gauge.util.GaugeUtil.isGaugeProjectDir;
 
 public final class GaugeProjectListener implements ProjectManagerListener {

@@ -21,7 +21,7 @@ import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.ui.TextFieldWithAutoCompletion;
 import com.intellij.ui.TextFieldWithAutoCompletionListProvider;
-import com.thoughtworks.gauge.Constants;
+import com.thoughtworks.gauge.GaugeConstants;
 import com.thoughtworks.gauge.GaugeBundle;
 import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.NotNull;
@@ -112,7 +112,7 @@ final class ExtractConceptDialog extends JDialog {
         errors.setText(GaugeBundle.message("please.enter.concept.name"));
       }
       else if (newFile.isVisible() && (FilenameUtils.removeExtension(newFile.getText().trim()).isEmpty() ||
-                                       !FilenameUtils.getExtension(newFile.getText().trim()).equals(Constants.CONCEPT_EXTENSION))) {
+                                       !FilenameUtils.getExtension(newFile.getText().trim()).equals(GaugeConstants.CONCEPT_EXTENSION))) {
         errors.setText(GaugeBundle.message("please.select.filename.cpt"));
       }
       else {

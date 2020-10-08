@@ -17,7 +17,7 @@
 package com.thoughtworks.gauge.inspection;
 
 import com.intellij.openapi.diagnostic.Logger;
-import com.thoughtworks.gauge.Constants;
+import com.thoughtworks.gauge.GaugeConstants;
 import com.thoughtworks.gauge.exception.GaugeNotFoundException;
 import com.thoughtworks.gauge.settings.GaugeSettingsModel;
 import com.thoughtworks.gauge.util.GaugeUtil;
@@ -40,7 +40,7 @@ final class GaugeInspectionHelper {
   static List<GaugeError> getErrors(File directory) {
     try {
       GaugeSettingsModel settings = getGaugeSettings();
-      ProcessBuilder processBuilder = new ProcessBuilder(settings.getGaugePath(), Constants.VALIDATE);
+      ProcessBuilder processBuilder = new ProcessBuilder(settings.getGaugePath(), GaugeConstants.VALIDATE);
       GaugeUtil.setGaugeEnvironmentsTo(processBuilder, settings);
       processBuilder.directory(directory);
       Process process = processBuilder.start();

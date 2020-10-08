@@ -17,7 +17,7 @@
 package com.thoughtworks.gauge.execution.runner.processors;
 
 import com.intellij.execution.testframework.sm.ServiceMessageBuilder;
-import com.thoughtworks.gauge.Constants;
+import com.thoughtworks.gauge.GaugeConstants;
 import com.thoughtworks.gauge.execution.runner.MessageProcessor;
 import com.thoughtworks.gauge.execution.runner.TestsCache;
 import com.thoughtworks.gauge.execution.runner.event.ExecutionEvent;
@@ -36,8 +36,8 @@ public final class SpecEventProcessor extends GaugeEventProcessor {
   protected boolean onStart(ExecutionEvent event) throws ParseException {
     if (getCache().getCurrentId() == SuiteEventProcessor.SUITE_ID) getProcessor().processLineBreak();
     getCache().setId(event.id);
-    if (getCache().getId(event.id.split(Constants.SPEC_SCENARIO_DELIMITER)[0]) == null) {
-      getCache().setId(event.id.split(Constants.SPEC_SCENARIO_DELIMITER)[0], getCache().getId(event.id));
+    if (getCache().getId(event.id.split(GaugeConstants.SPEC_SCENARIO_DELIMITER)[0]) == null) {
+      getCache().setId(event.id.split(GaugeConstants.SPEC_SCENARIO_DELIMITER)[0], getCache().getId(event.id));
     }
     ServiceMessageBuilder msg = ServiceMessageBuilder.testSuiteStarted(event.name);
     super.addLocation(event, msg);

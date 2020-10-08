@@ -23,7 +23,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.AnnotatedElementsSearch;
-import com.thoughtworks.gauge.Constants;
+import com.thoughtworks.gauge.GaugeConstants;
 import com.thoughtworks.gauge.GaugeBootstrapService;
 import com.thoughtworks.gauge.Step;
 import com.thoughtworks.gauge.StepValue;
@@ -116,7 +116,7 @@ public final class StepUtil {
   }
 
   private static VirtualFile[] findConceptFiles(Module module) {
-    Collection<VirtualFile> conceptFiles = FilenameIndex.getAllFilesByExt(module.getProject(), Constants.CONCEPT_EXTENSION);
+    Collection<VirtualFile> conceptFiles = FilenameIndex.getAllFilesByExt(module.getProject(), GaugeConstants.CONCEPT_EXTENSION);
     return conceptFiles.toArray(VirtualFile.EMPTY_ARRAY);
   }
 

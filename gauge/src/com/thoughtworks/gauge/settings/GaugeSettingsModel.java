@@ -17,7 +17,7 @@
 package com.thoughtworks.gauge.settings;
 
 import com.intellij.openapi.util.NlsSafe;
-import com.thoughtworks.gauge.Constants;
+import com.thoughtworks.gauge.GaugeConstants;
 
 import java.util.Objects;
 
@@ -41,7 +41,7 @@ public final class GaugeSettingsModel {
   }
 
   public String getHomePath() {
-    return homePath == null ? System.getenv(Constants.GAUGE_HOME) : homePath;
+    return homePath == null ? System.getenv(GaugeConstants.GAUGE_HOME) : homePath;
   }
 
   public Boolean useIntelliJTestRunner() {

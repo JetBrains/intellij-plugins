@@ -19,7 +19,7 @@ package com.thoughtworks.gauge.execution;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.thoughtworks.gauge.Constants;
+import com.thoughtworks.gauge.GaugeConstants;
 import com.thoughtworks.gauge.exception.GaugeNotFoundException;
 import com.thoughtworks.gauge.settings.GaugeSettingsModel;
 import com.thoughtworks.gauge.util.GaugeUtil;
@@ -37,10 +37,10 @@ public final class GaugeCommandLine {
       GaugeSettingsModel settings = GaugeUtil.getGaugeSettings();
       commandLine.setExePath(settings.getGaugePath());
       Map<String, String> environment = commandLine.getEnvironment();
-      environment.put(Constants.GAUGE_HOME, settings.getHomePath());
+      environment.put(GaugeConstants.GAUGE_HOME, settings.getHomePath());
     }
     catch (GaugeNotFoundException e) {
-      commandLine.setExePath(Constants.GAUGE);
+      commandLine.setExePath(GaugeConstants.GAUGE);
     }
     finally {
       commandLine.setWorkDirectory(project.getBasePath());

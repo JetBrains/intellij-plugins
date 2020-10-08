@@ -25,7 +25,7 @@ import com.intellij.execution.testframework.actions.AbstractRerunFailedTestsActi
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.ui.ComponentContainer;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.thoughtworks.gauge.Constants;
+import com.thoughtworks.gauge.GaugeConstants;
 import com.thoughtworks.gauge.execution.GaugeCommandLine;
 import com.thoughtworks.gauge.execution.GaugeCommandLineState;
 import com.thoughtworks.gauge.execution.GaugeRunConfiguration;
@@ -57,7 +57,7 @@ public class GaugeRerunFailedAction extends AbstractRerunFailedTestsAction {
     @Override
     public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) {
       GeneralCommandLine commandLine = GaugeCommandLine.getInstance(config.getModule(), getProject());
-      commandLine.addParameters(Constants.RUN, Constants.FAILED);
+      commandLine.addParameters(GaugeConstants.RUN, GaugeConstants.FAILED);
       return new GaugeCommandLineState(commandLine, getProject(), env, config);
     }
 

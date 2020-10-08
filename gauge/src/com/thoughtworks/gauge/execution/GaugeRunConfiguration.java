@@ -31,7 +31,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMExternalizer;
 import com.intellij.openapi.util.WriteExternalException;
-import com.thoughtworks.gauge.Constants;
+import com.thoughtworks.gauge.GaugeConstants;
 import com.thoughtworks.gauge.core.GaugeVersion;
 import com.thoughtworks.gauge.settings.GaugeSettingsService;
 import kotlin.text.StringsKt;
@@ -80,20 +80,20 @@ public final class GaugeRunConfiguration extends LocatableConfigurationBase<Gaug
   }
 
   private void addFlags(GeneralCommandLine commandLine, ExecutionEnvironment env) {
-    commandLine.addParameter(Constants.RUN);
+    commandLine.addParameter(GaugeConstants.RUN);
     if (GaugeVersion.isGreaterOrEqual(TEST_RUNNER_SUPPORT_VERSION, true)
         && GaugeSettingsService.getSettings().useIntelliJTestRunner()) {
       LOG.info("Using IntelliJ Test Runner");
-      commandLine.addParameter(Constants.MACHINE_READABLE);
-      commandLine.addParameter(Constants.HIDE_SUGGESTION);
+      commandLine.addParameter(GaugeConstants.MACHINE_READABLE);
+      commandLine.addParameter(GaugeConstants.HIDE_SUGGESTION);
     }
-    commandLine.addParameter(Constants.SIMPLE_CONSOLE);
+    commandLine.addParameter(GaugeConstants.SIMPLE_CONSOLE);
     if (tags != null && !StringsKt.isBlank(tags)) {
-      commandLine.addParameter(Constants.TAGS);
+      commandLine.addParameter(GaugeConstants.TAGS);
       commandLine.addParameter(tags);
     }
     if (environment != null && !StringsKt.isBlank(environment)) {
-      commandLine.addParameters(Constants.ENV_FLAG, environment);
+      commandLine.addParameters(GaugeConstants.ENV_FLAG, environment);
     }
     addTableRowsRangeFlags(commandLine);
     addParallelExecFlags(commandLine, env);
@@ -105,7 +105,7 @@ public final class GaugeRunConfiguration extends LocatableConfigurationBase<Gaug
 
   private void addTableRowsRangeFlags(GeneralCommandLine commandLine) {
     if (rowsRange != null && !StringsKt.isBlank(rowsRange)) {
-      commandLine.addParameter(Constants.TABLE_ROWS);
+      commandLine.addParameter(GaugeConstants.TABLE_ROWS);
       commandLine.addParameter(rowsRange);
     }
   }
@@ -129,11 +129,11 @@ public final class GaugeRunConfiguration extends LocatableConfigurationBase<Gaug
 
   private void addParallelExecFlags(GeneralCommandLine commandLine, ExecutionEnvironment env) {
     if (parallelExec(env)) {
-      commandLine.addParameter(Constants.PARALLEL);
+      commandLine.addParameter(GaugeConstants.PARALLEL);
       try {
         if (!Strings.isNullOrEmpty(parallelNodes)) {
           Integer.parseInt(this.parallelNodes);
-          commandLine.addParameters(Constants.PARALLEL_NODES, parallelNodes);
+          commandLine.addParameters(GaugeConstants.PARALLEL_NODES, parallelNodes);
         }
       }
       catch (NumberFormatException e) {
@@ -147,7 +147,7 @@ public final class GaugeRunConfiguration extends LocatableConfigurationBase<Gaug
   }
 
   private static void addSpecs(GeneralCommandLine commandLine, String specsToExecute) {
-    String[] specNames = specsToExecute.split(Constants.SPEC_FILE_DELIMITER_REGEX);
+    String[] specNames = specsToExecute.split(GaugeConstants.SPEC_FILE_DELIMITER_REGEX);
     for (String specName : specNames) {
       if (!specName.isEmpty()) {
         commandLine.addParameter(specName.trim());
@@ -233,7 +233,7 @@ public final class GaugeRunConfiguration extends LocatableConfigurationBase<Gaug
     for (String specName : specsArrayToExecute) {
       builder.append(specName);
       if (specsArrayToExecute.indexOf(specName) != specsArrayToExecute.size() - 1) {
-        builder.append(Constants.SPEC_FILE_DELIMITER);
+        builder.append(GaugeConstants.SPEC_FILE_DELIMITER);
       }
     }
     setSpecsToExecute(builder.toString());
