@@ -190,8 +190,13 @@ public class InjectionsTest extends BasePlatformTestCase {
     assertBraces("{{", "}}");
   }
 
-  public void testDefaultDelimitersInJSX() throws Exception {
+  public void testDefaultDelimitersInJSX() {
     myFixture.configureByFiles("defaultDelimiters.jsx", "angular.js");
+    assertNotSame(AngularJSLanguage.INSTANCE, myFixture.getFile().getLanguage());
+  }
+
+  public void testNgRepeat() {
+    myFixture.configureByFiles("ngRepeatExplicit.jsx", "angular.js");
     assertNotSame(AngularJSLanguage.INSTANCE, myFixture.getFile().getLanguage());
   }
 
