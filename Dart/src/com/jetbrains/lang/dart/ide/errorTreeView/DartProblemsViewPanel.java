@@ -104,8 +104,7 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
                                           ? ((DartProblem)object).getErrorMessage() + " " + ((DartProblem)object).getPresentableLocation()
                                           : "");
 
-    table.setShowVerticalLines(false);
-    table.setShowHorizontalLines(false);
+    table.setShowGrid(false);
     table.setRowHeight(table.getRowHeight() + JBUIScale.scale(4));
 
     JTableHeader tableHeader = table.getTableHeader();
