@@ -52,10 +52,10 @@ class PythonLangSupport : AbstractLangSupport() {
     val model = ProjectSdksModel()
     model.reset(null)
     val sdkHomes = mutableListOf<String>()
-    sdkHomes.addAll(VirtualEnvSdkFlavor.getInstance().suggestHomePaths(null))
+    sdkHomes.addAll(VirtualEnvSdkFlavor.getInstance().suggestHomePaths(null, null))
     PythonSdkFlavor.getApplicableFlavors()
       .filter { it !is VirtualEnvSdkFlavor }
-      .forEach { sdkHomes.addAll(it.suggestHomePaths(null)) }
+      .forEach { sdkHomes.addAll(it.suggestHomePaths(null, null)) }
     sdkHomes.sort()
     return SdkConfigurationUtil.filterExistingPaths(PythonSdkType.getInstance(), sdkHomes, model.sdks)
       .mapTo(mutableListOf(), ::PyDetectedSdk).filter { sdk -> isNoOlderThan27(sdk) }
