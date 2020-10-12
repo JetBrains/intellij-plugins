@@ -10,8 +10,6 @@ import training.learn.exceptons.BadModuleException
 import training.learn.interfaces.Lesson
 import training.learn.interfaces.Module
 import training.learn.interfaces.ModuleType
-import training.learn.lesson.Scenario
-import training.learn.lesson.XmlLesson
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonSample
 import training.learn.lesson.kimpl.parseLessonSample
@@ -94,30 +92,10 @@ class XmlModule(override val name: String,
         continue // do not show unfinished lessons in release
       }
       when (lessonElement.name) {
-        XmlModuleConstants.MODULE_XML_LESSON_ELEMENT -> lessonsPath?.let { addXmlLesson(lessonElement, it, classLoader) }
-                                                        ?: LOG.error(
-                                                          "Need to specify ${XmlModuleConstants.MODULE_LESSONS_PATH_ATTR} in module attributes")
+        XmlModuleConstants.MODULE_XML_LESSON_ELEMENT -> error("XML modules are now unsupported")
         XmlModuleConstants.MODULE_KT_LESSON_ELEMENT -> addKtLesson(lessonElement, lessonsPath, classLoader)
         else -> LOG.error("Unknown element ${lessonElement.name} in  XmlModule file")
       }
-    }
-  }
-
-  private fun addXmlLesson(lessonElement: Element, lessonsPath: String, classLoader: ClassLoader) {
-    val lessonFilename = lessonElement.getAttributeValue(XmlModuleConstants.MODULE_LESSON_FILENAME_ATTR)
-    val lessonPath = lessonsPath + lessonFilename
-    try {
-      val scenario = Scenario(lessonPath, classLoader)
-      val lesson = XmlLesson(scenario = scenario, lang = scenario.lang, module = this)
-      lessons.add(lesson)
-    }
-    catch (e: JDOMException) {
-      //XmlLesson file is corrupted
-      LOG.error(BadLessonException("Probably lesson file is corrupted: $lessonPath JDOMException:$e"))
-    }
-    catch (e: IOException) {
-      //XmlLesson file cannot be read
-      LOG.error(BadLessonException("Probably lesson file cannot be read: $lessonPath"))
     }
   }
 

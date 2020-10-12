@@ -34,8 +34,6 @@ import training.learn.exceptons.LessonIsOpenedException
 import training.learn.interfaces.Lesson
 import training.learn.interfaces.ModuleType
 import training.learn.lesson.LessonManager
-import training.learn.lesson.LessonProcessor
-import training.learn.lesson.XmlLesson
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContextImpl
 import training.learn.lesson.kimpl.LessonExecutor
@@ -191,11 +189,8 @@ class OpenLessonAction(val lesson: Lesson) : AnAction(lesson.name) {
 
       //4. Process lesson
       LOG.debug("${projectWhereToStartLesson.name}: 4. Process lesson")
-      when (lesson) {
-        is XmlLesson -> LessonProcessor.process(projectWhereToStartLesson, lesson, textEditor.editor)
-        is KLesson -> processDslLesson(lesson, textEditor, projectWhereToStartLesson)
-      }
-
+      if (lesson is KLesson) processDslLesson(lesson, textEditor, projectWhereToStartLesson)
+      else error("Unknown lesson format")
     }
     catch (invalidSdkException: InvalidSdkException) {
       Messages.showMessageDialog(projectWhereToStartLesson,

@@ -101,7 +101,6 @@ class LessonManager {
     shownRestoreNotification = null
     currentLessonExecutor?.stopLesson()
     currentLessonExecutor?.lesson?.onStop()
-    LessonProcessor.currentExecutionList?.lesson?.onStop()
     LearningUiHighlightingManager.clearHighlights()
     clearAllListeners()
   }
