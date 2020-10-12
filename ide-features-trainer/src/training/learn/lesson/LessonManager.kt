@@ -6,23 +6,13 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
-import com.intellij.openapi.components.serviceIfCreated
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.keymap.Keymap
 import com.intellij.openapi.keymap.KeymapManagerListener
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.ProjectManager
-import com.intellij.openapi.project.ProjectManagerListener
-import com.intellij.openapi.ui.popup.Balloon
-import com.intellij.openapi.util.Disposer
-import com.intellij.ui.awt.RelativePoint
 import org.jdom.Element
 import training.commands.kotlin.TaskContext
-import training.editor.MouseListenerHolder
-import training.editor.actions.BlockCaretAction
-import training.editor.actions.LearnActions
-import training.learn.ActionsRecorder
 import training.learn.CourseManager
 import training.learn.LearnBundle
 import training.learn.interfaces.Lesson
@@ -31,10 +21,7 @@ import training.ui.LearningUiHighlightingManager
 import training.ui.LearningUiManager
 import training.ui.Message
 import training.ui.views.LearnPanel
-import training.util.createBalloon
 import training.util.createNamedSingleThreadExecutor
-import training.util.editorPointForBalloon
-import java.util.*
 import java.util.concurrent.Executor
 
 @Service
@@ -75,11 +62,6 @@ class LessonManager {
 
   init {
     val connect = ApplicationManager.getApplication().messageBus.connect()
-    connect.subscribe(ProjectManager.TOPIC, object : ProjectManagerListener {
-      override fun projectClosed(project: Project) {
-        serviceIfCreated<LessonManager>()?.clearAllListeners()
-      }
-    })
     connect.subscribe(KeymapManagerListener.TOPIC, object : KeymapManagerListener {
       override fun activeKeymapChanged(keymap: Keymap?) {
         learnPanel?.lessonMessagePane?.redrawMessages()
@@ -102,7 +84,6 @@ class LessonManager {
     currentLessonExecutor?.stopLesson()
     currentLessonExecutor?.lesson?.onStop()
     LearningUiHighlightingManager.clearHighlights()
-    clearAllListeners()
   }
 
   @Throws(Exception::class)
@@ -126,11 +107,6 @@ class LessonManager {
       clearEditor(editor)
     }
     learnPanel.clearLessonPanel()
-
-    mouseListenerHolder?.restoreMouseActions(editor)
-
-    myLearnActions.forEach { it.unregisterAction() }
-    myLearnActions.clear()
 
     val project = editor.project ?: throw Exception("Unable to open lesson in a null project")
     val nextLesson = CourseManager.instance.getNextNonPassedLesson(cLesson)
@@ -217,75 +193,6 @@ class LessonManager {
     }
   }
 
-  private fun removeActionsRecorders() {
-    for (actionsRecorder in actionsRecorders) {
-      Disposer.dispose(actionsRecorder)
-    }
-    actionsRecorders.clear()
-  }
-
-  fun unblockCaret() {
-    val myBlockActions = ArrayList<BlockCaretAction>()
-
-    for (myLearnAction in myLearnActions) {
-      if (myLearnAction is BlockCaretAction) {
-        myBlockActions.add(myLearnAction)
-        myLearnAction.unregisterAction()
-      }
-    }
-
-    myLearnActions.removeAll(myBlockActions)
-  }
-
-  fun blockCaret(editor: Editor) {
-    val blockCaretAction = BlockCaretAction(editor)
-    blockCaretAction.addActionHandler(Runnable {
-      try {
-        showCaretBlockedBalloon()
-      }
-      catch (e: InterruptedException) {
-        LOG.error(e)
-      }
-    })
-    myLearnActions.add(blockCaretAction)
-  }
-
-  fun registerActionsRecorder(recorder: ActionsRecorder) {
-    actionsRecorders.add(recorder)
-  }
-
-  @Throws(InterruptedException::class)
-  private fun showCaretBlockedBalloon() {
-    val balloon = createBalloon(LearnBundle.message("learn.ui.balloon.blockCaret.message"))
-    balloon.show(RelativePoint(lastEditor?.contentComponent!!, editorPointForBalloon(lastEditor!!)), Balloon.Position.above)
-  }
-
-  private fun clearAllListeners() {
-    lastEditor?.let {
-      mouseListenerHolder?.restoreMouseActions(it)
-      removeActionsRecorders()
-      unblockCaret()
-    }
-  }
-
-  fun blockMouse(editor: Editor) {
-    with(MouseListenerHolder(editor)) {
-      mouseListenerHolder = this
-      grabMouseActions(Runnable {
-        try {
-          showCaretBlockedBalloon()
-        }
-        catch (e: InterruptedException) {
-          LOG.error(e)
-        }
-      })
-    }
-  }
-
-  fun unblockMouse(editor: Editor) {
-    mouseListenerHolder?.restoreMouseActions(editor)
-  }
-
   fun addLessonListener(lessonListener: LessonListener) {
     lessonListeners.add(lessonListener)
   }
@@ -322,11 +229,7 @@ class LessonManager {
   companion object {
     @Volatile
     var externalTestActionsExecutor: Executor? = null
-
-    private val myLearnActions = mutableListOf<LearnActions>()
-    private val actionsRecorders = mutableSetOf<ActionsRecorder>()
     private var lastEditor: Editor? = null
-    private var mouseListenerHolder: MouseListenerHolder? = null
 
     val instance: LessonManager
       get() = service()
