@@ -1,9 +1,0 @@
-PostCSS File:ApplyWithParen.pcss
-  PsiElement(POST_CSS_LAZY_STYLESHEET)
-    PsiElement(POST_CSS_STYLESHEET)
-      PsiElement(CSS_RULESET_LIST)
-        PsiElement(CSS_APPLY)
-          PsiElement(CSS_APPLY_SYM)('@apply')
-          PsiElement(CSS_LPAREN)('(')
-          PsiElement(CSS_IDENT)('--my')
-          PsiElement(CSS_RPAREN)(')')

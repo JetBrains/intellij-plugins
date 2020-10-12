@@ -8,4 +8,8 @@ public class PostCssParsingOtherTest extends PostCssParsingTest {
   public void testSimpleVars() {
     doTest();
   }
+
+  public void testApplyAtRule() {
+    doTest();
+  }
 }
