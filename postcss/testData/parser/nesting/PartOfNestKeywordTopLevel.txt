@@ -2,5 +2,5 @@ PostCSS File:PartOfNestKeywordTopLevel.pcss
   PsiElement(POST_CSS_LAZY_STYLESHEET)
     PsiElement(POST_CSS_STYLESHEET)
       PsiElement(CSS_RULESET_LIST)
-        PsiElement(CSS_BAD_AT_RULE)
+        PsiElement(CSS_GENERIC_AT_RULE)
           PsiElement(CSS_ATKEYWORD)('@n')

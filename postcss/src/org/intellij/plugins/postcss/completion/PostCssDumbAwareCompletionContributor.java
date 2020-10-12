@@ -93,7 +93,7 @@ public class PostCssDumbAwareCompletionContributor extends CompletionContributor
     if (parent instanceof PsiErrorElement) {
       parent = parent.getParent();
     }
-    if (parent == null || parent.getNode().getElementType() != CssElementTypes.CSS_BAD_AT_RULE) return;
+    if (parent == null || parent.getNode().getElementType() != CssElementTypes.CSS_GENERIC_AT_RULE) return;
 
     PsiElement prev = parent.getPrevSibling();
     boolean insideBlock = parent.getParent() instanceof CssBlock && (!(prev instanceof PsiErrorElement));

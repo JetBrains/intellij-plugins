@@ -151,7 +151,7 @@ public class PostCssParser extends CssParser2 {
         parseCustomSelectorAtRule() ||
         parseCustomMediaAtRule() ||
         parseAtRuleNesting() ||
-        parseBadAtRule(false) ||
+        parseGenericAtRule(false) ||
         tryToParseRuleset()) {
       myRulesetSeen = true;
       return true;
