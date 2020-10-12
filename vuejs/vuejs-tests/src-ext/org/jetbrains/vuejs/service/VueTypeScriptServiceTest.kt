@@ -39,14 +39,14 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
     return vueRelativeTestDataPath() + BASE_PATH
   }
 
-  @TypeScriptVersion(TypeScriptVersions.TS28)
+  @TypeScriptVersion(TypeScriptVersions.TS26)
   fun testSimpleVue() {
     doTestWithCopyDirectory()
     myFixture.configureByFile("SimpleVueNoTs.vue")
     checkHighlightingByOptions(false)
   }
 
-  @TypeScriptVersion(TypeScriptVersions.TS28)
+  @TypeScriptVersion(TypeScriptVersions.TS26)
   @Throws(Exception::class)
   fun testSimpleCompletion() {
     checkBaseStringQualifiedCompletionWithTemplates(
@@ -57,14 +57,14 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
       }, true)
   }
 
-  @TypeScriptVersion(TypeScriptVersions.TS28)
+  @TypeScriptVersion(TypeScriptVersions.TS26)
   fun testSimpleVueNoTs() {
     doTestWithCopyDirectory()
     myFixture.configureByFile("SimpleVue.vue")
     checkHighlightingByOptions(false)
   }
 
-  @TypeScriptVersion(TypeScriptVersions.TS28)
+  @TypeScriptVersion(TypeScriptVersions.TS26)
   fun testSimpleVueEditing() {
     doTestWithCopyDirectory()
     myFixture.type('\b')
@@ -73,17 +73,17 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
     checkAfterFile("2.vue")
   }
 
-  @TypeScriptVersion(TypeScriptVersions.TS28)
+  @TypeScriptVersion(TypeScriptVersions.TS26)
   fun testSimpleVueEditingNoTs() {
     completeTsLangAndAssert()
   }
 
-  @TypeScriptVersion(TypeScriptVersions.TS28)
+  @TypeScriptVersion(TypeScriptVersions.TS26)
   fun testSimpleVueEditingNoTsNoRefs() {
     completeTsLangAndAssert()
   }
 
-  @TypeScriptVersion(TypeScriptVersions.TS28)
+  @TypeScriptVersion(TypeScriptVersions.TS26)
   fun testSimpleVueEditingCloseTag() {
     doTestWithCopyDirectory()
     myFixture.type('\b')
@@ -92,12 +92,12 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
     checkAfterFile("2.vue")
   }
 
-  @TypeScriptVersion(TypeScriptVersions.TS28)
+  @TypeScriptVersion(TypeScriptVersions.TS26)
   fun testSimpleVueTsx() {
     doTestWithCopyDirectory()
   }
 
-  @TypeScriptVersion(TypeScriptVersions.TS28)
+  @TypeScriptVersion(TypeScriptVersions.TS26)
   fun testNoScriptSection() {
     myFixture.configureDependencies(VueTestModule.VUE_2_5_3)
     doTestWithCopyDirectory()
@@ -105,7 +105,7 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
     checkHighlightingByOptions(false)
   }
 
-  @TypeScriptVersion(TypeScriptVersions.TS28)
+  @TypeScriptVersion(TypeScriptVersions.TS26)
   fun testNoScriptSectionVue3() {
     myFixture.configureDependencies(VueTestModule.VUE_3_0_0)
     doTestWithCopyDirectory()
@@ -113,19 +113,19 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
     checkHighlightingByOptions(false)
   }
 
-  @TypeScriptVersion(TypeScriptVersions.TS28)
+  @TypeScriptVersion(TypeScriptVersions.TS26)
   fun testConfigScope() {
     doTestWithCopyDirectory()
   }
 
-  @TypeScriptVersion(TypeScriptVersions.TS28)
+  @TypeScriptVersion(TypeScriptVersions.TS26)
   fun testSimpleVueTsToTsx() {
     doTestWithCopyDirectory()
     myFixture.type('x')
     checkAfterFile("vue")
   }
 
-  @TypeScriptVersion(TypeScriptVersions.TS28)
+  @TypeScriptVersion(TypeScriptVersions.TS26)
   fun testSimpleVueTsxToTs() {
     doTestWithCopyDirectory()
     myFixture.type('\b')

@@ -117,6 +117,7 @@ module.exports = function init(
       const tsLsHost = info.languageServiceHost;
       const project = info.project;
       const compilerHost = <ts.CompilerHost><any>project
+      const getCanonicalFileName = ts_impl.sys.useCaseSensitiveFileNames ? toFileNameLowerCase : identity;
 
       // Allow resolve into Vue files
       const vue_sys = {
@@ -130,7 +131,7 @@ module.exports = function init(
         }
       }
       let moduleResolutionCache = ts_impl.createModuleResolutionCache(project.getCurrentDirectory(),
-        (x: any) => compilerHost.getCanonicalFileName(x), project.getCompilerOptions());
+        (x: any) => (compilerHost.getCanonicalFileName ?? getCanonicalFileName)(x), project.getCompilerOptions());
       const loader = (moduleName: string, containingFile: string, redirectedReference: any) => {
         const tsResolvedModule = ts_impl.resolveModuleName(moduleName, containingFile, project.getCompilerOptions(),
           vue_sys, moduleResolutionCache, redirectedReference).resolvedModule!;
@@ -171,3 +172,14 @@ module.exports = function init(
     }
   };
 };
+
+/* Copied from TS compiler/core.ts */
+
+function identity<T>(x: T) { return x; }
+function toLowerCase(x: string) { return x.toLowerCase(); }
+const fileNameLowerCaseRegExp = /[^\u0130\u0131\u00DFa-z0-9\\/:\-_. ]+/g;
+function toFileNameLowerCase(x: string) {
+  return fileNameLowerCaseRegExp.test(x) ?
+    x.replace(fileNameLowerCaseRegExp, toLowerCase) :
+    x;
+}
