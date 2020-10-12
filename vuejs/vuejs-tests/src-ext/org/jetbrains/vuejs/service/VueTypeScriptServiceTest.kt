@@ -106,6 +106,14 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS28)
+  fun testNoScriptSectionVue3() {
+    myFixture.configureDependencies(VueTestModule.VUE_3_0_0)
+    doTestWithCopyDirectory()
+    myFixture.configureByFile("main.ts")
+    checkHighlightingByOptions(false)
+  }
+
+  @TypeScriptVersion(TypeScriptVersions.TS28)
   fun testConfigScope() {
     doTestWithCopyDirectory()
   }

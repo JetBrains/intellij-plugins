@@ -1694,7 +1694,7 @@ export default class ComponentInsertion extends Vue {
     // Used TS type is recursive in itself and recursion prevention is expected
     RecursionManager.disableAssertOnRecursionPrevention(myFixture.testRootDisposable)
     RecursionManager.disableMissedCacheAssertions(myFixture.testRootDisposable)
-    myFixture.configureDependencies(VueTestModule.VUE_3_0_0_BETA_9)
+    myFixture.configureDependencies(VueTestModule.VUE_3_0_0)
     myFixture.configureByFile("compositionAPI/count-vue3.vue")
     myFixture.completeBasic()
     UsefulTestCase.assertContainsElements(myFixture.renderLookupItems(true, false), "!foo#101", "!state#101")

@@ -87,7 +87,7 @@ export class VueScriptCache {
 
     // Allow for empty <script> tag
     if (result.trim() === "") {
-      result = "import Vue from 'vue'; export default Vue;"
+      result = "import componentDefinition from '*.vue'; export default componentDefinition;"
       scriptKind = ts_impl.ScriptKind.TS;
     }
 
