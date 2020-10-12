@@ -38,7 +38,7 @@ class CourseManager internal constructor() : Disposable {
   }
 
   init {
-    TrainingModules.EP_NAME.addChangeListener(Runnable {
+    COURSE_MODULES_EP.addChangeListener(Runnable {
       clearModules()
       for (toolWindow in LearnToolWindowFactory.learnWindowPerProject.values) {
         toolWindow.reinitViews()
@@ -48,23 +48,6 @@ class CourseManager internal constructor() : Disposable {
 
   fun clearModules() {
     allModules = null
-  }
-
-  private fun loadXmlModules(): List<Module> {
-    val result: MutableList<Module> = mutableListOf()
-    val trainingModules = TrainingModules.EP_NAME.extensions
-    for (modules in trainingModules) {
-      val primaryLanguage = LangManager.getInstance().getLangSupportById(modules.language) ?:
-                            error("Cannot find primary language support: ${modules.language}")
-      val classLoader = modules.loaderForClass
-      for (module in modules.children) {
-        val moduleFilename = module.xmlPath
-        val xmlModule = XmlModule.initModule(moduleFilename, primaryLanguage, classLoader)
-                        ?: throw Exception("Unable to init module (is null) from file: $moduleFilename")
-        result.add(xmlModule)
-      }
-    }
-    return result
   }
 
   //TODO: remove this method or convert XmlModule to a Module
@@ -130,9 +113,9 @@ class CourseManager internal constructor() : Disposable {
   }
 
   private fun initAllModules(): List<Module> {
-    val extensions = ExtensionPointName<LanguageExtensionPoint<LearningCourse>>("training.ift.learning.course").extensions
+    val extensions = COURSE_MODULES_EP.extensions
     val nonXML = extensions.map { it.instance.modules() }.flatten()
-    return nonXML + loadXmlModules()
+    return nonXML
     //return loadXmlModules()
   }
 
@@ -146,6 +129,7 @@ class CourseManager internal constructor() : Disposable {
   companion object {
     val instance: CourseManager
       get() = ServiceManager.getService(CourseManager::class.java)
+    val COURSE_MODULES_EP = ExtensionPointName<LanguageExtensionPoint<LearningCourse>>("training.ift.learning.course")
   }
 
 }

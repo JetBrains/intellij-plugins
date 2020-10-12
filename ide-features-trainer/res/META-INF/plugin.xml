@@ -33,8 +33,6 @@
       <with attribute="implementationClass" implements="training.lang.LangSupport"/>
     </extensionPoint>
 
-    <extensionPoint name="ift.modules" beanClass="training.learn.TrainingModules" dynamic="true"/>
-
     <extensionPoint name="ift.learning.course" beanClass="com.intellij.lang.LanguageExtensionPoint" dynamic="true">
       <with attribute="implementationClass" implements="training.learn.LearningCourse"/>
     </extensionPoint>
