@@ -7,8 +7,9 @@ import com.intellij.lang.javascript.frameworks.modules.JSBaseModuleReferenceCont
 import com.intellij.lang.javascript.modules.JSModuleNameInfo
 import com.intellij.lang.javascript.modules.JSModuleNameInfo.ExtensionSettings
 import com.intellij.lang.javascript.modules.JSModuleNameInfoImpl
+import com.intellij.lang.javascript.modules.imports.JSImportDescriptor
+import com.intellij.lang.javascript.modules.imports.JSSimpleImportDescriptor
 import com.intellij.openapi.vfs.VfsUtilCore
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiReferenceProvider
@@ -28,20 +29,26 @@ class DenoModuleReferenceContributor : JSBaseModuleReferenceContributor() {
     return emptyArray()
   }
 
-  override fun getModuleInfo(configuration: JSImportPathConfiguration,
-                             moduleFileOrDirectory: VirtualFile,
-                             resolvedModuleFile: VirtualFile): JSModuleNameInfo? {
+  override fun getImportDescriptors(configuration: JSImportPathConfiguration,
+                                    baseDescriptor: JSImportDescriptor): List<JSImportDescriptor> {
+    val moduleDescriptor = baseDescriptor.moduleDescriptor
+    if (moduleDescriptor !is JSModuleNameInfo) return emptyList()
+    val resolvedModuleFile = moduleDescriptor.resolvedFile
+    val moduleFileOrDirectory = moduleDescriptor.moduleFileOrDirectory
+
     if (!TypeScriptUtil.isTypeScriptFile(resolvedModuleFile) ||
-       TypeScriptUtil.isDefinitionFile(resolvedModuleFile)
-    ) return null
-    
+        TypeScriptUtil.isDefinitionFile(resolvedModuleFile)
+    ) return emptyList()
+
     val place = configuration.place
     var externalModuleName = VfsUtilCore.findRelativePath(place.containingFile.virtualFile, moduleFileOrDirectory, '/')
-    if (externalModuleName == null) return null
+    if (externalModuleName == null) return emptyList()
     if (!externalModuleName.startsWith(".") && !externalModuleName.startsWith(File.separator)) {
       externalModuleName = "./$externalModuleName"
     }
-    
-    return JSModuleNameInfoImpl(externalModuleName, moduleFileOrDirectory, resolvedModuleFile, place, emptyArray(), ExtensionSettings.EXACT)
+
+    val newInfo = JSModuleNameInfoImpl(externalModuleName, moduleFileOrDirectory, resolvedModuleFile, place, emptyArray(),
+                                       ExtensionSettings.EXACT)
+    return listOf(JSSimpleImportDescriptor(newInfo, baseDescriptor))
   }
 }
