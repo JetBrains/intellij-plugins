@@ -151,7 +151,7 @@ public class ActionScriptImportHandler extends JSImportHandler {
     return result;
   }
 
-  private static JSNamedElement resolveTypeNameInTheSamePackage(final @NotNull String str, final PsiElement context) {
+  private static JSNamedElement resolveTypeNameInTheSamePackage(@NotNull String str, @NotNull PsiElement context) {
     JSNamedElement fileLocalElement = JSResolveUtil.findFileLocalElement(str, context);
     if (fileLocalElement != null) return fileLocalElement;
 
@@ -224,14 +224,14 @@ public class ActionScriptImportHandler extends JSImportHandler {
           final JSClass parentClass = (JSClass)element;
           final JSClass[] classes = parentClass.getSuperClasses();
 
-          if (classes != null && classes.length > 0 && resolveProcessor.getName().equals(classes[0].getName())) {
+          if (classes.length > 0 && resolveProcessor.getName().equals(classes[0].getName())) {
             jsClass = classes[0];
           }
         }
 
         if (jsClass != null && !resolveProcessor.execute(jsClass, ResolveState.initial())) return false;
       } else {
-        JSNamedElement jsClass = resolveTypeNameInTheSamePackage(resolveProcessor.getName(), element);
+        JSNamedElement jsClass = element != null ? resolveTypeNameInTheSamePackage(resolveProcessor.getName(), element) : null;
         return jsClass == null || resolveProcessor.execute(jsClass, ResolveState.initial());
       }
     }
