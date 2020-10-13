@@ -170,6 +170,8 @@
     <codeInsight.parameterNameHints language="Vue"
                                     implementationClass="org.jetbrains.vuejs.editor.VueJSInlayParameterHintsProvider"/>
 
+    <eslint.ruleMappersFactory implementation="org.jetbrains.vuejs.libraries.eslint.VueEslintRuleMappersFactory"/>
+
     <vuejs.templateScopesProvider
       implementation="org.jetbrains.vuejs.codeInsight.template.VueStandardSymbolsScopesProvider"
       id="standardSymbols"
