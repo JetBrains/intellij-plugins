@@ -16,6 +16,7 @@ import com.intellij.ui.content.Content
 import com.intellij.usageView.UsageViewContentManager
 import com.intellij.util.messages.Topic
 import com.intellij.xdebugger.XDebuggerManager
+import org.jetbrains.annotations.Nls
 import training.commands.kotlin.TaskContext
 import training.commands.kotlin.TaskRuntimeContext
 import training.keymap.KeymapUtil
@@ -75,7 +76,7 @@ object LessonUtil {
     return if (message != null) sampleRestoreNotification(message, sample) else null
   }
 
-  fun TaskRuntimeContext.sampleRestoreNotification(message: String, sample: LessonSample) =
+  fun TaskRuntimeContext.sampleRestoreNotification(@Nls message: String, sample: LessonSample) =
     TaskContext.RestoreNotification(message) { setSample(sample) }
 
   fun findItem(ui: JList<*>, checkList: (item: Any) -> Boolean): Int? {

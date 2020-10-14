@@ -209,7 +209,7 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
               override fun sessionStopped() {
                 val activeToolWindow = LearningUiManager.activeToolWindow
                 if (activeToolWindow != null && !mayBeStopped && LessonManager.instance.currentLesson == this@CommonDebugLesson) {
-                  val notification = TaskContext.RestoreNotification("Debug session has been stopped. Need to restart lesson.") {
+                  val notification = TaskContext.RestoreNotification(LessonsBundle.message("debug.workflow.need.restart.lesson")) {
                     CourseManager.instance.openLesson(activeToolWindow.project, this@CommonDebugLesson)
                   }
                   LessonManager.instance.setRestoreNotification(notification)

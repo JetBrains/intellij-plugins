@@ -4,6 +4,7 @@ package training.ui.views
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.guessCurrentProject
+import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.ui.components.labels.ActionLink
 import com.intellij.ui.components.labels.LinkLabel
@@ -329,7 +330,7 @@ class LearnPanel(private val learnToolWindow: LearnToolWindow, val lesson: Lesso
     repaint()
   }
 
-  fun setButtonNextAction(notPassedLesson: Lesson?, text: String?, runnable: () -> Unit) {
+  fun setButtonNextAction(notPassedLesson: Lesson?, @Nls text: String?, runnable: () -> Unit) {
     button.action = object : AbstractAction() {
       override fun actionPerformed(actionEvent: ActionEvent) {
         runnable()
@@ -349,7 +350,7 @@ class LearnPanel(private val learnToolWindow: LearnToolWindow, val lesson: Lesso
     rootPane?.defaultButton = button
   }
 
-  fun setButtonSkipActionAndText(runnable: Runnable?, text: String?, visible: Boolean) {
+  fun setButtonSkipActionAndText(runnable: Runnable?, @Nls text: String?, visible: Boolean) {
     rootPane?.defaultButton = null
     button.action = object : AbstractAction() {
       override fun actionPerformed(actionEvent: ActionEvent) {
@@ -370,6 +371,7 @@ class LearnPanel(private val learnToolWindow: LearnToolWindow, val lesson: Lesso
     button.isVisible = visible
   }
 
+  @NlsSafe
   private fun getNextLessonKeyStrokeText() =
     KeymapUtil.getKeyStrokeText(KeymapUtil.getShortcutByActionId("learn.next.lesson"))
 

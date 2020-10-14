@@ -48,7 +48,7 @@ abstract class TaskContext {
     }
   }
 
-  data class RestoreNotification(val message: String, val callback: () -> Unit)
+  data class RestoreNotification(@Nls val message: String, val callback: () -> Unit)
 
   open fun proposeRestore(restoreCheck: TaskRuntimeContext.() -> RestoreNotification?) = Unit
 
