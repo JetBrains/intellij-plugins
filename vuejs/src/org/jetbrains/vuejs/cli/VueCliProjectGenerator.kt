@@ -11,8 +11,6 @@ import com.intellij.javascript.nodejs.packages.NodePackageUtil
 import com.intellij.javascript.nodejs.util.NodePackage
 import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator
 import com.intellij.lang.javascript.boilerplate.NpxPackageDescriptor
-import com.intellij.lang.javascript.buildTools.webpack.WebPackConfigManager
-import com.intellij.lang.javascript.buildTools.webpack.WebPackConfiguration
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ContentEntry

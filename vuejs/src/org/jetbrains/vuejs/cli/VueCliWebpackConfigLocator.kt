@@ -5,11 +5,13 @@ import com.intellij.javascript.nodejs.NodeModuleDirectorySearchProcessor
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil
 import com.intellij.javascript.nodejs.PackageJsonData
 import com.intellij.javascript.nodejs.packageJson.PackageJsonFileManager
-import com.intellij.lang.javascript.buildTools.webpack.WebpackConfigLocator
+import com.intellij.lang.javascript.buildTools.webpack.WebPackConfigLocator
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiElement
 
-class VueCliWebpackConfigLocator : WebpackConfigLocator {
-  override fun detectConfig(project: Project): String? =
+class VueCliWebpackConfigLocator : WebPackConfigLocator {
+  override fun detectConfig(project: Project, context: PsiElement): VirtualFile? =
     PackageJsonFileManager.getInstance(project).validPackageJsonFiles
       .asSequence()
       .filter { it.isValid && PackageJsonData.getOrCreateWithPreferredProject(project, it).isDependencyOfAnyType(VUE_CLI_SERVICE_PKG) }
@@ -18,7 +20,6 @@ class VueCliWebpackConfigLocator : WebpackConfigLocator {
           it.parent, VUE_CLI_SERVICE_PKG, NodeModuleDirectorySearchProcessor.PROCESSOR)
       }
       .mapNotNull { it.moduleSourceRoot.findChild("webpack.config.js") }
-      .map { it.path }
       .firstOrNull()
 
   companion object {
