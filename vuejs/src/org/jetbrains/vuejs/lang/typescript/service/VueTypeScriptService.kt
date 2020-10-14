@@ -15,14 +15,10 @@ import com.intellij.lang.typescript.compiler.languageService.protocol.TypeScript
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.ConfigureRequest
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.ConfigureRequestArguments
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.FileExtensionInfo
-import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptOpenEditorCommand
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
 import com.intellij.openapi.application.ReadAction
-import com.intellij.openapi.editor.Document
-import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
@@ -75,7 +71,7 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
 
   override fun isServiceEnabled(context: VirtualFile): Boolean = super.isServiceEnabled(context) && isVueServiceEnabled()
 
-  override fun createProtocol(readyConsumer: Consumer<*>, tsServicePath: String): JSLanguageServiceProtocol? {
+  override fun createProtocol(readyConsumer: Consumer<*>, tsServicePath: String): JSLanguageServiceProtocol {
     return VueTypeScriptServiceProtocol(myProject, mySettings, readyConsumer, createEventConsumer(), tsServicePath)
   }
 
@@ -113,12 +109,12 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
     val arguments = ConfigureRequestArguments()
     val fileExtensionInfo = FileExtensionInfo()
     fileExtensionInfo.extension = ".vue"
-    
+
     //see ts.getSupportedExtensions
     //x.scriptKind === ScriptKind.Deferred(7) || needJsExtensions && isJSLike(x.scriptKind) ? x.extension : undefined
     //so only "ScriptKind.Deferred" kinds are accepted for file searching
     fileExtensionInfo.scriptKind = 7
-    
+
     fileExtensionInfo.isMixedContent = false
     arguments.extraFileExtensions = arrayOf(fileExtensionInfo)
 

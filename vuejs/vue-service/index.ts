@@ -10,6 +10,16 @@ module.exports = function init(
   if (!patched) {
     patched = true
 
+    // Don't output compilation results of `.vue` files. The DefaultSessionExtension#getFileWrite should actually be patched
+    // to not populate the output list
+    const _writeFile = ts_impl.sys.writeFile
+    ts_impl.sys.writeFile = function writeFilePatched(path: string, data: string, writeByteOrderMark?: boolean) {
+      if (path.endsWith(".vue.d.ts") || path.endsWith(".vue.js") || path.endsWith(".vue.js.map")) {
+        return
+      }
+      _writeFile(path, data, writeByteOrderMark);
+    }
+
     // Detect whether script kind has changed and if so, drop the whole program and patch compiler host
     const _createProgram = ts_impl.createProgram
     ts_impl.createProgram = function createProgram(rootNamesOrOptions: any): ts.Program {

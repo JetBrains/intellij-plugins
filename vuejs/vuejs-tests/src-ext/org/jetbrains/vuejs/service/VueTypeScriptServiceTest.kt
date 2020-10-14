@@ -6,10 +6,13 @@ import com.intellij.lang.javascript.service.JSLanguageService
 import com.intellij.lang.javascript.service.JSLanguageServiceBase
 import com.intellij.lang.javascript.service.JSLanguageServiceProvider
 import com.intellij.lang.javascript.typescript.service.TypeScriptServiceTestBase
+import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
+import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.testFramework.JSUnit38AssumeSupportRunner
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.ui.UIUtil
+import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureDependencies
 import org.jetbrains.vuejs.lang.typescript.service.VueTypeScriptService
@@ -130,6 +133,32 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
     doTestWithCopyDirectory()
     myFixture.type('\b')
     checkAfterFile("vue")
+  }
+
+  @TypeScriptVersion(TypeScriptVersions.TS26)
+  fun testNoVueCompileOnSave() {
+    val settings = TypeScriptCompilerSettings.getSettings(project)
+    settings.isRecompileOnChanges = true
+    settings.setUseServiceForProjectsWithoutConfig(true)
+    settings.setUseService(true)
+    myFixture.copyDirectoryToProject(getTestName(false), "");
+    myFixture.configureFromTempProjectFile(getTestName(false) + "." + extension)
+    myFixture.checkHighlighting()
+    myFixture.configureFromTempProjectFile(getTestName(false) + "Clear." + extension)
+    myFixture.type("1")
+    myFixture.configureFromTempProjectFile("test.ts")
+    myFixture.type("1")
+    WriteAction.runAndWait<Exception> {
+      FileDocumentManager.getInstance().saveAllDocuments()
+    }
+    waitEmptyServiceQueue()
+    WriteAction.runAndWait<Exception> {
+      myFixture.tempDirFixture.findOrCreateDir(".").refresh(false, true)
+    }
+    TestCase.assertEquals(listOf("NoVueCompileOnSave.vue", "NoVueCompileOnSaveClear.vue",
+                                 "shims-vue.d.ts", "test.d.ts", "test.js", "test.js.map", "test.ts", "tsconfig.json"),
+                          myFixture.tempDirFixture.findOrCreateDir(".")
+                            .children.asSequence().map { it.name }.sorted().toList())
   }
 
   companion object {
