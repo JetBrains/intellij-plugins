@@ -28,7 +28,7 @@ class VueEslintRuleMappersFactory : EslintRuleMappersFactory {
   )
 
   private class VueHtmlClosingBracketNewline : EslintRuleMapper("vue/html-closing-bracket-newline") {
-    override fun create(values: MutableList<JsonValue>?): EslintSettingsConverter {
+    override fun create(values: MutableList<JsonValue>?, eslintConfig: EslintConfig): EslintSettingsConverter {
       val options = values?.getOrNull(0) as? JsonObject
       // "singleline" not supported
       val multiLine = getAlwaysNeverOption(options?.findProperty("multiline"), true) ?: return EslintSettingsConverter.MISCONFIGURATION
@@ -49,7 +49,7 @@ class VueEslintRuleMappersFactory : EslintRuleMappersFactory {
   }
 
   private class VueHtmlIndent : EslintRuleMapper("vue/html-indent") {
-    override fun create(values: MutableList<JsonValue>?): EslintSettingsConverter {
+    override fun create(values: MutableList<JsonValue>?, eslintConfig: EslintConfig): EslintSettingsConverter {
       val isTab = values?.getOrNull(0)?.castSafelyTo<JsonStringLiteral>()?.value == "tab"
       val base = if (isTab) 1 else values?.getOrNull(0)?.castSafelyTo<JsonNumberLiteral>()?.value?.toInt() ?: 2
       val config = values?.getOrNull(1)?.castSafelyTo<JsonObject>()
@@ -92,7 +92,7 @@ class VueEslintRuleMappersFactory : EslintRuleMappersFactory {
   }
 
   private class VueHtmlQuotes : EslintRuleMapper("vue/html-quotes") {
-    override fun create(values: MutableList<JsonValue>?): EslintSettingsConverter {
+    override fun create(values: MutableList<JsonValue>?, eslintConfig: EslintConfig): EslintSettingsConverter {
       val quoteStyle = when (values?.getOrNull(0)
         ?.castSafelyTo<JsonStringLiteral>()
         ?.value) {
@@ -114,7 +114,7 @@ class VueEslintRuleMappersFactory : EslintRuleMappersFactory {
   }
 
   private class VueMustacheInterpolationSpacing : EslintRuleMapper("vue/mustache-interpolation-spacing") {
-    override fun create(values: MutableList<JsonValue>?): EslintSettingsConverter {
+    override fun create(values: MutableList<JsonValue>?, eslintConfig: EslintConfig): EslintSettingsConverter {
       val spaces = getAlwaysNeverOption(values, true) ?: return EslintSettingsConverter.MISCONFIGURATION
       return object : EslintSettingsConverter {
         override fun inSync(settings: CodeStyleSettings): Boolean =
@@ -130,7 +130,7 @@ class VueEslintRuleMappersFactory : EslintRuleMappersFactory {
   }
 
   private class VueNoSpacesAroundEqualSignsInAttribute : EslintRuleMapper("vue/no-spaces-around-equal-signs-in-attribute") {
-    override fun create(values: MutableList<JsonValue>?): EslintSettingsConverter {
+    override fun create(values: MutableList<JsonValue>?, eslintConfig: EslintConfig): EslintSettingsConverter {
       return EslintHtmlSettingsConverter(
         inSync = { _, custom -> !custom.HTML_SPACE_AROUND_EQUALITY_IN_ATTRIBUTE },
         applier = { _, custom -> custom.HTML_SPACE_AROUND_EQUALITY_IN_ATTRIBUTE = false }
@@ -139,7 +139,7 @@ class VueEslintRuleMappersFactory : EslintRuleMappersFactory {
   }
 
   private class VueScriptIndent : EslintRuleMapper("vue/script-indent") {
-    override fun create(values: MutableList<JsonValue>?): EslintSettingsConverter {
+    override fun create(values: MutableList<JsonValue>?, eslintConfig: EslintConfig): EslintSettingsConverter {
       val isTab = values?.getOrNull(0)?.castSafelyTo<JsonStringLiteral>()?.value == "tab"
       val base = if (isTab) 1 else values?.getOrNull(0)?.castSafelyTo<JsonNumberLiteral>()?.value?.toInt() ?: 2
       val indent = getIntOptionValue(values?.getOrNull(1)?.castSafelyTo<JsonObject>(),
