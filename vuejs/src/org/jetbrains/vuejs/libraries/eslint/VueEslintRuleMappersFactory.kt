@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.linter.eslint.importer.EslintRuleMapper
 import com.intellij.lang.javascript.linter.eslint.importer.EslintRuleMappersFactory
 import com.intellij.lang.javascript.linter.eslint.importer.EslintSettingsConverter
 import com.intellij.psi.codeStyle.CodeStyleSettings
+import com.intellij.psi.codeStyle.CommonCodeStyleSettings
 import com.intellij.psi.formatter.xml.HtmlCodeStyleSettings
 import com.intellij.util.castSafelyTo
 import com.intellij.xml.util.HtmlUtil
@@ -52,10 +53,10 @@ class VueEslintRuleMappersFactory : EslintRuleMappersFactory {
     override fun create(values: MutableList<JsonValue>?, eslintConfig: EslintConfig): EslintSettingsConverter {
       val isTab = values?.getOrNull(0)?.castSafelyTo<JsonStringLiteral>()?.value == "tab"
       val base = if (isTab) 1 else values?.getOrNull(0)?.castSafelyTo<JsonNumberLiteral>()?.value?.toInt() ?: 2
-      val config = values?.getOrNull(1)?.castSafelyTo<JsonObject>()
+      val config = values?.getOrNull(1)
       val indent = getIntOptionValue(config, "baseIndent", 1) ?: return EslintSettingsConverter.MISCONFIGURATION
       val attributeIndent = getIntOptionValue(config, "attribute", 1) ?: return EslintSettingsConverter.MISCONFIGURATION
-      val alignAttributes = getBooleanOptionValue(config, "alignAttributesVertically", true)
+      val alignAttributes = getBooleanOptionValue(config as? JsonObject, "alignAttributesVertically", true)
                             ?: return EslintSettingsConverter.MISCONFIGURATION
       val getIndentOptions = { settings: CodeStyleSettings ->
         if (settings.getLanguageIndentOptions(VueLanguage.INSTANCE).isOverrideLanguageOptions) {
@@ -104,7 +105,7 @@ class VueEslintRuleMappersFactory : EslintRuleMappersFactory {
       // "avoid escape" not supported
       return EslintHtmlSettingsConverter(
         inSync = { _, custom ->
-          custom.HTML_QUOTE_STYLE != quoteStyle || !custom.HTML_ENFORCE_QUOTES
+          custom.HTML_QUOTE_STYLE == quoteStyle && custom.HTML_ENFORCE_QUOTES
         },
         applier = { _, custom ->
           custom.HTML_QUOTE_STYLE = quoteStyle
@@ -142,8 +143,8 @@ class VueEslintRuleMappersFactory : EslintRuleMappersFactory {
     override fun create(values: MutableList<JsonValue>?, eslintConfig: EslintConfig): EslintSettingsConverter {
       val isTab = values?.getOrNull(0)?.castSafelyTo<JsonStringLiteral>()?.value == "tab"
       val base = if (isTab) 1 else values?.getOrNull(0)?.castSafelyTo<JsonNumberLiteral>()?.value?.toInt() ?: 2
-      val indent = getIntOptionValue(values?.getOrNull(1)?.castSafelyTo<JsonObject>(),
-                                     "baseIndent", 0) ?: return EslintSettingsConverter.MISCONFIGURATION
+      val indent = getIntOptionValue(values?.getOrNull(1), "baseIndent", 0)
+                   ?: return EslintSettingsConverter.MISCONFIGURATION
 
       // The mapping is only partial, we do not support complex scenarios here, nor should we
       val scriptIndentation = base * indent > 0
@@ -168,4 +169,22 @@ class VueEslintRuleMappersFactory : EslintRuleMappersFactory {
     }
   }
 
+  private class EslintHtmlSettingsConverter(
+    private val inSync: (common: CommonCodeStyleSettings, custom: HtmlCodeStyleSettings) -> Boolean,
+    private val applier: (common: CommonCodeStyleSettings, custom: HtmlCodeStyleSettings) -> Unit
+  ) : EslintSettingsConverter {
+
+    override fun inSync(settings: CodeStyleSettings): Boolean {
+      val common = settings.getCommonSettings(HTMLLanguage.INSTANCE)
+      val custom = settings.getCustomSettings(HtmlCodeStyleSettings::class.java)
+      return inSync(common, custom)
+    }
+
+    override fun apply(settings: CodeStyleSettings) {
+      val common = settings.getCommonSettings(HTMLLanguage.INSTANCE)
+      val custom = settings.getCustomSettings(HtmlCodeStyleSettings::class.java)
+      applier(common, custom)
+    }
+
+  }
 }
