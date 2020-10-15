@@ -77,6 +77,11 @@ public class PlatformioConfigurationType extends CMakeRunConfigurationType {
       String getId() {
         return PLATFORM_IO_DEBUG_ID;
       }
+
+      @Override
+      public boolean isEditableInDumbMode() {
+        return true;
+      }
     };
   }
 
@@ -119,6 +124,11 @@ public class PlatformioConfigurationType extends CMakeRunConfigurationType {
     public @NotNull
     String getName() {
       return name.get();
+    }
+
+    @Override
+    public boolean isEditableInDumbMode() {
+      return true;
     }
   }
 }
