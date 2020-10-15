@@ -2,7 +2,10 @@
 package training.learn.lesson.kimpl
 
 import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.impl.ActionButton
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ApplicationNamesInfo
+import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorModificationUtil
 import com.intellij.openapi.editor.ex.EditorEx
@@ -13,15 +16,21 @@ import com.intellij.openapi.util.text.TextWithMnemonic
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ex.ToolWindowManagerListener
 import com.intellij.ui.content.Content
+import com.intellij.ui.tabs.impl.JBTabsImpl
 import com.intellij.usageView.UsageViewContentManager
 import com.intellij.util.messages.Topic
+import com.intellij.util.ui.UIUtil
 import com.intellij.xdebugger.XDebuggerManager
+import org.fest.swing.timing.Timeout
 import org.jetbrains.annotations.Nls
 import training.commands.kotlin.TaskContext
 import training.commands.kotlin.TaskRuntimeContext
 import training.keymap.KeymapUtil
 import training.learn.LearnBundle
+import training.ui.LearningUiHighlightingManager
+import training.ui.LearningUiUtil
 import java.awt.event.KeyEvent
+import java.util.concurrent.TimeUnit
 import javax.swing.JList
 import javax.swing.KeyStroke
 
@@ -108,6 +117,14 @@ object LessonUtil {
   fun rawCtrlEnter(): String {
     return "<raw_action>${if (SystemInfo.isMacOSMojave) "\u2318\u23CE" else "Ctrl + Enter"}</raw_action>"
   }
+
+  fun checkToolbarIsShowing(ui: ActionButton): Boolean   {
+    // Some buttons are duplicated to several tab-panels. It is a way to find an active one.
+    val parentOfType = UIUtil.getParentOfType(JBTabsImpl.Toolbar::class.java, ui)
+    val location = parentOfType?.location
+    val x = location?.x
+    return x != 0
+  }
 }
 
 fun TaskContext.toolWindowShowed(toolWindowId: String) {
@@ -157,4 +174,25 @@ fun TaskRuntimeContext.closeAllFindTabs() {
 
 fun String.dropMnemonic(): String {
   return TextWithMnemonic.parse(this).dropMnemonic(true).text
+}
+
+val seconds01 = Timeout.timeout(1, TimeUnit.SECONDS)
+
+fun LessonContext.highlightButtonById(actionId: String) {
+  val needToFindButton = ActionManager.getInstance().getAction(actionId)
+  prepareRuntimeTask {
+    LearningUiHighlightingManager.clearHighlights()
+    ApplicationManager.getApplication().executeOnPooledThread {
+      val result =
+        LearningUiUtil.findAllShowingComponentWithTimeout(null, ActionButton::class.java, seconds01) { ui ->
+        ui.action == needToFindButton && LessonUtil.checkToolbarIsShowing(ui)
+      }
+      invokeLater {
+        for (button in result) {
+          val options = LearningUiHighlightingManager.HighlightingOptions(clearPreviousHighlights = false)
+          LearningUiHighlightingManager.highlightComponent(button, options)
+        }
+      }
+    }
+  }
 }

@@ -8,6 +8,7 @@ import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.general.run.CommonDebugLesson
 import training.learn.lesson.kimpl.LessonContext
+import training.learn.lesson.kimpl.highlightButtonById
 
 class JavaDebugLesson(module: Module) : CommonDebugLesson(module, "java.debug.workflow", "JAVA") {
   private val demoClassName = JavaRunLessonsUtils.demoClassName

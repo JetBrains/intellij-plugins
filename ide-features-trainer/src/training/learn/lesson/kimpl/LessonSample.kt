@@ -27,7 +27,7 @@ fun createFromTemplate(template: LessonSample, insert: String): LessonSample {
 }
 
 fun parseLessonSample(rowText: String): LessonSample {
-  val text = if (rowText.last() == '\n') rowText else rowText + '\n'
+  val text = if (rowText.isEmpty() || rowText.last() == '\n') rowText else rowText + '\n'
   val positionList = mutableListOf<LessonSamplePosition>()
   val resultText = parseCarets(text, positionList)
   val positions = mutableMapOf<Int, LessonSamplePosition>()

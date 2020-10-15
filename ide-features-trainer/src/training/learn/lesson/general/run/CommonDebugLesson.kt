@@ -10,8 +10,6 @@ import com.intellij.ide.impl.DataManagerImpl
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataProvider
-import com.intellij.openapi.actionSystem.impl.ActionButton
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.WriteCommandAction
@@ -23,7 +21,6 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.tasks.TaskBundle
 import com.intellij.testGuiFramework.framework.GuiTestUtil
 import com.intellij.testGuiFramework.util.Key
-import com.intellij.ui.tabs.impl.JBTabsImpl
 import com.intellij.util.ui.UIUtil
 import com.intellij.xdebugger.*
 import com.intellij.xdebugger.impl.XDebugSessionImpl
@@ -31,7 +28,6 @@ import com.intellij.xdebugger.impl.XDebuggerManagerImpl
 import com.intellij.xdebugger.impl.breakpoints.XBreakpointUtil
 import com.intellij.xdebugger.impl.frame.XDebuggerFramesList
 import com.intellij.xdebugger.impl.ui.tree.XDebuggerTree
-import org.fest.swing.timing.Timeout
 import org.jetbrains.annotations.Nls
 import training.commands.kotlin.TaskContext
 import training.commands.kotlin.TaskRuntimeContext
@@ -47,11 +43,9 @@ import training.learn.lesson.kimpl.LessonUtil.checkPositionOfEditor
 import training.learn.lesson.kimpl.LessonUtil.sampleRestoreNotification
 import training.ui.LearningUiHighlightingManager
 import training.ui.LearningUiManager
-import training.ui.LearningUiUtil
 import training.util.WeakReferenceDelegator
 import training.util.invokeActionForFocusContext
 import java.awt.Rectangle
-import java.util.concurrent.TimeUnit
 import javax.swing.JDialog
 import javax.swing.text.JTextComponent
 
@@ -72,15 +66,17 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
   private var debugSession: XDebugSession? by WeakReferenceDelegator()
   private var logicalPosition: LogicalPosition = LogicalPosition(0, 0)
 
-  @Nls
-  private val incorrectBreakPointsMessage = LessonsBundle.message("debug.workflow.incorrect.breakpoints")
-
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
 
     prepareTask()
 
-    toggleBreakpointTask()
+    prepareRuntimeTask {
+      logicalPosition = editor.offsetToLogicalPosition(sample.startOffset)
+    }
+    toggleBreakpointTask(sample, { logicalPosition }) {
+      LessonsBundle.message("debug.workflow.toggle.breakpoint", action("ToggleLineBreakpoint"))
+    }
 
     startDebugTask()
 
@@ -146,42 +142,6 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
           checkExpectedStateOfEditor(sample, false)
         }
       }
-    }
-  }
-
-  private fun LessonContext.toggleBreakpointTask() {
-    task {
-      before {
-        logicalPosition = editor.offsetToLogicalPosition(sample.startOffset)
-      }
-      triggerByPartOfComponent<EditorGutterComponentEx> l@{ ui ->
-        if (CommonDataKeys.EDITOR.getData(ui as DataProvider) != editor) return@l null
-        val y = editor.visualLineToY(editor.logicalToVisualPosition(logicalPosition).line)
-        return@l Rectangle(20, y, ui.width - 26, editor.lineHeight)
-      }
-    }
-
-    prepareRuntimeTask {
-      runWriteAction {
-        val breakpointManager = XDebuggerManager.getInstance(project).breakpointManager
-        breakpointManager.allBreakpoints.forEach { breakpointManager.removeBreakpoint(it) }
-      }
-    }
-
-    task("ToggleLineBreakpoint") {
-      text(LessonsBundle.message("debug.workflow.toggle.breakpoint", action(it)))
-      stateCheck {
-        lineWithBreakpoints() == setOf(logicalPosition.line)
-      }
-      proposeRestore {
-        val breakpoints = lineWithBreakpoints()
-        checkExpectedStateOfEditor(sample)
-        ?: if (breakpoints.isNotEmpty() && breakpoints != setOf(logicalPosition.line)) {
-          TaskContext.RestoreNotification(incorrectBreakPointsMessage, restorePreviousTaskCallback)
-        }
-        else null
-      }
-      test { actions(it) }
     }
   }
 
@@ -457,28 +417,6 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
 
   protected abstract fun LessonContext.applyProgramChangeTasks()
 
-  protected fun LessonContext.highlightButtonById(actionId: String) {
-    val needToFindButton = ActionManager.getInstance().getAction(actionId)
-    prepareRuntimeTask {
-      LearningUiHighlightingManager.clearHighlights()
-      ApplicationManager.getApplication().executeOnPooledThread {
-        val result = LearningUiUtil.findAllShowingComponentWithTimeout(null, ActionButton::class.java,
-                                                                       Timeout.timeout(1,
-                                                                                       TimeUnit.SECONDS)) { ui ->
-          ui.action == needToFindButton
-          // Some buttons are duplicated to several tab-panels. It is a way to find an active one.
-          && UIUtil.getParentOfType(JBTabsImpl.Toolbar::class.java, ui)?.location?.x != 0
-        }
-
-        invokeLater {
-          for (button in result) {
-            LearningUiHighlightingManager.highlightComponent(button)
-          }
-        }
-      }
-    }
-  }
-
   private fun LessonContext.highlightLineNumberByOffset(offset: Int) {
     task {
       triggerByPartOfComponent<EditorGutterComponentEx> l@{ ui ->
@@ -517,5 +455,45 @@ abstract class CommonDebugLesson(module: Module, id: String, languageId: String)
     val offset = caretOffset - (if (restoreLength <= textLength) 0 else restoreLength - textLength)
 
     checkExpectedStateOfEditor(LessonSample(restoreText, offset), false) ?: checkForBreakpoints()
+  }
+}
+
+
+@Nls
+private val incorrectBreakPointsMessage = LessonsBundle.message("debug.workflow.incorrect.breakpoints")
+
+fun LessonContext.toggleBreakpointTask(sample: LessonSample,
+                                       logicalPosition: () -> LogicalPosition,
+                                       checkLine: Boolean = true,
+                                       @Nls message: TaskContext.() -> String) {
+  task {
+    triggerByPartOfComponent<EditorGutterComponentEx> l@{ ui ->
+      if (CommonDataKeys.EDITOR.getData(ui as DataProvider) != editor) return@l null
+      val y = editor.visualLineToY(editor.logicalToVisualPosition(logicalPosition()).line)
+      return@l Rectangle(20, y, ui.width - 26, editor.lineHeight)
+    }
+  }
+
+  prepareRuntimeTask {
+    runWriteAction {
+      val breakpointManager = XDebuggerManager.getInstance(project).breakpointManager
+      breakpointManager.allBreakpoints.forEach { breakpointManager.removeBreakpoint(it) }
+    }
+  }
+
+  task {
+    text(message())
+    stateCheck {
+      lineWithBreakpoints() == setOf(logicalPosition().line)
+    }
+    proposeRestore {
+      val breakpoints = lineWithBreakpoints()
+      checkExpectedStateOfEditor(sample)
+      ?: if (breakpoints.isNotEmpty() && (checkLine && breakpoints != setOf(logicalPosition().line))) {
+        TaskContext.RestoreNotification(incorrectBreakPointsMessage, restorePreviousTaskCallback)
+      }
+      else null
+    }
+    test { actions("ToggleLineBreakpoint") }
   }
 }
