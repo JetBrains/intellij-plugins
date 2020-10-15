@@ -6,20 +6,13 @@ import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.options.BoundConfigurable
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.ui.layout.*
-import training.actions.StartLearnAction
 import training.lang.LangManager
 import training.learn.LearnBundle
-import training.ui.welcomeScreen.recentProjects.actionGroups.GroupManager
 import training.util.resetPrimaryLanguage
 import javax.swing.DefaultComboBoxModel
 
 class FeaturesTrainerSettingsPanel : BoundConfigurable(LearnBundle.message("learn.options.panel.name"), null) {
   override fun createPanel(): DialogPanel = panel {
-    row {
-      checkBox(LearnBundle.message("learn.option.show.list.on.welcome.frame"),
-               { GroupManager.instance.showTutorialsOnWelcomeFrame },
-               { updateWelcomeFrame(it) })
-    }
     val languagesExtensions = LangManager.getInstance().supportedLanguagesExtensions.sortedBy { it.language }
     if (languagesExtensions.isNotEmpty()) {
       row {
@@ -38,11 +31,6 @@ class FeaturesTrainerSettingsPanel : BoundConfigurable(LearnBundle.message("lear
     row {
       buttonFromAction(LearnBundle.message("learn.option.reset.progress"), "settings", ActionManager.getInstance().getAction("ResetLearningProgressAction"))
     }
-  }
-
-  private fun updateWelcomeFrame(show: Boolean) {
-    StartLearnAction.updateState(show)
-    GroupManager.instance.showTutorialsOnWelcomeFrame = show
   }
 
   private data class LanguageOption(val language: Language) {
