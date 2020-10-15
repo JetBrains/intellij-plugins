@@ -76,8 +76,8 @@ final class StaticArgCompletionProvider extends CompletionProvider<CompletionPar
     return steps.stream()
       .map(SpecStep::getStaticArgList)
       .flatMap(Collection::stream)
-      .filter(arg -> arg.getText() != null)
       .map(PsiElement::getText)
+      .filter(arg -> arg != null)
       .collect(Collectors.toSet());
   }
 }
