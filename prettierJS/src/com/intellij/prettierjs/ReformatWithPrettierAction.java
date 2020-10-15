@@ -11,12 +11,12 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.javascript.nodejs.interpreter.NodeInterpreterUtil;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
+import com.intellij.javascript.nodejs.npm.InstallNodeLocalDependenciesAction;
 import com.intellij.javascript.nodejs.npm.NpmManager;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.lang.javascript.linter.JSLinterGuesser;
 import com.intellij.lang.javascript.linter.JsqtProcessOutputViewer;
-import com.intellij.javascript.nodejs.npm.InstallNodeLocalDependenciesAction;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
@@ -443,7 +443,8 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
   private static void showErrorDetails(@NotNull Project project, @NotNull String text) {
     ProcessOutput output = new ProcessOutput();
     output.appendStderr(text);
-    JsqtProcessOutputViewer.show(project, PrettierUtil.PACKAGE_NAME, PrettierUtil.ICON, null, null, output);
+    JsqtProcessOutputViewer
+      .show(project, PrettierBundle.message("prettier.formatter.notification.title"), PrettierUtil.ICON, null, null, output);
   }
 
   private static void editSettings(@NotNull Project project) {

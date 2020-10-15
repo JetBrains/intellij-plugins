@@ -209,7 +209,7 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
     @Nullable
     @Override
     public String getPresentableText(@NotNull Project project) {
-      return "reformat";
+      return PrettierBundle.message("progress.title");
     }
   }
 }

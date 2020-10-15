@@ -10,6 +10,7 @@ import com.intellij.openapi.options.BoundSearchableConfigurable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.ValidationInfo
+import com.intellij.openapi.util.NlsSafe
 import com.intellij.ui.layout.*
 import java.nio.file.FileSystems
 import java.util.regex.PatternSyntaxException
@@ -52,7 +53,8 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
                 null
               }
               catch (e: PatternSyntaxException) {
-                ValidationInfo(e.message?.lines()?.firstOrNull() ?: PrettierBundle.message("invalid.pattern"), it)
+                @NlsSafe val firstLine = e.localizedMessage?.lines()?.firstOrNull()
+                ValidationInfo(firstLine ?: PrettierBundle.message("invalid.pattern"), it)
               }
             }
             .component.apply { runForFilesLabel.labelFor = this }
