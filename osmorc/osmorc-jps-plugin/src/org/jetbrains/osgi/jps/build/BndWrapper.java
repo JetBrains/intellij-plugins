@@ -163,9 +163,8 @@ public class BndWrapper {
         analyzer.setProperty(Constants.BUNDLE_VERSION, version);
       }
 
-      analyzer.calcManifest();
-
       try (Jar jar = analyzer.getJar()) {
+        jar.setManifest(analyzer.calcManifest());
         jar.write(outputJar);
       }
 
