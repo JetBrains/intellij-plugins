@@ -145,15 +145,15 @@ class ModulesPanel(private val learnToolWindow: LearnToolWindow?) : JPanel() {
     module2linklabel[module] = moduleName
     moduleName.setListener({ _, _ ->
                              val project = guessCurrentProject(modulesPanel)
+                             var lesson = module.giveNotPassedLesson()
+                             if (lesson == null) lesson = module.lessons[0]
                              val dumbService = DumbService.getInstance(project)
-                             if (dumbService.isDumb) {
+                             if (dumbService.isDumb && !lesson.properties.canStartInDumbMode) {
                                val balloon = createBalloon(LearnBundle.message("indexing.message"))
                                balloon.showInCenterOf(module2linklabel[module])
                                return@setListener
                              }
                              try {
-                               var lesson = module.giveNotPassedLesson()
-                               if (lesson == null) lesson = module.lessons[0]
                                CourseManager.instance.openLesson(project, lesson)
                              }
                              catch (e: Exception) {

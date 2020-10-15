@@ -29,7 +29,7 @@ import java.beans.PropertyChangeListener
 import java.util.concurrent.CompletableFuture
 
 class ActionsRecorder(private val project: Project,
-                      private val document: Document,
+                      private val document: Document?,
                       parentDisposable: Disposable) : Disposable {
 
   private val documentListeners: MutableList<DocumentListener> = mutableListOf()
@@ -216,7 +216,7 @@ class ActionsRecorder(private val project: Project,
     checkCallback = check
 
     addKeyEventListener { check() }
-    document.addDocumentListener(createDocumentListener { check() })
+    document?.addDocumentListener(createDocumentListener { check() })
     addSimpleCommandListener(check)
     actionListeners.add(object : AnActionListener {
       override fun afterActionPerformed(action: AnAction, dataContext: DataContext, event: AnActionEvent) {
@@ -261,7 +261,7 @@ class ActionsRecorder(private val project: Project,
       override fun beforeDocumentChange(event: DocumentEvent) {}
 
       override fun documentChanged(event: DocumentEvent) {
-        if (PsiDocumentManager.getInstance(project).isUncommited(document)) {
+        if (document != null && PsiDocumentManager.getInstance(project).isUncommited(document)) {
           ApplicationManager.getApplication().invokeLater {
             if (!disposed && !project.isDisposed) {
               PsiDocumentManager.getInstance(project).commitAndRunReadAction { onDocumentChange() }
@@ -286,7 +286,7 @@ class ActionsRecorder(private val project: Project,
 
 
   private fun removeListeners() {
-    if (documentListeners.isNotEmpty()) documentListeners.forEach { document.removeDocumentListener(it) }
+    if (documentListeners.isNotEmpty() && document != null) documentListeners.forEach { document.removeDocumentListener(it) }
     if (eventDispatchers.isNotEmpty()) eventDispatchers.forEach { IdeEventQueue.getInstance().removeDispatcher(it) }
     actionListeners.clear()
     documentListeners.clear()

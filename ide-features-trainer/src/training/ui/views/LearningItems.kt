@@ -69,7 +69,7 @@ class LearningItems : JPanel() {
       { _, _ ->
         val project = guessCurrentProject(this)
         val dumbService = DumbService.getInstance(project)
-        if (dumbService.isDumb) {
+        if (dumbService.isDumb && !lesson.properties.canStartInDumbMode) {
           val balloon = createBalloon(LearnBundle.message("indexing.message"))
           balloon.showInCenterOf(name)
           return@setListener

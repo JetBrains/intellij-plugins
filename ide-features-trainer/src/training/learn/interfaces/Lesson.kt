@@ -7,6 +7,7 @@ import training.commands.kotlin.TaskTestContext
 import training.learn.lesson.LessonListener
 import training.learn.lesson.LessonState
 import training.learn.lesson.LessonStateManager
+import training.learn.lesson.kimpl.LessonProperties
 import training.util.findLanguageByID
 
 interface Lesson {
@@ -60,4 +61,7 @@ interface Lesson {
 
   val testScriptProperties : TaskTestContext.TestScriptProperties
     get() = TaskTestContext.TestScriptProperties()
+
+  val properties: LessonProperties
+    get() = LessonProperties()
 }

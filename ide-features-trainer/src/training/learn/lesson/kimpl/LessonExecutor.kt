@@ -31,8 +31,11 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
                               var rehighlightComponent: (() -> Component)? = null,
                               var userVisibleInfo: PreviousTaskInfo? = null)
 
+  private val selectedEditor
+    get() = FileEditorManager.getInstance(project).selectedTextEditor
+
   val editor: Editor
-    get() = FileEditorManager.getInstance(project).selectedTextEditor ?: error("no editor selected now")
+    get() = selectedEditor ?: error("no editor selected now")
 
   data class TaskCallbackData(var shouldRestoreToTask: (() -> TaskContext.TaskId?)? = null,
                               var delayMillis: Int = 0)
@@ -74,7 +77,12 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
     }
 
     addTaskAction {
-      Alarm().addRequest({ processNextTask(currentTaskIndex + 1) }, delayMillis)
+      val action = {
+        foundComponent = taskActions[currentTaskIndex].userVisibleInfo?.ui
+        rehighlightComponent = taskActions[currentTaskIndex].rehighlightComponent
+        processNextTask(currentTaskIndex + 1)
+      }
+      Alarm().addRequest(action, delayMillis)
     }
   }
 
@@ -158,9 +166,9 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
     // do not reset information from the previous tasks if it is available already
     if (taskInfo.userVisibleInfo == null) {
       taskInfo.userVisibleInfo = object : PreviousTaskInfo {
-        override val text: String = editor.document.text
-        override val position: LogicalPosition = editor.caretModel.currentCaret.logicalPosition
-        override val sample: LessonSample = prepareSampleFromCurrentState(editor)
+        override val text: String = selectedEditor?.document?.text ?: ""
+        override val position: LogicalPosition = selectedEditor?.caretModel?.currentCaret?.logicalPosition ?: LogicalPosition(0, 0)
+        override val sample: LessonSample = selectedEditor?.let { prepareSampleFromCurrentState(it) } ?: parseLessonSample("")
         override val ui: Component? = foundComponent
       }
       taskInfo.rehighlightComponent = rehighlightComponent
@@ -176,7 +184,7 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
 
   private fun processTask(taskContent: TaskContext.() -> Unit) {
     assert(ApplicationManager.getApplication().isDispatchThread)
-    val recorder = ActionsRecorder(project, editor.document, this)
+    val recorder = ActionsRecorder(project, selectedEditor?.document, this)
     currentRecorder = recorder
     val taskCallbackData = TaskCallbackData()
     val taskContext = TaskContextImpl(this, recorder, currentTaskIndex, taskCallbackData)

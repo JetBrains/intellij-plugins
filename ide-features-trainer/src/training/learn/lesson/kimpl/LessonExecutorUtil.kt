@@ -2,6 +2,8 @@
 package training.learn.lesson.kimpl
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.wm.ToolWindowId
+import com.intellij.openapi.wm.ToolWindowManager
 import org.intellij.lang.annotations.Language
 import org.jdom.input.SAXBuilder
 import training.commands.kotlin.TaskContext
@@ -12,6 +14,7 @@ import training.ui.LearnToolWindowFactory
 import training.ui.Message
 import training.util.useNewLearningUi
 import java.awt.Component
+import java.lang.reflect.Modifier
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
 import javax.swing.Icon
@@ -22,6 +25,17 @@ internal object LessonExecutorUtil {
     val fakeTaskContext = FakeTaskContext(project)
     taskContent(fakeTaskContext)
     return fakeTaskContext.hasDetection && fakeTaskContext.hasText
+  }
+
+  fun hideStandardToolwindows(project: Project) {
+    val windowManager = ToolWindowManager.getInstance(project)
+    val declaredFields = ToolWindowId::class.java.declaredFields
+    for (field in declaredFields) {
+      if (Modifier.isStatic(field.modifiers) && field.type == String::class.java) {
+        val id = field.get(null) as String
+        windowManager.getToolWindow(id)?.hide(null)
+      }
+    }
   }
 
   fun addTextToLearnPanel(@Language("HTML") text: String, project: Project) {

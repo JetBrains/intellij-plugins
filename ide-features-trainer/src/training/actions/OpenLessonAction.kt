@@ -4,7 +4,6 @@ package training.actions
 import com.intellij.ide.scratch.ScratchFileService
 import com.intellij.ide.scratch.ScratchRootType
 import com.intellij.ide.startup.StartupManagerEx
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DataKey
 import com.intellij.openapi.application.ApplicationManager
@@ -12,6 +11,7 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.fileEditor.TextEditor
+import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.roots.ProjectRootManager
@@ -20,7 +20,6 @@ import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
 import training.lang.LangManager
 import training.lang.LangSupport
@@ -37,6 +36,7 @@ import training.learn.lesson.LessonManager
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContextImpl
 import training.learn.lesson.kimpl.LessonExecutor
+import training.learn.lesson.kimpl.LessonExecutorUtil
 import training.learn.lesson.listeners.NextLessonListener
 import training.learn.lesson.listeners.StatisticLessonListener
 import training.project.ProjectUtils
@@ -45,13 +45,12 @@ import training.ui.LearningUiManager
 import training.util.findLanguageByID
 import java.awt.FontFormatException
 import java.io.IOException
-import java.lang.reflect.Modifier
 import java.util.concurrent.ExecutionException
 
 /**
  * @author Sergey Karashevich
  */
-class OpenLessonAction(val lesson: Lesson) : AnAction(lesson.name) {
+class OpenLessonAction(val lesson: Lesson) : DumbAwareAction(lesson.name) {
 
   override fun actionPerformed(e: AnActionEvent) {
     val whereToStartLessonProject = e.getData(PROJECT_WHERE_TO_OPEN_DATA_KEY)
@@ -97,7 +96,11 @@ class OpenLessonAction(val lesson: Lesson) : AnAction(lesson.name) {
       LOG.debug("${projectWhereToStartLesson.name}: trying to find LearnProject in opened projects ${learnProject != null}")
       if (learnProject != null) LearningUiManager.learnProject = learnProject
 
-      if (lesson.module.moduleType == ModuleType.SCRATCH) {
+      if (!lesson.properties.openFileAtStart) {
+        LOG.debug("${lesson.name} does not open any file at the start")
+        vf = null
+      }
+      else if (lesson.module.moduleType == ModuleType.SCRATCH) {
         LOG.debug("${projectWhereToStartLesson.name}: scratch based lesson")
         vf = getScratchFile(projectWhereToStartLesson, lesson, langSupport.filename)
       }
@@ -134,9 +137,7 @@ class OpenLessonAction(val lesson: Lesson) : AnAction(lesson.name) {
           throw Exception("Unable to start Learn project")
         }
       }
-      if (vf == null) return  //if user aborts opening lesson in LearnProject or Virtual File couldn't be computed
 
-      LOG.debug("${projectWhereToStartLesson.name}: VirtualFile for lesson has been created/found")
       val currentProject =
         if (lesson.module.moduleType != ModuleType.SCRATCH) LearningUiManager.learnProject!!.also {
           // close all tabs in the currently opened learning project
@@ -164,7 +165,7 @@ class OpenLessonAction(val lesson: Lesson) : AnAction(lesson.name) {
       LOG.debug("${projectWhereToStartLesson.name}: PREPARING TO START LESSON:")
       LOG.debug("${projectWhereToStartLesson.name}: 1. Open or find editor")
       var textEditor: TextEditor? = null
-      if (FileEditorManager.getInstance(projectWhereToStartLesson).isFileOpen(vf)) {
+      if (vf != null && FileEditorManager.getInstance(projectWhereToStartLesson).isFileOpen(vf)) {
         val editors = FileEditorManager.getInstance(projectWhereToStartLesson).getEditors(vf)
         for (fileEditor in editors) {
           if (fileEditor is TextEditor) {
@@ -172,7 +173,7 @@ class OpenLessonAction(val lesson: Lesson) : AnAction(lesson.name) {
           }
         }
       }
-      if (textEditor == null) {
+      if (vf != null && textEditor == null) {
         val editors = FileEditorManager.getInstance(projectWhereToStartLesson).openFile(vf, true, true)
         for (fileEditor in editors) {
           if (fileEditor is TextEditor) {
@@ -180,12 +181,12 @@ class OpenLessonAction(val lesson: Lesson) : AnAction(lesson.name) {
           }
         }
       }
-      if (textEditor!!.editor.isDisposed) throw Exception("Editor is already disposed!")
 
       //2. set the focus on this editor
       //FileEditorManager.getInstance(project).setSelectedEditor(vf, TextEditorProvider.getInstance().getEditorTypeId());
       LOG.debug("${projectWhereToStartLesson.name}: 2. Set the focus on this editor")
-      FileEditorManager.getInstance(projectWhereToStartLesson).openEditor(OpenFileDescriptor(projectWhereToStartLesson, vf), true)
+      if (vf != null)
+        FileEditorManager.getInstance(projectWhereToStartLesson).openEditor(OpenFileDescriptor(projectWhereToStartLesson, vf), true)
 
       //4. Process lesson
       LOG.debug("${projectWhereToStartLesson.name}: 4. Process lesson")
@@ -202,27 +203,19 @@ class OpenLessonAction(val lesson: Lesson) : AnAction(lesson.name) {
     catch (e: Exception) {
       LOG.error(e)
     }
-
   }
 
-  private fun processDslLesson(lesson: KLesson, textEditor: TextEditor, projectWhereToStartLesson: Project) {
+  private fun processDslLesson(lesson: KLesson, textEditor: TextEditor?, projectWhereToStartLesson: Project) {
     val executor = LessonExecutor(lesson, projectWhereToStartLesson)
     val lessonContext = LessonContextImpl(executor)
-    LessonManager.instance.initDslLesson(textEditor.editor, lesson, executor)
+    LessonManager.instance.initDslLesson(textEditor?.editor, lesson, executor)
     lesson.lessonContent(lessonContext)
     executor.processNextTask(0)
   }
 
   private fun hideOtherViews(project: Project) {
     ApplicationManager.getApplication().invokeLater {
-      val windowManager = ToolWindowManager.getInstance(project)
-      val declaredFields = ToolWindowId::class.java.declaredFields
-      for (field in declaredFields) {
-        if (Modifier.isStatic(field.modifiers) && field.type == String::class.java) {
-          val id = field.get(null) as String
-          windowManager.getToolWindow(id)?.hide(null)
-        }
-      }
+      LessonExecutorUtil.hideStandardToolwindows(project)
     }
   }
 
@@ -260,11 +253,16 @@ class OpenLessonAction(val lesson: Lesson) : AnAction(lesson.name) {
   }
 
   private fun openLessonWhenLearnProjectStart(lesson: Lesson, myLearnProject: Project) {
+    if (lesson.properties.canStartInDumbMode) {
+      openLesson(myLearnProject, lesson)
+      return
+    }
     fun _openLesson() {
       val toolWindowManager = ToolWindowManager.getInstance(myLearnProject)
       val learnToolWindow = toolWindowManager.getToolWindow(LearnToolWindowFactory.LEARN_TOOL_WINDOW)
       if (learnToolWindow != null) {
-        learnToolWindow.show(null)
+        val runnable = if (lesson.properties.showLearnToolwindowAtStart) null else Runnable { learnToolWindow.hide() }
+        learnToolWindow.show(runnable)
         openLesson(myLearnProject, lesson)
       }
     }
@@ -281,7 +279,7 @@ class OpenLessonAction(val lesson: Lesson) : AnAction(lesson.name) {
   }
 
   @Throws(IOException::class)
-  private fun getScratchFile(project: Project, lesson: Lesson, filename: String): VirtualFile? {
+  private fun getScratchFile(project: Project, lesson: Lesson, filename: String): VirtualFile {
     var vf: VirtualFile? = null
     val languageByID = findLanguageByID(lesson.lang)
     if (CourseManager.instance.mapModuleVirtualFile.containsKey(lesson.module)) {

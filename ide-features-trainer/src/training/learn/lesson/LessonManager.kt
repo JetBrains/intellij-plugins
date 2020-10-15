@@ -73,8 +73,8 @@ class LessonManager {
     })
   }
 
-  internal fun initDslLesson(editor: Editor, cLesson: Lesson, lessonExecutor: LessonExecutor) {
-    initLesson(editor, cLesson)
+  internal fun initDslLesson(editor: Editor?, cLesson: Lesson, lessonExecutor: LessonExecutor) {
+    initLesson(editor, cLesson, lessonExecutor.project)
     currentLessonExecutor = lessonExecutor
   }
 
@@ -86,8 +86,12 @@ class LessonManager {
     LearningUiHighlightingManager.clearHighlights()
   }
 
-  @Throws(Exception::class)
   internal fun initLesson(editor: Editor, cLesson: Lesson) {
+    val project = editor.project ?: throw Exception("Unable to open lesson in a null project")
+    initLesson(editor, cLesson, project)
+  }
+
+  internal fun initLesson(editor: Editor?, cLesson: Lesson, project: Project) {
     if (!cLesson.lessonListeners.contains(delegateListener))
       cLesson.addLessonListener(delegateListener)
     val learnPanel = learnPanel ?: return
@@ -108,7 +112,6 @@ class LessonManager {
     }
     learnPanel.clearLessonPanel()
 
-    val project = editor.project ?: throw Exception("Unable to open lesson in a null project")
     val nextLesson = CourseManager.instance.getNextNonPassedLesson(cLesson)
     if (nextLesson != null) {
       val runnable = Runnable {
