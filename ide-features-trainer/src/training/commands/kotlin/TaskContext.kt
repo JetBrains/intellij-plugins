@@ -9,10 +9,7 @@ import org.fest.swing.timing.Timeout
 import org.intellij.lang.annotations.Language
 import org.jetbrains.annotations.Nls
 import training.learn.LearnBundle
-import training.learn.lesson.kimpl.LearningDsl
-import training.learn.lesson.kimpl.LearningDslBase
-import training.learn.lesson.kimpl.LessonSamplePosition
-import training.learn.lesson.kimpl.LessonUtil
+import training.learn.lesson.kimpl.*
 import training.ui.LearningUiHighlightingManager
 import training.ui.LearningUiUtil
 import java.awt.Component
@@ -56,7 +53,7 @@ abstract class TaskContext : LearningDslBase {
   /**
    * Write a text to the learn panel (panel with a learning tasks).
    */
-  open fun text(@Language("HTML") @Nls text: String) = Unit
+  open fun text(@Language("HTML") @Nls text: String, useBalloon: LearningBalloonConfig? = null) = Unit
 
   /** Insert text in the current position */
   open fun type(text: String) = Unit

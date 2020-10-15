@@ -22,6 +22,7 @@ import training.learn.lesson.LessonManager
 import java.awt.Component
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
+import javax.swing.JComponent
 
 internal class TaskContextImpl(private val lessonExecutor: LessonExecutor,
                                private val recorder: ActionsRecorder,
@@ -76,7 +77,14 @@ internal class TaskContextImpl(private val lessonExecutor: LessonExecutor,
     }
   }
 
-  override fun text(@Language("HTML") text: String) = LessonExecutorUtil.addTextToLearnPanel(text, runtimeContext.project)
+  override fun text(@Language("HTML") text: String, useBalloon: LearningBalloonConfig?) {
+    LessonExecutorUtil.addTextToLearnPanel(text, runtimeContext.project)
+    if (useBalloon != null) {
+      val ui = runtimeContext.previous.ui as? JComponent ?: return
+      LessonExecutorUtil.showBalloonMessage(text, ui, useBalloon, runtimeContext.taskDisposable)
+    }
+  }
+
 
   override fun type(text: String) {
     lessonExecutor.type(text)

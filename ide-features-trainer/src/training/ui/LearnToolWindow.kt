@@ -21,6 +21,7 @@ import training.learn.lesson.LessonListener
 import training.learn.lesson.LessonManager
 import training.learn.lesson.kimpl.ApplyTaskLessonContext
 import training.learn.lesson.kimpl.KLesson
+import training.learn.lesson.kimpl.LearningBalloonConfig
 import training.learn.lesson.kimpl.LessonExecutorUtil
 import training.ui.views.LanguageChoosePanel
 import training.ui.views.LearnPanel
@@ -217,5 +218,5 @@ class LearnToolWindow internal constructor(val project: Project, private val who
 }
 
 private class DocumentationModeTaskContext(override val project: Project) : TaskContext() {
-  override fun text(text: String) = LessonExecutorUtil.addTextToLearnPanel(text, project)
+  override fun text(text: String, useBalloon: LearningBalloonConfig?) = LessonExecutorUtil.addTextToLearnPanel(text, project)
 }

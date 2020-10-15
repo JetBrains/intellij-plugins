@@ -10,6 +10,7 @@ import training.commands.kotlin.TaskRuntimeContext
 import training.learn.CourseManager
 import training.learn.lesson.kimpl.ApplyTaskLessonContext
 import training.learn.lesson.kimpl.KLesson
+import training.learn.lesson.kimpl.LearningBalloonConfig
 import java.awt.datatransfer.StringSelection
 
 @Suppress("HardCodedStringLiteral")
@@ -32,7 +33,7 @@ class DumpFeaturesTrainerText : AnAction("Copy IFT Course Text to Clipboard") {
 
 
 private class TextCollector(private val buffer: StringBuffer, override val project: Project) : TaskContext() {
-  override fun text(text: String) {
+  override fun text(text: String, useBalloon: LearningBalloonConfig?) {
     buffer.append(text)
     buffer.append('\n')
   }
