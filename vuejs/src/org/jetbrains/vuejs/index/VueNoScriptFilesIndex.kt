@@ -1,12 +1,13 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.index
 
+import com.intellij.lang.ecmascript6.psi.JSExportAssignment
+import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.psi.xml.XmlFile
 import com.intellij.util.castSafelyTo
 import com.intellij.util.indexing.*
 import com.intellij.util.io.KeyDescriptor
-import org.jetbrains.vuejs.codeInsight.findDefaultExport
 import org.jetbrains.vuejs.lang.html.VueFileType
 import java.io.DataInput
 import java.io.DataOutput
@@ -20,7 +21,8 @@ class VueNoScriptFilesIndex : ScalarIndexExtension<Boolean>() {
     inputData.psiFile.let {
       it is XmlFile && findModule(it).let { module ->
         if (module != null) {
-          findDefaultExport(module)?.castSafelyTo<JSObjectLiteralExpression>()
+          (ES6PsiUtil.findDefaultExport(module) as? JSExportAssignment)?.stubSafeElement
+            ?.castSafelyTo<JSObjectLiteralExpression>()
             ?.properties?.size == 0
         } else true
       }
