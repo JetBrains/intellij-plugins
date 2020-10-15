@@ -4,14 +4,17 @@ package training.ui.views
 import com.intellij.icons.AllIcons.General.ChevronDown
 import com.intellij.icons.AllIcons.General.ChevronUp
 import com.intellij.openapi.actionSystem.ActionPlaces
+import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.wm.impl.welcomeScreen.WelcomeScreenUIManager
 import com.intellij.ui.AncestorListenerAdapter
 import com.intellij.ui.RoundedLineBorder
+import com.intellij.ui.components.labels.LinkLabel
 import com.intellij.util.ui.JBUI
 import icons.FeaturesTrainerIcons.PluginIcon
+import training.actions.OpenLessonAction
 import training.actions.StartLearnAction
 import training.learn.CourseManager
 import training.learn.LearnBundle
@@ -19,7 +22,6 @@ import training.learn.interfaces.Module
 import training.ui.views.WelcomeScreenPanelColorsAndFonts.HEADER
 import training.ui.views.WelcomeScreenPanelColorsAndFonts.InteractiveCoursesBorder
 import training.ui.views.WelcomeScreenPanelColorsAndFonts.MODULE_DESCRIPTION
-import training.ui.views.WelcomeScreenPanelColorsAndFonts.MODULE_HEADER
 import training.ui.views.WelcomeScreenPanelColorsAndFonts.REGULAR
 import java.awt.*
 import java.awt.event.*
@@ -101,20 +103,12 @@ class WelcomeScreenLearnPanel() : JPanel() {
       object : MouseAdapter() {
         override fun mouseEntered(e: MouseEvent?) {
           if (contentState == ContentState.EXPANDED) return
-          learnIdeFeaturesPanel.background = WelcomeScreenPanelColorsAndFonts.HoveredColor
-          learnIdeFeaturesPanel.isOpaque = true
-          repaint()
-          cursor = Cursor(Cursor.HAND_CURSOR);
+          activateLearnIdeFeaturesPanel()
         }
 
         override fun mouseExited(e: MouseEvent?) {
           if (e == null) return
-          if (Rectangle(Point(learnIdeFeaturesPanel.locationOnScreen.x + 1, learnIdeFeaturesPanel.locationOnScreen.y + 1),
-                        Dimension(learnIdeFeaturesPanel.bounds.size.width - 2, learnIdeFeaturesPanel.bounds.size.height - 2)).contains(
-              e.locationOnScreen)) return
-          learnIdeFeaturesPanel.isOpaque = false
-          repaint()
-          cursor = Cursor(Cursor.DEFAULT_CURSOR);
+          deactivateLearnIdeFeaturesPanel(e.locationOnScreen)
         }
 
         override fun mousePressed(e: MouseEvent?) {
@@ -129,6 +123,25 @@ class WelcomeScreenLearnPanel() : JPanel() {
     setComponentZOrder(contentPanel, 1)
 
   }
+
+  private fun activateLearnIdeFeaturesPanel() {
+    learnIdeFeaturesPanel.background = WelcomeScreenPanelColorsAndFonts.HoveredColor
+    learnIdeFeaturesPanel.isOpaque = true
+    repaint()
+    cursor = Cursor(Cursor.HAND_CURSOR);
+  }
+
+  private fun deactivateLearnIdeFeaturesPanel(mouseLocationOnScreen: Point) {
+    if (pointerInLearnIdeFeaturesPanel(mouseLocationOnScreen)) return
+    learnIdeFeaturesPanel.isOpaque = false
+    repaint()
+    cursor = Cursor(Cursor.DEFAULT_CURSOR)
+  }
+
+  private fun pointerInLearnIdeFeaturesPanel(mouseLocationOnScreen: Point) =
+    Rectangle(Point(learnIdeFeaturesPanel.locationOnScreen.x + 1, learnIdeFeaturesPanel.locationOnScreen.y + 1),
+              Dimension(learnIdeFeaturesPanel.bounds.size.width - 2, learnIdeFeaturesPanel.bounds.size.height - 2)).contains(
+      mouseLocationOnScreen)
 
   private fun modulesPanel(): JPanel {
     val modules = CourseManager.instance.modules
@@ -152,8 +165,16 @@ class WelcomeScreenLearnPanel() : JPanel() {
     return HeightLimitedPane(module.description ?: "", MODULE_DESCRIPTION)
   }
 
-  private fun moduleHeader(module: Module): HeightLimitedPane {
-    return HeightLimitedPane(module.name, MODULE_HEADER)
+  private fun moduleHeader(module: Module): LinkLabel<Any> {
+    val linkLabel = LinkLabel<Any>(module.name, null)
+    linkLabel.name = "linkLabel.${module.name}"
+    linkLabel.font = linkLabel.font.deriveFont(12.0f)
+    linkLabel.setListener({ _, _ ->
+                            var lesson = module.giveNotPassedLesson()
+                            if (lesson == null) lesson = module.lessons[0]
+                            performActionOnWelcomeScreen(OpenLessonAction(lesson))
+                          }, null)
+    return linkLabel
   }
 
   private fun initInteractiveCoursePanel() {
@@ -277,11 +298,8 @@ class WelcomeScreenLearnPanel() : JPanel() {
   private fun JButton.setButtonAction() {
     this.action = object : AbstractAction(LearnBundle.message("welcome.tab.start.learning.button")) {
       override fun actionPerformed(e: ActionEvent?) {
-        val startLearnAction = StartLearnAction()
-        val anActionEvent = AnActionEvent.createFromAnAction(startLearnAction, null, ActionPlaces.WELCOME_SCREEN, DataContext.EMPTY_CONTEXT)
-        ActionUtil.performActionDumbAware(startLearnAction, anActionEvent)
+        performActionOnWelcomeScreen(StartLearnAction())
       }
-
     }
   }
 
@@ -312,6 +330,8 @@ class WelcomeScreenLearnPanel() : JPanel() {
   }
 
   private fun collapseContent() {
+    val pointerLocation = MouseInfo.getPointerInfo().location
+    if (pointerInLearnIdeFeaturesPanel(pointerLocation)) activateLearnIdeFeaturesPanel()
     learnIdeFeaturesContent.remove(modulesPanel)
     learnIdeFeaturesContent.revalidate()
     learnIdeFeaturesContent.repaint()
@@ -321,6 +341,11 @@ class WelcomeScreenLearnPanel() : JPanel() {
   private fun rigid(_width: Int, _height: Int): Component {
     return Box.createRigidArea(
       Dimension(JBUI.scale(_width), JBUI.scale(_height))).apply { (this as JComponent).alignmentX = LEFT_ALIGNMENT }
+  }
+
+  private fun performActionOnWelcomeScreen(action: AnAction) {
+    val anActionEvent = AnActionEvent.createFromAnAction(action, null, ActionPlaces.WELCOME_SCREEN, DataContext.EMPTY_CONTEXT)
+    ActionUtil.performActionDumbAware(action, anActionEvent)
   }
 
   private class HeightLimitedPane(text: String, style: SimpleAttributeSet, val _width: Int? = null) : JTextPane() {
