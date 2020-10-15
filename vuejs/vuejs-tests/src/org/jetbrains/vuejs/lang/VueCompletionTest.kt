@@ -1760,6 +1760,20 @@ export default class ComponentInsertion extends Vue {
     assertOrderedEquals(myFixture.lookupElementStrings!!, "transparent", "transparentize")
   }
 
+  fun testImportEmptyObjectInitializerComponent() {
+    myFixture.configureByText("FooBar.vue", "<script>export default {}</script>")
+    myFixture.configureByText("check.vue", "<template><<caret></template>")
+    myFixture.completeBasic()
+    myFixture.type("foo-\n")
+    myFixture.checkResult("""<template><foo-bar</template>
+<script>
+import FooBar from "./FooBar";
+export default {
+  components: {FooBar}
+}
+</script>""")
+  }
+
   private fun assertDoesntContainVueLifecycleHooks() {
     myFixture.completeBasic()
     assertDoesntContain(myFixture.lookupElementStrings!!, "\$el", "\$options", "\$parent")
