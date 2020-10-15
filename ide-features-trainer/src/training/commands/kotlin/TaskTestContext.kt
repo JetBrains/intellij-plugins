@@ -15,11 +15,13 @@ import org.fest.swing.core.Robot
 import org.fest.swing.fixture.ContainerFixture
 import org.fest.swing.fixture.JListFixture
 import org.fest.swing.timing.Timeout
+import training.learn.lesson.kimpl.LearningDsl
 import training.util.invokeActionForFocusContext
 import java.awt.Component
 import java.awt.Container
 import javax.swing.JList
 
+@LearningDsl
 class TaskTestContext(rt: TaskRuntimeContext): TaskRuntimeContext(rt) {
 
   data class TestScriptProperties (

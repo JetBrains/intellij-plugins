@@ -34,11 +34,9 @@ class ExtractClosure: UIViewController {
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
 
-    task { select(14, 1, 19, 1) }
+    select(14, 1, 19, 1)
 
-    task {
-      text(LessonsBundle.message("swift.refactoring.extract.closure.intro"))
-    }
+    text(LessonsBundle.message("swift.refactoring.extract.closure.intro"))
     task {
       triggers("Refactorings.QuickListPopupAction", "SwiftIntroduceClosureVariable")
       text(LessonsBundle.message("swift.refactoring.extract.closure.exec", action("Refactorings.QuickListPopupAction")))

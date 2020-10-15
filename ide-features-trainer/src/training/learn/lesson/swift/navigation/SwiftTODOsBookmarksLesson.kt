@@ -108,8 +108,8 @@ class Navigation: UITableViewController {
       triggers("com.intellij.ide.todo.SetTodoFilterAction$1")
       text(LessonsBundle.message("swift.navigation.todo.custom", icon(AllIcons.General.Filter)))
     }
-    task { text(LessonsBundle.message("swift.navigation.todo.go.back", action("EditorEscape"))) }
-    task { caret(20, 9) }
+    text(LessonsBundle.message("swift.navigation.todo.go.back", action("EditorEscape")))
+    caret(20, 9)
     task {
       triggers("ToggleBookmark")
       text(LessonsBundle.message("swift.navigation.todo.bookmark", action("ToggleBookmark")))

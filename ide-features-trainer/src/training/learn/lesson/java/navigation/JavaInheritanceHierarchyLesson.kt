@@ -99,15 +99,13 @@ class JavaInheritanceHierarchyLesson(module: Module)
       LessonsBundle.message("java.inheritance.hierarchy.open.class.hierarchy", action(it))
     }
 
-    task {
-      text(LessonsBundle.message("java.inheritance.hierarchy.last.note",
-                                 action("GotoImplementation"),
-                                 action("GotoSuperMethod"),
-                                 action("MethodHierarchy"),
-                                 action("TypeHierarchy"),
-                                 action("GotoAction"),
-                                 strong("hierarchy")))
-    }
+    text(LessonsBundle.message("java.inheritance.hierarchy.last.note",
+                               action("GotoImplementation"),
+                               action("GotoSuperMethod"),
+                               action("MethodHierarchy"),
+                               action("TypeHierarchy"),
+                               action("GotoAction"),
+                               strong("hierarchy")))
   }
 
   private fun TaskRuntimeContext.atDeclarationPosition(): Boolean {

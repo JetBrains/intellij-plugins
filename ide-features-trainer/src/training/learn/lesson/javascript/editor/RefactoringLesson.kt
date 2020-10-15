@@ -95,13 +95,11 @@ class RefactoringLesson(module: Module)
             TemplateManager.getInstance(project).getActiveTemplate(editor) == null
           }
         }
-        task {
-          text(
-            LessonsBundle.message("js.editor.refactorings.next",
-                                  "https://resources.jetbrains.com/storage/products/webstorm/docs/WebStorm_ReferenceCard.pdf",
-                                  strong(ActionsBundle.message("group.RefactoringMenu.text").dropMnemonic()),
-                                  action("learn.next.lesson")))
-        }
+        text(
+          LessonsBundle.message("js.editor.refactorings.next",
+                                "https://resources.jetbrains.com/storage/products/webstorm/docs/WebStorm_ReferenceCard.pdf",
+                                strong(ActionsBundle.message("group.RefactoringMenu.text").dropMnemonic()),
+                                action("learn.next.lesson")))
       }
     }
   override val existedFile = "refactoring.js"

@@ -36,7 +36,7 @@ class Select: UIViewController {
 }""".trimIndent())
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
-    task { caret(12, 13) }
+    caret(12, 13)
     task {
       triggers("EditorNextWordWithSelection")
       text(LessonsBundle.message("swift.editor.selection.word", action("EditorNextWordWithSelection")))

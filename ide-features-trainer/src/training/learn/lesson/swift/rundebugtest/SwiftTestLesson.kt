@@ -39,13 +39,9 @@ class TestExample: UIViewController {
       triggers("GotoFile", "LearnProjectTests.swift")
       text(LessonsBundle.message("swift.rdt.test.prepare", code("LearnProjectTests.swift"), action("GotoFile")))
     }
-    task {
-      text(LessonsBundle.message("swift.rdt.test.intro"))
-    }
-    task {
-      text(LessonsBundle.message("swift.rdt.test.intro.tests"))
-    }
-    task { caret(5, 5) }
+    text(LessonsBundle.message("swift.rdt.test.intro"))
+    text(LessonsBundle.message("swift.rdt.test.intro.tests"))
+    caret(5, 5)
     task {
       triggers("RunClass")
       text(LessonsBundle.message("swift.rdt.test.suite", action("RunClass")))
@@ -54,12 +50,12 @@ class TestExample: UIViewController {
       triggers("com.intellij.util.config.DumbAwareToggleInvertedBooleanProperty")
       text(LessonsBundle.message("swift.rdt.test.show", icon(AllIcons.RunConfigurations.ShowPassed)))
     }
-    task { caret(17, 19) }
+    caret(17, 19)
     task {
       triggers("RunClass")
       text(LessonsBundle.message("swift.rdt.test.single", action("RunClass")))
     }
-    task { caret(13, 9) }
+    caret(13, 9)
     task {
       triggers("ToggleLineBreakpoint", "DebugClass")
       text(LessonsBundle.message("swift.rdt.test.debug.single", action("ToggleLineBreakpoint"), action("DebugClass")))
@@ -76,11 +72,11 @@ class TestExample: UIViewController {
       triggers("GotoFile", "LearnProjectTests.swift")
       text(LessonsBundle.message("swift.rdt.test.go.back", code("LearnProjectTests.swift"), action("GotoFile")))
     }
-    task { caret(18, 97) }
+    caret(18, 97)
     task { type("\n") }
-    task { caret(19, 9) }
+    caret(19, 9)
     task { type("\t\tXCTAssert(false)") }
-    task { caret(5, 5) }
+    caret(5, 5)
     task {
       triggers("RunClass")
       text(LessonsBundle.message("swift.rdt.test.failing", action("RunClass")))
@@ -89,7 +85,7 @@ class TestExample: UIViewController {
       triggers("com.intellij.util.config.DumbAwareToggleInvertedBooleanProperty")
       text(LessonsBundle.message("swift.rdt.test.filter.failed", icon(AllIcons.RunConfigurations.ShowPassed)))
     }
-    task { caret(19, 21) }
+    caret(19, 21)
     task {
       triggers("EditorDeleteLine")
       text(LessonsBundle.message("swift.rdt.test.delete.failed", code("XCTAssert(false)"), action("EditorDeleteLine")))
@@ -98,7 +94,7 @@ class TestExample: UIViewController {
       triggers("com.jetbrains.cidr.execution.testing.unit.AppCodeOCUnitRerunFailedTestsAction")
       text(LessonsBundle.message("swift.rdt.test.rerun.failed", icon(AllIcons.RunConfigurations.RerunFailedTests)))
     }
-    task { caret(5, 5) }
+    caret(5, 5)
     task {
       triggers("RunClass", "com.intellij.execution.testframework.ToolbarPanel\$SortByDurationAction")
       text(LessonsBundle.message("swift.rdt.test.additional", icon(AllIcons.RunConfigurations.SortbyDuration), icon(AllIcons.ObjectBrowser.Sorted), action("RunClass")))
@@ -107,8 +103,6 @@ class TestExample: UIViewController {
       triggers("com.intellij.execution.testframework.sm.runner.history.actions.ImportTestsFromHistoryAction")
       text(LessonsBundle.message("swift.rdt.test.history", icon(AllIcons.Vcs.History)))
     }
-    task {
-      text(LessonsBundle.message("swift.rdt.test.more"))
-    }
+    text(LessonsBundle.message("swift.rdt.test.more"))
   }
 }

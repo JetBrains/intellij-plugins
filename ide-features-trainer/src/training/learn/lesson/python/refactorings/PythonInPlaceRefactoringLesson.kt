@@ -88,7 +88,7 @@ class PythonInPlaceRefactoringLesson(module: Module)
     }
 
     prepareRuntimeTask { // restore point
-      prepareSample(previous.sample)
+      setSample(previous.sample)
     }
 
     task {
@@ -154,7 +154,7 @@ class PythonInPlaceRefactoringLesson(module: Module)
         GuiTestUtil.shortcut(Key.ENTER)
       }
     }
-    task { text(LessonsBundle.message("python.in.place.refactoring.remark.about.application.scope")) }
+    text(LessonsBundle.message("python.in.place.refactoring.remark.about.application.scope"))
   }
 
   private fun newName(text: CharSequence, prefix: Int): String {

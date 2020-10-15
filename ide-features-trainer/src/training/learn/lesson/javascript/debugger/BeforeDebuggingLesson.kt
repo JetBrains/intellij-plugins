@@ -72,9 +72,7 @@ class BeforeDebuggingLesson(module: Module)
             focusOwner is EditorComponentImpl
           }
         }
-        task {
-          text(LessonsBundle.message("js.debugger.before.next", action("learn.next.lesson")))
-        }
+        text(LessonsBundle.message("js.debugger.before.next", action("learn.next.lesson")))
 
       }
     }

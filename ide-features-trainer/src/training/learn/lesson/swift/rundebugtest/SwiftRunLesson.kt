@@ -31,7 +31,7 @@ class RunExample: UIViewController {
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
 
-    task { caret(6, 10) }
+    caret(6, 10)
     task {
       triggers("Run")
       text(LessonsBundle.message("swift.rdt.run.actions", action("Run")))

@@ -37,33 +37,30 @@ class AppCode: JetBrainsIDE {}""".trimIndent())
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
 
-    task {
-      text(LessonsBundle.message("swift.navigation.code.intro"))
-    }
+    text(LessonsBundle.message("swift.navigation.code.intro"))
     task {
       triggers("GotoClass", "DetailViewController.swift")
-      text(LessonsBundle.message("swift.navigation.code.class", code("DetailViewController"), action("GotoClass"), code("dvc"), LessonUtil.rawEnter()))
+      text(LessonsBundle.message("swift.navigation.code.class", code("DetailViewController"), action("GotoClass"), code("dvc"),
+                                 LessonUtil.rawEnter()))
     }
-    task {
-      text(LessonsBundle.message("swift.navigation.code.fuzzy"))
-    }
+    text(LessonsBundle.message("swift.navigation.code.fuzzy"))
     task {
       triggers("GotoFile", "AppDelegate.swift")
-      text(LessonsBundle.message("swift.navigation.code.file", code("AppDelegate.swift"), action("GotoFile"), code("ad"), LessonUtil.rawEnter()))
+      text(LessonsBundle.message("swift.navigation.code.file", code("AppDelegate.swift"), action("GotoFile"), code("ad"),
+                                 LessonUtil.rawEnter()))
     }
     task {
       triggers("GotoSymbol", "MasterViewController.swift")
-      text(LessonsBundle.message("swift.navigation.code.symbol", code("detailViewController"), code("MasterViewController"), action("GotoSymbol"), code("dvc"), LessonUtil.rawEnter()))
+      text(LessonsBundle.message("swift.navigation.code.symbol", code("detailViewController"), code("MasterViewController"),
+                                 action("GotoSymbol"), code("dvc"), LessonUtil.rawEnter()))
     }
-    task {
-      text(LessonsBundle.message("swift.navigation.code.non.project.files"))
-    }
-    task { caret(5, 20) }
+    text(LessonsBundle.message("swift.navigation.code.non.project.files"))
+    caret(5, 20)
     task {
       triggers("GotoDeclaration", "DetailViewController.swift")
       text(LessonsBundle.message("swift.navigation.code.declaration", code("DetailViewController?"), action("GotoDeclaration")))
     }
-    task { caret(3, 33) }
+    caret(3, 33)
     task {
       triggers("GotoImplementation")
       text(LessonsBundle.message("swift.navigation.code.implementation", action("GotoDeclaration"), action("GotoImplementation"), code("UIViewController")))
@@ -72,7 +69,7 @@ class AppCode: JetBrainsIDE {}""".trimIndent())
       triggers("GotoFile", "Navigation.swift")
       text(LessonsBundle.message("swift.navigation.code.go.back", code("Navigation.swift"), action("GotoFile")))
     }
-    task { caret(27, 10) }
+    caret(27, 10)
     task {
       triggers("GotoSuperMethod")
       text(LessonsBundle.message("swift.navigation.code.super", action("GotoSuperMethod"), code("JetBrainsIDE")))

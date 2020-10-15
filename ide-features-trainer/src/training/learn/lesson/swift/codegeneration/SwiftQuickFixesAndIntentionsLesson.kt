@@ -59,8 +59,8 @@ class QuickFixes: NSObject {
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
 
-    task { text(LessonsBundle.message("swift.codegeneration.quickfix.intro", code("fix-its"))) }
-    task { caret(6, 17) }
+    text(LessonsBundle.message("swift.codegeneration.quickfix.intro", code("fix-its")))
+    caret(6, 17)
     task {
       triggers("ShowIntentionActions")
       text(LessonsBundle.message("swift.codegeneration.quickfix.fixit", action("ShowIntentionActions"), code("_")))
@@ -69,15 +69,13 @@ class QuickFixes: NSObject {
       triggers("CodeInspection.OnEditor")
       text(LessonsBundle.message("swift.codegeneration.quickfix.sourcekit.inspection", action("CodeInspection.OnEditor")))
     }
-    task {
-      text(LessonsBundle.message("swift.codegeneration.quickfix.sourcekit.fixit"))
-    }
-    task { caret(15, 19) }
+    text(LessonsBundle.message("swift.codegeneration.quickfix.sourcekit.fixit"))
+    caret(15, 19)
     task {
       triggers("ShowIntentionActions", "EditorChooseLookupItem")
       text(LessonsBundle.message("swift.codegeneration.quickfix.typo.in.var", action("EditorEscape"), action("ShowIntentionActions"), LessonUtil.rawEnter()))
     }
-    task { caret(15, 41) }
+    caret(15, 41)
     task {
       triggers("ShowIntentionActions", "ShowIntentionActions")
       text(LessonsBundle.message("swift.codegeneration.quickfix.typo.in.string", code("incorrctlySpeled")))

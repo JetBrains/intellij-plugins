@@ -56,7 +56,6 @@ class CodeEditingLesson(module: Module)
         waitBeforeContinue(500)
         caret(232)
         task("EditorSelectWord") {
-          caret(232)
           text(LessonsBundle.message("js.editor.code.editing.select.word", action(it)))
           trigger(it) {
             val selectionEnd = editor.selectionModel.selectionEnd
@@ -82,12 +81,11 @@ class CodeEditingLesson(module: Module)
         }
         task("CommentByLineComment") {
           text(
-            LessonsBundle.message("js.editor.code.editing.duplicate.delete.comment", action("EditorDuplicate"), action("EditorDeleteLine"), action("CommentByLineComment")))
+            LessonsBundle.message("js.editor.code.editing.duplicate.delete.comment", action("EditorDuplicate"), action("EditorDeleteLine"),
+                                  action("CommentByLineComment")))
           trigger(it)
         }
-        task {
-          text(LessonsBundle.message("js.editor.code.editing.next", action("learn.next.lesson")))
-        }
+        text(LessonsBundle.message("js.editor.code.editing.next", action("learn.next.lesson")))
       }
     }
   override val existedFile = "index.html"

@@ -37,10 +37,8 @@ class PreciseNavigationController : UIViewController {
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
 
-    task { caret(5, 19) }
-    task {
-      text(LessonsBundle.message("swift.navigation.precise.intro"))
-    }
+    caret(5, 19)
+    text(LessonsBundle.message("swift.navigation.precise.intro"))
     task {
       triggers("GotoNextError")
       text(LessonsBundle.message("swift.navigation.precise.next.error", action("GotoNextError")))

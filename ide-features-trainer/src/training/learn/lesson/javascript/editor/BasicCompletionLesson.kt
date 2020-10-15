@@ -75,9 +75,7 @@ class BasicCompletionLesson(module: Module)
             textBeforeCaret("pickAnimal(favoriteAnimals")
           }
         }
-        task {
-          text(LessonsBundle.message("js.editor.completion.next", action("learn.next.lesson")))
-        }
+        text(LessonsBundle.message("js.editor.completion.next", action("learn.next.lesson")))
       }
     }
   override val existedFile = "basicCompletion.js"

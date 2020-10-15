@@ -79,9 +79,7 @@ class CodeInspectionLesson(module: Module)
             textOnLine(2, "books.forEach(book => {")
           }
         }
-        task {
-          text(LessonsBundle.message("js.editor.code.inspection.next", action("learn.next.lesson")))
-        }
+        text(LessonsBundle.message("js.editor.code.inspection.next", action("learn.next.lesson")))
       }
     }
   override val existedFile = "codeInspection.js"

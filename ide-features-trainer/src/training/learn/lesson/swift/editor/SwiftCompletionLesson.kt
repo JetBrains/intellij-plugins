@@ -34,21 +34,21 @@ class Completion: UIViewController {
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
 
-    task { caret(15, 16) }
+    caret(15, 16)
     task {
       triggers("EditorChooseLookupItem")
       text(LessonsBundle.message("swift.editor.completion.basic", code(".stf"), LessonUtil.rawEnter(), code("sizeToFit()")))
     }
-    task { caret(15, 20) }
-    task { text(LessonsBundle.message("swift.editor.completion.basic.shortcut", action("CodeCompletion"))) }
-    task { caret(19, 35) }
+    caret(15, 20)
+    text(LessonsBundle.message("swift.editor.completion.basic.shortcut", action("CodeCompletion")))
+    caret(19, 35)
     task { type(" ") }
 
     task {
       triggers("SmartTypeCompletion", "EditorChooseLookupItem")
       text(LessonsBundle.message("swift.editor.completion.smart", action("SmartTypeCompletion"), LessonUtil.rawEnter()))
     }
-    task { caret(19, 37) }
+    caret(19, 37)
     task { type("s") }
 
     task {
@@ -59,11 +59,12 @@ class Completion: UIViewController {
       triggers("EditorChooseLookupItemReplace")
       text(LessonsBundle.message("swift.editor.completion.tab", code("singleLine"), action("EditorChooseLookupItemReplace"), action("EditorChooseLookupItem")))
     }
-    task { caret(22, 21) }
+    caret(22, 21)
     task {
       triggers("CodeCompletion", "EditorChooseLookupItemReplace")
-      text(LessonsBundle.message("swift.editor.completion.tab.method", action("CodeCompletion"), action("EditorChooseLookupItemReplace"), code("animate(withDuration:animations:completion:)"), code("animate(withDuration:animations:)")))
+      text(LessonsBundle.message("swift.editor.completion.tab.method", action("CodeCompletion"), action("EditorChooseLookupItemReplace"),
+                                 code("animate(withDuration:animations:completion:)"), code("animate(withDuration:animations:)")))
     }
-    task { text(LessonsBundle.message("swift.editor.completion.go.next", action("learn.next.lesson"))) }
+    text(LessonsBundle.message("swift.editor.completion.go.next", action("learn.next.lesson")))
   }
 }

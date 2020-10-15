@@ -8,27 +8,7 @@ class LessonContextImpl(private val executor: LessonExecutor): LessonContext() {
     executor.task(taskContent)
   }
 
-  override fun caret(offset: Int) {
-    executor.caret(offset)
-  }
-
-  override fun caret(line: Int, column: Int) {
-    executor.caret(line, column)
-  }
-
-  override fun caret(text: String, select: Boolean) {
-    executor.caret(text, select)
-  }
-
-  override fun caret(position: LessonSamplePosition) {
-    executor.caret(position)
-  }
-
   override fun waitBeforeContinue(delayMillis: Int) {
     executor.waitBeforeContinue(delayMillis)
-  }
-
-  override fun prepareSample(sample: LessonSample) {
-    executor.prepareSample(sample)
   }
 }

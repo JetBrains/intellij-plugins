@@ -6,7 +6,6 @@ import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.editor.LogicalPosition
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
@@ -56,28 +55,28 @@ internal class TaskContextImpl(private val lessonExecutor: LessonExecutor,
   override fun proposeRestore(restoreCheck: TaskRuntimeContext.() -> RestoreNotification?) {
     restoreState {
       // restoreState is used to trigger by any IDE state change and check restore proposal is needed
-      val file = lessonExecutor.virtualFile
-      val proposal = restoreCheck(runtimeContext)
-      if (proposal == null) {
-        if (LessonManager.instance.shownRestoreNotification != null) {
-          LessonManager.instance.clearRestoreMessage()
-        }
-      }
-      else {
-        if (proposal.message != LessonManager.instance.shownRestoreNotification?.message) {
-          EditorNotifications.getInstance(runtimeContext.project).updateNotifications(file)
-          LessonManager.instance.setRestoreNotification(proposal)
-        }
-      }
+      this@TaskContextImpl.proposeRestoreCheck(restoreCheck)
       return@restoreState false
     }
   }
 
-  override fun text(@Language("HTML") text: String) = LessonExecutorUtil.addTextToLearnPanel(text, runtimeContext.project)
-
-  override fun select(startLine: Int, startColumn: Int, endLine: Int, endColumn: Int) {
-    lessonExecutor.select(startLine,startColumn, endLine, endColumn)
+  private fun proposeRestoreCheck(restoreCheck: TaskRuntimeContext.() -> RestoreNotification?) {
+    val file = lessonExecutor.virtualFile
+    val proposal = restoreCheck(runtimeContext)
+    if (proposal == null) {
+      if (LessonManager.instance.shownRestoreNotification != null) {
+        LessonManager.instance.clearRestoreMessage()
+      }
+    }
+    else {
+      if (proposal.message != LessonManager.instance.shownRestoreNotification?.message) {
+        EditorNotifications.getInstance(runtimeContext.project).updateNotifications(file)
+        LessonManager.instance.setRestoreNotification(proposal)
+      }
+    }
   }
+
+  override fun text(@Language("HTML") text: String) = LessonExecutorUtil.addTextToLearnPanel(text, runtimeContext.project)
 
   override fun type(text: String) {
     lessonExecutor.type(text)

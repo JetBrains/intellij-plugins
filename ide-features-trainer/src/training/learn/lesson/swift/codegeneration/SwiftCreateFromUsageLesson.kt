@@ -26,30 +26,30 @@ class CreateFromUsage: UIViewController {
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
 
-    task { caret(7, 30) }
+    caret(7, 30)
     task {
       triggers("ShowIntentionActions", "EditorChooseLookupItem")
       text(LessonsBundle.message("swift.codegeneration.cfu.create.local", action("ShowIntentionActions"), action("ShowIntentionActions"), LessonUtil.rawEnter()))
     }
     task { type(" = UILabel()") }
 
-    task { caret(9, 11) }
+    caret(9, 11)
     task {
       triggers("ShowIntentionActions", "NextTemplateVariable")
       text(LessonsBundle.message("swift.codegeneration.cfu.repeat", code("setup")))
     }
-    task { text(LessonsBundle.message("swift.codegeneration.cfu.nice")) }
-    task { caret(17, 20) }
+    text(LessonsBundle.message("swift.codegeneration.cfu.nice"))
+    caret(17, 20)
     task {
       triggers("ShowIntentionActions", "EditorChooseLookupItem")
       text(LessonsBundle.message("swift.codegeneration.cfu.create.class", action("ShowIntentionActions")))
     }
-    task { caret(22, 27) }
+    caret(22, 27)
     task {
       triggers("ShowIntentionActions", "NextTemplateVariable")
       text(LessonsBundle.message("swift.codegeneration.cfu.create.init", code("IDE"), action("ShowIntentionActions"), LessonUtil.rawEnter()))
     }
-    task { caret(22, 21) }
+    caret(22, 21)
     task {
       triggers("ShowIntentionActions")
       text(LessonsBundle.message("swift.codegeneration.cfu.create.empty.init"))

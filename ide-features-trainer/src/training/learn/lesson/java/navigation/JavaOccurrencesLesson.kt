@@ -90,8 +90,6 @@ class JavaOccurrencesLesson(module: Module)
     actionTask("FindPrevious") {
       LessonsBundle.message("java.find.occurrences.find.previous.in.editor", action(it))
     }
-    task {
-      text(LessonsBundle.message("java.find.occurrences.note.about.cyclic", action("FindNext"), action("FindPrevious")))
-    }
+    text(LessonsBundle.message("java.find.occurrences.note.about.cyclic", action("FindNext"), action("FindPrevious")))
   }
 }

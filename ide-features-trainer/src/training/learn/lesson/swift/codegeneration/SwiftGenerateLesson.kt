@@ -22,10 +22,9 @@ class IDE {
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
 
-    task { caret(12, 1) }
-    task {
-      text(LessonsBundle.message("swift.codegeneration.generate.intro", code("equals"), code("hashValue"), code("description"), code("debugDescription")))
-    }
+    caret(12, 1)
+    text(LessonsBundle.message("swift.codegeneration.generate.intro", code("equals"), code("hashValue"), code("description"),
+                               code("debugDescription")))
     task {
       triggers("Generate", "Swift.Generate.Init")
       text(LessonsBundle.message("swift.codegeneration.generate.init", action("Generate"), LessonUtil.rawEnter()))

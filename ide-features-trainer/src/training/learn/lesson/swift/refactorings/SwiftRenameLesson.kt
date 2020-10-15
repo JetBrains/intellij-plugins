@@ -31,17 +31,17 @@ class Rename: UIViewController {
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
 
-    task { text(LessonsBundle.message("swift.refactoring.rename.any")) }
+    text(LessonsBundle.message("swift.refactoring.rename.any"))
     task {
       triggers("GotoFile", "MasterViewController.swift")
       text(LessonsBundle.message("swift.refactoring.rename.go.to.file", code("MasterViewController.swift"), action("GotoFile")))
     }
-    task { caret(6, 10) }
+    caret(6, 10)
     task {
       triggers("RenameElement", "NextTemplateVariable")
       text(LessonsBundle.message("swift.refactoring.rename.var", code("objects"), code("array"), action("RenameElement"), LessonUtil.rawEnter()))
     }
-    task { caret(5, 39) }
+    caret(5, 39)
     task {
       triggers("RenameElement", "NextTemplateVariable")
       text(LessonsBundle.message("swift.refactoring.rename.class", code("DetailViewController")))

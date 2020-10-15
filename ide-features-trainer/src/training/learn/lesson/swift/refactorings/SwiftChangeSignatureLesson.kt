@@ -38,10 +38,8 @@ class ChangeSignature: UIViewController {
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
 
-    task { caret(16, 22) }
-    task {
-      text(LessonsBundle.message("swift.refactoring.change.signature.intro"))
-    }
+    caret(16, 22)
+    text(LessonsBundle.message("swift.refactoring.change.signature.intro"))
     task {
       triggers("ChangeSignature")
       text(LessonsBundle.message("swift.refactoring.change.signature.exec", action("ChangeSignature"), code("method"), code("setup")))

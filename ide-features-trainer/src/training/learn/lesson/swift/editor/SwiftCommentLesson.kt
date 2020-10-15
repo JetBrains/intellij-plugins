@@ -40,25 +40,24 @@ class Comment: UIViewController {
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
 
-
-    task { caret(12, 1) }
+    caret(12, 1)
     task {
       triggers("CommentByLineComment")
       text(LessonsBundle.message("swift.editor.comment.intro", action("CommentByLineComment")))
     }
-    task { caret(12, 1) }
+    caret(12, 1)
     task {
       triggers("CommentByLineComment")
       text(LessonsBundle.message("swift.editor.comment.uncomment", action("CommentByLineComment")))
     }
-    task { caret(12, 1) }
+    caret(12, 1)
     task {
       triggers("EditorDownWithSelection", "CommentByLineComment")
       text(LessonsBundle.message("swift.editor.comment.several.lines", action("EditorDownWithSelection"), action("CommentByLineComment")))
     }
-    task { select(1, 1, 1, 1) }
+    select(1, 1, 1, 1)
 
-    task { caret(14, 37) }
+    caret(14, 37)
     task {
       triggers("EditorSelectWord", "EditorSelectWord", "CommentByBlockComment")
       text(LessonsBundle.message("swift.editor.comment.block", action("EditorSelectWord"), code("frame: CGRect.zero"), action("CommentByBlockComment")))

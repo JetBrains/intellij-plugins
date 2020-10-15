@@ -3,28 +3,29 @@ package training.commands.kotlin
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.ui.tree.TreeVisitor
 import com.intellij.util.ui.tree.TreeUtil
 import org.fest.swing.timing.Timeout
 import org.intellij.lang.annotations.Language
 import org.jetbrains.annotations.Nls
 import training.learn.LearnBundle
+import training.learn.lesson.kimpl.LearningDsl
+import training.learn.lesson.kimpl.LearningDslBase
+import training.learn.lesson.kimpl.LessonSamplePosition
 import training.learn.lesson.kimpl.LessonUtil
 import training.ui.LearningUiHighlightingManager
-import training.ui.LearningUiManager
 import training.ui.LearningUiUtil
 import java.awt.Component
 import java.awt.Rectangle
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
-import javax.swing.Icon
 import javax.swing.JList
 import javax.swing.JTree
 import javax.swing.tree.TreePath
 
-abstract class TaskContext {
+@LearningDsl
+abstract class TaskContext : LearningDslBase {
   abstract val project: Project
 
   open val taskId: TaskId = TaskId(0)
@@ -56,9 +57,6 @@ abstract class TaskContext {
    * Write a text to the learn panel (panel with a learning tasks).
    */
   open fun text(@Language("HTML") @Nls text: String) = Unit
-
-  /** Select text in editor */
-  open fun select(startLine:Int, startColumn:Int, endLine:Int, endColumn:Int) = Unit
 
   /** Insert text in the current position */
   open fun type(text: String) = Unit
@@ -192,32 +190,16 @@ abstract class TaskContext {
   @Deprecated("It is auxiliary method with explicit class parameter. Use inlined short form instead")
   open fun triggerByUiComponentAndHighlight(findAndHighlight: TaskRuntimeContext.() -> (() -> Component)) = Unit
 
-  /** Show shortcut for [actionId] inside lesson step message */
-  open fun action(actionId: String): String  {
-    return "<action>$actionId</action>"
+  open fun caret(position: LessonSamplePosition) = before {
+    caret(position)
   }
 
-  /** Highlight as code inside lesson step message */
-  open fun code(sourceSample: String): String  {
-    return "<code>${StringUtil.escapeXmlEntities(sourceSample)}</code>"
+  /** NOTE:  [line] and [column] starts from 1 not from zero. So these parameters should be same as in editors. */
+  open fun caret(line: Int, column: Int) = before {
+    caret(line, column)
   }
 
-  /** Highlight some [text] */
-  open fun strong(text: String): String  {
-    return "<strong>${StringUtil.escapeXmlEntities(text)}</strong>"
-  }
-
-  /** Show an [icon] inside lesson step message */
-  open fun icon(icon: Icon): String  {
-    val index = LearningUiManager.getIconIndex(icon)
-    return "<icon_idx>$index</icon_idx>"
-  }
-  
-  open fun shortcut(key: String): String {
-    return "<shortcut>${key}</shortcut>"
-  }
-
-  class DoneStepContext(val future: CompletableFuture<Boolean>, rt: TaskRuntimeContext): TaskRuntimeContext(rt) {
+  class DoneStepContext(val future: CompletableFuture<Boolean>, rt: TaskRuntimeContext) : TaskRuntimeContext(rt) {
     fun completeStep() {
       assert(ApplicationManager.getApplication().isDispatchThread)
       if (!future.isDone && !future.isCancelled) {

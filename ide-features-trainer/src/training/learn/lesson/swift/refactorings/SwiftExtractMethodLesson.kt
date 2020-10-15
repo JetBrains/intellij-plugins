@@ -35,7 +35,7 @@ class ExtractMethod: UIViewController {
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
 
-    task { select(11, 9, 18, 43) }
+    select(11, 9, 18, 43)
     task {
       triggers("ExtractMethod")
       text(LessonsBundle.message("swift.refactoring.extract.method.intro", code("setup"), action("ExtractMethod")))
@@ -44,11 +44,10 @@ class ExtractMethod: UIViewController {
       triggers("\$Undo")
       text(LessonsBundle.message("swift.refactoring.extract.method.undo", action("\$Undo")))
     }
-    task { select(11, 9, 18, 43) }
+    select(11, 9, 18, 43)
 
-    task {
-      text(LessonsBundle.message("swift.refactoring.extract.method.change.params", icon(AllIcons.General.ArrowUp), icon(AllIcons.General.ArrowDown)))
-    }
+    text(LessonsBundle.message("swift.refactoring.extract.method.change.params", icon(AllIcons.General.ArrowUp),
+                               icon(AllIcons.General.ArrowDown)))
     task {
       triggers("ExtractMethod")
       text(LessonsBundle.message("swift.refactoring.extract.method.exec.again", action("ExtractMethod")))

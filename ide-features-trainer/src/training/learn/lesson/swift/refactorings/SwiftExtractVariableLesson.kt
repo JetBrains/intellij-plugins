@@ -32,17 +32,16 @@ class ExtractVariable: UIViewController {
 }""".trimIndent())
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
-    task { caret(8, 61) }
+    caret(8, 61)
     task {
       triggers("IntroduceVariable", "NextTemplateVariable")
       text(LessonsBundle.message("swift.refactoring.extract.variable.exec", action("IntroduceVariable"), code("50"), code("y")))
     }
-    task {
-      text(LessonsBundle.message("swift.refactoring.extract.variable.description"))
-    }
+    text(LessonsBundle.message("swift.refactoring.extract.variable.description"))
     task {
       triggers("IntroduceVariable", "NextTemplateVariable")
-      text(LessonsBundle.message("swift.refactoring.extract.variable.exec.again", action("IntroduceVariable"), code("CGRect"), code("frame")))
+      text(
+        LessonsBundle.message("swift.refactoring.extract.variable.exec.again", action("IntroduceVariable"), code("CGRect"), code("frame")))
     }
   }
 }

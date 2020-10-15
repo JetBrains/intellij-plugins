@@ -37,7 +37,7 @@ class FoldingDemo {
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
 
-    task { caret(13, 9) }
+    caret(13, 9)
     task {
       triggers("CollapseRegion")
       text(LessonsBundle.message("swift.editor.folding.collapse", action("CollapseRegion")))
@@ -54,7 +54,7 @@ class FoldingDemo {
       triggers("ExpandAllRegions")
       text(LessonsBundle.message("swift.editor.folding.expand.all", action("ExpandAllRegions")))
     }
-    task { select(7, 9, 8, 24) }
+    select(7, 9, 8, 24)
     task {
       triggers("CollapseSelection")
       text(LessonsBundle.message("swift.editor.folding.collapse.statement.any", action("CollapseSelection")))
@@ -63,7 +63,7 @@ class FoldingDemo {
       triggers("ExpandRegion")
       text(LessonsBundle.message("swift.editor.folding.expand.statement", action("ExpandRegion")))
     }
-    task { caret(18, 13) }
+    caret(18, 13)
     task {
       triggers("CollapseBlock")
       text(LessonsBundle.message("swift.editor.folding.block", action("CollapseBlock")))

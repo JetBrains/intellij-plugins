@@ -99,47 +99,35 @@ class Navigation: UITableViewController {
 }""".trimIndent())
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
-    task {
-      text(LessonsBundle.message("swift.navigation.windows.intro"))
-    }
+    text(LessonsBundle.message("swift.navigation.windows.intro"))
     task {
       triggers("ActivateProjectToolWindow")
       text(LessonsBundle.message("swift.navigation.windows.project", action("ActivateProjectToolWindow")))
     }
-    task {
-      text(LessonsBundle.message("swift.navigation.windows.project2"))
-    }
+    text(LessonsBundle.message("swift.navigation.windows.project2"))
     task {
       triggers("ProjectView.ManualOrder")
       text(LessonsBundle.message("swift.navigation.windows.project.settings", icon(AllIcons.General.GearPlain)))
     }
-    task {
-      text(LessonsBundle.message("swift.navigation.windows.project.settings.more"))
-    }
-    task {
-      text(LessonsBundle.message("swift.navigation.windows.files", code(".xcworkspace"), code(".xcproject")))
-    }
+    text(LessonsBundle.message("swift.navigation.windows.project.settings.more"))
+    text(LessonsBundle.message("swift.navigation.windows.files", code(".xcworkspace"), code(".xcproject")))
     task {
       triggers("com.intellij.ui.content.tabs.TabbedContentAction\$MyNextTabAction")
       text(LessonsBundle.message("swift.navigation.windows.files.activate", action("NextTab")))
     }
-    task { caret(1, 1) }
-    task { text(LessonsBundle.message("swift.navigation.windows.return.to.editor", action("EditorEscape"))) }
-    task {
-      text(LessonsBundle.message("swift.navigation.windows.structure", code("//TODO"), code("//FIXME"), code("#pragma mark"), code("//MARK")))
-    }
+    caret(1, 1)
+    text(LessonsBundle.message("swift.navigation.windows.return.to.editor", action("EditorEscape")))
+    text(LessonsBundle.message("swift.navigation.windows.structure", code("//TODO"), code("//FIXME"), code("#pragma mark"), code("//MARK")))
     task {
       triggers("ActivateStructureToolWindow")
       text(LessonsBundle.message("swift.navigation.windows.structure.activate", action("ActivateStructureToolWindow")))
     }
-    task {
-      text(LessonsBundle.message("swift.navigation.windows.jump.to.source", action("EditSource")))
-    }
+    text(LessonsBundle.message("swift.navigation.windows.jump.to.source", action("EditSource")))
     task {
       triggers("FileStructurePopup")
       text(LessonsBundle.message("swift.navigation.windows.structure.popup", action("FileStructurePopup")))
     }
-    task { text(LessonsBundle.message("swift.navigation.windows.dismiss.structure.popup", action("EditorEscape"))) }
+    text(LessonsBundle.message("swift.navigation.windows.dismiss.structure.popup", action("EditorEscape")))
     task {
       triggers("FindInPath")
       text(LessonsBundle.message("swift.navigation.windows.find", action("FindInPath")))
@@ -148,16 +136,12 @@ class Navigation: UITableViewController {
       triggers("Build")
       text(LessonsBundle.message("swift.navigation.windows.build", action("Build")))
     }
-    task {
-      text(LessonsBundle.message("swift.navigation.windows.build.messages", icon(AllIcons.General.Filter)))
-    }
+    text(LessonsBundle.message("swift.navigation.windows.build.messages", icon(AllIcons.General.Filter)))
     task {
       triggers("Run")
       text(LessonsBundle.message("swift.navigation.windows.run", action("Run")))
     }
-    task {
-      text(LessonsBundle.message("swift.navigation.windows.run.window", action("ActivateRunToolWindow")))
-    }
+    text(LessonsBundle.message("swift.navigation.windows.run.window", action("ActivateRunToolWindow")))
     task {
       triggers("Stop")
       text(LessonsBundle.message("swift.navigation.windows.stop", action("Stop")))
@@ -166,29 +150,26 @@ class Navigation: UITableViewController {
       triggers("GotoFile", "MasterViewController.swift")
       text(LessonsBundle.message("swift.navigation.windows.go.to.file", code("MasterViewController.swift"), action("GotoFile")))
     }
-    task { caret(11, 9) }
+    caret(11, 9)
     task {
       triggers("ToggleLineBreakpoint", "Debug")
       text(LessonsBundle.message("swift.navigation.windows.toggle.break", action("ToggleLineBreakpoint"), action("Debug")))
     }
-    task {
-      text(LessonsBundle.message("swift.navigation.windows.debug", action("ActivateDebugToolWindow")))
-    }
+    text(LessonsBundle.message("swift.navigation.windows.debug", action("ActivateDebugToolWindow")))
     task {
       triggers("Stop")
       text(LessonsBundle.message("swift.navigation.windows.stop.debug", action("Stop")))
     }
-    task { caret(16, 9) }
+    caret(16, 9)
     task {
       triggers("ViewBreakpoints")
       text(LessonsBundle.message("swift.navigation.windows.breakpoints", action("ViewBreakpoints")))
     }
     task {
       triggers("ActivateVersionControlToolWindow")
-      text(LessonsBundle.message("swift.navigation.windows.init.git", action("Vcs.QuickListPopupAction"), action("ActivateVersionControlToolWindow")))
+      text(LessonsBundle.message("swift.navigation.windows.init.git", action("Vcs.QuickListPopupAction"),
+                                 action("ActivateVersionControlToolWindow")))
     }
-    task {
-      text(LessonsBundle.message("swift.navigation.windows.vcs.window"))
-    }
+    text(LessonsBundle.message("swift.navigation.windows.vcs.window"))
   }
 }

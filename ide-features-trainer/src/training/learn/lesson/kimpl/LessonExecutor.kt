@@ -5,24 +5,15 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.invokeLater
-import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.command.WriteCommandAction
-import com.intellij.openapi.command.undo.BasicUndoableAction
-import com.intellij.openapi.command.undo.DocumentReferenceManager
-import com.intellij.openapi.command.undo.UndoManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.LogicalPosition
-import com.intellij.openapi.editor.ex.EditorEx
-import com.intellij.openapi.editor.ex.EditorGutterComponentEx
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiDocumentManager
 import com.intellij.util.Alarm
-import com.intellij.util.DocumentUtil
 import training.commands.kotlin.PreviousTaskInfo
 import training.commands.kotlin.TaskContext
 import training.commands.kotlin.TaskTestContext
@@ -117,48 +108,6 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
     currentRecorder = null
     currentRestoreRecorder?.let { Disposer.dispose(it) }
     currentRestoreRecorder = null
-  }
-
-  fun prepareSample(sample: LessonSample) {
-    addSimpleTaskAction {
-      setSample(sample)
-    }
-  }
-
-  fun caret(position: LessonSamplePosition) {
-    addSimpleTaskAction {
-      setCaret(position)
-    }
-  }
-
-  fun caret(offset: Int) {
-    addSimpleTaskAction { OpenFileDescriptor(project, virtualFile, offset).navigateIn(editor) }
-  }
-
-  fun caret(line: Int, column: Int) {
-    addSimpleTaskAction { OpenFileDescriptor(project, virtualFile, line - 1, column - 1).navigateIn(editor) }
-  }
-
-  fun caret(text: String, select: Boolean) {
-    addSimpleTaskAction l@{
-      val start = getStartOffsetForText(text, editor, project) ?: return@l
-      editor.caretModel.moveToOffset(start)
-      if (select) {
-        editor.selectionModel.setSelection(start, start + text.length)
-      }
-    }
-  }
-
-  fun select(startLine: Int, startColumn: Int, endLine: Int, endColumn: Int) {
-    addSimpleTaskAction l@{
-      val blockStart = LogicalPosition(startLine - 1, startColumn - 1)
-      val blockEnd = LogicalPosition(endLine - 1, endColumn - 1)
-
-      val startPosition = editor.logicalPositionToOffset(blockStart)
-      val endPosition = editor.logicalPositionToOffset(blockEnd)
-      editor.caretModel.moveToOffset(startPosition)
-      editor.selectionModel.setSelection(startPosition, endPosition)
-    }
   }
 
   fun type(text: String) {
@@ -345,54 +294,5 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
         taskContext.testActions.forEach { it.run() }
       }
     }
-  }
-
-  fun setSample(sample: LessonSample) {
-    invokeLater(ModalityState.NON_MODAL) {
-      (editor as? EditorEx)?.isViewer = false
-      setDocumentCode(sample.text)
-      setCaret(sample.getPosition(0))
-    }
-  }
-
-  private fun setCaret(position: LessonSamplePosition) {
-    position.selection?.let { editor.selectionModel.setSelection(it.first, it.second) }
-    editor.caretModel.moveToOffset(position.startOffset)
-  }
-
-  private fun setDocumentCode(code: String) {
-    val document = editor.document
-    DocumentUtil.writeInRunUndoTransparentAction {
-      val documentReference = DocumentReferenceManager.getInstance().create(document)
-      UndoManager.getInstance(project).nonundoableActionPerformed(documentReference, false)
-      document.replaceString(0, document.textLength, code)
-    }
-    PsiDocumentManager.getInstance(project).commitDocument(document)
-    doUndoableAction(project)
-    updateGutter(editor)
-  }
-
-  private fun getStartOffsetForText(text: String, editor: Editor, project: Project): Int? {
-    val document = editor.document
-
-    val indexOf = document.charsSequence.indexOf(text)
-    if (indexOf != -1) {
-      return indexOf
-    }
-    return null
-  }
-
-  private fun doUndoableAction(project: Project) {
-    CommandProcessor.getInstance().executeCommand(project, {
-      UndoManager.getInstance(project).undoableActionPerformed(object : BasicUndoableAction() {
-        override fun undo() {}
-        override fun redo() {}
-      })
-    }, null, null)
-  }
-
-  private fun updateGutter(editor: Editor) {
-    val editorGutterComponentEx = editor.gutter as EditorGutterComponentEx
-    editorGutterComponentEx.revalidateMarkup()
   }
 }

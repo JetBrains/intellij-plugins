@@ -93,9 +93,7 @@ class GotoActionLesson(module: Module, lang: String, private val sample: LessonS
         }
       }
 
-      task {
-        text(LessonsBundle.message("goto.action.propose.to.go.next", action("learn.next.lesson")))
-      }
+      text(LessonsBundle.message("goto.action.propose.to.go.next", action("learn.next.lesson")))
     }
 
   private fun isLineNumbersShown() = EditorSettingsExternalizable.getInstance().isLineNumbersShown

@@ -53,10 +53,10 @@ abstract class SurroundAndUnwrapLesson(module: Module, lang: String)
       prepareRuntimeTask {
         editor.caretModel.currentCaret.moveCaretRelatively(0, lineShiftBeforeUnwrap, false, true)
       }
-      prepareRuntimeTask { // restore point
-        prepareSample(previous.sample)
-      }
 
+      prepareRuntimeTask { // restore point
+        setSample(previous.sample)
+      }
       task("Unwrap") {
         proposeIfModified {
           editor.caretModel.currentCaret.logicalPosition.line != previous.position.line

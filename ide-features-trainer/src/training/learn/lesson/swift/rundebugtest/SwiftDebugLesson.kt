@@ -31,12 +31,12 @@ class DebugExample: UIViewController {
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
 
-    task { text(LessonsBundle.message("swift.rdt.debug.intro")) }
+    text(LessonsBundle.message("swift.rdt.debug.intro"))
     task {
       triggers("GotoFile", "MasterViewController.swift")
       text(LessonsBundle.message("swift.rdt.debug.prepare", code("MasterViewController.swift"), action("GotoFile")))
     }
-    task { caret(11, 9) }
+    caret(11, 9)
     task {
       triggers("ToggleLineBreakpoint", "Debug")
       text(LessonsBundle.message("swift.rdt.debug.toggle.break", action("ToggleLineBreakpoint"), action("Debug")))

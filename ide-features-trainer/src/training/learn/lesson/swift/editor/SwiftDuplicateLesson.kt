@@ -37,13 +37,12 @@ class Duplicate: UIViewController {
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
 
-
-    task { caret(15, 22) }
+    caret(15, 22)
     task {
       triggers("EditorDuplicate")
       text(LessonsBundle.message("swift.editor.duplicate.line", action("EditorDuplicate")))
     }
-    task { select(14, 1, 18, 1) }
+    select(14, 1, 18, 1)
 
     task {
       triggers("EditorDuplicate")

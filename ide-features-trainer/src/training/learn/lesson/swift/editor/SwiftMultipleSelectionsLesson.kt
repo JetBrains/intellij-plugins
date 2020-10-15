@@ -49,7 +49,7 @@ SIX
 """.trimIndent())
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
-    task { caret(14, 18) }
+    caret(14, 18)
     task {
       triggers("SelectNextOccurrence")
       text(LessonsBundle.message("swift.editor.selections.next", action("SelectNextOccurrence")))
@@ -70,7 +70,7 @@ SIX
       triggers("EditorEscape")
       text(LessonsBundle.message("swift.editor.selections.replace", code("td"), code("th"), code("td"), action("EditorEscape")))
     }
-    task { caret(29, 1) }
+    caret(29, 1)
     task {
       triggers("EditorToggleColumnMode", "EditorDownWithSelection", "EditorDownWithSelection", "EditorDownWithSelection", "EditorDownWithSelection", "EditorDownWithSelection")
       text(LessonsBundle.message("swift.editor.selections.column", action("EditorToggleColumnMode"), code("ONE"), code("SIX")))

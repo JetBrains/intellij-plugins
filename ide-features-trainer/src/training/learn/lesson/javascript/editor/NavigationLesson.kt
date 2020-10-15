@@ -107,11 +107,9 @@ class NavigationLesson(module: Module)
           }
           trigger(it)
         }
-        task {
-          text(LessonsBundle.message("js.editor.navigation.keymap.reference",
-                                     strong(LessonsBundle.message("js.editor.basics.module.name")),
-                                     "https://resources.jetbrains.com/storage/products/webstorm/docs/WebStorm_ReferenceCard.pdf"))
-        }
+        text(LessonsBundle.message("js.editor.navigation.keymap.reference",
+                                   strong(LessonsBundle.message("js.editor.basics.module.name")),
+                                   "https://resources.jetbrains.com/storage/products/webstorm/docs/WebStorm_ReferenceCard.pdf"))
       }
     }
   override val existedFile = "navigation.js"

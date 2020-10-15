@@ -34,38 +34,34 @@ class AnotherTest: Test {
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
 
-    task {
-      text(LessonsBundle.message("swift.navigation.search.intro"))
-    }
-    task { select(16, 13, 16, 17) }
+    text(LessonsBundle.message("swift.navigation.search.intro"))
+    select(16, 13, 16, 17)
 
     task {
       triggers("Find")
       text(LessonsBundle.message("swift.navigation.search.var", code("test"), code("test"), action("Find"), code("test")))
     }
-    task { select(16, 14, 16, 14) }
+    select(16, 14, 16, 14)
 
     task {
       triggers("FindUsages")
       text(LessonsBundle.message("swift.navigation.search.find.usages.var", code("test"), action("EditorEscape"), action("FindUsages")))
     }
-    task { text(LessonsBundle.message("swift.navigation.search.find.usages.var.result", code("test"))) }
-    task { caret(15, 23) }
+    text(LessonsBundle.message("swift.navigation.search.find.usages.var.result", code("test")))
+    caret(15, 23)
     task {
       triggers("FindUsages")
       text(LessonsBundle.message("swift.navigation.search.find.usages.proto", action("EditorEscape"), action("FindUsages"), code("Test")))
     }
-    task { caret(17, 17) }
+    caret(17, 17)
     task {
       triggers("FindUsages")
-      text(LessonsBundle.message("swift.navigation.search.find.usages.method", code("test(containsTest test: Int, anotherContainingTest test1: String)"), action("EditorEscape"), action("FindUsages")))
+      text(LessonsBundle.message("swift.navigation.search.find.usages.method",
+                                 code("test(containsTest test: Int, anotherContainingTest test1: String)"), action("EditorEscape"),
+                                 action("FindUsages")))
     }
-    task {
-      text(LessonsBundle.message("swift.navigation.search.rule"))
-    }
-    task {
-      text(LessonsBundle.message("swift.navigation.search.text.search", action("Find"), action("FindInPath")))
-    }
+    text(LessonsBundle.message("swift.navigation.search.rule"))
+    text(LessonsBundle.message("swift.navigation.search.text.search", action("Find"), action("FindInPath")))
     task {
       triggers("SearchEverywhere")
       text(LessonsBundle.message("swift.navigation.search.everything"))

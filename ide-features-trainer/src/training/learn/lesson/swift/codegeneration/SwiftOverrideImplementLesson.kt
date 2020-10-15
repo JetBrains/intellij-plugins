@@ -33,15 +33,14 @@ class OverrideImplement: UIViewController, UITableViewDataSource {
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
 
-    task { caret(22, 5) }
-    task {
-      text(LessonsBundle.message("swift.codegeneration.overrideimplement.intro", action("OverrideMethods"), action("ImplementMethods")))
-    }
+    caret(22, 5)
+    text(LessonsBundle.message("swift.codegeneration.overrideimplement.intro", action("OverrideMethods"), action("ImplementMethods")))
     task {
       triggers("ImplementMethods")
-      text(LessonsBundle.message("swift.codegeneration.overrideimplement.implement", action("ImplementMethods"), LessonUtil.rawEnter(), code("UITableViewDataSource")))
+      text(LessonsBundle.message("swift.codegeneration.overrideimplement.implement", action("ImplementMethods"), LessonUtil.rawEnter(),
+                                 code("UITableViewDataSource")))
     }
-    task { caret(22, 5) }
+    caret(22, 5)
     task {
       triggers("OverrideMethods")
       text(LessonsBundle.message("swift.codegeneration.overrideimplement.override", action("OverrideMethods"), code("viewAppear"), action("\$SelectAll"), LessonUtil.rawEnter()))

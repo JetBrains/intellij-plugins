@@ -36,12 +36,12 @@ class Move: UIViewController {
 }""".trimIndent())
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
-    task { caret(18, 9) }
+    caret(18, 9)
     task {
       triggers("MoveLineDown", "MoveLineDown")
       text(LessonsBundle.message("swift.editor.move.line.down", action("MoveLineDown"), code("viewDidLoad")))
     }
-    task { caret(16, 9) }
+    caret(16, 9)
     task {
       triggers("MoveLineUp", "MoveLineUp")
       text(LessonsBundle.message("swift.editor.move.line.up", action("MoveLineUp"), code("header")))

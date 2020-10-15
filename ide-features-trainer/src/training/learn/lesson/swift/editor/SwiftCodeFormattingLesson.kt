@@ -38,7 +38,7 @@ class Format: UIViewController {
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
 
-    task { select(10, 1, 15, 1) }
+    select(10, 1, 15, 1)
 
     task {
       triggers("ReformatCode")

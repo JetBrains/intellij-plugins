@@ -48,7 +48,8 @@ class DebuggingSecondPartLesson(module: Module)
 
         task {
           text(LessonsBundle.message("js.debugger.part.2.evaluate",
-                                     code("a === b"), strong(XDebuggerBundle.message("xdebugger.button.evaluate").dropMnemonic()), code("false"), code("true (a !== b)"),
+                                     code("a === b"), strong(XDebuggerBundle.message("xdebugger.button.evaluate").dropMnemonic()),
+                                     code("false"), code("true (a !== b)"),
                                      code("()"), code("a === b"), code("a !== b")))
           stateCheck {
             textOnLine(1, "a !== b")
@@ -60,12 +61,10 @@ class DebuggingSecondPartLesson(module: Module)
           trigger(it)
         }
 
-        task {
-          text(LessonsBundle.message("js.debugger.part.2.end",
-                                     strong(LessonsBundle.message("js.debugger.module.name", productName)),
-                                     "https://www.jetbrains.com/help/webstorm/2019.2/debugging-code.html",
-                                     "https://blog.jetbrains.com/webstorm/tag/debug/"))
-        }
+        text(LessonsBundle.message("js.debugger.part.2.end",
+                                   strong(LessonsBundle.message("js.debugger.module.name", productName)),
+                                   "https://www.jetbrains.com/help/webstorm/2019.2/debugging-code.html",
+                                   "https://blog.jetbrains.com/webstorm/tag/debug/"))
       }
     }
   override val existedFile = "debugging.js"

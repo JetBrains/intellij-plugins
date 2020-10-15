@@ -130,14 +130,11 @@ class JestLesson(module: Module)
           trigger(it)
         }
 
-        task {
-          text(LessonsBundle.message("js.testing.jest.end",
-                                     "https://blog.jetbrains.com/webstorm/2018/10/testing-with-jest-in-webstorm/",
-                                     "https://www.jetbrains.com/help/webstorm/unit-testing-javascript.html"))
-        }
+        text(LessonsBundle.message("js.testing.jest.end",
+                                   "https://blog.jetbrains.com/webstorm/2018/10/testing-with-jest-in-webstorm/",
+                                   "https://www.jetbrains.com/help/webstorm/unit-testing-javascript.html"))
       }
     }
 
-  override val existedFile: String?
-    get() = "sum.test.js"
+  override val existedFile: String = "sum.test.js"
 }

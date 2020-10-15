@@ -93,9 +93,7 @@ class PythonSearchEverywhereLesson(module: Module)
       LessonsBundle.message("python.search.everywhere.quick.documentation", action(it))
     }
 
-    task {
-      text(LessonsBundle.message("python.search.everywhere.finish", action("GotoSymbol"), action("GotoFile")))
-    }
+    text(LessonsBundle.message("python.search.everywhere.finish", action("GotoSymbol"), action("GotoFile")))
 
     if (TaskTestContext.inTestMode) task {
       stateCheck { focusOwner is EditorComponentImpl }

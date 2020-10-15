@@ -77,8 +77,6 @@ class FStringCompletionLesson(module: Module)
       }
       test { GuiTestUtil.shortcut(Key.ENTER) }
     }
-    task {
-      text(LessonsBundle.message("python.f.string.completion.result.message"))
-    }
+    text(LessonsBundle.message("python.f.string.completion.result.message"))
   }
 }

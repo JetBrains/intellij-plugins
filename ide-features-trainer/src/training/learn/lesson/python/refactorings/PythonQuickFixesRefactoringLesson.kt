@@ -60,7 +60,7 @@ class PythonQuickFixesRefactoringLesson(module: Module)
     }
 
     prepareRuntimeTask { // restore point
-      prepareSample(previous.sample)
+      setSample(previous.sample)
     }
 
     task("ShowIntentionActions") {

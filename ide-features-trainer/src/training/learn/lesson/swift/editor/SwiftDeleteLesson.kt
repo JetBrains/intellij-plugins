@@ -37,8 +37,7 @@ class Delete: UIViewController {
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
 
-
-    task { caret(12, 9) }
+    caret(12, 9)
     task {
       triggers("EditorDeleteLine")
       text(LessonsBundle.message("swift.editor.delete.action", action("EditorDeleteLine")))

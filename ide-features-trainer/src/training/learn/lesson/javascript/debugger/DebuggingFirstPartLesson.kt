@@ -48,14 +48,16 @@ class DebuggingFirstPartLesson(module: Module)
         }
 
         task {
-          text(LessonsBundle.message("js.debugger.part.1.scripts.tab", strong(XDebuggerBundle.message("debugger.session.tab.console.content.name")), strong(JSDebuggerBundle.message("js.console.debug.name")), strong(JSDebuggerBundle.message("js.scripts.tab.title"))))
+          text(LessonsBundle.message("js.debugger.part.1.scripts.tab",
+                                     strong(XDebuggerBundle.message("debugger.session.tab.console.content.name")),
+                                     strong(JSDebuggerBundle.message("js.console.debug.name")),
+                                     strong(JSDebuggerBundle.message("js.scripts.tab.title"))))
           stateCheck {
             focusOwner.toString().contains("treeStructure.SimpleTree")
           }
         }
-        task {
-          text(LessonsBundle.message("js.debugger.part.1.next", strong(JSDebuggerBundle.message("js.scripts.tab.title")), action("learn.next.lesson")))
-        }
+        text(LessonsBundle.message("js.debugger.part.1.next", strong(JSDebuggerBundle.message("js.scripts.tab.title")),
+                                   action("learn.next.lesson")))
       }
     }
   override val existedFile = "debugging.js"

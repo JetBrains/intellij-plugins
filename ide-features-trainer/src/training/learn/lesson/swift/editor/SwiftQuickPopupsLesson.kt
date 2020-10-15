@@ -35,7 +35,7 @@ class Duplicate: UIViewController {
 }""".trimIndent())
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
-    task { caret(18, 34) }
+    caret(18, 34)
     task {
       triggers("ParameterInfo")
       text(LessonsBundle.message("swift.editor.popups.param.info", action("ParameterInfo")))
@@ -44,12 +44,12 @@ class Duplicate: UIViewController {
       triggers("EditorEscape")
       text(LessonsBundle.message("swift.editor.popups.close.param.info", action("EditorEscape")))
     }
-    task { caret(4, 26) }
+    caret(4, 26)
     task {
       triggers("QuickJavaDoc")
       text(LessonsBundle.message("swift.editor.popups.doc", action("QuickJavaDoc")))
     }
-    task { caret(4, 26) }
+    caret(4, 26)
     task {
       triggers("QuickImplementations")
       text(LessonsBundle.message("swift.editor.popups.impl", action("QuickImplementations")))
