@@ -6,7 +6,6 @@ import training.learn.lesson.general.navigation.DeclarationAndUsagesLesson
 import training.learn.lesson.kimpl.LessonContext
 
 class PythonDeclarationAndUsagesLesson(module: Module) : DeclarationAndUsagesLesson(module, "Python") {
-  override fun LessonContext.setInitialPosition() = caret(652, 30)
-  override val typeOfEntity = 0
-  override val existedFile: String = "src/jinja2/ext.py"
+  override fun LessonContext.setInitialPosition() = caret(9, 21)
+  override val existedFile: String = "src/declaration_and_usages_demo.py"
 }

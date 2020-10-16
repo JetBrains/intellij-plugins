@@ -118,6 +118,11 @@ object LessonUtil {
     return "<raw_action>${if (SystemInfo.isMacOSMojave) "\u2318\u23CE" else "Ctrl + Enter"}</raw_action>"
   }
 
+  fun rawShift(): String {
+    val keyStrokeShift = KeymapUtil.getKeyStrokeText(KeyStroke.getKeyStroke(KeyEvent.VK_SHIFT, 0))
+    return "<raw_action>$keyStrokeShift</raw_action>"
+  }
+
   fun checkToolbarIsShowing(ui: ActionButton): Boolean   {
     // Some buttons are duplicated to several tab-panels. It is a way to find an active one.
     val parentOfType = UIUtil.getParentOfType(JBTabsImpl.Toolbar::class.java, ui)

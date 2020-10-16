@@ -13,10 +13,7 @@ import training.learn.lesson.general.refactorings.ExtractVariableFromBubbleLesso
 import training.learn.lesson.java.assistance.JavaEditorCodingAssistanceLesson
 import training.learn.lesson.java.basic.JavaSurroundAndUnwrapLesson
 import training.learn.lesson.java.completion.*
-import training.learn.lesson.java.navigation.JavaDeclarationAndUsagesLesson
-import training.learn.lesson.java.navigation.JavaFileStructureLesson
-import training.learn.lesson.java.navigation.JavaInheritanceHierarchyLesson
-import training.learn.lesson.java.navigation.JavaOccurrencesLesson
+import training.learn.lesson.java.navigation.*
 import training.learn.lesson.java.refactorings.JavaExtractMethodCocktailSortLesson
 import training.learn.lesson.java.refactorings.JavaRefactoringMenuLesson
 import training.learn.lesson.java.refactorings.JavaRenameLesson
@@ -85,6 +82,7 @@ class JavaLearningCourse : LearningCourseBase(JavaLanguage.INSTANCE.id) {
         JavaFileStructureLesson(it),
         JavaDeclarationAndUsagesLesson(it),
         JavaInheritanceHierarchyLesson(it),
+        JavaSearchEverywhereLesson(it),
         JavaOccurrencesLesson(it),
       )
     },

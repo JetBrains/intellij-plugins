@@ -95,5 +95,5 @@ class RubyLangSupport : AbstractLangSupport() {
       return modules[0]
     }
 
-  override val projectSandboxRelativePath = "app/sandbox.rb"
+  override val projectSandboxRelativePath = "src/sandbox.rb"
 }

@@ -5,8 +5,8 @@ import training.learn.interfaces.Module
 import training.learn.lesson.general.navigation.FileStructureLesson
 
 class PythonFileStructureLesson(module: Module) : FileStructureLesson(module, "Python") {
-  override val searchSubstring: String = "caf"
-  override val firstWord: String = "cache"
-  override val secondWord: String = "file"
-  override val existedFile: String = "src/jinja2/bccache.py"
+  override val searchSubstring: String = "hosa"
+  override val firstWord: String = "homo"
+  override val secondWord: String = "sapience"
+  override val existedFile: String = "src/file_structure_demo.py"
 }

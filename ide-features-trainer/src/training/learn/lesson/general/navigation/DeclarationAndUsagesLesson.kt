@@ -23,7 +23,6 @@ import training.learn.lesson.kimpl.closeAllFindTabs
 abstract class DeclarationAndUsagesLesson(module: Module, lang: String)
   : KLesson("Declaration and usages", LessonsBundle.message("declaration.and.usages.lesson.name"), module, lang) {
   abstract fun LessonContext.setInitialPosition()
-  abstract val typeOfEntity: Int // 0 - method, 1 - attribute accessor
   abstract override val existedFile: String
 
   override val lessonContent: LessonContext.() -> Unit
@@ -31,7 +30,7 @@ abstract class DeclarationAndUsagesLesson(module: Module, lang: String)
       setInitialPosition()
 
       task("GotoDeclaration") {
-        text(LessonsBundle.message("declaration.and.usages.jump.to.declaration", action(it), typeOfEntity))
+        text(LessonsBundle.message("declaration.and.usages.jump.to.declaration", action(it)))
         trigger(it, { state() }) { before, _ ->
           before != null && !isInsidePsi(before.target.navigationElement, before.position)
         }
@@ -39,7 +38,7 @@ abstract class DeclarationAndUsagesLesson(module: Module, lang: String)
       }
 
       task("GotoDeclaration") {
-        text(LessonsBundle.message("declaration.and.usages.show.usages", typeOfEntity, action(it)))
+        text(LessonsBundle.message("declaration.and.usages.show.usages", action(it)))
         trigger(it, { state() }) l@{ before, now ->
           if (before == null || now == null) {
             return@l false

@@ -7,6 +7,5 @@ import training.learn.lesson.kimpl.LessonContext
 
 class JavaDeclarationAndUsagesLesson(module: Module) : DeclarationAndUsagesLesson(module, "JAVA") {
   override fun LessonContext.setInitialPosition() = caret("foo()")
-  override val typeOfEntity = 0
   override val existedFile: String get() = "src/DerivedClass2.java"
 }

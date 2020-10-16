@@ -5,8 +5,8 @@ import training.learn.interfaces.Module
 import training.learn.lesson.general.navigation.FileStructureLesson
 
 class RubyFileStructureLesson(module: Module) : FileStructureLesson(module, "ruby") {
-  override val searchSubstring: String = "coo"
-  override val firstWord: String = "condition"
-  override val secondWord: String = "option"
-  override val existedFile: String = "lib/active_support/callbacks.rb"
+  override val searchSubstring: String = "hosa"
+  override val firstWord: String = "homo"
+  override val secondWord: String = "sapience"
+  override val existedFile: String = "src/file_structure_demo.rb"
 }

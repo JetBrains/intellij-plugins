@@ -6,7 +6,6 @@ import training.learn.lesson.general.navigation.DeclarationAndUsagesLesson
 import training.learn.lesson.kimpl.LessonContext
 
 class RubyDeclarationAndUsagesLesson(module: Module) : DeclarationAndUsagesLesson(module, "ruby") {
-  override fun LessonContext.setInitialPosition() = caret(20, 45)
-  override val typeOfEntity = 1
-  override val existedFile: String = "lib/active_support/core_ext/date/calculations.rb"
+  override fun LessonContext.setInitialPosition() = caret(11, 19)
+  override val existedFile: String = "src/declaration_and_usages_demo.rb"
 }

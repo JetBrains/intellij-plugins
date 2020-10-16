@@ -17,9 +17,9 @@ import training.learn.lesson.ruby.completion.RubyBasicCompletionLesson
 import training.learn.lesson.ruby.completion.RubyCompletionWithTabLesson
 import training.learn.lesson.ruby.completion.RubyHippieCompletionLesson
 import training.learn.lesson.ruby.completion.RubyPostfixCompletionLesson
-import training.learn.lesson.ruby.navigation.RubyClassSearchLesson
 import training.learn.lesson.ruby.navigation.RubyDeclarationAndUsagesLesson
 import training.learn.lesson.ruby.navigation.RubyFileStructureLesson
+import training.learn.lesson.ruby.navigation.RubySearchEverywhereLesson
 import training.learn.lesson.ruby.refactorings.RubyRefactorMenuLesson
 import training.learn.lesson.ruby.refactorings.RubyRenameLesson
 
@@ -83,7 +83,7 @@ class RubyLearningCourse : LearningCourseBase(RubyLanguage.INSTANCE.id) {
       listOf(
         RubyDeclarationAndUsagesLesson(it),
         RubyFileStructureLesson(it),
-        RubyClassSearchLesson(it),
+        RubySearchEverywhereLesson(it)
       )
     },
   )
