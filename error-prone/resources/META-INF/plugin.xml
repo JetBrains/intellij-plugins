@@ -10,6 +10,7 @@
   <depends>com.intellij.modules.java</depends>
   <vendor>JetBrains</vendor>
 
+  <resource-bundle>messages.ErrorProneBundle</resource-bundle>
   <extensions defaultExtensionNs="com.intellij">
     <java.compiler implementation="org.intellij.errorProne.ErrorProneJavaBackendCompiler"/>
     <projectService serviceImplementation="org.intellij.errorProne.ErrorProneCompilerConfiguration"/>

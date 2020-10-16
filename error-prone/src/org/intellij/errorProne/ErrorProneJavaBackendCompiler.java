@@ -29,7 +29,7 @@ public class ErrorProneJavaBackendCompiler implements BackendCompiler {
   @NotNull
   @Override
   public String getPresentableName() {
-    return "Javac with error-prone";
+    return ErrorProneBundle.message("compiler.name.javac.with.error.prone");
   }
 
   @NotNull
