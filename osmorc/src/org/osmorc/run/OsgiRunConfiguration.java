@@ -29,7 +29,7 @@ import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.util.JavaParametersUtil;
-import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -183,7 +183,7 @@ public class OsgiRunConfiguration extends RunConfigurationBase<Element> implemen
     if (framework != null) {
       String name = framework.getAttributeValue(INSTANCE_ATTRIBUTE);
       if (name != null) {
-        ApplicationSettings settings = ServiceManager.getService(ApplicationSettings.class);
+        ApplicationSettings settings = ApplicationManager.getApplication().getService(ApplicationSettings.class);
         instanceToUse = settings.getFrameworkInstance(name);
       }
     }

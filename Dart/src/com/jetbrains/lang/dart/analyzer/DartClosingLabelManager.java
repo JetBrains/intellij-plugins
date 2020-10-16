@@ -4,7 +4,6 @@ package com.jetbrains.lang.dart.analyzer;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.colors.FontPreferences;
@@ -51,7 +50,7 @@ public class DartClosingLabelManager implements @NotNull Disposable {
   }
 
   public static DartClosingLabelManager getInstance() {
-    return ServiceManager.getService(DartClosingLabelManager.class);
+    return ApplicationManager.getApplication().getService(DartClosingLabelManager.class);
   }
 
   public void setShowClosingLabels(boolean value) {

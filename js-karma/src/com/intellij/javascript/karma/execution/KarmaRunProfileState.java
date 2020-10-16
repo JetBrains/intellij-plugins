@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.karma.execution;
 
 import com.intellij.coverage.CoverageExecutor;
@@ -15,7 +16,7 @@ import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerRegistry;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.util.NodePackage;
-import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -78,7 +79,7 @@ public class KarmaRunProfileState implements RunProfileState {
       server = null;
     }
     if (server == null) {
-      JSLocationResolver locationResolver = ServiceManager.getService(JSLocationResolver.class);
+      JSLocationResolver locationResolver = ApplicationManager.getApplication().getService(JSLocationResolver.class);
       if (locationResolver != null) {
         // dependency is optional
         locationResolver.dropCache(myRunConfiguration);

@@ -24,8 +24,8 @@
  */
 package org.osmorc.settings;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.util.containers.ContainerUtil;
@@ -54,7 +54,7 @@ public class ApplicationSettings implements PersistentStateComponent<Application
   private List<LibraryBundlificationRule> myRules = ContainerUtil.newArrayList(new LibraryBundlificationRule());
 
   public static ApplicationSettings getInstance() {
-    return ServiceManager.getService(ApplicationSettings.class);
+    return ApplicationManager.getApplication().getService(ApplicationSettings.class);
   }
 
   @Override

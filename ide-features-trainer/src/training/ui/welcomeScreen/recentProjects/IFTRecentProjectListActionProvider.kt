@@ -1,11 +1,11 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.ui.welcomeScreen.recentProjects
 
 import com.intellij.ide.ProjectGroupActionGroup
 import com.intellij.ide.RecentProjectListActionProvider
 import com.intellij.ide.ReopenProjectAction
 import com.intellij.openapi.actionSystem.AnAction
-import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.application.ApplicationManager
 import training.ui.welcomeScreen.recentProjects.actionGroups.GroupManager
 
 class IFTRecentProjectListActionProvider : RecentProjectListActionProvider() {
@@ -27,7 +27,7 @@ class IFTRecentProjectListActionProvider : RecentProjectListActionProvider() {
 
   companion object {
     val instance: IFTRecentProjectListActionProvider
-      get() = ServiceManager.getService(IFTRecentProjectListActionProvider::class.java)
+      get() = ApplicationManager.getApplication().getService(IFTRecentProjectListActionProvider::class.java)
   }
 
 }
