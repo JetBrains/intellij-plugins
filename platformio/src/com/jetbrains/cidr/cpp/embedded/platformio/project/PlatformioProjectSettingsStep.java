@@ -13,6 +13,7 @@ import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.platform.DirectoryProjectGenerator;
@@ -138,12 +139,13 @@ public class PlatformioProjectSettingsStep extends ProjectSettingsStepBase<Ref<B
       }.queue();
     }
     catch (Throwable e) {
-      String errorMessage = String.valueOf(ExceptionUtil.getMessage(e));
+      @NlsSafe String errorMessage = String.valueOf(ExceptionUtil.getMessage(e));
       setErrorText(errorMessage);
+      @NlsSafe String className = e.getClass().getSimpleName();
       Notification notification =
         PlatformioService.NOTIFICATION_GROUP.createNotification(
           ClionEmbeddedPlatformioBundle.message("platformio.utility.failed"),
-          e.getClass().getSimpleName(),
+          className,
           errorMessage, NotificationType.WARNING);
       Notifications.Bus.notify(notification);
     }

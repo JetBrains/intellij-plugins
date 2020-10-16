@@ -198,17 +198,19 @@ public class PlatformioLauncher extends CLionLauncher {
                                           @NotNull ExecutionConsole console,
                                           @NotNull List<? super AnAction> actions) throws ExecutionException {
 
-    actions.add(new AnAction(() -> "Reset", () -> EmbeddedBundle.message("mcu.reset.action.description"), CLionEmbeddedIcons.ResetMcu) {
-      @Override
-      public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
-        XDebugSession session = XDebuggerManager.getInstance(getProject()).getDebugSession(console);
-        if (session != null) {
-          ((CidrDebugProcess)session.getDebugProcess()).postCommand(
-            drv -> ((GDBDriver)drv).interruptAndExecuteConsole("pio_reset_halt_target")
-          );
+    actions.add(
+      new AnAction(() -> EmbeddedBundle.message("mcu.reset.action.title"), () -> EmbeddedBundle.message("mcu.reset.action.description"),
+                   CLionEmbeddedIcons.ResetMcu) {
+        @Override
+        public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
+          XDebugSession session = XDebuggerManager.getInstance(getProject()).getDebugSession(console);
+          if (session != null) {
+            ((CidrDebugProcess)session.getDebugProcess()).postCommand(
+              drv -> ((GDBDriver)drv).interruptAndExecuteConsole("pio_reset_halt_target")
+            );
+          }
         }
-      }
-    });
+      });
   }
 
   @Nullable

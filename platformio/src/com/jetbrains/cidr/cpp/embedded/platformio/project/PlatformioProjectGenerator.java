@@ -22,6 +22,7 @@ import com.intellij.openapi.progress.PerformInBackgroundOption;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -57,8 +58,8 @@ import javax.swing.*;
 import java.io.IOException;
 import java.util.List;
 
-import static com.jetbrains.cidr.cpp.embedded.stm32cubemx.CMakeSTM32CubeMXProjectGenerator.EMBEDDED_PROJECTS_GROUP_NAME;
 import static com.jetbrains.cidr.cpp.embedded.stm32cubemx.CMakeSTM32CubeMXProjectGenerator.EMBEDDED_PROJECTS_GROUP_DISPLAY_NAME;
+import static com.jetbrains.cidr.cpp.embedded.stm32cubemx.CMakeSTM32CubeMXProjectGenerator.EMBEDDED_PROJECTS_GROUP_NAME;
 
 public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<BoardInfo>>
   implements CustomStepProjectGenerator<Ref<BoardInfo>> {
@@ -257,7 +258,7 @@ public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<BoardI
     }
   }
 
-  private static void showError(@NotNull String message) {
+  private static void showError(@NotNull @NlsContexts.NotificationContent String message) {
     Notification notification = PlatformioService.NOTIFICATION_GROUP.createNotification(
       ClionEmbeddedPlatformioBundle.message("project.init.failed"), null,
       message, NotificationType.WARNING);
