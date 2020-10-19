@@ -19,7 +19,6 @@
 
   <depends>com.intellij.modules.lang</depends>
   <depends>com.intellij.modules.vcs</depends>
-  <depends>com.intellij.modules.ultimate</depends>
 
   <actions>
     <group id="PerforceDirect.Menu" class="org.jetbrains.idea.perforce.actions.PerforceMenu" popup="true">
