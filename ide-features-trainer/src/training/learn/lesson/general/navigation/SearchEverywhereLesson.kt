@@ -19,6 +19,7 @@ import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonUtil
 import training.ui.LearningUiHighlightingManager
+import java.awt.event.KeyEvent
 
 abstract class SearchEverywhereLesson(module: Module, lang: String)
   : KLesson("Search everywhere", LessonsBundle.message("search.everywhere.lesson.name"), module, lang) {
@@ -28,7 +29,7 @@ abstract class SearchEverywhereLesson(module: Module, lang: String)
 
   override val lessonContent: LessonContext.() -> Unit = {
     actionTask("SearchEverywhere") {
-      LessonsBundle.message("search.everywhere.invoke.search.everywhere", LessonUtil.actionName(it), LessonUtil.rawShift())
+      LessonsBundle.message("search.everywhere.invoke.search.everywhere", LessonUtil.actionName(it), LessonUtil.rawKeyStroke(KeyEvent.VK_SHIFT))
     }
 
     task("que") {

@@ -82,6 +82,7 @@ class JavaLearningCourse : LearningCourseBase(JavaLanguage.INSTANCE.id) {
         JavaFileStructureLesson(it),
         JavaDeclarationAndUsagesLesson(it),
         JavaInheritanceHierarchyLesson(it),
+        JavaRecentFilesLesson(it),
         JavaSearchEverywhereLesson(it),
         JavaOccurrencesLesson(it),
       )

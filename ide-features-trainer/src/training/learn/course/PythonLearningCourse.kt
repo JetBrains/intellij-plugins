@@ -16,6 +16,7 @@ import training.learn.lesson.python.basic.PythonSurroundAndUnwrapLesson
 import training.learn.lesson.python.completion.*
 import training.learn.lesson.python.navigation.PythonDeclarationAndUsagesLesson
 import training.learn.lesson.python.navigation.PythonFileStructureLesson
+import training.learn.lesson.python.navigation.PythonRecentFilesLesson
 import training.learn.lesson.python.navigation.PythonSearchEverywhereLesson
 import training.learn.lesson.python.refactorings.PythonInPlaceRefactoringLesson
 import training.learn.lesson.python.refactorings.PythonQuickFixesRefactoringLesson
@@ -87,6 +88,7 @@ class PythonLearningCourse : LearningCourseBase(PythonLanguage.INSTANCE.id) {
       listOf(
         PythonDeclarationAndUsagesLesson(it),
         PythonFileStructureLesson(it),
+        PythonRecentFilesLesson(it),
         PythonSearchEverywhereLesson(it),
       )
     },

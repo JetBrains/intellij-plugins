@@ -109,18 +109,19 @@ object LessonUtil {
     return "<strong>${name}</strong>"
   }
 
-  fun rawEnter(): String {
-    val keyStrokeEnter = KeymapUtil.getKeyStrokeText(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0))
-    return "<raw_action>$keyStrokeEnter</raw_action>"
+  /**
+   * Use constants from [java.awt.event.KeyEvent] as keyCode.
+   * For example: rawKeyStroke(KeyEvent.VK_SHIFT)
+   */
+  fun rawKeyStroke(keyCode: Int): String {
+    val keyStroke = KeymapUtil.getKeyStrokeText(KeyStroke.getKeyStroke(keyCode, 0))
+    return "<raw_action>$keyStroke</raw_action>"
   }
+
+  fun rawEnter(): String = rawKeyStroke(KeyEvent.VK_ENTER)
 
   fun rawCtrlEnter(): String {
     return "<raw_action>${if (SystemInfo.isMacOSMojave) "\u2318\u23CE" else "Ctrl + Enter"}</raw_action>"
-  }
-
-  fun rawShift(): String {
-    val keyStrokeShift = KeymapUtil.getKeyStrokeText(KeyStroke.getKeyStroke(KeyEvent.VK_SHIFT, 0))
-    return "<raw_action>$keyStrokeShift</raw_action>"
   }
 
   fun checkToolbarIsShowing(ui: ActionButton): Boolean   {
