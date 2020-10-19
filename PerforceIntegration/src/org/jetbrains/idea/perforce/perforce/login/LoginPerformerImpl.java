@@ -152,7 +152,7 @@ public class LoginPerformerImpl implements LoginPerformer {
 
   private boolean isSSOAuthRequired() {
     try {
-      final ExecResult infoResult = myConnection.runP4TaggedCommandLine(mySettings, new String[]{"info"}, null);
+      final ExecResult infoResult = myConnection.runP4CommandLine(mySettings, new String[]{"-ztag"}, new String[]{"info"}, null);
       String infoStr = infoResult.getStdout();
       if (infoStr.contains(SSO_REQUIRED) || infoStr.contains(SSO_OPTIONAL)) {
         LOG.debug("Login: ssoAuth enabled");

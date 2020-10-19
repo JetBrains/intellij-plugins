@@ -84,13 +84,16 @@ public abstract class AbstractP4Connection implements P4Connection {
   }
 
   @Override
-  public ExecResult runP4TaggedCommandLine(final PerforceSettings settings,
-                                     final String[] strings,
+  public ExecResult runP4CommandLine(final PerforceSettings settings,
+                                     final String[] conArgs,
+                                     final String[] p4args,
                                      final StringBuffer stringBuffer) throws VcsException {
     final ExecResult result = new ExecResult();
-    settings.useTaggedOutput = true;
-    runP4CommandLine(settings, strings, stringBuffer);
-    settings.useTaggedOutput = false;
+    try {
+      runP4CommandImpl(settings, conArgs, p4args, result, stringBuffer);
+    } catch (RuntimeException e) {
+      throw new VcsException(e);
+    }
     return result;
   }
 

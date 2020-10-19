@@ -18,7 +18,7 @@ public interface P4Connection {
   ExecResult runP4CommandLine(final PerforceSettings settings, @NonNls final String[] strings, @Nullable final StringBuffer stringBuffer)
     throws VcsException;
 
-  ExecResult runP4TaggedCommandLine(final PerforceSettings settings, @NonNls final String[] strings, @Nullable final StringBuffer stringBuffer)
+  ExecResult runP4CommandLine(final PerforceSettings settings, @NonNls @NotNull String[] conArgs, @NonNls @NotNull String[] p4args, @Nullable final StringBuffer stringBuffer)
           throws VcsException;
 
   @NotNull
