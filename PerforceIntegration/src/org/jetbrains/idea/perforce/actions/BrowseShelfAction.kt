@@ -44,7 +44,7 @@ class BrowseShelfAction : DumbAwareAction(PerforceBundle.messagePointer("shelf.b
   }
 
   companion object {
-    private val LOG = Logger.getInstance("#org.jetbrains.idea.perforce.actions.BrowseShelfAction")
+    private val LOG = Logger.getInstance(BrowseShelfAction::class.java)
 
     @JvmStatic
     fun browseShelf(project: Project, shelvedChanges: List<ShelvedChange>) {
