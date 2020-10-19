@@ -25,6 +25,7 @@ public class LoginPerformerImpl implements LoginPerformer {
   @NonNls private final static String CONNECT_FAILED = "Connect to server failed; check $P4PORT.";
   @NonNls private final static String CONNECTION_REFUSED = "Connection refused";
   @NonNls private final static String SSO_REQUIRED = "ssoAuth required";
+  @NonNls private final static String SSO_OPTIONAL = "ssoAuth optional";
 
   private final P4Connection myConnection;
   private final PerforceSettings mySettings;
@@ -153,8 +154,8 @@ public class LoginPerformerImpl implements LoginPerformer {
     try {
       final ExecResult infoResult = myConnection.runP4TaggedCommandLine(mySettings, new String[]{"info"}, null);
       String infoStr = infoResult.getStdout();
-      if (infoStr.contains(SSO_REQUIRED)) {
-        LOG.debug("Login: ssoAuth required");
+      if (infoStr.contains(SSO_REQUIRED) || infoStr.contains(SSO_OPTIONAL)) {
+        LOG.debug("Login: ssoAuth enabled");
         return true;
       }
     } catch (VcsException e) {
