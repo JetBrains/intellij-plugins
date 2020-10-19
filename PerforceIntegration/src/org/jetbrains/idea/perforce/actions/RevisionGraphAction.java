@@ -29,7 +29,6 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vcs.FileStatus;
@@ -69,9 +68,6 @@ public class RevisionGraphAction extends DumbAwareAction {
 
     //create the command
     cmd.addParameters("-p", port, "-u", userName, "-c", clientName);
-    if (SystemInfo.isWindows) {
-      cmd.addParameters("-win", "0");
-    }
   }
 
   @Override
@@ -88,7 +84,7 @@ public class RevisionGraphAction extends DumbAwareAction {
     final PerforceClient client = PerforceManager.getInstance(project).getClient(connection);
     final PerforceSettings settings = PerforceSettings.getSettings(project);
 
-    final GeneralCommandLine cmd = new GeneralCommandLine(settings.PATH_TO_P4V);
+    final GeneralCommandLine cmd = new GeneralCommandLine(settings.PATH_TO_P4VC);
 
     try {
       addCommandParameters(cmd, client);
@@ -120,7 +116,7 @@ public class RevisionGraphAction extends DumbAwareAction {
       command.append(FileUtil.toSystemDependentName(virtualFile.getPath()));
     }
 
-    cmd.addParameters("-cmd", command.toString());
+    cmd.addParameters(command.toString());
 
     LOG.debug("Invoking p4v with command line " + cmd.getCommandLineString());
 
@@ -139,9 +135,9 @@ public class RevisionGraphAction extends DumbAwareAction {
           if (exitCode != 0) {
             Notifications.Bus.notify(
               new Notification(PerforceVcs.getKey().getName(),
-                               PerforceBundle.message("p4v.running.problems"),
-                               PerforceBundle.message("p4v.running.problems.message", cmd, exitCode, (output.length() > 0 ? PerforceBundle
-                                 .message("p4v.running.problems.output", output) : "")),
+                               PerforceBundle.message("p4vc.running.problems"),
+                               PerforceBundle.message("p4vc.running.problems.message", cmd, exitCode, (output.length() > 0 ? PerforceBundle
+                                 .message("p4vc.running.problems.output", output) : "")),
                                NotificationType.ERROR));
           }
           super.onOSProcessTerminated(exitCode);
@@ -149,13 +145,13 @@ public class RevisionGraphAction extends DumbAwareAction {
       }.startNotify();
     }
     catch (ExecutionException ex) {
-      Messages.showErrorDialog(project, PerforceBundle.message("p4v.run.failed", ex.getMessage()), PerforceBundle.message("p4v"));
+      Messages.showErrorDialog(project, PerforceBundle.message("p4vc.run.failed", ex.getMessage()), PerforceBundle.message("p4vc"));
     }
   }
 
   @NonNls
   protected String getCommandName() {
-    return "tree";
+    return "revgraph";
   }
 
   @Override

@@ -33,6 +33,18 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.HyperlinkLabel;
 import com.intellij.ui.RelativeFont;
 import com.intellij.ui.components.JBLabel;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.idea.perforce.PerforceBundle;
+import org.jetbrains.idea.perforce.application.*;
+import org.jetbrains.idea.perforce.perforce.connections.*;
+import org.jetbrains.idea.perforce.perforce.login.LoginPerformerImpl;
+import org.jetbrains.idea.perforce.perforce.login.LoginState;
+import org.jetbrains.idea.perforce.perforce.login.LoginSupport;
+import org.jetbrains.idea.perforce.perforce.login.PerforceLoginManager;
+
+import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -40,42 +52,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JTextField;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.idea.perforce.PerforceBundle;
-import org.jetbrains.idea.perforce.application.ClientRootsCache;
-import org.jetbrains.idea.perforce.application.ConnectionDiagnoseRefresher;
-import org.jetbrains.idea.perforce.application.ConnectionInfo;
-import org.jetbrains.idea.perforce.application.P4ConfigConnectionDiagnoseDialog;
-import org.jetbrains.idea.perforce.application.P4RootsInformation;
-import org.jetbrains.idea.perforce.application.PerforceClientRootsChecker;
-import org.jetbrains.idea.perforce.application.PerforceInfoAndClient;
-import org.jetbrains.idea.perforce.application.PerforceManager;
-import org.jetbrains.idea.perforce.application.PerforceVcs;
-import org.jetbrains.idea.perforce.perforce.connections.P4ConfigHelper;
-import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
-import org.jetbrains.idea.perforce.perforce.connections.P4ConnectionCalculator;
-import org.jetbrains.idea.perforce.perforce.connections.P4ParametersConnection;
-import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManager;
-import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManagerI;
-import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionProblemsNotifier;
-import org.jetbrains.idea.perforce.perforce.connections.PerforceMultipleConnections;
-import org.jetbrains.idea.perforce.perforce.connections.SingletonConnection;
-import org.jetbrains.idea.perforce.perforce.login.LoginPerformerImpl;
-import org.jetbrains.idea.perforce.perforce.login.LoginState;
-import org.jetbrains.idea.perforce.perforce.login.LoginSupport;
-import org.jetbrains.idea.perforce.perforce.login.PerforceLoginManager;
 
 public class ConfigPanel {
   private JTextField m_port;
@@ -94,7 +70,7 @@ public class ConfigPanel {
   private JCheckBox myIsEnabled;
   private JCheckBox myUseLogin;
   private JTextField myServerTimeoutField;
-  private TextFieldWithBrowseButton myP4VPathField;
+  private TextFieldWithBrowseButton myP4VCPathField;
   private JCheckBox myUsePerforceJobs;
   private JCheckBox myShowIntegratedChangelistsInCheckBox;
   private JRadioButton myUseP4CONFIGOrDefaultRadioButton;
@@ -174,29 +150,20 @@ public class ConfigPanel {
                                          FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor());
 
     FileChooserDescriptor fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFileOrFolderDescriptor();
-    myP4VPathField.addActionListener(new ComponentWithBrowseButton.BrowseFolderActionListener<>(
-      PerforceBundle.message("dialog.title.path.to.p4.exe"), PerforceBundle.message("dialog.description.path.to.p4v.exe"), myP4VPathField,
+    myP4VCPathField.addActionListener(new ComponentWithBrowseButton.BrowseFolderActionListener<>(
+      PerforceBundle.message("dialog.title.path.to.p4.exe"), PerforceBundle.message("dialog.description.path.to.p4vc.exe"), myP4VCPathField,
       project, fileChooserDescriptor, TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT) {
       @Override
       protected VirtualFile getInitialFile() {
         final VirtualFile file = super.getInitialFile();
         if (file == null && SystemInfo.isMac) {
-          return LocalFileSystem.getInstance().refreshAndFindFileByPath("/Applications/p4v.app");
+          return LocalFileSystem.getInstance().refreshAndFindFileByPath("/Applications/p4vc");
         }
         return file;
       }
 
       @Override
       protected void onFileChosen(@NotNull VirtualFile chosenFile) {
-        final String trim = chosenFile.getPath();
-        if (SystemInfo.isMac && trim.endsWith("/p4v.app")) {
-          final String actualPath = trim + "/Contents/MacOS/p4v";
-          final VirtualFile actualFile = LocalFileSystem.getInstance().findFileByPath(actualPath);
-          if (actualFile != null) {
-            super.onFileChosen(actualFile);
-            return;
-          }
-        }
         super.onFileChosen(chosenFile);
       }
     });
@@ -242,7 +209,7 @@ public class ConfigPanel {
     m_user.setText(settings.user);
     m_showCmds.setSelected(settings.showCmds);
     m_pathToExec.setText(settings.pathToExec);
-    myP4VPathField.setText(settings.PATH_TO_P4V);
+    myP4VCPathField.setText(settings.PATH_TO_P4VC);
 
     final File dumpFile = PerforceRunner.getDumpFile();
     if (dumpFile.exists()) {
@@ -305,7 +272,7 @@ public class ConfigPanel {
     if (execChanged) {
       PerforceManager.getInstance(myProject).resetClientVersion();
     }
-    settings.PATH_TO_P4V = myP4VPathField.getText();
+    settings.PATH_TO_P4VC = myP4VCPathField.getText();
     settings.CHARSET = (String)myCharset.getSelectedItem();
     settings.SHOW_BRANCHES_HISTORY = myShowBranchingHistory.isSelected();
     settings.USE_LOGIN = myUseLogin.isSelected();
@@ -328,7 +295,7 @@ public class ConfigPanel {
     if (settings.showCmds != m_showCmds.isSelected()) return false;
     if (settings.SHOW_BRANCHES_HISTORY != myShowBranchingHistory.isSelected()) return false;
     if (!Objects.equals(settings.pathToExec, m_pathToExec.getText().trim())) return false;
-    if (!Objects.equals(settings.PATH_TO_P4V, myP4VPathField.getText().trim())) return false;
+    if (!Objects.equals(settings.PATH_TO_P4VC, myP4VCPathField.getText().trim())) return false;
     if (! Comparing.equal(settings.USE_PERFORCE_JOBS, myUsePerforceJobs.isSelected())) return false;
     if (! Comparing.equal(settings.myCanGoOffline, mySwitchToOffline.isSelected())) return false;
     if (! Comparing.equal(settings.SHOW_INTEGRATED_IN_COMMITTED_CHANGES, myShowIntegratedChangelistsInCheckBox.isSelected())) return false;

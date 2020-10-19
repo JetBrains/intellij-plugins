@@ -77,7 +77,7 @@ public final class PerforceSettings implements PersistentStateComponent<Perforce
   public boolean showCmds = false;
 
   public @NlsSafe String pathToExec = "p4";
-  public @NlsSafe String PATH_TO_P4V = "p4v";
+  public @NlsSafe String PATH_TO_P4VC = "p4vc";
 
   public boolean myCanGoOffline = true;
 
