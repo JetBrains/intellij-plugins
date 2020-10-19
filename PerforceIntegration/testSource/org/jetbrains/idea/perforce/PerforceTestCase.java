@@ -111,7 +111,7 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
   }
 
   protected String getPerforceVersion() {
-    return "2012.1";
+    return "2015.1";
   }
 
   private void initProject(final File root) {
