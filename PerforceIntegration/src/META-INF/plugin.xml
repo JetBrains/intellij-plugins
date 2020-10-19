@@ -1,5 +1,5 @@
 <idea-plugin>
-  <name>Perforce</name>
+  <name>Perforce Helix Core</name>
   <id>PerforceDirectPlugin</id>
   <vendor>JetBrains</vendor>
   <resource-bundle>messages.PerforceBundle</resource-bundle>
