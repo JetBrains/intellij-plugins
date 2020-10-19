@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 public class LoginPerformerImpl implements LoginPerformer {
   private final static Logger LOG = Logger.getInstance(LoginPerformerImpl.class);
   @NonNls private static final String LOGGED_IN_MESSAGE = "logged in";
+  @NonNls private static final String NAVIGATE_MESSAGE = "Navigate to URL";
   @NonNls private final static String CONNECT_FAILED = "Connect to server failed; check $P4PORT.";
   @NonNls private final static String CONNECTION_REFUSED = "Connection refused";
 
@@ -109,7 +110,7 @@ public class LoginPerformerImpl implements LoginPerformer {
       final ExecResult loginResult = myConnection.runP4CommandLine(mySettings, new String[]{"login"}, data);
       String stdOut = loginResult.getStdout();
       String stdErr = loginResult.getStderr();
-      if (stdErr.length() > 0 || !stdOut.contains(LOGGED_IN_MESSAGE)) {
+      if ((stdErr.length() > 0 && !stdErr.contains(NAVIGATE_MESSAGE)) || !stdOut.contains(LOGGED_IN_MESSAGE)) {
         String message = !stdOut.isEmpty() && !stdErr.isEmpty() ? stdOut + "\n" + stdErr : stdOut + stdErr;
         if (StringUtil.isEmptyOrSpaces(message) && loginResult.getException() != null) {
           message = loginResult.getException().getMessage();
@@ -129,6 +130,10 @@ public class LoginPerformerImpl implements LoginPerformer {
 
   @Override
   public LoginState loginWithStoredPassword() {
+    if (isSSOAuthRequired()) {
+      // no password required for SSO
+      return login("");
+    }
     String password = myConnection instanceof P4ParametersConnection
                       ? ((P4ParametersConnection)myConnection).getParameters().getPassword()
                       : mySettings.getPasswd();
@@ -141,5 +146,23 @@ public class LoginPerformerImpl implements LoginPerformer {
   @Override
   public P4Connection getMyConnection() {
     return myConnection;
+  }
+
+  private boolean isSSOAuthRequired() {
+    try {
+      mySettings.useTaggedOutput = true;
+      final ExecResult infoResult = myConnection.runP4CommandLine(mySettings, new String[]{"info"}, null);
+      String infoStr = infoResult.getStdout();
+      if (infoStr!=null && infoStr.contains("ssoAuth required")) {
+        LOG.info("Login: ssoAuth required");
+        return true;
+      }
+    } catch (VcsException e) {
+      LOG.warn("Login failed: " + e.getMessage());
+      return false;
+    } finally {
+      mySettings.useTaggedOutput = false;
+    }
+    return false;
   }
 }

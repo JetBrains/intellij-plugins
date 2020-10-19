@@ -70,6 +70,7 @@ public final class PerforceSettings implements PersistentStateComponent<Perforce
   public Map<ConnectionId, ParticularConnectionSettings> myConnectionSettings = new LinkedHashMap<>();
 
   public boolean useP4CONFIG = true;
+  public boolean useTaggedOutput = false;
   public String port = "<perforce_server>:1666";
   public String client = "";
   public String user = "";
@@ -142,6 +143,10 @@ public final class PerforceSettings implements PersistentStateComponent<Perforce
     if (!isNoneCharset()) {
       args.add("-C");
       args.add(CHARSET);
+    }
+
+    if (useTaggedOutput) {
+      args.add("-ztag");
     }
 
     return ArrayUtilRt.toStringArray(args);
