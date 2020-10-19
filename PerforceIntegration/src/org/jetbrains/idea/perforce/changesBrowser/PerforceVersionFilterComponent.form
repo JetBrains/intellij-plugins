@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.jetbrains.idea.perforce.changesBrowser.PerforceVersionFilterComponent">
+  <grid id="ea841" binding="myPanel" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="0" left="0" bottom="0" right="0"/>
+    <constraints>
+      <xy x="14" y="7" width="568" height="55"/>
+      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <grid id="4fc7f" row-count="1" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <xy x="2" y="2" width="564" height="26"/>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="a07d7" class="javax.swing.JCheckBox" binding="myUseUserFilter">
+            <constraints>
+              <xy x="2" y="2" width="273" height="22"/>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0"/>
+            </constraints>
+            <properties>
+              <text resource-bundle="messages/PerforceBundle" key="label.browse.changes.filter.user"/>
+            </properties>
+          </component>
+          <component id="d7e7c" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="myUserField">
+            <constraints>
+              <xy x="285" y="3" width="100" height="20"/>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0">
+                <preferred-size width="100" height="-1"/>
+              </grid>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="380e2" class="javax.swing.JCheckBox" binding="myUseClientFilter">
+            <constraints>
+              <xy x="395" y="2" width="57" height="22"/>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0"/>
+            </constraints>
+            <properties>
+              <text resource-bundle="messages/PerforceBundle" key="label.browse.changes.filter.client"/>
+            </properties>
+          </component>
+          <component id="c7ffd" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="myClientField">
+            <constraints>
+              <xy x="462" y="3" width="100" height="20"/>
+              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0">
+                <preferred-size width="100" height="-1"/>
+              </grid>
+            </constraints>
+            <properties/>
+          </component>
+        </children>
+      </grid>
+      <xy id="a8b4b" binding="myStandardPanel" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <xy x="2" y="33" width="564" height="20"/>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children/>
+      </xy>
+    </children>
+  </grid>
+</form>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.jetbrains.idea.perforce.application.PerforceIntegratePanel">
+  <grid id="fc8b8" binding="myPanel" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="0" left="0" bottom="0" right="0"/>
+    <constraints>
+      <xy x="29" y="45" width="350" height="177"/>
+      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <component id="68c70" class="javax.swing.JCheckBox" binding="myRunResolve">
+        <constraints>
+          <xy x="2" y="153" width="275" height="22"/>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0"/>
+        </constraints>
+        <properties>
+          <text resource-bundle="messages/PerforceBundle" key="checkbox.run.resolve.after.sync"/>
+        </properties>
+      </component>
+      <component id="d37f4" class="javax.swing.JCheckBox" binding="myRevertUnchanged">
+        <constraints>
+          <xy x="2" y="126" width="266" height="22"/>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0"/>
+        </constraints>
+        <properties>
+          <text resource-bundle="messages/PerforceBundle" key="checkbox.update.options.revert.unchanged.files.before.sync"/>
+        </properties>
+      </component>
+      <grid id="e95a3" binding="myParticularConnectionsPanel" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <xy x="2" y="2" width="346" height="119"/>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="3" anchor="0" fill="3" indent="0"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children/>
+      </grid>
+    </children>
+  </grid>
+</form>
