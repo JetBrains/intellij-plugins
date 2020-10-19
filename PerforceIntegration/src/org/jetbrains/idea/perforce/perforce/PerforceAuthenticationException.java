@@ -8,6 +8,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.vcs.VcsConnectionProblem;
 import com.intellij.openapi.vcs.VcsException;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.perforce.PerforceBundle;
 import org.jetbrains.idea.perforce.actions.MessageManager;
@@ -23,7 +24,7 @@ public class PerforceAuthenticationException extends VcsConnectionProblem {
   private final P4Connection myConnection;
   private final Project myProject;
 
-  public PerforceAuthenticationException(String message, @NotNull P4Connection connection, Project project) {
+  public PerforceAuthenticationException(@Nls String message, @NotNull P4Connection connection, Project project) {
     super(message);
     myConnection = connection;
     myProject = project;

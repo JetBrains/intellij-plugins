@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.vcs.VcsConnectionProblem;
 import com.intellij.openapi.vcs.ui.VcsBalloonProblemNotifier;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.idea.perforce.PerforceBundle;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 import org.jetbrains.idea.perforce.perforce.login.PerforceLoginManager;
@@ -15,7 +16,7 @@ public class PerforcePasswordNotAllowedException extends VcsConnectionProblem {
   private final Project myProject;
   private final P4Connection myConnection;
 
-  public PerforcePasswordNotAllowedException(String message, Project project, P4Connection connection) {
+  public PerforcePasswordNotAllowedException(@Nls String message, Project project, P4Connection connection) {
     super(message);
     myProject = project;
     myConnection = connection;

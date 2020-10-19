@@ -73,7 +73,7 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <vcs name="Perforce" vcsClass="org.jetbrains.idea.perforce.application.PerforceVcs" displayName="Perforce"/>
-    <projectConfigurable id="vcs.Perforce" displayName="Perforce" instance="org.jetbrains.idea.perforce.perforce.PerforceConfigurable"
+    <projectConfigurable id="vcs.Perforce" key="settings.perforce.option.group" instance="org.jetbrains.idea.perforce.perforce.PerforceConfigurable"
                          parentId="project.propVCSSupport.Mappings" groupWeight="-500"/>
     <vcs.changeListDecorator implementation="org.jetbrains.idea.perforce.application.PerforceLocalChangeListDecorator"/>
     <vcsCheckinHandlerFactory implementation="org.jetbrains.idea.perforce.application.PerforceCheckinHandlerFactory"/>
