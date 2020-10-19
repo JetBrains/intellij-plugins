@@ -93,7 +93,7 @@ public class RevisionGraphAction extends DumbAwareAction {
       return;
     }
 
-    @NonNls StringBuilder command = new StringBuilder(getCommandName()).append(' ');
+    cmd.addParameters(getCommandName());
 
     FStat fStat = null;
     if (settings.ENABLED) {
@@ -110,13 +110,11 @@ public class RevisionGraphAction extends DumbAwareAction {
       }
     }
     if (fStat != null && !StringUtil.isEmpty(fStat.depotFile)) {
-      command.append(fStat.depotFile);
+      cmd.addParameters(fStat.depotFile);
     }
     else {
-      command.append(FileUtil.toSystemDependentName(virtualFile.getPath()));
+      cmd.addParameters(FileUtil.toSystemDependentName(virtualFile.getPath()));
     }
-
-    cmd.addParameters(command.toString());
 
     LOG.debug("Invoking p4v with command line " + cmd.getCommandLineString());
 
