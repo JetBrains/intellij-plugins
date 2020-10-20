@@ -13,15 +13,19 @@ import java.util.*
 
 class VueAttributeNameParser private constructor() {
   companion object {
+    fun parse(attributeName: CharSequence, context: String? = null, isTopLevel: Boolean = false): VueAttributeInfo {
+      return parse(attributeName) { it.isValidIn(context, isTopLevel) }
+    }
 
-    fun parse(attributeName: CharSequence, context: String? = null, isTopLevel: Boolean = false): VueAttributeInfo =
-      parse(attributeName) { it.isValidIn(context, isTopLevel) }
-
-    fun parse(attributeName: CharSequence, context: XmlTag): VueAttributeInfo =
-      parse(attributeName) { it.isValidIn(context) }
+    fun parse(attributeName: CharSequence, context: XmlTag): VueAttributeInfo {
+      return parse(attributeName) { it.isValidIn(context) }
+    }
 
     private fun parse(attributeName: CharSequence, isValid: (VueAttributeKind) -> Boolean): VueAttributeInfo {
-      if (attributeName.isEmpty()) return VueAttributeInfo("", VueAttributeKind.PLAIN)
+      if (attributeName.length == 0) {
+        return VueAttributeInfo("", VueAttributeKind.PLAIN)
+      }
+
       val name: String
       val kind: VueDirectiveKind
       var paramsPos: Int
