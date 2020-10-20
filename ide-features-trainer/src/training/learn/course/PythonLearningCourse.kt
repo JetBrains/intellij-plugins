@@ -11,9 +11,11 @@ import training.learn.lesson.general.assistance.ParameterInfoLesson
 import training.learn.lesson.general.assistance.QuickPopupsLesson
 import training.learn.lesson.general.refactorings.ExtractMethodCocktailSortLesson
 import training.learn.lesson.general.refactorings.ExtractVariableFromBubbleLesson
+import training.learn.lesson.kimpl.LessonUtil
 import training.learn.lesson.python.assistance.PythonEditorCodingAssistanceLesson
 import training.learn.lesson.python.basic.PythonSurroundAndUnwrapLesson
 import training.learn.lesson.python.completion.*
+import training.learn.lesson.python.essensial.PythonOnboardingTour
 import training.learn.lesson.python.navigation.PythonDeclarationAndUsagesLesson
 import training.learn.lesson.python.navigation.PythonFileStructureLesson
 import training.learn.lesson.python.navigation.PythonRecentFilesLesson
@@ -24,9 +26,24 @@ import training.learn.lesson.python.refactorings.PythonRefactorMenuLesson
 import training.learn.lesson.python.refactorings.PythonRenameLesson
 import training.learn.lesson.python.run.PythonDebugLesson
 import training.learn.lesson.python.run.PythonRunConfigurationLesson
+import training.util.switchOnExperimentalLessons
 
 class PythonLearningCourse : LearningCourseBase(PythonLanguage.INSTANCE.id) {
-  override fun modules() = listOf(
+  override fun modules() = (if (switchOnExperimentalLessons) experimentalModules() else emptyList()) + stableModules()
+
+  private fun experimentalModules() = listOf(
+    @Suppress("HardCodedStringLiteral")
+    LearningModule(name = "Essential",
+                   description = "A brief overview of the main ${LessonUtil.productName} features.",
+                   primaryLanguage = langSupport,
+                   moduleType = ModuleType.PROJECT) {
+      listOf(
+        PythonOnboardingTour(it),
+      )
+    },
+  )
+
+  private fun stableModules() = listOf(
     LearningModule(name = LessonsBundle.message("editor.basics.module.name"),
                    description = LessonsBundle.message("editor.basics.module.description"),
                    primaryLanguage = langSupport,
