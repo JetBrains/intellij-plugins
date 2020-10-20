@@ -3,8 +3,10 @@ package org.angular2.editor;
 
 import com.intellij.javascript.JSFunctionWithSubstitutor;
 import com.intellij.javascript.JSParameterInfoHandler;
+import com.intellij.lang.javascript.psi.JSFunctionType;
 import com.intellij.lang.parameterInfo.CreateParameterInfoContext;
 import com.intellij.lang.typescript.hint.TypeScriptParameterInfoHandler;
+import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.utils.parameterInfo.MockCreateParameterInfoContext;
 import com.intellij.testFramework.utils.parameterInfo.MockParameterInfoUIContext;
 import com.intellij.util.containers.ContainerUtil;
@@ -34,12 +36,11 @@ public class Angular2PipeParameterInfoTest extends Angular2CodeInsightFixtureTes
   }
 
   private static String getPresentation(Object parameterInfoElement) {
-    assertTrue(parameterInfoElement instanceof JSFunctionWithSubstitutor);
-    final JSFunctionWithSubstitutor jsFunctionWithSubstitutor =
-      (JSFunctionWithSubstitutor)parameterInfoElement;
+    assertTrue(parameterInfoElement instanceof JSFunctionType);
+    final JSFunctionType jsFunctionType = (JSFunctionType)parameterInfoElement;
     final JSParameterInfoHandler parameterInfoHandler = new JSParameterInfoHandler();
-    MockParameterInfoUIContext context = new MockParameterInfoUIContext<>(jsFunctionWithSubstitutor.myFunctionItem);
-    parameterInfoHandler.updateUI(jsFunctionWithSubstitutor, context);
+    MockParameterInfoUIContext<PsiElement> context = new MockParameterInfoUIContext<>(jsFunctionType.getSourceFunctionItem());
+    parameterInfoHandler.updateUI(jsFunctionType, context);
     return context.getText();
   }
 }
