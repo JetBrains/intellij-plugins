@@ -268,8 +268,8 @@ Vue.options.delimiters = ['<%', '%>']
   fun testTemplateInjectionVueLib() {
     myFixture.configureByFile(getTestName(false) + ".js")
     checkParseTree(".off")
-    JSTestUtils.addJsLibrary(project, "vue", null, myFixture.tempDirFixture.createFile("foo.js"),
-                             null, ScriptingLibraryModel.LibraryLevel.GLOBAL)
+    JSTestUtils.addJsLibrary(project, "vue", myFixture.testRootDisposable, null,
+                             myFixture.tempDirFixture.createFile("foo.js"), null, ScriptingLibraryModel.LibraryLevel.GLOBAL)
     checkParseTree(".on")
   }
 
