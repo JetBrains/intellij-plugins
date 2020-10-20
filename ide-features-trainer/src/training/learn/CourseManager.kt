@@ -22,11 +22,14 @@ import training.learn.lesson.LessonManager
 import training.ui.LearnToolWindowFactory
 import training.ui.LearningUiManager
 import training.util.isLearningDocumentationMode
+import training.util.switchOnExperimentalLessons
 
 class CourseManager internal constructor() : Disposable {
   val mapModuleVirtualFile: MutableMap<Module, VirtualFile> = ContainerUtil.createWeakMap()
 
   private var allModules: List<Module>? = null
+
+  private var currentConfiguration = switchOnExperimentalLessons
 
   val modules: List<Module>
     get() = LangManager.getInstance().getLangSupport()?.let { filterByLanguage(it) } ?: emptyList()
@@ -112,16 +115,18 @@ class CourseManager internal constructor() : Disposable {
       .size
   }
 
-  private fun initAllModules(): List<Module> {
-    val extensions = COURSE_MODULES_EP.extensions
-    val nonXML = extensions.map { it.instance.modules() }.flatten()
-    return nonXML
-    //return loadXmlModules()
+  private fun initAllModules(): List<Module> = COURSE_MODULES_EP.extensions.map { it.instance.modules() }.flatten()
+
+  private fun getAllModules(): List<Module> {
+    if (currentConfiguration != switchOnExperimentalLessons) {
+      allModules = null
+      currentConfiguration = switchOnExperimentalLessons
+    }
+    return allModules ?: initAllModules().also { allModules = it }
   }
 
   private fun filterByLanguage(primaryLangSupport: LangSupport): List<Module> {
-    val allModules = allModules ?: initAllModules().also { this.allModules = it }
-    return allModules.filter { it.primaryLanguage == primaryLangSupport }
+    return getAllModules().filter { it.primaryLanguage == primaryLangSupport }
   }
 
   fun getModulesByLanguage(primaryLangSupport: LangSupport): List<Module> = filterByLanguage(primaryLangSupport)

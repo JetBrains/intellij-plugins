@@ -108,5 +108,9 @@
                  description="Turn on it to look at new developing UI for IFT"
                  defaultValue="FALSE"
                  restartRequired="false"/>
+    <registryKey key="ift.experimental.lessons"
+                 description="Turn on it to preview incomplete lessons"
+                 defaultValue="FALSE"
+                 restartRequired="false"/>
   </extensions>
 </idea-plugin>
