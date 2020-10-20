@@ -86,7 +86,6 @@ class OpenLessonAction(val lesson: Lesson) : DumbAwareAction(lesson.name) {
 
       val langSupport = LangManager.getInstance().getLangSupport() ?: throw Exception("Language for learning plugin is not defined")
 
-      val vf: VirtualFile?
       var learnProject = LearningUiManager.learnProject
       if (learnProject != null && langSupport.defaultProjectName != learnProject.name) {
         learnProject = null // We are in the project from another course
@@ -96,44 +95,38 @@ class OpenLessonAction(val lesson: Lesson) : DumbAwareAction(lesson.name) {
       LOG.debug("${projectWhereToStartLesson.name}: trying to find LearnProject in opened projects ${learnProject != null}")
       if (learnProject != null) LearningUiManager.learnProject = learnProject
 
-      if (!lesson.properties.openFileAtStart) {
-        LOG.debug("${lesson.name} does not open any file at the start")
-        vf = null
-      }
-      else if (lesson.module.moduleType == ModuleType.SCRATCH) {
-        LOG.debug("${projectWhereToStartLesson.name}: scratch based lesson")
-        vf = getScratchFile(projectWhereToStartLesson, lesson, langSupport.filename)
-      }
-      else { //if this file should be opened in LearnProject
-        //0. learnProject == null but this project is LearnProject then just getFileInLearnProject
-        if ((learnProject == null || learnProject.isDisposed) && projectWhereToStartLesson.name == langSupport.defaultProjectName) {
-          LOG.debug(
-            "${projectWhereToStartLesson.name}: 0. learnProject is null but the current project (${projectWhereToStartLesson.name}) is LearnProject then just getFileInLearnProject")
-          LearningUiManager.learnProject = projectWhereToStartLesson
-          vf = getFileInLearnProject(lesson)
-          //1. learnProject == null and current project has different name then initLearnProject and register post startup open lesson
+      val vf: VirtualFile? = when {
+        lesson.module.moduleType == ModuleType.SCRATCH -> {
+          LOG.debug("${projectWhereToStartLesson.name}: scratch based lesson")
+          getScratchFile(projectWhereToStartLesson, lesson, langSupport.filename)
         }
-        else if (learnProject == null || learnProject.isDisposed) {
-          LOG.debug("${projectWhereToStartLesson.name}: 1. learnProject is null or disposed")
-          initLearnProject(projectWhereToStartLesson) {
-            LOG.debug("${projectWhereToStartLesson.name}: 1. ... LearnProject has been started")
-            openLessonWhenLearnProjectStart(lesson, it)
-            LOG.debug("${projectWhereToStartLesson.name}: 1. ... open lesson when learn project has been started")
+        learnProject == null || learnProject.isDisposed -> {
+          if (projectWhereToStartLesson.name != langSupport.defaultProjectName) { //1. learnProject == null and current project has different name then initLearnProject and register post startup open lesson
+            LOG.debug("${projectWhereToStartLesson.name}: 1. learnProject is null or disposed")
+            initLearnProject(projectWhereToStartLesson) {
+              LOG.debug("${projectWhereToStartLesson.name}: 1. ... LearnProject has been started")
+              openLessonWhenLearnProjectStart(lesson, it)
+              LOG.debug("${projectWhereToStartLesson.name}: 1. ... open lesson when learn project has been started")
+            }
+            return
           }
-          return
-          //2. learnProject != null and learnProject is disposed then reinitProject and getFileInLearnProject
+          else {
+            LOG.debug("${projectWhereToStartLesson.name}: 0. learnProject is null but the current project (${projectWhereToStartLesson.name})" +
+                      "is LearnProject then just getFileInLearnProject")
+            LearningUiManager.learnProject = projectWhereToStartLesson
+            getFileInLearnProject(lesson)
+          }
         }
-        else if (learnProject.isOpen && projectWhereToStartLesson != learnProject) {
+        learnProject.isOpen && projectWhereToStartLesson != learnProject -> {
           LOG.debug("${projectWhereToStartLesson.name}: 3. LearnProject is opened but not focused. Ask user to focus to LearnProject")
           askSwitchToLearnProjectBack(learnProject, projectWhereToStartLesson)
           return
-          //4. learnProject != null and learnProject is opened and focused getFileInLearnProject
         }
-        else if (learnProject.isOpen && projectWhereToStartLesson == learnProject) {
+        learnProject.isOpen && projectWhereToStartLesson == learnProject -> {
           LOG.debug("${projectWhereToStartLesson.name}: 4. LearnProject is the current project")
-          vf = getFileInLearnProject(lesson)
+          getFileInLearnProject(lesson)
         }
-        else {
+        else -> {
           throw Exception("Unable to start Learn project")
         }
       }
@@ -312,9 +305,12 @@ class OpenLessonAction(val lesson: Lesson) : DumbAwareAction(lesson.name) {
   }
 
   @Throws(IOException::class)
-  private fun getFileInLearnProject(lesson: Lesson): VirtualFile {
+  private fun getFileInLearnProject(lesson: Lesson): VirtualFile? {
+    if (!lesson.properties.openFileAtStart) {
+      LOG.debug("${lesson.name} does not open any file at the start")
+      return null
+    }
     val function = object : Computable<VirtualFile> {
-
       override fun compute(): VirtualFile {
         val learnProject = LearningUiManager.learnProject!!
 
