@@ -22,7 +22,7 @@ export default defineComponent(<weak_warning>{</weak_warning>
   props: {
     model: Object
   },
-  setup(props) {
+  async setup(props) {
     const state = reactive({
       open: false,
       isFolder: computed(() => {
