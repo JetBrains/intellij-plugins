@@ -10,6 +10,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorModificationUtil
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.util.NlsActions
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.text.TextWithMnemonic
@@ -29,7 +30,10 @@ import training.keymap.KeymapUtil
 import training.learn.LearnBundle
 import training.ui.LearningUiHighlightingManager
 import training.ui.LearningUiUtil
+import java.awt.Component
+import java.awt.Dimension
 import java.awt.event.KeyEvent
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 import javax.swing.JList
 import javax.swing.KeyStroke
@@ -178,6 +182,15 @@ fun TaskRuntimeContext.closeAllFindTabs() {
   }
 }
 
+fun LessonContext.gotItTask(position: Balloon.Position, dimension: Dimension, @Nls text: TaskContext.() -> String) {
+  task {
+    val gotIt = CompletableFuture<Boolean>()
+    text(text(), LearningBalloonConfig(position, dimension) { gotIt.complete(true) })
+    addStep(gotIt)
+  }
+
+}
+
 fun String.dropMnemonic(): String {
   return TextWithMnemonic.parse(this).dropMnemonic(true).text
 }
@@ -197,6 +210,29 @@ fun LessonContext.highlightButtonById(actionId: String) {
         for (button in result) {
           val options = LearningUiHighlightingManager.HighlightingOptions(clearPreviousHighlights = false)
           LearningUiHighlightingManager.highlightComponent(button, options)
+        }
+      }
+    }
+  }
+}
+
+inline fun <reified ComponentType : Component> LessonContext.highlightAllFoundUi(
+  clearPreviousHighlights: Boolean = true,
+  highlightInside: Boolean = true,
+  crossinline finderFunction: TaskRuntimeContext.(ComponentType) -> Boolean
+) {
+  prepareRuntimeTask {
+    if (clearPreviousHighlights) LearningUiHighlightingManager.clearHighlights()
+    ApplicationManager.getApplication().executeOnPooledThread {
+      val result =
+        LearningUiUtil.findAllShowingComponentWithTimeout(null, ComponentType::class.java, seconds01) { ui ->
+        finderFunction(ui)
+      }
+
+      invokeLater {
+        for (ui in result) {
+          val options = LearningUiHighlightingManager.HighlightingOptions(clearPreviousHighlights = false, highlightInside = highlightInside)
+          LearningUiHighlightingManager.highlightComponent(ui, options)
         }
       }
     }
