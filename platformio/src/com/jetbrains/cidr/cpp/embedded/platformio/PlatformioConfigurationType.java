@@ -99,7 +99,7 @@ public class PlatformioConfigurationType extends CMakeRunConfigurationType {
 
   public class ToolConfigurationFactory extends ConfigurationFactory {
     private final String[] cliParameters;
-    private final Supplier<String> name;
+    private final Supplier<@NlsActions.ActionText String> name;
     private final String myId;
 
     ToolConfigurationFactory(@NonNls @NotNull String id, @NotNull Supplier<@NlsActions.ActionText String> name, String... cliParameters) {
