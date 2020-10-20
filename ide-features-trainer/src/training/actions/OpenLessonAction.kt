@@ -151,6 +151,7 @@ class OpenLessonAction(val lesson: Lesson) : DumbAwareAction(lesson.name) {
       LOG.debug("${projectWhereToStartLesson.name}: Set lesson view")
       LearningUiManager.activeToolWindow?.setLearnPanel(lesson)
       LOG.debug("${projectWhereToStartLesson.name}: XmlLesson onStart()")
+      if (lesson.module.moduleType == ModuleType.PROJECT) LessonManager.instance.cleanUpBeforeLesson(projectWhereToStartLesson)
       lesson.onStart()
 
       //to start any lesson we need to do 4 steps:

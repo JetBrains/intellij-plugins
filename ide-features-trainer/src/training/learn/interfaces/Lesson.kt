@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.interfaces
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import training.commands.kotlin.TaskTestContext
@@ -53,6 +54,9 @@ interface Lesson {
   fun onStop() {
     lessonListeners.forEach { it.lessonStopped(this) }
   }
+
+  /** This method is called for all project-based lessons before the start of any project-based lesson */
+  fun cleanUp(project: Project) = Unit
 
   fun pass() {
     LessonStateManager.setPassed(this)
