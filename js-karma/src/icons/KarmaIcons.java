@@ -13,7 +13,7 @@ import javax.swing.*;
  */
 public final class KarmaIcons {
   private static @NotNull Icon load(@NotNull String path, long cacheKey, int flags) {
-    return IconManager.getInstance().loadRasterizedIcon(path, KarmaIcons.class, cacheKey, flags);
+    return IconManager.getInstance().loadRasterizedIcon(path, KarmaIcons.class.getClassLoader(), cacheKey, flags);
   }
-  /** 16x16 */ public static final @NotNull Icon Karma2 = load("/icons/karma2.svg", 7022910262958405640L, 0);
+  /** 16x16 */ public static final @NotNull Icon Karma2 = load("icons/karma2.svg", 7022910262958405640L, 0);
 }
