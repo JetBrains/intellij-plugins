@@ -4,10 +4,7 @@ package org.jetbrains.vuejs.model.source
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
-import com.intellij.lang.javascript.psi.types.JSAliasTypeImpl
-import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl
-import com.intellij.lang.javascript.psi.types.JSTypeImpl
-import com.intellij.lang.javascript.psi.types.JSTypeSubstitutionContextImpl
+import com.intellij.lang.javascript.psi.types.*
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
@@ -49,6 +46,15 @@ class VueCompositionInfoProvider : VueContainerInfoProvider {
             initializer.findProperty(SETUP_METHOD)
               ?.castSafelyTo<JSFunctionProperty>()
               ?.returnType
+              ?.let { returnType ->
+                (returnType as? JSAsyncReturnType)
+                  ?.substitute()
+                  ?.castSafelyTo<JSGenericTypeImpl>()
+                  ?.takeIf { (it.type as? JSTypeImpl)?.typeText == "Promise" }
+                  ?.arguments
+                  ?.getOrNull(0)
+                ?: returnType
+              }
               ?.asRecordType()
               ?.properties
               ?.mapNotNull { mapSignatureToRawBinding(it, context, unwrapRef) }
@@ -59,7 +65,7 @@ class VueCompositionInfoProvider : VueContainerInfoProvider {
 
     private fun mapSignatureToRawBinding(signature: JSRecordType.PropertySignature,
                                          context: JSTypeSubstitutionContextImpl,
-                                         unwrapRef: TypeScriptTypeAlias?): VueNamedSymbol? {
+                                         unwrapRef: TypeScriptTypeAlias?): VueNamedSymbol {
       val name = signature.memberName
       var signatureType = signature.jsType?.substitute(context)
       var isReadOnly = false
