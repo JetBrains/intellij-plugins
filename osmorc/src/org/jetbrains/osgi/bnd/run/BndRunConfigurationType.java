@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.osgi.bnd.run;
 
 import com.intellij.execution.configurations.*;
@@ -6,7 +6,7 @@ import com.intellij.openapi.components.BaseState;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NotNullLazyValue;
 import icons.OsmorcIdeaIcons;
-import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.osgi.bnd.imp.BndProjectImporter;
@@ -36,23 +36,19 @@ public final class BndRunConfigurationType extends ConfigurationTypeBase {
   }
 
   private static abstract class FactoryBase extends ConfigurationFactory {
-    private final String myName;
+    private final @Nls String myName;
     private final NotNullLazyValue<? extends Icon> myIcon;
     private final String myId;
 
-    FactoryBase(@NotNull ConfigurationType type,
-                @NotNull String name,
-                @NotNull @NonNls String id,
-                @NotNull NotNullLazyValue<? extends Icon> icon) {
+    FactoryBase(ConfigurationType type, @Nls String name, String id, NotNullLazyValue<? extends Icon> icon) {
       super(type);
       myName = name;
       myIcon = icon;
       myId = id;
     }
 
-    @NotNull
     @Override
-    public String getName() {
+    public @Nls @NotNull String getName() {
       return myName;
     }
 
