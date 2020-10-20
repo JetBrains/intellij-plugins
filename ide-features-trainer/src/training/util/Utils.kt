@@ -10,7 +10,6 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.invokeLater
-import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
@@ -27,7 +26,6 @@ import training.learn.lesson.LessonManager
 import training.learn.lesson.LessonStateManager
 import training.ui.LearnToolWindowFactory
 import training.ui.LearningUiManager
-import java.awt.Point
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import javax.swing.Icon
@@ -43,12 +41,6 @@ fun findLanguageByID(id: String): Language? {
     id
   }
   return Language.findLanguageByID(effectiveId)
-}
-
-fun editorPointForBalloon(myEditor: Editor): Point {
-  val offset = myEditor.caretModel.currentCaret.offset
-  val position = myEditor.offsetToVisualPosition(offset)
-  return myEditor.visualPositionToXY(position)
 }
 
 fun createBalloon(@Nls text: String): Balloon = createBalloon(text, 3000)
@@ -67,10 +59,6 @@ const val trainerPluginConfigName: String = "ide-features-trainer.xml"
 val featureTrainerVersion: String by lazy {
   val featureTrainerPluginId = PluginManagerCore.getPluginByClassName(CourseManager::class.java.name)
   PluginManagerCore.getPlugin(featureTrainerPluginId)?.version ?: "UNKNOWN"
-}
-
-val isFeatureTrainerSnapshot: Boolean by lazy {
-  featureTrainerVersion.contains("SNAPSHOT")
 }
 
 fun createAnAction(icon: Icon, action: (AnActionEvent) -> Unit): AnAction {
@@ -113,6 +101,9 @@ fun findLanguageSupport(project: Project): LangSupport? {
 
 val useNewLearningUi: Boolean
   get() = Registry.`is`("ide.features.trainer.new.ui", false)
+
+val switchOnExperimentalLessons: Boolean
+  get() = Registry.`is`("ift.experimental.lessons", false)
 
 fun isLearningDocumentationMode(project: Project): Boolean =
   (ActionManager.getInstance().getAction("LearningDocumentationModeAction") as? LearningDocumentationModeAction)
