@@ -8,6 +8,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.lang.dart.DartBundle
 import com.jetbrains.lang.dart.ide.actions.DartPubActionBase
@@ -40,7 +41,8 @@ object DartWebdev {
     val process = {
       val indicator = ProgressManager.getInstance().progressIndicator
       indicator.isIndeterminate = true
-      indicator.text2 = "pub global activate webdev"
+      @NlsSafe val progressText = "pub global activate webdev"
+      indicator.text2 = progressText
 
       val command = GeneralCommandLine()
       command.isRedirectErrorStream = true
