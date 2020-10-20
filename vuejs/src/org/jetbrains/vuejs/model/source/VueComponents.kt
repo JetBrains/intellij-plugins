@@ -98,26 +98,25 @@ class VueComponents {
         ?.find(this::isComponentDecorator)
     }
 
-    fun getComponentDescriptor(element: PsiElement?): VueSourceEntityDescriptor? {
+    fun getComponentDescriptor(element: PsiElement?): VueSourceEntityDescriptor? =
       when (val resolved = resolveElementTo(element, JSObjectLiteralExpression::class, JSCallExpression::class, JSClass::class)) {
         // {...}
-        is JSObjectLiteralExpression -> return VueSourceEntityDescriptor(resolved)
+        is JSObjectLiteralExpression -> VueSourceEntityDescriptor(resolved)
 
         // Vue.extend({...})
         // defineComponent({...})
         is JSCallExpression ->
           if (isExtendVueCall(resolved) || isDefineComponentCall(resolved)) {
             PsiTreeUtil.getStubChildOfType(resolved.argumentList!!, JSObjectLiteralExpression::class.java)
-              ?.let { return VueSourceEntityDescriptor(it) }
-          }
+              ?.let { VueSourceEntityDescriptor(it) }
+          } else null
 
         // @Component({...}) class MyComponent {...}
         is JSClassExpression ->
-          return VueSourceEntityDescriptor(getComponentDecorator(resolved)?.let { getDescriptorFromDecorator(it) },
+          VueSourceEntityDescriptor(getComponentDecorator(resolved)?.let { getDescriptorFromDecorator(it) },
                                            resolved)
+        else -> null
       }
-      return null
-    }
 
     @StubSafe
     fun getDescriptorFromDecorator(decorator: ES6Decorator): JSObjectLiteralExpression? {
@@ -138,16 +137,14 @@ class VueComponents {
     }
 
     @StubUnsafe
-    private fun isExtendVueCall(callExpression: JSCallExpression): Boolean {
-      return (callExpression.methodExpression as? JSReferenceExpression)?.referenceName == EXTEND_FUN
-    }
+    private fun isExtendVueCall(callExpression: JSCallExpression): Boolean =
+      (callExpression.methodExpression as? JSReferenceExpression)?.referenceName == EXTEND_FUN
 
     @StubUnsafe
-    private fun isDefineComponentCall(callExpression: JSCallExpression): Boolean {
-      return callExpression.methodExpression
+    fun isDefineComponentCall(callExpression: JSCallExpression): Boolean =
+      callExpression.methodExpression
         ?.castSafelyTo<JSReferenceExpression>()
         ?.takeIf { it.qualifier == null && it.referenceName == DEFINE_COMPONENT_FUN } != null
-    }
   }
 }
 

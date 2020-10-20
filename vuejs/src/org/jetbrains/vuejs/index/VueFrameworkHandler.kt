@@ -38,6 +38,7 @@ import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.isComponentDecorator
+import org.jetbrains.vuejs.model.source.VueComponents.Companion.isDefineComponentCall
 
 class VueFrameworkHandler : FrameworkIndexingHandler() {
   // 1 here we are just mapping the constants, no lifecycle needed
@@ -188,8 +189,10 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     val firstProperty = obj?.firstProperty ?: return outData
     if (firstProperty == property) {
       val parent = obj.parent
-      if (parent is JSExportAssignment ||
-          (parent is JSAssignmentExpression && isDefaultExports(parent.definitionExpression?.expression))) {
+      if (parent is JSExportAssignment
+          || (parent is JSAssignmentExpression && isDefaultExports(parent.definitionExpression?.expression))
+          || parent.castSafelyTo<JSArgumentList>()?.parent
+            ?.castSafelyTo<JSCallExpression>()?.let { isDefineComponentCall(it) } == true) {
         if (isPossiblyVueContainerInitializer(obj)) {
           if (out == null) out = JSElementIndexingDataImpl()
           out.addImplicitElement(createImplicitElement(getComponentNameFromDescriptor(obj), property, VueComponentsIndex.JS_KEY))

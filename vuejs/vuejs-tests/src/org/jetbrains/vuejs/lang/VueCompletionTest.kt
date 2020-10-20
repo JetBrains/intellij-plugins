@@ -1708,6 +1708,16 @@ export default class ComponentInsertion extends Vue {
     UsefulTestCase.assertContainsElements(myFixture.renderLookupItems(true, false), "!count#101", "!double#101")
   }
 
+  fun testDefineComponent() {
+    myFixture.configureDependencies(VueTestModule.VUE_2_5_3, VueTestModule.COMPOSITION_API_0_4_0)
+    myFixture.copyDirectoryToProject("defineComponent", "")
+    myFixture.configureByText("test.vue","<template><<caret></template>")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "Component1", "component1",
+                           "Component2", "component2", "ComponentThree", "component-three", "Component4", "component4")
+    assertDoesntContain(myFixture.lookupElementStrings!!, "component-four", "ComponentFour")
+  }
+
   fun testNoDuplicateCompletionProposals() {
     myFixture.configureByFile("noDupedAttrs.vue")
     myFixture.completeBasic()
