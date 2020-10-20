@@ -191,6 +191,8 @@
     <vuejs.contextProvider implementation="org.jetbrains.vuejs.context.VueNodeModulesContextProvider"
                            id="node_modules"
                            order="after package.json"/>
+    <vuejs.contextProvider implementation="org.jetbrains.vuejs.context.VueLibraryContextProvider"
+                           id="js_libs"/>
 
     <vuejs.containerInfoProvider implementation="org.jetbrains.vuejs.model.source.VueDefaultContainerInfoProvider"
                                  id="default"/>

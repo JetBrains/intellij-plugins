@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.lang
 import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.injection.InjectedLanguageManager
+import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.ModificationTracker
@@ -15,6 +16,7 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.testFramework.ParsingTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.util.ui.UIUtil
+import com.intellij.webcore.libraries.ScriptingLibraryModel
 import junit.framework.TestCase
 import org.jetbrains.vuejs.context.VueContextProvider
 import org.jetbrains.vuejs.context.isVueContext
@@ -261,6 +263,14 @@ Vue.options.delimiters = ['<%', '%>']
   fun testStubbedAttribute() {
     myFixture.configureByFile(getTestName(false) + ".vue")
     checkParseTree()
+  }
+
+  fun testTemplateInjectionVueLib() {
+    myFixture.configureByFile(getTestName(false) + ".js")
+    checkParseTree(".off")
+    JSTestUtils.addJsLibrary(project, "vue", null, myFixture.tempDirFixture.createFile("foo.js"),
+                             null, ScriptingLibraryModel.LibraryLevel.GLOBAL)
+    checkParseTree(".on")
   }
 
   fun testForbiddenVueContext() {
