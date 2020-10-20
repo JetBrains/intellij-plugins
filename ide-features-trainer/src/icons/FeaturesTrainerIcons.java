@@ -12,10 +12,10 @@ import javax.swing.*;
  */
 public final class FeaturesTrainerIcons {
   private static @NotNull Icon load(@NotNull String path, long cacheKey, int flags) {
-    return IconManager.getInstance().loadRasterizedIcon(path, FeaturesTrainerIcons.class, cacheKey, flags);
+    return IconManager.getInstance().loadRasterizedIcon(path, FeaturesTrainerIcons.class.getClassLoader(), cacheKey, flags);
   }
-  /** 16x16 */ public static final @NotNull Icon Checkmark = load("/img/checkmark.svg", 6907338944229206668L, 2);
-  /** 16x16 */ public static final @NotNull Icon FeatureTrainer = load("/img/featureTrainer.svg", -6460187159917247672L, 2);
-  /** 13x13 */ public static final @NotNull Icon FeatureTrainerToolWindow = load("/img/featureTrainerToolWindow.svg", -5555050524412059250L, 2);
-  /** 16x16 */ public static final @NotNull Icon GreenCheckmark = load("/img/greenCheckmark.svg", -7871038605619664903L, 2);
+  /** 16x16 */ public static final @NotNull Icon Checkmark = load("img/checkmark.svg", 6907338944229206668L, 2);
+  /** 16x16 */ public static final @NotNull Icon FeatureTrainer = load("img/featureTrainer.svg", -6460187159917247672L, 2);
+  /** 13x13 */ public static final @NotNull Icon FeatureTrainerToolWindow = load("img/featureTrainerToolWindow.svg", -5555050524412059250L, 2);
+  /** 16x16 */ public static final @NotNull Icon GreenCheckmark = load("img/greenCheckmark.svg", -7871038605619664903L, 2);
 }

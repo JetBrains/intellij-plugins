@@ -11,7 +11,7 @@ import javax.swing.*;
  */
 public final class GaugeIcons {
   private static @NotNull Icon load(@NotNull String path, long cacheKey, int flags) {
-    return IconManager.getInstance().loadRasterizedIcon(path, GaugeIcons.class, cacheKey, flags);
+    return IconManager.getInstance().loadRasterizedIcon(path, GaugeIcons.class.getClassLoader(), cacheKey, flags);
   }
-  /** 16x16 */ public static final @NotNull Icon Gauge = load("/icons/gauge.svg", 8741379292461483583L, 2);
+  /** 16x16 */ public static final @NotNull Icon Gauge = load("icons/gauge.svg", 8741379292461483583L, 2);
 }
