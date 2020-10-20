@@ -98,7 +98,7 @@ class VueSourceGlobal(override val project: Project, private val packageJsonUrl:
 
       // Add Vue files without <script> section as possible imports
       val psiManager = PsiManager.getInstance(project)
-      FileBasedIndex.getInstance().getFilesWithKey(VueNoScriptFilesIndex.VUE_NO_SCRIPT_FILES_INDEX, setOf(true), { file ->
+      FileBasedIndex.getInstance().getFilesWithKey(VueEmptyComponentInitializersIndex.VUE_NO_SCRIPT_FILES_INDEX, setOf(true), { file ->
         val componentName = fromAsset(file.nameWithoutExtension)
         if (!localComponents.containsKey(componentName)) {
           psiManager.findFile(file)
