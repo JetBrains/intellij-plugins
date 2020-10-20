@@ -3,6 +3,7 @@ package org.angularjs.codeInsight.router;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.util.SmartList;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,8 +17,8 @@ import java.util.Map;
  */
 public class DiagramObject {
   private @NotNull Type myType;
-  private final @NotNull String myName;
-  private @Nullable String myTooltip;
+  private final @NotNull @NlsSafe String myName;
+  private @Nullable @Nls String myTooltip;
   private final @Nullable SmartPsiElementPointer myNavigationTarget;
   private boolean myIsValid = true;  //invalid = created by reference from other place, but not defined
   private final @NotNull List<String> myNotes;
@@ -99,11 +100,11 @@ public class DiagramObject {
     return myNotes;
   }
 
-  public @Nullable String getTooltip() {
+  public @NotNull @Nls String getTooltip() {
     return myTooltip == null ? myName : myTooltip;
   }
 
-  public void setTooltip(@Nullable String tooltip) {
+  public void setTooltip(@Nls @Nullable String tooltip) {
     myTooltip = tooltip;
   }
 

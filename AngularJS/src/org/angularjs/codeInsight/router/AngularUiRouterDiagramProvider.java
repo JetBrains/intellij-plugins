@@ -32,9 +32,11 @@ import com.intellij.uml.UmlGraphBuilder;
 import com.intellij.uml.core.renderers.DefaultUmlRenderer;
 import com.intellij.uml.presentation.DiagramPresentationModelImpl;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.JBUI;
 import org.angularjs.AngularJSBundle;
 import org.intellij.lang.annotations.Pattern;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,7 +48,6 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.List;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author Irina.Chernushina on 3/23/2016.
@@ -126,7 +127,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
         final List<String> warnings = element.getWarnings();
         final List<String> notes = element.getNotes();
         if (errors.isEmpty() && warnings.isEmpty() && notes.isEmpty()) return element.getTooltip();
-        final StringBuilder sb = new StringBuilder(element.getTooltip());
+        @Nls final StringBuilder sb = new StringBuilder(element.getTooltip());
         if (!notes.isEmpty()) {
           for (String note : notes) {
             sb.append('\n').append(note);
@@ -134,13 +135,13 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
         }
         sb.append("<font style=\"color:#ff0000;\">");
         if (!errors.isEmpty()) {
-          sb.append('\n').append(StringUtil.pluralize("Error", errors.size())).append(":\n");
+          sb.append('\n').append(AngularJSBundle.icuMessage("angularjs.ui.router.diagram.node.tooltip.errors", errors.size())).append(":\n");
           for (String error : errors) {
             sb.append(error).append('\n');
           }
         }
         if (!warnings.isEmpty()) {
-          sb.append('\n').append(StringUtil.pluralize("Warning", warnings.size())).append(":\n");
+          sb.append('\n').append(AngularJSBundle.icuMessage("angularjs.ui.router.diagram.node.tooltip.warnings", errors.size())).append(":\n");
           for (String warning : warnings) {
             sb.append(warning).append('\n');
           }
@@ -461,7 +462,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
 
   @Override
   public @NotNull DiagramExtras<DiagramObject> getExtras() {
-    return new DiagramExtras<DiagramObject>() {
+    return new DiagramExtras<>() {
       @Override
       public List<AnAction> getExtraActions() {
         return Collections.singletonList(new MyEditSourceAction());
@@ -581,11 +582,10 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
         myAction.actionPerformed(e);
       }
       else {
-        final List<Trinity<String, SmartPsiElementPointer, Icon>> children = childrenList.stream()
-          .map(ch -> Trinity.create(ch.getType().name() + ": " + ch.getName(), ch.getNavigationTarget(), (Icon)null))
-          .collect(Collectors.toList());
+        final List<Trinity<String, SmartPsiElementPointer, Icon>> children = ContainerUtil
+          .map(childrenList, ch -> Trinity.create(ch.getType().name() + ": " + ch.getName(), ch.getNavigationTarget(), null));
         JSModulesDiagramUtils.showMembersSelectionPopup(
-          main.getType().name() + ": " + main.getName(),
+          main.getType().name() + ": " + main.getName(), //NON-NLS
           main.getNavigationTarget(), null, children, e.getDataContext());
       }
     }

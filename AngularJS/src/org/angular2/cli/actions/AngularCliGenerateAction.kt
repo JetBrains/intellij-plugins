@@ -193,7 +193,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
       private lateinit var editor: EditorTextField
 
       init {
-        title = "Generate ${schematic.name}"
+        title = Angular2Bundle.message("action.angularCliGenerate.title", schematic.name)
         init()
       }
 
@@ -247,7 +247,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
 
     val filter = AngularCliFilter(project, cli.path)
     AngularCliProjectGenerator.generate(interpreter, NodePackage(module.virtualFile?.path!!),
-                                        Function<NodePackage, String> { pkg -> pkg.findBinFile("ng", null)?.absolutePath },
+                                        Function { pkg -> pkg.findBinFile("ng", null)?.absolutePath },
                                         cli, VfsUtilCore.virtualToIoFile(workingDir ?: cli), project,
                                         null, arrayOf(filter), "generate", schematic.name, *arguments)
   }

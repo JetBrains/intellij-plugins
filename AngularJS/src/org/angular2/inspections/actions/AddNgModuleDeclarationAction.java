@@ -3,12 +3,13 @@ package org.angular2.inspections.actions;
 
 import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil;
 import com.intellij.lang.javascript.modules.imports.ES6ImportCandidate;
-import com.intellij.lang.javascript.modules.imports.JSPlaceElementFilter;
 import com.intellij.lang.javascript.modules.imports.JSImportCandidate;
+import com.intellij.lang.javascript.modules.imports.JSPlaceElementFilter;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.SmartPsiElementPointer;
 import one.util.streamex.StreamEx;
@@ -40,7 +41,7 @@ public class AddNgModuleDeclarationAction extends Angular2NgModuleSelectAction {
                                @NotNull PsiElement context,
                                @NotNull SmartPsiElementPointer<ES6Decorator> declarationDecorator,
                                @NotNull String declarationName,
-                               @NotNull String actionName,
+                               @NotNull @NlsContexts.Command String actionName,
                                boolean codeCompletion) {
     super(editor, context, "", JSPlaceElementFilter.DEFAULT_FILTER, actionName, codeCompletion);
     myDeclarationName = declarationName;
