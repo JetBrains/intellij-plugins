@@ -3,6 +3,7 @@ package org.angular2.inspections.actions;
 
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
@@ -24,6 +25,7 @@ public final class Angular2ActionFactory {
 
     Angular2SourceDeclaration sourceDeclaration = tryCast(declaration, Angular2SourceDeclaration.class);
     String className;
+    //noinspection DialogTitleCapitalization
     return sourceDeclaration == null || (className = sourceDeclaration.getTypeScriptClass().getName()) == null
            ? null
            : createAddNgModuleDeclarationAction(editor, element,
@@ -37,7 +39,7 @@ public final class Angular2ActionFactory {
                                                                                          @NotNull PsiElement element,
                                                                                          @NotNull SmartPsiElementPointer<ES6Decorator> declarationDecorator,
                                                                                          @NotNull String declarationName,
-                                                                                         @NotNull String actionName,
+                                                                                         @NotNull @NlsContexts.Command String actionName,
                                                                                          boolean codeCompletion) {
     return new AddNgModuleDeclarationAction(editor, element, declarationDecorator, declarationName, actionName, codeCompletion);
   }
@@ -45,13 +47,14 @@ public final class Angular2ActionFactory {
   public static @NotNull NgModuleImportAction createNgModuleImportAction(@Nullable Editor editor,
                                                                          @NotNull PsiElement element,
                                                                          boolean codeCompletion) {
+    //noinspection DialogTitleCapitalization
     return createNgModuleImportAction(editor, element, Angular2Bundle.message("angular.quickfix.ngmodule.import.name.choice"),
                                       codeCompletion);
   }
 
   public static @NotNull NgModuleImportAction createNgModuleImportAction(@Nullable Editor editor,
                                                                          @NotNull PsiElement element,
-                                                                         @NotNull String actionName,
+                                                                         @NotNull @NlsContexts.Command String actionName,
                                                                          boolean codeCompletion) {
     return new NgModuleImportAction(editor, element, actionName, codeCompletion);
   }

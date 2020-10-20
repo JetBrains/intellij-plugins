@@ -1,6 +1,7 @@
 package org.angularjs.codeInsight.router;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -205,7 +206,7 @@ public class AngularUiRouterGraphBuilder {
 
     private AngularUiRouterNode createLocalTemplate(PsiElement element, AngularUiRouterDiagramProvider provider) {
       final String name = element.getContainingFile().getName() + " (" + message("angularjs.ui.router.diagram.node.name.local") + ")";
-      final String key = element.getContainingFile().getVirtualFile().getUrl() + ":" + element.getTextRange().getStartOffset();
+      final @NlsSafe String key = element.getContainingFile().getVirtualFile().getUrl() + ":" + element.getTextRange().getStartOffset();
       final Template template = AngularUiRouterDiagramBuilder.readTemplateFromFile(element.getProject(), name, element);
       if (!templateNodes.containsKey(key)) {
         final DiagramObject templateObject = new DiagramObject(Type.template, name, template.getPointer());
@@ -360,7 +361,7 @@ public class AngularUiRouterGraphBuilder {
     private @NotNull AngularUiRouterNode getOrCreateTemplateNode(AngularUiRouterDiagramProvider provider,
                                                                  @Nullable VirtualFile templateFile,
                                                                  @NotNull String templateUrl, @Nullable Template template) {
-      final String fullUrl = templateUrl;
+      final @NlsSafe String fullUrl = templateUrl;
       final int idx = fullUrl.lastIndexOf('/');
       templateUrl = idx >= 0 ? templateUrl.substring(idx + 1) : templateUrl;
       template = template == null && templateFile != null ? myTemplatesMap.get(templateFile) : template;

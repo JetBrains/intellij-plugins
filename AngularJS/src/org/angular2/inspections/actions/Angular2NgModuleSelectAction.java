@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.modules.imports.JSImportCandidate;
 import com.intellij.lang.javascript.modules.imports.JSImportElementFilter;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,14 +15,14 @@ import java.util.List;
 
 public class Angular2NgModuleSelectAction extends JSImportAction {
 
-  private final @NotNull String myActionName;
+  private final @NotNull @NlsContexts.Command String myActionName;
   protected final boolean myCodeCompletion;
 
   public Angular2NgModuleSelectAction(@Nullable Editor editor,
                                       @NotNull PsiElement context,
                                       @NotNull String name,
                                       @NotNull JSImportElementFilter filter,
-                                      @NotNull String actionName,
+                                      @NotNull @NlsContexts.Command String actionName,
                                       boolean codeCompletion) {
     super(editor, context, name, filter);
     myActionName = actionName;

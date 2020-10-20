@@ -4,12 +4,13 @@ package org.angular2.inspections.actions;
 import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil;
 import com.intellij.lang.javascript.modules.JSModuleNameInfo;
 import com.intellij.lang.javascript.modules.imports.ES6ImportCandidate;
-import com.intellij.lang.javascript.modules.imports.JSPlaceElementFilter;
 import com.intellij.lang.javascript.modules.imports.JSImportCandidate;
+import com.intellij.lang.javascript.modules.imports.JSPlaceElementFilter;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.MultiMap;
@@ -33,7 +34,7 @@ import static org.angular2.Angular2DecoratorUtil.IMPORTS_PROP;
 
 public class NgModuleImportAction extends Angular2NgModuleSelectAction {
 
-  NgModuleImportAction(@Nullable Editor editor, @NotNull PsiElement element, @NotNull String actionName, boolean codeCompletion) {
+  NgModuleImportAction(@Nullable Editor editor, @NotNull PsiElement element, @NotNull @NlsContexts.Command String actionName, boolean codeCompletion) {
     super(editor, element, "NgModule", JSPlaceElementFilter.DEFAULT_FILTER, actionName, codeCompletion); //NON-NLS
   }
 
