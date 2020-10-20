@@ -1,0 +1,140 @@
+JSFile:TemplateInjectionVueLib.js
+  JSExpressionStatement
+    JSCallExpression
+      JSReferenceExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('Vue')
+        PsiElement(JS:DOT)('.')
+        PsiElement(JS:IDENTIFIER)('component')
+      JSArgumentList
+        PsiElement(JS:LPAR)('(')
+        JSLiteralExpression
+          PsiElement(JS:STRING_LITERAL)('"main-component"')
+        PsiElement(JS:COMMA)(',')
+        PsiWhiteSpace(' ')
+        JSObjectLiteralExpression
+          PsiElement(JS:LBRACE)('{')
+          PsiWhiteSpace('\n  ')
+          JSProperty
+            PsiElement(JS:IDENTIFIER)('template')
+            PsiElement(JS:COLON)(':')
+            PsiWhiteSpace(' ')
+            JSStringTemplateExpression
+              PsiElement(JS:BACKQUOTE)('`')
+              PsiElement(JS:STRING_TEMPLATE_PART)('\n            <div class="main-component">\n                <div>{{value}}</div>\n                <button v-on:click="increment">Increment</button>\n            </div>\n        ')
+              PsiElement(JS:BACKQUOTE)('`')
+              HtmlFile:TemplateInjectionVueLib.js
+                PsiElement(HTML_DOCUMENT)
+                  PsiWhiteSpace('\n            ')
+                  PsiElement(XML_PROLOG)
+                    <empty list>
+                  HtmlTag:div
+                    XmlToken:XML_START_TAG_START('<')
+                    XmlToken:XML_NAME('div')
+                    PsiWhiteSpace(' ')
+                    PsiElement(XML_ATTRIBUTE)
+                      XmlToken:XML_NAME('class')
+                      XmlToken:XML_EQ('=')
+                      PsiElement(XML_ATTRIBUTE_VALUE)
+                        XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
+                        XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('main-component')
+                        XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
+                    XmlToken:XML_TAG_END('>')
+                    XmlText
+                      PsiWhiteSpace('\n                ')
+                    HtmlTag:div
+                      XmlToken:XML_START_TAG_START('<')
+                      XmlToken:XML_NAME('div')
+                      XmlToken:XML_TAG_END('>')
+                      XmlText
+                        XmlToken:XML_DATA_CHARACTERS('{{value}}')
+                      XmlToken:XML_END_TAG_START('</')
+                      XmlToken:XML_NAME('div')
+                      XmlToken:XML_TAG_END('>')
+                    XmlText
+                      PsiWhiteSpace('\n                ')
+                    HtmlTag:button
+                      XmlToken:XML_START_TAG_START('<')
+                      XmlToken:XML_NAME('button')
+                      PsiWhiteSpace(' ')
+                      PsiElement(XML_ATTRIBUTE)
+                        XmlToken:XML_NAME('v-on:click')
+                        XmlToken:XML_EQ('=')
+                        PsiElement(XML_ATTRIBUTE_VALUE)
+                          XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
+                          XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('increment')
+                          XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
+                      XmlToken:XML_TAG_END('>')
+                      XmlText
+                        XmlToken:XML_DATA_CHARACTERS('Increment')
+                      XmlToken:XML_END_TAG_START('</')
+                      XmlToken:XML_NAME('button')
+                      XmlToken:XML_TAG_END('>')
+                    XmlText
+                      PsiWhiteSpace('\n            ')
+                    XmlToken:XML_END_TAG_START('</')
+                    XmlToken:XML_NAME('div')
+                    XmlToken:XML_TAG_END('>')
+                  PsiWhiteSpace('\n        ')
+          PsiElement(JS:COMMA)(',')
+          PsiWhiteSpace('\n  ')
+          JSFunctionProperty
+            PsiElement(JS:IDENTIFIER)('data')
+            JSParameterList
+              PsiElement(JS:LPAR)('(')
+              PsiElement(JS:RPAR)(')')
+            PsiWhiteSpace(' ')
+            JSBlockStatement
+              PsiElement(JS:LBRACE)('{')
+              PsiWhiteSpace('\n    ')
+              JSReturnStatement
+                PsiElement(JS:RETURN_KEYWORD)('return')
+                PsiWhiteSpace(' ')
+                JSObjectLiteralExpression
+                  PsiElement(JS:LBRACE)('{')
+                  PsiWhiteSpace('\n      ')
+                  JSProperty
+                    PsiElement(JS:IDENTIFIER)('value')
+                    PsiElement(JS:COLON)(':')
+                    PsiWhiteSpace(' ')
+                    JSLiteralExpression
+                      PsiElement(JS:NUMERIC_LITERAL)('0')
+                  PsiWhiteSpace('\n    ')
+                  PsiElement(JS:RBRACE)('}')
+              PsiWhiteSpace('\n  ')
+              PsiElement(JS:RBRACE)('}')
+          PsiElement(JS:COMMA)(',')
+          PsiWhiteSpace('\n  ')
+          JSProperty
+            PsiElement(JS:IDENTIFIER)('methods')
+            PsiElement(JS:COLON)(':')
+            PsiWhiteSpace(' ')
+            JSObjectLiteralExpression
+              PsiElement(JS:LBRACE)('{')
+              PsiWhiteSpace('\n    ')
+              JSFunctionProperty
+                PsiElement(JS:IDENTIFIER)('increment')
+                JSParameterList
+                  PsiElement(JS:LPAR)('(')
+                  PsiElement(JS:RPAR)(')')
+                PsiWhiteSpace(' ')
+                JSBlockStatement
+                  PsiElement(JS:LBRACE)('{')
+                  PsiWhiteSpace('\n      ')
+                  JSExpressionStatement
+                    JSPostfixExpression
+                      JSReferenceExpression
+                        JSThisExpression
+                          PsiElement(JS:THIS_KEYWORD)('this')
+                        PsiElement(JS:DOT)('.')
+                        PsiElement(JS:IDENTIFIER)('value')
+                      PsiElement(JS:PLUSPLUS)('++')
+                    PsiElement(JS:SEMICOLON)(';')
+                  PsiWhiteSpace('\n    ')
+                  PsiElement(JS:RBRACE)('}')
+              PsiWhiteSpace('\n  ')
+              PsiElement(JS:RBRACE)('}')
+          PsiWhiteSpace('\n')
+          PsiElement(JS:RBRACE)('}')
+        PsiElement(JS:RPAR)(')')
+    PsiElement(JS:SEMICOLON)(';')
