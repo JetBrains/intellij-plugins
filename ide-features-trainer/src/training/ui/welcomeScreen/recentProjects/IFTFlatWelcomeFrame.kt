@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.ui.welcomeScreen.recentProjects
 
 import com.intellij.openapi.application.ApplicationManager
@@ -12,7 +12,6 @@ import java.awt.BorderLayout
 import javax.swing.JPanel
 
 class IFTFlatWelcomeFrame : FlatWelcomeFrame() {
-
   private val originalWelcomeScreen: JPanel
     get() = UIUtil.findComponentsOfType(component, JPanel::class.java).first { it is WelcomeScreen }
   private val originalCenterWelcomeScreen: NonOpaquePanel
@@ -39,7 +38,6 @@ class IFTFlatWelcomeFrame : FlatWelcomeFrame() {
     }
     repaint()
   }
-
 }
 
 internal val showCustomWelcomeScreen
