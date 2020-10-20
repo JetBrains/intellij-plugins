@@ -20,6 +20,7 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.util.PairProcessor
 import com.intellij.util.Processor
 import com.intellij.util.castSafelyTo
+import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.findModule
@@ -63,7 +64,7 @@ class VueJSReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.
           ?.template
           ?.source
           ?.let {
-            val searchScope = LocalSearchScope(arrayOf(it), "template", false)
+            val searchScope = LocalSearchScope(arrayOf(it), VueBundle.message("vue.search.scope.template.name"), false)
             queryParameters.optimizer.searchWord(name, searchScope, true, element)
           }
       }
