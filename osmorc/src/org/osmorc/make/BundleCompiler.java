@@ -67,7 +67,7 @@ public class BundleCompiler implements Reporter {
   public List<String> bundlifyLibraries(@NotNull Module module) throws OsgiBuildException {
     myIndicator.setText(OsmorcBundle.message("compiler.progress.bundling.libraries", module.getName()));
 
-    File outputDir = BndWrapper.getOutputDir(getModuleOutputDir(module));
+    File outputDir = getOutputDir(module);
     List<LibraryBundlificationRule> libRules = ApplicationSettings.getInstance().getLibraryBundlificationRules();
 
     List<String> paths = OrderEnumerator.orderEntries(module)
@@ -86,15 +86,20 @@ public class BundleCompiler implements Reporter {
     return new BndWrapper(this).bundlifyLibraries(files, outputDir, libRules);
   }
 
-  private static File getModuleOutputDir(@NotNull Module module) throws OsgiBuildException {
+  private static File getOutputDir(Module module) throws OsgiBuildException {
     CompilerModuleExtension extension = CompilerModuleExtension.getInstance(module);
     if (extension != null) {
       String url = extension.getCompilerOutputUrl();
       if (url != null) {
-        return new File(VfsUtilCore.urlToPath(url));
+        File moduleOutputDir = new File(VfsUtilCore.urlToPath(url));
+        File outputDir = new File(moduleOutputDir.getParent(), "bundles");
+        if (!outputDir.exists() && !outputDir.mkdirs()) {
+          throw new OsgiBuildException(OsmorcBundle.message("compiler.error.cannot.create.output", outputDir));
+        }
+        return outputDir;
       }
     }
-    throw new OsgiBuildException("Unable to determine the compiler output path for the module '" + module.getName() + "'");
+    throw new OsgiBuildException(OsmorcBundle.message("compiler.error.cannot.locate.output", module.getName()));
   }
 
   @Override
