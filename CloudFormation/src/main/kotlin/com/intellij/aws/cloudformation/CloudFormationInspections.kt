@@ -5,6 +5,7 @@ package com.intellij.aws.cloudformation
 import com.google.common.collect.ArrayListMultimap
 import com.google.common.collect.Multimap
 import com.google.common.primitives.Floats
+import com.intellij.aws.cloudformation.CloudFormationBundle.message
 import com.intellij.aws.cloudformation.metadata.CloudFormationResourceType
 import com.intellij.aws.cloudformation.metadata.CloudFormationResourceType.Companion.isCustomResourceType
 import com.intellij.aws.cloudformation.metadata.awsServerlessFunction
@@ -15,8 +16,10 @@ import com.intellij.aws.cloudformation.references.CloudFormationMappingFirstLeve
 import com.intellij.aws.cloudformation.references.CloudFormationMappingSecondLevelKeyReference
 import com.intellij.aws.cloudformation.references.CloudFormationReferenceBase
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import org.jetbrains.annotations.Nls
 import org.jetbrains.yaml.psi.impl.YAMLScalarImpl
 import java.util.regex.Pattern
 
@@ -51,11 +54,12 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
   }
 */
 
-  private fun addProblem(element: CfnNode, description: String) {
+  private fun addProblem(element: CfnNode, @Nls description: String) {
     // TODO check psi element mapping not exists
     val psiElement = if (element is CfnNamedNode && element.name != null) {
       parsed.getPsiElement(element.name)
-    } else {
+    }
+    else {
       parsed.getPsiElement(element)
     }
 
@@ -80,11 +84,12 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
     val _used_to_enforce_exhaustive_check: Unit = when (function.functionId) {
       CloudFormationIntrinsicFunction.Ref -> {
         if (function.args.size != 1 || arg0 !is CfnScalarValueNode) {
-          addProblem(function, "Reference expects one string argument")
-        } else {
+          addProblem(function, message("reference.expects.one.string.argument"))
+        }
+        else {
           val arg0WithoutVersionOrAlias = arg0.value.removeSuffix(".Version").removeSuffix(".Alias")
           val resourceNodeWithoutVersionOrAlias = CloudFormationResolve.resolveResource(
-              parsed, arg0WithoutVersionOrAlias)
+            parsed, arg0WithoutVersionOrAlias)
 
           val resourceNodeParent = function.parentOfType<CfnResourceNode>(parsed)
           val excluded = resourceNodeParent?.let { it.name?.value }?.let { listOf(it) } ?: emptyList()
@@ -95,8 +100,9 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
             // Disgusting hack from serverless spec
             // https://github.com/awslabs/serverless-application-model/blob/develop/versions/2016-10-31.md#referencing-lambda-version--alias-resources
             resourceNodeWithoutVersionOrAlias != null && resourceNodeWithoutVersionOrAlias.isAwsServerlessFunctionWithAutoPublishAlias() &&
-                arg0WithoutVersionOrAlias != arg0.value -> {
-              addEntityReference(arg0, CloudFormationSection.ResourcesSingletonList, excludeFromCompletion = excluded, referenceValue = arg0WithoutVersionOrAlias)
+            arg0WithoutVersionOrAlias != arg0.value -> {
+              addEntityReference(arg0, CloudFormationSection.ResourcesSingletonList, excludeFromCompletion = excluded,
+                                 referenceValue = arg0WithoutVersionOrAlias)
             }
 
             else -> {
@@ -110,14 +116,15 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
 
       CloudFormationIntrinsicFunction.Condition ->
         if (function.args.size != 1 || arg0 !is CfnScalarValueNode) {
-          addProblem(function, "Condition reference expects one string argument")
-        } else {
+          addProblem(function, message("condition.reference.expects.one.string.argument"))
+        }
+        else {
           addEntityReference(arg0, CloudFormationSection.ConditionsSingletonList)
         }
 
       CloudFormationIntrinsicFunction.FnBase64 -> {
         if (function.args.size != 1) {
-          addProblem(function, "Base64 reference expects 1 argument")
+          addProblem(function, message("base64.reference.expects.1.argument"))
         }
 
         Unit
@@ -125,8 +132,9 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
 
       CloudFormationIntrinsicFunction.FnFindInMap -> {
         if (function.args.size != 3) {
-          addProblem(function, "FindInMap requires 3 arguments")
-        } else {
+          addProblem(function, message("findinmap.requires.3.arguments"))
+        }
+        else {
           val mappingName = function.args[0]
           val firstLevelKey = function.args[1]
           val secondLevelKey = function.args[2]
@@ -159,18 +167,23 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
         if (function.args.size == 1 && arg0 is CfnScalarValueNode && function.name.value == CloudFormationIntrinsicFunction.FnGetAtt.shortForm) {
           val dotIndex = arg0.value.indexOf('.')
           if (dotIndex < 0) {
-            addProblem(function, "GetAttr in short form requires argument in the format logicalNameOfResource.attributeName")
+            addProblem(function,
+                       message("getattr.in.short.form.requires.argument.in.the.format.logicalnameofresource.attributename"))
             resourceName = null
             attributeName = null
-          } else {
+          }
+          else {
             resourceName = arg0.value.substring(0, dotIndex)
             attributeName = arg0.value.substring(dotIndex + 1)
           }
-        } else if (function.args.size == 2 && arg0 is CfnScalarValueNode) {
+        }
+        else if (function.args.size == 2 && arg0 is CfnScalarValueNode) {
           resourceName = arg0.value
           attributeName = if (arg1 is CfnScalarValueNode) arg1.value else null
-        } else {
-          addProblem(function, "GetAtt requires two string arguments in full form or one string argument in short form")
+        }
+        else {
+          addProblem(function,
+                     message("getatt.requires.two.string.arguments.in.full.form.or.one.string.argument.in.short.form"))
           resourceName = null
           attributeName = null
         }
@@ -189,14 +202,16 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
           val resourceWithoutRoleSuffix = CloudFormationResolve.resolveResource(parsed, resourceNameWithoutRoleSuffix)
           if (resource == null && resourceWithoutRoleSuffix?.typeName == awsServerlessFunction.name) {
             addEntityReference(arg0 as CfnScalarValueNode, CloudFormationSection.ResourcesSingletonList,
-                excludeFromCompletion = excluded, referenceValue = resourceNameWithoutRoleSuffix)
+                               excludeFromCompletion = excluded, referenceValue = resourceNameWithoutRoleSuffix)
             if (attributeName != "Arn") {
               addProblem(
-                  if (function.args.size == 1) arg0 else (arg1 ?: function),
-                  "Implicit IAM Function Role supports only 'Arn' attribute")
+                if (function.args.size == 1) arg0 else (arg1 ?: function),
+                message("implicit.iam.function.role.supports.only.arn.attribute"))
             }
-          } else {
-            addEntityReference(arg0 as CfnScalarValueNode, CloudFormationSection.ResourcesSingletonList, excludeFromCompletion = excluded, referenceValue = resourceName)
+          }
+          else {
+            addEntityReference(arg0 as CfnScalarValueNode, CloudFormationSection.ResourcesSingletonList, excludeFromCompletion = excluded,
+                               referenceValue = resourceName)
 
             if (attributeName != null) {
               val typeName = resource?.typeName
@@ -207,8 +222,8 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
                   CloudFormationMetadataProvider.METADATA.findResourceType(typeName, parsed.root) != null) {
                 if (!resource.getAttributes(parsed.root).containsKey(attributeName)) {
                   addProblem(
-                      if (function.args.size == 1) arg0 else (arg1 ?: function),
-                      "Unknown attribute in resource type '$typeName': $attributeName")
+                    if (function.args.size == 1) arg0 else (arg1 ?: function),
+                    message("unknown.attribute.in.resource.type.0.1", typeName, attributeName))
                 }
               }
             }
@@ -222,7 +237,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
         // TODO verify string against known regions
         // TODO possibility for dataflow checks
         if (function.args.size != 1) {
-          addProblem(function, "GetAZs expects one argument")
+          addProblem(function, message("getazs.expects.one.argument"))
         }
 
         Unit
@@ -230,7 +245,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
 
       CloudFormationIntrinsicFunction.FnCidr -> {
         if (function.args.size != 2 && function.args.size != 3) {
-          addProblem(function, "Cidr expects two or three arguments")
+          addProblem(function, message("cidr.expects.two.or.three.arguments"))
         }
 
         Unit
@@ -238,7 +253,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
 
       CloudFormationIntrinsicFunction.FnImportValue -> {
         if (function.args.size != 1) {
-          addProblem(function, "ImportValue expects one argument")
+          addProblem(function, message("importvalue.expects.one.argument"))
         }
 
         Unit
@@ -246,7 +261,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
 
       CloudFormationIntrinsicFunction.FnJoin -> {
         if (function.args.size != 2) {
-          addProblem(function, "Join expects a string argument and an array argument")
+          addProblem(function, message("join.expects.a.string.argument.and.an.array.argument"))
         }
 
         Unit
@@ -254,7 +269,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
 
       CloudFormationIntrinsicFunction.FnSplit -> {
         if (function.args.size != 2) {
-          addProblem(function, "Split expects two string arguments")
+          addProblem(function, message("split.expects.two.string.arguments"))
         }
 
         Unit
@@ -262,12 +277,14 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
 
       CloudFormationIntrinsicFunction.FnSelect -> {
         if (function.args.size != 2) {
-          addProblem(function, "Select expects an index argument and an array argument")
-        } else if (arg0 is CfnScalarValueNode) {
+          addProblem(function, message("select.expects.an.index.argument.and.an.array.argument"))
+        }
+        else if (arg0 is CfnScalarValueNode) {
           try {
             Integer.parseUnsignedInt(arg0.value)
-          } catch (t: NumberFormatException) {
-            addProblem(function, "Select index should be a valid non-negative number")
+          }
+          catch (t: NumberFormatException) {
+            addProblem(function, message("select.index.should.be.a.valid.non.negative.number"))
           }
         }
 
@@ -278,7 +295,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
         // TODO Add references to substituted values in a string
         // TODO Add references to the mapping
         if (function.args.size != 1 && !(function.args.size == 2 && arg1 is CfnObjectValueNode)) {
-          addProblem(function, "Sub expects one argument plus an optional value map")
+          addProblem(function, message("sub.expects.one.argument.plus.an.optional.value.map"))
         }
 
         Unit
@@ -287,7 +304,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
       // TODO Check context, valid only in boolean context
       CloudFormationIntrinsicFunction.FnAnd, CloudFormationIntrinsicFunction.FnOr -> {
         if (function.args.size < 2) {
-          addProblem(function, function.functionId.shortForm + " expects at least 2 arguments")
+          addProblem(function, message("0.expects.at.least.2.arguments", function.functionId.shortForm))
         }
 
         Unit
@@ -295,7 +312,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
 
       CloudFormationIntrinsicFunction.FnEquals -> {
         if (function.args.size != 2) {
-          addProblem(function, "Equals expects exactly 2 arguments")
+          addProblem(function, message("equals.expects.exactly.2.arguments"))
         }
 
         Unit
@@ -305,16 +322,18 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
         if (function.args.size == 3) {
           if (arg0 is CfnScalarValueNode) {
             addEntityReference(arg0, CloudFormationSection.ConditionsSingletonList)
-          } else {
-            addProblem(function, "If's first argument should be a condition name")
           }
-        } else {
-          addProblem(function, "If expects exactly 3 arguments")
+          else {
+            addProblem(function, message("if.s.first.argument.should.be.a.condition.name"))
+          }
+        }
+        else {
+          addProblem(function, message("if.expects.exactly.3.arguments"))
         }
 
       CloudFormationIntrinsicFunction.FnNot -> {
         if (function.args.size != 1) {
-          addProblem(function, "Not expects exactly 1 argument")
+          addProblem(function, message("not.expects.exactly.1.argument"))
         }
 
         Unit
@@ -350,14 +369,14 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
     val typeName = resourceTypeValue?.value
 
     if (resourceTypeValue == null || typeName == null || typeName.isEmpty()) {
-      addProblem(resourceType, "Type value is required")
+      addProblem(resourceType, message("type.value.is.required"))
       return
     }
 
     if (!isCustomResourceType(typeName)) {
       val resourceTypeMetadata = CloudFormationMetadataProvider.METADATA.findResourceType(typeName, parsed.root)
       if (resourceTypeMetadata == null) {
-        addProblem(resourceTypeValue, CloudFormationBundle.message("format.unknown.type", typeName))
+        addProblem(resourceTypeValue, message("format.unknown.type", typeName))
       }
     }
 
@@ -366,11 +385,11 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
 
   override fun outputs(outputs: CfnOutputsNode) {
     if (outputs.properties.isEmpty()) {
-      addProblem(outputs, "Outputs section must declare at least one stack output")
+      addProblem(outputs, message("outputs.section.must.declare.at.least.one.stack.output"))
     }
 
     if (outputs.properties.size > CloudFormationMetadataProvider.METADATA.limits.maxOutputs) {
-      addProblem(outputs, CloudFormationBundle.message("format.max.outputs.exceeded", CloudFormationMetadataProvider.METADATA.limits.maxOutputs))
+      addProblem(outputs, message("format.max.outputs.exceeded", CloudFormationMetadataProvider.METADATA.limits.maxOutputs))
     }
 
     super.outputs(outputs)
@@ -378,36 +397,37 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
 
   override fun globals(globals: CfnGlobalsNode) {
     if (!parsed.root.transformValues.contains(CloudFormationConstants.awsServerless20161031TransformName)) {
-      addProblem(globals, "Globals section supported with ${CloudFormationConstants.awsServerless20161031TransformName} transform only")
+      addProblem(globals,
+                 message("globals.section.supported.with.0.transform.only", CloudFormationConstants.awsServerless20161031TransformName))
       return
     }
 
     if (globals.globals.isEmpty()) {
-      addProblem(globals, "Globals section must provide defaults for at least one resource")
+      addProblem(globals, message("globals.section.must.provide.defaults.for.at.least.one.resource"))
     }
 
     super.globals(globals)
   }
 
   override fun serverlessEntityDefaultsNode(serverlessEntityDefaultsNode: CfnServerlessEntityDefaultsNode) {
-    val name = serverlessEntityDefaultsNode.name?.value
+    @NlsSafe val name = serverlessEntityDefaultsNode.name?.value
 
     if (name != null) {
       val resourceType = CloudFormationConstants.GlobalsResourcesMap.get(name)
       if (resourceType == null) {
         addProblem(
-            serverlessEntityDefaultsNode,
-            "Unsupported globals section '$name'. The following sections are supported: " +
-                CloudFormationConstants.GlobalsResourcesMap.keys.sorted().joinToString())
+          serverlessEntityDefaultsNode,
+          message("unsupported.globals.section.0.the.following.sections.are.supported.1", name,
+                  CloudFormationConstants.GlobalsResourcesMap.keys.sorted().joinToString()))
       } else {
         for (nameValueNode in serverlessEntityDefaultsNode.properties) {
-          val propertyName = nameValueNode.name?.value ?: continue
+          @NlsSafe val propertyName = nameValueNode.name?.value ?: continue
 
           val property = resourceType.properties.firstOrNull { it.name == propertyName }
           if (property == null || property.excludedFromGlobals) {
             addProblem(
-                nameValueNode.name,
-                "Property $propertyName is unsupported in '$name' sections of Globals")
+              nameValueNode.name,
+              message("property.0.is.unsupported.in.1.sections.of.globals", propertyName, name))
           }
         }
       }
@@ -418,11 +438,11 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
 
   override fun parameters(parameters: CfnParametersNode) {
     if (parameters.parameters.isEmpty()) {
-      addProblem(parameters, "Parameters section must declare at least one parameter")
+      addProblem(parameters, message("parameters.section.must.declare.at.least.one.parameter"))
     }
 
     if (parameters.parameters.size > CloudFormationMetadataProvider.METADATA.limits.maxParameters) {
-      addProblem(parameters, CloudFormationBundle.message("format.max.parameters.exceeded", CloudFormationMetadataProvider.METADATA.limits.maxParameters))
+      addProblem(parameters, message("format.max.parameters.exceeded", CloudFormationMetadataProvider.METADATA.limits.maxParameters))
     }
 
     super.parameters(parameters)
@@ -430,7 +450,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
 
   private fun checkValueIsScalar(nameValue: CfnNameValueNode) {
     if (nameValue.value !is CfnScalarValueNode && nameValue.value != null) {
-      addProblem(nameValue, "Expected a string")
+      addProblem(nameValue, message("expected.a.string"))
     }
   }
 
@@ -441,24 +461,24 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
     if (type != null) checkValueIsScalar(type)
 
     val typeValue = type?.value
-    val typeName = (typeValue as? CfnScalarValueNode)?.value?.trim()
+    @NlsSafe val typeName = (typeValue as? CfnScalarValueNode)?.value?.trim()
     if (type == null || typeName == null) {
-      addProblem(parameter, "Required property Type is missing or empty")
+      addProblem(parameter, message("required.property.type.is.missing.or.empty"))
       return
     }
 
     if (!CloudFormationConstants.allParameterTypes.contains(typeName)) {
-        addProblem(type.value, "Unknown parameter type: $typeName")
+      addProblem(type.value, message("unknown.parameter.type.0", typeName))
       return
     }
 
     parameter.properties.forEach { property ->
-      val propertyName = property.name?.value?.trim() ?: return@forEach
+      @NlsSafe val propertyName = property.name?.value?.trim() ?: return@forEach
       val typedPropertyName = CloudFormationParameterProperty.values().singleOrNull { it.id == propertyName }
 
       when (typedPropertyName) {
         null -> {
-          addProblem(parameter, "Unknown parameter property: " + propertyName)
+          addProblem(parameter, message("unknown.parameter.property.0", propertyName))
         }
 
         CloudFormationParameterProperty.AllowedPattern -> {
@@ -469,11 +489,12 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
           if (property.value is CfnArrayValueNode) {
             property.value.items.forEach {
               if (it !is CfnScalarValueNode) {
-                addProblem(it, "Expected a string")
+                addProblem(it, message("expected.a.string"))
               }
             }
-          } else {
-            addProblem(property, "Expected an array")
+          }
+          else {
+            addProblem(property, message("expected.an.array"))
           }
 
           Unit
@@ -492,7 +513,9 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
 
           val scalar = property.value as? CfnScalarValueNode
           if (scalar != null && scalar.value.length > CloudFormationConstants.ParameterDescriptionLimit) {
-            addProblem(property, "${CloudFormationParameterProperty.Description.id} is too long (${scalar.value.length} chars), maximum allowed length is ${CloudFormationConstants.ParameterDescriptionLimit}")
+            addProblem(property,
+                       message("0.is.too.long.1.chars.maximum.allowed.length.is.2", CloudFormationParameterProperty.Description.id,
+                               scalar.value.length, CloudFormationConstants.ParameterDescriptionLimit))
           }
 
           Unit
@@ -504,13 +527,13 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
           val scalar = property.value as? CfnScalarValueNode
           if (scalar != null) {
             if (!numbersPattern.matcher(scalar.value).matches()) {
-              addProblem(property, "Expected a number")
+              addProblem(property, message("expected.a.number"))
             }
 
             if (typeName != CloudFormationParameterType.String.id &&
                 !CloudFormationConstants.AwsSpecificParameterTypes.contains(typeName) &&
                 !CloudFormationConstants.SsmParameterTypes.contains(typeName)) {
-              addProblem(property, "$propertyName property is valid for ${CloudFormationParameterType.String.id} type only")
+              addProblem(property, message("0.property.is.valid.for.1.type.only", propertyName, CloudFormationParameterType.String.id))
             }
           }
 
@@ -523,11 +546,11 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
           val scalar = property.value as? CfnScalarValueNode
           if (scalar != null) {
             if (Floats.tryParse(scalar.value) == null) {
-              addProblem(property, "Expected an integer or float")
+              addProblem(property, message("expected.an.integer.or.float"))
             }
 
             if (typeName != CloudFormationParameterType.Number.id) {
-              addProblem(property, "$propertyName property is valid for ${CloudFormationParameterType.Number.id} type only")
+              addProblem(property, message("0.property.is.valid.for.1.type.only1", propertyName, CloudFormationParameterType.Number.id))
             }
           }
 
@@ -539,7 +562,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
 
           val scalar = property.value as? CfnScalarValueNode
           if (scalar != null && !scalar.value.equals("True", ignoreCase = true)) {
-            addProblem(property, "Only 'True' value is allowed")
+            addProblem(property, message("only.true.value.is.allowed"))
           }
 
           Unit
@@ -552,11 +575,11 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
 
   override fun mappings(mappings: CfnMappingsNode) {
     if (mappings.mappings.isEmpty()) {
-      addProblem(mappings, "Mappings section must declare at least one parameter")
+      addProblem(mappings, message("mappings.section.must.declare.at.least.one.parameter"))
     }
 
     if (mappings.mappings.size > CloudFormationMetadataProvider.METADATA.limits.maxMappings) {
-      addProblem(mappings, CloudFormationBundle.message("format.max.mappings.exceeded", CloudFormationMetadataProvider.METADATA.limits.maxMappings))
+      addProblem(mappings, message("format.max.mappings.exceeded", CloudFormationMetadataProvider.METADATA.limits.maxMappings))
     }
 
     super.mappings(mappings)
@@ -584,7 +607,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
 
     val resourceType = resource.type
     if (resourceType == null) {
-      addProblem(resource, "Type property is required for resource")
+      addProblem(resource, message("type.property.is.required.for.resource"))
       return
     }
 
@@ -597,7 +620,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
             propertyName != CloudFormationConstants.CommentResourcePropertyName &&
             !isCustomResourceType(resourceType.value!!.value) &&
             metadata.findProperty(propertyName) == null) {
-          addProblem(it, CloudFormationBundle.message("format.unknown.resource.type.property", propertyName))
+          addProblem(it, message("format.unknown.resource.type.property", propertyName))
         }
       }
 
@@ -605,8 +628,8 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
       val missingProperties = calculateMissingProperties(presentProperties, metadata)
       if (missingProperties.isNotEmpty()) {
         addProblem(
-            element = propertiesNode ?: resource,
-            description = CloudFormationBundle.message("format.required.resource.properties.are.not.set", missingProperties.joinToString(separator = " "))
+          element = propertiesNode ?: resource,
+          description = message("format.required.resource.properties.are.not.set", missingProperties.joinToString(separator = " "))
         )
       }
     }
@@ -618,7 +641,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
 
   override fun resources(resources: CfnResourcesNode) {
     if (resources.resources.isEmpty()) {
-      addProblem(resources, "Resources section should declare at least one resource")
+      addProblem(resources, message("resources.section.should.declare.at.least.one.resource"))
       return
     }
 
@@ -647,7 +670,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
           if (parameter is CfnScalarValueNode) {
             addEntityReference(parameter, CloudFormationSection.ParametersSingletonList, predefinedParameters)
           } else {
-            addProblem(parameter, "Expected a string")
+            addProblem(parameter, message("expected.a.string"))
           }
         }
       }
@@ -665,7 +688,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
 
   override fun root(root: CfnRootNode) {
     if (root.resourcesNode == null && !parsed.getPsiElement(root).textRange.isEmpty) {
-      addProblem(root, "Resources section is missing")
+      addProblem(root, message("resources.section.is.missing"))
     }
 
     super.root(root)
