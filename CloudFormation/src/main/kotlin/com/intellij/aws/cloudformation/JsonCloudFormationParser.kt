@@ -7,6 +7,7 @@ import com.intellij.json.psi.*
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import org.jetbrains.annotations.Nls
 import java.util.*
 
 class JsonCloudFormationParser private constructor () {
@@ -24,14 +25,14 @@ class JsonCloudFormationParser private constructor () {
     return this
   }
 
-  private fun addProblem(element: PsiElement, description: String) {
+  private fun addProblem(element: PsiElement, @Nls description: String) {
     myProblems.add(CloudFormationProblem(element, description))
   }
 
-  private fun addProblemOnNameElement(property: JsonProperty, description: String) {
+  private fun addProblemOnNameElement(property: JsonProperty, @Nls description: String) {
     addProblem(
-        if (property.firstChild != null) property.firstChild else property,
-        description)
+      if (property.firstChild != null) property.firstChild else property,
+      description)
   }
 
   private fun root(root: JsonObject): CfnRootNode {
@@ -87,12 +88,12 @@ class JsonCloudFormationParser private constructor () {
 
     val list = obj.propertyList.mapNotNull { value ->
       if (value.name.isEmpty()) {
-        addProblemOnNameElement(value, "A non-empty key is expected")
+        addProblemOnNameElement(value, CloudFormationBundle.message("a.non.empty.key.is.expected"))
         return@mapNotNull null
       }
 
       if (value.value == null) {
-        addProblemOnNameElement(value, "A value is expected")
+        addProblemOnNameElement(value, CloudFormationBundle.message("a.value.is.expected"))
         return@mapNotNull null
       }
 
@@ -242,7 +243,7 @@ class JsonCloudFormationParser private constructor () {
         CfnArrayValueNode(items).registerNode(value)
       }
       is JsonReferenceExpression -> {
-        addProblem(value, "Expected an expression")
+        addProblem(value, CloudFormationBundle.message("expected.an.expression"))
         CfnScalarValueNode(value.identifier.text).registerNode(value)
       }
       is JsonObject -> {
@@ -292,7 +293,7 @@ class JsonCloudFormationParser private constructor () {
   }
 
   private fun checkAndGetStringOrStringArray(property: JsonProperty?): List<CfnScalarValueNode> {
-    val expectedMessage = "Expected a string or an array of strings"
+    val expectedMessage = CloudFormationBundle.message("expected.a.string.or.an.array.of.strings")
     val value = property?.value
     return when (value) {
       null -> emptyList()

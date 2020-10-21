@@ -2,10 +2,12 @@ package com.intellij.aws.cloudformation
 
 import com.google.common.collect.ArrayListMultimap
 import com.google.common.collect.Multimap
+import com.intellij.aws.cloudformation.CloudFormationBundle.message
 import com.intellij.aws.cloudformation.model.*
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import org.jetbrains.annotations.Nls
 import org.jetbrains.yaml.psi.*
 import org.jetbrains.yaml.psi.impl.YAMLBlockMappingImpl
 import org.jetbrains.yaml.psi.impl.YAMLCompoundValueImpl
@@ -37,11 +39,11 @@ class YamlCloudFormationParser private constructor () {
     return this
   }
 
-  private fun addProblem(element: PsiElement, description: String) {
+  private fun addProblem(element: PsiElement, @Nls description: String) {
     myProblems.add(CloudFormationProblem(element, description))
   }
 
-  private fun addProblemOnNameElement(element: PsiElement, description: String) {
+  private fun addProblemOnNameElement(element: PsiElement, @Nls description: String) {
     val keyValue = element as? YAMLKeyValue
     addProblem(keyValue?.key ?: element, description)
   }
@@ -70,8 +72,8 @@ class YamlCloudFormationParser private constructor () {
         CloudFormationSection.Mappings -> mappings(property)
         else -> {
           addProblemOnNameElement(
-              property.owner,
-              CloudFormationBundle.message("format.unknown.section", name))
+            property.owner,
+            message("format.unknown.section", name))
           null
         }
       }
@@ -149,7 +151,7 @@ class YamlCloudFormationParser private constructor () {
 
     val list = obj?.cfnKeyValues()?.mapNotNull { keyValue ->
       if (keyValue.keyText.isEmpty()) {
-        addProblemOnNameElement(keyValue.owner, "A non-empty key is expected")
+        addProblemOnNameElement(keyValue.owner, message("a.non.empty.key.is.expected"))
         return@mapNotNull null
       }
 
@@ -181,7 +183,7 @@ class YamlCloudFormationParser private constructor () {
     return if (property.key != null) {
       CfnScalarValueNode(property.keyText).registerNode(property.key)
     } else {
-      addProblem(property.owner, "Expected a name")
+      addProblem(property.owner, message("expected.a.name"))
       CfnScalarValueNode("").registerNode(property.owner)
     }
   }
@@ -204,7 +206,7 @@ class YamlCloudFormationParser private constructor () {
       val propertyKey = property.keyText.trim()
 
       if (!CloudFormationConstants.AllTopLevelResourceProperties.contains(propertyKey)) {
-        addProblemOnNameElement(property.owner, CloudFormationBundle.message("format.unknown.resource.property", propertyKey))
+        addProblemOnNameElement(property.owner, message("format.unknown.resource.property", propertyKey))
       }
 
       val node = when (propertyKey) {
@@ -325,7 +327,7 @@ class YamlCloudFormationParser private constructor () {
     val functionId = CloudFormationIntrinsicFunction.shortNames[functionName]
 
     if (functionId == null) {
-      addProblem(tag, "Unknown CloudFormation function: $functionName")
+      addProblem(tag, message("unknown.cloudformation.function.0", functionName))
       return null
     }
 
@@ -338,7 +340,7 @@ class YamlCloudFormationParser private constructor () {
       }
 
       value.javaClass == YAMLCompoundValueImpl::class.java -> {
-        addProblem(value, "Too many values")
+        addProblem(value, message("too.many.values"))
 
         val parameterNode = CfnScalarValueNode((value as YAMLCompoundValueImpl).textValue).registerNode(value)
         return CfnFunctionNode(tagNode, functionId, listOf(parameterNode)).registerNode(value).toOptionalValue()
@@ -358,13 +360,13 @@ class YamlCloudFormationParser private constructor () {
           // Only exception for having a mapping here
           return CfnFunctionNode(tagNode, functionId, listOf(nestedLongFunctionCall)).toOptionalValue()
         } else {
-          addProblem(tag, "CloudFormation function expects a scalar value or a sequence")
+          addProblem(tag, message("cloudformation.function.expects.a.scalar.value.or.a.sequence"))
           null
         }
       }
 
       else -> {
-        addProblem(value, CloudFormationBundle.message("format.unknown.value", value.javaClass.simpleName))
+        addProblem(value, message("format.unknown.value", value.javaClass.simpleName))
         null
       }
     }
@@ -379,7 +381,7 @@ class YamlCloudFormationParser private constructor () {
     return when {
       value is YAMLScalar -> CfnScalarValueNode(value.textValue).registerNode(value)
       value.javaClass == YAMLCompoundValueImpl::class.java -> {
-        addProblem(value, "Too many values")
+        addProblem(value, message("too.many.values"))
         CfnScalarValueNode((value as YAMLCompoundValueImpl).textValue).registerNode(value)
       }
       value is YAMLSequence -> {
@@ -409,7 +411,7 @@ class YamlCloudFormationParser private constructor () {
         }
       }
       else -> {
-        addProblem(value, CloudFormationBundle.message("format.unknown.value", value.javaClass.simpleName))
+        addProblem(value, message("format.unknown.value", value.javaClass.simpleName))
         null
       }
     }
@@ -431,7 +433,7 @@ class YamlCloudFormationParser private constructor () {
       is YAMLSequence -> value.items.mapNotNull { checkAndGetStringElement(it.value) }
       is YAMLScalar -> checkAndGetStringElement(value)?.let { listOf(it) } ?: emptyList()
       else -> {
-        addProblemOnNameElement(property.owner, "Expected a string or an array of strings")
+        addProblemOnNameElement(property.owner, message("expected.a.string.or.an.array.of.strings"))
         emptyList()
       }
     }
@@ -442,7 +444,7 @@ class YamlCloudFormationParser private constructor () {
 
     val obj = expression as? YAMLMapping
     if (obj == null) {
-      addProblem(expression, "Expected YAML mapping")
+      addProblem(expression, message("expected.yaml.mapping"))
       return null
     }
 
@@ -454,7 +456,7 @@ class YamlCloudFormationParser private constructor () {
 
     if (!CloudFormationConstants.SupportedTemplateFormatVersions.contains(version)) {
       val supportedVersions = StringUtil.join(CloudFormationConstants.SupportedTemplateFormatVersions, ", ")
-      addProblem(value, CloudFormationBundle.message("format.unknownVersion", supportedVersions))
+      addProblem(value, message("format.unknownVersion", supportedVersions))
     }
   }
 
@@ -466,13 +468,13 @@ class YamlCloudFormationParser private constructor () {
 
     val scalar = expression as? YAMLScalar
     if (scalar == null) {
-      addProblem(expression, "A string literal is expected")
+      addProblem(expression, message("a.string.literal.is.expected"))
       return null
     }
 
     val tag = scalar.tag
     if (tag != null) {
-      addProblem(expression, "Unexpected tag: ${tag.text}")
+      addProblem(expression, message("unexpected.tag.0", tag.text))
       return null
     }
 
@@ -499,7 +501,7 @@ class YamlCloudFormationParser private constructor () {
 
     for (doc in yamlFile.documents.drop(1)) {
       if (doc.topLevelValue != null) {
-        addProblem(doc, "Unexpected YAML document")
+        addProblem(doc, message("unexpected.yaml.document"))
       }
     }
 
@@ -508,7 +510,7 @@ class YamlCloudFormationParser private constructor () {
     val topLevelValue = yamlDocument.topLevelValue
     if (topLevelValue == null) {
       if (!yamlDocument.textRange.isEmpty) {
-        addProblem(yamlDocument, "Expected top-level value")
+        addProblem(yamlDocument, message("expected.top.level.value"))
       }
 
       return CfnRootNode.empty().registerNode(yamlDocument)
@@ -516,7 +518,7 @@ class YamlCloudFormationParser private constructor () {
 
     val yamlMapping = topLevelValue as? YAMLMapping
     if (yamlMapping == null) {
-      addProblem(topLevelValue, "Expected YAML mapping")
+      addProblem(topLevelValue, message("expected.yaml.mapping"))
       return CfnRootNode.empty().registerNode(topLevelValue)
     }
 
