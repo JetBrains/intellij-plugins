@@ -35,7 +35,7 @@ final class GaugeRunTaskConfigurationType extends ConfigurationTypeBase {
       }
 
       @Override
-      public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
+      public @NotNull RunConfiguration createTemplateConfiguration(@NotNull Project project) {
         return new GaugeRunConfiguration("Gauge Execution", project, this);
       }
     };
