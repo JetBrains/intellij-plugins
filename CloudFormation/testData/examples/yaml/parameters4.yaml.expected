@@ -7,4 +7,4 @@ Resources:
   RootBucket:
     Type: AWS::S3::Bucket
 
-0: Description is too long (4002 chars), maximum allowed length is 4000
+0: Description is too long (4,002 chars), maximum allowed length is 4,000
