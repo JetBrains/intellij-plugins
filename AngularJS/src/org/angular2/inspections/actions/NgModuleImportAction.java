@@ -80,7 +80,7 @@ public class NgModuleImportAction extends Angular2NgModuleSelectAction {
     Map<JSImportCandidate, JSModuleNameInfo> renderedTexts = new HashMap<>();
     candidates = removeMergedElements(candidates, elementsFromLibraries);
     candidates = fillModuleNamesAndFilterByBlacklist(renderedTexts, candidates);
-    return removeSrcLibraryFiles(candidates, createLibraryModulesInfos(elementsFromLibraries, renderedTexts));
+    return removeSrcLikeLibraryFiles(candidates, createLibraryModulesInfos(elementsFromLibraries, renderedTexts));
   }
 
   @Override
