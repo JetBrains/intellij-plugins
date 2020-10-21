@@ -11,6 +11,7 @@ import com.intellij.openapi.actionSystem.ex.AnActionListener
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.CommandEvent
 import com.intellij.openapi.command.CommandListener
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.editor.event.DocumentListener
@@ -27,6 +28,8 @@ import java.awt.event.KeyEvent
 import java.awt.event.MouseEvent
 import java.beans.PropertyChangeListener
 import java.util.concurrent.CompletableFuture
+
+private val LOG = logger<ActionsRecorder>()
 
 class ActionsRecorder(private val project: Project,
                       private val document: Document?,
@@ -128,9 +131,7 @@ class ActionsRecorder(private val project: Project,
     val future: CompletableFuture<Boolean> = CompletableFuture()
     val actionListener = object : AnActionListener {
       override fun beforeActionPerformed(action: AnAction, dataContext: DataContext, event: AnActionEvent) {
-        if (getActionId(action) == actionId && check()) {
-          future.complete(true)
-        }
+        checkAndCancelForException(future) { getActionId(action) == actionId && check() }
       }
     }
     actionListeners.add(actionListener)
@@ -162,13 +163,7 @@ class ActionsRecorder(private val project: Project,
 
       override fun beforeEditorTyping(c: Char, dataContext: DataContext) {}
 
-      private fun checkComplete(): Boolean {
-        val complete = check.check()
-        if (complete) {
-          future.complete(true)
-        }
-        return complete
-      }
+      private fun checkComplete(): Boolean = checkAndCancelForException(future) { check.check() }
     }
     actionListeners.add(actionListener)
     return future
@@ -208,11 +203,7 @@ class ActionsRecorder(private val project: Project,
   fun futureCheck(checkFunction: () -> Boolean): CompletableFuture<Boolean> {
     val future: CompletableFuture<Boolean> = CompletableFuture()
 
-    val check = {
-      if (!future.isDone && !future.isCancelled && checkFunction()) {
-        future.complete(true)
-      }
-    }
+    val check: () -> Unit = { checkAndCancelForException(future, checkFunction) }
     checkCallback = check
 
     addKeyEventListener { check() }
@@ -302,5 +293,19 @@ class ActionsRecorder(private val project: Project,
       println(actionId)
     }
     return actionId
+  }
+
+  private fun checkAndCancelForException(future: CompletableFuture<Boolean>, check: () -> Boolean): Boolean {
+    try {
+      if (!future.isDone && !future.isCancelled && check()) {
+        future.complete(true)
+        return true
+      }
+      return false
+    }
+    catch (e: Exception) {
+      LOG.error("IFT check produces exception", e)
+    }
+    return false
   }
 }
