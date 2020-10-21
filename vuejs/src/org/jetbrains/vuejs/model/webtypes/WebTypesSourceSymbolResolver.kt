@@ -47,7 +47,11 @@ class WebTypesSourceSymbolResolver(private val context: PsiFile, private val plu
             is JSElement -> module
             else -> findModule(module)
           } ?: continue
-          JSResolveResult.resolve(ES6PsiUtil.resolveSymbolInModule(symbolName, context, jsModule))
+          ES6PsiUtil.resolveSymbolInModule(symbolName, context, jsModule).asSequence()
+            .filter { it.isValidResult }
+            .map { it.element }
+            // TODO resolve to multiple symbols
+            .firstOrNull()
             ?.let { return Result.create(it, context, module, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS) }
         }
       }
