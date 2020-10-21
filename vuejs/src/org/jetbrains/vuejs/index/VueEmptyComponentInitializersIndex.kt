@@ -5,6 +5,7 @@ import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.impl.JSPropertyImpl
 import com.intellij.psi.xml.XmlFile
 import com.intellij.util.castSafelyTo
 import com.intellij.util.indexing.*
@@ -33,7 +34,8 @@ class VueEmptyComponentInitializersIndex : ScalarIndexExtension<Boolean>() {
             ?.let { VueComponents.getComponentDescriptor(it) }
             ?.initializer
             ?.castSafelyTo<JSObjectLiteralExpression>()
-            ?.properties?.size == 0
+            ?.properties
+            ?.count { it is JSPropertyImpl } == 0
         }
         else true
       }
@@ -42,7 +44,7 @@ class VueEmptyComponentInitializersIndex : ScalarIndexExtension<Boolean>() {
     }
   }
 
-  override fun getVersion(): Int = 4
+  override fun getVersion(): Int = 5
 
   override fun getInputFilter(): FileBasedIndex.InputFilter = FileBasedIndex.InputFilter {
     it.fileType == VueFileType.INSTANCE
