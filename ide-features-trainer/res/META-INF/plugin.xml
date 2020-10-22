@@ -46,7 +46,6 @@
       implementation="training.statistic.IdeFeaturesTrainerRuleValidator"/>
     <statistics.validation.customValidationRule
       implementation="training.statistic.IdeFeaturesTrainerModuleRuleValidator"/>
-    <applicationService serviceImplementation="training.ui.welcomeScreen.recentProjects.IFTRecentProjectListActionProvider"/>
 
     <interactiveCourseFactory id="IFTInteractiveCourse" implementation="training.ui.welcomeScreen.IFTInteractiveCourse" order="first"/>
 
@@ -54,8 +53,6 @@
       serviceImplementation="training.learn.CourseManager"/>
     <applicationService
       serviceImplementation="training.lang.LangManager"/>
-    <applicationService
-      serviceImplementation="training.ui.welcomeScreen.recentProjects.actionGroups.GroupManager"/>
     <applicationService
       serviceImplementation="training.ui.UISettings"/>
     <applicationService
