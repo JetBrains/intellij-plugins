@@ -8,6 +8,7 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.ui.JBColor
+import com.intellij.ui.UIBundle
 import com.intellij.ui.awt.RelativePoint
 import org.intellij.lang.annotations.Language
 import org.jdom.Element
@@ -15,6 +16,7 @@ import org.jdom.input.SAXBuilder
 import training.commands.kotlin.TaskContext
 import training.commands.kotlin.TaskRuntimeContext
 import training.commands.kotlin.TaskTestContext
+import training.learn.LearnBundle
 import training.learn.lesson.LessonManager
 import training.ui.LearnToolWindowFactory
 import training.ui.LearningUiHighlightingManager
@@ -87,14 +89,14 @@ internal object LessonExecutorUtil {
       .createBalloon()
     val gotItCallBack = balloonConfig.gotItCallBack
     stopButton.action = if (gotItCallBack != null) {
-      object : AbstractAction("Got it!") {
+      object : AbstractAction(UIBundle.message("got.it")) {
         override fun actionPerformed(e: ActionEvent?) {
           gotItCallBack()
         }
       }
     }
     else {
-      object : AbstractAction("Stop lesson") {
+      object : AbstractAction(LearnBundle.message("learn.ui.button.stop.lesson")) {
         override fun actionPerformed(e: ActionEvent?) {
           LessonManager.instance.stopLesson()
         }
@@ -125,9 +127,8 @@ internal object LessonExecutorUtil {
 
   private fun parseHtmlElement(text: String): Element {
     val wrappedText = "<root><text>$text</text></root>"
-    val textAsElement = SAXBuilder().build(wrappedText.byteInputStream()).rootElement.getChild("text")
-                        ?: throw IllegalStateException("Can't parse as XML:\n$text")
-    return textAsElement
+    return SAXBuilder().build(wrappedText.byteInputStream()).rootElement.getChild("text")
+           ?: throw IllegalStateException("Can't parse as XML:\n$text")
   }
 }
 

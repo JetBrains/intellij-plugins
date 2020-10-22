@@ -4,8 +4,4 @@ package training.learn.exceptons
 import training.lang.LangManager
 import training.learn.LearnBundle
 
-/**
- * @author Sergey Karashevich
- */
-class NoSdkException :
-  InvalidSdkException(LearnBundle.message("dialog.noSdk.message", LangManager.getInstance().getLanguageDisplayName()))
+class NoSdkException : InvalidSdkException(LearnBundle.message("dialog.noSdk.message", LangManager.getInstance().getLanguageDisplayName()))

@@ -47,9 +47,6 @@ import java.awt.FontFormatException
 import java.io.IOException
 import java.util.concurrent.ExecutionException
 
-/**
- * @author Sergey Karashevich
- */
 class OpenLessonAction(val lesson: Lesson) : DumbAwareAction(lesson.name) {
 
   override fun actionPerformed(e: AnActionEvent) {
@@ -251,7 +248,7 @@ class OpenLessonAction(val lesson: Lesson) : DumbAwareAction(lesson.name) {
       openLesson(myLearnProject, lesson)
       return
     }
-    fun _openLesson() {
+    fun openLesson() {
       val toolWindowManager = ToolWindowManager.getInstance(myLearnProject)
       val learnToolWindow = toolWindowManager.getToolWindow(LearnToolWindowFactory.LEARN_TOOL_WINDOW)
       if (learnToolWindow != null) {
@@ -263,11 +260,11 @@ class OpenLessonAction(val lesson: Lesson) : DumbAwareAction(lesson.name) {
 
     val startupManager = StartupManager.getInstance(myLearnProject)
     if (startupManager is StartupManagerEx && startupManager.postStartupActivityPassed()) {
-      _openLesson()
+      openLesson()
     }
     else {
       startupManager.registerPostStartupActivity {
-        _openLesson()
+        openLesson()
       }
     }
   }

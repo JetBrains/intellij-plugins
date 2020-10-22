@@ -28,9 +28,6 @@ import javax.swing.*
 import javax.swing.border.EmptyBorder
 import javax.swing.border.MatteBorder
 
-/**
- * @author Sergey Karashevich
- */
 class LearnPanel(private val learnToolWindow: LearnToolWindow, val lesson: Lesson? = null, private val documentationMode: Boolean = false) : JPanel() {
 
   //XmlLesson panel items
@@ -111,7 +108,7 @@ class LearnPanel(private val learnToolWindow: LearnToolWindow, val lesson: Lesso
         ActionLink(LearnBundle.message("experimental.tabbed.ui.switch.to.interactive.mode"), action)
       }
       else {
-        LinkLabel<Any>(LearnBundle.message("experimental.tabbed.ui.continue.lesson"), null) { _, _ ->
+        LinkLabel(LearnBundle.message("experimental.tabbed.ui.continue.lesson"), null) { _, _ ->
           learnToolWindow.restoreLesson()
         }
       }
@@ -337,14 +334,16 @@ class LearnPanel(private val learnToolWindow: LearnToolWindow, val lesson: Lesso
       }
     }
     val keyStroke = getNextLessonKeyStrokeText()
-    button.text = if (text != null) {
-      "$text ($keyStroke)"
-    }
-    else if (notPassedLesson != null) {
-      "${LearnBundle.message("learn.ui.button.next.lesson")}: ${notPassedLesson.name} ($keyStroke)"
-    }
-    else {
-      LearnBundle.message("learn.ui.button.next.lesson") + " ($keyStroke)"
+    button.text = when {
+      text != null -> {
+        "$text ($keyStroke)"
+      }
+      notPassedLesson != null -> {
+        "${LearnBundle.message("learn.ui.button.next.lesson")}: ${notPassedLesson.name} ($keyStroke)"
+      }
+      else -> {
+        LearnBundle.message("learn.ui.button.next.lesson") + " ($keyStroke)"
+      }
     }
     button.isSelected = true
     rootPane?.defaultButton = button

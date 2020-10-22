@@ -65,7 +65,7 @@ class LearningLessonsAutoExecutor(val project: Project, private val progress: Pr
 
   companion object {
     fun runAllLessons(project: Project) {
-      runBackgroundableTask("Running all lessons", project) {
+      runBackgroundableTask("Running All Lessons", project) {
         try {
           val learningLessonsAutoExecutor = LearningLessonsAutoExecutor(project, it)
           learningLessonsAutoExecutor.runAllLessons()

@@ -88,7 +88,7 @@ class CourseManager internal constructor() : Disposable {
   fun findLesson(lessonName: String): Lesson? {
     return modules
       .flatMap { it.lessons }
-      .firstOrNull { it.name.toUpperCase() == lessonName.toUpperCase() }
+      .firstOrNull { it.name.equals(lessonName, ignoreCase = true) }
   }
 
   fun getNextNonPassedLesson(currentLesson: Lesson?): Lesson? {

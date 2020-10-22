@@ -279,8 +279,7 @@ class ModulesPanel(private val learnToolWindow: LearnToolWindow?) : JPanel() {
       }
 
       val progressStr = module.calcProgress()
-      val progressLabel: JBLabel
-      progressLabel = if (progressStr != null) {
+      val progressLabel: JBLabel = if (progressStr != null) {
         JBLabel(progressStr)
       }
       else {

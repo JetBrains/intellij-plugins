@@ -15,16 +15,12 @@ import training.learn.exceptons.InvalidSdkException
 import training.learn.exceptons.NoSdkException
 import training.util.JdkSetupUtil
 
-/**
- * @author Sergey Karashevich
- */
 class JavaLangSupport : AbstractLangSupport() {
   override val primaryLanguage: String = "JAVA"
 
   override val defaultProductName: String = "IDEA"
 
-  override val projectSandboxRelativePath: String?
-    get() = "Sample.java"
+  override val projectSandboxRelativePath: String = "Sample.java"
 
   override fun applyProjectSdk(sdk: Sdk, project: Project) {
     val applySdkAction = {

@@ -39,7 +39,6 @@
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
-    <actionPromoter implementation="training.editor.actions.LearnActionPromoter"/>
     <!-- groupId should be same to StatisticBase.GROUP_ID and version to StatisticBase.VERSION -->
     <statistics.counterUsagesCollector groupId="ideFeaturesTrainer" version="4"/>
     <statistics.validation.customValidationRule

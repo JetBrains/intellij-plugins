@@ -6,9 +6,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.wm.ToolWindowAnchor
 
-/**
- * @author Sergey Karashevich
- */
 class SwiftSupport : AbstractLangSupport() {
   override val primaryLanguage: String
     get() = "swift"

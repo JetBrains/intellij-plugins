@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicReference
 object LearningUiUtil {
   @Volatile
   private var myRobot: Robot? = null
-  val robot: Robot
+  private val robot: Robot
     get() {
       if(myRobot == null)
         synchronized(this) {
@@ -32,7 +32,7 @@ object LearningUiUtil {
     myRobot = BasicRobot.robotWithCurrentAwtHierarchyWithoutScreenLock() // acquires ScreenLock
   }
 
-  fun releaseRobot() {
+  private fun releaseRobot() {
     if(myRobot != null) {
       synchronized(this){
         if (myRobot != null){
@@ -51,7 +51,7 @@ object LearningUiUtil {
                                         matcher: GenericTypeMatcher<T>,
                                         timeout: Timeout): Collection<T> {
     val reference = AtomicReference<Collection<T>>()
-    Pause.pause(object : Condition("Find component using " + matcher.toString()) {
+    Pause.pause(object : Condition("Find component using $matcher") {
       override fun test(): Boolean {
         val finder = robot.finder()
         val allFound = if (root != null) finder.findAll(root, matcher) else finder.findAll(matcher)
@@ -93,16 +93,12 @@ object LearningUiUtil {
                                                                   selector: ((candidates: Collection<ComponentType>) -> ComponentType?)? = null,
                                                                   finderFunction: (ComponentType) -> Boolean = { true }): ComponentType {
     try {
-      if (selector != null) {
+      return if (selector != null) {
         val result = waitUntilFoundAll(robot, container, typeMatcher(componentClass) { it.isShowing && finderFunction(it) }, timeout)
-        val single = selector(result)
-        if (single== null) {
-          throw ComponentLookupException("Cannot filter result component from: $result")
-        }
-        return single
+        selector(result) ?: throw ComponentLookupException("Cannot filter result component from: $result")
       }
       else {
-        return waitUntilFound(robot, container, typeMatcher(componentClass) { it.isShowing && finderFunction(it) }, timeout)
+        waitUntilFound(robot, container, typeMatcher(componentClass) { it.isShowing && finderFunction(it) }, timeout)
       }
     }
     catch (e: WaitTimedOutError) {

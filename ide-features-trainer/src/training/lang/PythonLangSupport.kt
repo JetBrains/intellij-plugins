@@ -14,9 +14,6 @@ import com.jetbrains.python.sdk.PythonSdkType
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor
 import com.jetbrains.python.sdk.flavors.VirtualEnvSdkFlavor
 
-/**
- * @author Sergey Karashevich
- */
 class PythonLangSupport : AbstractLangSupport() {
   override val defaultProjectName = "PyCharmLearningProject"
 

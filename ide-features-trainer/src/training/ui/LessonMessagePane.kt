@@ -46,16 +46,16 @@ class LessonMessagePane(private val learnToolWindow: LearnToolWindow?) : JTextPa
         val rangeData = getRangeDataForMouse(me) ?: return
         val middle = (rangeData.range.first + rangeData.range.last) / 2
         val rectangle = modelToView(middle)
-        rangeData.action(Point(rectangle.x.toInt(), (rectangle.y + rectangle.height).toInt()))
+        rangeData.action(Point(rectangle.x, (rectangle.y + rectangle.height)))
       }
 
       override fun mouseMoved(me: MouseEvent) {
         val rangeData = getRangeDataForMouse(me)
-        if (rangeData == null) {
-          cursor = Cursor.getDefaultCursor()
+        cursor = if (rangeData == null) {
+          Cursor.getDefaultCursor()
         }
         else {
-          cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)
+          Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)
         }
       }
     }
@@ -346,8 +346,7 @@ class LessonMessagePane(private val learnToolWindow: LearnToolWindow?) : JTextPa
           val fontSize = UISettings.instance.fontSize
 
           g2d.color = UISettings.instance.shortcutBackgroundColor
-          val r2d: RoundRectangle2D
-          r2d = if (!SystemInfo.isMac)
+          val r2d: RoundRectangle2D = if (!SystemInfo.isMac)
             RoundRectangle2D.Double(rectangleStart.getX() - 2 * indent, rectangleStart.getY() - indent + 1,
                                     rectangleEnd.getX() - rectangleStart.getX() + 4 * indent, (fontSize + 3 * indent).toDouble(),
                                     arc.toDouble(), arc.toDouble())

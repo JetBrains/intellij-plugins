@@ -65,8 +65,8 @@ abstract class BasicCompletionLessonBase(module: Module, lang: String)
           editor.document.text == result1
         }
         restoreState {
-          (previous.ui as? JList<*>)?.takeIf { it.isShowing }?.let {
-            !isTheFirstVariant(it)
+          (previous.ui as? JList<*>)?.takeIf { ui -> ui.isShowing }?.let { ui ->
+            !isTheFirstVariant(ui)
           } ?: true
         }
         test {
