@@ -77,7 +77,7 @@ abstract class TaskContext : LearningDslBase {
 
   /** An user need to rice an action which leads to appropriate end state */
   fun trigger(actionId: String, checkState: TaskRuntimeContext.() -> Boolean) {
-    trigger(actionId, { Unit }, { _, _ -> checkState() })
+    trigger(actionId, { }, { _, _ -> checkState() })
   }
 
   /**

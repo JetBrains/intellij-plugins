@@ -61,7 +61,7 @@ class TaskTestContext(rt: TaskRuntimeContext): TaskRuntimeContext(rt) {
       val myJList: JList<*> = findComponentWithTimeout(timeout) { jList: JList<*> ->
         if (partOfItem == null) true //if were searching for any jList()
         else {
-          val elements = (0 until jList.model.size).map { it: Int -> extCellReader.valueAt(jList, it) }
+          val elements = (0 until jList.model.size).map { extCellReader.valueAt(jList, it) }
           elements.any { it.toString().contains(partOfItem) } && jList.isShowing
         }
       }

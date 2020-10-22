@@ -14,9 +14,6 @@ import training.util.WeakReferenceDelegator
 import training.util.findLanguageByID
 import training.util.trainerPluginConfigName
 
-/**
- * @author Sergey Karashevich
- */
 @State(name = "LangManager", storages = [Storage(value = trainerPluginConfigName)])
 class LangManager : PersistentStateComponent<LangManager.State> {
 

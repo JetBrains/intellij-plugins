@@ -40,7 +40,7 @@ class QuickPopupsLesson(module: Module, lang: String, private val sample: Lesson
     }
   }
 
-  fun TaskRuntimeContext.checkDocComponentClosed(): Boolean {
+  private fun TaskRuntimeContext.checkDocComponentClosed(): Boolean {
     val activeDocComponent = QuickDocUtil.getActiveDocComponent(project)
     return activeDocComponent == null || !activeDocComponent.isShowing
   }

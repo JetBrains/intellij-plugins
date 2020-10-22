@@ -48,7 +48,7 @@ class StartLearnAction : AnAction(
       return this
     }
 
-    override fun createCenterPanel(): JComponent? = myLangChoosePanel
+    override fun createCenterPanel(): JComponent = myLangChoosePanel
   }
 
   private fun doAction() {

@@ -26,9 +26,6 @@ import javax.swing.text.BadLocationException
 import javax.swing.text.SimpleAttributeSet
 import javax.swing.text.StyleConstants
 
-/**
- * @author Sergey Karashevich
- */
 sealed class LanguageChoosePanelPlace(bundleAppendix: String) : BundlePlace(bundleAppendix) {
   object WELCOME_SCREEN : LanguageChoosePanelPlace("")
   object TOOL_WINDOW : LanguageChoosePanelPlace(".tool.window")

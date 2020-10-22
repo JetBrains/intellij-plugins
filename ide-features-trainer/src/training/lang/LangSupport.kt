@@ -7,7 +7,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.ToolWindowAnchor
 import training.learn.exceptons.InvalidSdkException
 import training.learn.exceptons.NoSdkException
-import java.io.File
 import java.nio.file.Path
 
 interface LangSupport {

@@ -41,8 +41,8 @@ fun checkSwapMoreThan2Lines(before: String, now: String): Boolean {
   if (beforeLines.size != nowLines.size) {
     return false
   }
-  val chane = beforeLines.size - commonPrefix(beforeLines, nowLines) - commonSuffix(beforeLines, nowLines)
-  return chane >= 4
+  val change = beforeLines.size - commonPrefix(beforeLines, nowLines) - commonSuffix(beforeLines, nowLines)
+  return change >= 4
 }
 
 private fun <T> commonPrefix(list1: List<T>, list2: List<T>): Int {

@@ -87,12 +87,7 @@ class LessonManager {
     LearningUiHighlightingManager.clearHighlights()
   }
 
-  internal fun initLesson(editor: Editor, cLesson: Lesson) {
-    val project = editor.project ?: throw Exception("Unable to open lesson in a null project")
-    initLesson(editor, cLesson, project)
-  }
-
-  internal fun initLesson(editor: Editor?, cLesson: Lesson, project: Project) {
+  private fun initLesson(editor: Editor?, cLesson: Lesson, project: Project) {
     if (!cLesson.lessonListeners.contains(delegateListener))
       cLesson.addLessonListener(delegateListener)
     val learnPanel = learnPanel ?: return
