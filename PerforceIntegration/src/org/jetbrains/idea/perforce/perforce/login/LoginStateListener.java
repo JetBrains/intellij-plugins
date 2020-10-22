@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class LoginStateListener {
   private boolean myIsInBatch;
-  private final Set<P4Connection> myConnections = Collections.newSetFromMap(new ConcurrentHashMap<>());
+  private final Set<P4Connection> myConnections = com.intellij.util.containers.ContainerUtil.newConcurrentSet();
 
   public void reconnected(P4Connection connection) {
     if (myIsInBatch) {
