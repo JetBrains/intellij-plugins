@@ -14,7 +14,8 @@ import java.io.FileNotFoundException
 
 class CloudFormationLanguageSubstitutor: LanguageSubstitutor() {
   override fun getLanguage(file: VirtualFile, project: Project): Language? {
-    if (file == FileBasedIndex.getInstance().fileBeingCurrentlyIndexed) return null
+    if (file == FileBasedIndex.getInstance().fileBeingCurrentlyIndexed ||
+        file.extension != "template") return null
     val bytes = try {
       FileUtil.loadFirstAndClose(file.inputStream, 10 * 1024)
     } catch (_: FileNotFoundException) {
