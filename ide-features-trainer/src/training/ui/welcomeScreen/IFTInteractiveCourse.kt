@@ -1,7 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.ui.welcomeScreen
 
-import com.intellij.icons.AllIcons.Ide.External_link_arrow
 import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -20,7 +19,6 @@ import training.actions.StartLearnAction
 import training.learn.CourseManager
 import training.learn.LearnBundle
 import training.learn.interfaces.Module
-import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Component.LEFT_ALIGNMENT
 import java.awt.Dimension
@@ -101,18 +99,6 @@ class IFTInteractiveCourseData : InteractiveCourseData {
         performActionOnWelcomeScreen(OpenLessonAction(lesson))
       }, null)
     return linkLabel
-  }
-
-
-  private fun LinkLabel<Any>.wrapWithUrlPanel(): JPanel {
-    val jPanel = JPanel()
-    jPanel.isOpaque = false
-    jPanel.layout = BoxLayout(jPanel, BoxLayout.LINE_AXIS)
-    jPanel.add(this, BorderLayout.CENTER)
-    jPanel.add(JLabel(External_link_arrow), BorderLayout.EAST)
-    jPanel.maximumSize = jPanel.preferredSize
-    jPanel.alignmentX = LEFT_ALIGNMENT
-    return jPanel
   }
 
   private fun rigid(_width: Int, _height: Int): Component {
