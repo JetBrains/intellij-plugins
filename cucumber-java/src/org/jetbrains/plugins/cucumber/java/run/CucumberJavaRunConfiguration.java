@@ -9,6 +9,7 @@ import com.intellij.execution.filters.Filter;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
+import com.intellij.execution.target.LanguageRuntimeType;
 import com.intellij.execution.testframework.JavaTestLocator;
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
@@ -288,5 +289,17 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
   @Override
   public String getActionName() {
     return getName();
+  }
+
+  @Nullable
+  @Override
+  public LanguageRuntimeType<?> getDefaultLanguageRuntimeType() {
+    return null;
+  }
+
+  @Nullable
+  @Override
+  public String getDefaultTargetName() {
+    return null;
   }
 }
