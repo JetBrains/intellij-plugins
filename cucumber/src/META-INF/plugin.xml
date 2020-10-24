@@ -9,6 +9,7 @@
   ]]>
   </description>
   <depends>com.intellij.modules.xml</depends>
+  <depends>org.intellij.intelliLang</depends>
   <vendor>JetBrains</vendor>
 
   <extensions defaultExtensionNs="com.intellij">

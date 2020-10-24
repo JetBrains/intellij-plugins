@@ -9,8 +9,7 @@
 .idea/shelf
 .idea/usage.statistics.xml
 .idea/workspace.xml
+/build
 /gradle
 /gradlew
 /gradlew.bat
-/build
-/out
