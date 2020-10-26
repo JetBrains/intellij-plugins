@@ -3,18 +3,15 @@ package org.jetbrains.vuejs.model.source
 
 import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.lang.javascript.JSElementTypes
-import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
 import com.intellij.lang.javascript.psi.types.evaluable.JSApplyCallType
-import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.StubBasedPsiElement
 import com.intellij.psi.impl.source.html.HtmlFileImpl
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndexKey
-import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.castSafelyTo
 import one.util.streamex.StreamEx
@@ -59,28 +56,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
       val Filters = MemberReader(FILTERS_PROP)
       val Delimiters = MemberReader(DELIMITERS_PROP, true, false)
       val Model = MemberReader(MODEL_PROP)
-      val Data = object : MemberReader(DATA_PROP) {
-        override fun getObjectLiteralFromResolved(resolved: PsiElement): JSObjectLiteralExpression? =
-          findReturnedObjectLiteral(resolved)
-
-        override fun getObjectLiteral(property: JSProperty): JSObjectLiteralExpression? {
-          val function = property.tryGetFunctionInitializer() ?: return null
-          return findReturnedObjectLiteral(function)
-        }
-      }
-
-      private fun findReturnedObjectLiteral(resolved: PsiElement): JSObjectLiteralExpression? {
-        if (resolved !is JSFunction) return null
-        return JSStubBasedPsiTreeUtil.findDescendants<JSObjectLiteralExpression>(
-          resolved, TokenSet.create(
-          JSStubElementTypes.OBJECT_LITERAL_EXPRESSION))
-          .find {
-            it.context == resolved ||
-            it.context is JSParenthesizedExpression && it.context?.context == resolved ||
-            it.context is JSReturnStatement
-          }
-      }
-
+      val Data = MemberReader(DATA_PROP, canBeFunctionResult = true)
     }
 
     private val EXTENDS = MixinsAccessor(EXTENDS_PROP, VueExtendsBindingIndex.KEY)
