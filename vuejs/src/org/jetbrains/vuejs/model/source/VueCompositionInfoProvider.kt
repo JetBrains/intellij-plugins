@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.castSafelyTo
+import org.jetbrains.vuejs.codeInsight.resolveElementTo
 import org.jetbrains.vuejs.codeInsight.resolveSymbolFromNodeModule
 import org.jetbrains.vuejs.index.COMPOSITION_API_MODULE
 import org.jetbrains.vuejs.index.VUE_MODULE
@@ -43,8 +44,8 @@ class VueCompositionInfoProvider : VueContainerInfoProvider {
                             initializer, "$COMPOSITION_API_MODULE/dist/reactivity/ref",
                             "UnwrapRef", TypeScriptTypeAlias::class.java)
           CachedValueProvider.Result.create(
-            initializer.findProperty(SETUP_METHOD)
-              ?.castSafelyTo<JSFunctionProperty>()
+            resolveElementTo(initializer.findProperty(SETUP_METHOD), JSFunction::class)
+              ?.castSafelyTo<JSFunction>()
               ?.returnType
               ?.let { returnType ->
                 (returnType as? JSAsyncReturnType)
