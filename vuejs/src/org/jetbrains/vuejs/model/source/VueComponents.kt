@@ -112,7 +112,7 @@ class VueComponents {
           } else null
 
         // @Component({...}) class MyComponent {...}
-        is JSClassExpression ->
+        is JSClass ->
           VueSourceEntityDescriptor(getComponentDecorator(resolved)?.let { getDescriptorFromDecorator(it) },
                                            resolved)
         else -> null
