@@ -30,7 +30,6 @@ import java.nio.charset.StandardCharsets
 
 import static com.intellij.testFramework.EdtTestUtil.runInEdtAndWait
 import static com.intellij.testFramework.UsefulTestCase.*
-import static junit.framework.TestCase.assertEquals
 import static org.junit.Assert.assertEquals
 
 /**
@@ -343,7 +342,7 @@ class PerforceHistoryTest extends PerforceTestCase {
     setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.ADD, VcsShowConfirmationOption.Value.DO_NOTHING_SILENTLY)
 
     VirtualFile file = createFileInCommand("a.txt", "")
-    file.charset = CharsetToolkit.UTF_16LE_CHARSET
+    file.charset = StandardCharsets.UTF_16LE
     setFileText(file, "first")
 
     def firstContent = file.contentsToByteArray()
@@ -355,7 +354,7 @@ class PerforceHistoryTest extends PerforceTestCase {
     setFileText(file, "second")
     submitDefaultList("second")
 
-    assert file.charset == CharsetToolkit.UTF_16LE_CHARSET
+    assert file.charset == StandardCharsets.UTF_16LE
 
     List<VcsFileRevision> history = getFileHistory(file)
     assertSize(2, history)
@@ -374,7 +373,7 @@ class PerforceHistoryTest extends PerforceTestCase {
     submitDefaultList("second")
 
     verify(runP4WithClient("edit", "-t", "utf16", file.path))
-    file.charset = CharsetToolkit.UTF_16LE_CHARSET
+    file.charset = StandardCharsets.UTF_16LE
     setFileText(file, "third")
     submitDefaultList("third")
 
@@ -386,6 +385,6 @@ class PerforceHistoryTest extends PerforceTestCase {
     List<VcsFileRevision> history = getFileHistory(file)
     List<DocumentContent> diffs = history.collect { VcsHistoryUtil.loadContentForDiff(myProject, path, it) as DocumentContent }
     assert diffs.collect { it.document.text } == ["third", "second", "first"]
-    assert diffs.collect { it.charset } == [CharsetToolkit.UTF_16LE_CHARSET, StandardCharsets.UTF_8, StandardCharsets.UTF_8]
+    assert diffs.collect { it.charset } == [StandardCharsets.UTF_16LE, StandardCharsets.UTF_8, StandardCharsets.UTF_8]
   }
 }
