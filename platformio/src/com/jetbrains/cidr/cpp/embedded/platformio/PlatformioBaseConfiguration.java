@@ -11,6 +11,7 @@ import com.intellij.openapi.util.NlsActions;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.jetbrains.cidr.cpp.cmake.model.CMakeTarget;
+import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionBase;
 import com.jetbrains.cidr.cpp.execution.CMakeAppRunConfiguration;
 import com.jetbrains.cidr.cpp.execution.CMakeBuildConfigurationHelper;
 import com.jetbrains.cidr.cpp.toolchains.CPPDebugger;
@@ -34,13 +35,19 @@ public abstract class PlatformioBaseConfiguration extends CMakeAppRunConfigurati
 
 
   private volatile CPPToolchains.Toolchain myToolchain;
+  private final PlatformioActionBase.FUS_COMMAND command;
 
-  public PlatformioBaseConfiguration(@NotNull Project project, @NotNull ConfigurationFactory configurationFactory,
-                                     @NotNull String myBuildTargetName, @NotNull Supplier<@NlsActions.ActionText String> name, String @Nullable [] cliParameters) {
+  public PlatformioBaseConfiguration(@NotNull Project project,
+                                     @NotNull ConfigurationFactory configurationFactory,
+                                     @NotNull String myBuildTargetName,
+                                     @NotNull Supplier<@NlsActions.ActionText String> name,
+                                     String @Nullable [] cliParameters,
+                                     @NotNull PlatformioActionBase.FUS_COMMAND command) {
     super(project, configurationFactory, name.get());
     this.myBuildTargetName = myBuildTargetName;
     this.mySuggestedName = name;
     this.cliParameters = cliParameters;
+    this.command = command;
   }
 
   @NotNull
@@ -58,7 +65,7 @@ public abstract class PlatformioBaseConfiguration extends CMakeAppRunConfigurati
   @Override
   public @Nullable
   CidrCommandLineState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) {
-    return new CidrCommandLineState(env, new PlatformioLauncher(env, this, cliParameters));
+    return new CidrCommandLineState(env, new PlatformioLauncher(env, this, cliParameters, command));
   }
 
 

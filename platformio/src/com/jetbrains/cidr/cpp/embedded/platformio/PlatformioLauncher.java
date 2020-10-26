@@ -29,6 +29,7 @@ import com.jetbrains.cidr.cpp.cmake.model.CMakeVariable;
 import com.jetbrains.cidr.cpp.cmake.workspace.CMakeProfileInfo;
 import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace;
 import com.jetbrains.cidr.cpp.embedded.EmbeddedBundle;
+import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionBase;
 import com.jetbrains.cidr.cpp.execution.CLionLauncher;
 import com.jetbrains.cidr.cpp.execution.CMakeAppRunConfiguration;
 import com.jetbrains.cidr.cpp.execution.CMakeBuildProfileExecutionTarget;
@@ -55,13 +56,16 @@ import java.util.Optional;
 
 public class PlatformioLauncher extends CLionLauncher {
   private final String[] cliParameters;
+  private final PlatformioActionBase.FUS_COMMAND command;
 
 
   public PlatformioLauncher(@NotNull ExecutionEnvironment executionEnvironment,
                             @NotNull PlatformioBaseConfiguration configuration,
-                            String @Nullable [] cliParameters) {
+                            String @Nullable [] cliParameters,
+                            @NotNull PlatformioActionBase.FUS_COMMAND command) {
     super(executionEnvironment, configuration);
     this.cliParameters = cliParameters;
+    this.command = command;
   }
 
   @NotNull
@@ -88,11 +92,18 @@ public class PlatformioLauncher extends CLionLauncher {
     return commandLine;
   }
 
+  @NotNull
+  @Override
+  public ProcessHandler createProcess(@NotNull CommandLineState state) throws ExecutionException {
+    PlatformioActionBase.fusLog(getProject(), command);
+    return super.createProcess(state);
+  }
+
   @Override
   @NotNull
   public CidrDebugProcess createDebugProcess(@NotNull CommandLineState commandLineState, @NotNull XDebugSession xDebugSession)
     throws ExecutionException {
-
+    PlatformioActionBase.fusLog(getProject(), command);
     Optional<String> cmakeBuildType = getCmakeBuildType(commandLineState);
     DebuggerDriverConfiguration debuggerDriverConfiguration = new CLionGDBDriverConfiguration(getConfiguration().getProject(),
                                                                                               ((PlatformioBaseConfiguration)getConfiguration())
