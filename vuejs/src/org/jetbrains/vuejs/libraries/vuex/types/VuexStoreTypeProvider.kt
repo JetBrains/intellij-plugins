@@ -2,8 +2,11 @@
 package org.jetbrains.vuejs.libraries.vuex.types
 
 import com.intellij.lang.javascript.psi.JSParameter
+import com.intellij.lang.javascript.psi.JSTypeUtils
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptParameter
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator
+import com.intellij.lang.javascript.psi.types.JSAnyType
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.GETTERS
@@ -27,6 +30,9 @@ object VuexStoreTypeProvider {
       return true
     }
     else if (result is JSParameter) {
+      if (result is TypeScriptParameter && result.jsType
+          .let { it != null && !JSTypeUtils.isAnyType(it)})
+            return false
       if (isActionContextParameter(result)) {
         if (!isVueContext(result)) return false
         evaluator.addType(VuexActionContextType(result), result)
