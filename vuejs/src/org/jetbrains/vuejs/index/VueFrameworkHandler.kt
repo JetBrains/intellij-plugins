@@ -33,6 +33,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.util.PathUtil
 import com.intellij.util.castSafelyTo
 import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
+import org.jetbrains.vuejs.codeInsight.es6Unquote
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.lang.html.VueFileType
@@ -69,7 +70,6 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     }
 
     private const val REQUIRE = "require"
-    private const val VUE_INSTANCE = "CombinedVueInstance"
 
     private val VUE_DESCRIPTOR_OWNERS = arrayOf(VUE_NAMESPACE, MIXIN_FUN, COMPONENT_FUN, EXTEND_FUN, DIRECTIVE_FUN, DELIMITERS_PROP,
                                                 FILTER_FUN, DEFINE_COMPONENT_FUN)
@@ -281,7 +281,8 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
                 ?.castSafelyTo<ES6ImportedBinding>()
                 ?.context?.castSafelyTo<ES6ImportExportDeclaration>()
                 ?.fromClause
-                ?.referenceText == "\"vue-typed-mixins\"") {
+                ?.referenceText
+                ?.let { es6Unquote(it) } == "vue-typed-mixins") {
             for (arg in qualifier.arguments) {
               arg.castSafelyTo<JSReferenceExpression>()
                 ?.takeIf { !it.hasQualifier() }
@@ -376,10 +377,10 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     return index == VueUrlIndex.KEY
   }
 
-  fun createImplicitElement(name: String, provider: PsiElement, indexKey: String,
-                            nameType: String? = null,
-                            descriptor: PsiElement? = null,
-                            isGlobal: Boolean = false): JSImplicitElementImpl {
+  private fun createImplicitElement(name: String, provider: PsiElement, indexKey: String,
+                                    nameType: String? = null,
+                                    descriptor: PsiElement? = null,
+                                    isGlobal: Boolean = false): JSImplicitElementImpl {
     val normalized = normalizeNameForIndex(name)
     val nameTypeRecord = nameType ?: ""
     val asIndexed = descriptor as? JSIndexedPropertyAccessExpression
