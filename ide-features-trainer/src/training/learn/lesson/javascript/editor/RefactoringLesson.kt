@@ -3,6 +3,7 @@ package training.learn.lesson.javascript.editor
 
 import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.idea.ActionsBundle
+import com.intellij.refactoring.RefactoringBundle
 import com.intellij.ui.components.JBList
 import training.lang.JavaScriptLangSupport
 import training.learn.LessonsBundle
@@ -58,7 +59,7 @@ class RefactoringLesson(module: Module)
         }
 
         task("RenameElement") {
-          text(LessonsBundle.message("js.editor.refactorings.rename", strong(ActionsBundle.message("action.Refactorings.QuickListPopupAction.text")), strong(ActionsBundle.message("action.RenameAction.text"))))
+          text(LessonsBundle.message("js.editor.refactorings.rename", strong(RefactoringBundle.message("refactor.this.title")), strong(ActionsBundle.message("action.RenameAction.text"))))
           trigger(it) {
             textAtCaretEqualsTo("books")
           }
@@ -98,7 +99,7 @@ class RefactoringLesson(module: Module)
         text(
           LessonsBundle.message("js.editor.refactorings.next",
                                 "https://resources.jetbrains.com/storage/products/webstorm/docs/WebStorm_ReferenceCard.pdf",
-                                strong(ActionsBundle.message("group.RefactoringMenu.text").dropMnemonic()),
+                                strong(RefactoringBundle.message("refactor.this.title")),
                                 action("learn.next.lesson")))
       }
     }
