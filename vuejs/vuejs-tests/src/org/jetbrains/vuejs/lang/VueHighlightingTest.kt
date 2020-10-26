@@ -1554,6 +1554,13 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
     myFixture.checkHighlighting()
   }
 
+  fun testAsyncSetup() {
+    myFixture.configureDependencies(VueTestModule.VUE_3_0_0)
+    myFixture.enableInspections(VueInspectionsProvider())
+    myFixture.configureByFile("asyncSetup.vue")
+    myFixture.checkHighlighting()
+  }
+
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {
