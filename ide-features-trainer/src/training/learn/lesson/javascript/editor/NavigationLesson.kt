@@ -18,7 +18,7 @@ import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.parseLessonSample
 
 class NavigationLesson(module: Module)
-  : KLesson("Secrets of Efficient Navigation", LessonsBundle.message("js.editor.navigation.title"), module, JavaScriptLangSupport.lang) {
+  : KLesson("Efficient Navigation", LessonsBundle.message("js.editor.navigation.title"), module, JavaScriptLangSupport.lang) {
 
   private val thisOwnerName = "$" + "{this.ownerName}"
   private val thisName = "$" + "{this.name}"

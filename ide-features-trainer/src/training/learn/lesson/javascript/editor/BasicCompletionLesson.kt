@@ -11,7 +11,7 @@ import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.parseLessonSample
 
 class BasicCompletionLesson(module: Module)
-  : KLesson("The Nuts and Bolts of Code Completion", LessonsBundle.message("js.editor.completion.title"), module,
+  : KLesson("Code Completion", LessonsBundle.message("js.editor.completion.title"), module,
             JavaScriptLangSupport.lang) {
 
   val sample = parseLessonSample("""
