@@ -59,7 +59,6 @@ public class PlatformioCleanBeforeRunTaskProvider extends BeforeRunTaskProvider<
     Ref<Boolean> success = new Ref<>(false);
     Semaphore actionFinished = new Semaphore();
     if (tool != null) {
-
       ProcessAdapter successListener = new ProcessAdapter() {
         @Override
         public void processTerminated(@NotNull ProcessEvent event) {

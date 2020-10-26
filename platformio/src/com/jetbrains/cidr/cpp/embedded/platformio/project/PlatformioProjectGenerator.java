@@ -58,6 +58,8 @@ import javax.swing.*;
 import java.io.IOException;
 import java.util.List;
 
+import static com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionBase.FUS_COMMAND.CREATE_PROJECT;
+import static com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionBase.fusLog;
 import static com.jetbrains.cidr.cpp.embedded.stm32cubemx.CMakeSTM32CubeMXProjectGenerator.EMBEDDED_PROJECTS_GROUP_DISPLAY_NAME;
 import static com.jetbrains.cidr.cpp.embedded.stm32cubemx.CMakeSTM32CubeMXProjectGenerator.EMBEDDED_PROJECTS_GROUP_NAME;
 
@@ -85,7 +87,7 @@ public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<BoardI
   @Nls
   @NotNull
   @Override
-  public   String getGroupDisplayName() {
+  public String getGroupDisplayName() {
     return EMBEDDED_PROJECTS_GROUP_DISPLAY_NAME.get();
   }
 
@@ -133,6 +135,7 @@ public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<BoardI
       PlatformioService.notifyPlatformioNotFound(project);
       return;
     }
+    fusLog(null, CREATE_PROJECT);
     CustomTool initTool = new CustomTool(ClionEmbeddedPlatformioBundle.message("platformio.init.title"));
     initTool.setProgram(myPioUtility);
     initTool.setWorkingDirectory(baseDir.getCanonicalPath());
