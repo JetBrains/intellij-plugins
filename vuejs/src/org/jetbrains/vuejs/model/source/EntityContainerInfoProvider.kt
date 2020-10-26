@@ -122,7 +122,8 @@ interface EntityContainerInfoProvider<T> {
 
     open class MemberReader(private val propertyName: String,
                             private val canBeArray: Boolean = false,
-                            private val canBeObject: Boolean = true) {
+                            private val canBeObject: Boolean = true,
+                            private val canBeFunctionResult: Boolean = false) {
       fun readMembers(descriptor: JSElement): List<Pair<String, JSElement>> =
         when (descriptor) {
           is JSObjectLiteralExpression -> readObjectLiteral(descriptor)
@@ -148,7 +149,7 @@ interface EntityContainerInfoProvider<T> {
           }
           else if (resolved != null) {
             propsObject = JSStubBasedPsiTreeUtil.findDescendants(resolved, JSStubElementTypes.OBJECT_LITERAL_EXPRESSION)
-                            .find { it.context == resolved } ?: getObjectLiteralFromResolved(resolved)
+                            .find { it.context == resolved } ?: getObjectLiteral(resolved)
             if ((propsObject == null && canBeArray) || !canBeObject) {
               return readPropsFromArray(resolved)
             }
@@ -186,8 +187,8 @@ interface EntityContainerInfoProvider<T> {
           }
         ?: emptyList()
 
-      protected open fun getObjectLiteral(property: JSProperty): JSObjectLiteralExpression? = null
-      protected open fun getObjectLiteralFromResolved(resolved: PsiElement): JSObjectLiteralExpression? = null
+      protected open fun getObjectLiteral(element: PsiElement): JSObjectLiteralExpression? =
+        if (canBeFunctionResult) objectLiteralFor(element) else null
 
       private fun readPropsFromArray(holder: PsiElement): List<Pair<String, JSElement>> =
         getStringLiteralsFromInitializerArray(holder)

@@ -12,6 +12,7 @@ enum class VuexTestStore(val dirName: String) {
   Storefront("vue-storefront"),
   StarImport("star-import"),
   SimpleStore("simple-store"),
+  StateViaLambda("state-via-lambda"),
   FunctionInit("function-init"),
 }
 

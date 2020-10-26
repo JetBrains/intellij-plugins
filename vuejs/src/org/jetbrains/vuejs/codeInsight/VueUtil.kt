@@ -59,8 +59,8 @@ const val ATTR_SLOT_SHORTHAND = '#'
 const val ATTR_ARGUMENT_PREFIX = ':'
 const val ATTR_MODIFIER_PREFIX = '.'
 
-val VUE_NOTIFICATIONS: NotificationGroup get() =
-  NotificationGroupManager.getInstance().getNotificationGroup("Vue")
+val VUE_NOTIFICATIONS: NotificationGroup
+  get() = NotificationGroupManager.getInstance().getNotificationGroup("Vue")
 
 fun fromAsset(name: String): String {
   // TODO ensure that this conversion conforms to Vue.js rules
@@ -158,10 +158,15 @@ fun resolveElementTo(element: PsiElement?, vararg classes: KClass<out JSElement>
     if (visited.add(cur)) {
       if (classes.any { it.isInstance(cur) }) return cur as? JSElement
       when (cur) {
+        is JSFunction -> {
+          JSStubBasedPsiTreeUtil.findReturnedExpressions(cur).asSequence()
+            .filter { JSReturnedExpressionType.isCountableReturnedExpression(it) }
+            .toCollection(queue)
+        }
         is JSInitializerOwner -> {
           ( // Try with stub
             when (cur) {
-              is JSProperty -> cur.objectLiteralExpressionInitializer
+              is JSProperty -> cur.objectLiteralExpressionInitializer ?: cur.tryGetFunctionInitializer()
               is JSVariable -> cur.initializerOrStub
               else -> null
             }
@@ -173,11 +178,6 @@ fun resolveElementTo(element: PsiElement?, vararg classes: KClass<out JSElement>
         }
         is PsiPolyVariantReference -> cur.multiResolve(false)
           .mapNotNullTo(queue) { if (it.isValidResult) it.element else null }
-        is JSFunctionExpression -> {
-          JSStubBasedPsiTreeUtil.findReturnedExpressions(cur).asSequence()
-            .filter { JSReturnedExpressionType.isCountableReturnedExpression(it) }
-            .toCollection(queue)
-        }
         else -> JSStubBasedPsiTreeUtil.calculateMeaningfulElements(cur)
           .toCollection(queue)
       }

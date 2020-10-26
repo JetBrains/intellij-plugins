@@ -25,4 +25,18 @@ class VuexHighlightingTest : BasePlatformTestCase() {
     myFixture.checkHighlighting()
   }
 
+  fun testStateViaLambda() {
+    myFixture.configureDependencies(VueTestModule.VUEX_3_1_0, VueTestModule.VUE_2_6_10)
+    myFixture.enableInspections(VueInspectionsProvider())
+    myFixture.configureByFile("stateViaLambda.ts")
+    myFixture.checkHighlighting()
+  }
+
+  fun testStateViaLambda2() {
+    myFixture.configureStore(VuexTestStore.StateViaLambda)
+    myFixture.enableInspections(VueInspectionsProvider())
+    myFixture.configureByFile("stateViaLambda.vue")
+    myFixture.checkHighlighting()
+  }
+
 }
