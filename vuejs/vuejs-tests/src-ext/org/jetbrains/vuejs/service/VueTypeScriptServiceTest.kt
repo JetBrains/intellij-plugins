@@ -109,6 +109,12 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS26)
+  fun testScriptSetup() {
+    myFixture.configureDependencies(VueTestModule.VUE_3_0_0)
+    doTestWithCopyDirectory()
+  }
+
+  @TypeScriptVersion(TypeScriptVersions.TS26)
   fun testNoScriptSectionVue3() {
     myFixture.configureDependencies(VueTestModule.VUE_3_0_0)
     doTestWithCopyDirectory()
@@ -141,7 +147,7 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
     settings.isRecompileOnChanges = true
     settings.setUseServiceForProjectsWithoutConfig(true)
     settings.setUseService(true)
-    myFixture.copyDirectoryToProject(getTestName(false), "");
+    myFixture.copyDirectoryToProject(getTestName(false), "")
     myFixture.configureFromTempProjectFile(getTestName(false) + "." + extension)
     myFixture.checkHighlighting()
     myFixture.configureFromTempProjectFile(getTestName(false) + "Clear." + extension)

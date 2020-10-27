@@ -30,6 +30,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.util.castSafelyTo
 import com.intellij.xml.util.HtmlUtil
 import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
+import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.findDefaultExport
 import org.jetbrains.vuejs.codeInsight.getHostFile
 import org.jetbrains.vuejs.codeInsight.toAsset
@@ -246,20 +247,19 @@ class VueModelManager {
       val file = element as? XmlFile ?: element.containingFile as? XmlFile
       if (file != null && file.fileType == VueFileType.INSTANCE) {
         val script = findScriptTag(file)
-        if (script != null) {
-          getDefaultExportedComponent(
+        if (script != null && !hasAttribute(script, SETUP_ATTRIBUTE_NAME)) {
+          findDefaultExport(
             resolveTagSrcReference(script) as? PsiFile
             ?: PsiTreeUtil.getStubChildOfType(script, JSEmbeddedContent::class.java)
-          )?.let { return it }
+          )
+            ?.let { getComponentDescriptor(it) }
+            ?.let { return it }
         }
         if (element.containingFile.originalFile.virtualFile?.fileType == VueFileType.INSTANCE)
           return VueSourceEntityDescriptor(source = element.containingFile)
       }
       return null
     }
-
-    private fun getDefaultExportedComponent(content: PsiElement?): VueSourceEntityDescriptor? =
-      getComponentDescriptor(findDefaultExport(content))
 
     private fun findVueApp(templateElement: PsiElement): VueApp? {
       val global = getGlobal(templateElement) ?: return null

@@ -27,6 +27,7 @@ import com.intellij.psi.stubs.IndexSink
 import com.intellij.psi.stubs.StubIndexKey
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlDocument
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
@@ -405,20 +406,19 @@ fun resolveLocally(ref: JSReferenceExpression): List<PsiElement> {
   else emptyList()
 }
 
-fun findModule(element: PsiElement?): JSEmbeddedContent? {
-  val file = element as? XmlFile ?: element?.containingFile as? XmlFile
-  if (file != null && file.fileType == VueFileType.INSTANCE) {
-    val script = findScriptTag(file)
-    if (script != null) {
-      return PsiTreeUtil.getStubChildOfType(script, JSEmbeddedContent::class.java)
-    }
-  }
-  return null
-}
+@StubSafe
+fun findModule(element: PsiElement?): JSEmbeddedContent? =
+  (element as? XmlFile ?: element?.containingFile as? XmlFile)
+    ?.let { findScriptTag(it) }
+    ?.let { PsiTreeUtil.getStubChildOfType(it, JSEmbeddedContent::class.java) }
 
-fun findScriptTag(xmlFile: XmlFile): XmlTag? {
-  return findTopLevelVueTag(xmlFile, SCRIPT_TAG_NAME)
-}
+@StubSafe
+fun findScriptTag(xmlFile: XmlFile): XmlTag? =
+  findTopLevelVueTag(xmlFile, SCRIPT_TAG_NAME)
+
+@StubSafe
+fun hasAttribute(tag: XmlTag, attributeName: String): Boolean =
+  PsiTreeUtil.getStubChildrenOfTypeAsList(tag, XmlAttribute::class.java).any { it.name == attributeName }
 
 @StubSafe
 fun findTopLevelVueTag(xmlFile: XmlFile, tagName: String): XmlTag? {

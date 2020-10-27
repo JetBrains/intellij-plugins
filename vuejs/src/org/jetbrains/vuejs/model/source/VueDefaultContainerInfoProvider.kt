@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.model.source
 
 import com.intellij.codeInsight.completion.CompletionUtil
+import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
@@ -13,16 +14,11 @@ import com.intellij.psi.impl.source.html.HtmlFileImpl
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndexKey
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.xml.XmlTag
 import com.intellij.util.castSafelyTo
 import one.util.streamex.StreamEx
-import org.jetbrains.vuejs.codeInsight.getJSTypeFromPropOptions
-import org.jetbrains.vuejs.codeInsight.getRequiredFromPropOptions
-import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
-import org.jetbrains.vuejs.codeInsight.objectLiteralFor
-import org.jetbrains.vuejs.index.LOCAL
-import org.jetbrains.vuejs.index.VueExtendsBindingIndex
-import org.jetbrains.vuejs.index.VueMixinBindingIndex
-import org.jetbrains.vuejs.index.resolve
+import org.jetbrains.vuejs.codeInsight.*
+import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.getComponentDescriptor
 
@@ -145,12 +141,19 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
       return StreamEx.of(ContainerMember.Components.readMembers(declaration))
         .mapToEntry({ p -> p.first }, { p -> p.second })
         .mapValues { element ->
-          val meaningfulElement = VueComponents.meaningfulExpression(element) ?: element
-          if (meaningfulElement is HtmlFileImpl) {
-            VueModelManager.getComponent(meaningfulElement)
-          }
-          else {
-            getComponentDescriptor(meaningfulElement as? JSElement)
+          when (val meaningfulElement = VueComponents.meaningfulExpression(element) ?: element) {
+            is ES6ImportedBinding ->
+              meaningfulElement.declaration?.fromClause
+                ?.resolveReferencedElements()
+                ?.find { it is JSEmbeddedContent }
+                ?.context
+                ?.castSafelyTo<XmlTag>()
+                ?.takeIf { hasAttribute(it, SETUP_ATTRIBUTE_NAME) }
+                ?.containingFile
+                ?.let { VueModelManager.getComponent(it) }
+            is HtmlFileImpl ->
+              VueModelManager.getComponent(meaningfulElement)
+            else -> getComponentDescriptor(meaningfulElement as? JSElement)
               ?.let { VueModelManager.getComponent(it) }
           }
           ?: VueUnresolvedComponent()
