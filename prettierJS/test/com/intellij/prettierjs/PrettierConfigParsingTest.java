@@ -24,7 +24,7 @@ public class PrettierConfigParsingTest extends BasePlatformTestCase {
 
   public void testJsonConfig() {
     doTest(new PrettierConfig(true, false, 120, false, true,
-                              3, PrettierUtil.TrailingCommaOption.all, true,
+                              3, PrettierConfig.TrailingCommaOption.all, true,
                               LineSeparator.CRLF.getSeparatorString(), true),
            ".prettierrc.json",
            "{\n" +
@@ -54,7 +54,7 @@ public class PrettierConfigParsingTest extends BasePlatformTestCase {
 
   public void testPackageJsonConfig() {
     doTest(new PrettierConfig(true, false, 120, false, true,
-                              3, PrettierUtil.TrailingCommaOption.all, true, null, null),
+                              3, PrettierConfig.TrailingCommaOption.all, true, null, false),
            "package.json",
            "{\n" +
            "  \"devDependencies\": {\n" +
@@ -75,7 +75,7 @@ public class PrettierConfigParsingTest extends BasePlatformTestCase {
   }
 
   public void testYamlConfig() {
-    doTest(new PrettierConfig(true, false, 120, false, true, 3, PrettierUtil.TrailingCommaOption.es5, true,
+    doTest(new PrettierConfig(true, false, 120, false, true, 3, PrettierConfig.TrailingCommaOption.es5, true,
                               LineSeparator.CRLF.getSeparatorString(), true),
            ".prettierrc.yml",
            "semi: false\n" +
