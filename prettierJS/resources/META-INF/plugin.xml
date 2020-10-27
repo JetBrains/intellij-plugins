@@ -52,6 +52,7 @@ Please report any issues in the <a href="https://youtrack.jetbrains.com/issues/W
 
     <prettierjs.codeStyleInstaller implementation="com.intellij.prettierjs.codeStyle.JSPrettierCodeStyleInstaller"/>
     <prettierjs.codeStyleInstaller implementation="com.intellij.prettierjs.codeStyle.HtmlPrettierCodeStyleInstaller"/>
+    <eslint.ruleMappersFactory implementation="com.intellij.prettierjs.eslint.PrettierEslintRuleMappersFactory"/>
   </extensions>
   <actions>
     <action id="ReformatWithPrettierAction" class="com.intellij.prettierjs.ReformatWithPrettierAction">
