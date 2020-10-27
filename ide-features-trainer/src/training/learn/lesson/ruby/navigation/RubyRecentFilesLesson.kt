@@ -9,7 +9,7 @@ class RubyRecentFilesLesson(module: Module) : RecentFilesLesson(module, "ruby") 
   override val existedFile: String = "src/recent_files_demo.rb"
 
   override val transitionMethodName: String = "print"
-  override val transitionFileName: String = "kernel.rb"
+  override val transitionFileName: String = "kernel"
   override val stringForRecentFilesSearch: String = transitionMethodName
 
   override fun LessonContext.setInitialPosition() = caret(transitionMethodName)

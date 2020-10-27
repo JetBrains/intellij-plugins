@@ -31,7 +31,7 @@ abstract class RecentFilesLesson(module: Module, lang: String)
   abstract override val existedFile: String
   abstract val transitionMethodName: String
   abstract val transitionFileName: String
-  abstract val stringForRecentFilesSearch: String  // should look like firstTransitionMethodName
+  abstract val stringForRecentFilesSearch: String  // should look like transitionMethodName
   abstract fun LessonContext.setInitialPosition()
 
   private val countOfFilesToOpen: Int = 20
@@ -41,7 +41,7 @@ abstract class RecentFilesLesson(module: Module, lang: String)
 
     task("GotoDeclaration") {
       text(LessonsBundle.message("recent.files.first.transition", code(transitionMethodName), action(it)))
-      trigger(it) { virtualFile.name == transitionFileName }
+      trigger(it) { virtualFile.name.startsWith(transitionFileName) }
       test { actions(it) }
     }
 

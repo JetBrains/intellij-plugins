@@ -9,7 +9,7 @@ class JavaRecentFilesLesson(module: Module) : RecentFilesLesson(module, "JAVA") 
   override val existedFile: String = "src/RecentFilesDemo.java"
 
   override val transitionMethodName: String = "println"
-  override val transitionFileName: String = "PrintStream.java"
+  override val transitionFileName: String = "PrintStream"
   override val stringForRecentFilesSearch: String = "print"
 
   override fun LessonContext.setInitialPosition() = caret("println")
