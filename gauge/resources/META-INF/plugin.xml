@@ -120,7 +120,8 @@
                       key="gauge.inspection.GlobalInspectionProvider.name"
                       enabledByDefault="true" isInternal="true"/>
 
-    <applicationConfigurable groupId="tools" id="com.thoughtworks.gauge" displayName="Gauge"
+    <applicationConfigurable groupId="tools" id="com.thoughtworks.gauge"
+                             key="gauge.inspection.group"
                              instance="com.thoughtworks.gauge.settings.GaugeSettings"/>
     <intentionAction>
       <category>Gauge</category>
