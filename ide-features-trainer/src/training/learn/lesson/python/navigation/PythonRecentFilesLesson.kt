@@ -9,7 +9,7 @@ class PythonRecentFilesLesson(module: Module) : RecentFilesLesson(module, "Pytho
   override val existedFile: String = "src/recent_files_demo.py"
 
   override val transitionMethodName: String = "print"
-  override val transitionFileName: String = "builtins.py"
+  override val transitionFileName: String = "builtins"
   override val stringForRecentFilesSearch: String = transitionMethodName
 
   override fun LessonContext.setInitialPosition() = caret(transitionMethodName)
