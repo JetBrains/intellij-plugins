@@ -231,6 +231,7 @@ class VueAttributeNameParser private constructor() {
     SCRIPT_ID(ID_ATTRIBUTE_NAME, requiresTag = SCRIPT_TAG_NAME, onlyTopLevelTag = false),
     SCRIPT_SRC(SRC_ATTRIBUTE_NAME, requiresTag = SCRIPT_TAG_NAME),
     SCRIPT_LANG(LANG_ATTRIBUTE_NAME, requiresTag = SCRIPT_TAG_NAME),
+    SCRIPT_SETUP(SETUP_ATTRIBUTE_NAME, requiresValue = false, requiresTag = SCRIPT_TAG_NAME),
     ;
 
     fun isValidIn(context: String?, isTopLevel: Boolean): Boolean {

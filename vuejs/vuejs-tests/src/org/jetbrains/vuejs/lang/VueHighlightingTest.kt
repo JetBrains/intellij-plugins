@@ -1,7 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang
 
-import com.intellij.idea.Bombed
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.JSTestUtils.testWithinLanguageLevel
 import com.intellij.lang.javascript.JavaScriptBundle
@@ -19,7 +18,6 @@ import junit.framework.TestCase
 import org.jetbrains.plugins.scss.inspections.SassScssResolvedByNameOnlyInspection
 import org.jetbrains.plugins.scss.inspections.SassScssUnresolvedVariableInspection
 import org.jetbrains.vuejs.lang.html.VueFileType
-import java.util.*
 
 class VueHighlightingTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String = getVueTestDataPath() + "/highlighting"
@@ -1558,6 +1556,13 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
     myFixture.configureDependencies(VueTestModule.VUE_3_0_0)
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.configureByFile("asyncSetup.vue")
+    myFixture.checkHighlighting()
+  }
+
+  fun testScriptSetup() {
+    myFixture.configureDependencies(VueTestModule.VUE_3_0_0)
+    myFixture.enableInspections(VueInspectionsProvider())
+    myFixture.configureByFile("scriptSetup.vue")
     myFixture.checkHighlighting()
   }
 
