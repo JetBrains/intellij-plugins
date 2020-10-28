@@ -1,9 +1,11 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.lesson.general
 
-import com.intellij.ide.IdeBundle
 import com.intellij.ide.actions.AboutPopup
 import com.intellij.ide.actions.searcheverywhere.SearchEverywhereUI
+import com.intellij.ide.util.gotoByName.GotoActionModel
+import com.intellij.idea.ActionsBundle
+import com.intellij.openapi.editor.actions.ToggleShowLineNumbersGloballyAction
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable
 import com.intellij.openapi.editor.impl.EditorComponentImpl
 import com.intellij.openapi.util.SystemInfo
@@ -60,11 +62,14 @@ class GotoActionLesson(module: Module, lang: String, private val sample: LessonS
       actionTask("GotoAction") {
         LessonsBundle.message("goto.action.invoke.again", action(it))
       }
-      val showLineNumbersName = IdeBundle.message("label.show.line.numbers")
+      val showLineNumbersName = ActionsBundle.message("action.EditorGutterToggleGlobalLineNumbers.text")
       task(LearnBundle.message("show.line.number.prefix.to.show.first")) {
         text(LessonsBundle.message("goto.action.show.line.numbers.request", strong(it), strong(showLineNumbersName)))
         triggerByListItemAndHighlight { item ->
-          item.toString().contains(showLineNumbersName)
+          val matchedValue = item as? GotoActionModel.MatchedValue
+          val actionWrapper = matchedValue?.value as? GotoActionModel.ActionWrapper
+          val action = actionWrapper?.action
+          action is ToggleShowLineNumbersGloballyAction
         }
         test {
           waitComponent(SearchEverywhereUI::class.java)
