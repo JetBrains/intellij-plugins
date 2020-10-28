@@ -157,6 +157,7 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
     WriteAction.runAndWait<Exception> {
       FileDocumentManager.getInstance().saveAllDocuments()
     }
+    myFixture.checkHighlighting()
     waitEmptyServiceQueue()
     WriteAction.runAndWait<Exception> {
       myFixture.tempDirFixture.findOrCreateDir(".").refresh(false, true)
