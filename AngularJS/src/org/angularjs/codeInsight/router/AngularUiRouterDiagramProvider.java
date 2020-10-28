@@ -49,10 +49,7 @@ import java.awt.event.ComponentEvent;
 import java.util.List;
 import java.util.*;
 
-/**
- * @author Irina.Chernushina on 3/23/2016.
- */
-public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramObject> {
+public final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramObject> {
   public static final String ANGULAR_UI_ROUTER = "Angular-ui-router";
   public static final JBColor VIEW_COLOR = new JBColor(new Color(0xE1FFFC), new Color(0x589df6));
   public static final BasicStroke DOTTED_STROKE =
@@ -335,7 +332,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
         try {
           inUpdate = true;
           myEdgeRealizers.clear();
-          final List<DiagramNode> nodes = GraphUtil.getSelectedNodes(getGraphBuilder());
+          final List<DiagramNode<?>> nodes = GraphUtil.getSelectedNodes(getGraphBuilder());
           super.update();
           myEdgesPositions.clear();
           final DiagramBuilder builder = getBuilder();
@@ -343,8 +340,8 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
           builder.getView().fitContent();
           builder.updateView();
           if (!nodes.isEmpty()) {
-            final Collection<DiagramNode> objects = builder.getNodeObjects();
-            for (DiagramNode object : objects) {
+            final Collection<DiagramNode<?>> objects = builder.getNodeObjects();
+            for (DiagramNode<?> object : objects) {
               if (isInSelectedNodes(nodes, object)) {
                 builder.getGraph().setSelected(builder.getNode(object), true);
               }
@@ -388,7 +385,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
       private void updateBySelection(DiagramNode node) {
         myVisibleEdges.clear();
         UmlGraphBuilder builder = (UmlGraphBuilder)graph.getDataProvider(DiagramDataKeys.GRAPH_BUILDER).get(null);
-        final List<DiagramNode> nodes = new ArrayList<>(GraphUtil.getSelectedNodes(builder));
+        final List<DiagramNode<?>> nodes = new ArrayList<>(GraphUtil.getSelectedNodes(builder));
         if (node != null && !nodes.contains(node)) nodes.add(node);
         DiagramNode selected = null;
         for (DiagramEdge edge : builder.getEdgeObjects()) {
@@ -404,7 +401,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
           break;
         }
         if (selected == null) {
-          for (DiagramEdge edge : builder.getEdgeObjects()) {
+          for (DiagramEdge<?> edge : builder.getEdgeObjects()) {
             if (isInSelectedNodes(nodes, edge.getSource())) {
               selected = edge.getSource();
             }
@@ -446,8 +443,8 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
     };
   }
 
-  private static boolean isInSelectedNodes(List<DiagramNode> nodes, DiagramNode node) {
-    for (DiagramNode diagramNode : nodes) {
+  private static boolean isInSelectedNodes(List<DiagramNode<?>> nodes, DiagramNode<?> node) {
+    for (DiagramNode<?> diagramNode : nodes) {
       if (!(node instanceof AngularUiRouterNode && diagramNode instanceof AngularUiRouterNode)) continue;
       final DiagramObject selected = (DiagramObject)diagramNode.getIdentifyingElement();
       final DiagramObject object = (DiagramObject)node.getIdentifyingElement();
