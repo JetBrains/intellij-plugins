@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.source
 
+import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
@@ -78,6 +79,7 @@ class VueCompositionInfoProvider : VueContainerInfoProvider {
         is XmlFile -> findScriptTag(initializer)
           ?.takeIf { hasAttribute(it, SETUP_ATTRIBUTE_NAME) }
           ?.let { PsiTreeUtil.getStubChildOfType(it, JSEmbeddedContent::class.java) }
+          ?.takeIf { ES6PsiUtil.isEmbeddedModule(it) }
           ?.let { JSModuleTypeImpl(it, true) }
         else -> null
       }
