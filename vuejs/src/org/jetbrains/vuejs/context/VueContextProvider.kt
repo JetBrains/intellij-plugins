@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.context
 
 import com.intellij.openapi.extensions.ExtensionPointName
@@ -10,7 +10,6 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.CachedValueProvider
 
 interface VueContextProvider {
-
   /**
    * Context providers can determine whether a particular, parsed file should have Vue support enabled.
    * In such files Vue expressions will be injected. This API serves for a purpose of enabling Vue.js

@@ -6,8 +6,7 @@ import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.util.CachedValueProvider
 
-class VueLibraryContextProvider : VueContextProvider {
-
+private class VueLibraryContextProvider : VueContextProvider {
   override fun isVueContext(directory: PsiDirectory): CachedValueProvider.Result<Boolean> =
     CachedValueProvider.Result(JSLibraryManager.getInstance(directory.project)
                                  .libraryMappings.isAssociatedWithProject("vue"),

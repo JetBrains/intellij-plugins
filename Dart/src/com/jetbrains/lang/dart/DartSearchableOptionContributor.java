@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart;
 
 import com.intellij.application.options.CodeCompletionOptions;
@@ -6,7 +6,7 @@ import com.intellij.ide.ui.search.SearchableOptionContributor;
 import com.intellij.ide.ui.search.SearchableOptionProcessor;
 import org.jetbrains.annotations.NotNull;
 
-public class DartSearchableOptionContributor extends SearchableOptionContributor {
+final class DartSearchableOptionContributor extends SearchableOptionContributor {
   @Override
   public void processOptions(@NotNull SearchableOptionProcessor processor) {
     processor.addOptions(DartBundle.message("dart.editor.showClosingLabels.text"), null,
