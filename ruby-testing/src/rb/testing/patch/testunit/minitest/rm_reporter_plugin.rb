@@ -183,6 +183,16 @@ else
         self.options = defaults.merge(options)
       end
 
+      # copied from minitest-reporters: minitest_reporter_plugin.rb
+      def total_count(options)
+        filter = options[:filter] || '/./'
+        filter = Regexp.new $1 if filter =~ /\/(.*)\//
+
+        Minitest::Runnable.runnables.map(&:runnable_methods).flatten.find_all { |m|
+          filter === m || filter === "#{self}##{m}"
+        }.size
+      end
+
       def start
         # Setup test runner's MessageFactory
         set_message_factory(Rake::TeamCity::MessageFactory)
@@ -190,9 +200,9 @@ else
 
         # Report tests count:
         if ::Rake::TeamCity.is_in_idea_mode
-          log(Rake::TeamCity::MessageFactory.create_tests_count(options[:total_count] || 0))
+          log(Rake::TeamCity::MessageFactory.create_tests_count(options[:total_count] || total_count(options)))
         elsif ::Rake::TeamCity.is_in_buildserver_mode
-          log(Rake::TeamCity::MessageFactory.create_progress_message("Starting.. (#{options[:total_count] || 0} tests)"))
+          log(Rake::TeamCity::MessageFactory.create_progress_message("Starting.. (#{options[:total_count] || total_count(options)} tests)"))
         end
         @suites_start_time = Time.now
       end
