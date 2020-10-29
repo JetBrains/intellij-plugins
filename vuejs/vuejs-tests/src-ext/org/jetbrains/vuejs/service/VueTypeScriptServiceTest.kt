@@ -112,6 +112,8 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
   fun testScriptSetup() {
     myFixture.configureDependencies(VueTestModule.VUE_3_0_0)
     doTestWithCopyDirectory()
+    myFixture.configureFromTempProjectFile("ScriptSetup2.vue")
+    myFixture.checkHighlighting()
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS26)

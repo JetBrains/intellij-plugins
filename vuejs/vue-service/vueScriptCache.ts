@@ -89,10 +89,14 @@ export class VueScriptCache {
     parser.write(contents)
     parser.end()
 
-    // Support empty <script> tag and <script setup> syntax
-    if (result.trim() === "" || scriptSetup) {
+    // Support empty <script> tag
+    if (result.trim() === "") {
       result = "import componentDefinition from '*.vue'; export default componentDefinition;"
       scriptKind = ts_impl.ScriptKind.TS;
+    }
+    // Support <script setup> syntax
+    else if (scriptSetup) {
+      result = result + "; import __componentDefinition from '*.vue'; export default __componentDefinition;"
     }
 
     const snapshot = ts_impl.ScriptSnapshot.fromString(result);
