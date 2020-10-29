@@ -10,19 +10,14 @@ import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.ui.JBColor
 import com.intellij.ui.UIBundle
 import com.intellij.ui.awt.RelativePoint
-import org.intellij.lang.annotations.Language
-import org.jdom.Element
-import org.jdom.input.SAXBuilder
 import training.commands.kotlin.TaskContext
 import training.commands.kotlin.TaskRuntimeContext
 import training.commands.kotlin.TaskTestContext
 import training.learn.LearnBundle
 import training.learn.lesson.LessonManager
-import training.ui.LearnToolWindowFactory
 import training.ui.LearningUiHighlightingManager
 import training.ui.LessonMessagePane
-import training.ui.Message
-import training.util.useNewLearningUi
+import training.ui.MessageFactory
 import java.awt.Color
 import java.awt.Component
 import java.awt.Point
@@ -32,12 +27,20 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
 import javax.swing.*
 
+data class TaskProperties(var hasDetection: Boolean = false, var messagesNumber: Int = 0)
+
 internal object LessonExecutorUtil {
   /** This task is a real task with some event required and corresponding text. Used for progress indication. */
-  fun isRealTask(taskContent: TaskContext.() -> Unit, project: Project): Boolean {
-    val fakeTaskContext = FakeTaskContext(project)
+  fun taskProperties(taskContent: TaskContext.() -> Unit, project: Project): TaskProperties {
+    val fakeTaskContext = ExtractTaskPropertiesContext(project)
     taskContent(fakeTaskContext)
-    return fakeTaskContext.hasDetection && fakeTaskContext.hasText
+    return TaskProperties(fakeTaskContext.hasDetection, fakeTaskContext.textCount)
+  }
+
+  fun textMessages(taskContent: TaskContext.() -> Unit, project: Project): List<String> {
+    val fakeTaskContext = ExtractTextTaskContext(project)
+    taskContent(fakeTaskContext)
+    return fakeTaskContext.messages
   }
 
   fun hideStandardToolwindows(project: Project) {
@@ -51,23 +54,9 @@ internal object LessonExecutorUtil {
     }
   }
 
-  fun addTextToLearnPanel(@Language("HTML") text: String, project: Project) {
-    val textAsElement = parseHtmlElement(text)
-    if (useNewLearningUi) {
-      val learnToolWindow = LearnToolWindowFactory.learnWindowPerProject[project] ?: return
-      val learnPanel = learnToolWindow.learnPanel ?: return
-      learnPanel.addMessages(Message.convert(textAsElement))
-      learnToolWindow.updateScrollPane()
-    }
-    else {
-      LessonManager.instance.addMessages(textAsElement)
-    }
-  }
-
   fun showBalloonMessage(text: String, ui: JComponent, balloonConfig: LearningBalloonConfig, taskDisposable: Disposable) {
-    val textAsElement = parseHtmlElement(text)
-    val messages = Message.convert(textAsElement)
-    val messagesPane = LessonMessagePane(null)
+    val messages = MessageFactory.convert(text)
+    val messagesPane = LessonMessagePane()
     messagesPane.addMessage(messages)
     val balloonPanel = JPanel()
     balloonPanel.layout = BoxLayout(balloonPanel, BoxLayout.Y_AXIS)
@@ -124,20 +113,16 @@ internal object LessonExecutorUtil {
     val point = Point(visibleRect.x + xShift, visibleRect.y + yShift)
     return RelativePoint(component, point)
   }
-
-  private fun parseHtmlElement(text: String): Element {
-    val wrappedText = "<root><text>$text</text></root>"
-    return SAXBuilder().build(wrappedText.byteInputStream()).rootElement.getChild("text")
-           ?: throw IllegalStateException("Can't parse as XML:\n$text")
-  }
 }
 
-private class FakeTaskContext(override val project: Project) : TaskContext() {
-  var hasText = false
+
+
+private class ExtractTaskPropertiesContext(override val project: Project) : TaskContext() {
+  var textCount = 0
   var hasDetection = false
 
   override fun text(text: String, useBalloon: LearningBalloonConfig?) {
-    hasText = true
+    textCount++
   }
 
   override fun trigger(actionId: String) {
@@ -191,4 +176,11 @@ private class FakeTaskContext(override val project: Project) : TaskContext() {
   override fun strong(text: String): String = "" //Doesn't matter what to return
 
   override fun icon(icon: Icon): String = "" //Doesn't matter what to return
+}
+
+private class ExtractTextTaskContext(override val project: Project) : TaskContext() {
+  val messages = ArrayList<String>()
+  override fun text(text: String, useBalloon: LearningBalloonConfig?) {
+    messages.add(text)
+  }
 }

@@ -11,7 +11,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.keymap.Keymap
 import com.intellij.openapi.keymap.KeymapManagerListener
 import com.intellij.openapi.project.Project
-import org.jdom.Element
+import org.intellij.lang.annotations.Language
 import training.commands.kotlin.TaskContext
 import training.learn.CourseManager
 import training.learn.LearnBundle
@@ -20,7 +20,8 @@ import training.learn.interfaces.ModuleType
 import training.learn.lesson.kimpl.LessonExecutor
 import training.ui.LearningUiHighlightingManager
 import training.ui.LearningUiManager
-import training.ui.Message
+import training.ui.LessonMessagePane
+import training.ui.MessagePart
 import training.ui.views.LearnPanel
 import training.util.createNamedSingleThreadExecutor
 import training.util.useNewLearningUi
@@ -104,9 +105,17 @@ class LessonManager {
     }
   }
 
-  fun addMessages(element: Element) {
-    learnPanel?.addMessages(Message.convert(element))
+  fun addMessage(@Language("HTML") text: String) {
+    learnPanel?.addMessage(text)
     if (!useNewLearningUi) LearningUiManager.activeToolWindow?.updateScrollPane()
+  }
+
+  fun addInactiveMessages(messages: List<String>) {
+    for (m in messages) learnPanel?.addMessage(m, state = LessonMessagePane.MessageState.INACTIVE)
+  }
+
+  fun removeInactiveMessages(number: Int) {
+    learnPanel?.removeInactiveMessages(number)
   }
 
   fun resetMessagesNumber(number: Int) {
@@ -178,7 +187,7 @@ class LessonManager {
 
   fun clearRestoreMessage() {
     if (shownRestoreNotification != null) {
-      resetMessagesNumber(messagesNumber() - 1)
+      learnPanel?.clearRestoreMessage()
     }
   }
 
@@ -192,10 +201,10 @@ class LessonManager {
         clearRestoreMessage()
       }
     }
-    learnPanel?.addMessages(arrayOf(Message(warningIconIndex, Message.MessageType.ICON_IDX),
-                                    Message(" ${proposalText} ", Message.MessageType.TEXT_BOLD),
-                                    Message("Restore", Message.MessageType.LINK).also { it.runnable = callback }
-    ))
+    learnPanel?.addMessages(listOf(MessagePart(warningIconIndex, MessagePart.MessageType.ICON_IDX),
+                                   MessagePart(" ${proposalText} ", MessagePart.MessageType.TEXT_BOLD),
+                                   MessagePart("Restore", MessagePart.MessageType.LINK).also { it.runnable = callback }
+    ), LessonMessagePane.MessageState.RESTORE)
     if (!useNewLearningUi) LearningUiManager.activeToolWindow?.updateScrollPane()
     shownRestoreNotification = notification
   }
