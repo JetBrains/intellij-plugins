@@ -20,7 +20,6 @@ import training.commands.kotlin.TaskTestContext
 import training.learn.ActionsRecorder
 import training.learn.lesson.LessonManager
 import training.ui.LearnToolWindowFactory
-import training.ui.LearningUiManager
 import java.awt.Component
 
 class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
@@ -153,9 +152,6 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
       return
     }
     val taskInfo = taskActions[currentTaskIndex]
-    taskInfo.shownTaskIndex?.let {
-      LearningUiManager.activeToolWindow?.learnPanel?.updateLessonProgress(currentProgressTaskNumber, it)
-    }
     taskInfo.messagesNumberBeforeStart = LessonManager.instance.messagesNumber()
     setUserVisibleInfo()
     taskInfo.content()

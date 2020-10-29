@@ -20,8 +20,6 @@ import training.learn.interfaces.Lesson
 import training.learn.interfaces.Module
 import training.learn.lesson.LessonManager
 import training.ui.LearnToolWindowFactory
-import training.ui.LearningUiManager
-import training.util.isLearningDocumentationMode
 import training.util.switchOnExperimentalLessons
 
 class CourseManager internal constructor() : Disposable {
@@ -65,16 +63,6 @@ class CourseManager internal constructor() : Disposable {
   fun openLesson(projectWhereToOpen: Project, lesson: Lesson?) {
     LessonManager.instance.stopLesson()
     if (lesson == null) return //todo: remove null lessons
-    if (isLearningDocumentationMode(projectWhereToOpen)) {
-      if (projectWhereToOpen == LearningUiManager.activeToolWindow?.project) {
-        LessonManager.instance.stopLesson()
-        LearningUiManager.activeToolWindow = null
-      }
-      LearnToolWindowFactory.learnWindowPerProject[projectWhereToOpen]?.let { learnToolWindow ->
-        learnToolWindow.openInDocumentationMode(lesson)
-        return
-      }
-    }
     val focusOwner = IdeFocusManager.getInstance(projectWhereToOpen).focusOwner
     val parent = DataManager.getInstance().getDataContext(focusOwner)
     val data = mutableMapOf<String, Any?>()

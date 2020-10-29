@@ -5,6 +5,7 @@ import com.intellij.openapi.util.NlsSafe
 import org.jetbrains.annotations.Nls
 import training.lang.LangSupport
 import training.learn.LearnBundle
+import training.util.useNewLearningUi
 
 interface Module {
 
@@ -36,6 +37,8 @@ interface Module {
     for (lesson in lessons) {
       if (lesson.passed) done++
     }
+    if (useNewLearningUi) return LearnBundle.message("learn.module.progress", done, total)
+
     return if (done != 0) {
       if (done == total)
         ""

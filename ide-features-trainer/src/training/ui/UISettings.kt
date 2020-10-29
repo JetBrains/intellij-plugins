@@ -54,6 +54,7 @@ class UISettings {
   val italicFont: Font by lazy { plainFont.deriveFont(Font.ITALIC) }
   val boldFont: Font by lazy { plainFont.deriveFont(Font.BOLD) }
   val lessonHeaderFont: Font by lazy { Font(fontFace, Font.BOLD, fontSize + 2) }
+  val helpHeaderFont: Font by lazy { Font(fontFace, Font.BOLD, fontSize + 1) }
 
   //COLORS
   val defaultTextColor = JBColor(Color(30, 30, 30), Color(208, 208, 208))

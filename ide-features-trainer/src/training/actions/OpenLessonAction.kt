@@ -146,7 +146,7 @@ class OpenLessonAction(val lesson: Lesson) : DumbAwareAction(lesson.name) {
 
       //open next lesson if current is passed
       LOG.debug("${projectWhereToStartLesson.name}: Set lesson view")
-      LearningUiManager.activeToolWindow?.setLearnPanel(lesson)
+      LearningUiManager.activeToolWindow?.setLearnPanel()
       LOG.debug("${projectWhereToStartLesson.name}: XmlLesson onStart()")
       if (lesson.module.moduleType == ModuleType.PROJECT) LessonManager.instance.cleanUpBeforeLesson(projectWhereToStartLesson)
       lesson.onStart()
