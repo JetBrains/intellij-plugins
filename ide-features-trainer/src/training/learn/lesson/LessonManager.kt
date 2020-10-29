@@ -62,11 +62,12 @@ class LessonManager {
     currentLessonExecutor = lessonExecutor
   }
 
-  /** Save to use in any moment (from AWT thread) */
   internal fun stopLesson() {
     shownRestoreNotification = null
-    currentLessonExecutor?.stopLesson()
-    currentLessonExecutor?.lesson?.onStop()
+    currentLessonExecutor?.takeIf { !it.hasBeenStopped }?.let {
+      it.lesson.onStop()
+      it.stopLesson()
+    }
     LearningUiHighlightingManager.clearHighlights()
   }
 
@@ -166,6 +167,7 @@ class LessonManager {
     }
     learnPanel.updateUI()
     learnPanel.modulePanel.updateLessons(cLesson)
+    stopLesson()
   }
 
 
