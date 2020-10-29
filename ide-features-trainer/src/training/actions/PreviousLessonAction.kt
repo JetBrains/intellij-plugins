@@ -6,20 +6,20 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import training.learn.CourseManager
 import training.ui.LearnToolWindowFactory
+import training.util.getPreviousLessonForCurrent
+import training.util.lessonOpenedInProject
 
 class PreviousLessonAction : AnAction(AllIcons.Actions.Back) {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
-    val lesson = LearnToolWindowFactory.learnWindowPerProject[project]?.learnPanel?.lesson ?: return
-    val lessonsForModules = CourseManager.instance.lessonsForModules
-    val index = lessonsForModules.indexOf(lesson)
-    if (lessonsForModules.size <= 1 || index <= 0) return
-    CourseManager.instance.openLesson(project, lessonsForModules[index - 1])
+    if (LearnToolWindowFactory.learnWindowPerProject[project] == null) return
+    val previousLesson = getPreviousLessonForCurrent()
+    CourseManager.instance.openLesson(project, previousLesson)
   }
 
   override fun update(e: AnActionEvent) {
     val project = e.project
-    val lesson = LearnToolWindowFactory.learnWindowPerProject[project]?.learnPanel?.lesson
+    val lesson = lessonOpenedInProject(project)
     e.presentation.isEnabled = lesson != null && CourseManager.instance.lessonsForModules.firstOrNull() != lesson
   }
 }

@@ -63,6 +63,9 @@ interface Lesson {
     onPass()
   }
 
+  /** Map: name -> url */
+  val helpLinks: Map<String, String> get() = emptyMap()
+
   val testScriptProperties : TaskTestContext.TestScriptProperties
     get() = TaskTestContext.TestScriptProperties()
 

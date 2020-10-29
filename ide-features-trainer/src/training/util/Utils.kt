@@ -5,7 +5,6 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder
 import com.intellij.ide.DataManager
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.lang.Language
-import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.ex.ActionUtil
@@ -17,15 +16,17 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.annotations.Nls
-import training.actions.LearningDocumentationModeAction
 import training.lang.LangManager
 import training.lang.LangSupport
 import training.learn.CourseManager
 import training.learn.NewLearnProjectUtil
+import training.learn.interfaces.Lesson
 import training.learn.lesson.LessonManager
 import training.learn.lesson.LessonStateManager
 import training.ui.LearnToolWindowFactory
 import training.ui.LearningUiManager
+import java.awt.Desktop
+import java.net.URI
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import javax.swing.Icon
@@ -105,11 +106,6 @@ val useNewLearningUi: Boolean
 val switchOnExperimentalLessons: Boolean
   get() = Registry.`is`("ift.experimental.lessons", false)
 
-fun isLearningDocumentationMode(project: Project): Boolean =
-  (ActionManager.getInstance().getAction("LearningDocumentationModeAction") as? LearningDocumentationModeAction)
-    ?.isSelectedInProject(project)
-  ?: false
-
 fun invokeActionForFocusContext(action: AnAction) {
   DataManager.getInstance().dataContextFromFocusAsync.onSuccess { dataContext ->
     invokeLater {
@@ -117,4 +113,31 @@ fun invokeActionForFocusContext(action: AnAction) {
       ActionUtil.performActionDumbAwareWithCallbacks(action, event, dataContext)
     }
   }
+}
+
+fun openLinkInBrowser(link: String) {
+  val desktop = if (Desktop.isDesktopSupported()) Desktop.getDesktop() else null
+  if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+    desktop.browse(URI(link))
+  }
+}
+
+fun lessonOpenedInProject(project: Project?): Lesson? {
+  return if (LearnToolWindowFactory.learnWindowPerProject[project] != null) LessonManager.instance.currentLesson else null
+}
+
+fun getNextLessonForCurrent(): Lesson? {
+  val lesson = LessonManager.instance.currentLesson ?: return null
+  val lessonsForModules = CourseManager.instance.lessonsForModules
+  val index = lessonsForModules.indexOf(lesson)
+  if (index < 0 || index >= lessonsForModules.size - 1) return null
+  return lessonsForModules[index + 1]
+}
+
+fun getPreviousLessonForCurrent(): Lesson? {
+  val lesson = LessonManager.instance.currentLesson ?: return null
+  val lessonsForModules = CourseManager.instance.lessonsForModules
+  val index = lessonsForModules.indexOf(lesson)
+  if (index <= 0) return null
+  return lessonsForModules[index - 1]
 }

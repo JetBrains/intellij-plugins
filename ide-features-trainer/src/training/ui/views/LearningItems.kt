@@ -3,6 +3,7 @@ package training.ui.views
 
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.guessCurrentProject
+import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.labels.LinkLabel
 import com.intellij.ui.components.panels.HorizontalLayout
@@ -20,14 +21,13 @@ import training.learn.interfaces.Module
 import training.ui.UISettings
 import training.util.createBalloon
 import java.awt.Color
-import java.awt.Component
 import java.awt.Cursor
 import java.awt.event.MouseEvent
 import java.awt.event.MouseListener
 import javax.swing.JLabel
 import javax.swing.JPanel
-import javax.swing.SwingConstants
-import javax.swing.border.EmptyBorder
+
+val HOVER_COLOR: Color = JBColor.namedColor("Plugins.hoverBackground", JBColor(0xEDF6FE, 0x464A4D))
 
 class LearningItems : JPanel() {
   var modules: List<Module> = emptyList()
@@ -82,36 +82,38 @@ class LearningItems : JPanel() {
   }
 
   private fun createModuleItem(module: Module): JPanel {
+    val modulePanel = JPanel()
+    modulePanel.isOpaque = true
+    modulePanel.layout = VerticalLayout(5)
+    modulePanel.background = Color(0, 0, 0, 0)
+
     val result = JPanel()
+    result.isOpaque = true
 
     result.toolTipText = module.description
 
     result.layout = HorizontalLayout(5)
 
     result.border = JBUI.Borders.empty(5, 7)
-    val expandIcon = IconUtil.toSize(if (expanded.contains(module)) UIUtil.getTreeExpandedIcon() else UIUtil.getTreeCollapsedIcon(),
-                                     JBUIScale.scale(16), JBUIScale.scale(16))
-    val expandIconLabel = JLabel(expandIcon)
+
+    val expandPanel = JPanel().also {
+      it.layout = VerticalLayout(5)
+      it.background = Color(0, 0, 0, 0)
+      val expandIcon = IconUtil.toSize(if (expanded.contains(module)) UIUtil.getTreeExpandedIcon() else UIUtil.getTreeCollapsedIcon(),
+                                       JBUIScale.scale(16), JBUIScale.scale(16))
+      val expandIconLabel = JLabel(expandIcon)
+      it.add(expandIconLabel)
+    }
+    result.add(expandPanel)
 
     val name = JLabel(module.name)
+    name.font = UISettings.instance.moduleNameFont
+    modulePanel.add(name)
 
-    result.add(expandIconLabel)
-    result.add(name)
-
-    if (!module.hasNotPassedLesson()) {
-      val checkMarkIcon = if (!module.hasNotPassedLesson()) FeaturesTrainerIcons.Checkmark else EmptyIcon.ICON_16
-      val checkmarkIconLabel = JLabel(checkMarkIcon)
-
-      checkmarkIconLabel.border = JBUI.Borders.emptyRight(8)
-      checkmarkIconLabel.verticalAlignment = SwingConstants.CENTER
-      result.add(checkmarkIconLabel)
+    createModuleProgressLabel(module)?.let {
+      modulePanel.add(it)
     }
-    else {
-      createModuleProgressLabel(module)?.let {
-        result.add(UISettings.rigidGap(UISettings::progressGap, isVertical = false))
-        result.add(it)
-      }
-    }
+    result.add(modulePanel)
 
     result.addMouseListener(object : MouseListener {
       override fun mouseClicked(e: MouseEvent) {
@@ -132,7 +134,7 @@ class LearningItems : JPanel() {
       }
 
       override fun mouseEntered(e: MouseEvent) {
-        result.background = Color(0, 0, 0, 50)
+        result.background = HOVER_COLOR
         result.cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)
         result.revalidate()
         result.repaint()
@@ -151,11 +153,8 @@ class LearningItems : JPanel() {
   private fun createModuleProgressLabel(module: Module): JBLabel? {
     val progressStr = module.calcProgress() ?: return null
     val progressLabel = JBLabel(progressStr)
-    progressLabel.border = EmptyBorder(0, 5, 0, 5)
     progressLabel.name = "progressLabel"
-    progressLabel.font = UISettings.instance.italicFont
-    progressLabel.foreground = UISettings.instance.passedColor
-    progressLabel.alignmentY = Component.BOTTOM_ALIGNMENT
+    progressLabel.foreground = if (module.hasNotPassedLesson()) UISettings.instance.passedColor else UISettings.instance.completedColor
     return progressLabel
   }
 }

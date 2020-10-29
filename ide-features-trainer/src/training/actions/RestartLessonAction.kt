@@ -8,7 +8,7 @@ import training.learn.CourseManager
 import training.learn.lesson.LessonManager
 import training.ui.LearningUiManager
 
-class RestartLessonAction : AnAction(AllIcons.Actions.Restart) {
+class RestartLessonAction : AnAction(AllIcons.General.Reset) {
   override fun actionPerformed(e: AnActionEvent) {
     val activeToolWindow = LearningUiManager.activeToolWindow ?: return
     val lesson = LessonManager.instance.currentLesson ?: return

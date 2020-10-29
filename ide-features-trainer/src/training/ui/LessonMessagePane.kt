@@ -204,22 +204,6 @@ class LessonMessagePane(private val learnToolWindow: LearnToolWindow?) : JTextPa
     styledDocument.setCharacterAttributes(0, lessonMessage.end, passedStyle, false)
   }
 
-  fun redrawMessagesAsCompleted() {
-    val copy = lessonMessages.toList()
-    clear()
-    for (lessonMessage in copy) {
-      addMessage(lessonMessage.messages.toTypedArray())
-    }
-    for ((index, it) in lessonMessages.withIndex()) {
-      it.passed = copy[index].passed
-    }
-    addMessage(arrayOf(Message("Completed!", Message.MessageType.TEXT_BOLD)))
-    val completedStyle = this.addStyle(null, null)
-    StyleConstants.setForeground(completedStyle, UISettings.instance.completedColor)
-    styledDocument.setCharacterAttributes(lessonMessages.last().start, lessonMessages.last().end, completedStyle, false)
-    repaint()
-  }
-
   fun redrawMessages() {
     val copy = lessonMessages.toList()
     clear()

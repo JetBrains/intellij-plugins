@@ -8,11 +8,12 @@ import com.intellij.openapi.wm.ToolWindowManager
 import training.learn.CourseManager
 import training.learn.lesson.LessonManager
 import training.ui.LearnToolWindowFactory
+import training.util.lessonOpenedInProject
 
 class NextNonPassedLessonAction : AnAction(AllIcons.Actions.NextOccurence) {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
-    val lesson = LearnToolWindowFactory.learnWindowPerProject[project]?.learnPanel?.lesson ?: LessonManager.instance.currentLesson ?: return
+    val lesson = lessonOpenedInProject(project) ?: LessonManager.instance.currentLesson ?: return
     val nextNonPassedLesson = CourseManager.instance.getNextNonPassedLesson(lesson) ?: return
     CourseManager.instance.openLesson(project, nextNonPassedLesson)
   }
