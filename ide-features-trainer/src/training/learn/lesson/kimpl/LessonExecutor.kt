@@ -14,18 +14,23 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Alarm
+import org.intellij.lang.annotations.Language
 import training.commands.kotlin.PreviousTaskInfo
 import training.commands.kotlin.TaskContext
 import training.commands.kotlin.TaskTestContext
 import training.learn.ActionsRecorder
 import training.learn.lesson.LessonManager
 import training.ui.LearnToolWindowFactory
+import training.util.useNewLearningUi
 import java.awt.Component
+import kotlin.math.max
 
 class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
   private data class TaskInfo(val content: () -> Unit,
                               var restoreIndex: Int,
                               val shownTaskIndex: Int?,
+                              var messagesNumber: Int,
+                              val taskContent: (TaskContext.() -> Unit)?,
                               var messagesNumberBeforeStart: Int = 0,
                               var rehighlightComponent: (() -> Component)? = null,
                               var userVisibleInfo: PreviousTaskInfo? = null)
@@ -36,8 +41,8 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
   val editor: Editor
     get() = selectedEditor ?: error("no editor selected now")
 
-  data class TaskCallbackData(var shouldRestoreToTask: (() -> TaskContext.TaskId?)? = null,
-                              var delayMillis: Int = 0)
+  data class TaskData(var shouldRestoreToTask: (() -> TaskContext.TaskId?)? = null,
+                      var delayMillis: Int = 0)
 
   // Just tasks with messages to the panel. Do not count technical intermediate tasks.
   private var currentProgressTaskNumber = 0
@@ -62,8 +67,9 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
     Disposer.register(parentDisposable, this)
   }
 
-  private fun addTaskAction(shownTaskIndex: Int? = null, content: () -> Unit) {
-    taskActions.add(TaskInfo(content, taskActions.size - 1, shownTaskIndex))
+  private fun addTaskAction(shownTaskIndex: Int? = null, messagesNumber: Int = 0, taskContent: (TaskContext.() -> Unit)? = null, content: () -> Unit) {
+    val previousIndex = max(taskActions.size - 1, 0)
+    taskActions.add(TaskInfo(content, previousIndex, shownTaskIndex, messagesNumber, taskContent))
   }
 
   fun getUserVisibleInfo(index: Int): PreviousTaskInfo {
@@ -91,9 +97,18 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
       throw IllegalStateException("Nested tasks are not permitted!")
     }
 
-    val isRealTask = LessonExecutorUtil.isRealTask(taskContent, project)
-    val shownTaskNumber = if (isRealTask) currentProgressTaskNumber++ else null
-    addTaskAction(shownTaskNumber) { processTask(taskContent) }
+    val taskProperties = LessonExecutorUtil.taskProperties(taskContent, project)
+    val shownTaskNumber = if (taskProperties.hasDetection && taskProperties.messagesNumber != 0) currentProgressTaskNumber++ else null
+    addTaskAction(shownTaskNumber, taskProperties.messagesNumber, taskContent) {
+      if (useNewLearningUi) {
+        val taskInfo = taskActions[currentTaskIndex]
+        taskInfo.messagesNumber.takeIf { it != 0 }?.let {
+          LessonManager.instance.removeInactiveMessages(it)
+          taskInfo.messagesNumber = 0 // Here could be runtime messages
+        }
+      }
+      processTask(taskContent)
+    }
   }
 
   override fun dispose() {
@@ -132,7 +147,12 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
   val virtualFile: VirtualFile
     get() = FileDocumentManager.getInstance().getFile(editor.document) ?: error("No Virtual File")
 
-  fun processNextTask(taskIndex: Int) {
+  fun startLesson() {
+    if (useNewLearningUi) addAllInactiveMessages()
+    processNextTask(0)
+  }
+
+  private fun processNextTask(taskIndex: Int) {
     isUnderTaskProcessing = true
     // ModalityState.current() or without argument - cannot be used: dialog steps can stop to work.
     // Good example: track of rename refactoring
@@ -182,7 +202,7 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
     assert(ApplicationManager.getApplication().isDispatchThread)
     val recorder = ActionsRecorder(project, selectedEditor?.document, this)
     currentRecorder = recorder
-    val taskCallbackData = TaskCallbackData()
+    val taskCallbackData = TaskData()
     val taskContext = TaskContextImpl(this, recorder, currentTaskIndex, taskCallbackData)
     taskContext.apply(taskContent)
 
@@ -207,7 +227,7 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
 
   /** @return a callback to clear resources used to track restore */
   private fun checkForRestore(taskContext: TaskContextImpl,
-                              taskCallbackData: TaskCallbackData): () -> Unit {
+                              taskData: TaskData): () -> Unit {
     lateinit var clearRestore: () -> Unit
     fun restoreTask(restoreId: TaskContext.TaskId) {
       applyRestore(taskContext, restoreId)
@@ -222,7 +242,7 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
       }
     }
 
-    val shouldRestoreToTask = taskCallbackData.shouldRestoreToTask ?: return {}
+    val shouldRestoreToTask = taskData.shouldRestoreToTask ?: return {}
 
     fun checkFunction(): Boolean {
       if (hasBeenStopped) {
@@ -232,8 +252,8 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
       }
       val restoreId = shouldRestoreToTask()
       return if (restoreId != null) {
-        if (taskCallbackData.delayMillis == 0) restore(restoreId)
-        else Alarm().addRequest({ restore(restoreId) }, taskCallbackData.delayMillis)
+        if (taskData.delayMillis == 0) restore(restoreId)
+        else Alarm().addRequest({ restore(restoreId) }, taskData.delayMillis)
         true
       }
       else false
@@ -256,8 +276,8 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
 
   private fun chainNextTask(taskContext: TaskContextImpl,
                             recorder: ActionsRecorder,
-                            taskCallbackData: TaskCallbackData) {
-    val clearRestore = checkForRestore(taskContext, taskCallbackData)
+                            taskData: TaskData) {
+    val clearRestore = checkForRestore(taskContext, taskData)
 
     recorder.tryToCheckCallback()
 
@@ -298,5 +318,17 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
         taskContext.testActions.forEach { it.run() }
       }
     }
+  }
+
+  fun text(@Language("HTML") text: String) {
+    val taskInfo = taskActions[currentTaskIndex]
+    taskInfo.messagesNumber++ // Here could be runtime messages
+    LessonManager.instance.addMessage(text)
+  }
+
+  private fun addAllInactiveMessages() {
+    val tasksWithContent = taskActions.mapNotNull { it.taskContent }
+    val messages = tasksWithContent.map { LessonExecutorUtil.textMessages(it, project) }.flatten()
+    LessonManager.instance.addInactiveMessages(messages)
   }
 }

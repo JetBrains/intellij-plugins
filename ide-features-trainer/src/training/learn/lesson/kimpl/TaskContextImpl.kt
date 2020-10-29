@@ -27,7 +27,7 @@ import javax.swing.JComponent
 internal class TaskContextImpl(private val lessonExecutor: LessonExecutor,
                                private val recorder: ActionsRecorder,
                                val taskIndex: Int,
-                               private val callbackData: LessonExecutor.TaskCallbackData) : TaskContext() {
+                               private val data: LessonExecutor.TaskData) : TaskContext() {
   override val project: Project
     get() = lessonExecutor.project
 
@@ -47,10 +47,10 @@ internal class TaskContextImpl(private val lessonExecutor: LessonExecutor,
   }
 
   override fun restoreState(restoreId: TaskId?, delayMillis: Int, restoreRequired: TaskRuntimeContext.() -> Boolean) {
-    callbackData.delayMillis = delayMillis
-    val previous = callbackData.shouldRestoreToTask
+    data.delayMillis = delayMillis
+    val previous = data.shouldRestoreToTask
     val actualId = restoreId ?: TaskId(taskIndex - 1)
-    callbackData.shouldRestoreToTask = { previous?.let { it() } ?: if (restoreRequired(runtimeContext)) actualId else null }
+    data.shouldRestoreToTask = { previous?.let { it() } ?: if (restoreRequired(runtimeContext)) actualId else null }
   }
 
   override fun proposeRestore(restoreCheck: TaskRuntimeContext.() -> RestoreNotification?) {
@@ -78,7 +78,7 @@ internal class TaskContextImpl(private val lessonExecutor: LessonExecutor,
   }
 
   override fun text(@Language("HTML") text: String, useBalloon: LearningBalloonConfig?) {
-    LessonExecutorUtil.addTextToLearnPanel(text, runtimeContext.project)
+    lessonExecutor.text(text)
     if (useBalloon != null) {
       val ui = runtimeContext.previous.ui as? JComponent ?: return
       LessonExecutorUtil.showBalloonMessage(text, ui, useBalloon, runtimeContext.taskDisposable)
@@ -92,7 +92,9 @@ internal class TaskContextImpl(private val lessonExecutor: LessonExecutor,
 
   override fun runtimeText(callback: TaskRuntimeContext.() -> String?) {
     val text = callback(runtimeContext)
-    if (text != null) LessonExecutorUtil.addTextToLearnPanel(text, runtimeContext.project)
+    if (text != null) {
+      lessonExecutor.text(text)
+    }
   }
 
   override fun trigger(actionId: String) {
@@ -111,7 +113,9 @@ internal class TaskContextImpl(private val lessonExecutor: LessonExecutor,
     addStep(recorder.futureListActions(actionIds.toList()))
   }
 
-  override fun <T : Any?> trigger(actionId: String, calculateState: TaskRuntimeContext.() -> T, checkState: TaskRuntimeContext.(T, T) -> Boolean) {
+  override fun <T : Any?> trigger(actionId: String,
+                                  calculateState: TaskRuntimeContext.() -> T,
+                                  checkState: TaskRuntimeContext.(T, T) -> Boolean) {
     val check = getCheck(calculateState, checkState)
     addStep(recorder.futureActionAndCheckAround(actionId, check))
   }

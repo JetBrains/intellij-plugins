@@ -13,6 +13,7 @@ import com.intellij.util.containers.BidirectionalMap
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import icons.FeaturesTrainerIcons
+import org.intellij.lang.annotations.Language
 import org.jetbrains.annotations.Nls
 import training.keymap.KeymapUtil
 import training.learn.CourseManager
@@ -26,7 +27,6 @@ import training.util.openLinkInBrowser
 import training.util.useNewLearningUi
 import java.awt.*
 import java.awt.event.ActionEvent
-import java.net.URI
 import javax.swing.*
 import javax.swing.border.EmptyBorder
 import javax.swing.border.MatteBorder
@@ -43,7 +43,7 @@ class LearnPanel(private val learnToolWindow: LearnToolWindow) : JPanel() {
   private val allTopicsLabel: LinkLabel<Any> = LinkLabel(LearnBundle.message("learn.ui.alltopics"), null)
 
   private val lessonNameLabel = JLabel() //Name of the current lesson
-  val lessonMessagePane = LessonMessagePane(learnToolWindow)
+  val lessonMessagePane = LessonMessagePane()
   private val buttonPanel = JPanel()
   private val nextButton = JButton(LearnBundle.message("learn.ui.button.skip"))
   private val prevButton = JButton()
@@ -214,46 +214,23 @@ class LearnPanel(private val learnToolWindow: LearnToolWindow) : JPanel() {
     this.repaint()
   }
 
-  fun addMessage(text: String) {
-    lessonMessagePane.addMessage(text)
+  fun addMessage(@Language("HTML") text: String, state: LessonMessagePane.MessageState = LessonMessagePane.MessageState.NORMAL) {
+    val messages = MessageFactory.convert(text)
+    MessageFactory.setLinksHandlers(learnToolWindow.project, messages)
+    addMessages(messages, state)
   }
 
-  fun addMessages(messages: Array<Message>) {
-    for (message in messages) {
-      if (message.type == Message.MessageType.LINK && message.runnable == null) {
-        //add link handler
-        message.runnable = Runnable {
-          val link = message.link
-          if (link == null || link.isEmpty()) {
-            val lesson = CourseManager.instance.findLesson(message.text)
-            if (lesson != null) {
-              try {
-                val project = guessCurrentProject(this@LearnPanel)
-                CourseManager.instance.openLesson(project, lesson)
-              }
-              catch (e: Exception) {
-                LOG.warn(e)
-              }
-
-            }
-          }
-          else {
-            val desktop = if (Desktop.isDesktopSupported()) Desktop.getDesktop() else null
-            if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-              try {
-                desktop.browse(URI(link))
-              }
-              catch (e: Exception) {
-                LOG.warn(e)
-              }
-            }
-          }
-        }
+  fun addMessages(messageParts: List<MessagePart>, state: LessonMessagePane.MessageState = LessonMessagePane.MessageState.NORMAL) {
+    val needToShow = lessonMessagePane.addMessage(messageParts, state)
+    adjustMessagesArea()
+    if (useNewLearningUi) {
+      if (state != LessonMessagePane.MessageState.INACTIVE && needToShow != null) {
+        lessonMessagePane.scrollRectToVisible(needToShow)
       }
     }
-
-    lessonMessagePane.addMessage(messages)
-    adjustMessagesArea()
+    else {
+      learnToolWindow.scrollToTheEnd()
+    }
   }
 
   private fun adjustMessagesArea() {
@@ -270,6 +247,11 @@ class LearnPanel(private val learnToolWindow: LearnToolWindow) : JPanel() {
   fun resetMessagesNumber(number: Int) {
     lessonMessagePane.resetMessagesNumber(number)
     adjustMessagesArea()
+  }
+
+  fun removeInactiveMessages(number: Int) {
+    lessonMessagePane.removeInactiveMessages(number)
+    adjustMessagesArea() // TODO: fix it
   }
 
   fun messagesNumber(): Int = lessonMessagePane.messagesNumber()
@@ -542,6 +524,10 @@ class LearnPanel(private val learnToolWindow: LearnToolWindow) : JPanel() {
     nextButton.isSelected = true
     nextButton.isFocusable = true
     nextButton.requestFocus()
+  }
+
+  fun clearRestoreMessage() {
+    lessonMessagePane.clearRestoreMessages()
   }
 
   companion object {

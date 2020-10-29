@@ -201,7 +201,7 @@ class OpenLessonAction(val lesson: Lesson) : DumbAwareAction(lesson.name) {
     val lessonContext = LessonContextImpl(executor)
     LessonManager.instance.initDslLesson(textEditor?.editor, lesson, executor)
     lesson.lessonContent(lessonContext)
-    executor.processNextTask(0)
+    executor.startLesson()
   }
 
   private fun hideOtherViews(project: Project) {

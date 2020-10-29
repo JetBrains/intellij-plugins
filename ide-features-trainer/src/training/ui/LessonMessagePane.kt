@@ -14,6 +14,7 @@ import com.intellij.ui.JBColor
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.labels.LinkLabel
 import com.intellij.util.ui.JBUI
+import com.intellij.util.ui.UIUtil
 import icons.FeaturesTrainerIcons
 import training.keymap.KeymapUtil
 import training.learn.LearnBundle
@@ -23,22 +24,37 @@ import java.awt.*
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.awt.geom.RoundRectangle2D
-import java.util.concurrent.CopyOnWriteArrayList
 import javax.swing.*
+import javax.swing.text.AttributeSet
 import javax.swing.text.BadLocationException
 import javax.swing.text.SimpleAttributeSet
 import javax.swing.text.StyleConstants
 
-class LessonMessagePane(private val learnToolWindow: LearnToolWindow?) : JTextPane() {
-  private data class RangeData(val range: IntRange, val action: (Point) -> Unit)
+class LessonMessagePane : JTextPane() {
+  enum class MessageState { NORMAL, PASSED, INACTIVE, RESTORE }
 
-  private val lessonMessages = CopyOnWriteArrayList<LessonMessage>()
+  private data class LessonMessage(
+    val messageParts: List<MessagePart>,
+    var start: Int,
+    var end: Int,
+    var state: MessageState = MessageState.NORMAL
+  )
+  private data class RangeData(var range: IntRange, val action: (Point) -> Unit)
+
+  private val lessonMessages get() = activeMessages + restoreMessages + inactiveMessages
+  private val activeMessages = mutableListOf<LessonMessage>()
+  private val restoreMessages = mutableListOf<LessonMessage>()
+  private val inactiveMessages = mutableListOf<LessonMessage>()
+
   private val fontFamily = Font(UISettings.instance.fontFace, Font.PLAIN, UISettings.instance.fontSize).family
 
-  private val ranges = mutableListOf<RangeData>()
+  private val ranges = mutableSetOf<RangeData>()
+
+  private var insertOffset: Int = 0
 
   //, fontFace, check_width + check_right_indent
   init {
+    UIUtil.doNotScrollToCaret(this)
     initStyleConstants()
     isEditable = false
     val listener = object : MouseAdapter() {
@@ -80,6 +96,8 @@ class LessonMessagePane(private val learnToolWindow: LearnToolWindow?) : JTextPa
   private fun initStyleConstants() {
     font = Font(UISettings.instance.fontFace, Font.PLAIN, UISettings.instance.fontSize)
 
+    StyleConstants.setForeground(INACTIVE, UISettings.instance.passedColor)
+
     StyleConstants.setFontFamily(REGULAR, fontFamily)
     StyleConstants.setFontSize(REGULAR, UISettings.instance.fontSize)
     StyleConstants.setForeground(REGULAR, JBColor.BLACK)
@@ -119,62 +137,115 @@ class LessonMessagePane(private val learnToolWindow: LearnToolWindow?) : JTextPa
     this.setParagraphAttributes(PARAGRAPH_STYLE, true)
   }
 
-  fun messagesNumber(): Int = lessonMessages.size
+  fun messagesNumber(): Int = activeMessages.size
+
+  private fun removeMessagesRange(startIdx: Int, endIdx: Int, list: MutableList<LessonMessage>) {
+    if (startIdx == endIdx) return
+
+    val lastIdx = endIdx - 1
+    val startOffset = list[startIdx].start
+    val endOffset = list[lastIdx].end
+    val removeLength = endOffset - startOffset
+    list.subList(startIdx, endIdx).clear()
+    ranges.removeIf { startOffset <= it.range.first && it.range.last < endOffset }
+    fixOffsets(endOffset, -removeLength)
+
+    if (insertOffset in startOffset..endOffset) insertOffset = startOffset
+    else if (insertOffset > endOffset) insertOffset -= removeLength
+    document.remove(startOffset, endOffset - startOffset)
+  }
+
+  private fun fixOffsets(fromOffset: Int, lengthChange: Int) {
+    ranges.filter { it.range.first >= fromOffset }.forEach {
+      it.range = (it.range.first + lengthChange)..(it.range.last + lengthChange)
+    }
+    lessonMessages.forEach { message ->
+      if (message.start >= fromOffset) {
+        message.start += lengthChange
+        message.end += lengthChange
+        for (part in message.messageParts) {
+          part.startOffset += lengthChange
+          part.endOffset += lengthChange
+        }
+      }
+    }
+  }
+
+  fun clearRestoreMessages() {
+    removeMessagesRange(0, restoreMessages.size, restoreMessages)
+  }
+
+  fun removeInactiveMessages(number: Int) {
+    removeMessagesRange(0, number, inactiveMessages)
+  }
 
   fun resetMessagesNumber(number: Int) {
-    if (number == 0) {
-      clear()
-      return
-    }
-    val end = lessonMessages[number - 1].end
-    document.remove(end, document.length - end)
-    while (number < lessonMessages.size) {
-      lessonMessages.removeAt(lessonMessages.size - 1)
-    }
-  }
+    clearRestoreMessages()
 
-  fun addMessage(text: String) {
-    try {
-      val start = document.length
-      document.insertString(document.length, text, REGULAR)
-      val end = document.length
-      lessonMessages.add(LessonMessage(text, start, end))
-      learnToolWindow?.scrollToTheEnd()
-    }
-    catch (e: BadLocationException) {
-      LOG.warn(e)
-    }
-
-  }
-
-  fun addMessage(messages: Array<Message>) {
-    try {
-      val start = document.length
-      if (lessonMessages.isNotEmpty())
-        document.insertString(document.length, "\n", REGULAR)
-      for (message in messages) {
-        val startOffset = document.endPosition.offset
-        message.startOffset = startOffset
-        when (message.type) {
-          Message.MessageType.TEXT_REGULAR -> document.insertString(document.length, message.text, REGULAR)
-          Message.MessageType.TEXT_BOLD -> document.insertString(document.length, message.text, BOLD)
-          Message.MessageType.SHORTCUT -> appendShortcut(message)
-          Message.MessageType.CODE -> document.insertString(document.length, message.text, CODE)
-          Message.MessageType.CHECK -> document.insertString(document.length, message.text, ROBOTO)
-          Message.MessageType.LINK -> appendLink(message)
-          Message.MessageType.ICON -> message.toIcon()?.let { addPlaceholderForIcon(it) }
-          Message.MessageType.ICON_IDX -> LearningUiManager.iconMap[message.text]?.let { addPlaceholderForIcon(it) }
-          Message.MessageType.PROPOSE_RESTORE -> document.insertString(document.length, message.text, BOLD)
-        }
-        message.endOffset = document.endPosition.offset
+    if (useNewLearningUi) {
+      val move = activeMessages.subList(number, activeMessages.size - number)
+      move.forEach {
+        setInactiveStyle(it)
+        it.state = MessageState.INACTIVE
       }
-      val end = document.length
-      lessonMessages.add(LessonMessage(messages, start, end))
-      learnToolWindow?.scrollToTheEnd()
+      inactiveMessages.addAll(0, move)
+      move.clear()
     }
-    catch (e: BadLocationException) {
-      LOG.warn(e)
+    else {
+      removeMessagesRange(number, activeMessages.size - number, activeMessages)
     }
+  }
+
+  private fun insertText(text: String, attributeSet: AttributeSet) {
+    document.insertString(insertOffset, text, attributeSet)
+    insertOffset += text.length
+  }
+
+  fun addMessage(messageParts: List<MessagePart>, state: MessageState = MessageState.NORMAL): Rectangle? {
+    val lastActiveOffset = activeMessages.takeIf { it.isNotEmpty() }?.last()?.end ?: 0
+    insertOffset = when (state) {
+      MessageState.INACTIVE -> document.length
+      MessageState.RESTORE -> restoreMessages.takeIf { it.isNotEmpty() }?.last()?.end ?: lastActiveOffset
+      else -> lastActiveOffset
+    }
+    val start = insertOffset
+    if (insertOffset != 0)
+      insertText("\n", REGULAR)
+    val newRanges = mutableListOf<RangeData>()
+    for (message in messageParts) {
+      val startOffset = insertOffset
+      message.startOffset = startOffset
+      when (message.type) {
+        MessagePart.MessageType.TEXT_REGULAR -> insertText(message.text, REGULAR)
+        MessagePart.MessageType.TEXT_BOLD -> insertText(message.text, BOLD)
+        MessagePart.MessageType.SHORTCUT -> appendShortcut(message).let { newRanges.add(it) }
+        MessagePart.MessageType.CODE -> insertText(message.text, CODE)
+        MessagePart.MessageType.CHECK -> insertText(message.text, ROBOTO)
+        MessagePart.MessageType.LINK -> appendLink(message)?.let { newRanges.add(it) }
+        MessagePart.MessageType.ICON_IDX -> LearningUiManager.iconMap[message.text]?.let { addPlaceholderForIcon(it) }
+        MessagePart.MessageType.PROPOSE_RESTORE -> insertText(message.text, BOLD)
+      }
+      message.endOffset = insertOffset
+    }
+    val end = insertOffset
+    val lessonMessage = LessonMessage(messageParts, start, end)
+    if (state == MessageState.INACTIVE) {
+      setInactiveStyle(lessonMessage)
+    }
+    lessonMessage.state = state
+
+    fixOffsets(start, end - start)
+    ranges.addAll(newRanges)
+    when (state) {
+      MessageState.INACTIVE -> inactiveMessages
+      MessageState.RESTORE -> restoreMessages
+      else -> activeMessages
+    }.add(lessonMessage)
+
+    val startRect = modelToView(start) ?: return null
+    val endRect = modelToView(end - 1) ?: return null
+    return Rectangle(startRect.x, startRect.y, endRect.x + endRect.width - startRect.x, endRect.y + endRect.height - startRect.y)
+    //learnToolWindow?.scrollToTheEnd()
   }
 
   private fun addPlaceholderForIcon(icon: Icon) {
@@ -183,7 +254,7 @@ class LessonMessagePane(private val learnToolWindow: LearnToolWindow?) : JTextPa
       placeholder += " "
     }
     placeholder += " "
-    document.insertString(document.length, placeholder, REGULAR)
+    insertText(placeholder, REGULAR)
   }
 
   /**
@@ -191,11 +262,15 @@ class LessonMessagePane(private val learnToolWindow: LearnToolWindow?) : JTextPa
    */
   @Throws(BadLocationException::class)
   fun passPreviousMessages() {
-    val lessonMessage = lessonMessages.lastOrNull() ?: return
-    lessonMessage.passed = true
-
-    //Repaint text with passed style
-    setPassedStyle(lessonMessage)
+    if (!useNewLearningUi) { //Repaint text with passed style
+      val lessonMessage = lessonMessages.lastOrNull() ?: return
+      lessonMessage.state = MessageState.PASSED
+      setPassedStyle(lessonMessage)
+    }
+    else { //Repaint text with passed style
+      val lessonMessage = lessonMessages.lastOrNull { it.state == MessageState.NORMAL } ?: return
+      lessonMessage.state = MessageState.PASSED
+    }
   }
 
   private fun setPassedStyle(lessonMessage: LessonMessage) {
@@ -204,40 +279,47 @@ class LessonMessagePane(private val learnToolWindow: LearnToolWindow?) : JTextPa
     styledDocument.setCharacterAttributes(0, lessonMessage.end, passedStyle, false)
   }
 
+  private fun setInactiveStyle(lessonMessage: LessonMessage) {
+    styledDocument.setCharacterAttributes(lessonMessage.start, lessonMessage.end, INACTIVE, false)
+  }
+
+
   fun redrawMessages() {
     val copy = lessonMessages.toList()
     clear()
     for (lessonMessage in copy) {
-      addMessage(lessonMessage.messages.toTypedArray())
+      addMessage(lessonMessage.messageParts, lessonMessage.state)
     }
     for ((index, it) in lessonMessages.withIndex()) {
-      it.passed = copy[index].passed
-      if (it.passed) setPassedStyle(it)
+      it.state = copy[index].state
+      if (it.state == MessageState.PASSED && !useNewLearningUi) setPassedStyle(it)
     }
   }
 
   fun clear() {
     text = ""
-    lessonMessages.clear()
+    activeMessages.clear()
+    restoreMessages.clear()
+    inactiveMessages.clear()
     ranges.clear()
   }
 
   /**
    * Appends link inside JTextPane to Run another lesson
 
-   * @param message - should have LINK type. message.runnable starts when the message has been clicked.
+   * @param messagePart - should have LINK type. message.runnable starts when the message has been clicked.
    */
   @Throws(BadLocationException::class)
-  private fun appendLink(message: Message) {
-    val clickRange = appendClickableRange(message.text, LINK)
-    val runnable = message.runnable ?: return
-    ranges.add(RangeData(clickRange) { runnable.run() })
+  private fun appendLink(messagePart: MessagePart): RangeData? {
+    val clickRange = appendClickableRange(messagePart.text, LINK)
+    val runnable = messagePart.runnable ?: return null
+    return RangeData(clickRange) { runnable.run() }
   }
 
-  private fun appendShortcut(message: Message) {
-    val range = appendClickableRange(" ${message.text} ", SHORTCUT)
+  private fun appendShortcut(messagePart: MessagePart): RangeData {
+    val range = appendClickableRange(" ${messagePart.text} ", SHORTCUT)
     val clickRange = IntRange(range.first + 1, range.last - 1) // exclude around spaces
-    ranges.add(RangeData(clickRange) { showShortcutBalloon(it, message.link, message.text) })
+    return RangeData(clickRange) { showShortcutBalloon(it, messagePart.link, messagePart.text) }
   }
 
   private fun showShortcutBalloon(it: Point, actionName: String?, shortcut: String) {
@@ -255,7 +337,8 @@ class LessonMessagePane(private val learnToolWindow: LearnToolWindow?) : JTextPa
         balloon.hide()
       })
       jPanel.add(LinkLabel<Any>(LearnBundle.message("shortcut.balloon.add.shortcut"), null) { _, _ ->
-        KeymapPanel.addKeyboardShortcut(actionName, ActionShortcutRestrictions.getInstance().getForActionId(actionName), KeymapManager.getInstance().activeKeymap, this)
+        KeymapPanel.addKeyboardShortcut(actionName, ActionShortcutRestrictions.getInstance().getForActionId(actionName),
+                                        KeymapManager.getInstance().activeKeymap, this)
         balloon.hide()
         repaint()
       })
@@ -274,9 +357,9 @@ class LessonMessagePane(private val learnToolWindow: LearnToolWindow?) : JTextPa
   }
 
   private fun appendClickableRange(clickable: String, attributeSet: SimpleAttributeSet): IntRange {
-    val startLink = document.length
-    document.insertString(document.length, clickable, attributeSet)
-    val endLink = document.length
+    val startLink = insertOffset
+    insertText(clickable, attributeSet)
+    val endLink = insertOffset
     return startLink..endLink
   }
 
@@ -294,7 +377,7 @@ class LessonMessagePane(private val learnToolWindow: LearnToolWindow?) : JTextPa
 
   private fun paintLessonCheckmarks(g: Graphics) {
     for (lessonMessage in lessonMessages) {
-      if (lessonMessage.passed) {
+      if (lessonMessage.state == MessageState.PASSED) {
         var startOffset = lessonMessage.start
         if (startOffset != 0) startOffset++
         try {
@@ -319,13 +402,13 @@ class LessonMessagePane(private val learnToolWindow: LearnToolWindow?) : JTextPa
   private fun paintMessages(g: Graphics) {
     val g2d = g as Graphics2D
     for (lessonMessage in lessonMessages) {
-      val myMessages = lessonMessage.messages
+      val myMessages = lessonMessage.messageParts
       for (myMessage in myMessages) {
-        if (myMessage.type == Message.MessageType.SHORTCUT) {
+        if (myMessage.type == MessagePart.MessageType.SHORTCUT) {
           val startOffset = myMessage.startOffset
           val endOffset = myMessage.endOffset
-          val rectangleStart = modelToView(startOffset)
-          val rectangleEnd = modelToView(endOffset - 2)
+          val rectangleStart = modelToView(startOffset + 1)
+          val rectangleEnd = modelToView(endOffset - 1)
           val color = g2d.color
           val fontSize = UISettings.instance.fontSize
 
@@ -341,13 +424,8 @@ class LessonMessagePane(private val learnToolWindow: LearnToolWindow?) : JTextPa
           g2d.fill(r2d)
           g2d.color = color
         }
-        else if (myMessage.type == Message.MessageType.ICON) {
-          val rect = modelToView(myMessage.startOffset)
-          val icon = myMessage.toIcon()
-          icon?.paintIcon(this, g2d, rect.x, rect.y)
-        }
-        else if (myMessage.type == Message.MessageType.ICON_IDX) {
-          val rect = modelToView(myMessage.startOffset)
+        else if (myMessage.type == MessagePart.MessageType.ICON_IDX) {
+          val rect = modelToView(myMessage.startOffset + 1)
           val icon = LearningUiManager.iconMap[myMessage.text]
           icon?.paintIcon(this, g2d, rect.x, rect.y)
         }
@@ -356,10 +434,10 @@ class LessonMessagePane(private val learnToolWindow: LearnToolWindow?) : JTextPa
   }
 
   companion object {
-
     private val LOG = Logger.getInstance(LessonMessagePane::class.java)
 
     //Style Attributes for LessonMessagePane(JTextPane)
+    private val INACTIVE = SimpleAttributeSet()
     private val REGULAR = SimpleAttributeSet()
     private val BOLD = SimpleAttributeSet()
     private val SHORTCUT = SimpleAttributeSet()
