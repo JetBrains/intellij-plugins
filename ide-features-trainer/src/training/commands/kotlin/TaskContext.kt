@@ -198,7 +198,7 @@ abstract class TaskContext : LearningDslBase {
 
   class DoneStepContext(val future: CompletableFuture<Boolean>, rt: TaskRuntimeContext) : TaskRuntimeContext(rt) {
     fun completeStep() {
-      assert(ApplicationManager.getApplication().isDispatchThread)
+      ApplicationManager.getApplication().assertIsDispatchThread()
       if (!future.isDone && !future.isCancelled) {
         future.complete(true)
       }

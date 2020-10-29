@@ -28,7 +28,6 @@ import kotlin.math.max
 class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
   private data class TaskInfo(val content: () -> Unit,
                               var restoreIndex: Int,
-                              val shownTaskIndex: Int?,
                               var messagesNumber: Int,
                               val taskContent: (TaskContext.() -> Unit)?,
                               var messagesNumberBeforeStart: Int = 0,
@@ -44,10 +43,6 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
   data class TaskData(var shouldRestoreToTask: (() -> TaskContext.TaskId?)? = null,
                       var delayMillis: Int = 0)
 
-  // Just tasks with messages to the panel. Do not count technical intermediate tasks.
-  private var currentProgressTaskNumber = 0
-
-  private var isUnderTaskProcessing = false
   private val taskActions: MutableList<TaskInfo> = ArrayList()
 
   var foundComponent: Component? = null
@@ -59,6 +54,7 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
 
   private val parentDisposable: Disposable = LearnToolWindowFactory.learnWindowPerProject[project]?.parentDisposable ?: project
 
+  // Is used from ui detection pooled thread
   @Volatile
   var hasBeenStopped = false
     private set
@@ -67,9 +63,9 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
     Disposer.register(parentDisposable, this)
   }
 
-  private fun addTaskAction(shownTaskIndex: Int? = null, messagesNumber: Int = 0, taskContent: (TaskContext.() -> Unit)? = null, content: () -> Unit) {
+  private fun addTaskAction(messagesNumber: Int = 0, taskContent: (TaskContext.() -> Unit)? = null, content: () -> Unit) {
     val previousIndex = max(taskActions.size - 1, 0)
-    taskActions.add(TaskInfo(content, previousIndex, shownTaskIndex, messagesNumber, taskContent))
+    taskActions.add(TaskInfo(content, previousIndex, messagesNumber, taskContent))
   }
 
   fun getUserVisibleInfo(index: Int): PreviousTaskInfo {
@@ -77,10 +73,6 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
   }
 
   fun waitBeforeContinue(delayMillis: Int) {
-    if (isUnderTaskProcessing) {
-      throw IllegalStateException("Delay should be specified between tasks!")
-    }
-
     addTaskAction {
       val action = {
         foundComponent = taskActions[currentTaskIndex].userVisibleInfo?.ui
@@ -92,14 +84,10 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
   }
 
   fun task(taskContent: TaskContext.() -> Unit) {
-    assert(ApplicationManager.getApplication().isDispatchThread)
-    if (isUnderTaskProcessing) {
-      throw IllegalStateException("Nested tasks are not permitted!")
-    }
+    ApplicationManager.getApplication().assertIsDispatchThread()
 
     val taskProperties = LessonExecutorUtil.taskProperties(taskContent, project)
-    val shownTaskNumber = if (taskProperties.hasDetection && taskProperties.messagesNumber != 0) currentProgressTaskNumber++ else null
-    addTaskAction(shownTaskNumber, taskProperties.messagesNumber, taskContent) {
+    addTaskAction(taskProperties.messagesNumber, taskContent) {
       if (useNewLearningUi) {
         val taskInfo = taskActions[currentTaskIndex]
         taskInfo.messagesNumber.takeIf { it != 0 }?.let {
@@ -113,16 +101,15 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
 
   override fun dispose() {
     if (!hasBeenStopped) {
-      assert(ApplicationManager.getApplication().isDispatchThread)
+      ApplicationManager.getApplication().assertIsDispatchThread()
       disposeRecorders()
       hasBeenStopped = true
       taskActions.clear()
-      Disposer.dispose(this)
     }
   }
 
   fun stopLesson() {
-    dispose()
+    Disposer.dispose(this)
   }
 
   private fun disposeRecorders() {
@@ -153,7 +140,6 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
   }
 
   private fun processNextTask(taskIndex: Int) {
-    isUnderTaskProcessing = true
     // ModalityState.current() or without argument - cannot be used: dialog steps can stop to work.
     // Good example: track of rename refactoring
     invokeLater(ModalityState.any()) {
@@ -165,7 +151,7 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
 
   private fun processNextTask2() {
     LessonManager.instance.clearRestoreMessage()
-    assert(ApplicationManager.getApplication().isDispatchThread)
+    ApplicationManager.getApplication().assertIsDispatchThread()
     if (currentTaskIndex == taskActions.size) {
       LessonManager.instance.passLesson(project, lesson)
       disposeRecorders()
@@ -199,7 +185,7 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
   }
 
   private fun processTask(taskContent: TaskContext.() -> Unit) {
-    assert(ApplicationManager.getApplication().isDispatchThread)
+    ApplicationManager.getApplication().assertIsDispatchThread()
     val recorder = ActionsRecorder(project, selectedEditor?.document, this)
     currentRecorder = recorder
     val taskCallbackData = TaskData()
@@ -283,7 +269,7 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
 
     taskContext.steps.forEach { step ->
       step.thenAccept {
-        assert(ApplicationManager.getApplication().isDispatchThread)
+        ApplicationManager.getApplication().assertIsDispatchThread()
         val taskHasBeenDone = isTaskCompleted(taskContext)
         if (taskHasBeenDone) {
           clearRestore()
@@ -299,16 +285,10 @@ class LessonExecutor(val lesson: KLesson, val project: Project) : Disposable {
   private fun isTaskCompleted(taskContext: TaskContextImpl) = taskContext.steps.all { it.isDone && it.get() }
 
   private fun addSimpleTaskAction(taskAction: () -> Unit) {
-    assert(ApplicationManager.getApplication().isDispatchThread)
-    if (!isUnderTaskProcessing) {
-      addTaskAction {
-        taskAction()
-        processNextTask(currentTaskIndex + 1)
-      }
-    }
-    else {
-      // allow some simple tasks like caret move and so on...
+    ApplicationManager.getApplication().assertIsDispatchThread()
+    addTaskAction {
       taskAction()
+      processNextTask(currentTaskIndex + 1)
     }
   }
 
