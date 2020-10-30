@@ -99,6 +99,7 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase impleme
     myEnvs = envs;
   }
 
+  @NlsSafe
   @Nullable
   public String getCommand() {
     return myCommand;

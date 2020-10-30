@@ -121,7 +121,7 @@ public class DenoRunConfiguration extends DebuggableProcessRunConfigurationBase 
         debugPort = NetUtils.findAvailableSocketPort();
       }
       catch (IOException e) {
-        throw new ExecutionException("Cannot find available port", e);
+        throw new ExecutionException(DenoBundle.message("dialog.message.cannot.find.available.port"), e);
       }
     }
 
