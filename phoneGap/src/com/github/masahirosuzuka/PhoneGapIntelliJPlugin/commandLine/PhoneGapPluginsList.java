@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.HttpRequests;
@@ -59,6 +60,7 @@ public class PhoneGapPluginsList {
       return latest == null ? null : latest.getAsString();
     }
 
+    @NlsSafe
     public String getDesc() {
       return myDesc;
     }

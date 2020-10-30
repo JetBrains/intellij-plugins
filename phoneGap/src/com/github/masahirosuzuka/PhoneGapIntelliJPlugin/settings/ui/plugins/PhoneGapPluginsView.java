@@ -64,9 +64,9 @@ public class PhoneGapPluginsView {
                                  PhoneGapConfigurable.RepositoryStore repositoryStore,
                                  final VersionCallback callback) {
     final Ref<PhoneGapPackageManagementService> service = new Ref<>();
-    final Ref<String> error = new Ref<>();
-    final Ref<String> warning = new Ref<>();
-    final Ref<@NlsSafe String> version = new Ref<>();
+    final Ref<@Nls String> error = new Ref<>();
+    final Ref<@Nls String> warning = new Ref<>();
+    final Ref<@Nls String> version = new Ref<>();
     try {
       PhoneGapCommandLine commandLine = checkParams(error, warning, version, path, workDir);
 

@@ -9,7 +9,7 @@ import com.intellij.openapi.util.NotNullLazyValue
 import icons.JavaScriptDebuggerIcons
 
 class DenoConfigurationType :
-  SimpleConfigurationType("DenoConfigurationType", "Deno", DenoBundle.message("deno.run.configuration.description"), NotNullLazyValue.createConstantValue(
+  SimpleConfigurationType("DenoConfigurationType", DenoBundle.message("deno.name"), DenoBundle.message("deno.run.configuration.description"), NotNullLazyValue.createConstantValue(
     JavaScriptDebuggerIcons.JavaScript_debug_configuration)), DumbAware {
 
   override fun createTemplateConfiguration(project: Project): RunConfiguration {
