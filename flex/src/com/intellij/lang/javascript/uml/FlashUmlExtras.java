@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.uml;
 
 import com.intellij.diagram.*;
@@ -16,7 +17,7 @@ import java.util.List;
  * @author Kirill Safonov
  * @author Konstantin Bulenkov
  */
-public class FlashUmlExtras extends DiagramExtras<Object> {
+public final class FlashUmlExtras extends DiagramExtras<Object> {
   private final DiagramElementsProvider[] myProviders = {new FlashUmlSupersProvider(), new FlashUmlImplementationsProvider()};
 
   private final FlashUmlDndProvider myDndProvider = new FlashUmlDndProvider();
@@ -59,12 +60,12 @@ public class FlashUmlExtras extends DiagramExtras<Object> {
       return null;
     }
 
-    final List<DiagramEdge> edges = DiagramUtils.getSelectedEdges(builder);
+    final List<DiagramEdge<?>> edges = DiagramUtils.getSelectedEdges(builder);
     if (edges.size() != 1) {
       return null;
     }
 
-    final DiagramEdge edge = edges.get(0);
+    final DiagramEdge<?> edge = edges.get(0);
     if (edge instanceof FlashUmlEdge) {
       DiagramRelationshipInfo relationship = edge.getRelationship();
       return relationship instanceof FlashUmlRelationship ? ((FlashUmlRelationship)relationship).getElement() : null;

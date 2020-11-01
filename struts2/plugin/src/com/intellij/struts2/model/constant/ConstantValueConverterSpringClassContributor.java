@@ -49,7 +49,7 @@ public class ConstantValueConverterSpringClassContributor implements ConstantVal
     }
 
     final SpringModel springModel = SpringManager.getInstance(module.getProject()).getCombinedModel(module);
-    final SpringBeanPointer springBeanPointer = SpringModelSearchers.findBean(springModel, s);
+    final SpringBeanPointer<?>  springBeanPointer = SpringModelSearchers.findBean(springModel, s);
     if (springBeanPointer == null) {
       return null;
     }

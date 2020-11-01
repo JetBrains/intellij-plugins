@@ -113,7 +113,7 @@ public class ExtendableClassConverterSpringContributor
       }
 
       final SpringModel springModel = getSpringModel();
-      final SpringBeanPointer springBean = SpringModelSearchers.findBean(springModel, beanName);
+      final SpringBeanPointer<?>  springBean = SpringModelSearchers.findBean(springModel, beanName);
       if (springBean == null) {
         return null;
       }
@@ -131,7 +131,7 @@ public class ExtendableClassConverterSpringContributor
 
       final @Nullable Set<PsiClass> subClasses = getPossibleSubClasses();
 
-      final Collection<SpringBeanPointer> list = new ArrayList<>();
+      final Collection<SpringBeanPointer<?>> list = new ArrayList<>();
       if (subClasses.size() > 0) {
         for (PsiClass subClass : subClasses) {
           list.addAll(SpringModelSearchers.findBeans(springModel, SpringModelSearchParameters.byClass(subClass).withInheritors()));
@@ -142,7 +142,7 @@ public class ExtendableClassConverterSpringContributor
       }
 
       final List<LookupElement> variants = new ArrayList<>(list.size());
-      for (final SpringBeanPointer bean : list) {
+      for (final SpringBeanPointer<?>  bean : list) {
         if (bean.isAbstract()) {
           continue;
         }

@@ -62,7 +62,7 @@ public final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<Di
   private final DiagramColorManagerBase myColorManager;
 
   public AngularUiRouterDiagramProvider() {
-    myResolver = new DiagramVfsResolver<DiagramObject>() {
+    myResolver = new DiagramVfsResolver<>() {
       @Override
       public String getQualifiedName(DiagramObject element) {
         if ((Type.template.equals(element.getType()) || Type.topLevelTemplate.equals(element.getType())) &&
@@ -88,7 +88,7 @@ public final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<Di
         }
       }
     };
-    myElementManager = new AbstractDiagramElementManager<DiagramObject>() {
+    myElementManager = new AbstractDiagramElementManager<>() {
       @Override
       public Object[] getNodeItems(DiagramObject parent) {
         return ArrayUtil.toObjectArray(parent.getChildrenList());
@@ -229,7 +229,7 @@ public final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<Di
   }
 
   @Override
-  public @Nullable DiagramPresentationModel createPresentationModel(Project project, Graph2D graph) {
+  public @NotNull DiagramPresentationModel createPresentationModel(Project project, Graph2D graph) {
     return new DiagramPresentationModelImpl(graph, project, this) {
       @Override
       public boolean allowChangeVisibleCategories() {

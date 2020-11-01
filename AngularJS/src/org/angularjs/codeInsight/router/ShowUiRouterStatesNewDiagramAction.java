@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs.codeInsight.router;
 
 import com.intellij.diagram.DiagramProvider;
@@ -14,6 +15,7 @@ import com.intellij.uml.core.actions.ShowDiagram;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
 import icons.AngularJSIcons;
+import org.angularjs.AngularJSBundle;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,22 +24,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static org.angularjs.AngularJSBundle.message;
-
-/**
- * @author Irina.Chernushina on 3/23/2016.
- */
-public class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
-  public static final String USAGE_KEY = "angular.js.ui.router.show.diagram";
-
+final class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
     final Project project = e.getProject();
     if (project == null) return;
 
-    final AngularUiRouterDiagramProvider diagramProvider =
-      (AngularUiRouterDiagramProvider)DiagramProvider.findByID(AngularUiRouterDiagramProvider.ANGULAR_UI_ROUTER);
-    if (diagramProvider == null) return;
+    DiagramProvider<DiagramObject> diagramProvider = DiagramProvider.findByID(AngularUiRouterDiagramProvider.ANGULAR_UI_ROUTER);
+    if (diagramProvider == null) {
+      return;
+    }
+
     List<Pair<String, AngularUiRouterGraphBuilder>> graphBuilders = new ArrayList<>();
     ProgressManager.getInstance().runProcessWithProgressSynchronously(
       () -> ApplicationManager.getApplication().runReadAction(() -> {
@@ -56,7 +53,7 @@ public class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
                                             entry.getKey());
           graphBuilders.add(Pair.create(entry.getKey().getName(), graphBuilder));
         }
-      }), message("angularjs.ui.router.diagram.action.new.diagram.progress", diagramProvider.getPresentableName()), false, project);
+      }), AngularJSBundle.message("angularjs.ui.router.diagram.action.new.diagram.progress", diagramProvider.getPresentableName()), false, project);
 
     final AngularUiRouterProviderContext routerProviderContext = AngularUiRouterProviderContext.getInstance(project);
     routerProviderContext.reset();
@@ -73,8 +70,8 @@ public class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
     if (graphBuilders.isEmpty()) {
       //noinspection DialogTitleCapitalization
       Messages.showInfoMessage(project,
-                               message("angularjs.ui.router.diagram.action.new.diagram.info.no.router.states.found"),
-                               message("angularjs.ui.router.diagram.action.new.diagram.name"));
+                               AngularJSBundle.message("angularjs.ui.router.diagram.action.new.diagram.info.no.router.states.found"),
+                               AngularJSBundle.message("angularjs.ui.router.diagram.action.new.diagram.name"));
       return;
     }
     if (graphBuilders.size() == 1) {
@@ -94,7 +91,7 @@ public class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
     }
     list.setListData(ArrayUtil.toObjectArray(data));
     JBPopupFactory.getInstance().createListPopupBuilder(list)
-      .setTitle(message("angularjs.ui.router.diagram.action.new.diagram.select.main.file"))
+      .setTitle(AngularJSBundle.message("angularjs.ui.router.diagram.action.new.diagram.select.main.file"))
       .setItemChoosenCallback(() -> {
         final int index = list.getSelectedIndex();
         if (index >= 0) {
@@ -110,8 +107,8 @@ public class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
     e.getPresentation().setEnabledAndVisible(project != null && AngularIndexUtil.hasAngularJS(project));
 
     //noinspection DialogTitleCapitalization
-    e.getPresentation().setText(message("angularjs.ui.router.diagram.action.new.diagram.name"));
-    e.getPresentation().setDescription(message("angularjs.ui.router.diagram.action.new.diagram.description"));
+    e.getPresentation().setText(AngularJSBundle.message("angularjs.ui.router.diagram.action.new.diagram.name"));
+    e.getPresentation().setDescription(AngularJSBundle.message("angularjs.ui.router.diagram.action.new.diagram.description"));
     e.getPresentation().setIcon(AngularJSIcons.AngularJS);
   }
 }
