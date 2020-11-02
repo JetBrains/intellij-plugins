@@ -17,7 +17,11 @@ module Teamcity
       attr_reader :config, :options
 
       def initialize(config)
-        @io = ensure_io(config.out_stream)
+        if method(:ensure_io).arity == 2 # 2 arguments needed since Cucumber 5.2.0
+          @io = ensure_io(config.out_stream, config.error_stream)
+        else
+          @io = ensure_io(config.out_stream)
+        end
         @config = config
         @ast_lookup = ::Cucumber::Formatter::AstLookup.new(config)
         @passed_test_cases = []
