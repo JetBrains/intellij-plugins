@@ -43,10 +43,10 @@ class JavaLearningCourse : LearningCourseBase(JavaLanguage.INSTANCE.id) {
                    primaryLanguage = langSupport,
                    moduleType = ModuleType.SCRATCH) {
       listOf(
-        BasicCompletionLesson(it),
-        SmartTypeCompletionLesson(it),
-        PostfixCompletionLesson(it),
-        StatementCompletionLesson(it),
+        JavaBasicCompletionLesson(it),
+        JavaSmartTypeCompletionLesson(it),
+        JavaPostfixCompletionLesson(it),
+        JavaStatementCompletionLesson(it),
         JavaCompletionWithTabLesson(it),
       )
     },

@@ -12,24 +12,26 @@ import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.parseLessonSample
 
-class StatementCompletionLesson(module: Module)
+class JavaStatementCompletionLesson(module: Module)
   : KLesson("Statement completion", LessonsBundle.message("java.statement.completion.lesson.name"), module, JavaLangSupport.lang) {
 
-  val sample = parseLessonSample("""class PrimeNumbers {
-    public static void main(String[] args) {
-        System.out.println("Prime numbers between 1 and 100");
-
-        for (int i = 2; i < 100; i++) {
-            boolean isPrime = true;
-
-            for (int j = 2; j < i; j++)
-
-            if (isPrime) {
-                System.out.print(i + " ");
+  val sample = parseLessonSample("""
+    class PrimeNumbers {
+        public static void main(String[] args) {
+            System.out.println("Prime numbers between 1 and 100");
+    
+            for (int i = 2; i < 100; i++) {
+                boolean isPrime = true;
+    
+                for (int j = 2; j < i; j++)
+    
+                if (isPrime) {
+                    System.out.print(i + " ");
+                }
             }
         }
     }
-}""".trimIndent())
+  """.trimIndent())
 
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)

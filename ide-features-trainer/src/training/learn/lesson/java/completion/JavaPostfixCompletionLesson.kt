@@ -8,15 +8,16 @@ import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.parseLessonSample
 
-class PostfixCompletionLesson(module: Module)
+class JavaPostfixCompletionLesson(module: Module)
   : KLesson("Postfix completion", LessonsBundle.message("postfix.completion.lesson.name"), module, JavaLangSupport.lang) {
 
-  val sample = parseLessonSample("""class PostfixCompletionDemo{
-
-    public void demonstrate(int show_times){
-        (show_times == 10)
+  val sample = parseLessonSample("""
+    class PostfixCompletionDemo{
+        public void demonstrate(int show_times){
+            (show_times == 10)
+        }
     }
-}""".trimIndent())
+  """.trimIndent())
 
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
