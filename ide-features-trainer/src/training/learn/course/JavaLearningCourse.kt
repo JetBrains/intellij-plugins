@@ -4,7 +4,7 @@ package training.learn.course
 import com.intellij.lang.java.JavaLanguage
 import training.learn.LearningModule
 import training.learn.LessonsBundle
-import training.learn.interfaces.ModuleType
+import training.learn.interfaces.LessonType
 import training.learn.lesson.general.*
 import training.learn.lesson.general.assistance.CodeFormatLesson
 import training.learn.lesson.general.assistance.ParameterInfoLesson
@@ -25,7 +25,7 @@ class JavaLearningCourse : LearningCourseBase(JavaLanguage.INSTANCE.id) {
     LearningModule(name = LessonsBundle.message("editor.basics.module.name"),
                    description = LessonsBundle.message("editor.basics.module.description"),
                    primaryLanguage = langSupport,
-                   moduleType = ModuleType.SCRATCH) {
+                   moduleType = LessonType.SCRATCH) {
       fun ls(sampleName: String) = loadSample("EditorBasics/$sampleName")
       listOf(
         GotoActionLesson(it, lang, ls("00.Actions.java.sample")),
@@ -41,7 +41,7 @@ class JavaLearningCourse : LearningCourseBase(JavaLanguage.INSTANCE.id) {
     LearningModule(name = LessonsBundle.message("code.completion.module.name"),
                    description = LessonsBundle.message("code.completion.module.description"),
                    primaryLanguage = langSupport,
-                   moduleType = ModuleType.SCRATCH) {
+                   moduleType = LessonType.SCRATCH) {
       listOf(
         JavaBasicCompletionLesson(it),
         JavaSmartTypeCompletionLesson(it),
@@ -53,7 +53,7 @@ class JavaLearningCourse : LearningCourseBase(JavaLanguage.INSTANCE.id) {
     LearningModule(name = LessonsBundle.message("refactorings.module.name"),
                    description = LessonsBundle.message("refactorings.module.description"),
                    primaryLanguage = langSupport,
-                   moduleType = ModuleType.PROJECT) {
+                   moduleType = LessonType.PROJECT) {
       fun ls(sampleName: String) = loadSample("Refactorings/$sampleName")
       listOf(
         JavaRenameLesson(it),
@@ -65,7 +65,7 @@ class JavaLearningCourse : LearningCourseBase(JavaLanguage.INSTANCE.id) {
     LearningModule(name = LessonsBundle.message("code.assistance.module.name"),
                    description = LessonsBundle.message("code.assistance.module.description"),
                    primaryLanguage = langSupport,
-                   moduleType = ModuleType.PROJECT) {
+                   moduleType = LessonType.PROJECT) {
       fun ls(sampleName: String) = loadSample("CodeAssistance/$sampleName")
       listOf(
         CodeFormatLesson(it, lang, ls("CodeFormat.java.sample")),
@@ -77,7 +77,7 @@ class JavaLearningCourse : LearningCourseBase(JavaLanguage.INSTANCE.id) {
     LearningModule(name = LessonsBundle.message("navigation.module.name"),
                    description = LessonsBundle.message("navigation.module.description"),
                    primaryLanguage = langSupport,
-                   moduleType = ModuleType.PROJECT) {
+                   moduleType = LessonType.PROJECT) {
       listOf(
         JavaFileStructureLesson(it),
         JavaDeclarationAndUsagesLesson(it),
@@ -90,7 +90,7 @@ class JavaLearningCourse : LearningCourseBase(JavaLanguage.INSTANCE.id) {
     LearningModule(name = LessonsBundle.message("run.debug.module.name"),
                    description = LessonsBundle.message("run.debug.module.description"),
                    primaryLanguage = langSupport,
-                   moduleType = ModuleType.PROJECT) {
+                   moduleType = LessonType.PROJECT) {
       listOf(
         JavaRunConfigurationLesson(it),
         JavaDebugLesson(it),

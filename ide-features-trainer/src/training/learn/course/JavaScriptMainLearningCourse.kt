@@ -4,7 +4,7 @@ package training.learn.course
 import com.intellij.lang.javascript.JavascriptLanguage
 import training.learn.LearningModule
 import training.learn.LessonsBundle
-import training.learn.interfaces.ModuleType
+import training.learn.interfaces.LessonType
 import training.learn.lesson.javascript.editor.*
 import training.learn.lesson.javascript.testing.JestLesson
 import training.learn.lesson.kimpl.LessonUtil
@@ -14,7 +14,7 @@ class JavaScriptMainLearningCourse : LearningCourseBase(JavascriptLanguage.INSTA
     LearningModule(name = LessonsBundle.message("js.editor.basics.module.name"),
                    description = LessonsBundle.message("js.editor.basics.module.description"),
                    primaryLanguage = langSupport,
-                   moduleType = ModuleType.PROJECT) {
+                   moduleType = LessonType.PROJECT) {
       listOf(
         BasicCompletionLesson(it),
         CodeInspectionLesson(it),
@@ -26,7 +26,7 @@ class JavaScriptMainLearningCourse : LearningCourseBase(JavascriptLanguage.INSTA
     LearningModule(name = LessonsBundle.message("js.getting.started.module.name"),
                    description = LessonsBundle.message("js.getting.started.module.description", LessonUtil.productName),
                    primaryLanguage = langSupport,
-                   moduleType = ModuleType.PROJECT) {
+                   moduleType = LessonType.PROJECT) {
       listOf(
         JestLesson(it),
       )

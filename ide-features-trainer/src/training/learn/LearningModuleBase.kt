@@ -4,13 +4,13 @@ package training.learn
 import org.jetbrains.annotations.Nls
 import training.lang.LangSupport
 import training.learn.interfaces.Lesson
+import training.learn.interfaces.LessonType
 import training.learn.interfaces.Module
-import training.learn.interfaces.ModuleType
 
 abstract class LearningModuleBase(@Nls override val name: String,
                               @Nls override val description: String,
                               override val primaryLanguage: LangSupport,
-                              override val moduleType: ModuleType) : Module {
+                              override val moduleType: LessonType) : Module {
 
   override fun toString(): String {
     return "($name for $primaryLanguage)"

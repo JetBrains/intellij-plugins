@@ -25,6 +25,8 @@ interface Lesson {
 
   val module: Module
 
+  val lessonType: LessonType get() = module.moduleType
+
   val classLoader: ClassLoader
     get() = module.classLoader
 
