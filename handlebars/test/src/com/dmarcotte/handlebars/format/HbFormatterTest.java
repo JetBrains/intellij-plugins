@@ -2,6 +2,7 @@ package com.dmarcotte.handlebars.format;
 
 import com.dmarcotte.handlebars.HbLanguage;
 import com.dmarcotte.handlebars.util.HbTestUtils;
+import com.intellij.application.options.CodeStyle;
 import com.intellij.codeInsight.generation.AutoIndentLinesHandler;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
@@ -40,7 +41,7 @@ public abstract class HbFormatterTest extends BasePlatformTestCase implements Hb
     throws Exception {
     super.setUp();
 
-    formatterTestSettings = new FormatterTestSettings(CodeStyleSettingsManager.getSettings(getProject()));
+    formatterTestSettings = new FormatterTestSettings(CodeStyle.getSettings(getProject()));
     formatterTestSettings.setUp();
   }
 

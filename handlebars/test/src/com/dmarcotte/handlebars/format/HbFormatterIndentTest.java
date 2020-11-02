@@ -1,8 +1,8 @@
 package com.dmarcotte.handlebars.format;
 
 import com.dmarcotte.handlebars.config.HbConfig;
+import com.intellij.application.options.CodeStyle;
 import com.intellij.ide.highlighter.HtmlFileType;
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.formatter.xml.HtmlCodeStyleSettings;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,8 +34,8 @@ public class HbFormatterIndentTest extends HbFormatterTest {
    * Sanity check that we respect non-default (i.e. 4) indent sizes
    */
   public void testNonDefaultIndentSize() {
-    int previousHtmlIndent = CodeStyleSettingsManager.getSettings(getProject()).getIndentOptions(HtmlFileType.INSTANCE).INDENT_SIZE;
-    CodeStyleSettingsManager.getSettings(getProject()).getIndentOptions(HtmlFileType.INSTANCE).INDENT_SIZE = 2;
+    int previousHtmlIndent = CodeStyle.getSettings(getProject()).getIndentOptions(HtmlFileType.INSTANCE).INDENT_SIZE;
+    CodeStyle.getSettings(getProject()).getIndentOptions(HtmlFileType.INSTANCE).INDENT_SIZE = 2;
 
     doStringBasedTest(
 
@@ -52,7 +52,7 @@ public class HbFormatterIndentTest extends HbFormatterTest {
       "{{/foo}}"
     );
 
-    CodeStyleSettingsManager.getSettings(getProject()).getIndentOptions(HtmlFileType.INSTANCE).INDENT_SIZE = previousHtmlIndent;
+    CodeStyle.getSettings(getProject()).getIndentOptions(HtmlFileType.INSTANCE).INDENT_SIZE = previousHtmlIndent;
   }
 
   public void testSimpleStache() {
@@ -330,6 +330,6 @@ public class HbFormatterIndentTest extends HbFormatterTest {
 
   @NotNull
   private HtmlCodeStyleSettings getHtmlSettings() {
-    return CodeStyleSettingsManager.getSettings(getProject()).getCustomSettings(HtmlCodeStyleSettings.class);
+    return CodeStyle.getSettings(getProject()).getCustomSettings(HtmlCodeStyleSettings.class);
   }
 }

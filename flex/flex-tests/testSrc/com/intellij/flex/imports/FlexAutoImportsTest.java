@@ -1,5 +1,6 @@
 package com.intellij.flex.imports;
 
+import com.intellij.application.options.CodeStyle;
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerEx;
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl;
 import com.intellij.codeInsight.intention.IntentionAction;
@@ -14,7 +15,6 @@ import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import com.intellij.util.containers.ContainerUtil;
@@ -126,7 +126,7 @@ public class FlexAutoImportsTest extends CodeInsightFixtureTestCase<FlexModuleFi
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
   public void testWrapImportStatement() {
-    CodeStyleSettings currentSettings = CodeStyleSettingsManager.getSettings(myFixture.getProject());
+    CodeStyleSettings currentSettings = CodeStyle.getSettings(myFixture.getProject());
     int m = currentSettings.getDefaultRightMargin();
     currentSettings.setDefaultRightMargin(20);
     try {

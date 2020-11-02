@@ -1,5 +1,6 @@
 package com.intellij.flex.imports;
 
+import com.intellij.application.options.CodeStyle;
 import com.intellij.codeInsight.actions.OptimizeImportsAction;
 import com.intellij.flex.util.FlexModuleFixtureBuilder;
 import com.intellij.flex.util.FlexModuleFixtureBuilderImpl;
@@ -12,7 +13,6 @@ import com.intellij.lang.javascript.formatter.ECMA4CodeStyleSettings;
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.formatter.xml.XmlCodeStyleSettings;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
@@ -195,7 +195,7 @@ public class FlexOptimizeImportsTest extends CodeInsightFixtureTestCase<FlexModu
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
   public void testAmbiguous3() {
-    final CodeStyleSettings styleSettings = CodeStyleSettingsManager.getSettings(getProject());
+    final CodeStyleSettings styleSettings = CodeStyle.getSettings(getProject());
     XmlCodeStyleSettings xmlSettings = styleSettings.getCustomSettings(XmlCodeStyleSettings.class);
     int aroundCDataBefore = xmlSettings.XML_WHITE_SPACE_AROUND_CDATA;
     xmlSettings.XML_WHITE_SPACE_AROUND_CDATA = XmlCodeStyleSettings.WS_AROUND_CDATA_NEW_LINES;
@@ -226,7 +226,7 @@ public class FlexOptimizeImportsTest extends CodeInsightFixtureTestCase<FlexModu
   public void testNoSemicolons() {
     JSTestUtils.addClassesToProject(myFixture, true, "foo.MyClass", "foo.MyClass2", "bar.MyClass3");
     final JSCodeStyleSettings codeStyleSettings =
-      CodeStyleSettingsManager.getInstance(myFixture.getProject()).getCurrentSettings().getCustomSettings(ECMA4CodeStyleSettings.class);
+      CodeStyle.getSettings(myFixture.getProject()).getCustomSettings(ECMA4CodeStyleSettings.class);
     boolean b = codeStyleSettings.USE_SEMICOLON_AFTER_STATEMENT;
     codeStyleSettings.USE_SEMICOLON_AFTER_STATEMENT = false;
     try {
@@ -263,7 +263,7 @@ public class FlexOptimizeImportsTest extends CodeInsightFixtureTestCase<FlexModu
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testNoBlankLines2() {
     JSTestUtils.addClassesToProject(myFixture, true, "com.Foo", "com.Bar", "com.Zzz");
-    final CodeStyleSettings styleSettings = CodeStyleSettingsManager.getSettings(getProject());
+    final CodeStyleSettings styleSettings = CodeStyle.getSettings(getProject());
     XmlCodeStyleSettings xmlSettings = styleSettings.getCustomSettings(XmlCodeStyleSettings.class);
     boolean b = xmlSettings.XML_KEEP_WHITE_SPACES_INSIDE_CDATA;
     try {

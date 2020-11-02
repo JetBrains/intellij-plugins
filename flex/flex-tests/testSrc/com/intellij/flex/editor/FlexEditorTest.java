@@ -1,11 +1,11 @@
 package com.intellij.flex.editor;
 
+import com.intellij.application.options.CodeStyle;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.formatter.ECMA4CodeStyleSettings;
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.formatter.xml.XmlCodeStyleSettings;
 import com.intellij.testFramework.LightProjectDescriptor;
 
@@ -130,7 +130,7 @@ public class FlexEditorTest extends JSBaseEditorTestCase {
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testInsertCdataOnGt4() {
-    final CodeStyleSettings codeSettings = CodeStyleSettingsManager.getSettings(getProject());
+    final CodeStyleSettings codeSettings = CodeStyle.getSettings(getProject());
     final XmlCodeStyleSettings xmlSettings = codeSettings.getCustomSettings(XmlCodeStyleSettings.class);
     int currWsAroundCData = xmlSettings.XML_WHITE_SPACE_AROUND_CDATA;
     xmlSettings.XML_WHITE_SPACE_AROUND_CDATA = XmlCodeStyleSettings.WS_AROUND_CDATA_NEW_LINES;
@@ -171,7 +171,7 @@ public class FlexEditorTest extends JSBaseEditorTestCase {
     _testInsertBraceOnEnter("2", "js2");
 
     final JSCodeStyleSettings codeSettings =
-      CodeStyleSettingsManager.getSettings(getProject()).getCustomSettings(ECMA4CodeStyleSettings.class);
+      CodeStyle.getSettings(getProject()).getCustomSettings(ECMA4CodeStyleSettings.class);
     try {
       codeSettings.INDENT_PACKAGE_CHILDREN = JSCodeStyleSettings.INDENT;
       _testInsertBraceOnEnter("3", "js2");
