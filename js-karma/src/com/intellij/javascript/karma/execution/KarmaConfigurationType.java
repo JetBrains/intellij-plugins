@@ -46,4 +46,9 @@ public final class KarmaConfigurationType extends SimpleConfigurationType implem
   public static KarmaConfigurationType getInstance() {
     return ConfigurationTypeUtil.findConfigurationType(KarmaConfigurationType.class);
   }
+
+  @Override
+  public boolean isEditableInDumbMode() {
+    return true;
+  }
 }
