@@ -16,9 +16,8 @@ import com.jetbrains.cidr.execution.AppCodeRunConfiguration;
 import com.jetbrains.cidr.execution.BuildDestination;
 import com.jetbrains.cidr.execution.SimulatedBuildDestination;
 import com.jetbrains.cidr.xcode.XcodeBase;
-import com.jetbrains.cidr.xcode.frameworks.AppleSdk;
-import com.jetbrains.cidr.xcode.model.XCBuildConfiguration;
 import com.jetbrains.cidr.xcode.model.XCBuildSettings;
+import com.jetbrains.cidr.xcode.model.XcodeMetaData;
 import icons.AppcodeRevealIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -54,16 +53,14 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
 
     e.getPresentation().setIcon(ICON);
 
-
-    XCBuildConfiguration xcBuildConfiguration = myConfiguration.getConfiguration();
-    AppleSdk sdk = xcBuildConfiguration == null ? null : XCBuildSettings.getRawBuildSettings(xcBuildConfiguration).getBaseSdk();
+    XCBuildSettings buildSettings = XcodeMetaData.getBuildSettings(myConfiguration.getResolveConfiguration(myDestination));
 
     File lib = null;
     boolean compatible = false;
 
     File appBundle = Reveal.getDefaultRevealApplicationBundle();
     if (appBundle != null) {
-      lib = Reveal.getRevealLib(appBundle, sdk);
+      lib = Reveal.getRevealLib(appBundle, buildSettings);
       compatible = Reveal.isCompatible(appBundle);
 
       e.getPresentation().setEnabled(lib != null
