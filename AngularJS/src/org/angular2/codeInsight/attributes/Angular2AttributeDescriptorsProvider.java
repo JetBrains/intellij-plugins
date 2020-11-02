@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight.attributes;
 
 import com.intellij.lang.javascript.psi.JSRecordType;
@@ -51,8 +51,7 @@ import static java.util.Collections.singletonList;
 import static org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.isTemplateTag;
 import static org.angular2.lang.html.parser.Angular2AttributeType.*;
 
-public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescriptorsProvider {
-
+public final class Angular2AttributeDescriptorsProvider implements XmlAttributeDescriptorsProvider {
   @NonNls public static final String EVENT_ATTR_PREFIX = "on";
   @NonNls public static final String NG_NON_BINDABLE_ATTR = "ngNonBindable";
   @NonNls public static final String I18N_ATTR = "i18n";
@@ -102,7 +101,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
   }
 
   @NonNls private static final List<String> CUSTOM_NG_ATTRS =
-    ContainerUtil.immutableList(I18N_ATTR, NG_NON_BINDABLE_ATTR, "ngProjectAs");
+    List.of(I18N_ATTR, NG_NON_BINDABLE_ATTR, "ngProjectAs");
   @NonNls private static final Key<CachedValue<List<XmlAttributeDescriptor>>> STANDARD_PROPERTIES_KEY =
     new Key<>("angular.standard.properties");
 
