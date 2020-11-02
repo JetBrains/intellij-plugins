@@ -62,7 +62,6 @@ public class ComponentsTest extends BasePlatformTestCase {
   }
 
   public void testEditableFieldContentAssistOnCtrl() {
-    JSEvaluatorComplexityTracker.setMaxComplexity(80, getTestRootDisposable());
     myFixture.configureByFiles("editableField.html", "editableField.js", "angular.js");
     AngularTestUtil.moveToOffsetBySignature("\"$ctrl.<caret>editMode\"", myFixture);
     myFixture.completeBasic();
