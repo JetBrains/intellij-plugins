@@ -16,7 +16,7 @@ import training.commands.kotlin.TaskContext
 import training.learn.CourseManager
 import training.learn.LearnBundle
 import training.learn.interfaces.Lesson
-import training.learn.interfaces.ModuleType
+import training.learn.interfaces.LessonType
 import training.learn.lesson.kimpl.LessonExecutor
 import training.ui.LearningUiHighlightingManager
 import training.ui.LearningUiManager
@@ -212,7 +212,8 @@ class LessonManager {
   }
 
   fun cleanUpBeforeLesson(project: Project) {
-    for (lesson in CourseManager.instance.modules.filter { it.moduleType == ModuleType.PROJECT }.flatMap { it.lessons }) {
+
+    for (lesson in CourseManager.instance.lessonsForModules.filter { it.lessonType == LessonType.PROJECT }) {
       lesson.cleanUp(project)
     }
   }

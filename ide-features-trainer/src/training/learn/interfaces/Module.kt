@@ -20,7 +20,8 @@ interface Module {
 
   val primaryLanguage: LangSupport
 
-  val moduleType: ModuleType
+  /** It is lessons default type */
+  val moduleType: LessonType
 
   val description: String?
 

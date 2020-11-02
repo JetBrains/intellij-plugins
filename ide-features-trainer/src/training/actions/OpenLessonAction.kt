@@ -31,7 +31,7 @@ import training.learn.exceptons.BadModuleException
 import training.learn.exceptons.InvalidSdkException
 import training.learn.exceptons.LessonIsOpenedException
 import training.learn.interfaces.Lesson
-import training.learn.interfaces.ModuleType
+import training.learn.interfaces.LessonType
 import training.learn.lesson.LessonManager
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContextImpl
@@ -93,7 +93,7 @@ class OpenLessonAction(val lesson: Lesson) : DumbAwareAction(lesson.name) {
       if (learnProject != null) LearningUiManager.learnProject = learnProject
 
       val vf: VirtualFile? = when {
-        lesson.module.moduleType == ModuleType.SCRATCH -> {
+        lesson.lessonType == LessonType.SCRATCH -> {
           LOG.debug("${projectWhereToStartLesson.name}: scratch based lesson")
           getScratchFile(projectWhereToStartLesson, lesson, langSupport.filename)
         }
@@ -129,13 +129,13 @@ class OpenLessonAction(val lesson: Lesson) : DumbAwareAction(lesson.name) {
       }
 
       val currentProject =
-        if (lesson.module.moduleType != ModuleType.SCRATCH) LearningUiManager.learnProject!!.also {
+        if (lesson.lessonType != LessonType.SCRATCH) LearningUiManager.learnProject!!.also {
           // close all tabs in the currently opened learning project
           ProjectUtils.closeAllEditorsInProject(it)
         }
         else projectWhereToStartLesson
 
-      if (lesson.module.moduleType != ModuleType.SCRATCH || LearningUiManager.learnProject == projectWhereToStartLesson) {
+      if (lesson.lessonType != LessonType.SCRATCH || LearningUiManager.learnProject == projectWhereToStartLesson) {
         // do not change view environment for scratch lessons in user project
         hideOtherViews(projectWhereToStartLesson)
       }
@@ -148,7 +148,7 @@ class OpenLessonAction(val lesson: Lesson) : DumbAwareAction(lesson.name) {
       LOG.debug("${projectWhereToStartLesson.name}: Set lesson view")
       LearningUiManager.activeToolWindow?.setLearnPanel()
       LOG.debug("${projectWhereToStartLesson.name}: XmlLesson onStart()")
-      if (lesson.module.moduleType == ModuleType.PROJECT) LessonManager.instance.cleanUpBeforeLesson(projectWhereToStartLesson)
+      if (lesson.lessonType == LessonType.PROJECT) LessonManager.instance.cleanUpBeforeLesson(projectWhereToStartLesson)
       lesson.onStart()
 
       //to start any lesson we need to do 4 steps:

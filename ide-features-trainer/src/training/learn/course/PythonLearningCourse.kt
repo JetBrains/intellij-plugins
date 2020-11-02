@@ -4,7 +4,7 @@ package training.learn.course
 import com.jetbrains.python.PythonLanguage
 import training.learn.LearningModule
 import training.learn.LessonsBundle
-import training.learn.interfaces.ModuleType
+import training.learn.interfaces.LessonType
 import training.learn.lesson.general.*
 import training.learn.lesson.general.assistance.CodeFormatLesson
 import training.learn.lesson.general.assistance.ParameterInfoLesson
@@ -36,7 +36,7 @@ class PythonLearningCourse : LearningCourseBase(PythonLanguage.INSTANCE.id) {
     LearningModule(name = "Essential",
                    description = "A brief overview of the main ${LessonUtil.productName} features.",
                    primaryLanguage = langSupport,
-                   moduleType = ModuleType.PROJECT) {
+                   moduleType = LessonType.PROJECT) {
       listOf(
         PythonOnboardingTour(it),
       )
@@ -47,7 +47,7 @@ class PythonLearningCourse : LearningCourseBase(PythonLanguage.INSTANCE.id) {
     LearningModule(name = LessonsBundle.message("editor.basics.module.name"),
                    description = LessonsBundle.message("editor.basics.module.description"),
                    primaryLanguage = langSupport,
-                   moduleType = ModuleType.SCRATCH) {
+                   moduleType = LessonType.SCRATCH) {
       fun ls(sampleName: String) = loadSample("EditorBasics/$sampleName")
       listOf(
         GotoActionLesson(it, lang, ls("Actions.py.sample")),
@@ -63,7 +63,7 @@ class PythonLearningCourse : LearningCourseBase(PythonLanguage.INSTANCE.id) {
     LearningModule(name = LessonsBundle.message("code.completion.module.name"),
                    description = LessonsBundle.message("code.completion.module.description"),
                    primaryLanguage = langSupport,
-                   moduleType = ModuleType.SCRATCH) {
+                   moduleType = LessonType.SCRATCH) {
       listOf(
         PythonBasicCompletionLesson(it),
         PythonTabCompletionLesson(it),
@@ -75,7 +75,7 @@ class PythonLearningCourse : LearningCourseBase(PythonLanguage.INSTANCE.id) {
     LearningModule(name = LessonsBundle.message("refactorings.module.name"),
                    description = LessonsBundle.message("refactorings.module.description"),
                    primaryLanguage = langSupport,
-                   moduleType = ModuleType.SCRATCH) {
+                   moduleType = LessonType.SCRATCH) {
       fun ls(sampleName: String) = loadSample("Refactorings/$sampleName")
       listOf(
         PythonRefactorMenuLesson(it),
@@ -89,7 +89,7 @@ class PythonLearningCourse : LearningCourseBase(PythonLanguage.INSTANCE.id) {
     LearningModule(name = LessonsBundle.message("code.assistance.module.name"),
                    description = LessonsBundle.message("code.assistance.module.description"),
                    primaryLanguage = langSupport,
-                   moduleType = ModuleType.PROJECT) {
+                   moduleType = LessonType.PROJECT) {
       fun ls(sampleName: String) = loadSample("CodeAssistance/$sampleName")
       listOf(
         CodeFormatLesson(it, lang, ls("CodeFormat.py.sample")),
@@ -101,7 +101,7 @@ class PythonLearningCourse : LearningCourseBase(PythonLanguage.INSTANCE.id) {
     LearningModule(name = LessonsBundle.message("navigation.module.name"),
                    description = LessonsBundle.message("navigation.module.description"),
                    primaryLanguage = langSupport,
-                   moduleType = ModuleType.PROJECT) {
+                   moduleType = LessonType.PROJECT) {
       listOf(
         PythonDeclarationAndUsagesLesson(it),
         PythonFileStructureLesson(it),
@@ -112,7 +112,7 @@ class PythonLearningCourse : LearningCourseBase(PythonLanguage.INSTANCE.id) {
     LearningModule(name = LessonsBundle.message("run.debug.module.name"),
                    description = LessonsBundle.message("run.debug.module.description"),
                    primaryLanguage = langSupport,
-                   moduleType = ModuleType.PROJECT) {
+                   moduleType = LessonType.PROJECT) {
       listOf(
         PythonRunConfigurationLesson(it),
         PythonDebugLesson(it),

@@ -4,7 +4,7 @@ package training.learn.course
 import com.intellij.lang.javascript.JavascriptLanguage
 import training.learn.LearningModule
 import training.learn.LessonsBundle
-import training.learn.interfaces.ModuleType
+import training.learn.interfaces.LessonType
 import training.learn.lesson.javascript.debugger.BeforeDebuggingLesson
 import training.learn.lesson.javascript.debugger.DebuggingFirstPartLesson
 import training.learn.lesson.javascript.debugger.DebuggingSecondPartLesson
@@ -15,7 +15,7 @@ class JavaScriptDebugLearningCourse : LearningCourseBase(JavascriptLanguage.INST
     LearningModule(name = LessonsBundle.message("js.debugger.module.name", LessonUtil.productName),
                    description = LessonsBundle.message("js.debugger.module.description"),
                    primaryLanguage = langSupport,
-                   moduleType = ModuleType.PROJECT) {
+                   moduleType = LessonType.PROJECT) {
       listOf(
         BeforeDebuggingLesson(it),
         DebuggingFirstPartLesson(it),

@@ -3,7 +3,7 @@ package training.learn.course
 
 import training.learn.LearningModule
 import training.learn.LessonsBundle
-import training.learn.interfaces.ModuleType
+import training.learn.interfaces.LessonType
 import training.learn.lesson.swift.codegeneration.SwiftCreateFromUsageLesson
 import training.learn.lesson.swift.codegeneration.SwiftGenerateLesson
 import training.learn.lesson.swift.codegeneration.SwiftOverrideImplementLesson
@@ -21,7 +21,7 @@ class SwiftLearningCourse : LearningCourseBase("Swift") {
                    description = LessonsBundle.message("swift.editor.module.description"),
                    sampleFileName = "Editor",
                    primaryLanguage = langSupport,
-                   moduleType = ModuleType.PROJECT) {
+                   moduleType = LessonType.PROJECT) {
       listOf(
         SwiftCompletionLesson(it),
         SwiftSelectionLesson(it),
@@ -39,7 +39,7 @@ class SwiftLearningCourse : LearningCourseBase("Swift") {
                    description = LessonsBundle.message("swift.code.generations.module.description"),
                    sampleFileName = "CodeGeneration",
                    primaryLanguage = langSupport,
-                   moduleType = ModuleType.PROJECT) {
+                   moduleType = LessonType.PROJECT) {
       listOf(
         SwiftGenerateLesson(it),
         SwiftOverrideImplementLesson(it),
@@ -51,7 +51,7 @@ class SwiftLearningCourse : LearningCourseBase("Swift") {
                    description = LessonsBundle.message("swift.navigation.module.description"),
                    sampleFileName = "Navigation",
                    primaryLanguage = langSupport,
-                   moduleType = ModuleType.PROJECT) {
+                   moduleType = LessonType.PROJECT) {
       listOf(
         SwiftMainWindowsViewsLesson(it),
         SwiftTODOsBookmarksLesson(it),
@@ -64,7 +64,7 @@ class SwiftLearningCourse : LearningCourseBase("Swift") {
                    description = LessonsBundle.message("swift.refactorings.module.description"),
                    sampleFileName = "Refactorings",
                    primaryLanguage = langSupport,
-                   moduleType = ModuleType.PROJECT) {
+                   moduleType = LessonType.PROJECT) {
       listOf(
         SwiftRenameLesson(it),
         SwiftExtractVariableLesson(it),
@@ -77,7 +77,7 @@ class SwiftLearningCourse : LearningCourseBase("Swift") {
                    description = LessonsBundle.message("swift.run.debug.test.module.description"),
                    sampleFileName = "RunDebugTest",
                    primaryLanguage = langSupport,
-                   moduleType = ModuleType.PROJECT) {
+                   moduleType = LessonType.PROJECT) {
       listOf(
         SwiftRunLesson(it),
         SwiftDebugLesson(it),

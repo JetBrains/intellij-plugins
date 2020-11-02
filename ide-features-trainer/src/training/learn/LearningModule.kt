@@ -4,12 +4,12 @@ package training.learn
 import org.jetbrains.annotations.Nls
 import training.lang.LangSupport
 import training.learn.interfaces.Lesson
-import training.learn.interfaces.ModuleType
+import training.learn.interfaces.LessonType
 
 class LearningModule(@Nls name: String,
                      @Nls description: String,
                      primaryLanguage: LangSupport,
-                     moduleType: ModuleType,
+                     moduleType: LessonType,
                      private val sampleFileName: String? = null,
                      initLessons: (LearningModule) -> List<Lesson>): LearningModuleBase(name, description, primaryLanguage, moduleType) {
 
