@@ -124,8 +124,16 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     File appBundle = Reveal.getDefaultRevealApplicationBundle();
     if (appBundle == null) return false;
 
-    if (Reveal.getRevealLib(appBundle, getSdk(config)) == null) return false;
+    if (Reveal.getRevealLib(appBundle, getBuildSettings(config)) == null) return false;
     return isAvailableForPlatform(config);
+  }
+
+  @Nullable
+  private static XCBuildSettings getBuildSettings(@NotNull AppCodeRunConfiguration config) {
+    BuildDestination destination = ContainerUtil.getFirstItem(config.getDestinations());
+    if (destination == null) return null;
+
+    return XcodeMetaData.getBuildSettings(config.getResolveConfiguration(destination));
   }
 
   private static boolean isAvailableForPlatform(@NotNull final AppCodeRunConfiguration config) {
@@ -201,7 +209,8 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     File appBundle = Reveal.getDefaultRevealApplicationBundle();
     if (appBundle == null) throw new ExecutionException(RevealBundle.message("dialog.message.reveal.application.bundle.not.found"));
 
-    File libReveal = Reveal.getRevealLib(appBundle, getSdk(configuration));
+    XCBuildSettings buildSettings = XcodeMetaData.getBuildSettings(buildConfiguration.getResolveConfiguration());
+    File libReveal = Reveal.getRevealLib(appBundle, buildSettings);
     if (libReveal == null) throw new ExecutionException(RevealBundle.message("dialog.message.reveal.library.not.found"));
 
     Reveal.LOG.info("Reveal lib found at " + libReveal);
@@ -372,7 +381,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
 
       File appBundle = Reveal.getDefaultRevealApplicationBundle();
       if (appBundle != null) {
-        found = (Reveal.getRevealLib(appBundle, getSdk(s)) != null);
+        found = (Reveal.getRevealLib(appBundle, getBuildSettings(s)) != null);
         compatible = Reveal.isCompatible(appBundle);
       }
 

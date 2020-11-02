@@ -14,12 +14,17 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Version;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.mac.foundation.NSWorkspace;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.cidr.AppleScript;
 import com.jetbrains.cidr.OCPathManager;
 import com.jetbrains.cidr.xcode.frameworks.ApplePlatform;
 import com.jetbrains.cidr.xcode.frameworks.AppleSdk;
+import com.jetbrains.cidr.xcode.frameworks.XCFramework;
+import com.jetbrains.cidr.xcode.model.XCBuildSettings;
 import com.jetbrains.cidr.xcode.plist.Plist;
 import com.jetbrains.cidr.xcode.plist.PlistDriver;
 import org.jetbrains.annotations.Contract;
@@ -58,13 +63,24 @@ public class Reveal {
   }
 
   @Contract("_, null -> null")
-  public static File getRevealLib(@NotNull File bundle, @Nullable AppleSdk sdk) {
+  public static File getRevealLib(@NotNull File bundle, @Nullable XCBuildSettings buildSettings) {
+    if (buildSettings == null) return null;
+
+    AppleSdk sdk = buildSettings.getBaseSdk();
     if (sdk == null) return null;
 
     ApplePlatform platform = sdk.getPlatform();
     File result;
 
-    if (isCompatibleWithReveal23OrHigher(bundle)) {
+    if (isCompatibleWithReveal27OrHigher(bundle)) {
+      File xcFrameworkIoFile = OCPathManager.getUserApplicationSupportSubFile("Reveal/RevealServer/RevealServer.xcframework");
+      VirtualFile xcFramework = VfsUtil.findFileByIoFile(xcFrameworkIoFile, true);
+      if (xcFramework == null) return null;
+      VirtualFile frameworkRoot = new XCFramework(xcFramework).resolveFrameworkRoot(buildSettings);
+      if (frameworkRoot == null) return null;
+      result = new File(VfsUtilCore.virtualToIoFile(frameworkRoot), "RevealServer");
+    }
+    else if (isCompatibleWithReveal23OrHigher(bundle)) {
       String libraryPath = "Reveal/RevealServer/";
       if (platform.isIOS()) {
         libraryPath += "iOS/";
@@ -119,6 +135,11 @@ public class Reveal {
   public static boolean isCompatibleWithReveal23OrHigher(@NotNull File bundle) {
     Version version = getRevealVersion(bundle);
     return version != null && version.isOrGreaterThan(12724);
+  }
+
+  public static boolean isCompatibleWithReveal27OrHigher(@NotNull File bundle) {
+    Version version = getRevealVersion(bundle);
+    return version != null && version.isOrGreaterThan(13901);
   }
 
   @Nullable
