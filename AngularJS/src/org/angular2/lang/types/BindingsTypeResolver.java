@@ -207,9 +207,10 @@ final class BindingsTypeResolver {
             });
           }
           else {
-            JSGenericTypesEvaluatorBase.matchGenericTypes(new JSGenericMappings(genericArguments), processingContext,
-                                                          inputType, propertyType);
-            JSGenericTypesEvaluatorBase.widenInferredTypes(genericArguments, Collections.singletonList(propertyType), null, null);
+            JSGenericTypesEvaluatorBase
+              .matchGenericTypes(new JSGenericMappings(genericArguments), processingContext, inputType, propertyType);
+            JSGenericTypesEvaluatorBase
+              .widenInferredTypes(genericArguments, Collections.singletonList(propertyType), null, null, processingContext);
           }
         }
       });
