@@ -70,6 +70,8 @@
                               implementation="org.jetbrains.vuejs.libraries.vuex.codeInsight.refs.VuexReferenceContributor"/>
     <psi.fileReferenceHelper implementation="org.jetbrains.vuejs.libraries.nuxt.codeInsight.NuxtFileReferenceHelper"/>
     <pathReferenceProvider implementation="org.jetbrains.vuejs.libraries.vueLoader.VueLoaderPathReferenceProvider"/>
+    <!--suppress PluginXmlValidity -->
+    <quoteHandler className="com.intellij.codeInsight.editorActions.HtmlQuoteHandler" fileType="Vue.js"/>
 
     <lang.syntaxHighlighterFactory language="Vue"
                                    implementationClass="org.jetbrains.vuejs.lang.html.highlighting.VueSyntaxHighlighterFactory"/>

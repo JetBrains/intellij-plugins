@@ -188,6 +188,8 @@
     <!-- Angular 2 HTML template contributions -->
     <fileType name="Angular2Html" implementationClass="org.angular2.lang.html.Angular2HtmlFileType" fieldName="INSTANCE"
               language="Angular2Html"/>
+    <!--suppress PluginXmlValidity -->
+    <quoteHandler className="com.intellij.codeInsight.editorActions.HtmlQuoteHandler" fileType="Angular2Html"/>
     <multiHostInjector implementation="org.angular2.editor.Angular2Injector" order="after JSCommentInjector, before JSConfigurationInjector"
                        id="angular2"/>
     <xml.xmlExtension implementation="org.angular2.codeInsight.Angular2HtmlExtension" order="before html" id="angular2"/>
@@ -252,6 +254,8 @@
     <lang.parserDefinition language="Angular2Svg" implementationClass="org.angular2.lang.svg.parser.Angular2SvgParserDefinition"/>
     <fileType name="Angular2Svg" implementationClass="org.angular2.lang.svg.Angular2SvgFileType" fieldName="INSTANCE"
               language="Angular2Svg"/>
+    <!--suppress PluginXmlValidity -->
+    <quoteHandler className="com.intellij.codeInsight.editorActions.HtmlQuoteHandler" fileType="Angular2Svg"/>
     <lang.substitutor language="SVG" implementationClass="org.angular2.lang.svg.Angular2SvgLanguageSubstitutor"/>
 
     <!-- Angular 2 Expression Language contributions -->
