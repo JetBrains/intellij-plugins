@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class PerforceChangeListHelper {
+public final class PerforceChangeListHelper {
   @NonNls private static final String DEFAULT_DESCRIPTION = "<none>";
 
   public static String createSpecification(final String description,

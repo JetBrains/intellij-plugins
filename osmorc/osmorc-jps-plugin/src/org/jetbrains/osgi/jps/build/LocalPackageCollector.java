@@ -35,7 +35,7 @@ import java.util.Map;
  * Helper class which collects local packages from the output path. This is copied code from the
  * felix bnd maven plugin.
  */
-public class LocalPackageCollector {
+public final class LocalPackageCollector {
   private static final String LOCAL_PACKAGES = "{local-packages}";
 
   /**

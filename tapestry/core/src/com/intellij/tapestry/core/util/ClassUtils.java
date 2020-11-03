@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * Utility methods for manipulating classes.
  */
-public class ClassUtils {
+public final class ClassUtils {
 
   public static boolean instanceOf(Object[] items, @NotNull Class<?> aClass) {
     for (Object item : items) {

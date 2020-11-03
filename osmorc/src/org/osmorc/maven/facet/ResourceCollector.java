@@ -35,7 +35,7 @@ import java.util.*;
 /**
  * Class which collects resources from a maven projects and modifies the imported bnd instructions to incorporate them.
  */
-public class ResourceCollector {
+public final class ResourceCollector {
   private static final String MAVEN_RESOURCES = "{maven-resources}";
   private static final String[] DEFAULT_INCLUDES = {"**/**"};
 

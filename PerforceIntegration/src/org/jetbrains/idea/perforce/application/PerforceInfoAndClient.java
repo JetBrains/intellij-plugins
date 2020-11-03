@@ -15,7 +15,7 @@ import java.util.*;
 /**
 * @author irengrig
 */
-public class PerforceInfoAndClient {
+public final class PerforceInfoAndClient {
   private final static Logger LOG = Logger.getInstance(PerforceInfoAndClient.class);
 
   @NotNull

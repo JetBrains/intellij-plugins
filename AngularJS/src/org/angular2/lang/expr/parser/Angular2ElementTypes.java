@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.expr.parser;
 
 import com.intellij.lang.ASTNode;
@@ -19,7 +19,6 @@ import static com.intellij.lang.javascript.JSKeywordSets.IDENTIFIER_NAMES;
 import static com.intellij.lang.javascript.JSTokenTypes.STRING_LITERAL;
 
 public interface Angular2ElementTypes extends JSElementTypes, Angular2StubElementTypes {
-
   IElementType PIPE_EXPRESSION = new Angular2ExpressionElementType("NG:PIPE_EXPRESSION", node -> new Angular2PipeExpressionImpl(node));
   IElementType PIPE_ARGUMENTS_LIST = new Angular2ExpressionElementType("NG:PIPE_ARGUMENTS_LIST", node -> new Angular2PipeArgumentsListImpl(node));
   IElementType PIPE_LEFT_SIDE_ARGUMENT =
@@ -51,7 +50,6 @@ public interface Angular2ElementTypes extends JSElementTypes, Angular2StubElemen
   }
 
   class Angular2ElementType extends IElementType implements ICompositeElementType {
-
     private final @NotNull Function<Angular2ElementType, ASTNode> myClassConstructor;
 
     public Angular2ElementType(@NotNull @NonNls String debugName, @NotNull Function<Angular2ElementType, ASTNode> classConstructor) {
@@ -65,16 +63,14 @@ public interface Angular2ElementTypes extends JSElementTypes, Angular2StubElemen
     }
   }
 
-  class Angular2ExpressionElementType extends Angular2ElementType implements JSExpressionElementType {
-
+  final class Angular2ExpressionElementType extends Angular2ElementType implements JSExpressionElementType {
     public Angular2ExpressionElementType(@NotNull @NonNls String debugName,
                                          @NotNull Function<Angular2ElementType, ASTNode> classConstructor) {
       super(debugName, classConstructor);
     }
   }
 
-  class Angular2TemplateBindingType extends IElementType implements ICompositeElementType {
-
+  final class Angular2TemplateBindingType extends IElementType implements ICompositeElementType {
     private final @NotNull String myKey;
     private final boolean myVar;
     private final @Nullable String myName;
@@ -92,9 +88,7 @@ public interface Angular2ElementTypes extends JSElementTypes, Angular2StubElemen
     }
   }
 
-  class Angular2TemplateBindingsType extends IElementType implements ICompositeElementType {
-
-
+  final class Angular2TemplateBindingsType extends IElementType implements ICompositeElementType {
     private final @NotNull String myTemplateName;
 
     public Angular2TemplateBindingsType(@NotNull String templateName) {

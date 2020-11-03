@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.projectStructure.options;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -38,7 +38,7 @@ import java.util.List;
 /**
  * @author ksafonov
  */
-public class BCUtils {
+public final class BCUtils {
 
   private static final LinkageType[] FLEX_LIB_LINKAGES = {LinkageType.Default, LinkageType.Merged, LinkageType.External};
   private static final LinkageType[] FLEX_MOBILE_APP_LINKAGES = {LinkageType.Default};

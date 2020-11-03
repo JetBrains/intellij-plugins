@@ -14,7 +14,7 @@ import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-public class ConversionHelper {
+public final class ConversionHelper {
 
   private static final class LightweightBuildConfigurationEntry
     implements BuildConfigurationEntry, ModifiableBuildConfigurationEntry, StatefulDependencyEntry {

@@ -29,7 +29,7 @@ public class CfmlLangInfo {
   private Reference<CfmlLangDictionary> myCFDictionary;
   private String myCFDictionaryLevel;
 
-  private static class InstanceWithoutApplication {
+  private static final class InstanceWithoutApplication {
     static CfmlLangInfo instanceWithoutApplication = new CfmlLangInfo(null);
   }
 

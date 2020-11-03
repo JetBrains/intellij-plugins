@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex;
 
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
@@ -24,7 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 // this class is not a reference contributor any more, it is kept for MXML Design Preview plugin compatibility
-public class FlexReferenceContributor {
+public final class FlexReferenceContributor {
   static final String TRANSITION_TAG_NAME = "Transition";
   public static final String SOURCE_ATTR_NAME = "source";
   public static final String DESTINATION_ATTR_NAME = "destination";

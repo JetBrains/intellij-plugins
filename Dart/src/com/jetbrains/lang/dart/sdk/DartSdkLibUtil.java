@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.sdk;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.*;
 
-public class DartSdkLibUtil {
+public final class DartSdkLibUtil {
   private static final Logger LOG = Logger.getInstance(DartSdkLibUtil.class.getName());
 
   private static final String[] SDK_LIB_SUBFOLDERS_BLACKLIST = {

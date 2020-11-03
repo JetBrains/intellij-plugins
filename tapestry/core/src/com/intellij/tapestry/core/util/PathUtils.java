@@ -7,7 +7,7 @@ import java.io.File;
 /**
  * Utility methods for path manipulation.
  */
-public class PathUtils {
+public final class PathUtils {
 
     /**
      * The Tapestry path separator character.

@@ -31,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Yann C&eacute;bron
  */
-public class StrutsTreeDescriptionProvider {
+public final class StrutsTreeDescriptionProvider {
 
   public static String getElementDescription(@NotNull final PsiElement psiElement) {
     final DomElement domElement = DomUtil.getDomElement(psiElement);

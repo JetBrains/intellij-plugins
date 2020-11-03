@@ -41,7 +41,7 @@ import java.util.*;
 import static com.jetbrains.lang.dart.ide.index.DartImportOrExportInfo.Kind;
 import static com.jetbrains.lang.dart.util.DartUrlResolver.DART_CORE_URI;
 
-public class DartResolveUtil {
+public final class DartResolveUtil {
 
   public static final String OBJECT = "Object";
 

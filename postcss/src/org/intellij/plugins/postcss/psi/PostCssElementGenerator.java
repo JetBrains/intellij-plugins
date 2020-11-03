@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.psi.util.PsiTreeUtil.findChildOfType;
 
-public class PostCssElementGenerator {
+public final class PostCssElementGenerator {
   @NotNull
   public static CssSimpleSelector createAmpersandSelector(@NotNull final Project project) {
     //noinspection ConstantConditions

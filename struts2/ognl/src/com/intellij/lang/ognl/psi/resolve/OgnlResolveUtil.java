@@ -24,7 +24,7 @@ import com.intellij.util.Processor;
 /**
  * @author Yann C&eacute;bron
  */
-public class OgnlResolveUtil {
+public final class OgnlResolveUtil {
 
   public static void processVariables(PsiElement element, Processor<OgnlVariableReference> processor) {
     PsiFile ognlFile = element.getContainingFile();

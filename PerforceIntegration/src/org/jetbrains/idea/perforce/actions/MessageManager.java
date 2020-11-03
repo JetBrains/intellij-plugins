@@ -26,7 +26,7 @@ import javax.swing.*;
 /**
  * @author AKireyev
  */
-public class MessageManager {
+public final class MessageManager {
   private static final Logger LOG = Logger.getInstance(MessageManager.class.getName());
 
   public static void showMessageDialog(final Project project, final @NlsContexts.DialogMessage String msg, final @NlsContexts.DialogTitle String title, final Icon icon) {

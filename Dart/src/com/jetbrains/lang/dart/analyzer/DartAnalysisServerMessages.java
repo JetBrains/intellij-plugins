@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A utility class to send and receive Dart analysis busy messages on the project message bus.
  */
-public class DartAnalysisServerMessages {
+public final class DartAnalysisServerMessages {
   public static final Topic<DartAnalysisNotifier> DART_ANALYSIS_TOPIC = Topic.create("dart.analysisBusy", DartAnalysisNotifier.class);
 
   public interface DartAnalysisNotifier {

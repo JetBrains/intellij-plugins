@@ -15,9 +15,9 @@ import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.java.IJavaAnnotation;
 import com.intellij.tapestry.core.java.IJavaField;
-import com.intellij.tapestry.core.model.presentation.TapestryComponent;
 import com.intellij.tapestry.core.model.presentation.InjectedElement;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
+import com.intellij.tapestry.core.model.presentation.TapestryComponent;
 import com.intellij.tapestry.core.model.presentation.TemplateElement;
 import com.intellij.tapestry.core.util.PathUtils;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
@@ -37,7 +37,7 @@ import java.util.List;
 /**
  * Utility methods related to Tapestry.
  */
-public class TapestryUtils {
+public final class TapestryUtils {
 
   private static final Logger _logger = Logger.getInstance(TapestryUtils.class.getName());
 
@@ -330,7 +330,7 @@ public class TapestryUtils {
       return null;
     }
     final String tagLocalName = StringUtil.toLowerCase(tag.getLocalName()).replace('.', '/');
-    // element names are delimited by slashes but tag names may not contain slashes 
+    // element names are delimited by slashes but tag names may not contain slashes
     return tapestryProject.findComponent(tagLocalName);
   }
 

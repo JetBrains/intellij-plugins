@@ -35,7 +35,7 @@ import java.util.Collections;
 /**
  * @author Yann C&eacute;bron
  */
-class OgnlPsiUtil {
+final class OgnlPsiUtil {
 
   @NotNull
   static OgnlTokenType getOperator(OgnlBinaryExpression expression) {

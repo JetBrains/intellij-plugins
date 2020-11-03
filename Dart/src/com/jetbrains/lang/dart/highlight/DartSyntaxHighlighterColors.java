@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.highlight;
 
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
@@ -7,7 +8,7 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 
 import static com.intellij.openapi.editor.colors.TextAttributesKey.createTextAttributesKey;
 
-public class DartSyntaxHighlighterColors {
+public final class DartSyntaxHighlighterColors {
   public static final String DART_ERROR = "DART_ERROR";
   public static final String DART_WARNING = "DART_WARNING";
   public static final String DART_HINT = "DART_HINT";

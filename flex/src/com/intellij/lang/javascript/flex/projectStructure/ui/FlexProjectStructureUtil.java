@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
@@ -11,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class FlexProjectStructureUtil {
+public final class FlexProjectStructureUtil {
 
   public static Place createPlace(FlexBCConfigurable configurable, @Nullable String tabName) {
     Place place = new Place()

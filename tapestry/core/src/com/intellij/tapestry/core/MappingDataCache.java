@@ -14,7 +14,7 @@ import java.util.Map;
  * @author: Fedor.Korotkov
  */
 @VisibleForTesting
-public class MappingDataCache {
+public final class MappingDataCache {
   private static final String TAPESTRY_MAPPING_FQN = "org.apache.tapestry5.services.LibraryMapping";
   private static final String TAPESTRY_MAPPING_TEST_FQN = "LibraryMapping";
 

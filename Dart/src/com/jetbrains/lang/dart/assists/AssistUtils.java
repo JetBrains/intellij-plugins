@@ -37,7 +37,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.*;
 
-public class AssistUtils {
+public final class AssistUtils {
   /**
    * @return {@code true} if file contents changed, {@code false} otherwise
    */

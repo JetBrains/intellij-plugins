@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.psi.refactoring;
 
 import com.intellij.openapi.project.Project;
@@ -7,7 +8,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.psi.*;
 
-public class GherkinChangeUtil {
+public final class GherkinChangeUtil {
   @NotNull
   public static GherkinStep createStep(final String text, final Project project) {
     final GherkinFile dummyFile = createDummyFile(project,

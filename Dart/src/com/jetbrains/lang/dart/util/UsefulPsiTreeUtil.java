@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.util;
 
 import com.intellij.lang.ASTNode;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class UsefulPsiTreeUtil {
+public final class UsefulPsiTreeUtil {
   public static ASTNode[] findChildrenRange(ASTNode[] elements, int startOffset, int endOffset) {
     int i = findChildIndex(elements, startOffset);
     int j = findChildIndex(elements, endOffset);

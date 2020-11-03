@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.steps;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 /**
  * @author yole
  */
-public class CucumberStepHelper {
+public final class CucumberStepHelper {
   private static final Logger LOG = Logger.getInstance(CucumberStepHelper.class.getName());
 
   /**
@@ -165,7 +165,7 @@ public class CucumberStepHelper {
   public static int getExtensionCount() {
     return getCucumberExtensions().size();
   }
-  
+
   public static boolean isGherkin6Supported(@NotNull Module module) {
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       return true;

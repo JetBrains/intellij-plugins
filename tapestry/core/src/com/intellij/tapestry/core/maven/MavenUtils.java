@@ -11,7 +11,7 @@ import java.io.IOException;
 /**
  * Maven related utilities.
  */
-public class MavenUtils {
+public final class MavenUtils {
 
   /**
      * Creates a Maven pom.xml.

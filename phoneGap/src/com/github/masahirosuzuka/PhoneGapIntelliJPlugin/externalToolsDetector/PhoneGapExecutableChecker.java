@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.externalToolsDetector;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle;
@@ -15,7 +16,7 @@ import com.intellij.openapi.util.text.StringUtil;
  * <p/>
  * Created by Masahiro Suzuka on 2014/04/16.
  */
-public class PhoneGapExecutableChecker {
+public final class PhoneGapExecutableChecker {
 
 
   public static void check(Project project) {

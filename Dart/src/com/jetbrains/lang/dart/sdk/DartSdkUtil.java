@@ -29,7 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public class DartSdkUtil {
+public final class DartSdkUtil {
   private static final Map<Pair<File, Long>, String> ourVersions = new HashMap<>();
   private static final String DART_SDK_KNOWN_PATHS = "DART_SDK_KNOWN_PATHS";
 

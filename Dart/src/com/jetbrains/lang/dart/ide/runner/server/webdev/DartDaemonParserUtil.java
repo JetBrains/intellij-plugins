@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server.webdev;
 
 import com.google.gson.*;
@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
  * Util methods for parsing JSON out of the webdev daemon protocol, typically of the form:
  * <code>[{"event":"event-name","params":{"some-key":"some-value"}}]</code>
  */
-public class DartDaemonParserUtil {
+public final class DartDaemonParserUtil {
 
   @Nullable
   private static JsonObject parseDaemonLog(@NotNull final String text) throws JsonSyntaxException {

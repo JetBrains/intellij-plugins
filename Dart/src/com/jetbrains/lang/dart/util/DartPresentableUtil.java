@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class DartPresentableUtil {
+public final class DartPresentableUtil {
 
   @NonNls public static final String RIGHT_ARROW = UIUtil.rightArrow();
   @NonNls private static final String SPACE = " ";

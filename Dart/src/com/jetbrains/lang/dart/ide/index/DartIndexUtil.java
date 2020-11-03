@@ -17,7 +17,7 @@ import java.util.Set;
 
 import static com.jetbrains.lang.dart.ide.index.DartImportOrExportInfo.Kind;
 
-public class DartIndexUtil {
+public final class DartIndexUtil {
   // inc when change parser
   public static final int INDEX_VERSION = 25;
 

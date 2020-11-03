@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.uml;
 
 import com.intellij.diagram.DiagramRelationshipInfo;
@@ -34,7 +35,7 @@ public interface FlashUmlRelationship extends DiagramRelationshipInfo {
   String TYPE_ONE_TO_ONE = "ONE_TO_ONE";
   String TYPE_ONE_TO_MANY = "ONE_TO_MANY";
 
-  class Factory {
+  final class Factory {
 
     public static FlashUmlRelationship dependency(@Nullable String label, @NotNull PsiElement element) {
       return new Impl(TYPE_DEPENDENCY, DiagramLineType.DASHED, StringUtil.notNullize(label), null, null, 1,
