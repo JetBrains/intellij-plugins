@@ -187,7 +187,7 @@ libraryStatement ::= metadata* 'library' libraryNameElement ';' {pin=3}
 
 libraryNameElement ::= <<nonStrictID>> ('.' <<nonStrictID>>)* {
   mixin="com.jetbrains.lang.dart.psi.impl.DartLibraryNameElementBase"
-  implements="com.jetbrains.lang.dart.psi.DartPsiCompositeElement, com.intellij.psi.PsiNameIdentifierOwner"
+  implements=["com.jetbrains.lang.dart.psi.DartPsiCompositeElement" "com.intellij.psi.PsiNameIdentifierOwner"]
   methods=[getName]
 }
 
