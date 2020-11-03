@@ -26,12 +26,12 @@ class VueFileIndentOptionsProvider : FileIndentOptionsProvider() {
           settings.getLanguageIndentOptions(HTMLLanguage.INSTANCE)
       }
       // Treat file as an HTML file and apply HTML indentation settings
-      var fileTypeOptions = settings.getIndentOptions(fileType)
+      var htmlIndentOptions = settings.getLanguageIndentOptions(HTMLLanguage.INSTANCE)
       if (settings.getCustomSettings(HtmlCodeStyleSettings::class.java).HTML_UNIFORM_INDENT) {
-        fileTypeOptions = fileTypeOptions.clone() as IndentOptions
-        fileTypeOptions.isOverrideLanguageOptions = true
+        htmlIndentOptions = htmlIndentOptions.clone() as IndentOptions
+        htmlIndentOptions.isOverrideLanguageOptions = true
       }
-      return fileTypeOptions
+      return htmlIndentOptions
     }
     return null
   }
