@@ -54,6 +54,7 @@ import com.intellij.util.text.SyncDateFormat;
 import com.intellij.vcsUtil.VcsUtil;
 import gnu.trove.THashMap;
 import gnu.trove.TObjectLongHashMap;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -1735,7 +1736,7 @@ public final class PerforceRunner implements PerforceRunnerI {
     return totalLength > 2000;
   }
 
-  private static String createPasswordNotAllowedButSetMessage(@NotNull final P4Connection connection) {
+  private static @Nls String createPasswordNotAllowedButSetMessage(@NotNull final P4Connection connection) {
     return PerforceBundle.message("connection.password.not.allowed", connection.getWorkingDir());
   }
 

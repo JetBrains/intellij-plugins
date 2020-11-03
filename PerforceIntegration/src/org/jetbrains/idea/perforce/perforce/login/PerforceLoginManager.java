@@ -132,7 +132,7 @@ public final class PerforceLoginManager implements LoginSupport {
       throw new VcsConnectionProblem(state.getError());
     }
 
-    throw new PerforceAuthenticationException("Perforce authentication problem", connection, myProject);
+    throw new PerforceAuthenticationException(PerforceBundle.message("perforce.authentication.problem"), connection, myProject);
   }
 
   public boolean checkAndRepair(final P4Connection connection) {
