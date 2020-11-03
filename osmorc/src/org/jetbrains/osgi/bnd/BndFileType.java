@@ -15,8 +15,50 @@
  */
 package org.jetbrains.osgi.bnd;
 
-// [r.sh] will be extended later to a full-blown file type
-public class BndFileType {
+import com.intellij.icons.AllIcons;
+import com.intellij.openapi.fileTypes.LanguageFileType;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+
+/**
+ * File type for bnd (osgi bundle) files.
+ *
+ * @author <a href="mailto:tibor@malanik.eu">Tibor Malanik</a>
+ */
+public class BndFileType extends LanguageFileType {
+
   public static final String BND_EXT = "bnd";
   public static final String BND_RUN_EXT = "bndrun";
+
+  public static BndFileType INSTANCE = new BndFileType();
+
+  private BndFileType() {
+    super(BndLanguage.INSTANCE);
+  }
+
+  @NotNull
+  @NonNls
+  public String getName() {
+    return "bnd";
+  }
+
+  @NotNull
+  public String getDescription() {
+    return "bnd";
+  }
+
+  @NotNull
+  @NonNls
+  public String getDefaultExtension() {
+    return BND_EXT;
+  }
+
+  @Nullable
+  public Icon getIcon() {
+    return AllIcons.FileTypes.Config;
+  }
+
 }
