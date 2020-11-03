@@ -88,7 +88,7 @@ final class ExtractConceptDialog extends JDialog {
     contentPane.registerKeyboardAction(getCancelAction(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
                                        JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
     this.newFile.setVisible(false);
-    this.conceptName.setPlaceholder("Enter Concept Name. Example: my new \"concept\"");
+    this.conceptName.setPlaceholder(GaugeBundle.message("enter.concept.name.example.my.new.concept"));
     this.files.addActionListener(e -> {
       this.newFile.setVisible(false);
       Object selectedItem = Objects.requireNonNull(this.files.getSelectedItem());
