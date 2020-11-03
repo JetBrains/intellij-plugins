@@ -28,8 +28,10 @@ import training.commands.kotlin.TaskContext
 import training.commands.kotlin.TaskRuntimeContext
 import training.keymap.KeymapUtil
 import training.learn.LearnBundle
+import training.learn.LessonsBundle
 import training.ui.LearningUiHighlightingManager
 import training.ui.LearningUiUtil
+import training.util.useNewLearningUi
 import java.awt.Component
 import java.awt.Dimension
 import java.awt.event.KeyEvent
@@ -134,6 +136,15 @@ object LessonUtil {
     val location = parentOfType?.location
     val x = location?.x
     return x != 0
+  }
+}
+
+fun LessonContext.firstLessonCompletedMessage() {
+  if (useNewLearningUi) {
+    text(LessonsBundle.message("goto.action.propose.to.go.next.new.ui", LessonUtil.rawEnter()))
+  }
+  else {
+    text(LessonsBundle.message("goto.action.propose.to.go.next", action("learn.next.lesson")))
   }
 }
 

@@ -11,6 +11,7 @@ import training.learn.lesson.general.assistance.ParameterInfoLesson
 import training.learn.lesson.general.assistance.QuickPopupsLesson
 import training.learn.lesson.general.refactorings.ExtractVariableFromBubbleLesson
 import training.learn.lesson.java.assistance.JavaEditorCodingAssistanceLesson
+import training.learn.lesson.java.basic.JavaContextActionsLesson
 import training.learn.lesson.java.basic.JavaSurroundAndUnwrapLesson
 import training.learn.lesson.java.completion.*
 import training.learn.lesson.java.navigation.*
@@ -19,16 +20,28 @@ import training.learn.lesson.java.refactorings.JavaRefactoringMenuLesson
 import training.learn.lesson.java.refactorings.JavaRenameLesson
 import training.learn.lesson.java.run.JavaDebugLesson
 import training.learn.lesson.java.run.JavaRunConfigurationLesson
+import training.learn.lesson.kimpl.LessonUtil
 
 class JavaLearningCourse : LearningCourseBase(JavaLanguage.INSTANCE.id) {
   override fun modules() = listOf(
+    LearningModule(name = LessonsBundle.message("essential.module.name"),
+                   description = LessonsBundle.message("essential.module.description", LessonUtil.productName),
+                   primaryLanguage = langSupport,
+                   moduleType = LessonType.SCRATCH) {
+      fun ls(sampleName: String) = loadSample("EditorBasics/$sampleName")
+      listOf(
+        JavaContextActionsLesson(it),
+        GotoActionLesson(it, lang, ls("00.Actions.java.sample"), firstLesson = false),
+        JavaSearchEverywhereLesson(it),
+        JavaBasicCompletionLesson(it),
+      )
+    },
     LearningModule(name = LessonsBundle.message("editor.basics.module.name"),
                    description = LessonsBundle.message("editor.basics.module.description"),
                    primaryLanguage = langSupport,
                    moduleType = LessonType.SCRATCH) {
       fun ls(sampleName: String) = loadSample("EditorBasics/$sampleName")
       listOf(
-        GotoActionLesson(it, lang, ls("00.Actions.java.sample")),
         SelectLesson(it, lang, ls("01.Select.java.sample")),
         SingleLineCommentLesson(it, lang, ls("02.Comment.java.sample")),
         DuplicateLesson(it, lang, ls("04.Duplicate.java.sample")),
@@ -43,7 +56,6 @@ class JavaLearningCourse : LearningCourseBase(JavaLanguage.INSTANCE.id) {
                    primaryLanguage = langSupport,
                    moduleType = LessonType.SCRATCH) {
       listOf(
-        JavaBasicCompletionLesson(it),
         JavaSmartTypeCompletionLesson(it),
         JavaPostfixCompletionLesson(it),
         JavaStatementCompletionLesson(it),
@@ -83,7 +95,6 @@ class JavaLearningCourse : LearningCourseBase(JavaLanguage.INSTANCE.id) {
         JavaDeclarationAndUsagesLesson(it),
         JavaInheritanceHierarchyLesson(it),
         JavaRecentFilesLesson(it),
-        JavaSearchEverywhereLesson(it),
         JavaOccurrencesLesson(it),
       )
     },

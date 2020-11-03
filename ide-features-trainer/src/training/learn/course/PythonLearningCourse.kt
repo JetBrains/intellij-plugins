@@ -50,7 +50,7 @@ class PythonLearningCourse : LearningCourseBase(PythonLanguage.INSTANCE.id) {
                    moduleType = LessonType.SCRATCH) {
       fun ls(sampleName: String) = loadSample("EditorBasics/$sampleName")
       listOf(
-        GotoActionLesson(it, lang, ls("Actions.py.sample")),
+        GotoActionLesson(it, lang, ls("Actions.py.sample"), firstLesson = true),
         SelectLesson(it, lang, ls("Selection.py.sample")),
         SingleLineCommentLesson(it, lang, ls("Comment.py.sample")),
         DuplicateLesson(it, lang, ls("Duplicate.py.sample")),
