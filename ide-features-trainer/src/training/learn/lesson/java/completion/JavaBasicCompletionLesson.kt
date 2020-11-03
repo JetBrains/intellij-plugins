@@ -55,5 +55,6 @@ class JavaBasicCompletionLesson(module: Module)
       text(LessonsBundle.message("java.basic.completion.deeper.level", action(it)))
       triggers(it, it)
     }
+    text(LessonsBundle.message("java.basic.completion.module.promotion", strong(LessonsBundle.message("refactorings.module.name"))))
   }
 }

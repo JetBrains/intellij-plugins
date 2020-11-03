@@ -12,16 +12,15 @@ import com.intellij.openapi.util.SystemInfo
 import com.intellij.testGuiFramework.framework.GuiTestUtil
 import com.intellij.testGuiFramework.impl.jList
 import com.intellij.testGuiFramework.util.Key
+import training.commands.kotlin.TaskContext
 import training.learn.LearnBundle
 import training.learn.LessonsBundle
 import training.learn.interfaces.Module
-import training.learn.lesson.kimpl.KLesson
-import training.learn.lesson.kimpl.LessonContext
-import training.learn.lesson.kimpl.LessonSample
-import training.learn.lesson.kimpl.LessonUtil
+import training.learn.lesson.kimpl.*
+import java.awt.event.KeyEvent
 import javax.swing.JPanel
 
-class GotoActionLesson(module: Module, lang: String, private val sample: LessonSample) :
+class GotoActionLesson(module: Module, lang: String, private val sample: LessonSample, private val firstLesson: Boolean = false) :
   KLesson("Actions", LessonsBundle.message("goto.action.lesson.name"), module, lang) {
 
   companion object {
@@ -31,11 +30,17 @@ class GotoActionLesson(module: Module, lang: String, private val sample: LessonS
   override val lessonContent: LessonContext.() -> Unit
     get() = {
       prepareSample(sample)
-      actionTask("GotoAction") {
+      task("GotoAction") {
         val macOsWorkaround = if (SystemInfo.isMacOSMojave)
           LessonsBundle.message("goto.action.mac.workaround", LessonUtil.actionName(it), FIND_ACTION_WORKAROUND)
         else ""
-        LessonsBundle.message("goto.action.use.find.action", LessonUtil.actionName(it), action(it)) + macOsWorkaround
+
+        text(LessonsBundle.message("goto.action.use.find.action",
+                                   LessonUtil.actionName(it), action(it),
+                                   LessonUtil.actionName("SearchEverywhere"), LessonUtil.rawKeyStroke(KeyEvent.VK_SHIFT)
+        ) + macOsWorkaround)
+        searchEverywhereCheck()
+        test { actions(it) }
       }
       actionTask("About") {
         LessonsBundle.message("goto.action.invoke.about.action",
@@ -59,8 +64,11 @@ class GotoActionLesson(module: Module, lang: String, private val sample: LessonS
           }
         }
       }
-      actionTask("GotoAction") {
-        LessonsBundle.message("goto.action.invoke.again", action(it))
+      task("GotoAction") {
+        text(LessonsBundle.message("goto.action.invoke.again",
+                                   action(it), LessonUtil.rawKeyStroke(KeyEvent.VK_SHIFT)))
+        searchEverywhereCheck()
+        test { actions(it) }
       }
       val showLineNumbersName = ActionsBundle.message("action.EditorGutterToggleGlobalLineNumbers.text")
       task(LearnBundle.message("show.line.number.prefix.to.show.first")) {
@@ -97,9 +105,16 @@ class GotoActionLesson(module: Module, lang: String, private val sample: LessonS
           }
         }
       }
-
-      text(LessonsBundle.message("goto.action.propose.to.go.next", action("learn.next.lesson")))
+      if (firstLesson) {
+        firstLessonCompletedMessage()
+      }
     }
+
+  private fun TaskContext.searchEverywhereCheck() {
+    stateCheck {
+      focusOwner?.javaClass?.name?.contains("SearchEverywhereUI") ?: false
+    }
+  }
 
   private fun isLineNumbersShown() = EditorSettingsExternalizable.getInstance().isLineNumbersShown
 }

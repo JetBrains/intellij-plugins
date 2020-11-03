@@ -32,7 +32,7 @@ class RubyLearningCourse : LearningCourseBase(RubyLanguage.INSTANCE.id) {
                    moduleType = LessonType.SCRATCH) {
       fun ls(sampleName: String) = loadSample("EditorBasics/$sampleName")
       listOf(
-        GotoActionLesson(it, lang, ls("Actions.rb.sample")),
+        GotoActionLesson(it, lang, ls("Actions.rb.sample"), firstLesson = true),
         SelectLesson(it, lang, ls("Selection.rb.sample")),
         SingleLineCommentLesson(it, lang, ls("Comment.rb.sample")),
         DuplicateLesson(it, lang, ls("Duplicate.rb.sample")),

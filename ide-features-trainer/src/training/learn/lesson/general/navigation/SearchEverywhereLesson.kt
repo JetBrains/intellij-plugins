@@ -14,6 +14,7 @@ import com.intellij.ui.components.fields.ExtendableTextField
 import training.commands.kotlin.TaskRuntimeContext
 import training.commands.kotlin.TaskTestContext
 import training.learn.LessonsBundle
+import training.learn.interfaces.LessonType
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
@@ -26,6 +27,8 @@ abstract class SearchEverywhereLesson(module: Module, lang: String)
   abstract override val existedFile: String?
 
   abstract val resultFileName: String
+
+  override val lessonType: LessonType = LessonType.PROJECT
 
   override val lessonContent: LessonContext.() -> Unit = {
     actionTask("SearchEverywhere") {
@@ -93,7 +96,11 @@ abstract class SearchEverywhereLesson(module: Module, lang: String)
         GuiTestUtil.shortcut(Key.ESCAPE)
       }
     }
+
+    epilogue()
   }
+
+  open fun LessonContext.epilogue()  = Unit
 
   private fun TaskRuntimeContext.checkWordInSearch(expected: String): Boolean =
     (focusOwner as? ExtendableTextField)?.text.equals(expected, ignoreCase = true)
