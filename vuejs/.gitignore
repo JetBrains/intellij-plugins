@@ -1,5 +1,6 @@
 *~
 .DS_Store
+.gradle
 .idea/vcs.xml
 .idea/dataSources
 .idea/dataSources.*
@@ -8,4 +9,3 @@
 .idea/shelf
 .idea/workspace.xml
 /build
-/out
