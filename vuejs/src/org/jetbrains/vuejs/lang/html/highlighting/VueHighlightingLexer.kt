@@ -24,7 +24,7 @@ class VueHighlightingLexer(override val languageLevel: JSLanguageLevel,
   : HtmlHighlightingLexer(VueHighlightingMergingLexer(FlexAdapter(_VueLexer(interpolationConfig))),
                           true, null), VueLexer {
 
-  override fun acceptEmbeddedContentProvider(provider: HtmlEmbeddedContentProvider?): Boolean {
+  override fun acceptEmbeddedContentProvider(provider: HtmlEmbeddedContentProvider): Boolean {
     return provider !is HtmlScriptStyleEmbeddedContentProvider
   }
 

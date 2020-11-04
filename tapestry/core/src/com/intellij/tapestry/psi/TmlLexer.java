@@ -6,6 +6,7 @@ import com.intellij.lexer._XmlLexer;
 import com.intellij.lexer.__XmlLexer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.IElementType;
+import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.xml.util.HtmlUtil.STYLE_ATTRIBUTE_NAME;
 
@@ -19,7 +20,7 @@ public class TmlLexer extends XHtmlLexer {
   }
 
   @Override
-  protected boolean isAttributeEmbedmentToken(IElementType tokenType, CharSequence attributeName) {
+  protected boolean isAttributeEmbedmentToken(@NotNull IElementType tokenType, @NotNull CharSequence attributeName) {
     return tokenType == TelTokenTypes.TAP5_EL_CONTENT ? !StringUtil.equals(attributeName, STYLE_ATTRIBUTE_NAME)
                                                       : super.isAttributeEmbedmentToken(tokenType, attributeName);
   }

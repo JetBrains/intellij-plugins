@@ -2,6 +2,7 @@ package com.intellij.tapestry.psi;
 
 import com.intellij.lexer.XHtmlHighlightingLexer;
 import com.intellij.psi.tree.TokenSet;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Alexey Chmutov
@@ -15,7 +16,7 @@ public class TmlHighlightingLexer extends XHtmlHighlightingLexer {
   }
 
   @Override
-  protected TokenSet createAttributeEmbedmentTokenSet() {
+  protected @NotNull TokenSet createAttributeEmbedmentTokenSet() {
     return TokenSet.orSet(super.createAttributeEmbedmentTokenSet(), CUSTOM_ATTRIBUTE_TOKENS);
   }
 }
