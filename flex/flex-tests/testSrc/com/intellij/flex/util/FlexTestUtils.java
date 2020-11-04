@@ -71,7 +71,7 @@ import java.util.Map;
 import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
 import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
 
-public class FlexTestUtils {
+public final class FlexTestUtils {
 
   @NotNull
   public static String getTestDataPath(@NotNull final String relativePath) {

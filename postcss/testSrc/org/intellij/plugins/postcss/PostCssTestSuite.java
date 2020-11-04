@@ -19,14 +19,14 @@ import org.intellij.plugins.postcss.smartEnter.PostCssSmartEnterTest;
 import org.intellij.plugins.postcss.usages.PostCssFindUsagesTest;
 
 @SuppressWarnings({"JUnitTestClassNamingConvention"})
-public class PostCssTestSuite {
+public final class PostCssTestSuite {
   public static Test suite() {
     TestSuite testSuite = new TestSuite("All PostCSS");
     testSuite.addTest(WithoutPerformance.suite());
     return testSuite;
   }
 
-  public static class WithoutPerformance {
+  public static final class WithoutPerformance {
     public static Test suite() {
       TestSuite suite = new TestSuite("All PostCSS without performance");
       suite.addTest(Fast.suite());
@@ -39,7 +39,7 @@ public class PostCssTestSuite {
     }
   }
 
-  public static class Fast {
+  public static final class Fast {
     public static Test suite() {
       TestSuite suite = new TestSuite("Fast PostCSS");
       suite.addTestSuite(PostCssLexerTest.class);
@@ -53,7 +53,7 @@ public class PostCssTestSuite {
     }
   }
 
-  public static class Inspections {
+  public static final class Inspections {
     public static Test suite() {
       TestSuite suite = new TestSuite("Inspections PostCSS");
       suite.addTestSuite(PostCssCssInspectionTest.class);
@@ -72,7 +72,7 @@ public class PostCssTestSuite {
     }
   }
 
-  public static class Completion {
+  public static final class Completion {
     public static Test suite() {
       TestSuite suite = new TestSuite("Completion PostCSS");
       suite.addTestSuite(PostCssNestCompletionTest.class);
@@ -84,7 +84,7 @@ public class PostCssTestSuite {
     }
   }
 
-  public static class Resolving {
+  public static final class Resolving {
     public static Test suite() {
       TestSuite suite = new TestSuite("Resolving PostCSS");
       suite.addTestSuite(PostCssCustomSelectorResolveTest.class);
@@ -95,7 +95,7 @@ public class PostCssTestSuite {
     }
   }
 
-  public static class Refactoring {
+  public static final class Refactoring {
     public static Test suite() {
       TestSuite suite = new TestSuite("Refactoring PostCSS");
       suite.addTestSuite(PostCssRenameTest.class);
@@ -103,7 +103,7 @@ public class PostCssTestSuite {
     }
   }
 
-  public static class Other {
+  public static final class Other {
     public static Test suite() {
       TestSuite suite = new TestSuite("Other PostCSS");
       suite.addTestSuite(PostCssBreadcrumbsTest.class);

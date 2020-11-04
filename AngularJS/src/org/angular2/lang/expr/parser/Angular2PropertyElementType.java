@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.expr.parser;
 
 import com.intellij.lang.ASTNode;
@@ -15,13 +15,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
-public class Angular2PropertyElementType extends JSPropertyElementType {
-
-  public Angular2PropertyElementType() {
+final class Angular2PropertyElementType extends JSPropertyElementType {
+  Angular2PropertyElementType() {
     this("NG:PROPERTY");
   }
 
-  protected Angular2PropertyElementType(@NonNls String debugName) {
+  private Angular2PropertyElementType(@NonNls String debugName) {
     super(debugName);
   }
 

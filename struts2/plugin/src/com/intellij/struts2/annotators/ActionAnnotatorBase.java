@@ -53,9 +53,8 @@ import java.util.*;
  * @author Yann C&eacute;bron
  */
 abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
-
-  private static final DomElementListCellRenderer ACTION_RENDERER =
-      new DomElementListCellRenderer<Action>(StrutsBundle.message("annotators.action.no.name")) {
+  private static final DomElementListCellRenderer<Action> ACTION_RENDERER =
+      new DomElementListCellRenderer<>(StrutsBundle.message("annotators.action.no.name")) {
         @Override
         @NotNull
         @NonNls
@@ -178,14 +177,11 @@ abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
 
       final Set<PathReference> pathReferences = new HashSet<>();
       final List<Result> results = action.getResults();
-      for (final Result result : results) {
-        final PathReference pathReference = result.getValue();
-        ContainerUtil.addIfNotNull(pathReferences, pathReference);
+      for (Result result : results) {
+        ContainerUtil.addIfNotNull(pathReferences, result.getValue());
       }
 
-      final Set<PathReference> toStore = ContainerUtil.getOrCreate(pathReferenceMap,
-                                                                   method,
-                                                                   new HashSet<>());
+      Set<PathReference> toStore = pathReferenceMap.computeIfAbsent(method, __ -> new HashSet<>());
       toStore.addAll(pathReferences);
       pathReferenceMap.put(method, toStore);
     }

@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs.codeInsight.refs;
 
 import com.intellij.lang.injection.InjectedLanguageManager;
@@ -21,10 +22,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author Irina.Chernushina on 3/21/2016.
- */
-public class AngularJSNgAppReferencesProvider extends PsiReferenceProvider {
+public final class AngularJSNgAppReferencesProvider extends PsiReferenceProvider {
   @Override
   public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
     return new PsiReference[]{new AngularJSNgAppReference(((XmlAttributeValue)element))};
@@ -49,7 +47,7 @@ public class AngularJSNgAppReferencesProvider extends PsiReferenceProvider {
 
       Collection<JSImplicitElement> results = collectProcessor.getResults();
       if (results.size() > 1) {
-        final Condition<JSImplicitElement> filter = new Condition<JSImplicitElement>() {
+        results = ContainerUtil.filter(results, new Condition<>() {
           private Set<VirtualFile> includedFiles;
 
           @Override
@@ -64,8 +62,7 @@ public class AngularJSNgAppReferencesProvider extends PsiReferenceProvider {
             }
             return includedFiles.contains(element.getContainingFile().getVirtualFile());
           }
-        };
-        results = ContainerUtil.filter(results, filter);
+        });
       }
       List<ResolveResult> resolveResults = ContainerUtil.map(results, JSResolveResult::new);
       return resolveResults.toArray(ResolveResult.EMPTY_ARRAY);
