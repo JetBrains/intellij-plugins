@@ -64,14 +64,14 @@ abstract public class AbstractDartComponentImpl extends DartPsiCompositeElementI
 
   private Icon doOverlays(Icon icon) {
     if (isStatic() && !isGetter() && !isSetter()) {
-      icon = IconManager.getInstance().createOverlayIcon(icon, AllIcons.Nodes.StaticMark);
+      icon = IconManager.getInstance().createLayered(icon, AllIcons.Nodes.StaticMark);
     }
     if (isFinal()) {
-      icon = IconManager.getInstance().createOverlayIcon(icon, AllIcons.Nodes.FinalMark);
+      icon = IconManager.getInstance().createLayered(icon, AllIcons.Nodes.FinalMark);
     }
     if (isConst()) {
       //TODO: find a distinct const icon
-      icon = IconManager.getInstance().createOverlayIcon(icon, AllIcons.Nodes.FinalMark);
+      icon = IconManager.getInstance().createLayered(icon, AllIcons.Nodes.FinalMark);
     }
 
     return icon;
