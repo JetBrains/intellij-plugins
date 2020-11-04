@@ -7,7 +7,6 @@ import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSNamedElement
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
-import com.intellij.lang.javascript.psi.resolve.JSResolveResult
 import com.intellij.lang.typescript.modules.TypeScriptNodeReference
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.VirtualFileManager
@@ -44,12 +43,25 @@ class WebTypesSourceSymbolResolver(private val context: PsiFile, private val plu
       if (modules != null) {
         for (module in modules) {
           val jsModule = when (module) {
-            is JSElement -> module
-            else -> findModule(module)
-          } ?: continue
-          ES6PsiUtil.resolveSymbolInModule(symbolName, context, jsModule).asSequence()
+                           is JSElement -> module
+                           else -> findModule(module)
+                         } ?: continue
+          val exportName: String
+          val names = symbolName.split('.').let {
+            exportName = it[0]
+            it.subList(1, it.size)
+          }
+
+          ES6PsiUtil.resolveSymbolInModule(exportName, context, jsModule).asSequence()
             .filter { it.isValidResult }
-            .map { it.element }
+            .mapNotNull { it.element }
+            .flatMap {
+              var elements: List<PsiElement> = listOf(it)
+              for (name in names) {
+                elements = resolveQualifiedAccess(elements, name)
+              }
+              elements
+            }
             // TODO resolve to multiple symbols
             .firstOrNull()
             ?.let { return Result.create(it, context, module, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS) }
@@ -71,6 +83,15 @@ class WebTypesSourceSymbolResolver(private val context: PsiFile, private val plu
              ?: Result.create(null as PsiElement?, context, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
     }
     return Result.create(null, ModificationTracker.NEVER_CHANGED)
+  }
+
+  private fun resolveQualifiedAccess(elements: List<PsiElement>, name: String): List<PsiElement> {
+    val result = mutableListOf<PsiElement>()
+    for (element in elements) {
+      result.addAll(ES6PsiUtil.createResolver(element)
+                      .resolveQualifiedName(name))
+    }
+    return result
   }
 
 }
