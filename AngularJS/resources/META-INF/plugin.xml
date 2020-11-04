@@ -264,7 +264,7 @@
     <codeInsight.template.postfixTemplateProvider language="Angular2"
                                                   implementationClass="com.intellij.codeInsight.template.postfix.templates.EmptyPostfixTemplateProvider"/>
     <lang.parserDefinition language="Angular2" implementationClass="org.angular2.lang.expr.parser.Angular2ParserDefinition"/>
-    <stubElementTypeHolder class="org.angular2.lang.expr.parser.Angular2StubElementTypes"/>
+    <stubElementTypeHolder class="org.angular2.lang.expr.parser.Angular2StubElementTypes" externalIdPrefix="NG:"/>
     <completion.contributor language="any" implementationClass="org.angular2.codeInsight.Angular2CompletionContributor"
                             id="Angular2CompletionContributor"
                             order="before JSPatternBasedCompletionContributor, before JSCompletionContributor, before xmlNonFirst, before cssClassOrIdReferenceCompletionContributor"/>

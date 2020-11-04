@@ -9,5 +9,5 @@ public interface Angular2StubElementTypes {
   int STUB_VERSION = 2;
 
   Angular2PropertyElementType PROPERTY = new Angular2PropertyElementType();
-  JSStubElementType<JSVariableStub<JSVariable>, JSVariable> TEMPLATE_BINDING_VARIABLE = new Angular2TemplateVariableElementType();
+  JSStubElementType<JSVariableStub<JSVariable>, JSVariable> TEMPLATE_VARIABLE = new Angular2TemplateVariableElementType();
 }

@@ -28,7 +28,7 @@ public class Angular2TemplateVariableImpl extends JSVariableImpl<JSVariableStub<
   }
 
   public Angular2TemplateVariableImpl(JSVariableStub<JSVariable> stub) {
-    super(stub, Angular2StubElementTypes.TEMPLATE_BINDING_VARIABLE);
+    super(stub, Angular2StubElementTypes.TEMPLATE_VARIABLE);
   }
 
   @Override

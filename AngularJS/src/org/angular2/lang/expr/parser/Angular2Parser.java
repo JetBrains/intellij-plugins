@@ -283,7 +283,7 @@ public class Angular2Parser extends JavaScriptParser<Angular2Parser.Angular2Expr
     if (isVariable) {
       key.collapse(IDENTIFIER);
       key = key.precede();
-      key.done(TEMPLATE_BINDING_VARIABLE);
+      key.done(TEMPLATE_VARIABLE);
       key.precede().done(VAR_STATEMENT);
     }
     else {
