@@ -20,6 +20,11 @@ final class Angular2TemplateVariableElementType extends JSVariableElementType {
   }
 
   @Override
+  public @NotNull String getExternalId() {
+    return getDebugName();
+  }
+
+  @Override
   public @NotNull JSVariableStub<JSVariable> createStub(@NotNull JSVariable psi, StubElement parentStub) {
     return new Angular2TemplateVariableStubImpl(psi, parentStub, this);
   }

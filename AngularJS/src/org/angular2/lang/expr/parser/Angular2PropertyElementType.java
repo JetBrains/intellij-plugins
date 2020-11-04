@@ -20,6 +20,11 @@ final class Angular2PropertyElementType extends JSPropertyElementType {
     this("NG:PROPERTY");
   }
 
+  @Override
+  public @NotNull String getExternalId() {
+    return getDebugName();
+  }
+
   private Angular2PropertyElementType(@NonNls String debugName) {
     super(debugName);
   }
