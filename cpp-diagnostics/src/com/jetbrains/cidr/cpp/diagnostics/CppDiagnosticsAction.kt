@@ -12,6 +12,7 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.openapi.util.NlsContexts
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.util.text.StringUtil
@@ -127,7 +128,7 @@ class CppDiagnosticsAction : DumbAwareAction() {
     }
 
 
-    private fun <R> readActionWithText(indicator: ProgressIndicator, text: String, block: () -> R): R {
+    private fun <R> readActionWithText(indicator: ProgressIndicator, @NlsContexts.ProgressText text : String, block: () -> R): R {
       val oldText = indicator.text
       indicator.text = text
       try {
