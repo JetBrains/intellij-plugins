@@ -12,17 +12,16 @@ class VueI18nEmbeddedContentSupport: HtmlEmbeddedContentSupport {
 
   override fun isEnabled(lexer: BaseHtmlLexer): Boolean = lexer is VueLexer
 
-  override fun createEmbeddedContentProviders(lexer: BaseHtmlLexer): List<HtmlEmbeddedContentProvider> {
-    return listOf(
-      object: HtmlTagEmbeddedContentProvider(lexer) {
+  override fun createEmbeddedContentProviders(lexer: BaseHtmlLexer): List<HtmlEmbeddedContentProvider> =
+    listOf( VueI18nTagEmbeddedContentProvider(lexer) )
 
-        override fun isInterestedInTag(tagName: CharSequence): Boolean = namesEqual(tagName, "i18n")
+  class VueI18nTagEmbeddedContentProvider(lexer: BaseHtmlLexer) : HtmlTagEmbeddedContentProvider(lexer) {
 
-        override fun isInterestedInAttribute(attributeName: CharSequence): Boolean = true
+    override fun isInterestedInTag(tagName: CharSequence): Boolean = namesEqual(tagName, "i18n")
 
-        override fun createEmbedmentInfo(): HtmlEmbedmentInfo? =
-          if (attributeName == null) HtmlEmbeddedContentProvider.RAW_TEXT_EMBEDMENT else null
-      }
-    )
+    override fun isInterestedInAttribute(attributeName: CharSequence): Boolean = true
+
+    override fun createEmbedmentInfo(): HtmlEmbedmentInfo? =
+      if (attributeName == null) HtmlEmbeddedContentProvider.RAW_TEXT_EMBEDMENT else null
   }
 }

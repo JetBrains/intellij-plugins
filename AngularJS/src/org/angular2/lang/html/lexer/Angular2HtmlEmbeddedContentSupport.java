@@ -42,7 +42,7 @@ public class Angular2HtmlEmbeddedContentSupport implements HtmlEmbeddedContentSu
                                       new Angular2AttributeContentProvider(lexer));
   }
 
-  private static class Angular2AttributeContentProvider extends HtmlAttributeEmbeddedContentProvider {
+  public static class Angular2AttributeContentProvider extends HtmlAttributeEmbeddedContentProvider {
 
     Angular2AttributeContentProvider(@NotNull BaseHtmlLexer lexer) {
       super(lexer);
@@ -79,7 +79,7 @@ public class Angular2HtmlEmbeddedContentSupport implements HtmlEmbeddedContentSu
     }
   }
 
-  private static class Angular2EmbeddedHighlightingLexer extends MergingLexerAdapterBase {
+  public static class Angular2EmbeddedHighlightingLexer extends MergingLexerAdapterBase {
 
     Angular2EmbeddedHighlightingLexer() {
       super(new Angular2SyntaxHighlighter().getHighlightingLexer());

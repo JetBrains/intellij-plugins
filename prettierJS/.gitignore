@@ -1,8 +1,17 @@
-node_modules
 .sandbox/
 
-# IDEA project files
-.idea/
+*~
+.DS_Store
+.idea/vcs.xml
+.idea/dataSources
+.idea/dataSources.*
+.idea/gradle_extensions.xml
+.idea/libraries/Gradle__*.xml
+.idea/shelf
+.idea/modules
+.idea/jarRepositories.xml
+.idea/workspace.xml
+
 
 ## Gradle.gitignore
 
