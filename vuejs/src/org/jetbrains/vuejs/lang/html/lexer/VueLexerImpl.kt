@@ -21,7 +21,7 @@ class VueLexerImpl(override val languageLevel: JSLanguageLevel,
     return state == _VueLexer.START_TAG_NAME || state == _VueLexer.END_TAG_NAME
   }
 
-  override fun acceptEmbeddedContentProvider(provider: HtmlEmbeddedContentProvider?): Boolean {
+  override fun acceptEmbeddedContentProvider(provider: HtmlEmbeddedContentProvider): Boolean {
     return provider !is HtmlScriptStyleEmbeddedContentProvider
   }
 
