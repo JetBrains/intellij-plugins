@@ -240,7 +240,7 @@ class PythonOnboardingTour(module: Module) :
 
   private fun LessonContext.projectTasks() {
     prepareRuntimeTask {
-      LessonExecutorUtil.hideStandardToolwindows(project)
+      LessonUtil.hideStandardToolwindows(project)
     }
     task {
       triggerByUiComponentAndHighlight { stripe: StripeButton ->
