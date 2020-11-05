@@ -1,5 +1,5 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package training.learn.lesson.ruby.refactorings
+package org.jetbrains.ruby.ift.lesson.refactorings
 
 import com.intellij.openapi.project.Project
 import com.intellij.refactoring.RefactoringBundle
@@ -8,6 +8,7 @@ import com.intellij.testGuiFramework.impl.jList
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.Types
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.fqn.FQN
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.SymbolUtil
+import org.jetbrains.ruby.ift.RubyLessonsBundle
 import training.commands.kotlin.TaskTestContext
 import training.learn.LessonsBundle
 import training.learn.interfaces.Module
@@ -37,10 +38,10 @@ class RubyRefactorMenuLesson(module: Module)
     get() = {
       prepareSample(sample)
       actionTask("Refactorings.QuickListPopupAction") {
-        LessonsBundle.message("ruby.refactoring.menu.invoke.refactoring.list", action(it))
+        RubyLessonsBundle.message("ruby.refactoring.menu.invoke.refactoring.list", action(it))
       }
       task(RefactoringBundle.message("push.members.down.title")) {
-        text(LessonsBundle.message("ruby.refactoring.menu.use.push.method.down", strong(it), code("meow()")))
+        text(RubyLessonsBundle.message("ruby.refactoring.menu.use.push.method.down", strong(it), code("meow()")))
         trigger("MemberPushDown") { checkMethodMoved(project) }
         test {
           ideFrame {

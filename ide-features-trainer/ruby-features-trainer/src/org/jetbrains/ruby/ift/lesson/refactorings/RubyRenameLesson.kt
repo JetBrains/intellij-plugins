@@ -1,9 +1,10 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package training.learn.lesson.ruby.refactorings
+package org.jetbrains.ruby.ift.lesson.refactorings
 
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.testGuiFramework.impl.button
 import com.intellij.ui.treeStructure.Tree
+import org.jetbrains.ruby.ift.RubyLessonsBundle
 import training.commands.kotlin.TaskTestContext
 import training.learn.LessonsBundle
 import training.learn.interfaces.Module
@@ -50,7 +51,7 @@ class RubyRenameLesson(module: Module)
       prepareSample(sample)
       lateinit var replace: Future<String>
       task("RenameElement") {
-        text(LessonsBundle.message("ruby.rename.start.refactoring", action(it), code("teams"), code("teams_number")))
+        text(RubyLessonsBundle.message("ruby.rename.start.refactoring", action(it), code("teams"), code("teams_number")))
         replace = stateRequired {
           (focusOwner as? Tree)?.model?.root?.toString()?.let { root: String ->
             replacePreviewPattern.matcher(root).takeIf { m -> m.find() }?.group(1)
@@ -71,7 +72,7 @@ class RubyRenameLesson(module: Module)
         before {
           result = template.replace("<name>", replace.get(2, TimeUnit.SECONDS)).replace("<caret>", "")
         }
-        text(LessonsBundle.message("ruby.rename.confirm", strong(it)))
+        text(RubyLessonsBundle.message("ruby.rename.confirm", strong(it)))
         stateCheck { editor.document.text == result }
         test {
           ideFrame {

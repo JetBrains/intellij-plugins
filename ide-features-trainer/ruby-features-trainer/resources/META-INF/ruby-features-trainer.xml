@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<idea-plugin>
+  <extensions defaultExtensionNs="training">
+    <ift.language.extension language="ruby" implementationClass="org.jetbrains.ruby.ift.RubyLangSupport"/>
+    <ift.learning.course language="ruby" implementationClass="org.jetbrains.ruby.ift.RubyLearningCourse"/>
+  </extensions>
+</idea-plugin>

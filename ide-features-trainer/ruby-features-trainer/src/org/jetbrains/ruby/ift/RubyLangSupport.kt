@@ -1,5 +1,5 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package training.lang
+package org.jetbrains.ruby.ift
 
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
@@ -17,6 +17,7 @@ import org.jetbrains.plugins.ruby.ruby.RModuleUtil
 import org.jetbrains.plugins.ruby.ruby.sdk.RubySdkType
 import org.jetbrains.plugins.ruby.ruby.sdk.RubyVersionUtil
 import org.jetbrains.plugins.ruby.version.management.SdkRefresher
+import training.lang.AbstractLangSupport
 import training.learn.LearnBundle
 import training.learn.exceptons.InvalidSdkException
 import training.learn.exceptons.NoSdkException
