@@ -130,10 +130,12 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
 
   @Nullable
   private static XCBuildSettings getBuildSettings(@NotNull AppCodeRunConfiguration config) {
-    BuildDestination destination = ContainerUtil.getFirstItem(config.getDestinations());
-    if (destination == null) return null;
+    return ReadAction.compute(() -> {
+      BuildDestination destination = ContainerUtil.getFirstItem(config.getDestinations());
+      if (destination == null) return null;
 
-    return XcodeMetaData.getBuildSettings(config.getResolveConfiguration(destination));
+      return XcodeMetaData.getBuildSettings(config.getResolveConfiguration(destination));
+    });
   }
 
   private static boolean isAvailableForPlatform(@NotNull final AppCodeRunConfiguration config) {
