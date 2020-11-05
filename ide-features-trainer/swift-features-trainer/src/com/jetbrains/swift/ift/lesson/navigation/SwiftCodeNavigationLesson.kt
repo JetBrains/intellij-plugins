@@ -1,10 +1,10 @@
-package training.learn.lesson.swift.navigation
+package com.jetbrains.swift.ift.lesson.navigation
 
-import training.learn.LessonsBundle
+import com.jetbrains.swift.ift.SwiftLessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.*
 
-class SwiftCodeNavigationLesson(module: Module) : KLesson("swift.navigation.code", LessonsBundle.message("swift.navigation.code.name"), module, "Swift") {
+class SwiftCodeNavigationLesson(module: Module) : KLesson("swift.navigation.code", SwiftLessonsBundle.message("swift.navigation.code.name"), module, "Swift") {
 
   private val sample: LessonSample = parseLessonSample("""
 import Foundation
@@ -37,54 +37,54 @@ class AppCode: JetBrainsIDE {}""".trimIndent())
   override val lessonContent: LessonContext.() -> Unit = {
     prepareSample(sample)
 
-    text(LessonsBundle.message("swift.navigation.code.intro"))
+    text(SwiftLessonsBundle.message("swift.navigation.code.intro"))
     task {
       triggers("GotoClass", "DetailViewController.swift")
-      text(LessonsBundle.message("swift.navigation.code.class", code("DetailViewController"), action("GotoClass"), code("dvc"),
-                                 LessonUtil.rawEnter()))
+      text(SwiftLessonsBundle.message("swift.navigation.code.class", code("DetailViewController"), action("GotoClass"), code("dvc"),
+                                      LessonUtil.rawEnter()))
     }
-    text(LessonsBundle.message("swift.navigation.code.fuzzy"))
+    text(SwiftLessonsBundle.message("swift.navigation.code.fuzzy"))
     task {
       triggers("GotoFile", "AppDelegate.swift")
-      text(LessonsBundle.message("swift.navigation.code.file", code("AppDelegate.swift"), action("GotoFile"), code("ad"),
-                                 LessonUtil.rawEnter()))
+      text(SwiftLessonsBundle.message("swift.navigation.code.file", code("AppDelegate.swift"), action("GotoFile"), code("ad"),
+                                      LessonUtil.rawEnter()))
     }
     task {
       triggers("GotoSymbol", "MasterViewController.swift")
-      text(LessonsBundle.message("swift.navigation.code.symbol", code("detailViewController"), code("MasterViewController"),
-                                 action("GotoSymbol"), code("dvc"), LessonUtil.rawEnter()))
+      text(SwiftLessonsBundle.message("swift.navigation.code.symbol", code("detailViewController"), code("MasterViewController"),
+                                      action("GotoSymbol"), code("dvc"), LessonUtil.rawEnter()))
     }
-    text(LessonsBundle.message("swift.navigation.code.non.project.files"))
+    text(SwiftLessonsBundle.message("swift.navigation.code.non.project.files"))
     caret(5, 20)
     task {
       triggers("GotoDeclaration", "DetailViewController.swift")
-      text(LessonsBundle.message("swift.navigation.code.declaration", code("DetailViewController?"), action("GotoDeclaration")))
+      text(SwiftLessonsBundle.message("swift.navigation.code.declaration", code("DetailViewController?"), action("GotoDeclaration")))
     }
     caret(3, 33)
     task {
       triggers("GotoImplementation")
-      text(LessonsBundle.message("swift.navigation.code.implementation", action("GotoDeclaration"), action("GotoImplementation"), code("UIViewController")))
+      text(SwiftLessonsBundle.message("swift.navigation.code.implementation", action("GotoDeclaration"), action("GotoImplementation"), code("UIViewController")))
     }
     task {
       triggers("GotoFile", "Navigation.swift")
-      text(LessonsBundle.message("swift.navigation.code.go.back", code("Navigation.swift"), action("GotoFile")))
+      text(SwiftLessonsBundle.message("swift.navigation.code.go.back", code("Navigation.swift"), action("GotoFile")))
     }
     caret(27, 10)
     task {
       triggers("GotoSuperMethod")
-      text(LessonsBundle.message("swift.navigation.code.super", action("GotoSuperMethod"), code("JetBrainsIDE")))
+      text(SwiftLessonsBundle.message("swift.navigation.code.super", action("GotoSuperMethod"), code("JetBrainsIDE")))
     }
     task {
       triggers("GotoSuperMethod")
-      text(LessonsBundle.message("swift.navigation.code.super.again", action("GotoSuperMethod"), code("IDEProtocol")))
+      text(SwiftLessonsBundle.message("swift.navigation.code.super.again", action("GotoSuperMethod"), code("IDEProtocol")))
     }
     task {
       triggers("RecentFiles")
-      text(LessonsBundle.message("swift.navigation.code.recent", action("RecentFiles")))
+      text(SwiftLessonsBundle.message("swift.navigation.code.recent", action("RecentFiles")))
     }
     task {
       triggers("Switcher")
-      text(LessonsBundle.message("swift.navigation.code.switcher", action("Switcher")))
+      text(SwiftLessonsBundle.message("swift.navigation.code.switcher", action("Switcher")))
     }
   }
 }

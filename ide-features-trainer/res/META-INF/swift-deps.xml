@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<idea-plugin>
-  <extensions defaultExtensionNs="training">
-    <ift.language.extension language="Swift" implementationClass="training.lang.SwiftSupport"/>
-    <ift.learning.course language="Swift" implementationClass="training.learn.course.SwiftLearningCourse"/>
-  </extensions>
-</idea-plugin>
