@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package jetbrains.communicator.p2p;
 
 import com.intellij.notification.Notification;
@@ -11,8 +11,6 @@ import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.SmartList;
-import gnu.trove.THashMap;
-import gnu.trove.THashSet;
 import icons.IdeTalkCoreIcons;
 import jetbrains.communicator.core.*;
 import jetbrains.communicator.core.commands.NamedUserCommand;
@@ -45,7 +43,7 @@ import java.util.*;
 /**
  * @author Kir Maximov
  */
-public class P2PTransport implements Transport, UserMonitorClient, Disposable {
+public final class P2PTransport implements Transport, UserMonitorClient, Disposable {
   private static final Logger LOG = Logger.getLogger(P2PTransport.class);
 
   static final String CODE = "P2P";
@@ -55,9 +53,9 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
   private final UserMonitorThread myUserMonitorThread;
 
   private final Object myLock = new Object();
-  private final Map<User, OnlineUserInfo> myUserToInfo = new THashMap<>();
-  private final Map<User, OnlineUserInfo> myUserToInfoNew = new THashMap<>();
-  private final Collection<User> myOnlineUsers = new THashSet<>();
+  private final Map<User, OnlineUserInfo> myUserToInfo = new HashMap<>();
+  private final Map<User, OnlineUserInfo> myUserToInfoNew = new HashMap<>();
+  private final Collection<User> myOnlineUsers = new HashSet<>();
 
   private final EventBroadcaster myEventBroadcaster;
   private final IDEtalkListener myUserAddedCallbackListener;
@@ -116,7 +114,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
 
   @SuppressWarnings("UnusedDeclaration")
   private static final class P2PCustomPortServerManager extends CustomPortServerManagerBase {
-    private final Map<String, Object> handlers = Collections.synchronizedMap(new THashMap<>());
+    private final Map<String, Object> handlers = Collections.synchronizedMap(new HashMap<>());
 
     @Override
     public void cannotBind(@NotNull Exception e, int port) {
@@ -295,7 +293,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
       result = myUserToInfo.get(user);
     }
     if (result == null) {
-      result = new OnlineUserInfo(null, -1, new THashSet<>(), new UserPresence(false));
+      result = new OnlineUserInfo(null, -1, new HashSet<>(), new UserPresence(false));
     }
     return result;
   }

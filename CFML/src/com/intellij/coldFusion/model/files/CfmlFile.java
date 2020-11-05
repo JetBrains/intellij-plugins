@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.model.files;
 
 import com.intellij.coldFusion.model.psi.*;
@@ -14,7 +14,6 @@ import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.util.containers.ContainerUtil;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,10 +22,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Created by Lera Nikolaenko
- */
-public class CfmlFile extends PsiFileBase {
+public final class CfmlFile extends PsiFileBase {
   private final CachedValue<Map<String, CfmlImplicitVariable>> myImplicitVars;
   @NonNls
   public static final String CFMLVARIABLE_MARKER = "@cfmlvariable ";
@@ -43,7 +39,7 @@ public class CfmlFile extends PsiFileBase {
 
   CachedValueProvider<Map<String, CfmlImplicitVariable>> createImplicitVarsProvider() {
     return () -> {
-      final Map<String, CfmlImplicitVariable> result = new THashMap<>();
+      final Map<String, CfmlImplicitVariable> result = new HashMap<>();
       this.accept(new PsiRecursiveElementVisitor() {
         @Override
         public void visitComment(@NotNull final PsiComment comment) {

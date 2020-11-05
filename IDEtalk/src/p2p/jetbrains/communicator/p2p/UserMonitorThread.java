@@ -1,8 +1,7 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package jetbrains.communicator.p2p;
 
 import com.intellij.util.Time;
-import gnu.trove.THashSet;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.users.UserPresence;
@@ -24,7 +23,7 @@ import java.util.*;
  *         request and passes obtained users to UserMonitorClient
  */
 @SuppressWarnings({"HardCodedStringLiteral"})
-public class UserMonitorThread extends Thread {
+public final class UserMonitorThread extends Thread {
   public static final Logger LOG = Logger.getLogger(UserMonitorThread.class);
 
   static final long WAIT_USER_RESPONSES_TIMEOUT = 3000;
@@ -36,7 +35,7 @@ public class UserMonitorThread extends Thread {
   private final long myWaitUserResponsesTimeout;
   private final long myScansTimeout;
 
-  private final Set<User> myAvailableUsers = Collections.synchronizedSet(new THashSet<>());
+  private final Set<User> myAvailableUsers = Collections.synchronizedSet(new HashSet<>());
 
   private Thread myThread;
   private long myStartFindingAt;
@@ -236,7 +235,7 @@ public class UserMonitorThread extends Thread {
   void flushOnlineUsers() {
     Set<User> users;
     synchronized (myAvailableUsers) {
-      users = new THashSet<>(myAvailableUsers);
+      users = new HashSet<>(myAvailableUsers);
     }
     if (LOG.isDebugEnabled()) {
       LOG.debug("Setting online users: \n" + Arrays.toString(users.toArray()));
