@@ -9,6 +9,7 @@ import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.execution.util.ExecUtil;
 import com.intellij.ide.script.IdeScriptException;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
@@ -76,7 +77,7 @@ public final class Reveal {
       File xcFrameworkIoFile = OCPathManager.getUserApplicationSupportSubFile("Reveal/RevealServer/RevealServer.xcframework");
       VirtualFile xcFramework = VfsUtil.findFileByIoFile(xcFrameworkIoFile, true);
       if (xcFramework == null) return null;
-      VirtualFile frameworkRoot = new XCFramework(xcFramework).resolveFrameworkRoot(buildSettings);
+      VirtualFile frameworkRoot = ReadAction.compute(() -> new XCFramework(xcFramework).resolveFrameworkRoot(buildSettings));
       if (frameworkRoot == null) return null;
       result = new File(VfsUtilCore.virtualToIoFile(frameworkRoot), "RevealServer");
     }
