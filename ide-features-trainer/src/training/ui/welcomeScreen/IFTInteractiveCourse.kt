@@ -74,12 +74,12 @@ class IFTInteractiveCourseData : InteractiveCourseData {
       panel.add(moduleDescription(module))
       panel.add(rigid(16, 16))
     }
-
+    panel.add(rigid(16, 15))
     return panel
   }
 
   private fun moduleDescription(module: Module): HeightLimitedPane {
-    return HeightLimitedPane(module.description ?: "", -1, MODULE_DESCRIPTION)
+    return HeightLimitedPane(module.description ?: "", -2, MODULE_DESCRIPTION)
   }
 
   private fun moduleHeader(module: Module): LinkLabel<Any> {
