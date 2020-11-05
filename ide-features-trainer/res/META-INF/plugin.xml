@@ -15,7 +15,6 @@
 
   <depends optional="true" config-file="java-deps.xml">com.intellij.modules.java</depends>
   <depends optional="true" config-file="python-deps.xml">com.intellij.modules.python</depends>
-  <depends optional="true" config-file="swift-deps.xml">com.intellij.modules.cidr.lang</depends>
   <depends optional="true" config-file="javascript-deps.xml">JavaScript</depends>
   <depends optional="true" config-file="ift-javascript-debugger.xml">JavaScriptDebugger</depends>
 
