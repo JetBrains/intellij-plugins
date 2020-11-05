@@ -14,7 +14,6 @@
     ]]></description>
 
   <depends optional="true" config-file="java-deps.xml">com.intellij.modules.java</depends>
-  <depends optional="true" config-file="python-deps.xml">com.intellij.modules.python</depends>
 
   <resource-bundle>messages.LearnBundle</resource-bundle>
 
