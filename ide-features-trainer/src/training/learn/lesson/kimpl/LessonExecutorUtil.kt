@@ -43,17 +43,6 @@ internal object LessonExecutorUtil {
     return fakeTaskContext.messages
   }
 
-  fun hideStandardToolwindows(project: Project) {
-    val windowManager = ToolWindowManager.getInstance(project)
-    val declaredFields = ToolWindowId::class.java.declaredFields
-    for (field in declaredFields) {
-      if (Modifier.isStatic(field.modifiers) && field.type == String::class.java) {
-        val id = field.get(null) as String
-        windowManager.getToolWindow(id)?.hide(null)
-      }
-    }
-  }
-
   fun showBalloonMessage(text: String, ui: JComponent, balloonConfig: LearningBalloonConfig, taskDisposable: Disposable) {
     val messages = MessageFactory.convert(text)
     val messagesPane = LessonMessagePane()

@@ -33,10 +33,7 @@ import training.learn.exceptons.LessonIsOpenedException
 import training.learn.interfaces.Lesson
 import training.learn.interfaces.LessonType
 import training.learn.lesson.LessonManager
-import training.learn.lesson.kimpl.KLesson
-import training.learn.lesson.kimpl.LessonContextImpl
-import training.learn.lesson.kimpl.LessonExecutor
-import training.learn.lesson.kimpl.LessonExecutorUtil
+import training.learn.lesson.kimpl.*
 import training.learn.lesson.listeners.NextLessonListener
 import training.learn.lesson.listeners.StatisticLessonListener
 import training.project.ProjectUtils
@@ -206,7 +203,7 @@ class OpenLessonAction(val lesson: Lesson) : DumbAwareAction(lesson.name) {
 
   private fun hideOtherViews(project: Project) {
     ApplicationManager.getApplication().invokeLater {
-      LessonExecutorUtil.hideStandardToolwindows(project)
+      LessonUtil.hideStandardToolwindows(project)
     }
   }
 

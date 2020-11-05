@@ -10,11 +10,14 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorModificationUtil
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.util.NlsActions
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.text.TextWithMnemonic
 import com.intellij.openapi.wm.ToolWindow
+import com.intellij.openapi.wm.ToolWindowId
+import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.openapi.wm.ex.ToolWindowManagerListener
 import com.intellij.ui.content.Content
 import com.intellij.ui.tabs.impl.JBTabsImpl
@@ -35,6 +38,7 @@ import training.util.useNewLearningUi
 import java.awt.Component
 import java.awt.Dimension
 import java.awt.event.KeyEvent
+import java.lang.reflect.Modifier
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 import javax.swing.JList
@@ -44,6 +48,16 @@ object LessonUtil {
   val productName: String
     get() = ApplicationNamesInfo.getInstance().fullProductName
 
+  fun hideStandardToolwindows(project: Project) {
+    val windowManager = ToolWindowManager.getInstance(project)
+    val declaredFields = ToolWindowId::class.java.declaredFields
+    for (field in declaredFields) {
+      if (Modifier.isStatic(field.modifiers) && field.type == String::class.java) {
+        val id = field.get(null) as String
+        windowManager.getToolWindow(id)?.hide(null)
+      }
+    }
+  }
   fun insertIntoSample(sample: LessonSample, inserted: String): String {
     return sample.text.substring(0, sample.startOffset) + inserted + sample.text.substring(sample.startOffset)
   }
