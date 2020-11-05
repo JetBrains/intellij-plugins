@@ -1,9 +1,22 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package training.learn.course
+package org.jetbrains.ruby.ift
 
 import org.jetbrains.plugins.ruby.ruby.lang.RubyLanguage
+import org.jetbrains.ruby.ift.lesson.assistance.RubyEditorCodingAssistanceLesson
+import org.jetbrains.ruby.ift.lesson.basic.RubySurroundAndUnwrapLesson
+import org.jetbrains.ruby.ift.lesson.completion.RubyBasicCompletionLesson
+import org.jetbrains.ruby.ift.lesson.completion.RubyCompletionWithTabLesson
+import org.jetbrains.ruby.ift.lesson.completion.RubyHippieCompletionLesson
+import org.jetbrains.ruby.ift.lesson.completion.RubyPostfixCompletionLesson
+import org.jetbrains.ruby.ift.lesson.navigation.RubyDeclarationAndUsagesLesson
+import org.jetbrains.ruby.ift.lesson.navigation.RubyFileStructureLesson
+import org.jetbrains.ruby.ift.lesson.navigation.RubyRecentFilesLesson
+import org.jetbrains.ruby.ift.lesson.navigation.RubySearchEverywhereLesson
+import org.jetbrains.ruby.ift.lesson.refactorings.RubyRefactorMenuLesson
+import org.jetbrains.ruby.ift.lesson.refactorings.RubyRenameLesson
 import training.learn.LearningModule
 import training.learn.LessonsBundle
+import training.learn.course.LearningCourseBase
 import training.learn.interfaces.LessonType
 import training.learn.lesson.general.*
 import training.learn.lesson.general.assistance.CodeFormatLesson
@@ -11,18 +24,6 @@ import training.learn.lesson.general.assistance.ParameterInfoLesson
 import training.learn.lesson.general.assistance.QuickPopupsLesson
 import training.learn.lesson.general.refactorings.ExtractMethodCocktailSortLesson
 import training.learn.lesson.general.refactorings.ExtractVariableFromBubbleLesson
-import training.learn.lesson.ruby.assistance.RubyEditorCodingAssistanceLesson
-import training.learn.lesson.ruby.basic.RubySurroundAndUnwrapLesson
-import training.learn.lesson.ruby.completion.RubyBasicCompletionLesson
-import training.learn.lesson.ruby.completion.RubyCompletionWithTabLesson
-import training.learn.lesson.ruby.completion.RubyHippieCompletionLesson
-import training.learn.lesson.ruby.completion.RubyPostfixCompletionLesson
-import training.learn.lesson.ruby.navigation.RubyDeclarationAndUsagesLesson
-import training.learn.lesson.ruby.navigation.RubyFileStructureLesson
-import training.learn.lesson.ruby.navigation.RubyRecentFilesLesson
-import training.learn.lesson.ruby.navigation.RubySearchEverywhereLesson
-import training.learn.lesson.ruby.refactorings.RubyRefactorMenuLesson
-import training.learn.lesson.ruby.refactorings.RubyRenameLesson
 
 class RubyLearningCourse : LearningCourseBase(RubyLanguage.INSTANCE.id) {
   override fun modules() = listOf(

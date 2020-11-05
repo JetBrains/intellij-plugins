@@ -1,14 +1,14 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package training.learn.lesson.ruby.completion
+package org.jetbrains.ruby.ift.lesson.completion
 
-import training.learn.LessonsBundle
+import org.jetbrains.ruby.ift.RubyLessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.parseLessonSample
 
 class RubyHippieCompletionLesson(module: Module)
-  : KLesson("Hippie Completion", LessonsBundle.message("ruby.hippie.completion.lesson.name"), module, "ruby") {
+  : KLesson("Hippie Completion", RubyLessonsBundle.message("ruby.hippie.completion.lesson.name"), module, "ruby") {
 
   private val sample = parseLessonSample("""class SomeExampleClass
   attr_reader :callbacks
@@ -27,17 +27,17 @@ end
       val step1 = calculateResult("fore_save")
       val step2 = calculateResult("fore_create")
       task("HippieCompletion") {
-        text(LessonsBundle.message("ruby.hippie.completion.invoke.hippie.completion", action(it)))
+        text(RubyLessonsBundle.message("ruby.hippie.completion.invoke.hippie.completion", action(it)))
         trigger(it) { editor.document.text == step1 }
         test { actions(it) }
       }
       task("HippieCompletion") {
-        text(LessonsBundle.message("ruby.hippie.completion.repeat.one.time", action(it)))
+        text(RubyLessonsBundle.message("ruby.hippie.completion.repeat.one.time", action(it)))
         trigger(it) { editor.document.text == step2 }
         test { actions(it) }
       }
       task("HippieBackwardCompletion") {
-        text(LessonsBundle.message("ruby.hippie.completion.return.previous", action(it)))
+        text(RubyLessonsBundle.message("ruby.hippie.completion.return.previous", action(it)))
         trigger(it) { editor.document.text == step1 }
         test { actions(it) }
       }
