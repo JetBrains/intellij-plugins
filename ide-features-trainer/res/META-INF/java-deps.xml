@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<idea-plugin>
-  <extensions defaultExtensionNs="training">
-    <ift.language.extension language="JAVA" implementationClass="training.lang.JavaLangSupport"/>
-    <ift.learning.course language="JAVA" implementationClass="training.learn.course.JavaLearningCourse"/>
-  </extensions>
-</idea-plugin>

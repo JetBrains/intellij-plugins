@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.lesson.general
 
-import training.lang.JavaLangSupport
 import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
@@ -20,7 +19,7 @@ class MoveLesson(module: Module, lang: String, private val sample: LessonSample)
       actionTask("MoveLineUp") {
         LessonsBundle.message("move.pull.up", action(it))
       }
-      if (lang == JavaLangSupport.lang) caret(9, 5)
+      if (lang == "JAVA") caret(9, 5)
       task("MoveStatementUp") {
         text(LessonsBundle.message("move.whole.method.up", action(it)))
         trigger(it, { editor.document.text }, { before, now ->
