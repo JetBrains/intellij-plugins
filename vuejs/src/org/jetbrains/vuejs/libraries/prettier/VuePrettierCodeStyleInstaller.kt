@@ -13,8 +13,7 @@ import org.jetbrains.annotations.NotNull
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.lang.html.psi.formatter.VueCodeStyleSettings
 
-class VuePrettierCodeStyleInstaller : PrettierCodeStyleInstaller {
-
+internal class VuePrettierCodeStyleInstaller : PrettierCodeStyleInstaller {
   override fun install(project: Project, config: PrettierConfig, settings: CodeStyleSettings) {
     settings.getCustomSettings(VueCodeStyleSettings::class.java).let {
       it.INDENT_CHILDREN_OF_TOP_LEVEL = getIndentChildrenOfTopLevelSequence(it)

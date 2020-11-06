@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight.attributes
 
 import com.intellij.codeInsight.completion.*
@@ -12,7 +12,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ProcessingContext
 import com.intellij.xml.XmlAttributeDescriptor
 import com.intellij.xml.util.HtmlUtil
-import icons.VuejsIcons
+import org.jetbrains.vuejs.VuejsIcons
 import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor.AttributePriority.*
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueDirectiveInfo

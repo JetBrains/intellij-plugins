@@ -1,4 +1,4 @@
-<idea-plugin>
+<idea-plugin package="org.jetbrains.vuejs.copyright">
   <extensions defaultExtensionNs="com.intellij.copyright">
     <updater filetype="Vue.js" implementationClass="com.maddyhome.idea.copyright.psi.UpdateXmlCopyrightsProvider"/>
   </extensions>

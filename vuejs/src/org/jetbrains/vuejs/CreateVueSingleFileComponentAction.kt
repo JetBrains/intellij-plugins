@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs
 
 import com.intellij.ide.actions.CreateFileFromTemplateAction
@@ -8,7 +8,6 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys.*
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
-import icons.VuejsIcons
 import org.jetbrains.annotations.Nls
 import org.jetbrains.vuejs.context.hasVueFiles
 import org.jetbrains.vuejs.context.isVueContext
