@@ -17,7 +17,7 @@
 package com.thoughtworks.gauge.properties;
 
 import com.google.common.collect.ImmutableSet;
-import com.intellij.codeInspection.unused.ImplicitPropertyUsageProvider;
+import com.intellij.lang.properties.codeInspection.unused.ImplicitPropertyUsageProvider;
 import com.intellij.lang.properties.psi.Property;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -27,8 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-final class GaugeImplicitPropertyUsageProvider extends ImplicitPropertyUsageProvider {
-
+final class GaugeImplicitPropertyUsageProvider implements ImplicitPropertyUsageProvider {
   private static final Set<String> GAUGE_DEFAULT_PROPERTIES = ImmutableSet.of(
     "gauge_reports_dir",
     "overwrite_reports",
@@ -50,7 +49,7 @@ final class GaugeImplicitPropertyUsageProvider extends ImplicitPropertyUsageProv
   );
 
   @Override
-  protected boolean isUsed(@NotNull Property property) {
+  public boolean isUsed(@NotNull Property property) {
     String propertyName = property.getName();
 
     if (!GAUGE_DEFAULT_PROPERTIES.contains(propertyName) && !GAUGE_JAVA_PROPERTIES.contains(propertyName)) {

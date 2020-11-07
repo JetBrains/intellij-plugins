@@ -82,7 +82,7 @@
     <html.embeddedContentSupport implementation="org.jetbrains.vuejs.lang.html.lexer.VueEmbeddedContentSupport"/>
     <html.embeddedContentSupport implementation="org.jetbrains.vuejs.libraries.i18n.VueI18nEmbeddedContentSupport"/>
     <gotoDeclarationHandler implementation="org.jetbrains.vuejs.editor.VueGotoDeclarationHandler"/>
-    <notificationGroup displayType="BALLOON" id="Vue" icon="VuejsIcons.Vue" isLogByDefault="true"
+    <notificationGroup displayType="BALLOON" id="Vue" icon="org.jetbrains.vuejs.VuejsIcons.Vue" isLogByDefault="true"
                        bundle="messages.VueBundle" key="vue.documentation.vue"/>
 
     <stubIndex implementation="org.jetbrains.vuejs.index.VueComponentsIndex"/>
