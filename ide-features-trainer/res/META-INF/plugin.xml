@@ -78,12 +78,6 @@
       <add-to-group group-id="Internal" anchor="last"/>
     </group>
 
-    <action id="learn.next.lesson" class="training.actions.NextNonPassedLessonAction">
-      <keyboard-shortcut first-keystroke="alt shift RIGHT" keymap="$default"/>
-      <keyboard-shortcut first-keystroke="control shift RIGHT" keymap="Mac OS X 10.5+" replace-all="true"/>
-      <keyboard-shortcut first-keystroke="control shift RIGHT" keymap="Mac OS X" replace-all="true"/>
-    </action>
-
     <action id="PreviousLessonAction" class="training.actions.PreviousLessonAction"/>
     <action id="NextLessonAction" class="training.actions.NextLessonAction"/>
     <action id="ResetLearningProgressAction" class="training.actions.ResetLearningProgressAction"/>
@@ -98,7 +92,7 @@
   <extensions defaultExtensionNs="com.intellij">
     <registryKey key="ide.features.trainer.new.ui"
                  description="Turn on it to look at new developing UI for IFT"
-                 defaultValue="FALSE"
+                 defaultValue="TRUE"
                  restartRequired="false"/>
     <registryKey key="ift.experimental.lessons"
                  description="Turn on it to preview incomplete lessons"
