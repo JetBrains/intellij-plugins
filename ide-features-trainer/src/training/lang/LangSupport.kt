@@ -20,11 +20,7 @@ interface LangSupport {
   val langCourseFeedback: String?
     get() = null
 
-  /** Callback should download and install demo project */
-  val installRemoteProject: ((projectDirectory: Path) -> Unit)?
-    get() = null
-
-  /** Relative path inside plugin resources. Used iff [installRemoteProject] is null*/
+  /** Relative path inside plugin resources */
   val projectResourcePath: String
     get() = "/learnProjects/${primaryLanguage.toLowerCase()}/$defaultProjectName"
 
@@ -35,6 +31,8 @@ interface LangSupport {
   companion object {
     const val EP_NAME = "training.ift.language.extension"
   }
+
+  fun installAndOpenLearningProject(projectPath: Path, projectToClose: Project?, postInitCallback: (learnProject: Project) -> Unit)
 
   /**
    * Implement that method to define SDK lookup depending on a given project.
