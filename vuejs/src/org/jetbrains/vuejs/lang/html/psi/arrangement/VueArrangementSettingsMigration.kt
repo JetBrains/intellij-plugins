@@ -19,6 +19,7 @@ class VueArrangementSettingsMigration : StartupActivity, StartupActivity.DumbAwa
       propertiesComponent.setValue(VUE_REARRANGER_SETTINGS_MIGRATION, true)
 
       WriteAction.runAndWait<Throwable> {
+        if (project.isDisposed) return@runAndWait
         val codeStyleSchemesModel = CodeStyleSchemesModel(project)
         var changed = false
         codeStyleSchemesModel.schemes.asSequence()
