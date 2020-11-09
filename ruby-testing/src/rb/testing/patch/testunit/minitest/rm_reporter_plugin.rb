@@ -96,7 +96,24 @@ else
       end
 
       def init
-        Minitest.my_drb_url = DRb.start_service(nil, self.already_run_tests).uri
+        Minitest.my_drb_url = DRb.start_service('druby://127.0.0.1:' + get_free_port.to_s, self.already_run_tests).uri
+      end
+
+      def get_free_port
+        count = 0
+        port = 9997
+        begin
+          count += 1
+          if count > 10
+            raise "Can't find free TCP port"
+          end
+          server = TCPServer.new('127.0.0.1', port)
+          server.close
+        rescue Errno::EADDRINUSE
+          port = rand(65000 - 1024) + 1024
+          retry
+        end
+        port
       end
 
       def end_execution
