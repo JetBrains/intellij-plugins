@@ -41,7 +41,10 @@ class DenoModuleReferenceContributor : JSBaseModuleReferenceContributor() {
     ) return emptyList()
 
     val place = configuration.place
-    var externalModuleName = VfsUtilCore.findRelativePath(place.containingFile.virtualFile, moduleFileOrDirectory, '/')
+    val contextFile = place.containingFile?.virtualFile
+    if (contextFile == null) return emptyList()
+    
+    var externalModuleName = VfsUtilCore.findRelativePath(contextFile, moduleFileOrDirectory, '/')
     if (externalModuleName == null) return emptyList()
     if (!externalModuleName.startsWith(".") && !externalModuleName.startsWith(File.separator)) {
       externalModuleName = "./$externalModuleName"
