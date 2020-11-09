@@ -4,7 +4,10 @@ package org.jetbrains.vuejs.lang.html.psi.arrangement
 import com.intellij.application.options.codeStyle.CodeStyleSchemesModel
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.lang.html.HTMLLanguage
+import com.intellij.openapi.application.Application
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.application.WriteThread
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 import com.intellij.xml.arrangement.HtmlRearranger
@@ -16,10 +19,9 @@ class VueArrangementSettingsMigration : StartupActivity, StartupActivity.DumbAwa
   override fun runActivity(project: Project) {
     val propertiesComponent = PropertiesComponent.getInstance(project)
     if (!propertiesComponent.isTrueValue(VUE_REARRANGER_SETTINGS_MIGRATION)) {
-      propertiesComponent.setValue(VUE_REARRANGER_SETTINGS_MIGRATION, true)
-
-      WriteAction.runAndWait<Throwable> {
-        if (project.isDisposed) return@runAndWait
+      ApplicationManager.getApplication().invokeLaterOnWriteThread {
+        if (project.isDisposed || propertiesComponent.isTrueValue(VUE_REARRANGER_SETTINGS_MIGRATION)) return@invokeLaterOnWriteThread
+        propertiesComponent.setValue(VUE_REARRANGER_SETTINGS_MIGRATION, true)
         val codeStyleSchemesModel = CodeStyleSchemesModel(project)
         var changed = false
         codeStyleSchemesModel.schemes.asSequence()
