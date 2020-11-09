@@ -2,7 +2,7 @@
   "name": "ng-cli",
   "version": "1.0.0",
   "dependencies": {
-    "@angular/cli": "9.0.0-next.19",
+    "@angular/cli": "11.0.0-rc.2",
     "@types/node": "~12.12.5",
     "typescript": "~3.6.4"
   },
