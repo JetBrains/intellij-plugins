@@ -56,59 +56,53 @@ object ProjectUtils {
         else {
           dest = canonicalPlace
         }
-
-        val installRemoteProject = langSupport.installRemoteProject
-        if (installRemoteProject != null) {
-          val ok = invokeAndWaitIfNeeded {
-            Messages.showOkCancelDialog(projectToClose,
-                                        LearnBundle.message("learn.project.initializing.download.message"),
-                                        LearnBundle.message("learn.project.initializing.download.title"),
-                                        LearnBundle.message("learn.project.initializing.download.accept"),
-                                        Messages.getCancelButton(),
-                                        null) == Messages.OK
-          }
-          if (!ok) return@runBackgroundableTask
-          installRemoteProject(dest)
-        }
-        else {
-          val inputUrl: URL = langSupport.javaClass.classLoader.getResource(langSupport.projectResourcePath)
-          ?: throw IllegalArgumentException("No project ${langSupport.projectResourcePath} in resources for ${langSupport.primaryLanguage} IDE learning course")
-
-          if (!FileUtils.copyResourcesRecursively(inputUrl, dest.toFile())) {
-            val directories = invokeAndWaitIfNeeded {
-              val descriptor = FileChooserDescriptor(false, true, false, false, false, false)
-                .withTitle(LearnBundle.message("learn.project.initializing.choose.place"))
-              val dialog = FileChooserDialogImpl(descriptor, null)
-              val result = CompletableFuture<List<VirtualFile>>()
-              dialog.choose(VfsUtil.getUserHomeDir(), Consumer { result.complete(it) })
-              result
-            }.get()
-            if (directories.isEmpty())
-              return@runBackgroundableTask
-            val chosen = directories.single()
-            val canonicalPath = chosen.canonicalPath ?: error("No canonical path for $chosen")
-            dest = File(canonicalPath, langSupport.defaultProjectName).toPath()
-            if (!FileUtils.copyResourcesRecursively(inputUrl, dest.toFile())) {
-              invokeLater {
-                Messages.showInfoMessage(LearnBundle.message("learn.project.initializing.cannot.create.message"),
-                                         LearnBundle.message("learn.project.initializing.cannot.create.title"))
-              }
-              return@runBackgroundableTask
-            }
-          }
-        }
-
-        LangManager.getInstance().state.languageToProjectMap[langSupport.primaryLanguage] = dest.toAbsolutePath().toString()
-        PrintWriter(versionFile(dest).toFile(), "UTF-8").use {
-          it.println(featureTrainerVersion)
+        langSupport.installAndOpenLearningProject(dest, projectToClose, postInitCallback)
+      }
+      else {
+        val projectDirectoryVirtualFile = LocalFileSystem.getInstance().refreshAndFindFileByNioFile(dest)
+                                          ?: error("Copied Learn project folder is null")
+        invokeLater {
+          val project = ProjectUtil.openOrImport(projectDirectoryVirtualFile.toNioPath(), OpenProjectTask(projectToClose = projectToClose))
+                        ?: error("Could not create project for ${langSupport.primaryLanguage}")
+          postInitCallback(project)
         }
       }
-      val toSelect = LocalFileSystem.getInstance().refreshAndFindFileByNioFile(dest) ?: throw Exception("Copied Learn project folder is null")
-      invokeLater {
-        val openOrImport = ProjectUtil.openOrImport(toSelect.toNioPath(), OpenProjectTask(projectToClose = projectToClose))
-                           ?: error("Could not create project for " + langSupport.primaryLanguage)
-        postInitCallback(openOrImport)
+    }
+  }
+
+  fun copyLearningProjectFiles(newProjectDirectory: Path, langSupport: LangSupport) {
+    var targetDirectory = newProjectDirectory
+    val inputUrl: URL = javaClass.classLoader.getResource(langSupport.projectResourcePath)
+                        ?: throw IllegalArgumentException(
+                          "No project ${langSupport.projectResourcePath} in resources for ${langSupport.primaryLanguage} IDE learning course")
+    if (!FileUtils.copyResourcesRecursively(inputUrl, targetDirectory.toFile())) {
+      val directories = invokeAndWaitIfNeeded {
+        val descriptor = FileChooserDescriptor(false, true, false, false, false, false)
+          .withTitle(LearnBundle.message("learn.project.initializing.choose.place"))
+        val dialog = FileChooserDialogImpl(descriptor, null)
+        val result = CompletableFuture<List<VirtualFile>>()
+        dialog.choose(VfsUtil.getUserHomeDir(), Consumer { result.complete(it) })
+        result
+      }.get()
+      if (directories.isEmpty())
+        error("No directory selected for the project")
+      val chosen = directories.single()
+      val canonicalPath = chosen.canonicalPath ?: error("No canonical path for $chosen")
+      targetDirectory = File(canonicalPath, langSupport.defaultProjectName).toPath()
+      if (!FileUtils.copyResourcesRecursively(inputUrl, targetDirectory.toFile())) {
+        invokeLater {
+          Messages.showInfoMessage(LearnBundle.message("learn.project.initializing.cannot.create.message"),
+                                   LearnBundle.message("learn.project.initializing.cannot.create.title"))
+        }
+        error("Cannot create learning demo project. See LOG files for details.")
       }
+    }
+    LangManager.getInstance().state.languageToProjectMap[langSupport.primaryLanguage] = targetDirectory.toAbsolutePath().toString()
+  }
+
+  fun createVersionFile(newProjectDirectory: Path) {
+    PrintWriter(newProjectDirectory.resolve("feature-trainer-version.txt").toFile(), "UTF-8").use {
+      it.println(featureTrainerVersion)
     }
   }
 
