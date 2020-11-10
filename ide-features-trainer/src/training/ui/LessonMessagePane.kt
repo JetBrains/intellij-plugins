@@ -183,7 +183,7 @@ class LessonMessagePane : JTextPane() {
     clearRestoreMessages()
 
     if (useNewLearningUi) {
-      val move = activeMessages.subList(number, activeMessages.size - number)
+      val move = activeMessages.subList(number, activeMessages.size)
       move.forEach {
         setInactiveStyle(it)
         it.state = MessageState.INACTIVE
