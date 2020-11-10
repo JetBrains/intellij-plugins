@@ -31,7 +31,7 @@ import java.util.stream.Stream;
 
 public abstract class PlatformioActionBase extends DumbAwareAction {
 
-  private static final EventLogGroup EVENT_LOG_GROUP = new EventLogGroup("cidr.embedded.platformio", 1);
+  public static final EventLogGroup EVENT_LOG_GROUP = new EventLogGroup("cidr.embedded.platformio", 1);
   private static final EventId1<String> COMMAND_EVENT_ID = EVENT_LOG_GROUP.registerEvent(
     "command", EventFields.String("name", FUS_COMMAND.valuesList())
   );
