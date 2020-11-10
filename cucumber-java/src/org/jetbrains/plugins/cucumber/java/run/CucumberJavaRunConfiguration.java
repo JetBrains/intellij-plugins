@@ -83,9 +83,8 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
         }
 
         params.setMainClass(getMainClassName());
-        for (RunConfigurationExtension ext : RunConfigurationExtension.EP_NAME.getExtensionList()) {
-          ext.updateJavaParameters(CucumberJavaRunConfiguration.this, params, getRunnerSettings(), executor);
-        }
+        JavaRunConfigurationExtensionManager.getInstance()
+          .updateJavaParameters(CucumberJavaRunConfiguration.this, params, getRunnerSettings(), executor);
 
         final String glueValue = getGlue();
         if (glueValue != null && !StringUtil.isEmpty(glueValue)) {
