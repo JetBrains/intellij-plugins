@@ -10,6 +10,7 @@ import training.learn.lesson.javascript.textBeforeOffset
 import training.learn.lesson.javascript.textOnLine
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
+import training.learn.lesson.kimpl.LessonUtil
 import training.learn.lesson.kimpl.parseLessonSample
 
 class CodeEditingLesson(module: Module)
@@ -85,7 +86,7 @@ class CodeEditingLesson(module: Module)
                                   action("CommentByLineComment")))
           trigger(it)
         }
-        text(LessonsBundle.message("js.editor.code.editing.next", action("learn.next.lesson")))
+        text(LessonsBundle.message("js.editor.code.editing.next", LessonUtil.rawEnter()))
       }
     }
   override val existedFile = "index.html"

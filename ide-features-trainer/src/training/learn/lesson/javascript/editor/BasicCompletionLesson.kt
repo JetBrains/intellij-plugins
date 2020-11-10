@@ -8,6 +8,7 @@ import training.learn.lesson.javascript.setLanguageLevel
 import training.learn.lesson.javascript.textBeforeCaret
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
+import training.learn.lesson.kimpl.LessonUtil
 import training.learn.lesson.kimpl.parseLessonSample
 
 class BasicCompletionLesson(module: Module)
@@ -75,7 +76,7 @@ class BasicCompletionLesson(module: Module)
             textBeforeCaret("pickAnimal(favoriteAnimals")
           }
         }
-        text(LessonsBundle.message("js.editor.completion.next", action("learn.next.lesson")))
+        text(LessonsBundle.message("js.editor.completion.next", LessonUtil.rawEnter()))
       }
     }
   override val existedFile = "basicCompletion.js"

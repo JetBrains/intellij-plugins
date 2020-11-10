@@ -13,6 +13,7 @@ import training.learn.lesson.javascript.lineContainsBreakpoint
 import training.learn.lesson.javascript.setLanguageLevel
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
+import training.learn.lesson.kimpl.LessonUtil
 
 class DebuggingFirstPartLesson(module: Module)
   : KLesson("Debugging Code. Part I", LessonsBundle.message("js.debugger.part.1.title"), module, JavaScriptLangSupport.lang) {
@@ -57,7 +58,7 @@ class DebuggingFirstPartLesson(module: Module)
           }
         }
         text(LessonsBundle.message("js.debugger.part.1.next", strong(JSDebuggerBundle.message("js.scripts.tab.title")),
-                                   action("learn.next.lesson")))
+                                   LessonUtil.rawEnter()))
       }
     }
   override val existedFile = "debugging.js"
