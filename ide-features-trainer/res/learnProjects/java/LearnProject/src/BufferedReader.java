@@ -1,5 +1,3 @@
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import java.io.InputStream;
 import java.util.List;
 
@@ -21,27 +19,27 @@ class BufferedReader {
    * @return one byte from input stream
    */
   public byte read() {
-    throw new NotImplementedException();
+    throw new IllegalStateException("Not implemented yet");
   }
 
   /**
    * @return n bytes from input stream
    */
   public byte[] read(int n) {
-    throw new NotImplementedException();
+    throw new IllegalStateException("Not implemented yet");
   }
 
   /**
    * @return one line from input stream as String
    */
   public String readLine() {
-    throw new NotImplementedException();
+    throw new IllegalStateException("Not implemented yet");
   }
 
   /**
    * @return all lines from input stream as List of Strings
    */
   public List<String> lines() {
-    throw new NotImplementedException();
+    throw new IllegalStateException("Not implemented yet");
   }
 }
