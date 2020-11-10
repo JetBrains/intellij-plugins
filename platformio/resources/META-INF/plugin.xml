@@ -66,6 +66,7 @@
                              bundle="messages.ClionEmbeddedPlatformioBundle"
                              key="configurable.ClionEmbeddedPlatformioBundle.display.name"
                              groupId="language"/>
+    <statistics.counterUsagesCollector implementationClass="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioUsagesCollector"/>
   </extensions>
 
   <actions>
