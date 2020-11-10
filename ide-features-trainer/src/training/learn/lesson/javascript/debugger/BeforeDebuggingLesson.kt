@@ -10,10 +10,7 @@ import training.lang.JavaScriptLangSupport
 import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.javascript.setLanguageLevel
-import training.learn.lesson.kimpl.KLesson
-import training.learn.lesson.kimpl.LessonContext
-import training.learn.lesson.kimpl.dropMnemonic
-import training.learn.lesson.kimpl.parseLessonSample
+import training.learn.lesson.kimpl.*
 import javax.swing.tree.DefaultMutableTreeNode
 
 class BeforeDebuggingLesson(module: Module)
@@ -72,7 +69,7 @@ class BeforeDebuggingLesson(module: Module)
             focusOwner is EditorComponentImpl
           }
         }
-        text(LessonsBundle.message("js.debugger.before.next", action("learn.next.lesson")))
+        text(LessonsBundle.message("js.debugger.before.next", LessonUtil.rawEnter()))
 
       }
     }

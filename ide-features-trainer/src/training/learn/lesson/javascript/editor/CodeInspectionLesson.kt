@@ -11,6 +11,7 @@ import training.learn.lesson.javascript.textAtCaretEqualsTo
 import training.learn.lesson.javascript.textOnLine
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
+import training.learn.lesson.kimpl.LessonUtil
 import training.learn.lesson.kimpl.parseLessonSample
 
 class CodeInspectionLesson(module: Module)
@@ -79,7 +80,7 @@ class CodeInspectionLesson(module: Module)
             textOnLine(2, "books.forEach(book => {")
           }
         }
-        text(LessonsBundle.message("js.editor.code.inspection.next", action("learn.next.lesson")))
+        text(LessonsBundle.message("js.editor.code.inspection.next", LessonUtil.rawEnter()))
       }
     }
   override val existedFile = "codeInspection.js"

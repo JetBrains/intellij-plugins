@@ -65,6 +65,6 @@ class Completion: UIViewController {
       text(LessonsBundle.message("swift.editor.completion.tab.method", action("CodeCompletion"), action("EditorChooseLookupItemReplace"),
                                  code("animate(withDuration:animations:completion:)"), code("animate(withDuration:animations:)")))
     }
-    text(LessonsBundle.message("swift.editor.completion.go.next", action("learn.next.lesson")))
+    text(LessonsBundle.message("swift.editor.completion.go.next", LessonUtil.rawEnter()))
   }
 }

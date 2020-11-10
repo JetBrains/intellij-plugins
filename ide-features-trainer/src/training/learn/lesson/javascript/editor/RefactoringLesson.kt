@@ -11,10 +11,7 @@ import training.learn.interfaces.Module
 import training.learn.lesson.javascript.setLanguageLevel
 import training.learn.lesson.javascript.textAtCaretEqualsTo
 import training.learn.lesson.javascript.textOnLine
-import training.learn.lesson.kimpl.KLesson
-import training.learn.lesson.kimpl.LessonContext
-import training.learn.lesson.kimpl.dropMnemonic
-import training.learn.lesson.kimpl.parseLessonSample
+import training.learn.lesson.kimpl.*
 
 class RefactoringLesson(module: Module)
   : KLesson("Refactorings in a Nutshell", LessonsBundle.message("js.editor.refactorings.title"), module, JavaScriptLangSupport.lang) {
@@ -100,7 +97,7 @@ class RefactoringLesson(module: Module)
           LessonsBundle.message("js.editor.refactorings.next",
                                 "https://resources.jetbrains.com/storage/products/webstorm/docs/WebStorm_ReferenceCard.pdf",
                                 strong(RefactoringBundle.message("refactor.this.title")),
-                                action("learn.next.lesson")))
+                                LessonUtil.rawEnter()))
       }
     }
   override val existedFile = "refactoring.js"
