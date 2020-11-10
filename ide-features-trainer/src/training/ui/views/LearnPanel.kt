@@ -15,7 +15,6 @@ import com.intellij.util.ui.UIUtil
 import icons.FeaturesTrainerIcons
 import org.intellij.lang.annotations.Language
 import org.jetbrains.annotations.Nls
-import training.keymap.KeymapUtil
 import training.learn.CourseManager
 import training.learn.LearnBundle
 import training.learn.interfaces.Lesson
@@ -355,8 +354,7 @@ class LearnPanel(private val learnToolWindow: LearnToolWindow) : JPanel() {
   }
 
   @NlsSafe
-  private fun getNextLessonKeyStrokeText() =
-    KeymapUtil.getKeyStrokeText(KeymapUtil.getShortcutByActionId("learn.next.lesson"))
+  private fun getNextLessonKeyStrokeText() = "Enter"
 
   fun hideNextButton() {
     nextButton.isVisible = false

@@ -144,7 +144,7 @@ fun LessonContext.firstLessonCompletedMessage() {
     text(LessonsBundle.message("goto.action.propose.to.go.next.new.ui", LessonUtil.rawEnter()))
   }
   else {
-    text(LessonsBundle.message("goto.action.propose.to.go.next", action("learn.next.lesson")))
+    text(LessonsBundle.message("goto.action.propose.to.go.next"))
   }
 }
 
