@@ -72,7 +72,7 @@ object ProjectUtils {
 
   fun copyLearningProjectFiles(newProjectDirectory: Path, langSupport: LangSupport) {
     var targetDirectory = newProjectDirectory
-    val inputUrl: URL = javaClass.classLoader.getResource(langSupport.projectResourcePath)
+    val inputUrl: URL = langSupport.javaClass.classLoader.getResource(langSupport.projectResourcePath)
                         ?: throw IllegalArgumentException(
                           "No project ${langSupport.projectResourcePath} in resources for ${langSupport.primaryLanguage} IDE learning course")
     if (!FileUtils.copyResourcesRecursively(inputUrl, targetDirectory.toFile())) {
