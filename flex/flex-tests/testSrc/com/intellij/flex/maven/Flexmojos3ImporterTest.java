@@ -773,7 +773,7 @@ public class Flexmojos3ImporterTest extends FlexmojosImporterTestBase {
           }
         }
 
-        embedder.customizeForStrictResolve(workspaceMap, NULL_MAVEN_CONSOLE, EMPTY_MAVEN_PROCESS);
+        embedder.customizeForStrictResolve(workspaceMap, NULL_MAVEN_CONSOLE, getMavenProgressIndicator());
         MavenServerExecutionResult result =
           embedder.execute(app, Collections.emptyList(), Collections.emptyList(), Collections.singletonList("compile"));
         assertEmpty(result.problems);
@@ -794,7 +794,7 @@ public class Flexmojos3ImporterTest extends FlexmojosImporterTestBase {
     MavenProject appProject = myProjectsTree.findProject(new MavenId(TEST_GROUP_ID, "ttApp", TEST_VERSION));
     assertNotNull(appProject);
     myProjectResolver.executeWithEmbedder(appProject, myProjectsManager.getEmbeddersManager(), MavenEmbeddersManager.FOR_POST_PROCESSING,
-                                          NULL_MAVEN_CONSOLE, EMPTY_MAVEN_PROCESS, task);
+                                          NULL_MAVEN_CONSOLE, getMavenProgressIndicator(), task);
 
     List<MavenArtifact> appSubProjectDeps = appProject.getDependencies();
     assertTransitiveDeps(TEST_GROUP_ID, TEST_VERSION, appSubProjectDeps);
