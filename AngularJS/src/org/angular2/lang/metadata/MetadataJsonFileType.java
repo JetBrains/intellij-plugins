@@ -37,11 +37,6 @@ public abstract class MetadataJsonFileType implements FileType, FileTypeIdentifi
     return true;
   }
 
-  @Override
-  public @Nullable String getCharset(@NotNull VirtualFile file, final byte @NotNull [] content) {
-    return null;
-  }
-
   public abstract IStubFileElementType getFileElementType();
 
   protected abstract void createRootStub(MetadataFileStubImpl result, JsonValue value);

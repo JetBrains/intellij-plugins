@@ -46,9 +46,4 @@ public class SwfFileType implements FileType {
   public boolean isReadOnly() {
     return true;
   }
-
-  @Override
-  public String getCharset(@NotNull final VirtualFile file, final byte @NotNull [] content) {
-    return null;
-  }
 }

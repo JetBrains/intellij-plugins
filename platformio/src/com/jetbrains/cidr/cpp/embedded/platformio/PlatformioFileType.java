@@ -50,12 +50,6 @@ public class PlatformioFileType extends LanguageFileType {
     return language == null ? PlainTextLanguage.INSTANCE : language;
   }
 
-  @Override
-  @Nullable
-  public String getCharset(@NotNull VirtualFile virtualFile, byte @NotNull [] bytes) {
-    return null;
-  }
-
   @Contract("null->false")
   public static boolean isFileOfType(@Nullable VirtualFile file) {
     return file != null && FileTypeManager.getInstance().isFileOfType(file, INSTANCE);
