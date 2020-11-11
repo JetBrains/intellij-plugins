@@ -12,6 +12,7 @@ import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.progress.runBackgroundableTask
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -97,7 +98,21 @@ object ProjectUtils {
         error("Cannot create learning demo project. See LOG files for details.")
       }
     }
+    //copy learn project icon to .idea
+    copyLearnProjectIcon(targetDirectory.toFile())
     LangManager.getInstance().state.languageToProjectMap[langSupport.primaryLanguage] = targetDirectory.toAbsolutePath().toString()
+  }
+
+  private fun copyLearnProjectIcon(projectDir: File) {
+    val iconPath = "/img/learnProject-72.png"
+    val iconUrl = ProjectUtils::class.java.classLoader.getResource(iconPath) ?:
+                  throw IllegalArgumentException(
+      "Unable to locate icon for learn project by path: $iconPath")
+
+    val ideaDir = File(projectDir, ".idea")
+    FileUtil.createDirectory(ideaDir)
+    val iconPng = File(ideaDir, "icon.png")
+    FileUtil.copy(File(iconUrl.path), iconPng)
   }
 
   fun createVersionFile(newProjectDirectory: Path) {
