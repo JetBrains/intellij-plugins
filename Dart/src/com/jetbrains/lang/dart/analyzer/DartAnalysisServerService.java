@@ -1984,7 +1984,6 @@ public final class DartAnalysisServerService implements Disposable {
 
       @NonNls String serverArgsRaw = "";
       serverArgsRaw += " --useAnalysisHighlight2";
-      //serverArgsRaw += " --file-read-mode=normalize-eol-always";
       try {
         serverArgsRaw += " " + Registry.stringValue("dart.server.additional.arguments");
       }
