@@ -1,18 +1,18 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package training.learn.lesson.javascript.editor
+package com.intellij.javascript.ift.lesson.editor
 
-import training.lang.JavaScriptLangSupport
-import training.learn.LessonsBundle
+import com.intellij.javascript.ift.JavaScriptLangSupport
+import com.intellij.javascript.ift.JsLessonsBundle
+import com.intellij.javascript.ift.lesson.setLanguageLevel
 import training.learn.interfaces.Module
-import training.learn.lesson.javascript.setLanguageLevel
-import training.learn.lesson.javascript.textBeforeCaret
+import training.learn.js.textBeforeCaret
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonUtil
 import training.learn.lesson.kimpl.parseLessonSample
 
 class BasicCompletionLesson(module: Module)
-  : KLesson("The Nuts and Bolts of Code Completion", LessonsBundle.message("js.editor.completion.title"), module,
+  : KLesson("The Nuts and Bolts of Code Completion", JsLessonsBundle.message("js.editor.completion.title"), module,
             JavaScriptLangSupport.lang) {
 
   val sample = parseLessonSample("""
@@ -35,7 +35,7 @@ class BasicCompletionLesson(module: Module)
 
         caret(136)
         task("EditorChooseLookupItem") {
-          text(LessonsBundle.message("js.editor.completion.choose.lookup", strong("Ma"), action("EditorChooseLookupItem"),
+          text(JsLessonsBundle.message("js.editor.completion.choose.lookup", strong("Ma"), action("EditorChooseLookupItem"),
                                      code("Math")))
           trigger(it) {
             textBeforeCaret("Math")
@@ -43,7 +43,7 @@ class BasicCompletionLesson(module: Module)
         }
 
         task("EditorChooseLookupItem") {
-          text(LessonsBundle.message("js.editor.completion.choose.method",
+          text(JsLessonsBundle.message("js.editor.completion.choose.method",
                                      action("EditorEnter"), action("EditorTab"), code("."), code("Math"), strong("f"), code("floor")))
           trigger(it) {
             textBeforeCaret("Math.floor(")
@@ -52,7 +52,7 @@ class BasicCompletionLesson(module: Module)
 
         task("QuickJavaDoc") {
           text(
-            LessonsBundle.message("js.editor.completion.parameter.info",
+            JsLessonsBundle.message("js.editor.completion.parameter.info",
                                   action("ParameterInfo"), code("()"), action(it)))
           stateCheck {
             val line = editor.caretModel.logicalPosition.line
@@ -62,7 +62,7 @@ class BasicCompletionLesson(module: Module)
           trigger(it)
         }
         task {
-          text(LessonsBundle.message("js.editor.completion.add.parameter",
+          text(JsLessonsBundle.message("js.editor.completion.add.parameter",
                                      code("rnd"), code("()")))
           stateCheck {
             textBeforeCaret("Math.floor(rnd")
@@ -70,13 +70,13 @@ class BasicCompletionLesson(module: Module)
         }
         task("EditorChooseLookupItem") {
           text(
-            LessonsBundle.message("js.editor.completion.console.log.argument",
+            JsLessonsBundle.message("js.editor.completion.console.log.argument",
                                   code("console.log"), code("()"), code("pickAnimal(favoriteAnimals)")))
           trigger(it) {
             textBeforeCaret("pickAnimal(favoriteAnimals")
           }
         }
-        text(LessonsBundle.message("js.editor.completion.next", LessonUtil.rawEnter()))
+        text(JsLessonsBundle.message("js.editor.completion.next", LessonUtil.rawEnter()))
       }
     }
   override val existedFile = "basicCompletion.js"

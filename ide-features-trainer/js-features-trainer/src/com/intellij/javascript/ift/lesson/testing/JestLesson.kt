@@ -1,5 +1,5 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package training.learn.lesson.javascript.testing
+package com.intellij.javascript.ift.lesson.testing
 
 import com.intellij.execution.ExecutionBundle
 import com.intellij.execution.RunManager
@@ -7,6 +7,9 @@ import com.intellij.execution.testframework.TestRunnerBundle
 import com.intellij.execution.testframework.sm.SmRunnerBundle
 import com.intellij.icons.AllIcons
 import com.intellij.idea.ActionsBundle
+import com.intellij.javascript.ift.JavaScriptLangSupport
+import com.intellij.javascript.ift.JsLessonsBundle
+import com.intellij.javascript.ift.lesson.setLanguageLevel
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.editor.impl.EditorComponentImpl
@@ -16,12 +19,9 @@ import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.UIBundle
 import com.intellij.ui.treeStructure.Tree
-import training.lang.JavaScriptLangSupport
-import training.learn.LessonsBundle
 import training.learn.interfaces.Module
-import training.learn.lesson.javascript.setLanguageLevel
-import training.learn.lesson.javascript.textAtCaretEqualsTo
-import training.learn.lesson.javascript.textOnLine
+import training.learn.js.textAtCaretEqualsTo
+import training.learn.js.textOnLine
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonUtil.productName
@@ -32,7 +32,7 @@ import javax.swing.SwingConstants
 import javax.swing.tree.DefaultMutableTreeNode
 
 class JestLesson(module: Module)
-  : KLesson("Fundamentals of Testing in WebStorm", LessonsBundle.message("js.testing.jest.title", productName), module,
+  : KLesson("Fundamentals of Testing in WebStorm", JsLessonsBundle.message("js.testing.jest.title", productName), module,
             JavaScriptLangSupport.lang){
   override val lessonContent: LessonContext.() -> Unit
     get() {
@@ -63,7 +63,7 @@ class JestLesson(module: Module)
         }
 
         task("editRunConfigurations") {
-          text(LessonsBundle.message("js.testing.jest.prepare",
+          text(JsLessonsBundle.message("js.testing.jest.prepare",
                                      "https://jestjs.io/en/",
                                      "https://github.com/facebook/jest/tree/master/examples/getting-started",
                                      "https://jestjs.io/docs/en/getting-started",
@@ -76,14 +76,14 @@ class JestLesson(module: Module)
         }
 
         task("Run") {
-          text(LessonsBundle.message("js.testing.jest.run", strong(TestRunnerBundle.message("all.tests.scope.presentable.text")),
+          text(JsLessonsBundle.message("js.testing.jest.run", strong(TestRunnerBundle.message("all.tests.scope.presentable.text")),
                                      ExecutionBundle.message(
                                        "run.configurable.display.name"), icon(AllIcons.RunConfigurations.TestState.Run)))
           trigger(it)
         }
 
         task {
-          text(LessonsBundle.message("js.testing.jest.navigate",
+          text(JsLessonsBundle.message("js.testing.jest.navigate",
                                      strong(UIBundle.message("tool.window.name.run")),
                                      icon(AllIcons.RunConfigurations.TestState.Run),
                                      icon(AllIcons.RunConfigurations.RerunFailedTests),
@@ -98,14 +98,14 @@ class JestLesson(module: Module)
         }
 
         task {
-          text(LessonsBundle.message("js.testing.jest.double.click", strong("adds 1 + 2 to equal 3")))
+          text(JsLessonsBundle.message("js.testing.jest.double.click", strong("adds 1 + 2 to equal 3")))
           stateCheck {
             textAtCaretEqualsTo("toBe") && focusOwner is EditorComponentImpl
           }
         }
 
         task {
-          text(LessonsBundle.message("js.testing.jest.fix.test", strong(SmRunnerBundle.message(
+          text(JsLessonsBundle.message("js.testing.jest.fix.test", strong(SmRunnerBundle.message(
             "sm.test.runner.ui.tests.tree.presentation.labels.test.results")), strong(".toBe"), strong(".toBe"), strong("4"), strong("3")))
           stateCheck {
             textOnLine(5, "3")
@@ -113,7 +113,7 @@ class JestLesson(module: Module)
         }
 
         task {
-          text(LessonsBundle.message("js.testing.jest.re.run.test", icon(AllIcons.RunConfigurations.TestState.Red2), strong(
+          text(JsLessonsBundle.message("js.testing.jest.re.run.test", icon(AllIcons.RunConfigurations.TestState.Red2), strong(
             "Run adds 1 + 2 to equal 3")))
           stateCheck {
             RunManager.getInstance(project).findConfigurationByName("adds 1 + 2 to equal 3") != null
@@ -121,16 +121,16 @@ class JestLesson(module: Module)
         }
 
         task("Coverage") {
-          text(LessonsBundle.message("js.testing.jest.success.run.coverage", icon(AllIcons.General.RunWithCoverage)))
+          text(JsLessonsBundle.message("js.testing.jest.success.run.coverage", icon(AllIcons.General.RunWithCoverage)))
           trigger(it)
         }
 
         task("HideActiveWindow") {
-          text(LessonsBundle.message("js.testing.jest.coverage.result", shortcut(KeymapUtil.getShortcutText("HideActiveWindow"))))
+          text(JsLessonsBundle.message("js.testing.jest.coverage.result", shortcut(KeymapUtil.getShortcutText("HideActiveWindow"))))
           trigger(it)
         }
 
-        text(LessonsBundle.message("js.testing.jest.end",
+        text(JsLessonsBundle.message("js.testing.jest.end",
                                    "https://blog.jetbrains.com/webstorm/2018/10/testing-with-jest-in-webstorm/",
                                    "https://www.jetbrains.com/help/webstorm/unit-testing-javascript.html"))
       }
