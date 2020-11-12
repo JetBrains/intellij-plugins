@@ -1983,6 +1983,8 @@ public final class DartAnalysisServerService implements Disposable {
       }
 
       @NonNls String serverArgsRaw = "";
+      // Note that as of Dart 2.12.0 the '--useAnalysisHighlight2' flag is ignored (and is the
+      // default highlighting mode). We still want to pass it in for earlier SDKs.
       serverArgsRaw += " --useAnalysisHighlight2";
       try {
         serverArgsRaw += " " + Registry.stringValue("dart.server.additional.arguments");
