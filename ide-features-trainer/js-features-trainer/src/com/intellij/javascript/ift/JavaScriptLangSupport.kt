@@ -1,9 +1,9 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package training.lang
+package com.intellij.javascript.ift
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
-import training.learn.LessonsBundle
+import training.lang.AbstractLangSupport
 
 class JavaScriptLangSupport : AbstractLangSupport() {
 
@@ -19,7 +19,7 @@ class JavaScriptLangSupport : AbstractLangSupport() {
 
   override val defaultProductName: String = "WebStorm"
 
-  override val langCourseFeedback: String = LessonsBundle.message("js.module.feedback")
+  override val langCourseFeedback: String = JsLessonsBundle.message("js.module.feedback")
   
   override fun applyToProjectAfterConfigure(): (Project) -> Unit = {
   }

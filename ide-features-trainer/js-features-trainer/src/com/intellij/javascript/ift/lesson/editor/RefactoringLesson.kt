@@ -1,20 +1,20 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package training.learn.lesson.javascript.editor
+package com.intellij.javascript.ift.lesson.editor
 
 import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.idea.ActionsBundle
+import com.intellij.javascript.ift.JavaScriptLangSupport
+import com.intellij.javascript.ift.JsLessonsBundle
+import com.intellij.javascript.ift.lesson.setLanguageLevel
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.ui.components.JBList
-import training.lang.JavaScriptLangSupport
-import training.learn.LessonsBundle
 import training.learn.interfaces.Module
-import training.learn.lesson.javascript.setLanguageLevel
-import training.learn.lesson.javascript.textAtCaretEqualsTo
-import training.learn.lesson.javascript.textOnLine
+import training.learn.js.textAtCaretEqualsTo
+import training.learn.js.textOnLine
 import training.learn.lesson.kimpl.*
 
 class RefactoringLesson(module: Module)
-  : KLesson("Refactorings in a Nutshell", LessonsBundle.message("js.editor.refactorings.title"), module, JavaScriptLangSupport.lang) {
+  : KLesson("Refactorings in a Nutshell", JsLessonsBundle.message("js.editor.refactorings.title"), module, JavaScriptLangSupport.lang) {
 
   val sample = parseLessonSample(""" 
         function listBookAuthors(<caret>books) {
@@ -46,7 +46,7 @@ class RefactoringLesson(module: Module)
         task("Refactorings.QuickListPopupAction") {
           val quickListPopup = ActionsBundle.message("group.RefactoringMenu.text").dropMnemonic() + " > " +
                                ActionsBundle.message("action.Refactorings.QuickListPopupAction.text")
-          text(LessonsBundle.message("js.editor.refactorings.this",
+          text(JsLessonsBundle.message("js.editor.refactorings.this",
                                      "https://www.jetbrains.com/help/webstorm/refactoring-source-code.html#ws_supported_refactorings",
                                      code("books"), action(it), strong(quickListPopup)))
           stateCheck {
@@ -56,7 +56,7 @@ class RefactoringLesson(module: Module)
         }
 
         task("RenameElement") {
-          text(LessonsBundle.message("js.editor.refactorings.rename", strong(RefactoringBundle.message("refactor.this.title")), strong(ActionsBundle.message("action.RenameAction.text"))))
+          text(JsLessonsBundle.message("js.editor.refactorings.rename", strong(RefactoringBundle.message("refactor.this.title")), strong(ActionsBundle.message("action.RenameAction.text"))))
           trigger(it) {
             textAtCaretEqualsTo("books")
           }
@@ -64,14 +64,14 @@ class RefactoringLesson(module: Module)
 
         task {
           text(
-            LessonsBundle.message("js.editor.refactorings.rename.apply", code("books"), code("listOfBooks"), action("EditorEnter")))
+            JsLessonsBundle.message("js.editor.refactorings.rename.apply", code("books"), code("listOfBooks"), action("EditorEnter")))
           stateCheck {
             textOnLine(0, "function listBookAuthors(listOfBooks) {") &&
             TemplateManager.getInstance(project).getActiveTemplate(editor) == null
           }
         }
         task("IntroduceVariable") {
-          text(LessonsBundle.message("js.editor.refactorings.shortcut", code("author"), action(it)))
+          text(JsLessonsBundle.message("js.editor.refactorings.shortcut", code("author"), action(it)))
           stateCheck {
             textAtCaretEqualsTo("author")
           }
@@ -79,13 +79,13 @@ class RefactoringLesson(module: Module)
         }
         task {
           text(
-            LessonsBundle.message("js.editor.refactoring.select.expression", code("author"), code("book.author"), action("EditorEnter")))
+            JsLessonsBundle.message("js.editor.refactoring.select.expression", code("author"), code("book.author"), action("EditorEnter")))
           stateCheck {
             focusOwner is JBList<*> && (focusOwner as JBList<*>).model.getElementAt(0).toString() == "NO"
           }
         }
         task {
-          text(LessonsBundle.message("js.editor.refactoring.replace", code("let"), code("author")))
+          text(JsLessonsBundle.message("js.editor.refactoring.replace", code("let"), code("author")))
           stateCheck {
             textOnLine(3, "let author = book.author;") &&
             textOnLine(4, "if (!listOfAuthors.includes(author)) {") &&
@@ -94,7 +94,7 @@ class RefactoringLesson(module: Module)
           }
         }
         text(
-          LessonsBundle.message("js.editor.refactorings.next",
+          JsLessonsBundle.message("js.editor.refactorings.next",
                                 "https://resources.jetbrains.com/storage/products/webstorm/docs/WebStorm_ReferenceCard.pdf",
                                 strong(RefactoringBundle.message("refactor.this.title")),
                                 LessonUtil.rawEnter()))

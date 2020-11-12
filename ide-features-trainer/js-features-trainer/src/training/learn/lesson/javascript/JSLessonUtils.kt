@@ -1,11 +1,23 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package training.learn.js
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+package training.learn.lesson.javascript
 
+import com.intellij.icons.AllIcons
+import com.intellij.lang.javascript.dialects.JSLanguageLevel
+import com.intellij.lang.javascript.settings.JSRootConfiguration
+import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.editor.impl.DocumentMarkupModel
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.ui.components.fields.ExtendableTextField
 import training.commands.kotlin.TaskRuntimeContext
+import training.learn.lesson.kimpl.LessonContext
+
+fun LessonContext.setLanguageLevel() {
+  prepareRuntimeTask(ModalityState.NON_MODAL) {
+    JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
+  }
+}
 
 fun TaskRuntimeContext.textBeforeCaret(text: String): Boolean {
   val offset = editor.caretModel.offset
@@ -49,12 +61,29 @@ fun TaskRuntimeContext.textAtCaretEqualsTo(text: String): Boolean {
   return text == foundText || text == "("
 }
 
+fun TaskRuntimeContext.lineContainsBreakpoint(line: Int): Boolean {
+  val document = editor.document
+  val breakpoint = DocumentMarkupModel.forDocument(document, project, true).allHighlighters
+    .filter {
+      it.gutterIconRenderer?.icon == AllIcons.Debugger.Db_set_breakpoint && document.getLineNumber(it.startOffset) + 1 == line
+    }
+  return breakpoint.isNotEmpty()
+}
+
+fun altSymbol(): String {
+  if (SystemInfo.isMac) {
+    return "⌥"
+  }
+  return "Alt"
+}
+
 fun shiftSymbol(): String {
   if (SystemInfo.isMac) {
     return "⇧"
   }
   return "Shift"
 }
+
 
 fun TaskRuntimeContext.checkWordInSearchEverywhereInput(expected: String): Boolean =
   (focusOwner as? ExtendableTextField)?.text?.toLowerCase()?.contains(expected.toLowerCase()) == true

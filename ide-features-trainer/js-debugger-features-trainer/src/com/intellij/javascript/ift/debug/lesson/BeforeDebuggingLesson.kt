@@ -1,20 +1,19 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package training.learn.lesson.javascript.debugger
+package com.intellij.javascript.ift.debug.lesson
 
 import com.intellij.execution.ExecutionBundle
 import com.intellij.execution.RunManager
+import com.intellij.javascript.ift.debug.JsDebugLessonsBundle
+import com.intellij.javascript.ift.debug.setLanguageLevel
 import com.intellij.openapi.editor.impl.EditorComponentImpl
 import com.intellij.ui.UIBundle
 import com.intellij.ui.treeStructure.Tree
-import training.lang.JavaScriptLangSupport
-import training.learn.LessonsBundle
 import training.learn.interfaces.Module
-import training.learn.lesson.javascript.setLanguageLevel
 import training.learn.lesson.kimpl.*
 import javax.swing.tree.DefaultMutableTreeNode
 
 class BeforeDebuggingLesson(module: Module)
-  : KLesson("Before Debugging: Run/Debug Configurations", LessonsBundle.message("js.debugger.before.title"), module, JavaScriptLangSupport.lang) {
+  : KLesson("Before Debugging: Run/Debug Configurations", JsDebugLessonsBundle.message("js.debugger.before.title"), module, "JavaScript") {
 
   companion object {
     val jsDebuggerSample = parseLessonSample("""
@@ -37,19 +36,19 @@ class BeforeDebuggingLesson(module: Module)
         setLanguageLevel()
         prepareSample(jsDebuggerSample)
         task("RunClass") {
-          text(LessonsBundle.message("js.debugger.before.intro",
-                                     "https://nodejs.org/en/", strong("Different!"), strong("Equal!"),
-                                     "https://nodejs.org/en/download/", action(it)))
+          text(JsDebugLessonsBundle.message("js.debugger.before.intro",
+                                            "https://nodejs.org/en/", strong("Different!"), strong("Equal!"),
+                                            "https://nodejs.org/en/download/", action(it)))
           trigger(it)
         }
         task("HideActiveWindow") {
           text(
-            LessonsBundle.message("js.debugger.before.describe.tool.window",
-                                  action("RunClass"), strong(UIBundle.message("tool.window.name.run")), action(it)))
+            JsDebugLessonsBundle.message("js.debugger.before.describe.tool.window",
+                                         action("RunClass"), strong(UIBundle.message("tool.window.name.run")), action(it)))
           trigger(it)
         }
         task {
-          text(LessonsBundle.message("js.debugger.before.save", strong("debugging.js"), strong(ExecutionBundle.message("save.temporary.run.configuration.action.name", "debugging.js").dropMnemonic())))
+          text(JsDebugLessonsBundle.message("js.debugger.before.save", strong("debugging.js"), strong(ExecutionBundle.message("save.temporary.run.configuration.action.name", "debugging.js").dropMnemonic())))
           stateCheck {
             val selectedConfiguration = RunManager.getInstance(project).selectedConfiguration ?: return@stateCheck false
             !selectedConfiguration.isTemporary
@@ -57,19 +56,19 @@ class BeforeDebuggingLesson(module: Module)
 
         }
         task {
-          text(LessonsBundle.message("js.debugger.before.edit", strong("debugging.js"), strong(ExecutionBundle.message("edit.configuration.action").dropMnemonic())))
+          text(JsDebugLessonsBundle.message("js.debugger.before.edit", strong("debugging.js"), strong(ExecutionBundle.message("edit.configuration.action").dropMnemonic())))
           stateCheck {
             ((focusOwner as? Tree)?.model?.root as? DefaultMutableTreeNode)?.lastChild.toString() == "Templates"
           }
         }
 
         task {
-          text(LessonsBundle.message("js.debugger.before.manage", strong("+")))
+          text(JsDebugLessonsBundle.message("js.debugger.before.manage", strong("+")))
           stateCheck {
             focusOwner is EditorComponentImpl
           }
         }
-        text(LessonsBundle.message("js.debugger.before.next", LessonUtil.rawEnter()))
+        text(JsDebugLessonsBundle.message("js.debugger.before.next", LessonUtil.rawEnter()))
 
       }
     }
