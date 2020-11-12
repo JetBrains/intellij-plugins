@@ -318,7 +318,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
       }
       combinations.add(combination);
       for (int j = 0; j < combinationCount; j++) {
-        int[] currentCombination = Arrays.copyOf(combination, combination.length);
+        int[] currentCombination = combination.clone();
         for (int i = sampleCounts.length - 1; i >= 0; i--) {
           if (currentCombination[i] != sampleCounts[i]) {
             currentCombination[i]++;

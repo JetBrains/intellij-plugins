@@ -107,7 +107,7 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
 
   @Override
   public FlexBuildConfiguration[] getBuildConfigurations() {
-    return Arrays.copyOf(myConfigurations, myConfigurations.length);
+    return myConfigurations.clone();
   }
 
   FlexBuildConfigurationImpl[] doGetBuildConfigurations() {
