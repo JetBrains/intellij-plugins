@@ -7,7 +7,7 @@ import com.intellij.openapi.util.EmptyRunnable
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.runInEdtAndWait
 
-fun CodeInsightTestFixture.configureDependencies(vararg modules: VueTestModule) {
+fun CodeInsightTestFixture.configureVueDependencies(vararg modules: VueTestModule) {
   createPackageJsonWithVueDependency(
     this, modules.asSequence()
     .filter { it.folder != "vue" }
