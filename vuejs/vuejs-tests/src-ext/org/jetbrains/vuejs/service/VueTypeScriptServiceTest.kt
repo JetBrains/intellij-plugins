@@ -14,7 +14,7 @@ import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.ui.UIUtil
 import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.VueTestModule
-import org.jetbrains.vuejs.lang.configureDependencies
+import org.jetbrains.vuejs.lang.configureVueDependencies
 import org.jetbrains.vuejs.lang.typescript.service.VueTypeScriptService
 import org.jetbrains.vuejs.lang.vueRelativeTestDataPath
 import org.junit.runner.RunWith
@@ -102,7 +102,7 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
 
   @TypeScriptVersion(TypeScriptVersions.TS26)
   fun testNoScriptSection() {
-    myFixture.configureDependencies(VueTestModule.VUE_2_5_3)
+    myFixture.configureVueDependencies(VueTestModule.VUE_2_5_3)
     doTestWithCopyDirectory()
     myFixture.configureByFile("NoScriptSectionImport.vue")
     checkHighlightingByOptions(false)
@@ -110,7 +110,7 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
 
   @TypeScriptVersion(TypeScriptVersions.TS26)
   fun testScriptSetup() {
-    myFixture.configureDependencies(VueTestModule.VUE_3_0_0)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
     doTestWithCopyDirectory()
     myFixture.configureFromTempProjectFile("ScriptSetup2.vue")
     myFixture.checkHighlighting()
@@ -118,7 +118,7 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
 
   @TypeScriptVersion(TypeScriptVersions.TS26)
   fun testNoScriptSectionVue3() {
-    myFixture.configureDependencies(VueTestModule.VUE_3_0_0)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
     doTestWithCopyDirectory()
     myFixture.configureByFile("main.ts")
     checkHighlightingByOptions(false)

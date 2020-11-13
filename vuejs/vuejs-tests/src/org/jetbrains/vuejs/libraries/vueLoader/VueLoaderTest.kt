@@ -16,7 +16,7 @@ class VueLoaderTest  : BasePlatformTestCase() {
 
   override fun setUp() {
     super.setUp()
-    myFixture.configureDependencies(VueTestModule.VUE_2_6_10)
+    myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10)
     val resolve = WebPackResolve(
       mapOf(Pair("@", "src"), Pair("foo", "src")),
       mutableListOf(myFixture.tempDirFixture.getFile(".")!!.path)

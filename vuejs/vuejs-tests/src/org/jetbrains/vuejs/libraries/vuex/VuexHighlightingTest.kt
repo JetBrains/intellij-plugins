@@ -4,7 +4,7 @@ package org.jetbrains.vuejs.libraries.vuex
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.jetbrains.vuejs.lang.VueInspectionsProvider
 import org.jetbrains.vuejs.lang.VueTestModule
-import org.jetbrains.vuejs.lang.configureDependencies
+import org.jetbrains.vuejs.lang.configureVueDependencies
 import org.jetbrains.vuejs.lang.getVueTestDataPath
 
 class VuexHighlightingTest : BasePlatformTestCase() {
@@ -19,14 +19,14 @@ class VuexHighlightingTest : BasePlatformTestCase() {
   }
 
   fun testTypedParameter() {
-    myFixture.configureDependencies(VueTestModule.VUEX_3_1_0, VueTestModule.VUE_2_6_10)
+    myFixture.configureVueDependencies(VueTestModule.VUEX_3_1_0, VueTestModule.VUE_2_6_10)
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.configureByFile("typedParameter.ts")
     myFixture.checkHighlighting()
   }
 
   fun testStateViaLambda() {
-    myFixture.configureDependencies(VueTestModule.VUEX_3_1_0, VueTestModule.VUE_2_6_10)
+    myFixture.configureVueDependencies(VueTestModule.VUEX_3_1_0, VueTestModule.VUE_2_6_10)
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.configureByFile("stateViaLambda.ts")
     myFixture.checkHighlighting()
