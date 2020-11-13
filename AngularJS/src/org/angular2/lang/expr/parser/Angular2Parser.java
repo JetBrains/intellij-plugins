@@ -307,7 +307,7 @@ public class Angular2Parser extends JavaScriptParser<Angular2Parser.Angular2Expr
     }
 
     @Override
-    public void parseScriptExpression(boolean isTypeContext) {
+    public void parseScriptExpression() {
       throw new UnsupportedOperationException();
     }
 
