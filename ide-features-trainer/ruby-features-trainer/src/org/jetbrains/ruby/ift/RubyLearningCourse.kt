@@ -72,7 +72,7 @@ class RubyLearningCourse : LearningCourseBase(RubyLanguage.INSTANCE.id) {
                    moduleType = LessonType.PROJECT) {
       fun ls(sampleName: String) = loadSample("CodeAssistance/$sampleName")
       listOf(
-        CodeFormatLesson(it, lang, ls("CodeFormat.rb.sample")),
+        CodeFormatLesson(it, lang, ls("CodeFormat.rb.sample"), false),
         ParameterInfoLesson(it, lang, ls("ParameterInfo.rb.sample")),
         QuickPopupsLesson(it, lang, ls("QuickPopups.rb.sample")),
         RubyEditorCodingAssistanceLesson(it, lang, ls("EditorCodingAssistance.rb.sample")),
