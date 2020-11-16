@@ -174,7 +174,6 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
                                                @NotNull JSTypeSource typeSource) {
     String name = jsClass.getQualifiedName();
     if (name == null) {
-      Logger.getInstance(ActionScriptTypeEvaluator.class).error(new IllegalArgumentException("name can't be null"));
       return JSAnyType.get(typeSource);
     }
     return JSNamedTypeFactory.createType(name, typeSource, staticOrInstance);
