@@ -17,10 +17,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @author Kir
- */
-
-/**
  * @noinspection "Magic number"
  */
 public final class ConsoleUtil {

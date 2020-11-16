@@ -28,7 +28,7 @@ public class HbEnterHandler extends EnterHandlerDelegateAdapter {
                                 @NotNull final Ref<Integer> caretAdvance,
                                 @NotNull final DataContext dataContext,
                                 final EditorActionHandler originalHandler) {
-    /**
+    /*
      * if we are between open and close tags, we ensure the caret ends up in the "logical" place on Enter.
      * i.e. "{{#foo}}<caret>{{/foo}}" becomes the following on Enter:
      *

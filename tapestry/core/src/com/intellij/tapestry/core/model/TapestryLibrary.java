@@ -83,11 +83,11 @@ public class TapestryLibrary implements Comparable {
     return findElements(TapestryConstants.MIXINS_PACKAGE, _basePackage);
   }
 
-  /**
-   * Finds the Tapestry IoC module builder of this library.
-   *
-   * @return the Tapestry IoC module builder of this library.
-   */
+  ///**
+  // * Finds the Tapestry IoC module builder of this library.
+  // *
+  // * @return the Tapestry IoC module builder of this library.
+  // */
   /*public ModuleBuilder getModuleBuilder() {
       if (getBasePackage().equals(TapestryConstants.CORE_LIBRARY_PACKAGE)) {
           return new ModuleBuilder(_project.getJavaTypeFinder().findType("org.apache.tapestry5.services.TapestryModule", true), _project);

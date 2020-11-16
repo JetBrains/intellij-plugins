@@ -1,4 +1,5 @@
-/*****************************************************************************
+/*
+ ****************************************************************************
  * Copyright (C) NanoContainer Organization. All rights reserved.            *
  * ------------------------------------------------------------------------- *
  * The software in this package is published under the terms of the BSD      *
@@ -6,7 +7,8 @@
  * the LICENSE.txt file.                                                     *
  *                                                                           *
  * Original code by Aslak Hellesoy and Paul Hammant                          *
- *****************************************************************************/
+ *****************************************************************************
+*/
 
 package org.nanocontainer.script.xml;
 

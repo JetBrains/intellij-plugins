@@ -11,11 +11,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-/**
- * created at Sep 11, 2001
- * @author Jeka
- */
 package com.intellij.javascript.flex.refactoring.moveMembers;
 
 import com.intellij.lang.javascript.JavaScriptBundle;
