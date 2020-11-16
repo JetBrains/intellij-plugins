@@ -27,6 +27,8 @@ class RubyLangSupport : AbstractLangSupport() {
   private val rubyProjectName: String
     get() = "RubyMineLearningProject"
 
+  override val filename: String = "Learning.rb"
+
   override fun checkSdk(sdk: Sdk?, project: Project) {
     if (project.name != rubyProjectName) return
 
