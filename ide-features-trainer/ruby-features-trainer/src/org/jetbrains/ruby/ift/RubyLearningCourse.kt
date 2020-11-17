@@ -3,6 +3,7 @@ package org.jetbrains.ruby.ift
 
 import org.jetbrains.plugins.ruby.ruby.lang.RubyLanguage
 import org.jetbrains.ruby.ift.lesson.assistance.RubyEditorCodingAssistanceLesson
+import org.jetbrains.ruby.ift.lesson.basic.RubyContextActionsLesson
 import org.jetbrains.ruby.ift.lesson.basic.RubySurroundAndUnwrapLesson
 import org.jetbrains.ruby.ift.lesson.completion.RubyBasicCompletionLesson
 import org.jetbrains.ruby.ift.lesson.completion.RubyCompletionWithTabLesson
@@ -33,7 +34,8 @@ class RubyLearningCourse : LearningCourseBase(RubyLanguage.INSTANCE.id) {
                    moduleType = LessonType.SCRATCH) {
       fun ls(sampleName: String) = loadSample("EditorBasics/$sampleName")
       listOf(
-        GotoActionLesson(it, lang, ls("Actions.rb.sample"), firstLesson = true),
+        RubyContextActionsLesson(it),
+        GotoActionLesson(it, lang, ls("Actions.rb.sample")),
         SelectLesson(it, lang, ls("Selection.rb.sample")),
         SingleLineCommentLesson(it, lang, ls("Comment.rb.sample")),
         DuplicateLesson(it, lang, ls("Duplicate.rb.sample")),
