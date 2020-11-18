@@ -107,7 +107,7 @@ public abstract class ServerRefactoringDialog<T extends ServerRefactoring> exten
     final SourceChange change = myRefactoring.getChange();
     if (change == null) {
       Logger.getInstance(ServerRefactoringDialog.class)
-        .error(myRefactoring.getClass().getSimpleName() + ".getChange() == null\n" + myOptionsStatus);
+        .warn(myRefactoring.getClass().getSimpleName() + ".getChange() == null\n" + myOptionsStatus);
       return;
     }
 
