@@ -11,7 +11,6 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.HttpRequests;
 import com.intellij.webcore.packaging.InstalledPackage;
 import com.intellij.webcore.packaging.RepoPackage;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -24,7 +23,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 
 public final class PhoneGapPluginsList {
-
   public static final String PLUGINS_URL = "http://registry.cordova.io/-/all";
 
   public static volatile Map<String, PhoneGapRepoPackage> CACHED_REPO;
@@ -97,7 +95,7 @@ public final class PhoneGapPluginsList {
       return HttpRequests.request(PLUGINS_URL).connect(new HttpRequests.RequestProcessor<Map<String, PhoneGapRepoPackage>>() {
         @Override
         public Map<String, PhoneGapRepoPackage> process(@NotNull HttpRequests.Request request) throws IOException {
-          Map<String, PhoneGapRepoPackage> result = new THashMap<>();
+          Map<String, PhoneGapRepoPackage> result = new HashMap<>();
           for (Map.Entry<String, JsonElement> entry : new JsonParser().parse(request.getReader()).getAsJsonObject().entrySet()) {
             if (!isExcludedProperty(entry.getKey())) {
               result.put(entry.getKey(), new PhoneGapRepoPackage(entry.getKey(), entry.getValue().getAsJsonObject()));
