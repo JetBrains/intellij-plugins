@@ -7,12 +7,16 @@ import com.intellij.javascript.ift.debug.JsDebugLessonsBundle
 import com.intellij.javascript.ift.debug.lesson.BeforeDebuggingLesson.Companion.jsDebuggerSample
 import com.intellij.javascript.ift.debug.lineContainsBreakpoint
 import com.intellij.javascript.ift.debug.setLanguageLevel
+import com.intellij.openapi.editor.LogicalPosition
 import com.intellij.ui.UIBundle
+import com.intellij.ui.tabs.impl.SingleHeightTabs
 import com.intellij.xdebugger.XDebuggerBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonUtil
+import training.learn.lesson.kimpl.LessonUtil.highlightBreakpointGutter
+import training.learn.lesson.kimpl.highlightButtonById
 
 class DebuggingFirstPartLesson(module: Module)
   : KLesson("Debugging Code. Part I", JsDebugLessonsBundle.message("js.debugger.part.1.title"), module, "JavaScript") {
@@ -22,11 +26,14 @@ class DebuggingFirstPartLesson(module: Module)
       return {
         setLanguageLevel()
         prepareSample(jsDebuggerSample)
+
+        highlightButtonById("Run")
         task("Run") {
           text(JsDebugLessonsBundle.message("js.debugger.part.1.start", icon(AllIcons.RunConfigurations.TestState.Run)))
           trigger(it)
         }
 
+        highlightBreakpointGutter(LogicalPosition(0, 0))
         task {
           text(JsDebugLessonsBundle.message("js.debugger.part.1.gutter", code("10"), code("-20"), code("Different!"), code("Equal!")))
           stateCheck {
@@ -34,11 +41,17 @@ class DebuggingFirstPartLesson(module: Module)
           }
         }
 
+        highlightButtonById("Debug")
         task("Debug") {
           text(JsDebugLessonsBundle.message("js.debugger.part.1.set.breakpoint", icon(AllIcons.Actions.StartDebugger), action(it)))
           trigger(it)
         }
 
+        task {
+          triggerByUiComponentAndHighlight { ui: SingleHeightTabs.SingleHeightLabel ->
+            ui.info.text == XDebuggerBundle.message("debugger.session.tab.console.content.name")
+          }
+        }
         task {
           text(JsDebugLessonsBundle.message("js.debugger.part.1.tool.window", UIBundle.message("tool.window.name.debug"), strong(XDebuggerBundle.message("xdebugger.default.content.title")), strong(XDebuggerBundle.message("debugger.session.tab.variables.title")), strong(XDebuggerBundle.message("debugger.session.tab.frames.title")), strong(XDebuggerBundle.message("debugger.session.tab.console.content.name"))))
           stateCheck {
@@ -47,6 +60,11 @@ class DebuggingFirstPartLesson(module: Module)
           }
         }
 
+        task {
+          triggerByUiComponentAndHighlight { ui: SingleHeightTabs.SingleHeightLabel ->
+            ui.info.text == JSDebuggerBundle.message("js.scripts.tab.title")
+          }
+        }
         task {
           text(JsDebugLessonsBundle.message("js.debugger.part.1.scripts.tab",
                                             strong(XDebuggerBundle.message("debugger.session.tab.console.content.name")),

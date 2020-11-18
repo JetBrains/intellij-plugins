@@ -10,6 +10,8 @@ import com.intellij.ui.UIBundle
 import com.intellij.ui.treeStructure.Tree
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.*
+import training.ui.LearningUiHighlightingManager
+import javax.swing.JButton
 import javax.swing.tree.DefaultMutableTreeNode
 
 class BeforeDebuggingLesson(module: Module)
@@ -47,15 +49,21 @@ class BeforeDebuggingLesson(module: Module)
                                          action("RunClass"), strong(UIBundle.message("tool.window.name.run")), action(it)))
           trigger(it)
         }
+
+        task {
+          triggerByUiComponentAndHighlight<JButton> { ui ->
+            ui.text == existedFile
+          }
+        }
         task {
           text(JsDebugLessonsBundle.message("js.debugger.before.save", strong("debugging.js"), strong(ExecutionBundle.message("save.temporary.run.configuration.action.name", "debugging.js").dropMnemonic())))
           stateCheck {
             val selectedConfiguration = RunManager.getInstance(project).selectedConfiguration ?: return@stateCheck false
             !selectedConfiguration.isTemporary
           }
-
         }
         task {
+          LearningUiHighlightingManager.clearHighlights()
           text(JsDebugLessonsBundle.message("js.debugger.before.edit", strong("debugging.js"), strong(ExecutionBundle.message("edit.configuration.action").dropMnemonic())))
           stateCheck {
             ((focusOwner as? Tree)?.model?.root as? DefaultMutableTreeNode)?.lastChild.toString() == "Templates"
