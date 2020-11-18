@@ -12,6 +12,7 @@ import com.intellij.javascript.ift.JsLessonsBundle
 import com.intellij.javascript.ift.lesson.setLanguageLevel
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.editor.LogicalPosition
 import com.intellij.openapi.editor.impl.EditorComponentImpl
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.fileEditor.impl.EditorWindow
@@ -22,11 +23,10 @@ import com.intellij.ui.treeStructure.Tree
 import training.learn.interfaces.Module
 import training.learn.js.textAtCaretEqualsTo
 import training.learn.js.textOnLine
-import training.learn.lesson.kimpl.KLesson
-import training.learn.lesson.kimpl.LessonContext
+import training.learn.lesson.kimpl.*
+import training.learn.lesson.kimpl.LessonUtil.highlightBreakpointGutter
 import training.learn.lesson.kimpl.LessonUtil.productName
-import training.learn.lesson.kimpl.dropMnemonic
-import training.learn.lesson.kimpl.parseLessonSample
+import training.ui.LearningUiHighlightingManager
 import java.awt.event.KeyEvent
 import javax.swing.SwingConstants
 import javax.swing.tree.DefaultMutableTreeNode
@@ -75,6 +75,7 @@ class JestLesson(module: Module)
           }
         }
 
+        highlightButtonById("Run")
         task("Run") {
           text(JsLessonsBundle.message("js.testing.jest.run", strong(TestRunnerBundle.message("all.tests.scope.presentable.text")),
                                      ExecutionBundle.message(
@@ -83,6 +84,9 @@ class JestLesson(module: Module)
         }
 
         task {
+          before {
+            LearningUiHighlightingManager.clearHighlights()
+          }
           text(JsLessonsBundle.message("js.testing.jest.navigate",
                                      strong(UIBundle.message("tool.window.name.run")),
                                      icon(AllIcons.RunConfigurations.TestState.Run),
@@ -112,6 +116,7 @@ class JestLesson(module: Module)
           }
         }
 
+        highlightBreakpointGutter(LogicalPosition(4, 0))
         task {
           text(JsLessonsBundle.message("js.testing.jest.re.run.test", icon(AllIcons.RunConfigurations.TestState.Red2), strong(
             "Run adds 1 + 2 to equal 3")))
@@ -120,7 +125,11 @@ class JestLesson(module: Module)
           }
         }
 
+        highlightButtonById("Coverage")
         task("Coverage") {
+          before {
+            LearningUiHighlightingManager.clearHighlights()
+          }
           text(JsLessonsBundle.message("js.testing.jest.success.run.coverage", icon(AllIcons.General.RunWithCoverage)))
           trigger(it)
         }
