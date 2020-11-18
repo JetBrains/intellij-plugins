@@ -41,7 +41,7 @@ PostCSS File:AmpersandInPseudoClasses.pcss
                 PsiElement(CSS_SELECTOR)
                   PsiElement(CSS_SIMPLE_SELECTOR)
                     PsiElement(CSS_SELECTOR_SUFFIX_LIST)
-                      PsiElement(CSS_PSEUDO_CLASS)
+                      PsiElement(CSS_PSEUDO_ELEMENT)
                         PsiElement(CSS_COLON)(':')
                         PsiElement(CSS_COLON)(':')
                         PsiElement(CSS_IDENT)('f&rst-letter')
