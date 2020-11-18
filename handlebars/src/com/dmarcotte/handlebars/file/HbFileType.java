@@ -3,6 +3,7 @@ package com.dmarcotte.handlebars.file;
 
 import com.dmarcotte.handlebars.HbBundle;
 import com.dmarcotte.handlebars.HbLanguage;
+import com.intellij.ide.highlighter.XmlLikeFileType;
 import com.intellij.lang.Language;
 import com.intellij.openapi.fileTypes.*;
 import com.intellij.openapi.project.Project;
@@ -16,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.nio.charset.Charset;
 
-public class HbFileType extends LanguageFileType implements TemplateLanguageFileType {
+public class HbFileType extends XmlLikeFileType implements TemplateLanguageFileType {
   public static final LanguageFileType INSTANCE = new HbFileType();
 
   @NonNls
