@@ -1,8 +1,8 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.entities;
 
-import com.intellij.openapi.util.AtomicNotNullLazyValue;
 import com.intellij.openapi.util.ClearableLazyValue;
+import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.ElementManipulators;
@@ -21,31 +21,33 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class Angular2DirectiveSelectorImpl implements Angular2DirectiveSelector {
-
+public final class Angular2DirectiveSelectorImpl implements Angular2DirectiveSelector {
   private final ClearableLazyValue<PsiElement> myLazyParent;
   private PsiElement myStaticParent;
   private final String myText;
   private final Function<? super Pair<String, Integer>, ? extends TextRange> myCreateRange;
-  private final AtomicNotNullLazyValue<List<Angular2DirectiveSimpleSelector>> mySimpleSelectors =
-    new AtomicNotNullLazyValue<List<Angular2DirectiveSimpleSelector>>() {
-      @Override
-      protected @NotNull List<Angular2DirectiveSimpleSelector> compute() {
-        if (myText == null) {
-          return Collections.emptyList();
-        }
-        try {
-          return Collections.unmodifiableList(Angular2DirectiveSimpleSelector.parse(myText));
-        }
-        catch (ParseException e) {
-          return Collections.emptyList();
-        }
+  private final NotNullLazyValue<List<Angular2DirectiveSimpleSelector>> mySimpleSelectors;
+  private final NotNullLazyValue<List<SimpleSelectorWithPsi>> mySimpleSelectorsWithPsi;
+
+  public Angular2DirectiveSelectorImpl(@NotNull PsiElement element,
+                                       @Nullable String text,
+                                       @Nullable Function<? super Pair<String, Integer>, ? extends TextRange> createRange) {
+    myLazyParent = null;
+    myStaticParent = element;
+    myText = text;
+    myCreateRange = createRange != null ? createRange : a -> TextRange.EMPTY_RANGE;
+    mySimpleSelectors = NotNullLazyValue.createAtomic(() -> {
+      if (myText == null) {
+        return Collections.emptyList();
       }
-    };
-  private final AtomicNotNullLazyValue<List<SimpleSelectorWithPsi>> mySimpleSelectorsWithPsi =
-    new AtomicNotNullLazyValue<List<SimpleSelectorWithPsi>>() {
-      @Override
-      protected @NotNull List<SimpleSelectorWithPsi> compute() {
+      try {
+        return Collections.unmodifiableList(Angular2DirectiveSimpleSelector.parse(myText));
+      }
+      catch (ParseException e) {
+        return Collections.emptyList();
+      }
+    });
+    mySimpleSelectorsWithPsi = NotNullLazyValue.createAtomic(() -> {
         if (myText == null) {
           return Collections.emptyList();
         }
@@ -60,16 +62,7 @@ public class Angular2DirectiveSelectorImpl implements Angular2DirectiveSelector 
         catch (ParseException e) {
           return Collections.emptyList();
         }
-      }
-    };
-
-  public Angular2DirectiveSelectorImpl(@NotNull PsiElement element,
-                                       @Nullable String text,
-                                       @Nullable Function<? super Pair<String, Integer>, ? extends TextRange> createRange) {
-    myLazyParent = null;
-    myStaticParent = element;
-    myText = text;
-    myCreateRange = createRange != null ? createRange : a -> TextRange.EMPTY_RANGE;
+      });
   }
 
   public Angular2DirectiveSelectorImpl(@NotNull Supplier<? extends PsiElement> element,
@@ -78,6 +71,33 @@ public class Angular2DirectiveSelectorImpl implements Angular2DirectiveSelector 
     myLazyParent = ClearableLazyValue.createAtomic(element);
     myText = text;
     myCreateRange = createRange != null ? createRange : a -> TextRange.EMPTY_RANGE;
+    mySimpleSelectors = NotNullLazyValue.createAtomic(() -> {
+          if (myText == null) {
+            return Collections.emptyList();
+          }
+          try {
+            return Collections.unmodifiableList(Angular2DirectiveSimpleSelector.parse(myText));
+          }
+          catch (ParseException e) {
+            return Collections.emptyList();
+          }
+        });
+    mySimpleSelectorsWithPsi = NotNullLazyValue.createAtomic(() -> {
+        if (myText == null) {
+          return Collections.emptyList();
+        }
+        try {
+          List<Angular2DirectiveSimpleSelectorWithRanges> simpleSelectorsWithRanges = Angular2DirectiveSimpleSelector.parseRanges(myText);
+          List<SimpleSelectorWithPsi> result = new ArrayList<>(simpleSelectorsWithRanges.size());
+          for (Angular2DirectiveSimpleSelectorWithRanges sel : simpleSelectorsWithRanges) {
+            result.add(new SimpleSelectorWithPsiImpl(sel));
+          }
+          return Collections.unmodifiableList(result);
+        }
+        catch (ParseException e) {
+          return Collections.emptyList();
+        }
+      });
   }
 
   @Override

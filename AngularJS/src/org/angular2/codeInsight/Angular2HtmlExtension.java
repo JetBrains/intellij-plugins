@@ -1,7 +1,6 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight;
 
-import com.intellij.openapi.util.AtomicNotNullLazyValue;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
@@ -29,9 +28,8 @@ import org.jetbrains.annotations.Nullable;
 import java.net.URL;
 import java.util.List;
 
-public class Angular2HtmlExtension extends HtmlXmlExtension {
-
-  private static final NotNullLazyValue<String> NG_ENT_LOCATION = AtomicNotNullLazyValue.createValue(() -> {
+public final class Angular2HtmlExtension extends HtmlXmlExtension {
+  private static final NotNullLazyValue<String> NG_ENT_LOCATION = NotNullLazyValue.createAtomic(() -> {
     URL url = Angular2HtmlExtension.class.getResource("/dtd/ngChars.ent");
     return VfsUtilCore.urlToPath(VfsUtilCore.fixURLforIDEA(
       URLUtil.unescapePercentSequences(url.toExternalForm())));
