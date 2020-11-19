@@ -18,6 +18,7 @@ import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings;
 import com.intellij.psi.templateLanguages.TemplateDataModifications;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -127,7 +128,7 @@ public final class HbFileViewProvider extends MultiplePsiFilesPerDocumentFileVie
   }
 
   @Override
-  public IElementType getContentElementType(@NotNull Language language) {
+  public @Nullable IElementType getContentElementType(@NotNull Language language) {
     if (language.is(getTemplateDataLanguage())) {
       return getTemplateDataElementType(getBaseLanguage());
     }
