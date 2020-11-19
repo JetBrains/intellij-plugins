@@ -20,14 +20,14 @@ import java.util.Optional;
 public class AngularCliFileReferenceHelper extends FileReferenceHelper {
 
   @Override
-  public boolean isMine(Project project, @NotNull VirtualFile file) {
+  public boolean isMine(@NotNull Project project, @NotNull VirtualFile file) {
     return getPsiFileSystemItem(project, file) instanceof HtmlLikeFile
            && Angular2LangUtil.isAngular2Context(project, file)
            && AngularConfigProvider.getAngularProject(project, file) != null;
   }
 
   @Override
-  public @NotNull Collection<PsiFileSystemItem> getContexts(Project project, @NotNull VirtualFile file) {
+  public @NotNull Collection<PsiFileSystemItem> getContexts(@NotNull Project project, @NotNull VirtualFile file) {
     return Optional.ofNullable(AngularConfigProvider.getAngularProject(project, file))
       .map(AngularProject::getSourceDir)
       .map(sourceDir -> (PsiFileSystemItem)PsiManager.getInstance(project).findDirectory(sourceDir))

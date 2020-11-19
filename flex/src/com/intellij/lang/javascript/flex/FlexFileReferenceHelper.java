@@ -30,18 +30,18 @@ import java.util.List;
 public class FlexFileReferenceHelper extends FileReferenceHelper {
   @Override
   @NotNull
-  public Collection<PsiFileSystemItem> getContexts(final Project project, @NotNull final VirtualFile file) {
+  public Collection<PsiFileSystemItem> getContexts(final @NotNull Project project, @NotNull final VirtualFile file) {
     return Collections.emptyList();
   }
 
   @Override
-  public boolean isMine(final Project project, @NotNull final VirtualFile file) {
+  public boolean isMine(final @NotNull Project project, @NotNull final VirtualFile file) {
     return false;
   }
 
   @Override
   @NotNull
-  public List<? extends LocalQuickFix> registerFixes(final FileReference reference) {
+  public List<? extends LocalQuickFix> registerFixes(final @NotNull FileReference reference) {
     final PsiElement element = reference.getElement();
     if (!(reference instanceof JSFlexFileReference) || !(element instanceof JSAttributeNameValuePair)) return Collections.emptyList();
 
