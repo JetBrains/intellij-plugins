@@ -14,6 +14,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.jetbrains.cidr.execution.AppCodeRunConfiguration;
 import com.jetbrains.cidr.execution.BuildDestination;
+import com.jetbrains.cidr.execution.MacOSBuildDestination;
 import com.jetbrains.cidr.execution.SimulatedBuildDestination;
 import com.jetbrains.cidr.xcode.XcodeBase;
 import com.jetbrains.cidr.xcode.model.XCBuildSettings;
@@ -128,7 +129,7 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
 
   @Nullable
   private static String getDeviceName(@NotNull BuildDestination destination) throws ExecutionException {
-    if (XcodeBase.getVersion().is(8)) {
+    if (XcodeBase.getVersion().is(8) || destination instanceof MacOSBuildDestination) {
       // Xcode 8's simulators use the host computer's name
       return ExecUtil.execAndReadLine(new GeneralCommandLine("scutil", "--get", "ComputerName"));
     } else if (destination.isDevice()) {
