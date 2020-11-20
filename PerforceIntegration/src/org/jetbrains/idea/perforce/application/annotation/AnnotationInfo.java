@@ -17,14 +17,14 @@ package org.jetbrains.idea.perforce.application.annotation;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vcs.VcsException;
-import gnu.trove.TLongArrayList;
+import it.unimi.dsi.fastutil.longs.LongArrayList;
 import org.jetbrains.idea.perforce.PerforceBundle;
 
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.StringReader;
 
-public class AnnotationInfo {
+public final class AnnotationInfo {
   private final String myContent;
   private final long[] myRevisions;
   private final boolean myUseChangelistNumbers;
@@ -36,7 +36,7 @@ public class AnnotationInfo {
     final LineNumberReader reader = new LineNumberReader(new StringReader(output));
     String line;
     final StringBuilder content = new StringBuilder();
-    final TLongArrayList revisions = new TLongArrayList();
+    final LongArrayList revisions = new LongArrayList();
     try {
       while ((line = reader.readLine()) != null) {
         final int endOfRevisionIndex = line.indexOf(":");
@@ -54,7 +54,7 @@ public class AnnotationInfo {
     }
 
     myContent = content.toString();
-    myRevisions = revisions.toNativeArray();
+    myRevisions = revisions.toLongArray();
   }
 
   public String getContent() {

@@ -16,7 +16,7 @@ import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.impl.source.codeStyle.PostFormatProcessor;
 import org.jetbrains.annotations.NotNull;
 
-public class PrettierPostFormatProcessor implements PostFormatProcessor {
+public final class PrettierPostFormatProcessor implements PostFormatProcessor {
   @Override
   public @NotNull PsiElement processElement(@NotNull PsiElement source, @NotNull CodeStyleSettings settings) {
     return source;

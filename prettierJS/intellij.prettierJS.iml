@@ -28,5 +28,6 @@
     <orderEntry type="module" module-name="intellij.json" />
     <orderEntry type="module" module-name="intellij.fileWatcher" />
     <orderEntry type="module" module-name="intellij.platform.core.ui" />
+    <orderEntry type="module" module-name="intellij.platform.codeStyle.impl" />
   </component>
 </module>

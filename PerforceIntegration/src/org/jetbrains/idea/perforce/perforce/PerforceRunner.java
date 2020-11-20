@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.jetbrains.idea.perforce.perforce;
 
 import com.google.common.collect.Lists;
@@ -27,6 +26,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.LineTokenizer;
 import com.intellij.openapi.util.text.StringUtil;
@@ -46,14 +46,11 @@ import com.intellij.serviceContainer.NonInjectable;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.SystemProperties;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.JBIterable;
-import com.intellij.util.containers.MultiMap;
-import com.intellij.util.text.FilePathHashingStrategy;
+import com.intellij.util.containers.*;
 import com.intellij.util.text.SyncDateFormat;
 import com.intellij.vcsUtil.VcsUtil;
-import gnu.trove.THashMap;
-import gnu.trove.TObjectLongHashMap;
+import it.unimi.dsi.fastutil.objects.Object2LongOpenCustomHashMap;
+import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -83,6 +80,7 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -288,7 +286,7 @@ public final class PerforceRunner implements PerforceRunnerI {
     final Map<P4File, FStat> result = new LinkedHashMap<>();
     String stderr = execResult.getStderr();
 
-    final Map<String, P4File> path2File = new THashMap<>(FilePathHashingStrategy.create());
+    final Map<String, P4File> path2File = CollectionFactory.createFilePathMap();
     for (P4File file : files) {
       path2File.put(FileUtil.toSystemIndependentName(file.getLocalPath()), file);
     }
@@ -711,7 +709,8 @@ public final class PerforceRunner implements PerforceRunnerI {
       }
     }
 
-    final TObjectLongHashMap<String> haveRevisions = new TObjectLongHashMap<>(FilePathHashingStrategy.create());
+    Object2LongOpenCustomHashMap<String> haveRevisions = new Object2LongOpenCustomHashMap<>(SystemInfoRt.isFileSystemCaseSensitive ? FastUtilHashingStrategies
+      .getCaseInsensitiveStringStrategy() : FastUtilHashingStrategies.getCanonicalStrategy());
 
     final PathsHelper pathsHelper = new PathsHelper(myPerforceManager);
     pathsHelper.addAllPaths(files);
@@ -721,7 +720,7 @@ public final class PerforceRunner implements PerforceRunnerI {
       File file = change.getFile();
       if (file != null) {
         final String path = file.getAbsolutePath();
-        final long revision = haveRevisions.get(FileUtil.toSystemDependentName(path));
+        final long revision = haveRevisions.getLong(FileUtil.toSystemDependentName(path));
         if (revision != 0) {
           change.setRevision(revision);
         }
@@ -1283,7 +1282,7 @@ public final class PerforceRunner implements PerforceRunnerI {
     return result.isEmpty() ? null : result.values().iterator().next();
   }
 
-  public static LinkedHashMap<String, BaseRevision> processResolveOutput(final String output) throws VcsException {
+  public static LinkedHashMap<String, BaseRevision> processResolveOutput(final String output) {
     final LinkedHashMap<String, BaseRevision> result = new LinkedHashMap<>();
     for (String line : StringUtil.splitByLines(output)) {
       String separator = MERGING_MESSAGE;
@@ -1389,7 +1388,7 @@ public final class PerforceRunner implements PerforceRunnerI {
     P4Connection connection = myConnectionManager.getConnectionForFile(file);
     if (connection == null) return false;
 
-    TObjectLongHashMap<String> haveRevisions = new TObjectLongHashMap<>();
+    Object2LongOpenHashMap<String> haveRevisions = new Object2LongOpenHashMap<>();
     final P4HaveParser haveParser = new P4HaveParser.RevisionCollector(myPerforceManager, haveRevisions);
     doHave(Collections.singletonList(getP4FilePath(file, file.isDirectory(), file.isDirectory())), connection, haveParser, false);
     return !haveRevisions.isEmpty();
@@ -1399,10 +1398,10 @@ public final class PerforceRunner implements PerforceRunnerI {
     P4Connection connection = myConnectionManager.getConnectionForFile(file);
     if (connection == null) return -1;
 
-    TObjectLongHashMap<String> haveRevisions = new TObjectLongHashMap<>();
+    Object2LongOpenHashMap<String> haveRevisions = new Object2LongOpenHashMap<>();
     final P4HaveParser haveParser = new P4HaveParser.RevisionCollector(myPerforceManager, haveRevisions);
     doHave(Collections.singletonList(getP4FilePath(file, file.isDirectory(), false)), connection, haveParser, false);
-    return haveRevisions.isEmpty() ? -1 : haveRevisions.getValues()[0];
+    return haveRevisions.isEmpty() ? -1 : haveRevisions.values().iterator().nextLong();
   }
 
   public VcsRevisionNumber getCurrentRevision(final P4File p4File) {
@@ -1447,7 +1446,7 @@ public final class PerforceRunner implements PerforceRunnerI {
 
     PerforceContext context = new PerforceContext(connection, longTimeout, false);
 
-    for (List<String> chunk : Lists.partition(new ArrayList<String>(new LinkedHashSet<>(filesSpec)), CHUNK_SIZE)) {
+    for (List<String> chunk : Lists.partition(new ArrayList<>(new LinkedHashSet<>(filesSpec)), CHUNK_SIZE)) {
       final ExecResult execResult = executeP4Command(new String[]{"have"}, chunk, null, context);
       final String stderr = execResult.getStderr();
       final boolean notUnderRoot = stderr.contains(NOT_ON_CLIENT_MESSAGE) || stderr.contains(NOT_UNDER_CLIENT_ROOT_MESSAGE);
@@ -1690,7 +1689,7 @@ public final class PerforceRunner implements PerforceRunnerI {
     }
 
     if (mySettings.showCmds) {
-      logMessage("\n" + retVal.toString());
+      logMessage("\n" + retVal);
     }
 
     if (mySettings.USE_LOGIN && (retVal.getStderr().contains(SESSION_EXPIRED_MESSAGE) || retVal.getStderr().contains(PASSWORD_INVALID_MESSAGE))) {
@@ -1746,7 +1745,7 @@ public final class PerforceRunner implements PerforceRunnerI {
 
   private static void logMessage(final String message) {
     File file = getDumpFile();
-    String s = "\n" + new Time(System.currentTimeMillis()).toString() + " " + message;
+    String s = "\n" + new Time(System.currentTimeMillis()) + " " + message;
     try {
       if (file.length() > MAX_LOG_LENGTH) {
         FileUtil.delete(file);

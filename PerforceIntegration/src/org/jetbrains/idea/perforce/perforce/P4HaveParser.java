@@ -2,7 +2,7 @@ package org.jetbrains.idea.perforce.perforce;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vcs.VcsException;
-import gnu.trove.TObjectLongHashMap;
+import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.perforce.PerforceBundle;
 import org.jetbrains.idea.perforce.application.PerforceManager;
@@ -52,10 +52,10 @@ public abstract class P4HaveParser {
     while (true);
   }
 
-  static class RevisionCollector extends P4HaveParser {
-    private final TObjectLongHashMap<String> myHaveRevisions;
+  static final class RevisionCollector extends P4HaveParser {
+    private final Object2LongMap<String> myHaveRevisions;
 
-    RevisionCollector(PerforceManager perforceManager, @NotNull TObjectLongHashMap<String> haveRevisions) {
+    RevisionCollector(PerforceManager perforceManager, @NotNull Object2LongMap<String> haveRevisions) {
       super(perforceManager);
       myHaveRevisions = haveRevisions;
     }

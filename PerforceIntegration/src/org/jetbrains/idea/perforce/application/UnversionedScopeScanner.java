@@ -14,17 +14,13 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.vcsUtil.VcsUtil;
-import gnu.trove.THashSet;
 import org.jetbrains.idea.perforce.perforce.P4HaveParser;
 import org.jetbrains.idea.perforce.perforce.PathsHelper;
 import org.jetbrains.idea.perforce.perforce.PerforceRunner;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Irina Chernushina
@@ -133,9 +129,9 @@ public abstract class UnversionedScopeScanner {
   }
 
   static class ScanResult {
-    final Set<String> missingFiles = new THashSet<>();
+    final Set<String> missingFiles = new HashSet<>();
     final List<VirtualFile> localOnly = new ArrayList<>();
-    final Set<VirtualFile> allLocalFiles = new THashSet<>();
+    final Set<VirtualFile> allLocalFiles = new HashSet<>();
   }
 
   private Set<VirtualFile> enumerateLocalFiles(Collection<FilePath> roots) {
@@ -144,7 +140,7 @@ public abstract class UnversionedScopeScanner {
       scope.addDirtyDirRecursively(root);
     }
 
-    final Set<VirtualFile> localFiles = new THashSet<>();
+    final Set<VirtualFile> localFiles = new HashSet<>();
     scope.iterateExistingInsideScope(file -> {
       if (!file.isDirectory() && !skipPotentiallyIgnored(file)) {
         localFiles.add(file);
