@@ -49,8 +49,10 @@ class CodeInspectionLesson(module: Module)
           }
         }
         task("ShowIntentionActions") {
-          text(JsLessonsBundle.message("js.editor.code.inspection.show.intentions",
-                                     action("GotoNextError"), code("book"), code("book"), action(it)))
+          text(JsLessonsBundle.message("js.editor.code.inspection.show.intentions.1",
+                                       action("GotoNextError")))
+          text(JsLessonsBundle.message("js.editor.code.inspection.show.intentions.2",
+                                       code("book"), code("book"), action(it)))
           before { caret(editor.document.getLineEndOffset(3) - 11) }
           
           //handle simple alt+enter and alt+enter for the error tooltip 

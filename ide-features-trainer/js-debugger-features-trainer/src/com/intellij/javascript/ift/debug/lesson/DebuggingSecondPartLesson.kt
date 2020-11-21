@@ -22,9 +22,10 @@ class DebuggingSecondPartLesson(module: Module)
         setLanguageLevel()
         prepareSample(BeforeDebuggingLesson.jsDebuggerSample)
         task("StepInto") {
-          text(JsDebugLessonsBundle.message("js.debugger.part.2.step.into",
+          text(JsDebugLessonsBundle.message("js.debugger.part.2.step.into.1",
                                             action("DebugClass"),
-                                            strong(XDebuggerBundle.message("xdebugger.debugger.tab.title")),
+                                            strong(XDebuggerBundle.message("xdebugger.debugger.tab.title"))))
+          text(JsDebugLessonsBundle.message("js.debugger.part.2.step.into.2",
                                             ActionsBundle.message("action.Resume.text").dropMnemonic(),
                                             icon(AllIcons.Actions.Resume),
                                             action(it), ActionsBundle.message("action.StepInto.text").dropMnemonic(),
@@ -33,22 +34,19 @@ class DebuggingSecondPartLesson(module: Module)
         }
 
         task("EvaluateExpression") {
-          text(JsDebugLessonsBundle.message("js.debugger.part.2.buttons",
-                                            ActionsBundle.message("action.StepOver.text").dropMnemonic(),
-                                            action("StepOver"),
-                                            strong(ActionsBundle.message("action.SmartStepInto.text").dropMnemonic()),
-                                            action("SmartStepInto"),
-                                            strong(ActionsBundle.message("action.StepOut.text").dropMnemonic()),
-                                            action("StepOut"),
+          text(JsDebugLessonsBundle.message("js.debugger.part.2.buttons.1",
+                                            "https://www.jetbrains.com/help/webstorm/stepping-through-the-program.html"))
+          text(JsDebugLessonsBundle.message("js.debugger.part.2.buttons.2",
                                             strong(XDebuggerBundle.message("xdebugger.dialog.title.evaluate.expression")),
                                             action(it)))
           trigger(it)
         }
 
         task {
-          text(JsDebugLessonsBundle.message("js.debugger.part.2.evaluate",
+          text(JsDebugLessonsBundle.message("js.debugger.part.2.evaluate.1",
                                             code("a === b"), strong(XDebuggerBundle.message("xdebugger.button.evaluate").dropMnemonic()),
-                                            code("false"), code("true (a !== b)"),
+                                            code("false"), code("true (a !== b)")))
+          text(JsDebugLessonsBundle.message("js.debugger.part.2.evaluate.2",
                                             code("()"), code("a === b"), code("a !== b")))
           stateCheck {
             textOnLine(1, "a !== b")

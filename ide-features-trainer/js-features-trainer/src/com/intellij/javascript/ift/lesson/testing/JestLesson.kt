@@ -87,15 +87,16 @@ class JestLesson(module: Module)
           before {
             LearningUiHighlightingManager.clearHighlights()
           }
-          text(JsLessonsBundle.message("js.testing.jest.navigate",
-                                     strong(UIBundle.message("tool.window.name.run")),
-                                     icon(AllIcons.RunConfigurations.TestState.Run),
-                                     icon(AllIcons.RunConfigurations.RerunFailedTests),
-                                     icon(AllIcons.RunConfigurations.ShowPassed),
-                                     "https://blog.jetbrains.com/webstorm/2018/10/testing-with-jest-in-webstorm/#run_tests_in_watch_mode",
-                                     strong(SmRunnerBundle.message("sm.test.runner.ui.tests.tree.presentation.labels.test.results")),
-                                     strong("add"),
-                                     shortcut(KeymapUtil.getKeyText(KeyEvent.VK_ENTER))))
+          text(JsLessonsBundle.message("js.testing.jest.navigate.1",
+                                       strong(UIBundle.message("tool.window.name.run")),
+                                       icon(AllIcons.RunConfigurations.TestState.Run),
+                                       icon(AllIcons.RunConfigurations.RerunFailedTests),
+                                       icon(AllIcons.RunConfigurations.ShowPassed),
+                                       "https://blog.jetbrains.com/webstorm/2018/10/testing-with-jest-in-webstorm/#run_tests_in_watch_mode"))
+          text(JsLessonsBundle.message("js.testing.jest.navigate.2",
+                                       strong(SmRunnerBundle.message("sm.test.runner.ui.tests.tree.presentation.labels.test.results")),
+                                       strong("add"),
+                                       shortcut(KeymapUtil.getKeyText(KeyEvent.VK_ENTER))))
           stateCheck {
             (focusOwner as? Tree)?.getSelectedNodes(DefaultMutableTreeNode::class.java, null)?.firstOrNull()?.toString() == "adds 1 + 2 to equal 3"
           }
@@ -109,8 +110,10 @@ class JestLesson(module: Module)
         }
 
         task {
-          text(JsLessonsBundle.message("js.testing.jest.fix.test", strong(SmRunnerBundle.message(
-            "sm.test.runner.ui.tests.tree.presentation.labels.test.results")), strong(".toBe"), strong(".toBe"), strong("4"), strong("3")))
+          text(JsLessonsBundle.message("js.testing.jest.fix.test.1",
+                                       strong(SmRunnerBundle.message("sm.test.runner.ui.tests.tree.presentation.labels.test.results")),
+                                       strong(".toBe")))
+          text(JsLessonsBundle.message("js.testing.jest.fix.test.2", strong(".toBe"), strong("4"), strong("3")))
           stateCheck {
             textOnLine(5, "3")
           }
@@ -118,8 +121,8 @@ class JestLesson(module: Module)
 
         highlightBreakpointGutter(LogicalPosition(4, 0))
         task {
-          text(JsLessonsBundle.message("js.testing.jest.re.run.test", icon(AllIcons.RunConfigurations.TestState.Red2), strong(
-            "Run adds 1 + 2 to equal 3")))
+          text(JsLessonsBundle.message("js.testing.jest.re.run.test.1", icon(AllIcons.RunConfigurations.TestState.Red2)))
+          text(JsLessonsBundle.message("js.testing.jest.re.run.test.2", strong("Run adds 1 + 2 to equal 3")))
           stateCheck {
             RunManager.getInstance(project).findConfigurationByName("adds 1 + 2 to equal 3") != null
           }
@@ -130,7 +133,8 @@ class JestLesson(module: Module)
           before {
             LearningUiHighlightingManager.clearHighlights()
           }
-          text(JsLessonsBundle.message("js.testing.jest.success.run.coverage", icon(AllIcons.General.RunWithCoverage)))
+          text(JsLessonsBundle.message("js.testing.jest.success.run.coverage.1"))
+          text(JsLessonsBundle.message("js.testing.jest.success.run.coverage.2", icon(AllIcons.General.RunWithCoverage)))
           trigger(it)
         }
 

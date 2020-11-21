@@ -38,7 +38,8 @@ class BeforeDebuggingLesson(module: Module)
         setLanguageLevel()
         prepareSample(jsDebuggerSample)
         task("RunClass") {
-          text(JsDebugLessonsBundle.message("js.debugger.before.intro",
+          text(JsDebugLessonsBundle.message("js.debugger.before.intro.1"))
+          text(JsDebugLessonsBundle.message("js.debugger.before.intro.2",
                                             "https://nodejs.org/en/", strong("Different!"), strong("Equal!"),
                                             "https://nodejs.org/en/download/", action(it)))
           trigger(it)
@@ -56,7 +57,8 @@ class BeforeDebuggingLesson(module: Module)
           }
         }
         task {
-          text(JsDebugLessonsBundle.message("js.debugger.before.save", strong("debugging.js"), strong(ExecutionBundle.message("save.temporary.run.configuration.action.name", "debugging.js").dropMnemonic())))
+          text(JsDebugLessonsBundle.message("js.debugger.before.save.1"))
+          text(JsDebugLessonsBundle.message("js.debugger.before.save.2", strong("debugging.js"), strong(ExecutionBundle.message("save.temporary.run.configuration.action.name", "debugging.js").dropMnemonic())))
           stateCheck {
             val selectedConfiguration = RunManager.getInstance(project).selectedConfiguration ?: return@stateCheck false
             !selectedConfiguration.isTemporary
@@ -71,7 +73,8 @@ class BeforeDebuggingLesson(module: Module)
         }
 
         task {
-          text(JsDebugLessonsBundle.message("js.debugger.before.manage", strong("+")))
+          text(JsDebugLessonsBundle.message("js.debugger.before.manage.1", strong("+")))
+          text(JsDebugLessonsBundle.message("js.debugger.before.manage.2"))
           stateCheck {
             focusOwner is EditorComponentImpl
           }
