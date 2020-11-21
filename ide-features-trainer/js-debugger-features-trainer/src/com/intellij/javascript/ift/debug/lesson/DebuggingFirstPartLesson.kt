@@ -29,7 +29,8 @@ class DebuggingFirstPartLesson(module: Module)
 
         highlightButtonById("Run")
         task("Run") {
-          text(JsDebugLessonsBundle.message("js.debugger.part.1.start", icon(AllIcons.RunConfigurations.TestState.Run)))
+          text(JsDebugLessonsBundle.message("js.debugger.part.1.start.1"))
+          text(JsDebugLessonsBundle.message("js.debugger.part.1.start.2", icon(AllIcons.RunConfigurations.TestState.Run)))
           trigger(it)
         }
 
@@ -53,7 +54,8 @@ class DebuggingFirstPartLesson(module: Module)
           }
         }
         task {
-          text(JsDebugLessonsBundle.message("js.debugger.part.1.tool.window", UIBundle.message("tool.window.name.debug"), strong(XDebuggerBundle.message("xdebugger.default.content.title")), strong(XDebuggerBundle.message("debugger.session.tab.variables.title")), strong(XDebuggerBundle.message("debugger.session.tab.frames.title")), strong(XDebuggerBundle.message("debugger.session.tab.console.content.name"))))
+          text(JsDebugLessonsBundle.message("js.debugger.part.1.tool.window.1", UIBundle.message("tool.window.name.debug")))
+          text(JsDebugLessonsBundle.message("js.debugger.part.1.tool.window.2", strong(XDebuggerBundle.message("xdebugger.default.content.title")), strong(XDebuggerBundle.message("debugger.session.tab.variables.title")), strong(XDebuggerBundle.message("debugger.session.tab.frames.title")), strong(XDebuggerBundle.message("debugger.session.tab.console.content.name"))))
           stateCheck {
             val text = focusOwner.toString()
             text.contains("Terminal") 
