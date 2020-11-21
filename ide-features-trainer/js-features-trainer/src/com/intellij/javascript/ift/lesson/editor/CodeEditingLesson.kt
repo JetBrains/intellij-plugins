@@ -67,12 +67,15 @@ class CodeEditingLesson(module: Module)
           }
         }
         task("MoveStatementUp") {
-          text(JsLessonsBundle.message("js.editor.code.editing.comment.delete.unselect.move.up", action("CommentByBlockComment"), action("EditorDeleteToWordStart"), action("EditorUnSelectWord"), action(it)))
+          text(JsLessonsBundle.message("js.editor.code.editing.comment.delete.unselect.move.up.1", action("CommentByBlockComment"), action("EditorDeleteToWordStart"), action("EditorUnSelectWord")))
+          text(JsLessonsBundle.message("js.editor.code.editing.comment.delete.unselect.move.up.2", action(it)))
           trigger(it)
         }
         task {
-          text(JsLessonsBundle.message("js.editor.code.editing.multi.caret",
-                                     code("td"), code("td"), action("SelectNextOccurrence"), code("td"), code("th"), action("EditorEscape")))
+          text(JsLessonsBundle.message("js.editor.code.editing.multi.caret.1",
+                                       code("td"), code("td"), action("SelectNextOccurrence")))
+          text(JsLessonsBundle.message("js.editor.code.editing.multi.caret.2",
+                                       code("td"), code("th"), action("EditorEscape")))
           stateCheck {
             textOnLine(9, "<th>") &&
             textOnLine(10, "<th>") &&
