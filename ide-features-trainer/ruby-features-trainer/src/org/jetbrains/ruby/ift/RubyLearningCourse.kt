@@ -39,7 +39,7 @@ class RubyLearningCourse : LearningCourseBase(RubyLanguage.INSTANCE.id) {
         SelectLesson(it, lang, ls("Selection.rb.sample")),
         SingleLineCommentLesson(it, lang, ls("Comment.rb.sample")),
         DuplicateLesson(it, lang, ls("Duplicate.rb.sample")),
-        MoveLesson(it, lang, ls("Move.rb.sample")),
+        MoveLesson(it, lang, "set(v)", ls("Move.rb.sample")),
         CollapseLesson(it, lang, ls("Collapse.rb.sample")),
         RubySurroundAndUnwrapLesson(it),
         MultipleSelectionHtmlLesson(it),
