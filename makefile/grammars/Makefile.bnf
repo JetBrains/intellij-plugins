@@ -86,7 +86,7 @@ conditional ::= conditional-keyword condition EOL block conditional-else* 'endif
 conditional-else ::= 'else' (conditional-keyword condition block | EOL? block) {pin=1}
 condition ::= condition-parens | (condition-body condition-body?)
 private condition-parens ::= '(' (condition-body|',')* ')' {pin=1}
-private condition-body ::= variable-usage|function|string|identifier|'='
+private condition-body ::= variable-usage|function|string|identifier|'='|':'
 block ::= stmt*
 
 identifier ::= identifier_part | (<<parseToDollarNoWhitespace>> identifier_part) | <<parseNoWhitespace>>

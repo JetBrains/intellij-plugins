@@ -170,12 +170,12 @@ public class MakefileVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitNamedElement(@NotNull MakefileNamedElement o) {
-    visitPsiElement(o);
-  }
-
   public void visitPsiLanguageInjectionHost(@NotNull PsiLanguageInjectionHost o) {
     visitElement(o);
+  }
+
+  public void visitNamedElement(@NotNull MakefileNamedElement o) {
+    visitPsiElement(o);
   }
 
   public void visitPsiElement(@NotNull PsiElement o) {

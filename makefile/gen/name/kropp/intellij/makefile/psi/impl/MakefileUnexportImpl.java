@@ -22,6 +22,7 @@ public class MakefileUnexportImpl extends ASTWrapperPsiElement implements Makefi
     visitor.visitUnexport(this);
   }
 
+  @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof MakefileVisitor) accept((MakefileVisitor)visitor);
     else super.accept(visitor);

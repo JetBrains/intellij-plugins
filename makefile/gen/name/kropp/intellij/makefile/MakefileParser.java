@@ -44,7 +44,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     r = any_0(b, l + 1);
     p = r; // pin = 1
     r = r && stmt(b, l + 1);
-    exit_section_(b, l, m, r, p, recover_parser_);
+    exit_section_(b, l, m, r, p, MakefileParser::recover);
     return r || p;
   }
 
@@ -161,7 +161,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // variable-usage|function|string|identifier|'='
+  // variable-usage|function|string|identifier|'='|':'
   static boolean condition_body(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "condition_body")) return false;
     boolean r;
@@ -170,6 +170,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     if (!r) r = string(b, l + 1);
     if (!r) r = identifier(b, l + 1);
     if (!r) r = consumeToken(b, ASSIGN);
+    if (!r) r = consumeToken(b, COLON);
     return r;
   }
 
@@ -577,7 +578,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
       if (!function_param_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "function_param", c)) break;
     }
-    exit_section_(b, l, m, r, false, function_recover_parser_);
+    exit_section_(b, l, m, r, false, MakefileParser::function_recover);
     return r;
   }
 
@@ -1739,14 +1740,4 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  static final Parser function_recover_parser_ = new Parser() {
-    public boolean parse(PsiBuilder b, int l) {
-      return function_recover(b, l + 1);
-    }
-  };
-  static final Parser recover_parser_ = new Parser() {
-    public boolean parse(PsiBuilder b, int l) {
-      return recover(b, l + 1);
-    }
-  };
 }

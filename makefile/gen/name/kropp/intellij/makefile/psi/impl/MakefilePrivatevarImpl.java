@@ -1,15 +1,15 @@
 // This is a generated file. Not intended for manual editing.
 package name.kropp.intellij.makefile.psi.impl;
 
-import java.util.List;
-import org.jetbrains.annotations.*;
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import static name.kropp.intellij.makefile.psi.MakefileTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
-import name.kropp.intellij.makefile.psi.*;
+import name.kropp.intellij.makefile.psi.MakefilePrivatevar;
+import name.kropp.intellij.makefile.psi.MakefileVariableAssignment;
+import name.kropp.intellij.makefile.psi.MakefileVisitor;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class MakefilePrivatevarImpl extends ASTWrapperPsiElement implements MakefilePrivatevar {
 
@@ -21,6 +21,7 @@ public class MakefilePrivatevarImpl extends ASTWrapperPsiElement implements Make
     visitor.visitPrivatevar(this);
   }
 
+  @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof MakefileVisitor) accept((MakefileVisitor)visitor);
     else super.accept(visitor);

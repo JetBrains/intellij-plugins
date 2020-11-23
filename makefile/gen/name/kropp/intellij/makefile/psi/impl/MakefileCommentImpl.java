@@ -1,15 +1,12 @@
 // This is a generated file. Not intended for manual editing.
 package name.kropp.intellij.makefile.psi.impl;
 
-import java.util.List;
-import org.jetbrains.annotations.*;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.util.PsiTreeUtil;
-import static name.kropp.intellij.makefile.psi.MakefileTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
-import name.kropp.intellij.makefile.psi.*;
+import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElementVisitor;
+import name.kropp.intellij.makefile.psi.MakefileComment;
+import name.kropp.intellij.makefile.psi.MakefileVisitor;
+import org.jetbrains.annotations.NotNull;
 
 public class MakefileCommentImpl extends ASTWrapperPsiElement implements MakefileComment {
 
@@ -21,6 +18,7 @@ public class MakefileCommentImpl extends ASTWrapperPsiElement implements Makefil
     visitor.visitComment(this);
   }
 
+  @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof MakefileVisitor) accept((MakefileVisitor)visitor);
     else super.accept(visitor);

@@ -19,6 +19,7 @@ public class MakefileDirectiveImpl extends ASTWrapperPsiElement implements Makef
     visitor.visitDirective(this);
   }
 
+  @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof MakefileVisitor) accept((MakefileVisitor)visitor);
     else super.accept(visitor);

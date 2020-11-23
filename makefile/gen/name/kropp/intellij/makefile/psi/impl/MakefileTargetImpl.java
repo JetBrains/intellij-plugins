@@ -1,17 +1,18 @@
 // This is a generated file. Not intended for manual editing.
 package name.kropp.intellij.makefile.psi.impl;
 
-import java.util.List;
-import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
+import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.util.PsiTreeUtil;
-import static name.kropp.intellij.makefile.psi.MakefileTypes.*;
-import name.kropp.intellij.makefile.psi.*;
-import com.intellij.navigation.ItemPresentation;
-import name.kropp.intellij.makefile.stub.MakefileTargetStubElement;
 import com.intellij.psi.stubs.IStubElementType;
+import com.intellij.psi.util.PsiTreeUtil;
+import name.kropp.intellij.makefile.psi.*;
+import name.kropp.intellij.makefile.stub.MakefileTargetStubElement;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class MakefileTargetImpl extends MakefileTargetNamedElementImpl implements MakefileTarget {
 
@@ -27,6 +28,7 @@ public class MakefileTargetImpl extends MakefileTargetNamedElementImpl implement
     visitor.visitTarget(this);
   }
 
+  @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof MakefileVisitor) accept((MakefileVisitor)visitor);
     else super.accept(visitor);
