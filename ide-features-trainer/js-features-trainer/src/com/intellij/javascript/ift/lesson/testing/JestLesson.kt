@@ -139,6 +139,9 @@ class JestLesson(module: Module)
         }
 
         task("HideActiveWindow") {
+          before {
+            LearningUiHighlightingManager.clearHighlights()
+          }
           text(JsLessonsBundle.message("js.testing.jest.coverage.result", shortcut(KeymapUtil.getShortcutText("HideActiveWindow"))))
           trigger(it)
         }
