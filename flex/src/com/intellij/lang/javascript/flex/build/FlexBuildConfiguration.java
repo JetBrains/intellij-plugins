@@ -27,7 +27,7 @@ public class FlexBuildConfiguration {
   public static final @NonNls String APPLICATION = "Application";
   public static final @NonNls String LIBRARY = "Library";
 
-  private final Type myType = Type.Default;
+  private static final Type myType = Type.Default;
   public boolean DO_BUILD;
   public String OUTPUT_TYPE = APPLICATION;
   public boolean USE_DEFAULT_SDK_CONFIG_FILE = true;
