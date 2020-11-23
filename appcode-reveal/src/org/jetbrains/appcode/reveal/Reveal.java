@@ -15,9 +15,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Version;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VfsUtilCore;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.mac.foundation.NSWorkspace;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.cidr.AppleScript;
@@ -34,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 
 public class Reveal {
@@ -74,12 +72,10 @@ public class Reveal {
     File result;
 
     if (isCompatibleWithReveal27OrHigher(bundle)) {
-      File xcFrameworkIoFile = OCPathManager.getUserApplicationSupportSubFile("Reveal/RevealServer/RevealServer.xcframework");
-      VirtualFile xcFramework = VfsUtil.findFileByIoFile(xcFrameworkIoFile, true);
-      if (xcFramework == null) return null;
-      VirtualFile frameworkRoot = ReadAction.compute(() -> new XCFramework(xcFramework).resolveFrameworkRoot(buildSettings));
+      Path xcFrameworkIoFile = OCPathManager.getUserApplicationSupportSubFile("Reveal/RevealServer/RevealServer.xcframework").toPath();
+      Path frameworkRoot = ReadAction.compute(() -> new XCFramework(xcFrameworkIoFile).resolveFrameworkRoot(buildSettings));
       if (frameworkRoot == null) return null;
-      result = new File(VfsUtilCore.virtualToIoFile(frameworkRoot), "RevealServer");
+      result = new File(frameworkRoot.toFile(), "RevealServer");
     }
     else if (isCompatibleWithReveal23OrHigher(bundle)) {
       String libraryPath = "Reveal/RevealServer/";
