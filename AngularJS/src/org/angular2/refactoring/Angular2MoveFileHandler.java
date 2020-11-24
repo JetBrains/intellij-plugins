@@ -4,6 +4,7 @@ package org.angular2.refactoring;
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.typescript.refactoring.ES6MoveFileHandler;
+import com.intellij.model.ModelBranch;
 import com.intellij.psi.PsiFile;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.util.IncorrectOperationException;
@@ -15,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class Angular2MoveFileHandler extends ES6MoveFileHandler {
 
@@ -50,5 +52,12 @@ public class Angular2MoveFileHandler extends ES6MoveFileHandler {
     protected void restore(@NotNull PsiFile file) {
       Angular2SoftFileReferenceSet.decodeTemplateReferenceData(file, myRefs);
     }
+
+    @Override
+    public @NotNull UsageInfo obtainBranchCopy(@NotNull ModelBranch branch) {
+      return new MyRestoreReferencesUsage(branch.obtainPsiCopy(Objects.requireNonNull(getFile())),
+                                          convertMap(myRefs, d -> d.branched(branch)));
+    }
+
   }
 }

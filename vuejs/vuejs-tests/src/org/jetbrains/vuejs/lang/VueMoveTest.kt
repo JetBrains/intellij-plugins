@@ -2,8 +2,9 @@
 package org.jetbrains.vuejs.lang
 
 import com.intellij.lang.javascript.JSMoveTestBase
+import com.intellij.openapi.util.registry.Registry
 
-class VueMoveTest: JSMoveTestBase() {
+open class VueMoveTest: JSMoveTestBase() {
   override fun getTestDataPath(): String = getVueTestDataPath() + "/refactoring/move/"
 
   override fun getTestRoot(): String {
@@ -13,4 +14,12 @@ class VueMoveTest: JSMoveTestBase() {
   fun testTsPathMappings() {
     doTest("src/components/ImportedFile.vue", "src/components/sub-directory")
   }
+
+  class BranchTest : VueMoveTest() {
+    override fun setUp() {
+      super.setUp()
+      Registry.get("run.refactorings.in.model.branch").setValue(true, testRootDisposable)
+    }
+  }
+
 }
