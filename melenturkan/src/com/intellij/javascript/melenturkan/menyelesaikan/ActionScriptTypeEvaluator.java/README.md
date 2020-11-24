@@ -180,3 +180,29 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
     return JSNamedTypeFactory.createType(name, typeSource, staticOrInstance);
   }
 }
+   #Sistem Manajemen Basis Data PostgreSQL
+
+ Direktori ini berisi rilis PostgreSQL saat ini dan sebelumnya,
+ dan antarmuka terkait, utilitas, dan proyek lainnya.
+
+ PostgreSQL bukanlah perangkat lunak domain publik.  Ini memiliki hak cipta oleh
+ University of California dan PostgreSQL Global Development Group,
+ tetapi dapat digunakan sesuai dengan persyaratan lisensi PostgreSQL
+ lisensi di bawah ini:
+
+ --------------------------------------------------  ----------------------
+
+ Sistem Manajemen Basis Data PostgreSQL
+ (sebelumnya dikenal sebagai Postgres, lalu sebagai Postgres95)
+
+ Bagian Hak Cipta (c) 1996-2020, Grup Pengembangan Global PostgreSQL
+
+ Bagian Hak Cipta (c) 1994, Bupati Universitas California
+
+ Izin untuk menggunakan, menyalin, memodifikasi, dan mendistribusikan perangkat lunak ini dan perangkat lunaknya
+ dokumentasi untuk tujuan apapun, tanpa biaya, dan tanpa tertulis
+ Perjanjian dengan ini diberikan, asalkan pemberitahuan hak cipta di atas
+ dan paragraf ini dan dua paragraf berikut muncul seluruhnya
+ salinan.
+
+ DALAM KEADAAN APA PUN, U…
