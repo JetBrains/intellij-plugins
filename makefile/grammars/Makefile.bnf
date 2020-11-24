@@ -104,7 +104,7 @@ unexport ::= 'unexport' (EOL | (variable-assignment|variable) EOL?)
 private exportvar ::= 'export' variable-assignment {pin=1}
 privatevar ::= 'private' variable-assignment {pin=1}
 
-include ::= ('include'|'-include'|'sinclude') filename+ EOL? {pin=1}
+include ::= ('include'|'-include'|'sinclude') filename+ EOL?
 filename ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileFilenameMixin"}
 
 vpath ::= 'vpath' (pattern 'include'? directory*)? EOL? {pin=1}

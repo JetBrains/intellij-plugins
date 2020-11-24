@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.*
 
 plugins {
   kotlin("jvm") version "1.3.72"
-  id("org.jetbrains.intellij") version "0.4.21"
+  id("org.jetbrains.intellij") version "0.6.4"
 }
 
 group = "name.kropp.intellij"
@@ -14,6 +14,7 @@ repositories {
 
 intellij {
   version = "2020.2"
+  type = "CL"
   pluginName = rootProject.name
   updateSinceUntilBuild = false
 

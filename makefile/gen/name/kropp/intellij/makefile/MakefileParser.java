@@ -721,14 +721,13 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   // ('include'|'-include'|'sinclude') filename+ EOL?
   public static boolean include(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "include")) return false;
-    boolean r, p;
+    boolean r;
     Marker m = enter_section_(b, l, _NONE_, INCLUDE, "<include>");
     r = include_0(b, l + 1);
-    p = r; // pin = 1
-    r = r && report_error_(b, include_1(b, l + 1));
-    r = p && include_2(b, l + 1) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
+    r = r && include_1(b, l + 1);
+    r = r && include_2(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
   }
 
   // 'include'|'-include'|'sinclude'
