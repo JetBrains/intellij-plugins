@@ -10,6 +10,7 @@
   </description>
   <depends>com.intellij.modules.xml</depends>
   <depends>org.intellij.intelliLang</depends>
+  <resource-bundle>messages.CucumberBundle</resource-bundle>
   <vendor>JetBrains</vendor>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -91,7 +92,7 @@
 
     <intentionAction>
       <className>org.jetbrains.plugins.cucumber.intentions.ScenarioToOutlineIntention</className>
-      <category>Cucumber</category>
+      <categoryKey>intention.family.name.cucumber</categoryKey>
     </intentionAction>
     <multiHostInjector implementation="org.jetbrains.plugins.cucumber.injector.GherkinLanguageInjector"/>
   </extensions>
