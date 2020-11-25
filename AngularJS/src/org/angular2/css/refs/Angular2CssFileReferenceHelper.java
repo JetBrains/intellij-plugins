@@ -4,6 +4,7 @@ package org.angular2.css.refs;
 import com.intellij.lang.javascript.frameworks.webpack.WebpackCssFileReferenceHelper;
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfig;
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService;
+import com.intellij.model.ModelBranch;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFileSystemItem;
@@ -32,6 +33,12 @@ public class Angular2CssFileReferenceHelper extends WebpackCssFileReferenceHelpe
   private static class AngularCliAwareCssFileReferenceResolver extends WebpackTildeFileReferenceResolver {
     AngularCliAwareCssFileReferenceResolver(final @NotNull Project project, final @NotNull VirtualFile contextFile) {
       super(project, contextFile);
+    }
+
+    @Override
+    public @NotNull AngularCliAwareCssFileReferenceResolver obtainBranchCopy(@NotNull ModelBranch branch) {
+      VirtualFile fileCopy = branch.findFileCopy(getVirtualFile());
+      return new AngularCliAwareCssFileReferenceResolver(getProject(), fileCopy);
     }
 
     @Override

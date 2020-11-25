@@ -5,6 +5,7 @@ import com.intellij.javascript.JSFileReference;
 import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil;
 import com.intellij.lang.javascript.psi.JSLiteralExpression;
 import com.intellij.model.ModelBranch;
+import com.intellij.model.ModelBranchUtil;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
@@ -51,17 +52,22 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
     }
 
     public static void decodeTemplateReferenceData(@Nullable PsiFile file) {
-      Map<String, Angular2TemplateReferenceData> map = file != null ? file.getCopyableUserData(TEMPLATE_REFERENCE_DATA_KEY) : null;
+      if (file == null) return;
+      Map<String, Angular2TemplateReferenceData> map = ModelBranchUtil.getAndResetCopyableUserData(file, TEMPLATE_REFERENCE_DATA_KEY);
       if (map != null) {
-        file.putCopyableUserData(TEMPLATE_REFERENCE_DATA_KEY, null);
         decodeTemplateReferenceData(file, map);
       }
     }
 
     public static void decodeTemplateReferenceData(@Nullable PsiFile file, @NotNull Map<String, Angular2TemplateReferenceData> dataMap) {
+      if (file == null) return;
       visitFile(file, fileReferenceSet -> {
         Angular2TemplateReferenceData referenceData = dataMap.get(fileReferenceSet.getPathString());
         if (referenceData != null) {
+          ModelBranch branch = ModelBranch.getPsiBranch(file);
+          if (branch != null) {
+            referenceData = referenceData.branched(branch);
+          }
           fileReferenceSet.decodeTemplateReferenceData(referenceData);
         }
       });

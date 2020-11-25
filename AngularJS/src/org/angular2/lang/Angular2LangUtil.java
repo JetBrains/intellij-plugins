@@ -2,6 +2,7 @@
 package org.angular2.lang;
 
 import com.intellij.lang.injection.InjectedLanguageManager;
+import com.intellij.model.ModelBranchUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.diagnostic.Logger;
@@ -48,7 +49,7 @@ public final class Angular2LangUtil {
     if (psiFile == null) {
       return false;
     }
-    final VirtualFile file = psiFile.getOriginalFile().getVirtualFile();
+    VirtualFile file = ModelBranchUtil.findOriginalFile(psiFile.getOriginalFile().getVirtualFile());
     if (file == null || !file.isInLocalFileSystem()) {
       return isAngular2Context(psiFile.getProject());
     }
@@ -60,6 +61,7 @@ public final class Angular2LangUtil {
         && "disabled".equals(System.getProperty("angular.js"))) {
       return false;
     }
+    context = ModelBranchUtil.findOriginalFile(context);
     while (context instanceof LightVirtualFileBase) {
       context = ((LightVirtualFileBase)context).getOriginalFile();
     }
