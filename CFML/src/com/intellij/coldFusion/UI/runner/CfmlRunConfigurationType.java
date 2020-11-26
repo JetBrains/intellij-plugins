@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 public final class CfmlRunConfigurationType extends SimpleConfigurationType {
   public CfmlRunConfigurationType() {
     super("Cold Fusion runner description" /* yes, backward compatibility, so strange id */, "Cold Fusion", "Cold Fusion runner description", //NON-NLS
-          NotNullLazyValue.create(() -> CFMLIcons.Cfml));
+          NotNullLazyValue.lazy(() -> CFMLIcons.Cfml));
   }
 
   @Override

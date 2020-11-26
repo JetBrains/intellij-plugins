@@ -63,7 +63,7 @@ public final class StrutsConstantHelper {
     if (extensions == null) {
       final Project project = psiElement.getProject();
       extensions = CachedValuesManager.getManager(project).createCachedValue(() -> {
-        NotNullLazyValue<List<String>> lazyValue = NotNullLazyValue.createAtomic(() -> {
+        NotNullLazyValue<List<String>> lazyValue = NotNullLazyValue.atomicLazy(() -> {
           final List<String> extensions1 =
             ReadAction.compute(() -> StrutsConstantManager.getInstance(project)
               .getConvertedValue(psiFile,

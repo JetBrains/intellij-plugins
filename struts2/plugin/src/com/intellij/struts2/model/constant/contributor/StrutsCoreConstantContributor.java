@@ -122,7 +122,7 @@ public final class StrutsCoreConstantContributor extends StrutsConstantContribut
    * Converter for {@code struts.i18n.encoding}.
    */
   private static final class EncodingConverter extends ResolvingConverter.StringConverter {
-    private final NotNullLazyValue<Set<String>> charSets = NotNullLazyValue.createAtomic(() -> {
+    private final NotNullLazyValue<Set<String>> charSets = NotNullLazyValue.atomicLazy(() -> {
       return ContainerUtil.map2Set(CharsetToolkit.getAvailableCharsets(), charset -> charset.name());
     });
 

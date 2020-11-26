@@ -28,7 +28,7 @@ public final class Angular2XmlElementSourcesResolver {
                                            @NotNull Function<Angular2Directive, Collection<? extends PsiElement>> getSelectors) {
     myScope = scope;
     mySources = new ArrayList<>(sources);
-    myDeclarations = NotNullLazyValue.createAtomic(() -> buildDeclarations(getProperties, getSelectors));
+    myDeclarations = NotNullLazyValue.atomicLazy(() -> buildDeclarations(getProperties, getSelectors));
   }
 
   public @NotNull XmlTag getScope() {

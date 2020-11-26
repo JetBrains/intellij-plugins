@@ -36,7 +36,7 @@ import static org.angular2.lang.metadata.MetadataUtils.readStringPropertyValue;
 public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase<?>> extends Angular2MetadataElementStub<Psi> {
   @NonNls private static final String EXTENDS_MEMBER = "#ext";
 
-  private static final NotNullLazyValue<Map<String, EntityFactory>> ENTITY_FACTORIES = NotNullLazyValue.createAtomic(() -> {
+  private static final NotNullLazyValue<Map<String, EntityFactory>> ENTITY_FACTORIES = NotNullLazyValue.atomicLazy(() -> {
     return ContainerUtil.<String, EntityFactory>immutableMapBuilder()
       .put(MODULE_DEC, Angular2MetadataModuleStub::new)
       .put(PIPE_DEC, Angular2MetadataPipeStub::createPipeStub)

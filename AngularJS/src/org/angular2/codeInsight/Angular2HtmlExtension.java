@@ -29,7 +29,7 @@ import java.net.URL;
 import java.util.List;
 
 public final class Angular2HtmlExtension extends HtmlXmlExtension {
-  private static final NotNullLazyValue<String> NG_ENT_LOCATION = NotNullLazyValue.createAtomic(() -> {
+  private static final NotNullLazyValue<String> NG_ENT_LOCATION = NotNullLazyValue.atomicLazy(() -> {
     URL url = Angular2HtmlExtension.class.getResource("/dtd/ngChars.ent");
     return VfsUtilCore.urlToPath(VfsUtilCore.fixURLforIDEA(
       URLUtil.unescapePercentSequences(url.toExternalForm())));

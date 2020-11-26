@@ -30,7 +30,7 @@ import javax.swing.*;
 public final class OgnlFileType extends LanguageFileType {
   public static final OgnlFileType INSTANCE = new OgnlFileType();
 
-  private static final NotNullLazyValue<LayeredIcon> ICON = NotNullLazyValue.createAtomic(() -> {
+  private static final NotNullLazyValue<LayeredIcon> ICON = NotNullLazyValue.atomicLazy(() -> {
     final LayeredIcon icon = new LayeredIcon(2);
     icon.setIcon(FileTypes.PLAIN_TEXT.getIcon(), 0);
     icon.setIcon(OgnlIcons.Action_small, 1, 0, 6);

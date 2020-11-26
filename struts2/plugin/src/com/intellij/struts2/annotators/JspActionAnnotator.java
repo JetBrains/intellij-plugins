@@ -141,7 +141,7 @@ public final class JspActionAnnotator extends LineMarkerProviderDescriptor {
             setAlignment(GutterIconRenderer.Alignment.LEFT).
             setTooltipText(StrutsBundle.message("annotators.jsp.goto.action.method")).
             setEmptyPopupText(StrutsBundle.message("annotators.jsp.goto.action.method.not.found")).
-            setTargets(NotNullLazyValue.create(() -> ContainerUtil.mapNotNull(actions, Action::searchActionMethod)));
+            setTargets(NotNullLazyValue.lazy(() -> ContainerUtil.mapNotNull(actions, Action::searchActionMethod)));
 
     XmlToken identifier = XmlTagUtil.getStartTagNameElement(xmlTag);
     if (identifier != null) {

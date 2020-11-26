@@ -20,7 +20,7 @@ import java.util.Set;
 public class FlexStylesIndexableSetContributor extends IndexableSetContributor {
   private static final Logger LOG = Logger.getInstance(FlexStylesIndexableSetContributor.class);
 
-  private static final NotNullLazyValue<Set<VirtualFile>> ourFiles = NotNullLazyValue.createAtomic(() -> {
+  private static final NotNullLazyValue<Set<VirtualFile>> ourFiles = NotNullLazyValue.atomicLazy(() -> {
     URL libFileUrl = FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as");
     VirtualFile file = VfsUtil.findFileByURL(libFileUrl);
     if (file != null) {

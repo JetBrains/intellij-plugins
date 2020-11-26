@@ -59,11 +59,11 @@ public abstract class PhoneGapTargets {
   @NotNull
   protected final Project myProject;
 
-  private final NotNullLazyValue<List<String>> myVirtualDevices = NotNullLazyValue.create(() -> {
+  private final NotNullLazyValue<List<String>> myVirtualDevices = NotNullLazyValue.lazy(() -> {
     return listVirtualDevicesNonCached();
   });
 
-  private final NotNullLazyValue<List<String>> myDevices = NotNullLazyValue.create(() -> {
+  private final NotNullLazyValue<List<String>> myDevices = NotNullLazyValue.lazy(() -> {
     return listDevicesNonCached();
   });
 

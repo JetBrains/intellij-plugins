@@ -17,7 +17,7 @@ class AngularLintConfiguration internal constructor(private val ngProject: Angul
   private val myIncludes = AtomicNullableLazyValue.createValue {
     config.files.mapNotNull(::createGlobMatcher).nullize()
   }
-  private val myExcludes = NotNullLazyValue.createAtomic {
+  private val myExcludes = NotNullLazyValue.atomicLazy {
     config.exclude.mapNotNull(::createGlobMatcher)
   }
 
