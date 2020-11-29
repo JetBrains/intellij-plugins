@@ -70,7 +70,8 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
 
         val workDirectory = if (workingDirectory.isNotEmpty()) macroManager.expandPath(workingDirectory) else File(path).parent
 
-        val envs = environmentVariables.envs.toMutableMap()
+        val parentEnvs = if (environmentVariables.isPassParentEnvs) EnvironmentUtil.getEnvironmentMap() else emptyMap<String,String>()
+        val envs = parentEnvs + environmentVariables.envs.toMutableMap()
         var command = arrayOf(makePath) + params.array
         try {
           for (customizer in LocalTerminalCustomizer.EP_NAME.extensions) {
@@ -88,7 +89,7 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
             .withExePath(command[0])
             .withWorkDirectory(workDirectory)
             .withEnvironment(envs)
-            .withParentEnvironmentType(if (environmentVariables.isPassParentEnvs) GeneralCommandLine.ParentEnvironmentType.CONSOLE else GeneralCommandLine.ParentEnvironmentType.NONE)
+            .withParentEnvironmentType(GeneralCommandLine.ParentEnvironmentType.NONE)
             .withParameters(command.slice(1 until command.size))
 
         val processHandler = ColoredProcessHandler(cmd)

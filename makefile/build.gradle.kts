@@ -14,7 +14,6 @@ repositories {
 
 intellij {
   version = "2020.2"
-  type = "CL"
   pluginName = rootProject.name
   updateSinceUntilBuild = false
 
