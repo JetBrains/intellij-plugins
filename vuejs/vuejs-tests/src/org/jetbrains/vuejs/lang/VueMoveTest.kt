@@ -15,6 +15,11 @@ open class VueMoveTest: JSMoveTestBase() {
     doTest("src/components/ImportedFile.vue", "src/components/sub-directory")
   }
 
+  fun testIndexFile() {
+    doTest("declared/subdir/index.vue", "declared")
+  }
+
+
   class BranchTest : VueMoveTest() {
     override fun setUp() {
       super.setUp()
