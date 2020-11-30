@@ -15,7 +15,7 @@ public class PackageAccessibilityInspectionTest extends LightOsgiFixtureTestCase
       "import aQute.lib.fileset.FileSet;\n" +
       "public class C {\n" +
       "  public static void main() {\n" +
-      "    javax.swing.<error descr=\"The package 'javax.swing' is not imported in the manifest\">Icon</error> icon = null;\n" +
+      "    <error descr=\"The package 'javax.swing' is not imported in the manifest\">javax.swing.Icon</error> icon = null;\n" +
       "    <error descr=\"The package 'aQute.bnd.repository.fileset' is not imported in the manifest\">FileSetRepository</error> repo = null;\n" +
       "    <error descr=\"The package 'aQute.lib.fileset' is not exported by the bundle dependencies\">FileSet</error> set = null;\n" +
       "  }\n" +
