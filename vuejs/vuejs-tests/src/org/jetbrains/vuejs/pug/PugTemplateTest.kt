@@ -30,4 +30,31 @@ class PugTemplateTest : BasePlatformTestCase() {
     myFixture.checkHighlighting()
   }
 
+  fun testLineCommenterWithinTemplate() {
+    doCommenterTest(true)
+  }
+
+  fun testLineCommenterCaret() {
+    doCommenterTest(true)
+  }
+
+  fun testLineCommenterAcrossTemplate() {
+    doCommenterTest(true)
+  }
+
+  fun testLineCommenterBinding() {
+    doCommenterTest(true)
+  }
+
+  fun testBlockCommenterBinding() {
+    doCommenterTest(false)
+  }
+
+  private fun doCommenterTest(lineCommenter: Boolean) {
+    val name = getTestName(true)
+    myFixture.configureByFile("$name.vue")
+    myFixture.performEditorAction(if (lineCommenter) "CommentByLineComment" else "CommentByBlockComment")
+    myFixture.checkResultByFile("${name}_after.vue")
+  }
+
 }
