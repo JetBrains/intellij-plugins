@@ -14,6 +14,9 @@ class VueCommenterTest : BasePlatformTestCase() {
   fun testLess() = doTest()
   fun testStylus() = doTest()
 
+  fun testBindingLineComment() = doTest()
+  fun testBindingBlockComment() = doTest(false)
+
   fun testCommentByLineComment() = JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) {
     val htmlSettings = it.getCommonSettings(HTMLLanguage.INSTANCE)
     htmlSettings.BLOCK_COMMENT_AT_FIRST_COLUMN = false
@@ -52,10 +55,10 @@ class VueCommenterTest : BasePlatformTestCase() {
     doTest(1, "CommentByBlockComment")
   }
 
-  fun doTest() {
+  fun doTest(lineCommenter: Boolean = true) {
     val name = getTestName(true)
     myFixture.configureByFile("$name.vue")
-    myFixture.performEditorAction("CommentByLineComment")
+    myFixture.performEditorAction(if (lineCommenter) "CommentByLineComment" else "CommentByBlockComment")
     myFixture.checkResultByFile("${name}_after.vue")
   }
 
