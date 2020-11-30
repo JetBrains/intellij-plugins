@@ -95,6 +95,7 @@ class PerforceAuthenticationTest extends PerforceTestCase {
     def customName = "customName"
     withP4SetVariable('P4CONFIG', customName) {
       def config = createFileInCommand(customName, createP4Config('test'))
+      addFile(customName, true) //Add explicitly. With p4 2015.1 and later clients, P4CONFIG files are ignored by default
       changeListManager.waitUntilRefreshed()
 
       setUseP4Config(customName)

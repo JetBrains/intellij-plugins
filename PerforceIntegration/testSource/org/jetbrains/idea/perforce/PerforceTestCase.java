@@ -25,6 +25,7 @@ import com.intellij.testFramework.TestLoggerFactory;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.TempDirTestFixture;
 import com.intellij.testFramework.vcs.AbstractJunitVcsTestCase;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.TimeoutUtil;
@@ -229,8 +230,19 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
     return buildTestClientSpec("test", myClientRoot.toString(), "//test/...");
   }
 
-  protected void addFile(final String subPath) {
-    verify(runP4WithClient("add", new File(myClientRoot, subPath).toString()));
+  protected void addFile(@NotNull String subPath) {
+    addFile(subPath, false);
+  }
+
+  protected void addFile(@NotNull String subPath, boolean withoutIgnoreChecking) {
+    List<String> argList = new ArrayList<>();
+    argList.add("add");
+    if (withoutIgnoreChecking) {
+      argList.add("-I");
+    }
+    argList.add(new File(myClientRoot, subPath).toString());
+
+    verify(runP4WithClient(ArrayUtil.toStringArray(argList)));
 
     // IDE might've cached unversioned status for this file
     // We can't detect external 'p4 add' so let's pretend the user pressed 'Force Refresh'
@@ -697,7 +709,7 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
 
   @NotNull
   protected Change getSingleChange() {
-    return assertOneElement(ChangeListManagerImpl.getInstanceImpl(myProject).getDefaultChangeList().getChanges());
+    return assertOneElement(getChangeListManager().getDefaultChangeList().getChanges());
   }
 
   protected void editExternally(VirtualFile file, String text) {
