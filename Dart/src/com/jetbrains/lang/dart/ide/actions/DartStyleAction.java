@@ -94,7 +94,6 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
       if (editor != null && showStatusHint) {
         showHintLater(editor, DartBundle.message("dart.style.hint.failed"), true);
       }
-      LOG.warn("Unexpected response from edit_format, formatResult is null");
       return inputRange;
     }
 
