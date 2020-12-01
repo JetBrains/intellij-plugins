@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 
 public class JSShortenFQNamesProcessor implements TemplateOptionalProcessor {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.lang.javascript.JSShortenFQNamesProcessor");
+  private static final Logger LOG = Logger.getInstance(JSShortenFQNamesProcessor.class);
 
   @Override
   public void processText(final Project project,

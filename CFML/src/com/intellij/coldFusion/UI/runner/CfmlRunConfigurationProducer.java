@@ -27,7 +27,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 final class CfmlRunConfigurationProducer extends LazyRunConfigurationProducer<CfmlRunConfiguration> {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.coldFusion.UI.runner.CfmlRunConfigurationProducer");
+  private static final Logger LOG = Logger.getInstance(CfmlRunConfigurationProducer.class);
   public final static String WWW_ROOT = "wwwroot";
   public final static String DEFAULT_HOST = "http://localhost:8500";
 

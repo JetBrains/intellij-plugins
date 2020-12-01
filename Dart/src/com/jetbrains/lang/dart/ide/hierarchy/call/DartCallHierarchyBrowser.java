@@ -22,7 +22,7 @@ import java.util.Comparator;
 import java.util.Map;
 
 public class DartCallHierarchyBrowser extends CallHierarchyBrowserBase {
-  private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.ide.hierarchy.call.DartCallHierarchyBrowser");
+  private static final Logger LOG = Logger.getInstance(DartCallHierarchyBrowser.class);
 
   public DartCallHierarchyBrowser(Project project, PsiElement method) {
     super(project, method);

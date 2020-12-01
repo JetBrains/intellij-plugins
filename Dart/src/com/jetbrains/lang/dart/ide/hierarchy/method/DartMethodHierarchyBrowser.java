@@ -24,7 +24,7 @@ import java.util.Comparator;
 import java.util.Map;
 
 public class DartMethodHierarchyBrowser extends MethodHierarchyBrowserBase {
-  private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.ide.hierarchy.method.DartMethodHierarchyBrowser");
+  private static final Logger LOG = Logger.getInstance(DartMethodHierarchyBrowser.class);
 
   public DartMethodHierarchyBrowser(Project project, PsiElement target) {
     super(project, target);

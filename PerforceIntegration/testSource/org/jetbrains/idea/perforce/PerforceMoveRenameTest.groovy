@@ -29,7 +29,7 @@ import static junit.framework.TestCase.*
  * @author peter
  */
 class PerforceMoveRenameTest extends PerforceTestCase {
-  private static final Logger LOG = Logger.getInstance("#org.jetbrains.idea.perforce.PerforceMoveRenameTest")
+  private static final Logger LOG = Logger.getInstance(PerforceMoveRenameTest.class)
   @Override
   void before() throws Exception {
     super.before()

@@ -40,7 +40,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class OutputMessageParser {
-  private static final Logger LOG = Logger.getInstance("#org.jetbrains.idea.perforce.perforce.OutputMessageParser");
+  private static final Logger LOG = Logger.getInstance(OutputMessageParser.class);
   protected LinkedList<String> myLines = new LinkedList<>();
   private String myDepotPath;
   protected String myCurrentLine;

@@ -7,7 +7,6 @@ import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiParser;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.containers.Stack;
@@ -20,7 +19,6 @@ import static com.intellij.coldFusion.model.lexer.CfmlTokenTypes.*;
  * Created by Lera Nikolaenko
  */
 public class CfmlParser implements PsiParser {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.coldFusion.model.parsers.CfmlParser");
 
   private static class Tag {
     public String myTagName;

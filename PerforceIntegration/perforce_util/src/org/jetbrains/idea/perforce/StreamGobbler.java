@@ -23,7 +23,7 @@ import com.intellij.util.ThrowableConsumer;
 import java.io.*;
 
 public final class StreamGobbler implements CancellableRunnable {
-  private static final Logger LOG = Logger.getInstance("#org.jetbrains.idea.perforce.StreamGobbler");
+  private static final Logger LOG = Logger.getInstance(StreamGobbler.class);
   private final static int IN_MEMORY_RESULT_THRESHOULD = 48 * 1024; // 48K
 
   private OutputStream myByteContents;
