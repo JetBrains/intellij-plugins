@@ -111,7 +111,7 @@ public class KarmaServerState {
       expectedBrowsers = config.getBrowsers();
     }
     Set<String> expectedBrowserSet = new HashSet<>(expectedBrowsers);
-    expectedBrowserSet.removeAll(myFailedToStartBrowsers);
+    myFailedToStartBrowsers.forEach(expectedBrowserSet::remove);
     if (myCapturedBrowsers.values().stream().anyMatch(o -> !o.isAutoCaptured())) {
       return true;
     }
