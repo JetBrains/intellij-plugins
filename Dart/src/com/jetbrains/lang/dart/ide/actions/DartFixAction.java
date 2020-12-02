@@ -23,6 +23,7 @@ import java.util.List;
  * <p/>
  * This is currently experimental work.
  */
+@SuppressWarnings("ComponentNotRegistered")
 public class DartFixAction extends AbstractDartFileProcessingAction {
   @NotNull
   @Override
