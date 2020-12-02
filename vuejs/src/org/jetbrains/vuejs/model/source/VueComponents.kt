@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.model.source
 
 import com.intellij.extapi.psi.StubBasedPsiElementBase
 import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
-import com.intellij.lang.ecmascript6.psi.JSClassExpression
 import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.lang.javascript.psi.*
@@ -106,15 +105,16 @@ class VueComponents {
         // Vue.extend({...})
         // defineComponent({...})
         is JSCallExpression ->
-          if (isExtendVueCall(resolved) || isDefineComponentCall(resolved)) {
+          if (isDefineComponentOrVueExtendCall(resolved)) {
             PsiTreeUtil.getStubChildOfType(resolved.argumentList!!, JSObjectLiteralExpression::class.java)
               ?.let { VueSourceEntityDescriptor(it) }
-          } else null
+          }
+          else null
 
         // @Component({...}) class MyComponent {...}
         is JSClass ->
           VueSourceEntityDescriptor(getComponentDecorator(resolved)?.let { getDescriptorFromDecorator(it) },
-                                           resolved)
+                                    resolved)
         else -> null
       }
 
@@ -137,14 +137,13 @@ class VueComponents {
     }
 
     @StubUnsafe
-    private fun isExtendVueCall(callExpression: JSCallExpression): Boolean =
-      (callExpression.methodExpression as? JSReferenceExpression)?.referenceName == EXTEND_FUN
-
-    @StubUnsafe
-    fun isDefineComponentCall(callExpression: JSCallExpression): Boolean =
+    fun isDefineComponentOrVueExtendCall(callExpression: JSCallExpression): Boolean =
       callExpression.methodExpression
         ?.castSafelyTo<JSReferenceExpression>()
-        ?.takeIf { it.qualifier == null && it.referenceName == DEFINE_COMPONENT_FUN } != null
+        ?.let {
+          (it.qualifier == null && it.referenceName == DEFINE_COMPONENT_FUN)
+          || it.referenceName == EXTEND_FUN
+        } == true
   }
 }
 
