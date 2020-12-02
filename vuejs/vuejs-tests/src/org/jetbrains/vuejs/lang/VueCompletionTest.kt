@@ -1798,6 +1798,16 @@ export default {
 </script>""")
   }
 
+  fun testImportVueExtend() {
+    myFixture.configureByText("FooBar.vue", "<script>export default Vue.extend({props: {}});</script>")
+    myFixture.configureByText("Test.vue", "<script>export default Vue.extend({name: 'FooBar2'});</script>")
+    myFixture.configureByText("FooBar3.vue", "<script>export default Vue.extend({data: function(){}});</script>")
+    myFixture.configureByText("FooBar4.vue", "<script>export default Vue.extend({});</script>")
+    myFixture.configureByText("check.vue", "<template><foo-<caret></template>")
+    myFixture.completeBasic()
+    assertEquals("foo-bar, foo-bar2, foo-bar3, foo-bar4", (myFixture.lookupElementStrings ?: emptyList()).joinToString())
+  }
+
   private fun assertDoesntContainVueLifecycleHooks() {
     myFixture.completeBasic()
     assertDoesntContain(myFixture.lookupElementStrings!!, "\$el", "\$options", "\$parent")
