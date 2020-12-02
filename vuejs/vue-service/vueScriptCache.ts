@@ -74,7 +74,8 @@ export class VueScriptCache {
       },
       ontext(data: string) {
         if (isScript) {
-          result += " ".repeat(parser.startIndex - lastIndex) + data
+          const lineCount = contents.substring(lastIndex, parser.startIndex).split("\n").length - 1
+          result += " ".repeat(parser.startIndex - lastIndex - lineCount) + "\n".repeat(lineCount) + data
           lastIndex = parser.endIndex + 1
         }
       },

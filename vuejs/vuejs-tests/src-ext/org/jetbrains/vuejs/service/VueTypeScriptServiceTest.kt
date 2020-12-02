@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.service
 
 import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.codeInsight.navigation.actions.GotoDeclarationOrUsageHandler2
 import com.intellij.lang.javascript.service.JSLanguageService
 import com.intellij.lang.javascript.service.JSLanguageServiceBase
 import com.intellij.lang.javascript.service.JSLanguageServiceProvider
@@ -47,6 +48,14 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
     doTestWithCopyDirectory()
     myFixture.configureByFile("SimpleVueNoTs.vue")
     checkHighlightingByOptions(false)
+  }
+
+  @TypeScriptVersion(TypeScriptVersions.TS26)
+  fun testGotoDeclaration() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10)
+    myFixture.configureByFile("GotoDeclaration.vue")
+    myFixture.performEditorAction("GotoDeclaration")
+    TestCase.assertEquals(2399, myFixture.editor.caretModel.currentCaret.offset)
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS26)
