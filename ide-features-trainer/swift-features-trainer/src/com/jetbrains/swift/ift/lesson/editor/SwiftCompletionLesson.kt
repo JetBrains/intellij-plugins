@@ -40,7 +40,10 @@ class Completion: UIViewController {
       text(SwiftLessonsBundle.message("swift.editor.completion.basic", code(".stf"), LessonUtil.rawEnter(), code("sizeToFit()")))
     }
     caret(15, 20)
-    text(SwiftLessonsBundle.message("swift.editor.completion.basic.shortcut", action("CodeCompletion")))
+    task {
+      triggers("CodeCompletion")
+      text(SwiftLessonsBundle.message("swift.editor.completion.basic.shortcut", action("CodeCompletion")))
+    }
     caret(19, 35)
     task { type(" ") }
 

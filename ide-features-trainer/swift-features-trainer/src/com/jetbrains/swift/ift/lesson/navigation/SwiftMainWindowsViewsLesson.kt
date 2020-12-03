@@ -113,7 +113,7 @@ class Navigation: UITableViewController {
     text(SwiftLessonsBundle.message("swift.navigation.windows.files", code(".xcworkspace"), code(".xcproject")))
     task {
       triggers("com.intellij.ui.content.tabs.TabbedContentAction\$MyNextTabAction")
-      text(SwiftLessonsBundle.message("swift.navigation.windows.files.activate", action("NextTab")))
+      text(SwiftLessonsBundle.message("swift.navigation.windows.files.activate", shortcut("⇧⌘]")))
     }
     caret(1, 1)
     text(SwiftLessonsBundle.message("swift.navigation.windows.return.to.editor", action("EditorEscape")))
