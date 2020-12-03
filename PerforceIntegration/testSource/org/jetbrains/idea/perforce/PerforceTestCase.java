@@ -507,15 +507,15 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
 
   @After
   public void after() throws Exception {
-    new RunAll()
-      .append(() -> {
+    new RunAll(
+      () -> {
         if (myProject != null) {
           getChangeListManager().waitUntilRefreshed();
         }
-      })
-      .append(() -> Disposer.dispose(myTestRootDisposable))
-      .append(() -> disposeFixtures())
-      .append(() -> {
+      },
+      () -> Disposer.dispose(myTestRootDisposable),
+      () -> disposeFixtures(),
+      () -> {
         long start = System.currentTimeMillis();
         while (myP4dProcess != null && myP4dProcess.isAlive() && System.currentTimeMillis() - start < 10_000) {
           TimeoutUtil.sleep(50); // maybe it's finishing?
@@ -523,8 +523,8 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
         if (myP4dProcess != null && myP4dProcess.isAlive()) {
           throw new AssertionError("Perforce server still alive!");
         }
-      })
-      .run();
+      }
+    ).run();
   }
 
   private void disposeFixtures() throws Exception {
