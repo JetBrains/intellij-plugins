@@ -9,7 +9,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="intellij.javaee.tapestry" />
-    <orderEntry type="library" scope="TEST" name="JUnit3" level="project" />
     <orderEntry type="library" scope="TEST" name="easymock" level="project" />
     <orderEntry type="library" scope="TEST" name="Objenesis" level="project" />
     <orderEntry type="library" name="CGLIB" level="project" />
@@ -29,5 +28,6 @@
     <orderEntry type="library" scope="TEST" name="Trove4j" level="project" />
     <orderEntry type="module" module-name="intellij.platform.core.ui" scope="TEST" />
     <orderEntry type="module" module-name="intellij.properties.psi.impl" scope="TEST" />
+    <orderEntry type="library" scope="TEST" name="JUnit4" level="project" />
   </component>
 </module>
