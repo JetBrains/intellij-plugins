@@ -43,13 +43,13 @@ import com.intellij.util.ObjectUtils.tryCast
 import com.intellij.util.castSafelyTo
 import one.util.streamex.StreamEx
 import org.jetbrains.vuejs.index.findScriptTag
+import org.jetbrains.vuejs.index.resolveLocally
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpression
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.model.source.PROPS_REQUIRED_PROP
 import org.jetbrains.vuejs.model.source.PROPS_TYPE_PROP
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.collections.HashSet
 import kotlin.reflect.KClass
 
 const val LANG_ATTRIBUTE_NAME = "lang"
@@ -116,17 +116,19 @@ fun getStringLiteralsFromInitializerArray(holder: PsiElement): List<JSLiteralExp
 }
 
 @StubSafe
-fun getTextIfLiteral(holder: PsiElement?): String? {
-  if (holder != null && holder is JSLiteralExpression) {
-    if ((holder as? StubBasedPsiElement<*>)?.stub != null) {
-      return holder.significantValue?.let { es6Unquote(it) }
-    }
-    if (holder.isQuotedLiteral) {
-      return holder.stringValue
-    }
+fun getTextIfLiteral(holder: PsiElement?): String? =
+  (if (holder is JSReferenceExpression) {
+    resolveLocally(holder).mapNotNull { (it as? JSVariable)?.initializerOrStub }.firstOrNull()
   }
-  return null
-}
+  else holder)
+    ?.castSafelyTo<JSLiteralExpression>()
+    ?.let { literalExpr ->
+      when {
+        (literalExpr as? StubBasedPsiElement<*>)?.stub != null -> literalExpr.significantValue?.let { es6Unquote(it) }
+        literalExpr.isQuotedLiteral -> literalExpr.stringValue
+        else -> null
+      }
+    }
 
 fun detectLanguage(tag: XmlTag?): String? = tag?.getAttribute(LANG_ATTRIBUTE_NAME)?.value?.trim()
 
