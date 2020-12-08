@@ -6,11 +6,11 @@ class Idea_70049 {
         }
     }
     // noinspection JSUnusedLocalSymbols
-    public function doSomething():void
-    {
-    }
 
     private <caret>function onMessageClick():void
+    {
+    }
+    public function doSomething():void
     {
     }
 }
