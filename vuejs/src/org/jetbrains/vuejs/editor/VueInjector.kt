@@ -1,6 +1,8 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.editor
 
+import com.intellij.lang.Language
+import com.intellij.lang.LanguageUtil
 import com.intellij.lang.injection.MultiHostInjector
 import com.intellij.lang.injection.MultiHostRegistrar
 import com.intellij.lang.javascript.JSInjectionBracesUtil
@@ -124,6 +126,7 @@ class VueInjector : MultiHostInjector {
       ?.parent?.castSafelyTo<XmlTag>()
       ?.takeIf { it.context is HtmlDocumentImpl }
       ?.let { CUSTOM_TOP_LEVEL_TAGS[it.name.toLowerCase(Locale.US)]?.invoke(it, context) }
+      ?.takeIf { LanguageUtil.isInjectableLanguage(it) }
       ?.let {
         registrar.startInjecting(it)
           .addPlace(null, null, context, ElementManipulators.getValueTextRange(context))
