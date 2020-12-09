@@ -13,9 +13,6 @@ import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInf
 interface VueContainerInfoProvider : EntityContainerInfoProvider<VueContainerInfo> {
 
   @JvmDefault
-  override fun getInfo(descriptor: VueSourceEntityDescriptor): VueContainerInfo?
-
-  @JvmDefault
   fun getThisTypeProperties(instanceOwner: VueInstanceOwner,
                             standardProperties: MutableMap<String, PropertySignature>)
     : Collection<PropertySignature> = emptyList()
