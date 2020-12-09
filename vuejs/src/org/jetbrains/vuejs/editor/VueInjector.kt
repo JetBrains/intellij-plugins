@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.editor
 
-import com.intellij.lang.Language
 import com.intellij.lang.injection.MultiHostInjector
 import com.intellij.lang.injection.MultiHostRegistrar
 import com.intellij.lang.javascript.JSInjectionBracesUtil
@@ -102,7 +101,7 @@ class VueInjector : MultiHostInjector {
 
     // this supposed to work in <template lang="jade"> attribute values
     if (context is XmlAttributeValueImpl
-        && !context.value.isBlank()
+        && context.value.isNotBlank()
         && parent is XmlAttribute
         && parent.parent != null
         && VueAttributeNameParser.parse(parent.name, parent.parent).injectJS) {
@@ -121,18 +120,16 @@ class VueInjector : MultiHostInjector {
       return
     }
 
-    if (context is XmlTextImpl) {
-      val parentTag = context.parent?.castSafelyTo<XmlTag>()
-      val lang = CUSTOM_TOP_LEVEL_TAGS[parentTag?.name?.toLowerCase(Locale.US)]
-      if (lang != null && parentTag?.context is HtmlDocumentImpl) {
-        Language.findLanguageByID(lang)?.let {
-          registrar.startInjecting(it)
-            .addPlace(null, null, context, ElementManipulators.getValueTextRange(context))
-            .doneInjecting()
-        }
+    (context as? XmlTextImpl)
+      ?.parent?.castSafelyTo<XmlTag>()
+      ?.takeIf { it.context is HtmlDocumentImpl }
+      ?.let { CUSTOM_TOP_LEVEL_TAGS[it.name.toLowerCase(Locale.US)]?.invoke(it, context) }
+      ?.let {
+        registrar.startInjecting(it)
+          .addPlace(null, null, context, ElementManipulators.getValueTextRange(context))
+          .doneInjecting()
         return
       }
-    }
 
     if (context is XmlTextImpl || context is XmlAttributeValueImpl) {
       val braces = BRACES_FACTORY.`fun`(context) ?: return

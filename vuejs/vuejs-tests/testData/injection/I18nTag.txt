@@ -13,6 +13,28 @@ HtmlFile:I18nTag.vue
         XmlText
           XmlToken:XML_DATA_CHARACTERS('foo')
           PsiWhiteSpace('\n')
+        HtmlTag:i18n
+          XmlToken:XML_START_TAG_START('<')
+          XmlToken:XML_NAME('i18n')
+          PsiWhiteSpace(' ')
+          PsiElement(XML_ATTRIBUTE)
+            XmlToken:XML_NAME('val')
+            XmlToken:XML_EQ('=')
+            PsiElement(XML_ATTRIBUTE_VALUE)
+              XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
+              XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
+          XmlToken:XML_TAG_END('>')
+          HtmlTag:div
+            XmlToken:XML_START_TAG_START('<')
+            XmlToken:XML_NAME('div')
+            XmlToken:XML_TAG_END('>')
+            PsiErrorElement:Element div is not closed
+              <empty list>
+          XmlToken:XML_END_TAG_START('</')
+          XmlToken:XML_NAME('i18n')
+          XmlToken:XML_TAG_END('>')
+        XmlText
+          PsiWhiteSpace('\n')
         XmlToken:XML_END_TAG_START('</')
         XmlToken:XML_NAME('div')
         XmlToken:XML_TAG_END('>')
@@ -54,6 +76,75 @@ HtmlFile:I18nTag.vue
                 PsiElement({)('{')
                 PsiElement(})('}')
             PsiElement(})('}')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('i18n')
+      XmlToken:XML_TAG_END('>')
+    PsiWhiteSpace('\n')
+    HtmlTag:i18n
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('i18n')
+      XmlToken:XML_TAG_END('>')
+      XmlText
+        XmlToken:XML_DATA_CHARACTERS('\n  aa\n    bb\n')
+        YAML file
+          YAML document
+            PsiElement(Eol)('\n')
+            PsiElement(indent)('  ')
+            YAML plain scalar text
+              PsiElement(text)('aa')
+              PsiElement(Eol)('\n')
+              PsiElement(indent)('    ')
+              PsiElement(text)('bb')
+          PsiElement(Eol)('\n')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('i18n')
+      XmlToken:XML_TAG_END('>')
+    PsiWhiteSpace('\n')
+    HtmlTag:i18n
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('i18n')
+      PsiWhiteSpace(' ')
+      PsiElement(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('lang')
+        XmlToken:XML_EQ('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
+          XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('yaml')
+          XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
+      XmlToken:XML_TAG_END('>')
+      XmlText
+        XmlToken:XML_DATA_CHARACTERS('{}')
+        YAML file
+          YAML document
+            YAML hash
+              PsiElement({)('{')
+              PsiElement(})('}')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('i18n')
+      XmlToken:XML_TAG_END('>')
+    PsiWhiteSpace('\n')
+    HtmlTag:i18n
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('i18n')
+      PsiWhiteSpace(' ')
+      PsiElement(XML_ATTRIBUTE)
+        XmlToken:XML_NAME('lang')
+        XmlToken:XML_EQ('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
+          XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('json')
+          XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
+      XmlToken:XML_TAG_END('>')
+      XmlText
+        XmlToken:XML_DATA_CHARACTERS('aaa')
+        PsiWhiteSpace(' ')
+        XmlToken:XML_DATA_CHARACTERS('aaa')
+        JsonFile: I18nTag.vue
+          JsonReferenceExpression
+            PsiElement(IDENTIFIER)('aaa')
+          PsiWhiteSpace(' ')
+          JsonReferenceExpression
+            PsiElement(IDENTIFIER)('aaa')
       XmlToken:XML_END_TAG_START('</')
       XmlToken:XML_NAME('i18n')
       XmlToken:XML_TAG_END('>')
