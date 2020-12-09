@@ -2015,6 +2015,13 @@ export default class UsageComponent extends Vue {
       myFixture.resolveReference("<no-script<caret>-section>").containingFile.name)
   }
 
+  fun testLazyLoaded() {
+    myFixture.configureByFiles("lazyLoaded/main.vue", "lazyLoaded/index.vue")
+    TestCase.assertEquals(
+      "index.vue",
+      myFixture.resolveReference("<Hello<caret>World").containingFile.name)
+  }
+
 }
 
 fun globalMixinText(): String {

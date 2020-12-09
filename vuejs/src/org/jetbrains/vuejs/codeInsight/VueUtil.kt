@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.codeInsight
 import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.extapi.psi.StubBasedPsiElementBase
+import com.intellij.lang.ecmascript6.psi.ES6ImportCall
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.injection.InjectedLanguageManager
@@ -161,7 +162,7 @@ fun resolveElementTo(element: PsiElement?, vararg classes: KClass<out JSElement>
       when (cur) {
         is JSFunction -> {
           JSStubBasedPsiTreeUtil.findReturnedExpressions(cur).asSequence()
-            .filter { JSReturnedExpressionType.isCountableReturnedExpression(it) }
+            .filter { JSReturnedExpressionType.isCountableReturnedExpression(it) || it is ES6ImportCall }
             .toCollection(queue)
         }
         is JSInitializerOwner -> {
@@ -179,6 +180,9 @@ fun resolveElementTo(element: PsiElement?, vararg classes: KClass<out JSElement>
         }
         is PsiPolyVariantReference -> cur.multiResolve(false)
           .mapNotNullTo(queue) { if (it.isValidResult) it.element else null }
+        is ES6ImportCall -> cur.resolveReferencedElements()
+          .toCollection(queue)
+        is JSEmbeddedContent -> findDefaultExport(cur)?.let { queue.add(it) }
         else -> JSStubBasedPsiTreeUtil.calculateMeaningfulElements(cur)
           .toCollection(queue)
       }
