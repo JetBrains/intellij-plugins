@@ -14,6 +14,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.HtmlUtil
+import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.index.VueFrameworkHandler
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
@@ -38,7 +39,8 @@ class VueFrameworkInsideScriptSpecificHandler : JSFrameworkSpecificHandler {
            && isInsideScript(parent)
            && VueJSLanguage.INSTANCE != language
            && (VueFrameworkHandler.hasComponentIndicatorProperties(parent) || parent.context is ES6ExportDefaultAssignment))
-          || (parent.containingFile is JSFile && VueFrameworkHandler.hasComponentIndicatorProperties(parent))) {
+          || (parent.containingFile is JSFile && VueFrameworkHandler.hasComponentIndicatorProperties(parent)
+              && isVueContext(parent))) {
         return getObjectLiteralTypeForComponent(parent)
       }
     }
