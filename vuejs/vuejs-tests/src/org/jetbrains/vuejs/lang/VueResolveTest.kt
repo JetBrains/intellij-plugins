@@ -1999,6 +1999,15 @@ export default class UsageComponent extends Vue {
     TestCase.assertEquals(104, myFixture.caretOffset)
   }
 
+  fun testGotoDeclarationTS() {
+    myFixture.configureByFile("gotoDeclarationTS.vue")
+    for (check in listOf("base", "watch", "computed", "methods")) {
+      myFixture.moveToOffsetBySignature("fetch<caret>Tracks/*$check*/()")
+      myFixture.performEditorAction("GotoDeclaration")
+      TestCase.assertEquals(check, 554, myFixture.caretOffset)
+    }
+  }
+
   fun testNoScriptSection() {
     myFixture.configureByFiles("noScriptSection/test.vue", "noScriptSection/noScriptSection.vue")
     TestCase.assertEquals(
