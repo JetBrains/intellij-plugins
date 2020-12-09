@@ -11,6 +11,11 @@ VuexStoreContext: {
         UPDATE_TEST_DATA: <store/index.js:88:JSFunctionProperty>,
       }
       modules: [
+        VuexModuleImpl bar [namespaced] <JSFile:bar.js> {
+          actions: {
+            updateData: <store/bar.js:27:JSFunctionProperty>,
+          }
+        }
         NuxtVuexModule foo [namespaced] <PsiDirectory:/src/store/store/foo> {
           state: {
             data: <foo/index.js:32:JSProperty>,

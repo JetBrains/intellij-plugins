@@ -397,7 +397,10 @@ class VuexResolveTest : BasePlatformTestCase() {
     myFixture.configureFromTempProjectFile("store/pages/index.vue")
     doTest(false,
            "'change<caret>Data'" to "store/actions.js:19:JSFunctionProperty",
-           "'foo/change<caret>Data'" to "foo/actions.js:19:JSFunctionProperty")
+           "'foo/change<caret>Data'" to "foo/actions.js:19:JSFunctionProperty",
+           "'bar/update<caret>Data'" to "store/bar.js:27:JSFunctionProperty",
+           "'bar/change<caret>Data'" to null,
+           "'ba<caret>r/changeData'" to "store/bar.js:0:JSFile:bar.js",)
     myFixture.configureFromTempProjectFile("store/store/foo/actions.js")
     doTest(false,
            "UPDATE_TEST_<caret>DATA" to "foo/index.js:75:JSFunctionProperty")
