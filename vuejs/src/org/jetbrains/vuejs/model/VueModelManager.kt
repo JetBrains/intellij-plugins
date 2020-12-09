@@ -54,6 +54,7 @@ class VueModelManager {
              ?: getGlobal(templateElement)
     }
 
+    /* This method is required in JS context. In TS context `this` type is resolved from the expected type handler. */
     fun findComponentForThisResolve(jsThisExpression: JSThisExpression): VueComponent? {
       //find enclosing function and it's second level enclosing function
       val function = PsiTreeUtil.getContextOfType(jsThisExpression, JSFunction::class.java)
