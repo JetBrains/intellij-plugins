@@ -16,6 +16,6 @@ class PythonTemplatesContextProvider : VueContextProvider {
       .modules
       .asSequence()
       .filter { it.moduleContentScope.contains(contextFile) }
-      .flatMap { TemplatesService.getInstance(it).templateFolders }
+      .flatMap { TemplatesService.getInstance(it)?.templateFolders ?: emptyList() }
       .any { VfsUtil.isAncestor(it, contextFile, false) }
 }
