@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * Created by Lera Nikolaenko
@@ -294,18 +295,14 @@ public final class CfmlPsiUtil {
     return null;
   }
 
-  public interface Getter<T, V> {
-    T get(V v);
-  }
-
   private static <Result extends PsiNamedElement> Result[] componentHierarchyGatherer(CfmlComponent component,
-                                                                                      Getter<Result[], ? super CfmlComponent> gatherer,
+                                                                                      Function<? super CfmlComponent, Result[]> gatherer,
                                                                                       Result[] EMPTY_ARRAY, boolean isSuperPriority) {
     CfmlComponent currentComponent = isSuperPriority ? component.getSuper() : component;
     Set<String> names = new HashSet<>();
     List<Result> result = new LinkedList<>();
     while (currentComponent != null) {
-      for (Result candidate : gatherer.get(currentComponent)) {
+      for (Result candidate : gatherer.apply(currentComponent)) {
         if (names.add(candidate.getName())) {
           result.add(candidate);
         }
@@ -314,7 +311,7 @@ public final class CfmlPsiUtil {
     }
     if (isSuperPriority) {
       currentComponent = component;
-      for (Result candidate : gatherer.get(currentComponent)) {
+      for (Result candidate : gatherer.apply(currentComponent)) {
         if (names.add(candidate.getName())) {
           result.add(candidate);
         }
@@ -324,21 +321,11 @@ public final class CfmlPsiUtil {
   }
 
   public static CfmlFunction @NotNull [] getFunctionsWithSupers(CfmlComponent component, boolean isSuperPriority) {
-    return componentHierarchyGatherer(component, new Getter<CfmlFunction[], CfmlComponent>() {
-      @Override
-      public CfmlFunction[] get(CfmlComponent component) {
-        return component.getFunctions();
-      }
-    }, CfmlFunction.EMPTY_ARRAY, isSuperPriority);
+    return componentHierarchyGatherer(component, component1 -> component1.getFunctions(), CfmlFunction.EMPTY_ARRAY, isSuperPriority);
   }
 
   public static CfmlProperty @NotNull [] getPropertiesWithSupers(CfmlComponent component, boolean isSuperPriority) {
-    return componentHierarchyGatherer(component, new Getter<CfmlProperty[], CfmlComponent>() {
-      @Override
-      public CfmlProperty[] get(CfmlComponent component) {
-        return component.getProperties();
-      }
-    }, CfmlProperty.EMPTY_ARRAY, isSuperPriority);
+    return componentHierarchyGatherer(component, component1 -> component1.getProperties(), CfmlProperty.EMPTY_ARRAY, isSuperPriority);
   }
 
   public static boolean processGlobalVariablesForComponent(CfmlComponent component,
