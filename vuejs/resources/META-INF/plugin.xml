@@ -220,6 +220,8 @@
     <vuejs.containerInfoProvider implementation="org.jetbrains.vuejs.libraries.vuelidate.VuelidateContainerInfoProvider"
                                  id="vuelidate"
                                  order="after decoratedComponent"/>
+    <vuejs.containerInfoProvider implementation="org.jetbrains.vuejs.libraries.nuxt.model.NuxtComponentProvider"
+                                 id="nuxt"/>
 
     <lang.documentationProvider implementationClass="org.jetbrains.vuejs.codeInsight.documentation.VueDocumentationProvider"
                                 language="Vue" order="before html"/>

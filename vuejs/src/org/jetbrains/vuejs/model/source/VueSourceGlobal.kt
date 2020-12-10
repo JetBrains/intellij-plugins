@@ -105,6 +105,14 @@ class VueSourceGlobal(override val project: Project, private val packageJsonUrl:
           true
         }, scope)
 
+      // Contribute components from providers.
+      for (map in listOf(localComponents, globalComponents))
+        VueContainerInfoProvider.getProviders()
+          .flatMap { it.getComponents(scope, map == localComponents).entries }
+          .forEach {
+            map[it.key] = it.value
+          }
+
       sortedMapOf(Pair(true, globalComponents),
                   Pair(false, localComponents))
     }[global] ?: emptyMap()

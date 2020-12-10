@@ -5,12 +5,16 @@ import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSRecordType.PropertySignature
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.openapi.extensions.ExtensionPointName
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.EntityContainerInfoProvider.DecoratedContainerInfoProvider
 import org.jetbrains.vuejs.model.source.EntityContainerInfoProvider.InitializedContainerInfoProvider
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInfo
 
 interface VueContainerInfoProvider : EntityContainerInfoProvider<VueContainerInfo> {
+
+  @JvmDefault
+  fun getComponents(scope: GlobalSearchScope, local: Boolean): Map<String, VueComponent> = emptyMap()
 
   @JvmDefault
   fun getThisTypeProperties(instanceOwner: VueInstanceOwner,
