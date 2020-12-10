@@ -100,18 +100,12 @@ else
       end
 
       def get_free_port
-        count = 0
         port = 9997
         begin
-          count += 1
-          if count > 10
-            raise "Can't find free TCP port"
-          end
-          server = TCPServer.new('127.0.0.1', port)
+          server = TCPServer.new('127.0.0.1', 0)
+          port = server.addr[1]
+        ensure
           server.close
-        rescue Errno::EADDRINUSE
-          port = rand(65000 - 1024) + 1024
-          retry
         end
         port
       end
@@ -238,7 +232,7 @@ else
       end
 
       def after_suite(suite)
-        already_run_test.remove suite.name
+        already_run_tests.remove suite.name
         log(Rake::TeamCity::MessageFactory.create_suite_finished(suite.name))
       end
 
