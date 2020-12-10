@@ -15,6 +15,8 @@ interface NuxtApplication {
 
   val configFile: VirtualFile
 
+  val config: NuxtConfig
+
   val packageJson: VirtualFile?
 
   val sourceDir: VirtualFile?

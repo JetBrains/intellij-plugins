@@ -30,7 +30,7 @@ internal class VueGlobalImpl(override val project: Project, private val packageJ
 
   override val source: PsiElement? = null
   override val parents: List<VueEntitiesContainer> = emptyList()
-  override val global: VueGlobal? get() = this
+  override val global: VueGlobal get() = this
 
   override val plugins: List<VuePlugin>
     get() = CachedValuesManager.getManager(project).getCachedValue(this, this::buildPluginsList)
@@ -80,7 +80,7 @@ internal class VueGlobalImpl(override val project: Project, private val packageJ
     if (result.find { it.moduleName == VUE_MODULE } == null) {
       VueWebTypesRegistry.createWebTypesPlugin(project, VUE_MODULE, null, this).let {
         dependencies.addAll(it.dependencyItems)
-        it.value?.let (result::add)
+        it.value?.let(result::add)
       }
     }
     return Result.create(result, *dependencies.toTypedArray())
@@ -159,7 +159,7 @@ internal class VueGlobalImpl(override val project: Project, private val packageJ
                ?.toList() ?: return emptyList()
     }
 
-    fun get(context: PsiElement): VueGlobal? {
+    fun get(context: PsiElement): VueGlobal {
       val psiFile = InjectedLanguageManager.getInstance(context.project).getTopLevelFile(context)
       return psiFile?.originalFile
                ?.virtualFile

@@ -11,7 +11,7 @@ class VueWebTypesGlobal(override val project: Project, packageJson: VirtualFile,
                         webTypes: WebTypes, owner: VueEntitiesContainer)
   : VueWebTypesEntitiesContainer(project, packageJson, webTypes, owner), VueGlobal {
 
-  override val global: VueGlobal? = this
+  override val global: VueGlobal = this
   override val apps: List<VueApp> = emptyList()
   override val plugins: List<VuePlugin> = emptyList()
   override val unregistered: VueEntitiesContainer = UNREGISTERED_INSTANCE
