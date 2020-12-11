@@ -12,10 +12,10 @@ interface NuxtConfig {
   val sourceDir: VirtualFile?
     get() = null
 
-  val componentsDirs: List<ComponentsDirectory>
+  val components: List<ComponentsDirectoryConfig>
     get() = emptyList()
 
-  interface ComponentsDirectory {
+  interface ComponentsDirectoryConfig {
     val path: String
     val prefix: String
     val global: Boolean

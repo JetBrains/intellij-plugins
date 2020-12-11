@@ -106,16 +106,16 @@ class VueSourceGlobal(override val project: Project, private val packageJsonUrl:
         }, scope)
 
       // Contribute components from providers.
-      for (map in listOf(localComponents, globalComponents))
-        VueContainerInfoProvider.getProviders()
-          .flatMap { it.getComponents(scope, map == localComponents).entries }
-          .forEach {
-            map[it.key] = it.value
-          }
+      val sourceComponents = VueContainerInfoProvider.ComponentsInfo(localComponents.toMap(), globalComponents.toMap())
+      VueContainerInfoProvider.getProviders()
+        .mapNotNull { it.getAdditionalComponents(scope, sourceComponents) }
+        .forEach {
+          globalComponents.putAll(it.global)
+          localComponents.putAll(it.local)
+        }
 
-      sortedMapOf(Pair(true, globalComponents),
-                  Pair(false, localComponents))
-    }[global] ?: emptyMap()
+      VueContainerInfoProvider.ComponentsInfo(localComponents.toMap(), globalComponents.toMap())
+    }.get(!global)
 
   private fun <T> getCachedValue(provider: (GlobalSearchScope) -> T): T {
     val psiFile: PsiFile? = VueGlobalImpl.findFileByUrl(packageJsonUrl)

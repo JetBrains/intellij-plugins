@@ -1,3 +1,7 @@
 export default {
-  name: "Foo"
+  name: "Foo2",
+  props: {
+
+  },
+  template: `<div>`
 }
