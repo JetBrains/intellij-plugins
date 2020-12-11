@@ -56,6 +56,7 @@ else
 
       Minitest.reporter.reporters.clear
       Minitest.reporter.reporters << self.rubymine_reporter
+      # can't additional reporters be registered after we put our?
     end
 
     class TestResult < Struct.new(:suite, :name, :assertions, :time, :exception)
@@ -96,18 +97,7 @@ else
       end
 
       def init
-        Minitest.my_drb_url = DRb.start_service('druby://127.0.0.1:' + get_free_port.to_s, self.already_run_tests).uri
-      end
-
-      def get_free_port
-        port = 9997
-        begin
-          server = TCPServer.new('127.0.0.1', 0)
-          port = server.addr[1]
-        ensure
-          server.close
-        end
-        port
+        Minitest.my_drb_url = DRb.start_service(nil, self.already_run_tests).uri
       end
 
       def end_execution
