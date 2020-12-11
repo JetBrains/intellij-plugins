@@ -14,12 +14,16 @@ import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInf
 interface VueContainerInfoProvider : EntityContainerInfoProvider<VueContainerInfo> {
 
   @JvmDefault
-  fun getComponents(scope: GlobalSearchScope, local: Boolean): Map<String, VueComponent> = emptyMap()
+  fun getAdditionalComponents(scope: GlobalSearchScope, sourceComponents: ComponentsInfo): ComponentsInfo? = null
 
   @JvmDefault
   fun getThisTypeProperties(instanceOwner: VueInstanceOwner,
                             standardProperties: MutableMap<String, PropertySignature>)
     : Collection<PropertySignature> = emptyList()
+
+  data class ComponentsInfo(val local: Map<String, VueComponent>, val global: Map<String, VueComponent>) {
+    fun get(local: Boolean): Map<String, VueComponent> = if (local) this.local else global
+  }
 
   interface VueContainerInfo {
     val components: Map<String, VueComponent> get() = emptyMap()

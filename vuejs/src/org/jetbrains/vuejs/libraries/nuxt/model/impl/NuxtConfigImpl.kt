@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.codeInsight.findDefaultExport
+import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.objectLiteralFor
 import org.jetbrains.vuejs.libraries.nuxt.model.NuxtConfig
 
@@ -25,24 +26,25 @@ class NuxtConfigImpl(override val file: PsiFile) : NuxtConfig {
       ?.literal
       ?.let { file.virtualFile?.parent?.findFileByRelativePath(it) }
 
-  override val componentsDirs: List<NuxtConfig.ComponentsDirectory> =
+  override val components: List<NuxtConfig.ComponentsDirectoryConfig> =
     configLiteral
       ?.findProperty("components")
       ?.let { property ->
         when (val propertyValue = property.value) {
-          is JSLiteralExpression -> if (propertyValue.value == true) listOf(ComponentsDirectoryImpl()) else emptyList()
-          is JSArrayLiteralExpression -> propertyValue.expressions.mapNotNull { readComponentDirsConfig(it) }
+          is JSLiteralExpression -> if (propertyValue.value == true) listOf(ComponentsDirectoryConfigImpl()) else emptyList()
+          is JSArrayLiteralExpression -> propertyValue.expressions.mapNotNull { readComponentsDirectoriesConfig(it) }
           else -> emptyList()
         }
       }
     ?: emptyList()
 
-  private fun readComponentDirsConfig(config: JSExpression): NuxtConfig.ComponentsDirectory? =
+  private fun readComponentsDirectoriesConfig(config: JSExpression): NuxtConfig.ComponentsDirectoryConfig? =
     when (config) {
-      is JSLiteralExpression -> (config.value as? String)?.let { ComponentsDirectoryImpl(it) }
-      is JSObjectLiteralExpression -> ComponentsDirectoryImpl(
+      is JSLiteralExpression -> (config.value as? String)?.let { ComponentsDirectoryConfigImpl(it) }
+      is JSObjectLiteralExpression -> ComponentsDirectoryConfigImpl(
         path = config.findProperty("path")?.value?.castSafelyTo<JSLiteralExpression>()?.value as? String ?: DEFAULT_PATH,
-        prefix = config.findProperty("prefix")?.value?.castSafelyTo<JSLiteralExpression>()?.value as? String ?: DEFAULT_PREFIX,
+        prefix = (config.findProperty("prefix")?.value?.castSafelyTo<JSLiteralExpression>()?.value as? String)?.let { fromAsset(it) }
+                 ?: DEFAULT_PREFIX,
         global = config.findProperty("global")?.value?.castSafelyTo<JSLiteralExpression>()?.value as? Boolean ?: false,
         extensions = config.findProperty("extensions")?.value?.castSafelyTo<JSArrayLiteralExpression>()
                        ?.expressions?.asSequence()
@@ -61,10 +63,10 @@ class NuxtConfigImpl(override val file: PsiFile) : NuxtConfig {
     const val DEFAULT_LEVEL = 0
   }
 
-  private class ComponentsDirectoryImpl(override val path: String = DEFAULT_PATH,
-                                        override val prefix: String = DEFAULT_PREFIX,
-                                        override val global: Boolean = DEFAULT_GLOBAL,
-                                        override val extensions: Set<String> = DEFAULT_EXTENSIONS,
-                                        override val level: Int = DEFAULT_LEVEL) : NuxtConfig.ComponentsDirectory
+  private class ComponentsDirectoryConfigImpl(override val path: String = DEFAULT_PATH,
+                                              override val prefix: String = DEFAULT_PREFIX,
+                                              override val global: Boolean = DEFAULT_GLOBAL,
+                                              override val extensions: Set<String> = DEFAULT_EXTENSIONS,
+                                              override val level: Int = DEFAULT_LEVEL) : NuxtConfig.ComponentsDirectoryConfig
 
 }
