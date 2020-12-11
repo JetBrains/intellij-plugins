@@ -10,6 +10,7 @@ import training.learn.LessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
+import training.learn.lesson.kimpl.LessonUtil.restoreIfModifiedOrMoved
 import training.learn.lesson.kimpl.dropMnemonic
 import training.learn.lesson.kimpl.parseLessonSample
 import java.util.concurrent.Future
@@ -57,6 +58,7 @@ class RubyRenameLesson(module: Module)
             replacePreviewPattern.matcher(root).takeIf { m -> m.find() }?.group(1)
           }
         }
+        restoreIfModifiedOrMoved()
         test {
           actions(it)
           with(TaskTestContext.guiTestCase) {
