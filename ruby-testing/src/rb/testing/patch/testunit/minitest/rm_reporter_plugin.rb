@@ -56,6 +56,7 @@ else
 
       Minitest.reporter.reporters.clear
       Minitest.reporter.reporters << self.rubymine_reporter
+      # can't additional reporters be registered after we put our?
     end
 
     class TestResult < Struct.new(:suite, :name, :assertions, :time, :exception)
