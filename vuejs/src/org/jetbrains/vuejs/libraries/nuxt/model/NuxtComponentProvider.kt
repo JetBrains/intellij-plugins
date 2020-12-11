@@ -23,7 +23,7 @@ import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
 class NuxtComponentProvider : VueContainerInfoProvider {
 
   override fun getComponents(scope: GlobalSearchScope, local: Boolean): Map<String, VueComponent> =
-    NuxtModelManager.getApplication(scope)
+    (if (!local) NuxtModelManager.getApplication(scope)
       ?.config?.takeIf { it.file != null }
       ?.let { config ->
         val visitedFiles = mutableSetOf<VirtualFile>()
@@ -36,7 +36,7 @@ class NuxtComponentProvider : VueContainerInfoProvider {
           .distinctBy { it.first }
           .toMap()
       }
-    ?: emptyMap()
+    else null) ?: emptyMap()
 
   private fun resolvePath(configFile: PsiFile, componentDir: NuxtConfig.ComponentsDirectory): VirtualFile? =
     if (componentDir.path.startsWith("~") || componentDir.path.startsWith("@")) {
