@@ -199,7 +199,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     File appBundle = Reveal.getDefaultRevealApplicationBundle();
     if (appBundle == null) throw new ExecutionException(RevealBundle.message("dialog.message.reveal.application.bundle.not.found"));
 
-    XCBuildSettings buildSettings = XCBuildSettings.withOverriddenSdk(buildConfiguration.getConfiguration(), buildConfiguration.getSdk());
+    XCBuildSettings buildSettings = ReadAction.compute(() -> XCBuildSettings.withOverriddenSdk(buildConfiguration.getConfiguration(), buildConfiguration.getSdk()));
     File libReveal = Reveal.getRevealLib(appBundle, buildSettings);
     if (libReveal == null) throw new ExecutionException(RevealBundle.message("dialog.message.reveal.library.not.found"));
 
