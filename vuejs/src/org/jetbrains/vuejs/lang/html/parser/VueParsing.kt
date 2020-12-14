@@ -21,7 +21,9 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
   override fun isSingleTag(tagName: String, originalTagName: String): Boolean {
     // There are heavily-used Vue components called like 'Col' or 'Input'. Unlike HTML tags <col> and <input> Vue components do have closing tags.
     // The following 'if' is a little bit hacky but it's rather tricky to solve the problem in a better way at parser level.
-    if (tagName != originalTagName) {
+    if (tagName.length >= 3
+        && tagName != originalTagName
+        && !originalTagName.all { it.isUpperCase() }) {
       return false
     }
     return super.isSingleTag(tagName, originalTagName)
