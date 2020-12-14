@@ -426,7 +426,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
     boolean isInTag = false;
     boolean isInPre = false;
     if (result) {
-      StringBuffer sb = new StringBuffer();
+      StringBuilder sb = new StringBuilder();
       do {
         String s = input.substring(prevpos, m.start());
         isInTag = endIsBetween(s, "<", ">", isInTag);

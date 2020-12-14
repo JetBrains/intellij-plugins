@@ -99,7 +99,7 @@ public final class CommunicatorStrings {
   /* replaces non-ASCII characters with &#xxx; presentation */
   public static String fromXMLSafeString(String str) {
     if (str == null) return "";
-    StringBuffer result = new StringBuffer(str.length());
+    StringBuilder result = new StringBuilder(str.length());
 
     Matcher matcher = SPECIAL_CHAR.matcher(str);
 

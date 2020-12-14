@@ -280,7 +280,7 @@ public final class CucumberUtil {
    */
   public static String replaceNotNecessaryTextTemplateByRegexp(@NotNull String cucumberExpression) {
     Matcher matcher = OPTIONAL_PATTERN.matcher(cucumberExpression);
-    StringBuffer result = new StringBuffer();
+    StringBuilder result = new StringBuilder();
 
     while(matcher.find()) {
       String parameterPart = matcher.group(2);
