@@ -25,7 +25,7 @@ import com.intellij.openapi.vcs.*;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.containers.UtilKt;
+import com.intellij.util.containers.JBIterable;
 import com.intellij.vcsUtil.ActionWithTempFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.perforce.CancelActionException;
@@ -44,15 +44,15 @@ public final class ActionEdit extends ActionBaseFile {
     if (presentation.isEnabledAndVisible()) {
       Project project = e.getRequiredData(CommonDataKeys.PROJECT);
       ChangeListManager clm = ChangeListManager.getInstance(project);
-      if (UtilKt.notNullize(e.getData(VcsDataKeys.VIRTUAL_FILE_STREAM))
-        .allMatch(file -> clm.isIgnoredFile(file) || clm.isUnversioned(file))) {
+      if (JBIterable.from(e.getData(VcsDataKeys.VIRTUAL_FILES))
+        .filter(file -> !(clm.isIgnoredFile(file) || clm.isUnversioned(file)))
+        .isEmpty()) {
         presentation.setEnabled(false);
       }
     }
   }
 
   @Override
-  @SuppressWarnings({"unchecked"})
   protected void performAction(final VirtualFile vFile,
                                final Project project,
                                final boolean alone,
