@@ -8,8 +8,8 @@
   </div>
 </template>
 
-<script lang="ts">
-<warning>export abstract class Greeter<T> {</warning>
+<script lang="ts"><EOLWarning descr="tslint: Expected linebreak to be 'CRLF' (linebreak-style)"></EOLWarning>
+<warning descr="tslint: Expected linebreak to be 'CRLF' (linebreak-style)">export abstract class Greeter<T> {</warning>
 <warning>    greetNTimes(to, {from, times}: { from: string[], times: number }) {</warning>
 <warning>        return <error>range</error>(times).map(item => <warning>{return this.greet(to, from)<warning></warning>}</warning>)</warning><EOLWarning></EOLWarning>
 <warning>    }</warning>
@@ -28,7 +28,7 @@
 <warning>  </warning>
 <warning>var anotherArrow = () => {</warning>
 <warning>    return {x: 1}</warning><EOLWarning></EOLWarning>
-<warning>}</warning><EOLWarning></EOLWarning>
+<warning descr="tslint: Expected linebreak to be 'CRLF' (linebreak-style)">}</warning><EOLWarning descr="tslint: Missing semicolon (semicolon)"></EOLWarning>
 </script>
 <style>
   div {
