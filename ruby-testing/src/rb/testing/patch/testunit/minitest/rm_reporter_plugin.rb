@@ -97,7 +97,7 @@ else
 
       def init
         my_drb_url = DRb.start_service(nil, self.already_run_tests).uri
-        DRb.start_service
+        @my_pid = Process.pid
         @tests = DRbObject.new_with_uri(my_drb_url)
       end
 
@@ -106,8 +106,8 @@ else
       end
 
       def process_test(test)
-
         my_mutex.synchronize {
+          start_drb_server_smart
           unless @tests === test.class.to_s
             @tests.add(test.class.to_s)
             reporter.log(Rake::TeamCity::MessageFactory.create_suite_started(test.class.to_s, reporter.minitest_test_location(test), '0', test.class.to_s))
@@ -116,6 +116,15 @@ else
       end
 
       private
+
+      # starts Drb service for the forked process if necessary.
+      # See: https://docs.ruby-lang.org/en/master/DRb.html#module-DRb-label-Client+code
+      def start_drb_server_smart
+        unless @my_pid == Process.pid
+          DRb.start_service
+          @my_pid = Process.pid
+        end
+      end
 
       def close_all_suites
         already_run_tests.each do |test|
