@@ -547,16 +547,25 @@ public class VmServiceWrapper implements Disposable {
     });
   }
 
-  public void callToString(@NotNull String isolateId,
-                           @NotNull String targetId,
-                           @NotNull InvokeConsumer callback) {
+  public void callToString(@NotNull String isolateId, @NotNull String targetId, @NotNull InvokeConsumer callback) {
+    callMethodOnTarget(isolateId, targetId, "toString", callback);
+  }
+
+  public void callToList(@NotNull String isolateId, @NotNull String targetId, @NotNull InvokeConsumer callback) {
+    callMethodOnTarget(isolateId, targetId, "toList", callback);
+  }
+
+  private void callMethodOnTarget(@NotNull String isolateId,
+                                  @NotNull String targetId,
+                                  @NotNull String methodName,
+                                  @NotNull InvokeConsumer callback) {
     // For 3.11 and after we use "invoke"; before that, we use "eval";
     if (supportsInvoke()) {
-      addRequest(() -> myVmService.invoke(isolateId, targetId, "toString", Collections.emptyList(), true, callback));
+      addRequest(() -> myVmService.invoke(isolateId, targetId, methodName, Collections.emptyList(), true, callback));
     }
     else {
       myDebugProcess.getVmServiceWrapper()
-        .evaluateInTargetContext(isolateId, targetId, "toString()", new EvaluateConsumer() {
+        .evaluateInTargetContext(isolateId, targetId, methodName + "()", new EvaluateConsumer() {
           @Override
           public void onError(RPCError error) {
             callback.onError(error);
