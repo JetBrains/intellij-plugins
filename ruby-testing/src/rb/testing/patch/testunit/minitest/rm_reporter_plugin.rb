@@ -48,7 +48,6 @@ else
   module Minitest
     class << self
       attr_accessor :rubymine_reporter
-      attr_accessor :my_drb_url
     end
 
     def self.plugin_rm_reporter_init(options)
@@ -93,11 +92,13 @@ else
         GC.disable
         self.reporter = reporter
         self.my_mutex = Mutex.new
-        self.already_run_tests = []
+        self.already_run_tests = Set[]
       end
 
       def init
-        Minitest.my_drb_url = DRb.start_service(nil, self.already_run_tests).uri
+        my_drb_url = DRb.start_service(nil, self.already_run_tests).uri
+        DRb.start_service
+        @tests = DRbObject.new_with_uri(my_drb_url)
       end
 
       def end_execution
@@ -105,25 +106,24 @@ else
       end
 
       def process_test(test)
-        DRb.start_service
-        tests = DRbObject.new_with_uri(Minitest.my_drb_url)
 
         my_mutex.synchronize {
-          unless tests.include? test.class.to_s
-            tests << test.class.to_s
+          unless @tests === test.class.to_s
+            @tests.add(test.class.to_s)
             reporter.log(Rake::TeamCity::MessageFactory.create_suite_started(test.class.to_s, reporter.minitest_test_location(test), '0', test.class.to_s))
           end
         }
       end
 
       private
-        def close_all_suites
-          (0...already_run_tests.count).each do |i|
-            reporter.log(Rake::TeamCity::MessageFactory.create_suite_finished(already_run_tests[i], already_run_tests[i]))
-          end
-          already_run_tests.clear
-          GC.enable
+
+      def close_all_suites
+        already_run_tests.each do |test|
+          reporter.log(Rake::TeamCity::MessageFactory.create_suite_finished(test, test))
         end
+        already_run_tests.clear
+        GC.enable
+      end
     end
 
     class RubyMineMinitestSequenceTestCaseManager
