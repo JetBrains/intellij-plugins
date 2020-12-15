@@ -226,13 +226,13 @@ public final class FStat {
     final BufferedReader reader = new BufferedReader(new StringReader(stdOut));
     String line;
     File file = null;
-    StringBuffer currentBuffer = new StringBuffer();
+    StringBuilder currentBuffer = new StringBuilder();
     final HashMap<File, String> result = new HashMap<>();
     while ((line = reader.readLine()) != null) {
       if (line.length() == 0) {
         if (file != null) {
           result.put(file, currentBuffer.toString());
-          currentBuffer = new StringBuffer();
+          currentBuffer = new StringBuilder();
           file = null;
         }
       }
