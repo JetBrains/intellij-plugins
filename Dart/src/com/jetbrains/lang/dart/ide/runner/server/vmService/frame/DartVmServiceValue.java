@@ -11,6 +11,7 @@ import com.intellij.xdebugger.frame.*;
 import com.intellij.xdebugger.frame.presentation.XKeywordValuePresentation;
 import com.intellij.xdebugger.frame.presentation.XNumericValuePresentation;
 import com.intellij.xdebugger.frame.presentation.XStringValuePresentation;
+import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.DartVmServiceDebugProcess;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.VmServiceConsumers;
 import org.dartlang.vm.service.consumer.GetObjectConsumer;
@@ -211,7 +212,7 @@ public class DartVmServiceValue extends XNamedValue {
       case Float64x2:
       case Int32x4:
       case StackTrace:
-        node.setFullValueEvaluator(new ImmediateFullValueEvaluator("Click to see stack trace...",
+        node.setFullValueEvaluator(new ImmediateFullValueEvaluator(DartBundle.message("debugger.link.see.stack.trace"),
                                                                    Objects.requireNonNull(myInstanceRef.getValueAsString())));
         node.setPresentation(getIcon(), myInstanceRef.getClassRef().getName(), "", true);
         break;
