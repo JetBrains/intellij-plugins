@@ -21,6 +21,7 @@ import training.lang.AbstractLangSupport
 import training.learn.LearnBundle
 import training.learn.exceptons.InvalidSdkException
 import training.learn.exceptons.NoSdkException
+import training.project.ReadMeCreator
 import java.io.File
 
 class RubyLangSupport : AbstractLangSupport() {
@@ -28,6 +29,8 @@ class RubyLangSupport : AbstractLangSupport() {
     get() = "RubyMineLearningProject"
 
   override val filename: String = "Learning.rb"
+
+  override val readMeCreator = ReadMeCreator()
 
   override fun checkSdk(sdk: Sdk?, project: Project) {
     if (project.name != rubyProjectName) return
