@@ -21,6 +21,7 @@ import com.intellij.javascript.testFramework.interfaces.mochaTdd.MochaTddFileStr
 import com.intellij.javascript.testFramework.interfaces.mochaTdd.MochaTddFileStructureBuilder;
 import com.intellij.javascript.testFramework.jasmine.JasmineFileStructure;
 import com.intellij.javascript.testFramework.jasmine.JasmineFileStructureBuilder;
+import com.intellij.javascript.testFramework.jasmine.JasmineSpecStructure;
 import com.intellij.javascript.testFramework.qunit.QUnitFileStructure;
 import com.intellij.javascript.testFramework.qunit.QUnitFileStructureBuilder;
 import com.intellij.javascript.testFramework.util.JSTestNamePattern;
@@ -43,6 +44,7 @@ import org.jetbrains.io.LocalFileFinder;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class KarmaExecutionSession {
@@ -212,11 +214,7 @@ public class KarmaExecutionSession {
       LOG.info("Not a JavaScript file " + testFilePath + ", " + (psiFile == null ? "null" : psiFile.getClass()));
       throw new ExecutionException(KarmaBundle.message("execution.javascript_file_expected.dialog.message", testFilePath));
     }
-    JasmineFileStructure jasmine = JasmineFileStructureBuilder.getInstance().fetchCachedTestFileStructure(jsFile);
-    List<List<JSTestNamePattern>> allTestsPatterns = new ArrayList<>();
-    jasmine.forEachTest(spec -> {
-      allTestsPatterns.add(spec.getTestTreePathPatterns());
-    });
+    List<List<JSTestNamePattern>> allTestsPatterns = new ArrayList<>(collectJasmineTests(jsFile));
     if (!allTestsPatterns.isEmpty()) {
       return allTestsPatterns;
     }
@@ -236,6 +234,18 @@ public class KarmaExecutionSession {
       return allTestsPatterns;
     }
     throw new ExecutionException(KarmaBundle.message("execution.no_tests_found_in_file.dialog.message", testFilePath));
+  }
+
+  private static @NotNull List<List<JSTestNamePattern>> collectJasmineTests(@NotNull JSFile jsFile) {
+    JasmineFileStructure jasmine = JasmineFileStructureBuilder.getInstance().fetchCachedTestFileStructure(jsFile);
+    return ContainerUtil.map(jasmine.getChildren(), element -> {
+      List<JSTestNamePattern> patterns = element.getTestTreePathPatterns();
+      if (element instanceof JasmineSpecStructure) {
+        return patterns;
+      }
+      JSTestNamePattern anyTestPattern = new JSTestNamePattern(Collections.singletonList(JSTestNamePattern.anyRange("match all descendant suites/specs")));
+      return ContainerUtil.concat(patterns, Collections.singletonList(anyTestPattern));
+    });
   }
 
   @NotNull
