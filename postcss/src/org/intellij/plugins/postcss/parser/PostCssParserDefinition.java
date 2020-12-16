@@ -23,12 +23,12 @@ public class PostCssParserDefinition extends CSSParserDefinition {
   }
 
   @Override
-  public PsiFile createFile(FileViewProvider viewProvider) {
+  public @NotNull PsiFile createFile(@NotNull FileViewProvider viewProvider) {
     return new PostCssFileImpl(viewProvider);
   }
 
   @Override
-  public IFileElementType getFileNodeType() {
+  public @NotNull IFileElementType getFileNodeType() {
     return PostCssElementTypes.POST_CSS_FILE;
   }
 
