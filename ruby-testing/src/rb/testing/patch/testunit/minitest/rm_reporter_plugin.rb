@@ -1,3 +1,5 @@
+# Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+
 # This file is the main entrypoint in the process of injection of RubyMine output formatter into minitest / minitest-reporters
 # infrastructure. It sets up the runner and reporter for minitest.
 
@@ -108,7 +110,7 @@ else
       def process_test(test)
         my_mutex.synchronize {
           start_drb_server_smart
-          unless @tests === test.class.to_s
+          unless @tests.include?(test.class.to_s)
             @tests.add(test.class.to_s)
             reporter.log(Rake::TeamCity::MessageFactory.create_suite_started(test.class.to_s, reporter.minitest_test_location(test), '0', test.class.to_s))
           end
