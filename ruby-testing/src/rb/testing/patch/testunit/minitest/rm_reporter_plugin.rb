@@ -98,7 +98,7 @@ else
       end
 
       def init
-        my_drb_url = DRb.start_service(nil, self.already_run_tests).uri
+        my_drb_url = DRb.start_service('druby://localhost:0', self.already_run_tests).uri
         @my_pid = Process.pid
         @tests = DRbObject.new_with_uri(my_drb_url)
       end
@@ -123,7 +123,7 @@ else
       # See: https://docs.ruby-lang.org/en/master/DRb.html#module-DRb-label-Client+code
       def start_drb_server_smart
         unless @my_pid == Process.pid
-          DRb.start_service
+          DRb.start_service('druby://localhost:0')
           @my_pid = Process.pid
         end
       end
