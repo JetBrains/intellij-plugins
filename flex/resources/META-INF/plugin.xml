@@ -160,6 +160,7 @@
     <orderEnumerationHandlerFactory
         implementation="com.intellij.lang.javascript.flex.projectStructure.FlexOrderEnumerationHandler$FactoryImpl"/>
     <sdkFinder implementation="com.intellij.lang.javascript.flex.projectStructure.FlexCompositeSdk$SdkFinderImpl"/>
+    <applicationService serviceImplementation="com.intellij.lang.javascript.flex.projectStructure.FlexCompositeSdkManager"/>
 
     <projectStructureValidator implementation="com.intellij.lang.javascript.flex.projectStructure.ui.FlexProjectStructureValidator"/>
 
