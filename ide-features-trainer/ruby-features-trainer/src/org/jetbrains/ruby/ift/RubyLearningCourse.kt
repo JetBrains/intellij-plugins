@@ -49,7 +49,7 @@ class RubyLearningCourse : LearningCourseBase(RubyLanguage.INSTANCE.id) {
     LearningModule(name = LessonsBundle.message("code.completion.module.name"),
                    description = LessonsBundle.message("code.completion.module.description"),
                    primaryLanguage = langSupport,
-                   moduleType = LessonType.PROJECT) {
+                   moduleType = LessonType.SINGLE_EDITOR) {
       listOf(
         RubyBasicCompletionLesson(it),
         RubyHippieCompletionLesson(it),
@@ -60,7 +60,7 @@ class RubyLearningCourse : LearningCourseBase(RubyLanguage.INSTANCE.id) {
     LearningModule(name = LessonsBundle.message("refactorings.module.name"),
                    description = LessonsBundle.message("refactorings.module.description"),
                    primaryLanguage = langSupport,
-                   moduleType = LessonType.PROJECT) {
+                   moduleType = LessonType.SINGLE_EDITOR) {
       fun ls(sampleName: String) = loadSample("Refactorings/$sampleName")
       listOf(
         RubyRefactorMenuLesson(it),
@@ -72,7 +72,7 @@ class RubyLearningCourse : LearningCourseBase(RubyLanguage.INSTANCE.id) {
     LearningModule(name = LessonsBundle.message("code.assistance.module.name"),
                    description = LessonsBundle.message("code.assistance.module.description"),
                    primaryLanguage = langSupport,
-                   moduleType = LessonType.PROJECT) {
+                   moduleType = LessonType.SINGLE_EDITOR) {
       fun ls(sampleName: String) = loadSample("CodeAssistance/$sampleName")
       listOf(
         CodeFormatLesson(it, lang, ls("CodeFormat.rb.sample"), false),
