@@ -18,13 +18,15 @@ import com.intellij.util.io.HttpRequests;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 public final class CfmlUnitRemoteTestsRunner {
   private static final Logger LOG = Logger.getInstance(CfmlUnitRemoteTestsRunner.class.getName());
 
   public static String getLauncherText(String resourcePath) {
     try {
-      return ResourceUtil.loadText(CfmlUnitRunConfiguration.class.getResource(resourcePath))
+      return ResourceUtil.loadText(Objects.requireNonNull(CfmlUnitRunConfiguration.class.getClassLoader()
+                                                            .getResourceAsStream(StringUtil.trimStart(resourcePath, "/"))))
         .replaceFirst("\\Q/*system_delimiter*/\\E", (String.valueOf(File.separatorChar)).replace("\\", "\\\\\\\\"));
     }
     catch (IOException e) {

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.flexunit;
 
 import com.intellij.execution.ExecutionException;
@@ -9,11 +9,10 @@ import com.intellij.util.ResourceUtil;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
-public class SwfPolicyFileConnection extends ServerConnectionBase {
-
+public final class SwfPolicyFileConnection extends ServerConnectionBase {
   private static final String POLICY_FILE_REQUEST = "<policy-file-request/>";
 
   public static final int DEFAULT_PORT = 843;
@@ -23,14 +22,12 @@ public class SwfPolicyFileConnection extends ServerConnectionBase {
   private final String myContent;
 
   public SwfPolicyFileConnection() throws ExecutionException {
-    final URL resource = getClass().getResource("SocketPolicyFile.xml");
-    try {
-      myContent = ResourceUtil.loadText(resource);
+    try (InputStream resource = getClass().getClassLoader().getResourceAsStream("com/intellij/lang/javascript/flex/flexunit/SocketPolicyFile.xml")) {
+      myContent = ResourceUtil.loadText(Objects.requireNonNull(resource));
     }
     catch (IOException e) {
       throw new ExecutionException(e.getMessage(), e);
     }
-
   }
 
   @Override

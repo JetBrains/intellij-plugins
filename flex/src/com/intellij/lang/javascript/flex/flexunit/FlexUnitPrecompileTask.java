@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.flexunit;
 
 import com.intellij.compiler.options.CompileStepBeforeRun;
@@ -36,15 +36,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 
-public class FlexUnitPrecompileTask implements CompileTask {
-
+public final class FlexUnitPrecompileTask implements CompileTask {
   public static final Key<Collection<String>> FILES_TO_DELETE = Key.create("FlexUnitPrecompileTask.filesToRemove");
 
   private final Project myProject;
@@ -384,7 +379,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
     else {
       templateName = "LauncherTemplateMx.mxml";
     }
-    final URL resource = FlexUnitPrecompileTask.class.getResource("/unittestingsupport/" + templateName);
-    return ResourceUtil.loadText(resource);
+    return ResourceUtil.loadText(Objects.requireNonNull(FlexUnitPrecompileTask.class.getClassLoader()
+                                                          .getResourceAsStream("unittestingsupport/" + templateName)));
   }
 }
