@@ -313,10 +313,16 @@ else
         msg
       end
 
+      # This method is a bit lame. It covers minitest thread-based parallelization, but won't cover ActiveSupport process-based parallelization.
+      # Actually we should use parallel manager all the time, even for a single threaded run. It brings small overhead, but supports any
+      # type of parallelization
+
       private
+
       def parallel_run?
-        defined?(Minitest) && Minitest.respond_to?(:parallel_executor) && Minitest.parallel_executor.respond_to?(:start) ||
-            defined?(MiniTest::Unit::TestCase) && MiniTest::Unit::TestCase.respond_to?(:test_order) && MiniTest::Unit::TestCase.test_order == :parallel
+        defined?(Minitest) && Minitest.respond_to?(:parallel_executor) && Minitest.parallel_executor.respond_to?(:start) &&
+          Minitest.parallel_executor.respond_to?(:size) && Minitest.parallel_executor.size > 1 ||
+          defined?(MiniTest::Unit::TestCase) && MiniTest::Unit::TestCase.respond_to?(:test_order) && MiniTest::Unit::TestCase.test_order == :parallel
       end
 
       def get_test_name(test)
