@@ -1,6 +1,6 @@
 package {
  interface A {
-   function fo<caret>o(i: int) {}
+   function fo<caret>o(i: int)
  }
 }
 
