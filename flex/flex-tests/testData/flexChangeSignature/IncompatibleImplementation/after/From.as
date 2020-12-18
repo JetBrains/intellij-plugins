@@ -1,6 +1,6 @@
 package {
  interface A {
-   function foo2(j:int) {}
+   function foo2(j:int)
  }
 }
 
