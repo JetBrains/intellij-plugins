@@ -7,13 +7,12 @@ import com.intellij.tapestry.core.model.TapestryLibrary;
 import com.intellij.tapestry.core.model.presentation.components.DummyTapestryParameter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import gnu.trove.THashMap;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 public abstract class ParameterReceiverElement extends PresentationLibraryElement {
-
   private Map<String, TapestryParameter> _parametersCache;
   private long _parametersCacheTimestamp;
 
@@ -32,7 +31,7 @@ public abstract class ParameterReceiverElement extends PresentationLibraryElemen
       return _parametersCache;
     }
 
-    Map<String, TapestryParameter> _parameters = new THashMap<>();
+    Map<String, TapestryParameter> _parameters = new HashMap<>();
     _parameters.put("mixins", new DummyTapestryParameter(getProject(), "mixins", false));
     _parametersCacheTimestamp = getElementClass().getFile().getFile().lastModified();
 
@@ -56,7 +55,7 @@ public abstract class ParameterReceiverElement extends PresentationLibraryElemen
   @NotNull
   public Map<String, TapestryParameter> getRequiredParameters() {
     Map<String, TapestryParameter> parameters = getParameters();
-    Map<String, TapestryParameter> requiredParameters = new THashMap<>();
+    Map<String, TapestryParameter> requiredParameters = new HashMap<>();
 
     for (TapestryParameter parameter : parameters.values()) {
       if (parameter.isRequired()) {
@@ -74,7 +73,7 @@ public abstract class ParameterReceiverElement extends PresentationLibraryElemen
    */
   public Map<String, TapestryParameter> getOptionalParameters() {
     Map<String, TapestryParameter> parameters = getParameters();
-    Map<String, TapestryParameter> optionalParameters = new THashMap<>();
+    Map<String, TapestryParameter> optionalParameters = new HashMap<>();
 
     for (TapestryParameter parameter : parameters.values()) {
       if (!parameter.isRequired()) {

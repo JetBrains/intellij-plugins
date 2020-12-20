@@ -4,15 +4,12 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.util.CachedValuesManager;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;
 
+import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author: Fedor.Korotkov
- */
 @VisibleForTesting
 public final class MappingDataCache {
   private static final String TAPESTRY_MAPPING_FQN = "org.apache.tapestry5.services.LibraryMapping";
@@ -24,7 +21,7 @@ public final class MappingDataCache {
   }
 
   private static Map<String, String> computeMappingData(PsiFile file) {
-    final Map<String, String> result = new THashMap<>();
+    final Map<String, String> result = new HashMap<>();
     if (file instanceof PsiCompiledElement) {
       PsiElement element = file.getNavigationElement();
       if (element != file && element instanceof PsiFile) {

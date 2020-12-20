@@ -20,7 +20,18 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="maven-model" level="project" />
+    <orderEntry type="module-library">
+      <library name="maven-model" type="repository">
+        <properties maven-id="org.apache.maven:maven-model:3.6.1" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-model/3.6.3/maven-model-3.6.3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-model/3.6.3/maven-model-3.6.3-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
     <orderEntry type="library" exported="" name="Velocity" level="project" />
     <orderEntry type="library" exported="" name="CGLIB" level="project" />
     <orderEntry type="module" module-name="intellij.platform.ide" exported="" />
@@ -38,7 +49,6 @@
     <orderEntry type="module" module-name="intellij.properties" />
     <orderEntry type="module" module-name="intellij.css.psi" />
     <orderEntry type="module" module-name="intellij.idea.ultimate.icons" />
-    <orderEntry type="library" name="Trove4j" level="project" />
     <orderEntry type="module" module-name="intellij.platform.core.ui" />
     <orderEntry type="module" module-name="intellij.properties.psi.impl" />
   </component>

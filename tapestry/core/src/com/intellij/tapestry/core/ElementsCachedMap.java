@@ -7,11 +7,11 @@ import com.intellij.tapestry.core.model.TapestryLibrary;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.tapestry.intellij.util.CachedUserDataCache;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -42,7 +42,7 @@ abstract class ElementsCachedMap extends CachedUserDataCache<Map<String, Present
 
   @Override
   protected Map<String, PresentationLibraryElement> computeValue(Module module) {
-    Map<String, PresentationLibraryElement> map = new THashMap<>();
+    Map<String, PresentationLibraryElement> map = new HashMap<>();
     TapestryProject project = TapestryModuleSupportLoader.getTapestryProject(module);
     assert project != null;
     for (TapestryLibrary library : project.getLibraries()) {
