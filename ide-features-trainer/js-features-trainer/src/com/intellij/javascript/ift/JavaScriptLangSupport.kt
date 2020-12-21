@@ -4,6 +4,7 @@ package com.intellij.javascript.ift
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import training.lang.AbstractLangSupport
+import training.util.getFeedbackLink
 
 class JavaScriptLangSupport : AbstractLangSupport() {
 
@@ -19,7 +20,7 @@ class JavaScriptLangSupport : AbstractLangSupport() {
 
   override val defaultProductName: String = "WebStorm"
 
-  override val langCourseFeedback: String = JsLessonsBundle.message("js.module.feedback")
+  override val langCourseFeedback get() = getFeedbackLink(this, true)
   
   override fun applyToProjectAfterConfigure(): (Project) -> Unit = {
   }
