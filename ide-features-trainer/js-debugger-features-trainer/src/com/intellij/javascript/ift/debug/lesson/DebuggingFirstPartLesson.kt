@@ -34,7 +34,7 @@ class DebuggingFirstPartLesson(module: Module)
           trigger(it)
         }
 
-        highlightBreakpointGutter(LogicalPosition(0, 0))
+        highlightBreakpointGutter { LogicalPosition(0, 0) }
         task {
           text(JsDebugLessonsBundle.message("js.debugger.part.1.gutter", code("10"), code("-20"), code("Different!"), code("Equal!")))
           stateCheck {
