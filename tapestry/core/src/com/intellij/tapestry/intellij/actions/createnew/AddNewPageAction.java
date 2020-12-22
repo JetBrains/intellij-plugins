@@ -37,14 +37,14 @@ public class AddNewPageAction extends AddNewElementAction<PagesNode> {
    */
   @Override
   public void actionPerformed(@NotNull AnActionEvent event) {
-    final Module module = getModule(event);
+    Module module = event.getData(LangDataKeys.MODULE);
     if (module == null) return;
 
     String defaultPagePath = getDefaultElementPath(event, module);
     if (defaultPagePath == null) return;
 
     final AddNewComponentDialog addNewComponentDialog =
-        new AddNewComponentDialog((Module)event.getDataContext().getData(LangDataKeys.MODULE.getName()), defaultPagePath, true);
+        new AddNewComponentDialog(module, defaultPagePath, true);
 
     final DialogBuilder builder = new DialogBuilder(module.getProject());
     builder.setCenterPanel(addNewComponentDialog.getContentPane());

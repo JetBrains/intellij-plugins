@@ -20,6 +20,7 @@ import com.intellij.ide.IdeView;
 import com.intellij.ide.util.DirectoryChooserUtil;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -42,7 +43,7 @@ public final class GaugeDataContext implements DataContext {
   @Nullable
   @Override
   public Object getData(@NonNls String dataId) {
-    if (dataId.equals("IDEView")) {
+    if (LangDataKeys.IDE_VIEW.is(dataId)) {
       return new MyIdeView(CommonDataKeys.PROJECT.getData(dataContext));
     }
     else {

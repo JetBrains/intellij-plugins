@@ -36,14 +36,14 @@ public class AddNewComponentAction extends AddNewElementAction<ComponentsNode> {
    */
   @Override
   public void actionPerformed(@NotNull AnActionEvent event) {
-    final Module module = getModule(event);
+    Module module = event.getData(LangDataKeys.MODULE);
     if (module == null) return;
 
     String defaultComponentPath = getDefaultElementPath(event, module);
     if (defaultComponentPath == null) return;
 
     final AddNewComponentDialog addNewComponentDialog =
-        new AddNewComponentDialog((Module)event.getDataContext().getData(LangDataKeys.MODULE.getName()), defaultComponentPath, false);
+        new AddNewComponentDialog(module, defaultComponentPath, false);
 
     final DialogBuilder builder = new DialogBuilder(module.getProject());
     builder.setCenterPanel(addNewComponentDialog.getContentPane());
