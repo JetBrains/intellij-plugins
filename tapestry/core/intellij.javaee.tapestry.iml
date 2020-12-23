@@ -22,7 +22,7 @@
     </orderEntry>
     <orderEntry type="module-library">
       <library name="maven-model" type="repository">
-        <properties maven-id="org.apache.maven:maven-model:3.6.1" />
+        <properties include-transitive-deps="false" maven-id="org.apache.maven:maven-model:3.6.3" />
         <CLASSES>
           <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-model/3.6.3/maven-model-3.6.3.jar!/" />
         </CLASSES>
@@ -51,5 +51,6 @@
     <orderEntry type="module" module-name="intellij.idea.ultimate.icons" />
     <orderEntry type="module" module-name="intellij.platform.core.ui" />
     <orderEntry type="module" module-name="intellij.properties.psi.impl" />
+    <orderEntry type="library" scope="RUNTIME" name="plexus-utils" level="project" />
   </component>
 </module>
