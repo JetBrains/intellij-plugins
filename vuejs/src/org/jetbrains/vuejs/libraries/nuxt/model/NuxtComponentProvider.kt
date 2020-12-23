@@ -4,20 +4,13 @@ package org.jetbrains.vuejs.libraries.nuxt.model
 import com.intellij.lang.javascript.buildTools.webpack.WebPackConfigManager
 import com.intellij.lang.javascript.buildTools.webpack.WebPackReferenceContributor
 import com.intellij.lang.javascript.library.JSLibraryUtil
-import com.intellij.lang.javascript.psi.JSFile
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.castSafelyTo
-import org.jetbrains.vuejs.codeInsight.findDefaultExport
 import org.jetbrains.vuejs.codeInsight.fromAsset
-import org.jetbrains.vuejs.model.VueComponent
-import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
 
 class NuxtComponentProvider : VueContainerInfoProvider {
@@ -30,6 +23,7 @@ class NuxtComponentProvider : VueContainerInfoProvider {
         val resolvedDirs = config.components.asSequence()
           .mapNotNull { componentDir -> resolvePath(config.file!!, componentDir)?.let { Pair(it, componentDir) } }
           .sortedBy { dir -> -dir.first.path.count { it == '\\' || it == '/' } }
+          .toList()
 
         sourceComponents.local.flatMap { (_, component) ->
           val componentFile = component.source?.containingFile?.virtualFile
@@ -59,7 +53,7 @@ class NuxtComponentProvider : VueContainerInfoProvider {
       WebPackConfigManager.getInstance(configFile.project)
         .resolveConfig(configFile)
         .takeIf { !it.isEmpty() }
-        ?.let { webpackReferenceProvider.getAliasedReferences(componentDir.path, configFile, 0, null, it, true) }
+        ?.let { webpackReferenceProvider.getAliasedReferences(componentDir.path.trimEnd('/'), configFile, 0, null, it, true) }
         ?.lastOrNull()
         ?.resolve()
         ?.castSafelyTo<PsiDirectory>()
