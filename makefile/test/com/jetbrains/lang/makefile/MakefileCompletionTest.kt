@@ -1,3 +1,5 @@
+package com.jetbrains.lang.makefile
+
 import com.intellij.testFramework.fixtures.*
 
 class MakefileCompletionTest : BasePlatformTestCase() {

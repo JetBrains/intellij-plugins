@@ -1,3 +1,5 @@
+package com.jetbrains.lang.makefile
+
 import com.intellij.testFramework.*
 import name.kropp.intellij.makefile.*
 

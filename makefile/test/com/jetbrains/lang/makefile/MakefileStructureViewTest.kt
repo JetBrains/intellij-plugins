@@ -1,3 +1,5 @@
+package com.jetbrains.lang.makefile
+
 import com.intellij.testFramework.*
 import com.intellij.testFramework.fixtures.*
 

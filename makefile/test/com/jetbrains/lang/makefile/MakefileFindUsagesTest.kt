@@ -1,3 +1,5 @@
+package com.jetbrains.lang.makefile
+
 import com.intellij.codeInsight.*
 import com.intellij.find.*
 import com.intellij.find.impl.*
