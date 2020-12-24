@@ -126,7 +126,7 @@ public class DartCommandLineRunningState extends CommandLineState {
     try {
       final DartRunConfiguration dartRunConfiguration = (DartRunConfiguration)getEnvironment().getRunProfile();
       final VirtualFile launchFile = dartRunConfiguration.getRunnerParameters().getDartFileOrDirectory();
-      final String message = DartBundle.message("analysis.issues.may.affect.the.execution", 
+      final String message = DartBundle.message("analysis.issues.may.affect.the.execution",
                                                 DartProblemsView.OPEN_DART_ANALYSIS_LINK, dartRunConfiguration.getName());
       DartExecutionHelper.displayIssues(project, launchFile, message, dartRunConfiguration.getIcon());
     }
@@ -200,7 +200,7 @@ public class DartCommandLineRunningState extends CommandLineState {
       addVmOption(commandLine, "--pause_isolates_on_start");
     }
 
-    if (customObservatoryPort <= 0) {
+    if (customObservatoryPort <= 0 && DefaultDebugExecutor.EXECUTOR_ID.equals(getEnvironment().getExecutor().getId())) {
       try {
         addVmOption(commandLine, "--enable-vm-service:" + NetUtils.findAvailableSocketPort());
       }
