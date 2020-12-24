@@ -1,4 +1,4 @@
-package name.kropp.intellij.makefile.psi.impl
+package com.jetbrains.lang.makefile.psi.impl
 
 import com.intellij.extapi.psi.*
 import com.intellij.lang.*

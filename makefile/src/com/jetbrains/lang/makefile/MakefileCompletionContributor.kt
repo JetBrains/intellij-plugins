@@ -1,11 +1,11 @@
-package name.kropp.intellij.makefile
+package com.jetbrains.lang.makefile
 
 import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.*
 import com.intellij.patterns.*
 import com.intellij.patterns.PlatformPatterns.*
 import com.intellij.util.*
-import name.kropp.intellij.makefile.psi.MakefileTypes.*
+import com.jetbrains.lang.makefile.psi.MakefileTypes.*
 
 class MakefileCompletionContributor : CompletionContributor() {
   private object KeywordCompletionProvider : CompletionProvider<CompletionParameters>() {

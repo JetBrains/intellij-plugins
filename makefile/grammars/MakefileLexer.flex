@@ -1,12 +1,12 @@
-package name.kropp.intellij.makefile;
+package com.jetbrains.lang.makefile;
 
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
-import name.kropp.intellij.makefile.psi.MakefileTypes;
+import com.jetbrains.lang.makefile.psi.MakefileTypes;
 
 import static com.intellij.psi.TokenType.BAD_CHARACTER;
 import static com.intellij.psi.TokenType.WHITE_SPACE;
-import static name.kropp.intellij.makefile.psi.MakefileTypes.*;
+import static com.jetbrains.lang.makefile.psi.MakefileTypes.*;
 
 %%
 

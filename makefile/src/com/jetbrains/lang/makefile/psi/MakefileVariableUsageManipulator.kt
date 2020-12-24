@@ -1,8 +1,8 @@
-package name.kropp.intellij.makefile.psi
+package com.jetbrains.lang.makefile.psi
 
 import com.intellij.openapi.util.*
 import com.intellij.psi.*
-import name.kropp.intellij.makefile.psi.impl.*
+import com.jetbrains.lang.makefile.psi.impl.*
 
 class MakefileVariableUsageManipulator : AbstractElementManipulator<MakefileVariableUsageImpl>() {
   override fun handleContentChange(element: MakefileVariableUsageImpl, range: TextRange, newContent: String?): MakefileVariableUsageImpl? {

@@ -1,4 +1,4 @@
-package name.kropp.intellij.makefile
+package com.jetbrains.lang.makefile
 
 import com.intellij.lang.*
 import com.intellij.lang.folding.*
@@ -7,7 +7,7 @@ import com.intellij.openapi.project.*
 import com.intellij.openapi.util.*
 import com.intellij.psi.*
 import com.intellij.psi.util.*
-import name.kropp.intellij.makefile.psi.*
+import com.jetbrains.lang.makefile.psi.*
 
 class MakefileFoldingBuilder : FoldingBuilderEx(), DumbAware {
   override fun buildFoldRegions(root: PsiElement, document: Document, quick: Boolean) =

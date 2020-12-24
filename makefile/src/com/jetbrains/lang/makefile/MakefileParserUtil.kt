@@ -1,12 +1,12 @@
 @file:Suppress("UNUSED_PARAMETER")
 
-package name.kropp.intellij.makefile
+package com.jetbrains.lang.makefile
 
 import com.intellij.lang.*
 import com.intellij.lang.parser.*
 import com.intellij.psi.*
 import com.intellij.psi.tree.*
-import name.kropp.intellij.makefile.psi.MakefileTypes.*
+import com.jetbrains.lang.makefile.psi.MakefileTypes.*
 
 object MakefileParserUtil : GeneratedParserUtilBase() {
   private val nonTargetTokens = setOf(EOL, COLON, TAB, SPLIT)

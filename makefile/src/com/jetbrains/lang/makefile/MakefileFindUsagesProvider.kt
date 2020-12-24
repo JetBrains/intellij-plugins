@@ -1,11 +1,11 @@
-package name.kropp.intellij.makefile
+package com.jetbrains.lang.makefile
 
 import com.intellij.lang.cacheBuilder.*
 import com.intellij.lang.findUsages.*
 import com.intellij.psi.*
 import com.intellij.psi.tree.*
-import name.kropp.intellij.makefile.psi.*
-import name.kropp.intellij.makefile.psi.MakefileTypes.*
+import com.jetbrains.lang.makefile.psi.*
+import com.jetbrains.lang.makefile.psi.MakefileTypes.*
 
 class MakefileFindUsagesProvider : FindUsagesProvider {
   override fun getWordsScanner() = DefaultWordsScanner(MakefileLexerAdapter(), TokenSet.create(CHARS), TokenSet.create(COMMENT), TokenSet.EMPTY)

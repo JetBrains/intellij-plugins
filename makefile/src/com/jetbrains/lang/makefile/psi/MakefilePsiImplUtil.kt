@@ -1,12 +1,12 @@
-package name.kropp.intellij.makefile.psi
+package com.jetbrains.lang.makefile.psi
 
 import com.intellij.navigation.*
 import com.intellij.psi.*
 import com.intellij.psi.tree.*
 import com.intellij.psi.util.*
-import name.kropp.intellij.makefile.*
-import name.kropp.intellij.makefile.psi.MakefileTypes.*
-import name.kropp.intellij.makefile.psi.impl.*
+import com.jetbrains.lang.makefile.*
+import com.jetbrains.lang.makefile.psi.MakefileTypes.*
+import com.jetbrains.lang.makefile.psi.impl.*
 import java.util.regex.*
 
 object MakefilePsiImplUtil {

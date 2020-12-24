@@ -1,12 +1,12 @@
-package name.kropp.intellij.makefile.psi.impl
+package com.jetbrains.lang.makefile.psi.impl
 
 import com.intellij.extapi.psi.*
 import com.intellij.lang.*
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.*
 import com.intellij.util.*
-import name.kropp.intellij.makefile.*
-import name.kropp.intellij.makefile.psi.*
+import com.jetbrains.lang.makefile.*
+import com.jetbrains.lang.makefile.psi.*
 
 abstract class MakefilePrerequisiteMixin internal constructor(node: ASTNode) : ASTWrapperPsiElement(node), MakefilePrerequisite {
   override fun getReferences(): Array<PsiReference> {

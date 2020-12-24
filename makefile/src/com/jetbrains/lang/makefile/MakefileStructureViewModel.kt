@@ -1,4 +1,4 @@
-package name.kropp.intellij.makefile
+package com.jetbrains.lang.makefile
 
 import com.intellij.ide.structureView.StructureViewModelBase
 import com.intellij.psi.PsiFile

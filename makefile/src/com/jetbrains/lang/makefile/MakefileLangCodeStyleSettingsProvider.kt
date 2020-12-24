@@ -1,4 +1,4 @@
-package name.kropp.intellij.makefile
+package com.jetbrains.lang.makefile
 
 import com.intellij.application.options.*
 import com.intellij.psi.codeStyle.*

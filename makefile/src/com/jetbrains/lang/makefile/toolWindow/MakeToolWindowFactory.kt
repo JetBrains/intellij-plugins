@@ -1,4 +1,4 @@
-package name.kropp.intellij.makefile.toolWindow
+package com.jetbrains.lang.makefile.toolWindow
 
 import com.intellij.execution.impl.*
 import com.intellij.ide.*
@@ -12,7 +12,7 @@ import com.intellij.ui.*
 import com.intellij.ui.content.impl.*
 import com.intellij.ui.treeStructure.*
 import com.intellij.util.ui.tree.*
-import name.kropp.intellij.makefile.*
+import com.jetbrains.lang.makefile.*
 import java.awt.*
 import java.awt.event.*
 import java.awt.event.MouseEvent.*

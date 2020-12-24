@@ -1,10 +1,10 @@
-package name.kropp.intellij.makefile.psi.impl
+package com.jetbrains.lang.makefile.psi.impl
 
 import com.intellij.extapi.psi.*
 import com.intellij.lang.*
 import com.intellij.psi.stubs.*
-import name.kropp.intellij.makefile.psi.*
-import name.kropp.intellij.makefile.stub.*
+import com.jetbrains.lang.makefile.psi.*
+import com.jetbrains.lang.makefile.stub.*
 
 abstract class MakefileTargetNamedElementImpl : StubBasedPsiElementBase<MakefileTargetStubElement>, MakefileNamedElement {
   constructor(node: ASTNode) : super(node)

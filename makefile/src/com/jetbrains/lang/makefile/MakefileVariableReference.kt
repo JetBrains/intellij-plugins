@@ -1,10 +1,10 @@
-package name.kropp.intellij.makefile
+package com.jetbrains.lang.makefile
 
 import com.intellij.codeInsight.lookup.*
 import com.intellij.lang.*
 import com.intellij.openapi.util.*
 import com.intellij.psi.*
-import name.kropp.intellij.makefile.psi.*
+import com.jetbrains.lang.makefile.psi.*
 
 class MakefileVariableReference(private val usage: MakefileVariableUsage) : PsiPolyVariantReferenceBase<MakefileVariableUsage>(usage, false) {
   override fun getRangeInElement(): TextRange {

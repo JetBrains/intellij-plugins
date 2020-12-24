@@ -1,4 +1,4 @@
-package name.kropp.intellij.makefile
+package com.jetbrains.lang.makefile
 
 class MakeSettings {
   var path: String = DEFAULT_MAKE_PATH

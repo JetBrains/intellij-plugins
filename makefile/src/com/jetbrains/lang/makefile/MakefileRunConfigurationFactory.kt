@@ -1,9 +1,9 @@
-package name.kropp.intellij.makefile
+package com.jetbrains.lang.makefile
 
 import com.intellij.execution.configurations.*
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.*
-import name.kropp.intellij.makefile.psi.*
+import com.jetbrains.lang.makefile.psi.*
 import java.io.*
 
 class MakefileRunConfigurationFactory(private val runConfigurationType: MakefileRunConfigurationType) : ConfigurationFactory(runConfigurationType) {

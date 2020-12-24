@@ -1,7 +1,7 @@
-package name.kropp.intellij.makefile.toolWindow
+package com.jetbrains.lang.makefile.toolWindow
 
-import name.kropp.intellij.makefile.*
-import name.kropp.intellij.makefile.psi.*
+import com.jetbrains.lang.makefile.*
+import com.jetbrains.lang.makefile.psi.*
 import java.util.*
 import javax.swing.*
 import javax.swing.tree.*

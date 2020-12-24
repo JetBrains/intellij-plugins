@@ -1,10 +1,10 @@
-package name.kropp.intellij.makefile.stub
+package com.jetbrains.lang.makefile.stub
 
 import com.intellij.psi.stubs.*
-import name.kropp.intellij.makefile.MakefileLanguage
-import name.kropp.intellij.makefile.TARGET_INDEX_KEY
-import name.kropp.intellij.makefile.psi.MakefileTarget
-import name.kropp.intellij.makefile.psi.impl.MakefileTargetImpl
+import com.jetbrains.lang.makefile.MakefileLanguage
+import com.jetbrains.lang.makefile.TARGET_INDEX_KEY
+import com.jetbrains.lang.makefile.psi.MakefileTarget
+import com.jetbrains.lang.makefile.psi.impl.MakefileTargetImpl
 
 object MakefileTargetStubElementType : IStubElementType<MakefileTargetStubElement, MakefileTarget>("TARGET", MakefileLanguage) {
   @Suppress("UNUSED_PARAMETER")

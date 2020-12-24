@@ -1,7 +1,7 @@
-package name.kropp.intellij.makefile.stub
+package com.jetbrains.lang.makefile.stub
 
 import com.intellij.psi.stubs.NamedStubBase
 import com.intellij.psi.stubs.StubElement
-import name.kropp.intellij.makefile.psi.MakefileTarget
+import com.jetbrains.lang.makefile.psi.MakefileTarget
 
 class MakefileTargetStubElementImpl(parent: StubElement<*>?, name: String?) : NamedStubBase<MakefileTarget>(parent, MakefileTargetStubElementType, name), MakefileTargetStubElement

@@ -1,4 +1,4 @@
-package name.kropp.intellij.makefile
+package com.jetbrains.lang.makefile
 
 import com.intellij.execution.configuration.EnvironmentVariablesComponent
 import com.intellij.icons.AllIcons
@@ -55,7 +55,7 @@ class MakefileRunConfigurationEditor(private val project: Project) : SettingsEdi
     if (file != null) {
       val psiFile = PsiManager.getInstance(project).findFile(file)
       if (psiFile != null) {
-        targetCompletionProvider.setItems(name.kropp.intellij.makefile.findTargets(psiFile).map { it.name })
+        targetCompletionProvider.setItems(findTargets(psiFile).map { it.name })
         return
       }
     }

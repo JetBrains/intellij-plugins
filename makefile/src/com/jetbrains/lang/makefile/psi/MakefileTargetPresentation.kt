@@ -1,7 +1,7 @@
-package name.kropp.intellij.makefile.psi
+package com.jetbrains.lang.makefile.psi
 
 import com.intellij.navigation.ItemPresentation
-import name.kropp.intellij.makefile.MakefileTargetIcon
+import com.jetbrains.lang.makefile.MakefileTargetIcon
 
 class MakefileTargetPresentation(private val target: MakefileTarget) : ItemPresentation {
   override fun getIcon(b: Boolean) = MakefileTargetIcon

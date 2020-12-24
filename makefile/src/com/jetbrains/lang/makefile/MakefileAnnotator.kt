@@ -1,4 +1,4 @@
-package name.kropp.intellij.makefile
+package com.jetbrains.lang.makefile
 
 import com.intellij.lang.*
 import com.intellij.lang.annotation.*
@@ -8,14 +8,14 @@ import com.intellij.openapi.util.*
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.*
 import com.intellij.psi.tree.*
-import name.kropp.intellij.makefile.MakefileSyntaxHighlighter.Companion.FUNCTION
-import name.kropp.intellij.makefile.MakefileSyntaxHighlighter.Companion.PREREQUISITE
-import name.kropp.intellij.makefile.MakefileSyntaxHighlighter.Companion.SPECIAL_TARGET
-import name.kropp.intellij.makefile.MakefileSyntaxHighlighter.Companion.STRING
-import name.kropp.intellij.makefile.MakefileSyntaxHighlighter.Companion.TARGET
-import name.kropp.intellij.makefile.MakefileSyntaxHighlighter.Companion.VARIABLE
-import name.kropp.intellij.makefile.MakefileSyntaxHighlighter.Companion.VARIABLE_VALUE
-import name.kropp.intellij.makefile.psi.*
+import com.jetbrains.lang.makefile.MakefileSyntaxHighlighter.Companion.FUNCTION
+import com.jetbrains.lang.makefile.MakefileSyntaxHighlighter.Companion.PREREQUISITE
+import com.jetbrains.lang.makefile.MakefileSyntaxHighlighter.Companion.SPECIAL_TARGET
+import com.jetbrains.lang.makefile.MakefileSyntaxHighlighter.Companion.STRING
+import com.jetbrains.lang.makefile.MakefileSyntaxHighlighter.Companion.TARGET
+import com.jetbrains.lang.makefile.MakefileSyntaxHighlighter.Companion.VARIABLE
+import com.jetbrains.lang.makefile.MakefileSyntaxHighlighter.Companion.VARIABLE_VALUE
+import com.jetbrains.lang.makefile.psi.*
 
 
 class MakefileAnnotator : Annotator {

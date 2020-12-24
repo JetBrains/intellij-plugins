@@ -1,4 +1,4 @@
-package name.kropp.intellij.makefile.toolWindow
+package com.jetbrains.lang.makefile.toolWindow
 
 import com.intellij.icons.*
 import com.intellij.openapi.actionSystem.*

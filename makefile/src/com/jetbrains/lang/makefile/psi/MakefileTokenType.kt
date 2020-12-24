@@ -1,7 +1,7 @@
-package name.kropp.intellij.makefile.psi
+package com.jetbrains.lang.makefile.psi
 
 import com.intellij.psi.tree.IElementType
-import name.kropp.intellij.makefile.MakefileLanguage
+import com.jetbrains.lang.makefile.MakefileLanguage
 
 open class MakefileTokenType(debugName: String) : IElementType(debugName, MakefileLanguage)
 

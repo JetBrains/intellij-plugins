@@ -1,8 +1,8 @@
-package name.kropp.intellij.makefile
+package com.jetbrains.lang.makefile
 
 import com.intellij.execution.lineMarker.*
 import com.intellij.psi.*
-import name.kropp.intellij.makefile.psi.*
+import com.jetbrains.lang.makefile.psi.*
 
 class MakefileTargetRunLineMarkerContributor : RunLineMarkerContributor() {
   override fun getInfo(element: PsiElement): Info? {

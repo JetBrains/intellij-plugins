@@ -1,9 +1,9 @@
-package name.kropp.intellij.makefile
+package com.jetbrains.lang.makefile
 
 import com.intellij.psi.*
 import com.intellij.spellchecker.inspections.*
 import com.intellij.spellchecker.tokenizer.*
-import name.kropp.intellij.makefile.psi.*
+import com.jetbrains.lang.makefile.psi.*
 
 class MakefileSpellcheckingStrategy : SpellcheckingStrategy() {
   override fun getTokenizer(element: PsiElement): Tokenizer<out PsiElement> = when (element) {

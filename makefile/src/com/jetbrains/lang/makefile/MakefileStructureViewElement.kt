@@ -1,11 +1,11 @@
-package name.kropp.intellij.makefile
+package com.jetbrains.lang.makefile
 
 import com.intellij.ide.structureView.StructureViewTreeElement
 import com.intellij.ide.util.treeView.smartTree.TreeElement
 import com.intellij.navigation.ItemPresentation
 import com.intellij.navigation.NavigationItem
 import com.intellij.psi.PsiElement
-import name.kropp.intellij.makefile.psi.MakefileTarget
+import com.jetbrains.lang.makefile.psi.MakefileTarget
 
 class MakefileStructureViewElement(private val element: PsiElement) : StructureViewTreeElement {
   override fun getPresentation(): ItemPresentation {

@@ -1,4 +1,4 @@
-package name.kropp.intellij.makefile.toolWindow
+package com.jetbrains.lang.makefile.toolWindow
 
 import com.intellij.execution.*
 import com.intellij.execution.actions.*
@@ -9,7 +9,7 @@ import com.intellij.openapi.actionSystem.impl.*
 import com.intellij.openapi.project.*
 import com.intellij.psi.search.*
 import com.intellij.ui.treeStructure.*
-import name.kropp.intellij.makefile.*
+import com.jetbrains.lang.makefile.*
 
 class MakefileToolWindowRunTargetAction(private val tree: Tree, private val project: Project, private val runManager: RunManagerImpl) : AnAction("Run target", "Run target", MakefileTargetIcon) {
   override fun actionPerformed(event: AnActionEvent) {

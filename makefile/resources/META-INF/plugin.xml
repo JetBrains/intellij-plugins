@@ -12,38 +12,38 @@ Support for editing and running UNIX Makefiles
   <depends optional="true" config-file="terminal-config.xml">org.jetbrains.plugins.terminal</depends>
 
   <extensions defaultExtensionNs="com.intellij">
-    <fileType name="Makefile" language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileFileType" fieldName="INSTANCE" extensions="mk" fileNamesCaseInsensitive="makefile;GNUmakefile"/>
-    <lang.parserDefinition language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileParserDefinition"/>
-    <lang.syntaxHighlighterFactory language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileSyntaxHighlighterFactory"/>
-    <lang.foldingBuilder language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileFoldingBuilder"/>
-    <annotator language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileAnnotator"/>
-    <lang.psiStructureViewFactory language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileStructureViewFactory"/>
-    <lang.commenter language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileCommenter"/>
-    <lang.findUsagesProvider language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileFindUsagesProvider"/>
-    <lang.braceMatcher language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileBraceMatcherProvider" />
-    <gotoSymbolContributor implementation="name.kropp.intellij.makefile.MakefileChooseByNameContributor"/>
-    <colorSettingsPage implementation="name.kropp.intellij.makefile.MakefileColorSettingsPage"/>
-    <completion.contributor language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileCompletionContributor"/>
-    <configurationType implementation="name.kropp.intellij.makefile.MakefileRunConfigurationType"/>
-    <projectService serviceImplementation="name.kropp.intellij.makefile.MakefileProjectSettings"/>
+    <fileType name="Makefile" language="Makefile" implementationClass="com.jetbrains.lang.makefile.MakefileFileType" fieldName="INSTANCE" extensions="mk" fileNamesCaseInsensitive="makefile;GNUmakefile"/>
+    <lang.parserDefinition language="Makefile" implementationClass="com.jetbrains.lang.makefile.MakefileParserDefinition"/>
+    <lang.syntaxHighlighterFactory language="Makefile" implementationClass="com.jetbrains.lang.makefile.MakefileSyntaxHighlighterFactory"/>
+    <lang.foldingBuilder language="Makefile" implementationClass="com.jetbrains.lang.makefile.MakefileFoldingBuilder"/>
+    <annotator language="Makefile" implementationClass="com.jetbrains.lang.makefile.MakefileAnnotator"/>
+    <lang.psiStructureViewFactory language="Makefile" implementationClass="com.jetbrains.lang.makefile.MakefileStructureViewFactory"/>
+    <lang.commenter language="Makefile" implementationClass="com.jetbrains.lang.makefile.MakefileCommenter"/>
+    <lang.findUsagesProvider language="Makefile" implementationClass="com.jetbrains.lang.makefile.MakefileFindUsagesProvider"/>
+    <lang.braceMatcher language="Makefile" implementationClass="com.jetbrains.lang.makefile.MakefileBraceMatcherProvider" />
+    <gotoSymbolContributor implementation="com.jetbrains.lang.makefile.MakefileChooseByNameContributor"/>
+    <colorSettingsPage implementation="com.jetbrains.lang.makefile.MakefileColorSettingsPage"/>
+    <completion.contributor language="Makefile" implementationClass="com.jetbrains.lang.makefile.MakefileCompletionContributor"/>
+    <configurationType implementation="com.jetbrains.lang.makefile.MakefileRunConfigurationType"/>
+    <projectService serviceImplementation="com.jetbrains.lang.makefile.MakefileProjectSettings"/>
     <projectConfigurable groupId="build.tools" groupWeight="110" id="reference.settingsdialog.project.make"
-                         instance="name.kropp.intellij.makefile.MakeConfigurable"/>
-    <runLineMarkerContributor language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileTargetRunLineMarkerContributor"/>
-    <runConfigurationProducer implementation="name.kropp.intellij.makefile.MakefileRunConfigurationProducer"/>
-    <codeStyleSettingsProvider implementation="name.kropp.intellij.makefile.MakefileCodeStyleSettingsProvider"/>
-    <langCodeStyleSettingsProvider implementation="name.kropp.intellij.makefile.MakefileLangCodeStyleSettingsProvider"/>
-    <lang.elementManipulator implementationClass="name.kropp.intellij.makefile.psi.MakefilePrerequisiteManipulator"
-                             forClass="name.kropp.intellij.makefile.psi.impl.MakefilePrerequisiteImpl"/>
-    <lang.elementManipulator implementationClass="name.kropp.intellij.makefile.psi.MakefileVariableUsageManipulator"
-                             forClass="name.kropp.intellij.makefile.psi.impl.MakefileVariableUsageImpl"/>
-    <documentationProvider implementation="name.kropp.intellij.makefile.MakefileDocumentationProvider"/>
-    <spellchecker.support language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileSpellcheckingStrategy" />
-    <multiHostInjector implementation="name.kropp.intellij.makefile.MakefileShellLanguageInjector"/>
+                         instance="com.jetbrains.lang.makefile.MakeConfigurable"/>
+    <runLineMarkerContributor language="Makefile" implementationClass="com.jetbrains.lang.makefile.MakefileTargetRunLineMarkerContributor"/>
+    <runConfigurationProducer implementation="com.jetbrains.lang.makefile.MakefileRunConfigurationProducer"/>
+    <codeStyleSettingsProvider implementation="com.jetbrains.lang.makefile.MakefileCodeStyleSettingsProvider"/>
+    <langCodeStyleSettingsProvider implementation="com.jetbrains.lang.makefile.MakefileLangCodeStyleSettingsProvider"/>
+    <lang.elementManipulator implementationClass="com.jetbrains.lang.makefile.psi.MakefilePrerequisiteManipulator"
+                             forClass="com.jetbrains.lang.makefile.psi.impl.MakefilePrerequisiteImpl"/>
+    <lang.elementManipulator implementationClass="com.jetbrains.lang.makefile.psi.MakefileVariableUsageManipulator"
+                             forClass="com.jetbrains.lang.makefile.psi.impl.MakefileVariableUsageImpl"/>
+    <documentationProvider implementation="com.jetbrains.lang.makefile.MakefileDocumentationProvider"/>
+    <spellchecker.support language="Makefile" implementationClass="com.jetbrains.lang.makefile.MakefileSpellcheckingStrategy" />
+    <multiHostInjector implementation="com.jetbrains.lang.makefile.MakefileShellLanguageInjector"/>
 
-    <stubElementTypeHolder class="name.kropp.intellij.makefile.psi.MakefileTypes" />
-    <stubIndex implementation="name.kropp.intellij.makefile.MakefileTargetIndex" />
+    <stubElementTypeHolder class="com.jetbrains.lang.makefile.psi.MakefileTypes" />
+    <stubIndex implementation="com.jetbrains.lang.makefile.MakefileTargetIndex" />
 
-    <toolWindow id="make" anchor="right" factoryClass="name.kropp.intellij.makefile.toolWindow.MakeToolWindowFactory" secondary="true"/>
+    <toolWindow id="make" anchor="right" factoryClass="com.jetbrains.lang.makefile.toolWindow.MakeToolWindowFactory" secondary="true"/>
 
     <internalFileTemplate name="Makefile" />
   </extensions>

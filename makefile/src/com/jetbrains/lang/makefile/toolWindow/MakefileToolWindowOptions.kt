@@ -1,7 +1,7 @@
-package name.kropp.intellij.makefile.toolWindow
+package com.jetbrains.lang.makefile.toolWindow
 
 import com.intellij.openapi.project.*
-import name.kropp.intellij.makefile.*
+import com.jetbrains.lang.makefile.*
 import javax.swing.tree.*
 
 class MakefileToolWindowOptions(val project: Project) {

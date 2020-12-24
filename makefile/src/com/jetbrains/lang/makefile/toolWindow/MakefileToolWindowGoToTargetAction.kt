@@ -1,10 +1,10 @@
-package name.kropp.intellij.makefile.toolWindow
+package com.jetbrains.lang.makefile.toolWindow
 
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.project.*
 import com.intellij.psi.search.*
 import com.intellij.ui.treeStructure.*
-import name.kropp.intellij.makefile.*
+import com.jetbrains.lang.makefile.*
 
 class MakefileToolWindowGoToTargetAction(private val tree: Tree, private val project: Project) : AnAction("Go to target", "Go to target", MakefileTargetIcon) {
   override fun actionPerformed(event: AnActionEvent) {

@@ -1,4 +1,4 @@
-package name.kropp.intellij.makefile
+package com.jetbrains.lang.makefile
 
 import com.intellij.openapi.fileChooser.*
 import com.intellij.openapi.options.*

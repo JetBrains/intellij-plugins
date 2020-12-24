@@ -1,4 +1,4 @@
-package name.kropp.intellij.makefile
+package com.jetbrains.lang.makefile
 
 import com.intellij.openapi.editor.*
 import com.intellij.openapi.editor.colors.*
@@ -6,7 +6,7 @@ import com.intellij.openapi.editor.colors.TextAttributesKey.*
 import com.intellij.openapi.fileTypes.*
 import com.intellij.psi.*
 import com.intellij.psi.tree.*
-import name.kropp.intellij.makefile.psi.*
+import com.jetbrains.lang.makefile.psi.*
 
 class MakefileSyntaxHighlighter : SyntaxHighlighterBase() {
   companion object {

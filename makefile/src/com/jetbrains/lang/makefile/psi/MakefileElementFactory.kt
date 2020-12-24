@@ -1,8 +1,8 @@
-package name.kropp.intellij.makefile.psi
+package com.jetbrains.lang.makefile.psi
 
 import com.intellij.openapi.project.*
 import com.intellij.psi.*
-import name.kropp.intellij.makefile.*
+import com.jetbrains.lang.makefile.*
 
 object MakefileElementFactory {
   fun createFile(project: Project, text: String) =

@@ -1,10 +1,10 @@
-package name.kropp.intellij.makefile
+package com.jetbrains.lang.makefile
 
 import com.intellij.lang.*
 import com.intellij.lang.injection.*
 import com.intellij.openapi.util.*
 import com.intellij.psi.*
-import name.kropp.intellij.makefile.psi.*
+import com.jetbrains.lang.makefile.psi.*
 import kotlin.math.*
 
 private const val SHELL_LANGUAGE_ID = "Shell Script"

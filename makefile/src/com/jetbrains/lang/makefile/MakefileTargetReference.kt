@@ -1,8 +1,8 @@
-package name.kropp.intellij.makefile
+package com.jetbrains.lang.makefile
 
 import com.intellij.codeInsight.lookup.*
 import com.intellij.psi.*
-import name.kropp.intellij.makefile.psi.*
+import com.jetbrains.lang.makefile.psi.*
 
 class MakefileTargetReference(private val prerequisite: MakefilePrerequisite) : PsiPolyVariantReferenceBase<MakefilePrerequisite>(prerequisite, false) {
   override fun handleElementRename(newName: String): PsiElement {

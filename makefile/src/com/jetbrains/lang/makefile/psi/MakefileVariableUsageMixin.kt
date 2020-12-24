@@ -1,10 +1,10 @@
-package name.kropp.intellij.makefile.psi.impl
+package com.jetbrains.lang.makefile.psi.impl
 
 import com.intellij.extapi.psi.*
 import com.intellij.lang.*
 import com.intellij.psi.*
-import name.kropp.intellij.makefile.*
-import name.kropp.intellij.makefile.psi.*
+import com.jetbrains.lang.makefile.*
+import com.jetbrains.lang.makefile.psi.*
 
 abstract class MakefileVariableUsageMixin internal constructor(node: ASTNode) : ASTWrapperPsiElement(node), MakefileVariableUsage {
   override fun getReferences(): Array<PsiReference> = myReference

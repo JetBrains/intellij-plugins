@@ -1,11 +1,11 @@
-package name.kropp.intellij.makefile
+package com.jetbrains.lang.makefile
 
 import com.intellij.extapi.psi.PsiFileBase
 import com.intellij.psi.FileViewProvider
 import com.intellij.psi.util.PsiTreeUtil
-import name.kropp.intellij.makefile.psi.MakefileRule
-import name.kropp.intellij.makefile.psi.MakefileTarget
-import name.kropp.intellij.makefile.psi.MakefileVariable
+import com.jetbrains.lang.makefile.psi.MakefileRule
+import com.jetbrains.lang.makefile.psi.MakefileTarget
+import com.jetbrains.lang.makefile.psi.MakefileVariable
 
 class MakefileFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, MakefileLanguage) {
   override fun getFileType() = MakefileFileType

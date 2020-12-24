@@ -1,4 +1,4 @@
-package name.kropp.intellij.makefile.psi
+package com.jetbrains.lang.makefile.psi
 
 import com.intellij.openapi.util.*
 import com.intellij.psi.*
