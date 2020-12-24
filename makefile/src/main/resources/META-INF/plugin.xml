@@ -1,19 +1,12 @@
 <idea-plugin>
   <id>name.kropp.intellij.makefile</id>
   <name>Makefile support</name>
-  <version>SNAPSHOT</version>
-  <vendor email="victor.kropp@gmail.com" url="https://victor.kropp.name/projects/makefile/">Victor Kropp</vendor>
+  <vendor>JetBrains</vendor>
+  <category>Languages</category>
 
   <description><![CDATA[
 Support for editing and running UNIX Makefiles
     ]]></description>
-
-  <change-notes><![CDATA[
-The new version comes with another bunch of improvements for parser.
-Make runner now inherits customized environment variables in supported IDEs (e. g. in GoLand)
-]]></change-notes>
-
-  <idea-version since-build="202.6397"/>
 
   <depends>com.intellij.modules.lang</depends>
   <depends optional="true" config-file="terminal-config.xml">org.jetbrains.plugins.terminal</depends>
