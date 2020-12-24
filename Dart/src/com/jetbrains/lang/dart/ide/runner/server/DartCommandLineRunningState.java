@@ -200,7 +200,7 @@ public class DartCommandLineRunningState extends CommandLineState {
       addVmOption(commandLine, "--pause_isolates_on_start");
     }
 
-    if (customObservatoryPort <= 0) {
+    if (customObservatoryPort <= 0 && DefaultDebugExecutor.EXECUTOR_ID.equals(getEnvironment().getExecutor().getId())) {
       try {
         addVmOption(commandLine, "--enable-vm-service:" + NetUtils.findAvailableSocketPort());
       }
