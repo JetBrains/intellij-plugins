@@ -8,6 +8,6 @@ class MakefileFoldingTest : BasePlatformTestCase() {
 
   fun doTest() = myFixture.testFolding("$testDataPath/$basePath/${getTestName(true)}.mk")
 
-  override fun getTestDataPath() = "testData"
+  override fun getTestDataPath() = BASE_TEST_DATA_PATH
   override fun getBasePath() = "folding"
 }

@@ -7,6 +7,6 @@ class MakefileHighlightingTest : BasePlatformTestCase() {
 
   fun doTest(checkInfos: Boolean = false) { myFixture.testHighlighting(true, checkInfos, true, "$basePath/${getTestName(true)}.mk") }
 
-  override fun getTestDataPath() = "testData"
+  override fun getTestDataPath() = BASE_TEST_DATA_PATH
   override fun getBasePath() = "highlighting"
 }

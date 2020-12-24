@@ -11,6 +11,6 @@ class MakefileStructureViewTest : BasePlatformTestCase() {
     }
   }
 
-  override fun getTestDataPath() = "testData"
+  override fun getTestDataPath() = BASE_TEST_DATA_PATH
   override fun getBasePath() = "structure"
 }

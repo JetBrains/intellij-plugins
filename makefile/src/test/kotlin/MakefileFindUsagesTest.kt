@@ -23,6 +23,6 @@ class MakefileFindUsagesTest : BasePlatformTestCase() {
     assertThat(handler, nullValue())
   }
 
-  override fun getTestDataPath() = "testData"
+  override fun getTestDataPath() = BASE_TEST_DATA_PATH
   override fun getBasePath() = "findUsages"
 }

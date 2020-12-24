@@ -12,6 +12,6 @@ class MakefileCreateRuleQuickfixTest : BasePlatformTestCase() {
     myFixture.checkResultByFile("$basePath/${getTestName(true)}.gold.mk")
   }
 
-  override fun getTestDataPath() = "testData"
+  override fun getTestDataPath() = BASE_TEST_DATA_PATH
   override fun getBasePath() = "quickfix/createRule"
 }
