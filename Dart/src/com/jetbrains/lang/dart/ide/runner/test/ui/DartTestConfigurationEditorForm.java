@@ -1,9 +1,8 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.test.ui;
 
 import com.intellij.execution.configuration.EnvironmentVariablesComponent;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
@@ -14,6 +13,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.JBColor;
+import com.intellij.ui.RawCommandLineEditor;
 import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.lang.dart.DartBundle;
@@ -40,6 +40,7 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
   private JTextField myTestNameField;
   private JLabel myTargetNameLabel;
   private JTextField myTargetNameField;
+  private RawCommandLineEditor myVMOptions;
   private JTextField myTestRunnerOptionsField;
   private EnvironmentVariablesComponent myEnvironmentVariables;
 
@@ -87,6 +88,7 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
     }
     myTestNameField.setText(
       parameters.getScope() == GROUP_OR_TEST_BY_NAME ? StringUtil.notNullize(parameters.getTestName()) : "");
+    myVMOptions.setText(parameters.getVMOptions());
     myTestRunnerOptionsField.setText(parameters.getTestRunnerOptions());
     myEnvironmentVariables.setEnvs(parameters.getEnvs());
     myEnvironmentVariables.setPassParentEnvs(parameters.isIncludeParentEnvs());
@@ -95,7 +97,7 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
   }
 
   @Override
-  protected void applyEditorTo(@NotNull final DartTestRunConfiguration configuration) throws ConfigurationException {
+  protected void applyEditorTo(@NotNull final DartTestRunConfiguration configuration) {
     final DartTestRunnerParameters parameters = configuration.getRunnerParameters();
 
     final DartTestRunnerParameters.Scope scope = (DartTestRunnerParameters.Scope)myScopeCombo.getSelectedItem();
@@ -106,6 +108,7 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
       scope == GROUP_OR_TEST_BY_NAME ? StringUtil.nullize(myTestNameField.getText().trim()) : null);
     parameters
       .setTargetName(scope == FOLDER ? StringUtil.nullize(myTargetNameField.getText().trim()) : null);
+    parameters.setVMOptions(StringUtil.nullize(myVMOptions.getText(), true));
     parameters.setTestRunnerOptions(StringUtil.nullize(myTestRunnerOptionsField.getText().trim()));
     parameters.setEnvs(myEnvironmentVariables.getEnvs());
     parameters.setIncludeParentEnvs(myEnvironmentVariables.isPassParentEnvs());
