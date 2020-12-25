@@ -9,8 +9,8 @@ import com.intellij.psi.*
 import com.jetbrains.lang.makefile.psi.*
 
 class CreateRuleFix(private val prerequisite: PsiElement) : BaseIntentionAction() {
-  override fun getText() = "Create Rule"
-  override fun getFamilyName() = "Create Rule"
+  override fun getText() = MakefileLangBundle.message("intention.name.create.rule")
+  override fun getFamilyName() = MakefileLangBundle.message("intention.family.name.create.rule")
 
   override fun isAvailable(project: Project, editor: Editor?, psiFile: PsiFile?) = true
 

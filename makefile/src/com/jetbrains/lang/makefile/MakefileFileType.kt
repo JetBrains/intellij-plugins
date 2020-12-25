@@ -11,6 +11,7 @@ val MakefileTargetIcon: Icon = AllIcons.RunConfigurations.TestState.Run
 object MakefileFileType : LanguageFileType(MakefileLanguage) {
   override fun getIcon() = MakefileIcon
   override fun getName() = "Makefile"
-  override fun getDescription() = "GNU Makefile"
+  @Suppress("DialogTitleCapitalization")
+  override fun getDescription() = MakefileLangBundle.message("file.type.description")
   override fun getDefaultExtension() = "mk"
 }

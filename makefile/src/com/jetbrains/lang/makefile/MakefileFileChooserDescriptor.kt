@@ -5,7 +5,7 @@ import com.intellij.openapi.vfs.*
 
 class MakefileFileChooserDescriptor : FileChooserDescriptor(true, false, false, false, false, false) {
   init {
-    title = "Makefile"
+    title = MakefileLangBundle.message("file.chooser.title")
   }
 
   override fun isFileVisible(file: VirtualFile, showHiddenFiles: Boolean) = when {

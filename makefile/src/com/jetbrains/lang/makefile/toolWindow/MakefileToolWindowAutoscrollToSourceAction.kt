@@ -3,13 +3,14 @@ package com.jetbrains.lang.makefile.toolWindow
 import com.intellij.icons.*
 import com.intellij.openapi.actionSystem.*
 import com.intellij.ui.*
+import com.jetbrains.lang.makefile.MakefileLangBundle
 import javax.swing.*
 
 class MakefileToolWindowAutoscrollToSourceAction(
     private val options: MakefileToolWindowOptions,
     private val autoScrollHandler: AutoScrollToSourceHandler,
     private val tree: JComponent)
-  : ToggleAction("Autoscroll to source", null, AllIcons.General.AutoscrollToSource) {
+  : ToggleAction(MakefileLangBundle.message("action.autoscroll.to.source.text"), null, AllIcons.General.AutoscrollToSource) {
 
   override fun isSelected(e: AnActionEvent): Boolean = options.autoScrollToSource
 

@@ -32,22 +32,28 @@ class MakefileRunConfigurationEditor(private val project: Project) : SettingsEdi
         .setAlignLabelOnRight(false)
         .setHorizontalGap(UIUtil.DEFAULT_HGAP)
         .setVerticalGap(UIUtil.DEFAULT_VGAP)
-        .addLabeledComponent("&Makefile", filenameField)
-        .addLabeledComponent("&Targets", targetField)
-        .addComponent(LabeledComponent.create(argumentsField, "&Arguments"))
-        .addLabeledComponent("&Working Directory", createComponentWithMacroBrowse(workingDirectoryField))
+        .addLabeledComponent(MakefileLangBundle.message("run.configuration.editor.filename.label"), filenameField)
+        .addLabeledComponent(MakefileLangBundle.message("run.configuration.editor.target.label"), targetField)
+        .addComponent(LabeledComponent.create(argumentsField, MakefileLangBundle.message("run.configuration.editor.arguments.label")))
+        .addLabeledComponent(MakefileLangBundle.message("run.configuration.editor.working.directory.label"), createComponentWithMacroBrowse(workingDirectoryField))
         .addComponent(environmentVarsComponent)
         .panel
   }
 
   init {
-    filenameField.addBrowseFolderListener("Makefile", "Makefile path", project, MakefileFileChooserDescriptor())
+    filenameField.addBrowseFolderListener(MakefileLangBundle.message("file.chooser.title"),
+                                          MakefileLangBundle.message("file.chooser.description"),
+                                          project,
+                                          MakefileFileChooserDescriptor())
     filenameField.textField.document.addDocumentListener(object : DocumentAdapter() {
       override fun textChanged(event: DocumentEvent) {
         updateTargetCompletion(filenameField.text)
       }
     })
-    workingDirectoryField.addBrowseFolderListener("Choose Working Directory", "Choose Working Directory", project, FileChooserDescriptorFactory.createSingleFolderDescriptor())
+    workingDirectoryField.addBrowseFolderListener(MakefileLangBundle.message("working.directory.file.chooser"),
+                                                  MakefileLangBundle.message("working.directory.file.chooser.description"),
+                                                  project,
+                                                  FileChooserDescriptorFactory.createSingleFolderDescriptor())
   }
 
   fun updateTargetCompletion(filename: String) {

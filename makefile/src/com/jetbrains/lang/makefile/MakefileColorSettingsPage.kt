@@ -16,20 +16,20 @@ class MakefileColorSettingsPage : ColorSettingsPage {
   )
 
   private val DESCRIPTORS = arrayOf(
-      AttributesDescriptor("Comment", MakefileSyntaxHighlighter.COMMENT),
-      AttributesDescriptor("Documentation Comment", MakefileSyntaxHighlighter.DOCCOMMENT),
-      AttributesDescriptor("Keyword", MakefileSyntaxHighlighter.KEYWORD),
-      AttributesDescriptor("Target", MakefileSyntaxHighlighter.TARGET),
-      AttributesDescriptor("Special Target", MakefileSyntaxHighlighter.SPECIAL_TARGET),
-      AttributesDescriptor("Separator", MakefileSyntaxHighlighter.SEPARATOR),
-      AttributesDescriptor("Prerequisite", MakefileSyntaxHighlighter.PREREQUISITE),
-      AttributesDescriptor("Variable Name", MakefileSyntaxHighlighter.VARIABLE),
-      AttributesDescriptor("Variable Value", MakefileSyntaxHighlighter.VARIABLE_VALUE),
-      AttributesDescriptor("Line Split", MakefileSyntaxHighlighter.LINE_SPLIT),
-      AttributesDescriptor("Tab", MakefileSyntaxHighlighter.TAB),
-      AttributesDescriptor("Function", MakefileSyntaxHighlighter.FUNCTION),
-      AttributesDescriptor("Function Param", MakefileSyntaxHighlighter.FUNCTION_PARAM),
-      AttributesDescriptor("Braces", MakefileSyntaxHighlighter.BRACES)
+    AttributesDescriptor(MakefileLangBundle.message("attribute.descriptor.comment"), MakefileSyntaxHighlighter.COMMENT),
+    AttributesDescriptor(MakefileLangBundle.message("attribute.descriptor.documentation.comment"), MakefileSyntaxHighlighter.DOCCOMMENT),
+    AttributesDescriptor(MakefileLangBundle.message("attribute.descriptor.keyword"), MakefileSyntaxHighlighter.KEYWORD),
+    AttributesDescriptor(MakefileLangBundle.message("attribute.descriptor.target"), MakefileSyntaxHighlighter.TARGET),
+    AttributesDescriptor(MakefileLangBundle.message("attribute.descriptor.special.target"), MakefileSyntaxHighlighter.SPECIAL_TARGET),
+    AttributesDescriptor(MakefileLangBundle.message("attribute.descriptor.separator"), MakefileSyntaxHighlighter.SEPARATOR),
+    AttributesDescriptor(MakefileLangBundle.message("attribute.descriptor.prerequisite"), MakefileSyntaxHighlighter.PREREQUISITE),
+    AttributesDescriptor(MakefileLangBundle.message("attribute.descriptor.variable.name"), MakefileSyntaxHighlighter.VARIABLE),
+    AttributesDescriptor(MakefileLangBundle.message("attribute.descriptor.variable.value"), MakefileSyntaxHighlighter.VARIABLE_VALUE),
+    AttributesDescriptor(MakefileLangBundle.message("attribute.descriptor.line.split"), MakefileSyntaxHighlighter.LINE_SPLIT),
+    AttributesDescriptor(MakefileLangBundle.message("attribute.descriptor.tab"), MakefileSyntaxHighlighter.TAB),
+    AttributesDescriptor(MakefileLangBundle.message("attribute.descriptor.function"), MakefileSyntaxHighlighter.FUNCTION),
+    AttributesDescriptor(MakefileLangBundle.message("attribute.descriptor.function.param"), MakefileSyntaxHighlighter.FUNCTION_PARAM),
+    AttributesDescriptor(MakefileLangBundle.message("attribute.descriptor.braces"), MakefileSyntaxHighlighter.BRACES)
   )
 
   override fun getAttributeDescriptors() = DESCRIPTORS

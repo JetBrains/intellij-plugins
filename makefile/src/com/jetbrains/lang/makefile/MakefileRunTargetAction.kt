@@ -7,7 +7,10 @@ import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.actionSystem.impl.*
 import com.jetbrains.lang.makefile.psi.*
 
-class MakefileRunTargetAction(private val target: MakefileTarget) : AnAction("make ${target.name}", "make ${target.name}", MakefileTargetIcon) {
+class MakefileRunTargetAction(private val target: MakefileTarget)
+  : AnAction(MakefileLangBundle.message("action.run.target.text", target.name),
+             MakefileLangBundle.message("action.run.target.description", target.name),
+             MakefileTargetIcon) {
   override fun actionPerformed(event: AnActionEvent) {
     val dataContext = SimpleDataContext.getSimpleContext(Location.DATA_KEY.name, PsiLocation(target), event.dataContext)
 

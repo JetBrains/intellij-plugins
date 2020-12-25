@@ -52,9 +52,16 @@ class MakefileAnnotator : Annotator {
         }
 
         if (!targetReferences && !fileReferenceResolved) {
-          holder.newAnnotation(WEAK_WARNING, "Unresolved prerequisite").range(element).withFix(CreateRuleFix(element)).create()
+          holder
+            .newAnnotation(WEAK_WARNING, MakefileLangBundle.message("inspection.message.unresolved.prerequisite"))
+            .range(element)
+            .withFix(CreateRuleFix(element))
+            .create()
         } else if (unresolvedFile != null) {
-          holder.newAnnotation(WEAK_WARNING, "File not found").range(unresolvedFile!!).create()
+          holder
+            .newAnnotation(WEAK_WARNING, MakefileLangBundle.message("inspection.message.file.not.found"))
+            .range(unresolvedFile!!)
+            .create()
         }
       }
     } else if (element is MakefileVariable) {

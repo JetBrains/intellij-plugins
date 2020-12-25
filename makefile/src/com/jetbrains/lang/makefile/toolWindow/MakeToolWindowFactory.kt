@@ -21,7 +21,8 @@ import javax.swing.tree.*
 
 class MakeToolWindowFactory : ToolWindowFactory {
   override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
-    toolWindow.title = "make"
+    @Suppress("DialogTitleCapitalization")
+    toolWindow.title = MakefileLangBundle.message("tool.window.title")
 
     val contentManager = toolWindow.contentManager
 

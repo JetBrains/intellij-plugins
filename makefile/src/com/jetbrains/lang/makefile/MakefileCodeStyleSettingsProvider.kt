@@ -6,7 +6,7 @@ import com.intellij.psi.codeStyle.*
 
 class MakefileCodeStyleSettingsProvider : CodeStyleSettingsProvider() {
   override fun createConfigurable(settings: CodeStyleSettings, modelSettings: CodeStyleSettings): CodeStyleConfigurable {
-    return object : CodeStyleAbstractConfigurable(settings, modelSettings, "Makefile") {
+    return object : CodeStyleAbstractConfigurable(settings, modelSettings, MakefileLangBundle.message("configurable.name")) {
       override fun createPanel(settings: CodeStyleSettings): CodeStyleAbstractPanel {
         return object : TabbedLanguageCodeStylePanel(MakefileLanguage, currentSettings, settings) {
           override fun initTabs(settings: CodeStyleSettings) {

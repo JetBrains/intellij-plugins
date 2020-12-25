@@ -13,10 +13,14 @@ import javax.swing.*
 class MakeConfigurable(project: Project?) : Configurable {
   private val settings = project?.getService(MakefileProjectSettings::class.java)
   private val pathField = TextFieldWithBrowseButton()
-  private val cygwinField = JBCheckBox("Use Cygwin${if (!SystemInfo.isWindows) " (Windows only)" else ""}")
+  @Suppress("DialogTitleCapitalization")
+  private val cygwinField = JBCheckBox(MakefileLangBundle.message("configurable.use.cygwin.checkbox", if (!SystemInfo.isWindows) 0 else 1))
 
   init {
-    pathField.addBrowseFolderListener("Make", "Path to make executable", project, FileChooserDescriptor(true, false, false, false, false, false))
+    pathField.addBrowseFolderListener(MakefileLangBundle.message("make.file.chooser.title"),
+                                      MakefileLangBundle.message("make.file.chooser.description"),
+                                      project,
+                                      FileChooserDescriptor(true, false, false, false, false, false))
   }
 
   override fun isModified(): Boolean {
@@ -24,7 +28,7 @@ class MakeConfigurable(project: Project?) : Configurable {
            settings.settings?.useCygwin != cygwinField.isSelected
   }
 
-  override fun getDisplayName() = "Make"
+  override fun getDisplayName() = MakefileLangBundle.message("configurable.name")
   override fun apply() {
     settings?.settings?.path = pathField.text
     settings?.settings?.useCygwin = cygwinField.isSelected
@@ -35,7 +39,7 @@ class MakeConfigurable(project: Project?) : Configurable {
         .setAlignLabelOnRight(false)
         .setHorizontalGap(UIUtil.DEFAULT_HGAP)
         .setVerticalGap(UIUtil.DEFAULT_VGAP)
-        .addLabeledComponent("Path to &Make executable", pathField)
+        .addLabeledComponent(MakefileLangBundle.message("configurable.path.field.label"), pathField)
         .addComponent(cygwinField)
         .addComponentFillVertically(Spacer(), 0)
         .panel

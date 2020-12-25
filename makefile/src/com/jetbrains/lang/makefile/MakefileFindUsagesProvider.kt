@@ -15,8 +15,8 @@ class MakefileFindUsagesProvider : FindUsagesProvider {
     else element is MakefileNamedElement
 
   override fun getType(element: PsiElement) = when(element) {
-    is MakefileTarget -> if (!element.isSpecialTarget) "Makefile target" else ""
-    is MakefileVariable -> "Makefile variable"
+    is MakefileTarget -> if (!element.isSpecialTarget) MakefileLangBundle.message("usage.type.makefile.target") else ""
+    is MakefileVariable -> MakefileLangBundle.message("usage.type.makefile.variable")
     else -> ""
   }
 
