@@ -24,6 +24,7 @@ import training.learn.lesson.general.*
 import training.learn.lesson.general.assistance.CodeFormatLesson
 import training.learn.lesson.general.assistance.ParameterInfoLesson
 import training.learn.lesson.general.assistance.QuickPopupsLesson
+import training.learn.lesson.general.navigation.FindInFilesLesson
 import training.learn.lesson.general.refactorings.ExtractMethodCocktailSortLesson
 import training.learn.lesson.general.refactorings.ExtractVariableFromBubbleLesson
 
@@ -89,7 +90,8 @@ class RubyLearningCourse : LearningCourseBase(RubyLanguage.INSTANCE.id) {
         RubyDeclarationAndUsagesLesson(it),
         RubyFileStructureLesson(it),
         RubyRecentFilesLesson(it),
-        RubySearchEverywhereLesson(it)
+        RubySearchEverywhereLesson(it),
+        FindInFilesLesson(it, lang, "src/warehouse/find_in_files_sample.rb")
       )
     },
   )
