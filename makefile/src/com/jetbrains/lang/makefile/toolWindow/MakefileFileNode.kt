@@ -1,7 +1,7 @@
 package com.jetbrains.lang.makefile.toolWindow
 
 import com.intellij.psi.*
-import com.jetbrains.lang.makefile.*
+import icons.MakefileIcons
 import java.util.*
 import java.util.Collections.*
 import javax.swing.*
@@ -17,7 +17,7 @@ class MakefileFileNode(val psiFile: PsiFile, private val targets: List<MakefileT
   internal lateinit var parent: MakefileRootNode
 
   override val icon: Icon
-    get() = MakefileIcon
+    get() = MakefileIcons.Makefile
 
   override fun children(): Enumeration<out TreeNode>? = enumeration(targets)
 

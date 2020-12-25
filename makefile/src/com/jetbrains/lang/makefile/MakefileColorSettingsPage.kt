@@ -1,18 +1,19 @@
 package com.jetbrains.lang.makefile
 
 import com.intellij.openapi.options.colors.*
+import icons.MakefileIcons
 
 class MakefileColorSettingsPage : ColorSettingsPage {
   override fun getDisplayName() = MakefileLanguage.displayName
-  override fun getIcon() = MakefileIcon
+  override fun getIcon() = MakefileIcons.Makefile
 
   private val tags = mapOf(
-      "target" to MakefileSyntaxHighlighter.TARGET,
-      "specialTarget" to MakefileSyntaxHighlighter.SPECIAL_TARGET,
-      "variableName" to MakefileSyntaxHighlighter.VARIABLE,
-      "prerequisite" to MakefileSyntaxHighlighter.PREREQUISITE,
-      "function" to MakefileSyntaxHighlighter.FUNCTION,
-      "functionParam" to MakefileSyntaxHighlighter.FUNCTION_PARAM
+    "target" to MakefileSyntaxHighlighter.TARGET,
+    "specialTarget" to MakefileSyntaxHighlighter.SPECIAL_TARGET,
+    "variableName" to MakefileSyntaxHighlighter.VARIABLE,
+    "prerequisite" to MakefileSyntaxHighlighter.PREREQUISITE,
+    "function" to MakefileSyntaxHighlighter.FUNCTION,
+    "functionParam" to MakefileSyntaxHighlighter.FUNCTION_PARAM
   )
 
   private val DESCRIPTORS = arrayOf(

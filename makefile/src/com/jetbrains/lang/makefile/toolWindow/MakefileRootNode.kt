@@ -1,6 +1,6 @@
 package com.jetbrains.lang.makefile.toolWindow
 
-import com.jetbrains.lang.makefile.*
+import icons.MakefileIcons
 import java.util.*
 import java.util.Collections.*
 import javax.swing.*
@@ -14,7 +14,7 @@ class MakefileRootNode(private val files: List<MakefileFileNode>) : MakefileTree
   }
 
   override val icon: Icon
-    get() = MakefileIcon
+    get() = MakefileIcons.Makefile
 
   override fun children(): Enumeration<MakefileFileNode> = enumeration(files)
 
