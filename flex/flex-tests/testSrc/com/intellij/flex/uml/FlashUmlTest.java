@@ -132,7 +132,7 @@ public class FlashUmlTest extends JavaCodeInsightTestCase {
 
       DataContext dataContext = DataManager.getInstance().getDataContext(null);
       AnActionEvent event = AnActionEvent.createFromDataContext(ActionPlaces.UNKNOWN, null, dataContext);
-      List<DiagramProvider> providers = ShowDiagramBase.findProviders(event).toList();
+      List<DiagramProvider<?>> providers = ShowDiagramBase.findProviders(event).toList();
 
       FlashUmlProvider provider = ContainerUtil.findInstance(providers, FlashUmlProvider.class);
       assertNotNull("Flash UML provider not found", provider);
