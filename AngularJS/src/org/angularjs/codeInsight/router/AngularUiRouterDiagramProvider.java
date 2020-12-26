@@ -6,7 +6,7 @@ import com.intellij.diagram.components.DiagramNodeContainer;
 import com.intellij.diagram.extras.DiagramExtras;
 import com.intellij.diagram.presentation.DiagramState;
 import com.intellij.icons.AllIcons;
-import com.intellij.lang.javascript.modules.diagramm.JSModulesDiagramUtils;
+import com.intellij.lang.javascript.modules.diagram.JSModulesDiagramUtils;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.graph.GraphManager;
@@ -561,16 +561,20 @@ public final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<Di
         e.getPresentation().setEnabled(false);
         return;
       }
-      final List<DiagramNode> nodes = JSModulesDiagramUtils.getSelectedNodes(e);
+      final List<DiagramNode<?>> nodes = JSModulesDiagramUtils.getSelectedNodes(e);
       e.getPresentation().setEnabled(nodes != null && nodes.size() == 1 && nodes.get(0) instanceof AngularUiRouterNode);
     }
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
       final Project project = e.getData(CommonDataKeys.PROJECT);
-      if (project == null) return;
-      final List<DiagramNode> nodes = JSModulesDiagramUtils.getSelectedNodes(e);
-      if (nodes == null || nodes.size() != 1 || !(nodes.get(0) instanceof AngularUiRouterNode)) return;
+      if (project == null) {
+        return;
+      }
+      final List<DiagramNode<?>> nodes = JSModulesDiagramUtils.getSelectedNodes(e);
+      if (nodes == null || nodes.size() != 1 || !(nodes.get(0) instanceof AngularUiRouterNode)) {
+        return;
+      }
 
       final AngularUiRouterNode node = (AngularUiRouterNode)nodes.get(0);
       final DiagramObject main = node.getIdentifyingElement();

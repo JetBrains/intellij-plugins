@@ -1,6 +1,7 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs.codeInsight.attributes;
 
-import com.intellij.lang.javascript.modules.diagramm.JSModuleConnectionProvider;
+import com.intellij.lang.javascript.modules.diagram.JSModuleConnectionProvider;
 import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
@@ -22,10 +23,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Irina.Chernushina on 12/15/2016.
- */
-public class AngularModulesProvider implements JSModuleConnectionProvider {
+public final class AngularModulesProvider implements JSModuleConnectionProvider {
   public static final Color ANGULAR_COLOR = new Color(221, 27, 22);
 
   @Override
@@ -57,29 +55,30 @@ public class AngularModulesProvider implements JSModuleConnectionProvider {
                                              }
                                            });
     for (String key : processor.getResults()) {
-      AngularIndexUtil.multiResolve(project, AngularModuleIndex.KEY, key,
-                                    element -> {
-                                      if (!file.equals(element.getContainingFile())) return true;
-                                      // todo whether it would blink
-                                      final JSCallExpression expression = PsiTreeUtil.getParentOfType(element, JSCallExpression.class);
-                                      if (expression != null) {
-                                        final List<String> dependencies =
-                                          AngularModuleIndex.findDependenciesInModuleDeclaration(expression);
-                                        if (dependencies != null) {
-                                          for (String dependency : dependencies) {
-                                            final JSImplicitElement resolve =
-                                              AngularIndexUtil.resolve(project, AngularModuleIndex.KEY, dependency);
-                                            if (resolve != null) {
-                                              result.add(new Link(spm.createSmartPsiElementPointer(element.getNavigationElement()),
-                                                                  spm.createSmartPsiElementPointer(resolve.getNavigationElement()), key,
-                                                                  resolve.getName(),
-                                                                  AngularJSIcons.AngularJS));
-                                            }
-                                          }
-                                        }
-                                      }
-                                      return true;
-                                    });
+      AngularIndexUtil.multiResolve(project, AngularModuleIndex.KEY, key, element -> {
+        if (!file.equals(element.getContainingFile())) {
+          return true;
+        }
+        // todo whether it would blink
+        final JSCallExpression expression = PsiTreeUtil.getParentOfType(element, JSCallExpression.class);
+        if (expression != null) {
+          final List<String> dependencies =
+            AngularModuleIndex.findDependenciesInModuleDeclaration(expression);
+          if (dependencies != null) {
+            for (String dependency : dependencies) {
+              final JSImplicitElement resolve =
+                AngularIndexUtil.resolve(project, AngularModuleIndex.KEY, dependency);
+              if (resolve != null) {
+                result.add(new Link(spm.createSmartPsiElementPointer(element.getNavigationElement()),
+                                    spm.createSmartPsiElementPointer(resolve.getNavigationElement()), key,
+                                    resolve.getName(),
+                                    AngularJSIcons.AngularJS));
+              }
+            }
+          }
+        }
+        return true;
+      });
     }
     return result;
   }
