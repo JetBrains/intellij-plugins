@@ -429,7 +429,7 @@ public final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<Di
       @Override
       public DefaultUmlRenderer getRenderer() {
         if (myRenderer == null) {
-          myRenderer = new DefaultUmlRenderer(getBuilder(), createModificationTracker()) {
+          myRenderer = new DefaultUmlRenderer(getBuilder(), getModificationTrackerOfViewUpdates()) {
             @Override
             public void tuneNode(NodeRealizer realizer, JPanel wrapper) {
               wrapper.setBorder(JBUI.Borders.empty());
