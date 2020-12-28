@@ -27,8 +27,6 @@ PostCSS File:AmpersandInDeclaration.pcss
                     PsiElement(CSS_IDENT)('red')
                     PsiElement(CSS_SELECTOR_SUFFIX_LIST)
                       <empty list>
-              PsiErrorElement:'{' expected
-                <empty list>
             PsiElement(CSS_SEMICOLON)(';')
             PsiWhiteSpace('\n')
             PsiElement(CSS_RBRACE)('}')

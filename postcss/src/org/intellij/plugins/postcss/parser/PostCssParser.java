@@ -367,22 +367,6 @@ public class PostCssParser extends CssParser2 {
   }
 
   @Override
-  protected boolean parseRuleset() {
-    if (!isRulesetStart()) {
-      return false;
-    }
-    PsiBuilder.Marker ruleset = createCompositeElement();
-    parseSelectorList();
-    if (!parseDeclarationBlock()) {
-      if (getTokenType() != CssElementTypes.CSS_LBRACE) {
-        createErrorElement(CssBundle.message("parsing.error.opening.brace.expected"));
-      }
-    }
-    ruleset.done(CssElementTypes.CSS_RULESET);
-    return true;
-  }
-
-  @Override
   protected void parseSelectorList() {
     myAmpersandAllowed = true;
     super.parseSelectorList();
