@@ -8,8 +8,6 @@ PostCSS File:SimpleVars.pcss
               PsiElement(CSS_SIMPLE_SELECTOR)
                 PsiElement(POST_CSS_SIMPLE_VARIABLE)
                   PsiElement(POST_CSS_SIMPLE_VARIABLE_TOKEN)('$dir')
-          PsiErrorElement:'{' expected
-            <empty list>
         PsiErrorElement:Unexpected token
           <empty list>
         PsiElement(CSS_SEMICOLON)(';')
