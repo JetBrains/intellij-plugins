@@ -30,7 +30,6 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
 import com.intellij.openapi.vfs.newvfs.NewVirtualFile;
-import com.intellij.util.SystemProperties;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -228,7 +227,7 @@ public final class P4File {
           myLocalPath = myVFile.getPath();
         }
         else if (myParentDirOfDeleted != null) {
-          myLocalPath = myParentDirOfDeleted.getPath() + SystemProperties.getLineSeparator() + myName;
+          myLocalPath = myParentDirOfDeleted.getPath() + System.lineSeparator() + myName;
         }
         else {
           throw new RuntimeException(PerforceBundle.message("exception.text.cannot.figure.out.local.path"));

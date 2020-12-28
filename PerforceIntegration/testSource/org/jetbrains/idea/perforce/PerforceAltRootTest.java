@@ -7,7 +7,6 @@ import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.VcsShowConfirmationOption;
 import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.SystemProperties;
 import org.jetbrains.idea.perforce.application.PerforceVcs;
 import org.jetbrains.idea.perforce.perforce.P4WhereResult;
 import org.jetbrains.idea.perforce.perforce.PerforceRunner;
@@ -31,7 +30,7 @@ public class PerforceAltRootTest extends PerforceTestCase {
   }
 
   private static String clientSpecWithAltRoot(String mainRoot, String altRoot) {
-    String sep = SystemProperties.getLineSeparator();
+    String sep = System.lineSeparator();
     return "Client:\ttest" + sep +
            "Root:\t" + mainRoot + sep +
            "AltRoots:\t" + altRoot + sep +

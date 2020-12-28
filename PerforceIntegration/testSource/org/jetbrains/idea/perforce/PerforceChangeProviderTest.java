@@ -15,7 +15,6 @@ import com.intellij.testFramework.EdtTestUtil;
 import com.intellij.testFramework.vcs.DuringChangeListManagerUpdateTestScheme;
 import com.intellij.util.CollectConsumer;
 import com.intellij.util.ExceptionUtil;
-import com.intellij.util.SystemProperties;
 import org.jetbrains.idea.perforce.application.PerforceCommittedChangesProvider;
 import org.jetbrains.idea.perforce.application.PerforceRepositoryLocation;
 import org.jetbrains.idea.perforce.application.PerforceVcs;
@@ -1042,7 +1041,7 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
 
   @Test
   public void testFilesExcludedInClientSpec() {
-    setupClient(buildTestClientSpec("test", myWorkingCopyDir.getPath(), "//test/..." + SystemProperties.getLineSeparator() +
+    setupClient(buildTestClientSpec("test", myWorkingCopyDir.getPath(), "//test/..." + System.lineSeparator() +
                                                                         "\t-//depot/foo/.../*.txt //test/.../*.txt"));
     setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.ADD, VcsShowConfirmationOption.Value.DO_ACTION_SILENTLY);
 

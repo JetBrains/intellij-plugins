@@ -27,7 +27,6 @@ import com.intellij.testFramework.fixtures.TempDirTestFixture;
 import com.intellij.testFramework.vcs.AbstractJunitVcsTestCase;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ArrayUtilRt;
-import com.intellij.util.SystemProperties;
 import com.intellij.util.TimeoutUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.vcsUtil.VcsUtil;
@@ -343,8 +342,8 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
   }
 
   protected static String createP4Config(String client) {
-    return "P4CLIENT=" + client + SystemProperties.getLineSeparator() +
-           "P4PORT=localhost:" + ourP4port + SystemProperties.getLineSeparator();
+    return "P4CLIENT=" + client + System.lineSeparator() +
+           "P4PORT=localhost:" + ourP4port + System.lineSeparator();
   }
 
   protected void openForEdit(final VirtualFile fileToEdit) {
@@ -405,7 +404,7 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
   }
 
   protected void ignoreTestP4ConfigFiles() {
-    ignoreFiles(SystemProperties.getLineSeparator() + TEST_P4CONFIG);
+    ignoreFiles(System.lineSeparator() + TEST_P4CONFIG);
   }
 
   protected void ignoreFiles(@NotNull String fileEntries) {
@@ -576,12 +575,12 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
   }
 
   protected static String buildTestClientSpec(String clientName, String root, String depotMapping) {
-    return buildTestClientSpecCore(clientName, root) + "\t//depot/... " + depotMapping + SystemProperties.getLineSeparator();
+    return buildTestClientSpecCore(clientName, root) + "\t//depot/... " + depotMapping + System.lineSeparator();
   }
 
   @NotNull
   protected static String buildTestClientSpecCore(String clientName, String root) {
-    String sep = SystemProperties.getLineSeparator();
+    String sep = System.lineSeparator();
     return "Client:\t" + clientName + sep +
                "Root:\t" + root + sep +
                "View:" + sep;

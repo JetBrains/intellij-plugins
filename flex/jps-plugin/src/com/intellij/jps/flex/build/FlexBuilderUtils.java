@@ -11,7 +11,6 @@ import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.PathUtilRt;
-import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.ContainerUtil;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -449,6 +448,6 @@ public final class FlexBuilderUtils {
 
     contentElement.setText(swfName);
 
-    return JDOMUtil.write(rootElement, SystemProperties.getLineSeparator());
+    return JDOMUtil.write(rootElement, System.lineSeparator());
   }
 }

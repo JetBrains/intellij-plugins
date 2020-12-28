@@ -26,7 +26,6 @@ import com.intellij.openapi.vcs.actions.VcsContextFactory;
 import com.intellij.openapi.vcs.changes.ByteBackedContentRevision;
 import com.intellij.openapi.vcs.history.VcsRevisionNumber;
 import com.intellij.openapi.vcs.impl.ContentRevisionCache;
-import com.intellij.util.SystemProperties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.perforce.application.*;
@@ -66,7 +65,7 @@ public class PerforceContentRevision implements ByteBackedContentRevision {
   public String getContent() throws VcsException {
     String content = ContentRevisionCache.getAsString(getContentAsBytes(), getFile(), null);
     // todo whether we need to convert them?
-    return content == null ? null : StringUtil.convertLineSeparators(content, SystemProperties.getLineSeparator());
+    return content == null ? null : StringUtil.convertLineSeparators(content, System.lineSeparator());
   }
 
   @Override

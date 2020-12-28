@@ -8,7 +8,6 @@ import com.intellij.openapi.vcs.VcsDirectoryMapping;
 import com.intellij.openapi.vcs.VcsShowConfirmationOption;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.SystemProperties;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
 import org.junit.rules.TestName;
@@ -80,7 +79,7 @@ public class PerforceWindowsTest extends TestCase {
         String clientRoot = FileUtil.toSystemIndependentName(myClientRoot.toString());
         assertEquals(clientRoot, clientRoot.charAt(1), ':');
 
-        String sep = SystemProperties.getLineSeparator();
+        String sep = System.lineSeparator();
         return "Client:\ttest" + sep +
                "Root:\t" + myClientRoot + sep +
                "AltRoots:\t" + clientRoot.substring(2) + sep +

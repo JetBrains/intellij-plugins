@@ -5,7 +5,6 @@ import com.intellij.openapi.vcs.FileStatusManager
 import com.intellij.openapi.vcs.VcsConfiguration
 import com.intellij.openapi.vcs.VcsShowConfirmationOption
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.util.SystemProperties
 import org.jetbrains.idea.perforce.application.PerforceRepositoryLocation
 import org.jetbrains.idea.perforce.application.PerforceVcs
 import org.jetbrains.idea.perforce.perforce.connections.AbstractP4Connection
@@ -38,7 +37,7 @@ abstract class PerforceIgnoredTest extends PerforceTestCase {
   void testIgnoredFiles() throws Exception {
     setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.ADD, VcsShowConfirmationOption.Value.DO_NOTHING_SILENTLY)
 
-    ignoreFiles(SystemProperties.getLineSeparator() + "a.txt")
+    ignoreFiles(System.lineSeparator() + "a.txt")
     VirtualFile a = createFileInCommand("a.txt", "")
     VirtualFile b = createFileInCommand("b.txt", "")
     refreshChanges()
@@ -69,8 +68,7 @@ abstract class PerforceIgnoredTest extends PerforceTestCase {
 
     setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.ADD, VcsShowConfirmationOption.Value.DO_NOTHING_SILENTLY)
     def p4config = createFileInCommand(TEST_P4CONFIG, createP4Config('test'))
-    def p4ignore = createFileInCommand(customName, P4_IGNORE_NAME + SystemProperties.getLineSeparator() +
-                                                   customName + SystemProperties.getLineSeparator() + "a.txt")
+    def p4ignore = createFileInCommand(customName, P4_IGNORE_NAME + System.lineSeparator() + customName + System.lineSeparator() + "a.txt")
     VirtualFile a = createFileInCommand("a.txt", "")
     VirtualFile b = createFileInCommand("b.txt", "")
     refreshChanges()
@@ -92,7 +90,7 @@ abstract class PerforceIgnoredTest extends PerforceTestCase {
     addFile("a.txt")
     verify(runP4WithClient("sync", "//depot/...@0"))
 
-    ignoreFiles(SystemProperties.getLineSeparator() + ".idea")
+    ignoreFiles(System.lineSeparator() + ".idea")
     submitDefaultList("initial")
     verify(runP4WithClient("sync", "//depot/...@0"))
 

@@ -1718,7 +1718,7 @@ public final class PerforceRunner implements PerforceRunnerI {
   private static File createArgumentFile(Collection<String> args) throws VcsException {
     try {
       File tempFile = FileUtil.createTempFile("p4batch", ".txt");
-      FileUtil.writeToFile(tempFile, StringUtil.join(args, SystemProperties.getLineSeparator()));
+      FileUtil.writeToFile(tempFile, StringUtil.join(args, System.lineSeparator()));
       tempFile.deleteOnExit();
       return tempFile;
     }
