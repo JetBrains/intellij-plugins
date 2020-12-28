@@ -83,8 +83,6 @@ HtmlFile:test.vue
                       PsiElement(CSS_SIMPLE_SELECTOR)
                         PsiElement(CSS_SELECTOR_SUFFIX_LIST)
                           <empty list>
-                  PsiErrorElement:'{' expected
-                    <empty list>
                 PsiErrorElement:Unexpected token
                   <empty list>
                 PsiElement(POST_CSS_LT)('<')
@@ -96,8 +94,6 @@ HtmlFile:test.vue
                         PsiElement(CSS_SELECTOR_SUFFIX_LIST)
                           <empty list>
                       PsiElement(CSS_GT)('>')
-                  PsiErrorElement:'{' expected
-                    <empty list>
           XmlToken:XML_END_TAG_START('</')
           XmlToken:XML_NAME('style')
           XmlToken:XML_TAG_END('>')
