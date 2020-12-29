@@ -92,7 +92,7 @@ public class ECMAL4Highlighter extends JSHighlighter {
     "ECMAL4.DOC_TAG", JSHighlighter.JS_DOC_TAG
   );
   public static final TextAttributesKey ECMAL4_DOC_MARKUP = TextAttributesKey.createTextAttributesKey(
-    "ECMAL4.DOC_MARKUP", JSHighlighter.JS_DOC_MARKUP
+    "ECMAL4.DOC_MARKUP", DefaultLanguageHighlighterColors.DOC_COMMENT_MARKUP
   );
   public static final TextAttributesKey ECMAL4_VALID_STRING_ESCAPE = TextAttributesKey.createTextAttributesKey(
     "ECMAL4.VALID_STRING_ESCAPE", JSHighlighter.JS_VALID_STRING_ESCAPE
