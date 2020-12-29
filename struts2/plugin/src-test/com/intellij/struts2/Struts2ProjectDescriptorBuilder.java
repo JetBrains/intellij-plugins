@@ -24,17 +24,15 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.project.IntelliJProjectConfiguration;
 import com.intellij.struts2.facet.StrutsFacetType;
 import com.intellij.testFramework.IdeaTestUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
-import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.testFramework.fixtures.DefaultLightProjectDescriptor;
+import com.intellij.testFramework.fixtures.MavenDependencyUtil;
 import com.intellij.util.SmartList;
 import com.intellij.util.descriptors.ConfigFileInfoSet;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -47,11 +45,10 @@ import java.util.List;
 public final class Struts2ProjectDescriptorBuilder extends DefaultLightProjectDescriptor {
 
   private boolean addStrutsLibrary;
-  private boolean addJ2eeLibrary;
   private boolean addStrutsFacet;
   private boolean addWebFacet;
 
-  private final List<LibraryDefinition> libraries = new SmartList<>();
+  private final List<String> mavenLibs = new SmartList<>();
   private final List<Callback> callbacks = new SmartList<>();
 
   public Struts2ProjectDescriptorBuilder withWebModuleType() {
@@ -61,6 +58,11 @@ public final class Struts2ProjectDescriptorBuilder extends DefaultLightProjectDe
 
   public Struts2ProjectDescriptorBuilder withStrutsLibrary() {
     addStrutsLibrary = true;
+    return this;
+  }
+
+  public Struts2ProjectDescriptorBuilder withStrutsConvention() {
+    withMavenLibrary("org.apache.struts:struts2-convention-plugin:2.3.1");
     return this;
   }
 
@@ -74,13 +76,8 @@ public final class Struts2ProjectDescriptorBuilder extends DefaultLightProjectDe
     return this;
   }
 
-  public Struts2ProjectDescriptorBuilder withLibrary(String name, String... artifactIds) {
-    libraries.add(new LibraryDefinition(name, artifactIds));
-    return this;
-  }
-
-  public Struts2ProjectDescriptorBuilder withJ2eeLibrary() {
-    addJ2eeLibrary = true;
+  public Struts2ProjectDescriptorBuilder withMavenLibrary(String coordinates) {
+    mavenLibs.add(coordinates);
     return this;
   }
 
@@ -102,15 +99,11 @@ public final class Struts2ProjectDescriptorBuilder extends DefaultLightProjectDe
     }
 
     if (addStrutsLibrary) {
-      BasicLightHighlightingTestCase.addStrutsJars(module, model);
+      BasicLightHighlightingTestCase.addStrutsJars(model);
     }
 
-    if (addJ2eeLibrary) {
-      PsiTestUtil.addProjectLibrary(model, "JavaEE", IntelliJProjectConfiguration.getProjectLibraryClassesRootPaths("JavaEE"));
-    }
-
-    for (LibraryDefinition library : libraries) {
-      BasicLightHighlightingTestCase.addLibrary(model, library.groupId, library.artifactIds);
+    for (String lib : mavenLibs) {
+      MavenDependencyUtil.addFromMaven(model, lib);
     }
 
     final WebFacet webFacet = FacetUtil.addFacet(module, WebFacetType.getInstance());
@@ -162,11 +155,10 @@ public final class Struts2ProjectDescriptorBuilder extends DefaultLightProjectDe
     Struts2ProjectDescriptorBuilder builder = (Struts2ProjectDescriptorBuilder)o;
 
     if (addStrutsLibrary != builder.addStrutsLibrary) return false;
-    if (addJ2eeLibrary != builder.addJ2eeLibrary) return false;
     if (addStrutsFacet != builder.addStrutsFacet) return false;
     if (addWebFacet != builder.addWebFacet) return false;
     if (!callbacks.equals(builder.callbacks)) return false;
-    if (!libraries.equals(builder.libraries)) return false;
+    if (!mavenLibs.equals(builder.mavenLibs)) return false;
 
     return true;
   }
@@ -175,40 +167,9 @@ public final class Struts2ProjectDescriptorBuilder extends DefaultLightProjectDe
   public int hashCode() {
     int result = (addStrutsLibrary ? 1 : 0);
     result = 31 * result + (addStrutsFacet ? 1 : 0);
-    result = 31 * result + (addJ2eeLibrary ? 1 : 0);
     result = 31 * result + (addWebFacet ? 1 : 0);
-    result = 31 * result + libraries.hashCode();
+    result = 31 * result + mavenLibs.hashCode();
     result = 31 * result + callbacks.hashCode();
     return result;
-  }
-
-  private static final class LibraryDefinition {
-    private final String groupId;
-    private final String[] artifactIds;
-
-    private LibraryDefinition(String groupId, String[] artifactIds) {
-      this.groupId = groupId;
-      this.artifactIds = artifactIds;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      LibraryDefinition that = (LibraryDefinition)o;
-
-      if (!Arrays.equals(artifactIds, that.artifactIds)) return false;
-      if (!groupId.equals(that.groupId)) return false;
-
-      return true;
-    }
-
-    @Override
-    public int hashCode() {
-      int result = groupId.hashCode();
-      result = 31 * result + Arrays.hashCode(artifactIds);
-      return result;
-    }
   }
 }

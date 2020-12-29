@@ -29,7 +29,7 @@ public class JamResultPathTest extends JamConventionLightTestCase {
   private final LightProjectDescriptor CONVENTION_WEB = new Struts2ProjectDescriptorBuilder()
     .withStrutsLibrary()
     .withStrutsFacet()
-    .withLibrary("struts2-convention-plugin", "struts2-convention-plugin-" + STRUTS2_VERSION + ".jar")
+    .withStrutsConvention()
     .withWebModuleType();
 
   @NotNull

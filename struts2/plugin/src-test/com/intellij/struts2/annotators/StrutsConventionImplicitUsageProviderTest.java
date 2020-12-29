@@ -109,6 +109,8 @@ public class StrutsConventionImplicitUsageProviderTest extends BasicLightHighlig
     myFixture.checkHighlighting();
   }
 
-  private static final LightProjectDescriptor CONVENTION = new Struts2ProjectDescriptorBuilder().withStrutsLibrary().withStrutsFacet()
-    .withLibrary("struts2-convention-plugin", "struts2-convention-plugin-" + STRUTS2_VERSION + ".jar");
+  private static final LightProjectDescriptor CONVENTION = new Struts2ProjectDescriptorBuilder()
+    .withStrutsLibrary()
+    .withStrutsFacet()
+    .withStrutsConvention();
 }
