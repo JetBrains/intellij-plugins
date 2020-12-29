@@ -10,7 +10,7 @@ import training.util.getFeedbackLink
 
 class SwiftSupport : AbstractLangSupport() {
   override val primaryLanguage: String
-    get() = "swift"
+    get() = "Swift"
 
   override val langCourseFeedback get() = getFeedbackLink(this, true)
 
@@ -18,6 +18,10 @@ class SwiftSupport : AbstractLangSupport() {
 
   override val projectResourcePath: String =
     "/learnProjects/" + ApplicationNamesInfo.getInstance().fullProductName.toLowerCase() + "_swift/LearnProjectSwift"
+
+  override fun cleanupBeforeLessons(project: Project) {
+    // Do nothing for Swift
+  }
 
   override fun applyToProjectAfterConfigure(): (Project) -> Unit = {
   }
