@@ -7,7 +7,7 @@
   <extensions defaultExtensionNs="com.intellij">
     <registryKey key="ift.show.feedback.link.swift"
                  description="Whether IFT show feedback link in the modules panel for Swift course."
-                 defaultValue="FALSE"
+                 defaultValue="TRUE"
                  restartRequired="false"/>
   </extensions>
 </idea-plugin>
