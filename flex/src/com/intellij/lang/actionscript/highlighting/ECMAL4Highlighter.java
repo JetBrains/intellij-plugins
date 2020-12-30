@@ -91,9 +91,6 @@ public class ECMAL4Highlighter extends JSHighlighter {
   public static final TextAttributesKey ECMAL4_DOC_TAG = TextAttributesKey.createTextAttributesKey(
     "ECMAL4.DOC_TAG", JSHighlighter.JS_DOC_TAG
   );
-  public static final TextAttributesKey ECMAL4_DOC_MARKUP = TextAttributesKey.createTextAttributesKey(
-    "ECMAL4.DOC_MARKUP", DefaultLanguageHighlighterColors.DOC_COMMENT_MARKUP
-  );
   public static final TextAttributesKey ECMAL4_VALID_STRING_ESCAPE = TextAttributesKey.createTextAttributesKey(
     "ECMAL4.VALID_STRING_ESCAPE", JSHighlighter.JS_VALID_STRING_ESCAPE
   );
@@ -177,24 +174,10 @@ public class ECMAL4Highlighter extends JSHighlighter {
     ourAttributeMap.put(JSDocTokenTypes.DOC_TAG_NAMEPATH, ECMAL4_DOC_COMMENT);
     ourDocAttributeMap.put(JSDocTokenTypes.DOC_TAG_NAME, ECMAL4_DOC_TAG);
 
-    IElementType[] javaDocMarkup = {XmlTokenType.XML_START_TAG_START,
-      XmlTokenType.XML_END_TAG_START,
-      XmlTokenType.XML_TAG_END,
-      XmlTokenType.XML_EMPTY_ELEMENT_END,
-      XmlTokenType.TAG_WHITE_SPACE,
-      XmlTokenType.XML_TAG_NAME,
-      XmlTokenType.XML_NAME,
-      XmlTokenType.XML_ENTITY_REF_TOKEN,
-      XmlTokenType.XML_CHAR_ENTITY_REF,
-      XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN,
-      XmlTokenType.XML_ATTRIBUTE_VALUE_START_DELIMITER,
-      XmlTokenType.XML_ATTRIBUTE_VALUE_END_DELIMITER,
-      XmlTokenType.XML_EQ};
     IElementType[] javaDocMarkup2 = {
       XmlTokenType.XML_DATA_CHARACTERS, XmlTokenType.XML_REAL_WHITE_SPACE, XmlTokenType.TAG_WHITE_SPACE
     };
 
-    fillMap(ourDocAttributeMap, TokenSet.create(javaDocMarkup), ECMAL4_DOC_MARKUP);
     fillMap(ourDocAttributeMap, TokenSet.create(javaDocMarkup2), ECMAL4_DOC_COMMENT);
 
     ourJsToEcmaKeyMap.put(JS_PARAMETER, ECMAL4_PARAMETER);
