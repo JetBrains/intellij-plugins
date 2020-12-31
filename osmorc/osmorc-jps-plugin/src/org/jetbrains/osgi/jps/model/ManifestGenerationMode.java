@@ -29,6 +29,10 @@ public enum ManifestGenerationMode {
    */
   Bnd,
   /**
+   * Bnd will generate it using a bnd file, configured from bnd-maven-plugin.
+   */
+  BndMavenPlugin,
+  /**
    * Bundlor will generate it, using a bundlor file.
    */
   Bundlor

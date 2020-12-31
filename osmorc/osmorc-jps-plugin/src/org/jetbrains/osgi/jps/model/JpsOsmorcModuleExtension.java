@@ -39,6 +39,8 @@ public interface JpsOsmorcModuleExtension extends JpsElement {
 
   boolean isUseBndFile();
 
+  boolean isUseBndMavenPlugin();
+
   boolean isUseBundlorFile();
 
   boolean isManifestManuallyEdited();

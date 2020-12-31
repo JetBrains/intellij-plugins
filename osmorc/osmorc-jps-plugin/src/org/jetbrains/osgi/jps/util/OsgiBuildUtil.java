@@ -59,6 +59,11 @@ public final class OsgiBuildUtil {
 
   private static File findMavenProjectPath(CompileContext context, JpsModule module) {
     BuildDataPaths dataPaths = context.getProjectDescriptor().dataManager.getDataPaths();
+    return findMavenProjectPath(dataPaths, module);
+  }
+
+  @Nullable
+  public static File findMavenProjectPath(BuildDataPaths dataPaths, JpsModule module) {
     MavenProjectConfiguration projectConfig = JpsMavenExtensionService.getInstance().getMavenProjectConfiguration(dataPaths);
     if (projectConfig != null) {
       MavenModuleResourceConfiguration moduleConfig = projectConfig.moduleConfigurations.get(module.getName());

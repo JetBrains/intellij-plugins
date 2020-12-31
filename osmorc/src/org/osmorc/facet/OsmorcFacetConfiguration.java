@@ -26,6 +26,7 @@ package org.osmorc.facet;
 
 import aQute.bnd.header.OSGiHeader;
 import aQute.bnd.header.Parameters;
+import com.intellij.compiler.server.BuildManager;
 import com.intellij.facet.FacetConfiguration;
 import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
@@ -300,6 +301,10 @@ public final class OsmorcFacetConfiguration implements FacetConfiguration, Modif
 
   public boolean isUseBndFile() {
     return getManifestGenerationMode() == ManifestGenerationMode.Bnd;
+  }
+
+  public boolean isUseBndMavenPlugin() {
+    return getManifestGenerationMode() == ManifestGenerationMode.BndMavenPlugin;
   }
 
   /**

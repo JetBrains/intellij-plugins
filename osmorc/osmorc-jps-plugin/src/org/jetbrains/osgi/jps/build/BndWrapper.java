@@ -44,6 +44,7 @@ import java.io.FileInputStream;
 import java.util.*;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,6 +56,7 @@ import static org.jetbrains.osgi.jps.OsgiJpsBundle.message;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
 public class BndWrapper {
+  private static final Logger LOG = Logger.getInstance(BndWrapper.class);
   private final Reporter myReporter;
 
   public BndWrapper(Reporter reporter) {
@@ -190,6 +192,45 @@ public class BndWrapper {
       builder.setPedantic(false);
       builder.setClasspath(classPath);
       builder.setSourcepath(srcPath);
+      doBuild(builder, outputFile);
+    }
+  }
+
+  public void build(@Nullable File bndFile,
+                    @NotNull Map<String, String> properties,
+                    @NotNull Properties mavenProperties,
+                    File @NotNull [] classPath,
+                    File @NotNull [] srcPath,
+                    @Nullable File base,
+                    @NotNull File moduleOutputDir,
+                    @NotNull File outputFile) throws Exception {
+    try (Builder builder = new ReportingBuilder(myReporter, new Processor(mavenProperties, false))) {
+      if (LOG.isDebugEnabled()) {
+        builder.setTrace(true);
+        LOG.debug("OSGi bundle bnd file: " + bndFile + ", properties: " + properties + ", Maven properties: " + mavenProperties);
+      }
+
+      builder.setProperties(base, OrderedProperties.fromMap(properties));
+      builder.setPedantic(false);
+      builder.setClasspath(classPath);
+      builder.setSourcepath(srcPath);
+
+      if (bndFile != null) {
+        // implicitly calls setBase
+        builder.setProperties(bndFile);
+      }
+      else {
+        builder.setBase(base != null ? base : new File(""));
+      }
+
+      // pack everything of the output directory, just like in maven-jar-plugin
+      // includes/filtering/etc. needs to be done elsewhere
+      if (moduleOutputDir.isDirectory()) {
+        Jar classesDirJar = new Jar("classes", moduleOutputDir);
+        classesDirJar.setManifest(new Manifest());
+        builder.setJar(classesDirJar);
+      }
+
       doBuild(builder, outputFile);
     }
   }

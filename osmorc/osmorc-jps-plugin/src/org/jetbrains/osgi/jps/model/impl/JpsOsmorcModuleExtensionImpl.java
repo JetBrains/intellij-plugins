@@ -45,6 +45,13 @@ public class JpsOsmorcModuleExtensionImpl extends JpsElementBase<JpsOsmorcModule
       if (myProperties.myManifestGenerationMode == ManifestGenerationMode.Bnd) {
         return OsgiBuildUtil.findFileInModuleContentRoots(getModule(), getBndFileLocation());
       }
+      else if (myProperties.myManifestGenerationMode == ManifestGenerationMode.BndMavenPlugin) {
+        if (StringUtil.isNotEmpty(getBndFileLocation())) {
+          return OsgiBuildUtil.findFileInModuleContentRoots(getModule(), getBndFileLocation());
+        }
+
+        return null;
+      }
       else if (myProperties.myManifestGenerationMode == ManifestGenerationMode.Bundlor) {
         return OsgiBuildUtil.findFileInModuleContentRoots(getModule(), getBundlorFileLocation());
       }
@@ -114,6 +121,11 @@ public class JpsOsmorcModuleExtensionImpl extends JpsElementBase<JpsOsmorcModule
   @Override
   public boolean isUseBndFile() {
     return myProperties.myManifestGenerationMode == ManifestGenerationMode.Bnd;
+  }
+
+  @Override
+  public boolean isUseBndMavenPlugin() {
+    return myProperties.myManifestGenerationMode == ManifestGenerationMode.BndMavenPlugin;
   }
 
   @Override

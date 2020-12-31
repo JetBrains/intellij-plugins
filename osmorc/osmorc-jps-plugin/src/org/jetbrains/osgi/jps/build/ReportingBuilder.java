@@ -25,6 +25,7 @@
 package org.jetbrains.osgi.jps.build;
 
 import aQute.bnd.osgi.Builder;
+import aQute.bnd.osgi.Processor;
 import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +40,7 @@ public class ReportingBuilder extends Builder {
     myReporter = reporter;
   }
 
-  public ReportingBuilder(@NotNull Reporter reporter, @NotNull Builder parent) {
+  public ReportingBuilder(@NotNull Reporter reporter, @NotNull Processor parent) {
     super(parent);
     myReporter = reporter;
     use(parent);
