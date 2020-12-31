@@ -30,6 +30,7 @@ import com.intellij.testFramework.fixtures.MavenDependencyUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -137,9 +138,7 @@ public abstract class BasicLightHighlightingTestCase extends LightJavaCodeInsigh
   }
 
   /**
-   * For files located in JAR: {@code [PATH_TO_JAR]!/[PATH_TO_STRUTS_XML]}.
-   *
-   * @param strutsXmlPaths Paths to files.
+   * @param strutsXmlPaths Paths to files or URL inside JAR from VFS
    */
   protected void createStrutsFileSet(@NonNls String... strutsXmlPaths) {
     final StrutsFacet strutsFacet = StrutsFacet.getInstance(getModule());
@@ -150,11 +149,15 @@ public abstract class BasicLightHighlightingTestCase extends LightJavaCodeInsigh
     myStrutsFileSets.add(fileSet);
     for (String fileName : strutsXmlPaths) {
       VirtualFile file;
-      if (fileName.startsWith("jar:///")) {
+      if (fileName.contains("!")) {
         file = VirtualFileManager.getInstance().findFileByUrl(fileName);
       }
       else {
-        file = myFixture.copyFileToProject(fileName);
+        try {
+          file = myFixture.copyFileToProject(fileName);
+        } catch (UncheckedIOException e) {
+          throw new RuntimeException("Cannot process " + fileName, e);
+        }
       }
 
       assertNotNull("could not find file: '" + fileName + "'", file);
