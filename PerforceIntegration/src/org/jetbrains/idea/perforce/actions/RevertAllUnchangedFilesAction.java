@@ -15,24 +15,23 @@
  */
 package org.jetbrains.idea.perforce.actions;
 
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.vcs.AbstractVcsHelper;
-import com.intellij.openapi.vcs.CheckinProjectPanel;
-import com.intellij.openapi.vcs.ProjectLevelVcsManager;
-import com.intellij.openapi.vcs.VcsException;
-import com.intellij.openapi.vcs.actions.AbstractVcsAction;
-import com.intellij.openapi.vcs.actions.VcsContext;
+import com.intellij.openapi.vcs.*;
+import com.intellij.openapi.vcs.actions.VcsContextUtil;
 import com.intellij.openapi.vcs.changes.ChangeList;
 import com.intellij.openapi.vcs.changes.VcsDirtyScopeManager;
 import com.intellij.openapi.vcs.ui.Refreshable;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
@@ -46,43 +45,30 @@ import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 
 import java.util.*;
 
-import static com.intellij.util.ArrayUtil.isEmpty;
-
-public class RevertAllUnchangedFilesAction extends AbstractVcsAction {
+public class RevertAllUnchangedFilesAction extends DumbAwareAction {
 
   @Override
-  protected void update(@NotNull VcsContext vcsContext, @NotNull Presentation presentation) {
-    final Project project = vcsContext.getProject();
+  public void update(@NotNull AnActionEvent e) {
+    Presentation presentation = e.getPresentation();
+
+    final Project project = e.getProject();
     if (project == null) {
       presentation.setVisible(false);
       return;
     }
 
     boolean visible;
-    Refreshable panel = vcsContext.getRefreshableDialog();
-    if (panel instanceof CheckinProjectPanel) {
-      visible = ((CheckinProjectPanel)panel).vcsIsAffected(PerforceVcs.NAME);
+    final CheckinProjectPanel panel = ObjectUtils.tryCast(e.getData(Refreshable.PANEL_KEY), CheckinProjectPanel.class);
+    if (panel != null) {
+      visible = panel.vcsIsAffected(PerforceVcs.NAME);
     }
     else {
-      VirtualFile[] files = vcsContext.getSelectedFiles();
-      visible = !isEmpty(files) && hasFilesUnderPerforce(Arrays.asList(files), project);
+      List<VirtualFile> files = VcsContextUtil.selectedFiles(e.getDataContext());
+      visible = !files.isEmpty() && hasFilesUnderPerforce(files, project);
     }
+
     presentation.setVisible(visible);
     presentation.setEnabled(PerforceSettings.getSettings(project).ENABLED);
-  }
-
-  private static Collection<VirtualFile> getSelectedFiles(@NotNull VcsContext vcsContext) {
-    Refreshable panel = vcsContext.getRefreshableDialog();
-    if (panel instanceof CheckinProjectPanel) {
-      return ((CheckinProjectPanel)panel).getRoots();
-    }
-
-    VirtualFile[] array = vcsContext.getSelectedFiles();
-    if (!isEmpty(array)) {
-      return Arrays.asList(array);
-    }
-    
-    return Collections.emptyList();
   }
 
   private static boolean hasFilesUnderPerforce(final Collection<VirtualFile> roots, Project project) {
@@ -90,14 +76,22 @@ public class RevertAllUnchangedFilesAction extends AbstractVcsAction {
   }
 
   @Override
-  protected void actionPerformed(@NotNull VcsContext vcsContext) {
-    final CheckinProjectPanel panel = (CheckinProjectPanel)vcsContext.getRefreshableDialog();
-    final Collection<VirtualFile> roots = getSelectedFiles(vcsContext);
-    final Project project = vcsContext.getProject();
+  public void actionPerformed(@NotNull AnActionEvent e) {
+    final Project project = e.getProject();
+    final ChangeList[] changeLists = e.getData(VcsDataKeys.CHANGE_LISTS);
+    final CheckinProjectPanel panel = ObjectUtils.tryCast(e.getData(Refreshable.PANEL_KEY), CheckinProjectPanel.class);
+
+    final Collection<VirtualFile> roots;
+    if (panel != null) {
+      roots = panel.getRoots();
+    }
+    else {
+      roots = VcsContextUtil.selectedFiles(e.getDataContext());
+    }
 
     ApplicationManager.getApplication().runWriteAction(() -> FileDocumentManager.getInstance().saveAllDocuments());
 
-    revertUnchanged(project, roots, panel, vcsContext.getSelectedChangeLists());
+    revertUnchanged(project, roots, panel, changeLists);
   }
 
   public static void revertUnchanged(final Project project, final Collection<VirtualFile> roots, @Nullable final CheckinProjectPanel panel,
