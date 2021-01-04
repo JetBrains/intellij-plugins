@@ -10,10 +10,10 @@ public class CucumberJavaUtilTest {
   public void testIsCucumberExpression() {
     assertTrue(CucumberJavaUtil.isCucumberExpression("strings are cukexp by default"));
     assertFalse(CucumberJavaUtil.isCucumberExpression("^definitely a regexp$"));
+    assertFalse(CucumberJavaUtil.isCucumberExpression("^definitely a regexp"));
+    assertFalse(CucumberJavaUtil.isCucumberExpression("definitely a regexp$"));
     assertFalse(CucumberJavaUtil.isCucumberExpression("/surely a regexp/"));
-    assertFalse(CucumberJavaUtil.isCucumberExpression("this (.+) like a regexp"));
     assertTrue(CucumberJavaUtil.isCucumberExpression("this look(s) like a cukexp"));
-    assertFalse(CucumberJavaUtil.isCucumberExpression("(\\)text)"));
     assertTrue(CucumberJavaUtil.isCucumberExpression("\\(text)"));
   }
 
