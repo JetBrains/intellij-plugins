@@ -11,8 +11,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogBuilder
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.vcs.AbstractVcsHelper
+import com.intellij.openapi.vcs.VcsDataKeys
 import com.intellij.openapi.vcs.VcsException
-import com.intellij.openapi.vcs.actions.VcsContextWrapper
 import com.intellij.openapi.vcs.changes.LocalChangeList
 import com.intellij.openapi.vcs.changes.VcsDirtyScopeManager
 import com.intellij.openapi.vcs.changes.ui.SimpleChangesBrowser
@@ -27,7 +27,6 @@ import org.jetbrains.idea.perforce.application.ShelvedChange
 import org.jetbrains.idea.perforce.merge.PerforceMergeProvider
 import org.jetbrains.idea.perforce.perforce.PerforceRunner
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection
-import java.util.*
 
 /**
  * @author peter
@@ -88,7 +87,7 @@ class BrowseShelfAction : DumbAwareAction(PerforceBundle.messagePointer("shelf.b
     }
 
     private fun getShelvedChanges(project: Project?, e: AnActionEvent): List<ShelvedChange> {
-      val lists = VcsContextWrapper.createInstanceOn(e).selectedChangeLists
+      val lists = e.getData(VcsDataKeys.CHANGE_LISTS)
       val selectedChangeList = lists?.singleOrNull() as? LocalChangeList
       if (selectedChangeList != null && project != null) {
         return PerforceManager.getInstance(project).shelf.getShelvedChanges(selectedChangeList)
