@@ -149,7 +149,7 @@ public final class FlashUmlDataModel extends DiagramDataModel<Object> {
   @Override
   @NotNull
   @NonNls
-  public String getNodeName(final DiagramNode<Object> node) {
+  public String getNodeName(final @NotNull DiagramNode<Object> node) {
     Object element = getIdentifyingElement(node);
     if (element instanceof JSClass) {
       return "Class " + ((JSClass)element).getQualifiedName();
@@ -161,12 +161,12 @@ public final class FlashUmlDataModel extends DiagramDataModel<Object> {
   }
 
   @Override
-  public void removeNode(DiagramNode<Object> node) {
+  public void removeNode(@NotNull DiagramNode<Object> node) {
     removeElement(getIdentifyingElement(node));
   }
 
   @Override
-  public void removeEdge(DiagramEdge<Object> edge) {
+  public void removeEdge(@NotNull DiagramEdge<Object> edge) {
     final Object source = edge.getSource().getIdentifyingElement();
     final Object target = edge.getTarget().getIdentifyingElement();
     final DiagramRelationshipInfo relationship = edge.getRelationship();
@@ -640,7 +640,7 @@ public final class FlashUmlDataModel extends DiagramDataModel<Object> {
 
 
   @Override
-  public void expandNode(final DiagramNode<Object> node) {
+  public void expandNode(final @NotNull DiagramNode<Object> node) {
     final Object element = node.getIdentifyingElement();
     if (element instanceof String) {
       expandPackage((String)element);
@@ -660,7 +660,7 @@ public final class FlashUmlDataModel extends DiagramDataModel<Object> {
   }
 
   @Override
-  public void collapseNode(final DiagramNode<Object> node) {
+  public void collapseNode(final @NotNull DiagramNode<Object> node) {
     Object element = node.getIdentifyingElement();
     String fqn = getFqn(element);
     if (fqn == null) {

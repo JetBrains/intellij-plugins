@@ -47,6 +47,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.intellij.testFramework.assertions.Assertions.assertThat;
 
@@ -132,7 +133,7 @@ public class FlashUmlTest extends JavaCodeInsightTestCase {
 
       DataContext dataContext = DataManager.getInstance().getDataContext(null);
       AnActionEvent event = AnActionEvent.createFromDataContext(ActionPlaces.UNKNOWN, null, dataContext);
-      List<DiagramProvider<?>> providers = ShowDiagramBase.findProviders(event).toList();
+      List<DiagramProvider<?>> providers = ShowDiagramBase.findProviders(event).collect(Collectors.toList());
 
       FlashUmlProvider provider = ContainerUtil.findInstance(providers, FlashUmlProvider.class);
       assertNotNull("Flash UML provider not found", provider);
