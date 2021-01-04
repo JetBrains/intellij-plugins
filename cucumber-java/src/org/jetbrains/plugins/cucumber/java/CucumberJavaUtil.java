@@ -33,7 +33,6 @@ import org.jetbrains.plugins.cucumber.psi.*;
 
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -52,11 +51,7 @@ public final class CucumberJavaUtil {
   private static final Map<String, String> JAVA_PARAMETER_TYPES;
   public static final String CUCUMBER_EXPRESSIONS_CLASS_MARKER = "io.cucumber.cucumberexpressions.CucumberExpressionGenerator";
 
-  private static final Pattern BEGIN_ANCHOR = Pattern.compile("^\\^.*");
-  private static final Pattern END_ANCHOR = Pattern.compile(".*\\$$");
   private static final Pattern SCRIPT_STYLE_REGEXP = Pattern.compile("^/(.*)/$");
-  private static final Pattern PARENTHESIS = Pattern.compile("\\(([^)]+)\\)");
-  private static final Pattern ALPHA = Pattern.compile("[a-zA-Z]+");
 
   public static final String CUCUMBER_1_0_MAIN_CLASS = "cucumber.cli.Main";
   public static final String CUCUMBER_1_1_MAIN_CLASS = "cucumber.api.cli.Main";
@@ -84,30 +79,11 @@ public final class CucumberJavaUtil {
 
   /**
    * Checks if expression should be considered as a CucumberExpression or as a RegEx
-   * @see <a href="http://google.com">https://github.com/cucumber/cucumber/blob/master/cucumber-expressions/java/heuristics.adoc</a>
+   * @see <a href="https://github.com/cucumber/cucumber/blob/master/cucumber-expressions/java/heuristics.adoc">heuristic from cucumber library</a>
+   * @see <a href="https://github.com/cucumber/cucumber/blob/master/cucumber-expressions/java/src/main/java/io/cucumber/cucumberexpressions/ExpressionFactory.java>implementation in cucumber library</a>
    */
   public static boolean isCucumberExpression(@NotNull String expression) {
-    Matcher m = BEGIN_ANCHOR.matcher(expression);
-    if (m.find()) {
-      return false;
-    }
-    m = END_ANCHOR.matcher(expression);
-    if (m.find()) {
-      return false;
-    }
-    m = SCRIPT_STYLE_REGEXP.matcher(expression);
-    if (m.find()) {
-      return false;
-    }
-    m = PARENTHESIS.matcher(expression);
-    if (m.find()) {
-      String insideParenthesis = m.group(1);
-      if (ALPHA.matcher(insideParenthesis).lookingAt()) {
-        return true;
-      }
-      return false;
-    }
-    return true;
+    return !expression.startsWith("^") && !expression.endsWith("$") && !SCRIPT_STYLE_REGEXP.matcher(expression).find();
   }
 
   private static String getCucumberAnnotationSuffix(@NotNull String name) {
