@@ -144,9 +144,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
 
   @Override
   public void addType(@Nullable final JSType _type, @Nullable PsiElement source) {
-    if (_type != null &&
-        (source == null || source == EXPLICIT_TYPE_MARKER_ELEMENT)
-      ) {
+    if (_type != null && source == null) {
       // TODO [ksafonov] enforced scope (and context) should internal part of JSType.resolve()
       if (myContext.targetFile == null) {
         Logger.getInstance(ActionScriptTypeEvaluator.class).error("targetFile can't be null");

@@ -12,9 +12,7 @@ import org.jetbrains.vuejs.codeInsight.resolveSymbolFromNodeModule
 import org.jetbrains.vuejs.index.VUE_INSTANCE_MODULE
 import org.jetbrains.vuejs.model.VueInstanceOwner
 import org.jetbrains.vuejs.model.createImplicitPropertySignature
-import org.jetbrains.vuejs.model.source.VueSourceEntityDescriptor
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
-import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInfo
 import org.jetbrains.vuejs.types.VueComponentInstanceType
 
 class VuelidateContainerInfoProvider : VueContainerInfoProvider {
@@ -39,7 +37,9 @@ class VuelidateContainerInfoProvider : VueContainerInfoProvider {
                                       ?: return emptyList()
 
     val compositeVuelidateType = JSCompositeTypeFactory.createIntersectionType(
-      listOf(parametrizedValidationProps, validationGroups.jsType, validation.jsType),
+      listOf(parametrizedValidationProps.copyWithStrict(false),
+             validationGroups.jsType.copyWithStrict(false),
+             validation.jsType.copyWithStrict(false)),
       validationPropsType.source.copyWithStrict(false))
 
     return listOf(createImplicitPropertySignature("\$v", compositeVuelidateType,
