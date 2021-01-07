@@ -7,7 +7,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.AdditionalLibraryRootsProvider
 import com.intellij.openapi.roots.SyntheticLibrary
 import com.intellij.openapi.util.Condition
-import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
@@ -35,7 +34,6 @@ class DenoLibrary(private val libs: List<VirtualFile>) : SyntheticLibrary(), Ite
   override fun getPresentableText() = DenoBundle.message("deno.library.name")
   override fun hashCode(): Int = libs.hashCode()
 
-  override fun getLocationString(): String? = null
   override fun getIcon(unused: Boolean): Icon? = null
 }
 
