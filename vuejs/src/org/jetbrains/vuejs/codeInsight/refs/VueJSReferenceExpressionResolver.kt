@@ -21,6 +21,7 @@ import org.apache.commons.lang.StringUtils
 import org.jetbrains.vuejs.codeInsight.template.VueTemplateScopesResolver
 import org.jetbrains.vuejs.lang.expr.psi.VueJSFilterReferenceExpression
 import org.jetbrains.vuejs.model.VueFilter
+import org.jetbrains.vuejs.model.VueImplicitElement
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueModelProximityVisitor
 
@@ -95,9 +96,13 @@ class VueJSReferenceExpressionResolver(referenceExpression: JSReferenceExpressio
   private fun remapSetterGetterIfNeeded(results: MutableList<ResolveResult>,
                                         resolveResult: ResolveResult,
                                         access: ReadWriteAccessDetector.Access) {
-    when (val element = resolveResult.element) {
+    val resolvedElement = resolveResult.element
+    when (val element = if (resolvedElement is VueImplicitElement) resolvedElement.context else resolvedElement) {
       is JSFunctionItem -> {
-        val add: (JSFunctionItem) -> Unit = { it -> results.add(JSResolveResult(it)) }
+        val add: (JSFunctionItem) -> Unit = if (resolvedElement is VueImplicitElement)
+          { it -> results.add(JSResolveResult(resolvedElement.copyWithProvider(it))) }
+        else
+          { it -> results.add(JSResolveResult(it)) }
         when {
           element.isGetProperty && access == ReadWriteAccessDetector.Access.Write ->
             findPropertyAccessor(element, true, add)
