@@ -1798,6 +1798,15 @@ export default {
 </script>""")
   }
 
+  fun testCastedObjectProps() {
+    myFixture.configureByFile("castedObjectProps.vue")
+    myFixture.completeBasic()
+    assertSameElements(listOf("!slug#string#101", "propertyIsEnumerable#boolean#98", "isPrototypeOf#boolean#98",
+                              "toLocaleString#string#98", "!id#number#101", "constructor#Function#98", "valueOf#Object#98",
+                              "!subtitle#string#101", "toString#string#98", "!title#string#101", "hasOwnProperty#boolean#98"),
+                       myFixture.renderLookupItems(true, true, false))
+  }
+
   fun testImportVueExtend() {
     myFixture.configureByText("FooBar.vue", "<script>export default Vue.extend({props: {}});</script>")
     myFixture.configureByText("Test.vue", "<script>export default Vue.extend({name: 'FooBar2'});</script>")

@@ -228,13 +228,12 @@ fun getStubSafeCallArguments(call: JSCallExpression): List<PsiElement> {
   return emptyList()
 }
 
-fun getJSTypeFromPropOptions(expression: JSExpression?): JSType? {
-  return when (expression) {
-    is JSReferenceExpression -> getJSTypeFromVueType(expression)
+fun getJSTypeFromPropOptions(expression: JSExpression?): JSType? =
+  when (expression) {
     is JSArrayLiteralExpression -> JSCompositeTypeImpl.getCommonType(
       StreamEx.of(*expression.expressions)
         .select(JSReferenceExpression::class.java)
-        .map { getJSTypeFromVueType(it) }
+        .map { getJSTypeFromConstructor(it) }
         .nonNull()
         .toList(),
       JSTypeSource.EXPLICITLY_DECLARED, false
@@ -243,18 +242,18 @@ fun getJSTypeFromPropOptions(expression: JSExpression?): JSType? {
       ?.value
       ?.let {
         when (it) {
-          is JSReferenceExpression -> getJSTypeFromVueType(it)
+          is JSReferenceExpression -> getJSTypeFromConstructor(it)
           is JSArrayLiteralExpression -> getJSTypeFromPropOptions(it)
           else -> null
         }
       }
-    else -> null
+    null -> null
+    else -> getJSTypeFromConstructor(expression)
   }
-}
 
-private fun getJSTypeFromVueType(reference: JSReferenceExpression): JSType {
-  return JSApplyNewType(JSTypeofTypeImpl(reference, JSTypeSourceFactory.createTypeSource(reference, false)),
-                        JSTypeSourceFactory.createTypeSource(reference.containingFile, false))
+private fun getJSTypeFromConstructor(expression: JSExpression): JSType {
+  return JSApplyNewType(JSTypeofTypeImpl(expression, JSTypeSourceFactory.createTypeSource(expression, false)),
+                        JSTypeSourceFactory.createTypeSource(expression.containingFile, false))
 }
 
 fun getRequiredFromPropOptions(expression: JSExpression?): Boolean {

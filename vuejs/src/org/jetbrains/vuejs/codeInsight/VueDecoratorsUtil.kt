@@ -7,15 +7,13 @@ import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
 
-fun findDecorator(member: JSRecordType.TypeMember, names: Set<String>): ES6Decorator? {
-  return (member.memberSource.singleElement as? JSAttributeListOwner)
+fun findDecorator(member: JSRecordType.TypeMember, names: Set<String>): ES6Decorator? =
+  (member.memberSource.singleElement as? JSAttributeListOwner)
     ?.attributeList
     ?.decorators
     ?.find { names.contains(it.decoratorName) }
-}
 
-fun getDecoratorArgument(decorator: ES6Decorator, index: Int): JSExpression? {
-  return (decorator.expression as? JSCallExpression)
-    ?.arguments
-    ?.getOrNull(index)
-}
+fun getDecoratorArgument(decorator: ES6Decorator?, index: Int): JSExpression? =
+  (decorator?.expression as? JSCallExpression)
+  ?.arguments
+  ?.getOrNull(index)
