@@ -24,13 +24,13 @@ public class GherkinRenameHandlersTest extends BasePlatformTestCase {
     return CucumberTestUtil.getTestDataPath() + TEST_DATA_PATH;
   }
 
-  private void doTest(boolean stepRenameHandlerAvailable, boolean stepParamterRenameHandlerAvailable) {
+  private void doTest(boolean stepRenameHandlerAvailable, boolean stepParameterRenameHandlerAvailable) {
     myFixture.configureByFile(getTestName(true) + ".feature");
     DataContext context = new TestDataProvider(myFixture.getProject()) {};
 
     GherkinStepRenameHandler stepRenameHandler = new GherkinStepRenameHandler();
     GherkinInplaceRenameHandler gherkinInplaceRenameHandler = new GherkinInplaceRenameHandler();
     assertEquals(stepRenameHandlerAvailable, stepRenameHandler.isAvailableOnDataContext(context));
-    assertEquals(stepParamterRenameHandlerAvailable, gherkinInplaceRenameHandler.isAvailableOnDataContext(context));
+    assertEquals(stepParameterRenameHandlerAvailable, gherkinInplaceRenameHandler.isAvailableOnDataContext(context));
   }
 }
