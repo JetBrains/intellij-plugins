@@ -31,7 +31,7 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
     if (resolveResult instanceof Angular2TemplateBindings) {
       JSType type = Angular2TypeUtils.getTemplateBindingsContextType((Angular2TemplateBindings)resolveResult);
       if (type != null) {
-        addType(type, resolveResult);
+        addType(type);
       }
     }
     else {
@@ -44,7 +44,7 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
     PsiElement psiElement = resolveResult.getElement();
     if (resolveResult instanceof Angular2ComponentPropertyResolveResult && psiElement != null) {
       startEvaluationWithContext(myContext.withSource(psiElement));
-      addType(((Angular2ComponentPropertyResolveResult)resolveResult).getJSType(), resolveResult.getElement());
+      addType(((Angular2ComponentPropertyResolveResult)resolveResult).getJSType());
       return true;
     }
     super.addTypeFromResolveResult(referenceName, resolveResult);
@@ -52,12 +52,12 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
   }
 
   @Override
-  protected void doAddType(@NotNull JSType type, @Nullable PsiElement source) {
+  protected void doAddType(@NotNull JSType type) {
     if (type instanceof JSUnknownType) {
       // convert unknown to any to have less strict type validation in Angular
       type = JSAnyType.get(type.getSource());
     }
-    super.doAddType(type, source);
+    super.doAddType(type);
   }
 
   @Override
@@ -65,10 +65,10 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
     if (thisScope instanceof Angular2EmbeddedExpression) {
       TypeScriptClass componentClass = Angular2ComponentLocator.findComponentClass(thisQualifier);
       if (componentClass != null) {
-        addType(componentClass.getJSType(), thisQualifier);
+        addType(componentClass.getJSType());
       }
       else {
-        addType(JSAnyType.getWithLanguage(JSTypeSource.SourceLanguage.TS, true), thisQualifier);
+        addType(JSAnyType.getWithLanguage(JSTypeSource.SourceLanguage.TS, true));
       }
       return;
     }

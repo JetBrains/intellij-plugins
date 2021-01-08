@@ -5,7 +5,6 @@ import com.intellij.lang.javascript.ecmascript6.TypeScriptTypeEvaluator
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
-import com.intellij.lang.javascript.psi.resolve.JSTypeGuardEvaluator
 import com.intellij.lang.javascript.psi.resolve.JSTypeProcessor
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.primitives.JSNumberType
@@ -59,7 +58,7 @@ class VueJSTypeEvaluator(context: JSEvaluateContext, processor: JSTypeProcessor)
         }
         if (type != null) {
           val typeToAdd = destructuringParents.applyToOuterType(type)
-          addType(typeToAdd, null)
+          addType(typeToAdd)
         }
       }
       1 -> {
@@ -90,10 +89,10 @@ class VueJSTypeEvaluator(context: JSEvaluateContext, processor: JSTypeProcessor)
             }
           }
         }
-        addType(type, null)
+        addType(type)
       }
       2 -> {
-        addType(getVForVarType(collectionExpr, ::JSNumberType), null)
+        addType(getVForVarType(collectionExpr, ::JSNumberType))
       }
     }
     return true

@@ -669,7 +669,7 @@ public final class AngularJSIndexingHandler extends FrameworkIndexingHandler {
         final String name = resolveParent.getFirstChild().getText();
         final JSTypeSource source = JSTypeSourceFactory.createTypeSource(resolveResult);
         final JSType type = JSNamedType.createType(name, source, JSContext.INSTANCE);
-        evaluator.addType(type, resolveResult);
+        evaluator.addType(type);
         return true;
       }
     }
@@ -685,7 +685,7 @@ public final class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       final String name = ((JSParameter)resolveResult).getName();
       final JSTypeSource source = JSTypeSourceFactory.createTypeSource(resolveResult);
       final JSType type = JSNamedType.createType(name, source, JSContext.UNKNOWN);
-      evaluator.addType(type, resolveResult);
+      evaluator.addType(type);
     }
     return false;
   }

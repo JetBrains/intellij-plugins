@@ -9,7 +9,6 @@ import com.intellij.lang.javascript.psi.resolve.*;
 import com.intellij.lang.javascript.psi.types.*;
 import com.intellij.lang.javascript.psi.types.evaluable.JSCustomElementType;
 import com.intellij.lang.javascript.psi.types.primitives.JSPrimitiveArrayType;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
@@ -45,7 +44,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
           JSType argType = JSTypeUtils.createType(JSImportHandlingUtil.resolveTypeName(arrayInitializingType.getText(), newExpression), source);
           type = new JSGenericTypeImpl(source, type, argType);
         }
-        addType(type, methodExpr);
+        addType(type);
       }
       else {
         JSType type = JSAnyType.get(methodExpr, false);
@@ -59,7 +58,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
             if (typeFromText != null) type = typeFromText;
           }
         }
-        addType(type, methodExpr);
+        addType(type);
       }
     }
   }
@@ -71,19 +70,10 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
 
     JSType typeFromClass = ActionScriptResolveUtil.getTypeFromClass(expression, resolveResult);
     if (typeFromClass != null) {
-      addType(typeFromClass, resolveResult);
+      addType(typeFromClass);
     }
   }
 
-  /**
-   * @deprecated use {@link #addType(JSType, PsiElement)}
-   */
-
-  @Deprecated
-  protected void addType(@NotNull String type, @Nullable final PsiElement source) {
-    addType(JSNamedType.createType(type, JSTypeSourceFactory.createTypeSource(source, false), JSContext.UNKNOWN), source);
-  }
-  
   @Override
   protected void addTypeFromElementResolveResult(@Nullable PsiElement resolveResult) {
     if (resolveResult instanceof JSOffsetBasedImplicitElement && JavaScriptSupportLoader.isFlexMxmFile(resolveResult.getContainingFile())) {
@@ -110,7 +100,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
           else {
             type = new JSPrimitiveArrayType(source, JSTypeContext.INSTANCE);
           }
-          addType(type, arrayClass);
+          addType(type);
         }
       }
       else {
@@ -119,13 +109,13 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
         if (clazz != null) {
             final String name = clazz.getQualifiedName();
             if (name != null) {
-              addType(name, clazz);
+              addType(JSNamedType.createType(name, JSTypeSourceFactory.createTypeSource(clazz, false), JSContext.UNKNOWN));
             }
         }
       }
     }
     else if (resolveResult instanceof JSPackageWrapper) {
-      addType(new JSCustomElementType(resolveResult), null);
+      addType(new JSCustomElementType(resolveResult));
     }
     else {
       super.addTypeFromElementResolveResult(resolveResult);
@@ -143,14 +133,14 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
   }
 
   @Override
-  public void addType(@Nullable final JSType _type, @Nullable PsiElement source) {
+  public void addType(@Nullable final JSType _type) {
     if (_type instanceof JSPsiBasedTypeOfType) {
       PsiElement element = ((JSPsiBasedTypeOfType)_type).getElement();
       if (element instanceof JSReferenceExpression && ((JSReferenceExpression)element).resolve() == element) {
         return;
       }
     }
-    super.addType(_type, source);
+    super.addType(_type);
   }
 
   @NotNull
