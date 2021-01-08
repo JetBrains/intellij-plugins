@@ -1,43 +1,39 @@
-package com.intellij.lang.javascript.flex;
+package com.intellij.lang.javascript.flex
 
-import com.intellij.application.options.editor.AutoImportOptionsProvider;
-import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.ui.components.JBCheckBox;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.application.options.editor.AutoImportOptionsProvider
+import com.intellij.ide.util.PropertiesComponent
+import com.intellij.openapi.application.ApplicationBundle
+import com.intellij.openapi.options.DslConfigurableBase
+import com.intellij.openapi.ui.DialogPanel
+import com.intellij.ui.ContextHelpLabel
+import com.intellij.ui.layout.*
 
-import javax.swing.*;
+class ActionScriptAutoImportOptionsProvider : DslConfigurableBase(), AutoImportOptionsProvider {
 
-public class ActionScriptAutoImportOptionsProvider implements AutoImportOptionsProvider {
-
-  private static final String ADD_IMPORTS_ON_THE_FLY_PROPERTY = "ActionScript.add.unambiguous.imports.on.the.fly";
-  private static final boolean ADD_IMPORTS_ON_THE_FLY_DEFAULT = false;
-
-  private JPanel myMainPanel;
-  private JBCheckBox myOnTheFlyCheckBox;
-
-  static boolean isAddUnambiguousImportsOnTheFly() {
-    return PropertiesComponent.getInstance().getBoolean(ADD_IMPORTS_ON_THE_FLY_PROPERTY, ADD_IMPORTS_ON_THE_FLY_DEFAULT);
+  override fun createPanel(): DialogPanel {
+    return panel {
+      titledRow("ActionScript") {
+        row {
+          cell {
+            checkBox(ApplicationBundle.message("checkbox.add.unambiguous.imports.on.the.fly"), ::addUnambiguousImportsOnTheFly)
+            component(ContextHelpLabel.create(ApplicationBundle.message("help.add.unambiguous.imports")))
+          }
+        }
+      }
+    }
   }
 
-  @Nullable
-  @Override
-  public JComponent createComponent() {
-    return myMainPanel;
-  }
+  companion object {
+    private const val ADD_IMPORTS_ON_THE_FLY_PROPERTY = "ActionScript.add.unambiguous.imports.on.the.fly"
+    private const val ADD_IMPORTS_ON_THE_FLY_DEFAULT = false
 
-  @Override
-  public boolean isModified() {
-    return myOnTheFlyCheckBox.isSelected() != isAddUnambiguousImportsOnTheFly();
-  }
+    @JvmStatic
+    var addUnambiguousImportsOnTheFly: Boolean
+      @JvmName("isAddUnambiguousImportsOnTheFly")
+      get() = PropertiesComponent.getInstance().getBoolean(ADD_IMPORTS_ON_THE_FLY_PROPERTY, ADD_IMPORTS_ON_THE_FLY_DEFAULT)
+      set(value) {
+        PropertiesComponent.getInstance().setValue(ADD_IMPORTS_ON_THE_FLY_PROPERTY, value)
+      }
 
-  @Override
-  public void apply() {
-    final boolean onTheFly = myOnTheFlyCheckBox.isSelected();
-    PropertiesComponent.getInstance().setValue(ADD_IMPORTS_ON_THE_FLY_PROPERTY, onTheFly, ADD_IMPORTS_ON_THE_FLY_DEFAULT);
-  }
-
-  @Override
-  public void reset() {
-    myOnTheFlyCheckBox.setSelected(isAddUnambiguousImportsOnTheFly());
   }
 }
