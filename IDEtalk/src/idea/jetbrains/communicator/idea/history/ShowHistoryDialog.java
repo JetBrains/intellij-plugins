@@ -139,7 +139,7 @@ public class ShowHistoryDialog extends IdeaDialog {
     @Override
     @Nullable
     public Object getData(@NotNull @NonNls String dataId) {
-      if (CommonDataKeys.PROJECT.getName().equals(dataId)) {
+      if (CommonDataKeys.PROJECT.is(dataId)) {
         return myProject;
       }
       return null;

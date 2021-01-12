@@ -81,11 +81,11 @@ public class FlashUmlTest extends JavaCodeInsightTestCase {
 
   @Override
   public Object getData(@NotNull String dataId) {
-    if (dataId.equals(CommonDataKeys.PSI_ELEMENT.getName()) ||
+    if (CommonDataKeys.PSI_ELEMENT.is(dataId) ||
         dataId.equals(AnActionEvent.injectedId(CommonDataKeys.PSI_ELEMENT.getName()))) {
       return TargetElementUtil.findTargetElement(getEditor(), TargetElementUtil.getInstance().getReferenceSearchFlags());
     }
-    if (dataId.equals(CommonDataKeys.PSI_FILE.getName())) {
+    if (CommonDataKeys.PSI_FILE.is(dataId)) {
       return getFile();
     }
     return super.getData(dataId);
