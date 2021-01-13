@@ -175,7 +175,7 @@ public class PerforceReadOnlyFileStateManager {
   private static Set<String> findLocallyDeletedMissingFiles(ChangeListManagerGate addGate, Set<String> missingFiles) {
     Set<String> locallyDeleted = new HashSet<>();
     for (String path : missingFiles) {
-      if (!FileStatus.DELETED.equals(addGate.getStatus(new File(path)))) {
+      if (!FileStatus.DELETED.equals(addGate.getStatus(VcsUtil.getFilePath(new File(path))))) {
         locallyDeleted.add(path);
       }
     }

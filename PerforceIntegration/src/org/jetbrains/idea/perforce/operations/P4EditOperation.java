@@ -114,7 +114,7 @@ public class P4EditOperation extends VcsOperationOnPath {
   @Override
   public Change getChange(final Project project, ChangeListManagerGate addGate) {
     FilePath path = getFilePath();
-    final FileStatus status = addGate.getStatus(path.getIOFile());
+    final FileStatus status = addGate.getStatus(path);
     ContentRevision beforeRevision = FileStatus.ADDED.equals(status) ? null : PerforceCachingContentRevision.createOffline(project, path, path);
     ContentRevision afterRevision = CurrentContentRevision.create(path);
     return new Change(beforeRevision, afterRevision);
