@@ -262,7 +262,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   @JSTestOptions({JSTestOption.WithFlexSdk})
   public void testSeeAlso() {
     setUpJdk();
-    doTestWithLinkNavigationCheck("as", 6);
+    doTestWithLinkNavigationCheck("as", 4);
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
