@@ -11,6 +11,8 @@ import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.index.JSSymbolUtil
 import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptAsExpression
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptCastExpression
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver
 import com.intellij.lang.javascript.psi.types.*
@@ -251,20 +253,22 @@ fun getJSTypeFromPropOptions(expression: JSExpression?): JSType? =
     else -> getJSTypeFromConstructor(expression)
   }
 
-private fun getJSTypeFromConstructor(expression: JSExpression): JSType {
-  return JSApplyNewType(JSTypeofTypeImpl(expression, JSTypeSourceFactory.createTypeSource(expression, false)),
-                        JSTypeSourceFactory.createTypeSource(expression.containingFile, false))
-}
+private fun getJSTypeFromConstructor(expression: JSExpression): JSType =
+  (expression as? TypeScriptAsExpression)
+    ?.type?.jsType?.castSafelyTo<JSGenericTypeImpl>()
+    ?.takeIf { (it.type as? JSTypeImpl)?.typeText == "PropType" }
+    ?.arguments?.getOrNull(0)
+  ?: JSApplyNewType(JSTypeofTypeImpl(expression, JSTypeSourceFactory.createTypeSource(expression, false)),
+                    JSTypeSourceFactory.createTypeSource(expression.containingFile, false))
 
-fun getRequiredFromPropOptions(expression: JSExpression?): Boolean {
-  return (expression as? JSObjectLiteralExpression)
-           ?.findProperty(PROPS_REQUIRED_PROP)
-           ?.literalExpressionInitializer
-           ?.let {
-             it.isBooleanLiteral && "true" == it.significantValue
-           }
-         ?: false
-}
+fun getRequiredFromPropOptions(expression: JSExpression?): Boolean =
+  (expression as? JSObjectLiteralExpression)
+    ?.findProperty(PROPS_REQUIRED_PROP)
+    ?.literalExpressionInitializer
+    ?.let {
+      it.isBooleanLiteral && "true" == it.significantValue
+    }
+  ?: false
 
 fun <T : JSExpression> findExpressionInAttributeValue(attribute: XmlAttribute,
                                                       expressionClass: Class<T>): T? {
