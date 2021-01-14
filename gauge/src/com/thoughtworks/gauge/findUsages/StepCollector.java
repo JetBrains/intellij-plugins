@@ -21,7 +21,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.thoughtworks.gauge.annotator.FileManager;
 import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
@@ -46,7 +45,7 @@ public final class StepCollector {
 
     Stream.concat(conceptFiles.stream(), specFiles.stream()).forEach(f -> {
       Collection<Integer> values =
-        ContainerUtil.getFirstItem(FileBasedIndex.getInstance().getFileData(GaugeFileStubIndex.NAME, f, project).values(), Collections.emptyList());
+        Objects.requireNonNullElse(FileBasedIndex.getInstance().getSingleEntryIndexData(GaugeFileStubIndex.NAME, f, project), Collections.emptyList());
       if (values.size() > 0) {
         getSteps(PsiManager.getInstance(project).findFile(f), values);
       }

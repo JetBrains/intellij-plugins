@@ -3,7 +3,6 @@ package com.jetbrains.lang.dart.ide.index;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.externalizer.StringCollectionExternalizer;
@@ -12,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Map;
 
 public class DartPartUriIndex extends SingleEntryFileBasedIndexExtension<List<String>> {
   public static final ID<Integer, List<String>> DART_PATH_INDEX = ID.create("DartPathIndex");
@@ -30,7 +28,7 @@ public class DartPartUriIndex extends SingleEntryFileBasedIndexExtension<List<St
 
   @Override
   public @NotNull SingleEntryIndexer<List<String>> getIndexer() {
-    return new SingleEntryIndexer<List<String>>(false) {
+    return new SingleEntryIndexer<>(false) {
       @Nullable
       @Override
       protected List<String> computeValue(@NotNull FileContent inputData) {
@@ -53,8 +51,6 @@ public class DartPartUriIndex extends SingleEntryFileBasedIndexExtension<List<St
 
   @NotNull
   public static List<String> getPartUris(@NotNull final Project project, @NotNull final VirtualFile virtualFile) {
-    Map<Integer, List<String>> data = FileBasedIndex.getInstance().getFileData(DART_PATH_INDEX, virtualFile, project);
-    List<String> uris = ContainerUtil.getFirstItem(data.values());
-    return ContainerUtil.notNullize(uris);
+    return FileBasedIndex.getInstance().getSingleEntryIndexData(DART_PATH_INDEX, virtualFile, project);
   }
 }

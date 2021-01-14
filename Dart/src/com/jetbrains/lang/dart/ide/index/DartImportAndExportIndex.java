@@ -4,7 +4,6 @@ package com.jetbrains.lang.dart.ide.index;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.DataInputOutputUtil;
@@ -101,8 +100,6 @@ public class DartImportAndExportIndex extends SingleEntryFileBasedIndexExtension
   @NotNull
   public static List<DartImportOrExportInfo> getImportAndExportInfos(final @NotNull Project project,
                                                                      final @NotNull VirtualFile virtualFile) {
-    Map<Integer, List<DartImportOrExportInfo>> data =
-      FileBasedIndex.getInstance().getFileData(DART_IMPORT_EXPORT_INDEX, virtualFile, project);
-    return ContainerUtil.getFirstItem(data.values(), Collections.emptyList());
+    return FileBasedIndex.getInstance().getSingleEntryIndexData(DART_IMPORT_EXPORT_INDEX, virtualFile, project);
   }
 }
