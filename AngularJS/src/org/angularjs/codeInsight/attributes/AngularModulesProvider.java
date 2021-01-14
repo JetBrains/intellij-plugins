@@ -48,14 +48,7 @@ public class AngularModulesProvider implements JSModuleConnectionProvider {
     final List<Link> result = new ArrayList<>();
     final CommonProcessors.CollectProcessor<String> processor = new CommonProcessors.CollectProcessor<>();
     final GlobalSearchScope fileScope = GlobalSearchScope.fileScope(file);
-    final int fileId = FileBasedIndex.getFileId(file.getVirtualFile());
-    StubIndex.getInstance().processAllKeys(AngularModuleIndex.KEY, processor, fileScope,
-                                           new IdFilter() {
-                                             @Override
-                                             public boolean containsFileId(int id) {
-                                               return id == fileId;
-                                             }
-                                           });
+    StubIndex.getInstance().processAllKeys(AngularModuleIndex.KEY, processor, fileScope, null);
     for (String key : processor.getResults()) {
       AngularIndexUtil.multiResolve(project, AngularModuleIndex.KEY, key,
                                     element -> {
