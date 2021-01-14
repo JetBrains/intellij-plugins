@@ -1,14 +1,22 @@
 <template>
   <div>
-    {{ post.<caret> }}
+    {{ post. }}
+    {{ callback. }}
   </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, {PropType} from 'vue';
+
+interface ComplexMessage {
+  title: string;
+  okMessage: string;
+  cancelMessage: string;
+}
 
 export default  {
   props: {
+    callback: Object as PropType<ComplexMessage>,
     post: Object as () => {
       id: number
       slug: string
