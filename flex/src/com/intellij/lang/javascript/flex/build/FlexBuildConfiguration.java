@@ -35,8 +35,6 @@ public class FlexBuildConfiguration {
   public String CUSTOM_CONFIG_FILE = "";
   public boolean USE_CUSTOM_CONFIG_FILE_FOR_TESTS = false;
   public String CUSTOM_CONFIG_FILE_FOR_TESTS = "";
-  /** @deprecated */
-  @Deprecated public String APPLICATION_ENTRY_POINT = "";
   public String MAIN_CLASS = "";
   public String OUTPUT_FILE_NAME = "";
   public boolean USE_FACET_COMPILE_OUTPUT_PATH = false;

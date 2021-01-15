@@ -97,22 +97,6 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     CLI, REMOTE, WEBDEV
   }
 
-  /**
-   * @deprecated use another constructor
-   */
-  @Deprecated
-  public DartVmServiceDebugProcess(@NotNull XDebugSession session,
-                                   @NotNull String debuggingHost,
-                                   int observatoryPort,
-                                   @Nullable ExecutionResult executionResult,
-                                   @NotNull DartUrlResolver dartUrlResolver,
-                                   @Nullable String dasExecutionContextId,
-                                   @NotNull DebugType debugType,
-                                   int timeout,
-                                   @Nullable VirtualFile currentWorkingDirectory) {
-    this(session, executionResult, dartUrlResolver, dasExecutionContextId, debugType, timeout, currentWorkingDirectory);
-  }
-
   public DartVmServiceDebugProcess(@NotNull XDebugSession session,
                                    @Nullable ExecutionResult executionResult,
                                    @NotNull DartUrlResolver dartUrlResolver,
