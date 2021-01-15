@@ -15,7 +15,7 @@
 
     <taskdef name="scp" classname="org.apache.tools.ant.taskdefs.optional.ssh.Scp"
              classpath="${maven.plugin.classpath}"/>
-    <taskdef name="javac2" classname="com.intellij.uiDesigner.ant.Javac2" classpath="${javac2.classpath}"/>
+    <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpath="${javac2.classpath}"/>
 
     <target name="compile">
         <javac2 srcdir="src/main/java" destdir="target/classes" classpathref="javac2.classpath"/>
