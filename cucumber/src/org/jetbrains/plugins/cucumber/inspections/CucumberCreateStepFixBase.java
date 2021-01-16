@@ -62,7 +62,7 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
 
       final JBPopupFactory popupFactory = JBPopupFactory.getInstance();
       final ListPopup popupStep =
-        popupFactory.createListPopup(new BaseListPopupStep<CucumberStepDefinitionCreationContext>(
+        popupFactory.createListPopup(new BaseListPopupStep<>(
           CucumberBundle.message("choose.step.definition.file"), new ArrayList<>(pairs)) {
           @Override
           public boolean isSpeedSearchEnabled() {

@@ -218,15 +218,15 @@ public class AddImportECMAScriptClassOrFunctionAction implements HintAction, Que
         candidates.toArray(new JSQualifiedNamedElement[0]),
         new JSQualifiedNamedElementRenderer(),
         JavaScriptBundle.message("choose.class.to.import.title"),
-        new PsiElementProcessor<JSQualifiedNamedElement>() {
+        new PsiElementProcessor<>() {
           @Override
           public boolean execute(@NotNull final JSQualifiedNamedElement element) {
             CommandProcessor.getInstance().executeCommand(
-                project,
-                () -> doImport(element.getQualifiedName()),
-                "Import " + element.getQualifiedName(),
-                this
-             );
+              project,
+              () -> doImport(element.getQualifiedName()),
+              "Import " + element.getQualifiedName(),
+              this
+            );
 
             return false;
           }

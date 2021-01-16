@@ -65,7 +65,7 @@ public class DartStartupActivity implements StartupActivity {
     final DartSdk sdk = DartSdk.getDartSdk(module.getProject());
 
     final Collection<String> oldExcludedUrls =
-      ContainerUtil.filter(ModuleRootManager.getInstance(module).getExcludeRootUrls(), new Condition<String>() {
+      ContainerUtil.filter(ModuleRootManager.getInstance(module).getExcludeRootUrls(), new Condition<>() {
         final String rootUrl = root.getUrl();
 
         @Override

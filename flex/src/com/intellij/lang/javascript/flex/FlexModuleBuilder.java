@@ -262,7 +262,7 @@ public class FlexModuleBuilder extends ModuleBuilder {
     VirtualFile sourceRoot = VfsUtil.findRelativeFile(contentRoot, "src");
 
     if (sourceRoot == null) {
-      sourceRoot = ApplicationManager.getApplication().runWriteAction(new NullableComputable<VirtualFile>() {
+      sourceRoot = ApplicationManager.getApplication().runWriteAction(new NullableComputable<>() {
         @Override
         public VirtualFile compute() {
           try {

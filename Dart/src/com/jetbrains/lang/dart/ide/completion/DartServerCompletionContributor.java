@@ -68,7 +68,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
               // TODO(jwren) Update this file name here with the final name chosen.
               psiElement().inFile(psiFile().withName("fix_data.yaml"))
            ),
-           new CompletionProvider<CompletionParameters>() {
+           new CompletionProvider<>() {
              @Override
              protected void addCompletions(@NotNull final CompletionParameters parameters,
                                            @NotNull final ProcessingContext context,

@@ -45,7 +45,7 @@ public final class CfmlReferenceContributor extends PsiReferenceContributor {
       }
 
       PsiReferenceBase<PsiComment> ref =
-        new PsiReferenceBase<PsiComment>((PsiComment)element, TextRange.from(range.getStartOffset(), name.length())) {
+        new PsiReferenceBase<>((PsiComment)element, TextRange.from(range.getStartOffset(), name.length())) {
           @Override
           public PsiElement resolve() {
             return variable;

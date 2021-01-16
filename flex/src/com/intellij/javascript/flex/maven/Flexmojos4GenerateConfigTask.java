@@ -320,7 +320,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
         LocalFileSystem.getInstance().refreshFiles(virtualFiles);
 
         final MavenProjectsManager mavenProjectsManager = MavenProjectsManager.getInstance(project);
-        sourceRoots.forEachEntry(new TObjectObjectProcedure<MavenProject, List<String>>() {
+        sourceRoots.forEachEntry(new TObjectObjectProcedure<>() {
           @Override
           public boolean execute(MavenProject mavenProject, List<String> sourceRoots) {
             final Module module = mavenProjectsManager.findModule(mavenProject);

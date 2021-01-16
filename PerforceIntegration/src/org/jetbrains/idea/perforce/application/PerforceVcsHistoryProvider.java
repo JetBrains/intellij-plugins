@@ -43,12 +43,12 @@ import java.util.List;
 
 public class PerforceVcsHistoryProvider implements VcsHistoryProvider {
   private final PerforceVcs myVcs;
-  private static final ColumnInfo<VcsFileRevision, String> REVISION = new ColumnInfo<VcsFileRevision, String>(
+  private static final ColumnInfo<VcsFileRevision, String> REVISION = new ColumnInfo<>(
     PerforceBundle.message("file.history.revision.column.name")) {
     @Override
     public String valueOf(VcsFileRevision vcsFileRevision) {
       if (!(vcsFileRevision instanceof PerforceFileRevision)) return "";
-      return String.valueOf(((PerforceFileRevision) vcsFileRevision).getVersionNumber());
+      return String.valueOf(((PerforceFileRevision)vcsFileRevision).getVersionNumber());
     }
 
     @Override
@@ -56,26 +56,26 @@ public class PerforceVcsHistoryProvider implements VcsHistoryProvider {
       return (r1, r2) -> {
         if (!(r1 instanceof PerforceFileRevision)) return 1;
         if (!(r2 instanceof PerforceFileRevision)) return -1;
-        return (int)(((PerforceFileRevision) r1).getVersionNumber() - ((PerforceFileRevision) r2).getVersionNumber());
+        return (int)(((PerforceFileRevision)r1).getVersionNumber() - ((PerforceFileRevision)r2).getVersionNumber());
       };
     }
   };
 
-  private static final ColumnInfo<VcsFileRevision, String> ACTION = new ColumnInfo<VcsFileRevision, String>(
+  private static final ColumnInfo<VcsFileRevision, String> ACTION = new ColumnInfo<>(
     PerforceBundle.message("file.history.action.column.name")) {
     @Override
     public String valueOf(VcsFileRevision vcsFileRevision) {
       if (!(vcsFileRevision instanceof PerforceFileRevision)) return "";
-      return ((PerforceFileRevision) vcsFileRevision).getAction();
+      return ((PerforceFileRevision)vcsFileRevision).getAction();
     }
   };
 
-  private static final ColumnInfo<VcsFileRevision, String> CLIENT = new ColumnInfo<VcsFileRevision, String>(
+  private static final ColumnInfo<VcsFileRevision, String> CLIENT = new ColumnInfo<>(
     PerforceBundle.message("file.history.client.column.name")) {
     @Override
     public String valueOf(VcsFileRevision vcsFileRevision) {
       if (!(vcsFileRevision instanceof PerforceFileRevision)) return "";
-      return ((PerforceFileRevision) vcsFileRevision).getClient();
+      return ((PerforceFileRevision)vcsFileRevision).getClient();
     }
   };
   private final PerforceRunner myRunner;

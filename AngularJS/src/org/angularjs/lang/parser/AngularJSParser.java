@@ -17,7 +17,7 @@ public class AngularJSParser
   public AngularJSParser(PsiBuilder builder) {
     super(DialectOptionHolder.JS_1_5, builder);
     myExpressionParser = new AngularJSExpressionParser();
-    myStatementParser = new StatementParser<AngularJSParser>(this) {
+    myStatementParser = new StatementParser<>(this) {
       @Override
       protected void doParseStatement(boolean canHaveClasses) {
         final IElementType firstToken = builder.getTokenType();

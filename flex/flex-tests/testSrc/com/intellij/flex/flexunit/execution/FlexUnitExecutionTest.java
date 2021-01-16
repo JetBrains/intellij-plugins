@@ -81,7 +81,7 @@ public abstract class FlexUnitExecutionTest extends JavaCodeInsightTestCase impl
   private static final String FLEX_SDK_HOME = FLEX4_SDK_HOME;
 
   private static final Map<FlexUnitRunnerParameters.OutputLogLevel, String> LOG_MESSAGES =
-    new HashMap<FlexUnitRunnerParameters.OutputLogLevel, String>() {
+    new HashMap<>() {
       {
         put(FlexUnitRunnerParameters.OutputLogLevel.Fatal, "Fatal_message");
         put(FlexUnitRunnerParameters.OutputLogLevel.Error, "Error_message");

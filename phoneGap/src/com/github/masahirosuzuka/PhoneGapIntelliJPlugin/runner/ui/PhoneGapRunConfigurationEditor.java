@@ -155,7 +155,7 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
     myCommand.setMinimumAndPreferredWidth(200);
     myPlatformField.setMinimumAndPreferredWidth(200);
     myTarget.getTargetsField().setMinimumAndPreferredWidth(myPlatformField.getPreferredSize().width);
-    myTarget.setDataProvider(new ReloadableComboBoxPanel.DataProvider<String>() {
+    myTarget.setDataProvider(new ReloadableComboBoxPanel.DataProvider<>() {
 
       @NotNull
       @Override

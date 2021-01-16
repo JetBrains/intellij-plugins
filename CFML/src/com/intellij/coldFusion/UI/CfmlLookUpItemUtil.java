@@ -28,7 +28,7 @@ public class CfmlLookUpItemUtil implements PlatformIcons {
     String tailText = "(" + functionDescription.getParametersListPresentableText() + ")";
 
     return LookupElementBuilder.create(name).withTypeText(typeText).withIcon(METHOD_ICON)
-      .withInsertHandler(new ParenthesesInsertHandler<LookupElement>() {
+      .withInsertHandler(new ParenthesesInsertHandler<>() {
         @Override
         protected boolean placeCaretInsideParentheses(final InsertionContext context, final LookupElement item) {
           return functionDescription.getParameters().size() != 0;

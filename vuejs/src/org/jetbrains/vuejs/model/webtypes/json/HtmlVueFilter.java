@@ -35,7 +35,7 @@ public class HtmlVueFilter implements SourceEntity {
      */
     @JsonProperty("aliases")
     @JsonPropertyDescription("List of symbol aliases")
-    private List<String> aliases = new ArrayList<String>();
+    private List<String> aliases = new ArrayList<>();
     /**
      * Short description to be rendered in documentation popup. It will be rendered according to description-markup setting.
      * 
@@ -77,7 +77,7 @@ public class HtmlVueFilter implements SourceEntity {
      */
     @JsonProperty("arguments")
     @JsonPropertyDescription("List of arguments accepted by the filter. All arguments are non-optional by default.")
-    private List<HtmlVueFilterArgument> arguments = new ArrayList<HtmlVueFilterArgument>();
+    private List<HtmlVueFilterArgument> arguments = new ArrayList<>();
 
     /**
      * 

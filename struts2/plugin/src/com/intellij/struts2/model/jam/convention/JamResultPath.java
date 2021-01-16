@@ -65,7 +65,7 @@ public abstract class JamResultPath extends CommonModelElement.PsiBase implement
   /**
    * Resolves to property in {@code struts.properties}.
    */
-  private static final JamConverter<IProperty> PROPERTY_CONVERTER = new JamSimpleReferenceConverter<IProperty>() {
+  private static final JamConverter<IProperty> PROPERTY_CONVERTER = new JamSimpleReferenceConverter<>() {
 
     private Collection<IProperty> getStrutsProperties(final JamAttributeElement context) {
       final PsiAnnotationMemberValue annotationMemberValue = context.getPsiElement();
@@ -100,9 +100,9 @@ public abstract class JamResultPath extends CommonModelElement.PsiBase implement
     @NotNull
     @Override
     protected LookupElement createLookupElementFor(@NotNull final IProperty target) {
-      return LookupElementBuilder.create((PsiNamedElement) target.getPsiElement())
-                                 .withIcon(ElementPresentationManager.getIcon(target))
-                                 .withTailText("=" + target.getValue(), true).withRenderer(PropertiesCompletionContributor.LOOKUP_ELEMENT_RENDERER);
+      return LookupElementBuilder.create((PsiNamedElement)target.getPsiElement())
+        .withIcon(ElementPresentationManager.getIcon(target))
+        .withTailText("=" + target.getValue(), true).withRenderer(PropertiesCompletionContributor.LOOKUP_ELEMENT_RENDERER);
     }
   };
 
@@ -110,7 +110,7 @@ public abstract class JamResultPath extends CommonModelElement.PsiBase implement
   /**
    * Resolves to directory in web base path(s).
    */
-  private static final JamConverter<WebDirectoryElement> VALUE_CONVERTER = new JamSimpleReferenceConverter<WebDirectoryElement>() {
+  private static final JamConverter<WebDirectoryElement> VALUE_CONVERTER = new JamSimpleReferenceConverter<>() {
 
     @Override
     public WebDirectoryElement fromString(@Nullable final String s,
@@ -136,7 +136,6 @@ public abstract class JamResultPath extends CommonModelElement.PsiBase implement
 
       return webDirectoryElement.isDirectory() ? webDirectoryElement : null;
     }
-
   };
 
   private static final JamStringAttributeMeta.Single<WebDirectoryElement> VALUE_ATTRIBUTE =

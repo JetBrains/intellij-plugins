@@ -280,34 +280,34 @@ public class PerforceCheckinComponent implements CheckinChangeListSpecificCompon
     }
   }
 
-  private final static ColumnInfo<PerforceJob, String> JOB = new ColumnInfo<PerforceJob, String>(PerforceBundle.message("job")) {
+  private final static ColumnInfo<PerforceJob, String> JOB = new ColumnInfo<>(PerforceBundle.message("job")) {
     @Override
     public String valueOf(PerforceJob perforceJob) {
       return perforceJob.getName();
     }
   };
-  private final static ColumnInfo<PerforceJob, String> STATUS = new ColumnInfo<PerforceJob, String>(PerforceBundle.message("job.status")) {
+  private final static ColumnInfo<PerforceJob, String> STATUS = new ColumnInfo<>(PerforceBundle.message("job.status")) {
     @Override
     public String valueOf(PerforceJob perforceJob) {
       PerforceJobFieldValue field = perforceJob.getValueForStandardField(StandardJobFields.status);
       return field == null ? null : field.getValue();
     }
   };
-  private final static ColumnInfo<PerforceJob, String> USER = new ColumnInfo<PerforceJob, String>(PerforceBundle.message("job.user")) {
+  private final static ColumnInfo<PerforceJob, String> USER = new ColumnInfo<>(PerforceBundle.message("job.user")) {
     @Override
     public String valueOf(PerforceJob perforceJob) {
       PerforceJobFieldValue field = perforceJob.getValueForStandardField(StandardJobFields.user);
       return field == null ? null : field.getValue();
     }
   };
-  private final static ColumnInfo<PerforceJob, String> DATE = new ColumnInfo<PerforceJob, String>(PerforceBundle.message("job.date")) {
+  private final static ColumnInfo<PerforceJob, String> DATE = new ColumnInfo<>(PerforceBundle.message("job.date")) {
     @Override
     public String valueOf(PerforceJob perforceJob) {
       PerforceJobFieldValue field = perforceJob.getValueForStandardField(StandardJobFields.date);
       return field == null ? null : field.getValue();
     }
   };
-  private final static ColumnInfo<PerforceJob, String> DESCRIPTION = new ColumnInfo<PerforceJob, String>(PerforceBundle.message("job.description")) {
+  private final static ColumnInfo<PerforceJob, String> DESCRIPTION = new ColumnInfo<>(PerforceBundle.message("job.description")) {
     @Override
     public String valueOf(PerforceJob perforceJob) {
       PerforceJobFieldValue field = perforceJob.getValueForStandardField(StandardJobFields.description);

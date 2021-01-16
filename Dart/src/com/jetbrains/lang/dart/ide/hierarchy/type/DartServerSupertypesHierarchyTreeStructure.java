@@ -34,7 +34,7 @@ public final class DartServerSupertypesHierarchyTreeStructure extends HierarchyT
     final List<TypeHierarchyItem> items = getTypeHierarchyItems(dartClass);
     if (items.isEmpty()) return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
 
-    addSuperClassHierarchy(new HashSet<TypeHierarchyItem>(), myProject, items, items.get(0), descriptor);
+    addSuperClassHierarchy(new HashSet<>(), myProject, items, items.get(0), descriptor);
 
     return descriptor.getCachedChildren();
   }

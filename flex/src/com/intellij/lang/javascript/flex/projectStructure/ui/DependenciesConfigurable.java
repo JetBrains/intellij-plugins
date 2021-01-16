@@ -698,7 +698,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
   };
 
-  private static final ColumnInfo<MyTableItem, LinkageType> DEPENDENCY_TYPE_COLUMN = new ColumnInfo<MyTableItem, LinkageType>("Linkage") {
+  private static final ColumnInfo<MyTableItem, LinkageType> DEPENDENCY_TYPE_COLUMN = new ColumnInfo<>("Linkage") {
 
     @Override
     public LinkageType valueOf(MyTableItem item) {
@@ -821,7 +821,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     myTargetPlayerWarning.setIcon(AllIcons.General.BalloonWarning12);
     myWarning.setIcon(UIUtil.getBalloonWarningIcon());
 
-    myTable = new EditableTreeTable<MyTableItem>("", DEPENDENCY_TYPE_COLUMN) {
+    myTable = new EditableTreeTable<>("", DEPENDENCY_TYPE_COLUMN) {
       @Override
       protected void render(SimpleColoredComponent c, MyTableItem item) {
         if (item != null) {
@@ -1077,7 +1077,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   private void addItem(AnActionButton button) {
     initPopupActions();
     final JBPopup popup = JBPopupFactory.getInstance().createListPopup(
-      new BaseListPopupStep<AddItemPopupAction>(FlexBundle.message("add.dependency.popup.title"), myPopupActions) {
+      new BaseListPopupStep<>(FlexBundle.message("add.dependency.popup.title"), myPopupActions) {
         @Override
         public Icon getIconFor(AddItemPopupAction aValue) {
           return aValue.getIcon();

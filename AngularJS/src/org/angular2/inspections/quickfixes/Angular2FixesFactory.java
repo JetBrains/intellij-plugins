@@ -283,7 +283,7 @@ public final class Angular2FixesFactory {
       .selectKeys(JSElement.class)
       .toMap();
 
-    PsiElementProcessor<JSElement> processor = new PsiElementProcessor<JSElement>() {
+    PsiElementProcessor<JSElement> processor = new PsiElementProcessor<>() {
       @Override
       public boolean execute(final @NotNull JSElement element) {
         Optional.ofNullable(elementMap.get(element))

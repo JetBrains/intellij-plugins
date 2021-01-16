@@ -124,7 +124,7 @@ public class CreateValidationXmlIntention extends PsiElementBaseIntentionAction 
     final List<Action> filteredActions = getActionsWithoutValidation(actionClass);
     if (filteredActions.size() > 1) {
       final ListPopupStep<Action> step =
-        new BaseListPopupStep<Action>("Choose action mapping", filteredActions) {
+        new BaseListPopupStep<>("Choose action mapping", filteredActions) {
 
           @Override
           public Icon getIconFor(final Action value) {

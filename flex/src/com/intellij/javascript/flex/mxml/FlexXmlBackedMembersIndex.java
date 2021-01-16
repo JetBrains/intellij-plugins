@@ -41,7 +41,7 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
   @Override
   @NotNull
   public DataIndexer<String, Void, FileContent> getIndexer() {
-    return new DataIndexer<String, Void, FileContent>() {
+    return new DataIndexer<>() {
 
       @Override
       @NotNull

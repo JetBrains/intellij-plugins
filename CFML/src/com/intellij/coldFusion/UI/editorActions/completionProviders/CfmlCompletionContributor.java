@@ -87,7 +87,7 @@ public class CfmlCompletionContributor extends CompletionContributor {
              CfmlLanguage.INSTANCE),
            new CfmlAttributeNamesCompletionProvider());
     //return type completion in script function definition
-    final PatternCondition<PsiElement> withinTypeCondition = new PatternCondition<PsiElement>("") {
+    final PatternCondition<PsiElement> withinTypeCondition = new PatternCondition<>("") {
       @Override
       public boolean accepts(@NotNull PsiElement psiElement, ProcessingContext context) {
         return (psiElement.getParent() != null && psiElement.getParent().getNode().getElementType() == CfmlElementTypes.TYPE);
@@ -96,7 +96,7 @@ public class CfmlCompletionContributor extends CompletionContributor {
     extend(BASIC,
            psiElement().withParent(psiElement(CfmlElementTypes.TYPE))
              .withLanguage(CfmlLanguage.INSTANCE),
-           new CompletionProvider<CompletionParameters>() {
+           new CompletionProvider<>() {
              @Override
              protected void addCompletions(@NotNull CompletionParameters parameters,
                                            @NotNull ProcessingContext context,
@@ -106,11 +106,12 @@ public class CfmlCompletionContributor extends CompletionContributor {
                String[] attributeValues = text.indexOf('.') == -1 ?
                                           CfmlUtil.getAttributeValues("cffunction", "returntype", position.getProject()) :
                                           ArrayUtilRt.EMPTY_STRING_ARRAY;
-               Set<LookupElement> lookupResult = ContainerUtil.map2Set(attributeValues, argumentValue -> LookupElementBuilder.create(argumentValue).withCaseSensitivity(false));
+               Set<LookupElement> lookupResult = ContainerUtil
+                 .map2Set(attributeValues, argumentValue -> LookupElementBuilder.create(argumentValue).withCaseSensitivity(false));
 
                Object[] objects =
                  CfmlComponentReference.buildVariants(text, position.getContainingFile(), position.getProject(), null, false);
-               for(Object o:objects) {
+               for (Object o : objects) {
                  result.addElement((LookupElement)o);
                }
                result.addAllElements(lookupResult);
@@ -121,7 +122,7 @@ public class CfmlCompletionContributor extends CompletionContributor {
            psiElement().withElementType(CfscriptTokenTypes.IDENTIFIER).withSuperParent(2, CfmlComponent.class)
              .withLanguage(
                CfmlLanguage.INSTANCE).with(new PropertyPatternCondition()),
-           new CompletionProvider<CompletionParameters>() {
+           new CompletionProvider<>() {
              @Override
              protected void addCompletions(@NotNull CompletionParameters parameters,
                                            @NotNull ProcessingContext context,
@@ -145,7 +146,7 @@ public class CfmlCompletionContributor extends CompletionContributor {
     extend(BASIC, psiElement().
       withElementType(CfscriptTokenTypes.IDENTIFIER).
       withLanguage(CfmlLanguage.INSTANCE).
-      with(new PatternCondition<PsiElement>("") {
+      with(new PatternCondition<>("") {
         @Override
         public boolean accepts(@NotNull PsiElement psiElement, ProcessingContext context) {
           if (withinTypeCondition.accepts(psiElement, context)) return false;

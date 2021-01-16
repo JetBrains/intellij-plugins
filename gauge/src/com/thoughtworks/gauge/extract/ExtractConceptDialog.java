@@ -132,7 +132,7 @@ final class ExtractConceptDialog extends JDialog {
   }
 
   private static TextFieldWithAutoCompletionListProvider<String> getAutoCompleteTextField(final List<String> dirNames) {
-    return new TextFieldWithAutoCompletionListProvider<String>(dirNames) {
+    return new TextFieldWithAutoCompletionListProvider<>(dirNames) {
       @Nullable
       @Override
       protected Icon getIcon(@NotNull String o) {

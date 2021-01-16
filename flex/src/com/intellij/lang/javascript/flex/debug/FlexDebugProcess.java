@@ -137,7 +137,7 @@ public class FlexDebugProcess extends XDebugProcess {
 
   private String myFdbLaunchCommand;
 
-  private final LinkedList<DebuggerCommand> commandsToWrite = new LinkedList<DebuggerCommand>() {
+  private final LinkedList<DebuggerCommand> commandsToWrite = new LinkedList<>() {
     @Override
     public synchronized DebuggerCommand removeFirst() {
       waitForData();
@@ -1298,7 +1298,7 @@ public class FlexDebugProcess extends XDebugProcess {
 
   @Override
   public XValueMarkerProvider<FlexValue, String> createValueMarkerProvider() {
-    return new XValueMarkerProvider<FlexValue, String>(FlexValue.class) {
+    return new XValueMarkerProvider<>(FlexValue.class) {
       @Override
       public boolean canMark(@NotNull final FlexValue value) {
         return getObjectId(value) != null;

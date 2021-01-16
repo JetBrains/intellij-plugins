@@ -53,7 +53,7 @@ public class HtmlTagSlot implements DocumentedItem {
      */
     @JsonProperty("vue-properties")
     @JsonPropertyDescription("Specify properties of the slot scope")
-    private List<TypedEntity> vueProperties = new ArrayList<TypedEntity>();
+    private List<TypedEntity> vueProperties = new ArrayList<>();
 
     /**
      * 

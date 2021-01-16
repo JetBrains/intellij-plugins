@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public class FlexLibraryType extends LibraryType<FlexLibraryProperties> {
-  public static final PersistentLibraryKind<FlexLibraryProperties> FLEX_LIBRARY = new PersistentLibraryKind<FlexLibraryProperties>("flex") {
+  public static final PersistentLibraryKind<FlexLibraryProperties> FLEX_LIBRARY = new PersistentLibraryKind<>("flex") {
     @NotNull
     @Override
     public FlexLibraryProperties createDefaultProperties() {

@@ -87,7 +87,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
 
   @NonNls private static final String RADIO_BUTTON_GROUP_CLASS = "mx.controls.RadioButtonGroup";
 
-  private final static XmlUtil.DuplicationInfoProvider<XmlElement> myDuplicationInfoProvider = new XmlUtil.DuplicationInfoProvider<XmlElement>() {
+  private final static XmlUtil.DuplicationInfoProvider<XmlElement> myDuplicationInfoProvider = new XmlUtil.DuplicationInfoProvider<>() {
     @Override
     public String getName(@NotNull final XmlElement xmlElement) {
       if (xmlElement instanceof XmlTag) return ((XmlTag)xmlElement).getLocalName();

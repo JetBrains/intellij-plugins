@@ -64,7 +64,7 @@ public class FlashUmlChangeTracker extends ChangeTracker<JSClass, JSNamedElement
     }
   }
 
-  private static final PsiFilter<JSClass> CLASS_FILTER = new PsiFilter<JSClass>(JSClass.class) {
+  private static final PsiFilter<JSClass> CLASS_FILTER = new PsiFilter<>(JSClass.class) {
     @Override
     public boolean accept(JSClass element) {
       return element instanceof XmlBackedJSClassImpl || element.getParent() instanceof JSPackageStatement;
@@ -87,7 +87,7 @@ public class FlashUmlChangeTracker extends ChangeTracker<JSClass, JSNamedElement
 
   private static final PsiFilter<JSFunction> SETTER_FILTER = new MethodFilter(JSFunction.FunctionKind.SETTER);
 
-  private static final PsiFilter<JSVariable> FIELD_FILTER = new NameFilter<JSVariable>(JSVariable.class) {
+  private static final PsiFilter<JSVariable> FIELD_FILTER = new NameFilter<>(JSVariable.class) {
     @Override
     public boolean accept(JSVariable element) {
       return JSUtils.getMemberContainingClass(element) != null;

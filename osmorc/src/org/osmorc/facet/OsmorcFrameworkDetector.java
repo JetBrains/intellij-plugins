@@ -71,7 +71,7 @@ public class OsmorcFrameworkDetector extends FacetBasedFrameworkDetector<OsmorcF
   @NotNull
   @Override
   public ElementPattern<FileContent> createSuitableFilePattern() {
-    return FileContentPattern.fileContent().with(new PatternCondition<FileContent>("osmorc manifest file") {
+    return FileContentPattern.fileContent().with(new PatternCondition<>("osmorc manifest file") {
       @Override
       public boolean accepts(@NotNull FileContent content, ProcessingContext context) {
         return isSuitableFile(content.getContentAsText());

@@ -88,7 +88,7 @@ public final class FlexPropertyReferenceProvider extends PsiReferenceProvider {
             if (bundleExpression instanceof JSLiteralExpression) {
               final String expressionValue = ((JSLiteralExpression)bundleExpression).getStringValue();
               if (expressionValue != null) {
-                provider = new FlexPropertiesSupport.PropertyReferenceInfoProvider<JSLiteralExpressionImpl>() {
+                provider = new FlexPropertiesSupport.PropertyReferenceInfoProvider<>() {
                   @Override
                   public TextRange getReferenceRange(JSLiteralExpressionImpl element) {
                     return getValueRange(element);
@@ -122,7 +122,7 @@ public final class FlexPropertyReferenceProvider extends PsiReferenceProvider {
   }
 
   private static final FlexPropertiesSupport.PropertyReferenceInfoProvider<JSLiteralExpressionImpl> ourPropertyInfoProvider =
-    new FlexPropertiesSupport.PropertyReferenceInfoProvider<JSLiteralExpressionImpl>() {
+    new FlexPropertiesSupport.PropertyReferenceInfoProvider<>() {
       @Override
       public TextRange getReferenceRange(JSLiteralExpressionImpl element) {
         return getValueRange(element);
@@ -140,7 +140,7 @@ public final class FlexPropertyReferenceProvider extends PsiReferenceProvider {
     };
 
   private static final FlexPropertiesSupport.PropertyReferenceInfoProvider<JSLiteralExpressionImpl> ourSoftPropertyInfoProvider =
-    new FlexPropertiesSupport.PropertyReferenceInfoProvider<JSLiteralExpressionImpl>() {
+    new FlexPropertiesSupport.PropertyReferenceInfoProvider<>() {
       @Override
       public TextRange getReferenceRange(JSLiteralExpressionImpl element) {
         return getValueRange(element);
@@ -159,7 +159,7 @@ public final class FlexPropertyReferenceProvider extends PsiReferenceProvider {
 
 
   private static final FlexPropertiesSupport.BundleReferenceInfoProvider<JSLiteralExpressionImpl> ourBundleInfoProvider =
-    new FlexPropertiesSupport.BundleReferenceInfoProvider<JSLiteralExpressionImpl>() {
+    new FlexPropertiesSupport.BundleReferenceInfoProvider<>() {
       @Override
       public TextRange getReferenceRange(JSLiteralExpressionImpl element) {
         return getValueRange(element);
@@ -172,7 +172,7 @@ public final class FlexPropertyReferenceProvider extends PsiReferenceProvider {
     };
 
   private static final FlexPropertiesSupport.BundleReferenceInfoProvider<JSLiteralExpressionImpl> ourSoftBundleInfoProvider =
-    new FlexPropertiesSupport.BundleReferenceInfoProvider<JSLiteralExpressionImpl>() {
+    new FlexPropertiesSupport.BundleReferenceInfoProvider<>() {
       @Override
       public TextRange getReferenceRange(JSLiteralExpressionImpl element) {
         return getValueRange(element);

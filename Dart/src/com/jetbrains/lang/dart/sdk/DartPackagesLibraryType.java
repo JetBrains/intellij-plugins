@@ -18,7 +18,7 @@ public class DartPackagesLibraryType extends LibraryType<DartPackagesLibraryProp
   public static final String DART_PACKAGES_LIBRARY_NAME = "Dart Packages";
 
   public static final PersistentLibraryKind<DartPackagesLibraryProperties> LIBRARY_KIND =
-    new PersistentLibraryKind<DartPackagesLibraryProperties>("DartPackagesLibraryType") {
+    new PersistentLibraryKind<>("DartPackagesLibraryType") {
       @Override
       @NotNull
       public DartPackagesLibraryProperties createDefaultProperties() {

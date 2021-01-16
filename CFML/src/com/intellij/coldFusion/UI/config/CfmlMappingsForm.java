@@ -72,7 +72,7 @@ public class CfmlMappingsForm {
   @SuppressWarnings("unchecked")
   public CfmlMappingsForm(Project project) {
     myProject = project;
-    myTableEditor = new ValidatingTableEditor<Item>() {
+    myTableEditor = new ValidatingTableEditor<>() {
       @Override
       protected Item cloneOf(Item item) {
         return new Item(item.myDirectoryPath, item.myLogicalPath);

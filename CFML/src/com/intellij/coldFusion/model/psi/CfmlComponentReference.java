@@ -372,7 +372,7 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
 
     final String finalDirectoryName = directoryName;
 
-    return ContainerUtil.map2Array(variants, new Function<Object, Object>() {
+    return ContainerUtil.map2Array(variants, new Function<>() {
       class DotInsertHandler implements InsertHandler<LookupElement> {
         @Override
         public void handleInsert(@NotNull InsertionContext context, @NotNull LookupElement item) {

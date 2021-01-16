@@ -34,7 +34,7 @@ public class TemplateCompletionContributor extends CompletionContributor {
   private static final Logger _logger = Logger.getInstance(TemplateCompletionContributor.class);
 
   public TemplateCompletionContributor() {
-    extend(null, psiElement(), new CompletionProvider<CompletionParameters>() {
+    extend(null, psiElement(), new CompletionProvider<>() {
       @Override
       protected void addCompletions(@NotNull CompletionParameters parameters,
                                     @NotNull ProcessingContext context,
@@ -63,7 +63,9 @@ public class TemplateCompletionContributor extends CompletionContributor {
 
           // Completion of type and id attributes is handled by ComponentNameContextGetter
           if (TapestryXmlExtension.isTapestryTemplateNamespace(attribute.getNamespace()) &&
-              (attribute.getLocalName().equals("type") || attribute.getLocalName().equals("id") || attribute.getLocalName().equals("mixins"))) {
+              (attribute.getLocalName().equals("type") ||
+               attribute.getLocalName().equals("id") ||
+               attribute.getLocalName().equals("mixins"))) {
             return;
           }
 

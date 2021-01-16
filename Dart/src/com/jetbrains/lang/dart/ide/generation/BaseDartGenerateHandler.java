@@ -170,7 +170,7 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
                                                                           @NotNull @NlsContexts.DialogTitle String title) {
     final List<DartNamedElementNode> nodes = ContainerUtil.map(candidates, DartNamedElementNode::new);
     final MemberChooser<DartNamedElementNode> chooser =
-      new MemberChooser<DartNamedElementNode>(nodes.toArray(new DartNamedElementNode[0]), doAllowEmptySelection(), true, project, false) {
+      new MemberChooser<>(nodes.toArray(new DartNamedElementNode[0]), doAllowEmptySelection(), true, project, false) {
 
         @Override
         protected JComponent createCenterPanel() {

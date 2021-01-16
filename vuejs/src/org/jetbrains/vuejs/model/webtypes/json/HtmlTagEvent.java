@@ -39,7 +39,7 @@ public class HtmlTagEvent implements DocumentedItem {
     @JsonPropertyDescription("Link to online documentation.")
     private String docUrl;
     @JsonProperty("arguments")
-    private List<TypedEntity> arguments = new ArrayList<TypedEntity>();
+    private List<TypedEntity> arguments = new ArrayList<>();
 
     /**
      * 

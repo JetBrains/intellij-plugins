@@ -92,7 +92,7 @@ public final class PhoneGapPluginsList {
 
   private static Map<String, PhoneGapRepoPackage> listNoCache() {
     try {
-      return HttpRequests.request(PLUGINS_URL).connect(new HttpRequests.RequestProcessor<Map<String, PhoneGapRepoPackage>>() {
+      return HttpRequests.request(PLUGINS_URL).connect(new HttpRequests.RequestProcessor<>() {
         @Override
         public Map<String, PhoneGapRepoPackage> process(@NotNull HttpRequests.Request request) throws IOException {
           Map<String, PhoneGapRepoPackage> result = new HashMap<>();

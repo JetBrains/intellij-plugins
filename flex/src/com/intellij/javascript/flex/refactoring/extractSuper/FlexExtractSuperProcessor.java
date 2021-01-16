@@ -161,13 +161,14 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
       return JSPullUpConflictsUtil.checkConflicts(myMembersToMove, mySourceClass, createFakeClass(), v, JSVisibilityUtil.DEFAULT_OPTIONS);
     }
     else {
-      MultiMap<PsiElement, String> conflicts = new MultiMap<PsiElement, String>(Collections.synchronizedMap(CollectionFactory.createSmallMemoryFootprintMap())) {
-        @NotNull
-        @Override
-        protected Collection<String> createCollection() {
-          return Collections.synchronizedCollection(super.createCollection());
-        }
-      };
+      MultiMap<PsiElement, String> conflicts =
+        new MultiMap<>(Collections.synchronizedMap(CollectionFactory.createSmallMemoryFootprintMap())) {
+          @NotNull
+          @Override
+          protected Collection<String> createCollection() {
+            return Collections.synchronizedCollection(super.createCollection());
+          }
+        };
 
       // we create subclass with the same visibility as the source class, so let's check it accessibility by references that need to be pushed down
       checkIncomingReferencesToSubclass(usageInfos, conflicts, JSVisibilityUtil.DEFAULT_OPTIONS);

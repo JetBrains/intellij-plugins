@@ -63,7 +63,7 @@ public class FlexBCConfigurator {
   private final EventDispatcher<Listener> myEventDispatcher = EventDispatcher.create(Listener.class);
 
   // we can have only one Project Structure configuration dialog at a time, so it's OK to hold state for one project
-  private final LazyInitializer<Project> myModifiableModelInitializer = new LazyInitializer<Project>() {
+  private final LazyInitializer<Project> myModifiableModelInitializer = new LazyInitializer<>() {
     @Override
     protected void initialize(final Project project) {
       LOG.assertTrue(myConfigEditor == null);

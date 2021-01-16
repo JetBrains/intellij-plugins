@@ -67,7 +67,7 @@ public class BundleReference extends PsiReferenceBase<HeaderValuePart> implement
   }
 
   private static final ResolveCache.AbstractResolver<BundleReference, PsiElement> RESOLVER =
-    new ResolveCache.AbstractResolver<BundleReference, PsiElement>() {
+    new ResolveCache.AbstractResolver<>() {
       @Override
       public PsiElement resolve(@NotNull BundleReference reference, boolean incompleteCode) {
         final String text = reference.getCanonicalText();

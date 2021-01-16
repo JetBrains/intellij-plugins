@@ -100,7 +100,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
   }
 
   private static <T extends PsiElement> PatternCondition<T> language(@NotNull Language language) {
-    return new PatternCondition<T>("language(" + language.getID() + ")") {
+    return new PatternCondition<>("language(" + language.getID() + ")") {
       @Override
       public boolean accepts(@NotNull T t, ProcessingContext context) {
         return language.is(PsiUtilCore.findLanguageFromElement(t));

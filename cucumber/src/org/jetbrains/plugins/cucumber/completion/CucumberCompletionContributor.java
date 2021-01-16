@@ -74,7 +74,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
     PsiElementPattern.Capture<PsiElement> inStep =
       psiElement().inside(psiElement().withElementType(GherkinElementTypes.STEP)).andNot(inTable);
 
-    extend(CompletionType.BASIC, psiElement().inFile(psiElement(GherkinFile.class)).andNot(inTable), new CompletionProvider<CompletionParameters>() {
+    extend(CompletionType.BASIC, psiElement().inFile(psiElement(GherkinFile.class)).andNot(inTable), new CompletionProvider<>() {
       @Override
       protected void addCompletions(@NotNull CompletionParameters parameters,
                                     @NotNull ProcessingContext context,
@@ -91,10 +91,12 @@ public class CucumberCompletionContributor extends CompletionContributor {
 
           // if element isn't under feature declaration - suggest feature in autocompletion
           // but don't suggest scenario keywords inside steps
-          final PsiElement coveringElement = PsiTreeUtil.getParentOfType(position, GherkinStep.class, GherkinFeature.class, PsiFileSystemItem.class);
+          final PsiElement coveringElement =
+            PsiTreeUtil.getParentOfType(position, GherkinStep.class, GherkinFeature.class, PsiFileSystemItem.class);
           if (coveringElement instanceof PsiFileSystemItem) {
             addFeatureKeywords(result, gherkinKeywordTable);
-          } else if (coveringElement instanceof GherkinFeature) {
+          }
+          else if (coveringElement instanceof GherkinFeature) {
             if (gherkin6Enabled) {
               addRuleKeyword(result, gherkinKeywordTable);
             }
@@ -107,7 +109,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
       }
     });
 
-    extend(CompletionType.BASIC, inScenario.andNot(inStep), new CompletionProvider<CompletionParameters>() {
+    extend(CompletionType.BASIC, inScenario.andNot(inStep), new CompletionProvider<>() {
       @Override
       protected void addCompletions(@NotNull CompletionParameters parameters,
                                     @NotNull ProcessingContext context,
@@ -116,7 +118,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
       }
     });
 
-    extend(CompletionType.BASIC, inStep, new CompletionProvider<CompletionParameters>() {
+    extend(CompletionType.BASIC, inStep, new CompletionProvider<>() {
       @Override
       protected void addCompletions(@NotNull CompletionParameters parameters,
                                     @NotNull ProcessingContext context,

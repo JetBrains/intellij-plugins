@@ -128,7 +128,7 @@ public class FlexPullUpTest extends MultiFileTestCase {
 
   public static List<JSMemberInfo> getMemberInfos(final String[] members, JSClass clazz, boolean makeAbstract) {
     final List<JSMemberInfo> memberInfos = new ArrayList<>();
-    JSMemberInfo.extractClassMembers(clazz, memberInfos, new MemberInfoBase.Filter<JSAttributeListOwner>() {
+    JSMemberInfo.extractClassMembers(clazz, memberInfos, new MemberInfoBase.Filter<>() {
       @Override
       public boolean includeMember(JSAttributeListOwner member) {
         return ArrayUtil.contains(member.getName(), members);

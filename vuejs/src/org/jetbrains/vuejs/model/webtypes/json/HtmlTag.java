@@ -37,7 +37,7 @@ public class HtmlTag implements SourceEntity {
      */
     @JsonProperty("aliases")
     @JsonPropertyDescription("List of symbol aliases")
-    private List<String> aliases = new ArrayList<String>();
+    private List<String> aliases = new ArrayList<>();
     /**
      * Short description to be rendered in documentation popup. It will be rendered according to description-markup setting.
      * 
@@ -53,7 +53,7 @@ public class HtmlTag implements SourceEntity {
     @JsonPropertyDescription("Link to online documentation.")
     private String docUrl;
     @JsonProperty("attributes")
-    private List<HtmlTagAttribute> attributes = new ArrayList<HtmlTagAttribute>();
+    private List<HtmlTagAttribute> attributes = new ArrayList<>();
     /**
      * Allows to specify the source of the entity. For Vue.js component this may be for instance a class.
      * 
@@ -66,16 +66,16 @@ public class HtmlTag implements SourceEntity {
      */
     @JsonProperty("events")
     @JsonPropertyDescription("")
-    private List<HtmlTagEvent> events = new ArrayList<HtmlTagEvent>();
+    private List<HtmlTagEvent> events = new ArrayList<>();
     @JsonProperty("slots")
-    private List<HtmlTagSlot> slots = new ArrayList<HtmlTagSlot>();
+    private List<HtmlTagSlot> slots = new ArrayList<>();
     /**
      * Deprecated. Use regular 'slot' property instead and specify 'vue-properties' to provide slot scope information.
      * 
      */
     @JsonProperty("vue-scoped-slots")
     @JsonPropertyDescription("Deprecated. Use regular 'slot' property instead and specify 'vue-properties' to provide slot scope information.")
-    private List<HtmlTagSlot> vueScopedSlots = new ArrayList<HtmlTagSlot>();
+    private List<HtmlTagSlot> vueScopedSlots = new ArrayList<>();
     @JsonProperty("vue-model")
     private HtmlTagVueModel vueModel;
 

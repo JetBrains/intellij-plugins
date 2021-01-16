@@ -34,7 +34,7 @@ public class DartImportAndExportIndex extends SingleEntryFileBasedIndexExtension
 
   @Override
   public @NotNull SingleEntryIndexer<List<DartImportOrExportInfo>> getIndexer() {
-    return new SingleEntryIndexer<List<DartImportOrExportInfo>>(false) {
+    return new SingleEntryIndexer<>(false) {
       @Nullable
       @Override
       protected List<DartImportOrExportInfo> computeValue(@NotNull FileContent inputData) {
@@ -46,7 +46,7 @@ public class DartImportAndExportIndex extends SingleEntryFileBasedIndexExtension
   @NotNull
   @Override
   public DataExternalizer<List<DartImportOrExportInfo>> getValueExternalizer() {
-    return new DataExternalizer<List<DartImportOrExportInfo>>() {
+    return new DataExternalizer<>() {
       @Override
       public void save(final @NotNull DataOutput out, final @NotNull List<DartImportOrExportInfo> value) throws IOException {
         DataInputOutputUtil.writeINT(out, value.size());

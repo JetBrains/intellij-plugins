@@ -44,7 +44,7 @@ public class ThemeReferenceProvider extends PsiReferenceProvider {
 
   @Override
   public PsiReference @NotNull [] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
-    return new PsiReference[]{new PsiReferenceBase<XmlAttributeValue>((XmlAttributeValue) element) {
+    return new PsiReference[]{new PsiReferenceBase<>((XmlAttributeValue)element) {
       @Override
       public PsiElement resolve() {
         return myElement;
@@ -54,7 +54,6 @@ public class ThemeReferenceProvider extends PsiReferenceProvider {
       public Object @NotNull [] getVariants() {
         return DEFAULT_THEMES;
       }
-
     }};
   }
 

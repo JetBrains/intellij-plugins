@@ -46,7 +46,7 @@ public class PlatformioCleanBeforeRunTaskProvider extends BeforeRunTaskProvider<
   @Nullable
   @Override
   public BeforeRunTask<?> createTask(@NotNull RunConfiguration runConfiguration) {
-    return new BeforeRunTask<BeforeRunTask<?>>(ID) {
+    return new BeforeRunTask<>(ID) {
     };
   }
 

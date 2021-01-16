@@ -22,7 +22,7 @@ import java.util.Collection;
 public final class FileGrouper {
   private static <T> MultiMap<P4Connection, T> distributeByConnection(Collection<? extends T> files, NullableFunction<? super T, ? extends P4Connection> fun) {
     //todo P4ParametersConnection.equals should be based on client+server+user
-    MultiMap<P4Connection, T> sortedFiles = new MultiMap<>(new Object2ObjectOpenCustomHashMap<>(new Hash.Strategy<P4Connection>() {
+    MultiMap<P4Connection, T> sortedFiles = new MultiMap<>(new Object2ObjectOpenCustomHashMap<>(new Hash.Strategy<>() {
       @Override
       public int hashCode(P4Connection object) {
         return object == null ? 0 : object.getConnectionKey().hashCode();

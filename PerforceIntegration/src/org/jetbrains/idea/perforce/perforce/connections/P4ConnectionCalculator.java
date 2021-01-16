@@ -100,7 +100,7 @@ public class P4ConnectionCalculator {
 
   private static void filterSimilarConfigFiles(final Map<VirtualFile, P4ConnectionParameters> connectionSettings,
                                                List<VirtualFile> detailedVcsMappings) {
-    final AbstractFilterChildren<VirtualFile> filter = new AbstractFilterChildren<VirtualFile>() {
+    final AbstractFilterChildren<VirtualFile> filter = new AbstractFilterChildren<>() {
       @Override
       protected void sortAscending(List<? extends VirtualFile> list) {
         list.sort(FilePathComparator.getInstance());
@@ -163,7 +163,7 @@ public class P4ConnectionCalculator {
   }
 
   private static void filterByConfigFiles(final Map<VirtualFile, File> configsMap, List<VirtualFile> detailedVcsMappings) {
-    final AbstractFilterChildren<VirtualFile> filter = new AbstractFilterChildren<VirtualFile>() {
+    final AbstractFilterChildren<VirtualFile> filter = new AbstractFilterChildren<>() {
       @Override
       protected void sortAscending(List<? extends VirtualFile> list) {
         list.sort(FilePathComparator.getInstance());

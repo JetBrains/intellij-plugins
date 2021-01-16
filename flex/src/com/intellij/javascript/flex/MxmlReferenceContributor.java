@@ -180,7 +180,7 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
       });
 
     XmlUtil.registerXmlAttributeValueReferenceProvider(registrar, new String[]{FlexReferenceContributor.SOURCE_ATTR_NAME}, new ScopeFilter(
-      new ParentElementFilter(new AndFilter(XmlTagFilter.INSTANCE, new ElementFilterBase<PsiElement>(PsiElement.class) {
+      new ParentElementFilter(new AndFilter(XmlTagFilter.INSTANCE, new ElementFilterBase<>(PsiElement.class) {
         @Override
         protected boolean isElementAcceptable(final PsiElement element, final PsiElement context) {
           return true;
@@ -285,7 +285,7 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
     XmlUtil.registerXmlAttributeValueReferenceProvider(registrar, null, TrueFilter.INSTANCE,
                                                        createReferenceProviderForTagOrAttributeExpectingJSClass(quickFixProvider));
 
-    registrar.registerReferenceProvider(xmlAttribute().withParent(XmlTag.class).with(new PatternCondition<XmlAttribute>("") {
+    registrar.registerReferenceProvider(xmlAttribute().withParent(XmlTag.class).with(new PatternCondition<>("") {
       @Override
       public boolean accepts(@NotNull XmlAttribute xmlAttribute, ProcessingContext context) {
         String attrName = xmlAttribute.getLocalName();
@@ -304,7 +304,7 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
     });
 
     XmlUtil.registerXmlTagReferenceProvider(
-      registrar, null, new ElementFilterBase<XmlTag>(XmlTag.class) {
+      registrar, null, new ElementFilterBase<>(XmlTag.class) {
         @Override
         protected boolean isElementAcceptable(final XmlTag element, final PsiElement context) {
           return element.getName().indexOf('.') != -1;

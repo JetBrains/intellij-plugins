@@ -52,7 +52,7 @@ public class ActionNameCustomReferenceConverter implements CustomReferenceConver
   public PsiReference @NotNull [] createReferences(final GenericDomValue<String> genericDomValue,
                                                    final PsiElement psiElement,
                                                    final ConvertContext convertContext) {
-    final PsiReferenceBase<PsiElement> ref = new PsiReferenceBase<PsiElement>(psiElement) {
+    final PsiReferenceBase<PsiElement> ref = new PsiReferenceBase<>(psiElement) {
 
       @Override
       public PsiElement resolve() {

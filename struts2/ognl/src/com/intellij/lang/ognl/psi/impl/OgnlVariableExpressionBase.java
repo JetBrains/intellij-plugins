@@ -61,7 +61,7 @@ abstract class OgnlVariableExpressionBase extends OgnlExpressionImpl {
       final String name = getValue();
 
       final CommonProcessors.CollectProcessor<OgnlVariableReference> processor =
-        new CommonProcessors.CollectProcessor<OgnlVariableReference>() {
+        new CommonProcessors.CollectProcessor<>() {
           @Override
           protected boolean accept(OgnlVariableReference reference) {
             return reference.getName().equals(name);

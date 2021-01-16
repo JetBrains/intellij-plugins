@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
  * @author Vladislav.Soroka
  */
 class HeaderParametersProvider extends CompletionProvider<CompletionParameters> {
-  private static final InsertHandler<LookupElement> ATTRIBUTE_HANDLER = new InsertHandler<LookupElement>() {
+  private static final InsertHandler<LookupElement> ATTRIBUTE_HANDLER = new InsertHandler<>() {
     @Override
     public void handleInsert(@NotNull InsertionContext context, @NotNull LookupElement item) {
       context.setAddCompletionChar(false);
@@ -22,7 +22,7 @@ class HeaderParametersProvider extends CompletionProvider<CompletionParameters> 
     }
   };
 
-  private static final InsertHandler<LookupElement> DIRECTIVE_HANDLER = new InsertHandler<LookupElement>() {
+  private static final InsertHandler<LookupElement> DIRECTIVE_HANDLER = new InsertHandler<>() {
     @Override
     public void handleInsert(@NotNull InsertionContext context, @NotNull LookupElement item) {
       context.setAddCompletionChar(false);

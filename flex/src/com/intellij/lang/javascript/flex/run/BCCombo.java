@@ -53,7 +53,7 @@ public class BCCombo extends JComboBox {
     }
     myAllConfigs = allConfigs.toArray(new FlexBuildConfiguration[0]);
 
-    setRenderer(new ColoredListCellRenderer<Object>() {
+    setRenderer(new ColoredListCellRenderer<>() {
       @Override
       protected void customizeCellRenderer(@NotNull JList list, Object value, int index, boolean selected, boolean hasFocus) {
         if (value instanceof Pair) {

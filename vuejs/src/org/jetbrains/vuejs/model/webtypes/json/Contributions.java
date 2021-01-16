@@ -19,7 +19,7 @@ public class Contributions {
     @JsonProperty("html")
     private Html html;
     @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    private Map<String, Object> additionalProperties = new HashMap<>();
 
     @JsonProperty("html")
     public Html getHtml() {

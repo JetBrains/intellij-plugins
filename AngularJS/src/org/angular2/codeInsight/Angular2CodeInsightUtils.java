@@ -56,7 +56,7 @@ public final class Angular2CodeInsightUtils {
   public static LookupElementBuilder wrapWithImportDeclarationModuleHandler(@NotNull LookupElementBuilder element,
                                                                             @NotNull Class<? extends PsiElement> elementClass) {
     InsertHandler<LookupElement> originalHandler = element.getInsertHandler();
-    return element.withInsertHandler(new InsertHandler<LookupElement>() {
+    return element.withInsertHandler(new InsertHandler<>() {
       @Override
       public void handleInsert(@NotNull InsertionContext context, @NotNull LookupElement item) {
         boolean templateBindings = Angular2TemplateBindings.class == elementClass;

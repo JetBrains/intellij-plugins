@@ -245,7 +245,7 @@ public class AngularUiRouterDiagramBuilder {
     if (moduleFiles != null) return moduleFiles;
 
     final NonCyclicQueue<String> modulesQueue = new NonCyclicQueue<>();
-    final NonCyclicQueue<VirtualFile> filesQueue = new NonCyclicQueue<VirtualFile>() {
+    final NonCyclicQueue<VirtualFile> filesQueue = new NonCyclicQueue<>() {
       @Override
       protected boolean check(VirtualFile file) {
         // do not add lib (especially angular) files

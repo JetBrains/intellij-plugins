@@ -179,8 +179,8 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
 
       final Set<StrutsFileSet> strutsFileSets = strutsFacet.getConfiguration().getFileSets();
       final BaseListPopupStep<StrutsFileSet> step =
-        new BaseListPopupStep<StrutsFileSet>(StrutsBundle.message("annotators.fileset.fix.choose.fileset"),
-                                             new ArrayList<>(strutsFileSets)) {
+        new BaseListPopupStep<>(StrutsBundle.message("annotators.fileset.fix.choose.fileset"),
+                                new ArrayList<>(strutsFileSets)) {
 
           @Override
           public Icon getIconFor(final StrutsFileSet aValue) {
@@ -190,7 +190,8 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
           @Override
           public PopupStep onChosen(final StrutsFileSet selectedValue, final boolean finalChoice) {
             selectedValue.addFile(file.getVirtualFile());
-            ApplicationManager.getApplication().runWriteAction(() -> ProjectRootManagerEx.getInstanceEx(project).makeRootsChange(EmptyRunnable.getInstance(), false, true));
+            ApplicationManager.getApplication()
+              .runWriteAction(() -> ProjectRootManagerEx.getInstanceEx(project).makeRootsChange(EmptyRunnable.getInstance(), false, true));
 
             // re-highlight (remove annotation)
             DaemonCodeAnalyzer.getInstance(project).restart();

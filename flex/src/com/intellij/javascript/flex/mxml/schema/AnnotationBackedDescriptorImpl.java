@@ -838,7 +838,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
         FlexStateElementNames.STATES.equals(((XmlTag)context).getLocalName()) &&
         FlexUtils.isMxmlNs(((XmlTag)context).getNamespace())) {
       XmlTag[] tags = ((XmlTag)context).findSubTags("State", ((XmlTag)context).getNamespace());
-      XmlUtil.doDuplicationCheckForElements(tags, new HashMap<>(tags.length), new XmlUtil.DuplicationInfoProvider<XmlTag>() {
+      XmlUtil.doDuplicationCheckForElements(tags, new HashMap<>(tags.length), new XmlUtil.DuplicationInfoProvider<>() {
         @Override
         public String getName(@NotNull XmlTag xmlTag) {
           return xmlTag.getAttributeValue(FlexStateElementNames.NAME);

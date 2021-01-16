@@ -37,7 +37,7 @@ public class HtmlAttribute implements SourceEntity {
      */
     @JsonProperty("aliases")
     @JsonPropertyDescription("List of symbol aliases")
-    private List<String> aliases = new ArrayList<String>();
+    private List<String> aliases = new ArrayList<>();
     /**
      * Short description to be rendered in documentation popup. It will be rendered according to description-markup setting.
      * 
@@ -73,7 +73,7 @@ public class HtmlAttribute implements SourceEntity {
     @JsonPropertyDescription("Provide information about directive argument")
     private HtmlAttributeVueArgument vueArgument;
     @JsonProperty("vue-modifiers")
-    private List<HtmlAttributeVueModifier> vueModifiers = new ArrayList<HtmlAttributeVueModifier>();
+    private List<HtmlAttributeVueModifier> vueModifiers = new ArrayList<>();
 
     /**
      * 

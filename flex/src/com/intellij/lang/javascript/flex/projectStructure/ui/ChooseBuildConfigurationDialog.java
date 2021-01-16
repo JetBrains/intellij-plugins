@@ -190,7 +190,7 @@ public final class ChooseBuildConfigurationDialog extends DialogWrapper {
   }
 
   private void updateOnSelectionChange() {
-    mySelection = myTree.getSelectedNodes(DefaultMutableTreeNode.class, new Tree.NodeFilter<DefaultMutableTreeNode>() {
+    mySelection = myTree.getSelectedNodes(DefaultMutableTreeNode.class, new Tree.NodeFilter<>() {
       @Override
       public boolean accept(DefaultMutableTreeNode node) {
         return node.getUserObject() instanceof FlexBCConfigurable;

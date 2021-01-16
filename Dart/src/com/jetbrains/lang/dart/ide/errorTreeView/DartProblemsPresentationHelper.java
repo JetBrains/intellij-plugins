@@ -42,7 +42,7 @@ public class DartProblemsPresentationHelper {
   }
 
   RowFilter<DartProblemsTableModel, Integer> getRowFilter() {
-    return new RowFilter<DartProblemsTableModel, Integer>() {
+    return new RowFilter<>() {
       @Override
       public boolean include(final @NotNull Entry<? extends DartProblemsTableModel, ? extends Integer> entry) {
         return shouldShowProblem(entry.getModel().getItem(entry.getIdentifier()));
