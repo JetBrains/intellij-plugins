@@ -6,7 +6,6 @@ import com.intellij.lang.javascript.psi.JSThisExpression;
 import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
-import com.intellij.lang.javascript.psi.resolve.JSTypeProcessor;
 import com.intellij.lang.javascript.psi.types.JSAnyType;
 import com.intellij.lang.javascript.psi.types.JSTypeSource;
 import com.intellij.lang.javascript.psi.types.JSUnknownType;
@@ -21,9 +20,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
 
-  public Angular2TypeEvaluator(@NotNull JSEvaluateContext context,
-                               @NotNull JSTypeProcessor processor) {
-    super(context, processor);
+  public Angular2TypeEvaluator(@NotNull JSEvaluateContext context) {
+    super(context);
   }
 
   @Override
