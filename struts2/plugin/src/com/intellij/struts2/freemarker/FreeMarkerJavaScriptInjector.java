@@ -39,7 +39,7 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
  *
  * @author Yann C&eacute;bron
  */
-public class FreeMarkerJavaScriptInjector implements MultiHostInjector {
+final class FreeMarkerJavaScriptInjector implements MultiHostInjector {
   private static class Holder {
     private static final PsiElementPattern.Capture<FtlStringLiteral> JS_ELEMENT_PATTERN =
       psiElement(FtlStringLiteral.class)

@@ -53,11 +53,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author peter
- */
-public class Struts2GlobalVariableProvider extends FtlGlobalVariableProvider {
-
+final class Struts2GlobalVariableProvider extends FtlGlobalVariableProvider {
   @Override
   @NotNull
   public List<? extends FtlVariable> getGlobalVariables(final FtlFile file) {

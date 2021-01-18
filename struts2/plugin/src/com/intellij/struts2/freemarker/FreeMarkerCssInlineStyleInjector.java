@@ -41,7 +41,7 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
  *
  * @author Yann C&eacute;bron
  */
-public class FreeMarkerCssInlineStyleInjector implements MultiHostInjector {
+final class FreeMarkerCssInlineStyleInjector implements MultiHostInjector {
   private static class Holder {
     private static final PsiElementPattern.Capture<FtlStringLiteral> CSS_ELEMENT_PATTERN =
       psiElement(FtlStringLiteral.class)

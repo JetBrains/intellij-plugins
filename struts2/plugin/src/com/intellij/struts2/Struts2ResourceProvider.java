@@ -24,8 +24,7 @@ import org.jetbrains.annotations.NonNls;
  *
  * @author Dmitry Avdeev
  */
-public class Struts2ResourceProvider implements StandardResourceProvider {
-
+final class Struts2ResourceProvider implements StandardResourceProvider {
   @NonNls
   private static final String DTD_PATH = "/resources/dtds/";
 

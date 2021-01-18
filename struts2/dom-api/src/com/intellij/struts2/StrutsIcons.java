@@ -19,7 +19,6 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.ui.scale.JBUIScale;
-import icons.Struts2Icons;
 
 import javax.swing.*;
 

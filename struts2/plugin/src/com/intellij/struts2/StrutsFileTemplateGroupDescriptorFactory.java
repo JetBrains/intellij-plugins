@@ -18,7 +18,6 @@ package com.intellij.struts2;
 import com.intellij.ide.fileTemplates.FileTemplateDescriptor;
 import com.intellij.ide.fileTemplates.FileTemplateGroupDescriptor;
 import com.intellij.ide.fileTemplates.FileTemplateGroupDescriptorFactory;
-import icons.Struts2Icons;
 import org.jetbrains.annotations.NonNls;
 
 /**

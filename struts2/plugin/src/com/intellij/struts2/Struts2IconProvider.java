@@ -28,7 +28,6 @@ import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.ui.scale.JBUIScale;
-import icons.Struts2Icons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

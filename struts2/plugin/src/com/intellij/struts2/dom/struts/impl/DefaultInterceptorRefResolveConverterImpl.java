@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.intellij.struts2.dom.struts.impl;
 
 import com.intellij.openapi.util.Condition;
@@ -36,8 +35,7 @@ import java.util.List;
 /**
  * @author Yann C&eacute;bron
  */
-public class DefaultInterceptorRefResolveConverterImpl extends DefaultInterceptorRefResolveConverter {
-
+final class DefaultInterceptorRefResolveConverterImpl extends DefaultInterceptorRefResolveConverter {
   @Override
   @NotNull
   public Collection<? extends InterceptorStack> getVariants(final ConvertContext context) {

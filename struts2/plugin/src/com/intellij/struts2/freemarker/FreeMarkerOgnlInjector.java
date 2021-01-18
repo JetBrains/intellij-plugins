@@ -40,7 +40,7 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
  *
  * @author Yann C&eacute;bron
  */
-public class FreeMarkerOgnlInjector implements MultiHostInjector {
+final class FreeMarkerOgnlInjector implements MultiHostInjector {
   private final PsiElementPattern.Capture<FtlStringLiteral> myOgnlElementPattern =
     createPattern(s -> s.contains(OgnlLanguage.EXPRESSION_PREFIX));
 

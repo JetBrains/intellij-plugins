@@ -38,13 +38,13 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.jsp.JspFile;
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.struts2.Struts2Icons;
 import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.struts2.facet.ui.StrutsFileSet;
 import com.intellij.util.IncorrectOperationException;
-import icons.Struts2Icons;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;

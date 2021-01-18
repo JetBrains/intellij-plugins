@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.intellij.struts2.structure;
 
 import com.intellij.psi.xml.XmlFile;
@@ -32,8 +31,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Yann C&eacute;bron
  */
-public class ValidationStructureViewBuilderProvider extends BaseStructureViewBuilderProvider {
-
+final class ValidationStructureViewBuilderProvider extends BaseStructureViewBuilderProvider {
   @Override
   @Nullable
   protected DomFileElement getFileElement(@NotNull final XmlFile xmlFile) {

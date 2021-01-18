@@ -35,7 +35,7 @@ import java.util.List;
  * @author Yann C&eacute;bron
  */
 @Stubbed
-@Presentation(typeName = "Struts Action", icon = "Struts2Icons.Action")
+@Presentation(typeName = "Struts Action", icon = "com.intellij.struts2.Struts2Icons.Action")
 public interface Action extends ParamsElement {
 
   /**

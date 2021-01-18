@@ -12,8 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package com.intellij.struts2.dom.struts.impl;
+package com.intellij.struts2.spring;
 
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.module.Module;
@@ -46,7 +45,7 @@ import java.util.stream.Collectors;
  *
  * @author Yann C&eacute;bron
  */
-public class ExtendableClassConverterSpringContributor
+final class ExtendableClassConverterSpringContributor
   extends ExtendableClassConverter.ExtendableClassConverterContributor {
 
   @Override

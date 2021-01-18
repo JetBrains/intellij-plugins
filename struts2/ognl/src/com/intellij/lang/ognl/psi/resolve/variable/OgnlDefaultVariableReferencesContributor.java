@@ -23,8 +23,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Yann C&eacute;bron
  */
-public class OgnlDefaultVariableReferencesContributor extends OgnlVariableReferencesContributor {
-
+final class OgnlDefaultVariableReferencesContributor extends OgnlVariableReferencesContributor {
   private static final String ORIGIN_INFO = "OGNL";
 
   @Override

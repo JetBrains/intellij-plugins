@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.intellij.struts2.velocity;
 
 import com.intellij.javaee.web.WebUtil;
@@ -37,8 +36,7 @@ import java.util.List;
  * @author peter
  * @author Yann C&eacute;bron
  */
-public class VelocityStrutsResultContributor extends StrutsResultContributor {
-
+final class VelocityStrutsResultContributor extends StrutsResultContributor {
   @NonNls
   private static final String VELOCITY = "velocity";
 

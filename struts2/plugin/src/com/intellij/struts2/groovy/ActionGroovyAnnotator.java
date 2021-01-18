@@ -12,14 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package com.intellij.struts2.annotators;
+package com.intellij.struts2.groovy;
 
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
-import icons.Struts2Icons;
+import com.intellij.struts2.Struts2Icons;
+import com.intellij.struts2.annotators.ActionAnnotatorBase;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.typedef.GrClassDefinition;
 
 import javax.swing.*;
@@ -29,8 +28,7 @@ import javax.swing.*;
  *
  * @author Yann C&eacute;bron
  */
-public class ActionGroovyAnnotator extends ActionAnnotatorBase {
-
+final class ActionGroovyAnnotator extends ActionAnnotatorBase {
   @Override
   public String getId() {
     return "ActionGroovyAnnotator";
@@ -41,9 +39,8 @@ public class ActionGroovyAnnotator extends ActionAnnotatorBase {
     return "Action (Groovy)";
   }
 
-  @Nullable
   @Override
-  public Icon getIcon() {
+  public @NotNull Icon getIcon() {
     return Struts2Icons.Action;
   }
 

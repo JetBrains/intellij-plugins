@@ -29,8 +29,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Yann C&eacute;bron
  */
-public class OgnlStruts2JspVariableReferencesContributor extends OgnlVariableReferencesContributor {
-
+final class OgnlStruts2JspVariableReferencesContributor extends OgnlVariableReferencesContributor {
   private static final String ORIGIN_INFO = "JSP";
   private static final String[] VAR_NAMES = {"parameters", "request", "session", "application", "attr"};
 

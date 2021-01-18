@@ -1,5 +1,4 @@
 <idea-plugin>
-
   <!-- OGNL extension points -->
   <extensionPoints>
     <extensionPoint qualifiedName="com.intellij.ognl.variableReferencesContributor"

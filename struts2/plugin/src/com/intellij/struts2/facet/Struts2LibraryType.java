@@ -16,7 +16,7 @@
 package com.intellij.struts2.facet;
 
 import com.intellij.framework.library.DownloadableLibraryType;
-import icons.Struts2Icons;
+import com.intellij.struts2.Struts2Icons;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;

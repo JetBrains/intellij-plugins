@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.intellij.struts2.velocity;
 
 import com.intellij.javaee.web.WebCommonClassNames;
@@ -38,8 +37,7 @@ import java.util.List;
  *
  * @author Yann C&eacute;bron
  */
-public class Struts2GlobalVariableProvider extends VtlGlobalVariableProvider {
-
+final class Struts2GlobalVariableProvider extends VtlGlobalVariableProvider {
   @NotNull
   @Override
   public Collection<VtlVariable> getGlobalVariables(@NotNull final VtlFile file) {

@@ -34,8 +34,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Yann C&eacute;bron
  */
-public class CreateStrutsXmlAction extends CreateFileAction {
-
+final class CreateStrutsXmlAction extends CreateFileAction {
   public CreateStrutsXmlAction() {
     super(StrutsBundle.messagePointer("create.config.new.file"),
           StrutsBundle.messagePointer("create.config.new.file.description"),

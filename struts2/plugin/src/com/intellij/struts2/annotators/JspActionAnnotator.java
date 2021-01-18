@@ -24,6 +24,7 @@ import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.psi.xml.XmlToken;
+import com.intellij.struts2.Struts2Icons;
 import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.StrutsConstants;
 import com.intellij.struts2.StrutsIcons;
@@ -33,7 +34,6 @@ import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.util.XmlTagUtil;
-import icons.Struts2Icons;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 

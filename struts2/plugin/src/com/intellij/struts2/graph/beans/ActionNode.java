@@ -14,8 +14,8 @@
  */
 package com.intellij.struts2.graph.beans;
 
+import com.intellij.struts2.Struts2Icons;
 import com.intellij.struts2.dom.struts.action.Action;
-import icons.Struts2Icons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

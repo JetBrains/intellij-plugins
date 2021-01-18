@@ -23,12 +23,10 @@ import org.jetbrains.annotations.Nullable;
  * @author Yann C&eacute;bron
  */
 public abstract class ValidatorImpl implements Validator {
-
   @Override
   @Nullable
   public PsiClass getParamsClass() {
     final ValidatorConfig validatorConfig = getType().getValue();
     return validatorConfig != null ? validatorConfig.getValidatorClass().getValue() : null;
   }
-
 }

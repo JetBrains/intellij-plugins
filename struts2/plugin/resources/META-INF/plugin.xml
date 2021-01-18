@@ -1,5 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
 <!--
   ~ Copyright 2019 The authors
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,9 +12,8 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-
 <idea-plugin url="https://confluence.jetbrains.com/display/IDEADEV/Struts+2+Plugin+for+IntelliJ+IDEA"
-             xmlns:xi="http://www.w3.org/2001/XInclude">
+             xmlns:xi="http://www.w3.org/2001/XInclude" package="com.intellij.struts2">
 
   <id>com.intellij.struts2</id>
   <name>Struts 2</name>
@@ -38,7 +35,7 @@
 
   <vendor>JetBrains</vendor>
 
-  <xi:include href="/META-INF/ognl.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="/META-INF/ognl.xml"/>
 
   <!-- published extension points -->
   <extensionPoints>
@@ -258,5 +255,4 @@
       <add-to-group anchor="last" group-id="NewXmlDescriptor"/>
     </action>
   </actions>
-
 </idea-plugin>

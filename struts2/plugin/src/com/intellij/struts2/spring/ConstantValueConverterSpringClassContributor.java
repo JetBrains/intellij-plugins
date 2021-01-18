@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intellij.struts2.model.constant;
+package com.intellij.struts2.spring;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiClass;
@@ -21,6 +21,7 @@ import com.intellij.spring.contexts.model.SpringModel;
 import com.intellij.spring.model.SpringBeanPointer;
 import com.intellij.spring.model.utils.SpringModelSearchers;
 import com.intellij.struts2.StrutsConstants;
+import com.intellij.struts2.model.constant.ConstantValueConverterClassContributor;
 import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.DomJavaUtil;
 import org.jetbrains.annotations.NonNls;
@@ -32,9 +33,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Yann C&eacute;bron
  */
-public class ConstantValueConverterSpringClassContributor implements ConstantValueConverterClassContributor {
-
-
+final class ConstantValueConverterSpringClassContributor implements ConstantValueConverterClassContributor {
   @Override
   @Nullable
   public PsiClass fromString(@NotNull @NonNls final String s, final ConvertContext convertContext) {
@@ -56,5 +55,4 @@ public class ConstantValueConverterSpringClassContributor implements ConstantVal
 
     return springBeanPointer.getBeanClass();
   }
-
 }

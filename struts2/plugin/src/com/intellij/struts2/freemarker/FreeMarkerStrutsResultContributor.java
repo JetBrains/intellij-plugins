@@ -36,7 +36,7 @@ import java.util.Objects;
  *
  * @author peter
  */
-public final class FreeMarkerStrutsResultContributor extends StrutsResultContributor {
+final class FreeMarkerStrutsResultContributor extends StrutsResultContributor {
   @NonNls
   public static final String FREEMARKER = "freemarker";
 
