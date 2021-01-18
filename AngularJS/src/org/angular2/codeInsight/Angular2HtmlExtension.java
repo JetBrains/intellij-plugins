@@ -49,6 +49,16 @@ public final class Angular2HtmlExtension extends HtmlXmlExtension {
   }
 
   @Override
+  public boolean isImplicitlyLabelled(XmlTag tag) {
+    XmlTag parent = tag.getParentTag();
+    if (parent != null && "mat-form-field".equals(parent.getName()) && parent.findFirstSubTag("mat-label") != null) {
+      return true;
+    }
+
+    return super.isImplicitlyLabelled(tag);
+  }
+
+  @Override
   public boolean isRequiredAttributeImplicitlyPresent(XmlTag tag, String attrName) {
     Ref<Boolean> result = new Ref<>();
     tag.acceptChildren(new Angular2HtmlElementVisitor() {
