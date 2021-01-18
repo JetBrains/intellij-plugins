@@ -87,11 +87,11 @@ class RubyLearningCourse : LearningCourseBase(RubyLanguage.INSTANCE.id) {
                    primaryLanguage = langSupport,
                    moduleType = LessonType.PROJECT) {
       listOf(
+        RubySearchEverywhereLesson(it),
+        FindInFilesLesson(it, lang, "src/warehouse/find_in_files_sample.rb"),
         RubyDeclarationAndUsagesLesson(it),
         RubyFileStructureLesson(it),
         RubyRecentFilesLesson(it),
-        RubySearchEverywhereLesson(it),
-        FindInFilesLesson(it, lang, "src/warehouse/find_in_files_sample.rb")
       )
     },
   )
