@@ -207,7 +207,7 @@ public class KarmaDebugProgramRunner extends AsyncProgramRunner {
         mappings.put(karmaServer.formatUrlWithoutUrlRoot("/absolute"), roots[0]);
       }
     }
-    return new RemoteDebuggingFileFinder(mappings, (DebuggableFileFinder)null);
+    return new RemoteDebuggingFileFinder(mappings, null);
   }
 
   private static void resumeTestRunning(@NotNull OSProcessHandler processHandler) {
