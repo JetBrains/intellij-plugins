@@ -1812,6 +1812,12 @@ export default {
                        listOf("!okMessage#string#101", "!cancelMessage#string#101", "propertyIsEnumerable#boolean#98", "isPrototypeOf#boolean#98",
                               "toLocaleString#string#98", "constructor#Function#98", "valueOf#Object#98",
                               "toString#string#98", "!title#string#101", "hasOwnProperty#boolean#98"))
+    myFixture.moveToOffsetBySignature("message.<caret>")
+    myFixture.completeBasic()
+    assertSameElements(myFixture.renderLookupItems(true, true, false),
+                       listOf("propertyIsEnumerable#boolean#98", "isPrototypeOf#boolean#98",
+                              "toLocaleString#string#98", "constructor#Function#98", "valueOf#Object#98",
+                              "toString#string#98", "!title#string#101", "hasOwnProperty#boolean#98"))
   }
 
   fun testImportVueExtend() {
