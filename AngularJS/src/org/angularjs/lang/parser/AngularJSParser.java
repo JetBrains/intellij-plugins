@@ -19,7 +19,7 @@ public class AngularJSParser
     myExpressionParser = new AngularJSExpressionParser();
     myStatementParser = new StatementParser<>(this) {
       @Override
-      protected void doParseStatement(boolean canHaveClasses) {
+      protected void doParseStatement() {
         final IElementType firstToken = builder.getTokenType();
         if (firstToken == JSTokenTypes.LBRACE) {
           parseExpressionStatement();
@@ -49,7 +49,7 @@ public class AngularJSParser
             return;
           }
         }
-        super.doParseStatement(canHaveClasses);
+        super.doParseStatement();
       }
 
       private void parseNgForStatement() {
