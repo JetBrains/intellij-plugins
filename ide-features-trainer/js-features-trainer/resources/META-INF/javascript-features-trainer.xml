@@ -8,7 +8,7 @@
   <extensions defaultExtensionNs="com.intellij">
     <registryKey key="ift.show.feedback.link.javascript"
                  description="Whether IFT show feedback link in the modules panel for JavaScript course."
-                 defaultValue="FALSE"
+                 defaultValue="TRUE"
                  restartRequired="false"/>
   </extensions>
 </idea-plugin>
