@@ -231,20 +231,15 @@ fun getStubSafeCallArguments(call: JSCallExpression): List<PsiElement> {
 fun getJSTypeFromPropOptions(expression: JSExpression?): JSType? =
   when (expression) {
     is JSArrayLiteralExpression -> JSCompositeTypeImpl.getCommonType(
-      StreamEx.of(*expression.expressions)
-        .select(JSReferenceExpression::class.java)
-        .map { getJSTypeFromConstructor(it) }
-        .nonNull()
-        .toList(),
+      expression.expressions.map { getJSTypeFromConstructor(it) },
       JSTypeSource.EXPLICITLY_DECLARED, false
     )
     is JSObjectLiteralExpression -> expression.findProperty(PROPS_TYPE_PROP)
       ?.value
       ?.let {
         when (it) {
-          is JSReferenceExpression -> getJSTypeFromConstructor(it)
           is JSArrayLiteralExpression -> getJSTypeFromPropOptions(it)
-          else -> null
+          else -> getJSTypeFromConstructor(it)
         }
       }
     null -> null
