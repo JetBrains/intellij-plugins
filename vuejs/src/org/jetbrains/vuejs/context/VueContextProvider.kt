@@ -9,6 +9,7 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.CachedValueProvider
 
+@Deprecated(message = "Use WebFrameworkContext API instead.", level = DeprecationLevel.WARNING)
 interface VueContextProvider {
   /**
    * Context providers can determine whether a particular, parsed file should have Vue support enabled.
@@ -46,6 +47,8 @@ interface VueContextProvider {
   fun isVueContextForbidden(contextFile: VirtualFile, project: Project): Boolean = false
 
   companion object {
+    @Suppress("DEPRECATION")
+    @Deprecated(message = "Use WebFrameworkContext API instead.", level = DeprecationLevel.WARNING)
     val VUE_CONTEXT_PROVIDER_EP = ExtensionPointName.create<VueContextProvider>("com.intellij.vuejs.contextProvider")
   }
 }

@@ -31,7 +31,7 @@
   <vendor>JetBrains</vendor>
   <category>JavaScript Frameworks and Tools</category>
 
-  <depends>JavaScript</depends>
+  <depends>com.intellij.platform.web</depends>
   <depends>com.intellij.modules.platform</depends>
   <depends>com.intellij.css</depends>
   <depends optional="true" config-file="js-debugger.xml">JavaScriptDebugger</depends>
@@ -44,6 +44,7 @@
     <extensionPoint qualifiedName="com.intellij.vuejs.templateScopesProvider"
                     interface="org.jetbrains.vuejs.codeInsight.template.VueTemplateScopesProvider"
                     dynamic="true"/>
+    <!--suppress DeprecatedClassUsageInspection -->
     <extensionPoint qualifiedName="com.intellij.vuejs.contextProvider"
                     interface="org.jetbrains.vuejs.context.VueContextProvider"
                     dynamic="true"/>
@@ -175,6 +176,23 @@
 
     <eslint.ruleMappersFactory implementation="org.jetbrains.vuejs.libraries.eslint.VueEslintRuleMappersFactory"/>
 
+    <web.framework id="vue" implementation="org.jetbrains.vuejs.VueFramework"/>
+    <web.context framework="vue"
+                 implementation="org.jetbrains.vuejs.context.VueFileContext"
+                 id="vue.file"/>
+    <web.context framework="vue"
+                 implementation="org.jetbrains.vuejs.context.VuePackageJsonContext"
+                 id="vue.package.json"/>
+    <web.context framework="vue"
+                 implementation="org.jetbrains.vuejs.context.VueNodeModulesContext"
+                 id="vue.node_modules"
+                 order="after vue.package.json"/>
+    <web.context framework="vue"
+                 implementation="org.jetbrains.vuejs.context.VueLibraryContext"
+                 id="vue.js.libs"/>
+    <web.context framework="vue" implementation="org.jetbrains.vuejs.context.VueLegacyContext"
+                 id="vue.legacy" order="last"/>
+
     <vuejs.templateScopesProvider
       implementation="org.jetbrains.vuejs.codeInsight.template.VueStandardSymbolsScopesProvider"
       id="standardSymbols"
@@ -186,16 +204,6 @@
       implementation="org.jetbrains.vuejs.codeInsight.template.VueContainerScopeProvider"
       id="containerScope"
       order="after templateElements"/>
-
-    <vuejs.contextProvider implementation="org.jetbrains.vuejs.context.VueSimpleHtmlContextProvider"
-                           id="simple_html"/>
-    <vuejs.contextProvider implementation="org.jetbrains.vuejs.context.VuePackageJsonContextProvider"
-                           id="package.json"/>
-    <vuejs.contextProvider implementation="org.jetbrains.vuejs.context.VueNodeModulesContextProvider"
-                           id="node_modules"
-                           order="after package.json"/>
-    <vuejs.contextProvider implementation="org.jetbrains.vuejs.context.VueLibraryContextProvider"
-                           id="js_libs"/>
 
     <vuejs.containerInfoProvider implementation="org.jetbrains.vuejs.model.source.VueDefaultContainerInfoProvider"
                                  id="default"/>

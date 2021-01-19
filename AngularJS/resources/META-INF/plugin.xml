@@ -27,7 +27,7 @@
   ]]></description>
   <vendor>JetBrains</vendor>
 
-  <depends>JavaScript</depends>
+  <depends>com.intellij.platform.web</depends>
   <depends>com.intellij.modules.platform</depends>
   <depends optional="true" config-file="css-support.xml">com.intellij.css</depends>
   <depends optional="true" config-file="ui-router-diagram.xml">com.intellij.diagram</depends>
@@ -37,6 +37,7 @@
     <extensionPoint qualifiedName="org.angular2.attributesProvider"
                     interface="org.angular2.codeInsight.attributes.Angular2AttributesProvider"
                     dynamic="true"/>
+    <!--suppress DeprecatedClassUsageInspection -->
     <extensionPoint qualifiedName="org.angular2.contextProvider"
                     interface="org.angular2.lang.Angular2ContextProvider"
                     dynamic="true"/>
@@ -123,6 +124,14 @@
     <javascript.module.provider implementation="org.angularjs.codeInsight.attributes.AngularModulesProvider"/>
 
     <!-- Angular 2 contributions -->
+    <web.framework id="angular2" implementation="org.angular2.Angular2Framework"/>
+    <web.context framework="angular2" implementation="org.angular2.lang.Angular2PackageJsonContext"
+                 id="angular.packageJson"/>
+    <web.context framework="angular2" implementation="org.angular2.lang.Angular2NodeModulesContext"
+                 id="angular.nodeModules"  order="after angular.packageJson"/>
+    <web.context framework="angular2" implementation="org.angular2.lang.Angular2LegacyContext"
+                 id="angular.legacy" order="last"/>
+
     <applicationService serviceInterface="org.angular2.cli.AngularCliSchematicsRegistryService"
                         serviceImplementation="org.angular2.cli.AngularCliSchematicsRegistryServiceImpl"/>
     <javascript.names.suggester implementation="org.angular2.naming.Angular2NamesSuggester"/>
@@ -322,9 +331,6 @@
     <attributesProvider implementation="org.angular2.codeInsight.attributes.Angular2I18nAttributesProvider"/>
     <attributesProvider implementation="org.angular2.codeInsight.attributes.Angular2HammerJSEventAttributesProvider"/>
     <attributesProvider implementation="org.angular2.codeInsight.attributes.Angular2BasicAttributesProvider" order="last"/>
-
-    <contextProvider implementation="org.angular2.lang.Angular2PackageJsonContextProvider"/>
-    <contextProvider implementation="org.angular2.lang.Angular2NodeModulesContextProvider"/>
 
     <templateScopesProvider implementation="org.angular2.codeInsight.template.Angular2StandardSymbolsScopesProvider"
                             id="standardSymbols"/>

@@ -6,8 +6,17 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.util.CachedValueProvider;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * @deprecated Use {@link com.intellij.web.context.WebFrameworkContext} API instead with framework {@code angular2}
+ */
+@Deprecated
 public interface Angular2ContextProvider {
 
+  /**
+   * @deprecated Use {@link com.intellij.web.context.WebFrameworkContext} API instead with framework {@code angular2}
+   */
+  @SuppressWarnings("DeprecatedIsStillUsed")
+  @Deprecated
   ExtensionPointName<Angular2ContextProvider> ANGULAR_CONTEXT_PROVIDER_EP =
     ExtensionPointName.create("org.angular2.contextProvider");
 
