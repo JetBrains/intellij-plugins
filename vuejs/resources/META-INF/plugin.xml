@@ -181,12 +181,8 @@
                             implementation="org.jetbrains.vuejs.context.VueFileContext"
                             id="vue.file"/>
     <javascript.web.context framework="vue"
-                            implementation="org.jetbrains.vuejs.context.VuePackageJsonContext"
-                            id="vue.package.json"/>
-    <javascript.web.context framework="vue"
-                            implementation="org.jetbrains.vuejs.context.VueNodeModulesContext"
-                            id="vue.node_modules"
-                            order="after vue.package.json"/>
+                            implementation="org.jetbrains.vuejs.context.VueNodePackageContext"
+                            id="vue.nodePackage"/>
     <javascript.web.context framework="vue"
                             implementation="org.jetbrains.vuejs.context.VueLibraryContext"
                             id="vue.js.libs"/>

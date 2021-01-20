@@ -128,10 +128,8 @@
 
     <!-- Angular 2 contributions -->
     <javascript.web.framework id="angular2" implementation="org.angular2.Angular2Framework"/>
-    <javascript.web.context framework="angular2" implementation="org.angular2.lang.Angular2PackageJsonContext"
-                            id="angular.packageJson"/>
-    <javascript.web.context framework="angular2" implementation="org.angular2.lang.Angular2NodeModulesContext"
-                            id="angular.nodeModules" order="after angular.packageJson"/>
+    <javascript.web.context framework="angular2" implementation="org.angular2.lang.Angular2NodePackageContext"
+                            id="angular.nodePackage"/>
     <javascript.web.context framework="angular2" implementation="org.angular2.lang.Angular2LegacyContext"
                             id="angular.legacy" order="last"/>
 
