@@ -31,7 +31,7 @@
   <vendor>JetBrains</vendor>
   <category>JavaScript Frameworks and Tools</category>
 
-  <depends>com.intellij.platform.web</depends>
+  <depends>JavaScript</depends>
   <depends>com.intellij.modules.platform</depends>
   <depends>com.intellij.css</depends>
   <depends optional="true" config-file="js-debugger.xml">JavaScriptDebugger</depends>
@@ -176,22 +176,22 @@
 
     <eslint.ruleMappersFactory implementation="org.jetbrains.vuejs.libraries.eslint.VueEslintRuleMappersFactory"/>
 
-    <web.framework id="vue" implementation="org.jetbrains.vuejs.VueFramework"/>
-    <web.context framework="vue"
-                 implementation="org.jetbrains.vuejs.context.VueFileContext"
-                 id="vue.file"/>
-    <web.context framework="vue"
-                 implementation="org.jetbrains.vuejs.context.VuePackageJsonContext"
-                 id="vue.package.json"/>
-    <web.context framework="vue"
-                 implementation="org.jetbrains.vuejs.context.VueNodeModulesContext"
-                 id="vue.node_modules"
-                 order="after vue.package.json"/>
-    <web.context framework="vue"
-                 implementation="org.jetbrains.vuejs.context.VueLibraryContext"
-                 id="vue.js.libs"/>
-    <web.context framework="vue" implementation="org.jetbrains.vuejs.context.VueLegacyContext"
-                 id="vue.legacy" order="last"/>
+    <javascript.web.framework id="vue" implementation="org.jetbrains.vuejs.VueFramework"/>
+    <javascript.web.context framework="vue"
+                            implementation="org.jetbrains.vuejs.context.VueFileContext"
+                            id="vue.file"/>
+    <javascript.web.context framework="vue"
+                            implementation="org.jetbrains.vuejs.context.VuePackageJsonContext"
+                            id="vue.package.json"/>
+    <javascript.web.context framework="vue"
+                            implementation="org.jetbrains.vuejs.context.VueNodeModulesContext"
+                            id="vue.node_modules"
+                            order="after vue.package.json"/>
+    <javascript.web.context framework="vue"
+                            implementation="org.jetbrains.vuejs.context.VueLibraryContext"
+                            id="vue.js.libs"/>
+    <javascript.web.context framework="vue" implementation="org.jetbrains.vuejs.context.VueLegacyContext"
+                            id="vue.legacy" order="last"/>
 
     <vuejs.templateScopesProvider
       implementation="org.jetbrains.vuejs.codeInsight.template.VueStandardSymbolsScopesProvider"

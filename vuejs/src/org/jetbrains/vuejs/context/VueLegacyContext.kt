@@ -7,7 +7,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.CachedValueProvider
-import com.intellij.web.context.WebFrameworkContext
+import com.intellij.javascript.web.context.WebFrameworkContext
 
 @Suppress("DEPRECATION")
 class VueLegacyContext : WebFrameworkContext {

@@ -63,6 +63,6 @@
     <orderEntry type="module" module-name="intellij.platform.core.ui" />
     <orderEntry type="library" name="icu4j" level="project" />
     <orderEntry type="module" module-name="intellij.platform.codeStyle.impl" />
-    <orderEntry type="module" module-name="intellij.platform.web" />
+    <orderEntry type="module" module-name="intellij.javascript.web" />
   </component>
 </module>

@@ -10,7 +10,7 @@ import com.intellij.psi.impl.source.xml.XmlTagImpl
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.xml.XmlTag
-import com.intellij.web.context.WebFrameworkContext
+import com.intellij.javascript.web.context.WebFrameworkContext
 import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.lang.html.VueFileType
