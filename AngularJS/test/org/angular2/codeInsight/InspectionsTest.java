@@ -2,6 +2,7 @@
 package org.angular2.codeInsight;
 
 import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection;
+import com.intellij.htmltools.codeInspection.htmlInspections.HtmlFormInputWithoutLabelInspection;
 import com.intellij.lang.javascript.inspections.*;
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection;
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection;
@@ -112,6 +113,12 @@ public class InspectionsTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.enableInspections(new JSUnusedLocalSymbolsInspection());
     myFixture.configureByFiles("package.json");
     myFixture.configureByText("template.html", "<ng-template ngFor let- ></ng-template>");
+    myFixture.checkHighlighting();
+  }
+
+  public void testMissingLabelSuppressed() {
+    myFixture.enableInspections(new HtmlFormInputWithoutLabelInspection());
+    myFixture.configureByFiles("missingLabelSuppressed.html", "missingLabelSuppressed.ts", "package.json");
     myFixture.checkHighlighting();
   }
 }

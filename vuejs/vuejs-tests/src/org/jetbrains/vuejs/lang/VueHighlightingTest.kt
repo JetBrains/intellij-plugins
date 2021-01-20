@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang
 
+import com.intellij.htmltools.codeInspection.htmlInspections.HtmlFormInputWithoutLabelInspection
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.JSTestUtils.testWithinLanguageLevel
 import com.intellij.lang.javascript.JavaScriptBundle
@@ -1566,6 +1567,12 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
     myFixture.checkHighlighting()
   }
 
+  fun testMissingLabelSuppressed() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
+    myFixture.enableInspections(HtmlFormInputWithoutLabelInspection())
+    myFixture.configureByText("Foo.vue", """<input>""")
+    myFixture.checkHighlighting()
+  }
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {
