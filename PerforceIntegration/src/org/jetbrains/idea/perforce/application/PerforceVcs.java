@@ -46,6 +46,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ThreeState;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.io.ReadOnlyAttributeUtil;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.perforce.PerforceBundle;
@@ -116,6 +117,13 @@ public final class PerforceVcs extends AbstractVcs {
   @NotNull
   public String getDisplayName() {
     return NAME;
+  }
+
+  @Nls
+  @NotNull
+  @Override
+  public String getShortNameWithMnemonic() {
+    return PerforceBundle.message("perforce.name.with.mnemonic");
   }
 
   @Override
