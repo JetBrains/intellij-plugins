@@ -1,3 +1,4 @@
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.findUsages;
 
 import com.intellij.psi.PsiElement;
@@ -7,11 +8,12 @@ import com.intellij.usages.impl.rules.UsageTypeProvider;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DartUsageTypeProvider implements UsageTypeProvider {
   @Override
-  public UsageType getUsageType(PsiElement element) {
+  public UsageType getUsageType(@NotNull PsiElement element) {
     if (!(element instanceof DartReference)) {
       return null;
     }
