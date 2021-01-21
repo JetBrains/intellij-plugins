@@ -16,9 +16,9 @@ import org.jetbrains.vuejs.VueFramework
 import org.jetbrains.vuejs.lang.html.VueFileType
 
 
-fun isVueContext(context: PsiElement): Boolean = VueFramework.INSTANCE.isContext(context)
+fun isVueContext(context: PsiElement): Boolean = VueFramework.instance.isContext(context)
 
-fun isVueContext(contextFile: VirtualFile, project: Project): Boolean = VueFramework.INSTANCE.isContext(contextFile, project)
+fun isVueContext(contextFile: VirtualFile, project: Project): Boolean = VueFramework.instance.isContext(contextFile, project)
 
 fun hasVueFiles(project: Project): Boolean =
   CachedValuesManager.getManager(project).getCachedValue(project) {
@@ -40,4 +40,4 @@ fun enableVueTSService(project: Project): Boolean =
     }
     || project.baseDir
       ?.let { PsiManager.getInstance(project).findDirectory(it) }
-      ?.let { VueFramework.INSTANCE.isContext(it) } == true)
+      ?.let { VueFramework.instance.isContext(it) } == true)

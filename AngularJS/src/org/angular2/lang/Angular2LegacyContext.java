@@ -6,6 +6,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.javascript.web.context.WebFrameworkContext;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -16,18 +17,18 @@ public class Angular2LegacyContext implements WebFrameworkContext {
 
   @NotNull
   @Override
-  public CachedValueProvider.Result<Boolean> isEnabled(@NotNull PsiDirectory directory) {
+  public CachedValueProvider.Result<@Nullable Integer> isEnabled(@NotNull PsiDirectory directory) {
     Set<Object> dependencies = new HashSet<>();
     for (Angular2ContextProvider provider: Angular2ContextProvider.ANGULAR_CONTEXT_PROVIDER_EP.getExtensionList()) {
       var result = provider.isAngular2Context(directory);
       if (result.getValue() == Boolean.TRUE) {
-        return result;
+        return new CachedValueProvider.Result<>(0, result.getDependencyItems());
       }
       dependencies.addAll(Arrays.asList(result.getDependencyItems()));
     }
     if (dependencies.isEmpty()) {
       dependencies.add(ModificationTracker.NEVER_CHANGED);
     }
-    return new CachedValueProvider.Result<>(false, dependencies.toArray());
+    return new CachedValueProvider.Result<>(null, dependencies.toArray());
   }
 }

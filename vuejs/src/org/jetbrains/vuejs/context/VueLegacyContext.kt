@@ -17,19 +17,19 @@ class VueLegacyContext : WebFrameworkContext {
       it.isVueContextEnabled(file)
     }
 
-  override fun isEnabled(directory: PsiDirectory): CachedValueProvider.Result<Boolean> {
+  override fun isEnabled(directory: PsiDirectory): CachedValueProvider.Result<Int?> {
     val dependencies = mutableSetOf<Any>()
     for (provider in VueContextProvider.VUE_CONTEXT_PROVIDER_EP.extensions) {
       val result = provider.isVueContext(directory)
       if (result.value == true) {
-        return result
+        return CachedValueProvider.Result(0, result.dependencyItems)
       }
       dependencies.addAll(result.dependencyItems)
     }
     if (dependencies.isEmpty()) {
       dependencies.add(ModificationTracker.NEVER_CHANGED)
     }
-    return CachedValueProvider.Result(false, *dependencies.toTypedArray())
+    return CachedValueProvider.Result(null, *dependencies.toTypedArray())
   }
 
   override fun isForbidden(contextFile: VirtualFile, project: Project): Boolean =

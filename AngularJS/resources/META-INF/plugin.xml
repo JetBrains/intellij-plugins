@@ -96,6 +96,7 @@
     <annotator language="AngularJS" implementationClass="com.intellij.lang.javascript.validation.JSAnnotator"/>
     <fileType name="HTML" extensions="ng"/>
 
+    <!--suppress PluginXmlValidity -->
     <multiHostInjector implementation="org.angularjs.editor.AngularJSInjector"
                        order="before JSConfigurationInjector, after TemporaryPlacesInjector"
                        id="AngularInjector"/>
@@ -127,10 +128,10 @@
     <javascript.module.provider implementation="org.angularjs.codeInsight.attributes.AngularModulesProvider"/>
 
     <!-- Angular 2 contributions -->
-    <javascript.web.framework id="angular2" implementation="org.angular2.Angular2Framework"/>
-    <javascript.web.context framework="angular2" implementation="org.angular2.lang.Angular2NodePackageContext"
+    <javascript.web.framework id="angular" implementation="org.angular2.Angular2Framework"/>
+    <javascript.web.context framework="angular" implementation="org.angular2.lang.Angular2NodePackageContext"
                             id="angular.nodePackage"/>
-    <javascript.web.context framework="angular2" implementation="org.angular2.lang.Angular2LegacyContext"
+    <javascript.web.context framework="angular" implementation="org.angular2.lang.Angular2LegacyContext"
                             id="angular.legacy" order="last"/>
 
     <applicationService serviceInterface="org.angular2.cli.AngularCliSchematicsRegistryService"
@@ -207,7 +208,6 @@
     <lang.parserDefinition language="Angular2Html" implementationClass="org.angular2.lang.html.parser.Angular2HtmlParserDefinition"/>
     <lang.syntaxHighlighterFactory language="Angular2Html"
                                    implementationClass="org.angular2.lang.html.highlighting.Angular2HtmlHighlighterFactory"/>
-    <lang.substitutor language="HTML" implementationClass="org.angular2.lang.html.Angular2HtmlLanguageSubstitutor" order="first"/>
     <lookup.charFilter implementation="org.angular2.editor.Angular2LookupCharFilter" order="before xml"/>
     <localInspection implementationClass="org.angular2.inspections.AngularMissingEventHandlerInspection"
                      groupKey="angular.inspection.group.name" enabledByDefault="true"
@@ -251,7 +251,6 @@
     <xml.elementDescriptorProvider implementation="org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider" order="last"/>
     <idIndexer filetype="Angular2Html" implementationClass="org.angular2.lang.html.index.Angular2HtmlIdIndexer"/>
     <todoIndexer filetype="Angular2Html" implementationClass="org.angular2.lang.html.index.Angular2HtmlTodoIndexer"/>
-    <xml.fileNSInfoProvider implementation="org.angular2.lang.html.Angular2HtmlNSInfoProvider"/>
     <stubElementTypeHolder class="org.angular2.lang.html.stub.Angular2HtmlStubElementTypes"/>
     <lang.formatter language="Angular2Html" implementationClass="org.angular2.lang.html.Angular2HtmlFormattingModelBuilder"/>
     <gotoDeclarationHandler implementation="org.angular2.editor.Angular2GotoDeclarationHandler" order="first"/>
@@ -267,7 +266,6 @@
               language="Angular2Svg"/>
     <!--suppress PluginXmlValidity -->
     <quoteHandler className="com.intellij.codeInsight.editorActions.HtmlQuoteHandler" fileType="Angular2Svg"/>
-    <lang.substitutor language="SVG" implementationClass="org.angular2.lang.svg.Angular2SvgLanguageSubstitutor"/>
 
     <!-- Angular 2 Expression Language contributions -->
     <lang.syntaxHighlighter language="Angular2"

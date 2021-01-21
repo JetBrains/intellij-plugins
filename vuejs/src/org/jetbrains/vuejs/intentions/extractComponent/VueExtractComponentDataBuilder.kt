@@ -142,14 +142,14 @@ class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
   private fun findTemplate(): XmlTag? = PsiTreeUtil.findFirstParent(list[0]) { TEMPLATE_TAG_NAME == (it as? XmlTag)?.name } as? XmlTag
 
   fun createNewComponent(newComponentName: String): VirtualFile? {
-    val newText = generateNewComponentText(newComponentName) ?: return null
+    val newText = generateNewComponentText(newComponentName)
     val folder: PsiDirectory = containingFile.parent ?: return null
     val virtualFile = folder.virtualFile.createChildData(this, toAsset(newComponentName).capitalize() + ".vue")
     VfsUtil.saveText(virtualFile, newText)
     return virtualFile
   }
 
-  private fun generateNewComponentText(newComponentName: String): String? {
+  private fun generateNewComponentText(newComponentName: String): String {
     // this piece of code is responsible for handling the cases when the same function is use in a call and passed further as function
     val hasDirectUsageSet = mutableSetOf<String>()
     val hasReplaceMap = mutableMapOf<String, Boolean>()
@@ -217,7 +217,7 @@ export default {
   }
 
   private fun hasMeaningfulChildren(element: PsiElement) =
-    !PsiTreeUtil.processElements({ !(it !is PsiWhiteSpace && it !is PsiComment) }, element.children)
+    !PsiTreeUtil.processElements({ !(it !is PsiWhiteSpace && it !is PsiComment) }, *element.children)
 
   private fun langAttribute(lang: String?) = if (lang == null) "" else " lang=\"$lang\""
 

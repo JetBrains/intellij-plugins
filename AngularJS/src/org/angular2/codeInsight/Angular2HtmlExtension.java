@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight;
 
+import com.intellij.javascript.web.WebFramework;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
@@ -15,8 +16,8 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.URLUtil;
 import com.intellij.xml.HtmlXmlExtension;
 import com.intellij.xml.util.XmlUtil;
+import org.angular2.Angular2Framework;
 import org.angular2.lang.Angular2LangUtil;
-import org.angular2.lang.html.Angular2HtmlFileType;
 import org.angular2.lang.html.psi.Angular2HtmlBananaBoxBinding;
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor;
 import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding;
@@ -37,7 +38,7 @@ public final class Angular2HtmlExtension extends HtmlXmlExtension {
 
   @Override
   public boolean isAvailable(PsiFile file) {
-    return file.getFileType() instanceof Angular2HtmlFileType
+    return WebFramework.forFileType(file.getFileType()) == Angular2Framework.getInstance()
            && Angular2LangUtil.isAngular2Context(file);
   }
 
