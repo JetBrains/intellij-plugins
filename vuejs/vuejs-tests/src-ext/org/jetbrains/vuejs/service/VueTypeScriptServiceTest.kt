@@ -2,7 +2,6 @@
 package org.jetbrains.vuejs.service
 
 import com.intellij.codeInsight.completion.CompletionType
-import com.intellij.codeInsight.navigation.actions.GotoDeclarationOrUsageHandler2
 import com.intellij.lang.javascript.service.JSLanguageService
 import com.intellij.lang.javascript.service.JSLanguageServiceBase
 import com.intellij.lang.javascript.service.JSLanguageServiceProvider
@@ -10,7 +9,7 @@ import com.intellij.lang.javascript.typescript.service.TypeScriptServiceTestBase
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.testFramework.JSUnit38AssumeSupportRunner
+import com.intellij.testFramework.JUnit38AssumeSupportRunner
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.ui.UIUtil
 import junit.framework.TestCase
@@ -20,7 +19,7 @@ import org.jetbrains.vuejs.lang.typescript.service.VueTypeScriptService
 import org.jetbrains.vuejs.lang.vueRelativeTestDataPath
 import org.junit.runner.RunWith
 
-@RunWith(JSUnit38AssumeSupportRunner::class)
+@RunWith(JUnit38AssumeSupportRunner::class)
 class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
   override fun getService(): JSLanguageServiceBase {
     val services = JSLanguageServiceProvider.getLanguageServices(project)

@@ -5,14 +5,14 @@ import com.intellij.lang.javascript.service.JSLanguageService
 import com.intellij.lang.javascript.service.JSLanguageServiceBase
 import com.intellij.lang.javascript.service.JSLanguageServiceProvider
 import com.intellij.lang.javascript.typescript.service.TypeScriptServiceTestBase
-import com.intellij.testFramework.JSUnit38AssumeSupportRunner
+import com.intellij.testFramework.JUnit38AssumeSupportRunner
 import com.intellij.openapi.editor.impl.DocumentImpl
 import com.intellij.testFramework.ExpectedHighlightingData
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.util.containers.ContainerUtil
 import org.junit.runner.RunWith
 
-@RunWith(JSUnit38AssumeSupportRunner::class)
+@RunWith(JUnit38AssumeSupportRunner::class)
 class DenoTypeScriptServiceTest : TypeScriptServiceTestBase() {
   var before = false
 
