@@ -77,7 +77,6 @@ public class TapestryFrameworkSupportProvider extends FacetBasedFrameworkSupport
         builder.addOkAction();
         builder.setCenterPanel(newFacetDialog.getMainPanel());
         builder.setTitle("New Tapestry Support");
-        builder.setButtonsAlignment(SwingConstants.CENTER);
 
         builder.setOkOperation(() -> {
           if (!Validators.isValidPackageName(newFacetDialog.getApplicationPackage())) {

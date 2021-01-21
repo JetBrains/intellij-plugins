@@ -49,7 +49,6 @@ public class AddNewPageAction extends AddNewElementAction<PagesNode> {
     final DialogBuilder builder = new DialogBuilder(module.getProject());
     builder.setCenterPanel(addNewComponentDialog.getContentPane());
     builder.setTitle("New Tapestry Page");
-    builder.setButtonsAlignment(SwingConstants.CENTER);
     builder.setPreferredFocusComponent(addNewComponentDialog.getNameComponent());
 
     builder.setOkOperation(() -> {

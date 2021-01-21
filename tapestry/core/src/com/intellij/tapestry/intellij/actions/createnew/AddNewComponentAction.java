@@ -48,7 +48,6 @@ public class AddNewComponentAction extends AddNewElementAction<ComponentsNode> {
     final DialogBuilder builder = new DialogBuilder(module.getProject());
     builder.setCenterPanel(addNewComponentDialog.getContentPane());
     builder.setTitle("New Tapestry Component");
-    builder.setButtonsAlignment(SwingConstants.CENTER);
     builder.setPreferredFocusComponent(addNewComponentDialog.getNameComponent());
 
     builder.setOkOperation(() -> {
