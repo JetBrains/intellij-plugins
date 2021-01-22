@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.sdk;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
@@ -33,7 +33,6 @@ import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.flutter.FlutterUtil;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,13 +44,9 @@ import javax.swing.event.TreeWillExpandListener;
 import javax.swing.text.JTextComponent;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.ExpandVetoException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Enumeration;
+import java.util.*;
 
-public class DartConfigurable implements SearchableConfigurable, NoScroll {
-
+public final class DartConfigurable implements SearchableConfigurable, NoScroll {
   public static final int WEBDEV_PORT_DEFAULT = 53322;
   private static final String WEBDEV_PORT_PROPERTY_NAME = "dart.webdev.port";
 
@@ -90,7 +85,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
 
   private boolean myDartSupportEnabledInitial;
   private @Nullable DartSdk mySdkInitial;
-  private final @NotNull Collection<Module> myModulesWithDartSdkLibAttachedInitial = new THashSet<>();
+  private final @NotNull Collection<Module> myModulesWithDartSdkLibAttachedInitial = new HashSet<>();
 
   public DartConfigurable(final @NotNull Project project) {
     myProject = project;

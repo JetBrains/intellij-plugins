@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.index;
 
 import com.intellij.openapi.util.Key;
@@ -10,9 +10,9 @@ import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartControlFlowUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import static com.jetbrains.lang.dart.ide.index.DartImportOrExportInfo.Kind;
@@ -94,7 +94,7 @@ public final class DartIndexUtil {
                                                      final @NotNull DartImportOrExportStatement importOrExportStatement) {
     final String uri = importOrExportStatement.getUriString();
 
-    final Set<String> showComponentNames = new THashSet<>();
+    final Set<String> showComponentNames = new HashSet<>();
     for (DartShowCombinator showCombinator : importOrExportStatement.getShowCombinatorList()) {
       final DartLibraryReferenceList libraryReferenceList = showCombinator.getLibraryReferenceList();
       if (libraryReferenceList != null) {
@@ -104,7 +104,7 @@ public final class DartIndexUtil {
       }
     }
 
-    final Set<String> hideComponentNames = new THashSet<>();
+    final Set<String> hideComponentNames = new HashSet<>();
     for (DartHideCombinator hideCombinator : importOrExportStatement.getHideCombinatorList()) {
       final DartLibraryReferenceList libraryReferenceList = hideCombinator.getLibraryReferenceList();
       if (libraryReferenceList != null) {

@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.generation;
 
 import com.intellij.openapi.util.Pair;
@@ -7,13 +7,13 @@ import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DartImplementMethodHandler extends BaseDartGenerateHandler {
+public final class DartImplementMethodHandler extends BaseDartGenerateHandler {
   @Override
   @NotNull
   protected String getTitle() {
@@ -28,10 +28,8 @@ public class DartImplementMethodHandler extends BaseDartGenerateHandler {
 
   @Override
   protected void collectCandidates(@NotNull final DartClass dartClass, @NotNull final List<DartComponent> candidates) {
-    Map<Pair<String, Boolean>, DartComponent> result =
-      new THashMap<>(computeSuperInterfacesMembersMap(dartClass));
-    Map<Pair<String, Boolean>, DartComponent> superClassesMemberMap =
-      new THashMap<>(computeSuperClassesMemberMap(dartClass));
+    Map<Pair<String, Boolean>, DartComponent> result = new HashMap<>(computeSuperInterfacesMembersMap(dartClass));
+    Map<Pair<String, Boolean>, DartComponent> superClassesMemberMap = new HashMap<>(computeSuperClassesMemberMap(dartClass));
     result.keySet().removeAll(superClassesMemberMap.keySet());
     for (Map.Entry<Pair<String, Boolean>, DartComponent> entry : superClassesMemberMap.entrySet()) {
       final DartComponent component = entry.getValue();

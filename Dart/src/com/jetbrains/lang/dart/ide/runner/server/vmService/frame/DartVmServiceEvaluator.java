@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server.vmService.frame;
 
 import com.intellij.openapi.editor.Document;
@@ -22,7 +22,6 @@ import com.jetbrains.lang.dart.ide.runner.server.vmService.DartVmServiceDebugPro
 import com.jetbrains.lang.dart.ide.runner.server.vmService.VmServiceWrapper;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
-import gnu.trove.THashSet;
 import org.dartlang.vm.service.consumer.GetObjectConsumer;
 import org.dartlang.vm.service.element.*;
 import org.jetbrains.annotations.Nls;
@@ -30,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -162,7 +162,7 @@ public class DartVmServiceEvaluator extends XDebuggerEvaluator {
 
   private @Nullable LibraryRef findMatchingLibrary(@NotNull Isolate isolate, @NotNull List<VirtualFile> libraryFiles) {
     if (!libraryFiles.isEmpty()) {
-      Set<String> uris = new THashSet<>();
+      Set<String> uris = new HashSet<>();
 
       for (VirtualFile libraryFile : libraryFiles) {
         uris.addAll(myDebugProcess.getUrisForFile(libraryFile));

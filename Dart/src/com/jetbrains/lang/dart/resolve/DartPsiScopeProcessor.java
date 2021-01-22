@@ -1,3 +1,4 @@
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.resolve;
 
 import com.intellij.openapi.diagnostic.Logger;
@@ -10,19 +11,19 @@ import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.util.containers.Stack;
 import com.jetbrains.lang.dart.ide.index.DartShowHideInfo;
 import com.jetbrains.lang.dart.psi.DartComponentName;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 public abstract class DartPsiScopeProcessor implements PsiScopeProcessor {
   private static final Logger LOG = Logger.getInstance(DartResolveProcessor.class.getName());
 
   private final Stack<Pair<VirtualFile, DartShowHideInfo>> myShowHideFilters = new Stack<>();
-  private final Map<VirtualFile, Collection<PsiElement>> myFilteredOutElements = new THashMap<>();
+  private final Map<VirtualFile, Collection<PsiElement>> myFilteredOutElements = new HashMap<>();
 
   public void importedFileProcessingStarted(final @NotNull VirtualFile importedFile, final @NotNull DartShowHideInfo showHideInfo) {
     myShowHideFilters.push(Pair.create(importedFile, showHideInfo));

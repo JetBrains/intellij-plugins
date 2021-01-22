@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.util;
 
 import com.intellij.openapi.project.Project;
@@ -32,7 +32,6 @@ import com.jetbrains.lang.dart.psi.impl.AbstractDartPsiClass;
 import com.jetbrains.lang.dart.psi.impl.DartPsiCompositeElementImpl;
 import com.jetbrains.lang.dart.resolve.DartPsiScopeProcessor;
 import com.jetbrains.lang.dart.resolve.DartResolveProcessor;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -182,7 +181,7 @@ public final class DartResolveUtil {
     if (filesOfInterest != null && filesOfInterest.isEmpty()) return true;
 
     final boolean privateOnly = componentNameHint != null && componentNameHint.startsWith("_");
-    return processTopLevelDeclarationsImpl(context, processor, rootVirtualFile, filesOfInterest, new THashSet<>(), privateOnly);
+    return processTopLevelDeclarationsImpl(context, processor, rootVirtualFile, filesOfInterest, new HashSet<>(), privateOnly);
   }
 
   private static boolean processTopLevelDeclarationsImpl(final @NotNull PsiElement context,
@@ -299,7 +298,7 @@ public final class DartResolveUtil {
     if (librariesForContext1.isEmpty()) return false;
     final List<VirtualFile> librariesForContext2 = findLibrary(context2.getContainingFile());
     if (librariesForContext2.isEmpty()) return false;
-    final THashSet<VirtualFile> librariesSetForContext1 = new THashSet<>(librariesForContext1);
+    final Set<VirtualFile> librariesSetForContext1 = new HashSet<>(librariesForContext1);
     return ContainerUtil.find(librariesForContext2, librariesSetForContext1::contains) != null;
   }
 
@@ -446,10 +445,8 @@ public final class DartResolveUtil {
   }
 
   public static boolean processSuperClasses(PsiElementProcessor<? super DartClass> processor, DartClass @NotNull ... rootDartClasses) {
-    final Set<DartClass> processedClasses = new THashSet<>();
-    final LinkedList<DartClass> classes = new LinkedList<>();
-    classes.addAll(Arrays.asList(rootDartClasses));
-
+    final Set<DartClass> processedClasses = new HashSet<>();
+    LinkedList<DartClass> classes = new LinkedList<>(Arrays.asList(rootDartClasses));
     while (!classes.isEmpty()) {
       final DartClass dartClass = classes.pollFirst();
       if (dartClass == null || processedClasses.contains(dartClass)) {
@@ -485,7 +482,7 @@ public final class DartResolveUtil {
   public static void processSupers(@Nullable PsiElementProcessor<? super DartClass> superClassProcessor,
                                    @Nullable PsiElementProcessor<? super DartClass> superInterfaceProcessor,
                                    @Nullable DartClass rootDartClass) {
-    final Set<DartClass> processedClasses = new THashSet<>();
+    final Set<DartClass> processedClasses = new HashSet<>();
     DartClass currentClass = rootDartClass;
     while (currentClass != null) {
       processedClasses.add(currentClass);

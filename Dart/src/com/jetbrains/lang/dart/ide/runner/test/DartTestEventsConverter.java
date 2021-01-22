@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.test;
 
 import com.google.gson.*;
@@ -12,7 +12,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
 import com.jetbrains.lang.dart.ide.runner.util.DartTestLocationProvider;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
-import gnu.trove.TIntLongHashMap;
+import it.unimi.dsi.fastutil.ints.Int2LongOpenHashMap;
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessageVisitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -91,18 +91,17 @@ public final class DartTestEventsConverter extends OutputToGeneralTestEventsConv
   private String myLocation;
   private Key myCurrentOutputType;
   private ServiceMessageVisitor myCurrentVisitor;
-  private final TIntLongHashMap myTestIdToTimestamp;
+  private final Int2LongOpenHashMap myTestIdToTimestamp;
   private final Map<Integer, Test> myTestData;
   private final Map<Integer, Group> myGroupData;
   private final Map<Integer, Suite> mySuiteData;
-  private int mySuitCount;
 
   public DartTestEventsConverter(@NotNull final String testFrameworkName,
                                  @NotNull final TestConsoleProperties consoleProperties,
                                  @NotNull final DartUrlResolver urlResolver) {
     super(testFrameworkName, consoleProperties);
     myUrlResolver = urlResolver;
-    myTestIdToTimestamp = new TIntLongHashMap();
+    myTestIdToTimestamp = new Int2LongOpenHashMap();
     myTestData = new HashMap<>();
     myGroupData = new HashMap<>();
     mySuiteData = new HashMap<>();
@@ -345,10 +344,11 @@ public final class DartTestEventsConverter extends OutputToGeneralTestEventsConv
     return message.endsWith("\n") ? message : message + "\n";
   }
 
-  private boolean handleAllSuites(JsonObject obj) {
+  private static boolean handleAllSuites(JsonObject obj) {
     JsonElement elem = obj.get(JSON_COUNT);
-    if (elem == null || !elem.isJsonPrimitive()) return true;
-    mySuitCount = elem.getAsInt();
+    if (elem != null) {
+      elem.isJsonPrimitive();
+    }
     return true;
   }
 
@@ -377,12 +377,11 @@ public final class DartTestEventsConverter extends OutputToGeneralTestEventsConv
     myTestData.clear();
     myGroupData.clear();
     mySuiteData.clear();
-    mySuitCount = 0;
 
     return doProcessServiceMessages(ServiceMessageBuilder.testsStarted().toString());
   }
 
-  private boolean handleDone(JsonObject obj) throws ParseException {
+  private boolean handleDone(JsonObject obj) {
     // The test runner has reached the end of the tests.
     processAllTestsDone();
     return true;
@@ -408,7 +407,6 @@ public final class DartTestEventsConverter extends OutputToGeneralTestEventsConv
     myTestData.clear();
     myGroupData.clear();
     mySuiteData.clear();
-    mySuitCount = 0;
   }
 
   private boolean processGroupDone(@NotNull final Group group) throws ParseException {
@@ -735,8 +733,8 @@ public final class DartTestEventsConverter extends OutputToGeneralTestEventsConv
     }
   }
 
-  private static class Group extends Item {
-    private int myTestCount = 0;
+  private static final class Group extends Item {
+    private final int myTestCount;
     private int myDoneTestsCount = 0;
 
     static Group from(JsonObject obj, Map<Integer, Group> groups, Map<Integer, Suite> suites) {

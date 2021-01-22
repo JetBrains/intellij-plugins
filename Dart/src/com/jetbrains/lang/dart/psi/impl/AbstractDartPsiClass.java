@@ -1,3 +1,4 @@
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.psi.impl;
 
 import com.intellij.lang.ASTNode;
@@ -10,11 +11,11 @@ import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -168,7 +169,7 @@ abstract public class AbstractDartPsiClass extends AbstractDartComponentImpl imp
     if (myMembersCache == null) {
       myMembersCache = CachedValuesManager.getManager(getProject()).createCachedValue(
         () -> {
-          final Map<String, List<DartComponent>> nameToMembers = new THashMap<>();
+          final Map<String, List<DartComponent>> nameToMembers = new HashMap<>();
 
           for (DartComponent component : DartResolveUtil.findNamedSubComponents(false, this)) {
             final String componentName = component.getName();

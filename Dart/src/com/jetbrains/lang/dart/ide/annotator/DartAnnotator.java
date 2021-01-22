@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.annotator;
 
 import com.intellij.codeInspection.ProblemHighlightType;
@@ -27,7 +27,6 @@ import com.jetbrains.lang.dart.ide.errorTreeView.DartProblem;
 import com.jetbrains.lang.dart.psi.DartSymbolLiteralExpression;
 import com.jetbrains.lang.dart.psi.DartTernaryExpression;
 import com.jetbrains.lang.dart.sdk.DartSdk;
-import gnu.trove.THashMap;
 import org.dartlang.analysis.server.protocol.AnalysisErrorSeverity;
 import org.dartlang.analysis.server.protocol.HighlightRegionType;
 import org.jetbrains.annotations.Contract;
@@ -36,12 +35,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class DartAnnotator implements Annotator {
-
+public final class DartAnnotator implements Annotator {
   private static final Key<List<DartServerData.DartError>> DART_ERRORS = Key.create("DART_ERRORS");
   private static final Key<List<DartServerData.DartHighlightRegion>> DART_HIGHLIGHTING = Key.create("DART_HIGHLIGHTING");
 
-  private static final Map<String, String> HIGHLIGHTING_TYPE_MAP = new THashMap<>();
+  private static final Map<String, String> HIGHLIGHTING_TYPE_MAP = new HashMap<>();
 
   static {
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.ANNOTATION, DartSyntaxHighlighterColors.DART_ANNOTATION);

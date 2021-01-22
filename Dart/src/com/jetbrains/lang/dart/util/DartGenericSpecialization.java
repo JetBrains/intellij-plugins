@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.util;
 
 import com.intellij.openapi.util.text.StringUtil;
@@ -7,7 +7,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartTypeArguments;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,7 +28,7 @@ public final class DartGenericSpecialization implements Cloneable {
 
   @Override
   public DartGenericSpecialization clone() {
-    final Map<String, DartClassResolveResult> clonedMap = new THashMap<>();
+    final Map<String, DartClassResolveResult> clonedMap = new HashMap<>();
     for (String key : map.keySet()) {
       clonedMap.put(key, map.get(key));
     }
@@ -50,7 +49,7 @@ public final class DartGenericSpecialization implements Cloneable {
 
   public DartGenericSpecialization getInnerSpecialization(PsiElement element) {
     final String prefixToRemove = getGenericKey(element, "");
-    final Map<String, DartClassResolveResult> result = new THashMap<>();
+    final Map<String, DartClassResolveResult> result = new HashMap<>();
     for (String key : map.keySet()) {
       final DartClassResolveResult value = map.get(key);
       String newKey = key;

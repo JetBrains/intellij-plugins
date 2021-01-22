@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.index;
 
 import com.intellij.openapi.project.Project;
@@ -9,7 +9,6 @@ import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.DataInputOutputUtil;
 import com.intellij.util.io.IOUtil;
 import com.jetbrains.lang.dart.DartFileType;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,7 +17,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.util.*;
 
-public class DartImportAndExportIndex extends SingleEntryFileBasedIndexExtension<List<DartImportOrExportInfo>> {
+public final class DartImportAndExportIndex extends SingleEntryFileBasedIndexExtension<List<DartImportOrExportInfo>> {
   private static final ID<Integer, List<DartImportOrExportInfo>> DART_IMPORT_EXPORT_INDEX = ID.create("DartImportIndex");
 
   @NotNull
@@ -75,12 +74,12 @@ public class DartImportAndExportIndex extends SingleEntryFileBasedIndexExtension
           final String uri = IOUtil.readUTF(in);
           final String prefix = IOUtil.readUTF(in);
           final int showSize = DataInputOutputUtil.readINT(in);
-          final Set<String> showComponentNames = showSize == 0 ? Collections.emptySet() : new THashSet<>(showSize);
+          final Set<String> showComponentNames = showSize == 0 ? Collections.emptySet() : new HashSet<>(showSize);
           for (int j = 0; j < showSize; j++) {
             showComponentNames.add(IOUtil.readUTF(in));
           }
           final int hideSize = DataInputOutputUtil.readINT(in);
-          final Set<String> hideComponentNames = hideSize == 0 ? Collections.emptySet() : new THashSet<>(hideSize);
+          final Set<String> hideComponentNames = hideSize == 0 ? Collections.emptySet() : new HashSet<>(hideSize);
           for (int j = 0; j < hideSize; j++) {
             hideComponentNames.add(IOUtil.readUTF(in));
           }

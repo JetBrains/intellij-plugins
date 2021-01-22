@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.analyzer;
 
 import com.google.common.collect.EvictingQueue;
@@ -61,9 +61,7 @@ import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUpdateChecker;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
-import gnu.trove.THashMap;
-import gnu.trove.THashSet;
-import gnu.trove.TObjectIntHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
@@ -74,8 +72,6 @@ import java.io.File;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-
-import static com.google.dart.server.internal.remote.RemoteAnalysisServerImpl.DART_FIX_INFO_NON_NULLABLE;
 
 public final class DartAnalysisServerService implements Disposable {
   public static final String MIN_SDK_VERSION = "1.12";
@@ -133,9 +129,9 @@ public final class DartAnalysisServerService implements Disposable {
   @Nullable private String mySdkHome;
 
   private final DartServerRootsHandler myRootsHandler;
-  private final Map<String, Long> myFilePathWithOverlaidContentToTimestamp = new THashMap<>();
+  private final Map<String, Long> myFilePathWithOverlaidContentToTimestamp = new HashMap<>();
   private final List<String> myVisibleFiles = new ArrayList<>();
-  private final Set<Document> myChangedDocuments = new THashSet<>();
+  private final Set<Document> myChangedDocuments = new HashSet<>();
   private final Alarm myUpdateFilesAlarm;
 
   @NotNull private final Queue<CompletionInfo> myCompletionInfos = new LinkedList<>();
@@ -154,11 +150,11 @@ public final class DartAnalysisServerService implements Disposable {
   private boolean mySentAnalysisBusy;
 
   // files with red squiggles in Project View. This field is also used as a lock to access these 3 collections
-  @NotNull private final Set<String> myFilePathsWithErrors = new THashSet<>();
+  @NotNull private final Set<String> myFilePathsWithErrors = new HashSet<>();
   // how many files with errors are in this folder (recursively)
-  @NotNull private final TObjectIntHashMap<String> myFolderPathsWithErrors = new TObjectIntHashMap<>();
+  @NotNull private final Object2IntOpenHashMap<String> myFolderPathsWithErrors = new Object2IntOpenHashMap<>();
   // errors hash is tracked to optimize error notification listener: do not handle equal notifications more than once
-  @NotNull private final TObjectIntHashMap<String> myFilePathToErrorsHash = new TObjectIntHashMap<>();
+  @NotNull private final Object2IntOpenHashMap<String> myFilePathToErrorsHash = new Object2IntOpenHashMap<>();
 
   @NotNull private final EvictingQueue<String> myDebugLog = EvictingQueue.create(DEBUG_LOG_CAPACITY);
 
@@ -216,7 +212,7 @@ public final class DartAnalysisServerService implements Disposable {
       final int oldHash;
       synchronized (myFilePathsWithErrors) {
         // TObjectIntHashMap returns 0 if there's no such entry, it's equivalent to empty error set for this file
-        oldHash = myFilePathToErrorsHash.get(filePathSI);
+        oldHash = myFilePathToErrorsHash.getInt(filePathSI);
       }
 
       final int newHash = errorsWithoutTodo.isEmpty() ? 0 : ensureNotZero(errorsWithoutTodo.hashCode());
@@ -883,16 +879,16 @@ public final class DartAnalysisServerService implements Disposable {
 
     myUpdateFilesAlarm.cancelAllRequests();
 
-    final Map<String, Object> filesToUpdate = new THashMap<>();
+    final Map<String, Object> filesToUpdate = new HashMap<>();
     ApplicationManager.getApplication().assertReadAccessAllowed();
     synchronized (myLock) {
-      final Set<String> oldTrackedFiles = new THashSet<>(myFilePathWithOverlaidContentToTimestamp.keySet());
+      final Set<String> oldTrackedFiles = new HashSet<>(myFilePathWithOverlaidContentToTimestamp.keySet());
 
       final FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
 
       // some documents in myChangedDocuments may be updated by external change, such as switch branch, that's why we track them,
       // getUnsavedDocuments() is not enough, we must make sure that overlaid content is sent for for myChangedDocuments as well (to trigger DAS notifications)
-      final Set<Document> documents = new THashSet<>(myChangedDocuments);
+      final Set<Document> documents = new HashSet<>(myChangedDocuments);
       myChangedDocuments.clear();
       ContainerUtil.addAll(documents, fileDocumentManager.getUnsavedDocuments());
 
@@ -917,7 +913,7 @@ public final class DartAnalysisServerService implements Disposable {
       }
 
       if (LOG.isDebugEnabled()) {
-        final Set<String> overlaid = new THashSet<>(filesToUpdate.keySet());
+        final Set<String> overlaid = new HashSet<>(filesToUpdate.keySet());
         for (String removeOverlaid : oldTrackedFiles) {
           overlaid.remove(FileUtil.toSystemDependentName(removeOverlaid));
         }
@@ -967,7 +963,7 @@ public final class DartAnalysisServerService implements Disposable {
     synchronized (myFilePathsWithErrors) {
       if (errorsHash == 0) {
         // no errors
-        myFilePathToErrorsHash.remove(filePath);
+        myFilePathToErrorsHash.removeInt(filePath);
       }
       else {
         myFilePathToErrorsHash.put(filePath, errorsHash);
@@ -977,7 +973,7 @@ public final class DartAnalysisServerService implements Disposable {
         if (myFilePathsWithErrors.add(filePath)) {
           String parentPath = PathUtil.getParentPath(filePath);
           while (!parentPath.isEmpty()) {
-            final int count = myFolderPathsWithErrors.get(parentPath); // returns zero if there were no path in the map
+            final int count = myFolderPathsWithErrors.getInt(parentPath); // returns zero if there were no path in the map
             myFolderPathsWithErrors.put(parentPath, count + 1);
             parentPath = PathUtil.getParentPath(parentPath);
           }
@@ -987,7 +983,7 @@ public final class DartAnalysisServerService implements Disposable {
         if (myFilePathsWithErrors.remove(filePath)) {
           String parentPath = PathUtil.getParentPath(filePath);
           while (!parentPath.isEmpty()) {
-            final int count = myFolderPathsWithErrors.remove(parentPath); // returns zero if there was no path in the map
+            final int count = myFolderPathsWithErrors.removeInt(parentPath); // returns zero if there was no path in the map
             if (count > 1) {
               myFolderPathsWithErrors.put(parentPath, count - 1);
             }
@@ -1476,7 +1472,7 @@ public final class DartAnalysisServerService implements Disposable {
 
   @Nullable
   public List<SourceFileEdit> edit_dartfixNNBD(final @NotNull List<? extends VirtualFile> files) {
-    return edit_dartfix(files, Collections.singletonList(DART_FIX_INFO_NON_NULLABLE));
+    return edit_dartfix(files, Collections.singletonList(RemoteAnalysisServerImpl.DART_FIX_INFO_NON_NULLABLE));
   }
 
   @Nullable
@@ -1771,7 +1767,7 @@ public final class DartAnalysisServerService implements Disposable {
     synchronized (myLock) {
       if (myServer == null) return;
 
-      final Map<String, List<String>> subscriptions = new THashMap<>();
+      final Map<String, List<String>> subscriptions = new HashMap<>();
       subscriptions.put(AnalysisService.HIGHLIGHTS, myVisibleFiles);
       subscriptions.put(AnalysisService.NAVIGATION, myVisibleFiles);
       subscriptions.put(AnalysisService.OVERRIDES, myVisibleFiles);
@@ -1840,7 +1836,7 @@ public final class DartAnalysisServerService implements Disposable {
                                                                                                       @NotNull List<RuntimeCompletionExpression> expressions) {
     final AnalysisServer server = myServer;
     if (server == null) {
-      return new Pair(new ArrayList<CompletionSuggestion>(), new ArrayList<RuntimeCompletionExpression>());
+      return new Pair<>(new ArrayList<CompletionSuggestion>(), new ArrayList<RuntimeCompletionExpression>());
     }
 
     final String contextFilePath = FileUtil.toSystemDependentName(contextFile.getPath());
@@ -1853,7 +1849,7 @@ public final class DartAnalysisServerService implements Disposable {
       new GetRuntimeCompletionConsumer() {
         @Override
         public void computedResult(List<CompletionSuggestion> suggestions, List<RuntimeCompletionExpression> expressions) {
-          refResult.set(new Pair(suggestions, expressions));
+          refResult.set(new Pair<>(suggestions, expressions));
           latch.countDown();
         }
 
@@ -2208,7 +2204,7 @@ public final class DartAnalysisServerService implements Disposable {
 
   public boolean isFileWithErrors(@NotNull final VirtualFile file) {
     synchronized (myFilePathsWithErrors) {
-      return file.isDirectory() ? myFolderPathsWithErrors.get(file.getPath()) > 0 : myFilePathsWithErrors.contains(file.getPath());
+      return file.isDirectory() ? myFolderPathsWithErrors.getInt(file.getPath()) > 0 : myFilePathsWithErrors.contains(file.getPath());
     }
   }
 

@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.actions;
 
 import com.intellij.CommonBundle;
@@ -28,11 +28,11 @@ import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
-import gnu.trove.THashMap;
 import org.dartlang.analysis.server.protocol.SourceEdit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -171,7 +171,7 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
 
   // keep public to be accessible in 3rd party plugins
   public static void runDartfmt(@NotNull final Project project, @NotNull final List<? extends VirtualFile> dartFiles) {
-    final Map<VirtualFile, String> fileToNewContentMap = new THashMap<>();
+    final Map<VirtualFile, String> fileToNewContentMap = new HashMap<>();
     final int lineLength = getRightMargin(project);
 
     final Runnable runnable = () -> {

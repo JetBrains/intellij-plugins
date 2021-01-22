@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -36,7 +36,6 @@ import com.jetbrains.lang.dart.sdk.DartPackagesLibraryType;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import com.jetbrains.lang.dart.util.DotPackagesFileUtil;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -381,8 +380,8 @@ public class DartFileListener implements AsyncFileListener {
 
     @Override
     public void afterVfsChange() {
-      Set<Project> projectsToUpdate = new THashSet<>();
-      Set<Project> projectsToUpdateVisibleFiles = new THashSet<>();
+      Set<Project> projectsToUpdate = new HashSet<>();
+      Set<Project> projectsToUpdateVisibleFiles = new HashSet<>();
 
       for (Project project : ProjectManager.getInstance().getOpenProjects()) {
         if (DartSdk.getDartSdk(project) == null) continue;

@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart;
 
 import com.intellij.openapi.module.Module;
@@ -16,10 +16,10 @@ import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.sdk.DartSdk;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
@@ -31,7 +31,7 @@ import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
  * @see DartFileListener
  * @see DartModuleRootListener
  */
-public class DartStartupActivity implements StartupActivity {
+public final class DartStartupActivity implements StartupActivity {
   @Override
   public void runActivity(@NotNull Project project) {
     final Collection<VirtualFile> pubspecYamlFiles =
@@ -90,7 +90,7 @@ public class DartStartupActivity implements StartupActivity {
 
   private static Set<String> collectFolderUrlsToExclude(@NotNull final Module module,
                                                         @NotNull final VirtualFile pubspecYamlFile) {
-    final THashSet<String> newExcludedPackagesUrls = new THashSet<>();
+    final Set<String> newExcludedPackagesUrls = new HashSet<>();
     final VirtualFile root = pubspecYamlFile.getParent();
 
     final DartSdk sdk = DartSdk.getDartSdk(module.getProject());

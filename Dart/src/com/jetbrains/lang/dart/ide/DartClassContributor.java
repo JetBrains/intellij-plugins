@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide;
 
 import com.intellij.navigation.ChooseByNameContributorEx;
@@ -13,6 +13,7 @@ import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.FindSymbolParameters;
 import com.intellij.util.indexing.ID;
 import com.intellij.util.indexing.IdFilter;
+import com.jetbrains.lang.dart.ide.index.DartClassIndex;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartFile;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
@@ -22,22 +23,17 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.Objects;
 
-import static com.jetbrains.lang.dart.ide.index.DartClassIndex.DART_CLASS_INDEX;
-
-/**
- * @author: Fedor.Korotkov
- */
-public class DartClassContributor implements ChooseByNameContributorEx {
+public final class DartClassContributor implements ChooseByNameContributorEx {
   @Override
   public void processNames(@NotNull Processor<? super String> processor, @NotNull GlobalSearchScope scope, @Nullable IdFilter filter) {
-    FileBasedIndex.getInstance().processAllKeys(DART_CLASS_INDEX, processor, scope, filter);
+    FileBasedIndex.getInstance().processAllKeys(DartClassIndex.DART_CLASS_INDEX, processor, scope, filter);
   }
 
   @Override
   public void processElementsWithName(@NotNull String name,
                                       @NotNull Processor<? super NavigationItem> processor,
                                       @NotNull FindSymbolParameters parameters) {
-    doProcessElements(DART_CLASS_INDEX, DartResolveUtil::getClassDeclarations, name, processor, parameters);
+    doProcessElements(DartClassIndex.DART_CLASS_INDEX, DartResolveUtil::getClassDeclarations, name, processor, parameters);
   }
 
   static void doProcessElements(@NotNull ID<String, Void> index,

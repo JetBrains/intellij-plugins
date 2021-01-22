@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.actions;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -18,7 +18,6 @@ import com.jetbrains.lang.dart.ide.hierarchy.DartHierarchyUtil;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartComponentName;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
-import gnu.trove.THashSet;
 import org.dartlang.analysis.server.protocol.Element;
 import org.dartlang.analysis.server.protocol.Location;
 import org.dartlang.analysis.server.protocol.TypeHierarchyItem;
@@ -31,7 +30,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, DefinitionsScopedSearch.SearchParameters> {
+public final class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, DefinitionsScopedSearch.SearchParameters> {
   private static final class HierarchyInfo {
     @NotNull final String filePath;
     final int offset;
@@ -126,7 +125,7 @@ public class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, Defini
                                                  @NotNull final List<TypeHierarchyItem> hierarchyItems) {
     if (hierarchyItems.isEmpty()) return Collections.emptySet();
 
-    final Set<DartComponent> result = new THashSet<>(hierarchyItems.size());
+    final Set<DartComponent> result = new HashSet<>(hierarchyItems.size());
     addSubClasses(project, scope, new HashSet<>(), hierarchyItems, result, hierarchyItems.get(0), false);
     return result;
   }
@@ -137,7 +136,7 @@ public class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, Defini
                                                  @NotNull final List<TypeHierarchyItem> hierarchyItems) {
     if (hierarchyItems.isEmpty()) return Collections.emptySet();
 
-    final Set<DartComponent> result = new THashSet<>(hierarchyItems.size());
+    final Set<DartComponent> result = new HashSet<>(hierarchyItems.size());
     addSubMembers(project, scope, new HashSet<>(), hierarchyItems, result, hierarchyItems.get(0), false);
     return result;
   }

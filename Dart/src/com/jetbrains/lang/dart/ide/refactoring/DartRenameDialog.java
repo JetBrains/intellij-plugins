@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.refactoring;
 
 import com.intellij.find.findUsages.PsiElement2UsageTargetAdapter;
@@ -27,8 +27,6 @@ import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.assists.AssistUtils;
 import com.jetbrains.lang.dart.ide.findUsages.DartServerFindUsagesHandler;
-import gnu.trove.THashMap;
-import gnu.trove.THashSet;
 import org.dartlang.analysis.server.protocol.SourceChange;
 import org.dartlang.analysis.server.protocol.SourceEdit;
 import org.dartlang.analysis.server.protocol.SourceFileEdit;
@@ -39,10 +37,9 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-class DartRenameDialog extends ServerRefactoringDialog<ServerRenameRefactoring> {
+final class DartRenameDialog extends ServerRefactoringDialog<ServerRenameRefactoring> {
   private final JLabel myNewNamePrefix = new JLabel("");
   private NameSuggestionsField myNameSuggestionsField;
 
@@ -154,7 +151,7 @@ class DartRenameDialog extends ServerRefactoringDialog<ServerRenameRefactoring> 
     presentation.setUsageTypeFilteringAvailable(false);
 
     final List<UsageTarget> usageTargets = new SmartList<>();
-    final Map<Usage, String> usageToEditIdMap = new THashMap<>();
+    final Map<Usage, String> usageToEditIdMap = new HashMap<>();
     fillTargetsAndUsageToEditIdMap(usageTargets, usageToEditIdMap);
 
     final UsageTarget[] targets = usageTargets.toArray(UsageTarget.EMPTY_ARRAY);
@@ -209,10 +206,10 @@ class DartRenameDialog extends ServerRefactoringDialog<ServerRenameRefactoring> 
   @NotNull
   private Runnable createRefactoringRunnable(@NotNull final UsageView usageView, @NotNull final Map<Usage, String> usageToEditIdMap) {
     return () -> {
-      final Set<String> excludedIds = new THashSet<>();
+      final Set<String> excludedIds = new HashSet<>();
 
       // usageView.getExcludedUsages() and usageView.getUsages() doesn't contain deleted usages, that's why we need to start with full set usageToEditIdMap.keySet()
-      final Set<Usage> excludedUsages = new THashSet<>(usageToEditIdMap.keySet());
+      final Set<Usage> excludedUsages = new HashSet<>(usageToEditIdMap.keySet());
       excludedUsages.removeAll(usageView.getUsages());
       excludedUsages.addAll(usageView.getExcludedUsages());
 

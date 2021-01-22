@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.dart_style;
 
 import com.intellij.openapi.util.io.FileUtil;
@@ -8,10 +8,10 @@ import com.intellij.util.ArrayUtilRt;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.util.DartTestUtils;
-import gnu.trove.THashSet;
 import junit.framework.ComparisonFailure;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,7 +24,7 @@ public abstract class DartStyleTest extends FormatterTestCase {
   /**
    * The set of tests that are known to fail in all test modes.
    */
-  protected final Set<String> KNOWN_TO_FAIL = new THashSet<>();
+  protected final Set<String> KNOWN_TO_FAIL = new HashSet<>();
 
   {
     KNOWN_TO_FAIL.add("splitting/expressions.stmt:7  space-separated adjacent strings are split if they don't fit");
