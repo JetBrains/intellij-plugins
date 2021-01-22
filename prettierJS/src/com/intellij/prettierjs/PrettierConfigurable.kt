@@ -1,7 +1,6 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.prettierjs
 
-import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterField
 import com.intellij.javascript.nodejs.util.NodePackageField
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.IdeActions
@@ -23,23 +22,14 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
     val prettierConfiguration = PrettierConfiguration.getInstance(project)
 
     return panel {
-      val nodeInterpreterField = NodeJsInterpreterField(project, false)
-      row(JLabel(NodeJsInterpreterField.getLabelTextForComponent()).apply { labelFor = nodeInterpreterField }) {
-        nodeInterpreterField().withBinding(
-          { it.interpreterRef },
-          { nodeJsInterpreterField, interpreterRef -> nodeJsInterpreterField.interpreterRef = interpreterRef },
-          PropertyBinding({ prettierConfiguration.interpreterRef }, { prettierConfiguration.withInterpreterRef(it) })
-        )
-      }
-
-      val packageField = NodePackageField(nodeInterpreterField, PrettierUtil.PACKAGE_NAME)
+      val packageField = NodePackageField(project, PrettierUtil.PACKAGE_NAME, null)
       row(JLabel(PrettierBundle.message("prettier.package.label")).apply { labelFor = packageField }) {
         packageField().withBinding(
           { it.selectedRef },
           { nodePackageField, nodePackageRef -> nodePackageField.selectedRef = nodePackageRef },
           PropertyBinding({ prettierConfiguration.nodePackageRef }, { prettierConfiguration.withLinterPackage(it) })
         )
-      }.largeGapAfter()
+      }
 
       row {
         val runForFilesLabel = JLabel(PrettierBundle.message("run.for.files.label"))

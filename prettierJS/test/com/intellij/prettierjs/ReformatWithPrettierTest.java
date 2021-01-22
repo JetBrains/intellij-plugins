@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.prettierjs;
 
 import com.intellij.javascript.nodejs.util.NodePackageRef;
@@ -31,7 +31,6 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
     super.setUp();
     myFixture.setTestDataPath(PrettierJSTestUtil.getTestDataPath() + "reformat");
     PrettierConfiguration.getInstance(getProject())
-      .withInterpreterRef(getNodeInterpreter())
       .withLinterPackage(NodePackageRef.create(getNodePackage()));
   }
 

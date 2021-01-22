@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.prettierjs;
 
 import com.intellij.ide.util.PropertiesComponent;
@@ -12,7 +12,6 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,10 +25,8 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
     public @NotNull String myFilesPattern = PRETTIER_FILES_PATTERN_DEFAULT;
   }
 
-  @NonNls private static final String NODE_INTERPRETER_PROPERTY = "prettierjs.PrettierConfiguration.NodeInterpreter";
   @NonNls private static final String PACKAGE_PROPERTY = "prettierjs.PrettierConfiguration.Package";
 
-  @NonNls private static final String OLD_INTERPRETER_PROPERTY = "node.js.path.for.package.prettier";
   @NonNls private static final String OLD_PRETTIER_ON_SAVE_PROPERTY = "run.prettier.on.save";
   @NonNls private static final String OLD_PRETTIER_FILES_PATTERN_PROPERTY = "prettier.files.pattern";
 
@@ -82,13 +79,6 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
     }
   }
 
-  @Override
-  @NotNull
-  public NodeJsInterpreterRef getInterpreterRef() {
-    return NodeJsInterpreterRef.create(ObjectUtils.coalesce(PropertiesComponent.getInstance(myProject).getValue(NODE_INTERPRETER_PROPERTY),
-                                                            PropertiesComponent.getInstance(myProject).getValue(OLD_INTERPRETER_PROPERTY)));
-  }
-
   @NotNull
   @Override
   public NodePackageRef getNodePackageRef() {
@@ -105,7 +95,6 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
 
   @Override
   public PrettierConfiguration withInterpreterRef(@NotNull NodeJsInterpreterRef interpreterRef) {
-    PropertiesComponent.getInstance(myProject).setValue(NODE_INTERPRETER_PROPERTY, interpreterRef.getReferenceName());
     return this;
   }
 
