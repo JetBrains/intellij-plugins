@@ -90,6 +90,8 @@ else
     class RubyMineMinitestParallelTestCaseManager
       attr_accessor :reporter, :my_mutex, :already_run_tests
 
+      require 'set'
+
       def initialize(reporter)
         GC.disable
         self.reporter = reporter
