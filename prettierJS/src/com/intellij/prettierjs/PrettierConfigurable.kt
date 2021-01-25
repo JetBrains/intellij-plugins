@@ -10,10 +10,12 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.util.NlsSafe
+import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.*
 import java.nio.file.FileSystems
 import java.util.regex.PatternSyntaxException
 import javax.swing.JLabel
+import javax.swing.text.JTextComponent
 
 class PrettierConfigurable(private val project: Project) : BoundSearchableConfigurable(
   PrettierBundle.message("configurable.PrettierConfigurable.display.name"), "reference.settings.prettier", "settings.javascript.prettier") {
@@ -36,7 +38,10 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
         runForFilesLabel()
 
         cell(isFullWidth = true) {
-          textField({ prettierConfiguration.filesPattern }, { prettierConfiguration.filesPattern = it })
+          component(JBTextField(prettierConfiguration.filesPattern))
+            .withBinding({ textField -> textField.text.trim() },
+                         JTextComponent::setText,
+                         PropertyBinding({ prettierConfiguration.filesPattern }, { prettierConfiguration.filesPattern = it }))
             .withValidationOnInput {
               try {
                 FileSystems.getDefault().getPathMatcher("glob:" + it.text)
