@@ -16,9 +16,9 @@
 package com.intellij.struts2.dom.inspection;
 
 import com.intellij.codeInspection.LocalInspectionTool;
+import com.intellij.ide.highlighter.XmlFileType;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.util.InspectionValidatorUtil;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -58,7 +58,7 @@ final class Struts2ModelValidator extends ValidatorBase {
       FactoryMap.create(module1 -> isEnabledForModule(module1));
 
     final Set<VirtualFile> files = new HashSet<>();
-    for (final VirtualFile file : context.getCompileScope().getFiles(StdFileTypes.XML, false)) {
+    for (final VirtualFile file : context.getCompileScope().getFiles(XmlFileType.INSTANCE, false)) {
       final Module module = context.getModuleByFile(file);
       if (module != null &&
           enabledForModule.get(module)) {

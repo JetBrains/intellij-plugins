@@ -15,9 +15,9 @@
 package com.intellij.struts2.dom.inspection;
 
 import com.intellij.codeInspection.LocalInspectionTool;
+import com.intellij.ide.highlighter.XmlFileType;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.util.InspectionValidatorUtil;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -66,7 +66,7 @@ final class ValidatorModelValidator extends ValidatorBase {
 
     // collect all validation.xml files located in sources of S2-modules
     final Set<VirtualFile> files = new HashSet<>();
-    for (final VirtualFile file : context.getProjectCompileScope().getFiles(StdFileTypes.XML, true)) {
+    for (final VirtualFile file : context.getProjectCompileScope().getFiles(XmlFileType.INSTANCE, true)) {
       if (StringUtil.endsWith(file.getName(), FILENAME_EXTENSION_VALIDATION_XML)) {
         final PsiFile psiFile = psiManager.findFile(file);
         if (psiFile instanceof XmlFile &&
