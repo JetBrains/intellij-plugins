@@ -2,6 +2,7 @@
 package com.intellij.javascript.flex.documentation;
 
 import com.intellij.codeInsight.documentation.AbstractExternalFilter;
+import com.intellij.codeInsight.documentation.DocumentationManager;
 import com.intellij.codeInsight.documentation.DocumentationManagerProtocol;
 import com.intellij.codeInsight.documentation.PlatformDocumentationUtil;
 import com.intellij.ide.BrowserUtil;
@@ -747,7 +748,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
 
   @Override
   @Nullable
-  public PsiElement getDocumentationElementForLink(final PsiManager psiManager, String link, final PsiElement context) {
+  public PsiElement getDocumentationElementForLink(@NotNull PsiManager psiManager, @NotNull String link, @Nullable PsiElement context) {
     return getDocumentationElementForLinkStatic(psiManager, link, context);
   }
 
@@ -871,22 +872,34 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
     return result;
   }
 
-  @Nullable
+
   @Override
-  public String tryGetSeeAlsoLink(final String remainingLineContent, PsiElement element) {
-    if (!remainingLineContent.contains(".") && !remainingLineContent.startsWith("#")) {
+  protected boolean appendSeeAlsoLink(@NotNull String linkPart,
+                                      @NotNull String displayText,
+                                      @NotNull String seeAlsoValue,
+                                      @NotNull PsiElement element,
+                                      @NotNull StringBuilder result) {
+    String seeAlsoLink = tryGetSeeAlsoLink(linkPart, element);
+    if (seeAlsoLink != null) {
+      DocumentationManager.createHyperlink(result, seeAlsoLink, displayText, true);
+    }
+    return seeAlsoLink != null;
+  }
+
+  public String tryGetSeeAlsoLink(@NotNull String linkPart, @NotNull PsiElement element) {
+    if (!linkPart.contains(".") && !linkPart.startsWith("#")) {
       // first try to find class in the same package, then in default one
       JSQualifiedNamedElement qualifiedElement = findParentQualifiedElement(element);
       if (qualifiedElement != null) {
         String qname = qualifiedElement.getQualifiedName();
         String aPackage = qname.contains(".") ? qname.substring(0, qname.lastIndexOf('.') + 1) : "";
-        String resolvedLink = getSeeAlsoLinkResolved(element, aPackage + remainingLineContent);
+        String resolvedLink = getSeeAlsoLinkResolved(element, aPackage + linkPart);
         if (resolvedLink != null) {
           return resolvedLink;
         }
       }
     }
-    return getSeeAlsoLinkResolved(element, remainingLineContent);
+    return getSeeAlsoLinkResolved(element, linkPart);
   }
 
   @NotNull
