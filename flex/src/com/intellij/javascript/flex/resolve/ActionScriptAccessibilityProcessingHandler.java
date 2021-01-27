@@ -132,17 +132,12 @@ public class ActionScriptAccessibilityProcessingHandler extends AccessibilityPro
 
     String attributeNs = ActionScriptPsiImplUtil.getNamespace(attributeList);
     if (attributeNs != null) {
-      if (!resolveProcessor.isProcessingFromIndices()) {
-        String resolvedNs = ActionScriptPsiImplUtil.resolveNamespaceValue(attributeList);
-        if (resolvedNs == null && !resolveProcessor.getResultSink().isActionScript()) {
-          resolvedNs = attributeNs; // AS3
-        }
-        attributeNs = resolvedNs;
+      String resolvedNs = ActionScriptPsiImplUtil.resolveNamespaceValue(attributeList);
+      if (resolvedNs == null && !resolveProcessor.getResultSink().isActionScript()) {
+        resolvedNs = attributeNs; // AS3
       }
-      else {
-        attributeNs = null; // do not care about namespaces during indices built because it needs interfile resolve
-      }
-    }
+      attributeNs = resolvedNs;
+  }
 
     if (openedNses == null && attributeNs != null) {
       if (!anyNsAllowed &&
