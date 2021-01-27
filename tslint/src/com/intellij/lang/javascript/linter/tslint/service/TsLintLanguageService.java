@@ -1,10 +1,9 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.linter.tslint.service;
 
 import com.google.gson.*;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.idea.RareLogger;
-import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.linter.AutodetectLinterPackage;
 import com.intellij.lang.javascript.linter.ExtendedLinterState;
@@ -201,13 +200,6 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
       super("tslint", project, EmptyConsumer.getInstance());
       myNodePackage = nodePackage;
       myWorkingDirectory = workingDirectory;
-    }
-
-    @Nullable
-    @Override
-    protected NodeJsInterpreter getInterpreter() {
-      ExtendedLinterState<TsLintState> state = TsLintConfiguration.getInstance(myProject).getExtendedState();
-      return JSLanguageServiceUtil.getInterpreterIfValid(state.getState().getInterpreterRef().resolve(myProject));
     }
 
     @Override
