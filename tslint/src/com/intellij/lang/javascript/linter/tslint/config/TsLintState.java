@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.linter.tslint.config;
 
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
@@ -76,6 +76,7 @@ public final class TsLintState implements JSNpmLinterState<TsLintState> {
     return new Builder(this).setNodePackageRef(nodePackageRef).build();
   }
 
+  @Deprecated
   @Override
   public TsLintState withInterpreterRef(@NotNull NodeJsInterpreterRef ref) {
     return new TsLintState(ref, myNodePackageRef, myCustomConfigFileUsed, myCustomConfigFilePath, myRulesDirectory, myAllowJs);

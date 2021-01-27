@@ -93,6 +93,7 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
     return this;
   }
 
+  @Deprecated
   @Override
   public PrettierConfiguration withInterpreterRef(@NotNull NodeJsInterpreterRef interpreterRef) {
     return this;
