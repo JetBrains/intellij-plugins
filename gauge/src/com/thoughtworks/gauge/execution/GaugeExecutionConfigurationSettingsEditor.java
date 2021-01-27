@@ -33,7 +33,7 @@ final class GaugeExecutionConfigurationSettingsEditor extends SettingsEditor<Gau
   private JTextField rowsRange;
 
   @Override
-  protected void resetEditorFrom(GaugeRunConfiguration config) {
+  protected void resetEditorFrom(@NotNull GaugeRunConfiguration config) {
     specification.setText(config.getSpecsToExecute());
     environment.setText(config.getEnvironment());
     tags.setText(config.getTags());
@@ -44,7 +44,7 @@ final class GaugeExecutionConfigurationSettingsEditor extends SettingsEditor<Gau
   }
 
   @Override
-  protected void applyEditorTo(GaugeRunConfiguration config) {
+  protected void applyEditorTo(@NotNull GaugeRunConfiguration config) {
     config.setSpecsToExecute(specification.getText());
     config.setEnvironment(environment.getText());
     config.setTags(tags.getText());
