@@ -223,7 +223,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
 
     for (JSClass result : all) {
       if (ActionScriptResolveUtil.hasExcludeClassMetadata(result)) continue;
-      if (!JSResolveUtil.isAccessibleFromCurrentActionScriptPackage(result, packageName, place)) continue;
+      if (!ActionScriptResolveUtil.isAccessibleFromCurrentActionScriptPackage(result, packageName, place)) continue;
       if (!processedCandidateNames.add(result.getQualifiedName())) continue;
       variants.add(JSLookupUtilImpl.createPrioritizedLookupItem(result, result.getName(), JSLookupPriority.SMART_PRIORITY));
     }

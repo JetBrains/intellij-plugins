@@ -7,6 +7,7 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.actionscript.highlighting.ActionScriptSemanticHighlightingUtil;
+import com.intellij.lang.actionscript.psi.ActionScriptPsiImplUtil;
 import com.intellij.lang.annotation.AnnotationBuilder;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.HighlightSeverity;
@@ -475,8 +476,8 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
           String overrideNs = null;
 
           if (attributeList.getAccessType() != overrideAttrList.getAccessType() ||
-              (overrideNs = JSResolveUtil.getNamespaceValue(overrideAttrList)) != null &&
-              !overrideNs.equals(JSResolveUtil.getNamespaceValue(attributeList))) {
+              (overrideNs = ActionScriptPsiImplUtil.getNamespaceValue(overrideAttrList)) != null &&
+              !overrideNs.equals(ActionScriptPsiImplUtil.getNamespaceValue(attributeList))) {
             String newVisibility;
             IntentionAction fix;
             if (overrideNs != null) {
@@ -709,7 +710,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
 
     if (hasOtherElement) {
       JSAttributeList attributeList = ((JSAttributeListOwner)el).getAttributeList();
-      if (attributeList != null && attributeList.getConditionalCompileVariableReference() != null) return;
+      if (attributeList != null && ActionScriptPsiImplUtil.getConditionalCompileVariableReference(attributeList) != null) return;
       final ASTNode nameIdentifier = el.findNameIdentifier();
       myHolder.newAnnotation(HighlightSeverity.ERROR,
                              FlexBundle.message("javascript.validation.message.more.than.one.externally.visible.symbol"))
@@ -812,7 +813,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
 
   @Override
   public void visitJSAttributeList(JSAttributeList attributeList) {
-    PsiElement namespaceElement = attributeList.getNamespaceElement();
+    PsiElement namespaceElement = ActionScriptPsiImplUtil.getNamespaceElement(attributeList);
     PsiElement accessTypeElement = attributeList.findAccessTypeElement();
     PsiElement namespaceOrAccessModifierElement = namespaceElement;
 

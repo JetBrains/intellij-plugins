@@ -63,7 +63,7 @@ public class ActionScriptImportHandler extends JSImportHandler {
     final Ref<JSImportedElementResolveResult> resultRef = new Ref<>();
 
     final String name1 = name;
-    JSResolveUtil.walkOverStructure(context, context1 -> {
+    ActionScriptResolveUtil.walkOverStructure(context, context1 -> {
       JSImportedElementResolveResult resolved = null;
 
       if (context1 instanceof XmlBackedJSClassImpl) { // reference list in mxml
@@ -167,8 +167,9 @@ public class ActionScriptImportHandler extends JSImportHandler {
 
     byQName = JSDialectSpecificHandlersFactory.forElement(context).getClassResolver().findClassByQName(str, context);
     if (byQName instanceof JSQualifiedNamedElement &&
-        JSResolveUtil.acceptableSymbol((JSQualifiedNamedElement)byQName, JSResolveUtil.GlobalSymbolsAcceptanceState.WHATEVER, false,
-                                       context)) {
+        ActionScriptResolveUtil
+          .acceptableSymbol((JSQualifiedNamedElement)byQName, ActionScriptResolveUtil.GlobalSymbolsAcceptanceState.WHATEVER, false,
+                            context)) {
       return (JSQualifiedNamedElement)byQName;
     }
 
@@ -209,7 +210,7 @@ public class ActionScriptImportHandler extends JSImportHandler {
   private static boolean resolveTypeNameUsingImportsInner(final ResolveProcessor resolveProcessor, final PsiNamedElement parent) {
     final PsiElement element = JSResolveUtil.getClassReferenceForXmlFromContext(parent);
 
-    if (!JSImportHandlingUtil.ourPsiScopedImportSet.tryResolveImportedClass(parent, resolveProcessor)) return false;
+    if (!FlexResolveHelper.ourPsiScopedImportSet.tryResolveImportedClass(parent, resolveProcessor)) return false;
 
     if (parent instanceof JSPackageStatement) {
       final JSNamedElement jsClass = resolveTypeNameInTheSamePackage(resolveProcessor.getName(), parent);

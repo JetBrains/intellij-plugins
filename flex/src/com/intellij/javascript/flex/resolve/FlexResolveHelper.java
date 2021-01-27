@@ -3,16 +3,15 @@ package com.intellij.javascript.flex.resolve;
 import com.intellij.javascript.flex.mxml.MxmlJSClassProvider;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.flex.ImportUtils;
-import com.intellij.lang.javascript.flex.JSResolveHelper;
-import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
+import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
-import com.intellij.lang.javascript.psi.resolve.JSImportHandlingUtil;
+import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.openapi.project.Project;
@@ -35,6 +34,7 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Processor;
 import com.intellij.util.Query;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -43,6 +43,8 @@ import java.util.Collection;
  * @author yole
  */
 public class FlexResolveHelper implements JSResolveHelper {
+  public static final PsiScopedImportSet ourPsiScopedImportSet = new PsiScopedImportSet();
+
   @Override
   @Nullable
   public PsiElement findClassByQName(final String link, final Project project, final String className, final GlobalSearchScope scope) {
@@ -192,8 +194,8 @@ public class FlexResolveHelper implements JSResolveHelper {
         doImport = false;
       }
       else {
-        doImport = JSImportHandlingUtil.evaluateImportStatus(newName, ref) == JSImportHandlingUtil.ImportStatus.ABSENT &&
-                   JSImportHandlingUtil.evaluateImportStatus(ref.getReferencedName(), ref) == JSImportHandlingUtil.ImportStatus.ABSENT;
+        doImport = evaluateImportStatus(newName, ref) == ImportStatus.ABSENT &&
+                   evaluateImportStatus(ref.getReferencedName(), ref) == ImportStatus.ABSENT;
         JSQualifiedNamedElement qualifiedElement = null;
 
         if (element instanceof JSQualifiedNamedElement) {
@@ -270,6 +272,16 @@ public class FlexResolveHelper implements JSResolveHelper {
     return true;
   }
 
+  public static ImportStatus evaluateImportStatus(String newName, PsiElement context) {
+    EvaluateImportStatusProcessor statusProcessor = new EvaluateImportStatusProcessor(newName);
+    ActionScriptResolveUtil.walkOverStructure(context, statusProcessor);
+    return statusProcessor.myStatus.get();
+  }
+
+  public enum ImportStatus {
+    ABSENT, UNIQUE, MULTIPLE
+  }
+
   public interface MxmlAndFxgFilesProcessor {
     void addDependency(PsiDirectory directory);
     boolean processFile(VirtualFile file, final VirtualFile root);
@@ -296,4 +308,35 @@ public class FlexResolveHelper implements JSResolveHelper {
     return ContainerUtil.process(components, processor);
   }
 
+  private static class EvaluateImportStatusProcessor implements Processor<PsiNamedElement>, ScopedImportSet.ImportProcessor<Object> {
+    private final String myNewName;
+    private final Ref<ImportStatus> myStatus = new Ref<>(ImportStatus.ABSENT);
+
+    EvaluateImportStatusProcessor(String newName) {
+      myNewName = newName;
+    }
+
+    @Override
+    public boolean process(PsiNamedElement context) {
+      ourPsiScopedImportSet.process(myNewName, null, context, this);
+      if (context instanceof JSPackageStatement) return false;
+
+      return myStatus.get() == ImportStatus.ABSENT;
+    }
+
+    @Override
+    public Object process(@NotNull String referenceName, @NotNull ImportInfo info, @NotNull PsiNamedElement scope) {
+      if (info.starImport) {
+        final PsiElement clazz = JSDialectSpecificHandlersFactory.forElement(scope).getClassResolver()
+          .findClassByQName(info.getQNameToSearch(referenceName), scope);
+        if (clazz == null) return null;
+      }
+
+      ImportStatus status = myStatus.get();
+      if (status == ImportStatus.ABSENT) myStatus.set(ImportStatus.UNIQUE);
+      else if (status == ImportStatus.UNIQUE) myStatus.set(ImportStatus.MULTIPLE);
+
+      return null;
+    }
+  }
 }

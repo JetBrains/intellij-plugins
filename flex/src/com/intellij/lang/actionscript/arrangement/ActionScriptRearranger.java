@@ -2,6 +2,7 @@
 package com.intellij.lang.actionscript.arrangement;
 
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
+import com.intellij.lang.actionscript.psi.ActionScriptPsiImplUtil;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.arrangement.JSArrangementEntry;
 import com.intellij.lang.javascript.arrangement.JSElementArrangementEntry;
@@ -143,7 +144,7 @@ public class ActionScriptRearranger extends JSRearrangerBase {
       JSAttributeList.AccessType accessType = attributes.getExplicitAccessType();
 
       if (accessType == null) {
-        final String namespace = attributes.getNamespace();
+        final String namespace = ActionScriptPsiImplUtil.getNamespace(attributes);
         if (namespace == null) {
           accessType = JSAttributeList.AccessType.PACKAGE_LOCAL;
         }

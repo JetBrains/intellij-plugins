@@ -2,6 +2,7 @@
 package com.intellij.javascript.flex.refactoring.extractSuper;
 
 import com.intellij.javascript.flex.refactoring.RenameMoveUtils;
+import com.intellij.lang.actionscript.psi.ActionScriptPsiImplUtil;
 import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
@@ -246,7 +247,7 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
     String accessModifier;
     boolean isInterface;
     if (myMode == JSExtractSuperMode.RenameImplementation) {
-      final String namespace = JSResolveUtil.getNamespaceValue(mySourceClass.getAttributeList());
+      final String namespace = ActionScriptPsiImplUtil.getNamespaceValue(mySourceClass.getAttributeList());
       if (namespace != null) {
         accessModifier = namespace;
       }

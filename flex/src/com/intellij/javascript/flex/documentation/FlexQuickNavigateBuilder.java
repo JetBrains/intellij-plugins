@@ -1,12 +1,12 @@
 package com.intellij.javascript.flex.documentation;
 
+import com.intellij.lang.actionscript.psi.ActionScriptPsiImplUtil;
 import com.intellij.lang.actionscript.psi.impl.ActionScriptFunctionImpl;
 import com.intellij.lang.actionscript.psi.impl.ActionScriptVariableImpl;
 import com.intellij.lang.javascript.documentation.JSQuickNavigateBuilder;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.types.JSTypeSubstitutor;
 import com.intellij.lang.javascript.refactoring.JSVisibilityUtil;
 import com.intellij.openapi.util.NlsSafe;
@@ -106,7 +106,7 @@ class FlexQuickNavigateBuilder extends JSQuickNavigateBuilder {
     
     appendModifierWithSpace(result, attributeList, JSAttributeList.ModifierType.OVERRIDE);
 
-    String nsOrAccessModifier = JSResolveUtil.getNamespaceValue(attributeList);
+    String nsOrAccessModifier = ActionScriptPsiImplUtil.getNamespaceValue(attributeList);
     if (nsOrAccessModifier == null) {
       JSVisibilityUtil.PresentableAccessModifier modifier = JSVisibilityUtil.getPresentableAccessModifier(owner);
       if (modifier != null) nsOrAccessModifier = modifier.getText();
