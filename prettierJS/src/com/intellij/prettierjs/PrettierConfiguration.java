@@ -2,7 +2,6 @@
 package com.intellij.prettierjs;
 
 import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.javascript.nodejs.util.NodePackageDescriptor;
 import com.intellij.javascript.nodejs.util.NodePackageRef;
@@ -90,12 +89,6 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
     NodePackage newPackage = nodePackageRef.getConstantPackage();
     assert newPackage != null : getClass().getSimpleName() + "does not support non-constant package";
     PropertiesComponent.getInstance(myProject).setValue(PACKAGE_PROPERTY, newPackage.getSystemDependentPath());
-    return this;
-  }
-
-  @Deprecated
-  @Override
-  public PrettierConfiguration withInterpreterRef(@NotNull NodeJsInterpreterRef interpreterRef) {
     return this;
   }
 
