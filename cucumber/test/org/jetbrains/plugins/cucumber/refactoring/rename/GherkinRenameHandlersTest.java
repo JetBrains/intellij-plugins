@@ -2,7 +2,7 @@
 package org.jetbrains.plugins.cucumber.refactoring.rename;
 
 import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.testFramework.TestDataProvider;
+import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.plugins.cucumber.CucumberTestUtil;
 import org.jetbrains.plugins.cucumber.psi.refactoring.rename.GherkinInplaceRenameHandler;
@@ -26,7 +26,7 @@ public class GherkinRenameHandlersTest extends BasePlatformTestCase {
 
   private void doTest(boolean stepRenameHandlerAvailable, boolean stepParameterRenameHandlerAvailable) {
     myFixture.configureByFile(getTestName(true) + ".feature");
-    DataContext context = new TestDataProvider(myFixture.getProject()) {};
+    DataContext context = ((EditorEx)myFixture.getEditor()).getDataContext();
 
     GherkinStepRenameHandler stepRenameHandler = new GherkinStepRenameHandler();
     GherkinInplaceRenameHandler gherkinInplaceRenameHandler = new GherkinInplaceRenameHandler();
