@@ -32,7 +32,7 @@ else
   end
   if defined? MiniTest::Unit
     MiniTest::Unit.module_eval do
-      if defined? MiniTest::Unit and MiniTest::Unit.respond_to?(:status)
+      if defined?(MiniTest::Unit) && MiniTest::Unit.respond_to?(:status)
         alias_method :original_status, :status
 
         def status(io = nil)
@@ -278,7 +278,7 @@ else
           end
         end
         # todo: replace this check with failed? when it will be available
-        if not result.passed? and result.failure.class == Assertion
+        if !result.passed? && result.failure.class == Assertion
           self.failures += 1
           with_result(result) do |exception_msg, backtrace|
             log(Rake::TeamCity::MessageFactory.create_test_failed(test_name, exception_msg, backtrace, fqn))

@@ -28,7 +28,7 @@ STDERR.sync=true
 
 require 'rubygems'
 version = "> 0"
-if ARGV.first =~ /^_(.*)_$/ and Gem::Version.correct? $1 then
+if ARGV.first =~ /^_(.*)_$/ && Gem::Version.correct?($1)
   version = $1
   ARGV.shift
 end

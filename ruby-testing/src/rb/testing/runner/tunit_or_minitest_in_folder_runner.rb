@@ -109,7 +109,7 @@ def drb_launch_tests(drb_runner, test_scripts, test_scripts_names, test_names)
       cmdline << 'test'
     else
       load_path = cmdline.find_all {|param|
-        (not param.nil?) and param.start_with?('-I')
+        (!param.nil?) && param.start_with?('-I')
       }
       cmdline.concat load_path
     end
