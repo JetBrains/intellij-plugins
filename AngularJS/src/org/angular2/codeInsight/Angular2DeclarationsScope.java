@@ -60,7 +60,7 @@ public class Angular2DeclarationsScope {
   public @Nullable <T extends Angular2Declaration> Pair<T, DeclarationProximity> getClosestDeclaration(@NotNull Collection<T> declarations) {
     return StreamEx.of(declarations)
       .map(d -> pair(d, getDeclarationProximity(d)))
-      .min(Comparator.comparing(p -> p.second))
+      .min(Pair.comparingBySecond())
       .orElse(null);
   }
 
