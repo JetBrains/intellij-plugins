@@ -101,7 +101,7 @@ public final class PerforceVFSListener extends VcsVFSListener {
     }
 
     ProgressManager.getInstance().run(new Task.Backgroundable(myProject,
-                                                              PerforceBundle.getString("progress.title.checking.for.ignored.files"),
+                                                              PerforceBundle.message("progress.title.checking.for.ignored.files"),
                                                               false) {
       @Override
       public void run(@NotNull ProgressIndicator pi) {
@@ -148,7 +148,7 @@ public final class PerforceVFSListener extends VcsVFSListener {
   @NotNull
   @Override
   protected String getSingleFileAddPromptTemplate() {
-    return PerforceBundle.getString("confirmation.text.add.files");
+    return PerforceBundle.message("confirmation.text.add.files");
   }
 
   @NotNull
@@ -176,7 +176,7 @@ public final class PerforceVFSListener extends VcsVFSListener {
 
   @Override
   protected String getSingleFileDeletePromptTemplate() {
-    return PerforceBundle.getString("confirmation.text.remove.files");
+    return PerforceBundle.message("confirmation.text.remove.files");
   }
 
   @Override
