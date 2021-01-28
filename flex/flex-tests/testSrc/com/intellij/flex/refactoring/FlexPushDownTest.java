@@ -25,6 +25,7 @@ import com.intellij.usageView.UsageInfo;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 public class FlexPushDownTest extends MultiFileTestCase {
@@ -71,8 +72,8 @@ public class FlexPushDownTest extends MultiFileTestCase {
       (JSClass)JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver()
         .findClassByQName(from, GlobalSearchScope.projectScope(getProject()));
     assertNotNull("source class not found: " + from, sourceClass);
-    assertTrue(sourceClass.getQualifiedName() + " has no inheritors",
-               !JSInheritanceUtil.findDirectSubClasses(sourceClass, false).isEmpty());
+    assertFalse(sourceClass.getQualifiedName() + " has no inheritors",
+                JSInheritanceUtil.findDirectSubClasses(sourceClass, false).isEmpty());
 
     final List<JSMemberInfo> memberInfos = FlexPullUpTest.getMemberInfos(toPushDown, sourceClass, makeAbstract);
 
@@ -82,8 +83,7 @@ public class FlexPushDownTest extends MultiFileTestCase {
       protected UsageInfo @NotNull [] findUsages() {
         // ensure stable order
         final UsageInfo[] usages = super.findUsages();
-        Arrays.sort(usages,
-                    (o1, o2) -> ((JSClass)o1.getElement()).getQualifiedName().compareTo(((JSClass)o2.getElement()).getQualifiedName()));
+        Arrays.sort(usages, Comparator.comparing(o -> ((JSClass)o.getElement()).getQualifiedName()));
         return usages;
       }
     }.run();
