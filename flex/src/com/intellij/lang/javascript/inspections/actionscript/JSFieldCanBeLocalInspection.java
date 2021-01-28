@@ -67,8 +67,7 @@ public class JSFieldCanBeLocalInspection extends JSInspection {
 
       // sorted - for predictable caret position after quick fix
       final SortedMap<JSFunction, Collection<PsiReference>> functionToReferences =
-        new TreeMap<>(
-          (f1, f2) -> f1.getTextRange().getStartOffset() - f2.getTextRange().getStartOffset());
+        new TreeMap<>(Comparator.comparingInt(f -> f.getTextRange().getStartOffset()));
 
       final Map<JSFunction, PsiElement> functionToFirstReadUsage = new THashMap<>();
       final Map<JSFunction, PsiElement> functionToFirstWriteUsage = new THashMap<>();

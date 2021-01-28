@@ -393,7 +393,7 @@ public class PerforceCommittedChangesProvider implements CachingCommittedChanges
 
     @Override
     public Comparator<PerforceChangeList> getComparator() {
-      return (o1, o2) -> o1.getClient().compareTo(o2.getClient());
+      return Comparator.comparing(PerforceChangeList::getClient);
     }
   }
 }

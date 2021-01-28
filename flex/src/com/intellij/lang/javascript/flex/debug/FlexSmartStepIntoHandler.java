@@ -39,7 +39,7 @@ class FlexSmartStepIntoHandler extends XSmartStepIntoHandler<PsiBackedSmartStepI
     final Document document = FileDocumentManager.getInstance().getDocument(position.getFile());
 
     final SortedMap<PsiElement, PsiBackedSmartStepIntoVariant> element2candidateMap =
-      new TreeMap<>((o1, o2) -> o1.getTextOffset() - o2.getTextOffset());
+      new TreeMap<>(Comparator.comparingInt(PsiElement::getTextOffset));
 
     compute(document, element2candidateMap, new THashSet<>(), position.getLine(), position.getOffset());
 
