@@ -35,7 +35,7 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
     if (!isVueFile(virtualFile)) return false
 
     //lightweight check -> only parent configs, no indirect deps
-    val configs = TypeScriptConfigUtil.getNearestParentConfigFiles(virtualFile, service.configFiles)
+    val configs = TypeScriptConfigUtil.getNearestParentConfigFiles(project, virtualFile)
     return configs.any { service.parseConfigFile(it)?.include?.accept(virtualFile) ?: false }
   }
 
