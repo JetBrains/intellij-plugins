@@ -1,11 +1,30 @@
 <idea-plugin>
   <id>name.kropp.intellij.makefile</id>
-  <name>Makefile support</name>
+  <name>Makefile Language</name>
   <vendor>JetBrains</vendor>
   <category>Languages</category>
 
   <description><![CDATA[
-Support for editing and running UNIX Makefiles
+This plugin provides GNU Make language support:
+<ul>
+    <li>Syntax highlighting.</li>
+    <li>Keyword and target name completion.</li>
+    <li>Quick-doc for ## comments on a target line.</li>
+    <li>Find Usages and Go to Symbol navigation for targets.</li>
+    <li>Prerequisites resolution.</li>
+    <li>Rules, variables, and conditionals folding.</li>
+    <li>Quick-fixes to create new rules from unresolved prerequisites and remove empty rules.</li>
+</ul>
+
+In addition, the plugin provides support for running Make targets using:
+<ul>
+    <li>Make tool window</li>
+    <li>Makefile run configurations</li>
+    <li>Gutter icons</li>
+    <li>Context actions</li>
+</ul>
+
+Plugin source code was previously located at <a href="https://github.com/kropp/intellij-makefile/">https://github.com/kropp/intellij-makefile/</a>
     ]]></description>
 
   <depends>com.intellij.modules.lang</depends>
