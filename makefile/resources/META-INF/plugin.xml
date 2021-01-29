@@ -43,7 +43,7 @@ Support for editing and running UNIX Makefiles
     <stubElementTypeHolder class="com.jetbrains.lang.makefile.psi.MakefileTypes" />
     <stubIndex implementation="com.jetbrains.lang.makefile.MakefileTargetIndex" />
 
-    <toolWindow id="make" anchor="right" factoryClass="com.jetbrains.lang.makefile.toolWindow.MakeToolWindowFactory" secondary="true"/>
+    <toolWindow id="make" anchor="right" icon="MakefileIcons.Makefile" factoryClass="com.jetbrains.lang.makefile.toolWindow.MakeToolWindowFactory" secondary="true"/>
 
     <internalFileTemplate name="Makefile" />
   </extensions>
