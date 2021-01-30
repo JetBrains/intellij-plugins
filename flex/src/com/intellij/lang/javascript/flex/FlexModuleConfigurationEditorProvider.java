@@ -13,7 +13,7 @@ import com.intellij.openapi.roots.ui.configuration.ModuleConfigurationState;
 public class FlexModuleConfigurationEditorProvider implements ModuleConfigurationEditorProvider {
   @Override
   public ModuleConfigurationEditor[] createEditors(final ModuleConfigurationState state) {
-    final Module module = state.getRootModel().getModule();
+    final Module module = state.getCurrentRootModel().getModule();
     if (ModuleType.get(module) != FlexModuleType.getInstance()) return ModuleConfigurationEditor.EMPTY;
     return new ModuleConfigurationEditor[]{new FlexModuleEditor(state)};
   }

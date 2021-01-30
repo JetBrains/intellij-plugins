@@ -29,7 +29,7 @@ import java.util.List;
 final class GaugeModuleConfigurationProvider implements ModuleConfigurationEditorProvider {
   @Override
   public ModuleConfigurationEditor[] createEditors(ModuleConfigurationState state) {
-    Module module = state.getRootModel().getModule();
+    Module module = state.getCurrentRootModel().getModule();
 
     ModuleType<?> moduleType = ModuleType.get(module);
 
