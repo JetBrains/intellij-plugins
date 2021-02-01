@@ -275,11 +275,11 @@ public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematic
   private static class CachedValue<T> {
 
     private long myUpdateTime;
-    private Future<T> myCacheComputation;
+    private Future<? extends T> myCacheComputation;
     private T myCachedValue;
-    private final Callable<T> myValueSupplier;
+    private final Callable<? extends T> myValueSupplier;
 
-    CachedValue(Callable<T> valueSupplier) {
+    CachedValue(Callable<? extends T> valueSupplier) {
       this.myValueSupplier = valueSupplier;
     }
 
@@ -289,7 +289,7 @@ public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematic
 
     @SuppressWarnings("SynchronizeOnThis")
     public @Nullable T getValue(long timeout) {
-      Future<T> cacheComputation;
+      Future<? extends T> cacheComputation;
       synchronized (this) {
         if (myCachedValue != null && !isCacheExpired()) {
           return myCachedValue;

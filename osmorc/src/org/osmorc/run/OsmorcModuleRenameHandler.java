@@ -18,7 +18,7 @@ import java.util.List;
 
 class OsmorcModuleRenameHandler implements ModuleListener {
   @Override
-  public void modulesRenamed(@NotNull Project project, @NotNull List<Module> modules, @NotNull Function<Module, String> oldNameProvider) {
+  public void modulesRenamed(@NotNull Project project, @NotNull List<? extends Module> modules, @NotNull Function<? super Module, String> oldNameProvider) {
     List<Pair<SelectedBundle, String>> pairs = new SmartList<>();
     OsgiConfigurationType configurationType = ConfigurationTypeUtil.findConfigurationType(OsgiConfigurationType.class);
     for (Module module : modules) {

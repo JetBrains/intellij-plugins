@@ -47,7 +47,7 @@ final class VelocityStrutsResultContributor extends StrutsResultContributor {
 
   @Override
   public boolean createReferences(@NotNull final PsiElement psiElement,
-                                  @NotNull final List<PsiReference> references,
+                                  final @NotNull List<PsiReference> references,
                                   final boolean soft) {
     final String namespace = getNamespace(psiElement);
     if (namespace == null) {

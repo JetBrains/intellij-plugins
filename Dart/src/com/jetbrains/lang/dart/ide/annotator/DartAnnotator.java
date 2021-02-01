@@ -245,9 +245,9 @@ public final class DartAnnotator implements Annotator {
     }
   }
 
-  private static <T extends DartServerData.DartRegion> void processDartRegionsInRange(@NotNull List<T> regions,
+  private static <T extends DartServerData.DartRegion> void processDartRegionsInRange(@NotNull List<? extends T> regions,
                                                                                       @NotNull TextRange psiElementRange,
-                                                                                      @NotNull Consumer<T> processor) {
+                                                                                      @NotNull Consumer<? super T> processor) {
     if (regions.isEmpty()) return;
 
     int i = ObjectUtils.binarySearch(0, regions.size(),

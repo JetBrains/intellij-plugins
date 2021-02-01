@@ -18,7 +18,7 @@ class VueTypeScriptLineMarkersTest : TypeScriptLineMarkersTest() {
   )
 
   override fun doTestFor(checkWeakWarnings: Boolean,
-                         function: Function<MutableCollection<HighlightInfo>, Void>?,
+                         function: Function<in MutableCollection<HighlightInfo>, Void>,
                          vararg fileNames: String?) {
     LOG.info("Running overridden code for vue")
     if (skipTest()) {

@@ -42,7 +42,7 @@ public class DispatchPathResultContributor extends StrutsResultContributor {
 
   @Override
   public boolean createReferences(@NotNull final PsiElement psiElement,
-                                  @NotNull final List<PsiReference> references,
+                                  final @NotNull List<PsiReference> references,
                                   final boolean soft) {
 
     final String packageNamespace = getNamespace(psiElement);

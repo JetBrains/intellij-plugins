@@ -114,7 +114,7 @@ public class BCBasedRunnerParameters implements Cloneable {
     }
   }
 
-  public void handleModulesRename(List<Module> modules, Function<Module, String> oldNameProvider) {
+  public void handleModulesRename(List<? extends Module> modules, Function<? super Module, String> oldNameProvider) {
     for (Module module : modules) {
       String oldName = oldNameProvider.fun(module);
       if (oldName.equals(myModuleName)) {

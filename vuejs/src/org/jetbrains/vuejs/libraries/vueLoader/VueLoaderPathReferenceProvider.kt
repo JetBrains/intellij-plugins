@@ -16,11 +16,10 @@ import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
 class VueLoaderPathReferenceProvider : PathReferenceProviderBase() {
-
   override fun createReferences(psiElement: PsiElement,
                                 offset: Int,
                                 text: String,
-                                references: MutableList<PsiReference>,
+                                references: MutableList<in PsiReference>,
                                 soft: Boolean): Boolean {
     // Vue-loader strips `~` and treats the rest as module reference (require parameter)
     // and if first char is `@` the whole string is treated as module reference.

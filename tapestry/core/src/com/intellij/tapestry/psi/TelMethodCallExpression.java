@@ -2,7 +2,6 @@ package com.intellij.tapestry.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiType;
-import com.intellij.util.NullableFunction;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,7 +17,7 @@ public class TelMethodCallExpression extends TelCompositeElement implements TelR
 
   public PsiType @NotNull [] getArgumentTypes() {
     TelExpression[] args = getArgumentList().getArguments();
-    return ContainerUtil.map2Array(args, PsiType.class, (NullableFunction<TelExpression, PsiType>)expression -> expression.getPsiType());
+    return ContainerUtil.map2Array(args, PsiType.class, expression -> expression.getPsiType());
   }
 
   @NotNull

@@ -4,6 +4,7 @@ import com.intellij.codeInsight.actions.OptimizeImportsAction
 import com.intellij.ide.DataManager
 import com.intellij.lang.javascript.JavaScriptFormatterTestBase
 import com.intellij.lang.javascript.JavaScriptSupportLoader
+import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.refactoring.JSOptimizeImportTestBase
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.util.Consumer
@@ -14,7 +15,7 @@ class VueOptimizeImportTest : JSOptimizeImportTestBase() {
 
 
   fun testVueSimpleOptimize() {
-    JavaScriptFormatterTestBase.setTempSettings(project, JavaScriptSupportLoader.TYPESCRIPT, Consumer { settings ->
+    JavaScriptFormatterTestBase.setTempSettings(project, JavaScriptSupportLoader.TYPESCRIPT, Consumer<JSCodeStyleSettings> { settings ->
       settings.FORCE_QUOTE_STYlE = true
       settings.USE_DOUBLE_QUOTES = true
     })
