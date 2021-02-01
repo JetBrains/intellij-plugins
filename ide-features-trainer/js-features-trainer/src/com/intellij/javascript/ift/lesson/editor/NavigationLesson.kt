@@ -15,6 +15,7 @@ import training.learn.js.shiftSymbol
 import training.learn.js.textAtCaretEqualsTo
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
+import training.learn.lesson.kimpl.checkToolWindowState
 import training.learn.lesson.kimpl.parseLessonSample
 
 class NavigationLesson(module: Module)
@@ -83,7 +84,7 @@ class NavigationLesson(module: Module)
         }
         task("HideActiveWindow") {
           text(JsLessonsBundle.message("js.editor.navigation.hide.tool.window", action(it)))
-          trigger(it)
+          checkToolWindowState("Find", false)
         }
         task("SearchEverywhere") {
           text(JsLessonsBundle.message("js.editor.navigation.search.everywhere", shortcut(shiftSymbol())))

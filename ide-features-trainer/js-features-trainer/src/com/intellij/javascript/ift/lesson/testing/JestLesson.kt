@@ -135,7 +135,7 @@ class JestLesson(module: Module)
           }
           text(JsLessonsBundle.message("js.testing.jest.success.run.coverage.1"))
           text(JsLessonsBundle.message("js.testing.jest.success.run.coverage.2", icon(AllIcons.General.RunWithCoverage)))
-          trigger(it)
+          checkToolWindowState("Coverage", true)
         }
 
         task("HideActiveWindow") {
@@ -143,7 +143,7 @@ class JestLesson(module: Module)
             LearningUiHighlightingManager.clearHighlights()
           }
           text(JsLessonsBundle.message("js.testing.jest.coverage.result", shortcut(KeymapUtil.getShortcutText("HideActiveWindow"))))
-          trigger(it)
+          checkToolWindowState("Coverage", false)
         }
 
         text(JsLessonsBundle.message("js.testing.jest.end",

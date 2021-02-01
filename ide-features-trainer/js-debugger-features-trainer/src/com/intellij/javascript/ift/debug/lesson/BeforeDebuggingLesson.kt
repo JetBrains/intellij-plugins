@@ -48,7 +48,7 @@ class BeforeDebuggingLesson(module: Module)
           text(
             JsDebugLessonsBundle.message("js.debugger.before.describe.tool.window",
                                          action("RunClass"), strong(UIBundle.message("tool.window.name.run")), action(it)))
-          trigger(it)
+          checkToolWindowState("Run", false)
         }
 
         task {
