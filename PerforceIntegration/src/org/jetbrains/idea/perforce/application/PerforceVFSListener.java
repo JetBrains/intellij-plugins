@@ -147,6 +147,7 @@ public final class PerforceVFSListener extends VcsVFSListener {
 
   @NotNull
   @Override
+  @SuppressWarnings("UnresolvedPropertyKey")
   protected String getSingleFileAddPromptTemplate() {
     return PerforceBundle.message("confirmation.text.add.files");
   }
@@ -175,6 +176,7 @@ public final class PerforceVFSListener extends VcsVFSListener {
   }
 
   @Override
+  @SuppressWarnings("UnresolvedPropertyKey")
   protected String getSingleFileDeletePromptTemplate() {
     return PerforceBundle.message("confirmation.text.remove.files");
   }
