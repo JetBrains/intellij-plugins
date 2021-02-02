@@ -9,11 +9,9 @@
  */
 package org.nanocontainer;
 
-import org.picocontainer.ComponentAdapter;
 import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.Parameter;
 import org.picocontainer.PicoException;
-import org.picocontainer.defaults.BeanPropertyComponentAdapter;
 import org.picocontainer.defaults.ConstantParameter;
 import org.picocontainer.defaults.CustomPermissionsURLClassLoader;
 import org.picocontainer.defaults.DefaultPicoContainer;
@@ -70,7 +68,7 @@ public final class DefaultNanoContainer {
 
   public void registerComponentImplementation(Object key, String componentImplementationClassName)
     throws ClassNotFoundException {
-    Class componentImplementation = loadClass(componentImplementationClassName);
+    Class<?> componentImplementation = loadClass(componentImplementationClassName);
     if (key instanceof ClassNameKey) {
       key = loadClass(((ClassNameKey)key).getClassName());
     }
@@ -78,19 +76,7 @@ public final class DefaultNanoContainer {
   }
 
 
-  private ComponentAdapter registerComponentImplementation(String[] parameterTypesAsString,
-                                                           String[] parameterValuesAsString,
-                                                           Object key,
-                                                           Class componentImplementation) throws ClassNotFoundException {
-    Parameter[] parameters = new Parameter[parameterTypesAsString.length];
-    for (int i = 0; i < parameters.length; i++) {
-      Object value = BeanPropertyComponentAdapter.convert(parameterTypesAsString[i], parameterValuesAsString[i], getComponentClassLoader());
-      parameters[i] = new ConstantParameter(value);
-    }
-    return picoContainer.registerComponentImplementation(key, componentImplementation, parameters);
-  }
-
-  private Class loadClass(final String className) throws ClassNotFoundException {
+  private Class<?> loadClass(final String className) throws ClassNotFoundException {
     ClassLoader classLoader = getComponentClassLoader();
     String cn = getClassName(className);
     return classLoader.loadClass(cn);
@@ -107,9 +93,9 @@ public final class DefaultNanoContainer {
   public ClassLoader getComponentClassLoader() {
     if (componentClassLoader == null) {
       componentClassLoaderLocked = true;
-      componentClassLoader = (ClassLoader)AccessController.doPrivileged(new PrivilegedAction() {
+      componentClassLoader = AccessController.doPrivileged(new PrivilegedAction<>() {
         @Override
-        public Object run() {
+        public ClassLoader run() {
           return new CustomPermissionsURLClassLoader(getURLs(classPathElements), makePermissions(), parentClassLoader);
         }
       });
@@ -121,27 +107,26 @@ public final class DefaultNanoContainer {
     return picoContainer;
   }
 
-  private Map makePermissions() {
-    Map permissionsMap = new HashMap();
-    for (Object element : classPathElements) {
-      ClassPathElement cpe = (ClassPathElement)element;
-      PermissionCollection permissionCollection = cpe.getPermissionCollection();
-      permissionsMap.put(cpe.getUrl(), permissionCollection);
+  private Map<URL, PermissionCollection> makePermissions() {
+    Map<URL, PermissionCollection> permissionsMap = new HashMap<>();
+    for (ClassPathElement element : classPathElements) {
+      PermissionCollection permissionCollection = element.getPermissionCollection();
+      permissionsMap.put(element.getUrl(), permissionCollection);
     }
     return permissionsMap;
   }
 
-  private static URL[] getURLs(List classPathElemelements) {
-    final URL[] urls = new URL[classPathElemelements.size()];
+  private static URL[] getURLs(List<ClassPathElement> classPathElements) {
+    final URL[] urls = new URL[classPathElements.size()];
     for (int i = 0; i < urls.length; i++) {
-      urls[i] = ((ClassPathElement)classPathElemelements.get(i)).getUrl();
+      urls[i] = classPathElements.get(i).getUrl();
     }
     return urls;
   }
 
   public Object getComponentInstanceOfType(String componentType) {
     try {
-      Class compType = getComponentClassLoader().loadClass(componentType);
+      Class<?> compType = getComponentClassLoader().loadClass(componentType);
       return picoContainer.getComponentInstanceOfType(compType);
     }
     catch (ClassNotFoundException e) {
@@ -150,7 +135,7 @@ public final class DefaultNanoContainer {
     }
   }
 
-  public MutablePicoContainer addDecoratingPicoContainer(Class picoContainerClass) {
+  public MutablePicoContainer addDecoratingPicoContainer(Class<?> picoContainerClass) {
     DefaultPicoContainer pico = new DefaultPicoContainer();
     pico.registerComponentImplementation(MutablePicoContainer.class, picoContainerClass,
       new Parameter[]{new ConstantParameter(picoContainer)});

@@ -34,7 +34,6 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.XmlExtension;
 import com.intellij.xml.util.HtmlUtil;
@@ -290,18 +289,14 @@ public class Angular2CompletionContributor extends CompletionContributor {
             .nonNull()
             .flatCollection(attr -> StreamEx.of(providers).toFlatList(provider -> provider.getRelatedAttributes(attr)))
             .toSet();
-          for (XmlAttributeDescriptor descriptor : descriptors) {
-            if (descriptor instanceof Angular2AttributeDescriptor) {
-              if (!providedAttributes.contains(descriptor.getName())
-                  && isValidVariant(attribute, descriptor, attributes, extension)) {
-                Pair<LookupElement, String> elementWithPrefix =
-                  ((Angular2AttributeDescriptor)descriptor).getLookupElementWithPrefix(
-                    result.getPrefixMatcher(), moduleScope);
-                if (elementWithPrefix.first != null) {
-                  providedAttributes.add(elementWithPrefix.first.getLookupString());
-                  result.withPrefixMatcher(result.getPrefixMatcher().cloneWithPrefix(elementWithPrefix.second))
-                    .addElement(elementWithPrefix.first);
-                }
+          for (Angular2AttributeDescriptor descriptor : descriptors) {
+            if (!providedAttributes.contains(descriptor.getName())
+                && isValidVariant(attribute, descriptor, attributes, extension)) {
+              Pair<LookupElement, String> elementWithPrefix = descriptor.getLookupElementWithPrefix(result.getPrefixMatcher(), moduleScope);
+              if (elementWithPrefix.first != null) {
+                providedAttributes.add(elementWithPrefix.first.getLookupString());
+                result.withPrefixMatcher(result.getPrefixMatcher().cloneWithPrefix(elementWithPrefix.second))
+                  .addElement(elementWithPrefix.first);
               }
             }
           }

@@ -114,10 +114,9 @@ public abstract class CfmlIndex implements Disposable {
     if (ok) return items;
 
     Set<T> result = new HashSet<>(items.size());
-    for (PsiElement element : items) {
+    for (T element : items) {
       if (aClass.isInstance(element)) {
-        //noinspection unchecked
-        result.add((T)element);
+        result.add(element);
       }
       else {
         rebuildFileIndex(element, key);

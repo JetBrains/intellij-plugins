@@ -101,11 +101,11 @@ public class FlexmojosSdkAdditionalData implements SdkAdditionalData {
     try {
       final Element rootElement = JDOMUtil.load(compilerPomFile.getInputStream());
       if (!rootElement.getName().equals("project")) return;
-      for (final Object dependenciesElement : rootElement.getChildren("dependencies", rootElement.getNamespace())) {
-        for (final Object dependencyElement : ((Element)dependenciesElement).getChildren("dependency", rootElement.getNamespace())) {
-          final String groupId = ((Element)dependencyElement).getChildText("groupId", rootElement.getNamespace());
-          final String artifactId = ((Element)dependencyElement).getChildText("artifactId", rootElement.getNamespace());
-          final String version = ((Element)dependencyElement).getChildText("version", rootElement.getNamespace());
+      for (final Element dependenciesElement : rootElement.getChildren("dependencies", rootElement.getNamespace())) {
+        for (final Element dependencyElement : dependenciesElement.getChildren("dependency", rootElement.getNamespace())) {
+          final String groupId = dependencyElement.getChildText("groupId", rootElement.getNamespace());
+          final String artifactId = dependencyElement.getChildText("artifactId", rootElement.getNamespace());
+          final String version = dependencyElement.getChildText("version", rootElement.getNamespace());
           addClasspathEntry(repositoryRootPath, groupId, artifactId, version);
         }
       }
@@ -209,8 +209,8 @@ public class FlexmojosSdkAdditionalData implements SdkAdditionalData {
     myFlexCompilerClasspath.clear();
     final Element compilerClasspathElement = element.getChild(COMPILER_CLASSPATH_ELEMENT_NAME);
     if (compilerClasspathElement != null) {
-      for (Object classpathEntryElement : compilerClasspathElement.getChildren(CLASSPATH_ENTRY_ELEMENT_NAME)) {
-        myFlexCompilerClasspath.add(((Element)classpathEntryElement).getText());
+      for (Element classpathEntryElement : compilerClasspathElement.getChildren(CLASSPATH_ENTRY_ELEMENT_NAME)) {
+        myFlexCompilerClasspath.add(classpathEntryElement.getText());
       }
     }
 

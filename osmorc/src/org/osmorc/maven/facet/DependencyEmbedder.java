@@ -98,8 +98,8 @@ public final class DependencyEmbedder extends AbstractDependencyFilter {
       myEmbeddedArtifacts.addAll(dependencies);
     }
     else {
-      for (Object dependency : dependencies) {
-        addInlinePaths((MavenArtifact)dependency, inline, myInlinePaths);
+      for (MavenArtifact dependency : dependencies) {
+        addInlinePaths(dependency, inline, myInlinePaths);
       }
     }
   }

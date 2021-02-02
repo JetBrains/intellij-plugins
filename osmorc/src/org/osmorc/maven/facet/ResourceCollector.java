@@ -97,8 +97,8 @@ public final class ResourceCollector {
 
         String[] includedFiles = scanner.getIncludedFiles();
 
-        for (Object includedFile : includedFiles) {
-          String name = (String)includedFile;
+        for (String includedFile : includedFiles) {
+          String name = includedFile;
           String path = sourcePath + '/' + name;
 
 

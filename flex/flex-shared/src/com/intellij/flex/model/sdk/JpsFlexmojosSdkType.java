@@ -40,8 +40,8 @@ public class JpsFlexmojosSdkType extends JpsSdkType<JpsSimpleElement<JpsFlexmojo
         if (propertiesElement != null) {
           final Element compilerClasspathElement = propertiesElement.getChild(COMPILER_CLASSPATH_ELEMENT_NAME);
           if (compilerClasspathElement != null) {
-            for (Object classpathEntryElement : compilerClasspathElement.getChildren(CLASSPATH_ENTRY_ELEMENT_NAME)) {
-              flexCompilerClasspath.add(((Element)classpathEntryElement).getText());
+            for (Element classpathEntryElement : compilerClasspathElement.getChildren(CLASSPATH_ENTRY_ELEMENT_NAME)) {
+              flexCompilerClasspath.add(classpathEntryElement.getText());
             }
           }
 

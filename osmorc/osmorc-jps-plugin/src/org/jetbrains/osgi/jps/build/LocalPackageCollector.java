@@ -70,9 +70,7 @@ public final class LocalPackageCollector {
 
     boolean noPrivatePackages = "!*".equals(analyzer.getProperty(Constants.PRIVATE_PACKAGE));
 
-    for (Object aPackage : packages) {
-      String pkg = (String)aPackage;
-
+    for (String pkg : packages) {
       // mark all source packages as private by default (can be overridden by export list)
       if (privatePackages.length() > 0) {
         privatePackages.append(';');

@@ -210,16 +210,13 @@ public class KarmaCoverageEngine extends CoverageEngine {
       for (CoverageSuite suite : suitesBundle.getSuites()) {
         ProjectData data = suite.getCoverageData(coverageDataManager);
         if (data != null) {
-          for (Object key : data.getClasses().keySet()) {
-            if (key instanceof String) {
-              String path = (String)key;
-              VirtualFile file = VfsUtil.findFileByIoFile(new File(path), false);
-              if (file != null && file.isValid()) {
-                ProjectFileIndex projectFileIndex = ProjectFileIndex.SERVICE.getInstance(project);
-                VirtualFile contentRoot = projectFileIndex.getContentRootForFile(file);
-                if (contentRoot != null && contentRoot.isDirectory() && contentRoot.isValid()) {
-                  return contentRoot;
-                }
+          for (String path : data.getClasses().keySet()) {
+            VirtualFile file = VfsUtil.findFileByIoFile(new File(path), false);
+            if (file != null && file.isValid()) {
+              ProjectFileIndex projectFileIndex = ProjectFileIndex.SERVICE.getInstance(project);
+              VirtualFile contentRoot = projectFileIndex.getContentRootForFile(file);
+              if (contentRoot != null && contentRoot.isDirectory() && contentRoot.isValid()) {
+                return contentRoot;
               }
             }
           }
