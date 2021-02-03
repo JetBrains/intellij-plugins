@@ -26,6 +26,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,7 +36,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public abstract class NewJSClassUmlActionBase extends DiagramCreateNewElementAction<Object, CreateClassParameters> {
-  protected NewJSClassUmlActionBase(@NotNull Supplier<String> name, @NotNull Supplier<String> description, Icon icon) {
+  protected NewJSClassUmlActionBase(@NotNull Supplier<@Nls String> name, @NotNull Supplier<@Nls String> description, Icon icon) {
     super(name, description, icon);
   }
 

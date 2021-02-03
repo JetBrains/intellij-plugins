@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.refactoring.JSVisibilityUtil;
 import com.intellij.lang.javascript.refactoring.changeSignature.JSParameterInfo;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -25,7 +26,7 @@ import java.util.function.Supplier;
 public abstract class JSCreateMethodActionBase extends NewJSMemberActionBase {
   protected static final JSAttributeList.AccessType PUBLIC = JSAttributeList.AccessType.PUBLIC;
 
-  protected JSCreateMethodActionBase(@NotNull Supplier<String> name, @NotNull Supplier<String> description, Icon icon) {
+  protected JSCreateMethodActionBase(@NotNull Supplier<@Nls String> name, @NotNull Supplier<@Nls String> description, Icon icon) {
     super(name, description, icon);
   }
 
