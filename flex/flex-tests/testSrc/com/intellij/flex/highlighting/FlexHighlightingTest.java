@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.highlighting;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
@@ -104,7 +104,6 @@ import com.intellij.xml.XmlNSDescriptor;
 import com.intellij.xml.impl.dtd.XmlNSDescriptorImpl;
 import com.intellij.xml.util.CheckXmlFileWithXercesValidatorInspection;
 import com.sixrr.inspectjs.validity.BadExpressionStatementJSInspection;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -800,7 +799,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     doTestFor(true, testName + ".as", testName + ".swc");
     checkNavigatableSymbols("layoutObject");
 
-    final Set<String> resolvedNses = new THashSet<>();
+    final Set<String> resolvedNses = new HashSet<>();
     final Ref<String> foundConst = new Ref<>();
     final Ref<String> foundConst2 = new Ref<>();
 
