@@ -21,6 +21,7 @@ public class DartContinueStatementImpl extends DartPsiCompositeElementImpl imple
     visitor.visitContinueStatement(this);
   }
 
+  @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);

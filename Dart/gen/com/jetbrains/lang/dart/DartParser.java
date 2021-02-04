@@ -112,7 +112,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     r = argumentListPart(b, l + 1);
     r = r && argumentList_1(b, l + 1);
     r = r && argumentList_2(b, l + 1);
-    exit_section_(b, l, m, r, false, argument_list_recover_parser_);
+    exit_section_(b, l, m, r, false, DartParser::argument_list_recover);
     return r;
   }
 
@@ -153,7 +153,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_);
     r = namedArgument(b, l + 1);
     if (!r) r = expression(b, l + 1);
-    exit_section_(b, l, m, r, false, argument_list_part_recover_parser_);
+    exit_section_(b, l, m, r, false, DartParser::argument_list_part_recover);
     return r;
   }
 
@@ -854,7 +854,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!r) r = methodDeclaration(b, l + 1);
     if (!r) r = varDeclarationListWithSemicolon(b, l + 1);
     if (!r) r = incompleteDeclaration(b, l + 1);
-    exit_section_(b, l, m, r, false, class_member_recover_parser_);
+    exit_section_(b, l, m, r, false, DartParser::class_member_recover);
     return r;
   }
 
@@ -868,7 +868,7 @@ public class DartParser implements PsiParser, LightPsiParser {
       if (!classMemberDefinition(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "classMembers", c)) break;
     }
-    exit_section_(b, l, m, true, false, simple_scope_recover_parser_);
+    exit_section_(b, l, m, true, false, DartParser::simple_scope_recover);
     return true;
   }
 
@@ -1069,7 +1069,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     r = defaultFormalNamedParameter_0(b, l + 1);
     r = r && normalFormalParameter(b, l + 1);
     r = r && defaultFormalNamedParameter_2(b, l + 1);
-    exit_section_(b, l, m, r, false, default_formal_parameter_recover_parser_);
+    exit_section_(b, l, m, r, false, DartParser::default_formal_parameter_recover);
     return r;
   }
 
@@ -1386,7 +1386,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     boolean r;
     Marker m = enter_section_(b, l, _COLLAPSE_, EXPRESSION, "<expression>");
     r = assignExpressionWrapper(b, l + 1);
-    exit_section_(b, l, m, r, false, expression_recover_parser_);
+    exit_section_(b, l, m, r, false, DartParser::expression_recover);
     return r;
   }
 
@@ -1398,7 +1398,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_);
     r = expression(b, l + 1);
     if (!r) r = statement(b, l + 1);
-    exit_section_(b, l, m, r, false, parenthesesRecovery_parser_);
+    exit_section_(b, l, m, r, false, DartParser::parenthesesRecovery);
     return r;
   }
 
@@ -1450,7 +1450,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     boolean r;
     Marker m = enter_section_(b, l, _NONE_);
     r = expression(b, l + 1);
-    exit_section_(b, l, m, r, false, not_paren_recover_parser_);
+    exit_section_(b, l, m, r, false, DartParser::not_paren_recover);
     return r;
   }
 
@@ -1461,7 +1461,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     boolean r;
     Marker m = enter_section_(b, l, _NONE_);
     r = expression(b, l + 1);
-    exit_section_(b, l, m, r, false, not_paren_or_comma_recover_parser_);
+    exit_section_(b, l, m, r, false, DartParser::not_paren_or_comma_recover);
     return r;
   }
 
@@ -2262,7 +2262,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     r = forInPart(b, l + 1);
     if (!r) r = forLoopParts_1(b, l + 1);
     if (!r) r = forLoopParts_2(b, l + 1);
-    exit_section_(b, l, m, r, false, for_loops_parts_recover_parser_);
+    exit_section_(b, l, m, r, false, DartParser::for_loops_parts_recover);
     return r;
   }
 
@@ -5985,7 +5985,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     r = superCallOrFieldInitializer_0(b, l + 1);
     if (!r) r = fieldInitializer(b, l + 1);
     if (!r) r = assertStatement(b, l + 1);
-    exit_section_(b, l, m, r, false, super_call_or_field_initializer_recover_parser_);
+    exit_section_(b, l, m, r, false, DartParser::super_call_or_field_initializer_recover);
     return r;
   }
 
@@ -6288,7 +6288,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!r) r = functionDeclarationWithBodyOrNative(b, l + 1);
     if (!r) r = varDeclarationListWithSemicolon(b, l + 1);
     if (!r) r = incompleteDeclaration(b, l + 1);
-    exit_section_(b, l, m, r, false, top_level_recover_parser_);
+    exit_section_(b, l, m, r, false, DartParser::top_level_recover);
     return r;
   }
 
@@ -6487,7 +6487,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     r = typeParameter_0(b, l + 1);
     r = r && componentName(b, l + 1);
     r = r && typeParameter_2(b, l + 1);
-    exit_section_(b, l, m, r, false, type_parameter_recover_parser_);
+    exit_section_(b, l, m, r, false, DartParser::type_parameter_recover);
     return r;
   }
 
@@ -7284,69 +7284,4 @@ public class DartParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  static final Parser argument_list_part_recover_parser_ = new Parser() {
-    public boolean parse(PsiBuilder b, int l) {
-      return argument_list_part_recover(b, l + 1);
-    }
-  };
-  static final Parser argument_list_recover_parser_ = new Parser() {
-    public boolean parse(PsiBuilder b, int l) {
-      return argument_list_recover(b, l + 1);
-    }
-  };
-  static final Parser class_member_recover_parser_ = new Parser() {
-    public boolean parse(PsiBuilder b, int l) {
-      return class_member_recover(b, l + 1);
-    }
-  };
-  static final Parser default_formal_parameter_recover_parser_ = new Parser() {
-    public boolean parse(PsiBuilder b, int l) {
-      return default_formal_parameter_recover(b, l + 1);
-    }
-  };
-  static final Parser expression_recover_parser_ = new Parser() {
-    public boolean parse(PsiBuilder b, int l) {
-      return expression_recover(b, l + 1);
-    }
-  };
-  static final Parser for_loops_parts_recover_parser_ = new Parser() {
-    public boolean parse(PsiBuilder b, int l) {
-      return for_loops_parts_recover(b, l + 1);
-    }
-  };
-  static final Parser not_paren_or_comma_recover_parser_ = new Parser() {
-    public boolean parse(PsiBuilder b, int l) {
-      return not_paren_or_comma_recover(b, l + 1);
-    }
-  };
-  static final Parser not_paren_recover_parser_ = new Parser() {
-    public boolean parse(PsiBuilder b, int l) {
-      return not_paren_recover(b, l + 1);
-    }
-  };
-  static final Parser parenthesesRecovery_parser_ = new Parser() {
-    public boolean parse(PsiBuilder b, int l) {
-      return parenthesesRecovery(b, l + 1);
-    }
-  };
-  static final Parser simple_scope_recover_parser_ = new Parser() {
-    public boolean parse(PsiBuilder b, int l) {
-      return simple_scope_recover(b, l + 1);
-    }
-  };
-  static final Parser super_call_or_field_initializer_recover_parser_ = new Parser() {
-    public boolean parse(PsiBuilder b, int l) {
-      return super_call_or_field_initializer_recover(b, l + 1);
-    }
-  };
-  static final Parser top_level_recover_parser_ = new Parser() {
-    public boolean parse(PsiBuilder b, int l) {
-      return top_level_recover(b, l + 1);
-    }
-  };
-  static final Parser type_parameter_recover_parser_ = new Parser() {
-    public boolean parse(PsiBuilder b, int l) {
-      return type_parameter_recover(b, l + 1);
-    }
-  };
 }

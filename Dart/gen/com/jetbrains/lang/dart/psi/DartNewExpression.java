@@ -18,7 +18,6 @@ public interface DartNewExpression extends DartExpression, DartReference {
 
   boolean isConstantObjectExpression();
 
-  @Nullable
-  DartArguments getArguments();
+  @Nullable DartArguments getArguments();
 
 }

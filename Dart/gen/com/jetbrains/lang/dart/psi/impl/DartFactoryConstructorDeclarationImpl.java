@@ -21,6 +21,7 @@ public class DartFactoryConstructorDeclarationImpl extends AbstractDartComponent
     visitor.visitFactoryConstructorDeclaration(this);
   }
 
+  @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
@@ -63,8 +64,7 @@ public class DartFactoryConstructorDeclarationImpl extends AbstractDartComponent
   }
 
   @Override
-  @Nullable
-  public DartComponentName getComponentName() {
+  public @Nullable DartComponentName getComponentName() {
     return DartPsiImplUtil.getComponentName(this);
   }
 

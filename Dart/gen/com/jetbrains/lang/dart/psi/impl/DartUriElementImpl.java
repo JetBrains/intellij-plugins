@@ -23,6 +23,7 @@ public class DartUriElementImpl extends DartUriElementBase implements DartUriEle
     visitor.visitUriElement(this);
   }
 
+  @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
@@ -35,8 +36,7 @@ public class DartUriElementImpl extends DartUriElementBase implements DartUriEle
   }
 
   @Override
-  @NotNull
-  public Pair<String, TextRange> getUriStringAndItsRange() {
+  public @NotNull Pair<String, TextRange> getUriStringAndItsRange() {
     return DartPsiImplUtil.getUriStringAndItsRange(this);
   }
 

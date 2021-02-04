@@ -21,6 +21,7 @@ public class DartReturnTypeImpl extends DartPsiCompositeElementImpl implements D
     visitor.visitReturnType(this);
   }
 
+  @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);

@@ -21,14 +21,14 @@ public class DartFunctionBodyImpl extends DartPsiCompositeElementImpl implements
     visitor.visitFunctionBody(this);
   }
 
+  @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
   }
 
   @Override
-  @Nullable
-  public IDartBlock getBlock() {
+  public @Nullable IDartBlock getBlock() {
     return DartPsiImplUtil.getBlock(this);
   }
 

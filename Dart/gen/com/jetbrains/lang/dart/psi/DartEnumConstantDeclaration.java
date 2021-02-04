@@ -10,7 +10,6 @@ public interface DartEnumConstantDeclaration extends DartComponent {
   @NotNull
   DartComponentName getComponentName();
 
-  @NotNull
-  List<DartMetadata> getMetadataList();
+  @NotNull List<DartMetadata> getMetadataList();
 
 }

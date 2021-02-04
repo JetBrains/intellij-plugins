@@ -16,13 +16,10 @@ public interface DartType extends DartPsiCompositeElement {
   @Nullable
   DartUntypedFunctionType getUntypedFunctionType();
 
-  @Nullable
-  PsiElement resolveReference();
+  @Nullable PsiElement resolveReference();
 
-  @Nullable
-  DartReferenceExpression getReferenceExpression();
+  @Nullable DartReferenceExpression getReferenceExpression();
 
-  @Nullable
-  DartTypeArguments getTypeArguments();
+  @Nullable DartTypeArguments getTypeArguments();
 
 }

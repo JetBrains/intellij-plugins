@@ -21,6 +21,7 @@ public class DartVarDeclarationListPartImpl extends AbstractDartComponentImpl im
     visitor.visitVarDeclarationListPart(this);
   }
 
+  @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
@@ -39,8 +40,7 @@ public class DartVarDeclarationListPartImpl extends AbstractDartComponentImpl im
   }
 
   @Override
-  @NotNull
-  public List<DartMetadata> getMetadataList() {
+  public @NotNull List<DartMetadata> getMetadataList() {
     return DartPsiImplUtil.getMetadataList(this);
   }
 

@@ -17,10 +17,8 @@ public interface DartPartOfStatement extends DartPsiCompositeElement {
   @Nullable
   DartUriElement getUriElement();
 
-  @NotNull
-  String getLibraryName();
+  @NotNull String getLibraryName();
 
-  @NotNull
-  List<VirtualFile> getLibraryFiles();
+  @NotNull List<VirtualFile> getLibraryFiles();
 
 }
