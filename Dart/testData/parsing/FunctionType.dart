@@ -35,6 +35,10 @@ typedef F2100<T> = List<Function> Function<A>(Function x) Function();
 typedef F2200<T> = Function<A>(List<Function> x) Function();
 typedef F2300<T> = void Function<A>(core.List<core.int> x) Function();
 
+typedef a1 = void;
+typedef a2 = Foo;
+@a.b(c) typedef a3<a extends b, c extends d> = core.List<core.int>;
+
 
 int f0(int x) => null;
 Function f100(List<int> x) => null;
