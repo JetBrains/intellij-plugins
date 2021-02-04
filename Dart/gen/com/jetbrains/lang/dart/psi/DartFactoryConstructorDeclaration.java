@@ -25,7 +25,6 @@ public interface DartFactoryConstructorDeclaration extends DartComponent {
   @Nullable
   DartType getType();
 
-  @Nullable
-  DartComponentName getComponentName();
+  @Nullable DartComponentName getComponentName();
 
 }

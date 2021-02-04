@@ -21,6 +21,7 @@ public class DartInitializersImpl extends DartPsiCompositeElementImpl implements
     visitor.visitInitializers(this);
   }
 
+  @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);

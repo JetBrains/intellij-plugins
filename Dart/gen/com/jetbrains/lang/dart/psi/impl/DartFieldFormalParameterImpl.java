@@ -21,6 +21,7 @@ public class DartFieldFormalParameterImpl extends DartPsiCompositeElementImpl im
     visitor.visitFieldFormalParameter(this);
   }
 
+  @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);

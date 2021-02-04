@@ -13,7 +13,6 @@ public interface DartPartStatement extends DartUriBasedDirective {
   @NotNull
   DartUriElement getUriElement();
 
-  @NotNull
-  String getUriString();
+  @NotNull String getUriString();
 
 }

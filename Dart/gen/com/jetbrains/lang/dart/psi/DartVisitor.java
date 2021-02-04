@@ -3,8 +3,8 @@ package com.jetbrains.lang.dart.psi;
 
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElementVisitor;
-import  com.intellij.psi.PsiNameIdentifierOwner;
-import  com.intellij.psi.PsiLanguageInjectionHost;
+import com.intellij.psi.PsiNameIdentifierOwner;
+import com.intellij.psi.PsiLanguageInjectionHost;
 
 public class DartVisitor extends PsiElementVisitor {
 
@@ -280,6 +280,7 @@ public class DartVisitor extends PsiElementVisitor {
 
   public void visitLibraryNameElement(@NotNull DartLibraryNameElement o) {
     visitPsiCompositeElement(o);
+    // visitPsiNameIdentifierOwner(o);
   }
 
   public void visitLibraryReferenceList(@NotNull DartLibraryReferenceList o) {
@@ -484,7 +485,7 @@ public class DartVisitor extends PsiElementVisitor {
 
   public void visitStringLiteralExpression(@NotNull DartStringLiteralExpression o) {
     visitExpression(o);
-    // visitReference(o);
+    // visitPsiLanguageInjectionHost(o);
   }
 
   public void visitSuffixExpression(@NotNull DartSuffixExpression o) {

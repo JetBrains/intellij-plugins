@@ -21,6 +21,7 @@ public class DartIdImpl extends DartPsiCompositeElementImpl implements DartId {
     visitor.visitId(this);
   }
 
+  @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);

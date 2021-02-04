@@ -21,6 +21,7 @@ public class DartPrefixOperatorImpl extends DartPsiCompositeElementImpl implemen
     visitor.visitPrefixOperator(this);
   }
 
+  @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);

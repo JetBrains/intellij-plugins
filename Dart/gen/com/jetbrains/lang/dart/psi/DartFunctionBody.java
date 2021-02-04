@@ -7,7 +7,6 @@ import com.intellij.psi.PsiElement;
 
 public interface DartFunctionBody extends DartPsiCompositeElement {
 
-  @Nullable
-  IDartBlock getBlock();
+  @Nullable IDartBlock getBlock();
 
 }

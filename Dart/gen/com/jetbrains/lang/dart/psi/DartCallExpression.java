@@ -13,7 +13,6 @@ public interface DartCallExpression extends DartExpression, DartReference {
   @Nullable
   DartTypeArguments getTypeArguments();
 
-  @Nullable
-  DartArguments getArguments();
+  @Nullable DartArguments getArguments();
 
 }
