@@ -20,12 +20,9 @@ public interface DartFunctionTypeAlias extends DartComponent {
   DartReturnType getReturnType();
 
   @Nullable
+  DartType getType();
+
+  @Nullable
   DartTypeParameters getTypeParameters();
-
-  @Nullable
-  DartTypedFunctionType getTypedFunctionType();
-
-  @Nullable
-  DartUntypedFunctionType getUntypedFunctionType();
 
 }

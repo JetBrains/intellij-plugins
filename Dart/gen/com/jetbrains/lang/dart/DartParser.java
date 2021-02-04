@@ -2970,7 +2970,7 @@ public class DartParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // metadata* 'typedef' functionPrefix typeParameters? formalParameterList ';'?
-  //                     | metadata* 'typedef' componentName typeParameters? '=' functionTypeWrapper ';'?
+  //                     | metadata* 'typedef' componentName typeParameters? '=' type ';'?
   public static boolean functionTypeAlias(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "functionTypeAlias")) return false;
     if (!nextTokenIs(b, "<function type alias>", AT, TYPEDEF)) return false;
@@ -3022,7 +3022,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // metadata* 'typedef' componentName typeParameters? '=' functionTypeWrapper ';'?
+  // metadata* 'typedef' componentName typeParameters? '=' type ';'?
   private static boolean functionTypeAlias_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "functionTypeAlias_1")) return false;
     boolean r;
@@ -3032,7 +3032,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     r = r && componentName(b, l + 1);
     r = r && functionTypeAlias_1_3(b, l + 1);
     r = r && consumeToken(b, EQ);
-    r = r && functionTypeWrapper(b, l + 1);
+    r = r && type(b, l + 1);
     r = r && functionTypeAlias_1_6(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
