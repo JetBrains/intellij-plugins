@@ -28,7 +28,6 @@ public interface DartNamedConstructorDeclaration extends DartComponent {
   @Nullable
   DartStringLiteralExpression getStringLiteralExpression();
 
-  @Nullable
-  DartComponentName getComponentName();
+  @Nullable DartComponentName getComponentName();
 
 }

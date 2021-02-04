@@ -21,6 +21,7 @@ public class DartExportStatementImpl extends DartPsiCompositeElementImpl impleme
     visitor.visitExportStatement(this);
   }
 
+  @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
@@ -57,8 +58,7 @@ public class DartExportStatementImpl extends DartPsiCompositeElementImpl impleme
   }
 
   @Override
-  @NotNull
-  public String getUriString() {
+  public @NotNull String getUriString() {
     return DartPsiImplUtil.getUriString(this);
   }
 

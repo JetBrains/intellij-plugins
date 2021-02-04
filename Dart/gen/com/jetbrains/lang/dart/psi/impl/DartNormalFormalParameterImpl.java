@@ -21,6 +21,7 @@ public class DartNormalFormalParameterImpl extends DartPsiCompositeElementImpl i
     visitor.visitNormalFormalParameter(this);
   }
 
+  @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
@@ -45,8 +46,7 @@ public class DartNormalFormalParameterImpl extends DartPsiCompositeElementImpl i
   }
 
   @Override
-  @Nullable
-  public DartComponentName findComponentName() {
+  public @Nullable DartComponentName findComponentName() {
     return DartPsiImplUtil.findComponentName(this);
   }
 

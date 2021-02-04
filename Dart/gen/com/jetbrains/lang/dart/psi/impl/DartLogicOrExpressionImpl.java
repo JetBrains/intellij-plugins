@@ -21,6 +21,7 @@ public class DartLogicOrExpressionImpl extends DartOperatorExpressionImpl implem
     visitor.visitLogicOrExpression(this);
   }
 
+  @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);

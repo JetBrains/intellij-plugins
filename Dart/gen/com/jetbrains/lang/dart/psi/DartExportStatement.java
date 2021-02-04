@@ -22,7 +22,6 @@ public interface DartExportStatement extends DartImportOrExportStatement {
   @NotNull
   DartUriElement getUriElement();
 
-  @NotNull
-  String getUriString();
+  @NotNull String getUriString();
 
 }

@@ -21,6 +21,7 @@ public class DartNewExpressionImpl extends DartReferenceImpl implements DartNewE
     visitor.visitNewExpression(this);
   }
 
+  @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
@@ -50,8 +51,7 @@ public class DartNewExpressionImpl extends DartReferenceImpl implements DartNewE
   }
 
   @Override
-  @Nullable
-  public DartArguments getArguments() {
+  public @Nullable DartArguments getArguments() {
     return DartPsiImplUtil.getArguments(this);
   }
 

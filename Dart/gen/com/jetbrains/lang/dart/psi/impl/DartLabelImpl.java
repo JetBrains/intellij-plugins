@@ -21,6 +21,7 @@ public class DartLabelImpl extends AbstractDartComponentImpl implements DartLabe
     visitor.visitLabel(this);
   }
 
+  @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
@@ -33,8 +34,7 @@ public class DartLabelImpl extends AbstractDartComponentImpl implements DartLabe
   }
 
   @Override
-  @NotNull
-  public List<DartMetadata> getMetadataList() {
+  public @NotNull List<DartMetadata> getMetadataList() {
     return DartPsiImplUtil.getMetadataList(this);
   }
 

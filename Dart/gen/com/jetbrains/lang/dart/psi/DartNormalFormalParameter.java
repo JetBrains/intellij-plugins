@@ -16,7 +16,6 @@ public interface DartNormalFormalParameter extends DartPsiCompositeElement {
   @Nullable
   DartSimpleFormalParameter getSimpleFormalParameter();
 
-  @Nullable
-  DartComponentName findComponentName();
+  @Nullable DartComponentName findComponentName();
 
 }

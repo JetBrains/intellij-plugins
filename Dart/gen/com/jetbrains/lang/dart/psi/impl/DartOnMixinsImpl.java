@@ -21,6 +21,7 @@ public class DartOnMixinsImpl extends DartPsiCompositeElementImpl implements Dar
     visitor.visitOnMixins(this);
   }
 
+  @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);

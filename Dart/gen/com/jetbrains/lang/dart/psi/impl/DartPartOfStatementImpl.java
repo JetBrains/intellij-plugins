@@ -22,6 +22,7 @@ public class DartPartOfStatementImpl extends DartPsiCompositeElementImpl impleme
     visitor.visitPartOfStatement(this);
   }
 
+  @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof DartVisitor) accept((DartVisitor)visitor);
     else super.accept(visitor);
@@ -46,14 +47,12 @@ public class DartPartOfStatementImpl extends DartPsiCompositeElementImpl impleme
   }
 
   @Override
-  @NotNull
-  public String getLibraryName() {
+  public @NotNull String getLibraryName() {
     return DartPsiImplUtil.getLibraryName(this);
   }
 
   @Override
-  @NotNull
-  public List<VirtualFile> getLibraryFiles() {
+  public @NotNull List<VirtualFile> getLibraryFiles() {
     return DartPsiImplUtil.getLibraryFiles(this);
   }
 
