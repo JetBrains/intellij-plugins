@@ -53,20 +53,14 @@ public class DartFunctionTypeAliasImpl extends AbstractDartComponentImpl impleme
 
   @Override
   @Nullable
+  public DartType getType() {
+    return findChildByClass(DartType.class);
+  }
+
+  @Override
+  @Nullable
   public DartTypeParameters getTypeParameters() {
     return findChildByClass(DartTypeParameters.class);
-  }
-
-  @Override
-  @Nullable
-  public DartTypedFunctionType getTypedFunctionType() {
-    return findChildByClass(DartTypedFunctionType.class);
-  }
-
-  @Override
-  @Nullable
-  public DartUntypedFunctionType getUntypedFunctionType() {
-    return findChildByClass(DartUntypedFunctionType.class);
   }
 
 }
