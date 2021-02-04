@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.pubServer;
 
 import com.intellij.execution.ExecutionException;
@@ -43,7 +43,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.handler.codec.http.*;
 import io.netty.util.ReferenceCounted;
-import io.netty.util.internal.PlatformDependent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.builtInWebServer.BuiltInWebServerKt;
@@ -62,7 +61,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.util.Collection;
-import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -85,7 +83,6 @@ final class PubServerService extends NetService {
 
   private static final class ServerInfo {
     private final InetSocketAddress address;
-    private final Deque<Channel> freeServerChannels = PlatformDependent.newConcurrentDeque();
 
     private ServerInfo(InetSocketAddress address) {
       this.address = address;
@@ -263,9 +260,6 @@ final class PubServerService extends NetService {
     try {
       Collection<ClientInfo> clientInfos = serverToClientChannel.values();
       list = clientInfos.toArray(new ClientInfo[0]);
-      for (ServerInfo serverInstanceInfo : servedDirToSocketAddress.values()) {
-        serverInstanceInfo.freeServerChannels.clear();
-      }
       serverToClientChannel.clear();
     }
     finally {
