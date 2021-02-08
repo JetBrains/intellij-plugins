@@ -66,7 +66,7 @@ fun isVueContext(contextFile: VirtualFile, project: Project): Boolean {
                  ?.let { if (it.isValid) PsiManager.getInstance(project).findDirectory(it) else null }
                ?: return false
   return withContextChangeCheck(contextFile, project) {
-    isVueContext(psiDir) && !isVueContextForbiddenFromProviders(contextFile, project)
+    isVueContext(psiDir) && !isVueContextForbiddenFromProviders(file, project)
   }
 }
 
