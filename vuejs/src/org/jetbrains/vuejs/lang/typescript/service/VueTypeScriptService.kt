@@ -34,9 +34,7 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
     if (super.isAcceptableNonTsFile(project, service, virtualFile)) return true
     if (!isVueFile(virtualFile)) return false
 
-    //lightweight check -> only parent configs, no indirect deps
-    val configs = TypeScriptConfigUtil.getNearestParentConfigFiles(project, virtualFile)
-    return configs.any { service.parseConfigFile(it)?.include?.accept(virtualFile) ?: false }
+    return service.getDirectIncludePreferableConfig(virtualFile) != null
   }
 
   override fun postprocessErrors(file: PsiFile, errors: MutableList<JSAnnotationError>): List<JSAnnotationError> {
