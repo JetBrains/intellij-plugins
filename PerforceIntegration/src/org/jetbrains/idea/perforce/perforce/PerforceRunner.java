@@ -49,6 +49,7 @@ import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.*;
 import com.intellij.util.text.SyncDateFormat;
 import com.intellij.vcsUtil.VcsUtil;
+import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenCustomHashMap;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import org.jetbrains.annotations.Nls;
@@ -709,7 +710,7 @@ public final class PerforceRunner implements PerforceRunnerI {
       }
     }
 
-    Object2LongOpenCustomHashMap<String> haveRevisions = new Object2LongOpenCustomHashMap<>(SystemInfoRt.isFileSystemCaseSensitive ? FastUtilHashingStrategies
+    Object2LongMap<String> haveRevisions=new Object2LongOpenCustomHashMap<>(SystemInfoRt.isFileSystemCaseSensitive ? FastUtilHashingStrategies
       .getCaseInsensitiveStringStrategy() : FastUtilHashingStrategies.getCanonicalStrategy());
 
     final PathsHelper pathsHelper = new PathsHelper(myPerforceManager);
@@ -1388,7 +1389,7 @@ public final class PerforceRunner implements PerforceRunnerI {
     P4Connection connection = myConnectionManager.getConnectionForFile(file);
     if (connection == null) return false;
 
-    Object2LongOpenHashMap<String> haveRevisions = new Object2LongOpenHashMap<>();
+    Object2LongMap<String> haveRevisions = new Object2LongOpenHashMap<>();
     final P4HaveParser haveParser = new P4HaveParser.RevisionCollector(myPerforceManager, haveRevisions);
     doHave(Collections.singletonList(getP4FilePath(file, file.isDirectory(), file.isDirectory())), connection, haveParser, false);
     return !haveRevisions.isEmpty();
@@ -1398,7 +1399,7 @@ public final class PerforceRunner implements PerforceRunnerI {
     P4Connection connection = myConnectionManager.getConnectionForFile(file);
     if (connection == null) return -1;
 
-    Object2LongOpenHashMap<String> haveRevisions = new Object2LongOpenHashMap<>();
+    Object2LongMap<String> haveRevisions = new Object2LongOpenHashMap<>();
     final P4HaveParser haveParser = new P4HaveParser.RevisionCollector(myPerforceManager, haveRevisions);
     doHave(Collections.singletonList(getP4FilePath(file, file.isDirectory(), false)), connection, haveParser, false);
     return haveRevisions.isEmpty() ? -1 : haveRevisions.values().iterator().nextLong();

@@ -49,6 +49,7 @@ import com.jetbrains.lang.dart.ide.runner.server.webdev.DartDaemonParserUtil;
 import com.jetbrains.lang.dart.util.DartBazelFileUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import org.dartlang.vm.service.VmService;
 import org.dartlang.vm.service.element.*;
@@ -78,7 +79,7 @@ public final class DartVmServiceDebugProcess extends XDebugProcess {
   private String myLatestCurrentIsolateId;
 
   private final Map<String, LightVirtualFile> myScriptIdToContentMap = new HashMap<>();
-  private final Map<String, Int2ObjectOpenHashMap<Pair<Integer, Integer>>> myScriptIdToLinesAndColumnsMap = new HashMap<>();
+  private final Map<String, Int2ObjectMap<Pair<Integer, Integer>>> myScriptIdToLinesAndColumnsMap = new HashMap<>();
 
   private final @Nullable String myDASExecutionContextId;
   private final @NotNull DebugType myDebugType;
@@ -641,7 +642,7 @@ public final class DartVmServiceDebugProcess extends XDebugProcess {
       file = myScriptIdToContentMap.get(scriptRef.getId());
     }
 
-    Int2ObjectOpenHashMap<Pair<Integer, Integer>> tokenPosToLineAndColumn = myScriptIdToLinesAndColumnsMap.get(scriptRef.getId());
+    Int2ObjectMap<Pair<Integer, Integer>> tokenPosToLineAndColumn = myScriptIdToLinesAndColumnsMap.get(scriptRef.getId());
 
     if (file != null && tokenPosToLineAndColumn != null) {
       final Pair<Integer, Integer> lineAndColumn = tokenPosToLineAndColumn.get(tokenPos);
@@ -680,10 +681,10 @@ public final class DartVmServiceDebugProcess extends XDebugProcess {
     return uri.startsWith("dart:_") || uri.startsWith("dart:") && uri.contains("-patch/");
   }
 
-  private static @NotNull Int2ObjectOpenHashMap<Pair<Integer, Integer>> createTokenPosToLineAndColumnMap(@NotNull List<List<Integer>> tokenPosTable) {
+  private static Int2ObjectMap<Pair<Integer, Integer>> createTokenPosToLineAndColumnMap(@NotNull List<List<Integer>> tokenPosTable) {
     // Each subarray consists of a line number followed by (tokenPos, columnNumber) pairs
     // see https://github.com/dart-lang/vm_service_drivers/blob/master/dart/tool/service.md#script
-    final Int2ObjectOpenHashMap<Pair<Integer, Integer>> result = new Int2ObjectOpenHashMap<>();
+    final Int2ObjectMap<Pair<Integer, Integer>> result = new Int2ObjectOpenHashMap<>();
 
     for (List<Integer> lineAndPairs : tokenPosTable) {
       final Iterator<Integer> iterator = lineAndPairs.iterator();

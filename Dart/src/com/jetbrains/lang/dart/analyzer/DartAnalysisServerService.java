@@ -61,6 +61,7 @@ import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUpdateChecker;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.Contract;
@@ -152,9 +153,9 @@ public final class DartAnalysisServerService implements Disposable {
   // files with red squiggles in Project View. This field is also used as a lock to access these 3 collections
   @NotNull private final Set<String> myFilePathsWithErrors = new HashSet<>();
   // how many files with errors are in this folder (recursively)
-  @NotNull private final Object2IntOpenHashMap<String> myFolderPathsWithErrors = new Object2IntOpenHashMap<>();
+  @NotNull private final Object2IntMap<String> myFolderPathsWithErrors = new Object2IntOpenHashMap<>();
   // errors hash is tracked to optimize error notification listener: do not handle equal notifications more than once
-  @NotNull private final Object2IntOpenHashMap<String> myFilePathToErrorsHash = new Object2IntOpenHashMap<>();
+  @NotNull private final Object2IntMap<String> myFilePathToErrorsHash = new Object2IntOpenHashMap<>();
 
   @NotNull private final EvictingQueue<String> myDebugLog = EvictingQueue.create(DEBUG_LOG_CAPACITY);
 
