@@ -28,7 +28,6 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.ui.configuration.ModuleEditor;
 import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
-import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectStructureElementConfigurable;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.StructureConfigurableContext;
@@ -342,7 +341,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
       myIOSPackagingConfigurable.disposeUIResources();
     }
 
-    myDependenciesConfigurable = new DependenciesConfigurable(myConfiguration, myModule.getProject(), myConfigEditor, mySdksModel);
+    myDependenciesConfigurable = new DependenciesConfigurable(myConfiguration, myModule.getProject(), myConfigEditor, mySdksModel, getModulesConfigurator().getProjectStructureConfigurable());
     myDependenciesConfigurable.addUserActivityListener(myUserActivityListener, myDisposable);
 
     myCompilerOptionsConfigurable =
@@ -496,7 +495,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
   }
 
   private ModulesConfigurator getModulesConfigurator() {
-    return ModuleStructureConfigurable.getInstance(myModule.getProject()).getContext().getModulesConfigurator();
+    return myContext.getModulesConfigurator();
   }
 
   public Icon getIcon() {

@@ -119,10 +119,11 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
         final FlexProjectConfigurationEditor currentFlexEditor =
           FlexBuildConfigurationsExtension.getInstance().getConfigurator().getConfigEditor();
 
-        ProjectSdksModel sdksModel = ProjectStructureConfigurable.getInstance(project).getProjectJdksModel();
+        ProjectStructureConfigurable configurable = ProjectStructureConfigurable.getInstance(project);
+        ProjectSdksModel sdksModel = configurable.getProjectJdksModel();
         if (currentFlexEditor != null) {
           // project structure is open, don't directly commit model
-          sdksModel = new NonCommittingWrapper(sdksModel, JdkListConfigurable.getInstance(project));
+          sdksModel = new NonCommittingWrapper(sdksModel, configurable.getJdkConfig());
         }
 
         final ProjectJdksEditor editor =

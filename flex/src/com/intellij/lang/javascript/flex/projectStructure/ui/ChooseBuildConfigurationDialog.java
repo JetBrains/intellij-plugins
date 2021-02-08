@@ -8,7 +8,7 @@ import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
+import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Condition;
 import com.intellij.ui.*;
@@ -56,7 +56,7 @@ public final class ChooseBuildConfigurationDialog extends DialogWrapper {
                                                                       Condition<? super FlexBCConfigurable> filter) {
     Map<Module, List<FlexBCConfigurable>> treeItems = new HashMap<>();
     FlexBCConfigurator configurator = FlexBuildConfigurationsExtension.getInstance().getConfigurator();
-    for (Module module : ModuleStructureConfigurable.getInstance(project).getModules()) {
+    for (Module module : ProjectStructureConfigurable.getInstance(project).getModulesConfig().getModules()) {
       if (ModuleType.get(module) != FlexModuleType.getInstance()) {
         continue;
       }

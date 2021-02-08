@@ -5,7 +5,6 @@ import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfiguration
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
-import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
 import com.intellij.openapi.ui.MasterDetailsComponent;
 import com.intellij.ui.navigation.Place;
 import org.jetbrains.annotations.Nullable;
@@ -16,7 +15,7 @@ public final class FlexProjectStructureUtil {
 
   public static Place createPlace(FlexBCConfigurable configurable, @Nullable String tabName) {
     Place place = new Place()
-      .putPath(ProjectStructureConfigurable.CATEGORY, ModuleStructureConfigurable.getInstance(configurable.getModule().getProject()))
+      .putPath(ProjectStructureConfigurable.CATEGORY, ProjectStructureConfigurable.getInstance(configurable.getModule().getProject()).getModulesConfig())
       .putPath(MasterDetailsComponent.TREE_OBJECT, configurable.getEditableObject());
     if (tabName != null) {
       place.putPath(CompositeConfigurable.TAB_NAME, tabName);
