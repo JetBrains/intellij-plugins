@@ -4,6 +4,7 @@ package org.angular2.codeInsight;
 import com.intellij.codeInsight.daemon.impl.analysis.XmlUnboundNsPrefixInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection;
+import com.intellij.lang.javascript.TypeScriptTestUtil;
 import com.intellij.lang.javascript.psi.JSField;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
@@ -769,6 +770,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testCodeCompletionDefaultJSEventType() {
+    TypeScriptTestUtil.forceDefaultTsConfig(getProject(), getTestRootDisposable());
     myFixture.configureByFiles("attributeTypes.ts", "lib.dom.d.ts", "package.json");
     myFixture.completeBasic();
     myFixture.type("(clic\n$event.");

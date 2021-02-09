@@ -3,6 +3,7 @@ package org.angular2.metadata;
 
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
+import com.intellij.lang.javascript.TypeScriptTestUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angular2.inspections.Angular2TemplateInspectionsProvider;
@@ -30,6 +31,7 @@ public class IvyMetadataTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testMixedMetadataResolution() {
+    TypeScriptTestUtil.forceDefaultTsConfig(getProject(), getTestRootDisposable());
     //Test component matching, abstract class in hierarchy and indirect node module indexing
     myFixture.copyDirectoryToProject("material", ".");
     configureCopy(myFixture, ANGULAR_CORE_9_1_1_MIXED, ANGULAR_MATERIAL_8_2_3_MIXED);

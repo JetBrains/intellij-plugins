@@ -633,7 +633,7 @@ export default {
 </script>
 """)
       myFixture.completeBasic()
-      assertSameElements(myFixture.lookupElementStrings!!, "open", "opener", "openDatabase")
+      assertSameElements(myFixture.lookupElementStrings!!, "open", "opener")
     }
   }
 

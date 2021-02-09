@@ -2,6 +2,7 @@
 package org.angular2.inspections;
 
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
+import com.intellij.lang.javascript.TypeScriptTestUtil;
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection;
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection;
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection;
@@ -52,12 +53,14 @@ public class Angular2ExpressionTypesInspectionTest extends Angular2CodeInsightFi
   }
 
   public void testNgForOfAnyType() {
+    TypeScriptTestUtil.forceDefaultTsConfig(getProject(), getTestRootDisposable());
     configureLink(myFixture, ANGULAR_CORE_8_2_14, ANGULAR_COMMON_8_2_14);
     myFixture.configureByFiles("ngForOfAnyType.ts");
     myFixture.checkHighlighting();
   }
 
   public void testAnyType() {
+    TypeScriptTestUtil.forceDefaultTsConfig(getProject(), getTestRootDisposable());
     configureLink(myFixture);
     myFixture.configureByFiles("any-type.ts");
     myFixture.checkHighlighting();
