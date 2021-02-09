@@ -90,18 +90,18 @@ public final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<Di
     };
     myElementManager = new AbstractDiagramElementManager<>() {
       @Override
-      public Object[] getNodeItems(DiagramObject parent) {
+      public Object @NotNull [] getNodeItems(DiagramObject parent) {
         return ArrayUtil.toObjectArray(parent.getChildrenList());
       }
 
       @Override
-      public @Nullable DiagramObject findInDataContext(DataContext context) {
+      public @Nullable DiagramObject findInDataContext(@NotNull DataContext context) {
         //todo ?
         return null;
       }
 
       @Override
-      public boolean isAcceptableAsNode(Object element) {
+      public boolean isAcceptableAsNode(@Nullable Object element) {
         return element instanceof DiagramObject;
       }
 
@@ -111,7 +111,7 @@ public final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<Di
       }
 
       @Override
-      public @Nullable SimpleColoredText getItemName(Object element, DiagramState presentation) {
+      public @Nullable SimpleColoredText getItemName(@Nullable Object element, @NotNull DiagramState presentation) {
         if (element instanceof DiagramObject) {
           return new SimpleColoredText(((DiagramObject)element).getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
         }
@@ -119,7 +119,7 @@ public final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<Di
       }
 
       @Override
-      public String getNodeTooltip(DiagramObject element) {
+      public @Nullable @Nls String getNodeTooltip(DiagramObject element) {
         final List<String> errors = element.getErrors();
         final List<String> warnings = element.getWarnings();
         final List<String> notes = element.getNotes();
@@ -148,7 +148,7 @@ public final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<Di
       }
 
       @Override
-      public Icon getItemIcon(Object element, DiagramState presentation) {
+      public @Nullable Icon getItemIcon(@Nullable Object element, @NotNull DiagramState presentation) {
         return null; //do not show icons
       }
     };

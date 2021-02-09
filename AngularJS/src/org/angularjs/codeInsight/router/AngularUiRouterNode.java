@@ -24,7 +24,7 @@ public class AngularUiRouterNode extends DiagramNodeBase<DiagramObject> {
   }
 
   @Override
-  public Icon getIcon() {
+  public @Nullable Icon getIcon() {
     return null;
   }
 
