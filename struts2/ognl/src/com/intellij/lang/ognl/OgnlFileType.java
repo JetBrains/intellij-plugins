@@ -19,7 +19,6 @@ import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.ui.scale.JBUIScale;
-import icons.OgnlIcons;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
