@@ -7,7 +7,6 @@ import com.intellij.lang.typescript.tsconfig.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
-import org.jetbrains.vuejs.context.enableVueTSService
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.lang.html.VueFileType
@@ -39,8 +38,6 @@ class VueTypeScriptImportsResolverProvider : TypeScriptImportsResolverProvider {
   }
 
   override fun createResolver(project: Project, config: TypeScriptConfig): TypeScriptFileImportsResolver? {
-    if (!enableVueTSService(project)) return null
-
     val defaultProvider = TypeScriptImportsResolverProvider.getDefaultProvider(project, config)
     val nodeProcessor = TypeScriptNodeReference.TS_PROCESSOR
     val vueResolver = VueFileImportsResolver(project, config.resolveContext, nodeProcessor)

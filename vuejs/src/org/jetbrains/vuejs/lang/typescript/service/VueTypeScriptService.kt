@@ -16,14 +16,13 @@ import com.intellij.lang.typescript.compiler.languageService.protocol.commands.C
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.ConfigureRequestArguments
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.FileExtensionInfo
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
-import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.util.Consumer
-import org.jetbrains.vuejs.context.enableVueTSService
+import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.typescript.service.protocol.VueTypeScriptServiceProtocol
@@ -67,13 +66,17 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
 
   override fun getProcessName(): String = "Vue TypeScript"
 
-  override fun isServiceEnabled(context: VirtualFile): Boolean = super.isServiceEnabled(context) && isVueServiceEnabled()
+  override fun isServiceEnabled(context: VirtualFile): Boolean {
+    if (!super.isServiceEnabled(context)) return false
+    if (context.fileType is VueFileType) return true
+    
+    //other files
+    return isVueContext(context, myProject)
+  }
 
   override fun createProtocol(readyConsumer: Consumer<*>, tsServicePath: String): JSLanguageServiceProtocol {
     return VueTypeScriptServiceProtocol(myProject, mySettings, readyConsumer, createEventConsumer(), tsServicePath)
   }
-
-  private fun isVueServiceEnabled(): Boolean = enableVueTSService(myProject)
 
   override fun getInitialCommands(): Map<JSLanguageServiceSimpleCommand, Consumer<JSLanguageServiceObject>> {
     //commands
