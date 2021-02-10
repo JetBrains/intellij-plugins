@@ -1,3 +1,4 @@
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.osmorc.facet;
 
 import com.intellij.facet.ui.FacetBasedFrameworkSupportProvider;
@@ -18,9 +19,8 @@ public class OsgiFrameworkSupportProvider extends FacetBasedFrameworkSupportProv
     super(OsmorcFacetType.getInstance());
   }
 
-  @NotNull
   @Override
-  public FrameworkSupportConfigurableBase createConfigurable(@NotNull FrameworkSupportModel model) {
+  public @NotNull FrameworkSupportConfigurableBase createConfigurable(@NotNull FrameworkSupportModel model) {
     return new FrameworkConfigurable(this, model);
   }
 
@@ -29,9 +29,8 @@ public class OsgiFrameworkSupportProvider extends FacetBasedFrameworkSupportProv
 
   @Override
   public boolean isEnabledForModuleBuilder(@NotNull ModuleBuilder builder) {
-    return "LegacyJavaEE".equals(builder.getBuilderId())
-           || "LegacySpring".equals(builder.getBuilderId())
-           || "LegacyJBoss".equals(builder.getBuilderId());
+    String id = builder.getBuilderId();
+    return "LegacyJavaEE".equals(id) || "LegacySpring".equals(id) || "LegacyJBoss".equals(id);
   }
 
   private static class FrameworkConfigurable extends FrameworkSupportConfigurableBase implements FrameworkSupportWithLibrary {
@@ -39,9 +38,8 @@ public class OsgiFrameworkSupportProvider extends FacetBasedFrameworkSupportProv
       super(provider, model);
     }
 
-    @Nullable
     @Override
-    public CustomLibraryDescription createLibraryDescription() {
+    public @Nullable CustomLibraryDescription createLibraryDescription() {
       return DownloadableLibraryService.getInstance().createDescriptionForType(OsgiCoreLibraryType.class);
     }
 

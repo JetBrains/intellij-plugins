@@ -39,7 +39,6 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.UserActivityListener;
 import com.intellij.ui.UserActivityWatcher;
 import com.intellij.ui.components.ActionLink;
 import org.jetbrains.annotations.Nls;
@@ -51,10 +50,6 @@ import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.settings.ProjectSettings;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 
 /**
@@ -94,45 +89,18 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
     myValidatorsManager = validatorsManager;
     myModule = editorContext.getModule();
 
-    myManifestFileChooser.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        chooseFile(myManifestFileChooser);
-      }
-    });
-    myBndFile.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        chooseFile(myBndFile);
-      }
-    });
-    myBundlorFile.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        chooseFile(myBundlorFile);
-      }
-    });
-    myUseProjectDefaultManifestFileLocation.addChangeListener(new ChangeListener() {
-      @Override
-      public void stateChanged(ChangeEvent e) {
-        manifestFileLocationSelectorChanged();
-      }
-    });
+    myManifestFileChooser.addActionListener(e -> chooseFile(myManifestFileChooser));
+    myBndFile.addActionListener(e -> chooseFile(myBndFile));
+    myBundlorFile.addActionListener(e -> chooseFile(myBundlorFile));
+    myUseProjectDefaultManifestFileLocation.addChangeListener(e -> manifestFileLocationSelectorChanged());
 
     UserActivityWatcher watcher = new UserActivityWatcher();
-    watcher.addUserActivityListener(new UserActivityListener() {
-      @Override
-      public void stateChanged() {
-        myModified = true;
-        updateGui();
-      }
-    });
+    watcher.addUserActivityListener(() -> { myModified = true; updateGui(); });
     watcher.register(myRoot);
 
     myValidatorsManager.registerValidator(new FacetEditorValidator() {
-      @NotNull
       @Override
-      public ValidationResult check() {
+      public @NotNull ValidationResult check() {
         if (myManuallyEditedRadioButton.isSelected()) {
           String location = myUseModuleSpecificManifestFileLocation.isSelected() ? myManifestFileChooser.getText() :
                             ProjectSettings.getInstance(myModule.getProject()).getDefaultManifestFileLocation();
@@ -188,7 +156,7 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
   private void chooseFile(TextFieldWithBrowseButton field) {
     FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor();
     VirtualFile toSelect = findFileInContentRoots(field.getText(), myModule);
-    VirtualFile file = FileChooser.chooseFile(descriptor, myEditorContext.getProject(), toSelect);
+    VirtualFile file = FileChooser.chooseFile(descriptor, myModule.getProject(), toSelect);
     if (file != null) {
       for (VirtualFile root : getContentRoots(myModule)) {
         String relativePath = VfsUtilCore.getRelativePath(file, root, File.separatorChar);
@@ -208,9 +176,8 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
     myModified = true;
   }
 
-  @Nls
   @Override
-  public String getDisplayName() {
+  public @Nls String getDisplayName() {
     return OsmorcBundle.message("facet.tab.general");
   }
 
@@ -219,9 +186,8 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
     return "reference.settings.module.facet.osgi";
   }
 
-  @NotNull
   @Override
-  public JComponent createComponent() {
+  public @NotNull JComponent createComponent() {
     return myRoot;
   }
 
@@ -253,7 +219,6 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
   @Override
   public void reset() {
     OsmorcFacetConfiguration configuration = (OsmorcFacetConfiguration)myEditorContext.getFacet().getConfiguration();
-
     if (configuration.isUseBndFile()) {
       myUseBndFileRadioButton.setSelected(true);
     }

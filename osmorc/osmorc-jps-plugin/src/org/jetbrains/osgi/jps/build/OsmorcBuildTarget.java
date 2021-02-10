@@ -58,7 +58,6 @@ public class OsmorcBuildTarget extends ModuleBasedTarget<BuildRootDescriptor> {
       OsmorcModuleExtensionProperties p = ((JpsOsmorcModuleExtensionImpl)myExtension).getProperties();
       configHash = new XMLOutputter().outputString(XmlSerializer.serialize(p)).hashCode();
     }
-
     out.write(Integer.toHexString(configHash));
   }
 
@@ -68,12 +67,11 @@ public class OsmorcBuildTarget extends ModuleBasedTarget<BuildRootDescriptor> {
     return Collections.unmodifiableCollection(targetRegistry.getModuleBasedTargets(getModule(), selector));
   }
 
-  @NotNull
   @Override
-  public List<BuildRootDescriptor> computeRootDescriptors(JpsModel model,
-                                                          ModuleExcludeIndex index,
-                                                          IgnoredFileIndex ignoredFileIndex,
-                                                          BuildDataPaths dataPaths) {
+  public @NotNull List<BuildRootDescriptor> computeRootDescriptors(JpsModel model,
+                                                                   ModuleExcludeIndex index,
+                                                                   IgnoredFileIndex ignoredFileIndex,
+                                                                   BuildDataPaths dataPaths) {
     List<BuildRootDescriptor> rootDescriptors = new ArrayList<>();
 
     JpsOsmorcModuleExtension extension = JpsOsmorcExtensionService.getExtension(getModule());
@@ -96,21 +94,18 @@ public class OsmorcBuildTarget extends ModuleBasedTarget<BuildRootDescriptor> {
     return rootDescriptors;
   }
 
-  @Nullable
   @Override
-  public BuildRootDescriptor findRootDescriptor(String rootId, BuildRootIndex rootIndex) {
+  public @Nullable BuildRootDescriptor findRootDescriptor(String rootId, BuildRootIndex rootIndex) {
     return ContainerUtil.find(rootIndex.getTargetRoots(this, null), descriptor -> descriptor.getRootId().equals(rootId));
   }
 
-  @NotNull
   @Override
-  public String getPresentableName() {
+  public @NotNull String getPresentableName() {
     return "OSGi in module '" + getModule().getName() + "'";
   }
 
-  @NotNull
   @Override
-  public Collection<File> getOutputRoots(CompileContext context) {
+  public @NotNull Collection<File> getOutputRoots(CompileContext context) {
     if (myOutputRoots == null) {
       String location = myExtension.getJarFileLocation();
       if (!location.isEmpty()) {

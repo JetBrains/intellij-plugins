@@ -10,7 +10,7 @@ import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.ArrayUtilRt;
+import com.intellij.util.ArrayUtil;
 import icons.OsmorcIdeaIcons;
 import org.jetbrains.annotations.NotNull;
 import org.osgi.framework.Constants;
@@ -42,23 +42,14 @@ public class OsgiCoreLibraryType extends DownloadableLibraryType {
     if (jar != null && jar.getFileSystem() instanceof JarFileSystem) {
       VirtualFile manifestFile = jar.findFileByRelativePath(JarFile.MANIFEST_NAME);
       if (manifestFile != null) {
-        try {
-          InputStream input = manifestFile.getInputStream();
-          try {
-            String version = new Manifest(input).getMainAttributes().getValue(Constants.BUNDLE_VERSION);
-            if (version != null) {
-              try {
-                Version v = new Version(version);
-                return new LibraryVersionProperties(v.getMajor() + "." + v.getMinor() + "." + v.getMicro());
-              }
-              catch (IllegalArgumentException ignored) { }
-            }
-          }
-          finally {
-            input.close();
+        try (InputStream input = manifestFile.getInputStream()) {
+          String version = new Manifest(input).getMainAttributes().getValue(Constants.BUNDLE_VERSION);
+          if (version != null) {
+            Version v = new Version(version);
+            return new LibraryVersionProperties(v.getMajor() + "." + v.getMinor() + "." + v.getMicro());
           }
         }
-        catch (IOException ignored) { }
+        catch (IOException | IllegalArgumentException ignored) { }
       }
     }
 
@@ -66,16 +57,15 @@ public class OsgiCoreLibraryType extends DownloadableLibraryType {
     return new LibraryVersionProperties(null);
   }
 
-  @NotNull
   @Override
-  public Icon getLibraryTypeIcon() {
+  public @NotNull Icon getLibraryTypeIcon() {
     return OsmorcIdeaIcons.Osgi;
   }
 
   @Override
   protected String @NotNull [] getDetectionClassNames() {
     Logger.getInstance(getClass()).error(new AssertionError("shouldn't be called"));
-    return ArrayUtilRt.EMPTY_STRING_ARRAY;
+    return ArrayUtil.EMPTY_STRING_ARRAY;
   }
 
   public static boolean isOsgiCoreLibrary(@NotNull Library library) {

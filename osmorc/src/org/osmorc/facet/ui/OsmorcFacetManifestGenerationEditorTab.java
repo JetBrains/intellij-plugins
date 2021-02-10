@@ -22,7 +22,6 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.facet.ui;
 
 import com.intellij.compiler.server.BuildManager;
@@ -35,7 +34,6 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.ui.UserActivityListener;
 import com.intellij.ui.UserActivityWatcher;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.facet.OsmorcFacetConfiguration;
@@ -45,8 +43,6 @@ import org.osmorc.util.OsgiPsiUtil;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * The facet editor tab which is used to set up Osmorc facet settings concerning the generation of the manifest file by
@@ -73,20 +69,10 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab {
     myEditorPanel.add(myAdditionalPropertiesEditor, BorderLayout.CENTER);
 
     UserActivityWatcher watcher = new UserActivityWatcher();
-    watcher.addUserActivityListener(new UserActivityListener() {
-      @Override
-      public void stateChanged() {
-        myModified = true;
-      }
-    });
+    watcher.addUserActivityListener(() -> myModified = true);
     watcher.register(myRootPanel);
 
-    myBundleActivator.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        onBundleActivatorSelect();
-      }
-    });
+    myBundleActivator.addActionListener(e -> onBundleActivatorSelect());
   }
 
   private void updateGui() {
@@ -119,9 +105,8 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab {
     return OsmorcBundle.message("facet.tab.manifest");
   }
 
-  @NotNull
   @Override
-  public JComponent createComponent() {
+  public @NotNull JComponent createComponent() {
     return myRootPanel;
   }
 
