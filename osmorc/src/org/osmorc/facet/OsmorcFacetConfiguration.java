@@ -30,7 +30,6 @@ import com.intellij.facet.FacetConfiguration;
 import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
 import com.intellij.facet.ui.FacetValidatorsManager;
-import com.intellij.facet.ui.libraries.FrameworkLibraryValidator;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.compiler.CompilerPaths;
 import com.intellij.openapi.components.PathMacroManager;
@@ -115,8 +114,6 @@ public final class OsmorcFacetConfiguration implements FacetConfiguration, Modif
 
   @Override
   public FacetEditorTab[] createEditorTabs(FacetEditorContext context, FacetValidatorsManager validatorsManager) {
-    FrameworkLibraryValidator validator = OsgiCoreLibraryType.getValidator(context, validatorsManager);
-    validatorsManager.registerValidator(validator);
     return new FacetEditorTab[]{
       new OsmorcFacetGeneralEditorTab(context, validatorsManager),
       new OsmorcFacetJAREditorTab(context, validatorsManager),

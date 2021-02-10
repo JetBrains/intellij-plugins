@@ -25,11 +25,14 @@
 package org.osmorc.facet.ui;
 
 import com.intellij.facet.ui.*;
+import com.intellij.framework.library.DownloadableLibraryService;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.ui.configuration.libraries.AddCustomLibraryDialog;
+import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
@@ -37,9 +40,11 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.UserActivityListener;
 import com.intellij.ui.UserActivityWatcher;
+import com.intellij.ui.components.ActionLink;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.osgi.jps.model.ManifestGenerationMode;
+import org.osmorc.facet.OsgiCoreLibraryType;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.settings.ProjectSettings;
@@ -76,6 +81,7 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
   private TextFieldWithBrowseButton myBundlorFile;
   private JPanel myBundlorPanel;
   private JCheckBox myDoNotSynchronizeFacetCheckBox;
+  @SuppressWarnings("unused") private ActionLink mySetupCoreLibLink;
 
   private final FacetEditorContext myEditorContext;
   private final FacetValidatorsManager myValidatorsManager;
@@ -147,6 +153,13 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
         }
         return ValidationResult.OK;
       }
+    });
+  }
+
+  private void createUIComponents() {
+    mySetupCoreLibLink = new ActionLink("", e -> {
+      CustomLibraryDescription description = DownloadableLibraryService.getInstance().createDescriptionForType(OsgiCoreLibraryType.class);
+      AddCustomLibraryDialog.createDialog(description, myModule, null).show();
     });
   }
 
