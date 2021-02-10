@@ -147,6 +147,7 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab {
     myBundleVersion.setText(configuration.getBundleVersion());
     myAdditionalPropertiesEditor.setText(configuration.getAdditionalProperties());
     updateGui();
+    myModified = false;
   }
 
   @Override
