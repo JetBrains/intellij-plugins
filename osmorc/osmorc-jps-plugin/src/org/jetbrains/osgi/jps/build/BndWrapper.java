@@ -261,8 +261,6 @@ public class BndWrapper {
     }
 
     try (Jar jar = builder.build()) {
-      // override last modified as Bnd would otherwise take the bnd-file modification date
-      jar.updateModified(System.currentTimeMillis(), "newly built");
       jar.setName(outputFile.getName());
       jar.write(outputFile);
     }
