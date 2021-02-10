@@ -1,12 +1,15 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.osgi.jps.build;
 
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.xmlb.XmlSerializer;
+import org.jdom.output.XMLOutputter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.builders.*;
 import org.jetbrains.jps.builders.impl.BuildRootDescriptorImpl;
 import org.jetbrains.jps.builders.storage.BuildDataPaths;
+import org.jetbrains.jps.cmdline.ProjectDescriptor;
 import org.jetbrains.jps.incremental.CompileContext;
 import org.jetbrains.jps.indices.IgnoredFileIndex;
 import org.jetbrains.jps.indices.ModuleExcludeIndex;
@@ -15,9 +18,12 @@ import org.jetbrains.jps.model.java.JpsJavaExtensionService;
 import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.osgi.jps.model.JpsOsmorcExtensionService;
 import org.jetbrains.osgi.jps.model.JpsOsmorcModuleExtension;
+import org.jetbrains.osgi.jps.model.impl.JpsOsmorcModuleExtensionImpl;
+import org.jetbrains.osgi.jps.model.impl.OsmorcModuleExtensionProperties;
 import org.jetbrains.osgi.jps.util.OsgiBuildUtil;
 
 import java.io.File;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -42,6 +48,18 @@ public class OsmorcBuildTarget extends ModuleBasedTarget<BuildRootDescriptor> {
   @Override
   public String getId() {
     return myModule.getName();
+  }
+
+  @Override
+  public void writeConfiguration(ProjectDescriptor pd, PrintWriter out) {
+    int configHash = 0;
+    JpsOsmorcModuleExtension extension = JpsOsmorcExtensionService.getExtension(getModule());
+    if (extension != null) {
+      OsmorcModuleExtensionProperties p = ((JpsOsmorcModuleExtensionImpl)myExtension).getProperties();
+      configHash = new XMLOutputter().outputString(XmlSerializer.serialize(p)).hashCode();
+    }
+
+    out.write(Integer.toHexString(configHash));
   }
 
   @Override
