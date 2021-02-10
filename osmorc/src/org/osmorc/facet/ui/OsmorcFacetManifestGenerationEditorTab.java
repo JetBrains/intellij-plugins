@@ -25,6 +25,7 @@
 
 package org.osmorc.facet.ui;
 
+import com.intellij.compiler.server.BuildManager;
 import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
 import com.intellij.ide.util.ClassFilter;
@@ -136,6 +137,10 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab {
     configuration.setBundleSymbolicName(myBundleSymbolicName.getText());
     configuration.setBundleVersion(myBundleVersion.getText());
     configuration.setAdditionalProperties(myAdditionalPropertiesEditor.getText());
+
+    if (myModified) {
+      BuildManager.getInstance().clearState(myEditorContext.getProject());
+    }
     myModified = false;
   }
 

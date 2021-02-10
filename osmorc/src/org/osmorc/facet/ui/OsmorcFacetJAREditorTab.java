@@ -25,6 +25,7 @@
 package org.osmorc.facet.ui;
 
 import com.intellij.CommonBundle;
+import com.intellij.compiler.server.BuildManager;
 import com.intellij.facet.ui.*;
 import com.intellij.openapi.compiler.CompilerPaths;
 import com.intellij.openapi.fileChooser.FileChooser;
@@ -341,6 +342,10 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     configuration.setIgnoreFilePattern(myIgnoreFilePatternTextField.getText());
     configuration.setAlwaysRebuildBundleJAR(myAlwaysRebuildBundleJARCheckBox.isSelected());
     configuration.setAdditionalJARContents(myAdditionalJARContentsTableModel.getAdditionalContents());
+
+    if (myModified) {
+      BuildManager.getInstance().clearState(myEditorContext.getProject());
+    }
     myModified = false;
   }
 

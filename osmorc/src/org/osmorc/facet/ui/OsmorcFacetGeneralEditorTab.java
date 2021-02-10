@@ -24,6 +24,7 @@
  */
 package org.osmorc.facet.ui;
 
+import com.intellij.compiler.server.BuildManager;
 import com.intellij.facet.ui.*;
 import com.intellij.framework.library.DownloadableLibraryService;
 import com.intellij.openapi.fileChooser.FileChooser;
@@ -243,6 +244,9 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
     configuration.setBundlorFileLocation(FileUtil.toSystemIndependentName(myBundlorFile.getText()));
     configuration.setDoNotSynchronizeWithMaven(myDoNotSynchronizeFacetCheckBox.isSelected());
 
+    if (myModified) {
+      BuildManager.getInstance().clearState(myModule.getProject());
+    }
     myModified = false;
   }
 
