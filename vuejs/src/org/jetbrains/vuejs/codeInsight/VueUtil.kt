@@ -325,7 +325,7 @@ fun <T : PsiElement> resolveSymbolFromNodeModule(scope: PsiElement?, moduleName:
       ?.let { module ->
         val symbols = ES6PsiUtil.resolveSymbolInModule(symbolName, file, module)
         if (symbols.isEmpty()) {
-          TypeScriptAugmentationUtil.getModuleAugmentations(module)
+          TypeScriptAugmentationUtil.getModuleAugmentations(module, file)
             .asSequence()
             .filterIsInstance<JSElement>()
             .flatMap { ES6PsiUtil.resolveSymbolInModule(symbolName, file, it).asSequence() }
