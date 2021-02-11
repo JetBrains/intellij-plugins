@@ -7,6 +7,7 @@ import com.intellij.lang.html.HTMLLanguage;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JSLanguageDialect;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.TypeScriptTestUtil;
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
 import com.intellij.lang.javascript.psi.JSElement;
@@ -218,7 +219,7 @@ public class InjectionsTest extends Angular2CodeInsightFixtureTestCase {
     });
 
     // This should trigger immediate library update
-    TypeScriptConfigService.Provider.get(getProject()).getConfigFiles();
+    TypeScriptTestUtil.waitForLibraryUpdate(myFixture);
 
     // Ensure we are set up correctly
     ReadAction.run(() -> {
