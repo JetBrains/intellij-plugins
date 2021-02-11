@@ -173,10 +173,7 @@ public class GrStepDefinitionCreator implements StepDefinitionCreator {
     final Step cucumberStep = new Step(Collections.emptyList(), step.getKeyword().getText(), step.getName(), 0, null, null);
 
     SnippetGenerator generator = new SnippetGenerator(new GroovySnippet());
-    final String version = CucumberConfigUtil.getCucumberCoreVersion((PsiElement) step);
-    final String basePackage = GrCucumberCommonClassNames.cucumberPackagePrefix(version);
-    final String fqnPendingException = basePackage + ".PendingException";
-    String snippet = generator.getSnippet(cucumberStep, null).replace("PendingException", fqnPendingException);
+    String snippet = generator.getSnippet(cucumberStep, null);
 
     return (GrMethodCall)factory.createStatementFromText(snippet, step);
   }

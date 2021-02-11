@@ -22,8 +22,6 @@ Feature: Git Cherry-Pick When Auto-Commit is selected
   Scenario: Simple cherry-pick
     Given a comm<caret>it
 ''', '''\
-import cucumber.runtime.PendingException
-
 this.metaClass.mixin(cucumber.api.groovy.Hooks)
 this.metaClass.mixin(cucumber.api.groovy.EN)
 
@@ -41,8 +39,6 @@ Feature: Git Cherry-Pick When Auto-Commit is selected
   Scenario: Simple cherry-pick
     Given a comm<caret>it 'fix'
 ''', '''\
-import cucumber.runtime.PendingException
-
 this.metaClass.mixin(cucumber.api.groovy.Hooks)
 this.metaClass.mixin(cucumber.api.groovy.EN)
 
@@ -60,8 +56,6 @@ Feature: Git Cherry-Pick When Auto-Commit is selected
   Scenario: Simple cherry-pick
     Given a comm<caret>it 'fix' 5
 ''', '''\
-import cucumber.runtime.PendingException
-
 this.metaClass.mixin(cucumber.api.groovy.Hooks)
 this.metaClass.mixin(cucumber.api.groovy.EN)
 

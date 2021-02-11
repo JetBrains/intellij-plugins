@@ -3,5 +3,7 @@
 
 #parse("File Header.java")
 
+import cucumber.api.PendingException
+
 this.metaClass.mixin(cucumber.api.groovy.Hooks)
 this.metaClass.mixin(cucumber.api.groovy.EN)
