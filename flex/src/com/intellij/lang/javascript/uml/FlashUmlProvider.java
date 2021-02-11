@@ -1,3 +1,4 @@
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.uml;
 
 import com.intellij.diagram.*;
@@ -23,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
  * @author Kirill Safonov
  * @author Konstantin Bulenkov
  */
-public class FlashUmlProvider extends DiagramProvider<Object> {
+public final class FlashUmlProvider extends DiagramProvider<Object> {
   public static final String ID = "Flash";
 
   private final FlashUmlVisibilityManager myVisibilityManager = new FlashUmlVisibilityManager();

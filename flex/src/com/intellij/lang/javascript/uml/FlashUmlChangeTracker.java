@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.uml;
 
 import com.intellij.diagram.ChangeTracker;
@@ -32,8 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.*;
 
-public class FlashUmlChangeTracker extends ChangeTracker<JSClass, JSNamedElement, JSReferenceExpression> {
-
+final class FlashUmlChangeTracker extends ChangeTracker<JSClass, JSNamedElement, JSReferenceExpression> {
   private static class NameFilter<T extends PsiNamedElement> extends PsiFilter<T> {
     private NameFilter(@NotNull Class<T> filter) {
       super(filter);
