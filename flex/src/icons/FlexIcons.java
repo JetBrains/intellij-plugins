@@ -24,7 +24,7 @@ public final class FlexIcons {
 
     public static final class Sdk {
       /** 16x16 */ public static final @NotNull Icon Flex_sdk = load("images/flex/sdk/flex_sdk.svg", -4518111805383723414L, 0);
-      /** 16x16 */ public static final @NotNull Icon MavenFlex = load("images/flex/sdk/mavenFlex.svg", -155264812194034021L, 0);
+      /** 16x16 */ public static final @NotNull Icon MavenFlex = load("images/flex/sdk/mavenFlex.svg", 7471006958863975616L, 0);
     }
   }
 }
