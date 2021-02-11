@@ -7,9 +7,8 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.execution.util.ExecUtil;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.project.DumbAware;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.jetbrains.cidr.execution.AppCodeRunConfiguration;
@@ -26,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.io.File;
 
-public class RefreshRevealAction extends AnAction implements AnAction.TransparentUpdate, DumbAware {
+public class RefreshRevealAction extends DumbAwareAction {
   public static final Icon ICON = AppcodeRevealIcons.RunWithReveal;
 
   @NotNull private final AppCodeRunConfiguration myConfiguration;
