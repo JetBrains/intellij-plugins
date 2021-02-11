@@ -42,7 +42,7 @@ import static org.jetbrains.plugins.cucumber.CucumberUtil.STANDARD_PARAMETER_TYP
 import static org.jetbrains.plugins.cucumber.MapParameterTypeManager.DEFAULT;
 import static org.jetbrains.plugins.cucumber.java.CucumberJavaVersionUtil.CUCUMBER_CORE_VERSION_1_1;
 import static org.jetbrains.plugins.cucumber.java.CucumberJavaVersionUtil.CUCUMBER_CORE_VERSION_4_5;
-import static org.jetbrains.plugins.cucumber.java.run.CucumberJavaRunConfigurationProducer.HOOK_ANNOTATION_NAMES;
+import static org.jetbrains.plugins.cucumber.java.run.CucumberJavaRunConfigurationProducer.HOOK_AND_TYPE_ANNOTATION_NAMES;
 import static org.jetbrains.plugins.cucumber.java.steps.AnnotationPackageProvider.CUCUMBER_ANNOTATION_PACKAGES;
 
 public final class CucumberJavaUtil {
@@ -506,7 +506,7 @@ public final class CucumberJavaUtil {
   /**
    * Search for all Cucumber Hooks and sends their glue (package names) to consumer
    */
-  public static void calculateGlueFromHooks(@NotNull PsiElement element, @NotNull Consumer<String> consumer) {
+  public static void calculateGlueFromHooksAndTypes(@NotNull PsiElement element, @NotNull Consumer<String> consumer) {
     Module module = ModuleUtilCore.findModuleForPsiElement(element);
     if (module == null) {
       return;
@@ -515,7 +515,7 @@ public final class CucumberJavaUtil {
     JavaPsiFacade javaPsiFacade = JavaPsiFacade.getInstance(element.getProject());
     GlobalSearchScope dependenciesScope = module.getModuleWithDependenciesAndLibrariesScope(true);
 
-    for (String fullyQualifiedAnnotationName : HOOK_ANNOTATION_NAMES) {
+    for (String fullyQualifiedAnnotationName : HOOK_AND_TYPE_ANNOTATION_NAMES) {
       ProgressManager.checkCanceled();
       PsiClass psiClass = javaPsiFacade.findClass(fullyQualifiedAnnotationName, dependenciesScope);
 

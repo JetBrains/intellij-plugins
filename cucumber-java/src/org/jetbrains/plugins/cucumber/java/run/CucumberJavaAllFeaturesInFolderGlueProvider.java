@@ -40,5 +40,6 @@ public class CucumberJavaAllFeaturesInFolderGlueProvider implements CucumberGlue
         }
       }
     });
+    CucumberJavaUtil.calculateGlueFromHooksAndTypes(myDirectory, consumer);
   }
 }

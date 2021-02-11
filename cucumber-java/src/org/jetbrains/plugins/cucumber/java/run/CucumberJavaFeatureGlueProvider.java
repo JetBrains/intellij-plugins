@@ -9,7 +9,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinFile;
 import java.util.function.Consumer;
 
 import static org.jetbrains.plugins.cucumber.java.CucumberJavaUtil.calculateGlueFromGherkinFile;
-import static org.jetbrains.plugins.cucumber.java.CucumberJavaUtil.calculateGlueFromHooks;
+import static org.jetbrains.plugins.cucumber.java.CucumberJavaUtil.calculateGlueFromHooksAndTypes;
 
 public class CucumberJavaFeatureGlueProvider implements CucumberGlueProvider {
   private final PsiElement myElement;
@@ -21,7 +21,7 @@ public class CucumberJavaFeatureGlueProvider implements CucumberGlueProvider {
   @Override
   public void calculateGlue(@NotNull Consumer<String> consumer) {
     PsiFile file = myElement.getContainingFile();
-    calculateGlueFromHooks(myElement, consumer);
+    calculateGlueFromHooksAndTypes(myElement, consumer);
     calculateGlueFromGherkinFile((GherkinFile)file, consumer);
   }
 }
