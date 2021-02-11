@@ -4,7 +4,7 @@ package com.intellij.javascript.ift.lesson
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lang.javascript.settings.JSRootConfiguration
 import com.intellij.openapi.application.ModalityState
-import training.learn.lesson.kimpl.LessonContext
+import training.dsl.LessonContext
 
 fun LessonContext.setLanguageLevel() {
   prepareRuntimeTask(ModalityState.NON_MODAL) {

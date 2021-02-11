@@ -1,10 +1,10 @@
 package com.jetbrains.swift.ift.lesson.navigation
 
 import com.jetbrains.swift.ift.SwiftLessonsBundle
-import training.learn.lesson.kimpl.KLesson
-import training.learn.lesson.kimpl.LessonContext
-import training.learn.lesson.kimpl.LessonSample
-import training.learn.lesson.kimpl.parseLessonSample
+import training.dsl.LessonContext
+import training.dsl.LessonSample
+import training.dsl.parseLessonSample
+import training.learn.course.KLesson
 
 class SwiftPreciseNavigationLesson : KLesson("swift.navigation.precise",
                                              SwiftLessonsBundle.message("swift.navigation.precise.name"), "Swift") {

@@ -8,9 +8,13 @@ import com.intellij.javascript.ift.JsLessonsBundle
 import com.intellij.javascript.ift.lesson.setLanguageLevel
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.ui.components.JBList
+import training.dsl.LessonContext
+import training.dsl.LessonUtil
+import training.dsl.dropMnemonic
+import training.dsl.parseLessonSample
+import training.learn.course.KLesson
 import training.learn.js.textAtCaretEqualsTo
 import training.learn.js.textOnLine
-import training.learn.lesson.kimpl.*
 
 class RefactoringLesson
   : KLesson("Refactorings in a Nutshell", JsLessonsBundle.message("js.editor.refactorings.title"), JavaScriptLangSupport.lang) {

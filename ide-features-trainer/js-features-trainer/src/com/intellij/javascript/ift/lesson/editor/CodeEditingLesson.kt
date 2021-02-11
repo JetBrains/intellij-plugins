@@ -4,13 +4,13 @@ package com.intellij.javascript.ift.lesson.editor
 import com.intellij.application.options.CodeStyle
 import com.intellij.javascript.ift.JsLessonsBundle
 import com.intellij.javascript.ift.lesson.setLanguageLevel
+import training.dsl.LessonContext
+import training.dsl.LessonUtil
+import training.dsl.parseLessonSample
+import training.learn.course.KLesson
 import training.learn.js.textAfterOffset
 import training.learn.js.textBeforeOffset
 import training.learn.js.textOnLine
-import training.learn.lesson.kimpl.KLesson
-import training.learn.lesson.kimpl.LessonContext
-import training.learn.lesson.kimpl.LessonUtil
-import training.learn.lesson.kimpl.parseLessonSample
 
 class CodeEditingLesson
   : KLesson("Code Editing Tips and Tricks", JsLessonsBundle.message("js.editor.code.editing.tips.and.tricks.title"), "HTML") {

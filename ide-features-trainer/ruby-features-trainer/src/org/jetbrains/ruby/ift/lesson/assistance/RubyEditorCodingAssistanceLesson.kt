@@ -2,8 +2,8 @@
 package org.jetbrains.ruby.ift.lesson.assistance
 
 import org.jetbrains.plugins.ruby.RBundle
+import training.dsl.LessonSample
 import training.learn.lesson.general.assistance.EditorCodingAssistanceLesson
-import training.learn.lesson.kimpl.LessonSample
 
 class RubyEditorCodingAssistanceLesson(lang: String, sample: LessonSample) :
   EditorCodingAssistanceLesson(lang, sample) {

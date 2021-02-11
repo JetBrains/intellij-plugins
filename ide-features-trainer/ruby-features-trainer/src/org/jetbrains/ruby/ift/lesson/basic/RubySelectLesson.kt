@@ -3,9 +3,9 @@ package org.jetbrains.ruby.ift.lesson.basic
 
 import org.jetbrains.annotations.Nls
 import org.jetbrains.plugins.ruby.ruby.lang.RubyLanguage
+import training.dsl.LessonSample
+import training.dsl.parseLessonSample
 import training.learn.lesson.general.NewSelectLesson
-import training.learn.lesson.kimpl.LessonSample
-import training.learn.lesson.kimpl.parseLessonSample
 
 class RubySelectLesson : NewSelectLesson(RubyLanguage.INSTANCE.id) {
   override val selectArgument = "\'$selectString\'"

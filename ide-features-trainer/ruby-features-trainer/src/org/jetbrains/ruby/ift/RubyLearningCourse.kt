@@ -16,10 +16,10 @@ import org.jetbrains.ruby.ift.lesson.navigation.RubyRecentFilesLesson
 import org.jetbrains.ruby.ift.lesson.navigation.RubySearchEverywhereLesson
 import org.jetbrains.ruby.ift.lesson.refactorings.RubyRefactorMenuLesson
 import org.jetbrains.ruby.ift.lesson.refactorings.RubyRenameLesson
-import training.learn.LearningModule
 import training.learn.LessonsBundle
 import training.learn.course.LearningCourseBase
-import training.learn.interfaces.LessonType
+import training.learn.course.LearningModule
+import training.learn.course.LessonType
 import training.learn.lesson.general.*
 import training.learn.lesson.general.assistance.CodeFormatLesson
 import training.learn.lesson.general.assistance.ParameterInfoLesson

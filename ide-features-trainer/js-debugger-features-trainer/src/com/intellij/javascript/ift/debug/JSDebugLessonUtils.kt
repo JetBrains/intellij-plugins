@@ -6,8 +6,8 @@ import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lang.javascript.settings.JSRootConfiguration
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.editor.impl.DocumentMarkupModel
-import training.commands.kotlin.TaskRuntimeContext
-import training.learn.lesson.kimpl.LessonContext
+import training.dsl.LessonContext
+import training.dsl.TaskRuntimeContext
 
 fun LessonContext.setLanguageLevel() {
   prepareRuntimeTask(ModalityState.NON_MODAL) {

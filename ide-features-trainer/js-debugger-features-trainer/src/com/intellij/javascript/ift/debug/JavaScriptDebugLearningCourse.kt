@@ -5,10 +5,10 @@ import com.intellij.javascript.ift.debug.lesson.BeforeDebuggingLesson
 import com.intellij.javascript.ift.debug.lesson.DebuggingFirstPartLesson
 import com.intellij.javascript.ift.debug.lesson.DebuggingSecondPartLesson
 import com.intellij.lang.javascript.JavascriptLanguage
-import training.learn.LearningModule
+import training.dsl.LessonUtil
 import training.learn.course.LearningCourseBase
-import training.learn.interfaces.LessonType
-import training.learn.lesson.kimpl.LessonUtil
+import training.learn.course.LearningModule
+import training.learn.course.LessonType
 
 class JavaScriptDebugLearningCourse : LearningCourseBase(JavascriptLanguage.INSTANCE.id) {
   override fun modules() = listOf(

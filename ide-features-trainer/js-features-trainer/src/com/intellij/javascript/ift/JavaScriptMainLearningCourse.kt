@@ -4,10 +4,10 @@ package com.intellij.javascript.ift
 import com.intellij.javascript.ift.lesson.editor.*
 import com.intellij.javascript.ift.lesson.testing.JestLesson
 import com.intellij.lang.javascript.JavascriptLanguage
-import training.learn.LearningModule
+import training.dsl.LessonUtil
 import training.learn.course.LearningCourseBase
-import training.learn.interfaces.LessonType
-import training.learn.lesson.kimpl.LessonUtil
+import training.learn.course.LearningModule
+import training.learn.course.LessonType
 
 class JavaScriptMainLearningCourse : LearningCourseBase(JavascriptLanguage.INSTANCE.id) {
   override fun modules() = listOf(

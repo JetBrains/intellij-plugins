@@ -6,11 +6,11 @@ import com.intellij.idea.ActionsBundle
 import com.intellij.javascript.ift.debug.JsDebugLessonsBundle
 import com.intellij.javascript.ift.debug.setLanguageLevel
 import com.intellij.xdebugger.XDebuggerBundle
+import training.dsl.LessonContext
+import training.dsl.LessonUtil.productName
+import training.dsl.dropMnemonic
+import training.learn.course.KLesson
 import training.learn.js.textOnLine
-import training.learn.lesson.kimpl.KLesson
-import training.learn.lesson.kimpl.LessonContext
-import training.learn.lesson.kimpl.LessonUtil.productName
-import training.learn.lesson.kimpl.dropMnemonic
 
 class DebuggingSecondPartLesson
   : KLesson("Debugging Code. Part II", JsDebugLessonsBundle.message("js.debugger.part.2.title"), "JavaScript") {

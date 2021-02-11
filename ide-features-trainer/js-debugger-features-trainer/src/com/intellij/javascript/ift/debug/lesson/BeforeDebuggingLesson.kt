@@ -8,7 +8,8 @@ import com.intellij.javascript.ift.debug.setLanguageLevel
 import com.intellij.openapi.editor.impl.EditorComponentImpl
 import com.intellij.ui.UIBundle
 import com.intellij.ui.treeStructure.Tree
-import training.learn.lesson.kimpl.*
+import training.dsl.*
+import training.learn.course.KLesson
 import training.ui.LearningUiHighlightingManager
 import javax.swing.JButton
 import javax.swing.tree.DefaultMutableTreeNode

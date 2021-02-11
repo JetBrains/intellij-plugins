@@ -11,13 +11,13 @@ import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.fqn.FQN
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.SymbolUtil
 import org.jetbrains.plugins.ruby.ruby.refactoring.pushDown.RubyPushDownHandler
 import org.jetbrains.ruby.ift.RubyLessonsBundle
-import training.commands.kotlin.TaskTestContext
+import training.dsl.LessonContext
+import training.dsl.LessonUtil.restoreIfModifiedOrMoved
+import training.dsl.TaskTestContext
+import training.dsl.defaultRestoreDelay
+import training.dsl.parseLessonSample
 import training.learn.LessonsBundle
-import training.learn.lesson.kimpl.KLesson
-import training.learn.lesson.kimpl.LessonContext
-import training.learn.lesson.kimpl.LessonUtil.restoreIfModifiedOrMoved
-import training.learn.lesson.kimpl.defaultRestoreDelay
-import training.learn.lesson.kimpl.parseLessonSample
+import training.learn.course.KLesson
 
 class RubyRefactorMenuLesson
   : KLesson("Refactoring menu", LessonsBundle.message("refactoring.menu.lesson.name"), "ruby") {

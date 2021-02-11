@@ -11,9 +11,9 @@ import com.jetbrains.swift.ift.lesson.refactorings.*
 import com.jetbrains.swift.ift.lesson.rundebugtest.SwiftDebugLesson
 import com.jetbrains.swift.ift.lesson.rundebugtest.SwiftRunLesson
 import com.jetbrains.swift.ift.lesson.rundebugtest.SwiftTestLesson
-import training.learn.LearningModule
 import training.learn.course.LearningCourseBase
-import training.learn.interfaces.LessonType
+import training.learn.course.LearningModule
+import training.learn.course.LessonType
 
 class SwiftLearningCourse : LearningCourseBase("Swift") {
   override fun modules() = listOf(

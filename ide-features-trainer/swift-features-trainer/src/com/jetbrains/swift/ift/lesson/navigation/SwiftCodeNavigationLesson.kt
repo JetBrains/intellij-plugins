@@ -1,7 +1,11 @@
 package com.jetbrains.swift.ift.lesson.navigation
 
 import com.jetbrains.swift.ift.SwiftLessonsBundle
-import training.learn.lesson.kimpl.*
+import training.dsl.LessonContext
+import training.dsl.LessonSample
+import training.dsl.LessonUtil
+import training.dsl.parseLessonSample
+import training.learn.course.KLesson
 
 class SwiftCodeNavigationLesson : KLesson("swift.navigation.code", SwiftLessonsBundle.message("swift.navigation.code.name"),
                                           "Swift") {

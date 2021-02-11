@@ -20,11 +20,12 @@ import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.UIBundle
 import com.intellij.ui.treeStructure.Tree
+import training.dsl.*
+import training.dsl.LessonUtil.highlightBreakpointGutter
+import training.dsl.LessonUtil.productName
+import training.learn.course.KLesson
 import training.learn.js.textAtCaretEqualsTo
 import training.learn.js.textOnLine
-import training.learn.lesson.kimpl.*
-import training.learn.lesson.kimpl.LessonUtil.highlightBreakpointGutter
-import training.learn.lesson.kimpl.LessonUtil.productName
 import training.ui.LearningUiHighlightingManager
 import java.awt.event.KeyEvent
 import javax.swing.SwingConstants

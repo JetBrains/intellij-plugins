@@ -4,12 +4,12 @@ package org.jetbrains.ruby.ift.lesson.completion
 import com.intellij.testGuiFramework.framework.GuiTestUtil.typeText
 import com.intellij.testGuiFramework.impl.jList
 import org.jetbrains.ruby.ift.RubyLessonsBundle
+import training.dsl.LessonContext
+import training.dsl.LessonUtil.checkExpectedStateOfEditor
+import training.dsl.defaultRestoreDelay
+import training.dsl.parseLessonSample
 import training.learn.LessonsBundle
-import training.learn.lesson.kimpl.KLesson
-import training.learn.lesson.kimpl.LessonContext
-import training.learn.lesson.kimpl.LessonUtil.checkExpectedStateOfEditor
-import training.learn.lesson.kimpl.defaultRestoreDelay
-import training.learn.lesson.kimpl.parseLessonSample
+import training.learn.course.KLesson
 
 class RubyPostfixCompletionLesson
   : KLesson("Postfix completion", LessonsBundle.message("postfix.completion.lesson.name"), "ruby") {

@@ -1,9 +1,9 @@
 package org.jetbrains.ruby.ift.lesson.basic
 
 import org.jetbrains.plugins.ruby.RBundle
+import training.dsl.LessonSample
+import training.dsl.parseLessonSample
 import training.learn.lesson.general.ContextActionsLesson
-import training.learn.lesson.kimpl.LessonSample
-import training.learn.lesson.kimpl.parseLessonSample
 
 class RubyContextActionsLesson : ContextActionsLesson("ruby") {
   override val sample: LessonSample = parseLessonSample("""

@@ -6,12 +6,12 @@ import com.intellij.javascript.ift.JavaScriptLangSupport
 import com.intellij.javascript.ift.JsLessonsBundle
 import com.intellij.javascript.ift.lesson.setLanguageLevel
 import com.intellij.lang.javascript.JavaScriptBundle
+import training.dsl.LessonContext
+import training.dsl.LessonUtil
+import training.dsl.parseLessonSample
+import training.learn.course.KLesson
 import training.learn.js.textAtCaretEqualsTo
 import training.learn.js.textOnLine
-import training.learn.lesson.kimpl.KLesson
-import training.learn.lesson.kimpl.LessonContext
-import training.learn.lesson.kimpl.LessonUtil
-import training.learn.lesson.kimpl.parseLessonSample
 
 class CodeInspectionLesson
   : KLesson("The Power of Code Inspections", JsLessonsBundle.message("js.editor.code.inspection.title"), JavaScriptLangSupport.lang) {
