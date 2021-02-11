@@ -2,6 +2,7 @@
 package org.jetbrains.plugins.cucumber.groovy;
 
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.plugins.cucumber.java.config.CucumberConfigUtil;
 
 public final class GrCucumberCommonClassNames {
   @NonNls private static final String CUCUMBER_RUNTIME_GROOVY_HOOKS_1_0 = "cucumber.runtime.groovy.Hooks";
@@ -10,14 +11,40 @@ public final class GrCucumberCommonClassNames {
   @NonNls private static final String CUCUMBER_RUNTIME_GROOVY_HOOKS_1_1 = "cucumber.api.groovy.Hooks";
   @NonNls private static final String CUCUMBER_RUNTIME_GROOVY_1_1 = "cucumber.api.groovy";
 
+  @NonNls private static final String CUCUMBER_RUNTIME_GROOVY_HOOKS_4_5 = "io.cucumber.groovy.Hooks";
+  @NonNls private static final String CUCUMBER_RUNTIME_GROOVY_4_5 = "io.cucumber.groovy";
+
+  @NonNls private static final String[] CUCUMBER_BASE_VERSIONS = new String[]{"1_0", "1_1", "4_5"};
+  @NonNls private static final String[] CUCUMBER_PACKAGE_PREFIXES = new String[]{CUCUMBER_RUNTIME_GROOVY_1_0, CUCUMBER_RUNTIME_GROOVY_1_1, CUCUMBER_RUNTIME_GROOVY_4_5};
 
   public static boolean isHookClassName(String qname) {
-    return CUCUMBER_RUNTIME_GROOVY_HOOKS_1_0.equals(qname) || CUCUMBER_RUNTIME_GROOVY_HOOKS_1_1.equals(qname);
+    return CUCUMBER_RUNTIME_GROOVY_HOOKS_1_0.equals(qname) || CUCUMBER_RUNTIME_GROOVY_HOOKS_1_1.equals(qname) || CUCUMBER_RUNTIME_GROOVY_HOOKS_4_5.equals(qname);
   }
 
-  public  static boolean isCucumberRuntimeGroovyPackage(String packageName) {
-    return CUCUMBER_RUNTIME_GROOVY_1_0.equals(packageName) || CUCUMBER_RUNTIME_GROOVY_1_1.equals(packageName);
+  public static boolean isCucumberRuntimeGroovyPackage(String packageName) {
+    return CUCUMBER_RUNTIME_GROOVY_1_0.equals(packageName) || CUCUMBER_RUNTIME_GROOVY_1_1.equals(packageName) || CUCUMBER_RUNTIME_GROOVY_4_5.equals(packageName);
+  }
+
+  public static String cucumberTemplateVersion(String version) {
+    int arrayIndex = cucumberVersionIndex(version);
+    return CUCUMBER_BASE_VERSIONS[arrayIndex];
+  }
+
+  public static String cucumberPackagePrefix(String version) {
+    int arrayIndex = cucumberVersionIndex(version);
+    return CUCUMBER_PACKAGE_PREFIXES[arrayIndex];
   }
 
   private GrCucumberCommonClassNames() {}
+
+  private static int cucumberVersionIndex(String version) {
+    if (version != null && version.compareTo(CucumberConfigUtil.CUCUMBER_VERSION_1_1) < 0) {
+      return 0;
+    }
+    if (version != null && version.compareTo(CucumberConfigUtil.CUCUMBER_VERSION_4_5) < 0) {
+      return 1;
+    }
+    return 2;
+  }
+
 }

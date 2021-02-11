@@ -24,7 +24,9 @@ import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.StepDefinitionCreator;
+import org.jetbrains.plugins.cucumber.groovy.GrCucumberCommonClassNames;
 import org.jetbrains.plugins.cucumber.groovy.GrCucumberUtil;
+import org.jetbrains.plugins.cucumber.java.config.CucumberConfigUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.groovy.GroovyFileType;
 import org.jetbrains.plugins.groovy.actions.GroovyTemplatesFactory;
@@ -45,20 +47,17 @@ import java.util.Objects;
  */
 public class GrStepDefinitionCreator implements StepDefinitionCreator {
 
-  public static final String GROOVY_STEP_DEFINITION_FILE_TMPL_1_0 = "GroovyStepDefinitionFile.groovy";
-  public static final String GROOVY_STEP_DEFINITION_FILE_TMPL_1_1 = "GroovyStepDefinitionFile1_1.groovy";
-
+  public static final String GROOVY_STEP_DEFINITION_FILE_TMPL_PREFIX = "GroovyStepDefinitionFile";
 
   @NotNull
   @Override
   public PsiFile createStepDefinitionContainer(@NotNull PsiDirectory dir, @NotNull String name) {
     String fileName = name + '.' + GroovyFileType.DEFAULT_EXTENSION;
-    if (GrCucumberUtil.isCucumber_1_1_orAbove(dir)) {
-      return GroovyTemplatesFactory.createFromTemplate(dir, name, fileName, GROOVY_STEP_DEFINITION_FILE_TMPL_1_1, true);
-    }
-    else {
-      return GroovyTemplatesFactory.createFromTemplate(dir, name, fileName, GROOVY_STEP_DEFINITION_FILE_TMPL_1_0, true);
-    }
+    final String version = CucumberConfigUtil.getCucumberCoreVersion(dir);
+    String templateFileName = GROOVY_STEP_DEFINITION_FILE_TMPL_PREFIX
+            + GrCucumberCommonClassNames.cucumberTemplateVersion(version)
+            + ".groovy";
+    return GroovyTemplatesFactory.createFromTemplate(dir, name, fileName, templateFileName, true);
   }
 
   @Override
@@ -174,13 +173,9 @@ public class GrStepDefinitionCreator implements StepDefinitionCreator {
     final Step cucumberStep = new Step(Collections.emptyList(), step.getKeyword().getText(), step.getName(), 0, null, null);
 
     SnippetGenerator generator = new SnippetGenerator(new GroovySnippet());
-    final String fqnPendingException;
-    if (GrCucumberUtil.isCucumber_1_1_orAbove(step)) {
-      fqnPendingException = "cucumber.api.PendingException";
-    }
-    else {
-      fqnPendingException = "cucumber.runtime.PendingException";
-    }
+    final String version = CucumberConfigUtil.getCucumberCoreVersion((PsiElement) step);
+    final String basePackage = GrCucumberCommonClassNames.cucumberPackagePrefix(version);
+    final String fqnPendingException = basePackage + ".PendingException";
     String snippet = generator.getSnippet(cucumberStep, null).replace("PendingException", fqnPendingException);
 
     return (GrMethodCall)factory.createStatementFromText(snippet, step);
