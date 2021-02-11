@@ -1,10 +1,10 @@
 package com.jetbrains.swift.ift.lesson.editor
 
 import com.jetbrains.swift.ift.SwiftLessonsBundle
-import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.*
 
-class SwiftCompletionLesson(module: Module) : KLesson("swift.completions.basiccompletion", SwiftLessonsBundle.message("swift.editor.completion.name"), module, "Swift") {
+class SwiftCompletionLesson : KLesson("swift.completions.basiccompletion",
+                                      SwiftLessonsBundle.message("swift.editor.completion.name"), "Swift") {
 
   private val sample: LessonSample = parseLessonSample("""
 import Foundation

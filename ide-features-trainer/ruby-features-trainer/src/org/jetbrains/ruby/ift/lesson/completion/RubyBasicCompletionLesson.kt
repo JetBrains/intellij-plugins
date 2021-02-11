@@ -1,11 +1,10 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.ruby.ift.lesson.completion
 
-import training.learn.interfaces.Module
 import training.learn.lesson.general.completion.BasicCompletionLessonBase
 import training.learn.lesson.kimpl.parseLessonSample
 
-class RubyBasicCompletionLesson(module: Module) : BasicCompletionLessonBase(module, "ruby") {
+class RubyBasicCompletionLesson : BasicCompletionLessonBase("ruby") {
   override val sample1 = parseLessonSample("""
     class AnimalClass
       def speak

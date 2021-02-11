@@ -2,12 +2,11 @@
 package org.jetbrains.ruby.ift.lesson.assistance
 
 import org.jetbrains.plugins.ruby.RBundle
-import training.learn.interfaces.Module
 import training.learn.lesson.general.assistance.EditorCodingAssistanceLesson
 import training.learn.lesson.kimpl.LessonSample
 
-class RubyEditorCodingAssistanceLesson(module: Module, lang: String, sample: LessonSample) :
-  EditorCodingAssistanceLesson(module, lang, sample) {
+class RubyEditorCodingAssistanceLesson(lang: String, sample: LessonSample) :
+  EditorCodingAssistanceLesson(lang, sample) {
   override val errorIntentionText: String
     get() = RBundle.message("inspection.argcount.extra.argument.fix")
   override val warningIntentionText: String

@@ -1,13 +1,13 @@
 package com.jetbrains.swift.ift.lesson.editor
 
 import com.jetbrains.swift.ift.SwiftLessonsBundle
-import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 import training.learn.lesson.kimpl.parseLessonSample
 
-class SwiftMultipleSelectionsLesson(module: Module) : KLesson("swift.editorbasics.multipleselections", SwiftLessonsBundle.message("swift.editor.selections.name"), module, "Swift") {
+class SwiftMultipleSelectionsLesson : KLesson("swift.editorbasics.multipleselections",
+                                              SwiftLessonsBundle.message("swift.editor.selections.name"), "Swift") {
 
   private val sample: LessonSample = parseLessonSample("""import Foundation
 

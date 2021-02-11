@@ -1,13 +1,13 @@
 package com.jetbrains.swift.ift.lesson.navigation
 
 import com.jetbrains.swift.ift.SwiftLessonsBundle
-import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 import training.learn.lesson.kimpl.parseLessonSample
 
-class SwiftSearchLesson(module: Module) : KLesson("swift.navigation.search", SwiftLessonsBundle.message("swift.navigation.search.name"), module, "Swift") {
+class SwiftSearchLesson : KLesson("swift.navigation.search", SwiftLessonsBundle.message("swift.navigation.search.name"),
+                                  "Swift") {
 
   private val sample: LessonSample = parseLessonSample("""
 import Foundation

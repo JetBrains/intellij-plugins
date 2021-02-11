@@ -1,10 +1,10 @@
 package com.jetbrains.swift.ift.lesson.navigation
 
 import com.jetbrains.swift.ift.SwiftLessonsBundle
-import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.*
 
-class SwiftCodeNavigationLesson(module: Module) : KLesson("swift.navigation.code", SwiftLessonsBundle.message("swift.navigation.code.name"), module, "Swift") {
+class SwiftCodeNavigationLesson : KLesson("swift.navigation.code", SwiftLessonsBundle.message("swift.navigation.code.name"),
+                                          "Swift") {
 
   private val sample: LessonSample = parseLessonSample("""
 import Foundation

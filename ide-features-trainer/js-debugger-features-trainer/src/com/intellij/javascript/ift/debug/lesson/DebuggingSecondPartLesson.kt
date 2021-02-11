@@ -6,15 +6,14 @@ import com.intellij.idea.ActionsBundle
 import com.intellij.javascript.ift.debug.JsDebugLessonsBundle
 import com.intellij.javascript.ift.debug.setLanguageLevel
 import com.intellij.xdebugger.XDebuggerBundle
-import training.learn.interfaces.Module
 import training.learn.js.textOnLine
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonUtil.productName
 import training.learn.lesson.kimpl.dropMnemonic
 
-class DebuggingSecondPartLesson(module: Module)
-  : KLesson("Debugging Code. Part II", JsDebugLessonsBundle.message("js.debugger.part.2.title"), module, "JavaScript") {
+class DebuggingSecondPartLesson
+  : KLesson("Debugging Code. Part II", JsDebugLessonsBundle.message("js.debugger.part.2.title"), "JavaScript") {
 
   override val lessonContent: LessonContext.() -> Unit
     get() {

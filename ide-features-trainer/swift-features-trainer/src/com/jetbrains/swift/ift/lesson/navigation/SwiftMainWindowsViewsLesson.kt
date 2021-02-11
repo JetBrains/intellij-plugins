@@ -2,13 +2,13 @@ package com.jetbrains.swift.ift.lesson.navigation
 
 import com.intellij.icons.AllIcons
 import com.jetbrains.swift.ift.SwiftLessonsBundle
-import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 import training.learn.lesson.kimpl.parseLessonSample
 
-class SwiftMainWindowsViewsLesson(module: Module) : KLesson("swift.navigation.toolwindows", SwiftLessonsBundle.message("swift.navigation.windows.name"), module, "Swift") {
+class SwiftMainWindowsViewsLesson : KLesson("swift.navigation.toolwindows",
+                                            SwiftLessonsBundle.message("swift.navigation.windows.name"), "Swift") {
 
   private val sample: LessonSample = parseLessonSample("""
 import UIKit

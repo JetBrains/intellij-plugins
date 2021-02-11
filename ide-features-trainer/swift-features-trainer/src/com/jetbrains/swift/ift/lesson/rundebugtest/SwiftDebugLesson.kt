@@ -1,10 +1,9 @@
 package com.jetbrains.swift.ift.lesson.rundebugtest
 
 import com.jetbrains.swift.ift.SwiftLessonsBundle
-import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.*
 
-class SwiftDebugLesson(module: Module) : KLesson("swift.rdt.debug", SwiftLessonsBundle.message("swift.rdt.debug.name"), module, "Swift") {
+class SwiftDebugLesson : KLesson("swift.rdt.debug", SwiftLessonsBundle.message("swift.rdt.debug.name"), "Swift") {
 
   private val sample: LessonSample = parseLessonSample("""
 import UIKit

@@ -1,13 +1,13 @@
 package com.jetbrains.swift.ift.lesson.editor
 
 import com.jetbrains.swift.ift.SwiftLessonsBundle
-import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 import training.learn.lesson.kimpl.parseLessonSample
 
-class SwiftCodeFormattingLesson(module: Module) : KLesson("swift.codeassistance.codeformatting", SwiftLessonsBundle.message("swift.editor.format.name"), module, "Swift") {
+class SwiftCodeFormattingLesson : KLesson("swift.codeassistance.codeformatting",
+                                          SwiftLessonsBundle.message("swift.editor.format.name"), "Swift") {
 
   private val sample: LessonSample = parseLessonSample("""
 

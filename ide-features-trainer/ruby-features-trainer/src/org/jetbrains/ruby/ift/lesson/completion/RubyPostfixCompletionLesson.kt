@@ -5,15 +5,14 @@ import com.intellij.testGuiFramework.framework.GuiTestUtil.typeText
 import com.intellij.testGuiFramework.impl.jList
 import org.jetbrains.ruby.ift.RubyLessonsBundle
 import training.learn.LessonsBundle
-import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonUtil.checkExpectedStateOfEditor
 import training.learn.lesson.kimpl.defaultRestoreDelay
 import training.learn.lesson.kimpl.parseLessonSample
 
-class RubyPostfixCompletionLesson(module: Module)
-  : KLesson("Postfix completion", LessonsBundle.message("postfix.completion.lesson.name"), module, "ruby") {
+class RubyPostfixCompletionLesson
+  : KLesson("Postfix completion", LessonsBundle.message("postfix.completion.lesson.name"), "ruby") {
 
   private val sample = parseLessonSample("""class SomeExampleClass
   # @param string_array [Array<String>]

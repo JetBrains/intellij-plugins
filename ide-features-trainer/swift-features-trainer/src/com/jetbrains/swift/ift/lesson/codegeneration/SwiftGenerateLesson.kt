@@ -1,10 +1,10 @@
 package com.jetbrains.swift.ift.lesson.codegeneration
 
 import com.jetbrains.swift.ift.SwiftLessonsBundle
-import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.*
 
-class SwiftGenerateLesson(module: Module) : KLesson("swift.codegeneration.generate", SwiftLessonsBundle.message("swift.codegeneration.generate.name"), module, "Swift") {
+class SwiftGenerateLesson : KLesson("swift.codegeneration.generate",
+                                    SwiftLessonsBundle.message("swift.codegeneration.generate.name"), "Swift") {
 
   private val sample: LessonSample = parseLessonSample("""
 import Foundation

@@ -1,10 +1,11 @@
 package com.jetbrains.swift.ift.lesson.codegeneration
 
 import com.jetbrains.swift.ift.SwiftLessonsBundle
-import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.*
 
-class SwiftQuickFixesAndIntentionsLesson(module: Module) : KLesson("swift.codegeneration.quickfixes", SwiftLessonsBundle.message("swift.codegeneration.quickfix.name"), module, "Swift") {
+class SwiftQuickFixesAndIntentionsLesson : KLesson("swift.codegeneration.quickfixes",
+                                                   SwiftLessonsBundle.message("swift.codegeneration.quickfix.name"),
+                                                   "Swift") {
 
   private val sample: LessonSample = parseLessonSample("""
 import Foundation

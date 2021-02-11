@@ -2,13 +2,12 @@ package com.jetbrains.swift.ift.lesson.rundebugtest
 
 import com.intellij.icons.AllIcons
 import com.jetbrains.swift.ift.SwiftLessonsBundle
-import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 import training.learn.lesson.kimpl.parseLessonSample
 
-class SwiftTestLesson(module: Module) : KLesson("swift.rdt.test", SwiftLessonsBundle.message("swift.rdt.test.name"), module, "Swift") {
+class SwiftTestLesson : KLesson("swift.rdt.test", SwiftLessonsBundle.message("swift.rdt.test.name"), "Swift") {
 
   private val sample: LessonSample = parseLessonSample("""
 import UIKit

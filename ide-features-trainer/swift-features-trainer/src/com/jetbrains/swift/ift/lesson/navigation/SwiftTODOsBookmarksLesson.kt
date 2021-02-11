@@ -2,13 +2,13 @@ package com.jetbrains.swift.ift.lesson.navigation
 
 import com.intellij.icons.AllIcons
 import com.jetbrains.swift.ift.SwiftLessonsBundle
-import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 import training.learn.lesson.kimpl.parseLessonSample
 
-class SwiftTODOsBookmarksLesson(module: Module) : KLesson("swift.navigation.bookmarks", SwiftLessonsBundle.message("swift.navigation.todo.name"), module, "Swift") {
+class SwiftTODOsBookmarksLesson : KLesson("swift.navigation.bookmarks",
+                                          SwiftLessonsBundle.message("swift.navigation.todo.name"), "Swift") {
 
   private val sample: LessonSample = parseLessonSample("""
 import UIKit

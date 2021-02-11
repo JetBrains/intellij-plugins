@@ -1,12 +1,11 @@
 package org.jetbrains.ruby.ift.lesson.basic
 
 import org.jetbrains.plugins.ruby.RBundle
-import training.learn.interfaces.Module
 import training.learn.lesson.general.ContextActionsLesson
 import training.learn.lesson.kimpl.LessonSample
 import training.learn.lesson.kimpl.parseLessonSample
 
-class RubyContextActionsLesson(module: Module) : ContextActionsLesson(module, "ruby") {
+class RubyContextActionsLesson : ContextActionsLesson("ruby") {
   override val sample: LessonSample = parseLessonSample("""
     def inc(value)
       result = value + 1

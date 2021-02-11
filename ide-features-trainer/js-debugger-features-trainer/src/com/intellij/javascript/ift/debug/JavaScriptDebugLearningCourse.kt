@@ -17,9 +17,9 @@ class JavaScriptDebugLearningCourse : LearningCourseBase(JavascriptLanguage.INST
                    primaryLanguage = langSupport,
                    moduleType = LessonType.PROJECT) {
       listOf(
-        BeforeDebuggingLesson(it),
-        DebuggingFirstPartLesson(it),
-        DebuggingSecondPartLesson(it),
+        BeforeDebuggingLesson(),
+        DebuggingFirstPartLesson(),
+        DebuggingSecondPartLesson(),
       )
     },
   )

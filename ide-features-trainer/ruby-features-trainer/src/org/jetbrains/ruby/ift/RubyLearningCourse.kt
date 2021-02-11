@@ -36,15 +36,15 @@ class RubyLearningCourse : LearningCourseBase(RubyLanguage.INSTANCE.id) {
                    moduleType = LessonType.SCRATCH) {
       fun ls(sampleName: String) = loadSample("EditorBasics/$sampleName")
       listOf(
-        RubyContextActionsLesson(it),
-        GotoActionLesson(it, lang, ls("Actions.rb.sample")),
-        RubySelectLesson(it),
-        SingleLineCommentLesson(it, lang, ls("Comment.rb.sample")),
-        DuplicateLesson(it, lang, ls("Duplicate.rb.sample")),
-        MoveLesson(it, lang, "set(v)", ls("Move.rb.sample")),
-        CollapseLesson(it, lang, ls("Collapse.rb.sample")),
-        RubySurroundAndUnwrapLesson(it),
-        MultipleSelectionHtmlLesson(it),
+        RubyContextActionsLesson(),
+        GotoActionLesson(lang, ls("Actions.rb.sample")),
+        RubySelectLesson(),
+        SingleLineCommentLesson(lang, ls("Comment.rb.sample")),
+        DuplicateLesson(lang, ls("Duplicate.rb.sample")),
+        MoveLesson(lang, "set(v)", ls("Move.rb.sample")),
+        CollapseLesson(lang, ls("Collapse.rb.sample")),
+        RubySurroundAndUnwrapLesson(),
+        MultipleSelectionHtmlLesson(),
       )
     },
     LearningModule(name = LessonsBundle.message("code.completion.module.name"),
@@ -52,10 +52,10 @@ class RubyLearningCourse : LearningCourseBase(RubyLanguage.INSTANCE.id) {
                    primaryLanguage = langSupport,
                    moduleType = LessonType.SINGLE_EDITOR) {
       listOf(
-        RubyBasicCompletionLesson(it),
-        RubyHippieCompletionLesson(it),
-        RubyPostfixCompletionLesson(it),
-        RubyCompletionWithTabLesson(it),
+        RubyBasicCompletionLesson(),
+        RubyHippieCompletionLesson(),
+        RubyPostfixCompletionLesson(),
+        RubyCompletionWithTabLesson(),
       )
     },
     LearningModule(name = LessonsBundle.message("refactorings.module.name"),
@@ -64,10 +64,10 @@ class RubyLearningCourse : LearningCourseBase(RubyLanguage.INSTANCE.id) {
                    moduleType = LessonType.SINGLE_EDITOR) {
       fun ls(sampleName: String) = loadSample("Refactorings/$sampleName")
       listOf(
-        RubyRefactorMenuLesson(it),
-        RubyRenameLesson(it),
-        ExtractVariableFromBubbleLesson(it, lang, ls("ExtractVariable.rb.sample")),
-        ExtractMethodCocktailSortLesson(it, lang, ls("ExtractMethod.rb.sample")),
+        RubyRefactorMenuLesson(),
+        RubyRenameLesson(),
+        ExtractVariableFromBubbleLesson(lang, ls("ExtractVariable.rb.sample")),
+        ExtractMethodCocktailSortLesson(lang, ls("ExtractMethod.rb.sample")),
       )
     },
     LearningModule(name = LessonsBundle.message("code.assistance.module.name"),
@@ -76,10 +76,10 @@ class RubyLearningCourse : LearningCourseBase(RubyLanguage.INSTANCE.id) {
                    moduleType = LessonType.SINGLE_EDITOR) {
       fun ls(sampleName: String) = loadSample("CodeAssistance/$sampleName")
       listOf(
-        CodeFormatLesson(it, lang, ls("CodeFormat.rb.sample"), false),
-        ParameterInfoLesson(it, lang, ls("ParameterInfo.rb.sample")),
-        QuickPopupsLesson(it, lang, ls("QuickPopups.rb.sample")),
-        RubyEditorCodingAssistanceLesson(it, lang, ls("EditorCodingAssistance.rb.sample")),
+        CodeFormatLesson(lang, ls("CodeFormat.rb.sample"), false),
+        ParameterInfoLesson(lang, ls("ParameterInfo.rb.sample")),
+        QuickPopupsLesson(lang, ls("QuickPopups.rb.sample")),
+        RubyEditorCodingAssistanceLesson(lang, ls("EditorCodingAssistance.rb.sample")),
       )
     },
     LearningModule(name = LessonsBundle.message("navigation.module.name"),
@@ -87,11 +87,11 @@ class RubyLearningCourse : LearningCourseBase(RubyLanguage.INSTANCE.id) {
                    primaryLanguage = langSupport,
                    moduleType = LessonType.PROJECT) {
       listOf(
-        RubySearchEverywhereLesson(it),
-        FindInFilesLesson(it, lang, "src/warehouse/find_in_files_sample.rb"),
-        RubyDeclarationAndUsagesLesson(it),
-        RubyFileStructureLesson(it),
-        RubyRecentFilesLesson(it),
+        RubySearchEverywhereLesson(),
+        FindInFilesLesson(lang, "src/warehouse/find_in_files_sample.rb"),
+        RubyDeclarationAndUsagesLesson(),
+        RubyFileStructureLesson(),
+        RubyRecentFilesLesson(),
       )
     },
   )

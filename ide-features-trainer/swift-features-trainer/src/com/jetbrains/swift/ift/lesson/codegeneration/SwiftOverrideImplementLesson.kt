@@ -1,10 +1,11 @@
 package com.jetbrains.swift.ift.lesson.codegeneration
 
 import com.jetbrains.swift.ift.SwiftLessonsBundle
-import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.*
 
-class SwiftOverrideImplementLesson(module: Module) : KLesson("swift.codegeneration.overrideimplement", SwiftLessonsBundle.message("swift.codegeneration.overrideimplement.name"), module, "Swift") {
+class SwiftOverrideImplementLesson : KLesson("swift.codegeneration.overrideimplement",
+                                             SwiftLessonsBundle.message("swift.codegeneration.overrideimplement.name"),
+                                             "Swift") {
 
   private val sample: LessonSample = parseLessonSample("""
 import UIKit

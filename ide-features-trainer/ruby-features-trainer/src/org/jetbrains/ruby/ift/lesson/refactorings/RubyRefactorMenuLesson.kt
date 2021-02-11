@@ -13,15 +13,14 @@ import org.jetbrains.plugins.ruby.ruby.refactoring.pushDown.RubyPushDownHandler
 import org.jetbrains.ruby.ift.RubyLessonsBundle
 import training.commands.kotlin.TaskTestContext
 import training.learn.LessonsBundle
-import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonUtil.restoreIfModifiedOrMoved
 import training.learn.lesson.kimpl.defaultRestoreDelay
 import training.learn.lesson.kimpl.parseLessonSample
 
-class RubyRefactorMenuLesson(module: Module)
-  : KLesson("Refactoring menu", LessonsBundle.message("refactoring.menu.lesson.name"), module, "ruby") {
+class RubyRefactorMenuLesson
+  : KLesson("Refactoring menu", LessonsBundle.message("refactoring.menu.lesson.name"), "ruby") {
 
   private val sample = parseLessonSample("""
     class Animal

@@ -9,7 +9,6 @@ import com.intellij.javascript.ift.lesson.setLanguageLevel
 import com.intellij.openapi.editor.impl.EditorComponentImpl
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.ui.UIBundle
-import training.learn.interfaces.Module
 import training.learn.js.checkWordInSearchEverywhereInput
 import training.learn.js.shiftSymbol
 import training.learn.js.textAtCaretEqualsTo
@@ -18,8 +17,8 @@ import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.checkToolWindowState
 import training.learn.lesson.kimpl.parseLessonSample
 
-class NavigationLesson(module: Module)
-  : KLesson("Secrets of Efficient Navigation", JsLessonsBundle.message("js.editor.navigation.title"), module, JavaScriptLangSupport.lang) {
+class NavigationLesson
+  : KLesson("Secrets of Efficient Navigation", JsLessonsBundle.message("js.editor.navigation.title"), JavaScriptLangSupport.lang) {
 
   private val thisOwnerName = "$" + "{this.ownerName}"
   private val thisName = "$" + "{this.name}"

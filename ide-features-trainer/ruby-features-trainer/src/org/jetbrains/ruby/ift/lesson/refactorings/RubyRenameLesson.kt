@@ -7,7 +7,6 @@ import com.intellij.ui.treeStructure.Tree
 import org.jetbrains.ruby.ift.RubyLessonsBundle
 import training.commands.kotlin.TaskTestContext
 import training.learn.LessonsBundle
-import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonUtil.restoreIfModifiedOrMoved
@@ -17,8 +16,8 @@ import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 
-class RubyRenameLesson(module: Module)
-  : KLesson("Rename", LessonsBundle.message("rename.lesson.name"), module, "ruby") {
+class RubyRenameLesson
+  : KLesson("Rename", LessonsBundle.message("rename.lesson.name"), "ruby") {
 
   private val template = """
     class Championship

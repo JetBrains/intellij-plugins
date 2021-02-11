@@ -2,13 +2,13 @@ package com.jetbrains.swift.ift.lesson.refactorings
 
 import com.intellij.icons.AllIcons
 import com.jetbrains.swift.ift.SwiftLessonsBundle
-import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 import training.learn.lesson.kimpl.parseLessonSample
 
-class SwiftExtractMethodLesson(module: Module) : KLesson("swift.refactorings.extract.method", SwiftLessonsBundle.message("swift.refactoring.extract.method.name"), module, "Swift") {
+class SwiftExtractMethodLesson : KLesson("swift.refactorings.extract.method",
+                                         SwiftLessonsBundle.message("swift.refactoring.extract.method.name"), "Swift") {
 
   private val sample: LessonSample = parseLessonSample("""
 import UIKit

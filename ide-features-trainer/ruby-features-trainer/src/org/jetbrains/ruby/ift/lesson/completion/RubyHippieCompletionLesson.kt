@@ -2,14 +2,13 @@
 package org.jetbrains.ruby.ift.lesson.completion
 
 import org.jetbrains.ruby.ift.RubyLessonsBundle
-import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonUtil.restoreIfModifiedOrMoved
 import training.learn.lesson.kimpl.parseLessonSample
 
-class RubyHippieCompletionLesson(module: Module)
-  : KLesson("Hippie Completion", RubyLessonsBundle.message("ruby.hippie.completion.lesson.name"), module, "ruby") {
+class RubyHippieCompletionLesson
+  : KLesson("Hippie Completion", RubyLessonsBundle.message("ruby.hippie.completion.lesson.name"), "ruby") {
 
   private val sample = parseLessonSample("""class SomeExampleClass
   attr_reader :callbacks

@@ -1,13 +1,13 @@
 package com.jetbrains.swift.ift.lesson.editor
 
 import com.jetbrains.swift.ift.SwiftLessonsBundle
-import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 import training.learn.lesson.kimpl.parseLessonSample
 
-class SwiftDuplicateLesson(module: Module) : KLesson("swift.editorbasics.duplicate", SwiftLessonsBundle.message("swift.editor.duplicate.name"), module, "Swift") {
+class SwiftDuplicateLesson : KLesson("swift.editorbasics.duplicate",
+                                     SwiftLessonsBundle.message("swift.editor.duplicate.name"), "Swift") {
 
 
   private val sample: LessonSample = parseLessonSample("""

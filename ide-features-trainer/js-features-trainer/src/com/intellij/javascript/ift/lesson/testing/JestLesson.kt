@@ -20,7 +20,6 @@ import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.UIBundle
 import com.intellij.ui.treeStructure.Tree
-import training.learn.interfaces.Module
 import training.learn.js.textAtCaretEqualsTo
 import training.learn.js.textOnLine
 import training.learn.lesson.kimpl.*
@@ -31,8 +30,8 @@ import java.awt.event.KeyEvent
 import javax.swing.SwingConstants
 import javax.swing.tree.DefaultMutableTreeNode
 
-class JestLesson(module: Module)
-  : KLesson("Fundamentals of Testing in WebStorm", JsLessonsBundle.message("js.testing.jest.title", productName), module,
+class JestLesson
+  : KLesson("Fundamentals of Testing in WebStorm", JsLessonsBundle.message("js.testing.jest.title", productName),
             JavaScriptLangSupport.lang){
   override val lessonContent: LessonContext.() -> Unit
     get() {

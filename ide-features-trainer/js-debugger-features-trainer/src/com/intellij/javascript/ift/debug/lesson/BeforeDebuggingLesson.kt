@@ -8,14 +8,13 @@ import com.intellij.javascript.ift.debug.setLanguageLevel
 import com.intellij.openapi.editor.impl.EditorComponentImpl
 import com.intellij.ui.UIBundle
 import com.intellij.ui.treeStructure.Tree
-import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.*
 import training.ui.LearningUiHighlightingManager
 import javax.swing.JButton
 import javax.swing.tree.DefaultMutableTreeNode
 
-class BeforeDebuggingLesson(module: Module)
-  : KLesson("Before Debugging: Run/Debug Configurations", JsDebugLessonsBundle.message("js.debugger.before.title"), module, "JavaScript") {
+class BeforeDebuggingLesson
+  : KLesson("Before Debugging: Run/Debug Configurations", JsDebugLessonsBundle.message("js.debugger.before.title"), "JavaScript") {
 
   companion object {
     val jsDebuggerSample = parseLessonSample("""

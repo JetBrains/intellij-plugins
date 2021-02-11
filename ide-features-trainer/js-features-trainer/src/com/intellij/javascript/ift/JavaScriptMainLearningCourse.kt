@@ -16,11 +16,11 @@ class JavaScriptMainLearningCourse : LearningCourseBase(JavascriptLanguage.INSTA
                    primaryLanguage = langSupport,
                    moduleType = LessonType.PROJECT) {
       listOf(
-        BasicCompletionLesson(it),
-        CodeInspectionLesson(it),
-        RefactoringLesson(it),
-        CodeEditingLesson(it),
-        NavigationLesson(it),
+        BasicCompletionLesson(),
+        CodeInspectionLesson(),
+        RefactoringLesson(),
+        CodeEditingLesson(),
+        NavigationLesson(),
       )
     },
     LearningModule(name = JsLessonsBundle.message("js.getting.started.module.name"),
@@ -28,7 +28,7 @@ class JavaScriptMainLearningCourse : LearningCourseBase(JavascriptLanguage.INSTA
                    primaryLanguage = langSupport,
                    moduleType = LessonType.PROJECT) {
       listOf(
-        JestLesson(it),
+        JestLesson(),
       )
     },
   )

@@ -1,13 +1,13 @@
 package com.jetbrains.swift.ift.lesson.editor
 
 import com.jetbrains.swift.ift.SwiftLessonsBundle
-import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 import training.learn.lesson.kimpl.parseLessonSample
 
-class SwiftSelectionLesson(module: Module) : KLesson("swift.editorbasics.selection", SwiftLessonsBundle.message("swift.editor.selection.name"), module, "Swift") {
+class SwiftSelectionLesson : KLesson("swift.editorbasics.selection",
+                                     SwiftLessonsBundle.message("swift.editor.selection.name"), "Swift") {
 
 
   private val sample: LessonSample = parseLessonSample("""

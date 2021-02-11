@@ -1,13 +1,13 @@
 package com.jetbrains.swift.ift.lesson.editor
 
 import com.jetbrains.swift.ift.SwiftLessonsBundle
-import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 import training.learn.lesson.kimpl.parseLessonSample
 
-class SwiftDeleteLesson(module: Module) : KLesson("swift.editorbasics.deleteline", SwiftLessonsBundle.message("swift.editor.delete.name"), module, "Swift") {
+class SwiftDeleteLesson : KLesson("swift.editorbasics.deleteline", SwiftLessonsBundle.message("swift.editor.delete.name"),
+                                  "Swift") {
 
 
   private val sample: LessonSample = parseLessonSample("""

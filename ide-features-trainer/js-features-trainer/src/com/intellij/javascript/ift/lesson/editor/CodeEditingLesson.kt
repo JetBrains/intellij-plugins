@@ -4,7 +4,6 @@ package com.intellij.javascript.ift.lesson.editor
 import com.intellij.application.options.CodeStyle
 import com.intellij.javascript.ift.JsLessonsBundle
 import com.intellij.javascript.ift.lesson.setLanguageLevel
-import training.learn.interfaces.Module
 import training.learn.js.textAfterOffset
 import training.learn.js.textBeforeOffset
 import training.learn.js.textOnLine
@@ -13,8 +12,8 @@ import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonUtil
 import training.learn.lesson.kimpl.parseLessonSample
 
-class CodeEditingLesson(module: Module)
-  : KLesson("Code Editing Tips and Tricks", JsLessonsBundle.message("js.editor.code.editing.tips.and.tricks.title"), module, "HTML") {
+class CodeEditingLesson
+  : KLesson("Code Editing Tips and Tricks", JsLessonsBundle.message("js.editor.code.editing.tips.and.tricks.title"), "HTML") {
 
   val sample = parseLessonSample(""" 
         <!doctype html><html lang="en">
