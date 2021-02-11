@@ -14,6 +14,7 @@
  */
 package com.intellij.struts2.freemarker;
 
+import com.intellij.freemarker.FreemarkerIcons;
 import com.intellij.freemarker.psi.files.FtlFileType;
 import com.intellij.javaee.web.WebUtil;
 import com.intellij.javaee.web.facet.WebFacet;
@@ -23,7 +24,6 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet;
 import com.intellij.struts2.dom.struts.impl.path.FileReferenceSetHelper;
 import com.intellij.struts2.dom.struts.impl.path.StrutsResultContributor;
-import icons.FreemarkerIcons;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
