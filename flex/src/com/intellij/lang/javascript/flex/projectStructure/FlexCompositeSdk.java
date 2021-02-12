@@ -273,13 +273,13 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
     }
 
     @Override
-    public boolean isValidSdkHome(final String path) {
+    public boolean isValidSdkHome(final @NotNull String path) {
       return false;
     }
 
     @NotNull
     @Override
-    public String suggestSdkName(@Nullable String currentSdkName, String sdkHome) {
+    public String suggestSdkName(@Nullable String currentSdkName, @NotNull String sdkHome) {
       return Objects.requireNonNull(currentSdkName);
     }
 

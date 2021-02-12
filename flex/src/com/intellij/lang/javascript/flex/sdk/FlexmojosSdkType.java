@@ -34,7 +34,7 @@ public class FlexmojosSdkType extends SdkType {
   }
 
   @Override
-  public boolean isValidSdkHome(final String _path) {
+  public boolean isValidSdkHome(final @NotNull String _path) {
     final String path = FileUtil.toSystemIndependentName(_path);
     return path.matches(COMPILER_POM_PATTERN_1) || path.matches(COMPILER_POM_PATTERN_2);
   }
@@ -54,7 +54,7 @@ public class FlexmojosSdkType extends SdkType {
 
   @NotNull
   @Override
-  public String suggestSdkName(@Nullable final String currentSdkName, final String sdkHome) {
+  public String suggestSdkName(@Nullable final String currentSdkName, final @NotNull String sdkHome) {
     return "Flexmojos SDK " + getVersionString(sdkHome);
   }
 
