@@ -33,7 +33,6 @@ CfnRootNode{
                         value={
   "JsonKey": "JsonValue: ${SSS}"
 }
-
                       },
                       CfnObjectValueNode{
                         properties=[
