@@ -8,7 +8,7 @@ import training.dsl.parseLessonSample
 import training.learn.course.KLesson
 
 class SwiftGenerateLesson : KLesson("swift.codegeneration.generate",
-                                    SwiftLessonsBundle.message("swift.codegeneration.generate.name"), "Swift") {
+                                    SwiftLessonsBundle.message("swift.codegeneration.generate.name")) {
 
   private val sample: LessonSample = parseLessonSample("""
 import Foundation

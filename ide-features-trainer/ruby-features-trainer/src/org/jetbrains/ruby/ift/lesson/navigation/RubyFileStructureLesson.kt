@@ -4,7 +4,7 @@ package org.jetbrains.ruby.ift.lesson.navigation
 import com.intellij.openapi.editor.LogicalPosition
 import training.learn.lesson.general.navigation.FileStructureLesson
 
-class RubyFileStructureLesson : FileStructureLesson("ruby") {
+class RubyFileStructureLesson : FileStructureLesson() {
   override val existedFile: String = "src/file_structure_demo.rb"
   override val methodToFindPosition: LogicalPosition = LogicalPosition(80, 6)
 }

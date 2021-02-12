@@ -7,7 +7,6 @@ import com.intellij.execution.testframework.TestRunnerBundle
 import com.intellij.execution.testframework.sm.SmRunnerBundle
 import com.intellij.icons.AllIcons
 import com.intellij.idea.ActionsBundle
-import com.intellij.javascript.ift.JavaScriptLangSupport
 import com.intellij.javascript.ift.JsLessonsBundle
 import com.intellij.javascript.ift.lesson.setLanguageLevel
 import com.intellij.openapi.application.ModalityState
@@ -32,8 +31,7 @@ import javax.swing.SwingConstants
 import javax.swing.tree.DefaultMutableTreeNode
 
 class JestLesson
-  : KLesson("Fundamentals of Testing in WebStorm", JsLessonsBundle.message("js.testing.jest.title", productName),
-            JavaScriptLangSupport.lang){
+  : KLesson("Fundamentals of Testing in WebStorm", JsLessonsBundle.message("js.testing.jest.title", productName)){
   override val lessonContent: LessonContext.() -> Unit
     get() {
       return {

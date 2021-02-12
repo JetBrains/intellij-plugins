@@ -6,7 +6,7 @@ import training.dsl.LessonSample
 import training.dsl.parseLessonSample
 import training.learn.course.KLesson
 
-class SwiftMoveLesson : KLesson("swift.editorbasics.move", SwiftLessonsBundle.message("swift.editor.move.name"), "Swift") {
+class SwiftMoveLesson : KLesson("swift.editorbasics.move", SwiftLessonsBundle.message("swift.editor.move.name")) {
 
 
   private val sample: LessonSample = parseLessonSample("""

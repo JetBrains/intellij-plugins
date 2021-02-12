@@ -7,7 +7,7 @@ import training.dsl.parseLessonSample
 import training.learn.course.KLesson
 
 class SwiftMultipleSelectionsLesson : KLesson("swift.editorbasics.multipleselections",
-                                              SwiftLessonsBundle.message("swift.editor.selections.name"), "Swift") {
+                                              SwiftLessonsBundle.message("swift.editor.selections.name")) {
 
   private val sample: LessonSample = parseLessonSample("""import Foundation
 

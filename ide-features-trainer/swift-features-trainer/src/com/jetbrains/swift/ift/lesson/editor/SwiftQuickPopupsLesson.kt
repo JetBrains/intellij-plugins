@@ -7,7 +7,7 @@ import training.dsl.parseLessonSample
 import training.learn.course.KLesson
 
 class SwiftQuickPopupsLesson : KLesson("swift.codeassistance.quickpopups",
-                                       SwiftLessonsBundle.message("swift.editor.popups.name"), "Swift") {
+                                       SwiftLessonsBundle.message("swift.editor.popups.name")) {
 
   private val sample: LessonSample = parseLessonSample("""
 import Foundation

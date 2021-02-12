@@ -7,7 +7,7 @@ import training.dsl.parseLessonSample
 import training.learn.course.KLesson
 
 class SwiftExtractVariableLesson : KLesson("swift.refactorings.extract.variable",
-                                           SwiftLessonsBundle.message("swift.refactoring.extract.variable.name"), "Swift") {
+                                           SwiftLessonsBundle.message("swift.refactoring.extract.variable.name")) {
 
   private val sample: LessonSample = parseLessonSample("""
 import UIKit

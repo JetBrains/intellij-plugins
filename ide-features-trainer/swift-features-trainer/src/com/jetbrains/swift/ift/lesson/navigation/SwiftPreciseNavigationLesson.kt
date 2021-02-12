@@ -7,7 +7,7 @@ import training.dsl.parseLessonSample
 import training.learn.course.KLesson
 
 class SwiftPreciseNavigationLesson : KLesson("swift.navigation.precise",
-                                             SwiftLessonsBundle.message("swift.navigation.precise.name"), "Swift") {
+                                             SwiftLessonsBundle.message("swift.navigation.precise.name")) {
 
   private val sample: LessonSample = parseLessonSample("""
 import UIKit

@@ -4,7 +4,7 @@ package org.jetbrains.ruby.ift.lesson.completion
 import training.dsl.parseLessonSample
 import training.learn.lesson.general.completion.BasicCompletionLessonBase
 
-class RubyBasicCompletionLesson : BasicCompletionLessonBase("ruby") {
+class RubyBasicCompletionLesson : BasicCompletionLessonBase() {
   override val sample1 = parseLessonSample("""
     class AnimalClass
       def speak

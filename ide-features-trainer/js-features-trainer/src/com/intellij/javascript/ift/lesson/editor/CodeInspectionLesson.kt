@@ -2,7 +2,6 @@
 package com.intellij.javascript.ift.lesson.editor
 
 import com.intellij.icons.AllIcons
-import com.intellij.javascript.ift.JavaScriptLangSupport
 import com.intellij.javascript.ift.JsLessonsBundle
 import com.intellij.javascript.ift.lesson.setLanguageLevel
 import com.intellij.lang.javascript.JavaScriptBundle
@@ -14,7 +13,7 @@ import training.learn.js.textAtCaretEqualsTo
 import training.learn.js.textOnLine
 
 class CodeInspectionLesson
-  : KLesson("The Power of Code Inspections", JsLessonsBundle.message("js.editor.code.inspection.title"), JavaScriptLangSupport.lang) {
+  : KLesson("The Power of Code Inspections", JsLessonsBundle.message("js.editor.code.inspection.title")) {
 
   val sample = parseLessonSample("""
         function listBookAuthors(books) {

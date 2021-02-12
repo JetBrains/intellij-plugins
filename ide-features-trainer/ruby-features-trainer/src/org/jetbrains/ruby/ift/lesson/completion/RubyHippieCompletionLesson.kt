@@ -8,7 +8,7 @@ import training.dsl.parseLessonSample
 import training.learn.course.KLesson
 
 class RubyHippieCompletionLesson
-  : KLesson("Hippie Completion", RubyLessonsBundle.message("ruby.hippie.completion.lesson.name"), "ruby") {
+  : KLesson("Hippie Completion", RubyLessonsBundle.message("ruby.hippie.completion.lesson.name")) {
 
   private val sample = parseLessonSample("""class SomeExampleClass
   attr_reader :callbacks

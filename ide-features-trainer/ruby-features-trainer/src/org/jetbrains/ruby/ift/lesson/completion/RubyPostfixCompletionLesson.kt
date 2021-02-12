@@ -12,7 +12,7 @@ import training.learn.LessonsBundle
 import training.learn.course.KLesson
 
 class RubyPostfixCompletionLesson
-  : KLesson("Postfix completion", LessonsBundle.message("postfix.completion.lesson.name"), "ruby") {
+  : KLesson("Postfix completion", LessonsBundle.message("postfix.completion.lesson.name")) {
 
   private val sample = parseLessonSample("""class SomeExampleClass
   # @param string_array [Array<String>]

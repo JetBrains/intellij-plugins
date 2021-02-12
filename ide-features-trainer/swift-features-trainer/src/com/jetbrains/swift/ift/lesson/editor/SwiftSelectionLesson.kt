@@ -7,7 +7,7 @@ import training.dsl.parseLessonSample
 import training.learn.course.KLesson
 
 class SwiftSelectionLesson : KLesson("swift.editorbasics.selection",
-                                     SwiftLessonsBundle.message("swift.editor.selection.name"), "Swift") {
+                                     SwiftLessonsBundle.message("swift.editor.selection.name")) {
 
 
   private val sample: LessonSample = parseLessonSample("""

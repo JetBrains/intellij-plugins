@@ -7,7 +7,7 @@ import training.dsl.parseLessonSample
 import training.learn.course.KLesson
 
 class SwiftDuplicateLesson : KLesson("swift.editorbasics.duplicate",
-                                     SwiftLessonsBundle.message("swift.editor.duplicate.name"), "Swift") {
+                                     SwiftLessonsBundle.message("swift.editor.duplicate.name")) {
 
 
   private val sample: LessonSample = parseLessonSample("""

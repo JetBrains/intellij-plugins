@@ -20,7 +20,7 @@ import training.learn.LessonsBundle
 import training.learn.course.KLesson
 
 class RubyRefactorMenuLesson
-  : KLesson("Refactoring menu", LessonsBundle.message("refactoring.menu.lesson.name"), "ruby") {
+  : KLesson("Refactoring menu", LessonsBundle.message("refactoring.menu.lesson.name")) {
 
   private val sample = parseLessonSample("""
     class Animal

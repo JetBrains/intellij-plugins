@@ -8,8 +8,7 @@ import training.dsl.parseLessonSample
 import training.learn.course.KLesson
 
 class SwiftOverrideImplementLesson : KLesson("swift.codegeneration.overrideimplement",
-                                             SwiftLessonsBundle.message("swift.codegeneration.overrideimplement.name"),
-                                             "Swift") {
+                                             SwiftLessonsBundle.message("swift.codegeneration.overrideimplement.name")) {
 
   private val sample: LessonSample = parseLessonSample("""
 import UIKit

@@ -7,7 +7,7 @@ import training.dsl.LessonUtil
 import training.dsl.parseLessonSample
 import training.learn.course.KLesson
 
-class SwiftDebugLesson : KLesson("swift.rdt.debug", SwiftLessonsBundle.message("swift.rdt.debug.name"), "Swift") {
+class SwiftDebugLesson : KLesson("swift.rdt.debug", SwiftLessonsBundle.message("swift.rdt.debug.name")) {
 
   private val sample: LessonSample = parseLessonSample("""
 import UIKit

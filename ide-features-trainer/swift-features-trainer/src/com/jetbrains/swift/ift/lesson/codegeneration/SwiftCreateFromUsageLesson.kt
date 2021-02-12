@@ -8,7 +8,7 @@ import training.dsl.parseLessonSample
 import training.learn.course.KLesson
 
 class SwiftCreateFromUsageLesson : KLesson("swift.codegeneration.createfromusage",
-                                           SwiftLessonsBundle.message("swift.codegeneration.cfu.name"), "Swift") {
+                                           SwiftLessonsBundle.message("swift.codegeneration.cfu.name")) {
 
   private val sample: LessonSample = parseLessonSample("""
 import UIKit

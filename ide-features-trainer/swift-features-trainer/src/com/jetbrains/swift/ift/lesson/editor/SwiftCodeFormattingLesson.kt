@@ -7,7 +7,7 @@ import training.dsl.parseLessonSample
 import training.learn.course.KLesson
 
 class SwiftCodeFormattingLesson : KLesson("swift.codeassistance.codeformatting",
-                                          SwiftLessonsBundle.message("swift.editor.format.name"), "Swift") {
+                                          SwiftLessonsBundle.message("swift.editor.format.name")) {
 
   private val sample: LessonSample = parseLessonSample("""
 

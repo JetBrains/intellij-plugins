@@ -8,8 +8,7 @@ import training.dsl.parseLessonSample
 import training.learn.course.KLesson
 
 class SwiftQuickFixesAndIntentionsLesson : KLesson("swift.codegeneration.quickfixes",
-                                                   SwiftLessonsBundle.message("swift.codegeneration.quickfix.name"),
-                                                   "Swift") {
+                                                   SwiftLessonsBundle.message("swift.codegeneration.quickfix.name")) {
 
   private val sample: LessonSample = parseLessonSample("""
 import Foundation

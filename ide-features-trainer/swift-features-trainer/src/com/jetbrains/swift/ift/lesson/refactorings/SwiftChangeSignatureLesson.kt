@@ -8,7 +8,7 @@ import training.dsl.parseLessonSample
 import training.learn.course.KLesson
 
 class SwiftChangeSignatureLesson : KLesson("swift.refactorings.change.signature",
-                                           SwiftLessonsBundle.message("swift.refactoring.change.signature.name"), "Swift") {
+                                           SwiftLessonsBundle.message("swift.refactoring.change.signature.name")) {
 
   private val sample: LessonSample = parseLessonSample("""
 import UIKit

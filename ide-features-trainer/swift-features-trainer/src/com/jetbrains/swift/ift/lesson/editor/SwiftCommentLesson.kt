@@ -6,8 +6,7 @@ import training.dsl.LessonSample
 import training.dsl.parseLessonSample
 import training.learn.course.KLesson
 
-class SwiftCommentLesson : KLesson("swift.editorbasics.commentline", SwiftLessonsBundle.message("swift.editor.comment"),
-                                   "Swift") {
+class SwiftCommentLesson : KLesson("swift.editorbasics.commentline", SwiftLessonsBundle.message("swift.editor.comment")) {
 
 
   private val sample: LessonSample = parseLessonSample("""

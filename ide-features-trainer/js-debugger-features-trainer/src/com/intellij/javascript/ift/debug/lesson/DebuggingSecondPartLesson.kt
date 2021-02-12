@@ -13,7 +13,7 @@ import training.learn.course.KLesson
 import training.learn.js.textOnLine
 
 class DebuggingSecondPartLesson
-  : KLesson("Debugging Code. Part II", JsDebugLessonsBundle.message("js.debugger.part.2.title"), "JavaScript") {
+  : KLesson("Debugging Code. Part II", JsDebugLessonsBundle.message("js.debugger.part.2.title")) {
 
   override val lessonContent: LessonContext.() -> Unit
     get() {

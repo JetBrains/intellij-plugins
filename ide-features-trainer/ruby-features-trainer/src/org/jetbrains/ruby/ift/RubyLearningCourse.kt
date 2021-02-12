@@ -37,12 +37,12 @@ class RubyLearningCourse : LearningCourseBase(RubyLanguage.INSTANCE.id) {
       fun ls(sampleName: String) = loadSample("EditorBasics/$sampleName")
       listOf(
         RubyContextActionsLesson(),
-        GotoActionLesson(lang, ls("Actions.rb.sample")),
+        GotoActionLesson(ls("Actions.rb.sample")),
         RubySelectLesson(),
-        SingleLineCommentLesson(lang, ls("Comment.rb.sample")),
-        DuplicateLesson(lang, ls("Duplicate.rb.sample")),
-        MoveLesson(lang, "set(v)", ls("Move.rb.sample")),
-        CollapseLesson(lang, ls("Collapse.rb.sample")),
+        SingleLineCommentLesson(ls("Comment.rb.sample")),
+        DuplicateLesson(ls("Duplicate.rb.sample")),
+        MoveLesson("set(v)", ls("Move.rb.sample")),
+        CollapseLesson(ls("Collapse.rb.sample")),
         RubySurroundAndUnwrapLesson(),
         MultipleSelectionHtmlLesson(),
       )
@@ -66,8 +66,8 @@ class RubyLearningCourse : LearningCourseBase(RubyLanguage.INSTANCE.id) {
       listOf(
         RubyRefactorMenuLesson(),
         RubyRenameLesson(),
-        ExtractVariableFromBubbleLesson(lang, ls("ExtractVariable.rb.sample")),
-        ExtractMethodCocktailSortLesson(lang, ls("ExtractMethod.rb.sample")),
+        ExtractVariableFromBubbleLesson(ls("ExtractVariable.rb.sample")),
+        ExtractMethodCocktailSortLesson(ls("ExtractMethod.rb.sample")),
       )
     },
     LearningModule(name = LessonsBundle.message("code.assistance.module.name"),
@@ -76,10 +76,10 @@ class RubyLearningCourse : LearningCourseBase(RubyLanguage.INSTANCE.id) {
                    moduleType = LessonType.SINGLE_EDITOR) {
       fun ls(sampleName: String) = loadSample("CodeAssistance/$sampleName")
       listOf(
-        CodeFormatLesson(lang, ls("CodeFormat.rb.sample"), false),
-        ParameterInfoLesson(lang, ls("ParameterInfo.rb.sample")),
-        QuickPopupsLesson(lang, ls("QuickPopups.rb.sample")),
-        RubyEditorCodingAssistanceLesson(lang, ls("EditorCodingAssistance.rb.sample")),
+        CodeFormatLesson(ls("CodeFormat.rb.sample"), false),
+        ParameterInfoLesson(ls("ParameterInfo.rb.sample")),
+        QuickPopupsLesson(ls("QuickPopups.rb.sample")),
+        RubyEditorCodingAssistanceLesson(ls("EditorCodingAssistance.rb.sample")),
       )
     },
     LearningModule(name = LessonsBundle.message("navigation.module.name"),
@@ -88,7 +88,7 @@ class RubyLearningCourse : LearningCourseBase(RubyLanguage.INSTANCE.id) {
                    moduleType = LessonType.PROJECT) {
       listOf(
         RubySearchEverywhereLesson(),
-        FindInFilesLesson(lang, "src/warehouse/find_in_files_sample.rb"),
+        FindInFilesLesson("src/warehouse/find_in_files_sample.rb"),
         RubyDeclarationAndUsagesLesson(),
         RubyFileStructureLesson(),
         RubyRecentFilesLesson(),

@@ -8,7 +8,7 @@ import training.dsl.parseLessonSample
 import training.learn.course.KLesson
 
 class SwiftMainWindowsViewsLesson : KLesson("swift.navigation.toolwindows",
-                                            SwiftLessonsBundle.message("swift.navigation.windows.name"), "Swift") {
+                                            SwiftLessonsBundle.message("swift.navigation.windows.name")) {
 
   private val sample: LessonSample = parseLessonSample("""
 import UIKit

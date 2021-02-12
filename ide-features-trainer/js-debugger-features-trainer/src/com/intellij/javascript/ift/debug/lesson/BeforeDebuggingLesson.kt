@@ -15,7 +15,7 @@ import javax.swing.JButton
 import javax.swing.tree.DefaultMutableTreeNode
 
 class BeforeDebuggingLesson
-  : KLesson("Before Debugging: Run/Debug Configurations", JsDebugLessonsBundle.message("js.debugger.before.title"), "JavaScript") {
+  : KLesson("Before Debugging: Run/Debug Configurations", JsDebugLessonsBundle.message("js.debugger.before.title")) {
 
   companion object {
     val jsDebuggerSample = parseLessonSample("""

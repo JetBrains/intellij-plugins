@@ -8,7 +8,7 @@ import training.dsl.parseLessonSample
 import training.learn.course.KLesson
 
 class SwiftExtractMethodLesson : KLesson("swift.refactorings.extract.method",
-                                         SwiftLessonsBundle.message("swift.refactoring.extract.method.name"), "Swift") {
+                                         SwiftLessonsBundle.message("swift.refactoring.extract.method.name")) {
 
   private val sample: LessonSample = parseLessonSample("""
 import UIKit

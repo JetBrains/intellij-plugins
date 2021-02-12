@@ -5,8 +5,8 @@ import org.jetbrains.plugins.ruby.RBundle
 import training.dsl.LessonSample
 import training.learn.lesson.general.assistance.EditorCodingAssistanceLesson
 
-class RubyEditorCodingAssistanceLesson(lang: String, sample: LessonSample) :
-  EditorCodingAssistanceLesson(lang, sample) {
+class RubyEditorCodingAssistanceLesson(sample: LessonSample) :
+  EditorCodingAssistanceLesson(sample) {
   override val errorIntentionText: String
     get() = RBundle.message("inspection.argcount.extra.argument.fix")
   override val warningIntentionText: String

@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 
 class RubyRenameLesson
-  : KLesson("Rename", LessonsBundle.message("rename.lesson.name"), "ruby") {
+  : KLesson("Rename", LessonsBundle.message("rename.lesson.name")) {
 
   private val template = """
     class Championship

@@ -3,7 +3,6 @@ package com.intellij.javascript.ift.lesson.editor
 
 import com.intellij.ide.IdeBundle
 import com.intellij.idea.ActionsBundle
-import com.intellij.javascript.ift.JavaScriptLangSupport
 import com.intellij.javascript.ift.JsLessonsBundle
 import com.intellij.javascript.ift.lesson.setLanguageLevel
 import com.intellij.openapi.editor.impl.EditorComponentImpl
@@ -18,7 +17,7 @@ import training.learn.js.shiftSymbol
 import training.learn.js.textAtCaretEqualsTo
 
 class NavigationLesson
-  : KLesson("Secrets of Efficient Navigation", JsLessonsBundle.message("js.editor.navigation.title"), JavaScriptLangSupport.lang) {
+  : KLesson("Secrets of Efficient Navigation", JsLessonsBundle.message("js.editor.navigation.title")) {
 
   private val thisOwnerName = "$" + "{this.ownerName}"
   private val thisName = "$" + "{this.name}"

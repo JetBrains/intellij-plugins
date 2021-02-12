@@ -6,7 +6,7 @@ import training.dsl.parseLessonSample
 import training.learn.LessonsBundle
 import training.learn.lesson.general.SurroundAndUnwrapLesson
 
-class RubySurroundAndUnwrapLesson : SurroundAndUnwrapLesson("ruby") {
+class RubySurroundAndUnwrapLesson : SurroundAndUnwrapLesson() {
   override val sample: LessonSample = parseLessonSample("""
     def surround_and_unwrap_demo
       <select>print 'Surround and Unwrap me!'</select>

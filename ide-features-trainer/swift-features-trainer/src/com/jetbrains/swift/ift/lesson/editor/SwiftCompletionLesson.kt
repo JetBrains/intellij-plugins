@@ -8,7 +8,7 @@ import training.dsl.parseLessonSample
 import training.learn.course.KLesson
 
 class SwiftCompletionLesson : KLesson("swift.completions.basiccompletion",
-                                      SwiftLessonsBundle.message("swift.editor.completion.name"), "Swift") {
+                                      SwiftLessonsBundle.message("swift.editor.completion.name")) {
 
   private val sample: LessonSample = parseLessonSample("""
 import Foundation

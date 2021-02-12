@@ -5,7 +5,7 @@ import training.dsl.parseLessonSample
 import training.learn.lesson.general.CompletionWithTabLesson
 
 class RubyCompletionWithTabLesson :
-  CompletionWithTabLesson("ruby", "goodbye") {
+  CompletionWithTabLesson("goodbye") {
 
   override val sample = parseLessonSample("""class DemoClass
   def hello

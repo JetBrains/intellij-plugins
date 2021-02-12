@@ -6,8 +6,7 @@ import training.dsl.LessonSample
 import training.dsl.parseLessonSample
 import training.learn.course.KLesson
 
-class SwiftFoldingLesson : KLesson("swift.editorbasics.collapse", SwiftLessonsBundle.message("swift.editor.folding.name"),
-                                   "Swift") {
+class SwiftFoldingLesson : KLesson("swift.editorbasics.collapse", SwiftLessonsBundle.message("swift.editor.folding.name")) {
 
 
   private val sample: LessonSample = parseLessonSample("""

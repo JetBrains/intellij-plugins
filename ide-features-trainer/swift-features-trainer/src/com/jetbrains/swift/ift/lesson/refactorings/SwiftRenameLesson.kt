@@ -7,8 +7,7 @@ import training.dsl.LessonUtil
 import training.dsl.parseLessonSample
 import training.learn.course.KLesson
 
-class SwiftRenameLesson : KLesson("swift.refactorings.rename", SwiftLessonsBundle.message("swift.refactoring.rename.name"),
-                                  "Swift") {
+class SwiftRenameLesson : KLesson("swift.refactorings.rename", SwiftLessonsBundle.message("swift.refactoring.rename.name")) {
 
   private val sample: LessonSample = parseLessonSample("""
 import UIKit

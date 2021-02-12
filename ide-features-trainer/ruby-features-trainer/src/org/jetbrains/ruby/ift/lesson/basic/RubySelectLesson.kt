@@ -2,12 +2,11 @@
 package org.jetbrains.ruby.ift.lesson.basic
 
 import org.jetbrains.annotations.Nls
-import org.jetbrains.plugins.ruby.ruby.lang.RubyLanguage
 import training.dsl.LessonSample
 import training.dsl.parseLessonSample
 import training.learn.lesson.general.NewSelectLesson
 
-class RubySelectLesson : NewSelectLesson(RubyLanguage.INSTANCE.id) {
+class RubySelectLesson : NewSelectLesson() {
   override val selectArgument = "\'$selectString\'"
   override val selectCall = """some_method('$firstString', $selectArgument, '$thirdString')"""
 

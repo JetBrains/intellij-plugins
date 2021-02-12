@@ -6,8 +6,7 @@ import training.dsl.LessonSample
 import training.dsl.parseLessonSample
 import training.learn.course.KLesson
 
-class SwiftDeleteLesson : KLesson("swift.editorbasics.deleteline", SwiftLessonsBundle.message("swift.editor.delete.name"),
-                                  "Swift") {
+class SwiftDeleteLesson : KLesson("swift.editorbasics.deleteline", SwiftLessonsBundle.message("swift.editor.delete.name")) {
 
 
   private val sample: LessonSample = parseLessonSample("""

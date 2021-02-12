@@ -3,7 +3,6 @@ package com.intellij.javascript.ift.lesson.editor
 
 import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.idea.ActionsBundle
-import com.intellij.javascript.ift.JavaScriptLangSupport
 import com.intellij.javascript.ift.JsLessonsBundle
 import com.intellij.javascript.ift.lesson.setLanguageLevel
 import com.intellij.refactoring.RefactoringBundle
@@ -17,7 +16,7 @@ import training.learn.js.textAtCaretEqualsTo
 import training.learn.js.textOnLine
 
 class RefactoringLesson
-  : KLesson("Refactorings in a Nutshell", JsLessonsBundle.message("js.editor.refactorings.title"), JavaScriptLangSupport.lang) {
+  : KLesson("Refactorings in a Nutshell", JsLessonsBundle.message("js.editor.refactorings.title")) {
 
   val sample = parseLessonSample(""" 
         function listBookAuthors(<caret>books) {

@@ -18,7 +18,7 @@ import training.dsl.highlightButtonById
 import training.learn.course.KLesson
 
 class DebuggingFirstPartLesson
-  : KLesson("Debugging Code. Part I", JsDebugLessonsBundle.message("js.debugger.part.1.title"), "JavaScript") {
+  : KLesson("Debugging Code. Part I", JsDebugLessonsBundle.message("js.debugger.part.1.title")) {
 
   override val lessonContent: LessonContext.() -> Unit
     get() {

@@ -7,7 +7,7 @@ import training.dsl.parseLessonSample
 import training.learn.course.KLesson
 
 class SwiftExtractClosureLesson : KLesson("swift.refactorings.extract.closure",
-                                          SwiftLessonsBundle.message("swift.refactoring.extract.closure.name"), "Swift") {
+                                          SwiftLessonsBundle.message("swift.refactoring.extract.closure.name")) {
 
   private val sample: LessonSample = parseLessonSample("""
 import UIKit

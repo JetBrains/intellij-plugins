@@ -1,7 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.ift.lesson.editor
 
-import com.intellij.javascript.ift.JavaScriptLangSupport
 import com.intellij.javascript.ift.JsLessonsBundle
 import com.intellij.javascript.ift.lesson.setLanguageLevel
 import training.dsl.LessonContext
@@ -11,7 +10,7 @@ import training.learn.course.KLesson
 import training.learn.js.textBeforeCaret
 
 class BasicCompletionLesson
-  : KLesson("The Nuts and Bolts of Code Completion", JsLessonsBundle.message("js.editor.completion.title"), JavaScriptLangSupport.lang) {
+  : KLesson("The Nuts and Bolts of Code Completion", JsLessonsBundle.message("js.editor.completion.title")) {
 
   val sample = parseLessonSample("""
         let favoriteAnimals = ['dog', 'cat', 'unicorn'];

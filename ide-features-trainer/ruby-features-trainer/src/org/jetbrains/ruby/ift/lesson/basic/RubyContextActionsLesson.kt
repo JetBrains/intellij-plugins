@@ -5,7 +5,7 @@ import training.dsl.LessonSample
 import training.dsl.parseLessonSample
 import training.learn.lesson.general.ContextActionsLesson
 
-class RubyContextActionsLesson : ContextActionsLesson("ruby") {
+class RubyContextActionsLesson : ContextActionsLesson() {
   override val sample: LessonSample = parseLessonSample("""
     def inc(value)
       result = value + 1

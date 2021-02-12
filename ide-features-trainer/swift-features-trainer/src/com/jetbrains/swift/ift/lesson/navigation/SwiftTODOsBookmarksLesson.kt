@@ -8,7 +8,7 @@ import training.dsl.parseLessonSample
 import training.learn.course.KLesson
 
 class SwiftTODOsBookmarksLesson : KLesson("swift.navigation.bookmarks",
-                                          SwiftLessonsBundle.message("swift.navigation.todo.name"), "Swift") {
+                                          SwiftLessonsBundle.message("swift.navigation.todo.name")) {
 
   private val sample: LessonSample = parseLessonSample("""
 import UIKit

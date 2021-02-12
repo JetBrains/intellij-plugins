@@ -4,7 +4,7 @@ package org.jetbrains.ruby.ift.lesson.navigation
 import training.dsl.LessonContext
 import training.learn.lesson.general.navigation.RecentFilesLesson
 
-class RubyRecentFilesLesson : RecentFilesLesson("ruby") {
+class RubyRecentFilesLesson : RecentFilesLesson() {
   override val existedFile: String = "src/recent_files_demo.rb"
 
   override val transitionMethodName: String = "print"

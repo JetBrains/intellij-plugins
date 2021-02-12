@@ -7,8 +7,7 @@ import training.dsl.LessonUtil
 import training.dsl.parseLessonSample
 import training.learn.course.KLesson
 
-class SwiftCodeNavigationLesson : KLesson("swift.navigation.code", SwiftLessonsBundle.message("swift.navigation.code.name"),
-                                          "Swift") {
+class SwiftCodeNavigationLesson : KLesson("swift.navigation.code", SwiftLessonsBundle.message("swift.navigation.code.name")) {
 
   private val sample: LessonSample = parseLessonSample("""
 import Foundation
