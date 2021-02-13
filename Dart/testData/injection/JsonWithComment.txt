@@ -20,8 +20,7 @@ Dart File
         PsiElement(REGULAR_STRING_PART)('`')
         PsiElement(CLOSING_QUOTE)('"')
         JsonFile: JsonWithComment.dart
-          PsiErrorElement:<value> expected
-            <empty list>
+          <empty list>
   PsiElement(;)(';')
   PsiWhiteSpace('\n')
   PsiComment(SINGLE_LINE_COMMENT)('// language=JSON')
@@ -45,8 +44,7 @@ Dart File
         PsiElement(REGULAR_STRING_PART)('`')
         PsiElement(CLOSING_QUOTE)(''')
         JsonFile: JsonWithComment.dart
-          PsiErrorElement:<value> expected
-            <empty list>
+          <empty list>
   PsiElement(;)(';')
   PsiWhiteSpace('\n')
   PsiComment(SINGLE_LINE_COMMENT)('// language=JSON')
@@ -70,8 +68,7 @@ Dart File
         PsiElement(REGULAR_STRING_PART)('`')
         PsiElement(CLOSING_QUOTE)('"""')
         JsonFile: JsonWithComment.dart
-          PsiErrorElement:<value> expected
-            <empty list>
+          <empty list>
   PsiElement(;)(';')
   PsiWhiteSpace('\n')
   PsiComment(SINGLE_LINE_COMMENT)('// language=JSON')
@@ -95,8 +92,7 @@ Dart File
         PsiElement(REGULAR_STRING_PART)('`')
         PsiElement(CLOSING_QUOTE)(''''')
         JsonFile: JsonWithComment.dart
-          PsiErrorElement:<value> expected
-            <empty list>
+          <empty list>
   PsiElement(;)(';')
   PsiWhiteSpace('\n')
   PsiComment(SINGLE_LINE_COMMENT)('// language=JSON')
@@ -117,8 +113,7 @@ Dart File
         PsiWhiteSpace(' ')
         PsiElement(RAW_SINGLE_QUOTED_STRING)('r"`"')
         JsonFile: JsonWithComment.dart
-          PsiErrorElement:<value> expected
-            <empty list>
+          <empty list>
   PsiElement(;)(';')
   PsiWhiteSpace('\n')
   PsiComment(SINGLE_LINE_COMMENT)('// language=JSON')
@@ -139,8 +134,7 @@ Dart File
         PsiWhiteSpace(' ')
         PsiElement(RAW_SINGLE_QUOTED_STRING)('r'`'')
         JsonFile: JsonWithComment.dart
-          PsiErrorElement:<value> expected
-            <empty list>
+          <empty list>
   PsiElement(;)(';')
   PsiWhiteSpace('\n')
   PsiComment(SINGLE_LINE_COMMENT)('// language=JSON')
@@ -161,8 +155,7 @@ Dart File
         PsiWhiteSpace(' ')
         PsiElement(RAW_TRIPLE_QUOTED_STRING)('r"""`"""')
         JsonFile: JsonWithComment.dart
-          PsiErrorElement:<value> expected
-            <empty list>
+          <empty list>
   PsiElement(;)(';')
   PsiWhiteSpace('\n')
   PsiComment(SINGLE_LINE_COMMENT)('// language=JSON')
@@ -183,8 +176,7 @@ Dart File
         PsiWhiteSpace(' ')
         PsiElement(RAW_TRIPLE_QUOTED_STRING)('r'''`'''')
         JsonFile: JsonWithComment.dart
-          PsiErrorElement:<value> expected
-            <empty list>
+          <empty list>
   PsiElement(;)(';')
   PsiWhiteSpace('\n')
   PsiComment(SINGLE_LINE_COMMENT)('// language=JSON')
@@ -245,19 +237,15 @@ Dart File
             ID
               PsiElement(IDENTIFIER)('a')
               JsonFile: JsonWithComment.dart
-                PsiErrorElement:<value> expected
-                  <empty list>
-            JsonFile: JsonWithComment.dart
-              PsiErrorElement:<value> expected
                 <empty list>
-          JsonFile: JsonWithComment.dart
-            PsiErrorElement:<value> expected
+            JsonFile: JsonWithComment.dart
               <empty list>
+          JsonFile: JsonWithComment.dart
+            <empty list>
         PsiElement(REGULAR_STRING_PART)(' b')
         PsiElement(CLOSING_QUOTE)('"')
         JsonFile: JsonWithComment.dart
-          PsiErrorElement:<value> expected
-            <empty list>
+          <empty list>
   PsiElement(;)(';')
   PsiWhiteSpace('\n')
   PsiComment(SINGLE_LINE_COMMENT)('// language=JSON')
@@ -281,18 +269,14 @@ Dart File
             ID
               PsiElement(IDENTIFIER)('a')
               JsonFile: JsonWithComment.dart
-                PsiErrorElement:<value> expected
-                  <empty list>
-            JsonFile: JsonWithComment.dart
-              PsiErrorElement:<value> expected
                 <empty list>
-          JsonFile: JsonWithComment.dart
-            PsiErrorElement:<value> expected
+            JsonFile: JsonWithComment.dart
               <empty list>
+          JsonFile: JsonWithComment.dart
+            <empty list>
         PsiElement(CLOSING_QUOTE)('"')
         JsonFile: JsonWithComment.dart
-          PsiErrorElement:<value> expected
-            <empty list>
+          <empty list>
   PsiElement(;)(';')
   PsiWhiteSpace('\n')
   PsiComment(SINGLE_LINE_COMMENT)('// language=JSON')
