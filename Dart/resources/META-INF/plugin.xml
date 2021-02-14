@@ -1,5 +1,6 @@
 <idea-plugin>
   <name>Dart</name>
+  <id>Dart</id>
   <description><![CDATA[
 <p>Support for <a href="https://www.dartlang.org/">Dart</a></p>
 <p>Features</p>
