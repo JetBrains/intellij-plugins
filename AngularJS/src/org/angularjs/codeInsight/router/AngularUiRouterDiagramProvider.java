@@ -76,7 +76,7 @@ public final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<Di
       }
 
       @Override
-      public @Nullable DiagramObject resolveElementByFQN(String fqn, Project project) {
+      public @Nullable DiagramObject resolveElementByFQN(@NotNull String fqn, @NotNull Project project) {
         final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(fqn);
         if (file == null) {
           return null;
@@ -188,36 +188,36 @@ public final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<Di
   }
 
   @Override
-  public DiagramColorManager getColorManager() {
+  public @NotNull DiagramColorManager getColorManager() {
     return myColorManager;
   }
 
   @Pattern("[a-zA-Z0-9_-]*")
   @Override
-  public String getID() {
+  public @NotNull String getID() {
     return ANGULAR_UI_ROUTER;
   }
 
   @Override
-  public DiagramElementManager<DiagramObject> getElementManager() {
+  public @NotNull DiagramElementManager<DiagramObject> getElementManager() {
     return myElementManager;
   }
 
   @Override
-  public DiagramVfsResolver<DiagramObject> getVfsResolver() {
+  public @NotNull DiagramVfsResolver<DiagramObject> getVfsResolver() {
     return myResolver;
   }
 
   @Override
-  public String getPresentableName() {
+  public @NotNull String getPresentableName() {
     return AngularJSBundle.message("angularjs.ui.router.diagram.provider.name");
   }
 
   @Override
-  public DiagramDataModel<DiagramObject> createDataModel(@NotNull Project project,
-                                                         @Nullable DiagramObject element,
-                                                         @Nullable VirtualFile file,
-                                                         DiagramPresentationModel presentationModel) {
+  public @NotNull DiagramDataModel<DiagramObject> createDataModel(@NotNull Project project,
+                                                                  @Nullable DiagramObject element,
+                                                                  @Nullable VirtualFile file,
+                                                                  @NotNull DiagramPresentationModel presentationModel) {
     if (element == null || element.getNavigationTarget() == null) return null;
     final VirtualFile virtualFile = element.getNavigationTarget().getContainingFile().getVirtualFile();
     final AngularUiRouterGraphBuilder.GraphNodesBuilder nodesBuilder =
@@ -229,7 +229,7 @@ public final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<Di
   }
 
   @Override
-  public @NotNull DiagramPresentationModel createPresentationModel(Project project, Graph2D graph) {
+  public @NotNull DiagramPresentationModel createPresentationModel(@NotNull Project project, @NotNull Graph2D graph) {
     return new DiagramPresentationModelImpl(graph, project, this) {
       @Override
       public boolean allowChangeVisibleCategories() {
@@ -266,7 +266,7 @@ public final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<Di
       private final Set<AngularUiRouterEdge> myVisibleEdges = new HashSet<>();
 
       @Override
-      public EdgeLabel[] getEdgeLabels(DiagramEdge umlEdge, String label) {
+      public EdgeLabel @NotNull [] getEdgeLabels(@Nullable DiagramEdge umlEdge, @NotNull String label) {
         if (!(umlEdge instanceof AngularUiRouterEdge)) return super.getEdgeLabels(umlEdge, label);
         AngularUiRouterEdge angularEdge = (AngularUiRouterEdge)umlEdge;
         if (!isShowEdgeLabels() || StringUtil.isEmptyOrSpaces(angularEdge.getLabel())) {
@@ -355,7 +355,7 @@ public final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<Di
       }
 
       @Override
-      public void customizeSettings(Graph2DView view, EditMode editMode) {
+      public void customizeSettings(@NotNull Graph2DView view, @NotNull EditMode editMode) {
         super.customizeSettings(view, editMode);
         view.getGraph2D().addGraph2DSelectionListener(new Graph2DSelectionListener() {
           @Override
@@ -427,18 +427,15 @@ public final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<Di
       }
 
       @Override
-      public DefaultUmlRenderer getRenderer() {
-        if (myRenderer == null) {
-          myRenderer = new DefaultUmlRenderer(getBuilder(), getModificationTrackerOfViewUpdates()) {
-            @Override
-            public void tuneNode(NodeRealizer realizer, JPanel wrapper) {
-              wrapper.setBorder(JBUI.Borders.empty());
-              if (wrapper.getParent() instanceof JComponent) ((JComponent)wrapper.getParent()).setBorder(JBUI.Borders.empty());
-              super.tuneNode(realizer, wrapper);
-            }
-          };
-        }
-        return myRenderer;
+      protected @NotNull DefaultUmlRenderer createRenderer() {
+        return new DefaultUmlRenderer(getBuilder(), getModificationTrackerOfViewUpdates()) {
+          @Override
+          public void tuneNode(NodeRealizer realizer, JPanel wrapper) {
+            wrapper.setBorder(JBUI.Borders.empty());
+            if (wrapper.getParent() instanceof JComponent) ((JComponent)wrapper.getParent()).setBorder(JBUI.Borders.empty());
+            super.tuneNode(realizer, wrapper);
+          }
+        };
       }
     };
   }
@@ -461,7 +458,7 @@ public final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<Di
   public @NotNull DiagramExtras<DiagramObject> getExtras() {
     return new DiagramExtras<>() {
       @Override
-      public List<AnAction> getExtraActions() {
+      public @NotNull List<AnAction> getExtraActions() {
         return Collections.singletonList(new MyEditSourceAction());
       }
 

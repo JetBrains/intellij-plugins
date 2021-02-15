@@ -34,7 +34,7 @@ public final class FlashUmlExtras extends DiagramExtras<Object> {
   }
 
   @Override
-  public DiagramElementsProvider<Object>[] getElementsProviders() {
+  public DiagramElementsProvider<Object> @NotNull [] getElementsProviders() {
     //noinspection unchecked
     return myProviders;
   }

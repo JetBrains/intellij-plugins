@@ -30,7 +30,7 @@ public enum FlashUmlDependenciesSettingsOption {
     EnumSet<FlashUmlDependenciesSettingsOption> result = EnumSet.noneOf(FlashUmlDependenciesSettingsOption.class);
 
     final DiagramProvider provider = DiagramProvider.findByID(FlashUmlProvider.ID);
-    DiagramConfiguration configuration = DiagramConfiguration.getConfiguration();
+    DiagramConfiguration configuration = DiagramConfiguration.getInstance();
     for (FlashUmlDependenciesSettingsOption option : values()) {
       if (configuration.isEnabledByDefault(provider, option.getDisplayName())) {
         result.add(option);

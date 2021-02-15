@@ -80,7 +80,7 @@ public final class FlashUmlVfsResolver implements DiagramVfsResolver<Object> {
   }
 
   @Override
-  public Object resolveElementByFQN(String fqn, Project project) {
+  public Object resolveElementByFQN(@NotNull String fqn, @NotNull Project project) {
     return resolveElementByFqnStatic(fqn, project);
   }
 

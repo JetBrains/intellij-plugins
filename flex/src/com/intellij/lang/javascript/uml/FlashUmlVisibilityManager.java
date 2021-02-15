@@ -10,6 +10,8 @@ import com.intellij.lang.javascript.refactoring.JSVisibilityUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -40,12 +42,12 @@ public class FlashUmlVisibilityManager extends AbstractUmlVisibilityManager {
   //}
 
   @Override
-  public VisibilityLevel[] getVisibilityLevels() {
+  public VisibilityLevel @NotNull [] getVisibilityLevels() {
     return predefinedLevels.toArray(VisibilityLevel.EMPTY_ARRAY);
   }
 
   @Override
-  public VisibilityLevel getVisibilityLevel(Object element) {
+  public VisibilityLevel getVisibilityLevel(@Nullable Object element) {
     // TODO: support namespaces
 
     if (element instanceof JSAttributeListOwner) {
@@ -59,7 +61,7 @@ public class FlashUmlVisibilityManager extends AbstractUmlVisibilityManager {
   }
 
   @Override
-  public Comparator<VisibilityLevel> getComparator() {
+  public @NotNull Comparator<VisibilityLevel> getComparator() {
     return COMPARATOR;
   }
 }

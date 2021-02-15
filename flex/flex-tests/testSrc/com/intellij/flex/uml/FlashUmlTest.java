@@ -145,7 +145,7 @@ public class FlashUmlTest extends JavaCodeInsightTestCase {
       builder = UmlGraphBuilderFactory.create(myProject, provider, actualOrigin, null);
       Disposer.register(getTestRootDisposable(), builder);
       DiagramDataModel<?> model = builder.getDataModel();
-      DiagramConfiguration configuration = DiagramConfiguration.getConfiguration();
+      DiagramConfiguration configuration = DiagramConfiguration.getInstance();
       String originalCategories = configuration.categories.get(provider.getID());
       if (dependencies != null) {
         model.setShowDependencies(true);

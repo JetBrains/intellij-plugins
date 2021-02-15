@@ -37,40 +37,45 @@ public final class FlashUmlProvider extends DiagramProvider<Object> {
 
   @Pattern("[a-zA-Z0-9_-]*")
   @Override
-  public String getID() {
+  public @NotNull String getID() {
     return ID;
   }
 
   @Override
-  public FlashUmlVisibilityManager createVisibilityManager() {
+  public @NotNull FlashUmlVisibilityManager createVisibilityManager() {
     return myVisibilityManager;
   }
 
   @Override
-  public FlashUmlNodeContentManager getNodeContentManager() {
+  public @NotNull FlashUmlNodeContentManager getNodeContentManager() {
     return myNodeContentManager;
   }
 
   @Override
-  public FlashUmlElementManager getElementManager() {
+  public @NotNull DiagramNodeContentManager createNodeContentManager() {
+    return new FlashUmlNodeContentManager();
+  }
+
+  @Override
+  public @NotNull FlashUmlElementManager getElementManager() {
     return myElementManager;
   }
 
   @Override
-  public FlashUmlVfsResolver getVfsResolver() {
+  public @NotNull FlashUmlVfsResolver getVfsResolver() {
     return myVfsResolver;
   }
 
   @Override
-  public FlashUmlRelationshipManager getRelationshipManager() {
+  public @NotNull FlashUmlRelationshipManager getRelationshipManager() {
     return myRelationshipManager;
   }
 
   @Override
-  public FlashUmlDataModel createDataModel(@NotNull Project project,
-                                           @Nullable Object element,
-                                           @Nullable VirtualFile file,
-                                           DiagramPresentationModel presentationModel) {
+  public @NotNull FlashUmlDataModel createDataModel(@NotNull Project project,
+                                                    @Nullable Object element,
+                                                    @Nullable VirtualFile file,
+                                                    @NotNull DiagramPresentationModel presentationModel) {
     if (element instanceof JSFile) {
       element = JSPsiImplUtils.findQualifiedElement((JSFile)element);
     }
@@ -85,12 +90,12 @@ public final class FlashUmlProvider extends DiagramProvider<Object> {
   }
 
   @Override
-  public DiagramScopeManager<Object> createScopeManager(Project project) {
+  public DiagramScopeManager<Object> createScopeManager(@NotNull Project project) {
     return new DiagramPsiScopeManager<>(project);
   }
 
   @Override
-  public DiagramColorManager getColorManager() {
+  public @NotNull DiagramColorManager getColorManager() {
     return myColorManager;
   }
 
@@ -112,19 +117,19 @@ public final class FlashUmlProvider extends DiagramProvider<Object> {
   };
 
   @Override
-  public DiagramCreateNewElementAction<Object, ?>[] getCreateNewActions() {
+  public DiagramCreateNewElementAction<Object, ?> @NotNull [] getCreateNewActions() {
     //noinspection unchecked
     return myElementActions;
   }
 
   @Override
-  public DiagramCreateNewNodeElementAction<Object, ?>[] getCreateNewNodeElementActions() {
+  public DiagramCreateNewNodeElementAction<Object, ?> @NotNull [] getCreateNewNodeElementActions() {
     //noinspection unchecked
     return myNodeActions;
   }
 
   @Override
-  public String getPresentableName() {
+  public @NotNull String getPresentableName() {
     return FlexBundle.message("js.uml.presentable.name");
   }
 
