@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package jetbrains.communicator.idea;
 
 import com.intellij.execution.filters.Filter;
@@ -8,7 +8,7 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.project.Project;
-import com.intellij.ui.components.labels.LinkLabel;
+import com.intellij.ui.components.ActionLink;
 import jetbrains.communicator.core.users.User;
 import org.jetbrains.annotations.NotNull;
 
@@ -103,7 +103,7 @@ class ComponentConsoleView implements ConsoleView {
   public void printHyperlink(@NotNull String s, final HyperlinkInfo info) {
     if (myLength >= MAX_LENGTH) return;
 
-    myPanel.add(LinkLabel.create(linkText(s), () -> info.navigate(myProject)));
+    myPanel.add(new ActionLink(linkText(s), e -> { info.navigate(myProject); }));
   }
 
   private static String linkText(String s) {
