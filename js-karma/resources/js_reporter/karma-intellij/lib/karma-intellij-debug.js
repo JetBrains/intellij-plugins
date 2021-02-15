@@ -11,6 +11,9 @@ var intellijParameters = require('./karma-intellij-parameters')
   , intellijUtil = require('./intellijUtil')
   , REMOTE_DEBUGGING_PORT = '--remote-debugging-port';
 
+const SOCKET_IO_PING_TIMEOUT_MILLIS = 24 * 60 * 60 * 1000;
+exports.SOCKET_IO_PING_TIMEOUT_MILLIS = SOCKET_IO_PING_TIMEOUT_MILLIS
+
 function createPatchedContextHtmlFile() {
   var contextHtmlFilePath = intellijUtil.getKarmaFilePath('./static/' + HTML_FILE_NAME);
   var contextHtmlFileContent = fs.readFileSync(contextHtmlFilePath, {encoding: 'utf8'});
@@ -127,14 +130,15 @@ exports.configureTimeouts = (injector) => {
         webServer.timeout = 0;
       }
       var socketServer = injector.get('socketServer');
-      if (socketServer) {
+      // The code below is compatible with karma < 6. For karma@4 or higher, config.pingTimeout is updated in intellij.conf.js
+      if (socketServer && typeof socketServer.set === 'function') {
         // Disable socket.io heartbeat (ping) to avoid browser disconnecting when debugging tests,
         // because no ping requests are sent when test execution is suspended on a breakpoint.
         // Default values are not enough for suspended execution:
         //    'heartbeat timeout' (pingTimeout) = 60000 ms
         //    'heartbeat interval' (pingInterval) = 25000 ms
-        socketServer.set('heartbeat timeout', 24 * 60 * 60 * 1000);
-        socketServer.set('heartbeat interval', 24 * 60 * 60 * 1000);
+        socketServer.set('heartbeat timeout', SOCKET_IO_PING_TIMEOUT_MILLIS);
+        socketServer.set('heartbeat interval', SOCKET_IO_PING_TIMEOUT_MILLIS);
       }
     });
   }

@@ -19,7 +19,9 @@ function configureDebug(config) {
   // By default, browserNoActivityTimeout=10000 ms, not enough for suspended execution.
   // https://github.com/karma-runner/karma/blob/master/docs/config/01-configuration-file.md#browsernoactivitytimeout
   config.browserNoActivityTimeout = null;
-  require('./karma-intellij-debug').initCustomContextFile(config);
+  const intellijDebug = require('./karma-intellij-debug');
+  config.pingTimeout = intellijDebug.SOCKET_IO_PING_TIMEOUT_MILLIS;
+  intellijDebug.initCustomContextFile(config);
   (function fixMochaTimeout() {
     var client = config.client;
     if (typeof client === 'undefined') {
@@ -41,7 +43,7 @@ function configureDebug(config) {
       console.error('intellij: config.client is not an object')
     }
   })();
-  return require('./karma-intellij-debug').configureBrowsers(config);
+  return intellijDebug.configureBrowsers(config);
 }
 
 function disableSingleRun(config) {
