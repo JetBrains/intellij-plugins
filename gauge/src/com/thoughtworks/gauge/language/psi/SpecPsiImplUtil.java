@@ -27,6 +27,7 @@ import com.thoughtworks.gauge.core.GaugeCli;
 import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
 import com.thoughtworks.gauge.util.GaugeUtil;
 import com.thoughtworks.gauge.util.StepUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -37,7 +38,7 @@ public final class SpecPsiImplUtil {
   private SpecPsiImplUtil() {
   }
 
-  public static StepValue getStepValue(SpecStep element) {
+  public static @NotNull StepValue getStepValue(SpecStep element) {
     ASTNode step = element.getNode();
     String stepText = step.getText().trim();
     int newLineIndex = stepText.indexOf("\n");
@@ -47,11 +48,14 @@ public final class SpecPsiImplUtil {
     return getStepValueFor(element, stepText, inlineTable != null);
   }
 
-  public static StepValue getStepValueFor(PsiElement element, String stepText, Boolean hasInlineTable) {
-    return getStepValueFor(GaugeUtil.moduleForPsiElement(element), element, stepText, hasInlineTable);
+  public static @NotNull StepValue getStepValueFor(PsiElement element, String stepText, Boolean hasInlineTable) {
+    Module module = GaugeUtil.moduleForPsiElement(element);
+    if (module == null) return getDefaultStepValue(element);
+
+    return getStepValueFor(module, element, stepText, hasInlineTable);
   }
 
-  public static StepValue getStepValueFor(Module module, PsiElement element, String stepText, Boolean hasInlineTable) {
+  public static StepValue getStepValueFor(@NotNull Module module, PsiElement element, String stepText, Boolean hasInlineTable) {
     GaugeBootstrapService bootstrapService = GaugeBootstrapService.getInstance(module.getProject());
 
     GaugeCli gaugeCli = bootstrapService.getGaugeCli(module, false);
