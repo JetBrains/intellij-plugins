@@ -44,9 +44,8 @@ public class TsLintFileFixAction extends JSLinterFixAction {
            || DialectDetector.JAVASCRIPT_FILE_TYPES.contains(fileType);
   }
 
-  @NotNull
   @Override
-  protected JSLinterConfiguration getConfiguration(Project project) {
+  protected @NotNull JSLinterConfiguration getConfiguration(@NotNull Project project) {
     return TsLintConfiguration.getInstance(project);
   }
 
