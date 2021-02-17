@@ -154,4 +154,9 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
     }
     return JSNamedTypeFactory.createType(name, typeSource, staticOrInstance);
   }
+
+  @Override
+  protected @Nullable JSType getIndexedPropertyAccessType(@NotNull JSIndexedPropertyAccessExpression rawqualifier) {
+    return addComponentTypeFromArrayExpression(rawqualifier, rawqualifier.getQualifier());
+  }
 }

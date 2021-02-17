@@ -25,7 +25,7 @@ class VueTypeResolveTest : BasePlatformTestCase() {
              Triple("num", "number", "number"),
              Triple("str", "string", "number"),
              Triple("obj", "boolean", "string"),
-             Triple("objNum", "string,string|string", "number"),
+             Triple("objNum", "string,string", "number"),
              Triple("objMix", "Foo2,string|boolean", "string|number"),
              Triple("objIter", "boolean", "number"),
              Triple("objInit", "number", "\"a\"|\"b\"|\"c\"|\"d\""),
