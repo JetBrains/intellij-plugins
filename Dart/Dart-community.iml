@@ -22,6 +22,9 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="module" module-name="intellij.platform.core.ui" />
+    <orderEntry type="module" module-name="intellij.platform.ide.util.io" />
+    <orderEntry type="module" module-name="intellij.platform.codeStyle.impl" />
     <orderEntry type="module" module-name="intellij.platform.debugger" />
     <orderEntry type="module" module-name="intellij.platform.debugger.impl" />
     <orderEntry type="module" module-name="intellij.platform.smRunner" />
@@ -86,6 +89,8 @@
     <orderEntry type="library" name="netty-buffer" level="project" />
     <orderEntry type="library" name="netty-codec-http" level="project" />
     <orderEntry type="library" exported="" name="markdownj" level="project" />
+    <orderEntry type="library" name="caffeine" level="project" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
     <orderEntry type="module-library">
       <library name="org.apache.commons:commons-lang3:3.9" type="repository">
         <properties maven-id="org.apache.commons:commons-lang3:3.9" />
