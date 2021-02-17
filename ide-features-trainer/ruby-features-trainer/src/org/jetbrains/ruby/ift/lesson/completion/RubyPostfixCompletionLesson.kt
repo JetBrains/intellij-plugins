@@ -1,8 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.ruby.ift.lesson.completion
 
-import com.intellij.testGuiFramework.framework.GuiTestUtil.typeText
-import com.intellij.testGuiFramework.impl.jList
 import org.jetbrains.ruby.ift.RubyLessonsBundle
 import training.dsl.LessonContext
 import training.dsl.LessonUtil.checkExpectedStateOfEditor
@@ -43,9 +41,7 @@ end
           checkExpectedStateOfEditor(sample) { ".if".startsWith(it) }
         }
         test {
-          ideFrame {
-            typeText(".if")
-          }
+          type(".if")
         }
       }
       task {
@@ -54,7 +50,7 @@ end
           it.toString() == "string_array.length > 1"
         }
         restoreByUi(delayMillis = defaultRestoreDelay)
-        test {
+        test(waitEditorToBeReady = false) {
           ideFrame {
             jList("if").item(0).doubleClick()
           }
@@ -65,7 +61,7 @@ end
         text(RubyLessonsBundle.message("ruby.postfix.completion.choose.target", code(it)))
         stateCheck { editor.document.text == result }
         restoreByUi()
-        test {
+        test(waitEditorToBeReady = false) {
           ideFrame {
             jList(it).click()
           }

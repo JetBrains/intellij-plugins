@@ -3,8 +3,6 @@ package org.jetbrains.ruby.ift.lesson.refactorings
 
 import com.intellij.openapi.project.Project
 import com.intellij.refactoring.RefactoringBundle
-import com.intellij.testGuiFramework.impl.button
-import com.intellij.testGuiFramework.impl.jList
 import com.intellij.ui.components.JBList
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.Types
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.fqn.FQN
@@ -13,7 +11,6 @@ import org.jetbrains.plugins.ruby.ruby.refactoring.pushDown.RubyPushDownHandler
 import org.jetbrains.ruby.ift.RubyLessonsBundle
 import training.dsl.LessonContext
 import training.dsl.LessonUtil.restoreIfModifiedOrMoved
-import training.dsl.TaskTestContext
 import training.dsl.defaultRestoreDelay
 import training.dsl.parseLessonSample
 import training.learn.LessonsBundle
@@ -54,10 +51,8 @@ class RubyRefactorMenuLesson
           ideFrame {
             jList("$it...").clickItem("$it...")
           }
-          with(TaskTestContext.guiTestCase) {
-            dialog(it) {
-              button("Refactor").click()
-            }
+          dialog(it) {
+            button("Refactor").click()
           }
         }
       }

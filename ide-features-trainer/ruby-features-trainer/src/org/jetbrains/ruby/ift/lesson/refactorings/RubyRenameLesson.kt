@@ -2,12 +2,10 @@
 package org.jetbrains.ruby.ift.lesson.refactorings
 
 import com.intellij.refactoring.RefactoringBundle
-import com.intellij.testGuiFramework.impl.button
 import com.intellij.ui.treeStructure.Tree
 import org.jetbrains.ruby.ift.RubyLessonsBundle
 import training.dsl.LessonContext
 import training.dsl.LessonUtil.restoreIfModifiedOrMoved
-import training.dsl.TaskTestContext
 import training.dsl.dropMnemonic
 import training.dsl.parseLessonSample
 import training.learn.LessonsBundle
@@ -60,11 +58,9 @@ class RubyRenameLesson
         restoreIfModifiedOrMoved()
         test {
           actions(it)
-          with(TaskTestContext.guiTestCase) {
-            dialog {
-              typeText("teams_number")
-              button("Refactor").click()
-            }
+          dialog {
+            type("teams_number")
+            button("Refactor").click()
           }
         }
       }
