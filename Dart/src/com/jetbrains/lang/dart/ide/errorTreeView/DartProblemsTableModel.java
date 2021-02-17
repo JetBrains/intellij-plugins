@@ -1,7 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
-import com.intellij.analysis.AnalysisBundle;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
@@ -12,6 +11,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.ui.ListTableModel;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.analyzer.DartServerData;
 import org.dartlang.analysis.server.protocol.AnalysisError;
 import org.dartlang.analysis.server.protocol.AnalysisErrorSeverity;
 import org.jetbrains.annotations.Nls;
@@ -37,7 +37,10 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
       setText(problem.getErrorMessage().replaceAll("(\n)+", " "));
 
       // Pass null to the url, mouse movement to the hover makes the tooltip go away, see https://youtrack.jetbrains.com/issue/WEB-39449
-      setToolTipText(DartProblem.generateTooltipText(problem.getErrorMessage(), problem.getCorrectionMessage(), null));
+      setToolTipText(DartProblem.generateTooltipText(problem.getErrorMessage(),
+                                                     DartServerData.DartDiagnosticMessage
+                                                       .generateDartDiagnosticMessageList(problem.getDiagnosticMessages()),
+                                                     problem.getCorrectionMessage(), null));
 
       String severity = problem.getSeverity();
       setIcon(AnalysisErrorSeverity.ERROR.equals(severity)

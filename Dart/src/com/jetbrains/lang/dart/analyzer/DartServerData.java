@@ -525,12 +525,14 @@ public final class DartServerData {
     private final @Nullable @NonNls String myCode;
     private final @NotNull @NlsSafe String myMessage;
     private final @Nullable @NlsSafe String myCorrection;
+    private final @NotNull List<DartDiagnosticMessage> myContextMessages;
     private final @Nullable @NonNls String myUrl;
 
     @Contract(pure = true)
     @NotNull
     public DartError asEofError(int fileLength) {
-      return new DartError(fileLength > 0 ? fileLength - 1 : 0, fileLength > 0 ? 1 : 0, mySeverity, myCode, myMessage, myCorrection, myUrl);
+      return new DartError(fileLength > 0 ? fileLength - 1 : 0, fileLength > 0 ? 1 : 0, mySeverity, myCode, myMessage, myCorrection,
+                           myContextMessages, myUrl);
     }
 
     private DartError(@NotNull final AnalysisError error, final int correctedOffset, final int correctedLength) {
@@ -539,6 +541,7 @@ public final class DartServerData {
       myCode = error.getCode() == null ? null : error.getCode().intern();
       myMessage = error.getMessage();
       myCorrection = error.getCorrection();
+      myContextMessages = DartDiagnosticMessage.generateDartDiagnosticMessageList(error.getContextMessages());
       myUrl = error.getUrl();
     }
 
@@ -548,12 +551,14 @@ public final class DartServerData {
                       @Nullable @NonNls String code,
                       @NotNull @Nls String message,
                       @Nullable @Nls String correction,
+                      @NotNull List<DartDiagnosticMessage> contextMessages,
                       @Nullable @NonNls String url) {
       super(offset, length);
       mySeverity = severity;
       myCode = code;
       myMessage = message;
       myCorrection = correction;
+      myContextMessages = contextMessages;
       myUrl = url;
     }
 
@@ -577,8 +582,43 @@ public final class DartServerData {
       return myCorrection;
     }
 
+    public @NotNull List<DartDiagnosticMessage> getContextMessages() {
+      return myContextMessages;
+    }
+
     public @Nullable @NonNls String getUrl() {
       return myUrl;
+    }
+  }
+
+  public static final class DartDiagnosticMessage extends DartRegion {
+    private final @NotNull @NlsSafe String myMessage;
+    private final @NotNull String myFile;
+
+    public DartDiagnosticMessage(@NotNull DiagnosticMessage diagnosticMessage) {
+      super(diagnosticMessage.getLocation().getOffset(), diagnosticMessage.getLocation().getLength());
+      myMessage = diagnosticMessage.getMessage();
+      myFile = FileUtil.toSystemIndependentName(diagnosticMessage.getLocation().getFile().trim()).intern();
+    }
+
+    public @NotNull String getFile() {
+      return myFile;
+    }
+
+    public @NotNull @NlsSafe String getMessage() {
+      return myMessage;
+    }
+
+    @NotNull
+    public static List<DartDiagnosticMessage> generateDartDiagnosticMessageList(@Nullable List<DiagnosticMessage> contextMessages) {
+      List<DartDiagnosticMessage> result = new SmartList<>();
+      if (contextMessages == null || contextMessages.isEmpty()) {
+        return result;
+      }
+      for (DiagnosticMessage diagnosticMessage : contextMessages) {
+        result.add(new DartDiagnosticMessage(diagnosticMessage));
+      }
+      return result;
     }
   }
 

@@ -275,7 +275,7 @@ public final class DartAnnotator implements Annotator {
     final String severity = error.getSeverity();
     final String message = error.getMessage();
     final ProblemHighlightType specialHighlightType = getSpecialHighlightType(error);
-    final String tooltip = DartProblem.generateTooltipText(error.getMessage(), error.getCorrection(), error.getUrl());
+    final String tooltip = DartProblem.generateTooltipText(error.getMessage(), error.getContextMessages(), error.getCorrection(), error.getUrl());
     final HighlightSeverity annotationSeverity;
     TextAttributesKey textAttributesKey;
 

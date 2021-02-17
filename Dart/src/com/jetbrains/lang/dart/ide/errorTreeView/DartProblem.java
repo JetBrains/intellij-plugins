@@ -12,8 +12,10 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.PathUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.analyzer.DartServerData;
 import com.jetbrains.lang.dart.util.DartBuildFileUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.dartlang.analysis.server.protocol.AnalysisError;
@@ -167,10 +169,16 @@ public class DartProblem {
   }
 
   public static @NotNull @Nls String generateTooltipText(@NotNull @Nls String message,
+                                                         @NotNull List<DartServerData.DartDiagnosticMessage> contextMessages,
                                                          @Nullable @Nls String correction,
                                                          @Nullable @NonNls String url) {
-
     HtmlBuilder htmlBuilder = new HtmlBuilder().append(message);
+    if (!contextMessages.isEmpty()) {
+      for (DartServerData.DartDiagnosticMessage contextMessage : contextMessages) {
+        htmlBuilder.append(HtmlChunk.br()).append(HtmlChunk.br()).append(contextMessage.getMessage());
+        htmlBuilder.append(HtmlChunk.nbsp()).append("(" + PathUtil.getFileName(contextMessage.getFile()) + ")");
+      }
+    }
     if (StringUtil.isNotEmpty(correction)) {
       htmlBuilder.append(HtmlChunk.br()).append(HtmlChunk.br()).append(correction);
     }
