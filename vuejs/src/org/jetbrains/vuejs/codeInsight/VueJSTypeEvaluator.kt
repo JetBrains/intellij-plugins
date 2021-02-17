@@ -44,11 +44,11 @@ class VueJSTypeEvaluator(context: JSEvaluateContext)
             val type = JSTypeUtils.getIterableComponentType(collectionType)
             when {
               type != null -> type
-              useTypeScriptKeyofType(collectionType) ->
-                JSCompositeTypeFactory.createIndexedAccessType(collectionType,
-                                                               JSCompositeTypeFactory.createKeyOfType(
-                                                                 collectionType, collectionType.source),
-                                                               collectionType.source)
+              useTypeScriptKeyofType(collectionType) -> {
+                val keyOfType = JSCompositeTypeFactory.createKeyOfType(collectionType, collectionType.source)
+                val indexedAccessType = JSCompositeTypeFactory.createIndexedAccessType(collectionType, keyOfType, collectionType.source)
+                JSWidenType.createWidening(indexedAccessType, null)
+              }
               else -> getVForVarType(
                 collectionExpr, *getComponentTypeFromArrayExpression(expression, collectionExpr).toTypedArray())
             }
