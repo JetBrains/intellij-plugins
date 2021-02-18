@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.resolve.JSGenericMappings;
 import com.intellij.lang.javascript.psi.resolve.JSGenericTypesEvaluatorBase;
+import com.intellij.lang.javascript.psi.resolve.generic.JSTypeSubstitutorImpl;
 import com.intellij.lang.javascript.psi.types.*;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
@@ -223,7 +224,7 @@ final class BindingsTypeResolver {
 
   private static @NotNull JSTypeSubstitutor intersectGenerics(@NotNull MultiMap<JSTypeSubstitutor.JSTypeGenericId, JSType> arguments,
                                                               @NotNull JSTypeSource source) {
-    JSTypeSubstitutor result = new JSTypeSubstitutor();
+    JSTypeSubstitutorImpl result = new JSTypeSubstitutorImpl();
     for (Map.Entry<JSTypeSubstitutor.JSTypeGenericId, Collection<JSType>> entry : arguments.entrySet()) {
       result.put(entry.getKey(), merge(source, filter(entry.getValue(), Objects::nonNull), false));
     }

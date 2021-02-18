@@ -5,9 +5,9 @@ import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.JSTypeUtils
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterface
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
+import com.intellij.lang.javascript.psi.resolve.generic.JSTypeSubstitutorImpl
 import com.intellij.lang.javascript.psi.types.JSCompositeTypeFactory
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
-import com.intellij.lang.javascript.psi.types.JSTypeSubstitutor
 import org.jetbrains.vuejs.codeInsight.resolveSymbolFromNodeModule
 import org.jetbrains.vuejs.index.VUE_INSTANCE_MODULE
 import org.jetbrains.vuejs.model.VueInstanceOwner
@@ -31,7 +31,7 @@ class VuelidateContainerInfoProvider : VueContainerInfoProvider {
                                                    instanceOwner, standardProperties.values.filter { it.memberName != "\$v" })
 
     val validationPropsType = validationProps.jsType
-    val substitutor = JSTypeSubstitutor()
+    val substitutor = JSTypeSubstitutorImpl()
     substitutor.put(validationProps.typeParameters[0].genericId, vueInstanceType)
     val parametrizedValidationProps = JSTypeUtils.applyGenericArguments(validationProps.parsedTypeDeclaration, substitutor)
                                       ?: return emptyList()
