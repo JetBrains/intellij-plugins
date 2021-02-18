@@ -163,6 +163,24 @@ public class DartGeneratedParserUtilBase extends GeneratedParserUtilBase {
     return true;
   }
 
+  public static boolean gtGtGt(PsiBuilder builder_, int level_) {
+    final PsiBuilder.Marker marker_ = builder_.mark();
+    if (!consumeToken(builder_, GT)) {
+      marker_.rollbackTo();
+      return false;
+    }
+    if (!consumeToken(builder_, GT)) {
+      marker_.rollbackTo();
+      return false;
+    }
+    if (!consumeToken(builder_, GT)) {
+      marker_.rollbackTo();
+      return false;
+    }
+    marker_.collapse(GT_GT_GT);
+    return true;
+  }
+
   public static boolean gtEq(PsiBuilder builder_, int level_) {
     final PsiBuilder.Marker marker_ = builder_.mark();
     if (!consumeToken(builder_, GT)) {
