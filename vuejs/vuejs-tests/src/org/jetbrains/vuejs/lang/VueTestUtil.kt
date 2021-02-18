@@ -109,9 +109,12 @@ fun CodeInsightTestFixture.resolveReference(signature: String): PsiElement {
   return resolve!!
 }
 
-fun CodeInsightTestFixture.assertUnresolvedReference(signature: String) {
+fun CodeInsightTestFixture.assertUnresolvedReference(signature: String, okWithNoRef: Boolean = false) {
   val offsetBySignature = file.findOffsetBySignature(signature)
   val ref = file.findReferenceAt(offsetBySignature)
+  if (okWithNoRef && ref == null) {
+    return
+  }
   TestCase.assertNotNull(ref)
   TestCase.assertNull(ref!!.resolve())
   if (ref is PsiPolyVariantReference) {

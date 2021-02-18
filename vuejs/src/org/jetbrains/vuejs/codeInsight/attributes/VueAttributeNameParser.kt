@@ -222,7 +222,7 @@ class VueAttributeNameParser private constructor() {
     SLOT_SCOPE("slot-scope", injectJS = true, deprecated = true),
     SLOT_NAME(SLOT_NAME_ATTRIBUTE, injectJS = false, requiresTag = SLOT_TAG_NAME),
     STYLE_SCOPED("scoped", requiresValue = false, requiresTag = STYLE_TAG_NAME),
-    STYLE_MODULE("module", requiresValue = false, requiresTag = STYLE_TAG_NAME),
+    STYLE_MODULE(MODULE_ATTRIBUTE_NAME, requiresValue = false, requiresTag = STYLE_TAG_NAME),
     STYLE_SRC(SRC_ATTRIBUTE_NAME, requiresTag = STYLE_TAG_NAME),
     STYLE_LANG(LANG_ATTRIBUTE_NAME, requiresTag = STYLE_TAG_NAME),
     TEMPLATE_FUNCTIONAL("functional", requiresValue = false, requiresTag = TEMPLATE_TAG_NAME),
