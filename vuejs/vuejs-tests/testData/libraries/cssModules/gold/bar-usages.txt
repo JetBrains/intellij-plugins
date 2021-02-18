@@ -1,0 +1,3 @@
+<cssModule.vue.int:(1,11):(7,10)>	$style.bar
+<cssModule.vue:(313,328):(12,15)>	this.$style.bar
+<cssModule.vue:(391,395):(1,4)>	.bar

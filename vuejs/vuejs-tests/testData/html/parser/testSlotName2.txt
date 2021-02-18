@@ -37,7 +37,7 @@ HtmlFile:test.vue
               XmlToken:XML_START_TAG_START('<')
               XmlToken:XML_NAME('slot')
               PsiWhiteSpace(' ')
-              PsiElement(VUE:SLOT_TAG_ATTRIBUTE)
+              PsiElement(VUE:VUE_STUBBED_ATTRIBUTE)
                 XmlToken:XML_NAME('name')
                 XmlToken:XML_EQ('=')
                 PsiElement(XML_ATTRIBUTE_VALUE)

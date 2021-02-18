@@ -51,10 +51,7 @@ object VueStubElementTypes {
     }
   }
 
-  val SLOT_TAG_ATTRIBUTE = object : XmlStubBasedAttributeElementType("SLOT_TAG_ATTRIBUTE", VueLanguage.INSTANCE) {
-  }
-
-  val SCRIPT_SETUP_ATTRIBUTE = object : XmlStubBasedAttributeElementType("SCRIPT_SETUP_ATTRIBUTE", VueLanguage.INSTANCE) {
+  val VUE_STUBBED_ATTRIBUTE = object : XmlStubBasedAttributeElementType("VUE_STUBBED_ATTRIBUTE", VueLanguage.INSTANCE) {
   }
 
 }
