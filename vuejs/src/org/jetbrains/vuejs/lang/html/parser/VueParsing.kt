@@ -74,13 +74,13 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
       parseAttributeValue()
     }
     if (peekTagName().toLowerCase(Locale.US) == SLOT_TAG_NAME) {
-      attr.done(VueStubElementTypes.SLOT_TAG_ATTRIBUTE)
+      attr.done(VueStubElementTypes.VUE_STUBBED_ATTRIBUTE)
     }
     else
       when (attributeInfo.kind) {
         TEMPLATE_SRC, SCRIPT_SRC, STYLE_SRC -> attr.done(VueStubElementTypes.SRC_ATTRIBUTE)
         SCRIPT_ID -> attr.done(VueStubElementTypes.SCRIPT_ID_ATTRIBUTE)
-        SCRIPT_SETUP -> attr.done(VueStubElementTypes.SCRIPT_SETUP_ATTRIBUTE)
+        SCRIPT_SETUP, STYLE_MODULE -> attr.done(VueStubElementTypes.VUE_STUBBED_ATTRIBUTE)
         else -> attr.done(XmlElementType.XML_ATTRIBUTE)
       }
   }

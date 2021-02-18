@@ -32,6 +32,7 @@ import com.intellij.psi.xml.XmlDocument
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.PathUtil
+import com.intellij.util.SmartList
 import com.intellij.util.castSafelyTo
 import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
 import org.jetbrains.vuejs.codeInsight.es6Unquote
@@ -445,6 +446,31 @@ fun findTopLevelVueTag(xmlFile: XmlFile, tagName: String): XmlTag? {
     return result
   }
   return null
+}
+
+fun findTopLevelVueTags(xmlFile: XmlFile, tagName: String): List<XmlTag> {
+  if (xmlFile.fileType == VueFileType.INSTANCE) {
+    if (xmlFile is PsiFileImpl) {
+      xmlFile.stub?.let { stub ->
+        return stub.childrenStubs
+          .asSequence()
+          .mapNotNull { (it as? XmlTagStub<*>)?.psi }
+          .filter { it.localName.equals(tagName, ignoreCase = true) }
+          .toList()
+      }
+    }
+    val result = SmartList<XmlTag>()
+    xmlFile.accept(object : VueFileVisitor() {
+      override fun visitXmlTag(tag: XmlTag?) {
+        if (tag != null
+            && tag.localName.equals(tagName, ignoreCase = true)) {
+          result.add(tag)
+        }
+      }
+    })
+    return result
+  }
+  return emptyList()
 }
 
 private enum class VueStaticMethod(val methodName: String) {
