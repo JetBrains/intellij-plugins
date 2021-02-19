@@ -22,7 +22,7 @@ JSFile:test.nested.binding
         PsiElement(JS:COLON)(':')
         JSObjectLiteralExpression
           PsiElement(JS:LBRACE)('{')
-          Angular2Property
+          JSProperty
             PsiElement(JS:IDENTIFIER)('name')
             PsiElement(JS:COLON)(':')
             PsiWhiteSpace(' ')

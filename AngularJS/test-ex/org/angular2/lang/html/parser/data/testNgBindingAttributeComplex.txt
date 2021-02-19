@@ -16,7 +16,7 @@ HtmlFile:test.html
               JSExpressionStatement
                 JSObjectLiteralExpression
                   PsiElement(JS:LBRACE)('{')
-                  Angular2Property
+                  JSProperty
                     PsiElement(JS:STRING_LITERAL)(''current'')
                     PsiElement(JS:COLON)(':')
                     JSBinaryExpression
