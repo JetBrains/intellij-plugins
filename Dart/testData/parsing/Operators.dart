@@ -54,6 +54,7 @@ class Operators {
 
     super << 42;
     super >> 42;
+    super >>> 42;
 
     super == 42;
     super != 42;  // Expected to map to !(super == 42).
