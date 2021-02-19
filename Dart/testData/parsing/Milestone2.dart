@@ -173,6 +173,7 @@ class C {
   operator &(v) {}
   operator <<(v) {}
   operator >>(v) {}
+  operator >>>(v) {}
   operator [](i) {}
   operator []=(i, v) {}
   operator ~() {}

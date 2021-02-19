@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart;
 
 import com.intellij.lang.PsiBuilder;
@@ -160,6 +160,24 @@ public class DartGeneratedParserUtilBase extends GeneratedParserUtilBase {
       return false;
     }
     marker_.collapse(GT_GT);
+    return true;
+  }
+
+  public static boolean gtGtGt(PsiBuilder builder_, int level_) {
+    final PsiBuilder.Marker marker_ = builder_.mark();
+    if (!consumeToken(builder_, GT)) {
+      marker_.rollbackTo();
+      return false;
+    }
+    if (!consumeToken(builder_, GT)) {
+      marker_.rollbackTo();
+      return false;
+    }
+    if (!consumeToken(builder_, GT)) {
+      marker_.rollbackTo();
+      return false;
+    }
+    marker_.collapse(GT_GT_GT);
     return true;
   }
 
