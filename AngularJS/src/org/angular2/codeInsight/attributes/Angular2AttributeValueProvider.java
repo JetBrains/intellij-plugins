@@ -2,7 +2,6 @@
 package org.angular2.codeInsight.attributes;
 
 import com.intellij.html.impl.providers.HtmlAttributeValueProvider;
-import com.intellij.lang.javascript.psi.*;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
@@ -10,7 +9,6 @@ import com.intellij.util.ObjectUtils;
 import com.intellij.util.SmartList;
 import com.intellij.xml.util.HtmlUtil;
 import org.angular2.lang.Angular2LangUtil;
-import org.angular2.lang.expr.psi.Angular2Binding;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeInfo;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser.PropertyBindingInfo;
 import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding;
@@ -21,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+import static com.intellij.javascript.web.css.refs.CssClassInJSLiteralOrIdentifierReferenceProvider.getClassesFromEmbeddedContent;
 import static org.angular2.lang.html.parser.Angular2AttributeNameParser.parse;
 import static org.angular2.lang.html.psi.PropertyBindingType.CLASS;
 
@@ -64,7 +63,7 @@ public class Angular2AttributeValueProvider extends HtmlAttributeValueProvider {
       if (isNgClassAttribute(info)) {
         XmlAttribute attribute = tag.getAttribute(attributeName);
         if (attribute instanceof Angular2HtmlPropertyBinding) {
-          return getClassNames(((Angular2HtmlPropertyBinding)attribute).getBinding());
+          return getClassesFromEmbeddedContent(((Angular2HtmlPropertyBinding)attribute).getBinding());
         }
       }
       else if (info instanceof PropertyBindingInfo
@@ -76,39 +75,4 @@ public class Angular2AttributeValueProvider extends HtmlAttributeValueProvider {
     return null;
   }
 
-  private static @NotNull String getClassNames(@Nullable Angular2Binding binding) {
-    StringBuilder result = new StringBuilder();
-    if (binding != null && binding.getExpression() != null) {
-      binding.getExpression().accept(new JSElementVisitor() {
-        @Override
-        public void visitJSArrayLiteralExpression(JSArrayLiteralExpression node) {
-          for (JSExpression expression : node.getExpressions()) {
-            expression.accept(this);
-          }
-        }
-
-        @Override
-        public void visitJSLiteralExpression(JSLiteralExpression node) {
-          if (node.isQuotedLiteral()) {
-            result.append(node.getStringValue());
-            result.append(' ');
-          }
-        }
-
-        @Override
-        public void visitJSObjectLiteralExpression(JSObjectLiteralExpression node) {
-          for (JSProperty property : node.getProperties()) {
-            property.accept(this);
-          }
-        }
-
-        @Override
-        public void visitJSProperty(JSProperty node) {
-          result.append(node.getName());
-          result.append(' ');
-        }
-      });
-    }
-    return result.toString();
-  }
 }
