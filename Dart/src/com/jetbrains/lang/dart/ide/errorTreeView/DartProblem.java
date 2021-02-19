@@ -1,8 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.fileEditor.impl.FileOffsetsManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.NlsSafe;
@@ -186,10 +185,8 @@ public class DartProblem {
 
         VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(filePath);
         if (vFile != null) {
-          final Document document = FileDocumentManager.getInstance().getDocument(vFile);
-          if (document != null) {
-            // Note, Document.getLineNumber(int) is 0-based, add 1 to match 1-based IntelliJ line numbering:
-            final int line = document.getLineNumber(contextMessage.getOffset()) + 1;
+          int line = FileOffsetsManager.getInstance().getLineNumber(vFile, contextMessage.getOffset());
+          if (line >= 0) {
             htmlBuilder.append(":" + line);
           }
         }
