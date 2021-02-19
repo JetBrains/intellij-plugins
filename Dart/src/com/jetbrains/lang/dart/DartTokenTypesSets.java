@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart;
 
 import com.intellij.lang.*;
@@ -114,7 +114,7 @@ public interface DartTokenTypesSets {
 
   TokenSet OPERATORS = TokenSet.create(
     MINUS, MINUS_EQ, MINUS_MINUS, PLUS, PLUS_PLUS, PLUS_EQ, DIV, DIV_EQ, MUL, MUL_EQ, INT_DIV, INT_DIV_EQ, REM_EQ, REM, BIN_NOT, NOT,
-    EQ, EQ_EQ, NEQ, GT, GT_EQ, GT_GT_EQ, LT, LT_EQ, LT_LT, LT_LT_EQ, OR, OR_EQ, OR_OR, OR_OR_EQ, XOR, XOR_EQ, AND,
+    EQ, EQ_EQ, NEQ, GT, GT_EQ, GT_GT_EQ, GT_GT, GT_GT_GT, LT, LT_EQ, LT_LT, LT_LT_EQ, OR, OR_EQ, OR_OR, OR_OR_EQ, XOR, XOR_EQ, AND,
     AND_EQ, AND_AND, AND_AND_EQ, LBRACKET, RBRACKET, AS, QUEST_QUEST, QUEST_QUEST_EQ
   );
 
@@ -145,8 +145,8 @@ public interface DartTokenTypesSets {
     LT, LT_EQ, GT, GT_EQ,
     // '&' '|' '^'
     AND, OR, XOR,
-    // '<<' '>>'
-    LT_LT, GT_GT,
+    // '<<' '>>' '>>>'
+    LT_LT, GT_GT, GT_GT_GT,
     // '+' '-'
     PLUS, MINUS,
     // '*' '/' '%' '~/'

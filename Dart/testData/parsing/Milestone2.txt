@@ -1803,6 +1803,25 @@ Dart File
           PsiElement(operator)('operator')
           COMPONENT_NAME
             ID
+              PsiElement(IDENTIFIER)('>>>')
+          FORMAL_PARAMETER_LIST
+            PsiElement(()('(')
+            NORMAL_FORMAL_PARAMETER
+              SIMPLE_FORMAL_PARAMETER
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('v')
+            PsiElement())(')')
+          FUNCTION_BODY
+            LAZY_PARSEABLE_BLOCK
+              PsiElement({)('{')
+              STATEMENTS
+                <empty list>
+              PsiElement(})('}')
+        METHOD_DECLARATION
+          PsiElement(operator)('operator')
+          COMPONENT_NAME
+            ID
               PsiElement(IDENTIFIER)('[]')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
