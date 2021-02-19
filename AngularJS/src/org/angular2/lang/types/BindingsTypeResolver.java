@@ -208,7 +208,7 @@ final class BindingsTypeResolver {
           }
           else {
             JSGenericTypesEvaluatorBase
-              .matchGenericTypes(new JSGenericMappings(genericArguments), processingContext, inputType, propertyType);
+              .matchGenericTypes(new JSGenericMappings(genericArguments), processingContext, inputType, propertyType, x -> true);
             JSGenericTypesEvaluatorBase
               .widenInferredTypes(genericArguments, Collections.singletonList(propertyType), null, null, processingContext);
           }
