@@ -16,7 +16,6 @@ import org.jetbrains.annotations.NonNls;
 
 import static org.angular2.lang.expr.lexer.Angular2TokenTypes.*;
 import static org.angular2.lang.expr.parser.Angular2ElementTypes.*;
-import static org.angular2.lang.expr.parser.Angular2StubElementTypes.PROPERTY;
 
 public class Angular2Parser extends JavaScriptParser<Angular2Parser.Angular2ExpressionParser,
   Angular2Parser.Angular2StatementParser, FunctionParser, JSPsiTypeParser> {
@@ -480,7 +479,7 @@ public class Angular2Parser extends JavaScriptParser<Angular2Parser.Angular2Expr
 
       parsePropertyInitializer(false);
 
-      property.done(PROPERTY);
+      property.done(JSStubElementTypes.PROPERTY);
       property.setCustomEdgeTokenBinders(INCLUDE_DOC_COMMENT_AT_LEFT, WhitespacesBinders.DEFAULT_RIGHT_BINDER);
 
       return true;

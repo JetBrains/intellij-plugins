@@ -30,7 +30,7 @@ HtmlFile:test.html
               Angular2Interpolation
                 JSObjectLiteralExpression
                   PsiElement(JS:LBRACE)('{')
-                  Angular2Property
+                  JSProperty
                     PsiElement(JS:IDENTIFIER)('foo')
                     PsiElement(JS:COLON)(':')
                     PsiWhiteSpace(' ')
