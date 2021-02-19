@@ -142,15 +142,7 @@ fun detectVueScriptLanguage(file: PsiFile): String? {
   return detectLanguage(scriptTag)
 }
 
-val BOOLEAN_TYPE = JSBooleanType(true, JSTypeSource.EXPLICITLY_DECLARED, JSTypeContext.INSTANCE)
-
-private val vueTypesMap = mapOf(
-  Pair("Boolean", BOOLEAN_TYPE),
-  Pair("String", JSStringType(true, JSTypeSource.EXPLICITLY_DECLARED, JSTypeContext.INSTANCE)),
-  Pair("Number", JSNumberType(true, JSTypeSource.EXPLICITLY_DECLARED, JSTypeContext.INSTANCE)),
-  Pair("Function", JSFunctionTypeImpl(JSTypeSource.EXPLICITLY_DECLARED, listOf(), null)),
-  Pair("Array", JSArrayTypeImpl(null, JSTypeSource.EXPLICITLY_DECLARED))
-)
+val BOOLEAN_TYPE get() = JSBooleanType(true, JSTypeSource.EXPLICITLY_DECLARED, JSTypeContext.INSTANCE)
 
 fun objectLiteralFor(element: PsiElement?): JSObjectLiteralExpression? {
   return resolveElementTo(element, JSObjectLiteralExpression::class) as? JSObjectLiteralExpression?
