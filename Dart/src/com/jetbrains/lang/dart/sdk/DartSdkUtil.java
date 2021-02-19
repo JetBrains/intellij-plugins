@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.sdk;
 
 import com.intellij.ide.util.PropertiesComponent;
@@ -157,31 +157,22 @@ public final class DartSdkUtil {
 
   public static void updateKnownSdkPaths(@NotNull final Project project, @NotNull final String newSdkPath) {
     final DartSdk oldSdk = DartSdk.getDartSdk(project);
-    updateKnownPaths(DART_SDK_KNOWN_PATHS, oldSdk == null ? null : oldSdk.getHomePath(), newSdkPath);
-  }
-
-  private static void updateKnownPaths(@NotNull final String propertyKey, @Nullable final String oldPath, @NotNull final String newPath) {
     final List<String> knownPaths = new ArrayList<>();
 
-    final String[] oldKnownPaths = PropertiesComponent.getInstance().getValues(propertyKey);
+    final String[] oldKnownPaths = PropertiesComponent.getInstance().getValues(DART_SDK_KNOWN_PATHS);
     if (oldKnownPaths != null) {
       knownPaths.addAll(Arrays.asList(oldKnownPaths));
     }
 
-    if (oldPath != null) {
-      knownPaths.remove(oldPath);
-      knownPaths.add(0, oldPath);
+    if (oldSdk != null) {
+      knownPaths.remove(oldSdk.getHomePath());
+      knownPaths.add(0, oldSdk.getHomePath());
     }
 
-    knownPaths.remove(newPath);
-    knownPaths.add(0, newPath);
+    knownPaths.remove(newSdkPath);
+    knownPaths.add(0, newSdkPath);
 
-    if (knownPaths.isEmpty()) {
-      PropertiesComponent.getInstance().unsetValue(propertyKey);
-    }
-    else {
-      PropertiesComponent.getInstance().setValues(propertyKey, ArrayUtilRt.toStringArray(knownPaths));
-    }
+    PropertiesComponent.getInstance().setValues(DART_SDK_KNOWN_PATHS, ArrayUtilRt.toStringArray(knownPaths));
   }
 
   public static @Nullable @NlsContexts.Label String getErrorMessageIfWrongSdkRootPath(final @NotNull String sdkRootPath) {
