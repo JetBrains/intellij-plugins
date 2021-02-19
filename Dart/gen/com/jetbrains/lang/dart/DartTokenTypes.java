@@ -201,6 +201,7 @@ public interface DartTokenTypes {
   IElementType GT_EQ = new DartElementType(">=");
   IElementType GT_GT = new DartElementType(">>");
   IElementType GT_GT_EQ = new DartElementType(">>=");
+  IElementType GT_GT_GT = new DartElementType(">>>");
   IElementType HASH = new DartElementType("#");
   IElementType HEX_NUMBER = new DartElementType("HEX_NUMBER");
   IElementType HIDE = new DartElementType("hide");
