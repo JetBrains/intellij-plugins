@@ -4,6 +4,7 @@ package org.angular2.codeInsight;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.javascript.web.css.CssInBindingExpressionCompletionProvider;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.completion.JSLookupElementInsertHandler;
 import com.intellij.lang.javascript.completion.JSLookupPriority;
@@ -47,7 +48,6 @@ import org.angular2.codeInsight.tags.Angular2TagDescriptor;
 import org.angular2.codeInsight.template.Angular2StandardSymbolsScopesProvider;
 import org.angular2.codeInsight.template.Angular2TemplateScopesResolver;
 import org.angular2.css.Angular2CssAttributeNameCompletionProvider;
-import org.angular2.css.Angular2CssExpressionCompletionProvider;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Pipe;
 import org.angular2.lang.Angular2Bundle;
@@ -83,7 +83,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
 
     extend(CompletionType.BASIC,
            psiElement().with(language(Angular2Language.INSTANCE)),
-           new Angular2CssExpressionCompletionProvider());
+           new CssInBindingExpressionCompletionProvider());
 
     extend(CompletionType.BASIC,
            psiElement().inside(XmlPatterns.xmlAttribute()),

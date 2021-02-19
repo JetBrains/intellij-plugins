@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.codeInsight.completion.CompletionContributor
 import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.javascript.web.css.CssInBindingExpressionCompletionProvider
 import com.intellij.lang.Language
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.patterns.JSPatterns
@@ -29,6 +30,8 @@ class VueCompletionContributor : CompletionContributor() {
            VueAttributeValueCompletionProvider())
     extend(CompletionType.BASIC, psiElement().with(language(VueJSLanguage.INSTANCE)),
            VueJSCompletionProvider())
+    extend(CompletionType.BASIC, psiElement().with(language(VueJSLanguage.INSTANCE)),
+           CssInBindingExpressionCompletionProvider())
     extend(CompletionType.BASIC,
            psiElement(JSTokenTypes.IDENTIFIER)
              .withParent(JSPatterns.jsReferenceExpression().withFirstChild(psiElement(JSThisExpression::class.java))),

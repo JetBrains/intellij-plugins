@@ -31,6 +31,7 @@ import org.junit.runners.Suite
   VueResolveTest::class,
   VueFindUsagesTest::class,
   VueRenameTest::class,
+  VueCssClassTest::class,
   VueParameterInfoTest::class,
   VueOptimizeImportTest::class,
   VueLiveTemplatesTest::class,
