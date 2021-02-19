@@ -290,6 +290,12 @@ Dart File
                       SYMBOL_LITERAL_EXPRESSION
                         PsiElement(#)('#')
                         USER_DEFINABLE_OPERATOR
+                          SHIFT_OPERATOR
+                            PsiElement(>>>)('>>>')
+                      PsiElement(,)(',')
+                      SYMBOL_LITERAL_EXPRESSION
+                        PsiElement(#)('#')
+                        USER_DEFINABLE_OPERATOR
                           RELATIONAL_OPERATOR
                             PsiElement(>=)('>=')
                       PsiElement(,)(',')

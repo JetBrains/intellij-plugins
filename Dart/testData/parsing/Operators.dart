@@ -4,6 +4,11 @@ class Shifting {
     Box<Box<prefix.Fisk>> foo = null;
     return other >> 1;
   }
+
+  operator >>>(other) {
+    List<List<List<String>>> foo = null;
+    return other >>> 1;
+  }
 }
 
 var x = a ? b : c ? d : e ? f : g;
@@ -54,6 +59,7 @@ class Operators {
 
     super << 42;
     super >> 42;
+    super >>> 42;
 
     super == 42;
     super != 42;  // Expected to map to !(super == 42).

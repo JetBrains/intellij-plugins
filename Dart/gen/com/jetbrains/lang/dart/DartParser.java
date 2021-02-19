@@ -5524,12 +5524,13 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '<<' | <<gtGt>>
+  // '<<' | <<gtGtGt>> | <<gtGt>>
   public static boolean shiftOperator(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "shiftOperator")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, SHIFT_OPERATOR, "<shift operator>");
     r = consumeToken(b, LT_LT);
+    if (!r) r = gtGtGt(b, l + 1);
     if (!r) r = gtGt(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
