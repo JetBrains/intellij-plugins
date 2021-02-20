@@ -116,12 +116,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     testKindPanel.setBorder(JBUI.Borders.emptyLeft(10));
     ButtonGroup buttonGroup = new ButtonGroup();
     for (KarmaScopeKind scopeKind : KarmaScopeKind.values()) {
-      JRadioButton radioButton = new JRadioButton(UIUtil.removeMnemonic(scopeKind.getName()));
-      final int index = UIUtil.getDisplayMnemonicIndex(scopeKind.getName());
-      if (index != -1) {
-        radioButton.setMnemonic(scopeKind.getName().charAt(index + 1));
-        radioButton.setDisplayedMnemonicIndex(index);
-      }
+      JRadioButton radioButton = new JRadioButton(UIUtil.replaceMnemonicAmpersand(scopeKind.getName()));
       radioButton.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
