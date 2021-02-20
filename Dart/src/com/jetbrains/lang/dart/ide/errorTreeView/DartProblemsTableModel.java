@@ -1,7 +1,6 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
-import com.intellij.analysis.AnalysisBundle;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
@@ -37,7 +36,10 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
       setText(problem.getErrorMessage().replaceAll("(\n)+", " "));
 
       // Pass null to the url, mouse movement to the hover makes the tooltip go away, see https://youtrack.jetbrains.com/issue/WEB-39449
-      setToolTipText(DartProblem.generateTooltipText(problem.getErrorMessage(), problem.getCorrectionMessage(), null));
+      setToolTipText(DartProblem.generateTooltipText(problem.getErrorMessage(),
+                                                     problem.getContextMessages(),
+                                                     problem.getCorrectionMessage(),
+                                                     null));
 
       String severity = problem.getSeverity();
       setIcon(AnalysisErrorSeverity.ERROR.equals(severity)
