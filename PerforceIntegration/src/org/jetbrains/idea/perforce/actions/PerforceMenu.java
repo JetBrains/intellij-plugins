@@ -28,6 +28,6 @@ public final class PerforceMenu extends StandardVcsGroup {
 
   @Override
   public String getVcsName(final Project project) {
-    return "Perforce";
+    return PerforceVcs.NAME;
   }
 }
