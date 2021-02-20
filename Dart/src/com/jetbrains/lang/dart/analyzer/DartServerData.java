@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.analyzer;
 
 import com.google.common.collect.Sets;
@@ -531,19 +531,22 @@ public class DartServerData {
     @Nullable private final String myCode;
     @NotNull private final String myMessage;
     @Nullable private final String myCorrection;
+    private final @Nullable List<DiagnosticMessage> myContextMessages;
     @Nullable private final String myUrl;
 
     @Contract(pure = true)
-    @NotNull
-    public DartError asEofError(int fileLength) {
-      return new DartError(fileLength > 0 ? fileLength - 1 : 0, fileLength > 0 ? 1 : 0, mySeverity, myCode, myMessage, myCorrection, myUrl);
+    public @NotNull DartError asEofError(int fileLength) {
+      return new DartError(fileLength > 0 ? fileLength - 1 : 0,
+                           fileLength > 0 ? 1 : 0,
+                           mySeverity, myCode, myMessage, myContextMessages, myCorrection, myUrl);
     }
 
-    private DartError(@NotNull final AnalysisError error, final int correctedOffset, final int correctedLength) {
+    private DartError(@NotNull AnalysisError error, int correctedOffset, int correctedLength) {
       super(correctedOffset, correctedLength);
       mySeverity = error.getSeverity().intern();
       myCode = error.getCode() == null ? null : error.getCode().intern();
       myMessage = error.getMessage();
+      myContextMessages = error.getContextMessages();
       myCorrection = error.getCorrection();
       myUrl = error.getUrl();
     }
@@ -553,12 +556,14 @@ public class DartServerData {
                       @NotNull String severity,
                       @Nullable String code,
                       @NotNull String message,
+                      @Nullable List<DiagnosticMessage> contextMessages,
                       @Nullable String correction,
                       @Nullable String url) {
       super(offset, length);
       mySeverity = severity;
       myCode = code;
       myMessage = message;
+      myContextMessages = contextMessages;
       myCorrection = correction;
       myUrl = url;
     }
@@ -585,6 +590,10 @@ public class DartServerData {
     @Nullable
     public String getCorrection() {
       return myCorrection;
+    }
+
+    public @Nullable List<DiagnosticMessage> getContextMessages() {
+      return myContextMessages;
     }
 
     @Nullable

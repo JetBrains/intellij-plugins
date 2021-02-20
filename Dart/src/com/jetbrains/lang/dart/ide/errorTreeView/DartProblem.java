@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.openapi.project.Project;
@@ -9,13 +9,14 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.PathUtil;
 import com.intellij.xml.util.XmlStringUtil;
-import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.util.DartBuildFileUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.dartlang.analysis.server.protocol.AnalysisError;
 import org.dartlang.analysis.server.protocol.DiagnosticMessage;
+import org.dartlang.analysis.server.protocol.Location;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,7 +52,7 @@ public class DartProblem {
     return myAnalysisError.getUrl();
   }
 
-  @Nullable List<DiagnosticMessage> getDiagnosticMessages() {
+  public @Nullable List<DiagnosticMessage> getContextMessages() {
     return myAnalysisError.getContextMessages();
   }
 
@@ -162,16 +163,37 @@ public class DartProblem {
     return myContentRoot;
   }
 
-  public static @NotNull String generateTooltipText(@NotNull String message, @Nullable String correction, @Nullable String url) {
+  public static @NotNull String generateTooltipText(@NotNull String message,
+                                                    @Nullable List<DiagnosticMessage> contextMessages,
+                                                    @Nullable String correction,
+                                                    @Nullable String url) {
     StringBuilder tooltip = new StringBuilder("<html>").append(XmlStringUtil.escapeString(message));
-    if (StringUtil.isNotEmpty(correction)) {
-      tooltip.append("<br/><br/>").append(XmlStringUtil.escapeString(correction));
-    }
+
+    // Include the URL link to documentation.
     if (StringUtil.isNotEmpty(url)) {
-      tooltip.append("<br/><a href='").append(url).append("'>")
-        .append(DartBundle.message("action.DartProblemsViewPanel.open.documentation.text"))
-        .append("</a>");
+      tooltip.append(" (<a href='").append(url).append("'>Documentation</a>)");
     }
+
+    // For each context message, include the message and location.
+    if (contextMessages != null && !contextMessages.isEmpty()) {
+      tooltip.append("<ul>");
+      for (DiagnosticMessage contextMessage : contextMessages) {
+        Location location = contextMessage.getLocation();
+        String msg = XmlStringUtil.escapeString(StringUtil.trimEnd(contextMessage.getMessage(), '.'));
+        String locationText = XmlStringUtil.escapeString(PathUtil.getFileName(location.getFile()) + ":" + location.getStartLine());
+        tooltip.append("<li>").append(msg).append(" (").append(locationText).append(").</li>");
+      }
+      tooltip.append("</ul>");
+    }
+    else if (StringUtil.isNotEmpty(correction)) {
+      tooltip.append("<br/><br/>");
+    }
+
+    // Include the correction text, if included.
+    if (StringUtil.isNotEmpty(correction)) {
+      tooltip.append(XmlStringUtil.escapeString(correction));
+    }
+
     tooltip.append("</html>");
     return tooltip.toString();
   }
