@@ -19,7 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 
 public class PhoneGapPackageManagementService extends PackageManagementServiceEx {
@@ -71,11 +70,12 @@ public class PhoneGapPackageManagementService extends PackageManagementServiceEx
   }
 
   @Override
-  public Collection<InstalledPackage> getInstalledPackages() throws IOException {
-    List<String> names = myCommands.pluginList();
-
-
-    return PhoneGapPluginsList.wrapInstalled(names);
+  public @NotNull List<? extends InstalledPackage> getInstalledPackagesList() {
+    return ContainerUtil.map(myCommands.pluginList(),
+                             string -> {
+                               String[] split = string.split(" ");
+                               return new InstalledPackage(split[0], split.length > 1 ? split[1] : "");
+                             });
   }
 
   @Override

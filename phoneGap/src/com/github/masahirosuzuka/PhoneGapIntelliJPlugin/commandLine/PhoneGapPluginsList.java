@@ -6,10 +6,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.NlsSafe;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.HttpRequests;
-import com.intellij.webcore.packaging.InstalledPackage;
 import com.intellij.webcore.packaging.RepoPackage;
 import org.jetbrains.annotations.NotNull;
 
@@ -116,15 +114,6 @@ public final class PhoneGapPluginsList {
 
   public static void resetCache() {
     CACHED_REPO = null;
-  }
-
-  public static List<InstalledPackage> wrapInstalled(List<String> names) {
-    return ContainerUtil.map(names, s -> {
-      String[] split = s.split(" ");
-      String name = ArrayUtil.getFirstElement(split);
-      String version = split.length > 1 ? split[1] : "";
-      return new InstalledPackage(name, version);
-    });
   }
 
   public static List<RepoPackage> wrapRepo(List<String> names) {
