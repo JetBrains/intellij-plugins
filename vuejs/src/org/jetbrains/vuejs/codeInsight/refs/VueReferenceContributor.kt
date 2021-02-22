@@ -40,7 +40,6 @@ class VueReferenceContributor : PsiReferenceContributor() {
             override fun resolve(): PsiElement? {
               return (element.parent as? XmlAttribute)
                 ?.let { getAvailableSlots(it, false) }
-                ?.asSequence()
                 ?.find { it.name == this.value }
                 ?.source
             }

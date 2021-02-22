@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.types;
 
+import com.intellij.javascript.web.types.WebJSTypesUtil;
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil;
 import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil;
 import com.intellij.lang.javascript.psi.JSElement;
@@ -98,7 +99,7 @@ public class Angular2ReferenceType extends Angular2BaseType<Angular2HtmlAttrVari
                                    : isTemplateTag(tag)
                                      ? getTemplateRefType(Angular2ComponentLocator.findComponentClass(tag),
                                                           getNgTemplateTagContextType(tag))
-                                     : getHtmlElementClassType(createJSTypeSourceForXmlElement(tag), tag.getName()));
+                                     : WebJSTypesUtil.getHtmlElementClassType(createJSTypeSourceForXmlElement(tag), tag.getName()));
     }
     return null;
   }

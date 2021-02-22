@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.PsiFile
 import com.intellij.psi.SmartPointerManager
 import com.intellij.psi.impl.source.xml.XmlElementDescriptorProvider
 import com.intellij.psi.impl.source.xml.XmlTextImpl
@@ -44,29 +45,33 @@ val CUSTOM_TOP_LEVEL_TAGS: Map<String, (XmlTag, XmlTextImpl) -> Language?> = map
   })
 )
 
+fun resolveComponent(context: VueEntitiesContainer, tagName: String, containingFile: PsiFile): List<VueComponent> {
+  val result = mutableListOf<VueComponent>()
+  val normalizedTagName = fromAsset(tagName)
+  context.acceptEntities(object : VueModelProximityVisitor() {
+    override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
+      return acceptSameProximity(proximity, fromAsset(name) == normalizedTagName) {
+        // Cannot self refer without export declaration with component name
+        if ((component.source as? JSImplicitElement)?.context != containingFile) {
+          result.add(component)
+        }
+      }
+    }
+  }, VueModelVisitor.Proximity.GLOBAL)
+  return result
+}
+
 class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
   override fun getDescriptor(tag: XmlTag?): XmlElementDescriptor? {
     if (tag == null
         || DumbService.isDumb(tag.project)
         || !isVueContext(tag)) return null
 
-    val tagName = fromAsset(tag.name)
-    val containingFile = tag.containingFile.originalFile
 
-    val components = mutableListOf<VueComponent>()
-    VueModelManager.findEnclosingContainer(tag)?.acceptEntities(object : VueModelProximityVisitor() {
-      override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
-        return acceptSameProximity(proximity, fromAsset(name) == tagName) {
-          // Cannot self refer without export declaration with component name
-          if ((component.source as? JSImplicitElement)?.context != containingFile) {
-            components.add(component)
-          }
-        }
-      }
-    }, VueModelVisitor.Proximity.GLOBAL)
-
-    if (components.isNotEmpty())
-      return VueElementDescriptor(tag, components)
+    VueModelManager.findEnclosingContainer(tag)
+      ?.let { resolveComponent(it, tag.name, tag.containingFile.originalFile) }
+      ?.takeIf { it.isNotEmpty() }
+      ?.let { return VueElementDescriptor(tag, it) }
     return CUSTOM_TOP_LEVEL_TAGS[tag.name.toLowerCase(Locale.US)]?.let { VueElementDescriptor(tag) }
   }
 

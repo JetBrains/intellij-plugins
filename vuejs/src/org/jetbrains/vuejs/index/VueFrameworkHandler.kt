@@ -418,6 +418,10 @@ fun findScriptTag(xmlFile: XmlFile): XmlTag? =
   findTopLevelVueTag(xmlFile, SCRIPT_TAG_NAME)
 
 @StubSafe
+fun findAttribute(tag: XmlTag, attributeName: String): XmlAttribute? =
+  PsiTreeUtil.getStubChildrenOfTypeAsList(tag, XmlAttribute::class.java).firstOrNull { it.name == attributeName }
+
+@StubSafe
 fun hasAttribute(tag: XmlTag, attributeName: String): Boolean =
   PsiTreeUtil.getStubChildrenOfTypeAsList(tag, XmlAttribute::class.java).any { it.name == attributeName }
 

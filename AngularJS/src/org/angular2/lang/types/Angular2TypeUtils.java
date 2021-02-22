@@ -1,13 +1,15 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.types;
 
-import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.JSFunctionType;
+import com.intellij.lang.javascript.psi.JSParameterTypeDecorator;
+import com.intellij.lang.javascript.psi.JSType;
+import com.intellij.lang.javascript.psi.JSTypeUtils;
 import com.intellij.lang.javascript.psi.types.JSCompositeTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSTypeSource;
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
 import com.intellij.lang.javascript.psi.types.primitives.TypeScriptNeverJSTypeImpl;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.xml.XmlTag;
@@ -20,7 +22,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static com.intellij.lang.javascript.psi.JSTypeUtils.processExpandedType;
 import static com.intellij.psi.util.CachedValueProvider.Result.create;
@@ -29,8 +30,6 @@ import static com.intellij.util.ObjectUtils.notNull;
 
 public final class Angular2TypeUtils {
 
-  @NonNls private static final String HTML_ELEMENT_CLASS_NAME = "HTMLElement";
-  @NonNls private static final String HTML_ELEMENT_TAG_NAME_MAP_CLASS_NAME = "HTMLElementTagNameMap";
   @NonNls private static final String HTML_ELEMENT_EVENT_MAP_INTERFACE_NAME = "HTMLElementEventMap";
 
   public static @Nullable JSType extractEventVariableType(@Nullable JSType type) {
@@ -77,18 +76,6 @@ public final class Angular2TypeUtils {
 
   public static @NotNull JSTypeSource createJSTypeSourceForXmlElement(@NotNull PsiElement context) {
     return JSTypeSourceFactory.createTypeSource(notNull(Angular2ComponentLocator.findComponentClass(context), context), true);
-  }
-
-  @NonNls
-  public static @Nullable JSType getHtmlElementClassType(@NotNull JSTypeSource typeSource, @NotNull @NonNls String tagName) {
-    return Optional
-      .ofNullable(JSTypeUtils.createType(HTML_ELEMENT_TAG_NAME_MAP_CLASS_NAME, typeSource))
-      .map(tagNameMap -> tagNameMap.asRecordType().findPropertySignature(StringUtil.toLowerCase(tagName)))
-      .map(JSRecordType.PropertySignature::getJSType)
-      // We should keep the original type source,
-      // otherwise we are not getting any project specific shims.
-      .map(type -> type.withNewSource(typeSource))
-      .orElseGet(() -> JSTypeUtils.createType(HTML_ELEMENT_CLASS_NAME, typeSource));
   }
 
   public static @Nullable JSType getElementEventMap(@NotNull JSTypeSource typeSource) {
