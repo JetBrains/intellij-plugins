@@ -12,7 +12,7 @@ HtmlFile:AttrValueInjection.vue
         XmlToken:XML_START_TAG_START('<')
         XmlToken:XML_NAME('div')
         PsiWhiteSpace(' ')
-        PsiElement(XML_ATTRIBUTE)
+        PsiElement(VUE:REF_ATTRIBUTE)
           XmlToken:XML_NAME('ref')
           XmlToken:XML_EQ('=')
           PsiElement(XML_ATTRIBUTE_VALUE)

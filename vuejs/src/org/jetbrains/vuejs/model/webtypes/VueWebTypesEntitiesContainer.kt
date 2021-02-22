@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.PsiModificationTracker
@@ -49,13 +50,15 @@ open class VueWebTypesEntitiesContainer(project: Project, packageJson: VirtualFi
         else -> { doc -> "<p>" + StringUtil.escapeXmlEntities(doc).replace(EOL_PATTERN, "<br>") }
       }
 
-    val sourceSymbolResolver = packageJson?.let { PsiManager.getInstance(project).findFile(it) }
+    val packageJsonFile = packageJson?.let { PsiManager.getInstance(project).findFile(it) }
+    val sourceSymbolResolver = packageJsonFile
       ?.let { WebTypesSourceSymbolResolver(it, webTypes.name ?: "unknown") }
 
     val support = object : WebTypesContext {
       override val project: Project = project
       override val pluginName: String? = webTypes.name
       override val parent: VueEntitiesContainer = owner
+      override val packageJsonFile: PsiFile? = packageJsonFile
 
       override fun getType(webTypesType: Any?): JSType? = typeProvider(webTypesType)
 
@@ -134,6 +137,7 @@ open class VueWebTypesEntitiesContainer(project: Project, packageJson: VirtualFi
     val pluginName: String?
     val project: Project
     val parent: VueEntitiesContainer
+    val packageJsonFile: PsiFile?
 
     fun getType(webTypesType: Any?): JSType?
     fun resolveSourceSymbol(source: Source): Result<PsiElement?>

@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight.attributes;
 
+import com.intellij.javascript.web.types.WebJSTypesUtil;
 import com.intellij.lang.javascript.psi.JSRecordType;
 import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature;
@@ -281,7 +282,7 @@ public final class Angular2AttributeDescriptorsProvider implements XmlAttributeD
       Set<String> allowedElementProperties = new HashSet<>(DomElementSchemaRegistry.getElementProperties(xmlTag));
 
       JSTypeSource typeSource = Angular2TypeUtils.createJSTypeSourceForXmlElement(xmlTag);
-      JSType tagClass = Angular2TypeUtils.getHtmlElementClassType(typeSource, xmlTag.getName());
+      JSType tagClass = WebJSTypesUtil.getHtmlElementClassType(typeSource, xmlTag.getName());
       JSType elementEventMap = Angular2TypeUtils.getElementEventMap(typeSource);
 
       Set<String> eventNames = getPossibleEventNames(xmlTag, allowedElementProperties, elementEventMap);

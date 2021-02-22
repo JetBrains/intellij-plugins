@@ -81,6 +81,7 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
         TEMPLATE_SRC, SCRIPT_SRC, STYLE_SRC -> attr.done(VueStubElementTypes.SRC_ATTRIBUTE)
         SCRIPT_ID -> attr.done(VueStubElementTypes.SCRIPT_ID_ATTRIBUTE)
         SCRIPT_SETUP, STYLE_MODULE -> attr.done(VueStubElementTypes.VUE_STUBBED_ATTRIBUTE)
+        REF -> attr.done(VueStubElementTypes.REF_ATTRIBUTE)
         else -> attr.done(XmlElementType.XML_ATTRIBUTE)
       }
   }

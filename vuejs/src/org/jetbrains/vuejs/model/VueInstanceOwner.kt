@@ -21,6 +21,7 @@ import org.jetbrains.vuejs.model.source.VUE_NAMESPACE
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
 import org.jetbrains.vuejs.model.source.VueSourceEntity
 import org.jetbrains.vuejs.types.VueComponentInstanceType
+import org.jetbrains.vuejs.types.VueRefsType
 import java.util.*
 
 interface VueInstanceOwner : VueScopeElement {
@@ -32,6 +33,11 @@ interface VueInstanceOwner : VueScopeElement {
     }
     else null ?: JSAnyType.get(source, false)
 }
+
+fun getDefaultVueComponentInstanceType(context: PsiElement?): JSType? =
+  resolveSymbolFromNodeModule(context, VUE_MODULE, "ComponentPublicInstance", TypeScriptTypeAlias::class.java)
+    ?.typeDeclaration?.jsType
+  ?: resolveSymbolFromNodeModule(context, VUE_MODULE, VUE_NAMESPACE, TypeScriptInterface::class.java)?.jsType
 
 private val VUE_INSTANCE_PROPERTIES: List<String> = listOf(
   "\$el", "\$options", "\$parent", "\$root", "\$children", "\$refs", "\$slots",
@@ -47,16 +53,15 @@ private fun buildInstanceType(instance: VueInstanceOwner): JSType? {
   val result = mutableMapOf<String, JSRecordType.PropertySignature>()
   contributeDefaultInstanceProperties(source, result)
   contributeComponentProperties(instance, source, result)
+  replaceStandardProperty("\$refs", VueRefsType(JSTypeSourceFactory.createTypeSource(source, true), instance),
+                          source, result)
   contributePropertiesFromProviders(instance, result)
   return VueComponentInstanceType(JSTypeSourceFactory.createTypeSource(source, true), instance, result.values.toList())
 }
 
 private fun contributeDefaultInstanceProperties(source: PsiElement,
                                                 result: MutableMap<String, JSRecordType.PropertySignature>): MutableMap<String, JSRecordType.PropertySignature> {
-  val defaultInstanceType =
-    resolveSymbolFromNodeModule(source, VUE_MODULE, "ComponentPublicInstance", TypeScriptTypeAlias::class.java)
-      ?.typeDeclaration?.jsType
-    ?: resolveSymbolFromNodeModule(source, VUE_MODULE, VUE_NAMESPACE, TypeScriptInterface::class.java)?.jsType
+  val defaultInstanceType = getDefaultVueComponentInstanceType(source)
   if (defaultInstanceType != null) {
     defaultInstanceType.asRecordType()
       .properties
@@ -146,7 +151,7 @@ private fun contributeComponentProperties(instance: VueInstanceOwner,
   mergePut(result, methods)
 }
 
-private fun buildOptionsType(instance: VueInstanceOwner, originalType: JSType?): JSType? {
+private fun buildOptionsType(instance: VueInstanceOwner, originalType: JSType?): JSType {
   val result = mutableListOf<JSType>()
   originalType?.let(result::add)
   instance.acceptEntities(object : VueModelVisitor() {
