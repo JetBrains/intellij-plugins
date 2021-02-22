@@ -65,7 +65,6 @@ public class DartServerCompletionContributor extends CompletionContributor {
               psiElement().inFile(psiFile().withName(".analysis_options")),
               psiElement().inFile(psiFile().withName("analysis_options.yaml")),
               psiElement().inFile(psiFile().withName("pubspec.yaml")),
-              // TODO(jwren) Update this file name here with the final name chosen.
               psiElement().inFile(psiFile().withName("fix_data.yaml"))
            ),
            new CompletionProvider<>() {

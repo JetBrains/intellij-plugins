@@ -861,7 +861,8 @@ public final class DartAnalysisServerService implements Disposable {
            fileName.equals(".analysis_options") ||
            fileName.equals("analysis_options.yaml") ||
            fileName.equals("pubspec.yaml") ||
-           fileName.equals("androidmanifest.xml");
+           fileName.equals("androidmanifest.xml") ||
+           fileName.equals("fix_data.yaml");
   }
 
   public void updateFilesContent() {
