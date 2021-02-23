@@ -19,7 +19,6 @@ import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.ui.popup.IconButton
 import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.JBPopupFactory
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.*
@@ -119,7 +118,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
 
     val scroll = ScrollPaneFactory.createScrollPane(list)
     scroll.border = JBUI.Borders.empty()
-    val pane = ListWithFilter.wrap(list, scroll, StringUtil.createToStringFunction(Schematic::class.java))
+    val pane = ListWithFilter.wrap(list, scroll) { obj: Schematic? -> obj.toString() }
 
     val builder = JBPopupFactory
       .getInstance()
