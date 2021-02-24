@@ -31,11 +31,6 @@ public abstract class Angular2IvyEntity<T extends Angular2IvySymbolDef.Entity> e
   }
 
   @Override
-  public @NotNull PsiElement getNavigableElement() {
-    return getField();
-  }
-
-  @Override
   public @NotNull PsiElement getSourceElement() {
     return getField();
   }

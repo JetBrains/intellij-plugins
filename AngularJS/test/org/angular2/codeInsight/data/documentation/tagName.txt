@@ -1,0 +1,1 @@
+<div class='definition'><pre>export class ListItemComponent</pre></div><div class='content'><p>component comment</div><table class='sections'><tr><td valign='top'><icon src='JavaScriptPsiIcons.FileTypes.TypeScriptFile'/>&nbsp;deps/list-item.component.ts</td></table>

@@ -1,0 +1,1 @@
+<div class='definition'><pre>ListItemComponent.twoWayChange: <span style="color:#000080;">any</span></pre></div><div class='content'><p>twoWayChange comment</div><table class='sections'><tr><td valign='top'><icon src='JavaScriptPsiIcons.FileTypes.TypeScriptFile'/>&nbsp;deps/list-item.component.ts</td></table>

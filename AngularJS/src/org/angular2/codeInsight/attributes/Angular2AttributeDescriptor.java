@@ -366,7 +366,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
       .toList();
   }
 
-  private @NotNull Collection<PsiElement> getProperties(@NotNull Angular2Directive directive) {
+  public @NotNull Collection<PsiElement> getProperties(@NotNull Angular2Directive directive) {
     switch (myInfo.type) {
       case PROPERTY_BINDING:
       case TEMPLATE_BINDINGS:
