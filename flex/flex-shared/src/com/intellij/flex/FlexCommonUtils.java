@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex;
 
 import com.intellij.execution.configurations.CommandLineTokenizer;
@@ -632,7 +632,7 @@ public final class FlexCommonUtils {
 
   public static String getPathToBundledJar(String filename) {
     final URL url = FlexCommonUtils.class.getResource("");
-    if ("jar".equals(url.getProtocol())) {
+    if (url == null || "jar".equals(url.getProtocol())) {
       // running from build
       return FileUtil.toSystemDependentName(PathManager.getPluginsPath() + "/flex/lib/" + filename);
     }
