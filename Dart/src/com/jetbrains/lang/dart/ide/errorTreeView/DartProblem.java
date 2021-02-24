@@ -173,7 +173,14 @@ public class DartProblem {
                                                          @Nullable @Nls String correction,
                                                          @Nullable @NonNls String url) {
     // First include the error message.
-    HtmlBuilder htmlBuilder = new HtmlBuilder().append(message).append(HtmlChunk.br());
+    HtmlBuilder htmlBuilder = new HtmlBuilder().append(message);
+
+    // Include the URL link to documentation.
+    if (StringUtil.isNotEmpty(url)) {
+      htmlBuilder.append(" (").appendLink(url, DartBundle.message("error.doc.link")).append(")");
+    }
+
+    htmlBuilder.append(HtmlChunk.br());
 
     // For each context message, include the message and location.
     if (contextMessages != null && !contextMessages.isEmpty()) {
@@ -192,10 +199,6 @@ public class DartProblem {
       htmlBuilder.append(HtmlChunk.br()).append(correction);
     }
 
-    // Finally, include the URL link to documentation.
-    if (StringUtil.isNotEmpty(url)) {
-      htmlBuilder.append(HtmlChunk.br()).appendLink(url, DartBundle.message("action.DartProblemsViewPanel.open.documentation.text"));
-    }
     return htmlBuilder.wrapWith("html").toString();
   }
 }
