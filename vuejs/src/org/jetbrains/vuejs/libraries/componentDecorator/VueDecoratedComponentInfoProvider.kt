@@ -90,12 +90,18 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
           }
         }
 
-      clazz.extendsList?.children?.forEach { extendItem ->
-        val call = ((extendItem as? JSReferenceListMember)?.expression as? JSCallExpression)
-        if ((call?.methodExpression as? JSReferenceExpression)?.referenceName?.toLowerCase(Locale.US) == "mixins") {
-          call.arguments.mapNotNullTo(mixins) { arg ->
-            (arg as? JSReferenceExpression)?.resolve()
-              ?.let { VueModelManager.getMixin(it) }
+      clazz.extendsList?.members?.forEach { extendItem ->
+        if (extendItem.referenceText == null) {
+          val call = extendItem.expression as? JSCallExpression
+          if ((call?.methodExpression as? JSReferenceExpression)?.referenceName?.toLowerCase(Locale.US) == "mixins") {
+            call.arguments.mapNotNullTo(mixins) { arg ->
+              (arg as? JSReferenceExpression)?.resolve()
+                ?.let { VueModelManager.getMixin(it) }
+            }
+          }
+        } else {
+          extendItem.classes.mapNotNullTo(mixins) {
+            VueModelManager.getMixin(it)
           }
         }
       }
