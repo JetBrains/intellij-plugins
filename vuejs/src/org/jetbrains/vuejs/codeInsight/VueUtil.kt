@@ -24,7 +24,12 @@ import com.intellij.lang.typescript.modules.TypeScriptNodeReference
 import com.intellij.lang.typescript.resolve.TypeScriptAugmentationUtil
 import com.intellij.notification.NotificationGroup
 import com.intellij.notification.NotificationGroupManager
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -34,6 +39,7 @@ import com.intellij.psi.impl.source.resolve.FileContextUtil
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider.Result.create
+import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.CachedValuesManager.getCachedValue
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.xml.XmlAttribute
@@ -41,6 +47,7 @@ import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ObjectUtils.tryCast
 import com.intellij.util.castSafelyTo
+import com.intellij.util.ui.EDT
 import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.index.resolveLocally
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpression
@@ -48,7 +55,10 @@ import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.model.source.PROPS_REQUIRED_PROP
 import org.jetbrains.vuejs.model.source.PROPS_TYPE_PROP
 import java.util.*
+import java.util.concurrent.Callable
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.Future
+import java.util.concurrent.TimeUnit
 import kotlin.reflect.KClass
 
 const val LANG_ATTRIBUTE_NAME = "lang"
@@ -333,3 +343,44 @@ fun <T : PsiElement> resolveSymbolFromNodeModule(scope: PsiElement?, moduleName:
     create<T>(null, PsiModificationTracker.MODIFICATION_COUNT)
   }
 }
+
+private val logger = Logger.getInstance("#org.jetbrains.vuejs.codeInsight.VueUtil")
+
+fun <T> edtSafeEval(project: Project, timeout: Long, whenTimeout: T, provider: () -> T): T =
+  if (EDT.isCurrentThreadEdt()) {
+    val map = CachedValuesManager.getManager(project).getCachedValue(project) {
+      create(mutableMapOf<String, Future<*>?>(), ModificationTracker.NEVER_CHANGED)
+    }
+    val key = provider::class.java.name
+    val prevFuture = map[key]
+    if (prevFuture != null && !prevFuture.isDone) {
+      whenTimeout
+    }
+    else {
+      val newFuture = ApplicationManager.getApplication().executeOnPooledThread(Callable {
+        try {
+          provider()
+        }
+        catch (e: Throwable) {
+          if (e !is ProcessCanceledException) {
+            logger.error(e)
+          }
+          throw e
+        }
+      })
+      map[key] = null
+      try {
+        newFuture.get(timeout, TimeUnit.MILLISECONDS)
+      }
+      catch (e: Exception) {
+        map[key] = newFuture
+        if (e is ProcessCanceledException) {
+          throw e
+        }
+        whenTimeout
+      }
+    }
+  }
+  else {
+    provider()
+  }
