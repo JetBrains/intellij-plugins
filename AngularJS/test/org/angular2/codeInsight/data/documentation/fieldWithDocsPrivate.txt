@@ -1,0 +1,1 @@
+<div class='definition'><pre>Dir.change: <span style="color:#000080;">any</span></pre></div><div class='content'><p>Event emitted when the direction changes.</div><table class='sections'><tr><td valign='top'><icon src='JavaScriptPsiIcons.FileTypes.TypeScriptFile'/>&nbsp;deps/dir.ts</td></table>

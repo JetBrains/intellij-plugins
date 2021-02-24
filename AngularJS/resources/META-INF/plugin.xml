@@ -259,6 +259,8 @@
     <colorSettingsPage implementation="org.angular2.lang.html.highlighting.Angular2ColorsAndFontsPage"/>
     <xml.xmlSuppressionProvider implementation="org.angular2.inspections.Angular2HtmlSuppressionProvider" order="first"/>
     <html.embeddedContentSupport implementation="org.angular2.lang.html.lexer.Angular2HtmlEmbeddedContentSupport"/>
+    <lang.documentationProvider implementationClass="org.angular2.codeInsight.Angular2DocumentationProvider"
+                                language="Angular2Html" order="before html"/>
 
     <!-- Angular 2 SVG contributions -->
     <lang.parserDefinition language="Angular2Svg" implementationClass="org.angular2.lang.svg.parser.Angular2SvgParserDefinition"/>

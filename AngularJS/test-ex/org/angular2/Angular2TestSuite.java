@@ -50,6 +50,7 @@ import org.junit.runners.Suite;
   Angular2HtmlIndexerTest.class,
   Angular2HtmlParsingTest.class,
   Angular2DirectiveSimpleSelectorSpecTest.class,
+  Angular2DocumentationTest.class,
   AttributesTest.class,
   ContextTest.class,
   InjectionsTest.class,
