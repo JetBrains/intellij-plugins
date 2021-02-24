@@ -218,6 +218,7 @@ class VueAttributeNameParser private constructor() {
     SLOT(DEPRECATED_SLOT_ATTRIBUTE, deprecated = true),
     REF(REF_ATTRIBUTE_NAME),
     IS("is"),
+    KEY("key"),
     SCOPE("scope", injectJS = true, deprecated = true, requiresTag = TEMPLATE_TAG_NAME, onlyTopLevelTag = false),
     SLOT_SCOPE("slot-scope", injectJS = true, deprecated = true),
     SLOT_NAME(SLOT_NAME_ATTRIBUTE, injectJS = false, requiresTag = SLOT_TAG_NAME),

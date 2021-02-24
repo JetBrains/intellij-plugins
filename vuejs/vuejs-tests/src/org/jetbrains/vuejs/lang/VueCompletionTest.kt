@@ -1478,7 +1478,7 @@ export default class ComponentInsertion extends Vue {
              "!type#100", "!value#100", "about#0", "accesskey#0", "align#0", "autocapitalize#0", "autofocus#0", "class#0",
              "content#0", "contenteditable#0", "datafld#0", "dataformatas#0", "datasrc#0", "datatype#0", "dir#0", "draggable#0",
              "hidden#0", "id#0", "inlist#0", "inputmode#0", "is#25", "itemid#0", "itemprop#0", "itemref#0", "itemscope#0",
-             "itemtype#0", "nonce#0", "prefix#0", "property#0", "ref#25", "rel#0", "resource#0", "rev#0", "role#0", "slot#0",
+             "itemtype#0", "key#25", "nonce#0", "prefix#0", "property#0", "ref#25", "rel#0", "resource#0", "rev#0", "role#0", "slot#0",
              "slot-scope#0", "spellcheck#0", "style#0", "tabindex#0", "title#0", "translate#0", "typeof#0", "v-bind#25",
              "v-bind:#25", "v-cloak#25", "v-else#25", "v-else-if#25", "v-for#25", "v-html#25", "v-if#25", "v-model#25",
              "v-on:#25", "v-once#25", "v-pre#25", "v-show#25", "v-slot#25", "v-slot:#25", "v-text#25", "vocab#0", "xml:base#0",

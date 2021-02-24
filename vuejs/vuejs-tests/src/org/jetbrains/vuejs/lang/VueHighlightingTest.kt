@@ -1437,6 +1437,20 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
     myFixture.checkHighlighting()
   }
 
+  fun testKeyAttributeSupport() {
+    myFixture.configureByText("a-component.vue", """
+      <template>
+        <input v-for='d in [1,2,3]' :key='d'>
+        <div class='hello' 
+              v-show='<weak_warning descr="Unresolved variable or type msg">msg</weak_warning>' 
+              key='ley1' 
+              <warning descr="Attribute kay is not allowed here">kay</warning>='1' >
+        </div>
+      </template>
+    """)
+    myFixture.checkHighlighting()
+  }
+
   fun testPropsWithOptions() {
     myFixture.configureByFiles("propsWithOptions/usage.vue", "propsWithOptions/component.vue")
     myFixture.checkHighlighting()
