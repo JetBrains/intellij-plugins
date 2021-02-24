@@ -340,47 +340,6 @@ fun <T : PsiElement> resolveSymbolFromNodeModule(scope: PsiElement?, moduleName:
       ?.let {
         return@getCachedValue create(it, PsiModificationTracker.MODIFICATION_COUNT)
       }
-    create<T>(null, PsiModificationTracker.MODIFICATION_COUNT)
+    create(null, PsiModificationTracker.MODIFICATION_COUNT)
   }
 }
-
-private val logger = Logger.getInstance("#org.jetbrains.vuejs.codeInsight.VueUtil")
-
-fun <T> edtSafeEval(project: Project, timeout: Long, whenTimeout: T, provider: () -> T): T =
-  if (EDT.isCurrentThreadEdt()) {
-    val map = CachedValuesManager.getManager(project).getCachedValue(project) {
-      create(mutableMapOf<String, Future<*>?>(), ModificationTracker.NEVER_CHANGED)
-    }
-    val key = provider::class.java.name
-    val prevFuture = map[key]
-    if (prevFuture != null && !prevFuture.isDone) {
-      whenTimeout
-    }
-    else {
-      val newFuture = ApplicationManager.getApplication().executeOnPooledThread(Callable {
-        try {
-          provider()
-        }
-        catch (e: Throwable) {
-          if (e !is ProcessCanceledException) {
-            logger.error(e)
-          }
-          throw e
-        }
-      })
-      map[key] = null
-      try {
-        newFuture.get(timeout, TimeUnit.MILLISECONDS)
-      }
-      catch (e: Exception) {
-        map[key] = newFuture
-        if (e is ProcessCanceledException) {
-          throw e
-        }
-        whenTimeout
-      }
-    }
-  }
-  else {
-    provider()
-  }
