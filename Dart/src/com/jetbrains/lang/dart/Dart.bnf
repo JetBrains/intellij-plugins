@@ -222,7 +222,7 @@ partStatement ::= metadata* 'part' uriElement ';' {
   methods = [ getUriString ]
 }
 
-metadata ::= '@' simpleQualifiedReferenceExpression <<argumentsWrapper>>?
+metadata ::= '@' simpleQualifiedReferenceExpression typeArguments? <<argumentsWrapper>>?
 
 uriElement ::= stringLiteralExpression {mixin="com.jetbrains.lang.dart.psi.impl.DartUriElementBase"   methods = [ getUriStringAndItsRange ]}
 

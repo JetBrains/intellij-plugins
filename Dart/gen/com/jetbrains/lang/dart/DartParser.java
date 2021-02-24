@@ -4012,7 +4012,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '@' simpleQualifiedReferenceExpression <<argumentsWrapper>>?
+  // '@' simpleQualifiedReferenceExpression typeArguments? <<argumentsWrapper>>?
   public static boolean metadata(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "metadata")) return false;
     if (!nextTokenIs(b, AT)) return false;
@@ -4021,13 +4021,21 @@ public class DartParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, AT);
     r = r && simpleQualifiedReferenceExpression(b, l + 1);
     r = r && metadata_2(b, l + 1);
+    r = r && metadata_3(b, l + 1);
     exit_section_(b, m, METADATA, r);
     return r;
   }
 
-  // <<argumentsWrapper>>?
+  // typeArguments?
   private static boolean metadata_2(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "metadata_2")) return false;
+    typeArguments(b, l + 1);
+    return true;
+  }
+
+  // <<argumentsWrapper>>?
+  private static boolean metadata_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "metadata_3")) return false;
     argumentsWrapper(b, l + 1);
     return true;
   }

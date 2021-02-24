@@ -1,7 +1,7 @@
 mixin mixin(){}
 mixin mixin;
 mixin M {}
-@a @b() mixin M1<T, Y extends Comparable<Y>> on I<T>, J implements J,I<T> {}
+@a @b() @c<String>() @d<List<String>> mixin M1<T, Y extends Comparable<Y>> on I<T>, J implements J,I<T> {}
 
 class A<A>= Object with M;
 class A<A extends B<E>>= Object with M;
