@@ -53,6 +53,46 @@ Dart File
       ARGUMENTS
         PsiElement(()('(')
         PsiElement())(')')
+    METADATA
+      PsiElement(@)('@')
+      REFERENCE_EXPRESSION
+        ID
+          PsiElement(IDENTIFIER)('c')
+      TYPE_ARGUMENTS
+        PsiElement(<)('<')
+        TYPE_LIST
+          TYPE
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('String')
+        PsiElement(>)('>')
+      ARGUMENTS
+        PsiElement(()('(')
+        PsiElement())(')')
+    METADATA
+      PsiElement(@)('@')
+      REFERENCE_EXPRESSION
+        ID
+          PsiElement(IDENTIFIER)('d')
+      TYPE_ARGUMENTS
+        PsiElement(<)('<')
+        TYPE_LIST
+          TYPE
+            SIMPLE_TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('List')
+              TYPE_ARGUMENTS
+                PsiElement(<)('<')
+                TYPE_LIST
+                  TYPE
+                    SIMPLE_TYPE
+                      REFERENCE_EXPRESSION
+                        ID
+                          PsiElement(IDENTIFIER)('String')
+                PsiElement(>)('>')
+        PsiElement(>)('>')
     PsiElement(mixin)('mixin')
     COMPONENT_NAME
       ID
