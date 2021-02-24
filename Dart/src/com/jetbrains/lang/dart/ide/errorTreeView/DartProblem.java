@@ -173,21 +173,23 @@ public class DartProblem {
                                                          @Nullable @Nls String correction,
                                                          @Nullable @NonNls String url) {
     // First include the error message.
-    HtmlBuilder htmlBuilder = new HtmlBuilder().append(message);
+    HtmlBuilder htmlBuilder = new HtmlBuilder().append(message).append(HtmlChunk.br());
 
     // For each context message, include the message and location.
     if (contextMessages != null && !contextMessages.isEmpty()) {
+      HtmlBuilder listBuilder = new HtmlBuilder();
       for (DiagnosticMessage contextMessage : contextMessages) {
         Location location = contextMessage.getLocation();
         @NlsSafe String msg = StringUtil.trimEnd(contextMessage.getMessage(), '.');
         String locationText = PathUtil.getFileName(location.getFile()) + ":" + location.getStartLine();
-        htmlBuilder.append(HtmlChunk.br()).append(HtmlChunk.br()).append(msg).append(" (" + locationText + ").");
+        listBuilder.append(HtmlChunk.li().addText(msg + " (" + locationText + ")."));
       }
+      htmlBuilder.append(listBuilder.wrapWith("ul"));
     }
 
     // Include the correction text, if included.
     if (StringUtil.isNotEmpty(correction)) {
-      htmlBuilder.append(HtmlChunk.br()).append(HtmlChunk.br()).append(correction);
+      htmlBuilder.append(HtmlChunk.br()).append(correction);
     }
 
     // Finally, include the URL link to documentation.
