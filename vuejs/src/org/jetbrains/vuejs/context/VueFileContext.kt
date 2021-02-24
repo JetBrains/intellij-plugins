@@ -11,15 +11,22 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.xml.XmlTag
 import com.intellij.javascript.web.context.WebFrameworkContext
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
 class VueFileContext : WebFrameworkContext {
+
+  override fun isEnabled(file: VirtualFile, project: Project): Boolean {
+    return file.fileType == VueFileType.INSTANCE
+  }
+
   override fun isEnabled(file: PsiFile): Boolean {
     val vf = file.originalFile.virtualFile
-    if (vf != null && vf.fileType == VueFileType.INSTANCE
+    if (vf != null && isEnabled(vf, file.project)
         || (vf == null && file.language == VueLanguage.INSTANCE)) {
       return true
     }
