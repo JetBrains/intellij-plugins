@@ -1587,6 +1587,13 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
     myFixture.configureByText("Foo.vue", """<input>""")
     myFixture.checkHighlighting()
   }
+
+  fun testSuperComponentMixin() {
+    myFixture.enableInspections(VueInspectionsProvider())
+    myFixture.configureByFiles("superComponentMixin/MainMenu.vue", "superComponentMixin/mixins.ts")
+    myFixture.checkHighlighting()
+  }
+
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {
