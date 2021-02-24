@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.completion;
 
 import com.intellij.CommonBundle;
@@ -65,7 +65,6 @@ public class DartServerCompletionContributor extends CompletionContributor {
               psiElement().inFile(psiFile().withName(".analysis_options")),
               psiElement().inFile(psiFile().withName("analysis_options.yaml")),
               psiElement().inFile(psiFile().withName("pubspec.yaml")),
-              // TODO(jwren) Update this file name here with the final name chosen.
               psiElement().inFile(psiFile().withName("fix_data.yaml"))
            ),
            new CompletionProvider<CompletionParameters>() {
@@ -225,12 +224,12 @@ public class DartServerCompletionContributor extends CompletionContributor {
     final int codeOffset = parameters.getOffset();
 
     final DartAnalysisServerService das = DartAnalysisServerService.getInstance(project);
-    final Pair<List<CompletionSuggestion>, List<RuntimeCompletionExpression>> completionResult =
+    final RuntimeCompletionResult completionResult =
       das.execution_getSuggestions(code, codeOffset,
                                    contextFile, contextOffset,
                                    Collections.emptyList(), Collections.emptyList());
-    if (completionResult != null && completionResult.getFirst() != null) {
-      for (CompletionSuggestion suggestion : completionResult.getFirst()) {
+    if (completionResult != null && completionResult.suggestions != null) {
+      for (CompletionSuggestion suggestion : completionResult.suggestions) {
         LookupElementBuilder lookupElement = createLookupElement(project, suggestion);
         resultSet.addElement(lookupElement);
       }
@@ -458,15 +457,15 @@ public class DartServerCompletionContributor extends CompletionContributor {
     if (isNotYetImported) {
       lookup = lookup.withInsertHandler((context, item) -> {
         final DartAnalysisServerService das = DartAnalysisServerService.getInstance(project);
-        final Pair<String, SourceChange> result =
+        final GetCompletionDetailsResult result =
           das.completion_getSuggestionDetails(file, suggestionSetId, suggestion.getCompletion(), context.getStartOffset());
         if (result == null) {
           return;
         }
 
-        context.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), result.getFirst());
+        context.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), result.completion);
 
-        @Nullable final SourceChange change = result.getSecond();
+        @Nullable final SourceChange change = result.change;
         if (change == null) {
           return;
         }
