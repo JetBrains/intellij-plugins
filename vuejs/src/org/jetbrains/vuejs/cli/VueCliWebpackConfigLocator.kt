@@ -18,8 +18,7 @@ class VueCliWebpackConfigLocator : WebPackConfigLocator {
 
     PackageJsonUtil.processUpPackageJsonFiles(project, virtualFile) {
       if (it.isValid && PackageJsonData.getOrCreateWithPreferredProject(project, it).isDependencyOfAnyType(VUE_CLI_SERVICE_PKG)) {
-        val moduleInfo = NodeModuleSearchUtil.resolveModuleFromNodeModulesDir(it.parent, VUE_CLI_SERVICE_PKG,
-                                                                              NodeModuleDirectorySearchProcessor.PROCESSOR)
+        val moduleInfo = NodeModuleSearchUtil.resolveModule(VUE_CLI_SERVICE_PKG, it.parent, emptyList(), false, project)
         config = moduleInfo?.moduleSourceRoot?.findChild("webpack.config.js")
         if (config != null) {
           return@processUpPackageJsonFiles false

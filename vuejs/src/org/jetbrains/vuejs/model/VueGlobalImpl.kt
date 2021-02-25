@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.model
 
 import com.intellij.javascript.nodejs.PackageJsonData
 import com.intellij.javascript.nodejs.library.NodeModulesDirectoryManager
+import com.intellij.javascript.nodejs.library.yarn.YarnPnpManager
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.library.JSLibraryUtil.NODE_MODULES
@@ -69,12 +70,27 @@ internal class VueGlobalImpl(override val project: Project, private val packageJ
     dependencies.add(VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
     dependencies.addAll(enabledPackagesResult.dependencyItems)
     dependencies.add(NodeModulesDirectoryManager.getInstance(project).nodeModulesDirChangeTracker)
-    packageJson?.let {
-      PackageJsonUtil.processUpPackageJsonFilesInAllScope(it) { candidate ->
+    packageJson?.let { file ->
+      val yarnPnpManager = YarnPnpManager.getInstance(project)
+      val visiblePackages = if (yarnPnpManager.isUnderPnp(file)) {
+        enabledPackages.toMutableSet()
+      }
+      else null
+      PackageJsonUtil.processUpPackageJsonFilesInAllScope(file) { candidate ->
+        visiblePackages?.addAll(PackageJsonData.getOrCreate(candidate).allDependencies)
         result.addAll(getPlugins(candidate, enabledPackages))
         dependencies.add(candidate)
         true
       }
+      visiblePackages
+        ?.asSequence()
+        ?.mapNotNull {
+          yarnPnpManager.findInstalledPackageDir(file, it)
+            ?.let { dir -> PackageJsonUtil.findChildPackageJsonFile(dir) }
+        }
+        ?.filter { isVueLibrary(it, enabledPackages) }
+        ?.map { VuePluginImpl(project, it) }
+        ?.toCollection(result)
     }
     // ensure we have Vue plugin
     if (result.find { it.moduleName == VUE_MODULE } == null) {
@@ -87,13 +103,12 @@ internal class VueGlobalImpl(override val project: Project, private val packageJ
   }
 
   private fun getPlugins(packageJson: VirtualFile,
-                         enabledPackages: Set<String>): List<VuePlugin> =
+                         enabledPackages: Set<String>): Sequence<VuePlugin> =
     NodeModuleUtil.findNodeModulesByPackageJson(packageJson)
       ?.let { getVuePluginPackageJsons(it, enabledPackages) }
       ?.filter { isVueLibrary(it, enabledPackages) }
       ?.map { VuePluginImpl(project, it) }
-      ?.toList()
-    ?: emptyList()
+    ?: emptySequence()
 
   private fun getVuePluginPackageJsons(nodeModules: VirtualFile,
                                        enabledPackages: Set<String>): Sequence<VirtualFile> {

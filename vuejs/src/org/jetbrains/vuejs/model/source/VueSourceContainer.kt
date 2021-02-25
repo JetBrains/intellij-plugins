@@ -6,7 +6,6 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.psi.PsiElement
 import com.intellij.util.castSafelyTo
-import one.util.streamex.StreamEx
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInfo
@@ -71,15 +70,13 @@ abstract class VueSourceContainer(sourceElement: JSImplicitElement,
   private abstract class MemberAccessor<T>(val extInfoAccessor: (VueContainerInfo) -> T?, val takeFirst: Boolean = false) {
 
     fun get(descriptor: VueSourceEntityDescriptor): T {
-      return StreamEx.of(VueContainerInfoProvider.getProviders())
-               .map { it.getInfo(descriptor)?.let(extInfoAccessor) }
-               .nonNull()
+      return VueContainerInfoProvider.getProviders()
+               .asSequence()
+               .mapNotNull { it.getInfo(descriptor)?.let(extInfoAccessor) }
                .let {
-                 @Suppress("UNCHECKED_CAST")
-                 (it as StreamEx<T>)
+                 if (takeFirst) it.firstOrNull()
+                 else it.reduce(::merge)
                }
-               .let { if (takeFirst) it.findFirst() else it.reduce(::merge) }
-               .orElseGet(::empty)
              ?: empty()
     }
 
@@ -100,7 +97,7 @@ abstract class VueSourceContainer(sourceElement: JSImplicitElement,
     override fun merge(arg1: List<T>, arg2: List<T>): List<T> {
       if (arg1.isEmpty()) return arg2
       if (arg2.isEmpty()) return arg1
-      return StreamEx.of(arg1).append(arg2).distinct(::keyExtractor).toList()
+      return arg1.asSequence().plus(arg2).distinctBy(::keyExtractor).toList()
     }
 
     open fun keyExtractor(obj: T): Any {
