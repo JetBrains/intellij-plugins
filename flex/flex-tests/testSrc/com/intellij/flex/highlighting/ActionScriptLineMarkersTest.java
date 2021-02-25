@@ -236,7 +236,7 @@ public class ActionScriptLineMarkersTest extends ActionScriptDaemonAnalyzerTestC
     doTestFor(true, getTestName(false) + ".js2");
   }
 
-  @JSTestOptions({JSTestOption.WithLineMarkers, JSTestOption.WithSemanticKeywords})
+  @JSTestOptions({JSTestOption.WithInfos, JSTestOption.WithSymbolNames})
   public void testSemanticHighlighting() {
     defaultTest(); // IDEA-110040
   }
