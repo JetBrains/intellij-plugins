@@ -2,6 +2,7 @@
 package com.intellij.prettierjs.config;
 
 import com.intellij.lang.javascript.EmbeddedJsonSchemaFileProvider;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -13,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 
-public final class PrettierConfigJsonSchemaProviderFactory implements JsonSchemaProviderFactory {
+public final class PrettierConfigJsonSchemaProviderFactory implements JsonSchemaProviderFactory, DumbAware {
   static final String SCHEMA_FILE_NAME = "prettierrc-schema.json";
 
   @NotNull
