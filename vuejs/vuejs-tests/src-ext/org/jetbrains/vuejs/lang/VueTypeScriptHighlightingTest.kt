@@ -14,6 +14,7 @@ import org.jetbrains.vuejs.lang.html.VueLanguage
 
 class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
   private val toFix = setOf(
+    "SemanticKeywords", //different visibility
     "NodeDefTypes153",
     "NodeDefTypes",
     "GenericSeveralSignaturesWithConstraint",
