@@ -24,7 +24,6 @@
  */
 package org.osmorc.settings;
 
-import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -99,7 +98,7 @@ public class FrameworkDefinitionsEditorComponent {
           false, false, false, null, -1, null
         ).show(Objects.requireNonNull(b.getPreferredPopupPoint()))
         )
-        .setAddIcon(new LayeredIcon(AllIcons.General.Add, AllIcons.General.Dropdown))
+        .setAddIcon(LayeredIcon.ADD_WITH_DROPDOWN)
         .setRemoveAction((b) -> removeFrameworkInstance())
         .setEditAction((b) -> editFrameworkInstance())
         .createPanel(), BorderLayout.CENTER
