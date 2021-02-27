@@ -129,6 +129,7 @@
   GT=">"
   GT_EQ=">="
   GT_GT=">>"
+  GT_GT_GT=">>>"
   GT_GT_EQ=">>="
   LT="<"
   LT_EQ="<="
@@ -368,7 +369,7 @@ private binaryOperator ::= multiplicativeOperator |
 
 multiplicativeOperator ::= '*' | '/' | '%' | '~/'
 additiveOperator ::= '+' | '-'
-shiftOperator ::= '<<' | <<gtGt>>
+shiftOperator ::= '<<' | <<gtGtGt>> | <<gtGt>>
 relationalOperator ::= <<gtEq>> | '>' | '<=' | '<'
 bitwiseOperator ::= '&' | '^' | '|'
 
