@@ -121,7 +121,7 @@ public class CfmlRunConfigurationTest extends CfmlCodeInsightFixtureTestCase {
 
   public PsiFile createCfmPsiFile(String filename) throws IOException {
     String filePath = getDataPath() + filename;
-    FileInputStream fileInputStream = new FileInputStream(new File(filePath));
+    FileInputStream fileInputStream = new FileInputStream(filePath);
     try {
       String testText = StringUtil.convertLineSeparators(FileUtil.loadTextAndClose(fileInputStream));
       return myFixture.addFileToProject(WWWROOT_SRC + filename, testText);
