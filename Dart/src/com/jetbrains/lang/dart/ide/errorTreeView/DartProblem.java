@@ -180,8 +180,6 @@ public class DartProblem {
       htmlBuilder.append(" (").appendLink(url, DartBundle.message("error.doc.link")).append(")");
     }
 
-    htmlBuilder.append(HtmlChunk.br());
-
     // For each context message, include the message and location.
     if (contextMessages != null && !contextMessages.isEmpty()) {
       HtmlBuilder listBuilder = new HtmlBuilder();
@@ -193,10 +191,13 @@ public class DartProblem {
       }
       htmlBuilder.append(listBuilder.wrapWith("ul"));
     }
+    else if (StringUtil.isNotEmpty(correction)) {
+      htmlBuilder.append(HtmlChunk.br()).append(HtmlChunk.br());
+    }
 
     // Include the correction text, if included.
     if (StringUtil.isNotEmpty(correction)) {
-      htmlBuilder.append(HtmlChunk.br()).append(correction);
+      htmlBuilder.append(correction);
     }
 
     return htmlBuilder.wrapWith("html").toString();
