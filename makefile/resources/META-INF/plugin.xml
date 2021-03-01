@@ -62,10 +62,15 @@ Plugin source code was previously located at <a href="https://github.com/kropp/i
     <stubElementTypeHolder class="com.jetbrains.lang.makefile.psi.MakefileTypes" />
     <stubIndex implementation="com.jetbrains.lang.makefile.MakefileTargetIndex" />
 
-    <toolWindow id="make" anchor="right" icon="MakefileIcons.MakefileToolWindow" factoryClass="com.jetbrains.lang.makefile.toolWindow.MakeToolWindowFactory" secondary="true"/>
+    <postStartupActivity implementation="com.jetbrains.lang.makefile.toolWindow.MakefileToolWindowRegistrar"/>
 
     <internalFileTemplate name="Makefile" />
   </extensions>
+
+  <extensionPoints>
+    <extensionPoint qualifiedName="com.intellij.makefile.toolWindowStripeController"
+                    interface="com.jetbrains.lang.makefile.toolWindow.MakefileToolWindowStripeController" dynamic="true"/>
+  </extensionPoints>
 
   <actions>
   </actions>
