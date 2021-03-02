@@ -15,7 +15,6 @@ import com.intellij.xml.XmlAttributeDescriptor
 import com.intellij.xml.XmlElementDescriptor
 import com.intellij.xml.XmlElementsGroup
 import com.intellij.xml.XmlNSDescriptor
-import one.util.streamex.StreamEx
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor.AttributePriority.LOW
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
@@ -27,8 +26,8 @@ import org.jetbrains.vuejs.model.*
 
 class VueElementDescriptor(private val tag: XmlTag, private val sources: Collection<VueComponent> = emptyList()) : XmlElementDescriptor {
 
-  override fun getDeclaration(): JSImplicitElement {
-    return StreamEx.of(sources)
+  override fun getDeclaration(): JSImplicitElement =
+    sources.asSequence()
       .map { it.source }
       .map {
         if (it !is JSImplicitElement
@@ -38,12 +37,9 @@ class VueElementDescriptor(private val tag: XmlTag, private val sources: Collect
         else
           it
       }
-      .select(JSImplicitElement::class.java)
-      .findFirst()
-      .orElseGet {
-        JSImplicitElementImpl(JSImplicitElementImpl.Builder(tag.name, tag).forbidAstAccess())
-      }
-  }
+      .filterIsInstance<JSImplicitElement>()
+      .firstOrNull()
+    ?: JSImplicitElementImpl(JSImplicitElementImpl.Builder(tag.name, tag).forbidAstAccess())
 
   override fun getName(context: PsiElement?): String = (context as? XmlTag)?.name ?: name
   override fun getName(): String = fromAsset(declaration.name)
@@ -51,13 +47,11 @@ class VueElementDescriptor(private val tag: XmlTag, private val sources: Collect
   override fun getQualifiedName(): String = name
   override fun getDefaultName(): String = name
 
-  override fun getElementsDescriptors(context: XmlTag): Array<XmlElementDescriptor> {
-    return XmlDescriptorUtil.getElementsDescriptors(context)
-  }
+  override fun getElementsDescriptors(context: XmlTag): Array<XmlElementDescriptor> =
+    XmlDescriptorUtil.getElementsDescriptors(context)
 
-  override fun getElementDescriptor(childTag: XmlTag, contextTag: XmlTag): XmlElementDescriptor? {
-    return XmlDescriptorUtil.getElementDescriptor(childTag, contextTag)
-  }
+  override fun getElementDescriptor(childTag: XmlTag, contextTag: XmlTag): XmlElementDescriptor? =
+    XmlDescriptorUtil.getElementDescriptor(childTag, contextTag)
 
   override fun getAttributesDescriptors(context: XmlTag?): Array<out XmlAttributeDescriptor> {
     val result = mutableListOf<XmlAttributeDescriptor>()
@@ -67,53 +61,39 @@ class VueElementDescriptor(private val tag: XmlTag, private val sources: Collect
     return result.toTypedArray()
   }
 
-  fun getSources(): List<VueComponent> {
-    return sources.toList()
-  }
+  fun getSources(): List<VueComponent> =
+    sources.toList()
 
-  fun getPsiSources(): List<PsiElement> {
-    return sources.mapNotNull { it.source }
+  fun getPsiSources(): List<PsiElement> =
+    sources.mapNotNull { it.source }
       .ifEmpty {
         listOf(JSImplicitElementImpl(JSImplicitElementImpl.Builder(tag.name, tag).forbidAstAccess()))
       }
-  }
 
-  fun getProps(): List<XmlAttributeDescriptor> {
-    return StreamEx.of(sources)
-      .flatCollection {
-        val result = mutableListOf<XmlAttributeDescriptor>()
-        it.acceptPropertiesAndMethods(object : VueModelVisitor() {
-          override fun visitInputProperty(prop: VueInputProperty, proximity: Proximity): Boolean {
-            result.add(VueAttributeDescriptor(tag, fromAsset(prop.name), prop))
-            return true
-          }
-        })
-        result
-      }
-      .toList()
-  }
+  fun getProps(): List<XmlAttributeDescriptor> =
+    sources.flatMap {
+      val result = mutableListOf<XmlAttributeDescriptor>()
+      it.acceptPropertiesAndMethods(object : VueModelVisitor() {
+        override fun visitInputProperty(prop: VueInputProperty, proximity: Proximity): Boolean {
+          result.add(VueAttributeDescriptor(tag, fromAsset(prop.name), prop))
+          return true
+        }
+      })
+      result
+    }
 
-  fun getSlots(): List<VueSlot> {
-    return StreamEx.of(sources)
-      .select(VueContainer::class.java)
-      .flatCollection { it.slots }
-      .toList()
-  }
+  fun getSlots(): List<VueSlot> =
+    sources.flatMap { (it as? VueContainer)?.slots ?: emptyList() }
 
-  fun getEmitCalls(): List<VueEmitCall> {
-    return StreamEx.of(sources)
-      .select(VueContainer::class.java)
-      .flatCollection { it.emits }
-      .toList()
-  }
+  fun getEmitCalls(): List<VueEmitCall> =
+    sources.flatMap { (it as? VueContainer)?.emits ?: emptyList() }
 
-  fun getModel(): VueModelDirectiveProperties? {
-    return StreamEx.of(sources)
-      .select(VueContainer::class.java)
+  fun getModel(): VueModelDirectiveProperties =
+    sources.asSequence()
+      .filterIsInstance<VueContainer>()
       .map { it.model }
-      .findFirst()
-      .orElseGet { VueModelDirectiveProperties() }
-  }
+      .firstOrNull()
+    ?: VueModelDirectiveProperties()
 
   override fun getAttributeDescriptor(attributeName: String?, context: XmlTag?): XmlAttributeDescriptor? {
     val info = VueAttributeNameParser.parse(attributeName ?: return null,
@@ -144,8 +124,8 @@ class VueElementDescriptor(private val tag: XmlTag, private val sources: Collect
 
   private fun resolveToProp(context: XmlTag, propName: String, attributeName: String): XmlAttributeDescriptor? {
     val propFromAsset = fromAsset(propName)
-    return StreamEx.of(sources)
-      .map {
+    return sources.asSequence()
+      .mapNotNull {
         var result: XmlAttributeDescriptor? = null
         it.acceptPropertiesAndMethods(object : VueModelVisitor() {
           override fun visitInputProperty(prop: VueInputProperty, proximity: Proximity): Boolean {
@@ -158,13 +138,11 @@ class VueElementDescriptor(private val tag: XmlTag, private val sources: Collect
         })
         result
       }
-      .nonNull()
-      .findFirst()
-      .orElse(null)
+      .firstOrNull()
   }
 
-  override fun getAttributeDescriptor(attribute: XmlAttribute?): XmlAttributeDescriptor? = getAttributeDescriptor(attribute?.name,
-                                                                                                                  attribute?.parent)
+  override fun getAttributeDescriptor(attribute: XmlAttribute?): XmlAttributeDescriptor? =
+    getAttributeDescriptor(attribute?.name, attribute?.parent)
 
   override fun getNSDescriptor(): XmlNSDescriptor? = null
   override fun getTopGroup(): XmlElementsGroup? = null
