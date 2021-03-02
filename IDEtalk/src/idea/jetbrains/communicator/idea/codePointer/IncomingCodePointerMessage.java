@@ -25,6 +25,7 @@ import jetbrains.communicator.idea.VFSUtil;
 import jetbrains.communicator.util.CommunicatorStrings;
 import jetbrains.communicator.util.PositionCorrector;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.Date;
@@ -113,7 +114,7 @@ public class IncomingCodePointerMessage extends BaseIncomingLocalMessage {
 
   private class MyHyperlinkInfo implements HyperlinkInfo {
     @Override
-    public void navigate(Project project) {
+    public void navigate(@NotNull Project project) {
       updateFacade();
       VirtualFile virtualFile = VFSUtil.getVirtualFile(myRemoteFile);
       if (virtualFile == null) {

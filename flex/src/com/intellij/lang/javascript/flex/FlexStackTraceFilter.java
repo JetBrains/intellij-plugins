@@ -153,7 +153,7 @@ public class FlexStackTraceFilter implements Filter {
     }
 
     @Override
-    public void navigate(final Project project) {
+    public void navigate(@NotNull Project project) {
       final List<VirtualFile> validFiles = new ArrayList<>(myFiles.size());
       for (final VirtualFile file : myFiles) {
         if (file.isValid()) {

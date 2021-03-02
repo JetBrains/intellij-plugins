@@ -124,7 +124,7 @@ public class DartConsoleFilter implements Filter {
     }
 
     @Override
-    public void navigate(final Project project) {
+    public void navigate(@NotNull Project project) {
       OpenDartObservatoryUrlAction.openUrlInChromeFamilyBrowser(myUrl);
     }
   }
