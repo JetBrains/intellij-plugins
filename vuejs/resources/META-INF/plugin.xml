@@ -37,7 +37,6 @@
   <depends optional="true" config-file="js-debugger.xml">JavaScriptDebugger</depends>
   <depends optional="true" config-file="vue-copyright.xml">com.intellij.copyright</depends>
   <depends optional="true" config-file="prettier.xml">intellij.prettierJS</depends>
-  <depends optional="true" config-file="python.xml">Pythonid</depends>
 
   <extensionPoints>
     <!--suppress PluginXmlValidity -->

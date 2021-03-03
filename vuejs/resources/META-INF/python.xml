@@ -1,5 +1,0 @@
-<idea-plugin package="org.jetbrains.vuejs.libraries.python">
-  <extensions defaultExtensionNs="com.intellij">
-    <vuejs.contextProvider implementation="org.jetbrains.vuejs.libraries.python.PythonTemplatesContextProvider"/>
-  </extensions>
-</idea-plugin>
