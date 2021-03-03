@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 final class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
   @Override
@@ -53,7 +54,8 @@ final class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
                                             entry.getKey());
           graphBuilders.add(Pair.create(entry.getKey().getName(), graphBuilder));
         }
-      }), AngularJSBundle.message("angularjs.ui.router.diagram.action.new.diagram.progress", diagramProvider.getPresentableName()), false, project);
+      }), AngularJSBundle.message("angularjs.ui.router.diagram.action.new.diagram.progress", diagramProvider.getPresentableName()), false,
+      project);
 
     final AngularUiRouterProviderContext routerProviderContext = AngularUiRouterProviderContext.getInstance(project);
     routerProviderContext.reset();
@@ -106,7 +108,18 @@ final class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
   @Override
   public void update(@NotNull AnActionEvent e) {
     final Project project = e.getProject();
-    e.getPresentation().setEnabledAndVisible(project != null && AngularIndexUtil.hasAngularJS(project));
+    try {
+      e.getPresentation().setEnabledAndVisible(
+        project != null
+        && ApplicationManager.getApplication()
+             .executeOnPooledThread(() -> {
+               return AngularIndexUtil.hasAngularJS(project);
+             })
+             .get(5, TimeUnit.MILLISECONDS) == Boolean.TRUE);
+    }
+    catch (Exception exception) {
+      e.getPresentation().setEnabledAndVisible(false);
+    }
 
     //noinspection DialogTitleCapitalization
     e.getPresentation().setText(AngularJSBundle.message("angularjs.ui.router.diagram.action.new.diagram.name"));
