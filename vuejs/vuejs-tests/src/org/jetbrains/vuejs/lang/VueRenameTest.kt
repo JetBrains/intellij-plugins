@@ -26,7 +26,9 @@
 // limitations under the License.
 package org.jetbrains.vuejs.lang
 
+import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.testFramework.fixtures.CodeInsightTestUtil
 
 class VueRenameTest : BasePlatformTestCase() {
 
@@ -56,25 +58,21 @@ class VueRenameTest : BasePlatformTestCase() {
     doTest("newName")
   }
 
+  fun testInlineFieldRename() {
+    myFixture.configureByFile("inlineField.vue")
+    CodeInsightTestUtil.doInlineRename(VariableInplaceRenameHandler(), "foo", myFixture)
+    myFixture.checkResultByFile("inlineField_after.vue")
+  }
+
   fun testComponentNameFromDeclaration() {
-    val testFile1 = getTestName(true) + "1.vue"
-    val testFile2 = getTestName(true) + "2.vue"
-    val testFile3 = getTestName(true) + ".html"
-    val testFile4 = getTestName(true) + ".ts"
-    val testFile5 = getTestName(true) + ".js"
-    val testFileAfter1 = getTestName(true) + "1_after.vue"
-    val testFileAfter2 = getTestName(true) + "2_after.vue"
-    myFixture.configureByFile(testFile5)
-    myFixture.configureByFile(testFile4)
-    myFixture.configureByFile(testFile3)
-    myFixture.configureByFile(testFile2)
-    myFixture.configureByFile(testFile1)
-    myFixture.testRename(testFileAfter1, "AfterComponent")
-    myFixture.checkResultByFile(testFile1, testFileAfter1, true)
-    myFixture.checkResultByFile(testFile2, testFileAfter2, true)
-    myFixture.checkResultByFile(testFile3, testFile3, true)
-    myFixture.checkResultByFile(testFile4, testFile4, true)
-    myFixture.checkResultByFile(testFile5, testFile5, true)
+    val testName = getTestName(true)
+    val testFiles = listOf("1.vue", "2.vue", ".html", ".ts", ".js").map { testName + it }
+    val afterFiles = listOf("1_after.vue", "2_after.vue").map { testName + it }
+    testFiles.reversed().forEach { myFixture.configureByFile(it) }
+    myFixture.testRename(afterFiles[0], "AfterComponent")
+    testFiles.indices.forEach {
+      myFixture.checkResultByFile(testFiles[it], afterFiles.getOrNull(it) ?: testFiles[it], true)
+    }
   }
 
   private fun doTest(newName: String) {
