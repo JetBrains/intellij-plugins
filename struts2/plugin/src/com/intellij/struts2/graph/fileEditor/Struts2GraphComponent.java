@@ -20,7 +20,6 @@ import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.graph.GraphManager;
-import com.intellij.openapi.graph.base.Node;
 import com.intellij.openapi.graph.builder.GraphBuilder;
 import com.intellij.openapi.graph.builder.GraphBuilderFactory;
 import com.intellij.openapi.graph.builder.util.GraphViewUtil;
@@ -41,15 +40,15 @@ import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomEventListener;
 import com.intellij.util.xml.DomManager;
 import com.intellij.util.xml.events.DomEvent;
-import java.awt.BorderLayout;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Yann C&eacute;bron
@@ -102,16 +101,13 @@ public class Struts2GraphComponent extends JPanel implements DataProvider, Dispo
   }
 
   public List<DomElement> getSelectedDomElements() {
-    final List<DomElement> selected = new ArrayList<>();
-    final Graph2D graph = myBuilder.getGraph();
-    for (final Node node : graph.getNodeArray()) {
-      if (graph.isSelected(node)) {
-        final BasicStrutsNode nodeObject = myBuilder.getNodeObject(node);
-        if (nodeObject != null) {
-          ContainerUtil.addIfNotNull(selected, nodeObject.getIdentifyingElement());
-        }
+    final var selected = new ArrayList<DomElement>();
+    GraphViewUtil.forEachSelectedNode(myBuilder.getGraph(), node -> {
+      final var nodeObject = myBuilder.getNodeObject(node);
+      if (nodeObject != null) {
+        ContainerUtil.addIfNotNull(selected, nodeObject.getIdentifyingElement());
       }
-    }
+    });
     return selected;
   }
 
