@@ -64,7 +64,9 @@ final class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
       routerProviderContext.registerNodesBuilder(nodesBuilder);
       final DiagramObject element = nodesBuilder.getRootNode().getIdentifyingElement();
 
-      //noinspection unchecked
+      //noinspection unchecked,rawtypes
+      logStatistics(project, (DiagramProvider)diagramProvider, element, Collections.emptyList());
+      //noinspection unchecked,rawtypes
       final Runnable callback =
         show(project, ((DiagramProvider)diagramProvider), element, Collections.emptyList(), getLocation(e.getDataContext(), e));
       if (callback != null) {
