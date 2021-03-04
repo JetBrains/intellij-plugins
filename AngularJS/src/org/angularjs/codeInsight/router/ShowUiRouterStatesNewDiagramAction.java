@@ -4,16 +4,21 @@ package org.angularjs.codeInsight.router;
 import com.intellij.diagram.DiagramProvider;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.ui.components.JBList;
 import com.intellij.uml.core.actions.ShowDiagram;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
+import com.intellij.util.concurrency.AppExecutorUtil;
 import icons.AngularJSIcons;
 import org.angularjs.AngularJSBundle;
 import org.angularjs.index.AngularIndexUtil;
@@ -109,23 +114,28 @@ final class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
 
   @Override
   public void update(@NotNull AnActionEvent e) {
-    final Project project = e.getProject();
-    try {
-      e.getPresentation().setEnabledAndVisible(
-        project != null
-        && ApplicationManager.getApplication()
-             .executeOnPooledThread(() -> {
-               return AngularIndexUtil.hasAngularJS(project);
-             })
-             .get(5, TimeUnit.MILLISECONDS) == Boolean.TRUE);
-    }
-    catch (Exception exception) {
-      e.getPresentation().setEnabledAndVisible(false);
-    }
-
+    e.getPresentation().setEnabledAndVisible(isAngularJsContext(e));
     //noinspection DialogTitleCapitalization
     e.getPresentation().setText(AngularJSBundle.message("angularjs.ui.router.diagram.action.new.diagram.name"));
     e.getPresentation().setDescription(AngularJSBundle.message("angularjs.ui.router.diagram.action.new.diagram.description"));
     e.getPresentation().setIcon(AngularJSIcons.AngularJS);
+  }
+
+  private static boolean isAngularJsContext(@NotNull AnActionEvent e) {
+    final Project project = e.getProject();
+    if (project == null) return false;
+    try {
+      return CachedValuesManager.getManager(project)
+               .getCachedValue(project, () -> CachedValueProvider.Result.create(
+                 ReadAction.nonBlocking(() -> AngularIndexUtil.hasAngularJS(project))
+                   .inSmartMode(project)
+                   .submit(AppExecutorUtil.getAppExecutorService()),
+                 ModificationTracker.NEVER_CHANGED
+               ))
+               .get(5, TimeUnit.MILLISECONDS) == Boolean.TRUE;
+    }
+    catch (Exception exception) {
+      return false;
+    }
   }
 }
