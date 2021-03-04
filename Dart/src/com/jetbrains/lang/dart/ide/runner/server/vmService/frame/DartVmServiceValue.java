@@ -4,7 +4,6 @@ package com.jetbrains.lang.dart.ide.runner.server.vmService.frame;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.NlsSafe;
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.xdebugger.XSourcePosition;
@@ -39,8 +38,6 @@ public class DartVmServiceValue extends XNamedValue {
   private final @Nullable LocalVarSourceLocation myLocalVarSourceLocation;
   private final @Nullable FieldRef myFieldRef;
   private final boolean myIsException;
-
-  private final Ref<Integer> myCollectionChildrenAlreadyShown = new Ref<>(0);
 
   public DartVmServiceValue(@NotNull DartVmServiceDebugProcess debugProcess,
                             @NotNull String isolateId,
@@ -348,7 +345,7 @@ public class DartVmServiceValue extends XNamedValue {
     }
 
     if ((isListKind(myInstanceRef.getKind()) || myInstanceRef.getKind() == InstanceKind.Map)) {
-      computeCollectionChildren(node);
+      computeCollectionChildren(0, node);
     }
     else {
       myDebugProcess.getVmServiceWrapper().getObject(myIsolateId, myInstanceRef.getId(), new GetObjectConsumer() {
@@ -370,27 +367,24 @@ public class DartVmServiceValue extends XNamedValue {
     }
   }
 
-  private void computeCollectionChildren(@NotNull XCompositeNode node) {
-    final int offset = myCollectionChildrenAlreadyShown.get();
+  private void computeCollectionChildren(int offset, @NotNull XCompositeNode node) {
     final int count = Math.min(myInstanceRef.getLength() - offset, XCompositeNode.MAX_CHILDREN_TO_SHOW);
 
     myDebugProcess.getVmServiceWrapper().getCollectionObject(myIsolateId, myInstanceRef.getId(), offset, count, new GetObjectConsumer() {
       @Override
       public void received(Obj instance) {
         if (isListKind(myInstanceRef.getKind())) {
-          addListChildren(node, ((Instance)instance).getElements());
+          addListChildren(offset, node, ((Instance)instance).getElements());
         }
         else if (myInstanceRef.getKind() == InstanceKind.Map) {
-          addMapChildren(node, Objects.requireNonNull(((Instance)instance).getAssociations()));
+          addMapChildren(offset, node, Objects.requireNonNull(((Instance)instance).getAssociations()));
         }
         else {
           assert false : myInstanceRef.getKind();
         }
 
-        myCollectionChildrenAlreadyShown.set(myCollectionChildrenAlreadyShown.get() + count);
-
         if (offset + count < myInstanceRef.getLength()) {
-          node.tooManyChildren(myInstanceRef.getLength() - offset - count);
+          node.tooManyChildren(myInstanceRef.getLength() - offset - count, () -> computeCollectionChildren(offset + count, node));
         }
       }
 
@@ -406,23 +400,23 @@ public class DartVmServiceValue extends XNamedValue {
     });
   }
 
-  private void addListChildren(@NotNull XCompositeNode node, @Nullable ElementList<InstanceRef> listElements) {
+  private void addListChildren(int offset, @NotNull XCompositeNode node, @Nullable ElementList<InstanceRef> listElements) {
     if (listElements == null) {
       node.addChildren(XValueChildrenList.EMPTY, true);
       return;
     }
 
     final XValueChildrenList childrenList = new XValueChildrenList(listElements.size());
-    int index = myCollectionChildrenAlreadyShown.get();
+    int index = offset;
     for (InstanceRef listElement : listElements) {
       childrenList.add(new DartVmServiceValue(myDebugProcess, myIsolateId, String.valueOf(index++), listElement, null, null, false));
     }
     node.addChildren(childrenList, true);
   }
 
-  private void addMapChildren(@NotNull XCompositeNode node, @NotNull ElementList<MapAssociation> mapAssociations) {
+  private void addMapChildren(int offset, @NotNull XCompositeNode node, @NotNull ElementList<MapAssociation> mapAssociations) {
     final XValueChildrenList childrenList = new XValueChildrenList(mapAssociations.size());
-    int index = myCollectionChildrenAlreadyShown.get();
+    int index = offset;
     for (MapAssociation mapAssociation : mapAssociations) {
       final InstanceRef keyInstanceRef = mapAssociation.getKey();
       final InstanceRef valueInstanceRef = mapAssociation.getValue();

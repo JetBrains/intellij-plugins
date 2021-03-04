@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.psi;
 
 import com.intellij.ide.highlighter.HtmlFileType;
@@ -50,6 +51,7 @@ public class DartPackageAwareFileIncludeProvider extends FileIncludeProvider {
 
   @Override
   public FileIncludeInfo @NotNull [] getIncludeInfos(@NotNull final FileContent content) {
+    if (content.getProject().isDefault()) return FileIncludeInfo.EMPTY;
     if (PubspecYamlUtil.findPubspecYamlFile(content.getProject(), content.getFile()) == null) return FileIncludeInfo.EMPTY;
 
     final PsiFile psiFile = content.getPsiFile();

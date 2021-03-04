@@ -1,3 +1,4 @@
+# this file should be dropped after we stop supporting minitest < 5.x (2013 year, 1% of users at 2020)
 minitest_5_or_newer = false
 Gem::Specification::find_all_by_name('minitest').each do |gem|
   if Gem::Version.new(gem.version) >= Gem::Version.new('5.0')

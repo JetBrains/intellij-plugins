@@ -90,7 +90,7 @@ module.exports = function (config) {
   }
 
   var plugins = config.plugins || [];
-  plugins.push(require.resolve('./intellijPlugin.js'));
+  plugins.push(require('./intellijPlugin.js'));
   config.plugins = plugins;
 
   // Don't load the original configuration file in the browser.

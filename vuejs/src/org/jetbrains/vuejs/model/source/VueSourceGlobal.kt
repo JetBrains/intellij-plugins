@@ -43,15 +43,11 @@ class VueSourceGlobal(override val project: Project, private val packageJsonUrl:
     get() = getCachedValue { buildMixinsList(it) }
 
   override val components: Map<String, VueComponent>
-    get() {
-      return getComponents(true)
-    }
+    get() = getComponents(true)
 
   override val unregistered: VueEntitiesContainer = object : VueEntitiesContainer {
     override val components: Map<String, VueComponent>
-      get() {
-        return getComponents(false)
-      }
+      get() = getComponents(false)
     override val directives: Map<String, VueDirective> = emptyMap()
     override val filters: Map<String, VueFilter> = emptyMap()
     override val mixins: List<VueMixin> get() = emptyList()
@@ -59,18 +55,15 @@ class VueSourceGlobal(override val project: Project, private val packageJsonUrl:
     override val parents: List<VueEntitiesContainer> = emptyList()
   }
 
-  override fun equals(other: Any?): Boolean {
-    return (other as? VueSourceGlobal)?.let {
+  override fun equals(other: Any?): Boolean =
+    (other as? VueSourceGlobal)?.let {
       it.project == project && it.packageJsonUrl == packageJsonUrl
     } ?: false
-  }
 
-  override fun hashCode(): Int {
-    return (project.hashCode()) * 31 + packageJsonUrl.hashCode()
-  }
+  override fun hashCode(): Int = (project.hashCode()) * 31 + packageJsonUrl.hashCode()
 
-  private fun getComponents(global: Boolean): Map<String, VueComponent> {
-    return getCachedValue { scope ->
+  private fun getComponents(global: Boolean): Map<String, VueComponent> =
+    getCachedValue { scope ->
       val componentsData = VueComponentsCalculation.calculateScopeComponents(scope, false)
 
       val moduleComponents = componentsData.map
@@ -98,20 +91,31 @@ class VueSourceGlobal(override val project: Project, private val packageJsonUrl:
 
       // Add Vue files without regular initializer as possible imports
       val psiManager = PsiManager.getInstance(project)
-      FileBasedIndex.getInstance().getFilesWithKey(VueEmptyComponentInitializersIndex.VUE_NO_INITIALIZER_COMPONENTS_INDEX, setOf(true), { file ->
-        val componentName = fromAsset(file.nameWithoutExtension)
-        if (!localComponents.containsKey(componentName)) {
-          psiManager.findFile(file)
-            ?.let { psiFile -> VueModelManager.getComponent(VueSourceEntityDescriptor(source = psiFile)) }
-            ?.let { localComponents[componentName] = it }
-        }
-        true
-      }, scope)
+      FileBasedIndex.getInstance().getFilesWithKey(
+        VueEmptyComponentInitializersIndex.VUE_NO_INITIALIZER_COMPONENTS_INDEX, setOf(true),
+        { file ->
+          val componentName = fromAsset(file.nameWithoutExtension)
+          if (!localComponents.containsKey(componentName)) {
+            psiManager.findFile(file)
+              ?.let { psiFile ->
+                VueModelManager.getComponent(VueSourceEntityDescriptor(source = psiFile))
+              }
+              ?.let { localComponents[componentName] = it }
+          }
+          true
+        }, scope)
 
-      sortedMapOf(Pair(true, globalComponents),
-                  Pair(false, localComponents))
-    }[global] ?: emptyMap()
-  }
+      // Contribute components from providers.
+      val sourceComponents = VueContainerInfoProvider.ComponentsInfo(localComponents.toMap(), globalComponents.toMap())
+      VueContainerInfoProvider.getProviders()
+        .mapNotNull { it.getAdditionalComponents(scope, sourceComponents) }
+        .forEach {
+          globalComponents.putAll(it.global)
+          localComponents.putAll(it.local)
+        }
+
+      VueContainerInfoProvider.ComponentsInfo(localComponents.toMap(), globalComponents.toMap())
+    }.get(!global)
 
   private fun <T> getCachedValue(provider: (GlobalSearchScope) -> T): T {
     val psiFile: PsiFile? = VueGlobalImpl.findFileByUrl(packageJsonUrl)
@@ -134,36 +138,33 @@ class VueSourceGlobal(override val project: Project, private val packageJsonUrl:
   }
 
   companion object {
-    private fun buildDirectives(searchScope: GlobalSearchScope): Map<String, VueDirective> {
-      return getForAllKeys(searchScope, VueGlobalDirectivesIndex.KEY)
+    private fun buildDirectives(searchScope: GlobalSearchScope): Map<String, VueDirective> =
+      getForAllKeys(searchScope, VueGlobalDirectivesIndex.KEY)
         .asSequence()
         .map { Pair(it.name, VueSourceDirective(it.name, it.parent)) }
         // TODO properly support multiple directives with the same name
         .distinctBy { it.first }
         .toMap(TreeMap())
-    }
 
-    private fun buildMixinsList(scope: GlobalSearchScope): List<VueMixin> {
-      return resolve(GLOBAL, scope, VueMixinBindingIndex.KEY)
-               ?.asSequence()
-               ?.mapNotNull { VueComponents.vueMixinDescriptorFinder(it) }
-               ?.mapNotNull { VueModelManager.getMixin(it) }
-               ?.toList()
-             ?: emptyList()
-    }
+    private fun buildMixinsList(scope: GlobalSearchScope): List<VueMixin> =
+      resolve(GLOBAL, scope, VueMixinBindingIndex.KEY)
+        ?.asSequence()
+        ?.mapNotNull { VueComponents.vueMixinDescriptorFinder(it) }
+        ?.mapNotNull { VueModelManager.getMixin(it) }
+        ?.toList()
+      ?: emptyList()
 
-    private fun buildAppsList(scope: GlobalSearchScope): List<VueApp> {
-      return getForAllKeys(scope, VueOptionsIndex.KEY)
+    private fun buildAppsList(scope: GlobalSearchScope): List<VueApp> =
+      getForAllKeys(scope, VueOptionsIndex.KEY)
         .asSequence()
         .filter(VueComponents.Companion::isNotInLibrary)
         .mapNotNull { it as? JSObjectLiteralExpression ?: PsiTreeUtil.getParentOfType(it, JSObjectLiteralExpression::class.java) }
         .map { VueModelManager.getApp(it) }
         .filter { it.element != null }
         .toList()
-    }
 
-    private fun buildFiltersMap(scope: GlobalSearchScope): Map<String, VueFilter> {
-      return getForAllKeys(scope, VueGlobalFiltersIndex.KEY)
+    private fun buildFiltersMap(scope: GlobalSearchScope): Map<String, VueFilter> =
+      getForAllKeys(scope, VueGlobalFiltersIndex.KEY)
         .asSequence()
         .mapNotNull { element ->
           VueModelManager.getFilter(element)
@@ -172,6 +173,5 @@ class VueSourceGlobal(override val project: Project, private val packageJsonUrl:
         // TODO properly support multiple filters with the same name
         .distinctBy { it.first }
         .toMap(TreeMap())
-    }
   }
 }

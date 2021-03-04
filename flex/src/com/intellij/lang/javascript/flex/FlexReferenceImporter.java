@@ -15,9 +15,6 @@ import org.jetbrains.annotations.NotNull;
 public class FlexReferenceImporter implements ReferenceImporter {
   @Override
   public boolean autoImportReferenceAtCursor(@NotNull final Editor editor, @NotNull final PsiFile file) {
-    if (!ActionScriptAutoImportOptionsProvider.isAddUnambiguousImportsOnTheFly()) return false;
-    if (!(file instanceof JSFile) || file.getLanguage() != JavaScriptSupportLoader.ECMA_SCRIPT_L4) return false;
-
     int offset = editor.getCaretModel().getOffset();
     JSReferenceExpression expression = JSImportHandlingUtil.findUnresolvedReferenceExpression(editor, file, offset);
     if (expression != null) {
@@ -25,5 +22,12 @@ public class FlexReferenceImporter implements ReferenceImporter {
       return true;
     }
     return false;
+  }
+
+  @Override
+  public boolean isAddUnambiguousImportsOnTheFlyEnabled(@NotNull PsiFile file) {
+    return file instanceof JSFile &&
+           file.getLanguage() == JavaScriptSupportLoader.ECMA_SCRIPT_L4 &&
+           ActionScriptAutoImportOptionsProvider.isAddUnambiguousImportsOnTheFly();
   }
 }

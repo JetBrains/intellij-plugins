@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.codeInsight.tags
 import com.intellij.codeInsight.completion.PrioritizedLookupElement
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.lang.Language
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
@@ -12,10 +13,12 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.SmartPointerManager
 import com.intellij.psi.impl.source.xml.XmlElementDescriptorProvider
+import com.intellij.psi.impl.source.xml.XmlTextImpl
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.XmlElementDescriptor
 import com.intellij.xml.XmlTagNameProvider
 import icons.VuejsIcons
+import org.jetbrains.vuejs.codeInsight.LANG_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.detectVueScriptLanguage
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.toAsset
@@ -30,8 +33,15 @@ private const val PLUGIN_PRIORITY = 90.0
 private const val GLOBAL_PRIORITY = 80.0
 private const val UNREGISTERED_PRIORITY = 50.0
 
-val CUSTOM_TOP_LEVEL_TAGS: Map<String, String> = mapOf(
-  Pair("i18n", "JSON")
+val CUSTOM_TOP_LEVEL_TAGS: Map<String, (XmlTag, XmlTextImpl) -> Language?> = mapOf(
+  Pair("i18n", { tag, text ->
+    tag.getAttributeValue(LANG_ATTRIBUTE_NAME)
+      ?.let { lang -> Language.getRegisteredLanguages().find { it.id.equals(lang, true) } }
+    ?: if (text.chars.find { !it.isWhitespace() }?.let { it == '{' || it == '[' } != false)
+      Language.findLanguageByID("JSON")
+    else
+      Language.findLanguageByID("yaml")
+  })
 )
 
 class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {

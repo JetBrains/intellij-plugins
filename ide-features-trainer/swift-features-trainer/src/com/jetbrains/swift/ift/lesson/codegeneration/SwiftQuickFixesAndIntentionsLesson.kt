@@ -96,6 +96,7 @@ class QuickFixes: NSObject {
       triggers("com.intellij.codeInsight.daemon.impl.DaemonTooltipWithActionRenderer\$addActionsRow$1")
       text(SwiftLessonsBundle.message("swift.codegeneration.quickfix.redundant", code("@objc")))
     }
+    caret(43, 18)
     task {
       triggers("ShowIntentionActions")
       text(SwiftLessonsBundle.message("swift.codegeneration.quickfix.explicit.type", action("ShowIntentionActions"), code("fileManager")))

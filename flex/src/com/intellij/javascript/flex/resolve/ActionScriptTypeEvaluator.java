@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.psi.ecmal4.impl.JSPackageWrapper;
 import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
 import com.intellij.lang.javascript.psi.resolve.*;
 import com.intellij.lang.javascript.psi.types.*;
+import com.intellij.lang.javascript.psi.types.evaluable.JSCustomElementType;
 import com.intellij.lang.javascript.psi.types.primitives.JSPrimitiveArrayType;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
@@ -124,7 +125,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
       }
     }
     else if (resolveResult instanceof JSPackageWrapper) {
-      myTypeProcessor.processResolvedElement(resolveResult, myContext);
+      addType(new JSCustomElementType(resolveResult), null);
     }
     else {
       super.addTypeFromElementResolveResult(resolveResult);

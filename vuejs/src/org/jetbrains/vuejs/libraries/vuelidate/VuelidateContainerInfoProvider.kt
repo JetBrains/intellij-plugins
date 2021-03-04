@@ -19,8 +19,6 @@ import org.jetbrains.vuejs.types.VueComponentInstanceType
 
 class VuelidateContainerInfoProvider : VueContainerInfoProvider {
 
-  override fun getInfo(descriptor: VueSourceEntityDescriptor): VueContainerInfo? = null
-
   override fun getThisTypeProperties(instanceOwner: VueInstanceOwner,
                                      standardProperties: MutableMap<String, JSRecordType.PropertySignature>): Collection<JSRecordType.PropertySignature> {
     val source = instanceOwner.source!!

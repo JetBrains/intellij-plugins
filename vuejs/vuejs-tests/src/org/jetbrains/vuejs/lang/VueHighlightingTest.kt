@@ -787,7 +787,7 @@ Vue.component('global-comp-literal', {
   }
 
   fun testBuiltinTagsHighlighting() {
-    myFixture.configureDependencies(VueTestModule.VUE_2_5_3)
+    myFixture.configureVueDependencies(VueTestModule.VUE_2_5_3)
     myFixture.configureByText("BuiltinTagsHighlighting.vue", """
 <template>
     <transition-group>
@@ -1297,7 +1297,7 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
   }
 
   fun testVueExtendSyntax() {
-    myFixture.configureDependencies(VueTestModule.VUE_2_5_3)
+    myFixture.configureVueDependencies(VueTestModule.VUE_2_5_3)
     myFixture.configureByText("a-component.vue", """<script>export default Vue.extend({props:{msg: String}})</script>""")
     myFixture.configureByText("b-component.vue", """
       <template>
@@ -1320,7 +1320,7 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
   }
 
   fun testBootstrapVue() {
-    myFixture.configureDependencies(VueTestModule.BOOTSTRAP_VUE_2_0_0_RC_11)
+    myFixture.configureVueDependencies(VueTestModule.BOOTSTRAP_VUE_2_0_0_RC_11)
     myFixture.configureByText("b-component.vue", """
       <template>
         <b-alert show>Foo</b-alert>
@@ -1412,7 +1412,7 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
   }
 
   fun testDirectiveWithModifiers() {
-    myFixture.configureDependencies(VueTestModule.BOOTSTRAP_VUE_2_0_0_RC_11)
+    myFixture.configureVueDependencies(VueTestModule.BOOTSTRAP_VUE_2_0_0_RC_11)
     myFixture.configureByText("a-component.vue", """
       <template>
         <div>
@@ -1491,7 +1491,7 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
   }
 
   fun testCompositionApiBasic() {
-    myFixture.configureDependencies(VueTestModule.COMPOSITION_API_0_4_0)
+    myFixture.configureVueDependencies(VueTestModule.COMPOSITION_API_0_4_0)
     myFixture.configureByFile("compositeComponent1.vue")
     myFixture.checkHighlighting()
     myFixture.configureByFile("compositeComponent2.vue")
@@ -1512,19 +1512,19 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
   }
 
   fun testComputedTypeTS() {
-    myFixture.configureDependencies(VueTestModule.VUE_2_6_10)
+    myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10)
     myFixture.configureByFile("computedTypeTS.vue")
     myFixture.checkHighlighting()
   }
 
   fun testComputedTypeJS() {
-    myFixture.configureDependencies(VueTestModule.VUE_2_6_10)
+    myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10)
     myFixture.configureByFile("computedTypeJS.vue")
     myFixture.checkHighlighting()
   }
 
   fun testDataTypeTS() {
-    myFixture.configureDependencies(VueTestModule.VUE_2_6_10)
+    myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10)
     myFixture.configureByFile("dataTypeTS.vue")
     myFixture.checkHighlighting()
   }
@@ -1546,21 +1546,21 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
   }
 
   fun testIndirectExport() {
-    myFixture.configureDependencies(VueTestModule.VUE_2_6_10)
+    myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10)
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.configureByFile("indirectExport.vue")
     myFixture.checkHighlighting()
   }
 
   fun testAsyncSetup() {
-    myFixture.configureDependencies(VueTestModule.VUE_3_0_0)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.configureByFile("asyncSetup.vue")
     myFixture.checkHighlighting()
   }
 
   fun testScriptSetup() {
-    myFixture.configureDependencies(VueTestModule.VUE_3_0_0)
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.configureByFile("scriptSetup.vue")
     myFixture.checkHighlighting()

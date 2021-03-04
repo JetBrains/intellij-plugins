@@ -9,6 +9,7 @@ import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonUtil.checkExpectedStateOfEditor
+import training.learn.lesson.kimpl.defaultRestoreDelay
 import training.learn.lesson.kimpl.parseLessonSample
 
 class RubyPostfixCompletionLesson(module: Module)
@@ -53,7 +54,7 @@ end
         triggerByListItemAndHighlight {
           it.toString() == "string_array.length > 1"
         }
-        restoreByUi(200)
+        restoreByUi(delayMillis = defaultRestoreDelay)
         test {
           ideFrame {
             jList("if").item(0).doubleClick()

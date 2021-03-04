@@ -98,7 +98,7 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
   }
 
   fun testPureHtmlUniformIndent() {
-    myFixture.configureDependencies()
+    myFixture.configureVueDependencies()
     JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) {
       it.getCustomSettings(VueCodeStyleSettings::class.java).UNIFORM_INDENT = false
       it.getCustomSettings(HtmlCodeStyleSettings::class.java).HTML_UNIFORM_INDENT = true
@@ -110,7 +110,7 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
   }
 
   fun testPureHtmlPerLangIndent() {
-    myFixture.configureDependencies()
+    myFixture.configureVueDependencies()
     JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) {
       it.getCustomSettings(VueCodeStyleSettings::class.java).UNIFORM_INDENT = true
       it.getCustomSettings(HtmlCodeStyleSettings::class.java).HTML_UNIFORM_INDENT = false

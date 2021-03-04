@@ -4,6 +4,7 @@ package org.jetbrains.ruby.ift
 import org.jetbrains.plugins.ruby.ruby.lang.RubyLanguage
 import org.jetbrains.ruby.ift.lesson.assistance.RubyEditorCodingAssistanceLesson
 import org.jetbrains.ruby.ift.lesson.basic.RubyContextActionsLesson
+import org.jetbrains.ruby.ift.lesson.basic.RubySelectLesson
 import org.jetbrains.ruby.ift.lesson.basic.RubySurroundAndUnwrapLesson
 import org.jetbrains.ruby.ift.lesson.completion.RubyBasicCompletionLesson
 import org.jetbrains.ruby.ift.lesson.completion.RubyCompletionWithTabLesson
@@ -36,7 +37,7 @@ class RubyLearningCourse : LearningCourseBase(RubyLanguage.INSTANCE.id) {
       listOf(
         RubyContextActionsLesson(it),
         GotoActionLesson(it, lang, ls("Actions.rb.sample")),
-        SelectLesson(it, lang, ls("Selection.rb.sample")),
+        RubySelectLesson(it),
         SingleLineCommentLesson(it, lang, ls("Comment.rb.sample")),
         DuplicateLesson(it, lang, ls("Duplicate.rb.sample")),
         MoveLesson(it, lang, "set(v)", ls("Move.rb.sample")),
@@ -48,7 +49,7 @@ class RubyLearningCourse : LearningCourseBase(RubyLanguage.INSTANCE.id) {
     LearningModule(name = LessonsBundle.message("code.completion.module.name"),
                    description = LessonsBundle.message("code.completion.module.description"),
                    primaryLanguage = langSupport,
-                   moduleType = LessonType.PROJECT) {
+                   moduleType = LessonType.SINGLE_EDITOR) {
       listOf(
         RubyBasicCompletionLesson(it),
         RubyHippieCompletionLesson(it),
@@ -59,7 +60,7 @@ class RubyLearningCourse : LearningCourseBase(RubyLanguage.INSTANCE.id) {
     LearningModule(name = LessonsBundle.message("refactorings.module.name"),
                    description = LessonsBundle.message("refactorings.module.description"),
                    primaryLanguage = langSupport,
-                   moduleType = LessonType.PROJECT) {
+                   moduleType = LessonType.SINGLE_EDITOR) {
       fun ls(sampleName: String) = loadSample("Refactorings/$sampleName")
       listOf(
         RubyRefactorMenuLesson(it),
@@ -71,7 +72,7 @@ class RubyLearningCourse : LearningCourseBase(RubyLanguage.INSTANCE.id) {
     LearningModule(name = LessonsBundle.message("code.assistance.module.name"),
                    description = LessonsBundle.message("code.assistance.module.description"),
                    primaryLanguage = langSupport,
-                   moduleType = LessonType.PROJECT) {
+                   moduleType = LessonType.SINGLE_EDITOR) {
       fun ls(sampleName: String) = loadSample("CodeAssistance/$sampleName")
       listOf(
         CodeFormatLesson(it, lang, ls("CodeFormat.rb.sample"), false),

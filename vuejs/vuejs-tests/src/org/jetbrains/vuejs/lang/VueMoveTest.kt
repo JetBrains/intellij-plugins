@@ -13,4 +13,8 @@ class VueMoveTest: JSMoveTestBase() {
   fun testTsPathMappings() {
     doTest("src/components/ImportedFile.vue", "src/components/sub-directory")
   }
+
+  fun testIndexFile() {
+    doTest("declared/subdir/index.vue", "declared")
+  }
 }

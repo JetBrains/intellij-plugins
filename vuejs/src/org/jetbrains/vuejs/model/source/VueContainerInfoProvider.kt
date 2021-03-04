@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSRecordType.PropertySignature
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.openapi.extensions.ExtensionPointName
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.EntityContainerInfoProvider.DecoratedContainerInfoProvider
 import org.jetbrains.vuejs.model.source.EntityContainerInfoProvider.InitializedContainerInfoProvider
@@ -13,12 +14,16 @@ import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInf
 interface VueContainerInfoProvider : EntityContainerInfoProvider<VueContainerInfo> {
 
   @JvmDefault
-  override fun getInfo(descriptor: VueSourceEntityDescriptor): VueContainerInfo?
+  fun getAdditionalComponents(scope: GlobalSearchScope, sourceComponents: ComponentsInfo): ComponentsInfo? = null
 
   @JvmDefault
   fun getThisTypeProperties(instanceOwner: VueInstanceOwner,
                             standardProperties: MutableMap<String, PropertySignature>)
     : Collection<PropertySignature> = emptyList()
+
+  data class ComponentsInfo(val local: Map<String, VueComponent>, val global: Map<String, VueComponent>) {
+    fun get(local: Boolean): Map<String, VueComponent> = if (local) this.local else global
+  }
 
   interface VueContainerInfo {
     val components: Map<String, VueComponent> get() = emptyMap()

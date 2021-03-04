@@ -5,6 +5,7 @@ import org.jetbrains.ruby.ift.RubyLessonsBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
+import training.learn.lesson.kimpl.LessonUtil.restoreIfModifiedOrMoved
 import training.learn.lesson.kimpl.parseLessonSample
 
 class RubyHippieCompletionLesson(module: Module)
@@ -29,16 +30,19 @@ end
       task("HippieCompletion") {
         text(RubyLessonsBundle.message("ruby.hippie.completion.invoke.hippie.completion", action(it)))
         trigger(it) { editor.document.text == step1 }
+        restoreIfModifiedOrMoved()
         test { actions(it) }
       }
       task("HippieCompletion") {
         text(RubyLessonsBundle.message("ruby.hippie.completion.repeat.one.time", action(it)))
         trigger(it) { editor.document.text == step2 }
+        restoreIfModifiedOrMoved()
         test { actions(it) }
       }
       task("HippieBackwardCompletion") {
         text(RubyLessonsBundle.message("ruby.hippie.completion.return.previous", action(it)))
         trigger(it) { editor.document.text == step1 }
+        restoreIfModifiedOrMoved()
         test { actions(it) }
       }
     }

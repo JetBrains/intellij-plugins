@@ -14,13 +14,21 @@ import org.jetbrains.vuejs.libraries.nuxt.model.impl.NuxtApplicationImpl
 
 object NuxtModelManager {
 
-  fun getApplication(project:Project, context: VirtualFile): NuxtApplication? =
+  fun getApplication(project: Project, context: VirtualFile): NuxtApplication? =
     findParentEntry(context, getNuxtApplicationMap(project))
 
   fun getApplication(context: PsiElement): NuxtApplication? =
     context.containingFile?.originalFile?.virtualFile?.let {
       getApplication(context.project, it)
     }
+
+  fun getApplication(context: GlobalSearchScope): NuxtApplication? =
+    context.project
+      ?.let { getNuxtApplicationMap(it) }
+      ?.asSequence()
+      ?.filter { context.contains(it.key) }
+      ?.map { it.value }
+      ?.singleOrNull()
 
   private fun getNuxtApplicationMap(project: Project): Map<VirtualFile, NuxtApplication> =
     CachedValuesManager.getManager(project).getCachedValue(project) {

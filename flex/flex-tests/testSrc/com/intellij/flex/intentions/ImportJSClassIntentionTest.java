@@ -33,7 +33,7 @@ public class ImportJSClassIntentionTest extends BaseJSIntentionTestCase {
     ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
     boolean oldHintsEnabled = CodeInsightSettings.getInstance().ADD_UNAMBIGIOUS_IMPORTS_ON_THE_FLY;
 
-    CodeInsightSettings.getInstance().ADD_UNAMBIGIOUS_IMPORTS_ON_THE_FLY = true;
+    CodeInsightSettings.getInstance().ADD_UNAMBIGIOUS_IMPORTS_ON_THE_FLY = false;
     try {
       PropertiesComponent.getInstance().setValue("ActionScript.add.unambiguous.imports.on.the.fly", true);
       DaemonCodeAnalyzerSettings.getInstance().setImportHintEnabled(true);

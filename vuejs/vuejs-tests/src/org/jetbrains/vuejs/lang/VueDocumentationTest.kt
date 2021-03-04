@@ -9,7 +9,7 @@ class VueDocumentationTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String = getVueTestDataPath() + "/"
 
   fun testDocumentationFromDefinitions() {
-    myFixture.configureDependencies(VueTestModule.VUE_2_5_3)
+    myFixture.configureVueDependencies(VueTestModule.VUE_2_5_3)
     myFixture.configureByText("testDocumentationFromDefinitions.vue", """
 <script>
   export default {

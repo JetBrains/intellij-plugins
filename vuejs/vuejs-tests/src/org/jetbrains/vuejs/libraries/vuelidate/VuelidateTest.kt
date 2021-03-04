@@ -11,7 +11,7 @@ class VuelidateTest : BasePlatformTestCase() {
 
   override fun setUp() {
     super.setUp()
-    myFixture.configureDependencies(VueTestModule.VUE_2_6_10, VueTestModule.VUELIDATE_0_7_13)
+    myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10, VueTestModule.VUELIDATE_0_7_13)
   }
 
   fun testCompletion() {

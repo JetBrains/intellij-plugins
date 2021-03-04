@@ -6,10 +6,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.wm.ToolWindowAnchor
 import training.lang.AbstractLangSupport
+import training.util.getFeedbackLink
 
 class SwiftSupport : AbstractLangSupport() {
   override val primaryLanguage: String
     get() = "swift"
+
+  override val langCourseFeedback get() = getFeedbackLink(this, true)
 
   override val defaultProductName: String = "AppCode"
 

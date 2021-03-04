@@ -4,12 +4,12 @@ package org.jetbrains.vuejs.libraries.nuxt
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.VueTestModule
-import org.jetbrains.vuejs.lang.configureDependencies
+import org.jetbrains.vuejs.lang.configureVueDependencies
 
 class NuxtConfigTest : BasePlatformTestCase() {
 
   fun testBasic() {
-    myFixture.configureDependencies(VueTestModule.NUXT_2_8_1)
+    myFixture.configureVueDependencies(VueTestModule.NUXT_2_8_1)
     myFixture.configureByText("nuxt.config.js", "export default {<caret>}")
     myFixture.completeBasic()
     TestCase.assertEquals(
@@ -20,7 +20,7 @@ class NuxtConfigTest : BasePlatformTestCase() {
   }
 
   fun testHeadMeta() {
-    myFixture.configureDependencies(VueTestModule.VUE_2_6_10, VueTestModule.NUXT_2_8_1)
+    myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10, VueTestModule.NUXT_2_8_1)
     myFixture.configureByText("nuxt.config.js", "export default { head:{ meta:[{<caret>}] } }")
     myFixture.completeBasic()
     TestCase.assertEquals(
@@ -29,7 +29,7 @@ class NuxtConfigTest : BasePlatformTestCase() {
   }
 
   fun testBasic2_9() {
-    myFixture.configureDependencies(VueTestModule.NUXT_2_9_2)
+    myFixture.configureVueDependencies(VueTestModule.NUXT_2_9_2)
     myFixture.configureByText("nuxt.config.js", "export default {<caret>}")
     myFixture.completeBasic()
     TestCase.assertEquals(
@@ -41,7 +41,7 @@ class NuxtConfigTest : BasePlatformTestCase() {
   }
 
   fun testHeadMeta2_9() {
-    myFixture.configureDependencies(VueTestModule.VUE_2_6_10, VueTestModule.NUXT_2_9_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10, VueTestModule.NUXT_2_9_2)
     myFixture.configureByText("nuxt.config.js", "export default { head:{ meta:[{<caret>}] } }")
     myFixture.completeBasic()
     TestCase.assertEquals(
@@ -50,7 +50,7 @@ class NuxtConfigTest : BasePlatformTestCase() {
   }
 
   fun testBasic2_13() {
-    myFixture.configureDependencies(VueTestModule.NUXT_2_13_2)
+    myFixture.configureVueDependencies(VueTestModule.NUXT_2_13_2)
     myFixture.configureByText("nuxt.config.js", "export default {<caret>}")
     myFixture.completeBasic()
     TestCase.assertEquals(
@@ -62,7 +62,7 @@ class NuxtConfigTest : BasePlatformTestCase() {
   }
 
   fun testHeadMeta2_13() {
-    myFixture.configureDependencies(VueTestModule.VUE_2_6_10, VueTestModule.NUXT_2_13_2)
+    myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10, VueTestModule.NUXT_2_13_2)
     myFixture.configureByText("nuxt.config.js", "export default { head:{ meta:[{<caret>}] } }")
     myFixture.completeBasic()
     TestCase.assertEquals(

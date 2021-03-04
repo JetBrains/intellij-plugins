@@ -43,7 +43,7 @@ abstract class NuxtVuexContainer(override val source: PsiDirectory) : VuexContai
       val result = mutableMapOf<String, VuexModule>()
       getJSFiles(source).forEach { (name, file) ->
         if (name !in RESERVED_NAMES) {
-          result[name] = VuexModuleImpl(name, file)
+          result[name] = VuexModuleImpl(name, file, true)
         }
       }
       source.processChildren {

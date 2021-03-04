@@ -1,3 +1,5 @@
+# Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+
 # This file is the main entrypoint in the process of injection of RubyMine output formatter into minitest / minitest-reporters
 # infrastructure. It sets up the runner and reporter for minitest.
 
@@ -48,7 +50,6 @@ else
   module Minitest
     class << self
       attr_accessor :rubymine_reporter
-      attr_accessor :my_drb_url
     end
 
     def self.plugin_rm_reporter_init(options)
@@ -56,6 +57,7 @@ else
 
       Minitest.reporter.reporters.clear
       Minitest.reporter.reporters << self.rubymine_reporter
+      # can't additional reporters be registered after we put our?
     end
 
     class TestResult < Struct.new(:suite, :name, :assertions, :time, :exception)
@@ -92,11 +94,13 @@ else
         GC.disable
         self.reporter = reporter
         self.my_mutex = Mutex.new
-        self.already_run_tests = []
+        self.already_run_tests = Set[]
       end
 
       def init
-        Minitest.my_drb_url = DRb.start_service(nil, self.already_run_tests).uri
+        my_drb_url = DRb.start_service('druby://localhost:0', self.already_run_tests).uri
+        @my_pid = Process.pid
+        @tests = DRbObject.new_with_uri(my_drb_url)
       end
 
       def end_execution
@@ -104,25 +108,33 @@ else
       end
 
       def process_test(test)
-        DRb.start_service
-        tests = DRbObject.new_with_uri(Minitest.my_drb_url)
-
         my_mutex.synchronize {
-          unless tests.include? test.class.to_s
-            tests << test.class.to_s
+          start_drb_server_smart
+          unless @tests.include?(test.class.to_s)
+            @tests.add(test.class.to_s)
             reporter.log(Rake::TeamCity::MessageFactory.create_suite_started(test.class.to_s, reporter.minitest_test_location(test), '0', test.class.to_s))
           end
         }
       end
 
       private
-        def close_all_suites
-          (0...already_run_tests.count).each do |i|
-            reporter.log(Rake::TeamCity::MessageFactory.create_suite_finished(already_run_tests[i], already_run_tests[i]))
-          end
-          already_run_tests.clear
-          GC.enable
+
+      # starts Drb service for the forked process if necessary.
+      # See: https://docs.ruby-lang.org/en/master/DRb.html#module-DRb-label-Client+code
+      def start_drb_server_smart
+        unless @my_pid == Process.pid
+          DRb.start_service('druby://localhost:0')
+          @my_pid = Process.pid
         end
+      end
+
+      def close_all_suites
+        already_run_tests.each do |test|
+          reporter.log(Rake::TeamCity::MessageFactory.create_suite_finished(test, test))
+        end
+        already_run_tests.clear
+        GC.enable
+      end
     end
 
     class RubyMineMinitestSequenceTestCaseManager
@@ -301,10 +313,16 @@ else
         msg
       end
 
+      # This method is a bit lame. It covers minitest thread-based parallelization, but won't cover ActiveSupport process-based parallelization.
+      # Actually we should use parallel manager all the time, even for a single threaded run. It brings small overhead, but supports any
+      # type of parallelization
+
       private
+
       def parallel_run?
-        defined?(Minitest) && Minitest.respond_to?(:parallel_executor) && Minitest.parallel_executor.respond_to?(:start) ||
-            defined?(MiniTest::Unit::TestCase) && MiniTest::Unit::TestCase.respond_to?(:test_order) && MiniTest::Unit::TestCase.test_order == :parallel
+        defined?(Minitest) && Minitest.respond_to?(:parallel_executor) && Minitest.parallel_executor.respond_to?(:start) &&
+          Minitest.parallel_executor.respond_to?(:size) && Minitest.parallel_executor.size > 1 ||
+          defined?(MiniTest::Unit::TestCase) && MiniTest::Unit::TestCase.respond_to?(:test_order) && MiniTest::Unit::TestCase.test_order == :parallel
       end
 
       def get_test_name(test)
