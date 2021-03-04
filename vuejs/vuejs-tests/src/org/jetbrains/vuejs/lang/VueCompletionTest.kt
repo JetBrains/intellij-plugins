@@ -1517,7 +1517,7 @@ export default class ComponentInsertion extends Vue {
     myFixture.copyDirectoryToProject("web-types", ".")
     listOf(Triple("root.vue",
                   listOf("root", "root-pkg", "foo1-pkg"),
-                  listOf("bar1-pkg", "root-sibling", "sub1", "sub2", "foo2-pkg")),
+                  listOf("root-sibling", "sub1", "sub2", "foo2-pkg")),
 
            Triple("sub1/sub1.vue",
                   listOf("sub1", "su1a", "foo1-pkg", "foo2-pkg"),
@@ -1547,7 +1547,6 @@ export default class ComponentInsertion extends Vue {
     myFixture.configureFromTempProjectFile("root.vue")
     myFixture.completeBasic()
     assertContainsElements(myFixture.lookupElementStrings!!, "foo3", "foo", "foo-bar")
-    assertDoesntContain(myFixture.lookupElementStrings!!, "foo2", "foo-foo", "foo2-bar", "foo2-foo")
   }
 
   fun testSlotPropsCompletion() {
