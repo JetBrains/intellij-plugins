@@ -2,10 +2,14 @@
 package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
+import com.intellij.lang.javascript.evaluation.JSCodeBasedTypeFactory
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
+import com.intellij.lang.javascript.psi.resolve.JSCompleteTypeEvaluationProcessor
+import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.*
+import com.intellij.lang.javascript.psi.types.evaluable.JSReturnedExpressionType
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
@@ -74,6 +78,9 @@ class VueCompositionInfoProvider : VueContainerInfoProvider {
               ?.takeIf { (it.type as? JSTypeImpl)?.typeText == "Promise" }
               ?.arguments
               ?.getOrNull(0)
+            ?: (returnType as? JSReturnedExpressionType)?.findAssociatedExpression()?.let {
+              JSCodeBasedTypeFactory.getPsiBasedType(it, JSEvaluateContext(it.containingFile))
+            }
             ?: returnType
           }
         is XmlFile -> findScriptTag(initializer)
