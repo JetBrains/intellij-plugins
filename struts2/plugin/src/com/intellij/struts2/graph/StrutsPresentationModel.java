@@ -22,6 +22,7 @@ import com.intellij.openapi.graph.view.Graph2D;
 import com.intellij.openapi.graph.view.Graph2DView;
 import com.intellij.openapi.graph.view.NodeRealizer;
 import com.intellij.openapi.paths.PathReference;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiClass;
@@ -136,7 +137,7 @@ public class StrutsPresentationModel extends BasicGraphPresentationModel<BasicSt
     editMode.allowEdgeCreation(false);
 
     view.setFitContentOnResize(false);
-    view.setAntialiasedPainting(false);
+    view.setAntialiasedPainting(Registry.is(BasicGraphPresentationModel.USE_ANTIALIAING_REGKEY));
     view.setGridVisible(false);
     view.fitContent();
   }
