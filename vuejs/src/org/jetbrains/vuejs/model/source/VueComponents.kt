@@ -14,10 +14,7 @@ import com.intellij.lang.javascript.psi.util.JSProjectUtil
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.CachedValue
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.*
 import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.codeInsight.resolveElementTo
 import org.jetbrains.vuejs.index.getVueIndexData
@@ -177,5 +174,10 @@ open class VueSourceEntityDescriptor(val initializer: JSElement? /* JSObjectLite
         }
       }
     }
+  }
+
+  fun ensureValid() {
+    sequenceOf(initializer, clazz, source)
+      .forEach { element -> element?.let { PsiUtilCore.ensureValid(it) } }
   }
 }
