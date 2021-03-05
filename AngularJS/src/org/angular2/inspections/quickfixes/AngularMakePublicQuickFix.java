@@ -66,7 +66,7 @@ public class AngularMakePublicQuickFix extends JSPublicModifierIntention impleme
               ? element.getPrevSibling()
               : element.getParent();
 
-    if (!(element instanceof JSReferenceExpression)) {
+    if (element != null && !(element instanceof JSReferenceExpression)) {
       element = element.getPrevSibling();
     }
     if (element instanceof JSReferenceExpression) {
