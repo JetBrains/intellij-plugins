@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.libraries.vuex.model.store
 
 import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider
-import com.intellij.lang.javascript.psi.JSNewExpression
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
@@ -46,7 +45,7 @@ object VuexModelManager {
                               GlobalSearchScope.projectScope(project),
                               JSImplicitElementProvider::class.java)
           .asSequence()
-          .filterIsInstance<JSNewExpression>()
+          .filterIsInstance<JSCallExpression>()
           .filter { call -> call.indexingData?.implicitElements?.find { it.userString == VuexStoreIndex.JS_KEY } != null }
           .map { VuexStoreImpl(it) }
           .toList(), PsiModificationTracker.MODIFICATION_COUNT)

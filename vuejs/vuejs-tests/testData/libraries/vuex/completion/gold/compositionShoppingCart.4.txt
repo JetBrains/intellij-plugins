@@ -1,0 +1,8 @@
+!all#[]#101
+constructor#Function#98
+hasOwnProperty#boolean#98
+isPrototypeOf#boolean#98
+propertyIsEnumerable#boolean#98
+toLocaleString#string#98
+toString#string#98
+valueOf#Object#98

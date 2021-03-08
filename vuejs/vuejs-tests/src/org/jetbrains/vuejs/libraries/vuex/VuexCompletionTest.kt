@@ -557,6 +557,18 @@ class VuexCompletionTest : BasePlatformTestCase() {
     doItemsTest(2, "...mapActions(['<caret>'", section = "methods", strict = true, renderPriority = true)
   }
 
+  fun testCompositionShoppingCart() {
+    myFixture.configureStore(VuexTestStore.CompositionShoppingCart)
+    val fileName = "test.vue"
+    myFixture.copyFileToProject("composition-shopping-cart.vue", fileName)
+
+    doStoreItemsTest(0, fileName, "store.state.<caret>", strict = true, renderPriority = true, renderType = true)
+    doStoreItemsTest(1, fileName, "store.dispatch('cart/<caret>addProductToCart'", strict = true, renderPriority = true, renderType = true)
+    doStoreItemsTest(2, fileName, "store.dispatch('<caret>products/getAllProducts')", strict = true, renderPriority = true, renderType = true)
+    doStoreItemsTest(3, fileName, "store.dispatch('products/<caret>getAllProducts')", strict = true, renderPriority = true, renderType = true)
+    doStoreItemsTest(4, fileName, "store.state.products.<caret>", strict = true, renderPriority = true, renderType = true)
+  }
+
   private val namespacedHandlersCode = """
     const {mapState, mapActions, mapGetters, mapMutations} = createNamespacedHelpers('cart')
     const categoryModule = createNamespacedHelpers('category')

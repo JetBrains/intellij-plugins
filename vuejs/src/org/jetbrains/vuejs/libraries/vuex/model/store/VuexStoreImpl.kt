@@ -76,7 +76,7 @@ class VuexModuleImpl(override val name: String,
     }
 }
 
-class VuexStoreImpl(override val source: JSNewExpression) : VuexContainerImpl(), VuexStore {
+class VuexStoreImpl(override val source: JSCallExpression) : VuexContainerImpl(), VuexStore {
   override val initializer: JSObjectLiteralExpression?
     get() {
       val storeCreationCall = this.source

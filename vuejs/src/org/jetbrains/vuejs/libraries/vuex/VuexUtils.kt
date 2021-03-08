@@ -12,6 +12,7 @@ object VuexUtils {
   const val VUEX_NAMESPACE = "Vuex"
   const val STORE = "Store"
   const val REGISTER_MODULE = "registerModule"
+  const val CREATE_STORE = "createStore"
 
   const val MAP_STATE = "mapState"
   const val MAP_GETTERS = "mapGetters"

@@ -23,15 +23,14 @@ object VuexStoreTypeProvider {
   fun addTypeFromResolveResult(evaluator: JSTypeEvaluator, result: PsiElement): Boolean {
     if (result is TypeScriptField) {
       val typeConstructor = getTypeConstructor(result.name) ?: return false
-      if (result.containingFile.parent?.parent?.name != VUEX_PACKAGE) return false
-      if (!isVueContext(result)) return false
+      if (!isStoreField(result) || !isVueContext(result)) return false
       evaluator.addType(typeConstructor(result, VuexStaticNamespace.EMPTY))
       return true
     }
     else if (result is JSParameter) {
       if (result is TypeScriptParameter && result.jsType
-          .let { it != null && !JSTypeUtils.isAnyType(it)})
-            return false
+          .let { it != null && !JSTypeUtils.isAnyType(it) })
+        return false
       if (isActionContextParameter(result)) {
         if (!isVueContext(result)) return false
         evaluator.addType(VuexActionContextType(result))
@@ -46,6 +45,10 @@ object VuexStoreTypeProvider {
     }
     return false
   }
+
+  private fun isStoreField(result: TypeScriptField): Boolean =
+    result.namespace?.qualifiedName == "Store"
+    && result.containingFile.virtualFile?.parent?.parent?.name == VUEX_PACKAGE
 
   private fun getTypeConstructor(name: String?) = when (name) {
     STATE, ROOT_STATE -> ::VuexContainerStateType

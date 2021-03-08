@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.IndexSink
 import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.index.VueFrameworkHandler
+import org.jetbrains.vuejs.libraries.vuex.VuexUtils.CREATE_STORE
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.PROP_NAMESPACED
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.PROP_ROOT
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.REGISTER_MODULE
@@ -44,7 +45,7 @@ class VuexFrameworkHandler : FrameworkIndexingHandler() {
         return VUEX_MAPPERS.contains(refName)
       }
       else {
-        return REGISTER_MODULE == refName
+        return REGISTER_MODULE == refName || CREATE_STORE == refName
       }
     }
     else {
@@ -99,15 +100,15 @@ class VuexFrameworkHandler : FrameworkIndexingHandler() {
     val reference = callExpression.methodExpression
       ?.castSafelyTo<JSReferenceExpression>()
     val referenceName = reference?.referenceName ?: return
-    if (callExpression is JSNewExpression) {
-      if (JSSymbolUtil.isAccurateReferenceExpressionName(reference, VUEX_NAMESPACE, STORE)) {
-        outData.addImplicitElement(
-          JSImplicitElementImpl.Builder(STORE, callExpression)
-            .setUserString(this, VuexStoreIndex.JS_KEY)
-            .setType(JSImplicitElement.Type.Variable)
-            .forbidAstAccess()
-            .toImplicitElement())
-      }
+    if ((callExpression is JSNewExpression
+         && JSSymbolUtil.isAccurateReferenceExpressionName(reference, VUEX_NAMESPACE, STORE))
+        || referenceName == CREATE_STORE) {
+      outData.addImplicitElement(
+        JSImplicitElementImpl.Builder(STORE, callExpression)
+          .setUserString(this, VuexStoreIndex.JS_KEY)
+          .setType(JSImplicitElement.Type.Variable)
+          .forbidAstAccess()
+          .toImplicitElement())
     }
     else if (referenceName == REGISTER_MODULE) {
       val type = callExpression.arguments.getOrNull(1).castSafelyTo<JSReferenceExpression>()
