@@ -493,7 +493,7 @@ public final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<Di
         list.add(settings.getDirectedOrthogonalLayouter());
         //list.add(settings.getGroupLayouter());
         list.add(settings.getHVTreeLayouter());
-        list.add(settings.getOrthogonalLayouter());
+        //list.add(settings.getChannelLayouter());
         for (CanonicMultiStageLayouter current : list) {
           final ParallelEdgeLayouter parallelEdgeLayouter = GraphManager.getGraphManager().createParallelEdgeLayouter();
           parallelEdgeLayouter.setLineDistance(40);
