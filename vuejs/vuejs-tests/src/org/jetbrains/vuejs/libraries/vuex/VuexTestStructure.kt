@@ -26,35 +26,43 @@ class VuexTestStructure : BasePlatformTestCase() {
 
   fun testStorefront() {
     myFixture.configureStore(VuexTestStore.Storefront)
-    myFixture.configureByText("foo.vue", "<script>export default{}</script>")
-    doTestStructure()
+    doTestStructure(true)
   }
 
   fun testShoppingCart() {
     myFixture.configureStore(VuexTestStore.ShoppingCart)
-    myFixture.configureByText("foo.vue", "<script>export default{}</script>")
-    doTestStructure()
+    doTestStructure(true)
   }
 
   fun testCounterHot() {
     myFixture.configureStore(VuexTestStore.CounterHot)
-    myFixture.configureByText("foo.vue", "<script>export default{}</script>")
-    doTestStructure()
+    doTestStructure(true)
   }
 
   fun testSimpleStore() {
     myFixture.configureStore(VuexTestStore.SimpleStore)
-    myFixture.configureByText("foo.vue", "<script>export default{}</script>")
-    doTestStructure()
+    doTestStructure(true)
   }
 
   fun testFunctionInit() {
     myFixture.configureStore(VuexTestStore.FunctionInit)
-    myFixture.configureByText("foo.vue", "<script>export default{}</script>")
-    doTestStructure()
+    doTestStructure(true)
   }
 
-  private fun doTestStructure() {
+  fun testCompositionCounter() {
+    myFixture.configureStore(VuexTestStore.CompositionCounter)
+    doTestStructure(true)
+  }
+
+  fun testCompositionShoppingCart() {
+    myFixture.configureStore(VuexTestStore.CompositionShoppingCart)
+    doTestStructure(true)
+  }
+
+  private fun doTestStructure(createFile: Boolean = false) {
+    if (createFile) {
+      myFixture.configureByText("foo.vue", "<script>export default{}</script>")
+    }
     val context = VuexModelManager.getVuexStoreContext(myFixture.file)!!
     myFixture.configureByText("check.txt", printContext(context))
     myFixture.checkResultByFile(getTestName(false) + ".txt")

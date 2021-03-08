@@ -1,0 +1,22 @@
+VuexStoreContext: {
+  stores: [
+    VuexStoreImpl <store/store.js:1239:JSCallExpression> {
+      state: {
+        count: <store/store.js:127:JSProperty>,
+      }
+      getters: {
+        evenOrOdd: <store/store.js:1072:JSProperty>,
+      }
+      actions: {
+        decrement: <store/store.js:685:JSProperty>,
+        increment: <store/store.js:635:JSProperty>,
+        incrementAsync: <store/store.js:850:JSFunctionProperty>,
+        incrementIfOdd: <store/store.js:735:JSFunctionProperty>,
+      }
+      mutations: {
+        decrement: <store/store.js:477:JSFunctionProperty>,
+        increment: <store/store.js:432:JSFunctionProperty>,
+      }
+    }
+  ],
+}

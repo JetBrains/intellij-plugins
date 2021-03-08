@@ -419,6 +419,19 @@ class VuexResolveTest : BasePlatformTestCase() {
            "'foo/change<caret>Data'" to null)
   }
 
+  fun testCompositionApiResolution() {
+    myFixture.configureStore(VuexTestStore.CompositionCounter)
+    myFixture.configureByFile("composition-counter.vue")
+    doTest(
+      false,
+      "{{ co<caret>unt }}" to "src/composition-counter.vue:466:JSProperty",
+      "store.state.cou<caret>nt" to "store/store.js:127:JSProperty",
+      "store.getters.even<caret>OrOdd" to "store/store.js:1072:JSProperty",
+      "store.dispatch('inc<caret>rement')" to "store/store.js:635:JSProperty",
+      "@click=\"inc<caret>rement\"" to "src/composition-counter.vue:572:JSProperty",
+    )
+  }
+
   private fun doStorefrontTest(vararg args: Pair<String, String?>) {
     doStorefrontTest("storefront-component.ts", *args)
   }

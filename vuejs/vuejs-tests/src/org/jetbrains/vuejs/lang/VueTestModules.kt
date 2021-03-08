@@ -43,7 +43,8 @@ enum class VueTestModule(val folder: String, vararg packageNames: String) {
   VUETIFY_0_17_2("vuetify/0.17.2", "vuetify"),
   VUETIFY_1_2_10("vuetify/1.2.10", "vuetify"),
   VUETIFY_1_3_7("vuetify/1.3.7", "vuetify"),
-  VUEX_3_1_0("vuex");
+  VUEX_3_1_0("vuex/3.1.0", "vuex"),
+  VUEX_4_0_0("vuex/4.0.0", "vuex");
 
   val packageNames: List<String>
 
