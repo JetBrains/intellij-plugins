@@ -15,7 +15,7 @@ class VuexTestStructure : BasePlatformTestCase() {
   fun testNuxtJs() {
     myFixture.configureStore(VuexTestStore.NuxtJs)
     myFixture.configureFromTempProjectFile("store/pages/index.vue")
-    doTestStructure()
+    doTestStructure(false)
   }
 
   fun testNuxtJs2() {
@@ -26,40 +26,45 @@ class VuexTestStructure : BasePlatformTestCase() {
 
   fun testStorefront() {
     myFixture.configureStore(VuexTestStore.Storefront)
-    doTestStructure(true)
+    doTestStructure()
   }
 
   fun testShoppingCart() {
     myFixture.configureStore(VuexTestStore.ShoppingCart)
-    doTestStructure(true)
+    doTestStructure()
   }
 
   fun testCounterHot() {
     myFixture.configureStore(VuexTestStore.CounterHot)
-    doTestStructure(true)
+    doTestStructure()
   }
 
   fun testSimpleStore() {
     myFixture.configureStore(VuexTestStore.SimpleStore)
-    doTestStructure(true)
+    doTestStructure()
   }
 
   fun testFunctionInit() {
     myFixture.configureStore(VuexTestStore.FunctionInit)
-    doTestStructure(true)
+    doTestStructure()
+  }
+
+  fun testComics() {
+    myFixture.configureStore(VuexTestStore.Comics)
+    doTestStructure()
   }
 
   fun testCompositionCounter() {
     myFixture.configureStore(VuexTestStore.CompositionCounter)
-    doTestStructure(true)
+    doTestStructure()
   }
 
   fun testCompositionShoppingCart() {
     myFixture.configureStore(VuexTestStore.CompositionShoppingCart)
-    doTestStructure(true)
+    doTestStructure()
   }
 
-  private fun doTestStructure(createFile: Boolean = false) {
+  private fun doTestStructure(createFile: Boolean = true) {
     if (createFile) {
       myFixture.configureByText("foo.vue", "<script>export default{}</script>")
     }

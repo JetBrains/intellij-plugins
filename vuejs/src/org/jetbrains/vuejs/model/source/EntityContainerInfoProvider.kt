@@ -3,13 +3,12 @@ package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.ecmascript6.psi.ES6ImportExportDeclarationPart
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
-import com.intellij.lang.javascript.JSKeywordElementType
 import com.intellij.lang.javascript.JSStubElementTypes
-import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
+import com.intellij.lang.javascript.psi.types.JSBooleanLiteralTypeImpl
 import com.intellij.lang.javascript.psi.types.JSModuleTypeImpl
 import com.intellij.lang.javascript.psi.util.JSClassUtils
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
@@ -105,19 +104,19 @@ interface EntityContainerInfoProvider<T> {
         when (declaration) {
           is JSObjectLiteralExpression -> declaration
             .findProperty(propertyName)
-            ?.initializerOrStub?.castSafelyTo<JSLiteralExpression>()
-            ?.significantValue == (JSTokenTypes.TRUE_KEYWORD as JSKeywordElementType).keyword
+            .let { getBooleanValue(it) }
           is JSFile -> JSModuleTypeImpl(declaration, true)
             .asRecordType()
             .findPropertySignature(propertyName)
-            ?.memberSource
-            ?.singleElement
-            ?.castSafelyTo<JSInitializerOwner>()
-            ?.initializer
-            ?.castSafelyTo<JSLiteralExpression>()
-            ?.value == true
+            .let { getBooleanValue(it) }
           else -> false
         }
+
+      private fun getBooleanValue(element: Any?): Boolean =
+        element?.castSafelyTo<JSTypeOwner>()
+          ?.jsType?.substitute()
+          ?.castSafelyTo<JSBooleanLiteralTypeImpl>()
+          ?.literal == true
     }
 
     open class MemberReader(private val propertyName: String,

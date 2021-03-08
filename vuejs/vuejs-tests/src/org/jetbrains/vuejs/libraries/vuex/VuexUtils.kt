@@ -14,6 +14,7 @@ enum class VuexTestStore(val dirName: String, val isComposition: Boolean = false
   SimpleStore("simple-store"),
   StateViaLambda("state-via-lambda"),
   FunctionInit("function-init"),
+  Comics("comics"),
   CompositionCounter("composition-counter", true),
   CompositionShoppingCart("composition-shopping-cart", true),
 }
