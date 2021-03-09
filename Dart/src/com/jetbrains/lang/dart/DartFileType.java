@@ -24,7 +24,7 @@ public final class DartFileType extends LanguageFileType {
   @NotNull
   @Override
   public String getDescription() {
-    return DartBundle.message("file.type.description.dart");
+    return DartBundle.message("filetype.dart.description");
   }
 
   @NotNull

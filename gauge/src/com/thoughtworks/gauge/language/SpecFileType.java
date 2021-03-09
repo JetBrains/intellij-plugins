@@ -40,7 +40,7 @@ public final class SpecFileType extends LanguageFileType {
   @NotNull
   @Override
   public String getDescription() {
-    return GaugeBundle.message("label.gauge.specification.file");
+    return GaugeBundle.message("filetype.gauge.specification.description");
   }
 
   @NotNull

@@ -40,7 +40,7 @@ public class HbFileType extends XmlLikeFileType implements TemplateLanguageFileT
   @Override
   @NotNull
   public String getDescription() {
-    return HbBundle.message("hb.files.file.type.description");
+    return HbBundle.message("filetype.hb.description");
   }
 
   @Override

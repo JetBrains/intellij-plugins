@@ -29,7 +29,7 @@ public final class CfmlFileType extends LanguageFileType {
   @Override
   @NotNull
   public String getDescription() {
-    return CfmlBundle.message("file.type.description.coldfusion");
+    return CfmlBundle.message("filetype.coldfusion.description");
   }
 
   @Override

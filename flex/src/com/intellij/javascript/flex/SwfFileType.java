@@ -3,7 +3,7 @@ package com.intellij.javascript.flex;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -24,6 +24,12 @@ public class SwfFileType implements FileType {
   @NotNull
   public String getDescription() {
     return "Adobe Flash animation";
+  }
+
+  @Nls
+  @Override
+  public @NotNull String getDisplayName() {
+    return "Adobe Flash";
   }
 
   @Override

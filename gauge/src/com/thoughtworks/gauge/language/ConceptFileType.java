@@ -41,7 +41,7 @@ public final class ConceptFileType extends LanguageFileType {
   @NotNull
   @Override
   public String getDescription() {
-    return GaugeBundle.message("gauge.concept");
+    return GaugeBundle.message("filetype.gauge.concept.description");
   }
 
   @NotNull

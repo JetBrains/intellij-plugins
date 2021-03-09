@@ -26,7 +26,7 @@ public class GherkinFileType extends LanguageFileType {
   @Override
   @NotNull
   public String getDescription() {
-    return CucumberBundle.message("label.cucumber.scenario");
+    return CucumberBundle.message("filetype.cucumber.scenario.description");
   }
 
   @Override
