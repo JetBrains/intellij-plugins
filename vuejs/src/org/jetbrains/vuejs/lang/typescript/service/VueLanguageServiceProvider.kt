@@ -22,7 +22,7 @@ internal class VueLanguageServiceProvider(project: Project) : JSLanguageServiceP
     return if (value.isAcceptable(file)) value else null
   }
 
-  override fun isCandidate(file: VirtualFile): Boolean {
+  override fun isHighlightingCandidate(file: VirtualFile): Boolean {
     val type = file.fileType
     return TypeScriptLanguageServiceProvider.isJavaScriptOrTypeScriptFileType(type) || type == VueFileType.INSTANCE
   }
