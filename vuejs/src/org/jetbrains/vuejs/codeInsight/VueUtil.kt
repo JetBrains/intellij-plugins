@@ -54,6 +54,7 @@ import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpression
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.model.source.PROPS_REQUIRED_PROP
 import org.jetbrains.vuejs.model.source.PROPS_TYPE_PROP
+import org.jetbrains.vuejs.types.asCompleteType
 import java.util.*
 import java.util.concurrent.Callable
 import java.util.concurrent.ConcurrentHashMap
@@ -253,6 +254,7 @@ private fun getJSTypeFromConstructor(expression: JSExpression): JSType =
     ?.type?.jsType?.castSafelyTo<JSGenericTypeImpl>()
     ?.takeIf { (it.type as? JSTypeImpl)?.typeText == "PropType" }
     ?.arguments?.getOrNull(0)
+    ?.asCompleteType()
   ?: JSApplyNewType(JSTypeofTypeImpl(expression, JSTypeSourceFactory.createTypeSource(expression, false)),
                     JSTypeSourceFactory.createTypeSource(expression.containingFile, false))
 

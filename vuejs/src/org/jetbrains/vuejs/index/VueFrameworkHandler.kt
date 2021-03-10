@@ -10,6 +10,8 @@ import com.intellij.lang.javascript.index.JSSymbolUtil
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
+import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext
+import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl
@@ -42,6 +44,7 @@ import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.isComponentDecorator
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.isDefineComponentOrVueExtendCall
+import org.jetbrains.vuejs.types.VueCompositionPropsTypeProvider
 
 class VueFrameworkHandler : FrameworkIndexingHandler() {
   // 1 here we are just mapping the constants, no lifecycle needed
@@ -335,6 +338,12 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     }
     return false
   }
+
+  override fun addTypeFromResolveResult(evaluator: JSTypeEvaluator, context: JSEvaluateContext, result: PsiElement): Boolean =
+    VueCompositionPropsTypeProvider.addTypeFromResolveResult(evaluator, context, result)
+
+  override fun useOnlyCompleteMatch(type: JSType, evaluateContext: JSEvaluateContext): Boolean =
+    VueCompositionPropsTypeProvider.useOnlyCompleteMatch(type, evaluateContext)
 
   override fun shouldCreateStubForLiteral(node: ASTNode?): Boolean {
     if (node?.psi is JSLiteralExpression) {
