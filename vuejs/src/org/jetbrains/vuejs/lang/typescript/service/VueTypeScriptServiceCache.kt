@@ -10,23 +10,8 @@ import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.lang.html.VueFileType
 
 class VueTypeScriptServiceCache(project: Project) : TypeScriptLanguageServiceCache(project) {
-
-  override fun getFilesToClose(currentChangedFiles: MutableMap<VirtualFile, Long>): Set<VirtualFile> {
-    val filesToClose: Set<VirtualFile> = super.getFilesToClose(currentChangedFiles)
-
-    val toCloseByChangedType = mutableSetOf<VirtualFile>()
-    currentChangedFiles.forEach { (file, _) -> addFileIfInvalid(file, filesToClose, toCloseByChangedType) }
-    myOpenedFilesByEvent.forEach { file -> addFileIfInvalid(file, filesToClose, toCloseByChangedType) }
-
-    if (toCloseByChangedType.isNotEmpty()) {
-      myOpenedFilesByEvent.removeAll(toCloseByChangedType)
-      return filesToClose + toCloseByChangedType
-    }
-
-    return filesToClose
-  }
-
-  private fun addFileIfInvalid(file: VirtualFile,
+  
+  override fun addFileIfInvalid(file: VirtualFile,
                                filesToClose: Set<VirtualFile>,
                                toCloseByChangedType: MutableSet<VirtualFile>) {
     if (isInvalidVueTypeScriptFile(file) && !filesToClose.contains(file)) toCloseByChangedType.add(file)
