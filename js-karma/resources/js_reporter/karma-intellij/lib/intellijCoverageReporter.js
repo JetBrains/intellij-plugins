@@ -9,13 +9,39 @@ var intellijParameters = require('./karma-intellij-parameters')
   , LCOV_FILE_NAMES = ['lcov.info', 'lcovonly']
   , extraLcovLocations = ['coverage'];
 
-/**
- * Preconfigures coverage if 'Run with coverage' action performed.
- * The preconfigure config is passed to original karma config, so it's possible to  makes sense
- * @param {Object} config
- */
-function preconfigureCoverage(config) {
-  if (intellijParameters.isWithCoverage()) {
+const KARMA_COVERAGE_REPORTER_NAME = 'coverage';
+
+function hasCoveragePreprocessor(config) {
+  const preprocessorValues = Object.values(config.preprocessors);
+  return typeof preprocessorValues.flat === 'function' && preprocessorValues.flat().indexOf('coverage') >= 0;
+}
+
+function isKarmaCoveragePluginDeclared(config) {
+  const plugins = config.plugins
+  return Array.isArray(plugins) && (
+    plugins.some((plugin) => plugin.includes('/karma-coverage/')) ||
+    plugins.indexOf('karma-*') >= 0 && hasKarmaCoverageDependency()
+  );
+}
+
+function hasKarmaCoverageDependency() {
+  const packageJsonPath = path.join(process.cwd(), 'package.json')
+  if (fs.existsSync(packageJsonPath)) {
+    try {
+      const packageJson = require(packageJsonPath);
+      const karmaCoverage = 'karma-coverage';
+      return (packageJson.dependencies && karmaCoverage in packageJson.dependencies) ||
+        (packageJson.devDependencies && karmaCoverage in packageJson.devDependencies)
+    }
+    finally {
+    }
+  }
+}
+
+function addCoverageReporterIfNeeded(config, reporters) {
+  if (reporters.indexOf(KARMA_COVERAGE_REPORTER_NAME) < 0 && hasCoveragePreprocessor(config) && isKarmaCoveragePluginDeclared(config)) {
+    reporters.push(KARMA_COVERAGE_REPORTER_NAME);
+    console.log('intellij: \'' + KARMA_COVERAGE_REPORTER_NAME + '\' reporter was added as karma-coverage is used');
   }
 }
 
@@ -43,12 +69,13 @@ function configureCoverage(config) {
       dir : path.join(intellijParameters.getCoverageTempDirPath())
     });
     configureKarmaTypeScript(config);
+    addCoverageReporterIfNeeded(config, reporters);
   }
   else if (canCoverageBeDisabledSafely(config.coverageReporter)) {
-    var karmaCoverageReporterName = 'coverage';
-    if (reporters.indexOf(karmaCoverageReporterName) >= 0) {
-      reporters = intellijUtil.removeAll(reporters, karmaCoverageReporterName);
-      console.log('IntelliJ integration disabled coverage for faster run and debug capabilities');
+    if (reporters.indexOf(KARMA_COVERAGE_REPORTER_NAME) >= 0) {
+      reporters = intellijUtil.removeAll(reporters, KARMA_COVERAGE_REPORTER_NAME);
+      console.log('intellij: \'' + KARMA_COVERAGE_REPORTER_NAME + '\' reporter was removed for faster ' +
+        (intellijParameters.isDebug() ? 'debug' : 'run'));
     }
   }
   config.reporters = reporters;
@@ -216,6 +243,5 @@ function tryAddLcovInfo(filePath, coverageReports) {
 IntellijCoverageReporter.$inject = ['config'];
 IntellijCoverageReporter.reporterName = 'intellijCoverage_33e284dac2b015a9da50d767dc3fa58a';
 IntellijCoverageReporter.configureCoverage = configureCoverage;
-IntellijCoverageReporter.preconfigureCoverage = preconfigureCoverage;
 
 module.exports = IntellijCoverageReporter;

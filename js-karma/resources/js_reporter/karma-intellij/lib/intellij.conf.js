@@ -63,7 +63,6 @@ function disableSingleRun(config) {
 }
 
 module.exports = function (config) {
-  IntellijCoverageReporter.preconfigureCoverage(config);
   var originalConfigModule = require(originalConfigPath);
   // https://github.com/karma-runner/karma/blob/v1.7.0/lib/config.js#L364
   if (typeof originalConfigModule === 'object' && typeof originalConfigModule.default !== 'undefined') {
