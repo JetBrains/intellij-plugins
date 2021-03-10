@@ -1562,21 +1562,18 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
 
   fun testIndirectExport() {
     myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10)
-    myFixture.enableInspections(VueInspectionsProvider())
     myFixture.configureByFile("indirectExport.vue")
     myFixture.checkHighlighting()
   }
 
   fun testAsyncSetup() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
-    myFixture.enableInspections(VueInspectionsProvider())
     myFixture.configureByFile("asyncSetup.vue")
     myFixture.checkHighlighting()
   }
 
   fun testScriptSetup() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
-    myFixture.enableInspections(VueInspectionsProvider())
     myFixture.configureByFile("scriptSetup.vue")
     myFixture.checkHighlighting()
   }
@@ -1589,8 +1586,12 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
   }
 
   fun testSuperComponentMixin() {
-    myFixture.enableInspections(VueInspectionsProvider())
     myFixture.configureByFiles("superComponentMixin/MainMenu.vue", "superComponentMixin/mixins.ts")
+    myFixture.checkHighlighting()
+  }
+
+  fun testCompositionPropsJS() {
+    myFixture.configureByFiles("compositionPropsJS.vue")
     myFixture.checkHighlighting()
   }
 

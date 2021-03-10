@@ -20,8 +20,10 @@ import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.model.source.VUE_NAMESPACE
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
 import org.jetbrains.vuejs.model.source.VueSourceEntity
+import org.jetbrains.vuejs.types.VueCompleteRecordType
 import org.jetbrains.vuejs.types.VueComponentInstanceType
 import org.jetbrains.vuejs.types.VueRefsType
+import org.jetbrains.vuejs.types.createStrictTypeSource
 import java.util.*
 
 interface VueInstanceOwner : VueScopeElement {
@@ -53,8 +55,7 @@ private fun buildInstanceType(instance: VueInstanceOwner): JSType? {
   val result = mutableMapOf<String, JSRecordType.PropertySignature>()
   contributeDefaultInstanceProperties(source, result)
   contributeComponentProperties(instance, source, result)
-  replaceStandardProperty("\$refs", VueRefsType(JSTypeSourceFactory.createTypeSource(source, true), instance),
-                          source, result)
+  replaceStandardProperty("\$refs", VueRefsType(createStrictTypeSource(source), instance), source, result)
   contributePropertiesFromProviders(instance, result)
   return VueComponentInstanceType(JSTypeSourceFactory.createTypeSource(source, true), instance, result.values.toList())
 }
@@ -134,7 +135,7 @@ private fun contributeComponentProperties(instance: VueInstanceOwner,
 
   replaceStandardProperty("\$props", props.values.toList(), source, result)
   replaceStandardProperty("\$data", data.values.toList(), source, result)
-  buildOptionsType(instance, result["\$options"]?.jsType)?.let { replaceStandardProperty("\$options", it, source, result) }
+  replaceStandardProperty("\$options", buildOptionsType(instance, result["\$options"]?.jsType), source, result)
 
   // Vue will not proxy data properties starting with _ or $
   // https://vuejs.org/v2/api/#data
@@ -178,7 +179,7 @@ private fun replaceStandardProperty(propName: String, properties: List<JSRecordT
                                     defaultSource: PsiElement, result: MutableMap<String, JSRecordType.PropertySignature>) {
   val propSource = result[propName]?.memberSource?.singleElement ?: defaultSource
   result[propName] = createImplicitPropertySignature(
-    propName, JSSimpleRecordTypeImpl(JSTypeSourceFactory.createTypeSource(propSource, false), properties), propSource)
+    propName, VueCompleteRecordType(propSource, properties), propSource)
 }
 
 private fun replaceStandardProperty(propName: String, type: JSType,
