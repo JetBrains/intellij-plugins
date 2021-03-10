@@ -14,7 +14,8 @@ interface VueCompleteType : JSType
 fun createStrictTypeSource(element: PsiElement?) =
   JSTypeSource(element, JSTypeSource.SourceLanguage.TS, true)
 
-fun JSType.asCompleteType(): VueCompleteType = VueCompleteTypeImpl(this)
+fun JSType.asCompleteType(): VueCompleteType =
+  this as? VueCompleteType ?: VueCompleteTypeImpl(this)
 
 private class VueCompleteTypeImpl(private val baseType: JSType, source: JSTypeSource) : JSSimpleTypeBaseImpl(source), VueCompleteType {
 
@@ -26,7 +27,7 @@ private class VueCompleteTypeImpl(private val baseType: JSType, source: JSTypeSo
 
   override fun isEquivalentToWithSameClass(type: JSType, context: ProcessingContext?, allowResolve: Boolean): Boolean =
     type is VueCompleteTypeImpl
-    && type.baseType == baseType
+    && type.baseType.isEquivalentTo(baseType, context, allowResolve)
 
   override fun buildTypeTextImpl(format: JSType.TypeTextFormat, builder: JSTypeTextBuilder) {
     if (format == JSType.TypeTextFormat.SIMPLE) {
