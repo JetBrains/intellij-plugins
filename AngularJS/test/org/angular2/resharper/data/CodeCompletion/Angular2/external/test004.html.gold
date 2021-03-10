@@ -26,8 +26,6 @@ ion-col
 ion-grid
 ion-row
 (abort)
-(autocomplete)
-(autocompleteerror)
 (auxclick)
 (beforecopy)
 (beforecut)
@@ -108,7 +106,6 @@ ion-row
 (select)
 (selectstart)
 (show)
-(sort)
 (stalled)
 (submit)
 (suspend)
