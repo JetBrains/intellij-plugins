@@ -51,7 +51,7 @@ public class AngularUiRouterDiagramModel extends DiagramDataModel<DiagramObject>
   }
 
   @Override
-  public @Nullable DiagramNode<DiagramObject> addElement(DiagramObject element) {
+  public @Nullable DiagramNode<DiagramObject> addElement(@Nullable DiagramObject element) {
     return null;
   }
 

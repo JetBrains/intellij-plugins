@@ -610,7 +610,7 @@ public final class FlashUmlDataModel extends DiagramDataModel<Object> {
 
   @Override
   @Nullable
-  public DiagramNode<Object> addElement(Object element) {
+  public DiagramNode<Object> addElement(@Nullable Object element) {
     if (findNode(element) != null) return null;
 
     if (element instanceof JSClass) {
@@ -755,7 +755,7 @@ public final class FlashUmlDataModel extends DiagramDataModel<Object> {
   }
 
   @Override
-  public boolean hasElement(Object element) {
+  public boolean hasElement(@Nullable Object element) {
     return findNode(element) != null;
   }
 
