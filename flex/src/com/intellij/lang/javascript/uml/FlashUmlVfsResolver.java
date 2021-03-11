@@ -30,7 +30,7 @@ public final class FlashUmlVfsResolver implements DiagramVfsResolver<Object> {
   public static final String SEPARATOR = ":";
 
   @Override
-  public String getQualifiedName(Object element) {
+  public String getQualifiedName(@Nullable Object element) {
     return getQualifiedNameStatic(element);
   }
 
