@@ -25,7 +25,7 @@ public class ActionScriptResolveScopeProvider extends JSResolveScopeProvider imp
 
   @Nullable
   @Override
-  public GlobalSearchScope getResolveScope(@NotNull VirtualFile file, Project project) {
+  public GlobalSearchScope getResolveScope(@NotNull VirtualFile file, @NotNull Project project) {
     return getResolveScope(file, project, true);
   }
 
