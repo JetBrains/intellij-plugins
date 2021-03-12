@@ -172,17 +172,19 @@ public class OsgiBuildSession implements Reporter {
       else {
         // no bndfile specified, try to fallback to the default bnd.bnd file next to the pom.xml
         File mavenProjectPath = OsgiBuildUtil.getMavenProjectPath(myContext, myModule);
-        if (mavenProjectPath != null) {
-          bndFile = new File(mavenProjectPath.getParentFile(), "bnd.bnd");
-          if (bndFile.isFile()) {
-            mySourceToReport = bndFile.getAbsolutePath();
-          }
-          else{
-            bndFile = null;
-            // default not found, use the pom.xml location as the base and error source
-            mySourceToReport = mavenProjectPath.getAbsolutePath();
-            base = mavenProjectPath.getParentFile();
-          }
+        if (mavenProjectPath == null) {
+          throw new OsgiBuildException(message("session.pom.missing"));
+        }
+
+        bndFile = new File(mavenProjectPath.getParentFile(), "bnd.bnd");
+        if (bndFile.isFile()) {
+          mySourceToReport = bndFile.getAbsolutePath();
+        }
+        else{
+          bndFile = null;
+          // default not found, use the pom.xml location as the base and error source
+          mySourceToReport = mavenProjectPath.getAbsolutePath();
+          base = mavenProjectPath.getParentFile();
         }
       }
 
