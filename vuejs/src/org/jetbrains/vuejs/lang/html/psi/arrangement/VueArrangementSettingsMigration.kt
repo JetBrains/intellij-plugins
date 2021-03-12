@@ -4,10 +4,7 @@ package org.jetbrains.vuejs.lang.html.psi.arrangement
 import com.intellij.application.options.codeStyle.CodeStyleSchemesModel
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.lang.html.HTMLLanguage
-import com.intellij.openapi.application.Application
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.WriteAction
-import com.intellij.openapi.application.WriteThread
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 import com.intellij.xml.arrangement.HtmlRearranger
