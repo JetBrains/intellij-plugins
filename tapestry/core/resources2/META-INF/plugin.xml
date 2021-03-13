@@ -98,7 +98,7 @@
       <add-to-group group-id="EditorPopupMenu.GoTo" anchor="last"/>
     </group>
 
-    <group id="GoToTapestryClass" text="GoToClass">
+    <group id="GoToTapestryClass">
       <separator/>
       <action id="GoToClass"
               class="com.intellij.tapestry.intellij.actions.navigation.ClassTemplateNavigation"
