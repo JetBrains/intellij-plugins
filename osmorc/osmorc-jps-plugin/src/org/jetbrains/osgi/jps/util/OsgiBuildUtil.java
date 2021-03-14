@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.osgi.jps.util;
 
 import com.intellij.openapi.util.io.FileUtil;
@@ -59,6 +59,11 @@ public final class OsgiBuildUtil {
 
   private static File findMavenProjectPath(CompileContext context, JpsModule module) {
     BuildDataPaths dataPaths = context.getProjectDescriptor().dataManager.getDataPaths();
+    return findMavenProjectPath(dataPaths, module);
+  }
+
+  @Nullable
+  public static File findMavenProjectPath(BuildDataPaths dataPaths, JpsModule module) {
     MavenProjectConfiguration projectConfig = JpsMavenExtensionService.getInstance().getMavenProjectConfiguration(dataPaths);
     if (projectConfig != null) {
       MavenModuleResourceConfiguration moduleConfig = projectConfig.moduleConfigurations.get(module.getName());

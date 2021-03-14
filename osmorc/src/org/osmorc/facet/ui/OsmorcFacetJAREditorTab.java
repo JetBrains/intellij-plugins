@@ -256,8 +256,9 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     myJarOutputPathChooser.setEnabled(myPlaceInThisPathRadioButton.isSelected());
 
     Boolean bnd = myEditorContext.getUserData(OsmorcFacetGeneralEditorTab.BND_CREATION_KEY);
+    Boolean bndMavenPlugin = myEditorContext.getUserData(OsmorcFacetGeneralEditorTab.BND_MAVEN_PLUGIN_CREATION_KEY);
     Boolean bundlor = myEditorContext.getUserData(OsmorcFacetGeneralEditorTab.BUNDLOR_CREATION_KEY);
-    boolean useExternalTool = Boolean.TRUE.equals(bnd) || Boolean.TRUE.equals(bundlor);
+    boolean useExternalTool = Boolean.TRUE.equals(bnd) || Boolean.TRUE.equals(bndMavenPlugin) || Boolean.TRUE.equals(bundlor);
     myAdditionalJARContentsTable.setEnabled(!useExternalTool);
     myAdditionalJarContentsPanel.setEnabled(!useExternalTool);
     myIgnoreFilePatternTextField.setEnabled(!useExternalTool);

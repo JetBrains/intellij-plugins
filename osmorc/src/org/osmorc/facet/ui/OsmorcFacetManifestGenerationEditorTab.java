@@ -78,8 +78,9 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab {
   private void updateGui() {
     boolean isManuallyEdited = myEditorContext.getUserData(OsmorcFacetGeneralEditorTab.MANUAL_MANIFEST_EDITING_KEY) == Boolean.TRUE;
     boolean isBnd = myEditorContext.getUserData(OsmorcFacetGeneralEditorTab.BND_CREATION_KEY) == Boolean.TRUE;
+    boolean isBndMavenPlugin = myEditorContext.getUserData(OsmorcFacetGeneralEditorTab.BND_MAVEN_PLUGIN_CREATION_KEY) == Boolean.TRUE;
     boolean isBundlor = myEditorContext.getUserData(OsmorcFacetGeneralEditorTab.BUNDLOR_CREATION_KEY) == Boolean.TRUE;
-    boolean isUiEnabled = !(isManuallyEdited || isBnd || isBundlor);
+    boolean isUiEnabled = !(isManuallyEdited || isBnd || isBndMavenPlugin || isBundlor);
 
     myBundleSymbolicName.setEnabled(isUiEnabled);
     myBundleActivator.setEnabled(isUiEnabled);
