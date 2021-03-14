@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.osgi.jps.build;
 
 import aQute.bnd.osgi.Constants;
@@ -157,6 +157,48 @@ public class OsgiBuildSession implements Reporter {
         throw new OsgiBuildException(message("session.unknown.error"), e, null);
       }
       mySourceToReport = null;
+    }
+    else if (myExtension.isUseBndMavenPlugin()) {
+      File bndFile = myExtension.getBundleDescriptorFile();
+      File base = null;
+      if (bndFile != null && bndFile.isFile()) {
+        // explicitly specified bndfile that exists
+        mySourceToReport = bndFile.getAbsolutePath();
+      }
+      else if (StringUtil.isNotEmpty(myExtension.getBndFileLocation())) {
+        // explicitly specified bndfile that does not exist - fail to report a build error
+        throw new OsgiBuildException(message("session.bnd.missing", myExtension.getBndFileLocation()));
+      }
+      else {
+        // no bndfile specified, try to fallback to the default bnd.bnd file next to the pom.xml
+        File mavenProjectPath = OsgiBuildUtil.getMavenProjectPath(myContext, myModule);
+        if (mavenProjectPath == null) {
+          throw new OsgiBuildException(message("session.pom.missing"));
+        }
+
+        bndFile = new File(mavenProjectPath.getParentFile(), "bnd.bnd");
+        if (bndFile.isFile()) {
+          mySourceToReport = bndFile.getAbsolutePath();
+        }
+        else{
+          bndFile = null;
+          // default not found, use the pom.xml location as the base and error source
+          mySourceToReport = mavenProjectPath.getAbsolutePath();
+          base = mavenProjectPath.getParentFile();
+        }
+      }
+
+      Properties mavenProperties = OsgiBuildUtil.getMavenProjectProperties(myContext, myModule);
+      try {
+        myBndWrapper.build(bndFile, myExtension.getAdditionalProperties(), mavenProperties,
+                           myClasses, mySources, base, myModuleOutputDir, myOutputJarFile);
+      }
+      catch (Exception e) {
+        throw new OsgiBuildException(message("session.unknown.error"), e, null);
+      }
+      finally {
+        mySourceToReport = null;
+      }
     }
     else if (myExtension.isUseBundlorFile()) {
       String bundlorPath = myExtension.getBundlorFileLocation();

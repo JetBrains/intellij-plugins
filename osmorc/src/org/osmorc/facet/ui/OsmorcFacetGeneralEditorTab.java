@@ -61,6 +61,7 @@ import java.io.File;
 public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
   static final Key<Boolean> MANUAL_MANIFEST_EDITING_KEY = Key.create("MANUAL_MANIFEST_EDITING");
   static final Key<Boolean> BND_CREATION_KEY = Key.create("BND_CREATION");
+  static final Key<Boolean> BND_MAVEN_PLUGIN_CREATION_KEY = Key.create("BND_MAVEN_PLUGIN_CREATION");
   static final Key<Boolean> BUNDLOR_CREATION_KEY = Key.create("BUNDLOR_CREATION");
 
   private JRadioButton myManuallyEditedRadioButton;
@@ -70,6 +71,7 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
   private JRadioButton myUseProjectDefaultManifestFileLocation;
   private JRadioButton myUseModuleSpecificManifestFileLocation;
   private JRadioButton myUseBndFileRadioButton;
+  private JCheckBox myUseBndMavenPluginCheckBox;
   private JPanel myManifestPanel;
   private TextFieldWithBrowseButton myBndFile;
   private JPanel myBndPanel;
@@ -133,21 +135,24 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
   }
 
   private void updateGui() {
-    boolean isBnd = myUseBndFileRadioButton.isSelected();
+    boolean isBnd = myUseBndFileRadioButton.isSelected() && !myUseBndMavenPluginCheckBox.isSelected();
+    boolean isBndMavenPlugin = myUseBndFileRadioButton.isSelected() && myUseBndMavenPluginCheckBox.isSelected();
     boolean isBundlor = myUseBundlorFileRadioButton.isSelected();
     boolean isManuallyEdited = myManuallyEditedRadioButton.isSelected();
 
     myEditorContext.putUserData(MANUAL_MANIFEST_EDITING_KEY, isManuallyEdited);
     myEditorContext.putUserData(BND_CREATION_KEY, isBnd);
+    myEditorContext.putUserData(BND_MAVEN_PLUGIN_CREATION_KEY, isBndMavenPlugin);
     myEditorContext.putUserData(BUNDLOR_CREATION_KEY, isBundlor);
 
-    myBndPanel.setEnabled(isBnd);
+    myBndPanel.setEnabled(isBnd || isBndMavenPlugin);
     myBundlorPanel.setEnabled(isBundlor);
     myManifestPanel.setEnabled(isManuallyEdited);
     myUseProjectDefaultManifestFileLocation.setEnabled(isManuallyEdited);
     myUseModuleSpecificManifestFileLocation.setEnabled(isManuallyEdited);
     myManifestFileChooser.setEnabled(isManuallyEdited && !myUseProjectDefaultManifestFileLocation.isSelected());
     myBndFile.setEnabled(isBnd);
+    myUseBndMavenPluginCheckBox.setEnabled(isBnd || isBndMavenPlugin);
     myBundlorFile.setEnabled(isBundlor);
 
     myValidatorsManager.validate();
@@ -201,7 +206,8 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
     OsmorcFacetConfiguration configuration = (OsmorcFacetConfiguration)myEditorContext.getFacet().getConfiguration();
     configuration.setManifestGenerationMode(
       myControlledByOsmorcRadioButton.isSelected() ? ManifestGenerationMode.OsmorcControlled :
-      myUseBndFileRadioButton.isSelected() ? ManifestGenerationMode.Bnd :
+      myUseBndFileRadioButton.isSelected() && !myUseBndMavenPluginCheckBox.isSelected() ? ManifestGenerationMode.Bnd :
+      myUseBndFileRadioButton.isSelected() && myUseBndMavenPluginCheckBox.isSelected() ? ManifestGenerationMode.BndMavenPlugin :
       myUseBundlorFileRadioButton.isSelected() ? ManifestGenerationMode.Bundlor :
       ManifestGenerationMode.Manually);
     configuration.setManifestLocation(FileUtil.toSystemIndependentName(myManifestFileChooser.getText()));
@@ -221,6 +227,11 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
     OsmorcFacetConfiguration configuration = (OsmorcFacetConfiguration)myEditorContext.getFacet().getConfiguration();
     if (configuration.isUseBndFile()) {
       myUseBndFileRadioButton.setSelected(true);
+      myUseBndMavenPluginCheckBox.setSelected(false);
+    }
+    else if (configuration.isUseBndMavenPlugin()) {
+      myUseBndFileRadioButton.setSelected(true);
+      myUseBndMavenPluginCheckBox.setSelected(true);
     }
     else if (configuration.isUseBundlorFile()) {
       myUseBundlorFileRadioButton.setSelected(true);
@@ -260,7 +271,7 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
 
   private static VirtualFile findFileInContentRoots(String fileName, Module module) {
     for (VirtualFile root : getContentRoots(module)) {
-      VirtualFile file = root.findFileByRelativePath(fileName);
+      VirtualFile file = root.findFileByRelativePath(FileUtil.toSystemIndependentName(fileName));
       if (file != null) {
         return file;
       }

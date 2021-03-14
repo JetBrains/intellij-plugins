@@ -80,6 +80,14 @@ public class OsmorcBuildTarget extends ModuleBasedTarget<BuildRootDescriptor> {
       if (file != null) {
         rootDescriptors.add(new BuildRootDescriptorImpl(this, file, true));
       }
+      else if (extension.isUseBndMavenPlugin()) {
+        // fallback to watching the default bnd file
+        File mavenProjectPath = OsgiBuildUtil.findMavenProjectPath(dataPaths, myModule);
+        if (mavenProjectPath != null) {
+          file = new File(mavenProjectPath.getParentFile(), "bnd.bnd");
+          rootDescriptors.add(new BuildRootDescriptorImpl(this, file, true));
+        }
+      }
     }
 
     JpsJavaExtensionService.dependencies(getModule()).recursively().productionOnly().processModules(module -> {
