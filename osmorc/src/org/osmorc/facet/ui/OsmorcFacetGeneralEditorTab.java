@@ -60,9 +60,7 @@ import java.io.File;
  */
 public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
   static final Key<Boolean> MANUAL_MANIFEST_EDITING_KEY = Key.create("MANUAL_MANIFEST_EDITING");
-  static final Key<Boolean> BND_CREATION_KEY = Key.create("BND_CREATION");
-  static final Key<Boolean> BND_MAVEN_PLUGIN_CREATION_KEY = Key.create("BND_MAVEN_PLUGIN_CREATION");
-  static final Key<Boolean> BUNDLOR_CREATION_KEY = Key.create("BUNDLOR_CREATION");
+  static final Key<Boolean> EXT_TOOL_MANIFEST_CREATION_KEY = Key.create("EXT_TOOL_MANIFEST_CREATION");
 
   private JRadioButton myManuallyEditedRadioButton;
   private JRadioButton myControlledByOsmorcRadioButton;
@@ -141,9 +139,7 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
     boolean isManuallyEdited = myManuallyEditedRadioButton.isSelected();
 
     myEditorContext.putUserData(MANUAL_MANIFEST_EDITING_KEY, isManuallyEdited);
-    myEditorContext.putUserData(BND_CREATION_KEY, isBnd);
-    myEditorContext.putUserData(BND_MAVEN_PLUGIN_CREATION_KEY, isBndMavenPlugin);
-    myEditorContext.putUserData(BUNDLOR_CREATION_KEY, isBundlor);
+    myEditorContext.putUserData(EXT_TOOL_MANIFEST_CREATION_KEY, isBnd || isBndMavenPlugin || isBundlor);
 
     myBndPanel.setEnabled(isBnd || isBndMavenPlugin);
     myBundlorPanel.setEnabled(isBundlor);

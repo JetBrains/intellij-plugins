@@ -159,18 +159,17 @@ public class OsgiBuildSession implements Reporter {
       mySourceToReport = null;
     }
     else if (myExtension.isUseBndMavenPlugin()) {
-      File bndFile = myExtension.getBundleDescriptorFile();
-      File base = null;
+      File bndFile = myExtension.getBundleDescriptorFile(), base = null;
       if (bndFile != null && bndFile.isFile()) {
-        // explicitly specified bndfile that exists
+        // explicitly specified .bnd file that exists
         mySourceToReport = bndFile.getAbsolutePath();
       }
       else if (StringUtil.isNotEmpty(myExtension.getBndFileLocation())) {
-        // explicitly specified bndfile that does not exist - fail to report a build error
+        // explicitly specified .bnd file that does not exist - fail to report a build error
         throw new OsgiBuildException(message("session.bnd.missing", myExtension.getBndFileLocation()));
       }
       else {
-        // no bndfile specified, try to fallback to the default bnd.bnd file next to the pom.xml
+        // no .bnd file specified, try to fallback to the default bnd.bnd file next to the pom.xml
         File mavenProjectPath = OsgiBuildUtil.getMavenProjectPath(myContext, myModule);
         if (mavenProjectPath == null) {
           throw new OsgiBuildException(message("session.pom.missing"));
@@ -180,7 +179,7 @@ public class OsgiBuildSession implements Reporter {
         if (bndFile.isFile()) {
           mySourceToReport = bndFile.getAbsolutePath();
         }
-        else{
+        else {
           bndFile = null;
           // default not found, use the pom.xml location as the base and error source
           mySourceToReport = mavenProjectPath.getAbsolutePath();

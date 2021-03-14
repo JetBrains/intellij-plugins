@@ -77,15 +77,13 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab {
 
   private void updateGui() {
     boolean isManuallyEdited = myEditorContext.getUserData(OsmorcFacetGeneralEditorTab.MANUAL_MANIFEST_EDITING_KEY) == Boolean.TRUE;
-    boolean isBnd = myEditorContext.getUserData(OsmorcFacetGeneralEditorTab.BND_CREATION_KEY) == Boolean.TRUE;
-    boolean isBndMavenPlugin = myEditorContext.getUserData(OsmorcFacetGeneralEditorTab.BND_MAVEN_PLUGIN_CREATION_KEY) == Boolean.TRUE;
-    boolean isBundlor = myEditorContext.getUserData(OsmorcFacetGeneralEditorTab.BUNDLOR_CREATION_KEY) == Boolean.TRUE;
-    boolean isUiEnabled = !(isManuallyEdited || isBnd || isBndMavenPlugin || isBundlor);
+    boolean isToolGenerated = myEditorContext.getUserData(OsmorcFacetGeneralEditorTab.EXT_TOOL_MANIFEST_CREATION_KEY) == Boolean.TRUE;
+    boolean enabled = !(isManuallyEdited || isToolGenerated);
 
-    myBundleSymbolicName.setEnabled(isUiEnabled);
-    myBundleActivator.setEnabled(isUiEnabled);
-    myBundleVersion.setEnabled(isUiEnabled);
-    myAdditionalPropertiesEditor.getComponent().setEnabled(isUiEnabled);
+    myBundleSymbolicName.setEnabled(enabled);
+    myBundleActivator.setEnabled(enabled);
+    myBundleVersion.setEnabled(enabled);
+    myAdditionalPropertiesEditor.getComponent().setEnabled(enabled);
   }
 
   private void onBundleActivatorSelect() {

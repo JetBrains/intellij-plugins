@@ -57,6 +57,7 @@ import static org.jetbrains.osgi.jps.OsgiJpsBundle.message;
  */
 public class BndWrapper {
   private static final Logger LOG = Logger.getInstance(BndWrapper.class);
+
   private final Reporter myReporter;
 
   public BndWrapper(Reporter reporter) {
@@ -66,8 +67,7 @@ public class BndWrapper {
   /**
    * Wraps .jar files using Bnd analyzer. Uses bundlification rules defined in Settings/OSGi/Library Bundling.
    */
-  @NotNull
-  public List<String> bundlifyLibraries(@NotNull Collection<File> dependencies,
+  public @NotNull List<String> bundlifyLibraries(@NotNull Collection<File> dependencies,
                                         @NotNull File outputDir,
                                         @NotNull List<LibraryBundlificationRule> rules) {
     List<String> result = new ArrayList<>(dependencies.size());
@@ -94,8 +94,7 @@ public class BndWrapper {
     return result;
   }
 
-  @Nullable
-  private File wrap(@NotNull File sourceFile, @NotNull File outputDir, @NotNull List<LibraryBundlificationRule> rules) throws OsgiBuildException {
+  private @Nullable File wrap(@NotNull File sourceFile, @NotNull File outputDir, @NotNull List<LibraryBundlificationRule> rules) throws OsgiBuildException {
     if (!sourceFile.isFile()) {
       throw new OsgiBuildException(message("bnd.wrapper.library.not.found", sourceFile));
     }
@@ -329,8 +328,7 @@ public class BndWrapper {
     }
   }
 
-  @NotNull
-  public static List<String> getBundleNames(@NotNull File bndFile) {
+  public static @NotNull List<String> getBundleNames(@NotNull File bndFile) {
     try (Builder builder = new Builder()) {
       builder.setProperties(bndFile);
       builder.setPedantic(false);

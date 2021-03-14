@@ -32,11 +32,8 @@ public class JpsOsmorcModuleExtensionImpl extends JpsElementBase<JpsOsmorcModule
         return OsgiBuildUtil.findFileInModuleContentRoots(getModule(), getBndFileLocation());
       }
       else if (myProperties.myManifestGenerationMode == ManifestGenerationMode.BndMavenPlugin) {
-        if (StringUtil.isNotEmpty(getBndFileLocation())) {
-          return OsgiBuildUtil.findFileInModuleContentRoots(getModule(), getBndFileLocation());
-        }
-
-        return null;
+        String bnd = getBndFileLocation();
+        return StringUtil.isNotEmpty(bnd) ? OsgiBuildUtil.findFileInModuleContentRoots(getModule(), bnd) : null;
       }
       else if (myProperties.myManifestGenerationMode == ManifestGenerationMode.Bundlor) {
         return OsgiBuildUtil.findFileInModuleContentRoots(getModule(), getBundlorFileLocation());
