@@ -37,7 +37,7 @@ import java.util.concurrent.TimeUnit
 
 class NuxtApplicationImpl(override val configFile: VirtualFile, override val project: Project) : NuxtApplication {
 
-  override val nuxtVersion: SemVer? by lazy {
+  override val nuxtVersion: SemVer? by lazy(LazyThreadSafetyMode.NONE) {
     PsiManager.getInstance(project).findFile(configFile)?.let { file ->
       CachedValuesManager.getCachedValue(file) {
         CachedValueProvider.Result.create(NodeModuleSearchUtil.resolveModule(
