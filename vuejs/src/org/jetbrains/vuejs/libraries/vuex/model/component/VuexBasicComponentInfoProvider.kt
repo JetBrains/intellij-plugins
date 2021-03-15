@@ -9,6 +9,9 @@ import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitFunctionImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
+import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.castSafelyTo
 import one.util.streamex.StreamEx
@@ -125,51 +128,46 @@ class VuexBasicComponentInfoProvider : VueContainerInfoProvider.VueInitializedCo
 }
 
 private class VuexMappedSourceComputedStateProperty(override val name: String,
-                                                    element: JSElement) : VueComputedProperty {
-  override val source: JSElement by lazy {
-    resolveToVuexSymbol(element, true)
-      ?.let { resolved ->
-        when (resolved) {
-          is JSProperty -> resolved.jsType
-          is JSFunctionItem -> resolved.returnType
-          else -> null
-        }?.let {
-          VueImplicitElement(name, it, resolved, JSImplicitElement.Type.Property, true)
-        }
+                                                    private val element: JSElement) : VueComputedProperty {
+  override val source: JSElement
+    get() = getCachedVuexImplicitElement(element, true, name, JSImplicitElement.Type.Property) { name, resolved ->
+      when (resolved) {
+        is JSProperty -> resolved.jsType
+        is JSFunctionItem -> resolved.returnType
+        else -> null
+      }?.let {
+        VueImplicitElement(name, it, resolved, JSImplicitElement.Type.Property, true)
       }
-    ?: VueImplicitElement(name, null, element, JSImplicitElement.Type.Property, false)
-  }
+    }
 
   override val jsType: JSType? get() = (source as? JSTypeOwner)?.jsType
 }
 
 private class VuexMappedSourceComputedGetterProperty(override val name: String,
-                                                     element: JSElement) : VueComputedProperty {
-  override val source: JSElement by lazy {
-    resolveToVuexSymbol(element, false)
-      ?.castSafelyTo<JSFunctionItem>()
-      ?.let { function ->
+                                                     private val element: JSElement) : VueComputedProperty {
+  override val source: JSElement
+    get() = getCachedVuexImplicitElement(element, false, name, JSImplicitElement.Type.Property) { name, resolved ->
+      (resolved as? JSFunctionItem)?.let { function ->
         VueImplicitElement(name, function.returnType, function, JSImplicitElement.Type.Property, true)
-      } ?: VueImplicitElement(name, null, element, JSImplicitElement.Type.Property, false)
-  }
+      }
+    }
 
   override val jsType: JSType? get() = (source as? JSTypeOwner)?.jsType
 }
 
 private class VuexMappedSourceMethod(override val name: String,
-                                     element: JSElement) : VueMethod {
-  override val source: JSElement by lazy {
-    resolveToVuexSymbol(element, false)
-      ?.castSafelyTo<JSFunctionItem>()
-      ?.let { function ->
+                                     private val element: JSElement) : VueMethod {
+  override val source: JSElement
+    get() = getCachedVuexImplicitElement(element, false, name, JSImplicitElement.Type.Function) { name, resolved ->
+      (resolved as? JSFunctionItem)?.let { function ->
         VueImplicitFunction(
           name, function.returnType, function,
           function.parameters.asSequence()
             .drop(1)
             .map { JSLocalImplicitFunctionImpl.ParameterImpl(it.name, it.inferredType, it.isOptional, it.isRest) }
             .toList())
-      } ?: VueImplicitElement(name, null, element, JSImplicitElement.Type.Function, false)
-  }
+      }
+    }
 
   override val jsType: JSType? get() = (source as? JSTypeOwner)?.jsType
 }
@@ -206,3 +204,14 @@ private fun resolveToVuexSymbol(source: JSElement, resolveState: Boolean): JSEle
     function
   }
 }
+
+private fun getCachedVuexImplicitElement(source: JSElement,
+                                         resolveState: Boolean,
+                                         name: String,
+                                         type: JSImplicitElement.Type,
+                                         elementProvider: (name: String, el: JSElement) -> JSImplicitElement?): JSImplicitElement =
+  CachedValuesManager.getCachedValue(source, CachedValuesManager.getManager(source.project).getKeyForClass(elementProvider::class.java)) {
+    CachedValueProvider.Result.create(
+      resolveToVuexSymbol(source, resolveState)?.let { elementProvider(name, it) }
+      ?: VueImplicitElement(name, null, source, type, false), PsiModificationTracker.MODIFICATION_COUNT)
+  }

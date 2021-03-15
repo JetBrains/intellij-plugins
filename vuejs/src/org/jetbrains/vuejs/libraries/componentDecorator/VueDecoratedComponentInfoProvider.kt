@@ -10,7 +10,6 @@ import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
-import com.intellij.lang.javascript.psi.ecmal4.JSReferenceListMember
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.codeInsight.*
@@ -99,7 +98,8 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
                 ?.let { VueModelManager.getMixin(it) }
             }
           }
-        } else {
+        }
+        else {
           extendItem.classes.mapNotNullTo(mixins) {
             VueModelManager.getMixin(it)
           }
@@ -145,7 +145,9 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
       : VueDecoratedProperty(name, member), VueInputProperty {
 
       override val jsType: JSType = VueDecoratedComponentPropType(member, decorator, decoratorArgumentIndex)
-      override val required: Boolean by lazy { getRequiredFromPropOptions(getDecoratorArgument(decorator, decoratorArgumentIndex)) }
+      override val required: Boolean by lazy(LazyThreadSafetyMode.NONE) {
+        getRequiredFromPropOptions(getDecoratorArgument(decorator, decoratorArgumentIndex))
+      }
     }
 
     private class VueDecoratedComputedProperty(name: String,
