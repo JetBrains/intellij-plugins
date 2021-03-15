@@ -1,0 +1,116 @@
+{
+  "templateSetName": "Vue",
+  "contextMapping": {
+    "vue-script-vuex": "VUE_COMPONENT_DESCRIPTOR",
+    "vue-script-router": "VUE_SCRIPT",
+    "vue-script": "VUE_SCRIPT",
+    "vue-template": "VUE_TEMPLATE",
+    "vue": "VUE_TOP_LEVEL"
+  },
+  "templates": {
+    "vanim": {
+      "description": "Vue transition component with JavaScript hooks"
+    },
+    "vanimhook-js": {
+      "descriptionPrefix": "Vue",
+      "context": [
+        "VUE_COMPONENT_DESCRIPTOR"
+      ]
+    },
+    "vc-direct": {
+      "context": [
+        "JS_STATEMENT",
+        "VUE_SCRIPT"
+      ]
+    },
+    "vcomponents": {
+      "context": [
+        "VUE_COMPONENT_DESCRIPTOR"
+      ]
+    },
+    "vcomputed": {
+      "context": [
+        "VUE_COMPONENT_DESCRIPTOR"
+      ]
+    },
+    "vdata": {
+      "context": [
+        "VUE_COMPONENT_DESCRIPTOR"
+      ]
+    },
+    "vel-props": {
+      "descriptionPrefix": "Vue"
+    },
+    "vfilter": {
+      "context": [
+        "VUE_COMPONENT_DESCRIPTOR"
+      ]
+    },
+    "vfor": {
+      "description": "Vue v-for statement"
+    },
+    "vimport-gsap": {
+      "description": "Import GSAP library"
+    },
+    "vmethod": {
+      "context": [
+        "VUE_COMPONENT_DESCRIPTOR"
+      ]
+    },
+    "vmixin": {
+      "context": [
+        "JS_STATEMENT"
+      ]
+    },
+    "vmixin-use": {
+      "context": [
+        "VUE_COMPONENT_DESCRIPTOR"
+      ]
+    },
+    "vmodel": {
+      "descriptionPrefix": "Vue"
+    },
+    "vmodel-num": {
+      "descriptionPrefix": "Vue"
+    },
+    "von": {
+      "descriptionPrefix": "Vue",
+      "context": [
+        "VUE_INSIDE_TAG"
+      ]
+    },
+    "vprops": {
+      "variables": {
+        "Number": {
+          "name": "type",
+          "defaultValue": "Number"
+        },
+        "0": {
+          "name": "default",
+          "defaultValue": "0"
+        }
+      },
+      "context": [
+        "VUE_COMPONENT_DESCRIPTOR"
+      ]
+    },
+    "vsrc": {
+      "descriptionPrefix": "Vue"
+    },
+    "vstore": {
+      "context": [
+        "VUE_SCRIPT"
+      ]
+    },
+    "vstore-import": {
+      "context": [
+        "VUE_SCRIPT"
+      ]
+    },
+    "vwatcher": {
+      "context": [
+        "VUE_COMPONENT_DESCRIPTOR"
+      ]
+    }
+  }
+}
