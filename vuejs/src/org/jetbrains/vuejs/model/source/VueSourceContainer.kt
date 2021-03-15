@@ -76,7 +76,7 @@ abstract class VueSourceContainer(sourceElement: JSImplicitElement,
                .mapNotNull { it.getInfo(descriptor)?.let(extInfoAccessor) }
                .let {
                  if (takeFirst) it.firstOrNull()
-                 else it.reduce(::merge)
+                 else it.reduceOrNull(::merge)
                }
              ?: empty()
     }
