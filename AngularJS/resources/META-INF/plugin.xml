@@ -139,6 +139,11 @@
     <javascript.names.suggester implementation="org.angular2.naming.Angular2NamesSuggester"/>
     <psi.fileReferenceHelper implementation="org.angular2.cli.AngularCliFileReferenceHelper"/>
 
+    <projectService serviceInterface="org.angular2.refactoring.extractComponent.Angular2CliComponentGenerator"
+                    serviceImplementation="org.angular2.refactoring.extractComponent.Angular2CliComponentGeneratorImpl"
+                    testServiceImplementation="org.angular2.refactoring.Angular2CliComponentGeneratorMockImpl"
+    />
+
     <!--suppress PluginXmlValidity -->
     <javascript.rename.extension implementation="org.angular2.refactoring.Angular2RenameExtension"/>
     <localInspection implementationClass="org.angular2.inspections.AngularCliAddDependencyInspection"
@@ -174,7 +179,8 @@
     <directoryProjectConfigurator implementation="org.angular2.cli.AngularJSProjectConfigurator"
                                   order="after PlatformProjectConfigurator"/>
     <framework.detector implementation="org.angular2.cli.AngularJSFrameworkDetector"/>
-    <fileType name="tsconfig" fileNamesCaseInsensitive="tsconfig.app.json;tsconfig.lib.json;tsconfig.spec.json;tsconfig.e2e.json;tsconfig.editor.json"/>
+    <fileType name="tsconfig"
+              fileNamesCaseInsensitive="tsconfig.app.json;tsconfig.lib.json;tsconfig.spec.json;tsconfig.e2e.json;tsconfig.editor.json"/>
     <stubIndex implementation="org.angular2.index.Angular2TemplateUrlIndex"/>
     <stubIndex implementation="org.angular2.index.Angular2SourcePipeIndex"/>
     <stubIndex implementation="org.angular2.index.Angular2SourceDirectiveIndex"/>
@@ -351,6 +357,11 @@
     <action class="org.angular2.cli.actions.AngularCliAddDependencyAction" id="angularCliAdd"
             icon="/icons/angular2.svg">
       <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewDir"/>
+    </action>
+    <action id="Angular2ExtractComponentAction"
+            icon="/icons/angular2.svg"
+            class="org.angular2.refactoring.extractComponent.Angular2ExtractComponentAction">
+      <add-to-group group-id="IntroduceActionsGroup"/>
     </action>
   </actions>
   <resource-bundle>messages.Angular2Bundle</resource-bundle>

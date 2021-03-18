@@ -28,10 +28,7 @@ import org.angular2.metadata.JsonMetadataTest;
 import org.angular2.navigation.FindUsagesTest;
 import org.angular2.navigation.GotoRelatedTest;
 import org.angular2.navigation.GotoSymbolTest;
-import org.angular2.refactoring.AngularChangeSignatureTest;
-import org.angular2.refactoring.DirectiveRenameTest;
-import org.angular2.refactoring.MoveTest;
-import org.angular2.refactoring.RenameTest;
+import org.angular2.refactoring.*;
 import org.angular2.resharper.Angular2ReSharperTestSuite;
 import org.angular2.svg.AngularSvgTest;
 import org.junit.runner.RunWith;
@@ -79,6 +76,7 @@ import org.junit.runners.Suite;
   DirectiveRenameTest.class,
   MoveTest.class,
   RenameTest.class,
+  Angular2ExtractComponentTest.class,
   ComponentDeclarationNavigationTest.class,
   JsonMetadataTest.class,
   IvyMetadataTest.class,

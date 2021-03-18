@@ -55,6 +55,9 @@ public final class AngularCliUtil {
     return null;
   }
 
+  /**
+   * Locates folder in which angular.json from which user would run Angular CLI
+   */
   public static @Nullable VirtualFile findAngularCliFolder(@NotNull Project project, @Nullable VirtualFile file) {
     VirtualFile current = file;
     while (current != null) {
