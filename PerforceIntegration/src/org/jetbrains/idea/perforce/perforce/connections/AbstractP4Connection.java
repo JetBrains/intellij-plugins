@@ -17,15 +17,16 @@ package org.jetbrains.idea.perforce.perforce.connections;
 
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.ProcessNotCreatedException;
+import com.intellij.execution.util.ExecUtil;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.LogUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.process.InterruptibleProcess;
 import com.intellij.openapi.util.text.StringUtil;
@@ -54,6 +55,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
 
 public abstract class AbstractP4Connection implements P4Connection {
   private static final Logger LOG = Logger.getInstance(AbstractP4Connection.class);
@@ -167,7 +169,7 @@ public abstract class AbstractP4Connection implements P4Connection {
     }
     finally {
       if (rc == TIMEOUT_EXIT_CODE && ApplicationManager.getApplication().isUnitTestMode()) {
-        processList = LogUtil.getProcessList();
+        processList = ProcessHandle.allProcesses().map(h -> h.pid() + ": " + h.info()).collect(Collectors.joining("\n"));
       }
 
       tracer.stop();
@@ -200,11 +202,12 @@ public abstract class AbstractP4Connection implements P4Connection {
       retVal.setStdout("");
       retVal.setStderr(PerforceBundle.message("exception.text.perforce.integration.disconnected"));
       if (LOG.isDebugEnabled()) {
-        LOG.debug("process list: " + processList);
+        LOG.debug("process list:\n" + processList);
       }
       if (ApplicationManager.getApplication().isUnitTestMode()) {
         System.out.println("======================");
-        System.out.println("system info: " + LogUtil.getSystemMemoryInfo());
+        GeneralCommandLine sysInfo = new GeneralCommandLine(SystemInfo.isWindows ? "systeminfo" : SystemInfo.isMac ? "vm_stat" : "free").withRedirectErrorStream(true);
+        System.out.println("system info:\n" + ExecUtil.execAndGetOutput(sysInfo).getStdout());
 
         Path dumpPath = FileUtil.createTempFile(new File(System.getProperty("teamcity.build.tempDir", System.getProperty("java.io.tmpdir"))), "perforce", ".hprof.zip", false, false).toPath();
         MemoryDumpHelper.captureMemoryDumpZipped(dumpPath);
