@@ -1,0 +1,8 @@
+<input class="mx-auto d-block" ngModel #inputElement>
+
+<ng-container *ngFor="let section of sections">
+    <app-child [anotherText]="anotherText" [handleEvent]="handleEvent" [titleContent]="titleContent" [section]="section"
+               [inputElement]="inputElement" [dedicatedTextInterpolation]="dedicatedTextInterpolation"
+               [examplePerson]="examplePerson" [(twoWay)]="count" [actions]="actions"
+               [actionPrefix]="actionPrefix"></app-child>
+</ng-container>

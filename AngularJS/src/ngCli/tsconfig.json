@@ -9,8 +9,5 @@
     "target": "es2017",
     "outDir": "../../gen/ngCli"
   },
-  "compileOnSave": true,
-  "include": [
-    "*.ts"
-  ]
+  "compileOnSave": true
 }

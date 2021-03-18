@@ -1,0 +1,6 @@
+<p *ngIf="twoWay">
+    <app-list-item [twoWay]="twoWay_1"
+                   (twoWayChange)="twoWay_1Change.emit($event)"></app-list-item>
+    <app-list-item [twoWay]="twoWay_2"
+                   (twoWayChange)="twoWay_2Change.emit($event)"></app-list-item>
+</p>

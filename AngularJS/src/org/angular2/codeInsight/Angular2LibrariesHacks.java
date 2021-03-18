@@ -25,6 +25,7 @@ import org.angular2.entities.ivy.Angular2IvyDirective;
 import org.angular2.entities.metadata.psi.Angular2MetadataDirectiveBase;
 import org.angular2.entities.metadata.psi.Angular2MetadataDirectiveProperty;
 import org.angular2.entities.metadata.psi.Angular2MetadataNodeModule;
+import org.angular2.lang.Angular2LangUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,8 +49,6 @@ public final class Angular2LibrariesHacks {
 
   @NonNls private static final String IONIC_ANGULAR_PACKAGE = "@ionic/angular";
   @NonNls private static final String NG_MODEL_CHANGE = "ngModelChange";
-  @NonNls private static final String EVENT_EMITTER = "EventEmitter";
-  @NonNls private static final String SLICE_PIPE_NAME = "slice";
   @NonNls private static final String NG_FOR_OF = "ngForOf";
   @NonNls private static final String NG_ITERABLE = "NgIterable";
   @NonNls private static final String QUERY_LIST = "QueryList";
@@ -86,7 +85,7 @@ public final class Angular2LibrariesHacks {
         JSType type;
         if (prop instanceof TypeScriptField
             && (type = prop.getJSType()) != null
-            && type.getTypeText().startsWith(EVENT_EMITTER)) {
+            && type.getTypeText().startsWith(Angular2LangUtil.EVENT_EMITTER)) {
           outputs.put(prop.getMemberName(), prop.getMemberName());
         }
       }

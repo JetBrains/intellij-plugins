@@ -1,0 +1,22 @@
+<input class="mx-auto d-block" ngModel #inputElement>
+
+<ng-container *ngFor="let section of sections">
+  <section class="py-5 text-center container">
+    <div class="row py-lg-5">
+      <div class="col-lg-6 col-md-8 mx-auto" [title]="$any(anotherText)" (click)="handleEvent()">
+<selection>        <h1 class="fw-light" [title]="titleContent" (click)="handleEvent($event)">
+          Album example {{section}} {{ inputElement.value }}
+        </h1>
+        <p class="lead text-muted" title="{{1 + 1}} baz {{ anotherText }}">
+          Something {{dedicatedTextInterpolation}} short and leading
+          about the collection below—its contents, the creator, etc.
+          Make it short and sweet, but not too short so folks don’t simply skip over it entirely.
+        </p></selection>
+        <p>
+          <app-list-item [person]="examplePerson" [(twoWay)]="count"></app-list-item>
+        </p>
+        <p><a href="#" class="btn btn-secondary my-2" *ngFor="let action of actions">{{actionPrefix}} {{action}}</a></p>
+      </div>
+    </div>
+  </section>
+</ng-container>

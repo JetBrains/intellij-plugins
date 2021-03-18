@@ -3,10 +3,11 @@ package org.angular2.entities;
 
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.Pair;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+
+import static org.angular2.lang.Angular2LangUtil.OUTPUT_CHANGE_SUFFIX;
 
 public class Angular2DirectiveProperties {
 
@@ -14,8 +15,6 @@ public class Angular2DirectiveProperties {
   private final Collection<? extends Angular2DirectiveProperty> myOutputs;
   private final NotNullLazyValue<List<Pair<Angular2DirectiveProperty, Angular2DirectiveProperty>>> myInOuts =
     NotNullLazyValue.createValue(() -> {
-      @NonNls final String OUTPUT_CHANGE_SUFFIX = "Change";
-
       Collection<? extends Angular2DirectiveProperty> outputs = getOutputs();
       Collection<? extends Angular2DirectiveProperty> inputs = getInputs();
 

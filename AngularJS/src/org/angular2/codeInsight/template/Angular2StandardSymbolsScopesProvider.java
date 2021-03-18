@@ -2,6 +2,7 @@
 package org.angular2.codeInsight.template;
 
 import com.intellij.lang.javascript.psi.JSElement;
+import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
@@ -63,6 +64,12 @@ public class Angular2StandardSymbolsScopesProvider extends Angular2TemplateScope
       }
     }
     return result;
+  }
+
+  @Override
+  public boolean isImplicitReferenceExpression(JSReferenceExpression expression) {
+    var value = expression.getText();
+    return $ANY.equals(value) || $EVENT.equals(value);
   }
 
   private static final class Angular2$AnyScope extends Angular2TemplateScope {
