@@ -58,7 +58,7 @@ public class DartFileListener implements AsyncFileListener {
 
   @Nullable
   @Override
-  public ChangeApplier prepareChange(@NotNull List<? extends VFileEvent> events) {
+  public ChangeApplier prepareChange(@NotNull List<? extends @NotNull VFileEvent> events) {
     SmartList<VFileEvent> dotPackageEvents = new SmartList<>();
     SmartList<VFileEvent> moveOrRenameAnalyzableFileEvents = new SmartList<>();
 

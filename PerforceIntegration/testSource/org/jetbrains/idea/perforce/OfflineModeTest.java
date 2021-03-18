@@ -469,7 +469,7 @@ public class OfflineModeTest extends PerforceTestCase {
   private void watchVfsEvents() {
     myProject.getMessageBus().connect().subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
       @Override
-      public void after(@NotNull List<? extends VFileEvent> events) {
+      public void after(@NotNull List<? extends @NotNull VFileEvent> events) {
         LOG.debug("OfflineModeTest.after: " + events);
         LOG.debug(ThreadDumper.dumpThreadsToString());
       }

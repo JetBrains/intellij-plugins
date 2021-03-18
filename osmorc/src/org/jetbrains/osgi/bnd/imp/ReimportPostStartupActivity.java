@@ -92,7 +92,7 @@ final class ReimportPostStartupActivity implements StartupActivity.DumbAware {
     private final HelperService manager = HelperService.getInstance();
 
     @Override
-    public @Nullable ChangeApplier prepareChange(@NotNull List<? extends VFileEvent> events) {
+    public @Nullable ChangeApplier prepareChange(@NotNull List<? extends @NotNull VFileEvent> events) {
       if (!manager.isActive) {
         return null;
       }

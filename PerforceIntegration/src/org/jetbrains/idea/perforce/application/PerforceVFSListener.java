@@ -52,7 +52,7 @@ public final class PerforceVFSListener extends VcsVFSListener {
     super.installListeners();
     myProject.getMessageBus().connect(myProject).subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
       @Override
-      public void after(@NotNull List<? extends VFileEvent> events) {
+      public void after(@NotNull List<? extends @NotNull VFileEvent> events) {
         for (VFileEvent event : events) {
           if (event instanceof VFileCreateEvent) {
             if (!(event.getFileSystem() instanceof LocalFileSystem)) continue;
