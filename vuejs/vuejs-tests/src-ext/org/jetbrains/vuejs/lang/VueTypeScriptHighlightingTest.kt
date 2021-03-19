@@ -81,7 +81,11 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
 
   // these tests need to be ignored with additional code:
   override fun testIntermediateResultsNotCachedForRecursiveTypes() {
-    LOG.info("Skipping muted test")
+    //skip
+  }
+
+  override fun testTypeScriptImportStatementType() {
+    //skip
   }
 
   override fun doHighlightingWithInvokeFixAndCheckResult(fixName: String?, ext: String?, vararg files: String?) {
