@@ -121,7 +121,7 @@ public final class PhoneGapUtil {
   private static Collection<VirtualFile> getFolders(@NotNull Project project) {
     for (String folder : POSSIBLE_FOLDERS_IN_PHONEGAP_ROOT) {
       Collection<VirtualFile> files =
-        ContainerUtil.filter(FilenameIndex.getVirtualFilesByName(project, folder, GlobalSearchScope.projectScope(project)),
+        ContainerUtil.filter(FilenameIndex.getVirtualFilesByName(folder, GlobalSearchScope.projectScope(project)),
                              file -> file.isDirectory());
       if (!files.isEmpty()) {
         return files;

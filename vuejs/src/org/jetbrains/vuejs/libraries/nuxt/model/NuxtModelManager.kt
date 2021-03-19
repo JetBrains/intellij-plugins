@@ -33,7 +33,7 @@ object NuxtModelManager {
   private fun getNuxtApplicationMap(project: Project): Map<VirtualFile, NuxtApplication> =
     CachedValuesManager.getManager(project).getCachedValue(project) {
       create<Map<VirtualFile, NuxtApplication>>(
-        FilenameIndex.getVirtualFilesByName(project, NUXT_CONFIG_FILE, GlobalSearchScope.projectScope(project))
+        FilenameIndex.getVirtualFilesByName(NUXT_CONFIG_FILE, GlobalSearchScope.projectScope(project))
           .associateBy({ it.parent }, { NuxtApplicationImpl(it, project) }),
         VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
     }

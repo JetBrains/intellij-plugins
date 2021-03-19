@@ -65,7 +65,7 @@ fun resolve(name: String, scope: GlobalSearchScope, key: StubIndexKey<String, JS
 fun hasVueClassComponentLibrary(project: Project): Boolean {
   if (DumbService.isDumb(project)) return false
   return CachedValuesManager.getManager(project).getCachedValue(project) {
-    val packageJsonFiles = FilenameIndex.getVirtualFilesByName(project, PackageJsonUtil.FILE_NAME, GlobalSearchScope.projectScope(project))
+    val packageJsonFiles = FilenameIndex.getVirtualFilesByName(PackageJsonUtil.FILE_NAME, GlobalSearchScope.projectScope(project))
 
     var recordedDependency = packageJsonFiles.any { PackageJsonData.getOrCreate(it).isDependencyOfAnyType(VUE_CLASS_COMPONENT_MODULE) }
     if (!recordedDependency) {

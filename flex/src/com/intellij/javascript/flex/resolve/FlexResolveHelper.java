@@ -70,12 +70,12 @@ public class FlexResolveHelper implements JSResolveHelper {
     };
 
     Collection<VirtualFile> files =
-      FilenameIndex.getVirtualFilesByName(project, className + JavaScriptSupportLoader.MXML_FILE_EXTENSION_DOT, scope);
+      FilenameIndex.getVirtualFilesByName(className + JavaScriptSupportLoader.MXML_FILE_EXTENSION_DOT, scope);
     ContainerUtil.process(files, processor);
 
 
     if (result.isNull()) {
-      files = FilenameIndex.getVirtualFilesByName(project, className + JavaScriptSupportLoader.FXG_FILE_EXTENSION_DOT, scope);
+      files = FilenameIndex.getVirtualFilesByName(className + JavaScriptSupportLoader.FXG_FILE_EXTENSION_DOT, scope);
       ContainerUtil.process(files, processor);
     }
     return result.get();

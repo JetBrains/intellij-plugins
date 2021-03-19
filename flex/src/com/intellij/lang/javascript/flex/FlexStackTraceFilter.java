@@ -119,7 +119,7 @@ public class FlexStackTraceFilter implements Filter {
     final Collection<VirtualFile> result = new ArrayList<>();
 
     final Collection<VirtualFile> files =
-      FilenameIndex.getVirtualFilesByName(myProject, PathUtil.getFileName(filePath), GlobalSearchScope.allScope(myProject));
+      FilenameIndex.getVirtualFilesByName(PathUtil.getFileName(filePath), GlobalSearchScope.allScope(myProject));
 
     for (final VirtualFile file : files) {
       if (file.getPath().endsWith(matchingRelativePath)) {

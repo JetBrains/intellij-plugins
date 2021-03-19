@@ -71,7 +71,7 @@ public class DartConsoleFilter implements Filter {
         }
         else {
           if (myAllPubspecYamlFiles == null) {
-            myAllPubspecYamlFiles = FilenameIndex.getVirtualFilesByName(myProject, PUBSPEC_YAML, GlobalSearchScope.projectScope(myProject));
+            myAllPubspecYamlFiles = FilenameIndex.getVirtualFilesByName(PUBSPEC_YAML, GlobalSearchScope.projectScope(myProject));
           }
 
           VirtualFile inPackage = null;

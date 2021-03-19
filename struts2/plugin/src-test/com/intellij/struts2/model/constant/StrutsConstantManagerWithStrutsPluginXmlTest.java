@@ -54,7 +54,7 @@ public class StrutsConstantManagerWithStrutsPluginXmlTest extends StrutsConstant
 
   public void testSpringPluginXml() {
     Collection<VirtualFile> configFiles =
-      FilenameIndex.getVirtualFilesByName(myFixture.getProject(), "struts-plugin.xml", moduleWithLibrariesScope(getModule()));
+      FilenameIndex.getVirtualFilesByName("struts-plugin.xml", moduleWithLibrariesScope(getModule()));
     assertSize(1, configFiles);
 
     VirtualFile springStrutsPluginXml = configFiles.iterator().next();

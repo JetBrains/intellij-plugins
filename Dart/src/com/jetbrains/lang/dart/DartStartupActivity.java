@@ -43,7 +43,7 @@ public final class DartStartupActivity implements StartupActivity.Background {
   @Override
   public void runActivity(@NotNull Project project) {
     final Collection<VirtualFile> pubspecYamlFiles =
-      ReadAction.compute(() -> FilenameIndex.getVirtualFilesByName(project, PUBSPEC_YAML, GlobalSearchScope.projectScope(project)));
+      ReadAction.compute(() -> FilenameIndex.getVirtualFilesByName(PUBSPEC_YAML, GlobalSearchScope.projectScope(project)));
 
     if (pubspecYamlFiles.isEmpty()) {
       return;

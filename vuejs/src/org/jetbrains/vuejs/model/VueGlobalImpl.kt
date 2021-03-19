@@ -125,7 +125,7 @@ internal class VueGlobalImpl(override val project: Project, private val packageJ
       }
       .mapNotNull { PackageJsonUtil.findChildPackageJsonFile(it) }
       .plus(FilenameIndex.getVirtualFilesByName(
-        project, PackageJsonUtil.FILE_NAME,
+        PackageJsonUtil.FILE_NAME,
         GlobalSearchScopesCore.directoryScope(project, nodeModules, true)
       ))
       .distinct()

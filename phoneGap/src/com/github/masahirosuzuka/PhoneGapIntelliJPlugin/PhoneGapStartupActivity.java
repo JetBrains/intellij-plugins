@@ -107,16 +107,14 @@ public class PhoneGapStartupActivity implements StartupActivity.Background {
   }
 
   private static void excludeWorkingDirectories(@NotNull Project project) {
-    final Collection<VirtualFile> platformsDirectories = FilenameIndex.getVirtualFilesByName(project,
-                                                                                             FOLDER_PLATFORMS,
+    final Collection<VirtualFile> platformsDirectories = FilenameIndex.getVirtualFilesByName(FOLDER_PLATFORMS,
                                                                                              GlobalSearchScope.projectScope(project));
 
     for (VirtualFile directory : platformsDirectories) {
       excludeFolder(project, directory);
     }
 
-    final Collection<VirtualFile> wwwDirectories = FilenameIndex.getVirtualFilesByName(project,
-                                                                                       FOLDER_WWW,
+    final Collection<VirtualFile> wwwDirectories = FilenameIndex.getVirtualFilesByName(FOLDER_WWW,
                                                                                        GlobalSearchScope.projectScope(project));
 
     for (VirtualFile directory : wwwDirectories) {

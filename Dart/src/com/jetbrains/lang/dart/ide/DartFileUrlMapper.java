@@ -166,7 +166,7 @@ final class DartFileUrlMapper extends FileUrlMapper {
     final String authority = url.getAuthority();
     if (authority != null && !BuiltInServerManagerImpl.isOnBuiltInWebServerByAuthority(authority)) {
       return ReadAction.compute(() -> ContainerUtil
-        .getFirstItem(FilenameIndex.getVirtualFilesByName(project, PUBSPEC_YAML, GlobalSearchScope.projectScope(project))));
+        .getFirstItem(FilenameIndex.getVirtualFilesByName(PUBSPEC_YAML, GlobalSearchScope.projectScope(project))));
     }
 
     return null;
@@ -174,7 +174,7 @@ final class DartFileUrlMapper extends FileUrlMapper {
 
   @Nullable
   private static VirtualFile findFileInAnyPackagesFolder(final @NotNull Project project, final @NotNull String packageUrl) {
-    for (final VirtualFile yamlFile : FilenameIndex.getVirtualFilesByName(project, PUBSPEC_YAML, GlobalSearchScope.projectScope(project))) {
+    for (final VirtualFile yamlFile : FilenameIndex.getVirtualFilesByName(PUBSPEC_YAML, GlobalSearchScope.projectScope(project))) {
       final VirtualFile file = DartUrlResolver.getInstance(project, yamlFile).findFileByDartUrl(packageUrl);
       if (file != null) return file;
     }

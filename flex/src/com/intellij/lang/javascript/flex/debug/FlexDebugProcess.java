@@ -884,7 +884,7 @@ public class FlexDebugProcess extends XDebugProcess {
   }
 
   private static Collection<VirtualFile> getFilesByName(final Project project, final GlobalSearchScope scope, final String fileName) {
-    return ReadAction.compute(() -> FilenameIndex.getVirtualFilesByName(project, fileName, scope));
+    return ReadAction.compute(() -> FilenameIndex.getVirtualFilesByName(fileName, scope));
   }
 
   @Nullable
