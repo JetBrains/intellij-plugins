@@ -32,7 +32,6 @@ import com.intellij.lang.ASTNode
 import com.intellij.lang.xml.XMLLanguage
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorModificationUtil
-import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Comparing
@@ -62,7 +61,7 @@ class CfmlTypedHandler : TypedHandlerDelegate() {
     when (c) {
       '{' -> {
         val braceMatcher = CfmlBraceMatcher()
-        val iterator = (editor as EditorEx).highlighter.createIterator(offset)
+        val iterator = editor.highlighter.createIterator(offset)
         if (!braceMatcher.isLBraceToken(iterator, editor.document.charsSequence, fileType)) {
           EditorModificationUtil.insertStringAtCaret(editor, "}", true, 0)
           // return Result.STOP;
@@ -80,8 +79,8 @@ class CfmlTypedHandler : TypedHandlerDelegate() {
         }
       }
       '>' -> {
-        if ((editor as EditorEx).highlighter.createIterator(
-            editor.getCaretModel().offset).tokenType === CfmlTokenTypes.COMMENT || (editor as EditorEx).highlighter.createIterator(
+        if (editor.highlighter.createIterator(
+            editor.getCaretModel().offset).tokenType === CfmlTokenTypes.COMMENT || editor.highlighter.createIterator(
             editor.getCaretModel().offset).tokenType.language !== CfmlLanguage.INSTANCE) {
           return Result.CONTINUE
         }
@@ -171,7 +170,7 @@ class CfmlTypedHandler : TypedHandlerDelegate() {
       if (DocumentUtils.getCharAt(document, offset - 2) == '/') {
         return false
       }
-      var iterator = (editor as EditorEx).highlighter.createIterator(offset - 2)
+      var iterator = editor.highlighter.createIterator(offset - 2)
 
       while (!iterator.atEnd() && iterator.tokenType != CfmlTokenTypes.CF_TAG_NAME) {
         if (CfmlUtil.isControlToken(iterator.tokenType)) {

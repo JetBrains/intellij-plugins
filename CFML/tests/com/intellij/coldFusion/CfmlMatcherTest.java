@@ -5,7 +5,6 @@ import com.intellij.codeInsight.editorActions.CodeBlockUtil;
 import com.intellij.codeInsight.highlighting.BraceMatchingUtil;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.editor.highlighter.HighlighterIterator;
 import com.intellij.psi.PsiDocumentManager;
@@ -26,7 +25,7 @@ public class CfmlMatcherTest extends CfmlCodeInsightFixtureTestCase {
   private void doTest() {
     final int pairOffset = configureByTestFile(getTestName(false));
     int offset = myFixture.getEditor().getCaretModel().getOffset();
-    EditorHighlighter editorHighlighter = ((EditorEx)myFixture.getEditor()).getHighlighter();
+    EditorHighlighter editorHighlighter = myFixture.getEditor().getHighlighter();
     HighlighterIterator iterator = editorHighlighter.createIterator(offset);
     boolean forward = offset < pairOffset;
     boolean matched = BraceMatchingUtil

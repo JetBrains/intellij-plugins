@@ -15,7 +15,6 @@ import com.intellij.coldFusion.model.psi.CfmlTag;
 import com.intellij.coldFusion.model.psi.impl.CfmlAttributeImpl;
 import com.intellij.coldFusion.model.psi.impl.CfmlPropertyImpl;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.highlighter.HighlighterIterator;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -68,7 +67,7 @@ class CfmlAttributeNamesCompletionProvider extends CompletionProvider<Completion
         withCaseSensitivity(false), new TailType() {
         @Override
         public int processTail(Editor editor, int tailOffset) {
-          HighlighterIterator iterator = ((EditorEx)editor).getHighlighter().createIterator(tailOffset);
+          HighlighterIterator iterator = editor.getHighlighter().createIterator(tailOffset);
           if (!iterator.atEnd() && iterator.getTokenType() == CfmlTokenTypes.WHITE_SPACE) iterator.advance();
           if (!iterator.atEnd() && iterator.getTokenType() == CfmlTokenTypes.ASSIGN) {
             iterator.advance();
