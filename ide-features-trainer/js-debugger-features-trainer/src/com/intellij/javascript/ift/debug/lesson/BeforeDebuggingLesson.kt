@@ -68,7 +68,7 @@ class BeforeDebuggingLesson
           LearningUiHighlightingManager.clearHighlights()
           text(JsDebugLessonsBundle.message("js.debugger.before.edit", strong("debugging.js"), strong(ExecutionBundle.message("edit.configuration.action").dropMnemonic())))
           stateCheck {
-            ((focusOwner as? Tree)?.model?.root as? DefaultMutableTreeNode)?.lastChild.toString() == "Templates"
+            (focusOwner as? Tree)?.model?.javaClass?.name?.contains("RunConfigurable") ?: false
           }
         }
 
