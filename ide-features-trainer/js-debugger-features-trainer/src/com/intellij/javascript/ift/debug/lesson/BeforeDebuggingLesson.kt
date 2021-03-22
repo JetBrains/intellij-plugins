@@ -3,6 +3,7 @@ package com.intellij.javascript.ift.debug.lesson
 
 import com.intellij.execution.ExecutionBundle
 import com.intellij.execution.RunManager
+import com.intellij.execution.impl.RunConfigurable
 import com.intellij.javascript.ift.debug.JsDebugLessonsBundle
 import com.intellij.javascript.ift.debug.setLanguageLevel
 import com.intellij.openapi.editor.impl.EditorComponentImpl
@@ -12,7 +13,6 @@ import training.dsl.*
 import training.learn.course.KLesson
 import training.ui.LearningUiHighlightingManager
 import javax.swing.JButton
-import javax.swing.tree.DefaultMutableTreeNode
 
 class BeforeDebuggingLesson
   : KLesson("Before Debugging: Run/Debug Configurations", JsDebugLessonsBundle.message("js.debugger.before.title")) {
@@ -68,7 +68,7 @@ class BeforeDebuggingLesson
           LearningUiHighlightingManager.clearHighlights()
           text(JsDebugLessonsBundle.message("js.debugger.before.edit", strong("debugging.js"), strong(ExecutionBundle.message("edit.configuration.action").dropMnemonic())))
           stateCheck {
-            (focusOwner as? Tree)?.model?.javaClass?.name?.contains("RunConfigurable") ?: false
+            (focusOwner as? Tree)?.model?.javaClass?.name?.contains(RunConfigurable::class.java.simpleName) ?: false
           }
         }
 
