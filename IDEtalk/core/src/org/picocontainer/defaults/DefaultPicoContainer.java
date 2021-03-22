@@ -146,7 +146,6 @@ public class DefaultPicoContainer implements MutablePicoContainer, Disposable {
    * This method can be used to override the ComponentAdapter created by the {@link ComponentAdapterFactory}
    * passed to the constructor of this container.
    */
-  @Override
   public ComponentAdapter registerComponent(ComponentAdapter componentAdapter) {
     Object componentKey = componentAdapter.getComponentKey();
     if (componentKeyToAdapterCache.containsKey(componentKey)) {
@@ -170,30 +169,10 @@ public class DefaultPicoContainer implements MutablePicoContainer, Disposable {
    * The returned ComponentAdapter will be an {@link InstanceComponentAdapter}.
    */
   @Override
-  public ComponentAdapter registerComponentInstance(Object component) {
-    return registerComponentInstance(component.getClass(), component);
-  }
-
-  /**
-   * {@inheritDoc}
-   * The returned ComponentAdapter will be an {@link InstanceComponentAdapter}.
-   */
-  @Override
   public ComponentAdapter registerComponentInstance(Object componentKey, Object componentInstance) {
     ComponentAdapter componentAdapter =
       new InstanceComponentAdapter(componentKey, componentInstance, lifecycleStrategyForInstanceRegistrations);
     return registerComponent(componentAdapter);
-  }
-
-  /**
-   * {@inheritDoc}
-   * The returned ComponentAdapter will be instantiated by the {@link ComponentAdapterFactory}
-   * passed to the container's constructor.
-   * @param componentImplementation
-   */
-  @Override
-  public ComponentAdapter registerComponentImplementation(@NotNull Class<?> componentImplementation) {
-    return registerComponentImplementation(componentImplementation, componentImplementation);
   }
 
   /**

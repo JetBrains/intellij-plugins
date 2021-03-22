@@ -12,7 +12,7 @@ import org.jetbrains.idea.perforce.PerforceBundle;
 
 import java.util.Collection;
 
-public class PerforceLocalChangeListDecorator implements ChangeListDecorator {
+final class PerforceLocalChangeListDecorator implements ChangeListDecorator {
   private final Project myProject;
 
   public PerforceLocalChangeListDecorator(final Project project) {

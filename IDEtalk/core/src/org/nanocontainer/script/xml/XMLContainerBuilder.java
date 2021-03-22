@@ -419,7 +419,7 @@ public final class XMLContainerBuilder {
         container.getPico().registerComponentInstance(myClassLoader.loadClass(classKey), instance);
       }
       else {
-        container.getPico().registerComponentInstance(instance);
+        container.getPico().registerComponentInstance(instance.getClass(), instance);
       }
     }
     else {

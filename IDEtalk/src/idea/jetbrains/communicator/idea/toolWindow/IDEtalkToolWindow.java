@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package jetbrains.communicator.idea.toolWindow;
 
 import com.intellij.openapi.actionSystem.ActionGroup;
@@ -47,8 +47,8 @@ public final class IDEtalkToolWindow extends BaseToolWindow implements SettingsS
 
     myContainer = containerRegistry.getContainer();
 
-    myContainer.registerComponentImplementation(UserListComponentImpl.class);
-    myContainer.registerComponentImplementation(StatusToolbarImpl.class);
+    myContainer.registerComponentImplementation(UserListComponentImpl.class, UserListComponentImpl.class);
+    myContainer.registerComponentImplementation(StatusToolbarImpl.class, StatusToolbarImpl.class);
 
     myUserListComponent = (UserListComponentImpl)myContainer.getComponentInstanceOfType(UserListComponentImpl.class);
 
