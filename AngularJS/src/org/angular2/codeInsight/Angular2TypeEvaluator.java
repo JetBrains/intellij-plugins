@@ -2,17 +2,26 @@
 package org.angular2.codeInsight;
 
 import com.intellij.lang.javascript.ecmascript6.TypeScriptTypeEvaluator;
+import com.intellij.lang.javascript.psi.JSCallExpression;
+import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSThisExpression;
 import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
 import com.intellij.lang.javascript.psi.types.JSAnyType;
 import com.intellij.lang.javascript.psi.types.JSTypeSource;
+import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
 import com.intellij.lang.javascript.psi.types.JSUnknownType;
+import com.intellij.lang.javascript.psi.types.evaluable.JSApplyCallType;
+import com.intellij.lang.javascript.psi.types.evaluable.JSQualifiedReferenceType;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveResult;
+import com.intellij.util.containers.ContainerUtil;
 import org.angular2.entities.Angular2ComponentLocator;
+import org.angular2.entities.Angular2EntitiesProvider;
+import org.angular2.entities.Angular2Pipe;
 import org.angular2.lang.expr.psi.Angular2EmbeddedExpression;
+import org.angular2.lang.expr.psi.Angular2PipeExpression;
 import org.angular2.lang.expr.psi.Angular2TemplateBindings;
 import org.angular2.lang.types.Angular2TypeUtils;
 import org.jetbrains.annotations.NotNull;
@@ -22,6 +31,37 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
 
   public Angular2TypeEvaluator(@NotNull JSEvaluateContext context) {
     super(context);
+  }
+
+  @Override
+  protected void evaluateCallExpressionTypes(@NotNull JSCallExpression callExpression) {
+    if (callExpression instanceof Angular2PipeExpression) {
+      evaluatePipeExpressionTypes((Angular2PipeExpression)callExpression);
+    }
+    else {
+      super.evaluateCallExpressionTypes(callExpression);
+    }
+  }
+
+  private void evaluatePipeExpressionTypes(@NotNull Angular2PipeExpression pipeExpression) {
+    JSExpression methodExpression = pipeExpression.getMethodExpression();
+    String name = pipeExpression.getName();
+    if (methodExpression == null || name == null) return;
+
+    Angular2DeclarationsScope scope = new Angular2DeclarationsScope(methodExpression);
+    Angular2Pipe pipe = ContainerUtil.find(
+      Angular2EntitiesProvider.findPipes(pipeExpression.getProject(), pipeExpression.getName()),
+      scope::contains
+    );
+    if (pipe == null) return;
+
+    var jsClass = pipe.getTypeScriptClass();
+    if (jsClass == null) return;
+
+    var typeSource = JSTypeSourceFactory.createTypeSource(pipeExpression, true);
+    var instanceMethod = new JSQualifiedReferenceType(Angular2EntitiesProvider.TRANSFORM_METHOD, jsClass.getJSType(), typeSource);
+    var type = new JSApplyCallType(instanceMethod, typeSource);
+    addType(type);
   }
 
   @Override

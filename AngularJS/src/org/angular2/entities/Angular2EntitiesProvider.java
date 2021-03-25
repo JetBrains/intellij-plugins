@@ -52,7 +52,7 @@ import static org.angular2.lang.Angular2LangUtil.isAngular2Context;
 
 public final class Angular2EntitiesProvider {
 
-  static final String TRANSFORM_METHOD = "transform";
+  public static final String TRANSFORM_METHOD = "transform";
 
   public static Angular2Entity getEntity(@Nullable PsiElement element) {
     if (element == null) {
