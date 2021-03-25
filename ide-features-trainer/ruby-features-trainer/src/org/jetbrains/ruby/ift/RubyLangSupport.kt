@@ -1,15 +1,20 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.ruby.ift
 
+import com.intellij.CommonBundle
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
+import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.text.VersionComparatorUtil
+import icons.FeaturesTrainerIcons
+import org.jetbrains.plugins.ruby.RBundle
 import org.jetbrains.plugins.ruby.gem.GemDependency
 import org.jetbrains.plugins.ruby.gem.GemInstallUtil
 import org.jetbrains.plugins.ruby.gem.gem.GemRunner
@@ -57,7 +62,26 @@ class RubyLangSupport : AbstractLangSupport() {
     }
     catch (e: NoSdkException) {
       SdkRefresher.refreshAll()
-      super.getSdkForProject(project)
+      try {
+        super.getSdkForProject(project)
+      }
+      catch (e: NoSdkException) {
+        showSdkNotFoundDialog(project)
+        null
+      }
+    }
+  }
+
+  private fun showSdkNotFoundDialog(project: Project) {
+    val decision = Messages.showOkCancelDialog(project,
+                                               RubyLessonsBundle.message(
+                                                 "ruby.sdk.not.found.dialog.message"),
+                                               RubyLessonsBundle.message("ruby.sdk.not.found.dialog.title"),
+                                               RubyLessonsBundle.message("ruby.sdk.not.found.dialog.ok"),
+                                               CommonBundle.getCancelButtonText(),
+                                               FeaturesTrainerIcons.Img.PluginIcon)
+    if (decision == Messages.OK) {
+      ShowSettingsUtil.getInstance().showSettingsDialog(project, RBundle.message("ruby.ide.sdk.configurable.name"))
     }
   }
 
@@ -75,15 +99,14 @@ class RubyLangSupport : AbstractLangSupport() {
   override val defaultProductName: String = "RubyMine"
 
   override fun applyToProjectAfterConfigure(): (Project) -> Unit {
-    return { project ->
+    return l@{ project ->
+      val sdk = ProjectRootManager.getInstance(project).projectSdk ?: return@l
       val tempDirectory = FileUtil.createTempDirectory("bundler_gem", null, true)
       val bundlerGem = File(tempDirectory, "bundler-2.0.1.gem")
       val bundler = RubyLangSupport::class.java.getResourceAsStream("/learnProjects/ruby/gems/bundler-2.0.1.gem")
       FileUtil.writeToFile(bundlerGem, FileUtil.loadBytes(bundler))
 
-      val sdk = ProjectRootManager.getInstance(project).projectSdk!!
       val module = project.module
-
       GemInstallUtil.installGemsRequirements(sdk,
                                              module,
                                              listOf(GemDependency.any(bundlerGem.absolutePath)),
