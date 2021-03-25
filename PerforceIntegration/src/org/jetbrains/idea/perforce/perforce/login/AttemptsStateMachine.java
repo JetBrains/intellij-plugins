@@ -2,13 +2,13 @@ package org.jetbrains.idea.perforce.perforce.login;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.openapi.util.Getter;
-import java.util.Objects;
-
 import com.intellij.openapi.util.NlsContexts;
 import org.jetbrains.annotations.Nullable;
 
-public class AttemptsStateMachine {
+import java.util.Objects;
+import java.util.function.Supplier;
+
+public final class AttemptsStateMachine {
   private final static Logger LOG = Logger.getInstance(AttemptsStateMachine.class);
   private static final long ourTimeToRelogin = 3600000;
   private static final long ourSuccessBlindInterval = 600000;
@@ -138,7 +138,7 @@ public class AttemptsStateMachine {
     }
   }
 
-  private LoginState executeUnderLock(final Getter<LoginState> getter) {
+  private LoginState executeUnderLock(final Supplier<LoginState> getter) {
     boolean triggerChangesUpdate;
     final LoginState result;
     synchronized (myLock) {
