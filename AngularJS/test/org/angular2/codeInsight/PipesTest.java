@@ -58,6 +58,14 @@ public class PipesTest extends Angular2CodeInsightFixtureTestCase {
     assertContainsElements(variants, "big", "anchor", "substr");
   }
 
+  public void testGenericClassPipeResultCompletion() {
+    configureLink(myFixture, ANGULAR_COMMON_8_2_14);
+    myFixture.configureByFiles("genericClassPipe.ts");
+    myFixture.completeBasic();
+    final List<String> variants = myFixture.getLookupElementStrings();
+    assertContainsElements(variants, "bark", "eat");
+  }
+
   public void testAsyncPipeResultCompletion() {
     configureCopy(myFixture, ANGULAR_COMMON_8_2_14, RXJS_6_4_0);
     myFixture.configureByFiles("asyncPipe.html", "asyncPipe.ts");
@@ -93,7 +101,7 @@ public class PipesTest extends Angular2CodeInsightFixtureTestCase {
   public void testAsyncNgIfAsObjType() {
     configureCopy(myFixture, ANGULAR_COMMON_8_2_14, RXJS_6_4_0);
     myFixture.configureByFiles("ngIfAsObj.ts");
-    assertEquals("{foo: Person}", ((JSTypeOwner)myFixture.getElementAtCaret()).getJSType().getResolvedTypeText());
+    assertEquals("{foo: Person|null}", ((JSTypeOwner)myFixture.getElementAtCaret()).getJSType().getResolvedTypeText());
   }
 
   public void testContextAware() {
