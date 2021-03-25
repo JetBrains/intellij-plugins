@@ -152,8 +152,7 @@ public class AngularUiRouterDiagramBuilder {
 
   private static void putState2map(final @NotNull VirtualFile rootFile, final @NotNull UiRouterState state,
                                    final @NotNull Map<VirtualFile, Map<String, UiRouterState>> rootMap) {
-    Map<String, UiRouterState> map = rootMap.get(rootFile);
-    if (map == null) rootMap.put(rootFile, (map = new HashMap<>()));
+    Map<String, UiRouterState> map = rootMap.computeIfAbsent(rootFile, k -> new HashMap<>());
     if (map.containsKey(state.getName())) {
       final UiRouterState existing = map.get(state.getName());
       if (!Comparing.equal(existing.getPointer(), state.getPointer()) && state.getPointer() != null) {

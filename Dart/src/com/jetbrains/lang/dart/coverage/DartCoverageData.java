@@ -28,11 +28,7 @@ public class DartCoverageData {
         if (source == null) {
           continue;
         }
-        if (!mergedCoverageData.containsKey(source)) {
-          mergedCoverageData.put(source, new TreeMap<>());
-        }
-
-        SortedMap<Integer, Integer> fileData = mergedCoverageData.get(source);
+        SortedMap<Integer, Integer> fileData = mergedCoverageData.computeIfAbsent(source, k -> new TreeMap<>());
         List<Integer> hits = item.getHits();
         if (hits == null) {
           continue;

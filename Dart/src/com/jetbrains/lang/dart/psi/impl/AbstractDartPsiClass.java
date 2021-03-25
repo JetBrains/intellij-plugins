@@ -180,11 +180,7 @@ abstract public class AbstractDartPsiClass extends AbstractDartComponentImpl imp
               continue;
             }
 
-            List<DartComponent> components = nameToMembers.get(componentName);
-            if (components == null) {
-              components = new SmartList<>();
-              nameToMembers.put(componentName, components);
-            }
+            List<DartComponent> components = nameToMembers.computeIfAbsent(componentName, k -> new SmartList<>());
             components.add(component);
           }
 

@@ -99,10 +99,7 @@ public abstract class VcsOperation implements Cloneable {
       context.put(PENDING_CACHE, map = new HashMap<>());
     }
 
-    Map<Long, Boolean> cache = map.get(connection);
-    if (cache == null) {
-      map.put(connection, cache = new HashMap<>());
-    }
+    Map<Long, Boolean> cache = map.computeIfAbsent(connection, k -> new HashMap<>());
 
     Boolean valid = cache.get(number);
     if (valid == null) {

@@ -56,11 +56,7 @@ public abstract class DartPsiScopeProcessor implements PsiScopeProcessor {
 
     if (isFilteredOut(name)) {
       final VirtualFile importedFile = myShowHideFilters.peek().first;
-      Collection<PsiElement> elements = myFilteredOutElements.get(importedFile);
-      if (elements == null) {
-        elements = new ArrayList<>();
-        myFilteredOutElements.put(importedFile, elements);
-      }
+      Collection<PsiElement> elements = myFilteredOutElements.computeIfAbsent(importedFile, k -> new ArrayList<>());
       elements.add(element);
 
       return true;
