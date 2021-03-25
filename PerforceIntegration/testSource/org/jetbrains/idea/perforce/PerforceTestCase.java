@@ -506,7 +506,7 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
 
   @After
   public void after() throws Exception {
-    new RunAll(
+    RunAll.runAll(
       () -> {
         if (myProject != null) {
           getChangeListManager().waitUntilRefreshed();
@@ -523,7 +523,7 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
           throw new AssertionError("Perforce server still alive!");
         }
       }
-    ).run();
+    );
   }
 
   private void disposeFixtures() throws Exception {
