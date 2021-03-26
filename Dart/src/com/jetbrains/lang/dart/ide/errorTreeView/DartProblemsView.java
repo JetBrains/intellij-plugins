@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.execution.runners.ExecutionUtil;
@@ -10,7 +10,10 @@ import com.intellij.notification.impl.NotificationsConfigurationImpl;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
-import com.intellij.openapi.components.*;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.NlsContexts.TabTitle;
@@ -155,7 +158,7 @@ public final class DartProblemsView implements PersistentStateComponent<DartProb
   }
 
   public static @NotNull DartProblemsView getInstance(@NotNull final Project project) {
-    return ServiceManager.getService(project, DartProblemsView.class);
+    return project.getService(DartProblemsView.class);
   }
 
   public static DartProblemsViewSettings.ScopedAnalysisMode getScopeAnalysisMode(@NotNull final Project project) {

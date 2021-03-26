@@ -1,8 +1,8 @@
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.karma.coverage;
 
 import com.intellij.coverage.CoverageBundle;
 import com.intellij.coverage.SimpleCoverageAnnotator;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,7 +16,7 @@ public class KarmaCoverageAnnotator extends SimpleCoverageAnnotator {
   }
 
   public static KarmaCoverageAnnotator getInstance(@NotNull Project project) {
-    return ServiceManager.getService(project, KarmaCoverageAnnotator.class);
+    return project.getService(KarmaCoverageAnnotator.class);
   }
 
   @Override

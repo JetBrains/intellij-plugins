@@ -1,9 +1,8 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.osgi.project;
 
 import aQute.bnd.osgi.Constants;
 import aQute.lib.utf8properties.UTF8Properties;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.JdkOrderEntry;
@@ -45,7 +44,7 @@ import java.util.jar.Manifest;
 
 public class BundleManifestCache {
   public static BundleManifestCache getInstance(@NotNull Project project) {
-    return ServiceManager.getService(project, BundleManifestCache.class);
+    return project.getService(BundleManifestCache.class);
   }
 
   private final Project myProject;

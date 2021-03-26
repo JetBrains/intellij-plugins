@@ -19,7 +19,6 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.Service;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
@@ -75,7 +74,7 @@ public final class PerforceManager  {
   private final PerforceShelf myShelf;
 
   public static PerforceManager getInstance(Project project) {
-    return ServiceManager.getService(project, PerforceManager.class);
+    return project.getService(PerforceManager.class);
   }
 
   public PerforceManager(@NotNull Project project) {

@@ -18,7 +18,6 @@ package org.jetbrains.idea.perforce.perforce;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.components.Service;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -189,7 +188,7 @@ public final class PerforceRunner implements PerforceRunnerI {
   private final LoginSupport myLoginManager;
 
   public static PerforceRunner getInstance(Project project) {
-    return ServiceManager.getService(project, PerforceRunner.class);
+    return project.getService(PerforceRunner.class);
   }
 
   public PerforceRunner(Project project) {

@@ -15,7 +15,6 @@
 
 package com.intellij.struts2.dom.validator;
 
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
@@ -35,7 +34,7 @@ import java.util.List;
 public abstract class ValidatorManager {
 
   public static ValidatorManager getInstance(@NotNull final Project project) {
-    return ServiceManager.getService(project, ValidatorManager.class);
+    return project.getService(ValidatorManager.class);
   }
 
   /**

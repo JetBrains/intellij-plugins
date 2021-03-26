@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle;
@@ -15,7 +15,6 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.command.CommandProcessor;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
@@ -134,7 +133,7 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
               if (outputContains(stdout, stderr, "Platform " + platform + " already exists") ||
                   outputContains(stdout, stderr, "Platform " + platform + " already added")) {
                 ApplicationManager.getApplication().invokeLater(() -> {
-                  final MessageView messageView = ServiceManager.getService(project, MessageView.class);
+                  final MessageView messageView = project.getService(MessageView.class);
                   removeContents(messageView, null, tabText);
                 });
               }
@@ -173,7 +172,7 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
                                           @NotNull @NlsContexts.TabTitle final String tabDisplayName) {
     CommandProcessor commandProcessor = CommandProcessor.getInstance();
     commandProcessor.executeCommand(myProject, () -> {
-      final MessageView messageView = ServiceManager.getService(myProject, MessageView.class);
+      final MessageView messageView = myProject.getService(MessageView.class);
       final Content content = ContentFactory.SERVICE.getInstance().createContent(component, tabDisplayName, true);
       messageView.getContentManager().addContent(content);
       messageView.getContentManager().setSelectedContent(content);

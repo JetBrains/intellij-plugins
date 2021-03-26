@@ -4,7 +4,6 @@ import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.Service;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
@@ -56,7 +55,7 @@ public final class PerforceConnectionProblemsNotifier extends GenericNotifierImp
 
   public static void showConnectionState(final Project project, final boolean refreshBefore) {
     final PerforceSettings settings = PerforceSettings.getSettings(project);
-    final PerforceBaseInfoWorker perforceBaseInfoWorker = ServiceManager.getService(project, PerforceBaseInfoWorker.class);
+    final PerforceBaseInfoWorker perforceBaseInfoWorker = project.getService(PerforceBaseInfoWorker.class);
     final PerforceConnectionManagerI connectionManager = PerforceConnectionManager.getInstance(project);
     if (settings.useP4CONFIG) {
       final ConnectionDiagnoseRefresher refresher = new ConnectionDiagnoseRefresher() {

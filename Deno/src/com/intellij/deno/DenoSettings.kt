@@ -5,7 +5,6 @@ import com.intellij.lang.typescript.compiler.TypeScriptCompilerService
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.components.PersistentStateComponent
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.options.ConfigurationException
@@ -22,7 +21,7 @@ class DenoState {
 class DenoSettings(val project: Project) : PersistentStateComponent<DenoState> {
   companion object {
     fun getService(project: Project): DenoSettings {
-      return ServiceManager.getService(project, DenoSettings::class.java)
+      return project.getService(DenoSettings::class.java)
     }
   }
 

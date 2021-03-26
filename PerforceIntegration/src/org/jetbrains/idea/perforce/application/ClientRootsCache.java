@@ -1,7 +1,6 @@
 package org.jetbrains.idea.perforce.application;
 
 import com.intellij.openapi.components.Service;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.SystemInfo;
@@ -28,7 +27,7 @@ public final class ClientRootsCache {
   private final Object myLock = new Object();
 
   public static ClientRootsCache getClientRootsCache(Project project) {
-    return ServiceManager.getService(project, ClientRootsCache.class);
+    return project.getService(ClientRootsCache.class);
   }
 
   String putGet(final String rawClientRoot) {

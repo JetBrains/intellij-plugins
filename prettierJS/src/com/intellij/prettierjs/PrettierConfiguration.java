@@ -7,7 +7,6 @@ import com.intellij.javascript.nodejs.util.NodePackageDescriptor;
 import com.intellij.javascript.nodejs.util.NodePackageRef;
 import com.intellij.lang.javascript.linter.JSNpmLinterState;
 import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
@@ -44,7 +43,7 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
 
   @NotNull
   public static PrettierConfiguration getInstance(@NotNull Project project) {
-    return ServiceManager.getService(project, PrettierConfiguration.class);
+    return project.getService(PrettierConfiguration.class);
   }
 
   @Override

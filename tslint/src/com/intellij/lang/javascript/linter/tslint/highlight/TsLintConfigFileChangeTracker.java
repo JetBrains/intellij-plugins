@@ -1,3 +1,4 @@
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.linter.tslint.highlight;
 
 import com.intellij.json.JsonFileType;
@@ -6,7 +7,6 @@ import com.intellij.lang.javascript.linter.JSLinterConfigFileUtil;
 import com.intellij.lang.javascript.linter.tslint.TslintUtil;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +21,7 @@ public final class TsLintConfigFileChangeTracker extends JSLinterConfigChangeTra
   }
 
   public static TsLintConfigFileChangeTracker getInstance(@NotNull Project project) {
-    return ServiceManager.getService(project, TsLintConfigFileChangeTracker.class);
+    return project.getService(TsLintConfigFileChangeTracker.class);
   }
 
   @Override

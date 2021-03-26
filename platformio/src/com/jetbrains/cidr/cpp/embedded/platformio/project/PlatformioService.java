@@ -8,7 +8,6 @@ import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.components.Service;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -34,7 +33,7 @@ public final class PlatformioService {
 
   public static void setEnabled(@NotNull Project project, boolean enabled) {
     if (enabled) {
-      ServiceManager.getService(project, PlatformioService.class).myState = State.OK;
+      project.getService(PlatformioService.class).myState = State.OK;
     }
     else {
       PlatformioService serviceIfCreated = project.getServiceIfCreated(PlatformioService.class);

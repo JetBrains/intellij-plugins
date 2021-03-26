@@ -1,6 +1,6 @@
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs.codeInsight.router;
 
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +17,7 @@ public class AngularUiRouterProviderContext {
   private final Map<VirtualFile, AngularUiRouterGraphBuilder.GraphNodesBuilder> myData;
 
   public static AngularUiRouterProviderContext getInstance(@NotNull Project project) {
-    return ServiceManager.getService(project, AngularUiRouterProviderContext.class);
+    return project.getService(AngularUiRouterProviderContext.class);
   }
 
   public AngularUiRouterProviderContext(@NotNull Project project) {

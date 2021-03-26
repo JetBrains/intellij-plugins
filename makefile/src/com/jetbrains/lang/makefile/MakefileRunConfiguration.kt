@@ -1,16 +1,19 @@
 package com.jetbrains.lang.makefile
 
-import com.intellij.execution.*
-import com.intellij.execution.configuration.*
+import com.intellij.execution.Executor
+import com.intellij.execution.configuration.EnvironmentVariablesData
 import com.intellij.execution.configurations.*
-import com.intellij.execution.process.*
-import com.intellij.execution.runners.*
-import com.intellij.openapi.components.*
-import com.intellij.openapi.project.*
-import com.intellij.util.*
-import org.jdom.*
-import org.jetbrains.plugins.terminal.*
-import java.io.*
+import com.intellij.execution.process.ColoredProcessHandler
+import com.intellij.execution.process.ProcessHandler
+import com.intellij.execution.process.ProcessTerminatedListener
+import com.intellij.execution.runners.ExecutionEnvironment
+import com.intellij.openapi.components.PathMacroManager
+import com.intellij.openapi.project.Project
+import com.intellij.util.EnvironmentUtil
+import com.intellij.util.getOrCreate
+import org.jdom.Element
+import org.jetbrains.plugins.terminal.LocalTerminalCustomizer
+import java.io.File
 
 class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurationFactory, name: String) : LocatableConfigurationBase<RunProfileState>(project, factory, name) {
   var filename = ""
@@ -55,7 +58,7 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
   }
 
   override fun getState(executor: Executor, executionEnvironment: ExecutionEnvironment): RunProfileState? {
-    val makeSettings = ServiceManager.getService(project, MakefileProjectSettings::class.java).settings
+    val makeSettings = project.getService(MakefileProjectSettings::class.java).settings
     val makePath = makeSettings?.path ?: DEFAULT_MAKE_PATH
     return object : CommandLineState(executionEnvironment) {
       override fun startProcess(): ProcessHandler {

@@ -17,7 +17,6 @@ import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.application.ModalityState;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -722,7 +721,7 @@ public final class DartAnalysisServerService implements Disposable {
 
   @NotNull
   public static DartAnalysisServerService getInstance(@NotNull final Project project) {
-    return ServiceManager.getService(project, DartAnalysisServerService.class);
+    return project.getService(DartAnalysisServerService.class);
   }
 
   @NotNull

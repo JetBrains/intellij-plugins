@@ -1,6 +1,9 @@
 package org.jetbrains.idea.perforce.application;
 
-import com.intellij.openapi.components.*;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.changes.*;
 import com.intellij.util.xmlb.annotations.Attribute;
@@ -13,7 +16,7 @@ import java.util.List;
 @State(name = "LastSuccessfulUpdateTracker", storages = @Storage(StoragePathMacros.PRODUCT_WORKSPACE_FILE))
 public final class LastSuccessfulUpdateTracker implements PersistentStateComponent<LastSuccessfulUpdateTracker.ChangesUpdateResult> {
   public static LastSuccessfulUpdateTracker getInstance(Project project) {
-    return ServiceManager.getService(project, LastSuccessfulUpdateTracker.class);
+    return project.getService(LastSuccessfulUpdateTracker.class);
   }
 
   public static class ChangedFile {
