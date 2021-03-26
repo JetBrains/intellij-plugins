@@ -34,13 +34,13 @@
 ></my-comp>
 
 <my-comp
-    [dependency]="<warning descr="Type NgModel is not assignable to type string">asyncModel() | async</warning>"
+    [dependency]="<warning descr="Type NgModel | null is not assignable to type string">asyncModel() | async</warning>"
     [model]="asyncModel() | async"
 ></my-comp>
 
 <my-comp
     [dependency]="asyncString() | async"
-    [model]="<warning descr="Type string is not assignable to type NgModel">asyncString() | async</warning>"
+    [model]="<warning descr="Type string | null is not assignable to type NgModel">asyncString() | async</warning>"
 ></my-comp>
 
 <my-comp
