@@ -3,7 +3,9 @@ package com.intellij.javascript.ift
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
+import training.dsl.LessonUtil
 import training.lang.AbstractLangSupport
+import training.project.ReadMeCreator
 import training.util.getFeedbackLink
 
 class JavaScriptLangSupport : AbstractLangSupport() {
@@ -26,4 +28,37 @@ class JavaScriptLangSupport : AbstractLangSupport() {
   }
 
   override fun checkSdk(sdk: Sdk?, project: Project) {}
+
+  override val readMeCreator: ReadMeCreator = object : ReadMeCreator() {
+    override val iftDescription = JsLessonsBundle.message("js.readme.description", LessonUtil.productName)
+    override val howToUseHeader = JsLessonsBundle.message("js.readme.usage.header")
+    private val feedbackHeader = JsLessonsBundle.message("js.readme.feedback.header")
+
+    override fun createReadmeMdText(): String = """
+## $welcomeHeader
+
+$iftDescription
+
+### $howToUseHeader
+
+$toolWindowDescription
+
+$experiencedUsersRemark
+
+### $shortcutsHeader
+
+$shortcutProblemDescription
+
+$bugTrackerRemark
+
+### $exitHeader
+
+$exitOptionsDescription
+
+### $feedbackHeader
+
+$feedbackRequest
+""" // do not use trim because derived implementations will need to follow the current indent
+  }
+
 }
