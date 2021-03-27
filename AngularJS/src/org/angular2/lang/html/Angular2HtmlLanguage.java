@@ -2,11 +2,18 @@
 package org.angular2.lang.html;
 
 import com.intellij.javascript.web.lang.html.WebFrameworkHtmlDialect;
+import org.jetbrains.annotations.NotNull;
 
 public class Angular2HtmlLanguage extends WebFrameworkHtmlDialect {
   public static final Angular2HtmlLanguage INSTANCE = new Angular2HtmlLanguage();
 
   private Angular2HtmlLanguage() {
     super("Angular2Html");
+  }
+
+  @NotNull
+  @Override
+  public String getDisplayName() {
+    return "Angular HTML template";
   }
 }
