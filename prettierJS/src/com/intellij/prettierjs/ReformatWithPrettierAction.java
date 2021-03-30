@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.prettierjs;
 
 import com.intellij.codeInsight.actions.FileTreeIterator;
@@ -13,6 +13,7 @@ import com.intellij.javascript.nodejs.interpreter.NodeInterpreterUtil;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
 import com.intellij.javascript.nodejs.npm.InstallNodeLocalDependenciesAction;
 import com.intellij.javascript.nodejs.npm.NpmManager;
+import com.intellij.javascript.nodejs.settings.NodeSettingsConfigurable;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.lang.javascript.linter.JSLinterGuesser;
@@ -129,7 +130,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     }
     catch (ExecutionException e1) {
       errorHandler.showError(project, editor, PrettierBundle.message("error.invalid.interpreter"),
-                             () -> editSettings(project));
+                             () -> NodeSettingsConfigurable.showSettingsDialog(project));
       return false;
     }
 
