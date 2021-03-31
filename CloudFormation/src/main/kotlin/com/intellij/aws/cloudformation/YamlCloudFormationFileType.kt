@@ -10,6 +10,7 @@ class YamlCloudFormationFileType private constructor(): LanguageFileType(YAMLLan
   override fun getDescription(): String = CloudFormationBundle.message("filetype.aws.cloudformation.templates.yaml.description")
   override fun getDefaultExtension(): String = ""
   override fun getIcon(): Icon? = AllIcons.FileTypes.Yaml
+  override fun getDisplayName(): String = CloudFormationBundle.message("filetype.aws.cloudformation.templates.yaml.display.name")
 
   companion object {
     @JvmField

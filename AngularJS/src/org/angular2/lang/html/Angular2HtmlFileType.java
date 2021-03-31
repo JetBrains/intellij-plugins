@@ -2,6 +2,8 @@
 package org.angular2.lang.html;
 
 import com.intellij.javascript.web.lang.html.WebFrameworkHtmlFileType;
+import org.angularjs.AngularJSBundle;
+import org.jetbrains.annotations.NotNull;
 
 public final class Angular2HtmlFileType extends WebFrameworkHtmlFileType {
 
@@ -11,4 +13,9 @@ public final class Angular2HtmlFileType extends WebFrameworkHtmlFileType {
     super(Angular2HtmlLanguage.INSTANCE, "Angular2Html", "html");
   }
 
+  @NotNull
+  @Override
+  public String getDescription() {
+    return AngularJSBundle.message("filetype.angular2html.description");
+  }
 }
