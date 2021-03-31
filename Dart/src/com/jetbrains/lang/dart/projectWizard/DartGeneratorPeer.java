@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.projectWizard;
 
 import com.intellij.icons.AllIcons;
@@ -105,7 +105,8 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
     asyncProcessIcon.resume();
 
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
-      final String sdkPath = mySdkPathComboWithBrowse.getComboBox().getEditor().getItem().toString().trim();
+      final String sdkPath =
+        FileUtil.toSystemIndependentName(mySdkPathComboWithBrowse.getComboBox().getEditor().getItem().toString().trim());
       DartProjectTemplate.loadTemplatesAsync(sdkPath, templates -> {
         asyncProcessIcon.suspend();
         Disposer.dispose(asyncProcessIcon);
