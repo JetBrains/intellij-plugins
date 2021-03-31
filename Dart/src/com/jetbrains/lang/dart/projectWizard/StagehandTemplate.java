@@ -1,5 +1,7 @@
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.projectWizard;
 
+import com.intellij.execution.ExecutionException;
 import com.intellij.ide.highlighter.HtmlFileType;
 import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.module.Module;
@@ -37,7 +39,7 @@ class StagehandTemplate extends DartProjectTemplate {
     try {
       myStagehand.generateInto(sdkRoot, baseDir, myTemplate.myId);
     }
-    catch (Stagehand.StagehandException e) {
+    catch (ExecutionException e) {
       throw new IOException(e);
     }
 
@@ -47,7 +49,7 @@ class StagehandTemplate extends DartProjectTemplate {
       LocalFileSystem.getInstance().refreshAndFindFileByPath(baseDir.getPath() + "/" + PubspecYamlUtil.PUBSPEC_YAML);
     ContainerUtil.addIfNotNull(files, pubspec);
 
-    final VirtualFile mainFile = myTemplate.myEntrypoint.isEmpty()
+    final VirtualFile mainFile = StringUtil.isEmpty(myTemplate.myEntrypoint)
                                  ? null
                                  : LocalFileSystem.getInstance()
                                    .refreshAndFindFileByPath(baseDir.getPath() + "/" + myTemplate.myEntrypoint);
@@ -58,7 +60,7 @@ class StagehandTemplate extends DartProjectTemplate {
 
     ContainerUtil.addIfNotNull(files, mainFile);
 
-    if (!myTemplate.myEntrypoint.isEmpty() && mainFile != null) {
+    if (!StringUtil.isEmpty(myTemplate.myEntrypoint) && mainFile != null) {
       if (myTemplate.myEntrypoint.startsWith("bin/") && FileTypeRegistry.getInstance().isFileOfType(mainFile, DartFileType.INSTANCE)) {
         createCmdLineRunConfiguration(module, mainFile);
       }
