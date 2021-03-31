@@ -5,7 +5,6 @@ import com.intellij.notification.*
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.AppUIExecutor
 import com.intellij.openapi.application.ApplicationNamesInfo
-import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.progress.ProgressIndicator
@@ -41,7 +40,7 @@ class CppDiagnosticsAction : DumbAwareAction() {
     val task = object : Task.Modal(project, CppDiagnosticsBundle.message("cpp.diagnostics.progress.title"), true) {
       override fun run(indicator: ProgressIndicator) {
         val toolchains = readActionWithText(indicator, CppDiagnosticsBundle.message("cpp.diagnostics.progress.toolchains")) {
-          collectToolchains()
+          collectToolchains(project)
         }
 
         val cidrWorkspaces = readActionWithText(indicator, CppDiagnosticsBundle.message("cpp.diagnostics.progress.workspace")) {
