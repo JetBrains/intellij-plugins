@@ -30,5 +30,7 @@
     <action id="com.jetbrains.cidr.cpp.diagnostics.CppDiagnosticsAction" class="com.jetbrains.cidr.cpp.diagnostics.CppDiagnosticsAction">
       <add-to-group group-id="HelpDiagnosticTools" anchor="after" relative-to-action="LogDebugConfigure"/>
     </action>
+
+    <action id="ShowRemoteHostsInfo" class="com.jetbrains.cidr.cpp.diagnostics.ShowRemoteHostsInfoAction"/>
   </actions>
 </idea-plugin>
