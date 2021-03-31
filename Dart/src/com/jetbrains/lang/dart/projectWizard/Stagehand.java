@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.projectWizard;
 
 import com.intellij.execution.ExecutionException;
@@ -19,11 +19,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Stagehand {
+
+  private static final String DART_CREATE_MIN_SDK_VERSION = "2.10";
+
+  private static boolean isUseDartCreate(@NotNull String sdkHomePath) {
+    String version = DartSdkUtil.getSdkVersion(sdkHomePath);
+    return version != null && StringUtil.compareVersionNumbers(version, DART_CREATE_MIN_SDK_VERSION) >= 0;
+  }
 
   public static class StagehandDescriptor {
     public final @NotNull @NonNls String myId;
@@ -47,64 +53,59 @@ public class Stagehand {
     }
   }
 
-  public static class StagehandException extends Exception {
-    public StagehandException(String message) {
-      super(message);
-    }
-
-    public StagehandException(Throwable t) {
-      super(t);
-    }
-  }
-
   private static final Logger LOG = Logger.getInstance(Stagehand.class);
   private static final List<StagehandDescriptor> EMPTY = new ArrayList<>();
 
-  private static final class PubRunner {
+  private static ProcessOutput runDartCreate(@NotNull String sdkRoot,
+                                             @Nullable String workingDirectory,
+                                             int timeoutInSeconds,
+                                             String... parameters) throws ExecutionException {
+    final GeneralCommandLine command = new GeneralCommandLine()
+      .withExePath(DartSdkUtil.getDartExePath(sdkRoot))
+      .withWorkDirectory(workingDirectory);
 
-    private final String myWorkingDirectory;
+    command.addParameter("create");
+    command.addParameters(parameters);
 
-    PubRunner() {
-      myWorkingDirectory = null;
-    }
+    return new CapturingProcessHandler(command).runProcess(timeoutInSeconds * 1000, false);
+  }
 
-    PubRunner(final VirtualFile workingDirectory) {
-      myWorkingDirectory = workingDirectory.getCanonicalPath();
-    }
+  private static ProcessOutput runPubGlobal(@NotNull String sdkRoot,
+                                            @Nullable String workingDirectory,
+                                            int timeoutInSeconds,
+                                            @NotNull String pubEnvVarSuffix,
+                                            String... pubParameters) throws ExecutionException {
+    final GeneralCommandLine command = new GeneralCommandLine()
+      .withExePath(DartSdkUtil.getPubPath(sdkRoot))
+      .withWorkDirectory(workingDirectory)
+      .withEnvironment(DartPubActionBase.PUB_ENV_VAR_NAME, DartPubActionBase.getPubEnvValue() + ".stagehand" + pubEnvVarSuffix);
 
-    ProcessOutput runSync(final @NotNull String sdkRoot,
-                          int timeoutInSeconds,
-                          final @NotNull String pubEnvVarSuffix,
-                          String... pubParameters) throws StagehandException {
-      final GeneralCommandLine command = new GeneralCommandLine().withWorkDirectory(myWorkingDirectory);
+    command.addParameter("global");
+    command.addParameters(pubParameters);
 
-      final File pubFile = new File(DartSdkUtil.getPubPath(sdkRoot));
-      command.setExePath(pubFile.getPath());
-      command.addParameters(pubParameters);
-      command.withEnvironment(DartPubActionBase.PUB_ENV_VAR_NAME, DartPubActionBase.getPubEnvValue() + ".stagehand" + pubEnvVarSuffix);
-
-      try {
-        return new CapturingProcessHandler(command).runProcess(timeoutInSeconds * 1000, false);
-      }
-      catch (ExecutionException e) {
-        throw new StagehandException(e);
-      }
-    }
+    return new CapturingProcessHandler(command).runProcess(timeoutInSeconds * 1000, false);
   }
 
   public void generateInto(@NotNull final String sdkRoot,
                            @NotNull final VirtualFile projectDirectory,
-                           @NotNull final String templateId) throws StagehandException {
-    final ProcessOutput output = new PubRunner(projectDirectory)
-      .runSync(sdkRoot, 30, "", "global", "run", "stagehand", "--author", SystemProperties.getUserName(), templateId);
+                           @NotNull final String templateId) throws ExecutionException {
+    ProcessOutput output = isUseDartCreate(sdkRoot)
+                           ? runDartCreate(sdkRoot, projectDirectory.getParent().getPath(), 30, "--force", "--no-pub", "--template",
+                                           templateId, projectDirectory.getName())
+                           : runPubGlobal(sdkRoot, projectDirectory.getPath(), 30, "", "run", "stagehand", "--author",
+                                          SystemProperties.getUserName(), templateId);
+
     if (output.getExitCode() != 0) {
-      throw new StagehandException(output.getStderr());
+      throw new ExecutionException(output.getStderr());
     }
   }
 
   public List<StagehandDescriptor> getAvailableTemplates(@NotNull final String sdkRoot) {
     try {
-      final ProcessOutput output = new PubRunner().runSync(sdkRoot, 10, "", "global", "run", "stagehand", "--machine");
+      ProcessOutput output = isUseDartCreate(sdkRoot)
+                             ? runDartCreate(sdkRoot, null, 10, "--list-templates")
+                             : runPubGlobal(sdkRoot, null, 10, "", "run", "stagehand", "--machine");
+
       int exitCode = output.getExitCode();
 
       if (exitCode != 0) {
@@ -125,12 +126,14 @@ public class Stagehand {
           obj.optString("entrypoint")));
       }
 
-      // Sort the stagehand templates lexically by name.
-      result.sort((one, two) -> one.myLabel.compareToIgnoreCase(two.myLabel));
+      if (!isUseDartCreate(sdkRoot)) {
+        // Sort the stagehand templates lexically by name.
+        result.sort((one, two) -> one.myLabel.compareToIgnoreCase(two.myLabel));
+      }
 
       return result;
     }
-    catch (StagehandException | JSONException e) {
+    catch (ExecutionException | JSONException e) {
       LOG.info(e);
     }
 
@@ -138,10 +141,12 @@ public class Stagehand {
   }
 
   public void install(@NotNull final String sdkRoot) {
+    if (isUseDartCreate(sdkRoot)) return;
+
     try {
-      new PubRunner().runSync(sdkRoot, 60, ".activate", "global", "activate", "stagehand");
+      runPubGlobal(sdkRoot, null, 60, ".activate", "activate", "stagehand");
     }
-    catch (StagehandException e) {
+    catch (ExecutionException e) {
       LOG.info(e);
     }
   }

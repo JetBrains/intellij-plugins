@@ -186,15 +186,19 @@ public final class DartSdkUtil {
     return null;
   }
 
-  public static String getDartExePath(final @NotNull DartSdk sdk) {
-    return sdk.getHomePath() + (SystemInfo.isWindows ? "/bin/dart.exe" : "/bin/dart");
+  public static @NotNull String getDartExePath(@NotNull DartSdk sdk) {
+    return getDartExePath(sdk.getHomePath());
   }
 
-  public static String getPubPath(final @NotNull DartSdk sdk) {
+  public static @NotNull String getDartExePath(@NotNull String sdkRoot) {
+    return sdkRoot + (SystemInfo.isWindows ? "/bin/dart.exe" : "/bin/dart");
+  }
+
+  public static @NotNull String getPubPath(@NotNull DartSdk sdk) {
     return getPubPath(sdk.getHomePath());
   }
 
-  public static String getPubPath(final @NotNull String sdkRoot) {
+  public static @NotNull String getPubPath(@NotNull String sdkRoot) {
     return sdkRoot + (SystemInfo.isWindows ? "/bin/pub.bat" : "/bin/pub");
   }
 }
