@@ -139,29 +139,31 @@ module Minitest
         test_fqn = test_data.fqn
         debug("Test finished #{test_fqn}")
 
+        normalized_test_name = normalize(test_name)
+
         # record
         @test_count += 1
         @assertion_count += test_result.assertions
         if test_result.skipped?
           @skips += 1
           with_message_and_backtrace(test_result) do |exception_msg, backtrace|
-            send_service_message(Rake::TeamCity::MessageFactory.create_test_ignored(test_name, exception_msg, backtrace, test_fqn))
+            send_service_message(Rake::TeamCity::MessageFactory.create_test_ignored(normalized_test_name, exception_msg, backtrace, test_fqn))
           end
         end
         # todo: replace this check with failed? when it will be available
         if !test_result.passed? && test_result.failure.class == Assertion
           @failures += 1
           with_message_and_backtrace(test_result) do |exception_msg, backtrace|
-            send_service_message(Rake::TeamCity::MessageFactory.create_test_failed(test_name, exception_msg, backtrace, test_fqn))
+            send_service_message(Rake::TeamCity::MessageFactory.create_test_failed(normalized_test_name, exception_msg, backtrace, test_fqn))
           end
         end
         if test_result.error?
           @errors += 1
           with_message_and_backtrace(test_result) do |exception_msg, backtrace|
-            send_service_message(Rake::TeamCity::MessageFactory.create_test_error(test_name, exception_msg, backtrace, test_fqn))
+            send_service_message(Rake::TeamCity::MessageFactory.create_test_error(normalized_test_name, exception_msg, backtrace, test_fqn))
           end
         end
-        send_service_message(Rake::TeamCity::MessageFactory.create_test_finished(test_name, time_in_ms(test_result.time), nil, test_fqn))
+        send_service_message(Rake::TeamCity::MessageFactory.create_test_finished(normalized_test_name, time_in_ms(test_result.time), nil, test_fqn))
         @tests_to_run[class_name].delete(test_name)
         suite_finished(class_name) if @tests_to_run[class_name].empty?
       }
@@ -198,7 +200,7 @@ module Minitest
       test_data = @test_data[class_name][test_name]
       test_data.klass = klass
       suite_started(class_name, test_data.location) if first_in_suite
-      send_service_message(Rake::TeamCity::MessageFactory.create_test_started(test_name, test_data.location, class_name, test_data.fqn))
+      send_service_message(Rake::TeamCity::MessageFactory.create_test_started(normalize(test_name), test_data.location, class_name, test_data.fqn))
       debug("Test started: #{test_data.fqn} from #{test_data.location}")
     end
 
@@ -251,6 +253,10 @@ module Minitest
       backtrace = exception.nil? ? '' : Minitest::filter_backtrace(exception.backtrace).join("\n")
 
       yield(msg, backtrace)
+    end
+
+    def normalize(test_method_name)
+      test_method_name.gsub(/test_\d{4}_/, '')
     end
 
     def time_in_ms(time)
