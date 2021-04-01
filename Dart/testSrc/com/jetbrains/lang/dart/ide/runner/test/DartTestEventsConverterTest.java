@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.test;
 
 import com.google.gson.JsonSyntaxException;
@@ -80,7 +80,7 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
     "finish fails once",
     "start fails twice",
     "print fails twice message\n",
-    "fail fails twice true",
+    "fail fails twice false",
     "print fails twice dart:core                       NoSuchMethodError._throwNew\ntest/formatter_test.dart 112:7  main.<fn>.<fn>\n",
     "finish fails twice",
     "start fails thrice",
@@ -236,14 +236,14 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
     };
     String[] signals = {
       "start loading formatter_test.dart",
-      "fail loading formatter_test.dart true",
+      "fail loading formatter_test.dart false",
       "print loading formatter_test.dart 2nd failure message\n",
       "print loading formatter_test.dart 3rd failure message\n",
       "print loading formatter_test.dart 3rd stack trace\n",
       "finish loading formatter_test.dart",
       "start loading another_bad_test.dart",
       "print loading another_bad_test.dart some output\n",
-      "fail loading another_bad_test.dart true",
+      "fail loading another_bad_test.dart false",
       "print loading another_bad_test.dart some stack\n",
       "finish loading another_bad_test.dart"
     };
@@ -266,7 +266,7 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
     String[] signals = {
       "suite started next_test.dart",
       "start (setUpAll)",
-      "fail (setUpAll) true",
+      "fail (setUpAll) false",
       "print (setUpAll) test/next_test.dart 4:30  main.<fn>\n",
       "finish (setUpAll)",
       "suite finished next_test.dart"
