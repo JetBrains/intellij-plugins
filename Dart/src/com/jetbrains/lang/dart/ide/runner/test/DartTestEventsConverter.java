@@ -65,7 +65,6 @@ public final class DartTestEventsConverter extends OutputToGeneralTestEventsConv
   private static final String JSON_MESSAGE = "message";
   private static final String JSON_ERROR_MESSAGE = "error";
   private static final String JSON_STACK_TRACE = "stackTrace";
-  private static final String JSON_IS_FAILURE = "isFailure";
   private static final String JSON_PATH = "path";
   private static final String JSON_PLATFORM = "platform";
   private static final String JSON_LINE = "line";
@@ -323,7 +322,6 @@ public final class DartTestEventsConverter extends OutputToGeneralTestEventsConv
         }
       }
 
-      if (!getBoolean(obj, JSON_IS_FAILURE)) testError.addAttribute("error", "true");
       testError.addAttribute("message", appendLineBreakIfNeeded(failureMessage));
 
       result &= finishMessage(testError, test.getId(), test.getValidParentId());
