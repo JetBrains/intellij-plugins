@@ -33,14 +33,10 @@ public class FlexCompilerProjectConfigurable implements SearchableConfigurable, 
   private JTextField myHeapSizeTextField;
   private RawCommandLineEditor myVMOptionsEditor;
 
-  private final Project myProject;
   private final FlexCompilerProjectConfiguration myConfig;
 
   public FlexCompilerProjectConfigurable(final Project project) {
-    myProject = project;
     myConfig = FlexCompilerProjectConfiguration.getInstance(project);
-
-    myVMOptionsEditor.setDialogCaption(FlexBundle.message("flex.compiler.vm.options.title"));
   }
 
   @Override
