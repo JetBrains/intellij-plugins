@@ -1,3 +1,4 @@
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.util;
 
 import com.intellij.openapi.project.Project;
@@ -41,7 +42,7 @@ public abstract class DartUrlResolver {
   public abstract VirtualFile getPubspecYamlFile();
 
   /**
-   * Process 'Path Packages' (https://www.dartlang.org/tools/pub/dependencies.html#path-packages) and this package itself (symlink to local 'lib' folder)
+   * Process 'Path Packages' (https://dart.dev/tools/pub/dependencies#path-packages) and this package itself (symlink to local 'lib' folder)
    */
   public abstract void processLivePackages(final @NotNull PairConsumer<String, VirtualFile> packageNameAndDirConsumer);
 
