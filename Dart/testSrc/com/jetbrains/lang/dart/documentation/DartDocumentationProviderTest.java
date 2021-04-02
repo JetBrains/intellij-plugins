@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.documentation;
 
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -67,22 +67,22 @@ public class DartDocumentationProviderTest extends DartCodeInsightFixtureTestCas
   }
 
   public void testDocUrls() {
-    doTestDocUrl("https://api.dartlang.org/stable/dart-core/int-class.html",
+    doTestDocUrl("https://api.dart.dev/stable/dart-core/int-class.html",
                  "core/int.dart",
                  "abstract class int extends num {");
-    doTestDocUrl("https://api.dartlang.org/stable/dart-core/String/String.fromCharCodes.html",
+    doTestDocUrl("https://api.dart.dev/stable/dart-core/String/String.fromCharCodes.html",
                  "core/string.dart",
                  "external factory String.fromCharCodes(Iterable<int> charCodes,");
-    doTestDocUrl("https://api.dartlang.org/stable/dart-core/List/List.html",
+    doTestDocUrl("https://api.dart.dev/stable/dart-core/List/List.html",
                  "core/list.dart",
                  "external factory List([int length]);");
-    doTestDocUrl("https://api.dartlang.org/stable/dart-core/int/int.fromEnvironment.html",
+    doTestDocUrl("https://api.dart.dev/stable/dart-core/int/int.fromEnvironment.html",
                  "core/int.dart",
                  "external const factory int.fromEnvironment(String name, {int defaultValue});");
-    doTestDocUrl("https://api.dartlang.org/stable/dart-math/cos.html",
+    doTestDocUrl("https://api.dart.dev/stable/dart-math/cos.html",
                  "math/math.dart",
                  "external double cos(num radians);");
-    doTestDocUrl("https://api.dartlang.org/stable/dart-core/List/length.html",
+    doTestDocUrl("https://api.dart.dev/stable/dart-core/List/length.html",
                  "core/list.dart",
                  "set length(int newLength);");
   }

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.documentation;
 
 import com.intellij.lang.documentation.DocumentationProvider;
@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class DartDocumentationProvider implements DocumentationProvider {
-  private static final String BASE_DART_DOC_URL = "https://api.dartlang.org/stable/";
+  private static final String BASE_DART_DOC_URL = "https://api.dart.dev/stable/";
 
   @Override
   public String generateDoc(@NotNull final PsiElement element, @Nullable final PsiElement originalElement) {
@@ -116,12 +116,12 @@ public class DartDocumentationProvider implements DocumentationProvider {
 
   @Nullable
   private static String constructDocUrl(@NotNull final DartComponent component) {
-    // class:       https://api.dartlang.org/stable/dart-web_audio/AnalyserNode-class.html
-    // constructor: https://api.dartlang.org/stable/dart-core/DateTime/DateTime.fromMicrosecondsSinceEpoch.html
-    //              https://api.dartlang.org/stable/dart-core/List/List.html
-    // method:      https://api.dartlang.org/stable/dart-core/Object/toString.html
-    // property:    https://api.dartlang.org/stable/dart-core/List/length.html
-    // function:    https://api.dartlang.org/stable/dart-math/cos.html
+    // class:       https://api.dart.dev/stable/dart-web_audio/AnalyserNode-class.html
+    // constructor: https://api.dart.dev/stable/dart-core/DateTime/DateTime.fromMicrosecondsSinceEpoch.html
+    //              https://api.dart.dev/stable/dart-core/List/List.html
+    // method:      https://api.dart.dev/stable/dart-core/Object/toString.html
+    // property:    https://api.dart.dev/stable/dart-core/List/length.html
+    // function:    https://api.dart.dev/stable/dart-math/cos.html
 
     final String libRelatedUrlPart = getLibRelatedUrlPart(component);
     final String name = component.getName();
