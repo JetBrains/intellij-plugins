@@ -8,9 +8,7 @@ buildscript {
 
 repositories {
   mavenCentral()
-  maven("https://jetbrains.bintray.com/intellij-third-party-dependencies")
-  maven("https://jetbrains.bintray.com/jediterm")
-  maven("https://jetbrains.bintray.com/pty4j")
+  maven("https://cache-redirector.jetbrains.com/intellij-dependencies")
   maven("https://cache-redirector.jetbrains.com/www.myget.org/F/rd-snapshots/maven")
 }
 
