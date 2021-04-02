@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.execution.ExecutionException;
@@ -174,7 +174,7 @@ public class DartCommandLineRunningState extends CommandLineState {
 
         try {
           if (vmOption.equals("--enable-vm-service") || vmOption.equals("--observe")) {
-            customObservatoryPort = 8181; // default port, see https://www.dartlang.org/tools/dart-vm/
+            customObservatoryPort = 8181; // default port, see https://dart.dev/tools/dart-devtools#3-start-the-target-app
           }
           else if (vmOption.startsWith("--enable-vm-service:")) {
             customObservatoryPort = parseIntBeforeSlash(vmOption.substring("--enable-vm-service:".length()));

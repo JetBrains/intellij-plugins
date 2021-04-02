@@ -1,6 +1,6 @@
 # Dart Plugin for IntelliJ IDEA and other JetBrains IDEs
 
-This plugin provides support for the [Dart programming language](https://www.dartlang.org/).
+This plugin provides support for the [Dart programming language](https://dart.dev/).
 
 ## Installing and Getting Started
 

@@ -1,7 +1,7 @@
 <idea-plugin>
   <name>Dart</name>
   <description><![CDATA[
-<p>Support for <a href="https://www.dartlang.org/">Dart</a></p>
+<p>Support for <a href="https://dart.dev/">Dart</a></p>
 <p>Features</p>
 <ul>
 <li>Smart coding assistance for Dart that includes code completion, formatting, navigation, intentions, refactorings, and more</li>
