@@ -27,14 +27,9 @@
       <option name="url" value="https://cache-redirector.jetbrains.com/www.jetbrains.com/intellij-repository/snapshots" />
     </remote-repository>
     <remote-repository>
-      <option name="id" value="maven" />
-      <option name="name" value="maven" />
-      <option name="url" value="https://jetbrains.bintray.com/intellij-third-party-dependencies" />
-    </remote-repository>
-    <remote-repository>
-      <option name="id" value="maven2" />
-      <option name="name" value="maven2" />
-      <option name="url" value="https://jetbrains.bintray.com/jediterm" />
+      <option name="id" value="intellij-dependencies" />
+      <option name="name" value="IntelliJ Dependencies" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/intellij-dependencies" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="maven3" />
@@ -55,11 +50,6 @@
       <option name="id" value="maven3" />
       <option name="name" value="maven3" />
       <option name="url" value="https://cache-redirector.jetbrains.com/jcenter.bintray.com" />
-    </remote-repository>
-    <remote-repository>
-      <option name="id" value="maven3" />
-      <option name="name" value="maven3" />
-      <option name="url" value="https://jetbrains.bintray.com/pty4j" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="maven5" />
