@@ -24,8 +24,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class DartSdkUpdateChecker {
-  public static final String SDK_STABLE_DOWNLOAD_URL = "https://www.dartlang.org/redirects/sdk-download-stable";
-  private static final String SDK_DEV_DOWNLOAD_URL = "https://www.dartlang.org/redirects/sdk-download-dev";
+  public static final String SDK_STABLE_DOWNLOAD_URL = "https://www.dart.dev/redirects/sdk-download-stable";
+  private static final String SDK_DEV_DOWNLOAD_URL = "https://www.dart.dev/redirects/sdk-download-dev";
 
   private static final String SDK_STABLE_UPDATE_CHECK_URL =
     "https://storage.googleapis.com/dart-archive/channels/stable/release/latest/VERSION";

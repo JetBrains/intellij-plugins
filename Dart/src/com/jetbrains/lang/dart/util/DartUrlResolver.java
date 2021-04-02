@@ -41,7 +41,7 @@ public abstract class DartUrlResolver {
   public abstract VirtualFile getPubspecYamlFile();
 
   /**
-   * Process 'Path Packages' (https://www.dartlang.org/tools/pub/dependencies.html#path-packages) and this package itself (symlink to local 'lib' folder)
+   * Process 'Path Packages' (https://dart.dev/tools/pub/dependencies#path-packages) and this package itself (symlink to local 'lib' folder)
    */
   public abstract void processLivePackages(final @NotNull PairConsumer<String, VirtualFile> packageNameAndDirConsumer);
 

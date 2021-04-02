@@ -78,12 +78,12 @@ public final class DartStartupActivity implements StartupActivity.Background {
       root == null ? null : ProjectRootManager.getInstance(module.getProject()).getFileIndex().getContentRootForFile(root);
     if (contentRoot == null) return;
 
-    // http://pub.dartlang.org/doc/glossary.html#entrypoint-directory
+    // https://dart.dev/tools/pub/glossary#entrypoint-directory
     // Entrypoint directory: A directory inside your package that is allowed to contain Dart entrypoints.
     // Pub has a whitelist of these directories: benchmark, bin, example, test, tool, and web.
     // Any subdirectories of those (except bin) may also contain entrypoints.
     //
-    // the same can be seen in the pub tool source code: [repo root]/sdk/lib/_internal/pub/lib/src/entrypoint.dart
+    // the same can be seen in the pub tool source code: https://github.com/dart-lang/pub/blob/master/lib/src/entrypoint.dart
 
     final DartSdk sdk = DartSdk.getDartSdk(module.getProject());
 

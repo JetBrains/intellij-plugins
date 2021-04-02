@@ -41,7 +41,7 @@ public final class PubspecYamlUtil {
   private static final Key<Pair<Long, Map<String, Object>>> MOD_STAMP_TO_PUBSPEC_NAME = Key.create("MOD_STAMP_TO_PUBSPEC_NAME");
 
   public static boolean isPubspecFile(@NotNull final VirtualFile file) {
-    // https://www.dartlang.org/tools/pub/pubspec
+    // https://dart.dev/tools/pub/pubspec
     return !file.isDirectory() && file.getName().equals(PUBSPEC_YAML);
   }
 
@@ -94,7 +94,7 @@ public final class PubspecYamlUtil {
     processYamlDepsRecursively(project, processedPubspecs, pathPackageNameAndDirConsumer, baseDir, yamlInfo.get(DEPENDENCY_OVERRIDES));
   }
 
-  // Path packages: https://www.dartlang.org/tools/pub/dependencies.html#path-packages
+  // Path packages: https://dart.dev/tools/pub/dependencies#path-packages
   private static void processYamlDepsRecursively(@NotNull final Project project,
                                                  @NotNull final Set<VirtualFile> processedPubspecs,
                                                  @NotNull final PairConsumer<String, VirtualFile> pathPackageNameAndRelPathConsumer,
