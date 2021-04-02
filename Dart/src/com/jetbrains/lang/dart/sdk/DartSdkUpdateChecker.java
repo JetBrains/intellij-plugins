@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.sdk;
 
 import com.intellij.ide.BrowserUtil;
@@ -24,8 +24,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class DartSdkUpdateChecker {
-  public static final String SDK_STABLE_DOWNLOAD_URL = "https://www.dartlang.org/redirects/sdk-download-stable";
-  private static final String SDK_DEV_DOWNLOAD_URL = "https://www.dartlang.org/redirects/sdk-download-dev";
+  public static final String SDK_STABLE_DOWNLOAD_URL = "https://dart.dev/redirects/sdk-download-stable";
+  private static final String SDK_DEV_DOWNLOAD_URL = "https://dart.dev/redirects/sdk-download-dev";
 
   private static final String SDK_STABLE_UPDATE_CHECK_URL =
     "https://storage.googleapis.com/dart-archive/channels/stable/release/latest/VERSION";
