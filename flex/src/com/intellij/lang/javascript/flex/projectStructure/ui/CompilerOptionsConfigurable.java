@@ -1,10 +1,11 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.compiler.options.CompilerUIConfigurable;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.CompilerOptionInfo;
 import com.intellij.flex.model.bc.ValueSource;
+import com.intellij.icons.AllIcons;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
@@ -41,7 +42,6 @@ import com.intellij.ui.treeStructure.treetable.TreeTableModel;
 import com.intellij.ui.treeStructure.treetable.TreeTableTree;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.PathUtil;
-import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.AbstractTableCellEditor;
 import com.intellij.util.ui.ColumnInfo;
@@ -69,9 +69,7 @@ import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.*;
 
-import static com.intellij.lang.javascript.flex.projectStructure.model.CompilerOptions.ResourceFilesMode;
-
-public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptions> implements Place.Navigator {
+public final class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptions> implements Place.Navigator {
   public static final String CONDITIONAL_COMPILER_DEFINITION_NAME = "FlexCompilerOptions.ConditionalCompilerDefinitionName";
 
   public enum Location {
@@ -204,7 +202,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
 
     myIncludeInSWCPanel.setVisible(myMode == Mode.BC && myNature.isLib());
     myIncludeInSWCField.getTextField().setEditable(false);
-    myIncludeInSWCField.setButtonIcon(PlatformIcons.OPEN_EDIT_DIALOG_ICON);
+    myIncludeInSWCField.setButtonIcon(AllIcons.Actions.ShowViewer);
     myIncludeInSWCField.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(final ActionEvent e) {
@@ -398,12 +396,12 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     return false;
   }
 
-  private ResourceFilesMode getResourceFilesMode() {
+  private CompilerOptions.ResourceFilesMode getResourceFilesMode() {
     return !myCopyResourceFilesCheckBox.isVisible() || !myCopyResourceFilesCheckBox.isSelected()
-           ? ResourceFilesMode.None
+           ? CompilerOptions.ResourceFilesMode.None
            : myCopyAllResourcesRadioButton.isSelected()
-             ? ResourceFilesMode.All
-             : ResourceFilesMode.ResourcePatterns;
+             ? CompilerOptions.ResourceFilesMode.All
+             : CompilerOptions.ResourceFilesMode.ResourcePatterns;
   }
 
   @Override
@@ -433,10 +431,10 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
       myMapModified = false;
       updateTreeTable();
 
-      final ResourceFilesMode mode = myModel.getResourceFilesMode();
-      myCopyResourceFilesCheckBox.setSelected(mode != ResourceFilesMode.None);
-      myCopyAllResourcesRadioButton.setSelected(mode == ResourceFilesMode.None || mode == ResourceFilesMode.All);
-      myRespectResourcePatternsRadioButton.setSelected(mode == ResourceFilesMode.ResourcePatterns);
+      final CompilerOptions.ResourceFilesMode mode = myModel.getResourceFilesMode();
+      myCopyResourceFilesCheckBox.setSelected(mode != CompilerOptions.ResourceFilesMode.None);
+      myCopyAllResourcesRadioButton.setSelected(mode == CompilerOptions.ResourceFilesMode.None || mode == CompilerOptions.ResourceFilesMode.All);
+      myRespectResourcePatternsRadioButton.setSelected(mode == CompilerOptions.ResourceFilesMode.ResourcePatterns);
       updateResourcesControls();
 
       myFilesToIncludeInSWC = myModel.getFilesToIncludeInSWC();
@@ -906,7 +904,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
       myProject = project;
 
       getTextField().setEditable(false);
-      setButtonIcon(PlatformIcons.OPEN_EDIT_DIALOG_ICON);
+      setButtonIcon(AllIcons.Actions.ShowViewer);
 
       addActionListener(new ActionListener() {
         @Override
