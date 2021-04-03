@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine;
 
 import com.intellij.execution.ExecutionException;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 import static com.intellij.openapi.util.text.StringUtil.contains;
 
-public class PhoneGapCommandLine {
+public final class PhoneGapCommandLine {
   private static final Logger LOGGER = Logger.getInstance(PhoneGapCommandLine.class);
 
   public static final String INFO_PHONEGAP = "the following plugins are installed";
@@ -265,7 +265,7 @@ public class PhoneGapCommandLine {
       out = out.replaceAll("\\[(.*?)\\]", "");
     }
     List<String> plugins = Arrays.stream(out.split("\n"))
-      .map(StringUtil.TRIMMER::fun)
+      .map(StringUtil::trim)
       .filter(el -> el.length() > 0 && AsciiUtil.isLetter(el.charAt(0)))
       .collect(Collectors.toList());
 
