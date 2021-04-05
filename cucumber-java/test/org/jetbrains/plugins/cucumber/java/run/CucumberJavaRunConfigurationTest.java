@@ -6,6 +6,7 @@ import com.intellij.execution.PsiLocation;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.ide.DataManager;
+import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.util.Ref;
@@ -96,7 +97,7 @@ public class CucumberJavaRunConfigurationTest extends CucumberJavaCodeInsightTes
   @NotNull
   private ConfigurationContext getConfigurationContext() {
     DataContext dataContext = DataManager.getInstance().getDataContext(myFixture.getEditor().getComponent());
-    return ConfigurationContext.getFromContext(dataContext);
+    return ConfigurationContext.getFromContext(dataContext, ActionPlaces.UNKNOWN);
   }
 
   @Override

@@ -14,7 +14,7 @@ class MakefileRunTargetAction(private val target: MakefileTarget)
   override fun actionPerformed(event: AnActionEvent) {
     val dataContext = SimpleDataContext.getSimpleContext(Location.DATA_KEY.name, PsiLocation(target), event.dataContext)
 
-    val context = ConfigurationContext.getFromContext(dataContext)
+    val context = ConfigurationContext.getFromContext(dataContext, event.place)
 
     val producer = MakefileRunConfigurationProducer()
     val configuration = producer.findOrCreateConfigurationFromContext(context)?.configurationSettings ?: return

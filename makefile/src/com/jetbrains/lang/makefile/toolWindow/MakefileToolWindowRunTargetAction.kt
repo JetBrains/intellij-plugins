@@ -24,7 +24,7 @@ class MakefileToolWindowRunTargetAction(private val tree: Tree, private val proj
 
       val dataContext = SimpleDataContext.getSimpleContext(Location.DATA_KEY.name, PsiLocation(target), event.dataContext)
 
-      val context = ConfigurationContext.getFromContext(dataContext)
+      val context = ConfigurationContext.getFromContext(dataContext, event.place)
 
       val producer = MakefileRunConfigurationFactory(MakefileRunConfigurationType)
       val configuration = RunnerAndConfigurationSettingsImpl(runManager, producer.createConfigurationFromTarget(target)
