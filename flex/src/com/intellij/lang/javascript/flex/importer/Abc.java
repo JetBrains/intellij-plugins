@@ -311,7 +311,6 @@ class Abc {
     defaults[CONSTANT_Int] = ints;
     defaults[CONSTANT_UInt] = uints;
     defaults[CONSTANT_Double] = doubles;
-    defaults[CONSTANT_Int] = ints;
     defaults[CONSTANT_False] = buildSparseArray(10, "false");
     defaults[CONSTANT_True] = buildSparseArray(11, "true");
     defaults[CONSTANT_Namespace] = namespaces;
