@@ -8,7 +8,6 @@ import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigu
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ShowSettingsUtil;
@@ -58,11 +57,11 @@ public final class ChooseActiveBuildConfigurationAction extends DumbAwareAction 
   public void actionPerformed(@NotNull final AnActionEvent e) {
     Module module = e.getData(LangDataKeys.MODULE);
     if (module != null) {
-      createPopup(module).showInBestPositionFor(e.getDataContext());
+      createPopup(module, e.getDataContext()).showInBestPositionFor(e.getDataContext());
     }
   }
 
-  public static ListPopup createPopup(@NotNull Module module) {
+  public static ListPopup createPopup(@NotNull Module module, @NotNull DataContext dataContext) {
     final DefaultActionGroup actionGroup = new DefaultActionGroup();
     final FlexBuildConfigurationManager manager = FlexBuildConfigurationManager.getInstance(module);
     final FlexBuildConfiguration activeBc = manager.getActiveConfiguration();
@@ -74,7 +73,6 @@ public final class ChooseActiveBuildConfigurationAction extends DumbAwareAction 
     actionGroup.addSeparator();
     actionGroup.add(new EditBcsAction(module));
 
-    final DataContext dataContext = SimpleDataContext.getProjectContext(module.getProject());
     return new PopupFactoryImpl.ActionGroupPopup(FlexBundle.message("choose.build.configuration.popup.title", module.getName()),
                                                  actionGroup, dataContext, false, false, false, true, null, -1,
                                                  anAction -> anAction instanceof SelectBcAction && ((SelectBcAction)anAction).getBC() == activeBc, null) {
