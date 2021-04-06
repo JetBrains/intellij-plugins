@@ -109,11 +109,6 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
       new Task.Backgroundable(project, tabText, true) {
 
         @Override
-        public boolean shouldStartInBackground() {
-          return true;
-        }
-
-        @Override
         public void run(@NotNull final ProgressIndicator indicator) {
           try {
             String platform = phoneGapRunConfiguration.getPlatform();
