@@ -84,9 +84,15 @@ public class DartTestRunnerParameters extends DartCommandLineRunnerParameters im
   public enum Scope {
     FOLDER(DartBundle.messagePointer("test.mode.all.in.folder")),
     FILE(DartBundle.messagePointer("test.mode.all.in.file")),
-    @Deprecated // GROUP_OR_TEST_BY_NAME used instead
+    /**
+     * @deprecated GROUP_OR_TEST_BY_NAME used instead
+     */
+    @Deprecated
     GROUP(new Computable.PredefinedValueComputable<>("Test group")),
-    @Deprecated // GROUP_OR_TEST_BY_NAME used instead
+    /**
+     * @deprecated GROUP_OR_TEST_BY_NAME used instead
+     */
+    @Deprecated
     METHOD(new Computable.PredefinedValueComputable<>("Test name")),
     GROUP_OR_TEST_BY_NAME(DartBundle.messagePointer("test.mode.test.group.or.test.by.name")),
     MULTIPLE_NAMES(new Computable.PredefinedValueComputable<>("")); // Used by test re-runner action; not visible in UI
