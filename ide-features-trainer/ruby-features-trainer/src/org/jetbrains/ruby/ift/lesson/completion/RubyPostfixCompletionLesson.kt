@@ -29,19 +29,22 @@ end
 end
 """.trimIndent()).text
 
+  private val completionSuffix = ".if"
+
   override val lessonContent: LessonContext.() -> Unit
     get() = {
       prepareSample(sample)
       task {
-        text(LessonsBundle.message("postfix.completion.type.template", code(".if")))
+        text(LessonsBundle.message("postfix.completion.intro") + " " + RubyLessonsBundle.message("ruby.postfix.completion.type",
+                                                                                                 code(completionSuffix)))
         triggerByListItemAndHighlight {
-          it.toString() == ".if"
+          it.toString() == completionSuffix
         }
         proposeRestore {
-          checkExpectedStateOfEditor(sample) { ".if".startsWith(it) }
+          checkExpectedStateOfEditor(sample) { completionSuffix.startsWith(it) }
         }
         test {
-          type(".if")
+          type(completionSuffix)
         }
       }
       task {
