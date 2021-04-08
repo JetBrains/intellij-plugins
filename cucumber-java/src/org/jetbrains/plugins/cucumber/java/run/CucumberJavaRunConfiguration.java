@@ -14,6 +14,7 @@ import com.intellij.execution.testframework.JavaTestLocator;
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
 import com.intellij.execution.testframework.sm.runner.SMTestLocator;
+import com.intellij.execution.testframework.ui.BaseTestsOutputConsoleView;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.util.JavaParametersUtil;
 import com.intellij.junit4.ExpectedPatterns;
@@ -30,6 +31,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.PathUtil;
 import com.intellij.util.text.VersionComparatorUtil;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -67,7 +69,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
       private final Collection<Filter> myConsoleFilters = new ArrayList<>();
 
       @Override
-      protected JavaParameters createJavaParameters() throws com.intellij.execution.ExecutionException {
+      protected JavaParameters createJavaParameters() throws ExecutionException {
         final JavaParameters params = new JavaParameters();
         final JavaRunConfigurationModule module = getConfigurationModule();
 
@@ -110,7 +112,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
       }
 
       @NotNull
-      private ConsoleView createConsole(@NotNull final Executor executor, ProcessHandler processHandler) throws ExecutionException {
+      private ConsoleView createConsole(@NotNull final Executor executor, ProcessHandler processHandler) {
         @NonNls String testFrameworkName = "cucumber";
         final CucumberJavaRunConfiguration runConfiguration = CucumberJavaRunConfiguration.this;
         final SMTRunnerConsoleProperties consoleProperties = new SMTRunnerConsoleProperties(runConfiguration, testFrameworkName, executor) {
@@ -120,7 +122,11 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
             return JavaTestLocator.INSTANCE;
           }
         };
-        return SMTestRunnerConnectionUtil.createAndAttachConsole(testFrameworkName, processHandler, consoleProperties);
+        BaseTestsOutputConsoleView console = UIUtil.invokeAndWaitIfNeeded(() -> {
+          return SMTestRunnerConnectionUtil.createConsole(testFrameworkName, consoleProperties);
+        });
+        console.attachToProcess(processHandler);
+        return console;
       }
 
       @NotNull
