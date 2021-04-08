@@ -51,6 +51,9 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
                                                                                             "io.cucumber.java.DefaultDataTableEntryTransformer",
                                                                                             "io.cucumber.java.DefaultDataTableCellTransformer");
 
+  public static final Set<String> CONFIGURATION_ANNOTATION_NAMES = ContainerUtil.newHashSet("io.cucumber.spring.CucumberContextConfiguration",
+                                                                                            "io.cucumber.spring.ScenarioScope");
+
   @NotNull
   @Override
   public ConfigurationFactory getConfigurationFactory() {

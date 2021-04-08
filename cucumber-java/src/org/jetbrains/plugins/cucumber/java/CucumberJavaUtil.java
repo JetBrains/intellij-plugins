@@ -42,6 +42,7 @@ import static org.jetbrains.plugins.cucumber.CucumberUtil.STANDARD_PARAMETER_TYP
 import static org.jetbrains.plugins.cucumber.MapParameterTypeManager.DEFAULT;
 import static org.jetbrains.plugins.cucumber.java.CucumberJavaVersionUtil.CUCUMBER_CORE_VERSION_1_1;
 import static org.jetbrains.plugins.cucumber.java.CucumberJavaVersionUtil.CUCUMBER_CORE_VERSION_4_5;
+import static org.jetbrains.plugins.cucumber.java.run.CucumberJavaRunConfigurationProducer.CONFIGURATION_ANNOTATION_NAMES;
 import static org.jetbrains.plugins.cucumber.java.run.CucumberJavaRunConfigurationProducer.HOOK_AND_TYPE_ANNOTATION_NAMES;
 import static org.jetbrains.plugins.cucumber.java.steps.AnnotationPackageProvider.CUCUMBER_ANNOTATION_PACKAGES;
 
@@ -531,6 +532,23 @@ public final class CucumberJavaUtil {
           }
         });
       }
+    }
+
+    for (String fqn: CONFIGURATION_ANNOTATION_NAMES) {
+      ProgressManager.checkCanceled();
+      PsiClass psiClass = javaPsiFacade.findClass(fqn, dependenciesScope);
+      if (psiClass == null) {
+        continue;
+      }
+      Collection<PsiClass> psiClasses =
+        AnnotatedElementsSearch.searchPsiClasses(psiClass, GlobalSearchScope.allScope(element.getProject())).findAll();
+      psiClasses.forEach(it -> {
+        PsiClassOwner file = (PsiClassOwner)it.getContainingFile();
+        String packageName = file.getPackageName();
+        if (StringUtil.isNotEmpty(packageName)) {
+          consumer.accept(packageName);
+        }
+      });
     }
   }
 
