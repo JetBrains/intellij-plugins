@@ -16,7 +16,7 @@
 package com.intellij.struts2.reference;
 
 import com.intellij.javaee.model.xml.ParamValue;
-import com.intellij.javaee.model.xml.web.Filter;
+import com.intellij.javaee.web.model.xml.Filter;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.psi.PsiReferenceContributor;
 import com.intellij.psi.PsiReferenceProvider;

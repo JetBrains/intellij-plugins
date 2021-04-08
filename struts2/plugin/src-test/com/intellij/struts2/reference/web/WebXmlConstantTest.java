@@ -16,8 +16,8 @@
 package com.intellij.struts2.reference.web;
 
 import com.intellij.codeInspection.LocalInspectionTool;
-import com.intellij.j2ee.web.highlighting.WebWarningInspection;
-import com.intellij.j2ee.web.highlighting.WebXmlInspection;
+import com.intellij.javaee.web.highlighting.WebWarningInspection;
+import com.intellij.javaee.web.highlighting.WebXmlInspection;
 import com.intellij.struts2.BasicLightHighlightingTestCase;
 import com.intellij.struts2.model.constant.StrutsConstant;
 import com.intellij.struts2.model.constant.contributor.StrutsCoreConstantContributor;

@@ -17,19 +17,12 @@ package com.intellij.struts2.model.jam.convention;
 
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.jam.JamAttributeElement;
-import com.intellij.jam.JamConverter;
-import com.intellij.jam.JamElement;
-import com.intellij.jam.JamSimpleReferenceConverter;
-import com.intellij.jam.JamStringAttributeElement;
+import com.intellij.jam.*;
 import com.intellij.jam.annotations.JamPsiConnector;
 import com.intellij.jam.annotations.JamPsiValidity;
 import com.intellij.jam.model.common.CommonModelElement;
-import com.intellij.jam.reflect.JamAnnotationMeta;
-import com.intellij.jam.reflect.JamAttributeMeta;
-import com.intellij.jam.reflect.JamClassMeta;
-import com.intellij.jam.reflect.JamPackageMeta;
-import com.intellij.jam.reflect.JamStringAttributeMeta;
+import com.intellij.jam.reflect.*;
+import com.intellij.javaee.web.WebDirectoryElement;
 import com.intellij.javaee.web.WebUtil;
 import com.intellij.javaee.web.facet.WebFacet;
 import com.intellij.lang.properties.IProperty;
@@ -42,15 +35,15 @@ import com.intellij.psi.PsiAnnotationMemberValue;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiModifierListOwner;
 import com.intellij.psi.PsiNamedElement;
-import com.intellij.psi.jsp.WebDirectoryElement;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.ElementPresentationManager;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Objects;
 
 /**
  * {@code org.apache.struts2.convention.annotation.ResultPath}.

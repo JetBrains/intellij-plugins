@@ -14,8 +14,8 @@
  */
 package com.intellij.struts2.model.jam.convention;
 
+import com.intellij.javaee.web.WebDirectoryElement;
 import com.intellij.lang.properties.IProperty;
-import com.intellij.psi.jsp.WebDirectoryElement;
 import com.intellij.struts2.Struts2ProjectDescriptorBuilder;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;

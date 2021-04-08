@@ -16,10 +16,10 @@
 package com.intellij.struts2.model.constant;
 
 import com.intellij.javaee.model.CommonParamValue;
-import com.intellij.javaee.model.xml.web.Filter;
-import com.intellij.javaee.model.xml.web.WebApp;
 import com.intellij.javaee.web.WebUtil;
 import com.intellij.javaee.web.facet.WebFacet;
+import com.intellij.javaee.web.model.xml.Filter;
+import com.intellij.javaee.web.model.xml.WebApp;
 import com.intellij.lang.properties.IProperty;
 import com.intellij.lang.properties.PropertiesImplUtil;
 import com.intellij.openapi.module.Module;

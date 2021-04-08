@@ -15,8 +15,10 @@
 
 package com.intellij.struts2.dom.struts.impl.path;
 
+import com.intellij.javaee.web.WebDirectoryElement;
 import com.intellij.javaee.web.WebRoot;
 import com.intellij.javaee.web.facet.WebFacet;
+import com.intellij.javaee.web.psi.jsp.WebDirectoryUtil;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.util.Condition;
@@ -24,11 +26,10 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFileSystemItem;
-import com.intellij.psi.impl.source.jsp.WebDirectoryUtil;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet;
-import com.intellij.psi.jsp.WebDirectoryElement;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.util.containers.ContainerUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
