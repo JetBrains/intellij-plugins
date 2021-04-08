@@ -10,6 +10,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.SkipSlowTestLocally;
 import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import com.intellij.testFramework.propertyBased.*;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +31,7 @@ public class OgnlCodeInsightSanityTest extends LightJavaCodeInsightFixtureTestCa
   protected void setUp() throws Exception {
     super.setUp();
 
-    WriteAction.run(() -> FileTypeManager.getInstance().associateExtension(OgnlFileType.INSTANCE, EXTENSION));
+    CodeInsightTestFixtureImpl.associateExtensionTemporarily(OgnlFileType.INSTANCE, EXTENSION, getTestRootDisposable());
   }
 
   @Override

@@ -10,6 +10,7 @@ import com.intellij.openapi.rd.attach
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase
+import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import org.jetbrains.yaml.psi.YAMLFile
 import org.junit.Assert
 
@@ -70,10 +71,7 @@ class CloudFormationFileTypeDetectionTest: LightPlatformCodeInsightTestCase() {
   }
 
   private fun mapTemplateExtensionToPlainText() {
-    WriteAction.runAndWait<Exception> { FileTypeManager.getInstance().associateExtension(PlainTextFileType.INSTANCE, "template") }
-    testRootDisposable.attach {
-      WriteAction.runAndWait<Exception> { FileTypeManager.getInstance().removeAssociatedExtension(PlainTextFileType.INSTANCE, "template") }
-    }
+    CodeInsightTestFixtureImpl.associateExtensionTemporarily(PlainTextFileType.INSTANCE, "template", testRootDisposable)
   }
 
   private fun assertNotCloudFormationFile(fileName: String, fileText: String, check: (PsiFile) -> Unit = {}) {
