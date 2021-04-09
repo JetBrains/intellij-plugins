@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.jetbrains.plugins.cucumber.CucumberUtil.getCucumberStepReference;
+
 /**
  * @author Roman.Chernyatchik
  */
@@ -66,16 +68,7 @@ public class GherkinAnnotatorVisitor extends GherkinElementVisitor {
 
   @Override
   public void visitStep(GherkinStep step) {
-    CucumberStepReference reference = null;
-    for (PsiReference ref : step.getReferences()) {
-      if (ref instanceof CucumberStepReference) {
-        if (reference == null) {
-          reference = (CucumberStepReference) ref;
-        } else {
-          return;
-        }
-      }
-    }
+    CucumberStepReference reference = getCucumberStepReference(step);
     if (reference == null) {
       return;
     }

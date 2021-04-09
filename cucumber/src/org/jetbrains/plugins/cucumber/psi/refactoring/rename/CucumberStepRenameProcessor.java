@@ -23,19 +23,12 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.jetbrains.plugins.cucumber.CucumberUtil.getCucumberStepReference;
+
 public class CucumberStepRenameProcessor extends RenamePsiElementProcessor {
   @Override
   public boolean canProcessElement(@NotNull PsiElement element) {
     return element instanceof GherkinStep || PsiTreeUtil.getParentOfType(element, GherkinStep.class) != null;
-  }
-
-  public static CucumberStepReference getCucumberStepReference(PsiElement element) {
-    for (PsiReference ref : element.getReferences()) {
-      if (ref instanceof CucumberStepReference) {
-        return (CucumberStepReference)ref;
-      }
-    }
-    return null;
   }
 
   /**

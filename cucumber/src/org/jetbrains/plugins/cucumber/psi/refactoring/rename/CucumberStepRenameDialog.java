@@ -23,6 +23,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.EnumSet;
 
+import static org.jetbrains.plugins.cucumber.CucumberUtil.getCucumberStepReference;
+
 public class CucumberStepRenameDialog extends RenameDialog {
   private AbstractStepDefinition myStepDefinition;
 
@@ -69,7 +71,7 @@ public class CucumberStepRenameDialog extends RenameDialog {
 
   private AbstractStepDefinition getStepDefinition() {
     if (myStepDefinition == null) {
-      final CucumberStepReference ref = CucumberStepRenameProcessor.getCucumberStepReference(getPsiElement());
+      final CucumberStepReference ref = getCucumberStepReference(getPsiElement());
       if (ref != null) {
         myStepDefinition = ref.resolveToDefinition();
       }

@@ -8,7 +8,6 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static org.jetbrains.plugins.cucumber.CucumberUtil.getCucumberStepReference;
 
 public class ScenarioToOutlineIntention implements IntentionAction {
   public static final String ARGUMENT = "argument";
@@ -85,13 +86,7 @@ public class ScenarioToOutlineIntention implements IntentionAction {
     newScenarioText.append(keywordsTable.getScenarioOutlineKeyword()).append(": ").append(scenario.getScenarioName());
     Map<String, String> examples = new LinkedHashMap<>();
     for(GherkinStep step: scenario.getSteps()) {
-      CucumberStepReference reference = null;
-      for (PsiReference ref : step.getReferences()) {
-        if (ref instanceof CucumberStepReference) {
-          reference = (CucumberStepReference) ref;
-          break;
-        }
-      }
+      CucumberStepReference reference = getCucumberStepReference(step);
       final AbstractStepDefinition definition = reference != null ? reference.resolveToDefinition() : null;
       if (definition != null) {
         String stepName = replaceVarNames(step.getName(), definition, examples);

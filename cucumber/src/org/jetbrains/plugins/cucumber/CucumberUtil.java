@@ -481,4 +481,16 @@ public final class CucumberUtil {
     }
     return document.getLineNumber(textOffset) + 1;
   }
+
+  public static CucumberStepReference getCucumberStepReference(@Nullable PsiElement element) {
+    if (element == null) {
+      return null;
+    }
+    for (PsiReference ref : element.getReferences()) {
+      if (ref instanceof CucumberStepReference) {
+        return (CucumberStepReference) ref;
+      }
+    }
+    return null;
+  }
 }
