@@ -85,9 +85,13 @@ public class ScenarioToOutlineIntention implements IntentionAction {
     newScenarioText.append(keywordsTable.getScenarioOutlineKeyword()).append(": ").append(scenario.getScenarioName());
     Map<String, String> examples = new LinkedHashMap<>();
     for(GherkinStep step: scenario.getSteps()) {
-
-      PsiReference[] references = step.getReferences();
-      final CucumberStepReference reference = references.length > 0 ? (CucumberStepReference)step.getReferences()[0] : null;
+      CucumberStepReference reference = null;
+      for (PsiReference ref : step.getReferences()) {
+        if (ref instanceof CucumberStepReference) {
+          reference = (CucumberStepReference) ref;
+          break;
+        }
+      }
       final AbstractStepDefinition definition = reference != null ? reference.resolveToDefinition() : null;
       if (definition != null) {
         String stepName = replaceVarNames(step.getName(), definition, examples);
