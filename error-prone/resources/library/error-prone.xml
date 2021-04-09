@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <artifacts>
-  <artifact version="2.4.0.1" name="error-prone">
-    <item url="https://repo1.maven.org/maven2/com/google/errorprone/error_prone_core/2.4.0/error_prone_core-2.4.0-with-dependencies.jar"/>
+  <artifact version="2.6.0" name="error-prone">
+    <item url="https://repo1.maven.org/maven2/com/google/errorprone/error_prone_core/2.6.0/error_prone_core-2.6.0-with-dependencies.jar"/>
     <item url="https://repo1.maven.org/maven2/com/google/code/findbugs/jFormatString/3.0.0/jFormatString-3.0.0.jar"/>
-    <item url="https://repo1.maven.org/maven2/org/checkerframework/dataflow-shaded/3.1.2/dataflow-shaded-3.1.2.jar"/>
+    <item url="https://repo1.maven.org/maven2/org/checkerframework/dataflow-shaded/3.7.1/dataflow-shaded-3.7.1.jar"/>
     <item url="https://repo1.maven.org/maven2/com/google/errorprone/javac/9+181-r4173-1/javac-9+181-r4173-1.jar"/>
-
-    <!-- this is a workaround for missing dependency in error_prone_core-with-dependencies: https://github.com/google/error-prone/issues/1670 -->
-    <item url="https://repo1.maven.org/maven2/org/threeten/threeten-extra/1.5.0/threeten-extra-1.5.0.jar"/>
   </artifact>
 </artifacts>
