@@ -61,7 +61,7 @@ class Angular2ExtractedComponentBuilder(val sourceFile: PsiFile, val selectionSt
   fun build(): Angular2ExtractedComponent {
     try {
       val startElement = sourceFile.findElementAt(selectionStart)!!
-      val endElement = sourceFile.findElementAt(selectionEnd)!!
+      val endElement = sourceFile.findElementAt(selectionEnd) ?: sourceFile.findElementAt(selectionEnd - 1)!!
 
       if (isInsideInterpolation(startElement) || isInsideInterpolation(endElement)) {
         throw IllegalStateException()
@@ -256,7 +256,7 @@ class Angular2ExtractedComponentBuilder(val sourceFile: PsiFile, val selectionSt
     else if (source.containingFile is JSFile) {
       return true
     }
-    else if (!PsiTreeUtil.isContextAncestor(enclosingTag, source, true)
+    else if ((enclosingTag != null && !PsiTreeUtil.isContextAncestor(enclosingTag, source, true))
              || source.textRange?.let { extractedRange.contains(it) } == false) {
       return true
     }
