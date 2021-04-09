@@ -122,8 +122,7 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
     configuration.setNameFilter(getNameFilter(context));
     configuration.setFilePath(file.getPath());
     String programParametersFromDefaultConfiguration = StringUtil.defaultIfEmpty(configuration.getProgramParameters(), "");
-
-    if(programParametersFromDefaultConfiguration == null) {
+    if (StringUtil.isEmpty(programParametersFromDefaultConfiguration)) {
       configuration.setProgramParameters(formatterOptions);
     }
 

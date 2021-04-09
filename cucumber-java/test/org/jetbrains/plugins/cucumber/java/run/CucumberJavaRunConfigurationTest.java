@@ -51,6 +51,7 @@ public class CucumberJavaRunConfigurationTest extends CucumberJavaCodeInsightTes
     String parameters = runConfiguration.getProgramParameters();
     assertNotNull(parameters);
     assertTrue(parameters.contains("--plugin pretty"));
+    assertFalse(parameters.contains("org.jetbrains.plugins.cucumber.java.run.CucumberJvm"));
   }
 
   @Override
