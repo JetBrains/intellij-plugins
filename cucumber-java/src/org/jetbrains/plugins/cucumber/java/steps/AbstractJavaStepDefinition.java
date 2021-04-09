@@ -1,7 +1,6 @@
 package org.jetbrains.plugins.cucumber.java.steps;
 
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiParameter;
@@ -17,12 +16,19 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.plugins.cucumber.CucumberUtil.buildRegexpFromCucumberExpression;
-import static org.jetbrains.plugins.cucumber.java.CucumberJavaUtil.JAVA_DEFAULT_PARAMETER_TYPE_MANAGER;
 import static org.jetbrains.plugins.cucumber.java.CucumberJavaUtil.getAllParameterTypes;
 
 public abstract class AbstractJavaStepDefinition extends AbstractStepDefinition {
-  public AbstractJavaStepDefinition(@NotNull PsiElement element) {
+  private final Module myModule;
+
+  public AbstractJavaStepDefinition(@NotNull PsiElement element,
+                                    @NotNull Module module) {
     super(element);
+    myModule = module;
+  }
+
+  protected Module getModule() {
+    return myModule;
   }
 
   @Nullable
@@ -36,15 +42,13 @@ public abstract class AbstractJavaStepDefinition extends AbstractStepDefinition 
     if (element == null) {
       return null;
     }
-    final Module module = ModuleUtilCore.findModuleForPsiElement(element);
-    if (module != null) {
-      if (!CucumberJavaVersionUtil.isCucumber3OrMore(element)) {
-        return definitionText;
-      }
+
+    if (!CucumberJavaVersionUtil.isCucumber3OrMore(myModule)) {
+      return definitionText;
     }
 
     if (CucumberJavaUtil.isCucumberExpression(definitionText)) {
-      ParameterTypeManager parameterTypes = module != null ? getAllParameterTypes(module) : JAVA_DEFAULT_PARAMETER_TYPE_MANAGER;
+      ParameterTypeManager parameterTypes = getAllParameterTypes(myModule);
       return buildRegexpFromCucumberExpression(definitionText, parameterTypes);
     }
 
