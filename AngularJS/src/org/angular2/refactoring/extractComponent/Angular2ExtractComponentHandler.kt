@@ -37,6 +37,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.codeStyle.CodeStyleManager
+import com.intellij.psi.impl.source.tree.injected.InjectedLanguageEditorUtil
 import com.intellij.psi.util.descendantsOfType
 import com.intellij.refactoring.RefactoringActionHandler
 import com.intellij.refactoring.RefactoringBundle
@@ -283,7 +284,7 @@ class Angular2ExtractComponentHandler : RefactoringActionHandler {
   private fun showErrorHint(project: Project, editor: Editor, @NlsContexts.DialogMessage message: String) {
     CommonRefactoringUtil.showErrorHint(
       project,
-      editor,
+      InjectedLanguageEditorUtil.getTopLevelEditor(editor),
       RefactoringBundle.getCannotRefactorMessage(message),
       Angular2Bundle.message("angular.refactor.extractComponent.dialog"),
       null
