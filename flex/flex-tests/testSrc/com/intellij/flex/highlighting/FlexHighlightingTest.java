@@ -78,7 +78,6 @@ import com.intellij.psi.css.inspections.CssNegativeValueInspection;
 import com.intellij.psi.css.inspections.CssUnknownPropertyInspection;
 import com.intellij.psi.css.inspections.CssUnusedSymbolInspection;
 import com.intellij.psi.css.inspections.bugs.CssNoGenericFontNameInspection;
-import com.intellij.psi.css.inspections.bugs.CssUnitlessNumberInspection;
 import com.intellij.psi.css.inspections.invalid.CssInvalidFunctionInspection;
 import com.intellij.psi.css.inspections.invalid.CssInvalidHtmlTagReferenceInspection;
 import com.intellij.psi.css.inspections.invalid.CssInvalidPropertyValueInspection;
@@ -228,7 +227,6 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
   public void testFlexWithCss3() throws Exception {
-    enableInspectionTool(new CssUnitlessNumberInspection());
     enableInspectionTool(new CssNegativeValueInspection());
     enableInspectionTool(new CssNoGenericFontNameInspection());
     enableInspectionTool((LocalInspectionTool)Class.forName("org.jetbrains.w3validators.css.W3CssValidatorInspection").newInstance());
