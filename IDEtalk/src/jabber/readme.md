@@ -1,1 +1,0 @@
-Smack from https://github.com/igniterealtime/Smack/commit/9895123ff329d2b0ca75196c632f1740654c2a41.
