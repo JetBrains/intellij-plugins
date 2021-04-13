@@ -17,4 +17,9 @@ public interface Angular2Component extends Angular2Directive {
 
   @NotNull
   List<Angular2DirectiveSelector> getNgContentSelectors();
+
+  @Override
+  default boolean isComponent() {
+    return true;
+  }
 }

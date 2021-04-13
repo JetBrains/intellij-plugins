@@ -34,6 +34,6 @@ public interface Angular2Directive extends Angular2Declaration {
   @NotNull Angular2DirectiveKind getDirectiveKind();
 
   default boolean isComponent() {
-    return this instanceof Angular2Component;
+    return false;
   }
 }
