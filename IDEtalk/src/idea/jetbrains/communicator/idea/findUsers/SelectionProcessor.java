@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package jetbrains.communicator.idea.findUsers;
 
+import com.intellij.util.ArrayUtil;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.users.UserModel;
 import jetbrains.communicator.util.KirTree;
@@ -21,9 +22,9 @@ import static com.intellij.util.ui.tree.TreeUtil.collectSelectedPaths;
  */
 class SelectionProcessor {
   private final KirTree myUserTree;
-  private final JComboBox myGroups;
+  private final JComboBox<String> myGroups;
 
-  SelectionProcessor(KirTree userTree, JComboBox groups, String[] strings) {
+  SelectionProcessor(KirTree userTree, JComboBox<String> groups, String[] strings) {
     myUserTree = userTree;
     myGroups = groups;
 
@@ -49,10 +50,10 @@ class SelectionProcessor {
     });
 
 
-    Vector<String> groupsItems = new Vector<>(Arrays.asList(strings));
+    List<String> groupsItems = new ArrayList<>(Arrays.asList(strings));
     Collections.sort(groupsItems);
     groupsItems.add(0, UserModel.AUTO_GROUP);
-    myGroups.setModel(new DefaultComboBoxModel(groupsItems));
+    myGroups.setModel(new DefaultComboBoxModel<>(ArrayUtil.toStringArray(groupsItems)));
     myGroups.setSelectedItem(UserModel.AUTO_GROUP);
 
     updateGroupSelector();

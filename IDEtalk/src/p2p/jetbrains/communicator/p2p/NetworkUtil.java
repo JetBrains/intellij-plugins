@@ -1,8 +1,8 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package jetbrains.communicator.p2p;
 
-import jetbrains.communicator.core.Pico;
 import com.intellij.openapi.util.TimeoutCachedValue;
+import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.util.XmlRpcTarget;
 import org.apache.log4j.Logger;
 import org.apache.xmlrpc.XmlRpcClient;
@@ -71,6 +71,7 @@ public final class NetworkUtil {
     }
 
     try {
+      //noinspection UseOfObsoleteCollectionType
       return new XmlRpcClient(url).execute(fullMethodName, new Vector<>(parameters));
     }
     catch (MalformedURLException e) {

@@ -44,14 +44,9 @@ public class AddOnlineUserP2PCommand implements P2PCommand {
     return ID;
   }
 
-  public boolean addOnlineUser(String remoteAddress, String remoteUsername, int remotePort, Vector<String> projects, Vector userPresence) {
-    myUserMonitorThread.addOnlineUser(remoteAddress, CommunicatorStrings.fromXMLSafeString(remoteUsername),
-                                      remotePort, projects, UserPresence.fromVector(userPresence));
-    return true;
-  }
-
   public static void addSelfTo(int port, InetAddress remoteAddress, InetAddress selfAddress, int myPort, Collection<String> projects, UserPresence presence) {
     XmlRpcTargetImpl target = new XmlRpcTargetImpl(port, remoteAddress);
+    //noinspection UseOfObsoleteCollectionType
     NetworkUtil.sendMessage(target, ID, "addOnlineUser",
                             selfAddress.getHostAddress(),
                             CommunicatorStrings.toXMLSafeString(CommunicatorStrings.getMyUsername()),
