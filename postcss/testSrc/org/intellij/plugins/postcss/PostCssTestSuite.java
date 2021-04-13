@@ -64,8 +64,6 @@ public final class PostCssTestSuite {
       suite.addTestSuite(PostCssMediaRangeInspectionTest.class);
       suite.addTestSuite(PostCssCustomMediaInspectionTest.class);
       suite.addTestSuite(PostCssCustomMediaQuickFixTest.class);
-      suite.addTestSuite(PostCssCustomPropertiesInspectionTest.class);
-      suite.addTestSuite(PostCssCustomPropertiesQuickFixTest.class);
 
       suite.addTestSuite(PostCssHighlightingTest.class);
       return suite;

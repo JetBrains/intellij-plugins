@@ -75,10 +75,6 @@
                      key="inspections.custom.media.problems.name"
                      groupKey="inspections.group.name" enabledByDefault="true" level="ERROR"
                      implementationClass="org.intellij.plugins.postcss.inspections.PostCssCustomMediaInspection"/>
-    <localInspection language="PostCSS" bundle="messages.PostCssBundle"
-                     key="inspections.custom.property.problems.name"
-                     groupKey="inspections.group.name" enabledByDefault="true" level="WARNING"
-                     implementationClass="org.intellij.plugins.postcss.inspections.PostCssCustomPropertiesInspection"/>
   </extensions>
   <extensions defaultExtensionNs="com.intellij.css">
     <supportedFileTypesProvider implementation="org.intellij.plugins.postcss.index.PostCssSupportedFileTypesProvider" version="1"/>
