@@ -26,8 +26,13 @@ module Minitest
     end
 
     def plugin_rm_reporter_init(options)
+      assert_no_minitest_reporters
       Minitest.reporter.reporters.clear
       Minitest.reporter.reporters << Minitest::RubyMineReporter.new(options)
+    end
+
+    def assert_no_minitest_reporters
+      raise RuntimeError.new("\nCurrent implementation of IntelliJ Minitest support conflicts with MiniTest::Reporters. Please remove it from your Gemfile and test code, then re-run your tests.") if Object.const_defined?("MiniTest::Reporters")
     end
   end
 
@@ -68,6 +73,7 @@ module Minitest
     include Mutex_m
 
     def initialize(options = {})
+      Minitest.assert_no_minitest_reporters
       super(options[:io] || $stdout, options)
       @test_data = Hash.new { |suites_hash, class_name|
         suites_hash[class_name] = Hash.new { |tests_hash, test_name|
@@ -92,6 +98,7 @@ module Minitest
     ##
     # Starts reporting on the run.
     def start
+      Minitest.assert_no_minitest_reporters
       debug("Starting reporting")
       collect_tests_to_run
       send_service_message(Rake::TeamCity::MessageFactory.create_tests_count(options[:total_count] || total_count))
