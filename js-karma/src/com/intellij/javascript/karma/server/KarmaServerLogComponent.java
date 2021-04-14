@@ -50,9 +50,8 @@ public final class KarmaServerLogComponent implements ComponentWithActions {
     myServer = server;
   }
 
-  @Nullable
   @Override
-  public ActionGroup getToolbarActions() {
+  public @NotNull ActionGroup getToolbarActions() {
     if (myActionGroup != null) {
       return myActionGroup;
     }
@@ -77,15 +76,13 @@ public final class KarmaServerLogComponent implements ComponentWithActions {
     return null;
   }
 
-  @Nullable
   @Override
-  public String getToolbarPlace() {
+  public @NotNull String getToolbarPlace() {
     return ActionPlaces.UNKNOWN;
   }
 
-  @Nullable
   @Override
-  public JComponent getToolbarContextComponent() {
+  public @NotNull JComponent getToolbarContextComponent() {
     return myConsole.getComponent();
   }
 
@@ -181,10 +178,7 @@ public final class KarmaServerLogComponent implements ComponentWithActions {
             alarm.addRequest(this, timeoutMillis + 100, ModalityState.any());
           }
           else {
-            myConsole.print(KarmaBundle.message("waiting.for.captured.browser.text") + " ", ConsoleViewContentType.SYSTEM_OUTPUT);
-            String url = myServer.formatUrl("/");
-            myConsole.printHyperlink(url, new OpenUrlHyperlinkInfo(url));
-            myConsole.print("\n", ConsoleViewContentType.SYSTEM_OUTPUT);
+            printCaptureMessage();
             Disposer.dispose(alarm);
           }
         }
@@ -197,6 +191,21 @@ public final class KarmaServerLogComponent implements ComponentWithActions {
       }, alarm);
       myServer.onBrowsersReady(() -> Disposer.dispose(alarm));
     });
+  }
+
+  private void printCaptureMessage() {
+    String url = myServer.formatUrl("/");
+    String text = KarmaBundle.message("waiting.for.captured.browser.text", url);
+    int urlInd = text.indexOf(url);
+    if (urlInd >= 0) {
+      myConsole.print(text.substring(0, urlInd), ConsoleViewContentType.SYSTEM_OUTPUT);
+      myConsole.printHyperlink(url, new OpenUrlHyperlinkInfo(url));
+      myConsole.print(text.substring(urlInd + url.length()), ConsoleViewContentType.SYSTEM_OUTPUT);
+    }
+    else {
+      myConsole.print(text, ConsoleViewContentType.SYSTEM_OUTPUT);
+    }
+    myConsole.print("\n", ConsoleViewContentType.SYSTEM_OUTPUT);
   }
 
   private static boolean startsWithMessage(@NotNull String line, @NonNls @NotNull String message) {
