@@ -24,7 +24,7 @@ public class PresentationElementDocumentationWrapper {
     }
 
     public PresentationElementDocumentationWrapper(URL url) throws Exception {
-        _document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(url.openStream());
+        _document = DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder().parse(url.openStream());
     }
 
     /**

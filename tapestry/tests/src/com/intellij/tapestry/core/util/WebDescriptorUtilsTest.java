@@ -1,9 +1,9 @@
 package com.intellij.tapestry.core.util;
 
+import com.intellij.tapestry.core.resource.TestableResource;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
-import com.intellij.tapestry.core.resource.TestableResource;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -25,7 +25,7 @@ public class WebDescriptorUtilsTest {
     public void init() {
         if (_documentBuilder == null) {
             try {
-                _documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+                _documentBuilder = DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder();
             } catch (ParserConfigurationException ex) {
                 ex.printStackTrace();
             }
