@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server.webdev;
 
 import com.intellij.execution.ExecutionException;
@@ -17,16 +17,15 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Consumer;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.ide.actions.DartPubActionBase;
 import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.server.OpenDartObservatoryUrlAction;
 import com.jetbrains.lang.dart.pubServer.DartWebdev;
 import com.jetbrains.lang.dart.sdk.DartSdk;
-import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.charset.StandardCharsets;
@@ -120,8 +119,7 @@ public class DartWebdevRunningState extends CommandLineState {
 
     final GeneralCommandLine commandLine = new GeneralCommandLine().withWorkDirectory(workingDir.getPath());
     commandLine.setCharset(StandardCharsets.UTF_8);
-
-    commandLine.setExePath(FileUtil.toSystemDependentName(DartSdkUtil.getPubPath(sdk)));
+    DartPubActionBase.setupPubExePath(commandLine, sdk);
     commandLine.addParameters("global", "run", "webdev", "daemon");
 
     // Compute the relative html file path and first directory name in the relative html file path

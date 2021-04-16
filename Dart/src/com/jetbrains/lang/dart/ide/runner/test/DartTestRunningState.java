@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.test;
 
 import com.intellij.execution.DefaultExecutionResult;
@@ -28,13 +28,13 @@ import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.ide.actions.DartPubActionBase;
 import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.base.DartRunConfiguration;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunningState;
 import com.jetbrains.lang.dart.ide.runner.util.DartTestLocationProvider;
 import com.jetbrains.lang.dart.sdk.DartSdk;
-import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -156,10 +156,9 @@ public class DartTestRunningState extends DartCommandLineRunningState {
     return super.startProcess();
   }
 
-  @NotNull
   @Override
-  protected String getExePath(@NotNull final DartSdk sdk) {
-    return DartSdkUtil.getPubPath(sdk);
+  protected void setupExePath(@NotNull GeneralCommandLine commandLine, @NotNull DartSdk sdk) {
+    DartPubActionBase.setupPubExePath(commandLine, sdk);
   }
 
   @Override
