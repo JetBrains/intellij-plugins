@@ -32,7 +32,9 @@ module Minitest
     end
 
     def assert_no_minitest_reporters
-      raise RuntimeError.new("\nCurrent implementation of IntelliJ Minitest support conflicts with MiniTest::Reporters. Please remove it from your Gemfile and test code, then re-run your tests.") if Object.const_defined?("MiniTest::Reporters")
+      if Object.const_defined?("MiniTest::Reporters")
+        raise RuntimeError.new("\nCurrent implementation of IntelliJ Minitest support conflicts with MiniTest::Reporters. Please remove it from your Gemfile and test code, then re-run your tests.")
+      end
     end
   end
 
