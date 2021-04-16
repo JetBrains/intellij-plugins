@@ -37,7 +37,7 @@ class ExtractMethod: UIViewController {
 
     select(11, 9, 18, 43)
     task {
-      triggers("ExtractMethod")
+      triggers("SwiftExtractFunction")
       text(SwiftLessonsBundle.message("swift.refactoring.extract.function.intro", code("setup"), action("ExtractMethod")))
     }
     task {
@@ -49,7 +49,7 @@ class ExtractMethod: UIViewController {
     text(SwiftLessonsBundle.message("swift.refactoring.extract.function.change.params", icon(AllIcons.General.ArrowUp),
                                     icon(AllIcons.General.ArrowDown)))
     task {
-      triggers("ExtractMethod")
+      triggers("SwiftExtractFunction")
       text(SwiftLessonsBundle.message("swift.refactoring.extract.function.exec.again", action("ExtractMethod")))
     }
   }
