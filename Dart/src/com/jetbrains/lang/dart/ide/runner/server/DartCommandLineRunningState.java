@@ -147,7 +147,7 @@ public class DartCommandLineRunningState extends CommandLineState {
     final GeneralCommandLine commandLine = new GeneralCommandLine()
       .withWorkDirectory(myRunnerParameters.computeProcessWorkingDirectory(getEnvironment().getProject()));
     commandLine.setCharset(StandardCharsets.UTF_8);
-    commandLine.setExePath(FileUtil.toSystemDependentName(getExePath(sdk)));
+    setupExePath(commandLine, sdk);
     commandLine.getEnvironment().putAll(myRunnerParameters.getEnvs());
     commandLine
       .withParentEnvironmentType(myRunnerParameters.isIncludeParentEnvs() ? ParentEnvironmentType.CONSOLE : ParentEnvironmentType.NONE);
@@ -156,9 +156,8 @@ public class DartCommandLineRunningState extends CommandLineState {
     return commandLine;
   }
 
-  @NotNull
-  protected String getExePath(@NotNull final DartSdk sdk) {
-    return DartSdkUtil.getDartExePath(sdk);
+  protected void setupExePath(@NotNull GeneralCommandLine commandLine, @NotNull DartSdk sdk) {
+    commandLine.setExePath(DartSdkUtil.getDartExePath(sdk));
   }
 
   private void setupParameters(@NotNull final DartSdk sdk,

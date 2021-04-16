@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.actions;
 
 import com.intellij.CommonBundle;
@@ -33,6 +33,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
@@ -54,6 +55,7 @@ import com.jetbrains.lang.dart.sdk.DartConfigurable;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,10 +67,23 @@ import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 public abstract class DartPubActionBase extends AnAction implements DumbAware {
   public static final String PUB_ENV_VAR_NAME = "PUB_ENVIRONMENT";
 
-  private static final String GROUP_DISPLAY_ID = "Dart Pub Tool";
+  private static final @NonNls String GROUP_DISPLAY_ID = "Dart Pub Tool";
   private static final Key<PubToolWindowContentInfo> PUB_TOOL_WINDOW_CONTENT_INFO_KEY = Key.create("PUB_TOOL_WINDOW_CONTENT_INFO_KEY");
 
+  private static final String DART_PUB_MIN_SDK_VERSION = "2.10";
+
   private static final AtomicBoolean ourInProgress = new AtomicBoolean(false);
+
+  public static void setupPubExePath(@NotNull GeneralCommandLine commandLine, @NotNull DartSdk dartSdk) {
+    boolean useDartPub = StringUtil.compareVersionNumbers(dartSdk.getVersion(), DART_PUB_MIN_SDK_VERSION) >= 0;
+    if (useDartPub) {
+      commandLine.setExePath(FileUtil.toSystemDependentName(DartSdkUtil.getDartExePath(dartSdk)));
+      commandLine.addParameter("pub");
+    }
+    else {
+      commandLine.setExePath(FileUtil.toSystemDependentName(DartSdkUtil.getPubPath(dartSdk)));
+    }
+  }
 
   public static String getPubEnvValue() {
     String existingVar = System.getenv(PUB_ENV_VAR_NAME);
@@ -144,26 +159,25 @@ public abstract class DartPubActionBase extends AnAction implements DumbAware {
 
     if (sdk == null) return;
 
-    File pubFile = new File(DartSdkUtil.getPubPath(sdk));
-    if (!pubFile.isFile() && allowModalDialogs) {
-      final int answer =
-        Messages.showDialog(module.getProject(),
-                            DartBundle.message("dart.sdk.bad.dartpub.path", pubFile.getPath()),
-                            getTitle(module.getProject(), pubspecYamlFile),
-                            new String[]{DartBundle.message("setup.dart.sdk"), CommonBundle.getCancelButtonText()},
-                            Messages.OK,
-                            Messages.getErrorIcon());
-      if (answer != Messages.OK) return;
+    boolean useDartPub = StringUtil.compareVersionNumbers(sdk.getVersion(), DART_PUB_MIN_SDK_VERSION) >= 0;
+    File exeFile = useDartPub ? new File(DartSdkUtil.getDartExePath(sdk))
+                              : new File(DartSdkUtil.getPubPath(sdk));
+    if (!exeFile.isFile()) {
+      if (allowModalDialogs) {
+        final int answer =
+          Messages.showDialog(module.getProject(),
+                              DartBundle.message("dart.sdk.bad.dartpub.path", exeFile.getPath()),
+                              getTitle(module.getProject(), pubspecYamlFile),
+                              new String[]{DartBundle.message("setup.dart.sdk"), CommonBundle.getCancelButtonText()},
+                              Messages.OK,
+                              Messages.getErrorIcon());
+        if (answer == Messages.OK) {
+          DartConfigurable.openDartSettings(module.getProject());
+        }
+      }
 
-      DartConfigurable.openDartSettings(module.getProject());
-
-      sdk = DartSdk.getDartSdk(module.getProject());
-      if (sdk == null) return;
-
-      pubFile = new File(DartSdkUtil.getPubPath(sdk));
+      return;
     }
-
-    if (!pubFile.isFile()) return;
 
     final String[] pubParameters = calculatePubParameters(module.getProject(), pubspecYamlFile);
 
@@ -177,7 +191,7 @@ public abstract class DartPubActionBase extends AnAction implements DumbAware {
         }
       }
 
-      command.setExePath(pubFile.getPath());
+      setupPubExePath(command, sdk);
       command.addParameters(pubParameters);
 
       doPerformPubAction(module, pubspecYamlFile, command, getTitle(module.getProject(), pubspecYamlFile));
