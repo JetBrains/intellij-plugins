@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.coverage;
 
 import com.intellij.coverage.CoverageExecutor;
@@ -33,10 +19,10 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.ide.actions.DartPubActionBase;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfiguration;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunningState;
 import com.jetbrains.lang.dart.sdk.DartSdk;
-import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -76,14 +62,12 @@ public class DartCoverageProgramRunner extends GenericProgramRunner {
       throw new ExecutionException(DartBundle.message("dart.sdk.is.not.configured"));
     }
 
-    final String dartPubPath = DartSdkUtil.getPubPath(sdk);
-
     final RunContentDescriptor result = DefaultProgramRunnerKt.executeState(state, env, this);
     if (result == null) {
       return null;
     }
 
-    if (!myCoveragePackageActivated && !activateCoverage(runConfiguration.getProject(), dartPubPath)) {
+    if (!myCoveragePackageActivated && !activateCoverage(runConfiguration.getProject(), sdk)) {
       throw new ExecutionException("Cannot activate pub package 'coverage'.");
     }
 
@@ -109,15 +93,16 @@ public class DartCoverageProgramRunner extends GenericProgramRunner {
     final DartSdk sdk = DartSdk.getDartSdk(env.getProject());
     LOG.assertTrue(sdk != null);
 
-    final GeneralCommandLine cmdline = new GeneralCommandLine().withExePath(DartSdkUtil.getPubPath(sdk))
-      .withParameters("global", "run", "coverage:collect_coverage",
-                      "--uri", observatoryUrl,
-                      "--out", coverageFilePath,
-                      "--resume-isolates",
-                      "--wait-paused");
+    GeneralCommandLine commandLine = new GeneralCommandLine();
+    DartPubActionBase.setupPubExePath(commandLine, sdk);
+    commandLine.addParameters("global", "run", "coverage:collect_coverage",
+                              "--uri", observatoryUrl,
+                              "--out", coverageFilePath,
+                              "--resume-isolates",
+                              "--wait-paused");
 
     try {
-      final ProcessHandler coverageProcess = new OSProcessHandler(cmdline);
+      final ProcessHandler coverageProcess = new OSProcessHandler(commandLine);
 
       coverageProcess.addProcessListener(new ProcessAdapter() {
         @Override
@@ -135,7 +120,7 @@ public class DartCoverageProgramRunner extends GenericProgramRunner {
     }
   }
 
-  private boolean activateCoverage(@NotNull final Project project, @NotNull final String dartPubPath) {
+  private boolean activateCoverage(@NotNull Project project, @NotNull DartSdk sdk) {
     ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
       final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
       if (indicator != null) {
@@ -145,11 +130,13 @@ public class DartCoverageProgramRunner extends GenericProgramRunner {
       try {
         // 'pub global list' is fast, let's run it first to find out if coverage package is already activated.
         // Following 'pub global activate' is long and may be cancelled by user
-        checkIfCoverageActivated(dartPubPath);
+        checkIfCoverageActivated(sdk);
 
         // run 'pub global activate' regardless of activation status, because it checks for the coverage package update
-        final ProcessOutput activateOutput = new CapturingProcessHandler(
-          new GeneralCommandLine().withExePath(dartPubPath).withParameters("global", "activate", "coverage").withRedirectErrorStream(true))
+        GeneralCommandLine commandLine = new GeneralCommandLine().withRedirectErrorStream(true);
+        DartPubActionBase.setupPubExePath(commandLine, sdk);
+        commandLine.addParameters("global", "activate", "coverage");
+        ProcessOutput activateOutput = new CapturingProcessHandler(commandLine)
           .runProcessWithProgressIndicator(ProgressManager.getInstance().getProgressIndicator());
 
         if (activateOutput.getExitCode() != 0) {
@@ -158,7 +145,7 @@ public class DartCoverageProgramRunner extends GenericProgramRunner {
         }
 
         if (!myCoveragePackageActivated) {
-          checkIfCoverageActivated(dartPubPath);
+          checkIfCoverageActivated(sdk);
         }
       }
       catch (ExecutionException e) {
@@ -170,9 +157,11 @@ public class DartCoverageProgramRunner extends GenericProgramRunner {
     return myCoveragePackageActivated;
   }
 
-  private void checkIfCoverageActivated(@NotNull final String dartPubPath) throws ExecutionException {
-    final ProcessOutput listOutput = new CapturingProcessHandler(
-      new GeneralCommandLine().withExePath(dartPubPath).withParameters("global", "list").withRedirectErrorStream(true))
+  private void checkIfCoverageActivated(@NotNull DartSdk sdk) throws ExecutionException {
+    GeneralCommandLine commandLine = new GeneralCommandLine().withRedirectErrorStream(true);
+    DartPubActionBase.setupPubExePath(commandLine, sdk);
+    commandLine.addParameters("global", "list");
+    final ProcessOutput listOutput = new CapturingProcessHandler(commandLine)
       .runProcessWithProgressIndicator(ProgressManager.getInstance().getProgressIndicator());
 
     final String listOutputStdout = listOutput.getStdout();
