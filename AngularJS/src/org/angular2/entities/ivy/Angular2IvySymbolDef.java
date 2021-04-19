@@ -81,7 +81,7 @@ public abstract class Angular2IvySymbolDef {
     }
 
     @Override
-    protected @NotNull String getDefTypeName() {
+    protected @NotNull List<String> getDefTypeNames() {
       return TYPE_MODULE_DEF;
     }
   }
@@ -124,7 +124,7 @@ public abstract class Angular2IvySymbolDef {
     }
 
     @Override
-    protected @NotNull String getDefTypeName() {
+    protected @NotNull List<String> getDefTypeNames() {
       return TYPE_DIRECTIVE_DEF;
     }
   }
@@ -147,7 +147,7 @@ public abstract class Angular2IvySymbolDef {
     }
 
     @Override
-    protected @NotNull String getDefTypeName() {
+    protected @NotNull List<String> getDefTypeNames() {
       return TYPE_COMPONENT_DEF;
     }
   }
@@ -166,7 +166,7 @@ public abstract class Angular2IvySymbolDef {
     }
 
     @Override
-    protected @NotNull String getDefTypeName() {
+    protected @NotNull List<String> getDefTypeNames() {
       return TYPE_PIPE_DEF;
     }
   }
@@ -176,7 +176,7 @@ public abstract class Angular2IvySymbolDef {
     private Factory(@NotNull Object fieldStubOrPsi) {super(fieldStubOrPsi);}
 
     @Override
-    protected @NotNull String getDefTypeName() {
+    protected @NotNull List<String> getDefTypeNames() {
       return TYPE_FACTORY_DEF;
     }
 
@@ -239,11 +239,11 @@ public abstract class Angular2IvySymbolDef {
   @NonNls private static final String FIELD_COMPONENT_DEF = "ɵcmp";
   @NonNls private static final String FIELD_FACTORY_DEF = "ɵfac";
 
-  @NonNls private static final String TYPE_DIRECTIVE_DEF = "ɵɵDirectiveDefWithMeta";
-  @NonNls private static final String TYPE_MODULE_DEF = "ɵɵNgModuleDefWithMeta";
-  @NonNls private static final String TYPE_PIPE_DEF = "ɵɵPipeDefWithMeta";
-  @NonNls private static final String TYPE_COMPONENT_DEF = "ɵɵComponentDefWithMeta";
-  @NonNls private static final String TYPE_FACTORY_DEF = "ɵɵFactoryDef";
+  @NonNls private static final List<String> TYPE_DIRECTIVE_DEF = ContainerUtil.newArrayList("ɵɵDirectiveDefWithMeta", "ɵɵDirectiveDeclaration");
+  @NonNls private static final List<String> TYPE_MODULE_DEF = ContainerUtil.newArrayList("ɵɵNgModuleDefWithMeta", "ɵɵNgModuleDeclaration");
+  @NonNls private static final List<String> TYPE_PIPE_DEF = ContainerUtil.newArrayList("ɵɵPipeDefWithMeta", "ɵɵPipeDeclaration");
+  @NonNls private static final List<String> TYPE_COMPONENT_DEF = ContainerUtil.newArrayList("ɵɵComponentDefWithMeta", "ɵɵComponentDeclaration");
+  @NonNls private static final List<String> TYPE_FACTORY_DEF = ContainerUtil.newArrayList("ɵɵFactoryDef", "ɵɵFactoryDeclaration");
 
   private final Object myFieldOrStub;
 
@@ -271,7 +271,7 @@ public abstract class Angular2IvySymbolDef {
     return Objects.hash(getField());
   }
 
-  protected abstract @NotNull String getDefTypeName();
+  protected abstract @NotNull List<String> getDefTypeNames();
 
   protected @Nullable TypeScriptClass getContextClass() {
     return PsiTreeUtil.getContextOfType(getField(), TypeScriptClass.class);
@@ -283,9 +283,9 @@ public abstract class Angular2IvySymbolDef {
                           : doIfNotNull(tryCast(myFieldOrStub, StubBasedPsiElementBase.class),
                                         StubBasedPsiElementBase::getStub);
     if (stub != null) {
-      return getDefFieldArgumentStubbed((TypeScriptFieldStub)stub, index, getDefTypeName());
+      return getDefFieldArgumentStubbed((TypeScriptFieldStub)stub, index, getDefTypeNames());
     }
-    return getDefFieldArgumentPsi((TypeScriptField)myFieldOrStub, index, getDefTypeName());
+    return getDefFieldArgumentPsi((TypeScriptField)myFieldOrStub, index, getDefTypeNames());
   }
 
   protected @Nullable String getStringGenericParam(int index) {
@@ -432,26 +432,28 @@ public abstract class Angular2IvySymbolDef {
 
   private static @Nullable JSTypeDeclaration getDefFieldArgumentStubbed(@NotNull TypeScriptFieldStub field,
                                                                         int index,
-                                                                        @NotNull String typeName) {
+                                                                        @NotNull List<String> typeNames) {
     TypeScriptSingleTypeStub type = field.findChildStubByType(TypeScriptStubElementTypes.SINGLE_TYPE);
-    if (type != null) {
-      if (type.getQualifiedTypeName().endsWith(typeName)) {
-        TypeScriptTypeArgumentListStub typeArguments = type.findChildStubByType(TypeScriptStubElementTypes.TYPE_ARGUMENT_LIST);
-        if (typeArguments != null) {
-          @SuppressWarnings("rawtypes")
-          List<StubElement> declarations = typeArguments.getChildrenStubs();
-          if (index < declarations.size()) {
-            return tryCast(declarations.get(index).getPsi(), JSTypeDeclaration.class);
-          }
+    String qualifiedName = doIfNotNull(type, TypeScriptSingleTypeStub::getQualifiedTypeName);
+    if (qualifiedName == null) return null;
+    if (ContainerUtil.find(typeNames, name -> qualifiedName.endsWith(name)) != null) {
+      TypeScriptTypeArgumentListStub typeArguments = type.findChildStubByType(TypeScriptStubElementTypes.TYPE_ARGUMENT_LIST);
+      if (typeArguments != null) {
+        @SuppressWarnings("rawtypes")
+        List<StubElement> declarations = typeArguments.getChildrenStubs();
+        if (index < declarations.size()) {
+          return tryCast(declarations.get(index).getPsi(), JSTypeDeclaration.class);
         }
       }
     }
     return null;
   }
 
-  private static @Nullable JSTypeDeclaration getDefFieldArgumentPsi(@NotNull TypeScriptField field, int index, @NotNull String typeName) {
+  private static @Nullable JSTypeDeclaration getDefFieldArgumentPsi(@NotNull TypeScriptField field, int index, @NotNull List<String> typeNames) {
     TypeScriptSingleType type = PsiTreeUtil.getChildOfType(field, TypeScriptSingleType.class);
-    if (type != null && notNull(type.getQualifiedTypeName(), "").endsWith(typeName)) {
+    String qualifiedName = doIfNotNull(type, TypeScriptSingleType::getQualifiedTypeName);
+    if (qualifiedName == null) return null;
+    if (ContainerUtil.find(typeNames, name -> qualifiedName.endsWith(name)) != null) {
       JSTypeDeclaration[] declarations = type.getTypeArguments();
       if (index < declarations.length) {
         return declarations[index];
