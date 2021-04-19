@@ -68,7 +68,7 @@ class SwiftLearningCourse : LearningCourseBase("Swift") {
       listOf(
         SwiftRenameLesson(),
         SwiftExtractVariableLesson(),
-        SwiftExtractMethodLesson(),
+        SwiftExtractFunctionLesson(),
         SwiftExtractClosureLesson(),
         SwiftChangeSignatureLesson(),
       )

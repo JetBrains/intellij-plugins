@@ -7,8 +7,8 @@ import training.dsl.LessonSample
 import training.dsl.parseLessonSample
 import training.learn.course.KLesson
 
-class SwiftExtractMethodLesson : KLesson("swift.refactorings.extract.method",
-                                         SwiftLessonsBundle.message("swift.refactoring.extract.method.name")) {
+class SwiftExtractFunctionLesson : KLesson("swift.refactorings.extract.method",
+                                           SwiftLessonsBundle.message("swift.refactoring.extract.function.name")) {
 
   private val sample: LessonSample = parseLessonSample("""
 import UIKit
@@ -38,19 +38,19 @@ class ExtractMethod: UIViewController {
     select(11, 9, 18, 43)
     task {
       triggers("ExtractMethod")
-      text(SwiftLessonsBundle.message("swift.refactoring.extract.method.intro", code("setup"), action("ExtractMethod")))
+      text(SwiftLessonsBundle.message("swift.refactoring.extract.function.intro", code("setup"), action("ExtractMethod")))
     }
     task {
       triggers("\$Undo")
-      text(SwiftLessonsBundle.message("swift.refactoring.extract.method.undo", action("\$Undo")))
+      text(SwiftLessonsBundle.message("swift.refactoring.extract.function.undo", action("\$Undo")))
     }
     select(11, 9, 18, 43)
 
-    text(SwiftLessonsBundle.message("swift.refactoring.extract.method.change.params", icon(AllIcons.General.ArrowUp),
-                               icon(AllIcons.General.ArrowDown)))
+    text(SwiftLessonsBundle.message("swift.refactoring.extract.function.change.params", icon(AllIcons.General.ArrowUp),
+                                    icon(AllIcons.General.ArrowDown)))
     task {
       triggers("ExtractMethod")
-      text(SwiftLessonsBundle.message("swift.refactoring.extract.method.exec.again", action("ExtractMethod")))
+      text(SwiftLessonsBundle.message("swift.refactoring.extract.function.exec.again", action("ExtractMethod")))
     }
   }
 }
