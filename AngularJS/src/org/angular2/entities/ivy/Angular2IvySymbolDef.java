@@ -23,7 +23,8 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import static com.intellij.util.ObjectUtils.*;
+import static com.intellij.util.ObjectUtils.doIfNotNull;
+import static com.intellij.util.ObjectUtils.tryCast;
 import static org.angular2.Angular2DecoratorUtil.*;
 
 @SuppressWarnings("SameParameterValue")
@@ -82,7 +83,7 @@ public abstract class Angular2IvySymbolDef {
 
     @Override
     protected @NotNull List<String> getDefTypeNames() {
-      return TYPE_MODULE_DEF;
+      return TYPE_MODULE_DEFS;
     }
   }
 
@@ -125,7 +126,7 @@ public abstract class Angular2IvySymbolDef {
 
     @Override
     protected @NotNull List<String> getDefTypeNames() {
-      return TYPE_DIRECTIVE_DEF;
+      return TYPE_DIRECTIVE_DEFS;
     }
   }
 
@@ -148,7 +149,7 @@ public abstract class Angular2IvySymbolDef {
 
     @Override
     protected @NotNull List<String> getDefTypeNames() {
-      return TYPE_COMPONENT_DEF;
+      return TYPE_COMPONENT_DEFS;
     }
   }
 
@@ -167,7 +168,7 @@ public abstract class Angular2IvySymbolDef {
 
     @Override
     protected @NotNull List<String> getDefTypeNames() {
-      return TYPE_PIPE_DEF;
+      return TYPE_PIPE_DEFS;
     }
   }
 
@@ -177,7 +178,7 @@ public abstract class Angular2IvySymbolDef {
 
     @Override
     protected @NotNull List<String> getDefTypeNames() {
-      return TYPE_FACTORY_DEF;
+      return TYPE_FACTORY_DEFS;
     }
 
     /**
@@ -239,11 +240,17 @@ public abstract class Angular2IvySymbolDef {
   @NonNls private static final String FIELD_COMPONENT_DEF = "ɵcmp";
   @NonNls private static final String FIELD_FACTORY_DEF = "ɵfac";
 
-  @NonNls private static final List<String> TYPE_DIRECTIVE_DEF = ContainerUtil.newArrayList("ɵɵDirectiveDefWithMeta", "ɵɵDirectiveDeclaration");
-  @NonNls private static final List<String> TYPE_MODULE_DEF = ContainerUtil.newArrayList("ɵɵNgModuleDefWithMeta", "ɵɵNgModuleDeclaration");
-  @NonNls private static final List<String> TYPE_PIPE_DEF = ContainerUtil.newArrayList("ɵɵPipeDefWithMeta", "ɵɵPipeDeclaration");
-  @NonNls private static final List<String> TYPE_COMPONENT_DEF = ContainerUtil.newArrayList("ɵɵComponentDefWithMeta", "ɵɵComponentDeclaration");
-  @NonNls private static final List<String> TYPE_FACTORY_DEF = ContainerUtil.newArrayList("ɵɵFactoryDef", "ɵɵFactoryDeclaration");
+  /* NG 9-11: *Def(WithMeta), NG 12+: *Declaration */
+  @NonNls private static final List<String> TYPE_DIRECTIVE_DEFS =
+    ContainerUtil.newArrayList("ɵɵDirectiveDefWithMeta", "ɵɵDirectiveDeclaration");
+  @NonNls private static final List<String> TYPE_MODULE_DEFS =
+    ContainerUtil.newArrayList("ɵɵNgModuleDefWithMeta", "ɵɵNgModuleDeclaration");
+  @NonNls private static final List<String> TYPE_PIPE_DEFS =
+    ContainerUtil.newArrayList("ɵɵPipeDefWithMeta", "ɵɵPipeDeclaration");
+  @NonNls private static final List<String> TYPE_COMPONENT_DEFS =
+    ContainerUtil.newArrayList("ɵɵComponentDefWithMeta", "ɵɵComponentDeclaration");
+  @NonNls private static final List<String> TYPE_FACTORY_DEFS =
+    ContainerUtil.newArrayList("ɵɵFactoryDef", "ɵɵFactoryDeclaration");
 
   private final Object myFieldOrStub;
 
@@ -449,7 +456,9 @@ public abstract class Angular2IvySymbolDef {
     return null;
   }
 
-  private static @Nullable JSTypeDeclaration getDefFieldArgumentPsi(@NotNull TypeScriptField field, int index, @NotNull List<String> typeNames) {
+  private static @Nullable JSTypeDeclaration getDefFieldArgumentPsi(@NotNull TypeScriptField field,
+                                                                    int index,
+                                                                    @NotNull List<String> typeNames) {
     TypeScriptSingleType type = PsiTreeUtil.getChildOfType(field, TypeScriptSingleType.class);
     String qualifiedName = doIfNotNull(type, TypeScriptSingleType::getQualifiedTypeName);
     if (qualifiedName == null) return null;
