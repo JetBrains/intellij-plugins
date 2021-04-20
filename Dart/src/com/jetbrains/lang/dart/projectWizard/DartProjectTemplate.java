@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.projectWizard;
 
 import com.intellij.execution.RunManager;
@@ -16,7 +16,6 @@ import com.jetbrains.lang.dart.ide.runner.server.webdev.DartWebdevConfiguration;
 import com.jetbrains.lang.dart.ide.runner.server.webdev.DartWebdevConfigurationType;
 import com.jetbrains.lang.dart.projectWizard.Stagehand.StagehandDescriptor;
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -27,7 +26,8 @@ import java.util.List;
 public abstract class DartProjectTemplate {
 
   private static final Stagehand STAGEHAND = new Stagehand();
-  private static List<DartProjectTemplate> ourTemplateCache;
+  private static List<DartProjectTemplate> ourStagehandTemplateCache;
+  private static List<DartProjectTemplate> ourDartCreateTemplateCache;
 
   private static final Logger LOG = Logger.getInstance(DartProjectTemplate.class.getName());
 
@@ -76,21 +76,36 @@ public abstract class DartProjectTemplate {
   }
 
   private static @NotNull List<DartProjectTemplate> getStagehandTemplates(@NotNull String sdkRoot) {
-    if (ourTemplateCache != null) {
-      return ourTemplateCache;
+    boolean useDartCreate = Stagehand.isUseDartCreate(sdkRoot);
+
+    if (useDartCreate) {
+      if (ourDartCreateTemplateCache != null) {
+        return ourDartCreateTemplateCache;
+      }
+    }
+    else {
+      if (ourStagehandTemplateCache != null) {
+        return ourStagehandTemplateCache;
+      }
     }
 
     STAGEHAND.install(sdkRoot);
-
     final List<StagehandDescriptor> templates = STAGEHAND.getAvailableTemplates(sdkRoot);
 
-    ourTemplateCache = new ArrayList<>();
-
-    for (StagehandDescriptor template : templates) {
-      ourTemplateCache.add(new StagehandTemplate(STAGEHAND, template));
+    if (useDartCreate) {
+      ourDartCreateTemplateCache = new ArrayList<>();
+      for (StagehandDescriptor template : templates) {
+        ourDartCreateTemplateCache.add(new StagehandTemplate(STAGEHAND, template));
+      }
+      return ourDartCreateTemplateCache;
     }
-
-    return ourTemplateCache;
+    else {
+      ourStagehandTemplateCache = new ArrayList<>();
+      for (StagehandDescriptor template : templates) {
+        ourStagehandTemplateCache.add(new StagehandTemplate(STAGEHAND, template));
+      }
+      return ourStagehandTemplateCache;
+    }
   }
 
   static void createWebRunConfiguration(final @NotNull Module module, final @NotNull VirtualFile htmlFile) {
