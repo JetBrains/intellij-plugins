@@ -11,6 +11,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -49,10 +50,19 @@ class StagehandTemplate extends DartProjectTemplate {
       LocalFileSystem.getInstance().refreshAndFindFileByPath(baseDir.getPath() + "/" + PubspecYamlUtil.PUBSPEC_YAML);
     ContainerUtil.addIfNotNull(files, pubspec);
 
-    final VirtualFile mainFile = StringUtil.isEmpty(myTemplate.myEntrypoint)
-                                 ? null
-                                 : LocalFileSystem.getInstance()
-                                   .refreshAndFindFileByPath(baseDir.getPath() + "/" + myTemplate.myEntrypoint);
+    // template entrypoint is usually like "bin/__projectName__.dart"
+    String entrypoint = myTemplate.myEntrypoint;
+    if (pubspec != null && entrypoint != null) {
+      String projectName = PubspecYamlUtil.getDartProjectName(pubspec);
+      if (projectName != null) {
+        @NonNls String projectNamePlaceholder = "__projectName__";
+        entrypoint = StringUtil.replace(entrypoint, projectNamePlaceholder, projectName);
+      }
+    }
+
+    final VirtualFile mainFile =
+      StringUtil.isEmpty(entrypoint) ? null
+                                     : LocalFileSystem.getInstance().refreshAndFindFileByPath(baseDir.getPath() + "/" + entrypoint);
 
     if (mainFile != null && mainFile.getName().equals("index.html")) {
       ContainerUtil.addIfNotNull(files, mainFile.getParent().findChild("main.dart"));
@@ -60,11 +70,16 @@ class StagehandTemplate extends DartProjectTemplate {
 
     ContainerUtil.addIfNotNull(files, mainFile);
 
-    if (!StringUtil.isEmpty(myTemplate.myEntrypoint) && mainFile != null) {
-      if (myTemplate.myEntrypoint.startsWith("bin/") && FileTypeRegistry.getInstance().isFileOfType(mainFile, DartFileType.INSTANCE)) {
+    VirtualFile testFolder = LocalFileSystem.getInstance().refreshAndFindFileByPath(baseDir.getPath() + "/test");
+    if (testFolder != null && testFolder.isDirectory()) {
+      createTestRunConfiguration(module, baseDir.getPath());
+    }
+
+    if (!StringUtil.isEmpty(entrypoint) && mainFile != null) {
+      if (entrypoint.startsWith("bin/") && FileTypeRegistry.getInstance().isFileOfType(mainFile, DartFileType.INSTANCE)) {
         createCmdLineRunConfiguration(module, mainFile);
       }
-      if (myTemplate.myEntrypoint.startsWith("web/") && FileTypeRegistry.getInstance().isFileOfType(mainFile, HtmlFileType.INSTANCE)) {
+      if (entrypoint.startsWith("web/") && FileTypeRegistry.getInstance().isFileOfType(mainFile, HtmlFileType.INSTANCE)) {
         createWebRunConfiguration(module, mainFile);
       }
     }

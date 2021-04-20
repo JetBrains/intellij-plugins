@@ -14,7 +14,11 @@ import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfiguration
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunnerParameters;
 import com.jetbrains.lang.dart.ide.runner.server.webdev.DartWebdevConfiguration;
 import com.jetbrains.lang.dart.ide.runner.server.webdev.DartWebdevConfigurationType;
+import com.jetbrains.lang.dart.ide.runner.test.DartTestRunConfiguration;
+import com.jetbrains.lang.dart.ide.runner.test.DartTestRunConfigurationType;
+import com.jetbrains.lang.dart.ide.runner.test.DartTestRunnerParameters;
 import com.jetbrains.lang.dart.projectWizard.Stagehand.StagehandDescriptor;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -132,6 +136,22 @@ public abstract class DartProjectTemplate {
       runConfiguration.getRunnerParameters().setFilePath(mainDartFile.getPath());
       runConfiguration.getRunnerParameters()
         .setWorkingDirectory(DartCommandLineRunnerParameters.suggestDartWorkingDir(module.getProject(), mainDartFile));
+
+      settings.setName(runConfiguration.suggestedName());
+
+      runManager.addConfiguration(settings);
+      runManager.setSelectedConfiguration(settings);
+    }, module);
+  }
+
+  static void createTestRunConfiguration(@NotNull Module module, @NotNull @NonNls String baseDirPath) {
+    DartModuleBuilder.runWhenNonModalIfModuleNotDisposed(() -> {
+      final RunManager runManager = RunManager.getInstance(module.getProject());
+      final RunnerAndConfigurationSettings settings = runManager.createConfiguration("", DartTestRunConfigurationType.class);
+
+      final DartTestRunConfiguration runConfiguration = (DartTestRunConfiguration)settings.getConfiguration();
+      runConfiguration.getRunnerParameters().setScope(DartTestRunnerParameters.Scope.FOLDER);
+      runConfiguration.getRunnerParameters().setFilePath(baseDirPath);
 
       settings.setName(runConfiguration.suggestedName());
 
