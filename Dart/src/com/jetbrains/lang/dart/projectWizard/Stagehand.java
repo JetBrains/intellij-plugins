@@ -26,7 +26,7 @@ public class Stagehand {
 
   private static final String DART_CREATE_MIN_SDK_VERSION = "2.10";
 
-  private static boolean isUseDartCreate(@NotNull String sdkHomePath) {
+  static boolean isUseDartCreate(@NotNull String sdkHomePath) {
     String version = DartSdkUtil.getSdkVersion(sdkHomePath);
     return version != null && StringUtil.compareVersionNumbers(version, DART_CREATE_MIN_SDK_VERSION) >= 0;
   }
