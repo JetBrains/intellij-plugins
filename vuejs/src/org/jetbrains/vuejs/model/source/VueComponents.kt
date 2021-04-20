@@ -18,6 +18,7 @@ import com.intellij.psi.util.*
 import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.codeInsight.resolveElementTo
 import org.jetbrains.vuejs.index.getVueIndexData
+import org.jetbrains.vuejs.libraries.componentDecorator.isComponentDecorator
 
 /**
  * Basic resolve from index here (when we have the name literal and the descriptor literal/reference)
@@ -74,10 +75,6 @@ class VueComponents {
       return result.mapNotNull(::getComponentDescriptor).firstOrNull()
     }
 
-    fun isComponentDecorator(decorator: ES6Decorator): Boolean {
-      return decorator.decoratorName == "Component"
-    }
-
     fun getClassComponentDescriptor(clazz: JSClass): VueSourceEntityDescriptor =
       VueSourceEntityDescriptor(
         initializer = getComponentDecorator(clazz)?.let { getDescriptorFromDecorator(it) },
@@ -86,12 +83,12 @@ class VueComponents {
     fun getComponentDecorator(element: JSClass): ES6Decorator? {
       element.attributeList
         ?.decorators
-        ?.find(this::isComponentDecorator)
+        ?.find(::isComponentDecorator)
         ?.let { return it }
       return (element.context as? ES6ExportDefaultAssignment)
         ?.attributeList
         ?.decorators
-        ?.find(this::isComponentDecorator)
+        ?.find(::isComponentDecorator)
     }
 
     fun getComponentDescriptor(element: PsiElement?): VueSourceEntityDescriptor? =

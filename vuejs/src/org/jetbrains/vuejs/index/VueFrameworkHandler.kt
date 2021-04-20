@@ -41,8 +41,8 @@ import org.jetbrains.vuejs.codeInsight.es6Unquote
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.libraries.componentDecorator.isComponentDecorator
 import org.jetbrains.vuejs.model.source.*
-import org.jetbrains.vuejs.model.source.VueComponents.Companion.isComponentDecorator
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.isDefineComponentOrVueExtendCall
 import org.jetbrains.vuejs.types.VueCompositionPropsTypeProvider
 

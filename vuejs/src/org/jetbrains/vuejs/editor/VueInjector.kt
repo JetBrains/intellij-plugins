@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.editor
 
-import com.intellij.lang.Language
 import com.intellij.lang.LanguageUtil
 import com.intellij.lang.injection.MultiHostInjector
 import com.intellij.lang.injection.MultiHostRegistrar
@@ -39,11 +38,11 @@ import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.parser.VueJSParserDefinition
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.lang.html.parser.VueFileElementType.Companion.INJECTED_FILE_SUFFIX
+import org.jetbrains.vuejs.libraries.componentDecorator.isComponentDecorator
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueRegularComponent
 import org.jetbrains.vuejs.model.source.DELIMITERS_PROP
 import org.jetbrains.vuejs.model.source.TEMPLATE_PROP
-import org.jetbrains.vuejs.model.source.VueComponents
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.onlyLocal
 import org.jetbrains.vuejs.model.source.VueSourceContainer
 import java.util.*
@@ -170,7 +169,7 @@ class VueInjector : MultiHostInjector {
       return false
     return VueFrameworkHandler.hasComponentIndicatorProperties(initializer, TEMPLATE_PROP)
            || PsiTreeUtil.getContextOfType(initializer, ES6Decorator::class.java)
-             ?.let { VueComponents.isComponentDecorator(it) } == true
+             ?.let { isComponentDecorator(it) } == true
   }
 
   private fun injectInElement(host: PsiLanguageInjectionHost,
