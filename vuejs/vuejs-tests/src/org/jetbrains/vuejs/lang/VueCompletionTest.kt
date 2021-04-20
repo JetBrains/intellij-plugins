@@ -1507,6 +1507,25 @@ export default class ComponentInsertion extends Vue {
     assertDoesntContain(myFixture.lookupElementStrings!!, "decorated-mixin-prop3")
   }
 
+  fun testComplexComponentDecoratorCompletion8Ts() {
+    myFixture.copyDirectoryToProject("complexComponentDecorator8Ts", ".")
+    myFixture.configureFromTempProjectFile("App.vue")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!,
+                           "component-prop", "mixin-prop", "decorated-mixin-prop", "decorated-mixin-prop2")
+    assertDoesntContain(myFixture.lookupElementStrings!!, "decorated-mixin-prop3")
+  }
+
+  fun testComponentDecoratorCompletion8Name() {
+    myFixture.copyDirectoryToProject("complexComponentDecorator8Ts", ".")
+    myFixture.configureFromTempProjectFile("App.vue")
+    myFixture.moveToOffsetBySignature("<<caret>HW")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!,
+                           "Empty", "empty", "HelloWorld", "hello-world")
+    assertDoesntContain(myFixture.lookupElementStrings!!, "EmptyClass")
+  }
+
   fun testDestructuringVariableTypeInVFor() {
     myFixture.configureVueDependencies(VueTestModule.VUE_2_5_3)
     myFixture.configureByFile(getTestName(true) + ".vue")
@@ -1711,7 +1730,7 @@ export default class ComponentInsertion extends Vue {
   fun testDefineComponent() {
     myFixture.configureVueDependencies(VueTestModule.VUE_2_5_3, VueTestModule.COMPOSITION_API_0_4_0)
     myFixture.copyDirectoryToProject("defineComponent", "")
-    myFixture.configureByText("test.vue","<template><<caret></template>")
+    myFixture.configureByText("test.vue", "<template><<caret></template>")
     myFixture.completeBasic()
     assertContainsElements(myFixture.lookupElementStrings!!, "Component1", "component1",
                            "Component2", "component2", "ComponentThree", "component-three", "Component4", "component4")
@@ -1809,7 +1828,8 @@ export default {
     myFixture.moveToOffsetBySignature("callback.<caret>")
     myFixture.completeBasic()
     assertSameElements(myFixture.renderLookupItems(true, true, false),
-                       listOf("!okMessage#string#101", "!cancelMessage#string#101", "propertyIsEnumerable#boolean#98", "isPrototypeOf#boolean#98",
+                       listOf("!okMessage#string#101", "!cancelMessage#string#101", "propertyIsEnumerable#boolean#98",
+                              "isPrototypeOf#boolean#98",
                               "toLocaleString#string#98", "constructor#Function#98", "valueOf#Object#98",
                               "toString#string#98", "!title#string#101", "hasOwnProperty#boolean#98"))
     myFixture.moveToOffsetBySignature("message.<caret>")

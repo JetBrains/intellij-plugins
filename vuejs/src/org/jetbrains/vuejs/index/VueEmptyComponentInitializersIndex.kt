@@ -6,6 +6,7 @@ import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.impl.JSPropertyImpl
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlFile
@@ -14,6 +15,7 @@ import com.intellij.util.indexing.*
 import com.intellij.util.io.KeyDescriptor
 import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.libraries.componentDecorator.findComponentDecorator
 import org.jetbrains.vuejs.model.source.VueComponents
 import java.io.DataInput
 import java.io.DataOutput
@@ -28,21 +30,22 @@ class VueEmptyComponentInitializersIndex : ScalarIndexExtension<Boolean>() {
       file is XmlFile && findScriptTag(file).let { script ->
         if (script == null || hasAttribute(script, SETUP_ATTRIBUTE_NAME)) {
           true
-        } else {
+        }
+        else {
           val module = PsiTreeUtil.getStubChildOfType(script, JSEmbeddedContent::class.java)
           if (module != null) {
-            (ES6PsiUtil.findDefaultExport(module) as? JSExportAssignment)
+            val exportedElement = (ES6PsiUtil.findDefaultExport(module) as? JSExportAssignment)
               ?.stubSafeElement
-              ?.takeIf {
-                // ensure that we have right candidate type
-                // and that we won't perform any resolve in `getComponentDescriptor`
-                it is JSObjectLiteralExpression || it is JSCallExpression
-              }
-              ?.let { VueComponents.getComponentDescriptor(it) }
-              ?.initializer
-              ?.castSafelyTo<JSObjectLiteralExpression>()
-              ?.properties
-              ?.count { it is JSPropertyImpl } == 0
+            if (exportedElement is JSObjectLiteralExpression || exportedElement is JSCallExpression) {
+              VueComponents.getComponentDescriptor(exportedElement)
+                ?.initializer
+                ?.castSafelyTo<JSObjectLiteralExpression>()
+                ?.properties
+                ?.count { it is JSPropertyImpl } == 0
+            }
+            else
+              (exportedElement is JSClass
+               && findComponentDecorator(exportedElement) == null)
           }
           else true
         }
@@ -52,7 +55,7 @@ class VueEmptyComponentInitializersIndex : ScalarIndexExtension<Boolean>() {
     }
   }
 
-  override fun getVersion(): Int = 6
+  override fun getVersion(): Int = 7
 
   override fun getInputFilter(): FileBasedIndex.InputFilter = FileBasedIndex.InputFilter {
     it.fileType == VueFileType.INSTANCE
