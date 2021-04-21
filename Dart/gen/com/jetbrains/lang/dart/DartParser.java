@@ -210,10 +210,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '?.'? '[' expression? ']'
+  // ('?.' | '?')? '[' expression? ']'
   static boolean arrayAccess(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "arrayAccess")) return false;
-    if (!nextTokenIs(b, "", LBRACKET, QUEST_DOT)) return false;
+    if (!nextTokenIs(b, "", LBRACKET, QUEST, QUEST_DOT)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_);
     r = arrayAccess_0(b, l + 1);
@@ -225,11 +225,20 @@ public class DartParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // '?.'?
+  // ('?.' | '?')?
   private static boolean arrayAccess_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "arrayAccess_0")) return false;
-    consumeToken(b, QUEST_DOT);
+    arrayAccess_0_0(b, l + 1);
     return true;
+  }
+
+  // '?.' | '?'
+  private static boolean arrayAccess_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "arrayAccess_0_0")) return false;
+    boolean r;
+    r = consumeToken(b, QUEST_DOT);
+    if (!r) r = consumeToken(b, QUEST);
+    return r;
   }
 
   // expression?
@@ -243,7 +252,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   // arrayAccess
   public static boolean arrayAccessExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "arrayAccessExpression")) return false;
-    if (!nextTokenIs(b, "<array access expression>", LBRACKET, QUEST_DOT)) return false;
+    if (!nextTokenIs(b, "<array access expression>", LBRACKET, QUEST, QUEST_DOT)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _LEFT_, ARRAY_ACCESS_EXPRESSION, "<array access expression>");
     r = arrayAccess(b, l + 1);
