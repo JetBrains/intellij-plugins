@@ -50,7 +50,7 @@ class VueIntentionsTest : BasePlatformTestCase() {
   }
 
   fun testReplaceIfElseWithElvis() {
-    doIntentionTest("Replace if-else with ?:")
+    doIntentionTest(JSIntentionBundle.message("trivialif.replace-if-with-conditional.display-name"))
   }
 
   fun testReplaceWithIndexerAccess() {
