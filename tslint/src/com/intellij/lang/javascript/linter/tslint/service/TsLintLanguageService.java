@@ -3,7 +3,6 @@ package com.intellij.lang.javascript.linter.tslint.service;
 
 import com.google.gson.*;
 import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.idea.RareLogger;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.linter.AutodetectLinterPackage;
 import com.intellij.lang.javascript.linter.ExtendedLinterState;
@@ -34,9 +33,10 @@ import java.util.function.BiFunction;
 
 
 public final class TsLintLanguageService extends JSLanguageServiceBase {
-  @NotNull private final static Logger LOG = RareLogger.wrap(Logger.getInstance(TsLintLanguageService.class), false);
-  @NotNull private final VirtualFile myWorkingDirectory;
-  @NotNull private final NodePackage myNodePackage;
+  private final static Logger LOG = Logger.getInstance(TsLintLanguageService.class);
+
+  private final @NotNull VirtualFile myWorkingDirectory;
+  private final @NotNull NodePackage myNodePackage;
 
   public TsLintLanguageService(@NotNull Project project, @NotNull NodePackage nodePackage, @NotNull VirtualFile workingDirectory) {
     super(project);
