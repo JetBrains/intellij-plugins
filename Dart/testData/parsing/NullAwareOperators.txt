@@ -67,6 +67,56 @@ Dart File
                     PsiElement(var)('var')
                     COMPONENT_NAME
                       ID
+                        PsiElement(IDENTIFIER)('g')
+                  VAR_INIT
+                    PsiElement(=)('=')
+                    ARRAY_ACCESS_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        ID
+                          PsiElement(IDENTIFIER)('y')
+                      PsiElement(?)('?')
+                      PsiElement([)('[')
+                      REFERENCE_EXPRESSION
+                        ID
+                          PsiElement(IDENTIFIER)('b')
+                      PsiElement(])(']')
+                PsiElement(;)(';')
+                VAR_DECLARATION_LIST
+                  VAR_ACCESS_DECLARATION
+                    PsiElement(var)('var')
+                    COMPONENT_NAME
+                      ID
+                        PsiElement(IDENTIFIER)('h')
+                  VAR_INIT
+                    PsiElement(=)('=')
+                    IF_NULL_EXPRESSION
+                      ARRAY_ACCESS_EXPRESSION
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('y')
+                        PsiElement(?)('?')
+                        PsiElement([)('[')
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('b')
+                        PsiElement(])(']')
+                      PsiElement(??)('??')
+                      VALUE_EXPRESSION
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('c')
+                        CASCADE_REFERENCE_EXPRESSION
+                          PsiElement(?..)('?..')
+                          PsiElement([)('[')
+                          LITERAL_EXPRESSION
+                            PsiElement(NUMBER)('0')
+                          PsiElement(])(']')
+                PsiElement(;)(';')
+                VAR_DECLARATION_LIST
+                  VAR_ACCESS_DECLARATION
+                    PsiElement(var)('var')
+                    COMPONENT_NAME
+                      ID
                         PsiElement(IDENTIFIER)('b')
                   VAR_INIT
                     PsiElement(=)('=')
