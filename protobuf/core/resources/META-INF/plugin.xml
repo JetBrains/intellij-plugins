@@ -1,0 +1,9 @@
+<idea-plugin url="https://github.com/jvolkman/intellij-protobuf-editor">
+  <name>Protocol Buffers Editor</name>
+  <id>com.intellij.protobuf-core</id>
+  <vendor>JetBrains</vendor>
+  <category>Microservices</category>
+
+  <depends>com.intellij.modules.platform</depends>
+  <depends>com.intellij.modules.lang</depends>
+</idea-plugin>
