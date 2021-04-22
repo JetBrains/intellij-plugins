@@ -17,10 +17,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.uml.FlashUmlDataModel;
 import com.intellij.lang.javascript.uml.FlashUmlDependenciesSettingsOption;
 import com.intellij.lang.javascript.uml.FlashUmlProvider;
-import com.intellij.openapi.actionSystem.ActionPlaces;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil;
 import com.intellij.openapi.module.ModuleType;
@@ -82,7 +79,7 @@ public class FlashUmlTest extends JavaCodeInsightTestCase {
   @Override
   public Object getData(@NotNull String dataId) {
     if (CommonDataKeys.PSI_ELEMENT.is(dataId) ||
-        dataId.equals(AnActionEvent.injectedId(CommonDataKeys.PSI_ELEMENT.getName()))) {
+        InjectedDataKeys.PSI_ELEMENT.is(dataId)) {
       return TargetElementUtil.findTargetElement(getEditor(), TargetElementUtil.getInstance().getReferenceSearchFlags());
     }
     if (CommonDataKeys.PSI_FILE.is(dataId)) {
