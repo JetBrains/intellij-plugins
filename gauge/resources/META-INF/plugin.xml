@@ -104,22 +104,6 @@
     <lang.foldingBuilder language="Concept"
                          implementationClass="com.thoughtworks.gauge.folding.ConceptFoldingBuilder"/>
 
-    <localInspection language="Specification"
-                     implementationClass="com.thoughtworks.gauge.inspection.SpecInspectionProvider"
-                     groupKey="gauge.inspection.group"
-                     key="gauge.inspection.SpecInspectionProvider.name"
-                     enabledByDefault="true" level="ERROR"/>
-    <localInspection language="Concept"
-                     implementationClass="com.thoughtworks.gauge.inspection.ConceptInspectionProvider"
-                     groupKey="gauge.inspection.group"
-                     key="gauge.inspection.ConceptInspectionProvider.name"
-                     enabledByDefault="true" level="ERROR"/>
-    <globalInspection language="Specification"
-                      implementationClass="com.thoughtworks.gauge.inspection.GlobalInspectionProvider"
-                      groupKey="gauge.inspection.group"
-                      key="gauge.inspection.GlobalInspectionProvider.name"
-                      enabledByDefault="true" isInternal="true"/>
-
     <applicationConfigurable groupId="tools" id="com.thoughtworks.gauge"
                              key="gauge.inspection.group"
                              instance="com.thoughtworks.gauge.settings.GaugeSettings"/>
