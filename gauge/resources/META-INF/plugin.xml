@@ -12,16 +12,16 @@
   <depends optional="true" config-file="with-maven.xml">org.jetbrains.idea.maven</depends>
 
   <description><![CDATA[
-    Plugin for writing <a href="http://gauge.org">Gauge tests</a> (originally developed by Thoughtworks Inc.).
+    Plugin for writing <a href="https://gauge.org">Gauge tests</a> (originally developed by Thoughtworks Inc.).
     Supports only steps written in Java.
     <p>Features:</p>
     <ul>
       <li>Basic language parsing and highlighting</li>
-      <li>Project Creation</li>
+      <li>Project Creation with Maven and Gradle</li>
       <li>Auto completion</li>
       <li>Navigation from step to implementation</li>
       <li>Quick Fix for unimplemented steps</li>
-      <li>Execution and Debugging specs</li>
+      <li>Execution and Debugging of specs</li>
       <li>Support for Concepts</li>
       <li>Refactoring support</li>
     </ul>
