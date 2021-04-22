@@ -1,5 +1,3 @@
-// Dart Analysis Server provides a lot of different quick assists (intentions).
-// This example is for 'Add type annotation'.
-main() {
-  var items = <int>[0, 1, 2];
-}
+// 'Add type annotation' quick assist example.
+
+<spot>var</spot> items = <int>[0, 1, 2];
