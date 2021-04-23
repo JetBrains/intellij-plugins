@@ -149,7 +149,7 @@ public class ConfigPanel {
                                          project,
                                          FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor());
 
-    FileChooserDescriptor fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFileOrFolderDescriptor();
+    FileChooserDescriptor fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor();
     myP4VCPathField.addActionListener(new ComponentWithBrowseButton.BrowseFolderActionListener<>(
       PerforceBundle.message("dialog.title.path.to.p4.exe"), PerforceBundle.message("dialog.description.path.to.p4vc.exe"), myP4VCPathField,
       project, fileChooserDescriptor, TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT) {
