@@ -1,6 +1,6 @@
 <html>
 <body>
-  Reports Vue component <a href="https://vuejs.org/v2/api/#data">data</a> properties, which are not a function. Suggests wrapping object literal with a function.
-  <p>When defining a component, <code>data</code> must be declared as a function that returns the initial data object, because there will be many instances created using the same definition. If we still use a plain object for <code>data</code>, that same object will be shared by reference across all instances created! By providing a <code>data</code> function, every time a new instance is created, we can simply call it to return a fresh copy of the initial data.
+Reports a Vue component <a href="https://vuejs.org/v2/api/#data">data</a> property that is not a function. Suggests wrapping an object literal with a function.
+<p>When defining a component, <code>data</code> must be declared as a function that returns the initial data object, because the same definition will be used for creating numerous instances. If a plain object is still used for <code>data</code>, that very object will be shared by reference across all instances created! With a <code>data</code> function,  every time a new instance is created we can simply call it to return a fresh copy of the initial data.
 </body>
 </html>
