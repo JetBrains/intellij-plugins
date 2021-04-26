@@ -23,7 +23,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.protobuf.gencode.ProtoFromSourceComments;
+import com.intellij.protobuf.shared.gencode.ProtoFromSourceComments;
 import com.intellij.protobuf.jvm.names.NameGeneratorSelector;
 import com.intellij.protobuf.jvm.names.NameMatcher;
 import com.intellij.protobuf.lang.psi.*;
