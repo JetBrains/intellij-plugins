@@ -1,4 +1,4 @@
-<idea-plugin>
+<idea-plugin package="com.intellij.protobuf.jvm">
   <depends>com.intellij.java</depends>
   <extensions defaultExtensionNs="com.intellij">
     <!-- Java -> proto goto -->

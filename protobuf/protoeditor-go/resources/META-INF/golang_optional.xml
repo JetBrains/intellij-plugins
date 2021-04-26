@@ -1,4 +1,4 @@
-<idea-plugin>
+<idea-plugin package="com.intellij.protobuf.go">
   <depends>com.intellij.modules.go</depends>
   <extensions defaultExtensionNs="com.intellij">
     <!-- golang -> proto goto -->

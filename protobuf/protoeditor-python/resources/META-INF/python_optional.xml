@@ -1,4 +1,4 @@
-<idea-plugin>
+<idea-plugin package="com.intellij.protobuf.python">
   <depends>com.intellij.modules.python</depends>
 
   <extensions defaultExtensionNs="com.intellij">
