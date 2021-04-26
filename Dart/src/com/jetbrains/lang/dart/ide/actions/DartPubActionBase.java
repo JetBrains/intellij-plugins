@@ -74,6 +74,10 @@ public abstract class DartPubActionBase extends AnAction implements DumbAware {
 
   private static final AtomicBoolean ourInProgress = new AtomicBoolean(false);
 
+  public static boolean isUseDartTestInsteadOfPubRunTest(@NotNull DartSdk dartSdk) {
+    return StringUtil.compareVersionNumbers(dartSdk.getVersion(), DART_PUB_MIN_SDK_VERSION) >= 0;
+  }
+
   public static void setupPubExePath(@NotNull GeneralCommandLine commandLine, @NotNull DartSdk dartSdk) {
     boolean useDartPub = StringUtil.compareVersionNumbers(dartSdk.getVersion(), DART_PUB_MIN_SDK_VERSION) >= 0;
     if (useDartPub) {
