@@ -42,8 +42,10 @@ class PerforceChangeListCalculator {
   }
 
   private ChangeList findOrCreateDefaultList() {
-    LocalChangeList list = myAddGate.findChangeList(LocalChangeList.getDefaultName());
-    if (list == null) list = myAddGate.findChangeList(LocalChangeList.OLD_DEFAULT_NAME);
-    return list != null ? list : myAddGate.addChangeList(LocalChangeList.getDefaultName(), "");
+    for (String name : LocalChangeList.getAllDefaultNames()) {
+      LocalChangeList list = myAddGate.findChangeList(name);
+      if (list != null) return list;
+    }
+    return myAddGate.addChangeList(LocalChangeList.getDefaultName(), "");
   }
 }
