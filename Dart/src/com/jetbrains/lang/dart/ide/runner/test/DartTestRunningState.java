@@ -24,6 +24,7 @@ import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -35,6 +36,7 @@ import com.jetbrains.lang.dart.ide.runner.base.DartRunConfiguration;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunningState;
 import com.jetbrains.lang.dart.ide.runner.util.DartTestLocationProvider;
 import com.jetbrains.lang.dart.sdk.DartSdk;
+import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -158,7 +160,13 @@ public class DartTestRunningState extends DartCommandLineRunningState {
 
   @Override
   protected void setupExePath(@NotNull GeneralCommandLine commandLine, @NotNull DartSdk sdk) {
-    DartPubActionBase.setupPubExePath(commandLine, sdk);
+    boolean useDartTest = DartPubActionBase.isUseDartTestInsteadOfPubRunTest(sdk);
+    if (useDartTest) {
+      commandLine.setExePath(DartSdkUtil.getDartExePath(sdk));
+    }
+    else {
+      commandLine.setExePath(FileUtil.toSystemDependentName(DartSdkUtil.getPubPath(sdk)));
+    }
   }
 
   @Override
@@ -167,7 +175,14 @@ public class DartTestRunningState extends DartCommandLineRunningState {
   }
 
   @Override
-  protected void addVmOption(@NotNull final GeneralCommandLine commandLine, @NotNull final String option) {
+  protected void addVmOption(@NotNull DartSdk sdk, @NotNull GeneralCommandLine commandLine, @NotNull String option) {
+    boolean useDartTest = DartPubActionBase.isUseDartTestInsteadOfPubRunTest(sdk);
+    if (useDartTest) {
+      super.addVmOption(sdk, commandLine, option);
+      return;
+    }
+
+    // SDK 2.9 and older
     final String arguments = StringUtil.notNullize(myRunnerParameters.getArguments());
     if (DefaultRunExecutor.EXECUTOR_ID.equals(getEnvironment().getExecutor().getId()) &&
         option.startsWith("--enable-vm-service:") &&
