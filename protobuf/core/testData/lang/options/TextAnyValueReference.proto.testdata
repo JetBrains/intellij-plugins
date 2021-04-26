@@ -1,0 +1,23 @@
+syntax = "proto3";
+import "descriptor.proto";
+import "lang/options/any.proto";
+
+package foo.bar;
+
+message MyType {
+  repeated google.protobuf.Any any = 1;
+  bool value = 2;
+  extensions 100 to 200;
+}
+
+extend proto2.FileOptions {
+  MyType opt = 2000;
+}
+
+option (opt) = {
+  any {
+    [type.googleapis.com/foo.bar.MyType] {
+      va<caret>lue: true
+    }
+  }
+};

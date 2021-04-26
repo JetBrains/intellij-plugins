@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package foo.bar.baz;
+
+message Foo {
+  message Baz {
+  }
+}
+
+message Bar {
+  bar.ba<caret>z.Bogus x = 1;
+}

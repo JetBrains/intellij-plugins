@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package foo.bar;
+
+message Foo {
+  map<string, int32> some_map = 1;
+
+  // This doesn't actually compile since proto source files aren't allowed to reference generated
+  // map entry elements directly. But it tests our resolve logic.
+  SomeMap<caret>Entry bar = 2;
+}

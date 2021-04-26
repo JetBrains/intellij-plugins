@@ -1,0 +1,20 @@
+syntax = "proto2";
+import "descriptor.proto";
+
+package foo.bar;
+
+message MyType {
+  extensions 100 to 200;
+}
+
+extend proto2.FileOptions {
+  optional MyType opt = 2000;
+}
+
+extend MyType {
+  optional int32 ext_opt = 150;
+}
+
+option (opt) = {
+  [ext<caret>_opt] = 10
+};

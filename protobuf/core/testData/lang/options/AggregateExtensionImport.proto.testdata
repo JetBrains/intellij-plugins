@@ -1,0 +1,11 @@
+syntax = "proto2";
+
+package ext_bug.foo;
+
+import "lang/options/validation.proto";
+import "lang/options/constraints.proto";
+
+message TestMessage {
+  optional int64 test_value = 1
+  [(validation.constraints) = {[validation.in_range]{m<caret>in: 0}}];
+}

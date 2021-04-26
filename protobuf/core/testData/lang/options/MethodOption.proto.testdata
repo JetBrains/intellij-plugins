@@ -1,0 +1,11 @@
+syntax = "proto3";
+import "descriptor.proto";
+
+package foo.bar;
+
+service TestService {
+  rpc TestMethod (TestMessage) returns (TestMessage) {
+    // Method option
+    option depr<caret>ecated = true;
+  }
+}

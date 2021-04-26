@@ -1,0 +1,4 @@
+syntax = "proto2";
+package test.conflict.pkg;
+
+message FromAnotherFile {}

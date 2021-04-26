@@ -1,0 +1,113 @@
+// This file provides mock option definitions for use with tests.
+
+syntax = "proto2";
+
+package proto2;
+
+message FileOptions {
+  extensions 50 to max;
+  enum FileOptionType {
+    FOO = 1;
+    BAR = 2;
+  }
+  optional bool file_bool_option = 1;
+  optional int32 file_int_option = 2;
+  optional string file_string_option = 3;
+  optional FileOptionType file_enum_option = 4;
+}
+
+message MessageOptions {
+  extensions 50 to max;
+  enum MessageOptionType {
+    FOO = 1;
+    BAR = 2;
+  }
+  optional bool message_bool_option = 1;
+  optional int32 message_int_option = 2;
+  optional string message_string_option = 3;
+  optional MessageOptionType message_enum_option = 4;
+}
+
+message FieldOptions {
+  extensions 50 to max;
+  enum FieldOptionType {
+    FOO = 1;
+    BAR = 2;
+  }
+  optional bool field_bool_option = 1;
+  optional int32 field_int_option = 2;
+  optional string field_string_option = 3;
+  optional FieldOptionType field_enum_option = 4;
+}
+
+message OneofOptions {
+  extensions 50 to max;
+  enum OneofOptionType {
+    FOO = 1;
+    BAR = 2;
+  }
+  optional bool oneof_bool_option = 1;
+  optional int32 oneof_int_option = 2;
+  optional string oneof_string_option = 3;
+  optional OneofOptionType oneof_enum_option = 4;
+}
+
+message EnumOptions {
+  extensions 50 to max;
+  enum EnumOptionType {
+    FOO = 1;
+    BAR = 2;
+  }
+  optional bool enum_bool_option = 1;
+  optional int32 enum_int_option = 2;
+  optional string enum_string_option = 3;
+  optional EnumOptionType enum_enum_option = 4;
+}
+
+message EnumValueOptions {
+  extensions 50 to max;
+  enum EnumValueOptionType {
+    FOO = 1;
+    BAR = 2;
+  }
+  optional bool enum_value_bool_option = 1;
+  optional int32 enum_value_int_option = 2;
+  optional string enum_value_string_option = 3;
+  optional EnumValueOptionType enum_value_enum_option = 4;
+}
+
+message ServiceOptions {
+  extensions 50 to max;
+  enum ServiceOptionType {
+    FOO = 1;
+    BAR = 2;
+  }
+  optional bool service_bool_option = 1;
+  optional int32 service_int_option = 2;
+  optional string service_string_option = 3;
+  optional ServiceOptionType service_enum_option = 4;
+}
+
+message MethodOptions {
+  extensions 50 to max;
+  enum MethodOptionType {
+    FOO = 1;
+    BAR = 2;
+  }
+  optional bool method_bool_option = 1;
+  optional int32 method_int_option = 2;
+  optional string method_string_option = 3;
+  optional MethodOptionType method_enum_option = 4;
+}
+
+message StreamOptions {
+  extensions 50 to max;
+  enum StreamOptionType {
+    FOO = 1;
+    BAR = 2;
+  }
+  optional bool stream_bool_option = 1;
+  optional int32 stream_int_option = 2;
+  optional string stream_string_option = 3;
+  optional StreamOptionType stream_enum_option = 4;
+}

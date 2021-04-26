@@ -1,0 +1,7 @@
+syntax = "proto2";
+
+package test.conflict;
+
+// Conflicts with 'package test.conflict.pkg'.
+// LINT: LEGACY_NAMES
+message pkg {}

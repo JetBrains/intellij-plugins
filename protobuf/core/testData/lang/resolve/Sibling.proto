@@ -1,0 +1,7 @@
+// Some sibling file that can be imported.
+syntax = "proto3";
+package com.foo.xyz;
+
+message Foobar {
+  int32 abc = 1;
+}

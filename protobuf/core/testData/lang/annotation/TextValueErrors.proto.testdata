@@ -1,0 +1,254 @@
+syntax = "proto2";
+
+package foo.bar;
+
+import "google/protobuf/descriptor.proto";
+
+extend google.protobuf.FileOptions {
+  optional OptionHolder opt = 5020;
+}
+
+enum OptionEnum {
+  NEGATIVE = -1;
+  FOO = 1;
+  BAR = 2;
+  HUNDRED = 100;
+}
+
+message OptionMessage {
+  optional int32 field = 1;
+}
+
+message OptionHolder {
+  repeated string string = 1;
+  repeated bytes bytes = 2;
+  repeated bool bool = 3;
+  repeated double double = 4;
+  repeated float float = 5;
+  repeated uint32 uint32 = 6;
+  repeated uint64 uint64 = 7;
+  repeated fixed32 fixed32 = 8;
+  repeated fixed64 fixed64 = 9;
+  repeated int32 int32 = 10;
+  repeated int64 int64 = 11;
+  repeated sint32 sint32 = 12;
+  repeated sint64 sint64 = 13;
+  repeated sfixed32 sfixed32 = 14;
+  repeated sfixed64 sfixed64 = 15;
+  repeated OptionEnum enum = 16;
+  repeated OptionMessage message = 17;
+}
+
+option (opt) = {
+  string: "foobar";
+  string: <error descr="String value expected">10</error>
+  string: <error descr="String value expected">true</error>
+  string: <error descr="String value expected">{}</error>
+
+  bytes: "\x01\x02\x03\x04"
+  bytes: <error descr="String value expected">10</error>
+  bytes: <error descr="String value expected">true</error>
+  bytes: <error descr="String value expected">{}</error>
+
+  bool: true
+  bool: True
+  bool: t
+  bool: 1
+  bool: false
+  bool: False
+  bool: f
+  bool: 0
+  bool: <error descr="Boolean value expected">10</error>
+  bool: <error descr="Boolean value expected">-0</error>
+  bool: <error descr="Boolean value expected">"foobar"</error>
+  bool: <error descr="Boolean value expected">{}</error>
+
+  double: 1.0
+  double: -1.0
+  double: 0
+  double: 10
+  double: -10
+  double: 18446744073709551615
+  double: -9223372036854775808
+  double: inf
+  double: iNf
+  double: -inf
+  double: -iNf
+  double: infinity
+  double: iNfInItY
+  double: -infinity
+  double: -iNfInItY
+  double: nan
+  double: nAn
+  double: -nan
+  double: -nAn
+  double: <error descr="Integer value must be decimal">0x1</error>
+  double: <error descr="Integer value must be decimal">01</error>
+  double: <error descr="Integer value out of range">18446744073709551616</error>
+  double: <error descr="Integer value out of range">-9223372036854775809</error>
+  double: <error descr="Floating point value expected">true</error>
+  double: <error descr="Floating point value expected">"foobar"</error>
+  double: <error descr="Floating point value expected">{}</error>
+
+  float: 1.0
+  float: -1.0
+  float: 0
+  float: 10
+  float: -10
+  float: 18446744073709551615
+  float: -9223372036854775808
+  float: inf
+  float: iNf
+  float: -inf
+  float: -iNf
+  float: infinity
+  float: iNfInItY
+  float: -infinity
+  float: -iNfInItY
+  float: nan
+  float: nAn
+  float: -nan
+  float: -nAn
+  float: <error descr="Integer value must be decimal">0x1</error>
+  float: <error descr="Integer value must be decimal">01</error>
+  float: <error descr="Integer value out of range">18446744073709551616</error>
+  float: <error descr="Integer value out of range">-9223372036854775809</error>
+  float: <error descr="Floating point value expected">true</error>
+  float: <error descr="Floating point value expected">"foobar"</error>
+  float: <error descr="Floating point value expected">{}</error>
+
+  uint32: 20
+  uint32: 020 // octal
+  uint32: 0
+  uint32: 0xFFFFFFFF
+  uint32: <error descr="Unsigned value cannot be negative">-1</error>
+  uint32: <error descr="Integer value out of range">0x100000000</error>
+  uint32: <error descr="Integer value expected">true</error>
+  uint32: <error descr="Integer value expected">"foobar"</error>
+  uint32: <error descr="Integer value expected">{}</error>
+
+  uint64: 20
+  uint64: 020 // octal
+  uint64: 0
+  uint64: 0xFFFFFFFFFFFFFFFF
+  uint64: <error descr="Unsigned value cannot be negative">-1</error>
+  uint64: <error descr="Integer value out of range">0x10000000000000000</error>
+  uint64: <error descr="Integer value expected">true</error>
+  uint64: <error descr="Integer value expected">"foobar"</error>
+  uint64: <error descr="Integer value expected">{}</error>
+
+  fixed32: 20
+  fixed32: 020 // octal
+  fixed32: 0
+  fixed32: 0xFFFFFFFF
+  fixed32: <error descr="Unsigned value cannot be negative">-1</error>
+  fixed32: <error descr="Integer value out of range">0x100000000</error>
+  fixed32: <error descr="Integer value expected">true</error>
+  fixed32: <error descr="Integer value expected">"foobar"</error>
+  fixed32: <error descr="Integer value expected">{}</error>
+
+  fixed64: 20
+  fixed64: 020 // octal
+  fixed64: 0
+  fixed64: 0xFFFFFFFFFFFFFFFF
+  fixed64: <error descr="Unsigned value cannot be negative">-1</error>
+  fixed64: <error descr="Integer value out of range">0x10000000000000000</error>
+  fixed64: <error descr="Integer value expected">true</error>
+  fixed64: <error descr="Integer value expected">"foobar"</error>
+  fixed64: <error descr="Integer value expected">{}</error>
+
+  int32: 20
+  int32: -20
+  int32: 020 // octal
+  int32: 0
+  int32: 0x7FFFFFFF
+  int32: -0x80000000
+  int32: <error descr="Integer value out of range">0x80000000</error>
+  int32: <error descr="Integer value out of range">-0x80000001</error>
+  int32: <error descr="Integer value expected">true</error>
+  int32: <error descr="Integer value expected">"foobar"</error>
+  int32: <error descr="Integer value expected">{}</error>
+
+  int64: 20
+  int64: -20
+  int64: 020 // octal
+  int64: 0
+  int64: 0x7FFFFFFFFFFFFFFF
+  int64: -0x8000000000000000
+  int64: <error descr="Integer value out of range">0x8000000000000000</error>
+  int64: <error descr="Integer value out of range">-0x8000000000000001</error>
+  int64: <error descr="Integer value expected">true</error>
+  int64: <error descr="Integer value expected">"foobar"</error>
+  int64: <error descr="Integer value expected">{}</error>
+
+  sint32: 20
+  sint32: -20
+  sint32: 020 // octal
+  sint32: 0
+  sint32: 0x7FFFFFFF
+  sint32: -0x80000000
+  sint32: <error descr="Integer value out of range">0x80000000</error>
+  sint32: <error descr="Integer value out of range">-0x80000001</error>
+  sint32: <error descr="Integer value expected">true</error>
+  sint32: <error descr="Integer value expected">"foobar"</error>
+  sint32: <error descr="Integer value expected">{}</error>
+
+  sint64: 20
+  sint64: -20
+  sint64: 020 // octal
+  sint64: 0
+  sint64: 0x7FFFFFFFFFFFFFFF
+  sint64: -0x8000000000000000
+  sint64: <error descr="Integer value out of range">0x8000000000000000</error>
+  sint64: <error descr="Integer value out of range">-0x8000000000000001</error>
+  sint64: <error descr="Integer value expected">true</error>
+  sint64: <error descr="Integer value expected">"foobar"</error>
+  sint64: <error descr="Integer value expected">{}</error>
+
+  sfixed32: 20
+  sfixed32: -20
+  sfixed32: 020 // octal
+  sfixed32: 0
+  sfixed32: 0x7FFFFFFF
+  sfixed32: -0x80000000
+  sfixed32: <error descr="Integer value out of range">0x80000000</error>
+  sfixed32: <error descr="Integer value out of range">-0x80000001</error>
+  sfixed32: <error descr="Integer value expected">true</error>
+  sfixed32: <error descr="Integer value expected">"foobar"</error>
+  sfixed32: <error descr="Integer value expected">{}</error>
+
+  sfixed64: 20
+  sfixed64: -20
+  sfixed64: 020 // octal
+  sfixed64: 0
+  sfixed64: 0x7FFFFFFFFFFFFFFF
+  sfixed64: -0x8000000000000000
+  sfixed64: <error descr="Integer value out of range">0x8000000000000000</error>
+  sfixed64: <error descr="Integer value out of range">-0x8000000000000001</error>
+  sfixed64: <error descr="Integer value expected">true</error>
+  sfixed64: <error descr="Integer value expected">"foobar"</error>
+  sfixed64: <error descr="Integer value expected">{}</error>
+
+  // Enums
+  enum: FOO
+  enum: HUNDRED
+  enum: -1
+  enum: 100
+  enum: <error descr="Enum value expected">{}</error>
+  enum: <error descr="Enum value expected">1.0</error>
+  enum: <error descr="Enum value expected">-1.0</error>
+  enum: <error descr="Enum value expected">0x8000000000000000</error>
+
+  // Test a value list
+  string: ["foo", <error descr="String value expected">{}</error>, <error descr="String value expected">3</error>]
+
+  // Colons are required for non-message repeated fields
+  string: ["foo", "bar"]
+  string<error descr="Expected ':' after non-message field name"> </error> ["foo", "bar"]
+  enum: [FOO, BAR]
+  enum<error descr="Expected ':' after non-message field name"> </error> [FOO, BAR]
+
+  // Not required for message repeated fields
+  message: [{}, {}]
+  message [{}, {}]
+};

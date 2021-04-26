@@ -1,0 +1,43 @@
+syntax = "proto2";
+
+package foo.bar;
+
+import "google/protobuf/descriptor.proto";
+
+message OptionType {
+  reserved "nope";
+  repeated string str = 1;
+}
+
+extend google.protobuf.MessageOptions {
+  optional OptionType opt = 5000;
+}
+
+message Test {
+  option (opt) = {
+    // Control - a non-reserved field works as expected.
+    str: "foo"
+    str: <error descr="String value expected">10</error>
+    str <error descr="String value expected">{}</error>
+
+    // We shouldn't see any errors for the reserved field.
+    nope: 10
+    nope: "foo"
+    nope [{}]
+    nope: [10]
+    nope: []
+    nope {
+      // nested messages also get no annotations.
+      foo: bar
+      foo {
+        baz: 10
+      }
+    }
+
+    // We should still see string errors
+    nope: "12<error descr="Illegal escape sequence in string literal">\z</error>3"
+    nope {
+      bar: "12<error descr="Illegal escape sequence in string literal">\z</error>3"
+    }
+  };
+}

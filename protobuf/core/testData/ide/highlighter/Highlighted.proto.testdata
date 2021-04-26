@@ -1,0 +1,54 @@
+<symbolName textAttributesKey="PROTO_KEYWORD">syntax</symbolName> = "proto2";
+
+<symbolName textAttributesKey="PROTO_KEYWORD">import</symbolName> "google/protobuf/descriptor.proto";
+<symbolName textAttributesKey="PROTO_KEYWORD">import</symbolName> "ide/highlighter/TopLevelString.proto.testdata";
+
+<symbolName textAttributesKey="PROTO_KEYWORD">package</symbolName> foo.bar.message;
+
+<symbolName textAttributesKey="PROTO_KEYWORD">message</symbolName> my_type {}
+
+<symbolName textAttributesKey="PROTO_KEYWORD">enum</symbolName> TestEnum {
+  <symbolName textAttributesKey="PROTO_ENUM_VALUE">FOO</symbolName> = 0;
+  <symbolName textAttributesKey="PROTO_ENUM_VALUE">FOO_WITH_OPTION</symbolName> = 1 [deprecated = <symbolName textAttributesKey="PROTO_KEYWORD">true</symbolName>];
+  <symbolName textAttributesKey="PROTO_ENUM_VALUE">FOO_WITH_BAD_OPTION</symbolName> = 2 [<error textAttributesKey="WRONG_REFERENCES_ATTRIBUTES">bogus</error> = 0];
+}
+
+<symbolName textAttributesKey="PROTO_KEYWORD">message</symbolName> ValueType {
+  <symbolName textAttributesKey="PROTO_KEYWORD">optional</symbolName> my_type enum = 5 [weak = <symbolName textAttributesKey="PROTO_KEYWORD">true</symbolName>];
+  <symbolName textAttributesKey="PROTO_KEYWORD">optional</symbolName> <symbolName textAttributesKey="PROTO_KEYWORD">int32</symbolName> integer = 34 [<symbolName textAttributesKey="PROTO_KEYWORD">default</symbolName> = 5];
+  <symbolName textAttributesKey="PROTO_KEYWORD">repeated</symbolName> <symbolName textAttributesKey="PROTO_KEYWORD">float</symbolName> floating = 35 [<symbolName textAttributesKey="PROTO_KEYWORD">json_name</symbolName> = "y"];
+  <symbolName textAttributesKey="PROTO_KEYWORD">repeated</symbolName> <symbolName textAttributesKey="PROTO_KEYWORD">bool</symbolName> boolean = 36;
+  <symbolName textAttributesKey="PROTO_KEYWORD">optional</symbolName> TestEnum myenumval = 20 [<symbolName textAttributesKey="PROTO_KEYWORD">default</symbolName> = <symbolName textAttributesKey="PROTO_ENUM_VALUE">FOO</symbolName>];
+
+  // Don't highlight a qualified basic type as a keyword
+  <symbolName textAttributesKey="PROTO_KEYWORD">optional</symbolName> .string stringval = 21;
+}
+
+<symbolName textAttributesKey="PROTO_KEYWORD">extend</symbolName> google.protobuf.FileOptions {
+  <symbolName textAttributesKey="PROTO_KEYWORD">optional</symbolName> ValueType opt = 5000;
+}
+
+// Also test injected text format highlighting.
+
+<symbolName textAttributesKey="PROTO_KEYWORD">option</symbolName> (opt) = {
+  myenumval: <symbolName textAttributesKey="PROTO_ENUM_VALUE">FOO</symbolName>
+  boolean: <symbolName textAttributesKey="PROTO_KEYWORD">true</symbolName>
+  boolean: <symbolName textAttributesKey="PROTO_KEYWORD">True</symbolName>
+  boolean: <symbolName textAttributesKey="PROTO_KEYWORD">t</symbolName>
+  boolean: <symbolName textAttributesKey="PROTO_KEYWORD">false</symbolName>
+  boolean: <symbolName textAttributesKey="PROTO_KEYWORD">False</symbolName>
+  boolean: <symbolName textAttributesKey="PROTO_KEYWORD">f</symbolName>
+
+  floating: <symbolName textAttributesKey="PROTO_KEYWORD">inf</symbolName>
+  floating: <symbolName textAttributesKey="PROTO_KEYWORD">iNf</symbolName>
+  floating: <symbolName textAttributesKey="PROTO_KEYWORD">infinity</symbolName>
+  floating: <symbolName textAttributesKey="PROTO_KEYWORD">iNfInItY</symbolName>
+  floating: -<symbolName textAttributesKey="PROTO_KEYWORD">inf</symbolName>
+  floating: -<symbolName textAttributesKey="PROTO_KEYWORD">iNf</symbolName>
+  floating: -<symbolName textAttributesKey="PROTO_KEYWORD">infinity</symbolName>
+  floating: -<symbolName textAttributesKey="PROTO_KEYWORD">iNfInItY</symbolName>
+  floating: <symbolName textAttributesKey="PROTO_KEYWORD">nan</symbolName>
+  floating: <symbolName textAttributesKey="PROTO_KEYWORD">nAn</symbolName>
+  floating: -<symbolName textAttributesKey="PROTO_KEYWORD">nan</symbolName>
+  floating: -<symbolName textAttributesKey="PROTO_KEYWORD">nAn</symbolName>
+};

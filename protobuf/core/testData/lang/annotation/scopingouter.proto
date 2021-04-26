@@ -1,0 +1,20 @@
+syntax = "proto2";
+
+package scopingtest;
+
+import "google/protobuf/descriptor.proto";
+
+extend google.protobuf.FileOptions {
+  optional int32 resolvable_file_option2 = 66666;
+  optional int32 shadowed_file_option = 66667;
+}
+
+extend google.protobuf.ServiceOptions {
+  optional int32 resolvable_service_option2 = 55556;
+  optional int32 shadowed_service_option = 55557;
+}
+
+extend google.protobuf.MethodOptions {
+  optional int32 resolvable_method_option2 = 55556;
+  optional int32 shadowed_method_option = 55557;
+}

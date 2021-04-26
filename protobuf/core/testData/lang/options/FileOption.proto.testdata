@@ -1,0 +1,7 @@
+syntax = "proto3";
+import "descriptor.proto";
+
+package foo.bar;
+
+// File option
+option java<caret>_package = "com.foo.bar";

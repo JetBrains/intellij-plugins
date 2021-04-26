@@ -1,0 +1,351 @@
+syntax = "proto2";
+
+package foo.bar;
+
+import "google/protobuf/descriptor.proto";
+import "lang/options/any.proto";
+
+message OptionType {
+  extensions 200 to max;
+  optional int32 optional = 1;
+  repeated int32 repeated = 2;
+  repeated SubType repeated_message = 10;
+  optional TypeWithRequiredField with_required = 20;
+  optional OptionType recurse = 30;
+  optional google.protobuf.Any any = 31;
+  repeated google.protobuf.Any repeated_any = 32;
+  oneof OneofTest {
+    int32 a = 50;
+    int32 b = 51;
+    int32 c = 52;
+    SubType sub1 = 53;
+    SubType sub2 = 54;
+  }
+  repeated RepeatedSubType repeated_msg = 70;
+  map<string, float> mapval = 80;
+}
+
+extend OptionType {
+  optional bool ext = 200;
+}
+
+message SubType {
+  optional int32 sub_value = 1;
+}
+
+message AnyType {
+  optional int32 a = 1;
+  optional int32 b = 2;
+  optional google.protobuf.Any any = 3;
+}
+
+message RepeatedSubType {
+  optional int32 value = 1;
+  repeated RepeatedSubType recurse = 2;
+  repeated TypeWithRequiredField with_required = 3;
+}
+
+message TypeWithRequiredField {
+  optional int32 optional = 1;
+  required int32 required1 = 2;
+  required int32 required2 = 3;
+}
+
+extend google.protobuf.MessageOptions {
+  optional OptionType opt = 1003;
+  optional bool bool_opt = 1004;
+  optional google.protobuf.Any top_any = 1005;
+}
+
+message DuplicateStatementTest {
+  option (opt).optional = 1;
+  option (opt).repeated = 1;
+
+  // Optional fields can't be specified twice.
+  option (opt).<error descr="Non-repeated field 'optional' is specified multiple times">optional</error> = 1;
+
+  // Repeated fields can.
+  option (opt).repeated = 1;
+
+  // A third optional field should also generate an error.
+  option (opt).<error descr="Non-repeated field 'optional' is specified multiple times">optional</error> = 1;
+}
+
+message DuplicateInAggregateTest {
+  option (opt) = {
+    // The second two settings should generate errors
+    optional: 1
+    <error descr="Non-repeated field 'optional' is specified multiple times">optional</error>: 1
+    <error descr="Non-repeated field 'optional' is specified multiple times">optional</error>: 1
+
+    // No errors for repeated values
+    repeated: 1
+    repeated: 1
+  };
+}
+
+message DuplicateInAggregateShorthandTest {
+  option (opt) = {
+    repeated: [1, 2]
+    // Lists aren't supported for non-repeated fields.
+    optional: <error descr="Value list specified for non-repeated field 'optional'">[1, 2]</error>
+  };
+}
+
+message DuplicateWithAggregateTest {
+  option (opt) = {
+    optional: 1
+    repeated: 1
+  };
+
+  // Repeated fields can be specified multiple times.
+  option (opt).repeated = 1;
+  option (opt).repeated = 1;
+
+  // Optional fields can't be specified twice. The first specification was in the aggregate value.
+  option (opt).<error descr="Non-repeated field 'optional' is specified multiple times">optional</error> = 1;
+  option (opt).<error descr="Non-repeated field 'optional' is specified multiple times">optional</error> = 1;
+}
+
+message DuplicateExtensionOptionNameTest {
+  option (bool_opt) = true;
+  option (<error descr="Non-repeated field 'bool_opt' is specified multiple times">bool_opt</error>) = true;
+}
+
+message DuplicateExtensionFieldTest {
+  option (opt) = {
+    [ext]: true
+    [<error descr="Non-repeated field 'ext' is specified multiple times">ext</error>]: true
+  };
+}
+
+message AggregateAfterStatementErrorTest {
+  option (opt).repeated = 1;
+
+  // This fails because the "opt" field was already implicitly created in the above setting.
+  option (<error descr="Non-repeated field 'opt' is specified multiple times">opt</error>) = {
+    repeated: 1;
+  };
+}
+
+message StatementAfterAggregateSuccessTest {
+  option (opt) = {
+    repeated: 1;
+  };
+
+  // These should work, since they're merged into the existing message.
+  option (opt).repeated = 1;
+  option (opt).optional = 2;
+}
+
+message MissingRequiredInStatementTest {
+  option (opt).<error descr="One or more required members of type 'TypeWithRequiredField' are missing: required1, required2">with_required</error>.optional = 10;
+}
+
+message MissingRequiredInAggregateTest {
+  option (opt) = {
+    <error descr="One or more required members of type 'TypeWithRequiredField' are missing: required1, required2">with_required</error> {
+      optional: 1
+    }
+  };
+}
+
+message OneMissingRequiredInAggregateTest {
+  option (opt) = {
+    <error descr="One or more required members of type 'TypeWithRequiredField' are missing: required2">with_required</error> {
+      required1: 10
+    }
+  };
+}
+
+message NoMissingRequiredInStatementTest {
+  // All required fields specified. No errors.
+  option (opt).with_required.required1 = 10;
+  option (opt).with_required.required2 = 10;
+}
+
+message NoMissingRequiredInAggregateTest {
+  // All required fields specified. No errors.
+  option (opt) = {
+    with_required {
+      required1: 10
+      required2: 10
+    }
+  };
+}
+
+message RecursiveStatementsTest {
+  // There should be no errors here, as they're all separate instances of the field.
+  option (opt).optional = 1;
+  option (opt).recurse.optional = 1;
+  option (opt).recurse.recurse.optional = 1;
+}
+
+message RecursiveAggregatesTest {
+  // There should be no errors here, as they're all separate instances of the field.
+  option (opt) = {
+    optional: 1
+    recurse {
+      optional: 1
+      recurse {
+        optional: 1
+      }
+    }
+  };
+}
+
+message RepeatedMessageErrorTest {
+  option (opt).<error descr="Repeated message field 'repeated_message' must be initialized using an aggregate value">repeated_message</error>.sub_value = 10;
+}
+
+message RepeatedMessageSuccessTest {
+  option (opt).repeated_message = {
+    sub_value: 10
+  };
+  option (opt).repeated_message = {
+    sub_value: 10
+  };
+}
+
+message RepeatedMessageInAggregateSuccessTest {
+  option (opt) = {
+    repeated_message {
+      sub_value: 10
+    }
+    repeated_message {
+      sub_value: 10
+    }
+  };
+}
+
+// TODO(b/33823749): This case is currently accepted by the compiler.
+message MultipleOneofMemberStatementsTest {
+  option (opt).a = 1;
+  option (opt).<error descr="Field 'b' is specified along with field 'a', another member of oneof 'OneofTest'">b</error> = 1;
+  option (opt).<error descr="Field 'c' is specified along with field 'a', another member of oneof 'OneofTest'">c</error> = 1;
+}
+
+message MultipleOneofMembersInAggregateTest {
+  option (opt) = {
+    a: 1
+    <error descr="Field 'b' is specified along with field 'a', another member of oneof 'OneofTest'">b</error>: 1
+    <error descr="Field 'c' is specified along with field 'a', another member of oneof 'OneofTest'">c</error>: 1
+  };
+}
+
+// Tests the hypothetical case where qualifier names are actually part of a oneof.
+// TODO(b/33823749): this case is also currently works accepted by the compiler.
+message MultipleOneofMembersInQualifiers {
+  option (opt).sub1.sub_value = 1;
+  option (opt).<error descr="Field 'sub2' is specified along with field 'sub1', another member of oneof 'OneofTest'">sub2</error>.sub_value = 1;
+}
+
+// Test that multiple levels of repeated message values are valid.
+message RepeatedMessageTest {
+  option (opt).repeated_msg = {
+    value: 1
+    recurse {
+      value: 1
+    }
+    recurse {
+      value: 1
+      recurse {
+        value: 1
+      }
+      recurse {
+        value: 1
+      }
+    }
+  };
+
+  option (opt).repeated_msg = {
+    value: 1
+    recurse {
+      value: 1
+    }
+    recurse {
+      value: 1
+    }
+  };
+
+  option (opt).repeated_msg = {
+    value: 1
+    with_required {
+      required1: 1
+      required2: 1
+    }
+    <error descr="One or more required members of type 'TypeWithRequiredField' are missing: required2">with_required</error> {
+      required1: 1
+    }
+  };
+}
+
+// Test that both reference and occurrence errors show up together.
+// The previous occurrence annotation mechanism generated all annotations for descendants of an
+// OptionOwner. However, the IntelliJ annotator framework skips parents of ancestors that have
+// attached errors. So, because of the unresolved symbol annotation below, the occurrence annotation
+// was never being generated.
+message OccurrenceAndReferenceErrorsTest {
+  option <error descr="Cannot resolve option 'foobar'">foobar</error> = 1;
+  option deprecated = true;
+  option <error descr="Non-repeated field 'deprecated' is specified multiple times">deprecated</error> = true;
+}
+
+// Test that multiple message values can be set in a value list.
+message ValueListTest {
+  option (opt) = {
+    mapval: [
+      { key: "foo1" value: 3 },
+      { key: "foo2" value: 4 },
+      { key: "foo3" value: 5 },
+      { key: "foo4" <error descr="Non-repeated field 'key' is specified multiple times">key</error>: "invalid" }
+    ]
+  };
+}
+
+message AnyTest {
+  option (opt) = {
+    repeated_any {
+      [type.googleapis.com/foo.bar.AnyType] {
+        a: 1
+      }
+    }
+    repeated_any {
+      [type.googleapis.com/foo.bar.AnyType] {
+        a: 1
+      }
+    }
+    any {
+      [type.googleapis.com/foo.bar.AnyType] {
+        a: 1
+        <error descr="Non-repeated field 'a' is specified multiple times">a</error>: 1
+        any {
+          [type.googleapis.com/foo.bar.AnyType] {
+            a: 1
+            b: 1
+            <error descr="Non-repeated field 'b' is specified multiple times">b</error>: 1
+          }
+        }
+      }
+    }
+
+    // Any and single field collision
+    repeated_any {
+      [type.googleapis.com/foo.bar.AnyType] {}
+      <error descr="Non-repeated field 'value' is specified multiple times">value</error>: "bogus"
+    }
+
+    // Single field and any collision
+    repeated_any {
+      value: "bogus"
+      <error descr="Non-repeated field 'value' is specified multiple times">[type.googleapis.com/foo.bar.AnyType]</error> {}
+    }
+
+    // Multiple any collision
+    repeated_any {
+      [type.googleapis.com/foo.bar.AnyType] {}
+      <error descr="Non-repeated field 'type_url' is specified multiple times"><error descr="Non-repeated field 'value' is specified multiple times">[type.googleapis.com/foo.bar.AnyType]</error></error> {}
+    }
+  };
+  option (opt).<error descr="Repeated message field 'repeated_any' must be initialized using an aggregate value">repeated_any</error>.type_url = "foo";
+}

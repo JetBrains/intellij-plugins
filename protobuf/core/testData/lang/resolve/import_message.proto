@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+package foo.bar;
+
+import "lang/options/any.proto";
+
+message ImportMessage {
+  optional google.protobuf.Any any_message = 555;
+  optional string field = 1;
+  extensions 10 to max;
+}
+
+extend ImportMessage {
+  optional string not_exported_ext = 50;
+}

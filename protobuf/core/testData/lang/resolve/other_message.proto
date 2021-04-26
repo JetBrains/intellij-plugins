@@ -1,0 +1,8 @@
+syntax = "proto2";
+
+package foo.bar;
+
+message OtherMessage {
+  optional string field = 1;
+  optional int32 number = 2;
+}

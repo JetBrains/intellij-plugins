@@ -1,0 +1,8 @@
+syntax = "proto3";
+package foo.bar;
+
+// Documentation for some
+// message that stretches out.
+message abcd {
+  int32 x = 34;
+}

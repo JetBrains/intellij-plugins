@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package foo.bar;
+
+message Foo {
+  // This should be the resolved message.
+}
+
+message Bar {
+  message foo {
+    message bar {
+      message Foo {
+        // This should NOT be the resolved target.
+      }
+    }
+  }
+  .foo.bar.F<caret>oo x = 1;
+}

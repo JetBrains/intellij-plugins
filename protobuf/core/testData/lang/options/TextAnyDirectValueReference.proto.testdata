@@ -1,0 +1,21 @@
+syntax = "proto3";
+import "descriptor.proto";
+import "lang/options/any.proto";
+
+package foo.bar;
+
+message MyType {
+  bool value = 2;
+}
+
+extend proto2.FileOptions {
+  google.protobuf.Any any = 20003;
+}
+
+// This verifies that the injected text format file does not show an error on a
+// top-level Any value if the host .proto option field is an Any.
+option (any) = {
+  [type.googleapis.com/foo.bar.MyType] {
+    va<caret>lue: true
+  }
+};

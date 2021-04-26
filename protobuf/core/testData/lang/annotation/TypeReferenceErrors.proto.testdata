@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package foo.bar;
+
+import "lang/annotation/import1.proto";
+import "lang/annotation/import2.proto";
+
+message TestMessage {
+  .foo.bar.<error descr="Cannot resolve symbol 'MissingType'" type="WRONG_REF">MissingType</error> var1 = 1;
+  .foo.<error descr="Cannot resolve symbol 'baz'" type="WRONG_REF">baz</error>.MissingType var2 = 2;
+
+  .com.foo.<error descr="Ambiguous symbol 'Bar'">Bar</error> var3 = 3;
+  .com.foo.<error descr="Cannot resolve symbol 'Xyz'" type="WRONG_REF">Xyz</error> var4 = 4;
+
+  // Valid
+  .com.foo.Baz var5 = 5;
+
+  // Built-in types should not resolve when prefixed with a "."
+  string var6 = 6;
+  .<error descr="Cannot resolve symbol 'string'" type="WRONG_REF">string</error> var7 = 7;
+}

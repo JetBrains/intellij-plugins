@@ -1,0 +1,7 @@
+syntax = "proto2";
+package com.foo;
+
+enum Proto2Enum {
+  NEGATIVE = -1;
+  ONE = 1;
+}

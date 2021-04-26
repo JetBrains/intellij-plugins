@@ -1,0 +1,19 @@
+syntax = "proto2";
+
+package proto2_unittest;
+
+import "net/proto2/proto/descriptor.proto";
+
+message Value {
+  optional string string_field = 1;
+}
+
+extend proto2.ExtensionRangeOptions {
+  optional int32 int32_ext = 1000;
+  optional Value value_ext = 1001;
+}
+
+message MessageWithExtensionRangeOptions {
+  extensions 1, 3, 7 to 15, 20 to max
+    [(int32_ext) = 6, (value_ext) = {string_field: "Hello, World!"}];
+}

@@ -1,0 +1,14 @@
+syntax = "proto2";
+
+package foo.bar;
+
+message Bar {
+  oneof my_oneof {
+    // Should resolve to this.
+    group SomeGroup = 1 {
+      optional int32 xx = 1;
+    }
+  }
+
+  optional Some<caret>Group zz = 2;
+}

@@ -1,0 +1,9 @@
+syntax = "proto3";
+import "descriptor.proto";
+
+package foo.bar;
+
+message TestMessage {
+  // Field with option
+  int32 test_field = 1 [we<caret>ak = true];
+}

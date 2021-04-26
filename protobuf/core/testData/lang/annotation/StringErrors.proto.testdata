@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package foo.bar;
+
+message abc {
+  string x = 10 [default = <EOLError descr="Unterminated string literal">"123</EOLError>
+  ];
+
+  string z = 20 [default = "12<error descr="Illegal escape sequence in string literal">\z</error>3"];
+}

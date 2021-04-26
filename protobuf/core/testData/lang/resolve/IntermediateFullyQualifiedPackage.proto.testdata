@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package foo.bar;
+
+message Foo {
+  // This should be the resolved message.
+  message Baz {
+  }
+}
+
+message Bar {
+  .foo.b<caret>ar.Foo.Baz x = 1;
+}

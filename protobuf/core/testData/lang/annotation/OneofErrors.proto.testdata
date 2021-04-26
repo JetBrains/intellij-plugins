@@ -1,0 +1,30 @@
+syntax = "proto2";
+package com.foo;
+
+import "google/protobuf/descriptor.proto";
+
+extend google.protobuf.OneofOptions {
+  optional int32 oneof_option = 10000;
+}
+
+message Test {
+  oneof Okay1 {
+    option (oneof_option) = 10;
+    int32 foobar = 1;
+  }
+
+  oneof Okay2 {
+    int32 foobaz = 11;
+  }
+
+  oneof Okay3 {
+    group FooGroup = 50 {}
+  }
+
+  <error descr="Oneof must contain at least one field">oneof OptionButNoFields</error> {
+    option (oneof_option) = 10;
+  }
+
+  <error descr="Oneof must contain at least one field">oneof CompletelyEmpty</error> {
+  }
+}

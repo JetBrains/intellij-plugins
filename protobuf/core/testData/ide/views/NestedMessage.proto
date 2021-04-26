@@ -1,0 +1,47 @@
+// Test things nested in a message
+syntax = "proto2";
+
+package foo.bar;
+
+option java_multiple_files = true;
+option java_package = "com.company.my.package";
+
+import "example/module.proto";
+
+message WithoutNest {
+  required string field1 = 1;
+  repeated int32 field2 = 2;
+}
+
+message WithNest {
+  required string field1= 1;
+  repeated int32 field2 = 2;
+
+  message NestedMessage {
+    message NestedMessage2 {
+      optional int32 inner_nested1 = 1;
+    }
+    optional int32 nested1 = 1;
+    optional int32 nested2 = 2;
+    optional NestedMessage2 inner_nested_instance = 3;
+  }
+  enum NestedEnum {
+    VARIANT1 = 1;
+    VARIANT2 = 2;
+  }
+
+  optional NestedMessage msg_instance = 3;
+  optional NestedEnum enum_instance = 4;
+
+  optional group Group = 5 {
+    optional int32 field1 = 1;
+    optional int32 field2 = 2;
+  }
+
+  oneof oneof_field {
+    uint32 oneof_uint32 = 111;
+    NestedMessage oneof_nested_message = 112;
+    string oneof_string = 113;
+    bytes oneof_bytes = 114;
+  }
+}

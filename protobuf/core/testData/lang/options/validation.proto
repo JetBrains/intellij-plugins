@@ -1,0 +1,13 @@
+syntax = "proto2";
+
+package ext_bug.validation;
+
+import "google/protobuf/descriptor.proto";
+
+extend google.protobuf.FieldOptions {
+  optional Constraints constraints = 116105109;
+}
+
+message Constraints {
+  extensions 1000 to max;
+}

@@ -1,0 +1,17 @@
+syntax = "proto2";
+package com.foo;
+
+message Test {
+  extensions 10 to 1000;
+}
+
+extend Test {
+  optional int32 ext = 20;
+}
+
+extend Test {
+  optional group ExtGroup = 30 {}
+}
+
+<error descr="Extend definition must contain at least one field">extend Test</error> {
+}

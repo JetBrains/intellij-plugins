@@ -1,0 +1,10 @@
+syntax = "proto2";
+
+enum TestEnumReservedRange {
+  FOO = 0;
+  reserved 2, 15, 9 to 11, 3, 20 to max;
+  reserved -10 to 5;
+  reserved -100;
+  reserved "foo";
+  reserved "bar", "baz";
+}

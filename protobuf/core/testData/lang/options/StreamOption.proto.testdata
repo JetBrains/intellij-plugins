@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package foo.bar;
+
+service TestService {
+  stream TestStream (TestMessage,TestMessage) {
+    // Stream option
+    option depre<caret>cated = true;
+  }
+}

@@ -1,0 +1,74 @@
+syntax = "proto3";
+
+package foo.bar;
+
+import <error descr="Weak imports are not supported in proto3">weak</error> "lang/annotation/import1.proto";
+import "lang/annotation/proto2enum.proto";
+import "google/protobuf/descriptor.proto";
+
+message MessageSetTest {
+  option <error descr="MessageSet is not supported in proto3">message_set_wire_format</error> = true;
+}
+
+message ExtensionRangesTest {
+  <error descr="Extension ranges are not supported in proto3">extensions 10 to max;</error>
+}
+
+message FieldLabelsTest {
+  int32 valid = 1;
+  optional int32 valid_optional = 2;
+  <error descr="Required fields are not supported in proto3">required</error> int32 invalid_required = 3;
+}
+
+message GroupFieldTest {
+  <error descr="Group fields are not supported in proto3">group InvalidGroup = 10 {}</error>
+}
+
+message DefaultValueTest {
+  int32 valid = 1 [deprecated = true];
+  int32 invalid = 2 [<error descr="Default values are not supported in proto3">default = 10</error>];
+}
+
+message FieldNameUniquenessTest {
+  int32 unique = 1;
+  int32 <error descr="proto3 field names must be unique after being converted to lowercase with underscores removed">notUniqueName</error> = 2;
+  int32 <error descr="proto3 field names must be unique after being converted to lowercase with underscores removed">notUnique_name</error> = 3;
+  map<string,string> <error descr="proto3 field names must be unique after being converted to lowercase with underscores removed">not_unique_name</error> = 4;
+}
+
+message EnumValueTest {
+  enum ValidEnum {
+    VALID_FIRST = 0;
+    VALID_SECOND = 2;
+  }
+
+  enum InvalidEnum {
+    <error descr="First enum value must be 0 in proto3">INVALID_FIRST = 1;</error>
+    INVALID_SECOND = 2;
+  }
+}
+
+message EnumFieldTest {
+  enum Proto3Enum {
+    ZERO = 0;
+  }
+
+  Proto3Enum valid = 1;
+  com.foo.<error descr="Only proto3 enums can be used in proto3 messages">Proto2Enum</error> invalid = 2;
+}
+
+
+message ExtensionTest {
+
+  extend foo.bar.<error descr="Only option extensions are allowed in proto3">ExtensionRangesTest</error> {
+    int32 not_valid_1 = 25;
+  }
+
+  extend google.protobuf.MessageOptions {
+    int32 valid_1 = 1050;
+  }
+
+  extend .google.protobuf.MessageOptions {
+    int32 valid_2 = 1051;
+  }
+}

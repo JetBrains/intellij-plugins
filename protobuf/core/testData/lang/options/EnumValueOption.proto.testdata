@@ -1,0 +1,9 @@
+syntax = "proto3";
+import "descriptor.proto";
+
+package foo.bar;
+
+enum TestEnum {
+  // Enum value with option
+  VALUE1 = 1 [depre<caret>cated = true];
+}

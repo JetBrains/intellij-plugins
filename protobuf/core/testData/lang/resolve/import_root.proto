@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+package foo.bar;
+
+import "lang/resolve/import_message.proto";
+
+message ImportRoot {
+  optional string field = 1;
+  optional int32 number = 2;
+  optional ImportMessage import_message = 3;
+}
+
+extend ImportMessage {
+  optional string local_ext = 51;
+}

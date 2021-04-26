@@ -1,0 +1,9 @@
+syntax = "proto2";
+
+message Bar { message Baz {} }
+message Foo {
+  message Bar {}
+  // This reference should fail to resolve, because the unqualified "A" resolves to the
+  // message directly above, which has no XYZ child.
+  optional Bar.B<caret>az baz = 1;
+}

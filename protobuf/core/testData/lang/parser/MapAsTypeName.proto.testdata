@@ -1,0 +1,7 @@
+syntax = "proto3";
+package foo.bar;
+
+message Test {
+  message map {}
+  map foo = 1;
+}

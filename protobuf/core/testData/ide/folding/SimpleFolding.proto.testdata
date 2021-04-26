@@ -1,0 +1,41 @@
+<fold text='/*...*/' expand='true'>/*
+ * comments
+ * at
+ * the
+ * top.
+ */</fold>
+
+syntax = "proto3";
+
+package foo;
+
+<fold text='//...' expand='true'>// This is a multi-line comment
+// made up of multiple single-line comments.
+
+// and has a space.</fold>
+<fold text='/*...*/' expand='true'>/*
+ This is another block comment
+ */</fold>
+
+message Abcd <fold text='{...}' expand='true'>{
+
+  int32 x = 1;
+
+  message Def <fold text='{...}' expand='true'>{
+
+    int32 x = 2;
+  }</fold>
+
+  option foo <fold text='{...}' expand='true'>{
+    x: 1
+    y <fold text='<...>' expand='true'><
+
+    ></fold>
+
+    z <fold text='{...}' expand='true'>{
+
+    }</fold>
+
+  }</fold>
+
+}</fold>

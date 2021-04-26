@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package foo.bar;
+
+message Foo {
+  // This should be the resolved message.
+}
+
+message Baz {
+  int32 Foo = 1;
+  // This type should refer to the message above, not the int32 field in the same scope.
+  F<caret>oo x = 2;
+}

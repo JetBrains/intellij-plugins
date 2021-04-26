@@ -1,0 +1,9 @@
+syntax = "proto2";
+
+package foo.bar;
+
+<error descr="Duplicate package statement">package bogus;</error>
+<error descr="Duplicate package statement">package bogus2;</error>
+
+message abc {
+}

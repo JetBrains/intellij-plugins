@@ -1,0 +1,200 @@
+syntax = "proto2";
+
+import "google/protobuf/descriptor.proto";
+
+package foo.bar;
+
+message Empty {}
+
+message TestMessageSet {
+  option message_set_wire_format = true;
+  extensions 10 to max;
+}
+
+message TestMessageSetWithExplicitMaxExtension {
+  option message_set_wire_format = true;
+  extensions 10 to 2147483646;  // This should be fine.
+}
+
+message TestMessageSetWithTooLargeMaxExtension {
+  option message_set_wire_format = true;
+  extensions <error descr="Extension numbers cannot be greater than 2,147,483,646">10 to 2147483647</error>;  // Too big.
+}
+
+message NotMessageSet {
+  option message_set_wire_format = false;
+  extensions 10 to max;
+}
+
+message OptionType {
+  repeated TestMessageSet set_field = 2;
+  repeated NotMessageSet not_set_field = 3;
+  repeated group GroupMessageSet = 4 {
+    option message_set_wire_format = true;
+    extensions 10 to max;
+  }
+}
+
+extend google.protobuf.MessageOptions {
+  optional OptionType opt = 5000;
+}
+
+message MessageSetWithFields {
+  option message_set_wire_format = true;
+  extensions 10 to max;
+
+  <error descr="MessageSets cannot have fields, only extensions">optional string foo = 1;</error>
+  <error descr="MessageSets cannot have fields, only extensions">optional string bar = 2;</error>
+
+  extend MessageSetWithFields {
+    // This is valid.
+    optional Empty msg = 11;
+  }
+}
+
+message MessageSetExtensions {
+  enum TestEnum {
+    FOO = 1;
+  }
+
+  extend TestMessageSet {
+    optional Empty empty = 11;
+
+    // Invalid - must be optional
+    <error descr="Extensions of MessageSets must be optional messages">required</error> Empty required_empty = 12;
+    <error descr="Extensions of MessageSets must be optional messages">repeated</error> Empty repeated_empty = 13;
+
+    // Invalid - must be a message
+    optional <error descr="Extensions of MessageSets must be optional messages">string</error> string = 14;
+    optional <error descr="Extensions of MessageSets must be optional messages">bool</error> bool = 15;
+    optional <error descr="Extensions of MessageSets must be optional messages">TestEnum</error> enum = 16;
+  }
+}
+
+message ExtendsTestMessageSet {
+  extend TestMessageSet {
+    optional ExtendsTestMessageSet message_set_extension = 2147483646;  // This should be 'max'.
+  }
+  optional string val = 1;
+}
+
+message ExtendsGroupMessageSet {
+  extend OptionType.GroupMessageSet {
+    optional ExtendsGroupMessageSet message_set_extension = 101;
+  }
+  optional string val = 1;
+}
+
+message ExtendsNotMessageSet {
+  extend NotMessageSet {
+    optional ExtendsNotMessageSet message_set_extension = 200;
+  }
+  optional string val = 1;
+}
+
+message NotProperType {
+  extend TestMessageSet {
+    optional ExtendsTestMessageSet message_set_extension = 102;
+  }
+  optional string val = 1;
+}
+
+message NotOptional {
+  extend TestMessageSet {
+    <error descr="Extensions of MessageSets must be optional messages">repeated</error> NotOptional message_set_extension = 103;
+  }
+  optional string val = 1;
+}
+
+message NoExtensions {
+  optional string val = 1;
+}
+
+message MessageWithOptions {
+  option (opt) = {
+    set_field {
+      [ExtendsTestMessageSet] {
+        val: "foo"
+      }
+    }
+
+    set_field {
+      [<error descr="Extension option 'ExtendsGroupMessageSet' is not a field">ExtendsGroupMessageSet</error>] {
+        <error descr="Cannot resolve field 'val'">val</error>: "foo"
+      }
+    }
+
+    set_field {
+      [<error descr="Extension option 'NotProperType' is not a field">NotProperType</error>] {
+        <error descr="Cannot resolve field 'val'">val</error>: "foo"
+      }
+    }
+
+    set_field {
+      [<error descr="Extension option 'NotOptional' is not a field">NotOptional</error>] {
+        <error descr="Cannot resolve field 'val'">val</error>: "foo"
+      }
+    }
+
+    set_field {
+      [<error descr="Extension option 'NoExtensions' is not a field">NoExtensions</error>] {
+        <error descr="Cannot resolve field 'val'">val</error>: "foo"
+      }
+    }
+
+    // Group fields work, too.
+    GroupMessageSet {
+      [ExtendsGroupMessageSet] {
+        val: "foo"
+      }
+    }
+
+    GroupMessageSet {
+      [<error descr="Extension option 'ExtendsTestMessageSet' is not a field">ExtendsTestMessageSet</error>] {
+        <error descr="Cannot resolve field 'val'">val</error>: "foo"
+      }
+    }
+
+    // We should also still be able to specify the extension field directly.
+    set_field {
+      [ExtendsTestMessageSet.message_set_extension] {
+        val: "foo"
+      }
+    }
+
+    // Option occurrences should work.
+    set_field {
+      [ExtendsTestMessageSet] {
+        val: "foo"
+      }
+      [<error descr="Non-repeated field 'message_set_extension' is specified multiple times">ExtendsTestMessageSet</error>] {
+        val: "foo"
+      }
+    }
+
+    // Including a mix of message name and field name.
+    set_field {
+      [ExtendsTestMessageSet.message_set_extension] {
+        val: "foo"
+      }
+      [<error descr="Non-repeated field 'message_set_extension' is specified multiple times">ExtendsTestMessageSet</error>] {
+        val: "foo"
+      }
+    }
+    set_field {
+      [ExtendsTestMessageSet] {
+        val: "foo"
+      }
+      [ExtendsTestMessageSet.<error descr="Non-repeated field 'message_set_extension' is specified multiple times">message_set_extension</error>] {
+        val: "foo"
+      }
+    }
+
+    // Doesn't work for extendees without message_set_wire_format = true.
+    not_set_field {
+      [<error descr="Extension option 'ExtendsNotMessageSet' is not a field">ExtendsNotMessageSet</error>] {
+        <error descr="Cannot resolve field 'val'">val</error>: "foo"
+      }
+    }
+  };
+}

@@ -1,0 +1,8 @@
+syntax = "proto2";
+
+package foo.bar;
+
+message TestMessage {
+  optional int32 optional_with_default = 1 [default = 10];
+  repeated int32 repeated_with_default = 2 [<error descr="Repeated fields cannot have default values">default</error> = 10];
+}

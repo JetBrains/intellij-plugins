@@ -1,0 +1,9 @@
+syntax = "proto3";
+import "descriptor.proto";
+
+package foo.bar;
+
+service TestService {
+  // Service option
+  option deprec<caret>ated = true;
+}
