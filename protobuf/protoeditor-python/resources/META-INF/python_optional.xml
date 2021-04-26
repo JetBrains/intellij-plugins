@@ -1,0 +1,10 @@
+<idea-plugin>
+  <depends>com.intellij.modules.python</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <!-- Python -> proto goto -->
+    <gotoDeclarationHandler
+      implementation="com.intellij.protobuf.python.PbPythonGotoDeclarationHandler"
+      order="first"/>
+  </extensions>
+</idea-plugin>

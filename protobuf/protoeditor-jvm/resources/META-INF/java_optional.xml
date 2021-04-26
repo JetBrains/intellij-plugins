@@ -1,0 +1,13 @@
+<idea-plugin>
+  <depends>com.intellij.java</depends>
+  <extensions defaultExtensionNs="com.intellij">
+    <!-- Java -> proto goto -->
+    <gotoDeclarationHandler
+      implementation="com.intellij.protobuf.jvm.PbJavaGotoDeclarationHandler"/>
+    <fileBasedIndex
+      implementation="com.intellij.protobuf.jvm.PbJavaOuterClassIndex"/>
+    <!-- proto -> java find usages -->
+    <findUsagesHandlerFactory
+      implementation="com.intellij.protobuf.jvm.PbJavaFindUsagesHandlerFactory"/>
+  </extensions>
+</idea-plugin>

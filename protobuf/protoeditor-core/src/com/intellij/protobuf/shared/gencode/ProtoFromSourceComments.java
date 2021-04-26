@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intellij.protobuf.gencode;
+package com.intellij.protobuf.shared.gencode;
 
 import com.google.common.collect.ImmutableList;
 import com.intellij.protobuf.lang.psi.PbFile;
