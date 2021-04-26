@@ -39,6 +39,7 @@ public class PerforceJobsTest extends PerforceTestCase {
   public void testJobsLoading() throws IOException {
     final Ref<VirtualFile> refA = new Ref<>();
     WriteAction.runAndWait(() -> refA.set(myWorkingCopyDir.createChildData(this, "a.txt")));
+    assertNotNull(refA.get());
 
     addFile("a.txt");
 
@@ -186,6 +187,7 @@ public class PerforceJobsTest extends PerforceTestCase {
   public void testCreateListWithJobInNative() throws IOException {
     final Ref<VirtualFile> refA = new Ref<>();
     WriteAction.runAndWait(() -> refA.set(myWorkingCopyDir.createChildData(this, "a.txt")));
+    assertNotNull(refA.get());
 
     addFile("a.txt");
 

@@ -66,7 +66,6 @@ public final class CfmlUnitRemoteTestsRunner {
     throws ExecutionException {
     LOG.assertTrue(directory != null);
     final Ref<IOException> error = new Ref<>();
-    final Ref<VirtualFile> launcherFile = new Ref<>();
 
     final Runnable runnable = () -> ApplicationManager.getApplication().runWriteAction(() -> {
       try {
@@ -76,7 +75,6 @@ public final class CfmlUnitRemoteTestsRunner {
         }
         CfmlScriptNodeSuppressor.suppress(file);
         VfsUtil.saveText(file, fileText);
-        launcherFile.set(file);
       }
       catch (IOException e) {
         error.set(e);

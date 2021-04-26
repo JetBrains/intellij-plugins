@@ -30,8 +30,12 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+import static com.intellij.testFramework.UsefulTestCase.assertEquals;
+import static com.intellij.testFramework.UsefulTestCase.assertNull;
+import static com.intellij.testFramework.UsefulTestCase.fail;
 import static com.intellij.testFramework.UsefulTestCase.*;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -104,6 +108,8 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
       refA.set(myWorkingCopyDir.createChildData(this, "a.txt"));
       refB.set(myWorkingCopyDir.createChildData(this, "b.txt"));
     });
+    assertNotNull(refA.get());
+    assertNotNull(refB.get());
 
     addFile("a.txt");
     addFile("b.txt");
@@ -117,7 +123,7 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
     final Ref<Throwable> refThrowable = new Ref<>();
     doTestVariants(() -> {
       try {
-        numberRef.set(createChangeList(listName, Arrays.asList("//depot/a.txt")));
+        numberRef.set(createChangeList(listName, Collections.singletonList("//depot/a.txt")));
       }
       catch (Throwable e) {
         refThrowable.set(e);
@@ -151,6 +157,8 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
       refA.set(myWorkingCopyDir.createChildData(this, "a.txt"));
       refB.set(myWorkingCopyDir.createChildData(this, "b.txt"));
     });
+    assertNotNull(refA.get());
+    assertNotNull(refB.get());
 
     addFile("a.txt");
     addFile("b.txt");
@@ -206,17 +214,19 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
       refA.set(myWorkingCopyDir.createChildData(this, "a.txt"));
       refB.set(myWorkingCopyDir.createChildData(this, "b.txt"));
     });
+    assertNotNull(refA.get());
+    assertNotNull(refB.get());
 
     addFile("a.txt");
     addFile("b.txt");
 
     final String nativeComment = "idea name\nsecond comment line\nthird comment line";
 
-    long listNumber = createChangeList(nativeComment, Arrays.asList("//depot/a.txt"));
+    long listNumber = createChangeList(nativeComment, Collections.singletonList("//depot/a.txt"));
 
     checkNativeList(listNumber, nativeComment);
 
-    // synch
+    // sync
     ChangeListManagerImpl clManager = ChangeListManagerImpl.getInstanceImpl(myProject);
     VcsDirtyScopeManager.getInstance(myProject).markEverythingDirty();
     clManager.ensureUpToDate();
@@ -267,17 +277,19 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
       refA.set(myWorkingCopyDir.createChildData(this, "a.txt"));
       refB.set(myWorkingCopyDir.createChildData(this, "b.txt"));
     });
+    assertNotNull(refA.get());
+    assertNotNull(refB.get());
 
     addFile("a.txt");
     addFile("b.txt");
 
     final String nativeComment = "idea name\nsecond comment line\nthird comment line";
 
-    final long listNumber = createChangeList(nativeComment, Arrays.asList("//depot/a.txt"));
+    final long listNumber = createChangeList(nativeComment, Collections.singletonList("//depot/a.txt"));
 
     checkNativeList(listNumber, nativeComment);
 
-    // synch
+    // sync
     ChangeListManagerImpl clManager = ChangeListManagerImpl.getInstanceImpl(myProject);
     VcsDirtyScopeManager.getInstance(myProject).markEverythingDirty();
     clManager.ensureUpToDate();
@@ -312,7 +324,7 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
     final VirtualFile file = createFileInCommand("a.txt", "");
     addFile("a.txt");
 
-    submitList(createChangeList("name", Arrays.asList("//depot/a.txt")));
+    submitList(createChangeList("name", Collections.singletonList("//depot/a.txt")));
 
     verify(runP4WithClient("edit", new File(file.getPath()).getAbsolutePath()));
     verify(runP4WithClient("move", new File(file.getPath()).getAbsolutePath(),
@@ -320,7 +332,7 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
 
     refreshVfs();
 
-    // synch
+    // sync
     final ChangeListManager clManager = getChangeListManager();
     refreshChanges();
 
@@ -364,7 +376,7 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
 
     checkNativeList(listNumber, nativeComment);
 
-    // synch
+    // sync
     ChangeListManagerImpl clManager = ChangeListManagerImpl.getInstanceImpl(myProject);
     VcsDirtyScopeManager.getInstance(myProject).markEverythingDirty();
     clManager.ensureUpToDate();
@@ -393,12 +405,6 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
     if (!refThrowable.isNull()) {
       throw refThrowable.get();
     }
-    /*final long newListNumber = createChangeList(anotherComment, Arrays.asList("//depot/a.txt"));
-    checkNativeList(newListNumber, anotherName, anotherComment);
-    moveFile(newListNumber, "//depot/a.txt");
-    final List<String> filesInList = getFilesInList(newListNumber);
-    assert filesInList.size() == 1;
-    assert filesInList.get(0).startsWith("//depot/a.txt");*/
 
     refreshChanges();
     DuringChangeListManagerUpdateTestScheme.checkFilesAreInList(anotherName, clManager, refA.get());
@@ -437,7 +443,7 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
 
     checkNativeList(listNumber, nativeComment);
 
-    // synch
+    // sync
     ChangeListManagerImpl clManager = ChangeListManagerImpl.getInstanceImpl(myProject);
     VcsDirtyScopeManager.getInstance(myProject).markEverythingDirty();
     clManager.ensureUpToDate();
@@ -507,7 +513,7 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
 
     checkNativeList(listNumber, nativeComment);
 
-    // synch
+    // sync
     ChangeListManagerImpl clManager = ChangeListManagerImpl.getInstanceImpl(myProject);
     VcsDirtyScopeManager.getInstance(myProject).markEverythingDirty();
     clManager.ensureUpToDate();
@@ -568,7 +574,7 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
 
     checkNativeList(listNumber, nativeComment);
 
-    // synch
+    // sync
     ChangeListManagerImpl clManager = ChangeListManagerImpl.getInstanceImpl(myProject);
     VcsDirtyScopeManager.getInstance(myProject).markEverythingDirty();
     clManager.ensureUpToDate();
