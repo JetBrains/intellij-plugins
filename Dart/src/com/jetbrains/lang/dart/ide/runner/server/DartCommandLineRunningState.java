@@ -169,7 +169,7 @@ public class DartCommandLineRunningState extends CommandLineState {
       final StringTokenizer vmOptionsTokenizer = new CommandLineTokenizer(vmOptions);
       while (vmOptionsTokenizer.hasMoreTokens()) {
         final String vmOption = vmOptionsTokenizer.nextToken();
-        addVmOption(commandLine, vmOption);
+        addVmOption(sdk, commandLine, vmOption);
 
         try {
           if (vmOption.equals("--enable-vm-service") || vmOption.equals("--observe")) {
@@ -188,27 +188,27 @@ public class DartCommandLineRunningState extends CommandLineState {
 
     if (myRunnerParameters.isCheckedModeOrEnableAsserts()) {
       if (StringUtil.compareVersionNumbers(sdk.getVersion(), "2") < 0) {
-        addVmOption(commandLine, "--checked");
+        addVmOption(sdk, commandLine, "--checked");
       }
       else {
-        addVmOption(commandLine, "--enable-asserts");
+        addVmOption(sdk, commandLine, "--enable-asserts");
       }
     }
 
     if (DefaultDebugExecutor.EXECUTOR_ID.equals(getEnvironment().getExecutor().getId())) {
-      addVmOption(commandLine, "--pause_isolates_on_start");
+      addVmOption(sdk, commandLine, "--pause_isolates_on_start");
     }
 
     if (customObservatoryPort <= 0 && DefaultDebugExecutor.EXECUTOR_ID.equals(getEnvironment().getExecutor().getId())) {
       try {
-        addVmOption(commandLine, "--enable-vm-service:" + NetUtils.findAvailableSocketPort());
+        addVmOption(sdk, commandLine, "--enable-vm-service:" + NetUtils.findAvailableSocketPort());
       }
       catch (IOException e) {
         throw new ExecutionException(e);
       }
 
       if (getEnvironment().getRunner() instanceof DartCoverageProgramRunner) {
-        addVmOption(commandLine, "--pause-isolates-on-exit");
+        addVmOption(sdk, commandLine, "--pause-isolates-on-exit");
       }
     }
 
@@ -235,7 +235,7 @@ public class DartCommandLineRunningState extends CommandLineState {
     commandLine.addParameter(FileUtil.toSystemDependentName(dartFile.getPath()));
   }
 
-  protected void addVmOption(@NotNull final GeneralCommandLine commandLine, @NotNull final String option) {
+  protected void addVmOption(@NotNull DartSdk sdk, @NotNull GeneralCommandLine commandLine, @NotNull String option) {
     commandLine.addParameter(option);
   }
 
