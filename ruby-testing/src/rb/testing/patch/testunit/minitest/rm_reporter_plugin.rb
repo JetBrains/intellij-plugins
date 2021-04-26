@@ -32,7 +32,7 @@ module Minitest
     end
 
     def assert_no_minitest_reporters
-      if Object.const_defined?("MiniTest::Reporters")
+      if Object.const_defined?("Minitest::Reporters")
         if Minitest::Reporters.class_variable_defined?('@@loaded')
           raise RuntimeError.new("\nCurrent implementation of IntelliJ Minitest support conflicts with MiniTest::Reporters. Please remove Minitest::Reporters.use! from your test code, then re-run your tests.")
         end
