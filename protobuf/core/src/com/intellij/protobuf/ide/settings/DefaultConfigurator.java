@@ -61,7 +61,7 @@ public class DefaultConfigurator implements ProjectSettingsConfigurator {
 
   @Nullable
   static ImportPathEntry getBuiltInIncludeEntry() {
-    URL descriptorUrl = DefaultConfigurator.class.getResource("/include/google/protobuf/descriptor.proto");
+    URL descriptorUrl = DefaultConfigurator.class.getResource("/protobuf/descriptor.proto");
     if (descriptorUrl == null) {
       return null;
     }
