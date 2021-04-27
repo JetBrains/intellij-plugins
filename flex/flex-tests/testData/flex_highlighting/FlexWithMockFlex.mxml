@@ -4,7 +4,7 @@
                 mouseMove="<error descr="Unresolved function or method copy2()">copy2</error>()" initialize="<error descr="Unresolved function or method copy2()">copy2</error>()" implements="MyInterface"
                 xmlns:some="SomeInterface">
     <mx:Style <error descr="Attribute some:incorrect is not allowed here">some:incorrect</error>="a">
-      .designArea { skinClass: ClassReference("mx.core.<error descr="Unresolved variable or type 'UIComponent2'">UIComponent2</error>"); }
+      .designArea { skinClass: ClassReference("mx.core.<error descr="Cannot resolve class 'UIComponent2'">UIComponent2</error>"); }
       .designArea2 { skinClass: ClassReference("mx.core.UIComponent"); }
     </mx:Style>
     <mx:HBox <error descr="Attribute some:incorrect is not allowed here">some:incorrect</error>="a" <error descr="Attribute mx:incorrect2 is not allowed here">mx:incorrect2</error>=''>

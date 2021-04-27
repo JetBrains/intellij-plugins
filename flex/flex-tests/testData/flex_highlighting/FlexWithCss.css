@@ -3,7 +3,7 @@ Button {
   <warning descr="Unknown CSS property 'paddingtop'">paddingtop</warning>: 1px;
   borderAlpha: "yes";
   disabledSkin: Embed(source = "<error descr="Cannot resolve directory 'assets'">assets</error>/<error descr="Cannot resolve file 'Button_disabledSkin.png'">Button_disabledSkin.png</error>", scaleGridRight="61");
-  upSkin: ClassReference("<error descr="Unresolved variable or type 'domcad'">domcad</error>.<error descr="Unresolved variable or type 'FolderTabNavigatorMenuButtonProgrammaticSkin'">FolderTabNavigatorMenuButtonProgrammaticSkin</error>");
+  upSkin: ClassReference("<error descr="Cannot resolve package 'domcad'">domcad</error>.<error descr="Cannot resolve class 'FolderTabNavigatorMenuButtonProgrammaticSkin'">FolderTabNavigatorMenuButtonProgrammaticSkin</error>");
   upSkin: ClassReference("mx.core.UIComponent");
 }
 

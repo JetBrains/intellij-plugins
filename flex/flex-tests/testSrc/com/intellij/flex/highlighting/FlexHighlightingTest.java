@@ -73,7 +73,6 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.css.CssBundle;
-import com.intellij.psi.css.inspections.CssInvalidElementInspection;
 import com.intellij.psi.css.inspections.CssNegativeValueInspection;
 import com.intellij.psi.css.inspections.CssUnknownPropertyInspection;
 import com.intellij.psi.css.inspections.CssUnusedSymbolInspection;
@@ -203,7 +202,6 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
   public void testFlexSpecificFunctionsInCss() {
-    enableInspectionTool(new CssInvalidElementInspection());
     enableInspectionTool(new CssInvalidPropertyValueInspection());
     enableInspectionTool(new CssInvalidFunctionInspection());
     doTestFor(true, getTestName(false) + ".css");
@@ -453,7 +451,6 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
   public void testFlexWithMockFlex() throws Exception {
-    enableInspectionTool(new CssInvalidElementInspection());
     final String testName = getTestName(false);
     doHighlightingWithInvokeFixAndCheckResult("Add override modifier", "mxml", testName + ".mxml", testName + "_2.as");
   }
@@ -2223,7 +2220,6 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @JSTestOptions({JSTestOption.WithGumboSdk})
   public void testUnresolvedClassReference() throws Throwable {
-    enableInspectionTool(new CssInvalidElementInspection());
     JSTestUtils.disableFileHeadersInTemplates(getProject());
     final String testName = getTestName(false);
     doHighlightingWithInvokeFixAndCheckResult(JavaScriptBundle.message("javascript.create.class.intention.name", "MyZuperClass"), "mxml");
@@ -2242,7 +2238,6 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @JSTestOptions({JSTestOption.WithGumboSdk})
   public void testUnresolvedClassReference2() throws Throwable {
-    enableInspectionTool(new CssInvalidElementInspection());
     JSTestUtils.disableFileHeadersInTemplates(getProject());
     final String testName = getTestName(false);
     doHighlightingWithInvokeFixAndCheckResult("Create MXML Component 'Missing'", "mxml");

@@ -116,6 +116,7 @@
     <consoleFilterProvider implementation="com.intellij.lang.javascript.flex.FlexStackTraceFilterProvider"/>
     <gotoSymbolContributor implementation="com.intellij.javascript.flex.mxml.FlexXmlBackedSymbolContributor"/>
     <annotator language="Mxml" implementationClass="com.intellij.javascript.flex.mxml.FlexMxmlColorAnnotator"/>
+    <annotator language="CSS" implementationClass="com.intellij.javascript.flex.css.FlexCssAnnotator"/>
     <multiHostInjector implementation="com.intellij.javascript.flex.mxml.MxmlLanguageInjector"/>
 
     <internalFileTemplate name="ActionScript Class"/>
