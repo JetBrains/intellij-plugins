@@ -15,12 +15,12 @@
  */
 package com.intellij.protobuf.ide.actions;
 
+import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.protobuf.TestUtils;
 import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
 import com.intellij.protobuf.lang.PbFileType;
 import com.intellij.protobuf.lang.PbTextFileType;
@@ -31,9 +31,9 @@ import static com.google.common.truth.Truth.assertThat;
 public class InsertSchemaDirectiveActionTest extends PbCodeInsightFixtureTestCase {
 
   @Override
-  public String getTestDataPath() {
-    String discoveredPath = TestUtils.getTestdataPath(this);
-    return discoveredPath == null ? "" : discoveredPath;
+  protected void setUp() throws Exception {
+    super.setUp();
+    TemplateManagerImpl.setTemplateTesting(myFixture.getTestRootDisposable());
   }
 
   public void testActionIsVisibleForTextFormat() {
