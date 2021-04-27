@@ -165,7 +165,7 @@ public class PlatformioLauncher extends CLionLauncher {
       protected @NotNull
       DebuggerDriver.Inferior doLoadTarget(@NotNull DebuggerDriver driver) throws ExecutionException {
 
-        DebuggerDriver.Inferior tempInferior = ((GDBDriver)driver).loadForRemote("", null, null, Collections.emptyList());
+        DebuggerDriver.Inferior tempInferior = driver.loadForRemote("", null, null, Collections.emptyList());
         return driver.new Inferior(tempInferior.getId()) {
           @SuppressWarnings("RedundantThrows")
           @Override
