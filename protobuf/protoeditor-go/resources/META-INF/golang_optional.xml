@@ -1,5 +1,5 @@
 <idea-plugin package="com.intellij.protobuf.go">
-  <depends>com.intellij.modules.go</depends>
+  <depends>org.jetbrains.plugins.go</depends>
   <extensions defaultExtensionNs="com.intellij">
     <!-- golang -> proto goto -->
     <gotoDeclarationHandler
