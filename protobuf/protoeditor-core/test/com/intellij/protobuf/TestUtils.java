@@ -66,7 +66,7 @@ public final class TestUtils {
   }
 
   public static String getTestdataPath(UsefulTestCase test) {
-    return "contrib/protobuf/core/testData/";
+    return "contrib/protobuf/protoeditor-core/testData/";
   }
 
   private static String findOverridePath() {
