@@ -124,9 +124,6 @@
 
     <directoryProjectGenerator implementation="org.angularjs.AngularJSProjectGenerator"/>
 
-    <diagram.Provider implementation="org.angularjs.codeInsight.router.AngularUiRouterDiagramProvider"/>
-    <javascript.module.provider implementation="org.angularjs.codeInsight.attributes.AngularModulesProvider"/>
-
     <!-- Angular 2 contributions -->
     <javascript.web.framework id="angular" implementation="org.angular2.Angular2Framework"/>
     <javascript.web.context framework="angular" implementation="org.angular2.lang.Angular2NodePackageContext"
