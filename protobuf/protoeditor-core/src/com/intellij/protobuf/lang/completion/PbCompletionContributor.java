@@ -92,20 +92,22 @@ public class PbCompletionContributor extends CompletionContributor {
 
   private static class BuiltinTypesProvider extends CompletionProvider<CompletionParameters> {
 
-    // TODO(volkman): don't suggest float, double, or bytes for map fields.
-    private static final List<LookupElement> BUILTIN_TYPE_BUILDERS =
-        BuiltInType.getTypes()
-            .stream()
-            .map(BuiltInType::getName)
-            .map(LookupElementBuilder::create)
-            .collect(Collectors.toList());
+    private static List<LookupElement> createBuiltinTypeBuildersWithSpace() {
+      return BuiltInType.getTypes()
+        .stream()
+        .map(BuiltInType::getName)
+        .map(PbCompletionContributor::lookupElementWithSpace)
+        .collect(Collectors.toList());
+    }
 
-    private static final List<LookupElement> BUILTIN_TYPE_BUILDERS_WITH_SPACE =
-        BuiltInType.getTypes()
-            .stream()
-            .map(BuiltInType::getName)
-            .map(PbCompletionContributor::lookupElementWithSpace)
-            .collect(Collectors.toList());
+    // TODO(volkman): don't suggest float, double, or bytes for map fields.
+    private static List<LookupElement> createBuiltinTypeBuilders() {
+      return BuiltInType.getTypes()
+        .stream()
+        .map(BuiltInType::getName)
+        .map(LookupElementBuilder::create)
+        .collect(Collectors.toList());
+    }
 
     @Override
     protected void addCompletions(
@@ -118,52 +120,57 @@ public class PbCompletionContributor extends CompletionContributor {
       // something more complex like a PbMapField, where the type is usually followed by
       // ", " or ">" instead.
       if (fieldParent instanceof PbSimpleField) {
-        result.addAllElements(BUILTIN_TYPE_BUILDERS_WITH_SPACE);
+        result.addAllElements(createBuiltinTypeBuildersWithSpace());
         return;
       }
-      result.addAllElements(BUILTIN_TYPE_BUILDERS);
+      result.addAllElements(createBuiltinTypeBuilders());
     }
   }
 
   /** Keywords that are valid to start a "TopLevelEntry". */
   private static class TopLevelStartKeywords extends CompletionProvider<CompletionParameters> {
 
-    private static final List<LookupElement> TOP_LEVEL_ENTRY_START =
-        Stream.of("message", "enum", "service", "extend", "import", "package", "option")
-            .map(PbCompletionContributor::lookupElementWithSpace)
-            .collect(Collectors.toList());
+    private static List<LookupElement> createTopLevelEntryStart() {
+      return Stream.of("message", "enum", "service", "extend", "import", "package", "option")
+          .map(PbCompletionContributor::lookupElementWithSpace)
+          .collect(Collectors.toList());
+    }
 
     @Override
     protected void addCompletions(
         @NotNull CompletionParameters completionParameters,
         @NotNull ProcessingContext processingContext,
         @NotNull CompletionResultSet result) {
-      result.addAllElements(TOP_LEVEL_ENTRY_START);
+      result.addAllElements(createTopLevelEntryStart());
     }
   }
 
   /** Keywords that are valid to start non-top-level statements like "MessageEntry". */
   private static class NonTopLevelKeywords extends CompletionProvider<CompletionParameters> {
 
-    private static final List<LookupElement> MESSAGE_ENTRY_START =
-        Stream.of("message", "enum", "extensions", "reserved", "extend", "option", "oneof")
-            .map(PbCompletionContributor::lookupElementWithSpace)
-            .collect(Collectors.toList());
+    private static List<LookupElement> createMessageEntryStart() {
+      return Stream.of("message", "enum", "extensions", "reserved", "extend", "option", "oneof")
+        .map(PbCompletionContributor::lookupElementWithSpace)
+        .collect(Collectors.toList());
+    }
     // Probably don't want to follow "map" with a space. We could fill in the "<>" later.
-    private static final List<LookupElement> MESSAGE_ENTRY_START_NO_SPACE =
-        Stream.of("map").map(LookupElementBuilder::create).collect(Collectors.toList());
+    private static List<LookupElement> createMessageEntryStartNoSpace() {
+      return Stream.of("map").map(LookupElementBuilder::create).collect(Collectors.toList());
+    }
 
-    private static final List<LookupElement> PROTO2_FIELD_LABELS =
-        Stream.of("optional", "required", "repeated")
-            .map(PbCompletionContributor::lookupElementWithSpace)
-            .collect(Collectors.toList());
+    private static List<LookupElement> createProto2FieldLabels() {
+      return Stream.of("optional", "required", "repeated")
+        .map(PbCompletionContributor::lookupElementWithSpace)
+        .collect(Collectors.toList());
+    }
 
-    private static final List<LookupElement> PROTO3_FIELD_LABELS =
-        Stream.of("optional", "repeated")
-            .map(PbCompletionContributor::lookupElementWithSpace)
-            .collect(Collectors.toList());
+    private static List<LookupElement> createProto3FieldLabels() {
+      return Stream.of("optional", "repeated")
+        .map(PbCompletionContributor::lookupElementWithSpace)
+        .collect(Collectors.toList());
+    }
 
-    private static final LookupElement GROUP_KEYWORD = lookupElementWithSpace("group");
+    private static LookupElement createGroupKeyWord() { return lookupElementWithSpace("group"); }
 
     @Override
     protected void addCompletions(
@@ -181,15 +188,15 @@ public class PbCompletionContributor extends CompletionContributor {
         PbStatementOwner statementOwner =
             PsiTreeUtil.getParentOfType(element, PbStatementOwner.class);
         if (statementOwner instanceof PbMessageType) {
-          result.addAllElements(MESSAGE_ENTRY_START);
-          result.addAllElements(MESSAGE_ENTRY_START_NO_SPACE);
+          result.addAllElements(createMessageEntryStart());
+          result.addAllElements(createMessageEntryStartNoSpace());
         }
         switch (syntaxLevel) {
           case PROTO2:
-            result.addAllElements(PROTO2_FIELD_LABELS);
+            result.addAllElements(createProto2FieldLabels());
             break;
           case PROTO3:
-            result.addAllElements(PROTO3_FIELD_LABELS);
+            result.addAllElements(createProto3FieldLabels());
             break;
         }
       } else {
@@ -199,7 +206,7 @@ public class PbCompletionContributor extends CompletionContributor {
               PsiTreeUtil.getChildrenOfTypeAsList(simpleField, PbElement.class);
           if (fieldElements.size() == 2) {
             if (fieldElements.get(0) instanceof PbFieldLabel) {
-              result.addElement(GROUP_KEYWORD);
+              result.addElement(createGroupKeyWord());
             }
           }
         }
@@ -210,8 +217,9 @@ public class PbCompletionContributor extends CompletionContributor {
   /** Boolean value keywords */
   private static class BooleanKeywords extends CompletionProvider<CompletionParameters> {
 
-    private static final List<LookupElement> BOOLEAN_VALUES =
-        Stream.of("true", "false").map(LookupElementBuilder::create).collect(Collectors.toList());
+    private static List<LookupElement> createBooleanValues() {
+      return Stream.of("true", "false").map(LookupElementBuilder::create).collect(Collectors.toList());
+    }
 
     @Override
     protected void addCompletions(
@@ -226,7 +234,7 @@ public class PbCompletionContributor extends CompletionContributor {
       }
       BuiltInType builtInType = option.getOptionName().getBuiltInType();
       if (builtInType != null && "bool".equals(builtInType.getName())) {
-        result.addAllElements(BOOLEAN_VALUES);
+        result.addAllElements(createBooleanValues());
       }
     }
   }
