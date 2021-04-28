@@ -383,17 +383,6 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     doHighlighting();
   }
 
-  /*@JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
-  public void testHtmlCssFile() throws Exception {
-    enableInspectionTool(new FlexCssStrayBraceInspection());
-    enableInspectionTool((LocalInspectionTool)Class.forName("com.intellij.psi.css.inspections.CssInvalidElementInspection").newInstance());
-    enableInspectionTool((LocalInspectionTool)Class.forName("com.intellij.psi.css.inspections.CssUnknownPropertyInspection").newInstance());
-    enableInspectionTool(
-      (LocalInspectionTool)Class.forName("com.intellij.psi.css.inspections.CssInvalidHtmlTagReferenceInspection").newInstance());
-
-    doTestFor(true, getTestName(false) + ".css", "HtmlFileReferringToCss.html");
-  }*/
-
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
   public void testHtmlCssFile1() {
     registerCommonCssInspections();
