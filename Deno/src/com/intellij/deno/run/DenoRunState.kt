@@ -16,6 +16,7 @@ import com.intellij.javascript.nodejs.NodeCommandLineUtil
 import com.intellij.javascript.nodejs.debug.NodeDebugCommandLineConfigurator
 import com.intellij.javascript.nodejs.debug.NodeLocalDebuggableRunProfileState
 import com.intellij.openapi.actionSystem.LangDataKeys
+import com.intellij.terminal.TerminalExecutionConsole
 import org.jetbrains.concurrency.Promise
 
 class DenoRunState(environment: ExecutionEnvironment, runConfiguration: DenoRunConfiguration) :
@@ -64,6 +65,9 @@ class DenoRunState(environment: ExecutionEnvironment, runConfiguration: DenoRunC
   private fun createConsole(processHandler: ProcessHandler): ConsoleView {
     val consoleBuilder = object : TextConsoleBuilderImpl(environment.project) {
       override fun createConsole(): ConsoleView {
+        if (NodeCommandLineUtil.shouldUseTerminalConsole(processHandler)) {
+          return TerminalExecutionConsole(project, processHandler)
+        }
         return object : ConsoleViewImpl(environment.project, scope, isViewer, true) {
           override fun getData(dataId: String): Any? {
             return super.getData(dataId) ?: if (LangDataKeys.RUN_PROFILE.`is`(dataId)) environment.runProfile else null
