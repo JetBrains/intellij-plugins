@@ -27,8 +27,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.UUID;
 
-import static com.intellij.protobuf.TestUtils.notNull;
-
 /** Unit tests for {@link SettingsFileResolveProvider}. */
 public class SettingsFileResolveProviderTest extends PbCodeInsightFixtureTestCase {
 
@@ -109,33 +107,5 @@ public class SettingsFileResolveProviderTest extends PbCodeInsightFixtureTestCas
         resolver.getChildEntries("com/foo/dir/", getProject()),
         ChildEntry.file("foo.proto"),
         ChildEntry.file("bar.proto"));
-  }
-
-  public void testCanFindFile() throws Exception {
-    File inside1 = new File(tempDir, "inside1");
-    File inside2 = new File(tempDir, "inside2");
-    File outside = new File(tempDir, "outside");
-
-    File inside1File = new File(inside1, "dir/foo.proto");
-    File inside2File = new File(inside2, "dir/foo.proto");
-    File outsideFile = new File(outside, "dir/foo.proto");
-
-    FileUtil.writeToFile(inside1File, "// foo in inside1");
-    FileUtil.writeToFile(inside2File, "// foo in inside2");
-    FileUtil.writeToFile(outsideFile, "// foo in outside");
-
-    PbProjectSettings settings = PbProjectSettings.getInstance(getProject());
-    settings.setImportPathEntries(
-        Arrays.asList(
-            new ImportPathEntry(VfsUtil.pathToUrl(inside1.getPath()), "com/foo"),
-            new ImportPathEntry(VfsUtil.pathToUrl(inside2.getPath()), "")));
-
-    FileResolveProvider resolver = new SettingsFileResolveProvider();
-    assertTrue(
-        resolver.canFindFile(getProject(), notNull(VfsUtil.findFileByIoFile(inside1File, false))));
-    assertTrue(
-        resolver.canFindFile(getProject(), notNull(VfsUtil.findFileByIoFile(inside2File, false))));
-    assertFalse(
-        resolver.canFindFile(getProject(), notNull(VfsUtil.findFileByIoFile(outsideFile, false))));
   }
 }

@@ -168,12 +168,6 @@
       implementation="com.intellij.protobuf.ide.template.PbTextLanguageContext"/>
   </extensions>
 
-  <projectListeners>
-    <listener
-      class="com.intellij.protobuf.ide.settings.ProjectSettingsConfiguratorManager$ProjectRootsListener"
-      topic="com.intellij.openapi.roots.ModuleRootListener"/>
-  </projectListeners>
-
   <actions>
     <action
       class="com.intellij.protobuf.ide.actions.InsertSchemaDirectiveAction"
