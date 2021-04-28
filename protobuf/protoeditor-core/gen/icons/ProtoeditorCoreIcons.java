@@ -1,4 +1,4 @@
-package com.intellij.protobuf.icons;
+package icons;
 
 import com.intellij.ui.IconManager;
 import org.jetbrains.annotations.NotNull;
