@@ -47,9 +47,8 @@ public final class PbPythonGotoDeclarationHandler implements GotoDeclarationHand
     return null;
   }
 
-  @Nullable
   @Override
-  public PsiElement[] getGotoDeclarationTargets(
+  public PsiElement @Nullable [] getGotoDeclarationTargets(
       @Nullable PsiElement sourceElement, int offset, Editor editor) {
     if (sourceElement == null) {
       return null;
@@ -65,7 +64,7 @@ public final class PbPythonGotoDeclarationHandler implements GotoDeclarationHand
     if (matches.isEmpty()) {
       return null;
     }
-    return matches.toArray(new PsiElement[0]);
+    return matches.toArray(PsiElement.EMPTY_ARRAY);
   }
 
   private static ImmutableCollection<? extends PbElement> pythonToProto(

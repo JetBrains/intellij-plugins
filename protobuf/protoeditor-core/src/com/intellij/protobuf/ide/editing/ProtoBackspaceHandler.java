@@ -20,11 +20,10 @@ import com.intellij.codeInsight.editorActions.BackspaceHandlerDelegate;
 import com.intellij.codeInsight.highlighting.BraceMatcher;
 import com.intellij.codeInsight.highlighting.BraceMatchingUtil;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.highlighter.HighlighterIterator;
-import com.intellij.psi.PsiFile;
 import com.intellij.protobuf.lang.psi.PbFile;
 import com.intellij.protobuf.lang.psi.PbTextFile;
+import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -52,7 +51,7 @@ public class ProtoBackspaceHandler extends BackspaceHandlerDelegate {
         return false;
       }
 
-      HighlighterIterator iterator = ((EditorEx) editor).getHighlighter().createIterator(offset);
+      HighlighterIterator iterator = editor.getHighlighter().createIterator(offset);
       BraceMatcher braceMatcher = BraceMatchingUtil.getBraceMatcher(file.getFileType(), iterator);
       if (!braceMatcher.isLBraceToken(iterator, chars, file.getFileType())
           && !braceMatcher.isRBraceToken(iterator, chars, file.getFileType())) {
@@ -63,7 +62,7 @@ public class ProtoBackspaceHandler extends BackspaceHandlerDelegate {
           BraceMatchingUtil.findRightmostRParen(
               iterator, iterator.getTokenType(), chars, file.getFileType());
       if (rparenOffset >= 0) {
-        iterator = ((EditorEx) editor).getHighlighter().createIterator(rparenOffset);
+        iterator = editor.getHighlighter().createIterator(rparenOffset);
         boolean matched = BraceMatchingUtil.matchBrace(chars, file.getFileType(), iterator, false);
         if (matched) {
           return false;

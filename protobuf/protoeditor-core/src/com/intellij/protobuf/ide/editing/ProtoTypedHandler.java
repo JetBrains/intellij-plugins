@@ -26,11 +26,13 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.RangeMarker;
 import com.intellij.openapi.editor.ScrollType;
-import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.editor.highlighter.HighlighterIterator;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
+import com.intellij.protobuf.lang.psi.PbAggregateValue;
+import com.intellij.protobuf.lang.psi.PbFile;
+import com.intellij.protobuf.lang.psi.PbTextFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -39,9 +41,6 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.text.CharArrayUtil;
-import com.intellij.protobuf.lang.psi.PbAggregateValue;
-import com.intellij.protobuf.lang.psi.PbFile;
-import com.intellij.protobuf.lang.psi.PbTextFile;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -89,7 +88,7 @@ public class ProtoTypedHandler extends TypedHandlerDelegate {
   // This is a copy of TypedHandler#handleAfterLParen(...), which is unfortunately private.
   private static void handleAfterLParen(Editor editor, FileType fileType, char lparenChar) {
     int offset = editor.getCaretModel().getOffset();
-    HighlighterIterator iterator = ((EditorEx) editor).getHighlighter().createIterator(offset);
+    HighlighterIterator iterator = editor.getHighlighter().createIterator(offset);
     boolean atEndOfDocument = offset == editor.getDocument().getTextLength();
 
     if (!atEndOfDocument) {
@@ -126,7 +125,7 @@ public class ProtoTypedHandler extends TypedHandlerDelegate {
       lparenOffset = 0;
     }
 
-    iterator = ((EditorEx) editor).getHighlighter().createIterator(lparenOffset);
+    iterator = editor.getHighlighter().createIterator(lparenOffset);
     boolean matched = BraceMatchingUtil.matchBrace(fileText, fileType, iterator, true, true);
 
     if (!matched) {
@@ -174,7 +173,7 @@ public class ProtoTypedHandler extends TypedHandlerDelegate {
         return;
       }
 
-      EditorHighlighter highlighter = ((EditorEx) editor).getHighlighter();
+      EditorHighlighter highlighter = editor.getHighlighter();
       HighlighterIterator iterator = highlighter.createIterator(offset);
 
       final FileType fileType = file.getFileType();

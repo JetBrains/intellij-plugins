@@ -21,12 +21,12 @@ import com.intellij.lang.folding.FoldingDescriptor;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiComment;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.protobuf.ide.folding.ProtoFoldingUtils.ConsecutiveElementGrouper;
 import com.intellij.protobuf.lang.psi.ProtoBlockBody;
 import com.intellij.protobuf.lang.psi.ProtoTokenTypes;
+import com.intellij.psi.PsiComment;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,9 +36,8 @@ import java.util.List;
 
 /** A {@link FoldingBuilderEx} implementation for protobuf and prototext files. */
 public class ProtoFoldingBuilder extends FoldingBuilderEx implements DumbAware {
-  @NotNull
   @Override
-  public FoldingDescriptor[] buildFoldRegions(
+  public FoldingDescriptor @NotNull [] buildFoldRegions(
       @NotNull PsiElement root, @NotNull Document document, boolean quick) {
 
     Collection<PsiElement> elements =
@@ -58,7 +57,7 @@ public class ProtoFoldingBuilder extends FoldingBuilderEx implements DumbAware {
     }
     ProtoFoldingUtils.addIfNotNull(descriptors, grouper.buildBlock());
 
-    return descriptors.toArray(new FoldingDescriptor[0]);
+    return descriptors.toArray(FoldingDescriptor.EMPTY);
   }
 
   @Nullable
