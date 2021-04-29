@@ -20,9 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author yole
- */
+
 public class P4RevertOperation extends VcsOperation {
   public String beforePath;
   public String afterPath;

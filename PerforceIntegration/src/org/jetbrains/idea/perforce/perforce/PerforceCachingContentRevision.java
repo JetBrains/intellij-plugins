@@ -20,9 +20,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-/**
- * @author yole
- */
+
 public final class PerforceCachingContentRevision extends PerforceContentRevision {
   private final FilePath myCurrentPath;   // for renames - path after rename
   private final boolean myOffline;

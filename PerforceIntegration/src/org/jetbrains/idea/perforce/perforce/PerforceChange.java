@@ -26,9 +26,7 @@ import org.jetbrains.idea.perforce.application.PerforceManager;
 
 import java.io.File;
 
-/**
- * @author yole
- */
+
 public class PerforceChange extends PerforceAbstractChange {
   private final static Logger LOG = Logger.getInstance(PerforceChange.class);
   private final String myDepotPath;

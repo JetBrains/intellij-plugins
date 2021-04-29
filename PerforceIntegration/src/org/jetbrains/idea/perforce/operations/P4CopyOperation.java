@@ -16,9 +16,7 @@ import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManage
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @author yole
- */
+
 public class P4CopyOperation extends VcsOperationOnPath {
   private String mySourcePath;
 

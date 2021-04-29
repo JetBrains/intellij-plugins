@@ -16,9 +16,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes;
 
 import javax.swing.*;
 
-/**
- * @author yole
- */
+
 public abstract class GherkinPsiElementBase extends ASTWrapperPsiElement implements GherkinPsiElement {
   private static final TokenSet TEXT_FILTER = TokenSet.create(GherkinTokenTypes.TEXT);
 

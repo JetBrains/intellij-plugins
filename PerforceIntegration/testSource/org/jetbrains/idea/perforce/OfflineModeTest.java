@@ -34,9 +34,6 @@ import java.util.regex.Pattern;
 
 import static com.intellij.testFramework.UsefulTestCase.*;
 
-/**
- * @author yole
- */
 @SuppressWarnings("SameParameterValue")
 public class OfflineModeTest extends PerforceTestCase {
   private static final Logger LOG = Logger.getInstance(OfflineModeTest.class);

@@ -8,9 +8,7 @@ import org.jetbrains.idea.perforce.perforce.PerforceSettings;
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * @author yole
- */
+
 public class PerforceCheckinOptionsPanel implements RefreshableOnComponent {
   private final JPanel myPanel;
   private final JCheckBox myChkRevertUnchanged;

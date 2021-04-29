@@ -36,9 +36,6 @@ import java.util.List;
 import static com.intellij.testFramework.UsefulTestCase.*;
 import static junit.framework.Assert.assertTrue;
 
-/**
- * @author yole
- */
 public class PerforceOperationsTest extends PerforceTestCase {
   @Override
   @Before

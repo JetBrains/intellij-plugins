@@ -48,9 +48,7 @@ import org.jetbrains.idea.perforce.perforce.PerforceSettings;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManager;
 
-/**
- * @author yole
- */
+
 public class RevisionGraphAction extends DumbAwareAction {
   private static final Logger LOG = Logger.getInstance(RevisionGraphAction.class);
 

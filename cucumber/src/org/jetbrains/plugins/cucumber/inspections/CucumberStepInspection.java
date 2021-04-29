@@ -1,3 +1,4 @@
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.inspections;
 
 import com.intellij.codeInspection.ProblemsHolder;
@@ -14,9 +15,7 @@ import org.jetbrains.plugins.cucumber.steps.reference.CucumberStepReference;
 
 import static org.jetbrains.plugins.cucumber.CucumberUtil.getCucumberStepReference;
 
-/**
- * @author yole
- */
+
 public class CucumberStepInspection extends GherkinInspection {
   @Override
   public boolean isEnabledByDefault() {

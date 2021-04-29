@@ -14,9 +14,7 @@ import org.jetbrains.idea.perforce.perforce.FStat;
 import org.jetbrains.idea.perforce.perforce.P4File;
 import org.jetbrains.idea.perforce.perforce.PerforceRunner;
 
-/**
- * @author yole
- */
+
 public class P4AddOperation extends VcsOperationOnPath {
   @SuppressWarnings("unused") // used by deserialization reflection
   public P4AddOperation() {

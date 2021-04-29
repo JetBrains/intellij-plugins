@@ -28,9 +28,7 @@ import org.jetbrains.idea.perforce.perforce.PerforceRunner;
 import org.jetbrains.idea.perforce.perforce.PerforceSettings;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 
-/**
- * @author yole
- */
+
 public class PerforceBinaryContentRevision extends PerforceContentRevision implements BinaryContentRevision {
   private byte[] myContent = null;
 

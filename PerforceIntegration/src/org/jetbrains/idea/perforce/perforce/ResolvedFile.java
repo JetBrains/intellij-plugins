@@ -20,9 +20,7 @@ import org.jetbrains.annotations.NonNls;
 
 import java.io.File;
 
-/**
- * @author yole
- */
+
 public class ResolvedFile {
   private final File myLocalFile;
   private final String myOperation;

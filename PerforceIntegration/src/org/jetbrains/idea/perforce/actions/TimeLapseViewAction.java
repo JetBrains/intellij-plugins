@@ -22,9 +22,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author yole
- */
+
 public class TimeLapseViewAction extends RevisionGraphAction {
   @Override @NonNls
   protected String getCommandName() {

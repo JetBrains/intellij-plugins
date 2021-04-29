@@ -12,9 +12,7 @@ import org.jetbrains.idea.perforce.perforce.PerforceRunner;
 import java.io.File;
 import java.util.Map;
 
-/**
- * @author yole
- */
+
 public class P4MoveToChangeListOperation extends VcsOperationOnPath {
   @SuppressWarnings("unused") // used by deserialization reflection
   public P4MoveToChangeListOperation() {

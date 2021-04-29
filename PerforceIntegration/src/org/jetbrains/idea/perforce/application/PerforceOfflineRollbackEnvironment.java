@@ -27,9 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author yole
- */
+
 public class PerforceOfflineRollbackEnvironment extends DefaultRollbackEnvironment {
   private final Logger LOG = Logger.getInstance(PerforceOfflineRollbackEnvironment.class);
 

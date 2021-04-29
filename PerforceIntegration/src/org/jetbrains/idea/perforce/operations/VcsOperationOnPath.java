@@ -8,9 +8,7 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author yole
- */
+
 public abstract class VcsOperationOnPath extends VcsOperation {
   protected String myPath;
 

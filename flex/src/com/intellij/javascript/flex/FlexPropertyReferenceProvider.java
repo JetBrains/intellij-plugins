@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex;
 
 import com.intellij.lang.javascript.psi.*;
@@ -18,9 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author yole
- */
+
 public final class FlexPropertyReferenceProvider extends PsiReferenceProvider {
   private static final Set<String> ourMethodsWithPropertyReferences =
     Set.of("findResourceBundleWithResource", "getString", "getObject", "getClass", "getStringArray", "getNumber", "getInt",

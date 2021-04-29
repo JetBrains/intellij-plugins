@@ -56,9 +56,6 @@ import java.util.Map;
 
 import static com.intellij.testFramework.UsefulTestCase.*;
 
-/**
- * @author yole
- */
 public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
   private static final Logger LOG = Logger.getInstance(PerforceTestCase.class);
 

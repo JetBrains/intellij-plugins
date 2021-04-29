@@ -17,9 +17,7 @@ import org.jetbrains.idea.perforce.perforce.PerforceRunner;
 
 import java.io.File;
 
-/**
- * @author yole
- */
+
 public class P4DeleteOperation extends VcsOperationOnPath {
   @SuppressWarnings("unused") // used by deserialization reflection
   public P4DeleteOperation() {

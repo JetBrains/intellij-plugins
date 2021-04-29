@@ -25,9 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * @author yole
- */
+
 public class PerforceOfflineChangeProvider implements ChangeProvider {
   private final Project myProject;
 

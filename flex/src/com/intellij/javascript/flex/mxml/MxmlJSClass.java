@@ -1,3 +1,4 @@
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.mxml;
 
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
@@ -33,9 +34,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author yole
- */
+
 public class MxmlJSClass extends XmlBackedJSClassImpl {
   @NonNls public static final String XML_TAG_NAME = "XML";
   @NonNls public static final String XMLLIST_TAG_NAME = "XMLList";

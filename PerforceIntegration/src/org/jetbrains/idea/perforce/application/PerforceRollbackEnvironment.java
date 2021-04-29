@@ -27,9 +27,7 @@ import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManage
 
 import java.util.*;
 
-/**
- * @author yole
- */
+
 public class PerforceRollbackEnvironment implements RollbackEnvironment {
   private static final Logger LOG = Logger.getInstance(PerforceRollbackEnvironment.class);
 

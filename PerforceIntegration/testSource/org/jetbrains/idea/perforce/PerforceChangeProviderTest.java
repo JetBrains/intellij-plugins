@@ -38,9 +38,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-/**
- * @author yole
- */
 public class PerforceChangeProviderTest extends PerforceTestCase {
   private DuringChangeListManagerUpdateTestScheme myScheme;
 

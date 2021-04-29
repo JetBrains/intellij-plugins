@@ -29,9 +29,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author yole
- */
+
 public final class PerforceOutputMessageParser extends OutputMessageParser {
   private static final Logger LOG = Logger.getInstance(PerforceOutputMessageParser.class);
   @NonNls private static final String CHANGE_PREFIX = "change";

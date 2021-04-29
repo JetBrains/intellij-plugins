@@ -23,9 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author yole
-*/
 public class CommandArguments {
   private final List<String> myArguments = new ArrayList<>();
 

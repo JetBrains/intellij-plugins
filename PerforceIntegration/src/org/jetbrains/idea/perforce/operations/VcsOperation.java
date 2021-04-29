@@ -21,9 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author yole
- */
+
 public abstract class VcsOperation implements Cloneable {
   protected String myChangeList;
 

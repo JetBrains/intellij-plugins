@@ -19,9 +19,7 @@ import org.jetbrains.idea.perforce.perforce.P4File;
 import org.jetbrains.idea.perforce.perforce.PerforceCachingContentRevision;
 import org.jetbrains.idea.perforce.perforce.PerforceRunner;
 
-/**
- * @author yole
- */
+
 public class P4EditOperation extends VcsOperationOnPath {
   private static final Logger LOG = Logger.getInstance(P4EditOperation.class);
   @NonNls private static final String CANNOT_FIND_ERROR = "the system cannot find";

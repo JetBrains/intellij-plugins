@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.completion;
 
 import com.intellij.codeInsight.lookup.LookupElement;
@@ -54,9 +54,7 @@ import java.util.*;
 import static com.intellij.lang.javascript.psi.resolve.AccessibilityProcessingHandler.processWithStatic;
 import static com.intellij.lang.javascript.psi.types.JSNamedType.createType;
 
-/**
- * @author yole
- */
+
 public class ActionScriptSmartCompletionContributor extends JSSmartCompletionContributor {
   @Nullable
   @Override

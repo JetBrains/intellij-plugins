@@ -28,9 +28,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author yole
- */
+
 public class P4MoveRenameOperation extends VcsOperation {
   private static final Logger LOG = Logger.getInstance(P4MoveRenameOperation.class);
   private static final int CYCLE = 3;

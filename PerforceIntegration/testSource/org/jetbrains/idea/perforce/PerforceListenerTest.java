@@ -8,9 +8,6 @@ import org.junit.Test;
 import static com.intellij.testFramework.UsefulTestCase.assertEmpty;
 import static junit.framework.Assert.assertEquals;
 
-/**
- * @author yole
- */
 public class PerforceListenerTest extends PerforceTestCase {
   @Test
   public void testCopyAddedFile() {
