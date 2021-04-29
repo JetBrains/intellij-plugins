@@ -66,9 +66,9 @@ public class DefaultConfigurator implements ProjectSettingsConfigurator {
       return null;
     }
     VirtualFile descriptorFile = VfsUtil.findFileByURL(descriptorUrl);
-    if (descriptorFile == null) {
+    if (descriptorFile == null || descriptorFile.getParent() == null) {
       return null;
     }
-    return new ImportPathEntry(descriptorFile.getParent().getParent().getParent().getUrl(), null);
+    return new ImportPathEntry(descriptorFile.getParent().getUrl(), null);
   }
 }
