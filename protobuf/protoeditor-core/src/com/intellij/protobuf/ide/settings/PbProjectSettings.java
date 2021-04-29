@@ -56,13 +56,13 @@ public class PbProjectSettings implements PersistentStateComponent<PbProjectSett
     // Fire off an event to invalidate caches. Currently, we trigger a "project roots changed" event
     // which is not totally correct.
     // TODO(volkman): is there some better way to do this?
-    if (!project.isDisposed()) {
-      ApplicationManager.getApplication()
-          .runWriteAction(
-              () ->
-                  ProjectRootManagerEx.getInstanceEx(project)
-                      .makeRootsChange(() -> {}, false, true));
-    }
+    //if (!project.isDisposed()) {
+    //  ApplicationManager.getApplication()
+    //      .runWriteAction(
+    //          () ->
+    //              ProjectRootManagerEx.getInstanceEx(project)
+    //                  .makeRootsChange(() -> {}, false, true));
+    //}
   }
 
   @Nullable
