@@ -7,6 +7,7 @@
   <depends>com.intellij.modules.platform</depends>
   <depends>com.intellij.modules.lang</depends>
 
+  <depends config-file="golang_optional.xml" optional="true">org.jetbrains.plugins.go</depends>
   <depends config-file="python_optional.xml" optional="true">com.intellij.modules.python</depends>
   <depends config-file="java_optional.xml" optional="true">com.intellij.java</depends>
 

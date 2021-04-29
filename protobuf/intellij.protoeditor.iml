@@ -12,5 +12,6 @@
     <orderEntry type="module" module-name="intellij.protoeditor.core" />
     <orderEntry type="module" module-name="intellij.protoeditor.jvm" scope="PROVIDED" />
     <orderEntry type="module" module-name="intellij.protoeditor.python" scope="PROVIDED" />
+    <orderEntry type="module" module-name="intellij.protoeditor.go" scope="PROVIDED" />
   </component>
 </module>

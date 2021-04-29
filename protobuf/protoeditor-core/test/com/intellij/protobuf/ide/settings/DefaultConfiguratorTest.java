@@ -109,7 +109,7 @@ public class DefaultConfiguratorTest extends HeavyPlatformTestCase {
         "google/protobuf/descriptor.proto");
   }
 
-  public void testBuiltInDescriptor() throws IOException {
+  public void testBuiltInDescriptor() throws IOException { // fixme disable test?
     ImportPathEntry includeEntry = DefaultConfigurator.getBuiltInIncludeEntry();
     assertNotNull(includeEntry);
     assertEquals("", includeEntry.getPrefix());
