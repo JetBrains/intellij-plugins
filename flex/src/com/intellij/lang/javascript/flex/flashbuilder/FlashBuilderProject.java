@@ -1,19 +1,17 @@
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.flashbuilder;
 
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.openapi.util.Pair;
-import gnu.trove.THashMap;
-import gnu.trove.THashSet;
 
 import java.util.*;
 
 public class FlashBuilderProject {
-
   private String myName = FlexBundle.message("unnamed");
-  private final Map<String, String> myLinkedResources = new THashMap<>();
-  private final Set<String> myUsedPathVariables = new THashSet<>();
+  private final Map<String, String> myLinkedResources = new HashMap<>();
+  private final Set<String> myUsedPathVariables = new HashSet<>();
   private String myProjectRootPath = "";
   private final Collection<String> mySourcePaths = new ArrayList<>();
   private String myOutputFolderPath = "";

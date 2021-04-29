@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.flashbuilder;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -12,14 +12,10 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
 import com.intellij.util.PathUtil;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public final class FilesToPackageUtil {
   private static final Logger LOG = Logger.getInstance(FilesToPackageUtil.class.getName());
@@ -41,7 +37,7 @@ public final class FilesToPackageUtil {
   private static void initNodes(final VirtualFile rootFolder,
                                 final FolderNode rootFolderNode,
                                 final Collection<String> pathsExcludedFromPackaging) {
-    final Map<VirtualFile, Node> map = new THashMap<>();
+    final Map<VirtualFile, Node> map = new HashMap<>();
     map.put(rootFolder, rootFolderNode);
 
     VfsUtilCore.visitChildrenRecursively(rootFolder, new VirtualFileVisitor<Void>() {

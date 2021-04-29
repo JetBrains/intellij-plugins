@@ -1,3 +1,4 @@
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.resolve;
 
 import com.intellij.lang.actionscript.psi.ActionScriptPsiImplUtil;
@@ -12,10 +13,10 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveResult;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -39,7 +40,7 @@ public class ActionScriptAccessibilityProcessingHandler extends AccessibilityPro
       if (namespace != null) {
         String ns = skipNsResolving ? namespace.getText() : ActionScriptPsiImplUtil.calcNamespaceReference(place);
         if (ns != null) {
-          openedNses = new THashMap<>(1);
+          openedNses = new HashMap<>(1);
           openedNses.put(ns, null);
           defaultNsIsNotAllowed = true;
         }

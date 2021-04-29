@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.osgi.bnd.imp;
 
 import aQute.bnd.build.Container;
@@ -40,8 +40,8 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.pom.java.LanguageLevel;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.PathUtil;
+import com.intellij.util.containers.CollectionFactory;
 import com.intellij.util.containers.ContainerUtil;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.java.compiler.JpsJavaCompilerOptions;
@@ -97,7 +97,7 @@ public final class BndProjectImporter {
   private final com.intellij.openapi.project.Project myProject;
   private final Workspace myWorkspace;
   private final Collection<? extends Project> myProjects;
-  private final Map<String, String> mySourcesMap = new THashMap<>(FileUtil.PATH_HASHING_STRATEGY);
+  private final Map<String, String> mySourcesMap = CollectionFactory.createFilePathMap();
 
   public BndProjectImporter(@NotNull com.intellij.openapi.project.Project project,
                             @NotNull Workspace workspace,

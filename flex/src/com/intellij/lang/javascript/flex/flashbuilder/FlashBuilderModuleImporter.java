@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.flashbuilder;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -36,8 +36,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.ContainerUtil;
-import gnu.trove.THashMap;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -73,7 +71,7 @@ public class FlashBuilderModuleImporter {
     myAllFBProjects = allFBProjects;
     mySdkFinder = sdkFinder;
 
-    myPathVariables = new THashSet<>();
+    myPathVariables = new HashSet<>();
     for (final FlashBuilderProject flashBuilderProject : allFBProjects) {
       myPathVariables.addAll(flashBuilderProject.getUsedPathVariables());
     }
@@ -99,7 +97,7 @@ public class FlashBuilderModuleImporter {
     mainBC.setPureAs(fbProject.isPureActionScript());
     mainBC.setOutputType(fbProject.getOutputType());
 
-    final Map<String, String> compilerOptions = new THashMap<>();
+    final Map<String, String> compilerOptions = new HashMap<>();
 
     if (fbProject.getOutputType() == OutputType.Application) {
       mainBC.setMainClass(fbProject.getMainAppClassName());
@@ -669,7 +667,7 @@ public class FlashBuilderModuleImporter {
   }
 
   private static Map<String, String> loadEclipsePathVariables(final String workspacePath) {
-    final Map<String, String> eclipsePathVariables = new THashMap<>();
+    final Map<String, String> eclipsePathVariables = new HashMap<>();
     final VirtualFile prefsFile = LocalFileSystem.getInstance().findFileByPath(workspacePath + CORE_RESOURCES_PREFS_REL_PATH);
     if (prefsFile == null) return eclipsePathVariables;
 

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.uml;
 
 import com.intellij.diagram.extras.providers.ImplementationsProvider;
@@ -8,18 +8,18 @@ import com.intellij.lang.javascript.search.JSClassSearch;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.Processor;
-import gnu.trove.THashSet;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 
 public class FlashUmlImplementationsProvider extends ImplementationsProvider<Object> {
 
   @Override
   public Object[] getElements(Object element, Project project) {
     JSClass clazz = (JSClass)element;
-    final Collection<PsiElement> inheritors = Collections.synchronizedSet(new THashSet<>());
+    final Collection<PsiElement> inheritors = Collections.synchronizedSet(new HashSet<>());
 
     final Processor<JSClass> p = aClass -> {
       final PsiElement navigationElement = aClass.getNavigationElement();

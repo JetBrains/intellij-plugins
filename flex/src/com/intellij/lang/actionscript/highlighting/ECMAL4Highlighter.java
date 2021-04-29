@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.actionscript.highlighting;
 
 import com.intellij.lang.javascript.JSDocElementType;
@@ -13,9 +13,9 @@ import com.intellij.psi.StringEscapesTokenTypes;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.xml.XmlTokenType;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -24,10 +24,9 @@ import java.util.Map;
  * @author Rustam Vishnyakov
  */
 public class ECMAL4Highlighter extends JSHighlighter {
-  private static final Map<IElementType, TextAttributesKey> ourAttributeMap = new THashMap<>();
-  private static final Map<IElementType, TextAttributesKey> ourDocAttributeMap = new THashMap<>();
-  private static final Map<TextAttributesKey, TextAttributesKey> ourJsToEcmaKeyMap =
-    new THashMap<>();
+  private static final Map<IElementType, TextAttributesKey> ourAttributeMap = new HashMap<>();
+  private static final Map<IElementType, TextAttributesKey> ourDocAttributeMap = new HashMap<>();
+  private static final Map<TextAttributesKey, TextAttributesKey> ourJsToEcmaKeyMap = new HashMap<>();
 
   public static final TextAttributesKey ECMAL4_KEYWORD = TextAttributesKey.createTextAttributesKey(
     "ECMAL4.KEYWORD", JSHighlighter.JS_KEYWORD

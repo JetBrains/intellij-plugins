@@ -1,3 +1,4 @@
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.inspections.actionscript;
 
 import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector;
@@ -24,7 +25,6 @@ import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlText;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -69,8 +69,8 @@ public class JSFieldCanBeLocalInspection extends JSInspection {
       final SortedMap<JSFunction, Collection<PsiReference>> functionToReferences =
         new TreeMap<>(Comparator.comparingInt(f -> f.getTextRange().getStartOffset()));
 
-      final Map<JSFunction, PsiElement> functionToFirstReadUsage = new THashMap<>();
-      final Map<JSFunction, PsiElement> functionToFirstWriteUsage = new THashMap<>();
+      final Map<JSFunction, PsiElement> functionToFirstReadUsage = new HashMap<>();
+      final Map<JSFunction, PsiElement> functionToFirstWriteUsage = new HashMap<>();
 
       final PsiFile topLevelFile = InjectedLanguageManager.getInstance(field.getProject()).getTopLevelFile(field);
 

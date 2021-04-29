@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.execution.CantRunException;
@@ -70,7 +70,6 @@ import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
 import com.intellij.xdebugger.frame.XSuspendContext;
 import com.intellij.xdebugger.frame.XValueMarkerProvider;
 import com.intellij.xdebugger.stepping.XSmartStepIntoHandler;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -478,7 +477,7 @@ public class FlexDebugProcess extends XDebugProcess {
     return new FlexDebuggerEditorsProvider();
   }
 
-  private static final Set<String> ourAlreadyMadeExecutable = new THashSet<>();
+  private static final Set<String> ourAlreadyMadeExecutable = new HashSet<>();
 
   private static synchronized void ensureExecutable(String path) {
     if (!SystemInfo.isWindows && !ourAlreadyMadeExecutable.contains(path)) {
@@ -816,7 +815,7 @@ public class FlexDebugProcess extends XDebugProcess {
 
     // [3]
     final GlobalSearchScope bcScopeBase = FlexUtils.getModuleWithDependenciesAndLibrariesScope(myModule, myBC, isFlexUnit());
-    final GlobalSearchScope bcScope = uniteWithLibrarySourcesOfBC(bcScopeBase, myModule, myBC, new THashSet<>());
+    final GlobalSearchScope bcScope = uniteWithLibrarySourcesOfBC(bcScopeBase, myModule, myBC, new HashSet<>());
 
     Collection<VirtualFile> files = getFilesByName(getSession().getProject(), bcScope, fileName);
 
@@ -908,7 +907,7 @@ public class FlexDebugProcess extends XDebugProcess {
                                                                final Collection<FlexBuildConfiguration> processedConfigurations) {
     if (!processedConfigurations.add(bc)) return scope;
 
-    final Collection<VirtualFile> libSourceRoots = new THashSet<>();
+    final Collection<VirtualFile> libSourceRoots = new HashSet<>();
 
     final Sdk sdk = bc.getSdk();
     if (sdk != null) {
