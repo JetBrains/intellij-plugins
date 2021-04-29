@@ -32,12 +32,11 @@ import java.util.Collections;
  *
  * <p>The descriptor is set to <code>google/protobuf/descriptor.proto</code>.
  */
-public class DefaultConfigurator implements ProjectSettingsConfigurator {
+public final class DefaultConfigurator implements ProjectSettingsConfigurator {
   private static final String DESCRIPTOR = "google/protobuf/descriptor.proto";
 
-  @Nullable
   @Override
-  public PbProjectSettings configure(Project project, PbProjectSettings settings) {
+  public @NotNull PbProjectSettings configure(Project project, PbProjectSettings settings) {
     settings.setDescriptorPath(DESCRIPTOR);
     settings.getImportPathEntries().clear();
     VirtualFile[] roots = ProjectRootManager.getInstance(project).getContentSourceRoots();
@@ -61,7 +60,7 @@ public class DefaultConfigurator implements ProjectSettingsConfigurator {
 
   @Nullable
   static ImportPathEntry getBuiltInIncludeEntry() {
-    URL descriptorUrl = DefaultConfigurator.class.getResource("/protobuf/descriptor.proto");
+    URL descriptorUrl = DefaultConfigurator.class.getClassLoader().getResource("protobuf/descriptor.proto");
     if (descriptorUrl == null) {
       return null;
     }
