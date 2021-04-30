@@ -62,11 +62,6 @@
       <option name="url" value="https://buildserver.labs.intellij.net/guestAuth/repository/download/ijplatform_master_Idea_Installers/85925678:id/maven-artifacts/" />
     </remote-repository>
     <remote-repository>
-      <option name="id" value="maven" />
-      <option name="name" value="maven" />
-      <option name="url" value="https://cache-redirector.jetbrains.com/jetbrains.bintray.com/intellij-plugin-service" />
-    </remote-repository>
-    <remote-repository>
       <option name="id" value="maven2" />
       <option name="name" value="maven2" />
       <option name="url" value="https://cache-redirector.jetbrains.com/repo1.maven.org/maven2" />
