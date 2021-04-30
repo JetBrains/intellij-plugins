@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.maven;
 
 import com.intellij.flex.model.bc.*;
@@ -28,7 +28,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
-import gnu.trove.THashMap;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -179,7 +178,7 @@ public class Flexmojos3Configurator {
     setupSdk(mainBC);
 
     final String locales = StringUtil.join(myCompiledLocales, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
-    final Map<String, String> options = new THashMap<>(mainBC.getCompilerOptions().getAllOptions());
+    final Map<String, String> options = new HashMap<>(mainBC.getCompilerOptions().getAllOptions());
     options.put("compiler.locale", locales);
     mainBC.getCompilerOptions().setAllOptions(options);
 

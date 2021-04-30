@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex;
 
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
@@ -14,15 +14,11 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.text.StringTokenizer;
 import com.intellij.xml.util.XmlTagUtil;
-import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 // this class is not a reference contributor any more, it is kept for MXML Design Preview plugin compatibility
 public final class FlexReferenceContributor {
@@ -41,7 +37,7 @@ public final class FlexReferenceContributor {
 
     @NotNull
     private static Map<String, XmlTag> calcStates(PsiFile file) {
-      final Map<String, XmlTag> tags = new THashMap<>();
+      final Map<String, XmlTag> tags = new HashMap<>();
 
       file.accept(new XmlRecursiveElementVisitor() {
         @Override
