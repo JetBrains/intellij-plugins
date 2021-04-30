@@ -37,11 +37,6 @@
       <option name="url" value="https://cache-redirector.jetbrains.com/www.myget.org/F/rd-snapshots/maven" />
     </remote-repository>
     <remote-repository>
-      <option name="id" value="maven" />
-      <option name="name" value="maven" />
-      <option name="url" value="https://cache-redirector.jetbrains.com/jetbrains.bintray.com/intellij-plugin-service" />
-    </remote-repository>
-    <remote-repository>
       <option name="id" value="maven2" />
       <option name="name" value="maven2" />
       <option name="url" value="https://cache-redirector.jetbrains.com/repo1.maven.org/maven2" />
