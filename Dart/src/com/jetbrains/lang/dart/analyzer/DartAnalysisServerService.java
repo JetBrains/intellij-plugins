@@ -2,7 +2,6 @@
 package com.jetbrains.lang.dart.analyzer;
 
 import com.google.common.collect.EvictingQueue;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.Uninterruptibles;
 import com.google.dart.server.*;
@@ -2006,7 +2005,7 @@ public final class DartAnalysisServerService implements Disposable {
       try {
         startedServer.start();
         server_setSubscriptions(startedServer);
-        startedServer.completion_setSubscriptions(ImmutableList.of(CompletionService.AVAILABLE_SUGGESTION_SETS));
+        startedServer.completion_setSubscriptions(List.of(CompletionService.AVAILABLE_SUGGESTION_SETS));
 
         if (!myInitializationOnServerStartupDone) {
           myInitializationOnServerStartupDone = true;
