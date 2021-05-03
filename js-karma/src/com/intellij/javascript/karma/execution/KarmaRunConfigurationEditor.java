@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.configuration.EnvironmentVariablesTextFieldWithBrowseButton;
@@ -89,7 +89,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     RawCommandLineEditor editor = new RawCommandLineEditor();
     JTextField field = editor.getTextField();
     if (field instanceof ExpandableTextField) {
-      field.putClientProperty("monospaced", false);
+      ((ExpandableTextField)field).setMonospaced(false);
     }
     if (field instanceof ComponentWithEmptyText && emptyText != null) {
       ((ComponentWithEmptyText)field).getEmptyText().setText(emptyText);
