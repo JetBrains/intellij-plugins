@@ -107,7 +107,7 @@ class Angular2ExtractedComponentBuilder(val sourceFile: PsiFile, val selectionSt
           var grandChild = element.firstChild
           while (grandChild != null) {
             if (grandChild is Angular2Interpolation) {
-              handleEmbeddedExpression(grandChild)
+              pseudoVisitTextInterpolation(grandChild)
               return
             }
             grandChild = grandChild.nextSibling
@@ -198,6 +198,12 @@ class Angular2ExtractedComponentBuilder(val sourceFile: PsiFile, val selectionSt
         attributes.add(Attr(name = name, jsType = jsType, assignedValue = bananaBoxBinding.value!!,
                             attributeType = Angular2AttributeType.BANANA_BOX_BINDING))
         replacements.add(replacement)
+      }
+
+      fun pseudoVisitTextInterpolation(interpolation: Angular2Interpolation) {
+        if (!extractedRange.contains(interpolation.textRange)) return
+
+        handleEmbeddedExpression(interpolation)
       }
 
       fun handleEmbeddedExpression(embeddedExpression: Angular2EmbeddedExpression) {
