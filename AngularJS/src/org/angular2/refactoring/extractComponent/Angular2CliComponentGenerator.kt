@@ -13,6 +13,7 @@ import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter
 import com.intellij.javascript.nodejs.util.NodePackage
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
@@ -98,35 +99,37 @@ class Angular2CliComponentGeneratorImpl(val project: Project) : Angular2CliCompo
     val psiManager = PsiManager.getInstance(project)
     val cliDirectory = psiManager.findDirectory(cliDir)!!
 
-    for (command in commands) {
-      when (command.kind) {
-        GenerateCommandKind.WRITE -> {
-          val mkDirs = CreateFileAction.MkDirs(command.path, cliDirectory)
+    CommandProcessor.getInstance().runUndoTransparentAction {
+      for (command in commands) {
+        when (command.kind) {
+          GenerateCommandKind.WRITE -> {
+            val mkDirs = CreateFileAction.MkDirs(command.path, cliDirectory)
 
-          val file = mkDirs.directory.findFile(mkDirs.newName) ?: mkDirs.directory.createFile(mkDirs.newName)
-          val document = PsiDocumentManager.getInstance(project).getDocument(file)!!
-          document.setText(command.content!!)
-          PsiDocumentManager.getInstance(project).commitDocument(document)
+            val file = mkDirs.directory.findFile(mkDirs.newName) ?: mkDirs.directory.createFile(mkDirs.newName)
+            val document = PsiDocumentManager.getInstance(project).getDocument(file)!!
+            document.setText(StringUtil.convertLineSeparators(command.content!!))
+            PsiDocumentManager.getInstance(project).commitDocument(document)
 
-          affectedPaths.add(command.path)
-        }
-        GenerateCommandKind.DELETE -> {
-          val file = psiManager.findFile(cliDir.findFileByRelativePath(command.path)!!)!!
-          file.delete()
-
-          affectedPaths.add(command.path)
-        }
-        GenerateCommandKind.RENAME -> {
-          val fromFile = cliDir.findFileByRelativePath(command.path)!!
-          val mkDirs = CreateFileAction.MkDirs(command.to!!, cliDirectory)
-          if (mkDirs.directory.virtualFile != fromFile.parent) {
-            fromFile.rename(psiManager, ".angular_cli_ij_temp")
-            fromFile.move(psiManager, mkDirs.directory.virtualFile)
+            affectedPaths.add(command.path)
           }
-          fromFile.rename(psiManager, mkDirs.newName)
+          GenerateCommandKind.DELETE -> {
+            val file = psiManager.findFile(cliDir.findFileByRelativePath(command.path)!!)!!
+            file.delete()
 
-          affectedPaths.add(command.path)
-          affectedPaths.add(command.to!!)
+            affectedPaths.add(command.path)
+          }
+          GenerateCommandKind.RENAME -> {
+            val fromFile = cliDir.findFileByRelativePath(command.path)!!
+            val mkDirs = CreateFileAction.MkDirs(command.to!!, cliDirectory)
+            if (mkDirs.directory.virtualFile != fromFile.parent) {
+              fromFile.rename(psiManager, ".angular_cli_ij_temp")
+              fromFile.move(psiManager, mkDirs.directory.virtualFile)
+            }
+            fromFile.rename(psiManager, mkDirs.newName)
+
+            affectedPaths.add(command.path)
+            affectedPaths.add(command.to!!)
+          }
         }
       }
     }
