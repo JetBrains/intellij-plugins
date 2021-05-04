@@ -21,7 +21,6 @@ import com.intellij.usages.*;
 import com.intellij.util.SmartList;
 import com.intellij.util.ui.JBUI;
 import com.intellij.xml.util.XmlStringUtil;
-import com.intellij.xml.util.XmlTagUtilBase;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
@@ -71,7 +70,7 @@ final class DartRenameDialog extends ServerRefactoringDialog<ServerRenameRefacto
     gbConstraints.fill = GridBagConstraints.BOTH;
     JLabel nameLabel = new JLabel();
     panel.add(nameLabel, gbConstraints);
-    nameLabel.setText(XmlStringUtil.wrapInHtml(XmlTagUtilBase.escapeString(getLabelText(), false)));
+    nameLabel.setText(XmlStringUtil.wrapInHtml(XmlStringUtil.escapeString(getLabelText(), false)));
 
     gbConstraints.insets = JBUI.insetsBottom(4);
     gbConstraints.gridwidth = 1;
