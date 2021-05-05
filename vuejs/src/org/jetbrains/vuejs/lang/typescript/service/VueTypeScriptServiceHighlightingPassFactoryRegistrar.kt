@@ -12,9 +12,9 @@ import org.jetbrains.vuejs.lang.html.VueFileType
 
 internal class VueTypeScriptServiceHighlightingPassFactoryRegistrar : TextEditorHighlightingPassFactoryRegistrar {
   override fun registerHighlightingPassFactory(registrar: TextEditorHighlightingPassRegistrar, project: Project) {
-    class MyFactory : JSLanguageServiceHighlightingPassFactory(project, registrar) {
+    class MyFactory : JSLanguageServiceHighlightingPassFactory() {
       override fun getService(file: PsiFile): JSLanguageService? {
-        val service = TypeScriptServiceHighlightingPassFactory.getService(myProject, file)
+        val service = TypeScriptServiceHighlightingPassFactory.getService(file.project, file)
         return if (service is VueTypeScriptService) service else null
       }
 
@@ -22,6 +22,8 @@ internal class VueTypeScriptServiceHighlightingPassFactoryRegistrar : TextEditor
         return file.fileType == VueFileType.INSTANCE
       }
     }
-    MyFactory()
+
+    val factory = MyFactory()
+    JSLanguageServiceHighlightingPassFactory.registerHighlightingPassFactory(registrar, factory)
   }
 }

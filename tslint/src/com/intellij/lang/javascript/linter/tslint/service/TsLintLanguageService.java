@@ -2,7 +2,6 @@
 package com.intellij.lang.javascript.linter.tslint.service;
 
 import com.google.gson.*;
-import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.linter.AutodetectLinterPackage;
 import com.intellij.lang.javascript.linter.ExtendedLinterState;
@@ -220,7 +219,7 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
     }
 
     @Override
-    protected void addNodeProcessAdditionalArguments(@NotNull GeneralCommandLine commandLine) {
+    protected void addNodeProcessAdditionalArguments(@NotNull JSCommandLineBuilder commandLine) {
       super.addNodeProcessAdditionalArguments(commandLine);
       if (myServiceName != null) {
         JSLanguageServiceUtil.addNodeProcessArgumentsFromRegistry(commandLine, myServiceName,
