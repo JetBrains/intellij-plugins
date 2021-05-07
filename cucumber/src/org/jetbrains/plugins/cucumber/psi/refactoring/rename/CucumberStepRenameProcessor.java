@@ -10,6 +10,7 @@ import com.intellij.refactoring.listeners.RefactoringElementListener;
 import com.intellij.refactoring.rename.RenamePsiElementProcessor;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.containers.Stack;
 import org.intellij.lang.regexp.RegExpCapability;
 import org.intellij.lang.regexp.RegExpLexer;
 import org.intellij.lang.regexp.RegExpTT;
