@@ -18,10 +18,11 @@ package com.intellij.protobuf.lang.gotobyname;
 import com.intellij.navigation.ChooseByNameContributor;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.stubs.StubIndex;
 import com.intellij.protobuf.lang.psi.PbNamedElement;
 import com.intellij.protobuf.lang.stub.index.QualifiedNameIndex;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.stubs.StubIndex;
+import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -29,18 +30,16 @@ import java.util.Collection;
 /** {@link ChooseByNameContributor#SYMBOL_EP_NAME} extension for protobuf elements. */
 public class PbGotoSymbolContributor implements ChooseByNameContributor {
 
-  @NotNull
   @Override
-  public String[] getNames(Project project, boolean includeNonProjectItems) {
+  public String @NotNull[] getNames(Project project, boolean includeNonProjectItems) {
     // NOTE: this doesn't cover fields, because it is based on a stub index and we do not
     // make stubs for fields.
     Collection<String> names = StubIndex.getInstance().getAllKeys(QualifiedNameIndex.KEY, project);
-    return names.toArray(new String[0]);
+    return ArrayUtil.toStringArray(names);
   }
 
-  @NotNull
   @Override
-  public NavigationItem[] getItemsByName(
+  public NavigationItem @NotNull [] getItemsByName(
       String name, String pattern, Project project, boolean includeNonProjectItems) {
     GlobalSearchScope scope =
         includeNonProjectItems
@@ -48,6 +47,6 @@ public class PbGotoSymbolContributor implements ChooseByNameContributor {
             : GlobalSearchScope.projectScope(project);
     Collection<PbNamedElement> results =
         StubIndex.getElements(QualifiedNameIndex.KEY, name, project, scope, PbNamedElement.class);
-    return results.toArray(new NavigationItem[0]);
+    return results.toArray(NavigationItem.EMPTY_NAVIGATION_ITEM_ARRAY);
   }
 }

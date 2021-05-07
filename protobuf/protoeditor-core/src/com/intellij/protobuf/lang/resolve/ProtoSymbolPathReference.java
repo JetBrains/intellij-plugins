@@ -21,6 +21,8 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.protobuf.lang.psi.*;
+import com.intellij.protobuf.lang.psi.util.PbPsiUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPolyVariantReferenceBase;
 import com.intellij.psi.PsiReference;
@@ -29,8 +31,6 @@ import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.psi.impl.source.tree.LeafElement;
 import com.intellij.psi.util.QualifiedName;
 import com.intellij.util.IncorrectOperationException;
-import com.intellij.protobuf.lang.psi.*;
-import com.intellij.protobuf.lang.psi.util.PbPsiUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -158,9 +158,8 @@ public class ProtoSymbolPathReference extends PsiPolyVariantReferenceBase<PsiEle
         identifierRange.getLength());
   }
 
-  @NotNull
   @Override
-  public ResolveResult[] multiResolve(boolean incompleteCode) {
+  public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
     ResolveCache cache = ResolveCache.getInstance(myElement.getProject());
     return cache.resolveWithCaching(
         this,
@@ -169,8 +168,7 @@ public class ProtoSymbolPathReference extends PsiPolyVariantReferenceBase<PsiEle
         incompleteCode);
   }
 
-  @NotNull
-  private ResolveResult[] multiResolveNoCache() {
+  private ResolveResult @NotNull [] multiResolveNoCache() {
     QualifiedName name = symbolPath.getQualifiedName();
     PsiElement parent = symbolPath.getParent();
 
@@ -246,7 +244,7 @@ public class ProtoSymbolPathReference extends PsiPolyVariantReferenceBase<PsiEle
       }
     }
 
-    return results.toArray(new ResolveResult[0]);
+    return results.toArray(ResolveResult.EMPTY_ARRAY);
   }
 
   private ResolveResult[] resolveTopDown(QualifiedName name) {
@@ -256,12 +254,11 @@ public class ProtoSymbolPathReference extends PsiPolyVariantReferenceBase<PsiEle
     } else {
       results = resolver.resolveName(name, resolveFilter);
     }
-    return results.toArray(new ResolveResult[0]);
+    return results.toArray(ResolveResult.EMPTY_ARRAY);
   }
 
-  @NotNull
   @Override
-  public Object[] getVariants() {
+  public Object @NotNull [] getVariants() {
     if (completionFilter == null) {
       return LookupElement.EMPTY_ARRAY;
     }
