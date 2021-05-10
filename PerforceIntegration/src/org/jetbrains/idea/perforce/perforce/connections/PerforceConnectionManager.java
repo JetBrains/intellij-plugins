@@ -4,6 +4,7 @@ import com.intellij.ProjectTopics;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.AdditionalLibraryRootsListener;
 import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.openapi.roots.ModuleRootListener;
 import com.intellij.openapi.util.io.FileUtil;
@@ -14,6 +15,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBusConnection;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.perforce.application.PerforceManager;
@@ -21,6 +23,7 @@ import org.jetbrains.idea.perforce.perforce.P4File;
 import org.jetbrains.idea.perforce.perforce.PerforceSettings;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -72,6 +75,12 @@ public class PerforceConnectionManager implements PerforceConnectionManagerI {
   public PerforceMultipleConnections getMultipleConnectionObject() {
     final PerforceConnectionMapper mapper = getConnectionMapper();
     return mapper instanceof PerforceMultipleConnections ? (PerforceMultipleConnections) mapper : null;
+  }
+
+  private void libraryRootsChanged(@NotNull @Nls String presentableLibraryName,
+                                   @NotNull Collection<VirtualFile> newRoots,
+                                   @NotNull Collection<VirtualFile> oldRoots) {
+    updateConnections();
   }
 
   public static PerforceConnectionManagerI getInstance(Project project) {
@@ -143,6 +152,7 @@ public class PerforceConnectionManager implements PerforceConnectionManagerI {
         updateConnections();
       }
     });
+    myMessageBusConnection.subscribe(AdditionalLibraryRootsListener.TOPIC, this::libraryRootsChanged);
     myMessageBusConnection.subscribe(ProjectLevelVcsManager.VCS_CONFIGURATION_CHANGED, this::updateConnections);
 
     VirtualFileManager.getInstance().addVirtualFileListener(new PerforceP4ConfigVirtualFileListener(this, myProject), parentDisposable);
