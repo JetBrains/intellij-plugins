@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.cli;
 
 import com.intellij.execution.RunManager;
@@ -82,10 +82,8 @@ public final class AngularCliUtil {
 
   public static void notifyAngularCliNotInstalled(@NotNull Project project, @NotNull VirtualFile cliFolder, @NotNull @Nls String message) {
     VirtualFile packageJson = PackageJsonUtil.findChildPackageJsonFile(cliFolder);
-    Notification notification = NotificationGroupManager.getInstance().getNotificationGroup(NOTIFICATION_GROUP_ID).createNotification(
-      message,
-      Angular2Bundle.message("angular.notify.cli.required-package-not-installed"),
-      NotificationType.WARNING, null);
+    Notification notification = NotificationGroupManager.getInstance().getNotificationGroup(NOTIFICATION_GROUP_ID)
+      .createNotification(message, Angular2Bundle.message("angular.notify.cli.required-package-not-installed"), NotificationType.WARNING);
     if (packageJson != null) {
       notification.addAction(new PackageJsonGetDependenciesAction(project, packageJson, notification));
     }

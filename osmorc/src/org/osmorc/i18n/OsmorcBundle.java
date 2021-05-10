@@ -31,10 +31,11 @@ import com.intellij.notification.NotificationGroupManager;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.util.NlsContexts.NotificationContent;
 import com.intellij.openapi.util.NlsContexts.NotificationTitle;
-import java.util.function.Supplier;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
+
+import java.util.function.Supplier;
 
 /**
  * Internationalization bundle for Osmorc.
@@ -60,18 +61,18 @@ public final class OsmorcBundle extends DynamicBundle {
   public static Notification notification(@NotNull @NotificationTitle String title,
                                           @NotNull @NotificationContent String message,
                                           @NotNull NotificationType type) {
-    return NotificationGroupManager.getInstance().getNotificationGroup("OSGi").createNotification(title, message, type, null);
+    return NotificationGroupManager.getInstance().getNotificationGroup("OSGi").createNotification(title, message, type);
   }
 
   public static Notification important(@NotNull @NotificationTitle String title,
                                        @NotNull @NotificationContent String message,
                                        @NotNull NotificationType type) {
-    return NotificationGroupManager.getInstance().getNotificationGroup("OSGi-important").createNotification(title, message, type, null);
+    return NotificationGroupManager.getInstance().getNotificationGroup("OSGi-important").createNotification(title, message, type);
   }
 
   public static Notification bnd(@NotNull @NotificationTitle String title,
                                  @NotNull @NotificationContent String message,
                                  @NotNull NotificationType type) {
-    return NotificationGroupManager.getInstance().getNotificationGroup("OSGi-bnd").createNotification(title, message, type, null);
+    return NotificationGroupManager.getInstance().getNotificationGroup("OSGi-bnd").createNotification(title, message, type);
   }
 }

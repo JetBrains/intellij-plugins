@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.actions.airpackage;
 
 import com.intellij.flex.model.bc.BuildConfigurationNature;
@@ -207,7 +207,7 @@ public class AirPackageAction extends DumbAwareAction {
           }
         };
 
-        NOTIFICATION_GROUP.createNotification("", message, NotificationType.INFORMATION, listener).notify(project);
+        NOTIFICATION_GROUP.createNotification(message, NotificationType.INFORMATION).setListener(listener).notify(project);
       }
     };
   }
@@ -240,7 +240,7 @@ public class AirPackageAction extends DumbAwareAction {
         message = FlexBundle.message("failed.to.create.air.package", PathUtil.getFileName(packagePath), reason);
       }
 
-      NOTIFICATION_GROUP.createNotification("", message, NotificationType.ERROR, listener).notify(project);
+      NOTIFICATION_GROUP.createNotification(message, NotificationType.ERROR).setListener(listener).notify(project);
     };
   }
 

@@ -1,3 +1,4 @@
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.maven;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -250,7 +251,7 @@ public class FlexmojosImporter extends MavenImporter implements FlexConfigInform
     };
     myFlexConfigNotification =
       new Notification("Maven", FlexBundle.message("flexmojos.project.import"), FlexBundle.message("flexmojos.warning.short"),
-                       NotificationType.WARNING, listener);
+                       NotificationType.WARNING).setListener(listener);
 
     myFlexConfigNotification.notify(project);
   }

@@ -8,9 +8,7 @@ import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.ide.util.projectWizard.AbstractNewProjectStep;
 import com.intellij.ide.util.projectWizard.CustomStepProjectGenerator;
-import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
-import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
 import com.intellij.openapi.application.ApplicationManager;
@@ -262,9 +260,8 @@ public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<BoardI
   }
 
   private static void showError(@NotNull @NlsContexts.NotificationContent String message) {
-    Notification notification = PlatformioService.NOTIFICATION_GROUP.createNotification(
-      ClionEmbeddedPlatformioBundle.message("project.init.failed"), null,
-      message, NotificationType.WARNING);
-    Notifications.Bus.notify(notification);
+    PlatformioService.NOTIFICATION_GROUP
+      .createNotification(ClionEmbeddedPlatformioBundle.message("project.init.failed"), message, NotificationType.WARNING)
+      .notify(null);
   }
 }

@@ -99,7 +99,7 @@ final class Spectacle {
     Notification notification = STANDARD_NOTIFICATION.createNotification(
       GaugeBundle.message("notification.title.error.specification.preview"),
       GaugeBundle.message("notification.content.missing.plugin.spectacle.to.install.do"),
-      NotificationType.ERROR, null);
+      NotificationType.ERROR);
     notification.addAction(new NotificationAction(GaugeBundle.message("notification.content.install.spectacle")) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e, @NotNull Notification notification) {

@@ -7,9 +7,7 @@ import com.intellij.execution.process.CapturingProcessRunner;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.ide.util.projectWizard.AbstractNewProjectStep;
 import com.intellij.ide.util.projectWizard.ProjectSettingsStepBase;
-import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
-import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
@@ -142,12 +140,10 @@ public class PlatformioProjectSettingsStep extends ProjectSettingsStepBase<Ref<B
       @NlsSafe String errorMessage = String.valueOf(ExceptionUtil.getMessage(e));
       setErrorText(errorMessage);
       @NlsSafe String className = e.getClass().getSimpleName();
-      Notification notification =
-        PlatformioService.NOTIFICATION_GROUP.createNotification(
-          ClionEmbeddedPlatformioBundle.message("platformio.utility.failed"),
-          className,
-          errorMessage, NotificationType.WARNING);
-      Notifications.Bus.notify(notification);
+      PlatformioService.NOTIFICATION_GROUP
+        .createNotification(ClionEmbeddedPlatformioBundle.message("platformio.utility.failed"), errorMessage, NotificationType.WARNING)
+        .setSubtitle(className)
+        .notify(null);
     }
     checkValid();
     return panel;

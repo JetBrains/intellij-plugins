@@ -420,7 +420,7 @@ final class PubServerService extends NetService {
       final String message = DartBundle.message(myNotificationAboutErrors ? "dart.webdev.server.output.contains.errors"
                                                                           : "dart.webdev.server.output.contains.warnings");
 
-      myNotification = NOTIFICATION_GROUP.createNotification("", message, NotificationType.WARNING, new NotificationListener.Adapter() {
+      myNotification = NOTIFICATION_GROUP.createNotification(message, NotificationType.WARNING).setListener(new NotificationListener.Adapter() {
         @Override
         protected void hyperlinkActivated(final @NotNull Notification notification, final @NotNull HyperlinkEvent e) {
           notification.expire();

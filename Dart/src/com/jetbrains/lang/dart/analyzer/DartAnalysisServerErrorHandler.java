@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.analyzer;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
@@ -80,11 +80,11 @@ public class DartAnalysisServerErrorHandler {
 
     String content = DartBundle.message("notification.content.message.with.view.details.link", messageOneLine);
 
-    Notification notification = NOTIFICATION_GROUP
-      .createNotification(DartBundle.message("notification.title.dart.analysis.issue"), content,
-                          isFatal ? NotificationType.ERROR : NotificationType.WARNING, listener);
     // This writes to Event Log tool window but doesn't show a balloon.
-    notification.notify(myProject);
+    NOTIFICATION_GROUP
+      .createNotification(DartBundle.message("notification.title.dart.analysis.issue"), content, isFatal ? NotificationType.ERROR : NotificationType.WARNING)
+      .setListener(listener)
+      .notify(myProject);
   }
 
   private static String calculateIssueText(@NotNull String messageOneLine,

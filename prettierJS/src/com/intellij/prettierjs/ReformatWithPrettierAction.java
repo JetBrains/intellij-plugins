@@ -488,42 +488,26 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     @Override
     public void showError(@NotNull Project project, @Nullable Editor editor, @NotNull @Nls String text, @Nullable Runnable onLinkClick) {
       if (editor != null) {
-        showHintLater(editor, PrettierBundle.message("prettier.formatter.hint.0", text), true, toHyperLinkListener(onLinkClick));
+        HyperlinkListener listener = onLinkClick == null ? null : new HyperlinkAdapter() {
+          @Override
+          protected void hyperlinkActivated(HyperlinkEvent e) {
+            onLinkClick.run();
+          }
+        };
+        showHintLater(editor, PrettierBundle.message("prettier.formatter.hint.0", text), true, listener);
       }
       else {
-        showErrorNotification(project, text, toNotificationListener(onLinkClick));
+        Notification notification = JSLinterGuesser.NOTIFICATION_GROUP.createNotification(PrettierBundle.message("prettier.formatter.notification.title"), text, NotificationType.ERROR);
+        if (onLinkClick != null) {
+          notification.setListener(new NotificationListener.Adapter() {
+            @Override
+            protected void hyperlinkActivated(@NotNull Notification notification1, @NotNull HyperlinkEvent e) {
+              onLinkClick.run();
+            }
+          });
+        }
+        notification.notify(project);
       }
-    }
-
-    private static void showErrorNotification(@NotNull Project project,
-                                              @NotNull @Nls String text,
-                                              @Nullable NotificationListener notificationListener) {
-      JSLinterGuesser.NOTIFICATION_GROUP
-        .createNotification(PrettierBundle.message("prettier.formatter.notification.title"), text, NotificationType.ERROR,
-                            notificationListener)
-        .notify(project);
-    }
-
-    @Nullable
-    private static NotificationListener toNotificationListener(@Nullable Runnable runnable) {
-      if (runnable == null) return null;
-      return new NotificationListener.Adapter() {
-        @Override
-        protected void hyperlinkActivated(@NotNull Notification notification, @NotNull HyperlinkEvent e) {
-          runnable.run();
-        }
-      };
-    }
-
-    @Nullable
-    private static HyperlinkListener toHyperLinkListener(@Nullable Runnable runnable) {
-      if (runnable == null) return null;
-      return new HyperlinkAdapter() {
-        @Override
-        protected void hyperlinkActivated(HyperlinkEvent e) {
-          runnable.run();
-        }
-      };
     }
   }
 }

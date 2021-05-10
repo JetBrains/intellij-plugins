@@ -418,6 +418,6 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
       }
     };
     new Notification("Maven", FlexBundle.message("flexmojos.project.import"), FlexBundle.message("flexmojos4.warning.with.link"),
-                     NotificationType.WARNING, listener).notify(project);
+                     NotificationType.WARNING).setListener(listener).notify(project);
   }
 }

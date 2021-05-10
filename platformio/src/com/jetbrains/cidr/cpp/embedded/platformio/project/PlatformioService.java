@@ -1,12 +1,9 @@
 package com.jetbrains.cidr.cpp.embedded.platformio.project;
 
 import com.intellij.ide.BrowserUtil;
-import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationAction;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
-import com.intellij.notification.Notifications;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
@@ -52,25 +49,11 @@ public final class PlatformioService {
   }
 
   public static void notifyPlatformioNotFound(@Nullable Project project) {
-    Notification notification = NOTIFICATION_GROUP.createNotification(
-      ClionEmbeddedPlatformioBundle.message("platformio.utility.is.not.found"),
-      null,
-      ClionEmbeddedPlatformioBundle.message("please.check.system.path"),
-      NotificationType.ERROR);
-    notification.addAction(new AnAction(ClionEmbeddedPlatformioBundle.messagePointer("install.guide")) {
-      @Override
-      public void actionPerformed(@NotNull AnActionEvent e) {
-        openInstallGuide();
-      }
-    });
-    notification.addAction(new AnAction(ClionEmbeddedPlatformioBundle.messagePointer("open.settings.link")) {
-      @Override
-      public void actionPerformed(@NotNull AnActionEvent e) {
-        openSettings(project);
-        notification.expire();
-      }
-    });
-    Notifications.Bus.notify(notification, project);
+    NOTIFICATION_GROUP
+      .createNotification(ClionEmbeddedPlatformioBundle.message("platformio.utility.is.not.found"), ClionEmbeddedPlatformioBundle.message("please.check.system.path"), NotificationType.ERROR)
+      .addAction(NotificationAction.createSimple(ClionEmbeddedPlatformioBundle.message("install.guide"), () -> openInstallGuide()))
+      .addAction(NotificationAction.createSimpleExpiring(ClionEmbeddedPlatformioBundle.message("open.settings.link"), () -> openSettings(project)))
+      .notify(project);
   }
 
   public static State updateStateForProject(@Nullable Project project) {

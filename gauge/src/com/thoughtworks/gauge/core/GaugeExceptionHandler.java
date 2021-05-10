@@ -119,7 +119,7 @@ public final class GaugeExceptionHandler extends Thread {
 
     return new Notification(NotificationGroups.GAUGE_ERROR_GROUP,
                             GaugeBundle.message("notification.title.exception.occurred.in.gauge.plugin"), builder.toString(),
-                            NotificationType.ERROR,
-                            NotificationListener.URL_OPENING_LISTENER);
+                            NotificationType.ERROR)
+      .setListener(NotificationListener.URL_OPENING_LISTENER);
   }
 }

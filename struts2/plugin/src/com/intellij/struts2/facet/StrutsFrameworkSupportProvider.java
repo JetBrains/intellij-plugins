@@ -35,7 +35,6 @@ import com.intellij.javaee.web.model.xml.WebApp;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
-import com.intellij.notification.Notifications;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -187,12 +186,11 @@ public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportPr
               }
             };
 
-            Notifications.Bus.notify(
-              new Notification("Struts 2", "Struts 2 Setup",
-                               "Struts 2 Facet has been created, please check <a href=\"more\">created fileset</a>",
-                               NotificationType.INFORMATION,
-                               showFacetSettingsListener),
-              module.getProject());
+            new Notification("Struts 2", "Struts 2 Setup",
+                             "Struts 2 Facet has been created, please check <a href=\"more\">created fileset</a>",
+                             NotificationType.INFORMATION)
+              .setListener(showFacetSettingsListener)
+              .notify(module.getProject());
           }
           catch (Exception e) {
             LOG.error("error creating struts.xml from template", e);

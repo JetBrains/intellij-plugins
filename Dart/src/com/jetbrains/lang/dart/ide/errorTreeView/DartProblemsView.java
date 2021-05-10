@@ -217,7 +217,7 @@ public final class DartProblemsView implements PersistentStateComponent<DartProb
           .appendLink("never.show.again", DartBundle.message("notification.link.never.show.again"));
     }
 
-    myNotification = NOTIFICATION_GROUP.createNotification(title, content, notificationType, new NotificationListener.Adapter() {
+    myNotification = NOTIFICATION_GROUP.createNotification(title, content, notificationType).setListener(new NotificationListener.Adapter() {
       @Override
       protected void hyperlinkActivated(@NotNull final Notification notification, @NotNull final HyperlinkEvent e) {
         notification.expire();
@@ -235,7 +235,7 @@ public final class DartProblemsView implements PersistentStateComponent<DartProb
           NOTIFICATION_GROUP
             .createNotification(DartBundle.message("notification.title.warning.disabled"),
                                 DartBundle.message("notification.content.you.can.enable.it.back.in.the.a.href.event.log.a.settings"),
-                                NotificationType.INFORMATION, new Adapter() {
+                                NotificationType.INFORMATION).setListener(new Adapter() {
                 @Override
                 protected void hyperlinkActivated(@NotNull Notification notification, @NotNull HyperlinkEvent e) {
                   notification.expire();

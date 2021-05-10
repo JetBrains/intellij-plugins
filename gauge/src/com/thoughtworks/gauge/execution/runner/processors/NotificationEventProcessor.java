@@ -18,7 +18,6 @@ package com.thoughtworks.gauge.execution.runner.processors;
 
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
-import com.intellij.notification.Notifications;
 import com.thoughtworks.gauge.NotificationGroups;
 import com.thoughtworks.gauge.execution.runner.MessageProcessor;
 import com.thoughtworks.gauge.execution.runner.TestsCache;
@@ -39,9 +38,9 @@ public final class NotificationEventProcessor extends GaugeEventProcessor {
   protected boolean onEnd(ExecutionEvent event) {
     String title = event.notification.title;
     String message = event.notification.message;
-    Notification notification = new Notification(NotificationGroups.GAUGE_GROUP,
-                                                 title, message, event.notification.getType(), NotificationListener.URL_OPENING_LISTENER);
-    Notifications.Bus.notify(notification);
+    new Notification(NotificationGroups.GAUGE_GROUP, title, message, event.notification.getType())
+      .setListener(NotificationListener.URL_OPENING_LISTENER)
+      .notify(null);
     return true;
   }
 
