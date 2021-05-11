@@ -77,7 +77,7 @@ public final class Util {
 
     String testText = StringUtil.convertLineSeparators(loadFile(extraDataPath + testNameLowercased + ".test.cfml"));
     final PsiFile psiFile = PsiFileFactory.getInstance(project).createFileFromText(fileName, testText);
-    final String tree = DebugUtil.psiTreeToString(psiFile, true);
+    final String tree = DebugUtil.psiTreeToString(psiFile, false);
 
     UsefulTestCase.assertSameLinesWithFile(extraDataPath + testNameLowercased + ".test.expected", tree);
   }

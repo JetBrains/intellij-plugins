@@ -43,7 +43,7 @@ public abstract class PsiTestCase extends LightIdeaTestCase {
 
     if (!(expression instanceof OgnlExpression) ||
         PsiTreeUtil.getChildrenOfType(expression, PsiErrorElement.class) != null) {
-      fail(text + " parsed with errors:\n" + DebugUtil.psiToString(expression, true));
+      fail(text + " parsed with errors:\n" + DebugUtil.psiToString(expression, false));
     }
 
     return assertInstanceOf(expression, OgnlExpression.class);

@@ -480,6 +480,6 @@ public class OsgiManifestParserTest extends LightIdeaTestCase {
 
   private void doTest(String source, String expected) {
     PsiFile file = createLightFile("MANIFEST.MF", source);
-    assertEquals(expected, DebugUtil.psiToString(file, true));
+    assertEquals(expected, DebugUtil.psiToString(file, false));
   }
 }

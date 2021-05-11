@@ -316,7 +316,7 @@ Vue.options.delimiters = ['<%', '%>']
   }
 
   private fun toParseTreeText(file: PsiFile): String {
-    return DebugUtil.psiToString(file, false, false) { psiElement, consumer ->
+    return DebugUtil.psiToString(file, true, false) { psiElement, consumer ->
       InjectedLanguageManager.getInstance(project).enumerate(psiElement) { injectedPsi, _ -> consumer.consume(injectedPsi) }
     }
   }

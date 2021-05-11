@@ -46,7 +46,7 @@ class VueJSParserTest : LightPlatformCodeInsightTestCase(), FileBasedTestCaseHel
       val psiFile = PsiFileFactory.getInstance(project)
         .createFileFromText("test.js.$attributeName.$extension", VueJSLanguage.INSTANCE, line)
 
-      result.append(DebugUtil.psiToString(psiFile, false, false))
+      result.append(DebugUtil.psiToString(psiFile, true, false))
     }
     UsefulTestCase.assertSameLinesWithFile(File(path, suffix.replace("js", "txt")).toString(), result.toString())
   }

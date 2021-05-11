@@ -23,7 +23,7 @@ public class DartInjectionTest extends LightQuickFixTestCase {
   }
 
   private String toParseTreeText(PsiFile file) {
-    return DebugUtil.psiToString(file, false, false, (psiElement, consumer) -> InjectedLanguageManager
+    return DebugUtil.psiToString(file, true, false, (psiElement, consumer) -> InjectedLanguageManager
       .getInstance(getProject()).enumerate(psiElement, (injectedPsi, places) -> consumer.consume(injectedPsi)));
   }
 

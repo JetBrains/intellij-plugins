@@ -67,7 +67,7 @@ public class Angular2ParserTest extends LightPlatformCodeInsightTestCase impleme
       PsiFile psiFile = PsiFileFactory.getInstance(getProject())
         .createFileFromText("test." + name + "." + extension, Angular2Language.INSTANCE, line);
 
-      result.append(DebugUtil.psiToString(psiFile, false, false));
+      result.append(DebugUtil.psiToString(psiFile, true, false));
     }
     UsefulTestCase.assertSameLinesWithFile(new File(path, suffix.replace("js", "txt")).toString(), result.toString());
   }

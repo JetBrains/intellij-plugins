@@ -131,7 +131,7 @@ public class JsonMetadataTest extends Angular2CodeInsightFixtureTestCase {
     VirtualFile vFile = myFixture.getTempDirFixture().getFile("export.test.metadata.json");
     PsiFile file = myFixture.getPsiManager().findFile(vFile);
     assert file instanceof MetadataFileImpl;
-    String result = DebugUtil.psiToString(file, false, false);
+    String result = DebugUtil.psiToString(file, true, false);
     UsefulTestCase
       .assertSameLinesWithFile(new File(getTestDataPath(), "node_modules/export-aliases/export.test.metadata.json.txt").toString(), result);
   }
@@ -159,7 +159,7 @@ public class JsonMetadataTest extends Angular2CodeInsightFixtureTestCase {
         if (file.getName().endsWith(".metadata.json")) {
           String relativeFile = FileUtil.getRelativePath(pathPrefix, file.getVirtualFile().getPath(), '/');
           assert file instanceof MetadataFileImpl : relativeFile;
-          String result = DebugUtil.psiToString(file, false, false);
+          String result = DebugUtil.psiToString(file, true, false);
           UsefulTestCase.assertSameLinesWithFile(new File(getTestDataPath(), "material-stubs/" + relativeFile + ".txt").toString(), result);
         }
       }
@@ -299,7 +299,7 @@ public class JsonMetadataTest extends Angular2CodeInsightFixtureTestCase {
     VirtualFile vFile = myFixture.copyFileToProject(metadataJson);
     PsiFile file = myFixture.getPsiManager().findFile(vFile);
     assert file instanceof MetadataFileImpl;
-    String result = DebugUtil.psiToString(file, false, false);
+    String result = DebugUtil.psiToString(file, true, false);
     UsefulTestCase.assertSameLinesWithFile(new File(getTestDataPath(), psiOutput).toString(), result);
   }
 

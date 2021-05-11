@@ -47,7 +47,7 @@ public class AngularJSParserTest extends LightPlatformCodeInsightTestCase implem
       final AngularJSParserDefinition definition = new AngularJSParserDefinition();
       final PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(definition, new AngularJSLexer(), line);
       final ASTNode root = definition.createParser(getProject()).parse(AngularJSParserDefinition.FILE, builder);
-      result.append(DebugUtil.psiToString(root.getPsi(), false, false));
+    result.append(DebugUtil.psiToString(root.getPsi(), true, false));
     }    
 
     assertEquals(FileUtil.loadFile(new File(path, suffix.replace("js", "txt")), true), result.toString());
