@@ -1,5 +1,5 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angularjs.codeInsight.attributes;
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+package org.angularjs.diagram;
 
 import com.intellij.lang.javascript.modules.diagram.JSModuleConnectionProvider;
 import com.intellij.lang.javascript.psi.JSCallExpression;
@@ -12,8 +12,6 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.CommonProcessors;
-import com.intellij.util.indexing.FileBasedIndex;
-import com.intellij.util.indexing.IdFilter;
 import icons.AngularJSIcons;
 import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.index.AngularModuleIndex;

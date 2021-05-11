@@ -1,5 +1,5 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angularjs.codeInsight.router;
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+package org.angularjs.diagram;
 
 import com.intellij.diagram.*;
 import com.intellij.diagram.components.DiagramNodeContainer;
@@ -36,6 +36,7 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.JBUI;
 import org.angularjs.AngularJSBundle;
+import org.angularjs.codeInsight.router.*;
 import org.intellij.lang.annotations.Pattern;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -50,7 +51,7 @@ import java.awt.event.ComponentEvent;
 import java.util.List;
 import java.util.*;
 
-public final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramObject> {
+final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramObject> {
   public static final String ANGULAR_UI_ROUTER = "Angular-ui-router";
   public static final JBColor VIEW_COLOR = new JBColor(new Color(0xE1FFFC), new Color(0x589df6));
   public static final BasicStroke DOTTED_STROKE =

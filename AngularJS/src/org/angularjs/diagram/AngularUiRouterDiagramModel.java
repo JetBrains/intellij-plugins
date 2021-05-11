@@ -1,4 +1,5 @@
-package org.angularjs.codeInsight.router;
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+package org.angularjs.diagram;
 
 import com.intellij.CommonBundle;
 import com.intellij.diagram.DiagramDataModel;
@@ -9,6 +10,7 @@ import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiManager;
+import org.angularjs.codeInsight.router.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,10 +19,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author Irina.Chernushina on 3/23/2016.
- */
-public class AngularUiRouterDiagramModel extends DiagramDataModel<DiagramObject> {
+final class AngularUiRouterDiagramModel extends DiagramDataModel<DiagramObject> {
   private final VirtualFile myRootFile;
   private final @NotNull List<AngularUiRouterNode> myNodes;
   private final @NotNull List<AngularUiRouterEdge> myEdges;

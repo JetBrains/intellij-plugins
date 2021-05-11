@@ -1,4 +1,5 @@
-package org.angularjs.codeInsight.router;
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+package org.angularjs.diagram;
 
 import com.intellij.diagram.DiagramEdge;
 import com.intellij.openapi.graph.GraphManager;
@@ -9,13 +10,13 @@ import com.intellij.openapi.graph.view.LineType;
 import com.intellij.openapi.graph.view.QuadCurveEdgeRealizer;
 import com.intellij.ui.Gray;
 import com.intellij.uml.UmlGraphBuilder;
+import org.angularjs.codeInsight.router.AngularUiRouterEdge;
+import org.angularjs.codeInsight.router.AngularUiRouterNode;
+import org.angularjs.codeInsight.router.DiagramObject;
 
 import java.util.List;
 
-/**
- * @author Irina.Chernushina on 5/31/2016.
- */
-public class AngularEdgeLayouter {
+final class AngularEdgeLayouter {
   public void layoutEdges(UmlGraphBuilder umlGraphBuilder, Graph2D graph) {
     final Edge[] edgeArray = graph.getEdgeArray();
     for (Edge edge : edgeArray) {
@@ -30,7 +31,7 @@ public class AngularEdgeLayouter {
     }
   }
 
-  static class OneEdgeLayouter {
+  static final class OneEdgeLayouter {
     private final Edge edge;
     private final AngularUiRouterEdge edgeObject;
     private final double sourceXcenter;

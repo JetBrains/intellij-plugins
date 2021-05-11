@@ -4,7 +4,7 @@ package org.angularjs.diagrams;
 import com.intellij.lang.javascript.modules.diagram.BaseJSModuleDiagramDataTestCase;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.angularjs.AngularTestUtil;
-import org.angularjs.codeInsight.attributes.AngularModulesProvider;
+import org.angularjs.diagram.AngularModulesProvider;
 
 public class DiagramsTest extends BaseJSModuleDiagramDataTestCase {
   @Override

@@ -1,5 +1,5 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angularjs.codeInsight.router;
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+package org.angularjs.diagram;
 
 import com.intellij.diagram.DiagramProvider;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -21,6 +21,7 @@ import com.intellij.util.Consumer;
 import com.intellij.util.concurrency.AppExecutorUtil;
 import icons.AngularJSIcons;
 import org.angularjs.AngularJSBundle;
+import org.angularjs.codeInsight.router.*;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NotNull;
 

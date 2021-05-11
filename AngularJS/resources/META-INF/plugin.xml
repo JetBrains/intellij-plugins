@@ -30,10 +30,13 @@
     ]]></description>
   <vendor>JetBrains</vendor>
 
+  <content>
+    <module name="intellij.angularJS/diagram"/>
+  </content>
+
   <depends>JavaScript</depends>
   <depends>com.intellij.modules.platform</depends>
   <depends optional="true" config-file="css-support.xml">com.intellij.css</depends>
-  <depends optional="true" config-file="ui-router-diagram.xml">com.intellij.diagram</depends>
   <depends optional="true" config-file="tslint-support.xml">tslint</depends>
 
   <extensionPoints>
