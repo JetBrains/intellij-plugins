@@ -1,6 +1,7 @@
 // Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.refactoring.extractComponent
 
+import com.intellij.application.options.CodeStyle
 import com.intellij.lang.ecmascript6.psi.impl.ES6CreateImportUtil
 import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
@@ -46,6 +47,7 @@ import org.angular2.Angular2DecoratorUtil.INPUT_DEC
 import org.angular2.Angular2DecoratorUtil.OUTPUT_DEC
 import org.angular2.cli.AngularCliUtil
 import org.angular2.entities.Angular2Component
+import org.angular2.entities.Angular2ComponentLocator
 import org.angular2.entities.Angular2EntitiesProvider
 import org.angular2.lang.Angular2Bundle
 import org.angular2.lang.Angular2LangUtil
@@ -148,14 +150,16 @@ class Angular2ExtractComponentHandler : RefactoringActionHandler {
       val selector = component.selector.text
       val templateFile = component.templateFile!!
 
+      val sourceComponentFile = Angular2ComponentLocator.findComponentClasses(sourceFile).firstOrNull()?.containingFile
+
       if (!ReadonlyStatusHandler.ensureFilesWritable(project, sourceFile.virtualFile, templateFile.virtualFile, componentVirtualFile)) {
         throw IllegalStateException()
       }
 
       try {
         modifySourceFile(project, sourceFile, selector, extractedComponent)
-        modifyTemplateFile(project, templateFile, extractedComponent)
-        modifyComponentFile(project, componentFile, componentClass, extractedComponent)
+        modifyTemplateFile(project, sourceFile, templateFile, extractedComponent)
+        modifyComponentFile(project, sourceComponentFile, componentFile, componentClass, extractedComponent)
       }
       catch (e: Exception) {
         showErrorHint(project, editor, Angular2Bundle.message("angular.refactor.extractComponent.after-generator-error"))
@@ -197,6 +201,7 @@ class Angular2ExtractComponentHandler : RefactoringActionHandler {
   }
 
   private fun modifyTemplateFile(project: Project,
+                                 sourceTemplateFile: PsiFile?,
                                  templateFile: PsiFile,
                                  extractedComponent: Angular2ExtractedComponent) {
     val templateDocument = PsiDocumentManager.getInstance(project).getDocument(templateFile)!!
@@ -207,12 +212,23 @@ class Angular2ExtractComponentHandler : RefactoringActionHandler {
       template = template.replaceRange(textRange.startOffset, textRange.endOffset, replacement.text)
     }
 
+    if (InjectedLanguageManager.getInstance(project).isInjectedFragment(templateFile)) {
+      template = "\n" + template + "\n" // nicer formatting & prevents trailing whitespaces from loose source selection
+    }
+
     templateDocument.setText(template)
     PsiDocumentManager.getInstance(project).commitDocument(templateDocument)
-    CodeStyleManager.getInstance(project).reformat(templateFile)
+
+    if (sourceTemplateFile != null) {
+      CodeStyle.reformatWithFileContext(templateFile, sourceTemplateFile)
+    }
+    else {
+      CodeStyleManager.getInstance(project).reformat(templateFile)
+    }
   }
 
   private fun modifyComponentFile(project: Project,
+                                  sourceComponentFile: PsiFile?,
                                   componentFile: PsiFile,
                                   componentClass: TypeScriptClass,
                                   extractedComponent: Angular2ExtractedComponent) {
@@ -253,6 +269,10 @@ class Angular2ExtractComponentHandler : RefactoringActionHandler {
     }
 
     insertImports(extractedComponent, componentFile, seenInput, seenOutput)
+
+    if (sourceComponentFile != null) {
+      CodeStyle.reformatWithFileContext(componentFile, sourceComponentFile)
+    }
   }
 
   private fun insertImports(extractedComponent: Angular2ExtractedComponent,

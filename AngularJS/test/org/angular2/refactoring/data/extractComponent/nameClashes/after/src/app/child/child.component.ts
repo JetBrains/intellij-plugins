@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 
 @Component({
-  selector: 'app-child',
-  templateUrl: './child.component.html',
-  styleUrls: ['./child.component.css']
+    selector: 'app-child',
+    templateUrl: './child.component.html',
+    styleUrls: ['./child.component.css']
 })
 export class ChildComponent implements OnInit {
 
@@ -17,9 +17,10 @@ export class ChildComponent implements OnInit {
 
     @Output() twoWay_2Change = new EventEmitter<number>();
 
-    constructor() { }
+    constructor() {
+    }
 
-  ngOnInit(): void {
-  }
+    ngOnInit(): void {
+    }
 
 }
