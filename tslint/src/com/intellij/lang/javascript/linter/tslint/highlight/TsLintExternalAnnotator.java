@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.linter.tslint.highlight;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
@@ -210,7 +210,10 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
     long documentModificationStamp = document != null ? document.getModificationStamp() : -1;
     IntentionAction fixAllFileIntention = new TsLintFileFixAction().asIntentionAction();
 
-    JSLinterStandardFixes fixes = new JSLinterStandardFixes();
+    JSLinterStandardFixes fixes = new JSLinterStandardFixes()
+      .setShowEditSettings(false)
+      .setEditConfig(false);
+
     fixes.setErrorToIntentionConverter(errorBase -> {
       if (!(errorBase instanceof TsLinterError)) {
         return ContainerUtil.emptyList();
