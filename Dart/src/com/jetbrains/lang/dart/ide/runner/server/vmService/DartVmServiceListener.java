@@ -145,10 +145,10 @@ public class DartVmServiceListener implements VmServiceListener {
 
     if (vmBreakpoints == null || vmBreakpoints.isEmpty()) {
       final StepOption latestStep = myDebugProcess.getVmServiceWrapper().getLatestStep();
-
+      final StepOption nextStep = atAsyncSuspension ? StepOption.OverAsyncSuspension : latestStep;
       if (latestStep == StepOption.Over && equalSourcePositions(myLatestSourcePosition, sourcePosition)) {
         // continue stepping to change current line
-        myDebugProcess.getVmServiceWrapper().resumeIsolate(isolateRef.getId(), latestStep);
+        myDebugProcess.getVmServiceWrapper().resumeIsolate(isolateRef.getId(), nextStep);
       }
       else if (exception != null) {
         final XBreakpoint<DartExceptionBreakpointProperties> breakpoint =
