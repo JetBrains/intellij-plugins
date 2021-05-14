@@ -31,3 +31,13 @@ JSFile:test.logical.action
           PsiElement(JS:ANDAND)('&&')
           JSLiteralExpression
             PsiElement(JS:NUMERIC_LITERAL)('2')
+------
+JSFile:test.logical.action
+  Angular2Action
+    JSExpressionStatement
+      JSBinaryExpression
+        JSLiteralExpression
+          PsiElement(JS:NULL_KEYWORD)('null')
+        PsiElement(JS:QUEST_QUEST)('??')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')

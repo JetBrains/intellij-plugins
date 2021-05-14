@@ -238,6 +238,10 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
     doTestHtml("<div lang=\"{{interpolation?.here}}\"></div>");
   }
 
+  public void testNgBindingNullishCoalescing() throws Exception {
+    doTestHtml("<div lang=\"{{interpolation ?? 'fallback'}}\"></div>");
+  }
+
   public void testNgEntity() throws Exception {
     doTestHtml("<div>{{foo ? ' &mdash;' + bar : \"\"}}</div>");
   }
