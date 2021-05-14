@@ -2,15 +2,13 @@
   <id>cucumber-java</id>
   <name>Cucumber for Java</name>
   <category>Test Tools</category>
-  <description>
-      <![CDATA[
-  Adds support for <a href="http://cukes.info/">Cucumber</a> testing tools with step definitions written in Java.
-        <ul>
-<li>Provides coding assistance for step definitions</li>
-<li>Adds a dedicated run/debug configuration type</li>
-        </ul>
-      ]]>
-   </description>
+  <description><![CDATA[
+    Adds support for <a href="https://cucumber.io/">Cucumber</a> testing tools with step definitions written in Java.
+    <ul>
+      <li>Provides coding assistance for step definitions</li>
+      <li>Adds a dedicated run/debug configuration type</li>
+    </ul>
+  ]]></description>
   <depends>gherkin</depends>
   <depends>JUnit</depends>
   <depends>com.intellij.modules.java</depends>
