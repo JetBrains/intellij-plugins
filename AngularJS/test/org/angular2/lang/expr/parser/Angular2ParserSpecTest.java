@@ -312,6 +312,10 @@ public class Angular2ParserSpecTest {
           checkBinding("a < b ? a : b");
         });
 
+        it("should parse nullish coalescing expression", () -> {
+          checkBinding("a ?? b");
+        });
+
         it("should ignore comments in bindings", () -> {
           checkBinding("a //comment", "a");
         });
@@ -648,6 +652,7 @@ public class Angular2ParserSpecTest {
       pair(GE, ">="),
       pair(ANDAND, "&&"),
       pair(OROR, "||"),
+      pair(QUEST_QUEST, "??"),
       pair(AND, "&"),
       pair(OR, "|"),
       pair(EXCL, "!")

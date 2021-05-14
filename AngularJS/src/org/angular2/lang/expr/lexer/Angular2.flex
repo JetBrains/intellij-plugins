@@ -81,6 +81,7 @@ IDENT=[_$a-zA-Z][$0-9_a-zA-Z]*
   ">="                        { return GE; }
   "&&"                        { return ANDAND; }
   "||"                        { return OROR; }
+  "??"                        { return QUEST_QUEST; }
   "&"                         { return AND; }
   "|"                         { return OR; }
   "!"                         { return EXCL; }
