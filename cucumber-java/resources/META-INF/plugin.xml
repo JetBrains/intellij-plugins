@@ -36,6 +36,9 @@
     <pom.declarationSearcher implementation="org.jetbrains.plugins.cucumber.java.steps.search.CucumberJavaPomDeclarationSearcher"/>
     <fileBasedIndex implementation="org.jetbrains.plugins.cucumber.java.CucumberJava8StepIndex"/>
     <runConfigurationExtension implementation="org.jetbrains.plugins.cucumber.java.run.CucumberJUnitRunConfigurationExtension"/>
+
+    <dependencySupport kind="java" coordinate="io.cucumber:cucumber-java8" displayName="Cucumber"/>
+    <dependencySupport kind="java" coordinate="io.cucumber:cucumber-java" displayName="Cucumber"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.plugins.cucumber.steps">
