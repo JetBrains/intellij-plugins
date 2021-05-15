@@ -14,7 +14,7 @@
     <orderEntry type="module" module-name="intellij.platform.editor" />
     <orderEntry type="module" module-name="intellij.platform.core" />
     <orderEntry type="module" module-name="intellij.protoeditor.core" />
-    <orderEntry type="module" module-name="intellij.go" />
+    <orderEntry type="module" module-name="intellij.go.impl" />
     <orderEntry type="library" name="Guava" level="project" />
   </component>
 </module>
