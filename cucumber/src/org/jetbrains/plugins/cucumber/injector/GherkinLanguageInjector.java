@@ -41,6 +41,9 @@ public class GherkinLanguageInjector implements MultiHostInjector {
             return;
         }
         String languageMarker = StringUtil.trimTrailing(hostText.substring(PYSTRING_MARKER.length(), newLineCharacterOffset));
+        if (languageMarker.length() == 0) {
+          return;
+        }
         final Language language = InjectorUtils.getLanguageByString(languageMarker);
 
         if (language != null) {
