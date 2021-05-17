@@ -772,7 +772,7 @@ public class OfflineModeTest extends PerforceTestCase {
     refreshChanges();
     getChangeListManager().waitUntilRefreshed();
     assertSameElements(getChangeListManager().getUnversionedFiles(), fileB);
-    assertSameElements(getChangeListManager().getIgnoredFiles(), VfsUtil.findFileByIoFile(myP4IgnoreFile, true));
+    assertSameElements(getChangeListManager().getIgnoredFilePaths(), VcsUtil.getFilePath(myP4IgnoreFile, false));
   }
 
   private VirtualFile createAndSubmit(final String fileName, final String content) {
