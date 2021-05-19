@@ -1,6 +1,8 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.vuex
 
+import com.intellij.javascript.web.findOffsetBySignature
+import com.intellij.javascript.web.renderLookupItems
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.io.FileUtil
@@ -9,9 +11,7 @@ import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.createPackageJsonWithVueDependency
-import org.jetbrains.vuejs.lang.findOffsetBySignature
 import org.jetbrains.vuejs.lang.getVueTestDataPath
-import org.jetbrains.vuejs.lang.renderLookupItems
 import java.io.File
 
 class VuexCompletionTest : BasePlatformTestCase() {
@@ -564,8 +564,10 @@ class VuexCompletionTest : BasePlatformTestCase() {
 
     doStoreItemsTest(0, fileName, "store.state.<caret>", strict = true, renderPriority = true, renderType = true)
     doStoreItemsTest(1, fileName, "store.dispatch('cart/<caret>addProductToCart'", strict = true, renderPriority = true, renderType = true)
-    doStoreItemsTest(2, fileName, "store.dispatch('<caret>products/getAllProducts')", strict = true, renderPriority = true, renderType = true)
-    doStoreItemsTest(3, fileName, "store.dispatch('products/<caret>getAllProducts')", strict = true, renderPriority = true, renderType = true)
+    doStoreItemsTest(2, fileName, "store.dispatch('<caret>products/getAllProducts')", strict = true, renderPriority = true,
+                     renderType = true)
+    doStoreItemsTest(3, fileName, "store.dispatch('products/<caret>getAllProducts')", strict = true, renderPriority = true,
+                     renderType = true)
     doStoreItemsTest(4, fileName, "store.state.products.<caret>", strict = true, renderPriority = true, renderType = true)
   }
 

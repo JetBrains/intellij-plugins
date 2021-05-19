@@ -2,6 +2,8 @@
 package org.jetbrains.vuejs.libraries.vueLoader
 
 import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection
+import com.intellij.javascript.web.assertUnresolvedReference
+import com.intellij.javascript.web.resolveReference
 import com.intellij.lang.javascript.JSTestUtils.setWebpack
 import com.intellij.lang.javascript.buildTools.webpack.WebPackResolve
 import com.intellij.psi.PsiFileSystemItem

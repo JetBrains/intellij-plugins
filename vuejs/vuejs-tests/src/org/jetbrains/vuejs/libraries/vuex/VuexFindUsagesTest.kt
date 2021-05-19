@@ -1,8 +1,8 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.vuex
 
+import com.intellij.javascript.web.checkUsages
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import org.jetbrains.vuejs.lang.checkUsages
 import org.jetbrains.vuejs.lang.getVueTestDataPath
 
 class VuexFindUsagesTest : BasePlatformTestCase() {

@@ -1,6 +1,9 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.vuelidate
 
+import com.intellij.javascript.web.moveToOffsetBySignature
+import com.intellij.javascript.web.renderLookupItems
+import com.intellij.javascript.web.resolveReference
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.*
