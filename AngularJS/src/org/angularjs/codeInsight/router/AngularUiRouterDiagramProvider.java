@@ -9,6 +9,7 @@ import com.intellij.icons.AllIcons;
 import com.intellij.lang.javascript.modules.diagram.JSModulesDiagramUtils;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.graph.GraphLayoutManager;
 import com.intellij.openapi.graph.GraphManager;
 import com.intellij.openapi.graph.GraphUtil;
 import com.intellij.openapi.graph.base.Edge;
@@ -269,7 +270,7 @@ public final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<Di
       public EdgeLabel @NotNull [] getEdgeLabels(@Nullable DiagramEdge umlEdge, @NotNull String label) {
         if (!(umlEdge instanceof AngularUiRouterEdge)) return super.getEdgeLabels(umlEdge, label);
         AngularUiRouterEdge angularEdge = (AngularUiRouterEdge)umlEdge;
-        if (!isShowEdgeLabels() || StringUtil.isEmptyOrSpaces(angularEdge.getLabel())) {
+        if (!getSettings().isShowEdgeLabels() || StringUtil.isEmptyOrSpaces(angularEdge.getLabel())) {
           return EMPTY_LABELS;
         }
         //if (!myVisibleEdges.contains(umlEdge)) return EMPTY_LABELS;
@@ -416,7 +417,7 @@ public final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<Di
         }
         for (DiagramEdge edge : builder.getEdgeObjects()) {
           if (!(edge instanceof AngularUiRouterEdge)) continue;
-          if (isShowEdgeLabels() && selected != null && (selected.equals(edge.getSource()) || selected.equals(edge.getTarget()))) {
+          if (getSettings().isShowEdgeLabels() && selected != null && (selected.equals(edge.getSource()) || selected.equals(edge.getTarget()))) {
             myVisibleEdges.add((AngularUiRouterEdge)edge);
             graph.setLabelText(builder.getEdge(edge), ((AngularUiRouterEdge)edge).getLabel());
           }
@@ -476,7 +477,7 @@ public final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<Di
 
       @Override
       public @NotNull Layouter getCustomLayouter(GraphSettings settings, Project project) {
-        final SmartOrganicLayouter layouter = settings.getOrganicLayouter();
+        final SmartOrganicLayouter layouter = GraphLayoutManager.getInstance().getOrganicLayouter();
         layouter.setNodeEdgeOverlapAvoided(true);
 
         layouter.setNodeSizeAware(true);
@@ -488,11 +489,11 @@ public final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<Di
 
         final List<CanonicMultiStageLayouter> list = new ArrayList<>();
         list.add(layouter);
-        list.add(settings.getBalloonLayouter());
-        list.add(settings.getCircularLayouter());
-        list.add(settings.getDirectedOrthogonalLayouter());
+        list.add(GraphLayoutManager.getInstance().getBalloonLayouter());
+        list.add(GraphLayoutManager.getInstance().getCircularLayouter());
+        list.add(GraphLayoutManager.getInstance().getDirectedOrthogonalLayouter());
         //list.add(settings.getGroupLayouter());
-        list.add(settings.getHVTreeLayouter());
+        list.add(GraphLayoutManager.getInstance().getHVTreeLayouter());
         //list.add(settings.getChannelLayouter());
         for (CanonicMultiStageLayouter current : list) {
           final ParallelEdgeLayouter parallelEdgeLayouter = GraphManager.getGraphManager().createParallelEdgeLayouter();

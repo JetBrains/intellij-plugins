@@ -49,7 +49,7 @@ public class StrutsPresentationModel extends BasicGraphPresentationModel<BasicSt
 
   public StrutsPresentationModel(final Graph2D graph) {
     super(graph);
-    setShowEdgeLabels(true);
+    getSettings().setShowEdgeLabels(true);
   }
 
   @Override
