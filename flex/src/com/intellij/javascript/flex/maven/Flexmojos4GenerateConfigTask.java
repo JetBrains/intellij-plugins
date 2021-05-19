@@ -31,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.execution.MavenExternalParameters;
 import org.jetbrains.idea.maven.importing.MavenRootModelAdapter;
 import org.jetbrains.idea.maven.importing.MavenRootModelAdapterLegacyImpl;
+import org.jetbrains.idea.maven.importing.ModifiableModelsProviderProxyImpl;
 import org.jetbrains.idea.maven.model.MavenId;
 import org.jetbrains.idea.maven.project.*;
 import org.jetbrains.idea.maven.utils.MavenProcessCanceledException;
@@ -327,8 +328,9 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
             final Module module = mavenProjectsManager.findModule(mavenProject);
             if (module == null) return true;
 
-            IdeModifiableModelsProvider provider = ProjectDataManager.getInstance().createModifiableModelsProvider(project);
-            MavenRootModelAdapter a = new MavenRootModelAdapter(new MavenRootModelAdapterLegacyImpl(mavenProject, module, provider));
+            IdeModifiableModelsProviderImpl provider = ProjectDataManager.getInstance().createModifiableModelsProvider(project);
+            MavenRootModelAdapter a = new MavenRootModelAdapter(new MavenRootModelAdapterLegacyImpl(mavenProject, module,
+                                                                                                    new ModifiableModelsProviderProxyImpl(provider, project)));
             for (String sourceRoot : sourceRoots) {
               a.addSourceFolder(sourceRoot, JavaSourceRootType.SOURCE);
             }
