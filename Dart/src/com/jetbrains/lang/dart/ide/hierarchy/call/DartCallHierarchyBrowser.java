@@ -39,14 +39,14 @@ public class DartCallHierarchyBrowser extends CallHierarchyBrowserBase {
   }
 
   @Override
-  protected void createTrees(@NotNull Map<String, JTree> type2TreeMap) {
+  protected void createTrees(@NotNull Map<? super String, ? super JTree> type2TreeMap) {
     ActionGroup group = (ActionGroup)ActionManager.getInstance().getAction(IdeActions.GROUP_CALL_HIERARCHY_POPUP);
     type2TreeMap.put(getCallerType(), createHierarchyTree(group));
     type2TreeMap.put(getCalleeType(), createHierarchyTree(group));
   }
 
   private JTree createHierarchyTree(ActionGroup group) {
-    final JTree tree = createTree(false);
+    JTree tree = createTree(false);
     PopupHandler.installPopupHandler(tree, group, ActionPlaces.CALL_HIERARCHY_VIEW_POPUP, ActionManager.getInstance());
     return tree;
   }

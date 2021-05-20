@@ -40,8 +40,8 @@ public class DartMethodHierarchyBrowser extends MethodHierarchyBrowserBase {
   }
 
   @Override
-  protected void createTrees(@NotNull Map<String, JTree> trees) {
-    final JTree tree = createTree(false);
+  protected void createTrees(@NotNull Map<? super String, ? super JTree> trees) {
+    JTree tree = createTree(false);
     ActionGroup group = (ActionGroup)ActionManager.getInstance().getAction(IdeActions.GROUP_METHOD_HIERARCHY_POPUP);
     PopupHandler.installPopupHandler(tree, group, ActionPlaces.METHOD_HIERARCHY_VIEW_POPUP, ActionManager.getInstance());
     trees.put(getMethodType(), tree);

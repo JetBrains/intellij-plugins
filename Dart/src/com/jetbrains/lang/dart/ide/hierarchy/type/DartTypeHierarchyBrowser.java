@@ -22,7 +22,7 @@ import java.util.Map;
 public class DartTypeHierarchyBrowser extends TypeHierarchyBrowserBase {
   private static final Logger LOG = Logger.getInstance(DartTypeHierarchyBrowser.class);
 
-  public DartTypeHierarchyBrowser(final Project project, final DartClass dartClass) {
+  public DartTypeHierarchyBrowser(Project project, DartClass dartClass) {
     super(project, dartClass);
   }
 
@@ -32,7 +32,7 @@ public class DartTypeHierarchyBrowser extends TypeHierarchyBrowserBase {
   }
 
   @Override
-  protected void createTrees(@NotNull final Map<String, JTree> trees) {
+  protected void createTrees(@NotNull Map<? super String, ? super JTree> trees) {
     createTreeAndSetupCommonActions(trees, IdeActions.GROUP_TYPE_HIERARCHY_POPUP);
   }
 
@@ -49,7 +49,7 @@ public class DartTypeHierarchyBrowser extends TypeHierarchyBrowserBase {
   }
 
   @Override
-  protected boolean isApplicableElement(@NotNull final PsiElement element) {
+  protected boolean isApplicableElement(@NotNull PsiElement element) {
     return element instanceof DartClass;
   }
 
@@ -65,7 +65,7 @@ public class DartTypeHierarchyBrowser extends TypeHierarchyBrowserBase {
   }
 
   @Override
-  protected HierarchyTreeStructure createHierarchyTreeStructure(@NotNull final String typeName, @NotNull final PsiElement psiElement) {
+  protected HierarchyTreeStructure createHierarchyTreeStructure(@NotNull String typeName, @NotNull PsiElement psiElement) {
     if (getSupertypesHierarchyType().equals(typeName)) {
       return new DartServerSupertypesHierarchyTreeStructure(myProject, (DartClass)psiElement);
     }
@@ -82,12 +82,12 @@ public class DartTypeHierarchyBrowser extends TypeHierarchyBrowserBase {
   }
 
   @Override
-  protected boolean canBeDeleted(final PsiElement psiElement) {
+  protected boolean canBeDeleted(PsiElement psiElement) {
     return psiElement instanceof DartClass;
   }
 
   @Override
-  protected String getQualifiedName(final PsiElement psiElement) {
+  protected String getQualifiedName(PsiElement psiElement) {
     if (psiElement instanceof DartClass) {
       return ((DartClass)psiElement).getName();
     }
