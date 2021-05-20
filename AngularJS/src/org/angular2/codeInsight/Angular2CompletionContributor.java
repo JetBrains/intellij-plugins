@@ -5,6 +5,7 @@ import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.javascript.web.css.CssInBindingExpressionCompletionProvider;
+import com.intellij.javascript.web.webTypes.codeInsight.attributes.AsteriskAwarePrefixMatcher;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.completion.JSLookupElementInsertHandler;
 import com.intellij.lang.javascript.completion.JSLookupPriority;
@@ -263,7 +264,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
       }
       if (reference instanceof XmlAttributeReference) {
         CompletionResultSet result = resultSet.withPrefixMatcher(
-          new TemplateBindingsPrefixMatcher(resultSet.getPrefixMatcher()));
+          new AsteriskAwarePrefixMatcher(resultSet.getPrefixMatcher()));
         final XmlAttribute attribute = ((XmlAttributeReference)reference).getElement();
         final XmlTag tag = attribute.getParent();
         final XmlElementDescriptor parentDescriptor = tag.getDescriptor();
@@ -316,7 +317,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
               element = PrioritizedLookupElement.withPriority(element, Angular2AttributeDescriptor.AttributePriority.NORMAL.getValue() + 1);
             }
 
-            result.withPrefixMatcher(new TemplateBindingsPrefixMatcher(toPass.getPrefixMatcher()))
+            result.withPrefixMatcher(new AsteriskAwarePrefixMatcher(toPass.getPrefixMatcher()))
               .withRelevanceSorter(toPass.getSorter())
               .addElement(element);
           });
