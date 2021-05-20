@@ -64,6 +64,11 @@ public class DartConsoleFolding extends ConsoleFolding {
     // depending on the Moon phase (well, on initialization speed) we may get lines.size() == 2 where first line is Dart VM startup and 2nd line is Observatory URL)
     // but more frequently we get these 2 lines one by one
 
+    // Defensively return if lines is empty (https://youtrack.jetbrains.com/issue/WEB-51019)
+    if (lines.isEmpty()) {
+      return "";
+    }
+
     if (lines.size() == 1 && lines.get(0).startsWith(DartConsoleFilter.OBSERVATORY_LISTENING_ON)) {
       return " [Debug service available at " + lines.get(0).substring(DartConsoleFilter.OBSERVATORY_LISTENING_ON.length()) + "]";
     }
