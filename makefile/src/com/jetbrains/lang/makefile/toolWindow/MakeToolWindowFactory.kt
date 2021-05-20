@@ -90,7 +90,9 @@ class MakeToolWindowFactory : ToolWindowFactory {
       group.addAction(MakefileToolWindowSortAlphabeticallyAction(options, model))
       group.addAction(MakefileToolWindowShowSpecialAction(options, model))
 
-      toolBarPanel.add(ActionManager.getInstance().createActionToolbar("MakeToolWindowToolbar", group, true).component)
+      val toolbar = ActionManager.getInstance().createActionToolbar("MakeToolWindowToolbar", group, true)
+      toolbar.setTargetComponent(tree)
+      toolBarPanel.add(toolbar.component)
 
       panel.toolbar = toolBarPanel
 
