@@ -418,7 +418,7 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
 
       myTestsOutputConsolePrinter = new TestsOutputConsolePrinter(MyConsoleView.this, consoleProperties, null) {
         @Override
-        public void print(final String text, final ConsoleViewContentType contentType) {
+        public void print(final @NotNull String text, final @NotNull ConsoleViewContentType contentType) {
           myMockResettablePrinter.print(text, contentType);
         }
       };

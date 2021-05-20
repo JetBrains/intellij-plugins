@@ -415,7 +415,7 @@ public abstract class FlexUnitExecutionTest extends JavaCodeInsightTestCase impl
     final StringBuilder stdout = new StringBuilder();
     testProxy.printOn(new Printer() {
       @Override
-      public void print(String text, ConsoleViewContentType contentType) {
+      public void print(@NotNull String text, @NotNull ConsoleViewContentType contentType) {
         if (contentType == ConsoleViewContentType.NORMAL_OUTPUT) {
           stdout.append(text);
         }
@@ -430,7 +430,7 @@ public abstract class FlexUnitExecutionTest extends JavaCodeInsightTestCase impl
       }
 
       @Override
-      public void printHyperlink(String text, HyperlinkInfo info) {
+      public void printHyperlink(@NotNull String text, HyperlinkInfo info) {
       }
 
       @Override
