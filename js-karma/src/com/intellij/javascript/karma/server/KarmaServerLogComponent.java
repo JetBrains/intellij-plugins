@@ -29,7 +29,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.scale.JBUIScale;
-import com.intellij.ui.viewModel.extraction.DebugToolWindowContentExtractor;
+import com.intellij.ui.viewModel.extraction.ToolWindowContentExtractor;
 import com.intellij.util.Alarm;
 import com.intellij.util.ui.EmptyIcon;
 import org.jetbrains.annotations.NonNls;
@@ -120,7 +120,7 @@ public final class KarmaServerLogComponent implements ComponentWithActions {
                                              ExecutionUtil.getLiveIndicator(emptyIcon),
                                              console.getPreferredFocusableComponent());
     content.setCloseable(false);
-    content.putUserData(DebugToolWindowContentExtractor.ENABLE_DEBUG_TAB, true);
+    content.putUserData(ToolWindowContentExtractor.SYNC_TAB_TO_GUEST, true);
     ui.addContent(content, 4, PlaceInGrid.bottom, false);
     NopProcessHandler wrapperProcessHandler = new NopProcessHandler();
     // we can't attach console to real process handler to not lose any messages
