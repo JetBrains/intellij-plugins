@@ -58,6 +58,11 @@ public class DartConsoleFolding extends ConsoleFolding {
   @Nullable
   @Override
   public String getPlaceholderText(@NotNull Project project, @NotNull final List<String> lines) {
+    // Defensively return if lines is empty (WEB-51019)
+    if (lines.isEmpty()) {
+      return "";
+    }
+
     // C:\dart-sdk\bin\dart.exe --checked --pause_isolates_on_start --enable-vm-service:55465 C:\dart_projects\DartSample\bin\file1.dart arg
     // is collapsed to "dart file1.dart arg"
 
