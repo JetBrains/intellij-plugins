@@ -2,7 +2,7 @@ class Fred
   # The initialize method is the constructor.  The @val is
   # an object value.
   def initialize(v)
-    <caret>@val = v
+    @val = v
   end
 
   # Set it and get it.
@@ -12,5 +12,10 @@ class Fred
 
   def get
     @val
+  end
+
+  def print
+    puts 'v:'
+    puts @val<caret>
   end
 end
