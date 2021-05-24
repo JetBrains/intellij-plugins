@@ -22,10 +22,6 @@ import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 
 class VueCompletionContributor : CompletionContributor() {
   init {
-    extend(CompletionType.BASIC, psiElement(XmlTokenType.XML_NAME).withParent(xmlAttribute()),
-           VueAttributeNameCompletionProvider())
-    extend(CompletionType.BASIC, psiElement(XmlTokenType.XML_DATA_CHARACTERS),
-           VueTagContentCompletionProvider())
     extend(CompletionType.BASIC, psiElement(XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN),
            VueAttributeValueCompletionProvider())
     extend(CompletionType.BASIC, psiElement().with(language(VueJSLanguage.INSTANCE)),

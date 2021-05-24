@@ -53,7 +53,6 @@
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
-    <applicationService serviceImplementation="org.jetbrains.vuejs.model.webtypes.registry.VueWebTypesRegistry"/>
     <css.embeddedCssProvider implementation="org.jetbrains.vuejs.css.VueEmbeddedCssProvider"/>
     <css.inclusionContext implementation="org.jetbrains.vuejs.css.VueCssInclusionContext"/>
     <css.elementDescriptorProvider implementation="org.jetbrains.vuejs.css.VueCssElementDescriptorProvider"/>
@@ -79,10 +78,8 @@
 
     <lang.syntaxHighlighterFactory language="Vue"
                                    implementationClass="org.jetbrains.vuejs.lang.html.highlighting.VueSyntaxHighlighterFactory"/>
-    <xml.attributeDescriptorsProvider implementation="org.jetbrains.vuejs.codeInsight.attributes.VueAttributesProvider"/>
+
     <xml.xmlExtension implementation="org.jetbrains.vuejs.codeInsight.VueXmlExtension" order="before react"/>
-    <xml.tagNameProvider implementation="org.jetbrains.vuejs.codeInsight.tags.VueTagProvider"/>
-    <xml.elementDescriptorProvider implementation="org.jetbrains.vuejs.codeInsight.tags.VueTagProvider"/>
     <html.embeddedContentSupport implementation="org.jetbrains.vuejs.lang.html.lexer.VueEmbeddedContentSupport"/>
     <html.embeddedContentSupport implementation="org.jetbrains.vuejs.libraries.i18n.VueI18nEmbeddedContentSupport"/>
     <gotoDeclarationHandler implementation="org.jetbrains.vuejs.editor.VueGotoDeclarationHandler"/>
@@ -204,6 +201,8 @@
     <webTypes.definitions source="web-types/vue@2.4.0.web-types.json"/>
     <webTypes.definitions source="web-types/vue@2.5.0.web-types.json"/>
     <webTypes.definitions source="web-types/vue@3.0.0.web-types.json"/>
+
+    <webTypes.additionalContextProvider implementation="org.jetbrains.vuejs.model.VueWebTypesAdditionalContextProvider"/>
 
     <vuejs.templateScopesProvider
       implementation="org.jetbrains.vuejs.codeInsight.template.VueStandardSymbolsScopesProvider"

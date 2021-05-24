@@ -21,9 +21,7 @@ import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.model.source.VueSourceGlobal
-import org.jetbrains.vuejs.model.webtypes.registry.VueWebTypesRegistry
 import java.util.concurrent.ConcurrentHashMap
 
 internal class VueGlobalImpl(override val project: Project, private val packageJsonUrl: String)
@@ -43,42 +41,29 @@ internal class VueGlobalImpl(override val project: Project, private val packageJ
   private val packageJson: VirtualFile? get() = findFileByUrl(packageJsonUrl)
 
   override val delegate
-    get() = CachedValuesManager.getManager(project).getCachedValue(this) {
-      packageJson?.let { packageJson -> VueWebTypesRegistry.createWebTypesGlobal(project, packageJson, this) }
-      ?: Result.create(null as VueGlobal?, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
-    } ?: mySourceGlobal
+    get() = mySourceGlobal
 
   private fun getElementToParentMap(): MultiMap<VueScopeElement, VueEntitiesContainer> =
     CachedValuesManager.getManager(project).getCachedValue(this) {
       Result.create(buildElementToParentMap(),
                     PsiModificationTracker.MODIFICATION_COUNT,
-                    VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS,
-                    VueWebTypesRegistry.MODIFICATION_TRACKER)
+                    VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
     } ?: MultiMap.empty()
 
   private fun buildPluginsList(): Result<List<VuePlugin>> {
     val result = mutableListOf<VuePlugin>()
     val dependencies = mutableSetOf<Any>()
-    val enabledPackagesResult = VueWebTypesRegistry.instance.webTypesEnabledPackages
-    val enabledPackages = enabledPackagesResult.value.asSequence()
-      .flatMap { pkgName ->
-        if (pkgName.startsWith('@') && pkgName.contains('/'))
-          sequenceOf(pkgName, pkgName.takeWhile { ch -> ch != '/' })
-        else sequenceOf(pkgName)
-      }
-      .toSet()
     dependencies.add(VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
-    dependencies.addAll(enabledPackagesResult.dependencyItems)
     dependencies.add(NodeModulesDirectoryManager.getInstance(project).nodeModulesDirChangeTracker)
     packageJson?.let { file ->
       val yarnPnpManager = YarnPnpManager.getInstance(project)
       val visiblePackages = if (yarnPnpManager.isUnderPnp(file)) {
-        enabledPackages.toMutableSet()
+        mutableSetOf<String>()
       }
       else null
       PackageJsonUtil.processUpPackageJsonFilesInAllScope(file) { candidate ->
         visiblePackages?.addAll(PackageJsonData.getOrCreate(candidate).allDependencies)
-        result.addAll(getPlugins(candidate, enabledPackages))
+        result.addAll(getPlugins(candidate))
         dependencies.add(candidate)
         true
       }
@@ -88,48 +73,26 @@ internal class VueGlobalImpl(override val project: Project, private val packageJ
           yarnPnpManager.findInstalledPackageDir(file, it)
             ?.let { dir -> PackageJsonUtil.findChildPackageJsonFile(dir) }
         }
-        ?.filter { isVueLibrary(it, enabledPackages) }
+        ?.filter { isVueLibrary(it) }
         ?.map { VuePluginImpl(project, it) }
         ?.toCollection(result)
-    }
-    // ensure we have Vue plugin
-    if (result.find { it.moduleName == VUE_MODULE } == null) {
-      VueWebTypesRegistry.createWebTypesPlugin(project, VUE_MODULE, null, this).let {
-        dependencies.addAll(it.dependencyItems)
-        it.value?.let(result::add)
-      }
     }
     return Result.create(result, *dependencies.toTypedArray())
   }
 
-  private fun getPlugins(packageJson: VirtualFile,
-                         enabledPackages: Set<String>): Sequence<VuePlugin> =
+  private fun getPlugins(packageJson: VirtualFile): Sequence<VuePlugin> =
     NodeModuleUtil.findNodeModulesByPackageJson(packageJson)
-      ?.let { getVuePluginPackageJsons(it, enabledPackages) }
-      ?.filter { isVueLibrary(it, enabledPackages) }
+      ?.let {
+        FilenameIndex.getVirtualFilesByName(
+          PackageJsonUtil.FILE_NAME,
+          GlobalSearchScopesCore.directoryScope(project, it, true)
+        )
+      }
+      ?.asSequence()
+      ?.filter { isVueLibrary(it) }
       ?.map { VuePluginImpl(project, it) }
     ?: emptySequence()
 
-  private fun getVuePluginPackageJsons(nodeModules: VirtualFile,
-                                       enabledPackages: Set<String>): Sequence<VirtualFile> {
-    return nodeModules.children.asSequence()
-      .filter { enabledPackages.contains(it.name) && it.isDirectory }
-      .flatMap { dir ->
-        val name = dir.name
-        if (name.startsWith("@"))
-          dir.children.asSequence().filter {
-            enabledPackages.contains("$name/${it.name}") && it.isDirectory
-          }
-        else
-          sequenceOf(dir)
-      }
-      .mapNotNull { PackageJsonUtil.findChildPackageJsonFile(it) }
-      .plus(FilenameIndex.getVirtualFilesByName(
-        PackageJsonUtil.FILE_NAME,
-        GlobalSearchScopesCore.directoryScope(project, nodeModules, true)
-      ))
-      .distinct()
-  }
 
   private fun buildElementToParentMap(): MultiMap<VueScopeElement, VueEntitiesContainer> {
     val result = MultiMap<VueScopeElement, VueEntitiesContainer>()
@@ -210,12 +173,10 @@ internal class VueGlobalImpl(override val project: Project, private val packageJ
       return result
     }
 
-    private fun isVueLibrary(it: VirtualFile, enabledPackages: Set<String>): Boolean {
+    private fun isVueLibrary(it: VirtualFile): Boolean {
       val data = PackageJsonData.getOrCreate(it)
       return data.name == "vue"
-             || enabledPackages.contains(data.name)
              || data.containsOneOfDependencyOfAnyType("vue-loader", "vue-latest", "vue", "vue-template-compiler")
-             || data.webTypes != null
     }
 
   }

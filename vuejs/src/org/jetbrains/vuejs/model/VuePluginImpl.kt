@@ -9,7 +9,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.vuejs.model.source.VueSourcePlugin
-import org.jetbrains.vuejs.model.webtypes.registry.VueWebTypesRegistry
 
 class VuePluginImpl(private val project: Project, private val packageJson: VirtualFile) :
   VueDelegatedEntitiesContainer<VuePlugin>(), VuePlugin {
@@ -23,11 +22,9 @@ class VuePluginImpl(private val project: Project, private val packageJson: Virtu
       buildPlugin()
     }
 
-  private fun buildPlugin(): Result<VuePlugin>? {
-    val webTypes = VueWebTypesRegistry.createWebTypesPlugin(project, packageJson, this)
+  private fun buildPlugin(): Result<VuePlugin> {
     val dependencies = mutableSetOf<Any>(packageJson, NodeModulesDirectoryManager.getInstance(project).nodeModulesDirChangeTracker)
-    dependencies.addAll(webTypes.dependencyItems)
-    return Result.create(webTypes.value ?: VueSourcePlugin(project, packageJson), dependencies)
+    return Result.create(VueSourcePlugin(project, packageJson), dependencies)
   }
 
   override fun toString(): String {

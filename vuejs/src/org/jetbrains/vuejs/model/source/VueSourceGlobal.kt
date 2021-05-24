@@ -19,17 +19,13 @@ import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.model.*
-import org.jetbrains.vuejs.model.webtypes.registry.VueWebTypesRegistry
 import java.util.*
 
 class VueSourceGlobal(override val project: Project, private val packageJsonUrl: String?) : VueGlobal {
 
   override val global: VueGlobal = this
   override val plugins: List<VuePlugin>
-    get() =
-      CachedValuesManager.getManager(project).getCachedValue(project) {
-        VueWebTypesRegistry.createWebTypesPlugin(project, VUE_MODULE, null, this)
-      }?.let { listOf(it) } ?: emptyList()
+    get() = emptyList()
   override val source: PsiElement? = null
   override val parents: List<VueEntitiesContainer> = emptyList()
 
