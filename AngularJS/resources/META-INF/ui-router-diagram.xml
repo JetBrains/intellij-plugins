@@ -1,9 +1,9 @@
 <idea-plugin>
-  <actions>
-    <action class="org.angularjs.codeInsight.router.ShowUiRouterStatesNewDiagramAction" id="AngularJS.Show.Ui.Router.States.Diagram.Action">
+  <actions resource-bundle="messages.AngularJSBundle">
+    <action class="org.angularjs.codeInsight.router.ShowUiRouterStatesNewDiagramAction"
+            id="AngularJS.Show.Ui.Router.States.Diagram.Action">
       <add-to-group group-id="UML.EditorGroup" />
     </action>
-
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -12,5 +12,4 @@
     <javascript.module.provider implementation="org.angularjs.codeInsight.attributes.AngularModulesProvider"/>
   </extensions>
 
-  <resource-bundle>messages.AngularJSBundle</resource-bundle>
 </idea-plugin>

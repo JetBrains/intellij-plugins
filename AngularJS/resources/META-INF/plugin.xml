@@ -306,6 +306,7 @@
     <lang.elementManipulator forClass="org.angular2.lang.html.psi.Angular2HtmlNgContentSelector"
                              implementationClass="org.angular2.lang.html.psi.impl.Angular2HtmlNgContentSelectorManipulator"/>
     <notificationGroup id="Angular CLI" displayType="BALLOON" isLogByDefault="false" icon="AngularJSIcons.Angular2"
+                       bundle="messages.Angular2Bundle"
                        key="angular.description.angular-cli"/>
   </extensions>
 
@@ -346,7 +347,7 @@
                             id="component" order="after templateElements"/>
   </extensions>
 
-  <actions>
+  <actions resource-bundle="messages.Angular2Bundle">
     <action class="org.angular2.cli.actions.AngularCliGenerateAction" id="angularCliGenerate"
             icon="/icons/angular2.svg">
       <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewDir"/>
@@ -361,5 +362,4 @@
       <add-to-group group-id="IntroduceActionsGroup"/>
     </action>
   </actions>
-  <resource-bundle>messages.Angular2Bundle</resource-bundle>
 </idea-plugin>
