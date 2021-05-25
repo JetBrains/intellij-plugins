@@ -17,7 +17,9 @@ import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
@@ -480,7 +482,7 @@ public final class CompilerOptionsConfigurable extends NamedConfigurable<Compile
 
     final DefaultActionGroup group = new DefaultActionGroup();
     group.add(new RestoreDefaultValueAction(tree));
-    PopupHandler.installPopupHandler(treeTable, group, ActionPlaces.UNKNOWN, ActionManager.getInstance());
+    PopupHandler.installPopupMenu(treeTable, group, "FlexCompilerOptionsTreePopup");
 
     new TreeTableSpeedSearch(treeTable, o -> {
       final Object userObject = ((DefaultMutableTreeNode)o.getLastPathComponent()).getUserObject();
