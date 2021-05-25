@@ -32,6 +32,15 @@ public class CucumberStepRenameProcessor extends RenamePsiElementProcessor {
     return element instanceof GherkinStep || PsiTreeUtil.getParentOfType(element, GherkinStep.class) != null;
   }
 
+  public static CucumberStepReference getCucumberStepReference(PsiElement element) {
+    for (PsiReference ref : element.getReferences()) {
+      if (ref instanceof CucumberStepReference) {
+        return (CucumberStepReference)ref;
+      }
+    }
+    return null;
+  }
+
   /**
    * Wraps all special symbols of regexp with group and cut static text.
    * @param source regex to work with
