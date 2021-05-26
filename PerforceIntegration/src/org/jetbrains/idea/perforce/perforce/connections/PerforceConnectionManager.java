@@ -145,7 +145,7 @@ public class PerforceConnectionManager implements PerforceConnectionManagerI {
       }
     });
     myMessageBusConnection.subscribe(AdditionalLibraryRootsListener.TOPIC,
-                                     (presentableLibraryName, newRoots, oldRoots) -> updateConnections());
+                                     (presentableLibraryName, oldRoots, newRoots) -> updateConnections());
     myMessageBusConnection.subscribe(ProjectLevelVcsManager.VCS_CONFIGURATION_CHANGED, this::updateConnections);
 
     VirtualFileManager.getInstance().addVirtualFileListener(new PerforceP4ConfigVirtualFileListener(this, myProject), parentDisposable);
