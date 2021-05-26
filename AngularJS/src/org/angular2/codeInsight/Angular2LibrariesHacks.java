@@ -57,10 +57,9 @@ public final class Angular2LibrariesHacks {
    * Hack for WEB-37879
    */
   public static @Nullable JSType hackNgModelChangeType(@Nullable JSType type, @NotNull String propertyName) {
-    if (type != null
-        // Workaround issue with ngModelChange field.
-        // The workaround won't execute once Angular source is corrected.
-        && propertyName.equals(NG_MODEL_CHANGE)
+    // Workaround issue with ngModelChange field.
+    // The workaround won't execute once Angular source is corrected.
+    if (propertyName.equals(NG_MODEL_CHANGE)
         && type instanceof JSRecordType
         && !((JSRecordType)type).hasProperties()) {
       return JSAnyType.get(type.getSource());

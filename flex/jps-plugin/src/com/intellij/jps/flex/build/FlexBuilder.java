@@ -169,7 +169,7 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
    */
   private static boolean isFlexmojosBCWithUpdatedConfigFile(final JpsFlexBuildConfiguration bc) {
     final String configFilePath = bc.getCompilerOptions().getAdditionalConfigFilePath();
-    if (configFilePath.isEmpty() || !configFilePath.contains("/.idea/flexmojos/")) {
+    if (!configFilePath.contains("/.idea/flexmojos/")) {
       return false;
     }
 

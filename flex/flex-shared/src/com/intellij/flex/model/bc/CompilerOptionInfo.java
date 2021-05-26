@@ -351,7 +351,7 @@ public final class CompilerOptionInfo {
     assert StringUtil.isNotEmpty(displayName);
 
     final String advancedValue = groupElement.getAttributeValue("advanced");
-    final boolean advanced = advancedValue != null && "true".equals(advancedValue);
+    final boolean advanced = "true".equals(advancedValue);
 
     final String since = groupElement.getAttributeValue("since");
 
@@ -400,7 +400,7 @@ public final class CompilerOptionInfo {
     final ListElement[] listElements = type == OptionType.List ? readListElements(element) : null;
 
     final String advancedValue = element.getAttributeValue("advanced");
-    final boolean advanced = advancedValue != null && "true".equals(advancedValue);
+    final boolean advanced = "true".equals(advancedValue);
 
     final String since = element.getAttributeValue("since");
 

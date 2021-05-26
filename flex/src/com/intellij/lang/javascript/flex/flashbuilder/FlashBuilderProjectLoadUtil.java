@@ -605,7 +605,7 @@ public final class FlashBuilderProjectLoadUtil {
   private static void loadTheme(final FlashBuilderProject project, final Element actionScriptPropertiesElement) {
     final Element themeElement = actionScriptPropertiesElement.getChild(THEME_ELEMENT, actionScriptPropertiesElement.getNamespace());
     final String defaultThemeAttr = themeElement == null ? null : themeElement.getAttributeValue(DEFAULT_THEME_ATTR);
-    if (defaultThemeAttr != null && "false".equals(defaultThemeAttr)) {
+    if ("false".equals(defaultThemeAttr)) {
       final String themeDirPathRaw = themeElement.getAttributeValue(THEME_LOCATION_ATTR);
       if (themeDirPathRaw != null) {
         project.setThemeDirPathRaw(themeDirPathRaw);

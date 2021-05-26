@@ -13,7 +13,7 @@ public final class DartDaemonParserUtil {
 
   @Nullable
   private static JsonObject parseDaemonLog(@NotNull final String text) throws JsonSyntaxException {
-    if (text.isEmpty() || !text.startsWith("[{")) {
+    if (!text.startsWith("[{")) {
       return null;
     }
     final JsonParser jsonParser = new JsonParser();
@@ -76,7 +76,7 @@ public final class DartDaemonParserUtil {
    */
   @Nullable
   public static String getLogMessage(@NotNull final String text) {
-    if (text.isEmpty() || !text.startsWith("[{")) {
+    if (!text.startsWith("[{")) {
       return null;
     }
     final JsonObject jsonObject;

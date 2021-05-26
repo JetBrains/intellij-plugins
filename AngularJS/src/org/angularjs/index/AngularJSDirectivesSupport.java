@@ -104,8 +104,8 @@ public final class AngularJSDirectivesSupport {
 
   public static boolean isDirective(@NotNull JSImplicitElement directive) {
     final String userString = directive.getUserString();
-    return userString != null && (ANGULAR_DIRECTIVES_INDEX_USER_STRING.equals(userString)
-                                  || ANGULAR_DIRECTIVES_DOC_INDEX_USER_STRING.equals(userString));
+    return ANGULAR_DIRECTIVES_INDEX_USER_STRING.equals(userString)
+           || ANGULAR_DIRECTIVES_DOC_INDEX_USER_STRING.equals(userString);
   }
 
   private static @NotNull List<JSImplicitElement> findDirectivesCandidates(@NotNull Project project, @NotNull String indexLookupName) {
