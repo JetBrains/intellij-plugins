@@ -6,6 +6,7 @@ import com.intellij.codeInsight.completion.XmlTagInsertHandler
 import com.intellij.codeInsight.editorActions.XmlTagNameSynchronizer
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil
+import com.intellij.javascript.web.webTypes.registry.WebTypesCodeCompletionItem
 import com.intellij.lang.ecmascript6.psi.JSClassExpression
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.ecmascript6.psi.impl.ES6CreateImportUtil
@@ -71,9 +72,7 @@ class VueInsertHandler : XmlTagInsertHandler() {
     if (shouldHandleXmlInsert(context)) {
       super.handleInsert(context, item)
     }
-    val element = item.`object`.castSafelyTo<Pair<*, *>>()
-                    ?.second?.castSafelyTo<SmartPsiElementPointer<*>>()
-                    ?.element
+    val element = WebTypesCodeCompletionItem.getPsiElement(item)
                   ?: return
     val importedFile = element.containingFile
     if (importedFile == context.file) return

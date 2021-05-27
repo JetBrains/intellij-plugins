@@ -1,24 +1,29 @@
 // Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model
 
-import com.intellij.javascript.web.webTypes.registry.WebTypesAdditionalContextProvider
-import com.intellij.javascript.web.webTypes.registry.WebTypesContribution
+import com.intellij.javascript.web.webTypes.registry.*
 import com.intellij.javascript.web.webTypes.registry.WebTypesContribution.Companion.KIND_HTML_ATTRIBUTES
 import com.intellij.javascript.web.webTypes.registry.WebTypesContribution.Companion.KIND_HTML_ELEMENTS
 import com.intellij.javascript.web.webTypes.registry.WebTypesContribution.Companion.KIND_HTML_EVENTS
 import com.intellij.javascript.web.webTypes.registry.WebTypesContribution.Companion.KIND_HTML_SLOTS
 import com.intellij.javascript.web.webTypes.registry.WebTypesContribution.Companion.KIND_HTML_VUE_DIRECTIVES
 import com.intellij.javascript.web.webTypes.registry.WebTypesContribution.Companion.VUE_FRAMEWORK
-import com.intellij.javascript.web.webTypes.registry.WebTypesContributionsContainer
-import com.intellij.javascript.web.webTypes.registry.WebTypesNameMatchQueryParams
+import com.intellij.javascript.web.webTypes.registry.WebTypesContribution.Priority
+import com.intellij.lang.javascript.DialectDetector
+import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.Stack
+import org.jetbrains.vuejs.VuejsIcons
+import org.jetbrains.vuejs.codeInsight.detectVueScriptLanguage
 import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
 import org.jetbrains.vuejs.codeInsight.fromAsset
+import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler
+import org.jetbrains.vuejs.codeInsight.toAsset
 
 class VueWebTypesAdditionalContextProvider : WebTypesAdditionalContextProvider {
 
@@ -92,9 +97,99 @@ class VueWebTypesAdditionalContextProvider : WebTypesAdditionalContextProvider {
         }
       else emptySequence()
 
+    override fun getCodeCompletions(root: WebTypesContributionsContainer.ContributionRoot?,
+                                    kind: String,
+                                    name: String?,
+                                    params: WebTypesCodeCompletionQueryParams,
+                                    context: Stack<WebTypesContributionsContainer>): Sequence<WebTypesCodeCompletionItem> =
+      if (root == null || root == WebTypesContributionsContainer.ContributionRoot.HTML)
+        when (kind) {
+          KIND_HTML_ELEMENTS -> {
+            val result = mutableListOf<WebTypesCodeCompletionItem>()
+            val scriptLanguage = detectVueScriptLanguage(containingFile)
+            container.acceptEntities(object : VueModelVisitor() {
+              override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
+                // Cannot self refer without export declaration with component name
+                if ((component.source as? JSImplicitElement)?.context == containingFile) {
+                  return true
+                }
+                val moduleName: String? = if (component.parents.size == 1) {
+                  (component.parents.first() as? VuePlugin)?.moduleName
+                }
+                else null
+                listOf(toAsset(name).capitalize(), fromAsset(name)).forEach {
+                  result.add(createVueLookup(component, it, scriptLanguage, proximity, moduleName))
+                }
+                return true
+              }
+            }, VueModelVisitor.Proximity.OUT_OF_SCOPE)
+            result.asSequence()
+          }
+          KIND_HTML_VUE_DIRECTIVES -> {
+            val result = mutableListOf<WebTypesCodeCompletionItem>()
+            container.acceptEntities(object : VueModelVisitor() {
+              override fun visitDirective(name: String, directive: VueDirective, proximity: Proximity): Boolean {
+                result.add(WebTypesCodeCompletionItem.create(fromAsset(name),
+                                                             source = DirectiveWrapper(name, directive),
+                                                             priority = priorityOf(proximity),
+                                                             proximity = proximityOf(proximity)))
+                return true
+              }
+            }, VueModelVisitor.Proximity.GLOBAL)
+            result.asSequence()
+          }
+          else -> emptySequence()
+        }
+      else emptySequence()
+
     override fun getModificationCount(): Long =
       PsiModificationTracker.SERVICE.getInstance(containingFile.project).modificationCount
 
+    private fun priorityOf(proximity: VueModelVisitor.Proximity): Priority =
+      when (proximity) {
+        VueModelVisitor.Proximity.LOCAL -> Priority.HIGHEST
+        VueModelVisitor.Proximity.PLUGIN, VueModelVisitor.Proximity.APP -> Priority.HIGH
+        VueModelVisitor.Proximity.GLOBAL -> Priority.HIGH
+        VueModelVisitor.Proximity.OUT_OF_SCOPE -> Priority.NORMAL
+      }
+
+    private fun proximityOf(proximity: VueModelVisitor.Proximity): Int =
+      when (proximity) {
+        VueModelVisitor.Proximity.PLUGIN, VueModelVisitor.Proximity.APP -> 1
+        else -> 0
+      }
+
+    private fun createVueLookup(component: VueComponent,
+                                name: String,
+                                scriptLanguage: String?,
+                                proximity: VueModelVisitor.Proximity,
+                                moduleName: String? = null): WebTypesCodeCompletionItem {
+      val element = component.source
+      var builder = WebTypesCodeCompletionItem.create(
+        name = name,
+        source = ComponentWrapper(name, component),
+        icon = VuejsIcons.Vue,
+        typeText = moduleName,
+        priority = priorityOf(proximity),
+        proximity = proximityOf(proximity))
+
+      if (proximity == VueModelVisitor.Proximity.OUT_OF_SCOPE && element != null) {
+        val settings = JSApplicationSettings.getInstance()
+        if ((scriptLanguage != null && "ts" == scriptLanguage)
+            || (DialectDetector.isTypeScript(element)
+                && !JSLibraryUtil.isProbableLibraryFile(element.containingFile.viewProvider.virtualFile))) {
+          if (settings.hasTSImportCompletionEffective(element.project)) {
+            builder = builder.withInsertHandlerAdded(VueInsertHandler.INSTANCE)
+          }
+        }
+        else {
+          if (settings.isUseJavaScriptAutoImport) {
+            builder = builder.withInsertHandlerAdded(VueInsertHandler.INSTANCE)
+          }
+        }
+      }
+      return builder
+    }
   }
 
   private abstract class DocumentedItemWrapper<T : VueDocumentedItem>(
