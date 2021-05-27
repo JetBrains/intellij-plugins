@@ -1,8 +1,11 @@
-<idea-plugin url="https://github.com/jvolkman/intellij-protobuf-editor" package="com.intellij.protobuf">
-  <name>Protocol Buffers Editor</name>
+<idea-plugin package="com.intellij.protobuf">
+  <name>Protocol Buffers</name>
   <id>idea.plugin.protoeditor</id>
   <vendor>JetBrains</vendor>
   <category>Microservices</category>
+  <description><![CDATA[
+    Provides editor support for <a href="https://developers.google.com/protocol-buffers/">Protocol Buffers</a> files.
+  ]]></description>
 
   <depends>com.intellij.modules.platform</depends>
   <depends>com.intellij.modules.lang</depends>
