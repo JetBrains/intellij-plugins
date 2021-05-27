@@ -104,12 +104,6 @@ public class FlexmojosSdkType extends SdkType {
   }
 
   @Override
-  @NotNull
-  public Icon getIconForAddAction() {
-    return getIcon();
-  }
-
-  @Override
   public void setupSdkPaths(@NotNull final Sdk sdk) {
     final VirtualFile sdkRoot = sdk.getHomeDirectory();
     if (sdkRoot == null || !sdkRoot.isValid() || sdkRoot.isDirectory()) {

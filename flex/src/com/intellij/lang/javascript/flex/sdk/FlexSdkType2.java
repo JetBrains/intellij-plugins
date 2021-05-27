@@ -85,12 +85,6 @@ public class FlexSdkType2 extends SdkType {
     return FlexBundle.message("flex.sdk.presentable.name");
   }
 
-  @Override
-  @NotNull
-  public Icon getIconForAddAction() {
-    return getIcon();
-  }
-
   @NotNull
   public static FlexSdkType2 getInstance() {
     return SdkType.findInstance(FlexSdkType2.class);
