@@ -24,6 +24,7 @@ import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler
 import org.jetbrains.vuejs.codeInsight.toAsset
+import java.util.*
 
 class VueWebTypesAdditionalContextProvider : WebTypesAdditionalContextProvider {
 
@@ -202,6 +203,13 @@ class VueWebTypesAdditionalContextProvider : WebTypesAdditionalContextProvider {
 
     override val docUrl: String?
       get() = item.documentation.docUrl
+
+    override fun equals(other: Any?): Boolean =
+      other is DocumentedItemWrapper<*>
+      && matchedName == other.matchedName
+      && item == other.item
+
+    override fun hashCode(): Int = Objects.hash(matchedName, item)
   }
 
   private abstract class NamedSymbolWrapper<T : VueNamedSymbol>(item: T, matchedName: String = item.name) : DocumentedItemWrapper<T>(
