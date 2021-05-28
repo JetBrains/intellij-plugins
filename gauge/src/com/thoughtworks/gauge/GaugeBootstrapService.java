@@ -2,6 +2,7 @@ package com.thoughtworks.gauge;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -60,6 +61,7 @@ public final class GaugeBootstrapService implements Disposable {
   }
 
   public void moduleAdded(@NotNull Module module) {
+    if (ApplicationManager.getApplication().isUnitTestMode()) return;
     modulesQueue.add(new WeakReference<>(module));
 
     myUpdateQueue.queue(Update.create("INIT_GAUGE", () -> {
