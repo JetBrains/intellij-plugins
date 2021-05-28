@@ -191,7 +191,7 @@ public class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyl
       @Override
       public boolean process(@NotNull JSAttribute jsAttribute) {
         String attrName = jsAttribute.getName();
-        if (attrName != null && FlexAnnotationNames.STYLE.equals(attrName)) {
+        if (FlexAnnotationNames.STYLE.equals(attrName)) {
           JSAttributeNameValuePair pair = jsAttribute.getValueByName("name");
           String propertyName = pair != null ? pair.getSimpleValue() : null;
           if (propertyName != null) {
