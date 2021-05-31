@@ -200,7 +200,7 @@
     <webTypes.definitions source="web-types/vue@2.3.0.web-types.json"/>
     <webTypes.definitions source="web-types/vue@2.4.0.web-types.json"/>
     <webTypes.definitions source="web-types/vue@2.5.0.web-types.json"/>
-    <webTypes.definitions source="web-types/vue@3.0.0.web-types.json"/>
+    <webTypes.definitions source="web-types/vue@3.0.0.web-types.json" enableByDefault="true"/>
 
     <webTypes.additionalContextProvider implementation="org.jetbrains.vuejs.model.VueWebTypesAdditionalContextProvider"/>
 

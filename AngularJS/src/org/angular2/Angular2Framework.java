@@ -14,7 +14,7 @@ public class Angular2Framework extends WebFramework {
 
   @NotNull
   public static WebFramework getInstance() {
-    return Objects.requireNonNull(WebFramework.get("angular"));
+    return WebFramework.get("angular");
   }
 
   @NotNull

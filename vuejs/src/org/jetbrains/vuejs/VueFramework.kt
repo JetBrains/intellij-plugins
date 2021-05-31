@@ -16,6 +16,6 @@ class VueFramework: WebFramework() {
   override val htmlFileType: WebFrameworkHtmlFileType = VueFileType.INSTANCE
 
   companion object {
-    val instance get() = get("vue")!!
+    val instance get() = get("vue")
   }
 }
