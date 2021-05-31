@@ -17,7 +17,6 @@ import com.intellij.javascript.karma.util.ArchivedOutputListener;
 import com.intellij.javascript.nodejs.NodeStackTraceFilter;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionGroup;
-import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
@@ -78,8 +77,8 @@ public final class KarmaServerLogComponent implements ComponentWithActions {
   }
 
   @Override
-  public @NotNull String getToolbarPlace() {
-    return ActionPlaces.UNKNOWN;
+  public @NonNls @NotNull String getToolbarPlace() {
+    return KARMA_SERVER_CONTENT_ID;
   }
 
   @Override
