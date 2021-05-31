@@ -9,8 +9,8 @@ import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ex.ProjectRootManagerEx
-import com.intellij.openapi.util.EmptyRunnable
+import com.intellij.openapi.roots.AdditionalLibraryRootsListener
+import com.intellij.openapi.roots.AdditionalLibraryRootsProvider
 import com.intellij.util.ThrowableRunnable
 
 class DenoState {
@@ -45,16 +45,17 @@ class DenoSettings(val project: Project) : PersistentStateComponent<DenoState> {
 
   fun setUseDenoAndReload(useDeno: Boolean) {
     ApplicationManager.getApplication().isWriteAccessAllowed
+    val libraryProvider = AdditionalLibraryRootsProvider.EP_NAME.findExtensionOrFail(DenoLibraryProvider::class.java)
+    val oldRoots = libraryProvider.getRootsToWatch(project)
     setUseDeno(useDeno)
 
     WriteAction.run(
       ThrowableRunnable<ConfigurationException> {
         TypeScriptCompilerService.restartServices(project)
 
-        ThrowableRunnable<ConfigurationException> {
-          ProjectRootManagerEx.getInstanceEx(project).makeRootsChange(
-            EmptyRunnable.getInstance(), false, true)
-        }
+        val newRoots = libraryProvider.getRootsToWatch(project)
+        AdditionalLibraryRootsListener.fireAdditionalLibraryChanged(project, null, oldRoots, newRoots, "Deno")
+
         DaemonCodeAnalyzer.getInstance(project).restart()
       })
   }
