@@ -18,6 +18,9 @@ import com.intellij.javascript.karma.execution.KarmaConsoleView;
 import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.util.KarmaUtil;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
@@ -26,7 +29,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -78,7 +80,7 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
   }
 
   private static void listenForCoverageFile(@NotNull ExecutionEnvironment env, @NotNull KarmaServer server) {
-    RunConfigurationBase runConfiguration = (RunConfigurationBase)env.getRunProfile();
+    RunConfigurationBase<?> runConfiguration = (RunConfigurationBase<?>)env.getRunProfile();
     CoverageEnabledConfiguration coverageEnabledConfiguration = CoverageEnabledConfiguration.getOrCreate(runConfiguration);
     CoverageHelper.resetCoverageSuit(runConfiguration);
     String coverageFilePath = coverageEnabledConfiguration.getCoverageFilePath();
@@ -89,31 +91,38 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
         @Override
         public void onCoverageSessionFinished(@Nullable File lcovFile) {
           LOG.info("Processing karma coverage file: " + lcovFile);
-          UIUtil.invokeLaterIfNeeded(() -> {
+          ReadAction.run(() -> {
             Project project = env.getProject();
-            if (project.isDisposed()) return;
-            if (lcovFile != null) {
-              processLcovInfoFile(lcovFile, coverageFilePath, env, server, runConfiguration);
-            }
-            else {
-              //noinspection DialogTitleCapitalization
-              int response = Messages.showYesNoDialog(project,
-                                                      KarmaBundle.message("coverage.cannot_find_lcov.dialog.message"),
-                                                      KarmaBundle.message("coverage.cannot_find_lcov.dialog.title"),
-                                                      KarmaBundle.message("coverage.cannot_find_lcov.select_lcov.button"),
-                                                      KarmaBundle.message("coverage.cannot_find_lcov.cancel.button"),
-                                                      Messages.getWarningIcon());
-              if (response == Messages.YES) {
-                FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFileDescriptor(),
-                                       project,
-                                       null,
-                                       null, file -> {
-                    File selected = file != null ? VfsUtilCore.virtualToIoFile(file) : null;
-                    if (selected != null) {
-                      processLcovInfoFile(selected, coverageFilePath, env, server, runConfiguration);
-                    }
-                  });
+            if (!project.isDisposed()) {
+              if (lcovFile != null) {
+                processLcovInfoFile(lcovFile, coverageFilePath, env, server, runConfiguration);
+                return;
               }
+              ApplicationManager.getApplication().invokeLater(() -> {
+                int response = Messages.showYesNoDialog(project,
+                                                        KarmaBundle.message("coverage.cannot_find_lcov.dialog.message"),
+                                                        KarmaBundle.message("coverage.cannot_find_lcov.dialog.title"),
+                                                        KarmaBundle.message("coverage.cannot_find_lcov.select_lcov.button", "lcov.info"),
+                                                        KarmaBundle.message("coverage.cannot_find_lcov.cancel.button"),
+                                                        Messages.getWarningIcon());
+                if (response == Messages.YES) {
+                  FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFileDescriptor(),
+                                         project,
+                                         null,
+                                         null, file -> {
+                      File selected = file != null ? VfsUtilCore.virtualToIoFile(file) : null;
+                      if (selected != null) {
+                        ApplicationManager.getApplication().executeOnPooledThread(() -> {
+                          ReadAction.run(() -> {
+                            if (!project.isDisposed()) {
+                              processLcovInfoFile(selected, coverageFilePath, env, server, runConfiguration);
+                            }
+                          });
+                        });
+                      }
+                    });
+                }
+              }, ModalityState.defaultModalityState());
             }
           });
         }
@@ -125,7 +134,7 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
                                           @NotNull String toCoverageFilePath,
                                           @NotNull ExecutionEnvironment env,
                                           @NotNull KarmaServer karmaServer,
-                                          @NotNull RunConfigurationBase runConfiguration) {
+                                          @NotNull RunConfigurationBase<?> runConfiguration) {
     try {
       FileUtil.copy(lcovInfoFile, new File(toCoverageFilePath));
     }
