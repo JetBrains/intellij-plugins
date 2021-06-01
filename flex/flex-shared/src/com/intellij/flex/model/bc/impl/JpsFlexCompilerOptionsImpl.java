@@ -105,9 +105,7 @@ public final class JpsFlexCompilerOptionsImpl extends JpsElementBase<JpsFlexComp
   public State getState(/*final @Nullable ComponentManager componentManager*/) {
     State state = new State();
     /*putOptionsCollapsingPaths(myOptions, state.options, componentManager);*/
-    for (Map.Entry<String, String> entry : myOptions.entrySet()) {
-      state.options.put(entry.getKey(), entry.getValue());
-    }
+    state.options.putAll(myOptions);
 
     state.resourceFilesMode = myResourceFilesMode;
     //state.filesToIncludeInSWC = FlexIdeBuildConfigurationImpl.collapsePaths(componentManager, myFilesToIncludeInSWC);
@@ -120,9 +118,7 @@ public final class JpsFlexCompilerOptionsImpl extends JpsElementBase<JpsFlexComp
   public void loadState(State state) {
     assert myOptions.isEmpty();
 
-    for (Map.Entry<String, String> entry : state.options.entrySet()) {
-      myOptions.put(entry.getKey(), entry.getValue());
-    }
+    myOptions.putAll(state.options);
     // filter out options that are not known in current IDEA version
     /*
     for (Map.Entry<String, String> entry : state.options.entrySet()) {
