@@ -427,7 +427,7 @@ class VuexCompletionTest : BasePlatformTestCase() {
     doStoreItemsTest(9, categoryActions, "await dispatch('<caret>tax/calculateTaxes'") // {root:true}
     doStoreItemsTest(10, categoryActions, "await dispatch(<caret>'loadCategoryFilters'", strict = false)
     doStoreItemsTest(11, categoryActions, "await dispatch(<caret>'tax/calculateTaxes'",
-                     additionalContent = "<caret>,{},{root:true})", strict = false) // {root:true}
+                     additionalContent = "<caret>,{},{root:true})(", strict = false) // {root:true}
 
     doStoreItemsTest(8, categoryActions, "await dispatch(<caret>'loadCategoryFilters'",
                      additionalContent = "{type: '<caret>'}")
@@ -445,7 +445,7 @@ class VuexCompletionTest : BasePlatformTestCase() {
     doStoreItemsTest(9, categoryActions, "context.dispatch('<caret>changeRouterFilterParameters', {}, {root: true})")
     doStoreItemsTest(10, categoryActions, "context.dispatch(<caret>'changeRouterFilterParameters', currentQuery)", strict = false)
     doStoreItemsTest(11, categoryActions, "context.dispatch(<caret>'changeRouterFilterParameters', {}, {root: true})",
-                     additionalContent = "<caret>,{},{root:true})", strict = false)
+                     additionalContent = "<caret>,{},{root:true})(", strict = false)
 
     doStoreItemsTest(8, categoryActions, "context.dispatch(<caret>'changeRouterFilterParameters', currentQuery)",
                      additionalContent = "{type: '<caret>'}")
