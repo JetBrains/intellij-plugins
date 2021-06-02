@@ -4,7 +4,6 @@ import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.ProcessOutput
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.application.impl.ApplicationInfoImpl
-import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.SystemInfo
@@ -180,9 +179,7 @@ private fun checkRemoteRsync(remoteHost: HostMachine) = RemoteUtil.isRsyncInstal
 
 @Throws(IOException::class)
 private fun checkRsyncDownload(remoteHost: HostMachine): Boolean {
-  val credentials: RemoteCredentials = RemoteDeploymentHelper.getRemoteHost(remoteHost.hostId)
-                                       ?: throw IllegalStateException("Cannot find credentials by hostId")
-
+  val credentials: RemoteCredentials = getCredentials(remoteHost)
   val remote = remoteHost.createTempDirectory("remote", null)
   val local = FileUtil.createTempDirectory("local", null)
   val logFile = FileUtil.createTempFile("log", null)
@@ -219,7 +216,7 @@ private fun test(log: CdIndenter, host: HostMachine, @NonNls testName: String, c
 }
 
 private fun getCredentials(remoteHost: HostMachine): RemoteCredentials =
-  RemoteDeploymentHelper.getRemoteHost(remoteHost.hostId) ?: throw IllegalStateException("Cannot find credentials by hostId")
+  RemoteUtil.getCredentials(remoteHost) ?: throw IllegalStateException("Cannot find credentials by hostId")
 
 fun stackTraceToString(t: Throwable): String {
   val writer = StringWriter()
