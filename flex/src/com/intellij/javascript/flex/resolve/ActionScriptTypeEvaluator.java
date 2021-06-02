@@ -41,7 +41,9 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
 
         PsiElement arrayInitializingType = newExpression.getArrayInitializingType();
         if (arrayInitializingType != null) {
-          JSType argType = JSTypeUtils.createType(JSImportHandlingUtil.resolveTypeName(arrayInitializingType.getText(), newExpression), source);
+          JSType argType = JSTypeParser.createType(newExpression.getProject(),
+                                                   JSImportHandlingUtil.resolveTypeName(arrayInitializingType.getText(), newExpression),
+                                                   source);
           type = new JSGenericTypeImpl(source, type, argType);
         }
         addType(type);
@@ -54,7 +56,8 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
             resolve = resolve.getParent();
           }
           if (resolve instanceof JSClass || resolve == null) {
-            JSType typeFromText = JSTypeUtils.createType(methodExpr.getText(), JSTypeSourceFactory.createTypeSource(methodExpr, false));
+            JSType typeFromText = JSTypeParser.createType(methodExpr.getProject(), methodExpr.getText(),
+                                                          JSTypeSourceFactory.createTypeSource(methodExpr, false));
             if (typeFromText != null) type = typeFromText;
           }
         }

@@ -4,11 +4,7 @@ package org.angular2.lang.types;
 import com.intellij.lang.javascript.psi.JSFunctionType;
 import com.intellij.lang.javascript.psi.JSParameterTypeDecorator;
 import com.intellij.lang.javascript.psi.JSType;
-import com.intellij.lang.javascript.psi.JSTypeUtils;
-import com.intellij.lang.javascript.psi.types.JSCompositeTypeImpl;
-import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
-import com.intellij.lang.javascript.psi.types.JSTypeSource;
-import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
+import com.intellij.lang.javascript.psi.types.*;
 import com.intellij.lang.javascript.psi.types.primitives.TypeScriptNeverJSTypeImpl;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiModificationTracker;
@@ -84,6 +80,6 @@ public final class Angular2TypeUtils {
     // However, all additional properties are anyway covered by `on*` methods,
     // so we can default to HTMLElementEventMapInterface, for events like `focusin`, which is not
     // covered by an `on*` method
-    return JSTypeUtils.createType(HTML_ELEMENT_EVENT_MAP_INTERFACE_NAME, typeSource);
+    return JSNamedTypeFactory.createType(HTML_ELEMENT_EVENT_MAP_INTERFACE_NAME, typeSource, JSContext.INSTANCE);
   }
 }

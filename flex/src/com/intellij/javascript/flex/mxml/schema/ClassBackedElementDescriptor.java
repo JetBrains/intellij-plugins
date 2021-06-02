@@ -634,7 +634,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
             String arrayType = null;
 
             if(JSTypeEvaluateManager.isArrayType(propertyType)) {
-              arrayType = JSTypeEvaluateManager.getComponentType(propertyType);
+              arrayType = JSTypeEvaluateManager.getComponentType(jsNamedElement.getProject(), propertyType);
             } else if (ARRAY_CLASS_NAME.equals(propertyType)) {
               if (attributeList != null) {
                 arrayType = JSPsiImplUtils.getTypeFromAnnotationParameter(attributeList, FlexAnnotationNames.INSPECTABLE, ARRAY_TYPE_ANNOTATION_PARAMETER);
