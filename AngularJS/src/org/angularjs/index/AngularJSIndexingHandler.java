@@ -423,7 +423,8 @@ public final class AngularJSIndexingHandler extends FrameworkIndexingHandler {
         final boolean directive = ngdocValue.contains(DIRECTIVE);
         final boolean component = ngdocValue.contains(COMPONENT);
         if (directive || component) {
-          final List<Pair<String, String>> restrictions = calculateRestrictions(commentLines, name, directive ? DEFAULT_RESTRICTIONS : "E");
+          final List<Pair<String, String>> restrictions =
+            calculateRestrictions(comment, commentLines, name, directive ? DEFAULT_RESTRICTIONS : "E");
           if (outData == null) outData = new JSElementIndexingDataImpl();
           for (Pair<String, String> p : restrictions) {
             addImplicitElements(comment, directive ? DIRECTIVE : COMPONENT, AngularDirectivesDocIndex.KEY, p.first, p.second, outData);
@@ -438,7 +439,8 @@ public final class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     return outData;
   }
 
-  private static List<Pair<String, String>> calculateRestrictions(final String[] commentLines,
+  private static List<Pair<String, String>> calculateRestrictions(@NotNull PsiElement context, 
+                                                                  final String[] commentLines,
                                                                   String directiveName,
                                                                   String defaultRestrictions) {
     String restrict = defaultRestrictions;
@@ -449,7 +451,7 @@ public final class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       tag = getParamValue(tag, line, ELEMENT);
       final int start = line.indexOf(PARAM);
       if (start >= 0) {
-        final JSDocumentationUtils.DocTag docTag = JSDocumentationUtils.getDocTag(line.substring(start));
+        final JSDocumentationUtils.DocTag docTag = JSDocumentationUtils.getDocTag(context, line.substring(start));
         if (docTag != null && docTag.matchName != null) {
           for (String paramName : StringUtil.split(docTag.matchName, "|")) {
             if (restrict.equals(DEFAULT_RESTRICTIONS) || restrict.contains("A")) {
