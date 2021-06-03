@@ -41,6 +41,9 @@ Please report any issues in the <a href="https://youtrack.jetbrains.com/issues/W
       bundle="messages.PrettierBundle"
       key="configurable.PrettierConfigurable.display.name"
       instance="com.intellij.prettierjs.PrettierConfigurable"/>
+    <actionOnSaveInfoProvider id="PrettierOnSaveInfoProvider"
+                              implementation="com.intellij.prettierjs.PrettierConfigurable$PrettierOnSaveInfoProvider"
+                              order="after EsLintOnSaveInfoProvider"/>
 
     <fileType name="JSON" language="JSON" fileNames=".prettierrc"/>
     <lang.substitutor language="JSON" implementationClass="com.intellij.prettierjs.config.PrettierConfigLanguageSubstitutor"/>
@@ -74,7 +77,9 @@ Please report any issues in the <a href="https://youtrack.jetbrains.com/issues/W
     <jsonSchemaEnabler implementation="com.intellij.prettierjs.config.PrettierJsonSchemaInJsEnabler"/>
   </extensions>
   <extensions defaultExtensionNs="JavaScript">
-    <linterSaveAction implementation="com.intellij.prettierjs.PrettierSaveAction"/>
+    <linterSaveAction id="PrettierSaveAction"
+                      implementation="com.intellij.prettierjs.PrettierSaveAction"
+                      order="after ESLintSaveAction"/>
   </extensions>
 
 </idea-plugin>

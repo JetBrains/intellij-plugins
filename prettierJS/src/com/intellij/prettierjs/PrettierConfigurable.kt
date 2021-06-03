@@ -1,6 +1,10 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.prettierjs
 
+import com.intellij.ide.actionsOnSave.ActionOnSaveBackedByOwnConfigurable
+import com.intellij.ide.actionsOnSave.ActionOnSaveInfo
+import com.intellij.ide.actionsOnSave.ActionOnSaveInfoProvider
+import com.intellij.ide.actionsOnSave.ActionsOnSaveConfigurable
 import com.intellij.javascript.nodejs.util.NodePackageField
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.IdeActions
@@ -14,11 +18,16 @@ import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.*
 import java.nio.file.FileSystems
 import java.util.regex.PatternSyntaxException
+import javax.swing.JCheckBox
 import javax.swing.JLabel
 import javax.swing.text.JTextComponent
 
+private const val CONFIGURABLE_ID = "settings.javascript.prettier"
+
 class PrettierConfigurable(private val project: Project) : BoundSearchableConfigurable(
-  PrettierBundle.message("configurable.PrettierConfigurable.display.name"), "reference.settings.prettier", "settings.javascript.prettier") {
+  PrettierBundle.message("configurable.PrettierConfigurable.display.name"), "reference.settings.prettier", CONFIGURABLE_ID) {
+
+  private var runOnSaveCheckBox: JCheckBox? = null
 
   override fun createPanel(): DialogPanel {
     val prettierConfiguration = PrettierConfiguration.getInstance(project)
@@ -73,14 +82,40 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
       // empty label - to have the check box below the file patterns field
       row("") {
         cell {
-          checkBox(PrettierBundle.message("on.save.label"),
-                   { prettierConfiguration.isRunOnSave },
-                   { prettierConfiguration.isRunOnSave = it })
+          runOnSaveCheckBox = checkBox(PrettierBundle.message("on.save.label"),
+                                       { prettierConfiguration.isRunOnSave },
+                                       { prettierConfiguration.isRunOnSave = it })
+            .component
 
-          val shortcut = ActionManager.getInstance().getKeyboardShortcut("SaveAll")
-          shortcut?.let { comment(KeymapUtil.getShortcutText(it)) }
+          //val shortcut = ActionManager.getInstance().getKeyboardShortcut("SaveAll")
+          //shortcut?.let { comment(KeymapUtil.getShortcutText(it)) }
+
+          ActionsOnSaveConfigurable.createGoToActionsOnSavePageLink()().withLargeLeftGap()
         }
       }
     }
+  }
+
+
+  class PrettierOnSaveInfoProvider : ActionOnSaveInfoProvider() {
+    override fun getActionOnSaveInfos(project: Project): List<ActionOnSaveInfo> = listOf(PrettierOnSaveActionInfo(project))
+  }
+
+
+  private class PrettierOnSaveActionInfo(val project: Project)
+    : ActionOnSaveBackedByOwnConfigurable<PrettierConfigurable>(CONFIGURABLE_ID, PrettierConfigurable::class.java) {
+
+    @Suppress("DialogTitleCapitalization")
+    override fun getActionOnSaveName() = PrettierBundle.message("run.on.save.checkbox.on.actions.on.save.page")
+
+    override fun isActionOnSaveEnabledAccordingToStoredState() = PrettierConfiguration.getInstance(project).isRunOnSave
+
+    override fun isActionOnSaveEnabledAccordingToUiState(configurable: PrettierConfigurable) = configurable.runOnSaveCheckBox!!.isSelected
+
+    override fun setActionOnSaveEnabled(configurable: PrettierConfigurable, enabled: Boolean) {
+      configurable.runOnSaveCheckBox!!.isSelected = enabled;
+    }
+
+    override fun getActionLinks() = listOf(ActionsOnSaveConfigurable.createGoToPageInSettingsLink(CONFIGURABLE_ID))
   }
 }
