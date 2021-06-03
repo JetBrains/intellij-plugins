@@ -1,10 +1,7 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.prettierjs
 
-import com.intellij.ide.actionsOnSave.ActionOnSaveBackedByOwnConfigurable
-import com.intellij.ide.actionsOnSave.ActionOnSaveInfo
-import com.intellij.ide.actionsOnSave.ActionOnSaveInfoProvider
-import com.intellij.ide.actionsOnSave.ActionsOnSaveConfigurable
+import com.intellij.ide.actionsOnSave.*
 import com.intellij.javascript.nodejs.util.NodePackageField
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.IdeActions
@@ -122,24 +119,17 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
       getComment(configurable.packageField!!.selectedRef.constantPackage?.version,
                  configurable.runForFilesField!!.text.trim())
 
-    private fun getComment(prettierVersion: @Nullable SemVer?, filesPattern: @NotNull String): String? {
+    private fun getComment(prettierVersion: @Nullable SemVer?, filesPattern: @NotNull String): ActionOnSaveComment? {
       if (prettierVersion == null) {
-        // no need to show warning if Prettier is not used in this project at all
-        return when {
-          !isActionOnSaveEnabled -> null
-          else -> PrettierBundle.message("run.on.save.prettier.package.not.specified.warning")
-        }
+        val message = PrettierBundle.message("run.on.save.prettier.package.not.specified.warning")
+        // no need to show warning if Prettier is not enabled in this project
+        return if (isActionOnSaveEnabled) ActionOnSaveComment.warning(message) else ActionOnSaveComment.info(message)
       }
 
-      return PrettierBundle.message("run.on.save.prettier.version.and.files.pattern",
-                                    shorten(prettierVersion.rawVersion, 15),
-                                    shorten(filesPattern, 40))
+      return ActionOnSaveComment.info(PrettierBundle.message("run.on.save.prettier.version.and.files.pattern",
+                                                             shorten(prettierVersion.rawVersion, 15),
+                                                             shorten(filesPattern, 40)))
     }
-
-    override fun isWarningCommentAccordingToStoredState() = PrettierConfiguration.getInstance(project).`package`.version == null
-
-    override fun isWarningCommentAccordingToUiState(configurable: PrettierConfigurable) =
-      isActionOnSaveEnabled && configurable.packageField!!.selectedRef.constantPackage?.version == null
 
     override fun isActionOnSaveEnabledAccordingToStoredState() = PrettierConfiguration.getInstance(project).isRunOnSave
 
