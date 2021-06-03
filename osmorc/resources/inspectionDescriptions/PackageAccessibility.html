@@ -1,13 +1,9 @@
 <html>
 <body>
-<p>
-  This inspections reports usage of classes from packages not accessible inside the OSGi context -
-  i.e. those located in .jar files not packaged as bundles, or not exported by bundles,
-  or not imported in manifest file (if applicable).
-  Asking for such a classes may cause "class not found" exceptions at runtime.
-</p>
-<p>
-  The inspection is disabled in tests by default (see "Check tests" option).
-</p>
+Reports usages of classes from packages that are not accessible inside the OSGi context.
+  <p>For example, the inspection reports usages of classes located in .jar files that are not packaged as bundles, not exported by bundles,
+    or not imported in manifest file (if applicable).</p>
+  <p>Using such classes may cause "class not found" exceptions at runtime.</p>
+<p>The inspection is disabled in tests by default. To enable it, use the <b>Check tests</b> option.</p>
 </body>
 </html>
