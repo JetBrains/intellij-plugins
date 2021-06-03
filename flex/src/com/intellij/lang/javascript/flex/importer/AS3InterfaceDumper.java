@@ -4,6 +4,11 @@ package com.intellij.lang.javascript.flex.importer;
 import com.intellij.lang.javascript.JSFlexAdapter;
 import com.intellij.lang.javascript.JSKeywordSets;
 import com.intellij.lang.javascript.dialects.ECMAL4LanguageDialect;
+import com.intellij.lang.javascript.psi.JSType;
+import com.intellij.lang.javascript.psi.JSTypeUtils;
+import com.intellij.lang.javascript.psi.types.JSContext;
+import com.intellij.lang.javascript.psi.types.JSNamedTypeFactory;
+import com.intellij.lang.javascript.psi.types.JSTypeSource;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.IElementType;
@@ -167,13 +172,25 @@ class AS3InterfaceDumper extends AbstractDumpProcessor {
     append(getMultinameAsPackageName(name, parentName));
   }
 
-  protected String getTypeRef(Multiname name, String parentName) {
+  protected String getTypeRef(Multiname name, String parentName, boolean serialize) {
     try {
       myDumpTypeRef = true;
-      return getMultinameAsPackageName(name, parentName);
+      String qName = getMultinameAsPackageName(name, parentName);
+      if (qName != null && !qName.isEmpty() && serialize) {
+        if ("...".equals(qName)) return null;
+        return serializeQName(qName);
+      }
+
+      return qName;
     } finally {
       myDumpTypeRef = false;
     }
+  }
+
+  @NotNull
+  protected String serializeQName(String qName) {
+    JSType type = JSNamedTypeFactory.createType(qName, JSTypeSource.EMPTY_AS, JSContext.INSTANCE);
+    return JSTypeUtils.serializeType(type);
   }
 
   protected String getMultinameAsPackageName(Multiname name, String parentName) {
