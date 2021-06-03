@@ -14,8 +14,12 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.util.NlsSafe
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.*
+import com.intellij.util.text.SemVer
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
 import java.nio.file.FileSystems
 import java.util.regex.PatternSyntaxException
 import javax.swing.JCheckBox
@@ -27,15 +31,17 @@ private const val CONFIGURABLE_ID = "settings.javascript.prettier"
 class PrettierConfigurable(private val project: Project) : BoundSearchableConfigurable(
   PrettierBundle.message("configurable.PrettierConfigurable.display.name"), "reference.settings.prettier", CONFIGURABLE_ID) {
 
+  private var packageField: NodePackageField? = null
+  private var runForFilesField: JBTextField? = null
   private var runOnSaveCheckBox: JCheckBox? = null
 
   override fun createPanel(): DialogPanel {
     val prettierConfiguration = PrettierConfiguration.getInstance(project)
 
     return panel {
-      val packageField = NodePackageField(project, PrettierUtil.PACKAGE_NAME, null)
+      packageField = NodePackageField(project, PrettierUtil.PACKAGE_NAME, null)
       row(JLabel(PrettierBundle.message("prettier.package.label")).apply { labelFor = packageField }) {
-        packageField().withBinding(
+        packageField!!().withBinding(
           { it.selectedRef },
           { nodePackageField, nodePackageRef -> nodePackageField.selectedRef = nodePackageRef },
           PropertyBinding({ prettierConfiguration.nodePackageRef }, { prettierConfiguration.withLinterPackage(it) })
@@ -47,7 +53,8 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
         runForFilesLabel()
 
         cell(isFullWidth = true) {
-          component(JBTextField(prettierConfiguration.filesPattern))
+          runForFilesField = JBTextField()
+          component(runForFilesField!!)
             .withBinding({ textField -> textField.text.trim() },
                          JTextComponent::setText,
                          PropertyBinding({ prettierConfiguration.filesPattern }, { prettierConfiguration.filesPattern = it }))
@@ -108,14 +115,42 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
     @Suppress("DialogTitleCapitalization")
     override fun getActionOnSaveName() = PrettierBundle.message("run.on.save.checkbox.on.actions.on.save.page")
 
+    override fun getCommentAccordingToStoredState() =
+      PrettierConfiguration.getInstance(project).let { getComment(it.`package`.version, it.filesPattern) }
+
+    override fun getCommentAccordingToUiState(configurable: PrettierConfigurable) =
+      getComment(configurable.packageField!!.selectedRef.constantPackage?.version,
+                 configurable.runForFilesField!!.text.trim())
+
+    private fun getComment(prettierVersion: @Nullable SemVer?, filesPattern: @NotNull String): String? {
+      if (prettierVersion == null) {
+        // no need to show warning if Prettier is not used in this project at all
+        return when {
+          !isActionOnSaveEnabled -> null
+          else -> PrettierBundle.message("run.on.save.prettier.package.not.specified.warning")
+        }
+      }
+
+      return PrettierBundle.message("run.on.save.prettier.version.and.files.pattern",
+                                    shorten(prettierVersion.rawVersion, 15),
+                                    shorten(filesPattern, 40))
+    }
+
+    override fun isWarningCommentAccordingToStoredState() = PrettierConfiguration.getInstance(project).`package`.version == null
+
+    override fun isWarningCommentAccordingToUiState(configurable: PrettierConfigurable) =
+      isActionOnSaveEnabled && configurable.packageField!!.selectedRef.constantPackage?.version == null
+
     override fun isActionOnSaveEnabledAccordingToStoredState() = PrettierConfiguration.getInstance(project).isRunOnSave
 
     override fun isActionOnSaveEnabledAccordingToUiState(configurable: PrettierConfigurable) = configurable.runOnSaveCheckBox!!.isSelected
 
     override fun setActionOnSaveEnabled(configurable: PrettierConfigurable, enabled: Boolean) {
-      configurable.runOnSaveCheckBox!!.isSelected = enabled;
+      configurable.runOnSaveCheckBox!!.isSelected = enabled
     }
 
     override fun getActionLinks() = listOf(ActionsOnSaveConfigurable.createGoToPageInSettingsLink(CONFIGURABLE_ID))
+
+    private fun shorten(s: String, max: Int) = StringUtil.shortenTextWithEllipsis(s, max, 0, true)
   }
 }
