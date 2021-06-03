@@ -24,10 +24,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.*;
-import com.intellij.lang.javascript.psi.types.JSAnyType;
-import com.intellij.lang.javascript.psi.types.JSContext;
-import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
-import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
+import com.intellij.lang.javascript.psi.types.*;
 import com.intellij.lang.javascript.search.JSClassSearch;
 import com.intellij.lang.javascript.types.TypeFromUsageDetector;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -385,7 +382,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
         if (attributeList != null &&
             attributeList.getAccessType() == JSAttributeList.AccessType.PUBLIC &&
             attributeList.hasModifier(JSAttributeList.ModifierType.STATIC) &&
-            "String".equals(variable.getTypeString())
+            JSNamedType.isNamedTypeWithName(variable.getJSType(), JSCommonTypeNames.STRING_CLASS_NAME)
           ) {
           final String s = variable.getLiteralOrReferenceInitializerText();
           if (s != null && StringUtil.startsWith(s, "\"") && StringUtil.endsWith(s, "\"")) {

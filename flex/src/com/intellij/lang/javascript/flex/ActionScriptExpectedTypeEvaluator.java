@@ -92,9 +92,12 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
 
     final JSExpression qualifier = expression.getQualifier();
     final PsiElement resolve = qualifier instanceof JSReferenceExpression ? ((JSReferenceExpression)qualifier).resolve() : null;
-    final String type = resolve instanceof JSVariable ? ((JSVariable)resolve).getTypeString() : null;
+    JSType rType = resolve instanceof JSVariable ? ((JSVariable)resolve).getJSType() : null;
+    JSType lType = JSNamedTypeFactory.createType(ValidateTypesUtil.FLASH_UTILS_DICTIONARY,
+                                                 JSTypeSourceFactory.createTypeSource(expression, true),
+                                                 JSContext.INSTANCE);
 
-    return type != null && ActionScriptResolveUtil.isAssignableType(ValidateTypesUtil.FLASH_UTILS_DICTIONARY, type, expression);
+    return rType != null && JSResolveUtil.isAssignableJSType(lType, rType, null);
   }
 
   @Override

@@ -27,6 +27,7 @@ import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeListImpl;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSPackageStatementImpl;
 import com.intellij.lang.javascript.psi.resolve.*;
 import com.intellij.lang.javascript.psi.types.JSAnyType;
+import com.intellij.lang.javascript.psi.types.JSNamedType;
 import com.intellij.lang.javascript.psi.types.JSTypeImpl;
 import com.intellij.lang.javascript.psi.types.primitives.JSStringType;
 import com.intellij.lang.javascript.psi.types.primitives.JSVoidType;
@@ -94,9 +95,14 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
 
     if (result == SignatureMatchResult.COMPATIBLE_SIGNATURE) {
       for (int i = 0; i < parameters.length; ++i) {
-        if (!compatibleType(overrideParameters[i].getTypeString(), parameters[i].getTypeString(), overrideParameterList,
+        JSParameter overrideParameter = overrideParameters[i];
+        JSParameter parameter = parameters[i];
+        JSType overrideType = overrideParameter.getJSType();
+        JSType type = parameter.getJSType();
+        if (!compatibleType(overrideType == null ? null : type.getTypeText(), type == null ? null : type.getTypeText(),
+                            overrideParameterList,
                             nodeParameterList) ||
-            overrideParameters[i].hasInitializer() != parameters[i].hasInitializer()
+            overrideParameter.hasInitializer() != parameter.hasInitializer()
           ) {
           result = SignatureMatchResult.PARAMETERS_DIFFERS;
           break;
@@ -105,7 +111,10 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     }
 
     if (result == SignatureMatchResult.COMPATIBLE_SIGNATURE) {
-      if (!compatibleType(override.getReturnTypeString(), fun.getReturnTypeString(), override, fun)) {
+      JSType lType = override.getReturnType();
+      JSType rType = fun.getReturnType();
+      if (!compatibleType(lType == null ? null : lType.getTypeText(),
+                          rType == null ? null : rType.getTypeText(), override, fun)) {
         result = SignatureMatchResult.RETURN_TYPE_DIFFERS;
       }
     }
@@ -1081,7 +1090,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
           initializer instanceof JSReferenceExpression &&
           ((resolve = ((JSReferenceExpression)initializer).resolve()) instanceof JSNamespaceDeclaration ||
            resolve instanceof JSVariable &&
-           "Namespace".equals(((JSVariable)resolve).getTypeString())
+           JSNamedType.isNamedTypeWithName(((JSVariable)resolve).getJSType(), "Namespace")
           )
         ) {
         // ok

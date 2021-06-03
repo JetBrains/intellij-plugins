@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.flex.run.FlashRunConfigurationForm;
 import com.intellij.lang.javascript.flex.run.FlashRunConfigurationProducer;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSParameter;
+import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
@@ -70,7 +71,8 @@ public class FlexImplicitUsageProvider implements ImplicitUsageProvider, Conditi
         final JSParameter[] params = function.getParameterVariables();
 
         if (params.length == 1 && element == params[0]) {
-          @NonNls String type = ((JSParameter)element).getTypeString();
+          JSType jsType = ((JSParameter)element).getJSType();
+          String type = jsType == null ? null : jsType.getTypeText();
           if (type != null) type = JSImportHandlingUtil.resolveTypeName(type, element);
 
           if (type != null) {

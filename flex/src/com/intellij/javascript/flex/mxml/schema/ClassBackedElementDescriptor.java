@@ -751,7 +751,8 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
 
   static String getPropertyType(final JSNamedElement jsNamedElement) {
     if (jsNamedElement instanceof JSVariable) {
-      return ((JSVariable)jsNamedElement).getTypeString();
+      JSType jsType = ((JSVariable)jsNamedElement).getJSType();
+      return jsType == null ? null : jsType.getTypeText();
     }
     else if (jsNamedElement instanceof JSFunctionItem) {
       final JSType type = JSResolveUtil.getTypeFromSetAccessor((JSFunctionItem)jsNamedElement);
