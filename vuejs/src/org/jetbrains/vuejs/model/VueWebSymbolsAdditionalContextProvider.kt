@@ -36,12 +36,12 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
     ?: emptyList()
 
   private abstract class VueWrapperBase : WebSymbolsContainer,
-                                          WebSymbolsContainer.WebTypesContext {
-    val context: WebSymbolsContainer.WebTypesContext
+                                          WebSymbolsContainer.Context {
+    val context: WebSymbolsContainer.Context
       get() = this
 
-    val root: WebSymbolsContainer.ContributionRoot
-      get() = WebSymbolsContainer.ContributionRoot.HTML
+    val root: WebSymbolsContainer.Namespace
+      get() = WebSymbolsContainer.Namespace.HTML
 
     override val framework: String
       get() = VUE_FRAMEWORK
@@ -56,12 +56,12 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
   private class EntityContainerWrapper(private val containingFile: PsiFile,
                                        private val container: VueEntitiesContainer) : VueWrapperBase() {
 
-    override fun getContributions(root: WebSymbolsContainer.ContributionRoot?,
-                                  kind: String,
-                                  name: String?,
-                                  params: WebSymbolsNameMatchQueryParams,
-                                  context: Stack<WebSymbolsContainer>): Sequence<WebSymbolsContainer> =
-      if (root == null || root == WebSymbolsContainer.ContributionRoot.HTML)
+    override fun getSymbols(namespace: WebSymbolsContainer.Namespace?,
+                            kind: String,
+                            name: String?,
+                            params: WebSymbolsNameMatchQueryParams,
+                            context: Stack<WebSymbolsContainer>): Sequence<WebSymbolsContainer> =
+      if (namespace == null || namespace == WebSymbolsContainer.Namespace.HTML)
         when (kind) {
           KIND_HTML_ELEMENTS -> {
             val result = mutableListOf<VueComponent>()
@@ -98,12 +98,12 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
         }
       else emptySequence()
 
-    override fun getCodeCompletions(root: WebSymbolsContainer.ContributionRoot?,
+    override fun getCodeCompletions(namespace: WebSymbolsContainer.Namespace?,
                                     kind: String,
                                     name: String?,
                                     params: WebSymbolsCodeCompletionQueryParams,
                                     context: Stack<WebSymbolsContainer>): Sequence<WebSymbolCodeCompletionItem> =
-      if (root == null || root == WebSymbolsContainer.ContributionRoot.HTML)
+      if (namespace == null || namespace == WebSymbolsContainer.Namespace.HTML)
         when (kind) {
           KIND_HTML_ELEMENTS -> {
             val result = mutableListOf<WebSymbolCodeCompletionItem>()
@@ -230,12 +230,12 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
     override val source: PsiElement?
       get() = item.source
 
-    override fun getContributions(root: WebSymbolsContainer.ContributionRoot?,
-                                  kind: String,
-                                  name: String?,
-                                  params: WebSymbolsNameMatchQueryParams,
-                                  context: Stack<WebSymbolsContainer>): Sequence<WebSymbolsContainer> =
-      if (root == null || root == WebSymbolsContainer.ContributionRoot.HTML)
+    override fun getSymbols(namespace: WebSymbolsContainer.Namespace?,
+                            kind: String,
+                            name: String?,
+                            params: WebSymbolsNameMatchQueryParams,
+                            context: Stack<WebSymbolsContainer>): Sequence<WebSymbolsContainer> =
+      if (namespace == null || namespace == WebSymbolsContainer.Namespace.HTML)
         when (kind) {
           KIND_HTML_ATTRIBUTES -> {
             val searchName = name?.let { fromAsset(it) }
