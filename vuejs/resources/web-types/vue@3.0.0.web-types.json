@@ -1,32 +1,26 @@
 {
+  "$schema": "../../../../plugins/JavaScriptLanguage/web-platform/web-types-gen/resources/web-types.json",
   "framework": "vue",
   "name": "vue",
   "version": "3.0.0",
   "js-types-syntax": "typescript",
   "description-markup": "markdown",
   "framework-config": {
-    "context": [
-      {
-        "kind": "node-package",
-        "names": [
-          "vue",
-          "@vue/cli"
-        ]
-      },
-      {
-        "kind": "script-urls",
-        "patterns": [
-          ".*vue.*"
-        ]
-      }
-    ],
-    "custom-symbols": [
-      "html/elements/vue-model-modifiers",
-      "html/vue-directives",
-      "html/vue-directives/argument",
-      "html/vue-directives/modifiers",
-      "js/vue-filters"
-    ]
+    "enable-when": {
+      "node-packages": [
+        "vue",
+        "@vue/cli"
+      ],
+      "script-urls": [
+        ".*vue.*"
+      ],
+      "file-extensions": [
+        "vue"
+      ],
+      "ide-libraries": [
+        "vue"
+      ]
+    }
   },
   "contributions": {
     "html": {
@@ -58,7 +52,6 @@
               "name": "name",
               "description": "Used to automatically generate transition CSS class names. e.g. `name: 'fade'` will auto expand to `.fade-enter`, `,.fade-enter-active`, etc.",
               "value": {
-                "kind": "expression",
                 "type": "string"
               }
             },
@@ -66,8 +59,7 @@
               "name": "appear",
               "description": "Whether to apply transition on initial render.",
               "value": {
-                "kind": "expression",
-                "type": "boolean"
+                "type": "html-boolean"
               },
               "default": "false"
             },
@@ -76,23 +68,23 @@
               "description": "Whether to apply CSS transition classes. Defaults to `true`. If set to `false`, will only trigger JavaScript hooks registered via component events.",
               "default": "true",
               "value": {
-                "kind": "expression",
-                "type": "boolean"
+                "type": "html-boolean"
               }
             },
             {
               "name": "type",
               "description": "Specifies the type of transition events to wait for to determine transition end timing. Available values are `\"transition\"` and `\"animation\"`. By default, it will automatically detect the type that has a longer duration.",
               "value": {
-                "kind": "expression",
-                "type": "\"transition\" | \"animation\""
+                "type": [
+                  "\"transition\"",
+                  "\"animation\""
+                ]
               }
             },
             {
               "name": "duration",
               "description": "Specifies the duration of transition. By default, Vue waits for the first `transitionend` or `animationend` event on the root transition element.",
               "value": {
-                "kind": "expression",
                 "type": [
                   "number",
                   "{ enter: number, leave: number }"
@@ -102,63 +94,54 @@
             {
               "name": "enterFromClass",
               "value": {
-                "kind": "expression",
                 "type": "string"
               }
             },
             {
               "name": "leaveFromClass",
               "value": {
-                "kind": "expression",
                 "type": "string"
               }
             },
             {
               "name": "appearClass",
               "value": {
-                "kind": "expression",
                 "type": "string"
               }
             },
             {
               "name": "enterToClass",
               "value": {
-                "kind": "expression",
                 "type": "string"
               }
             },
             {
               "name": "leaveToClass",
               "value": {
-                "kind": "expression",
                 "type": "string"
               }
             },
             {
               "name": "appearToClass",
               "value": {
-                "kind": "expression",
                 "type": "string"
               }
             },
             {
               "name": "enterActiveClass",
               "value": {
-                "kind": "expression",
                 "type": "string"
               }
             },
             {
               "name": "leaveActiveClass",
               "value": {
-                "kind": "expression",
                 "type": "string"
               }
             },
             {
               "name": "appearActiveClass",
               "value": {
-                "kind": "expression",
                 "type": "string"
               }
             }
@@ -209,9 +192,18 @@
               "name": "mode",
               "description": "Controls the timing sequence of leaving/entering transitions. Available modes are `\"out-in\"` and `\"in-out\"`; defaults to simultaneous.",
               "value": {
-                "kind": "expression",
-                "type": "\"out-in\" | \"in-out\""
-              }
+                "type": "enum"
+              },
+              "values": [
+                {
+                  "name": "out-in",
+                  "description": "Current element transitions out first, then when complete, the new element transitions in."
+                },
+                {
+                  "name": "in-out",
+                  "description": "New element transitions in first, then when complete, the current element transitions out."
+                }
+              ]
             }
           ]
         },
@@ -225,7 +217,6 @@
               "name": "tag",
               "default": "\"span\"",
               "value": {
-                "kind": "expression",
                 "type": "string"
               }
             },
@@ -343,21 +334,23 @@
             "items": "/html/vue-directives",
             "template": [
               "v-",
-              "#item",
+              "#item:Vue directive",
               {
                 "delegate": "argument",
                 "template": [
                   ":",
-                  "#item"
+                  "#...",
+                  "#item:argument"
                 ],
                 "required": false,
+                "proximity": 1,
                 "repeat": false
               },
               {
                 "items": "modifiers",
                 "template": [
                   ".",
-                  "#item"
+                  "#item:modifier"
                 ],
                 "required": false,
                 "repeat": true
@@ -449,13 +442,17 @@
           "name": "text",
           "description": "Updates the element’s `textContent`. If you need to update the part of `textContent`, you should use `{{ Mustache }}` interpolations.",
           "doc-url": "https://v3.vuejs.org/api/directives.html#v-text",
-          "type": "string"
+          "attribute-value": {
+            "type": "string"
+          }
         },
         {
           "name": "html",
           "description": "Updates the element’s `innerHTML`. *Note that the contents are inserted as plain HTML - they will not be compiled as Vue templates*. If you find yourself trying to compose templates using `v-html`, try to rethink the solution by using components instead.",
           "doc-url": "https://v3.vuejs.org/api/directives.html#v-html",
-          "type": "string"
+          "attribute-value": {
+            "type": "string"
+          }
         },
         {
           "name": "show",
@@ -484,15 +481,19 @@
           "name": "for",
           "description": "Render the element or template block multiple times based on the source data. The directive’s value must use the special syntax `alias in expression` to provide an alias for the current element being iterated on. Alternatively, you can also specify an alias for the index (or the key if used on an Object). The default behavior of `v-for` will try to patch the elements in-place without moving them. To force it to reorder elements, you need to provide an ordering hint with the `key` special attribute.",
           "doc-url": "https://v3.vuejs.org/api/directives.html#v-for",
-          "type": "void",
-          "expression-parser": "vue:for"
+          "attribute-value": {
+            "parser": "vue:for",
+            "type": "void"
+          }
         },
         {
           "name": "on",
           "description": "Attaches an event listener to the element. The event type is denoted by the argument. The expression can be a method name, an inline statement, or omitted if there are modifiers present.\n\nWhen used on a normal element, it listens to *native DOM events* only. When used on a custom element component, it listens to *custom events* emitted on that child component.\n\nWhen listening to native DOM events, the method receives the native event as the only argument. If using inline statement, the statement has access to the special `$event` property: `v-on:click=\"handle('ok', $event)\"`.\n\n`v-on` also supports binding to an object of event/listener pairs without an argument. Note when using the object syntax, it does not support any modifiers.",
           "doc-url": "https://v3.vuejs.org/api/directives.html#v-on",
-          "type": "void",
-          "expression-parser": "vue:on",
+          "attribute-value": {
+            "parser": "vue:on",
+            "type": "void"
+          },
           "argument": {
             "name": "event name",
             "description": "Optional event name",
@@ -637,9 +638,6 @@
           "name": "bind",
           "description": "Dynamically bind one or more attributes, or a component prop to an expression.\n\nWhen used to bind the `class` or `style` attribute, it supports additional value types such as Array or Objects. See linked guide section below for more details.\n\nWhen used for prop binding, the prop must be properly declared in the child component.\n\nWhen used without an argument, can be used to bind an object containing attribute name-value pairs. Note in this mode `class` and `style` does not support Array or Objects.",
           "doc-url": "https://v3.vuejs.org/api/directives.html#v-bind",
-          "type": {
-            "reference": "argument"
-          },
           "argument": {
             "name": "attribute or property name",
             "description": "Optional attribute or property name",
@@ -684,7 +682,9 @@
           "name": "model",
           "description": "Create a two-way binding on a form input element or a component. For detailed usage and other notes, see the Guide section.",
           "doc-url": "https://v3.vuejs.org/api/directives.html#v-model",
-          "type": "any",
+          "attribute-value": {
+            "type": "any"
+          },
           "argument": {
             "name": "v-model prop/even pair to bind",
             "pattern": {
@@ -742,8 +742,10 @@
           "name": "slot",
           "description": "Denote named slots or slots that expect to receive props.",
           "doc-url": "https://v3.vuejs.org/api/directives.html#v-slot",
-          "type": "void",
-          "expression-parser": "vue:slot",
+          "attribute-value": {
+            "parser": "vue:slot",
+            "type": "void"
+          },
           "argument": {
             "name": "Slot name",
             "description": "Slot name (optional, defaults to `default`)",
@@ -780,7 +782,9 @@
           "name": "is",
           "description": "When using in-DOM templates, the template is subject to native HTML parsing rules. Some HTML elements, such as `<ul>`, `<ol>`, `<table>` and `<select>` have restrictions on what elements can appear inside them, and some elements such as `<li>`, `<tr>`, and `<option>` can only appear inside certain other elements. As a workaround, we can use `v-is` directive on these elements.",
           "doc-url": "https://v3.vuejs.org/api/directives.html#v-is",
-          "type": "string"
+          "attribute-value": {
+            "type": "string"
+          }
         }
       ]
     }
