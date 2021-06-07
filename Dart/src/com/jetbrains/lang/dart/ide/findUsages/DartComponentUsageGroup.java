@@ -83,7 +83,7 @@ class DartComponentUsageGroup implements UsageGroup, DataProvider {
   }
 
   @Override
-  public Icon getIcon(boolean isOpen) {
+  public Icon getIcon() {
     return myIcon;
   }
 
