@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.options.BoundSearchableConfigurable
+import com.intellij.openapi.options.ex.Settings
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.ValidationInfo
@@ -102,7 +103,8 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
 
 
   class PrettierOnSaveInfoProvider : ActionOnSaveInfoProvider() {
-    override fun getActionOnSaveInfos(project: Project): List<ActionOnSaveInfo> = listOf(PrettierOnSaveActionInfo(project))
+    override fun getActionOnSaveInfos(project: Project, settings: Settings):
+      List<ActionOnSaveInfo> = listOf(PrettierOnSaveActionInfo(project))
   }
 
 
