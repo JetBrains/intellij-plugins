@@ -44,7 +44,7 @@ public final class AngularModulesProvider implements JSModuleConnectionProvider 
     final List<Link> result = new ArrayList<>();
     final CommonProcessors.CollectProcessor<String> processor = new CommonProcessors.CollectProcessor<>();
     final GlobalSearchScope fileScope = GlobalSearchScope.fileScope(file);
-    StubIndex.getInstance().processAllKeys(AngularModuleIndex.KEY, processor, fileScope, null);
+    StubIndex.getInstance().processAllKeys(AngularModuleIndex.KEY, processor, fileScope);
     for (String key : processor.getResults()) {
       AngularIndexUtil.multiResolve(project, AngularModuleIndex.KEY, key, element -> {
         if (!file.equals(element.getContainingFile())) {
