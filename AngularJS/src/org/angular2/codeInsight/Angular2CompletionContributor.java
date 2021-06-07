@@ -5,7 +5,7 @@ import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.javascript.web.css.CssInBindingExpressionCompletionProvider;
-import com.intellij.javascript.web.webTypes.codeInsight.attributes.AsteriskAwarePrefixMatcher;
+import com.intellij.javascript.web.codeInsight.attributes.AsteriskAwarePrefixMatcher;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.completion.JSLookupElementInsertHandler;
 import com.intellij.lang.javascript.completion.JSLookupPriority;

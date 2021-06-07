@@ -1,14 +1,14 @@
 // Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model
 
-import com.intellij.javascript.web.webTypes.registry.*
-import com.intellij.javascript.web.webTypes.registry.WebTypesContribution.Companion.KIND_HTML_ATTRIBUTES
-import com.intellij.javascript.web.webTypes.registry.WebTypesContribution.Companion.KIND_HTML_ELEMENTS
-import com.intellij.javascript.web.webTypes.registry.WebTypesContribution.Companion.KIND_HTML_EVENTS
-import com.intellij.javascript.web.webTypes.registry.WebTypesContribution.Companion.KIND_HTML_SLOTS
-import com.intellij.javascript.web.webTypes.registry.WebTypesContribution.Companion.KIND_HTML_VUE_DIRECTIVES
-import com.intellij.javascript.web.webTypes.registry.WebTypesContribution.Companion.VUE_FRAMEWORK
-import com.intellij.javascript.web.webTypes.registry.WebTypesContribution.Priority
+import com.intellij.javascript.web.symbols.*
+import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_ATTRIBUTES
+import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_ELEMENTS
+import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_EVENTS
+import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_SLOTS
+import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_VUE_DIRECTIVES
+import com.intellij.javascript.web.symbols.WebSymbol.Companion.VUE_FRAMEWORK
+import com.intellij.javascript.web.symbols.WebSymbol.Priority
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.lang.javascript.psi.JSType
@@ -26,22 +26,22 @@ import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler
 import org.jetbrains.vuejs.codeInsight.toAsset
 import java.util.*
 
-class VueWebTypesAdditionalContextProvider : WebTypesAdditionalContextProvider {
+class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvider {
 
-  override fun getAdditionalContext(element: PsiElement?, framework: String?): List<WebTypesContributionsContainer> =
+  override fun getAdditionalContext(element: PsiElement?, framework: String?): List<WebSymbolsContainer> =
     element
       ?.takeIf { framework == VUE_FRAMEWORK }
       ?.let { VueModelManager.findEnclosingContainer(it) }
       ?.let { listOf(EntityContainerWrapper(element.containingFile, it)) }
     ?: emptyList()
 
-  private abstract class VueWrapperBase : WebTypesContributionsContainer,
-                                          WebTypesContributionsContainer.WebTypesContext {
-    val context: WebTypesContributionsContainer.WebTypesContext
+  private abstract class VueWrapperBase : WebSymbolsContainer,
+                                          WebSymbolsContainer.WebTypesContext {
+    val context: WebSymbolsContainer.WebTypesContext
       get() = this
 
-    val root: WebTypesContributionsContainer.ContributionRoot
-      get() = WebTypesContributionsContainer.ContributionRoot.HTML
+    val root: WebSymbolsContainer.ContributionRoot
+      get() = WebSymbolsContainer.ContributionRoot.HTML
 
     override val framework: String
       get() = VUE_FRAMEWORK
@@ -56,12 +56,12 @@ class VueWebTypesAdditionalContextProvider : WebTypesAdditionalContextProvider {
   private class EntityContainerWrapper(private val containingFile: PsiFile,
                                        private val container: VueEntitiesContainer) : VueWrapperBase() {
 
-    override fun getContributions(root: WebTypesContributionsContainer.ContributionRoot?,
+    override fun getContributions(root: WebSymbolsContainer.ContributionRoot?,
                                   kind: String,
                                   name: String?,
-                                  params: WebTypesNameMatchQueryParams,
-                                  context: Stack<WebTypesContributionsContainer>): Sequence<WebTypesContributionsContainer> =
-      if (root == null || root == WebTypesContributionsContainer.ContributionRoot.HTML)
+                                  params: WebSymbolsNameMatchQueryParams,
+                                  context: Stack<WebSymbolsContainer>): Sequence<WebSymbolsContainer> =
+      if (root == null || root == WebSymbolsContainer.ContributionRoot.HTML)
         when (kind) {
           KIND_HTML_ELEMENTS -> {
             val result = mutableListOf<VueComponent>()
@@ -98,15 +98,15 @@ class VueWebTypesAdditionalContextProvider : WebTypesAdditionalContextProvider {
         }
       else emptySequence()
 
-    override fun getCodeCompletions(root: WebTypesContributionsContainer.ContributionRoot?,
+    override fun getCodeCompletions(root: WebSymbolsContainer.ContributionRoot?,
                                     kind: String,
                                     name: String?,
-                                    params: WebTypesCodeCompletionQueryParams,
-                                    context: Stack<WebTypesContributionsContainer>): Sequence<WebTypesCodeCompletionItem> =
-      if (root == null || root == WebTypesContributionsContainer.ContributionRoot.HTML)
+                                    params: WebSymbolsCodeCompletionQueryParams,
+                                    context: Stack<WebSymbolsContainer>): Sequence<WebSymbolCodeCompletionItem> =
+      if (root == null || root == WebSymbolsContainer.ContributionRoot.HTML)
         when (kind) {
           KIND_HTML_ELEMENTS -> {
-            val result = mutableListOf<WebTypesCodeCompletionItem>()
+            val result = mutableListOf<WebSymbolCodeCompletionItem>()
             val scriptLanguage = detectVueScriptLanguage(containingFile)
             container.acceptEntities(object : VueModelVisitor() {
               override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
@@ -127,13 +127,13 @@ class VueWebTypesAdditionalContextProvider : WebTypesAdditionalContextProvider {
             result.asSequence()
           }
           KIND_HTML_VUE_DIRECTIVES -> {
-            val result = mutableListOf<WebTypesCodeCompletionItem>()
+            val result = mutableListOf<WebSymbolCodeCompletionItem>()
             container.acceptEntities(object : VueModelVisitor() {
               override fun visitDirective(name: String, directive: VueDirective, proximity: Proximity): Boolean {
-                result.add(WebTypesCodeCompletionItem.create(fromAsset(name),
-                                                             source = DirectiveWrapper(name, directive),
-                                                             priority = priorityOf(proximity),
-                                                             proximity = proximityOf(proximity)))
+                result.add(WebSymbolCodeCompletionItem.create(fromAsset(name),
+                                                              source = DirectiveWrapper(name, directive),
+                                                              priority = priorityOf(proximity),
+                                                              proximity = proximityOf(proximity)))
                 return true
               }
             }, VueModelVisitor.Proximity.GLOBAL)
@@ -164,9 +164,9 @@ class VueWebTypesAdditionalContextProvider : WebTypesAdditionalContextProvider {
                                 name: String,
                                 scriptLanguage: String?,
                                 proximity: VueModelVisitor.Proximity,
-                                moduleName: String? = null): WebTypesCodeCompletionItem {
+                                moduleName: String? = null): WebSymbolCodeCompletionItem {
       val element = component.source
-      var builder = WebTypesCodeCompletionItem.create(
+      var builder = WebSymbolCodeCompletionItem.create(
         name = name,
         source = ComponentWrapper(name, component),
         icon = VuejsIcons.Vue,
@@ -194,7 +194,7 @@ class VueWebTypesAdditionalContextProvider : WebTypesAdditionalContextProvider {
   }
 
   private abstract class DocumentedItemWrapper<T : VueDocumentedItem>(
-    override val matchedName: String, protected val item: T) : VueWrapperBase(), WebTypesContribution {
+    override val matchedName: String, protected val item: T) : VueWrapperBase(), WebSymbol {
 
     override val kind: String get() = KIND_HTML_ELEMENTS
 
@@ -230,12 +230,12 @@ class VueWebTypesAdditionalContextProvider : WebTypesAdditionalContextProvider {
     override val source: PsiElement?
       get() = item.source
 
-    override fun getContributions(root: WebTypesContributionsContainer.ContributionRoot?,
+    override fun getContributions(root: WebSymbolsContainer.ContributionRoot?,
                                   kind: String,
                                   name: String?,
-                                  params: WebTypesNameMatchQueryParams,
-                                  context: Stack<WebTypesContributionsContainer>): Sequence<WebTypesContributionsContainer> =
-      if (root == null || root == WebTypesContributionsContainer.ContributionRoot.HTML)
+                                  params: WebSymbolsNameMatchQueryParams,
+                                  context: Stack<WebSymbolsContainer>): Sequence<WebSymbolsContainer> =
+      if (root == null || root == WebSymbolsContainer.ContributionRoot.HTML)
         when (kind) {
           KIND_HTML_ATTRIBUTES -> {
             val searchName = name?.let { fromAsset(it) }
