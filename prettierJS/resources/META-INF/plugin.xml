@@ -43,7 +43,7 @@ Please report any issues in the <a href="https://youtrack.jetbrains.com/issues/W
       instance="com.intellij.prettierjs.PrettierConfigurable"/>
     <actionOnSaveInfoProvider id="PrettierOnSaveInfoProvider"
                               implementation="com.intellij.prettierjs.PrettierConfigurable$PrettierOnSaveInfoProvider"
-                              order="after EsLintOnSaveInfoProvider, before BuildOnSaveInfoProvider"/>
+                              order="after EsLintOnSaveInfoProvider, before BuildOnSaveInfoProvider, before FileWatcherOnSaveActionProvider, before UploadOnSaveActionProvider"/>
 
     <fileType name="JSON" language="JSON" fileNames=".prettierrc"/>
     <lang.substitutor language="JSON" implementationClass="com.intellij.prettierjs.config.PrettierConfigLanguageSubstitutor"/>
