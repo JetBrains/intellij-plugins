@@ -7,6 +7,7 @@ import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_ELEMENT
 import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_EVENTS
 import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_SLOTS
 import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_VUE_COMPONENTS
+import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_VUE_COMPONENT_PROPS
 import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_VUE_DIRECTIVES
 import com.intellij.javascript.web.symbols.WebSymbol.Companion.VUE_FRAMEWORK
 import com.intellij.javascript.web.symbols.WebSymbol.Priority
@@ -106,7 +107,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
                                     context: Stack<WebSymbolsContainer>): Sequence<WebSymbolCodeCompletionItem> =
       if (namespace == null || namespace == WebSymbolsContainer.Namespace.HTML)
         when (kind) {
-          KIND_HTML_ELEMENTS -> {
+          KIND_HTML_VUE_COMPONENTS -> {
             val result = mutableListOf<WebSymbolCodeCompletionItem>()
             val scriptLanguage = detectVueScriptLanguage(containingFile)
             container.acceptEntities(object : VueModelVisitor() {
@@ -238,7 +239,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
                             context: Stack<WebSymbolsContainer>): Sequence<WebSymbolsContainer> =
       if (namespace == null || namespace == WebSymbolsContainer.Namespace.HTML)
         when (kind) {
-          KIND_HTML_ATTRIBUTES -> {
+          KIND_HTML_VUE_COMPONENT_PROPS -> {
             val searchName = name?.let { fromAsset(it) }
             val props = mutableListOf<VueInputProperty>()
             item.acceptPropertiesAndMethods(object : VueModelVisitor() {

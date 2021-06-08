@@ -21,26 +21,42 @@ class VueFramework : WebFramework() {
                                  kind: SymbolKind,
                                  name: String,
                                  forQuery: Boolean): List<String> =
-    if (namespace == WebSymbolsContainer.Namespace.HTML
-        && kind == WebSymbol.KIND_HTML_VUE_COMPONENTS) {
-      if (!forQuery) {
-        if (name.contains('-'))
-          listOf(name)
-        else
-          listOf(JSStringUtil.toKebabCase(name, true, true))
+    if (namespace == WebSymbolsContainer.Namespace.HTML) {
+      if (forQuery) {
+        when (kind) {
+          WebSymbol.KIND_HTML_VUE_COMPONENTS ->
+            listOf(name, JSStringUtil.toKebabCase(name, false, true, true))
+          WebSymbol.KIND_HTML_VUE_COMPONENT_PROPS ->
+            listOf(JSStringUtil.toKebabCase(name, true, true, true))
+          else -> emptyList()
+        }
       }
-      else
-        listOf(name, JSStringUtil.toKebabCase(name, true, true))
+      else {
+        when (kind) {
+          WebSymbol.KIND_HTML_VUE_COMPONENTS ->
+            if (name.contains('-'))
+              listOf(name)
+            else
+              listOf(JSStringUtil.toKebabCase(name, false, true, true))
+          WebSymbol.KIND_HTML_VUE_COMPONENT_PROPS ->
+            listOf(JSStringUtil.toKebabCase(name, true, true, true))
+          else -> emptyList()
+        }
+      }
+
     }
     else emptyList()
 
   override fun getNameVariants(namespace: WebSymbolsContainer.Namespace, kind: SymbolKind, name: String): List<String> =
-    if (namespace == WebSymbolsContainer.Namespace.HTML
-               && kind == WebSymbol.KIND_HTML_VUE_COMPONENTS) {
-      if (name.contains('-'))
-        listOf(name)
-      else
-        listOf(name, JSStringUtil.toKebabCase(name, true, true))
+    if (namespace == WebSymbolsContainer.Namespace.HTML) {
+      when (kind) {
+        WebSymbol.KIND_HTML_VUE_COMPONENTS ->  if (name.contains('-'))
+          listOf(name)
+        else
+          listOf(name, JSStringUtil.toKebabCase(name, false, true, true))
+        WebSymbol.KIND_HTML_VUE_COMPONENT_PROPS -> listOf(JSStringUtil.toKebabCase(name, true, true, true))
+        else -> emptyList()
+      }
     }
     else emptyList()
 

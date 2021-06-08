@@ -26,7 +26,15 @@
           "name": "Vue component",
           "pattern": {
             "items": "/html/vue-components"
-          }
+          },
+          "attributes": [
+            {
+              "name": "Component property",
+              "pattern": {
+                "items": "props"
+              }
+            }
+          ]
         }
       ],
       "vue-components": [
@@ -34,11 +42,11 @@
           "name": "Component",
           "doc-url": "https://v3.vuejs.org/api/built-in-components.html#component",
           "description": "A “meta component” for rendering dynamic components. The actual component to render is determined by the `is` prop.",
-          "attributes": [
+          "props": [
             {
               "name": "is",
               "description": "An HTML tag name, a Component name or Component class reference.",
-              "value": {
+              "attribute-value": {
                 "kind": "expression",
                 "type": [
                   "string",
@@ -52,18 +60,18 @@
         {
           "name": "Transition components base",
           "abstract": true,
-          "attributes": [
+          "props": [
             {
               "name": "name",
               "description": "Used to automatically generate transition CSS class names. e.g. `name: 'fade'` will auto expand to `.fade-enter`, `,.fade-enter-active`, etc.",
-              "value": {
+              "attribute-value": {
                 "type": "string"
               }
             },
             {
               "name": "appear",
               "description": "Whether to apply transition on initial render.",
-              "value": {
+              "attribute-value": {
                 "type": "html-boolean"
               },
               "default": "false"
@@ -72,14 +80,14 @@
               "name": "css",
               "description": "Whether to apply CSS transition classes. Defaults to `true`. If set to `false`, will only trigger JavaScript hooks registered via component events.",
               "default": "true",
-              "value": {
+              "attribute-value": {
                 "type": "html-boolean"
               }
             },
             {
               "name": "type",
               "description": "Specifies the type of transition events to wait for to determine transition end timing. Available values are `\"transition\"` and `\"animation\"`. By default, it will automatically detect the type that has a longer duration.",
-              "value": {
+              "attribute-value": {
                 "type": [
                   "\"transition\"",
                   "\"animation\""
@@ -89,7 +97,7 @@
             {
               "name": "duration",
               "description": "Specifies the duration of transition. By default, Vue waits for the first `transitionend` or `animationend` event on the root transition element.",
-              "value": {
+              "attribute-value": {
                 "type": [
                   "number",
                   "{ enter: number, leave: number }"
@@ -98,55 +106,55 @@
             },
             {
               "name": "enterFromClass",
-              "value": {
+              "attribute-value": {
                 "type": "string"
               }
             },
             {
               "name": "leaveFromClass",
-              "value": {
+              "attribute-value": {
                 "type": "string"
               }
             },
             {
               "name": "appearClass",
-              "value": {
+              "attribute-value": {
                 "type": "string"
               }
             },
             {
               "name": "enterToClass",
-              "value": {
+              "attribute-value": {
                 "type": "string"
               }
             },
             {
               "name": "leaveToClass",
-              "value": {
+              "attribute-value": {
                 "type": "string"
               }
             },
             {
               "name": "appearToClass",
-              "value": {
+              "attribute-value": {
                 "type": "string"
               }
             },
             {
               "name": "enterActiveClass",
-              "value": {
+              "attribute-value": {
                 "type": "string"
               }
             },
             {
               "name": "leaveActiveClass",
-              "value": {
+              "attribute-value": {
                 "type": "string"
               }
             },
             {
               "name": "appearActiveClass",
-              "value": {
+              "attribute-value": {
                 "type": "string"
               }
             }
@@ -192,11 +200,11 @@
           "extends": "/html/vue-components/Transition components base",
           "description": "`<transition>` serve as transition effects for *single* element/component. The `<transition>` only applies the transition behavior to the wrapped content inside; it doesn't render an extra DOM element, or show up in the inspected component hierarchy.",
           "doc-url": "https://v3.vuejs.org/api/built-in-components.html#transition",
-          "attributes": [
+          "props": [
             {
               "name": "mode",
               "description": "Controls the timing sequence of leaving/entering transitions. Available modes are `\"out-in\"` and `\"in-out\"`; defaults to simultaneous.",
-              "value": {
+              "attribute-value": {
                 "type": "enum"
               },
               "values": [
@@ -217,11 +225,11 @@
           "extends": "/html/vue-components/Transition components base",
           "description": "`<transition-group>` serve as transition effects for *multiple* elements/components. The `<transition-group>` renders a real DOM element. By default it renders a `<span>`, and you can configure what element it should render via the `tag` attribute.\n\nNote that every child in a `<transition-group>` must be *uniquely keyed* for the animations to work properly.",
           "doc-url": "https://v3.vuejs.org/api/built-in-components.html#transition-group",
-          "attributes": [
+          "props": [
             {
               "name": "tag",
               "default": "\"span\"",
-              "value": {
+              "attribute-value": {
                 "type": "string"
               }
             },
@@ -235,11 +243,11 @@
           "name": "KeepAlive",
           "doc-url": "https://v3.vuejs.org/api/built-in-components.html#keep-alive",
           "description": "When wrapped around a dynamic component, `<keep-alive>` caches the inactive component instances without destroying them. Similar to `<transition>`, `<keep-alive>` is an abstract component: it doesn’t render a DOM element itself, and doesn’t show up in the component parent chain.\n\nWhen a component is toggled inside `<keep-alive>`, its `activated` and `deactivated` lifecycle hooks will be invoked accordingly.\n\nPrimarily used to preserve component state or avoid re-rendering.",
-          "attributes": [
+          "props": [
             {
               "name": "include",
               "description": "Only components with matching names will be cached.",
-              "value": {
+              "attribute-value": {
                 "kind": "expression",
                 "type": [
                   "string",
@@ -251,7 +259,7 @@
             {
               "name": "exclude",
               "description": "Any component with a matching name will not be cached.",
-              "value": {
+              "attribute-value": {
                 "kind": "expression",
                 "type": [
                   "string",
@@ -263,7 +271,7 @@
             {
               "name": "max",
               "description": "The maximum number of component instances to cache.",
-              "value": {
+              "attribute-value": {
                 "kind": "expression",
                 "type": "number"
               }
@@ -274,11 +282,11 @@
           "name": "Slot",
           "description": "`<slot>` serve as content distribution outlets in component templates. `<slot>` itself will be replaced.",
           "doc-url": "https://v3.vuejs.org/api/built-in-components.html#slot",
-          "attributes": [
+          "props": [
             {
               "name": "name",
               "description": "Used for named slot.",
-              "value": {
+              "attribute-value": {
                 "kind": "expression",
                 "type": "string"
               }
@@ -303,11 +311,11 @@
           "name": "Teleport",
           "description": "Teleport provides a clean way to control under which parent in our DOM a piece of HTML will be rendered, without having to resort to global state or splitting elements into two components.",
           "doc-url": "https://v3.vuejs.org/api/built-in-components.html#slot",
-          "attributes": [
+          "props": [
             {
               "name": "to",
               "description": "A valid query selector, or an HTMLElement (if used in a browser environment). Specifies a target element where `<teleport>` content will be moved",
-              "value": {
+              "attribute-value": {
                 "kind": "expression",
                 "required": true,
                 "type": [
@@ -369,9 +377,11 @@
           "doc-url": "https://v3.vuejs.org/api/directives.html#v-on",
           "virtual": true,
           "pattern": {
+            "proximity": -100,
             "delegate": "/html/vue-directives/on",
             "template": [
               "@",
+              "#...",
               {
                 "delegate": "argument",
                 "required": true,
@@ -395,9 +405,11 @@
           "doc-url": "https://v3.vuejs.org/api/directives.html#v-bind",
           "virtual": true,
           "pattern": {
+            "proximity": -100,
             "delegate": "/html/vue-directives/bind",
             "template": [
-              "$",
+              ":",
+              "#...",
               {
                 "delegate": "argument",
                 "required": true,
@@ -421,9 +433,11 @@
           "doc-url": "https://v3.vuejs.org/api/directives.html#v-slot",
           "virtual": true,
           "pattern": {
+            "proximity": -100,
             "delegate": "/html/vue-directives/slot",
             "template": [
               "#",
+              "#...",
               {
                 "delegate": "argument",
                 "required": true,
@@ -648,7 +662,10 @@
             "description": "Optional attribute or property name",
             "pattern": {
               "items": [
-                "#element/attributes"
+                {
+                  "path": "attributes",
+                  "includeVirtual": false
+                }
               ],
               "related": [
                 "#item",
