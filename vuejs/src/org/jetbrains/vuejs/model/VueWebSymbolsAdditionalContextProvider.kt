@@ -6,6 +6,7 @@ import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_ATTRIBU
 import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_ELEMENTS
 import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_EVENTS
 import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_SLOTS
+import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_VUE_COMPONENTS
 import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_VUE_DIRECTIVES
 import com.intellij.javascript.web.symbols.WebSymbol.Companion.VUE_FRAMEWORK
 import com.intellij.javascript.web.symbols.WebSymbol.Priority
@@ -40,10 +41,10 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
     val context: WebSymbolsContainer.Context
       get() = this
 
-    val root: WebSymbolsContainer.Namespace
+    val namespace: WebSymbolsContainer.Namespace
       get() = WebSymbolsContainer.Namespace.HTML
 
-    override val framework: String
+    override val framework: FrameworkId?
       get() = VUE_FRAMEWORK
 
     override val packageName: String
@@ -63,7 +64,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
                             context: Stack<WebSymbolsContainer>): Sequence<WebSymbolsContainer> =
       if (namespace == null || namespace == WebSymbolsContainer.Namespace.HTML)
         when (kind) {
-          KIND_HTML_ELEMENTS -> {
+          KIND_HTML_VUE_COMPONENTS -> {
             val result = mutableListOf<VueComponent>()
             val normalizedTagName = name?.let { fromAsset(it) }
             container.acceptEntities(object : VueModelProximityVisitor() {
@@ -196,7 +197,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
   private abstract class DocumentedItemWrapper<T : VueDocumentedItem>(
     override val matchedName: String, protected val item: T) : VueWrapperBase(), WebSymbol {
 
-    override val kind: String get() = KIND_HTML_ELEMENTS
+    override val kind: SymbolKind get() = KIND_HTML_ELEMENTS
 
     override val description: String?
       get() = item.documentation.description

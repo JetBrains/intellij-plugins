@@ -11,9 +11,6 @@
         "vue",
         "@vue/cli"
       ],
-      "script-urls": [
-        ".*vue.*"
-      ],
       "file-extensions": [
         "vue"
       ],
@@ -25,6 +22,14 @@
   "contributions": {
     "html": {
       "elements": [
+        {
+          "name": "Vue component",
+          "pattern": {
+            "items": "/html/vue-components"
+          }
+        }
+      ],
+      "vue-components": [
         {
           "name": "Component",
           "doc-url": "https://v3.vuejs.org/api/built-in-components.html#component",
@@ -184,7 +189,7 @@
         },
         {
           "name": "Transition",
-          "extends": "/html/elements/Transition components base",
+          "extends": "/html/vue-components/Transition components base",
           "description": "`<transition>` serve as transition effects for *single* element/component. The `<transition>` only applies the transition behavior to the wrapped content inside; it doesn't render an extra DOM element, or show up in the inspected component hierarchy.",
           "doc-url": "https://v3.vuejs.org/api/built-in-components.html#transition",
           "attributes": [
@@ -209,7 +214,7 @@
         },
         {
           "name": "TransitionGroup",
-          "extends": "/html/elements/Transition components base",
+          "extends": "/html/vue-components/Transition components base",
           "description": "`<transition-group>` serve as transition effects for *multiple* elements/components. The `<transition-group>` renders a real DOM element. By default it renders a `<span>`, and you can configure what element it should render via the `tag` attribute.\n\nNote that every child in a `<transition-group>` must be *uniquely keyed* for the animations to work properly.",
           "doc-url": "https://v3.vuejs.org/api/built-in-components.html#transition-group",
           "attributes": [
