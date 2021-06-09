@@ -48,7 +48,7 @@ class DartComponentUsageGroup implements UsageGroup, DataProvider {
 
   @Override
   public int compareTo(@NotNull UsageGroup usageGroup) {
-    return getText(null).compareToIgnoreCase(usageGroup.getText(null));
+    return getPresentableGroupText().compareToIgnoreCase(usageGroup.getPresentableGroupText());
   }
 
   public boolean equals(Object object) {
@@ -89,7 +89,7 @@ class DartComponentUsageGroup implements UsageGroup, DataProvider {
 
   @Override
   @NotNull
-  public String getText(UsageView view) {
+  public String getPresentableGroupText() {
     return myText;
   }
 
