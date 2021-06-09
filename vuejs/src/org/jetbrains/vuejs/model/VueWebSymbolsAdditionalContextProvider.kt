@@ -198,8 +198,6 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
   private abstract class DocumentedItemWrapper<T : VueDocumentedItem>(
     override val matchedName: String, protected val item: T) : VueWrapperBase(), WebSymbol {
 
-    override val kind: SymbolKind get() = KIND_HTML_ELEMENTS
-
     override val description: String?
       get() = item.documentation.description
 
@@ -225,6 +223,9 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
 
   private class ComponentWrapper(matchedName: String, component: VueComponent) :
     DocumentedItemWrapper<VueComponent>(matchedName, component) {
+
+    override val kind: SymbolKind
+      get() = KIND_HTML_VUE_COMPONENTS
 
     override val name: String
       get() = item.defaultName ?: matchedName
@@ -267,22 +268,36 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
   private class InputPropWrapper(matchedName: String, property: VueInputProperty)
     : NamedSymbolWrapper<VueInputProperty>(property, matchedName) {
 
+    override val kind: SymbolKind
+      get() = KIND_HTML_VUE_COMPONENT_PROPS
+
     override val jsType: JSType?
       get() = item.jsType
   }
 
   private class EmitCallWrapper(emitCall: VueEmitCall) : NamedSymbolWrapper<VueEmitCall>(emitCall) {
+
+    override val kind: SymbolKind
+      get() = KIND_HTML_EVENTS
+
     override val jsType: JSType?
       get() = item.eventJSType
   }
 
   private class SlotWrapper(slot: VueSlot) : NamedSymbolWrapper<VueSlot>(slot) {
+
+    override val kind: SymbolKind
+      get() = KIND_HTML_SLOTS
+
     override val jsType: JSType?
       get() = item.scope
   }
 
   private class DirectiveWrapper(matchedName: String, directive: VueDirective) :
     DocumentedItemWrapper<VueDirective>(matchedName, directive) {
+
+    override val kind: SymbolKind
+      get() = KIND_HTML_VUE_DIRECTIVES
 
     override val name: String
       get() = item.defaultName ?: matchedName
