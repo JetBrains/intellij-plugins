@@ -13,7 +13,7 @@ import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
 import com.intellij.tools.Tool;
-import com.intellij.ui.GuiUtils;
+import com.intellij.util.ModalityUiUtil;
 import com.intellij.util.concurrency.Semaphore;
 import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioCleanAction;
 import com.jetbrains.cidr.execution.build.CidrBuild;
@@ -78,7 +78,7 @@ public class PlatformioCleanBeforeRunTaskProvider extends BeforeRunTaskProvider<
     }
 
     if (!success.get()) {
-      GuiUtils.invokeLaterIfNeeded(
+      ModalityUiUtil.invokeLaterIfNeeded(
         () -> CidrBuild.showBuildNotification(configuration.getProject(), MessageType.ERROR,
                                               ClionEmbeddedPlatformioBundle.message("platformio.clean.failed")),
         ModalityState.NON_MODAL);

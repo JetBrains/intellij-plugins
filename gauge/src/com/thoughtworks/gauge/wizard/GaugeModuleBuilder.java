@@ -44,9 +44,9 @@ import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.ui.GuiUtils;
 import com.intellij.ui.components.JBRadioButton;
 import com.intellij.ui.components.panels.VerticalLayout;
+import com.intellij.util.ModalityUiUtil;
 import com.intellij.util.ui.FormBuilder;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
@@ -153,7 +153,7 @@ final class GaugeModuleBuilder extends ModuleBuilder {
     module.putUserData(ExternalSystemDataKeys.NEWLY_CREATED_PROJECT, Boolean.TRUE);
 
     StartupManager.getInstance(module.getProject()).runAfterOpened(() -> {
-      GuiUtils.invokeLaterIfNeeded(() -> {
+      ModalityUiUtil.invokeLaterIfNeeded(() -> {
         if (module.isDisposed()) return;
 
         new ReformatCodeProcessor(module.getProject(), module, false).run();

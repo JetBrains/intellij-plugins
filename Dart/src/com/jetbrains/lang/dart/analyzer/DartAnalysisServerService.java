@@ -42,7 +42,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.SearchScope;
-import com.intellij.ui.GuiUtils;
 import com.intellij.util.Consumer;
 import com.intellij.util.*;
 import com.intellij.util.containers.ContainerUtil;
@@ -799,9 +798,9 @@ public final class DartAnalysisServerService implements Disposable {
   }
 
   void updateCurrentFile() {
-    GuiUtils.invokeLaterIfNeeded(() -> DartProblemsView.getInstance(myProject).setCurrentFile(getCurrentOpenFile()),
-                                 ModalityState.NON_MODAL,
-                                 myDisposedCondition);
+    ModalityUiUtil.invokeLaterIfNeeded(() -> DartProblemsView.getInstance(myProject).setCurrentFile(getCurrentOpenFile()),
+                                       ModalityState.NON_MODAL,
+                                       myDisposedCondition);
   }
 
   public boolean isInIncludedRoots(@Nullable final VirtualFile vFile) {
