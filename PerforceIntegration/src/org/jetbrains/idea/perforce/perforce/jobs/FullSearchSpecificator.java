@@ -97,7 +97,7 @@ public class FullSearchSpecificator implements JobsSearchSpecificator {
   }
 
   private static final class FreePart {
-    protected final String myPattern;
+    private final String myPattern;
     private final String myFieldName;
     private final String mySign;
 
@@ -107,7 +107,7 @@ public class FullSearchSpecificator implements JobsSearchSpecificator {
       mySign = sign;
     }
 
-    protected void add(final StringBuilder sb) {
+    private void add(final StringBuilder sb) {
       sb.append(myFieldName).append(mySign).append(myPattern);
     }
   }

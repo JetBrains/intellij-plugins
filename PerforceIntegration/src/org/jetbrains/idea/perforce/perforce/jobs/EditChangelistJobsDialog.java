@@ -221,7 +221,7 @@ public class EditChangelistJobsDialog extends DialogWrapper {
       return false;
     }
 
-    protected JComponent createCenterPanel() {
+    private JComponent createCenterPanel() {
       final JPanel main = new JPanel(new GridBagLayout());
 
       final GridBagConstraints gb = new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTHWEST,GridBagConstraints.NONE,

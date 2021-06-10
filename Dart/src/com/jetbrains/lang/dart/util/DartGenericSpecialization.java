@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.util;
 
 import com.intellij.openapi.util.text.StringUtil;
@@ -22,7 +22,7 @@ public final class DartGenericSpecialization implements Cloneable {
     this(new HashMap<>());
   }
 
-  protected DartGenericSpecialization(Map<String, DartClassResolveResult> map) {
+  private DartGenericSpecialization(Map<String, DartClassResolveResult> map) {
     this.map = map;
   }
 

@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.entities;
 
 import com.intellij.openapi.util.ClearableLazyValue;
@@ -139,7 +139,8 @@ public final class Angular2DirectiveSelectorImpl implements Angular2DirectiveSel
     return getText();
   }
 
-  protected @NotNull Angular2DirectiveSelectorPsiElement convert(@NotNull Pair<String, Integer> range, boolean isElement) {
+  @NotNull
+  private Angular2DirectiveSelectorPsiElement convert(@NotNull Pair<String, Integer> range, boolean isElement) {
     return new Angular2DirectiveSelectorPsiElement(this, myCreateRange.apply(range), range.first, isElement);
   }
 

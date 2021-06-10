@@ -202,7 +202,7 @@ public final class PerforceManager  {
   }
 
   @Nullable
-  protected Map<String, List<String>> getInfoOnlyCached(final P4Connection connection) throws VcsException {
+  private Map<String, List<String>> getInfoOnlyCached(final P4Connection connection) throws VcsException {
     return myPerforceBaseInfoWorker.getCachedInfo(connection);
   }
 
