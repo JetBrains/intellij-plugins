@@ -15,6 +15,7 @@ import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttr
 import org.jetbrains.vuejs.model.getAvailableSlots
 import java.util.*
 
+// TODO move to web-types
 class VueAttributeValueCompletionProvider : CompletionProvider<CompletionParameters>() {
   private val VUE_SCRIPT_LANGUAGE = ContainerUtil.immutableSet("js", "ts")
   private val VUE_STYLE_LANGUAGE = vueStyleLanguages()

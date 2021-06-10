@@ -10,14 +10,11 @@ import com.intellij.lang.javascript.patterns.JSPatterns
 import com.intellij.lang.javascript.psi.JSThisExpression
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.PlatformPatterns.psiElement
-import com.intellij.patterns.XmlPatterns.xmlAttribute
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.util.ProcessingContext
-import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameCompletionProvider
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeValueCompletionProvider
-import org.jetbrains.vuejs.codeInsight.tags.VueTagContentCompletionProvider
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 
 class VueCompletionContributor : CompletionContributor() {

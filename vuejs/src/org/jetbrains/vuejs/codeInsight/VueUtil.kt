@@ -76,7 +76,6 @@ val VUE_NOTIFICATIONS: NotificationGroup
   get() = NotificationGroupManager.getInstance().getNotificationGroup("Vue")
 
 fun fromAsset(name: String): String {
-  // TODO ensure that this conversion conforms to Vue.js rules
   val result = StringBuilder()
   for (ch in name) {
     when {
