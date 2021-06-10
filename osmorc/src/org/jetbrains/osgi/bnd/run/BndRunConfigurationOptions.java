@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.osgi.bnd.run;
 
 import com.intellij.execution.configurations.LocatableRunConfigurationOptions;
@@ -10,27 +10,27 @@ public final class BndRunConfigurationOptions extends LocatableRunConfigurationO
   private final StoredProperty<Boolean> useAlternativeJre = property(false).provideDelegate(this, "useAlternativeJre");
   private final StoredProperty<String> alternativeJrePath = string(null).provideDelegate(this, "alternativeJrePath");
 
-  public final @Nullable String getBndRunFile() {
+  public @Nullable String getBndRunFile() {
     return bndRunFile.getValue(this);
   }
 
-  public final void setBndRunFile(@Nullable String file) {
+  public void setBndRunFile(@Nullable String file) {
     bndRunFile.setValue(this, file);
   }
 
-  public final boolean getUseAlternativeJre() {
+  public boolean getUseAlternativeJre() {
     return useAlternativeJre.getValue(this);
   }
 
-  public final void setUseAlternativeJre(boolean use) {
+  public void setUseAlternativeJre(boolean use) {
     useAlternativeJre.setValue(this, use);
   }
 
-  public final @Nullable String getAlternativeJrePath() {
+  public @Nullable String getAlternativeJrePath() {
     return alternativeJrePath.getValue(this);
   }
 
-  public final void setAlternativeJrePath(@Nullable String path) {
+  public void setAlternativeJrePath(@Nullable String path) {
     alternativeJrePath.setValue(this, path);
   }
 }

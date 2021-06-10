@@ -93,7 +93,7 @@ public final class FStat {
   @NonNls static final String UNRESOLVED_STATUS_FIELD = "unresolved ";
 
   @NonNls
-  public final String toString() {
+  public String toString() {
     return "org.jetbrains.idea.perforce.perforce.FStat{" + "status=" + status + ", local=" + local + ", statTime=" + statTime +
            ", \nclientFile='" + clientFile + "'" + ", \ndepotFile='" + depotFile + "'" + ", \nheadAction='" + headAction + "'" +
            ", headChange='" + headChange + "'" + ", headRev='" + headRev + "'" + ", headType='" + headType + "'" + ", headTime='" +

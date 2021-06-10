@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.linter.tslint.service;
 
 import com.google.gson.*;
@@ -49,16 +49,16 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
   }
 
   @Nullable
-  public final CompletableFuture<List<TsLinterError>> highlight(@NotNull VirtualFile virtualFile,
-                                                                @Nullable VirtualFile config,
-                                                                @Nullable String content,
-                                                                @NotNull TsLintState state) {
+  public CompletableFuture<List<TsLinterError>> highlight(@NotNull VirtualFile virtualFile,
+                                                          @Nullable VirtualFile config,
+                                                          @Nullable String content,
+                                                          @NotNull TsLintState state) {
     return createHighlightFuture(virtualFile, config, state,
                                  (filePath, configPath) -> new GetErrorsCommand(filePath, configPath,StringUtil.notNullize(content)));
   }
 
   @Nullable
-  public final CompletableFuture<List<TsLinterError>> highlightAndFix(@NotNull VirtualFile virtualFile, @NotNull TsLintState state) {
+  public CompletableFuture<List<TsLinterError>> highlightAndFix(@NotNull VirtualFile virtualFile, @NotNull TsLintState state) {
     VirtualFile config = TslintUtil.getConfig(state, myProject, virtualFile);
     //doesn't pass content (file should be saved before)
     return createHighlightFuture(virtualFile, config, state, FixErrorsCommand::new);
@@ -137,14 +137,14 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
   }
 
   @Override
-  protected final JSLanguageServiceQueue createLanguageServiceQueue() {
+  protected JSLanguageServiceQueue createLanguageServiceQueue() {
     return new JSLanguageServiceQueueImpl(myProject, new Protocol(myNodePackage, myWorkingDirectory, myProject), myProcessConnector,
                                           myDefaultReporter,
                                           new JSLanguageServiceDefaultCacheData());
   }
 
   @Override
-  protected final boolean needInitToolWindow() {
+  protected boolean needInitToolWindow() {
     return false;
   }
 
