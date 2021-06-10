@@ -73,7 +73,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
                             kind: String,
                             name: String?,
                             params: WebSymbolsNameMatchQueryParams,
-                            context: Stack<WebSymbolsContainer>): Sequence<WebSymbolsContainer> =
+                            context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
       if (namespace == null || namespace == Namespace.HTML)
         when (kind) {
           KIND_HTML_ELEMENTS -> {
@@ -82,12 +82,11 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
                 if (name == null) listOf(NAMESPACE_HTML, KIND_VUE_TOP_LEVEL_ELEMENT)
                 else listOf(NAMESPACE_HTML, KIND_VUE_TOP_LEVEL_ELEMENT, name)
               )
-                .asSequence()
                 .map {
                   WebSymbolMatch(it.name, it.nameSegments, Namespace.HTML, KIND_HTML_ELEMENTS, it.context)
                 }
             }
-            else emptySequence()
+            else emptyList()
           }
           KIND_HTML_VUE_COMPONENTS -> {
             val result = mutableListOf<VueComponent>()
@@ -102,7 +101,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
                 }
               }
             }, VueModelVisitor.Proximity.GLOBAL)
-            result.asSequence().mapNotNull {
+            result.mapNotNull {
               ComponentWrapper(name ?: it.defaultName ?: return@mapNotNull null, it)
             }
           }
@@ -116,19 +115,19 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
                 }
               }
             }, VueModelVisitor.Proximity.GLOBAL)
-            directives.asSequence().mapNotNull {
+            directives.mapNotNull {
               DirectiveWrapper(name ?: it.defaultName ?: return@mapNotNull null, it)
             }
           }
-          else -> emptySequence()
+          else -> emptyList()
         }
-      else emptySequence()
+      else emptyList()
 
     override fun getCodeCompletions(namespace: Namespace?,
                                     kind: String,
                                     name: String?,
                                     params: WebSymbolsCodeCompletionQueryParams,
-                                    context: Stack<WebSymbolsContainer>): Sequence<WebSymbolCodeCompletionItem> =
+                                    context: Stack<WebSymbolsContainer>): List<WebSymbolCodeCompletionItem> =
       if (namespace == null || namespace == Namespace.HTML)
         when (kind) {
           KIND_HTML_VUE_COMPONENTS -> {
@@ -150,7 +149,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
                 return true
               }
             }, VueModelVisitor.Proximity.OUT_OF_SCOPE)
-            result.asSequence()
+            result
           }
           KIND_HTML_VUE_DIRECTIVES -> {
             val result = mutableListOf<WebSymbolCodeCompletionItem>()
@@ -163,11 +162,11 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
                 return true
               }
             }, VueModelVisitor.Proximity.GLOBAL)
-            result.asSequence()
+            result
           }
-          else -> emptySequence()
+          else -> emptyList()
         }
-      else emptySequence()
+      else emptyList()
 
     override fun getModificationCount(): Long =
       PsiModificationTracker.SERVICE.getInstance(containingFile.project).modificationCount
@@ -261,7 +260,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
                             kind: String,
                             name: String?,
                             params: WebSymbolsNameMatchQueryParams,
-                            context: Stack<WebSymbolsContainer>): Sequence<WebSymbolsContainer> =
+                            context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
       if (namespace == null || namespace == Namespace.HTML)
         when (kind) {
           KIND_HTML_VUE_COMPONENT_PROPS -> {
@@ -275,17 +274,17 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
                 return true
               }
             })
-            props.asSequence().map { InputPropWrapper(name ?: it.name, it) }
+            props.map { InputPropWrapper(name ?: it.name, it) }
           }
           KIND_HTML_EVENTS -> {
-            (item as? VueContainer)?.emits?.asSequence()?.map { EmitCallWrapper(it) } ?: emptySequence()
+            (item as? VueContainer)?.emits?.map { EmitCallWrapper(it) } ?: emptyList()
           }
           KIND_HTML_SLOTS -> {
-            (item as? VueContainer)?.slots?.asSequence()?.map { SlotWrapper(it) } ?: emptySequence()
+            (item as? VueContainer)?.slots?.map { SlotWrapper(it) } ?: emptyList()
           }
-          else -> emptySequence()
+          else -> emptyList()
         }
-      else emptySequence()
+      else emptyList()
 
   }
 
