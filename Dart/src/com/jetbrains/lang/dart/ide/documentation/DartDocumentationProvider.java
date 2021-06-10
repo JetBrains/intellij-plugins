@@ -1,8 +1,9 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.documentation;
 
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.navigation.NavigationItem;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -32,7 +33,7 @@ public class DartDocumentationProvider implements DocumentationProvider {
     final PsiElement elementForDocs = resolvesTo(originalElement, element) ? originalElement : element;
     final HoverInformation hover = getSingleHover(elementForDocs);
     if (hover != null) {
-      return generateDocServer(hover);
+      return generateDocServer(element.getProject(), hover);
     }
     return DartDocUtil.generateDoc(element);
   }
@@ -65,7 +66,7 @@ public class DartDocumentationProvider implements DocumentationProvider {
     final PsiElement elementForInfo = resolvesTo(originalElement, element) ? originalElement : element;
     final HoverInformation hover = getSingleHover(elementForInfo);
     if (hover != null) {
-      return buildHoverTextServer(hover);
+      return buildHoverTextServer(elementForInfo.getProject(), hover);
     }
     return DartDocUtil.getSignature(element);
   }
@@ -84,23 +85,21 @@ public class DartDocumentationProvider implements DocumentationProvider {
     return docUrl == null ? null : Collections.singletonList(docUrl);
   }
 
-  @NotNull
-  public static String buildHoverTextServer(@NotNull final HoverInformation hover) {
+  public static @NotNull String buildHoverTextServer(@NotNull Project project, @NotNull HoverInformation hover) {
     final String elementDescription = StringUtil.trim(hover.getElementDescription());
     final String staticType = elementDescription == null || elementDescription.equals(hover.getStaticType()) ? null : hover.getStaticType();
     final String containingLibraryName = StringUtil.trim(hover.getContainingLibraryName());
-    return DartDocUtil.generateDoc(elementDescription, false, null, containingLibraryName, null, staticType, true);
+    return DartDocUtil.generateDoc(project, elementDescription, false, null, containingLibraryName, null, staticType, true);
   }
 
-  @NotNull
-  public static String generateDocServer(@NotNull final HoverInformation hover) {
+  public static @NotNull String generateDocServer(@NotNull Project project, @NotNull HoverInformation hover) {
     final String elementDescription = StringUtil.trim(hover.getElementDescription());
     final String containingLibraryName = StringUtil.trim(hover.getContainingLibraryName());
     final String containingClassDescription = StringUtil.trim(hover.getContainingClassDescription());
     final String staticType = StringUtil.trim(hover.getStaticType());
     final String docText = StringUtil.trim(hover.getDartdoc());
     return DartDocUtil
-      .generateDoc(elementDescription, false, docText, containingLibraryName, containingClassDescription, staticType, false);
+      .generateDoc(project, elementDescription, false, docText, containingLibraryName, containingClassDescription, staticType, false);
   }
 
   @Nullable

@@ -1,6 +1,7 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.documentation;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiComment;
@@ -14,6 +15,7 @@ import com.intellij.util.SmartList;
 import com.intellij.util.text.MarkdownUtil;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
 import com.jetbrains.lang.dart.psi.*;
+import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartGenericSpecialization;
 import com.jetbrains.lang.dart.util.DartPresentableUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
@@ -27,6 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public final class DartDocUtil {
+  private static final String FORMATTED_HOVER_SDK_VERSION = "2.14";
 
   public static final String SINGLE_LINE_DOC_COMMENT = "///";
   private static final String NBSP = "&nbsp;";
@@ -69,7 +72,7 @@ public final class DartDocUtil {
     }
 
     final String docText = getDocumentationText(namedComponent);
-    return generateDoc(signatureHtml, true, docText, containingLibraryName, containingClassDescription, null, false);
+    return generateDoc(element.getProject(), signatureHtml, true, docText, containingLibraryName, containingClassDescription, null, false);
   }
 
   @NotNull
@@ -133,14 +136,14 @@ public final class DartDocUtil {
     return ArrayUtil.toStringArray(result);
   }
 
-  @NotNull
-  public static String generateDoc(@Nullable @NlsSafe String signature,
-                                   boolean signatureIsHtml,
-                                   @Nullable @NlsSafe String docText,
-                                   @Nullable @NlsSafe String containingLibraryName,
-                                   @Nullable @NlsSafe String containingClassDescription,
-                                   @Nullable @NlsSafe String staticType,
-                                   boolean compactPresentation) {
+  public static @NotNull String generateDoc(@NotNull Project project,
+                                            @Nullable @NlsSafe String signature,
+                                            boolean signatureIsHtml,
+                                            @Nullable @NlsSafe String docText,
+                                            @Nullable @NlsSafe String containingLibraryName,
+                                            @Nullable @NlsSafe String containingClassDescription,
+                                            @Nullable @NlsSafe String staticType,
+                                            boolean compactPresentation) {
     final boolean hasContainingLibraryName = StringUtil.isNotEmpty(containingLibraryName);
     final boolean hasContainingClassDescription = StringUtil.isNotEmpty(containingClassDescription);
     final boolean hasStaticType = StringUtil.isNotEmpty(staticType);
@@ -158,7 +161,13 @@ public final class DartDocUtil {
         builder.append(signature);
       }
       else {
-        builder.append(formatSignature(signature));
+        DartSdk sdk = DartSdk.getDartSdk(project);
+        if (sdk != null && StringUtil.compareVersionNumbers(sdk.getVersion(), FORMATTED_HOVER_SDK_VERSION) >= 0) {
+          builder.append(StringUtil.replace(StringUtil.replace(signature, "\n", "<br/>"), " ", NBSP));
+        }
+        else {
+          builder.append(formatSignature(signature));
+        }
       }
       builder.append("<br>");
     }
