@@ -34,7 +34,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
     element
       ?.takeIf { framework == VUE_FRAMEWORK }
       ?.let { VueModelManager.findEnclosingContainer(it) }
-      ?.let { listOf(EntityContainerWrapper(element.containingFile, it)) }
+      ?.let { listOf(EntityContainerWrapper(element.containingFile.originalFile, it)) }
     ?: emptyList()
 
   private abstract class VueWrapperBase : WebSymbolsContainer,
