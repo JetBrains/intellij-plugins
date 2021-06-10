@@ -23,7 +23,6 @@ import org.jetbrains.vuejs.codeInsight.tags.VueElementDescriptor
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.model.VueDirective
 import org.jetbrains.vuejs.model.VueDirectiveModifier
-import org.jetbrains.vuejs.model.getAvailableSlots
 import javax.swing.Icon
 
 class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParameters>() {
@@ -325,27 +324,27 @@ class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParamete
   }
 
   private fun addSlotCompletions(attr: XmlAttribute, collector: CompletionCollector) {
-    val prefix = collector.prefix
-    val newCollector = if (prefix == "v-slot:") collector.withPrefixMatcher("") else collector
-    val lookupItemPrefix = if (prefix.startsWith("#")) "#" else ""
-    for (slot in getAvailableSlots(attr, true)) {
+    //val prefix = collector.prefix
+    //val newCollector = if (prefix == "v-slot:") collector.withPrefixMatcher("") else collector
+    //val lookupItemPrefix = if (prefix.startsWith("#")) "#" else ""
+    //for (slot in getAvailableSlots(attr, true)) {
       // TODO provide insert handler for scoped slots
-      if (slot.pattern != null) {
-        val patternPrefix = getPatternCompletablePrefix(slot.pattern!!)
-        if (patternPrefix.isNotBlank()) {
-          newCollector.contributeAttribute("v-slot:$patternPrefix") { addAttribute ->
-            addAttribute(lookupElement(patternPrefix, slot, insertHandler = null,
-                                       presentableText = slot.name, priority = HIGH,
-                                       typeText = slot.pattern?.toString()))
-          }
-        }
-      }
-      else {
-        newCollector.contributeAttribute("v-slot:${slot.name}") { addAttribute ->
-          addAttribute(lookupElement(lookupItemPrefix + slot.name, slot, priority = HIGH, insertHandler = null))
-        }
-      }
-    }
+      //if (slot.pattern != null) {
+      //  val patternPrefix = getPatternCompletablePrefix(slot.pattern!!)
+      //  if (patternPrefix.isNotBlank()) {
+      //    newCollector.contributeAttribute("v-slot:$patternPrefix") { addAttribute ->
+      //      addAttribute(lookupElement(patternPrefix, slot, insertHandler = null,
+      //                                 presentableText = slot.name, priority = HIGH,
+      //                                 typeText = slot.pattern?.toString()))
+      //    }
+      //  }
+      //}
+      //else {
+      //  newCollector.contributeAttribute("v-slot:${slot.name}") { addAttribute ->
+      //    addAttribute(lookupElement(lookupItemPrefix + slot.name, slot, priority = HIGH, insertHandler = null))
+      //  }
+      //}
+    //}
   }
 
   private fun lookupElement(name: String,

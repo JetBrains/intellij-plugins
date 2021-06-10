@@ -93,12 +93,13 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
                  }
 
                  info.directiveKind == VueDirectiveKind.SLOT -> {
-                   val slotName = info.arguments ?: DEFAULT_SLOT_NAME
-                   getAvailableSlots(context, true)
-                     .find { it.name == slotName || it.pattern?.matches(slotName) == true }
-                     ?.let {
-                       VueAttributeDescriptor(context, attributeName, it.source, listOf(it), true)
-                     }
+                   //val slotName = info.arguments ?: DEFAULT_SLOT_NAME
+                   //getAvailableSlots(context, true)
+                   //  .find { it.name == slotName || it.pattern?.matches(slotName) == true }
+                   //  ?.let {
+                   //    VueAttributeDescriptor(context, attributeName, it.source, listOf(it), true)
+                   //  }
+                   null
                  }
 
                  info.directiveKind == VueDirectiveKind.CUSTOM ->

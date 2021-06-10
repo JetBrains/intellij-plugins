@@ -823,9 +823,9 @@
             "name": "v-model prop/even pair to bind",
             "pattern": {
               "items": {
-                "path": "#element/attributes",
+                "path": "attributes",
                 "filter": {
-                  "target-list": "#element/events",
+                  "target-list": "events",
                   "prefix": "update:",
                   "suffix": ""
                 }
@@ -866,7 +866,7 @@
               "name": "custom",
               "pattern": {
                 "items": [
-                  "#element/vue-model-modifiers"
+                  "vue-model-modifiers"
                 ]
               }
             }
@@ -884,7 +884,7 @@
             "name": "Slot name",
             "description": "Slot name (optional, defaults to `default`)",
             "pattern": {
-              "items": "#element/slots"
+              "items": "vue-available-slots"
             }
           }
         },

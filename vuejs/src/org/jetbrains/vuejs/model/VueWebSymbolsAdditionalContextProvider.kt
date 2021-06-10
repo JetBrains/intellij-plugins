@@ -1,6 +1,7 @@
 // Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model
 
+import com.intellij.javascript.web.codeInsight.elements.WebSymbolElementDescriptor
 import com.intellij.javascript.web.symbols.*
 import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_ELEMENTS
 import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_EVENTS
@@ -35,6 +36,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
 
   companion object {
     const val KIND_VUE_TOP_LEVEL_ELEMENT = "vue-file-top-elements"
+    const val KIND_VUE_AVAILABLE_SLOTS = "vue-available-slots"
   }
 
   override fun getAdditionalContext(element: PsiElement?, framework: String?): List<WebSymbolsContainer> =
@@ -42,8 +44,9 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
       ?.takeIf { framework == VUE_FRAMEWORK }
       ?.let { VueModelManager.findEnclosingContainer(it) }
       ?.let {
-        listOf(EntityContainerWrapper(element.containingFile.originalFile, it,
-                                      (element as? XmlTag)?.let { tag -> tag.parentTag == null } == true))
+        listOfNotNull(EntityContainerWrapper(element.containingFile.originalFile, it,
+                                             (element as? XmlTag)?.let { tag -> tag.parentTag == null } == true),
+                      (element as? XmlTag)?.let { tag -> AvailableSlotsContainer(tag) })
       }
     ?: emptyList()
 
@@ -216,6 +219,18 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
       }
       return builder
     }
+  }
+
+  private class AvailableSlotsContainer(private val tag: XmlTag) : WebSymbolsContainer {
+    override fun getModificationCount(): Long = 0
+    override fun getSymbols(namespace: Namespace?,
+                            kind: SymbolKind,
+                            name: String?,
+                            params: WebSymbolsNameMatchQueryParams,
+                            context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
+      if ((namespace == null || namespace == Namespace.HTML) && kind == KIND_VUE_AVAILABLE_SLOTS)
+        getAvailableSlots(tag, true)
+      else emptyList()
   }
 
   private abstract class DocumentedItemWrapper<T : VueDocumentedItem>(
