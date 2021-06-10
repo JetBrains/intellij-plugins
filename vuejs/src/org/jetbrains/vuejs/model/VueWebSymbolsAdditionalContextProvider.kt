@@ -2,7 +2,6 @@
 package org.jetbrains.vuejs.model
 
 import com.intellij.javascript.web.symbols.*
-import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_ATTRIBUTES
 import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_ELEMENTS
 import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_EVENTS
 import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_SLOTS
@@ -11,6 +10,8 @@ import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_VUE_COM
 import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_VUE_DIRECTIVES
 import com.intellij.javascript.web.symbols.WebSymbol.Companion.VUE_FRAMEWORK
 import com.intellij.javascript.web.symbols.WebSymbol.Priority
+import com.intellij.javascript.web.symbols.WebSymbolsContainer.Companion.NAMESPACE_HTML
+import com.intellij.javascript.web.symbols.WebSymbolsContainer.Namespace
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.lang.javascript.psi.JSType
@@ -19,6 +20,7 @@ import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.psi.xml.XmlTag
 import com.intellij.util.containers.Stack
 import org.jetbrains.vuejs.VuejsIcons
 import org.jetbrains.vuejs.codeInsight.detectVueScriptLanguage
@@ -26,15 +28,23 @@ import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler
 import org.jetbrains.vuejs.codeInsight.toAsset
+import org.jetbrains.vuejs.lang.html.VueFileType
 import java.util.*
 
 class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvider {
+
+  companion object {
+    const val KIND_VUE_TOP_LEVEL_ELEMENT = "vue-file-top-elements"
+  }
 
   override fun getAdditionalContext(element: PsiElement?, framework: String?): List<WebSymbolsContainer> =
     element
       ?.takeIf { framework == VUE_FRAMEWORK }
       ?.let { VueModelManager.findEnclosingContainer(it) }
-      ?.let { listOf(EntityContainerWrapper(element.containingFile.originalFile, it)) }
+      ?.let {
+        listOf(EntityContainerWrapper(element.containingFile.originalFile, it,
+                                      (element as? XmlTag)?.let { tag -> tag.parentTag == null } == true))
+      }
     ?: emptyList()
 
   private abstract class VueWrapperBase : WebSymbolsContainer,
@@ -42,8 +52,8 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
     val context: WebSymbolsContainer.Context
       get() = this
 
-    val namespace: WebSymbolsContainer.Namespace
-      get() = WebSymbolsContainer.Namespace.HTML
+    val namespace: Namespace
+      get() = Namespace.HTML
 
     override val framework: FrameworkId?
       get() = VUE_FRAMEWORK
@@ -56,15 +66,29 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
   }
 
   private class EntityContainerWrapper(private val containingFile: PsiFile,
-                                       private val container: VueEntitiesContainer) : VueWrapperBase() {
+                                       private val container: VueEntitiesContainer,
+                                       private val isTopLevelTag: Boolean) : VueWrapperBase() {
 
-    override fun getSymbols(namespace: WebSymbolsContainer.Namespace?,
+    override fun getSymbols(namespace: Namespace?,
                             kind: String,
                             name: String?,
                             params: WebSymbolsNameMatchQueryParams,
                             context: Stack<WebSymbolsContainer>): Sequence<WebSymbolsContainer> =
-      if (namespace == null || namespace == WebSymbolsContainer.Namespace.HTML)
+      if (namespace == null || namespace == Namespace.HTML)
         when (kind) {
+          KIND_HTML_ELEMENTS -> {
+            if (containingFile.virtualFile?.fileType == VueFileType.INSTANCE && isTopLevelTag) {
+              params.registry.runNameMatchQuery(
+                if (name == null) listOf(NAMESPACE_HTML, KIND_VUE_TOP_LEVEL_ELEMENT)
+                else listOf(NAMESPACE_HTML, KIND_VUE_TOP_LEVEL_ELEMENT, name)
+              )
+                .asSequence()
+                .map {
+                  WebSymbolMatch(it.name, it.nameSegments, Namespace.HTML, KIND_HTML_ELEMENTS, it.context)
+                }
+            }
+            else emptySequence()
+          }
           KIND_HTML_VUE_COMPONENTS -> {
             val result = mutableListOf<VueComponent>()
             val normalizedTagName = name?.let { fromAsset(it) }
@@ -100,12 +124,12 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
         }
       else emptySequence()
 
-    override fun getCodeCompletions(namespace: WebSymbolsContainer.Namespace?,
+    override fun getCodeCompletions(namespace: Namespace?,
                                     kind: String,
                                     name: String?,
                                     params: WebSymbolsCodeCompletionQueryParams,
                                     context: Stack<WebSymbolsContainer>): Sequence<WebSymbolCodeCompletionItem> =
-      if (namespace == null || namespace == WebSymbolsContainer.Namespace.HTML)
+      if (namespace == null || namespace == Namespace.HTML)
         when (kind) {
           KIND_HTML_VUE_COMPONENTS -> {
             val result = mutableListOf<WebSymbolCodeCompletionItem>()
@@ -233,12 +257,12 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
     override val source: PsiElement?
       get() = item.source
 
-    override fun getSymbols(namespace: WebSymbolsContainer.Namespace?,
+    override fun getSymbols(namespace: Namespace?,
                             kind: String,
                             name: String?,
                             params: WebSymbolsNameMatchQueryParams,
                             context: Stack<WebSymbolsContainer>): Sequence<WebSymbolsContainer> =
-      if (namespace == null || namespace == WebSymbolsContainer.Namespace.HTML)
+      if (namespace == null || namespace == Namespace.HTML)
         when (kind) {
           KIND_HTML_VUE_COMPONENT_PROPS -> {
             val searchName = name?.let { fromAsset(it) }
