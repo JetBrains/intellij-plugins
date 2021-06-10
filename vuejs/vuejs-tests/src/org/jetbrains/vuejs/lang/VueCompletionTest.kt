@@ -1257,6 +1257,7 @@ export default class ComponentInsertion extends Vue {
   fun testAutopopupAfterVOnSelection() {
     myFixture.configureByText("a.vue", "<div v-o<caret>>")
     myFixture.completeBasic()
+    myFixture.assertPreferredCompletionItems(0, "v-on:", "v-on")
     (myFixture.lookup as LookupImpl).finishLookup(Lookup.NORMAL_SELECT_CHAR)
     // new completion must start
     myFixture.assertPreferredCompletionItems(0, "abort", "auxclick", "blur", "cancel", "canplay")

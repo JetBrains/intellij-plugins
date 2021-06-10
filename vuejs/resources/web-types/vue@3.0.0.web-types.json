@@ -356,7 +356,7 @@
                   "#item:argument"
                 ],
                 "required": false,
-                "proximity": 1,
+                "proximity": 5,
                 "repeat": false
               },
               {
@@ -377,7 +377,7 @@
           "doc-url": "https://v3.vuejs.org/api/directives.html#v-on",
           "virtual": true,
           "pattern": {
-            "proximity": -100,
+            "proximity": 10,
             "delegate": "/html/vue-directives/on",
             "template": [
               "@",
@@ -405,7 +405,7 @@
           "doc-url": "https://v3.vuejs.org/api/directives.html#v-bind",
           "virtual": true,
           "pattern": {
-            "proximity": -100,
+            "proximity": 10,
             "delegate": "/html/vue-directives/bind",
             "template": [
               ":",
@@ -433,7 +433,7 @@
           "doc-url": "https://v3.vuejs.org/api/directives.html#v-slot",
           "virtual": true,
           "pattern": {
-            "proximity": -100,
+            "proximity": 10,
             "delegate": "/html/vue-directives/slot",
             "template": [
               "#",
