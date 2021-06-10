@@ -6,6 +6,7 @@ import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import com.intellij.openapi.util.EmptyRunnable
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.runInEdtAndWait
+import com.intellij.util.ui.UIUtil
 
 fun CodeInsightTestFixture.configureVueDependencies(vararg modules: VueTestModule) {
   createPackageJsonWithVueDependency(
@@ -23,6 +24,7 @@ fun CodeInsightTestFixture.configureVueDependencies(vararg modules: VueTestModul
         .makeRootsChange(EmptyRunnable.getInstance(), false, true)
     }
   }
+  UIUtil.dispatchAllInvocationEvents()
 }
 
 enum class VueTestModule(val folder: String, vararg packageNames: String) {
