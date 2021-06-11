@@ -55,7 +55,7 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
       @Override
       public Sdk getSdk() {
         return FlexTestUtils.createSdk(getPathToMockFlex(FlexStructureViewTest.class, getTestName(false)),
-                                       "3.4.0", true, false, getTestRootDisposable());
+                                       "3.4.0", false, false, getTestRootDisposable());
       }
     };
   }
