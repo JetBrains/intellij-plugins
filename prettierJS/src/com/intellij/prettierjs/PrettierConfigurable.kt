@@ -94,7 +94,8 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
           //val shortcut = ActionManager.getInstance().getKeyboardShortcut("SaveAll")
           //shortcut?.let { comment(KeymapUtil.getShortcutText(it)) }
 
-          ActionsOnSaveConfigurable.createGoToActionsOnSavePageLink()().withLargeLeftGap()
+          val link = ActionsOnSaveConfigurable.createGoToActionsOnSavePageLink()
+          link().withLargeLeftGap()
         }
       }
     }
@@ -140,7 +141,7 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
       configurable.runOnSaveCheckBox!!.isSelected = enabled
     }
 
-    override fun getActionLinks() = listOf(ActionsOnSaveConfigurable.createGoToPageInSettingsLink(CONFIGURABLE_ID))
+    override fun getActionLinks() = listOf(createGoToPageInSettingsLink(CONFIGURABLE_ID))
 
     private fun shorten(s: String, max: Int) = StringUtil.shortenTextWithEllipsis(s, max, 0, true)
   }
