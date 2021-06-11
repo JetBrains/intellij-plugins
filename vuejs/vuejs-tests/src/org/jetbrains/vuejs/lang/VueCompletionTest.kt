@@ -1536,11 +1536,11 @@ export default class ComponentInsertion extends Vue {
   fun testWebTypesComplexSetup() {
     myFixture.copyDirectoryToProject("web-types", ".")
     listOf(Triple("root.vue",
-                  listOf("root", "root-pkg", "foo1-pkg"),
-                  listOf("root-sibling", "sub1", "sub2", "foo2-pkg")),
+                  listOf("root", "sub1", "root-sibling", "root-pkg", "foo1-pkg", "foo1Pkg"),
+                  listOf("foo2-pkg", "foo2Pkg", "Foo1Pkg")),
 
            Triple("sub1/sub1.vue",
-                  listOf("sub1", "su1a", "foo1-pkg", "foo2-pkg"),
+                  listOf("sub1", "su1a", "foo1-pkg", "foo2-pkg", "foo2Pkg"),
                   listOf("root", "root-pkg", "root-sibling", "sub2")),
 
            Triple("sub2/sub2.vue",

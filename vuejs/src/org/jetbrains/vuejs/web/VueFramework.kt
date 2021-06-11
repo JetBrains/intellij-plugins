@@ -54,7 +54,7 @@ class VueFramework : WebFramework() {
         WebSymbol.KIND_HTML_VUE_COMPONENTS ->  if (name.contains('-'))
           listOf(name)
         else
-          listOf(name, JSStringUtil.toKebabCase(name, false, true, true))
+          listOf(name, JSStringUtil.toKebabCase(name, true, true, true))
         WebSymbol.KIND_HTML_VUE_COMPONENT_PROPS -> listOf(JSStringUtil.toKebabCase(name, true, true, true))
         else -> emptyList()
       }
