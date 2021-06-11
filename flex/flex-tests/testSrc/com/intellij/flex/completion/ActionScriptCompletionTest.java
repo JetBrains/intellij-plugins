@@ -19,9 +19,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeImpl;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.impl.ProjectJdkTableImpl;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.LightProjectDescriptor;
@@ -34,7 +32,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Arrays;
-import java.util.stream.Stream;
 
 public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   protected static final String BASE_PATH = "/js2_completion/";
@@ -1242,10 +1239,6 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     new TestZZ("1", sdk45.getName()).run();
     new TestZZ("2", sdk46.getName()).run();
     new TestZZ("1", sdk45.getName()).run();
-
-    // Avoid jdk leak in new project model
-    ProjectJdkTableImpl jdkTable = (ProjectJdkTableImpl) ProjectJdkTable.getInstance();
-    Stream.of(jdkTable.getAllJdks()).forEach(jdkTable::removeTestJdk);
   }
 
   public void testSameParameterName() {
