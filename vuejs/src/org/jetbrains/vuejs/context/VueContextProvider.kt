@@ -8,7 +8,9 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.CachedValueProvider
+import org.jetbrains.annotations.ApiStatus
 
+@ApiStatus.ScheduledForRemoval(inVersion = "2022.1")
 @Deprecated(message = "Use WebFrameworkContext API instead.", level = DeprecationLevel.WARNING)
 interface VueContextProvider {
   /**
