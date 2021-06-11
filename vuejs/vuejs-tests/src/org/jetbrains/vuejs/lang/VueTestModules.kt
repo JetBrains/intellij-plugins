@@ -24,7 +24,6 @@ fun CodeInsightTestFixture.configureVueDependencies(vararg modules: VueTestModul
         .makeRootsChange(EmptyRunnable.getInstance(), false, true)
     }
   }
-  UIUtil.dispatchAllInvocationEvents()
 }
 
 enum class VueTestModule(val folder: String, vararg packageNames: String) {
