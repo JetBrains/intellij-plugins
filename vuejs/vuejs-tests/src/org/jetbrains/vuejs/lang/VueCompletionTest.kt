@@ -1218,7 +1218,7 @@ export default class ComponentInsertion extends Vue {
   fun testEventsAfterVOn() {
     myFixture.configureByText("foo.vue", "<template> <MyComponent v-on:cl<caret> </template>")
     myFixture.completeBasic()
-    assertSameElements(myFixture.lookupElementStrings!!, "auxclick", "click", "close", "dblclick")
+    assertSameElements(myFixture.lookupElementStrings!!, "auxclick", "click", "close", "dblclick", ".capture", ".once", ".passive", ".prevent", ".self", ".stop")
 
     myFixture.configureByText("foo.vue", "<template> <div v-on:<caret> </template>")
     myFixture.completeBasic()
@@ -1231,27 +1231,27 @@ export default class ComponentInsertion extends Vue {
     // general modifiers only
     myFixture.configureByText("foo.vue", "<template> <MyComponent @click123.<caret> </template>")
     myFixture.completeBasic()
-    assertSameElements(myFixture.lookupElementStrings!!, "stop", "prevent", "capture", "self", "once", "passive", "native")
+    assertSameElements(myFixture.lookupElementStrings!!, ".stop", ".prevent", ".capture", ".self", ".once", ".passive", ".native")
 
     // general modifiers (except already used) + key modifiers + system modifiers
     myFixture.configureByText("foo.vue", "<template> <div v-on:keyup.stop.passive.<caret> </template>")
     myFixture.completeBasic()
-    assertSameElements(myFixture.lookupElementStrings!!, "prevent", "capture", "self", "once",
-                       "enter", "tab", "delete", "esc", "space", "up", "down", "left", "right",
-                       "ctrl", "alt", "shift", "meta", "exact", "native")
+    assertSameElements(myFixture.lookupElementStrings!!, ".prevent", ".capture", ".self", ".once",
+                       ".enter", ".tab", ".delete", ".esc", ".space", ".up", ".down", ".left", ".right",
+                       ".ctrl", ".alt", ".shift", ".meta", ".exact", ".native")
 
     // general modifiers (except already used) + mouse button modifiers + system modifiers
     myFixture.configureByText("foo.vue", "<template> <div @click.capture.<caret> </template>")
     myFixture.completeBasic()
-    assertSameElements(myFixture.lookupElementStrings!!, "stop", "prevent", "self", "once", "passive",
-                       "left", "right", "middle",
-                       "ctrl", "alt", "shift", "meta", "exact", "native")
+    assertSameElements(myFixture.lookupElementStrings!!, ".stop", ".prevent", ".self", ".once", ".passive",
+                       ".left", ".right", ".middle",
+                       ".ctrl", ".alt", ".shift", ".meta", ".exact", ".native")
 
     // general modifiers + system modifiers
     myFixture.configureByText("foo.vue", "<template> <div @drop.<caret> </template>")
     myFixture.completeBasic()
-    assertSameElements(myFixture.lookupElementStrings!!, "stop", "prevent", "capture", "self", "once", "passive",
-                       "ctrl", "alt", "shift", "meta", "exact", "native")
+    assertSameElements(myFixture.lookupElementStrings!!, ".stop", ".prevent", ".capture", ".self", ".once", ".passive",
+                       ".ctrl", ".alt", ".shift", ".meta", ".exact", ".native")
   }
 
   fun testAutopopupAfterVOnSelection() {
@@ -1614,7 +1614,7 @@ export default class ComponentInsertion extends Vue {
     myFixture.copyDirectoryToProject("filters", ".")
     myFixture.configureFromTempProjectFile("App.vue")
     myFixture.completeBasic()
-    TestCase.assertEquals(listOf("localFilter", "globalFilter", "appFilter", "webTypesFilter").sorted(),
+    TestCase.assertEquals(listOf("localFilter", "globalFilter", "appFilter"/*, "webTypesFilter"*/).sorted(),
                           myFixture.lookupElementStrings!!.sorted())
   }
 
@@ -1676,7 +1676,7 @@ export default class ComponentInsertion extends Vue {
     myFixture.copyDirectoryToProject("modifiers", ".")
     myFixture.configureFromTempProjectFile("App.vue")
     myFixture.completeBasic()
-    assertEquals(listOf("ba", "foo"), myFixture.lookupElementStrings!!)
+    assertEquals(listOf(".ba", ".foo"), myFixture.lookupElementStrings!!)
   }
 
   fun testVue2CompositionApiCompletion() {
