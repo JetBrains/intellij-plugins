@@ -110,7 +110,7 @@
             "delegate": "/html/vue-directives/on",
             "template": [
               "@",
-              "#...",
+              "$...",
               {
                 "delegate": "argument",
                 "required": true
@@ -137,7 +137,7 @@
             "delegate": "/html/vue-directives/bind",
             "template": [
               ":",
-              "#...",
+              "$...",
               {
                 "delegate": "argument",
                 "required": true
@@ -164,7 +164,7 @@
             "delegate": "/html/vue-directives/slot",
             "template": [
               "#",
-              "#...",
+              "$...",
               {
                 "delegate": "argument",
                 "required": true

@@ -932,7 +932,7 @@ $script""")
     myFixture.completeBasic()
     assertContainsElements(myFixture.lookupElementStrings!!, "aaa", "v-for", "ddd", "sss",
                            "class", "about", "onclick", "v-bind", "v-bind:", "v-on:")
-    UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, ":aaa", ":ddd", ":sss", ":about", ":onclick", ":", "123", "true")
+    UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, ":aaa", ":ddd", ":sss", ":about", ":onclick", "123", "true")
 
     myFixture.type(":")
     myFixture.completeBasic()
