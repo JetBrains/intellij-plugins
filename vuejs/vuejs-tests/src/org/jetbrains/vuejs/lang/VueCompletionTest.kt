@@ -1285,7 +1285,7 @@ export default class ComponentInsertion extends Vue {
         <foo:tran<caret>/>
       </template>""")
     myFixture.completeBasic()
-    assertNull(myFixture.lookup)
+    assertNullOrEmpty(myFixture.lookupElementStrings)
   }
 
   fun testVueCompletionInsideScript() {
