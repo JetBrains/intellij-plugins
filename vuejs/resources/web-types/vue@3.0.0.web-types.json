@@ -424,6 +424,11 @@
             {
               "name": "appear-cancelled"
             }
+          ],
+          "slots": [
+            {
+              "name": "default"
+            }
           ]
         },
         {
@@ -773,30 +778,6 @@
                   "includeVirtual": false,
                   "filter": "vue-bind"
                 }
-              ],
-              "related": [
-                "#item",
-                [
-                  "v-bind:",
-                  "#item",
-                  {
-                    "regex": "(\\.[^\\.]*)*"
-                  }
-                ],
-                [
-                  ":",
-                  "#item",
-                  {
-                    "regex": "(\\.[^\\.]*)*"
-                  }
-                ],
-                [
-                  "v-model:",
-                  "#item",
-                  {
-                    "regex": "(\\.[^\\.]*)*"
-                  }
-                ]
               ]
             }
           },
@@ -819,27 +800,10 @@
             "pattern": {
               "items": {
                 "path": "attributes",
-                "filter": "match-prefix",
-                "target-list": "events",
+                "filter": "match-with-target-list",
+                "target-list": "/html/events",
                 "prefix": "update:"
-              },
-              "related": [
-                "#item",
-                [
-                  "v-bind:",
-                  "#item",
-                  {
-                    "regex": "(\\.[^\\.]*)*"
-                  }
-                ],
-                [
-                  ":",
-                  "#item",
-                  {
-                    "regex": "(\\.[^\\.]*)*"
-                  }
-                ]
-              ]
+              }
             }
           },
           "modifiers": [
