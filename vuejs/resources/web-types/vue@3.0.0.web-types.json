@@ -86,8 +86,7 @@
                   "#item:argument"
                 ],
                 "required": false,
-                "proximity": 5,
-                "repeat": false
+                "proximity": 5
               },
               {
                 "items": "modifiers",
@@ -114,8 +113,7 @@
               "#...",
               {
                 "delegate": "argument",
-                "required": true,
-                "repeat": false
+                "required": true
               },
               {
                 "items": "modifiers",
@@ -142,8 +140,7 @@
               "#...",
               {
                 "delegate": "argument",
-                "required": true,
-                "repeat": false
+                "required": true
               },
               {
                 "items": "modifiers",
@@ -170,8 +167,7 @@
               "#...",
               {
                 "delegate": "argument",
-                "required": true,
-                "repeat": false
+                "required": true
               },
               {
                 "items": "modifiers",

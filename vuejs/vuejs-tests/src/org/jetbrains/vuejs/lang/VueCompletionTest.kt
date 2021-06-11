@@ -1231,27 +1231,27 @@ export default class ComponentInsertion extends Vue {
     // general modifiers only
     myFixture.configureByText("foo.vue", "<template> <MyComponent @click123.<caret> </template>")
     myFixture.completeBasic()
-    assertSameElements(myFixture.lookupElementStrings!!, ".stop", ".prevent", ".capture", ".self", ".once", ".passive", ".native")
+    assertSameElements(myFixture.lookupElementStrings!!, ".stop", ".prevent", ".capture", ".self", ".once", ".passive")
 
     // general modifiers (except already used) + key modifiers + system modifiers
     myFixture.configureByText("foo.vue", "<template> <div v-on:keyup.stop.passive.<caret> </template>")
     myFixture.completeBasic()
     assertSameElements(myFixture.lookupElementStrings!!, ".prevent", ".capture", ".self", ".once",
                        ".enter", ".tab", ".delete", ".esc", ".space", ".up", ".down", ".left", ".right",
-                       ".ctrl", ".alt", ".shift", ".meta", ".exact", ".native")
+                       ".ctrl", ".alt", ".shift", ".meta", ".exact")
 
     // general modifiers (except already used) + mouse button modifiers + system modifiers
     myFixture.configureByText("foo.vue", "<template> <div @click.capture.<caret> </template>")
     myFixture.completeBasic()
     assertSameElements(myFixture.lookupElementStrings!!, ".stop", ".prevent", ".self", ".once", ".passive",
                        ".left", ".right", ".middle",
-                       ".ctrl", ".alt", ".shift", ".meta", ".exact", ".native")
+                       ".ctrl", ".alt", ".shift", ".meta", ".exact")
 
     // general modifiers + system modifiers
     myFixture.configureByText("foo.vue", "<template> <div @drop.<caret> </template>")
     myFixture.completeBasic()
     assertSameElements(myFixture.lookupElementStrings!!, ".stop", ".prevent", ".capture", ".self", ".once", ".passive",
-                       ".ctrl", ".alt", ".shift", ".meta", ".exact", ".native")
+                       ".ctrl", ".alt", ".shift", ".meta", ".exact")
   }
 
   fun testAutopopupAfterVOnSelection() {
