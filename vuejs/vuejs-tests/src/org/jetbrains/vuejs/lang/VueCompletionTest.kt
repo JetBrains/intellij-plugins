@@ -938,7 +938,7 @@ $script""")
     myFixture.completeBasic()
     assertContainsElements(myFixture.lookupElementStrings!!, ":aaa", ":ddd", ":sss", ":about")
     UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!,
-                                       "aaa", "v-for", "ddd", "sss", "v-bind", "v-bind:", "v-on:", ":onclick")
+                                       "aaa", "v-for", "ddd", "sss", "v-bind", ":v-bind", ":onclick")
 
     myFixture.type("a")
     myFixture.completeBasic()
@@ -1458,7 +1458,7 @@ export default class ComponentInsertion extends Vue {
     assertEquals(
       listOf("about", "accesskey", "autocapitalize", "autofocus", "charset", "class", "content", "contenteditable", "coords",
              "datatype", "dir", "download", "draggable", "hidden", "href", "hreflang", "id", "inlist", "inputmode", "is", "itemid",
-             "itemprop", "itemref", "itemscope", "itemtype", "key", "lang", "methods", "name", "nonce", "prefix", "property",
+             "itemprop", "itemref", "itemscope", "itemtype", "key", "lang", "methods", "name", "nonce", "prefix", "property", "ref",
              "referrerpolicy", "rel", "resource", "rev", "role", "shape", "slot", "spellcheck", "style", "tabindex", "target",
              "title", "translate", "type", "typeof", "urn", "vocab"),
       myFixture.lookupElementStrings!!

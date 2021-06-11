@@ -43,7 +43,6 @@
             {
               "name": "scope",
               "deprecated": true,
-              "priority": "lowest",
               "value": {
                 "kind": "expression",
                 "parser": "vue:slot-scope"
@@ -184,7 +183,7 @@
         {
           "name": "slot-scope",
           "deprecated": true,
-          "priority": "lowest",
+          "virtual": true,
           "value": {
             "kind": "expression",
             "parser": "vue:slot-scope"
@@ -192,8 +191,7 @@
         },
         {
           "name": "slot",
-          "deprecated": true,
-          "priority": "lowest"
+          "deprecated": true
         },
         {
           "name": "ref"
@@ -771,8 +769,9 @@
             "pattern": {
               "items": [
                 {
-                  "path": "attributes",
-                  "includeVirtual": false
+                  "path": "/html/attributes",
+                  "includeVirtual": false,
+                  "filter": "vue-bind"
                 }
               ],
               "related": [
@@ -816,15 +815,13 @@
             "type": "any"
           },
           "argument": {
-            "name": "v-model prop/even pair to bind",
+            "name": "v-model prop/event pair to bind",
             "pattern": {
               "items": {
                 "path": "attributes",
-                "filter": {
-                  "target-list": "events",
-                  "prefix": "update:",
-                  "suffix": ""
-                }
+                "filter": "match-prefix",
+                "target-list": "events",
+                "prefix": "update:"
               },
               "related": [
                 "#item",

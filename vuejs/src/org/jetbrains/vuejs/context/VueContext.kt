@@ -11,7 +11,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.indexing.FileBasedIndexImpl
-import org.jetbrains.vuejs.VueFramework
+import org.jetbrains.vuejs.web.VueFramework
 import org.jetbrains.vuejs.lang.html.VueFileType
 
 

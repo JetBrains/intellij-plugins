@@ -2,9 +2,6 @@
 package org.jetbrains.vuejs.lang.html
 
 import com.intellij.javascript.web.lang.html.WebFrameworkHtmlDialect
-import com.intellij.lang.html.HTMLLanguage
-import com.intellij.openapi.fileTypes.LanguageFileType
-import org.jetbrains.vuejs.VueFramework
 
 class VueLanguage private constructor() : WebFrameworkHtmlDialect("Vue") {
   companion object {

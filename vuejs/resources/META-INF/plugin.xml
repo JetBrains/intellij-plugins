@@ -179,7 +179,7 @@
 
     <eslint.ruleMappersFactory implementation="org.jetbrains.vuejs.libraries.eslint.VueEslintRuleMappersFactory"/>
 
-    <javascript.web.framework id="vue" implementation="org.jetbrains.vuejs.VueFramework"/>
+    <javascript.web.framework id="vue" implementation="org.jetbrains.vuejs.web.VueFramework"/>
     <javascript.web.context framework="vue"
                             implementation="org.jetbrains.vuejs.context.VueFileContext"
                             id="vue.file"/>
@@ -192,17 +192,18 @@
     <javascript.web.context framework="vue" implementation="org.jetbrains.vuejs.context.VueLegacyContext"
                             id="vue.legacy" order="last"/>
 
-    <webTypes.definitions source="web-types/vue@1.0.0.web-types.json"/>
-    <webTypes.definitions source="web-types/vue@2.0.0.web-types.json"/>
-    <webTypes.definitions source="web-types/vue@2.1.0.web-types.json"/>
-    <webTypes.definitions source="web-types/vue@2.1.8.web-types.json"/>
-    <webTypes.definitions source="web-types/vue@2.2.0.web-types.json"/>
-    <webTypes.definitions source="web-types/vue@2.3.0.web-types.json"/>
-    <webTypes.definitions source="web-types/vue@2.4.0.web-types.json"/>
-    <webTypes.definitions source="web-types/vue@2.5.0.web-types.json"/>
-    <webTypes.definitions source="web-types/vue@3.0.0.web-types.json" enableByDefault="true"/>
+    <javascript.webTypes source="web-types/vue@1.0.0.web-types.json"/>
+    <javascript.webTypes source="web-types/vue@2.0.0.web-types.json"/>
+    <javascript.webTypes source="web-types/vue@2.1.0.web-types.json"/>
+    <javascript.webTypes source="web-types/vue@2.1.8.web-types.json"/>
+    <javascript.webTypes source="web-types/vue@2.2.0.web-types.json"/>
+    <javascript.webTypes source="web-types/vue@2.3.0.web-types.json"/>
+    <javascript.webTypes source="web-types/vue@2.4.0.web-types.json"/>
+    <javascript.webTypes source="web-types/vue@2.5.0.web-types.json"/>
+    <javascript.webTypes source="web-types/vue@3.0.0.web-types.json" enableByDefault="true"/>
 
-    <web.additionalContextProvider implementation="org.jetbrains.vuejs.model.VueWebSymbolsAdditionalContextProvider"/>
+    <javascript.web.additionalContextProvider implementation="org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider"/>
+    <javascript.web.symbolsFilter name="vue-bind" implementation="org.jetbrains.vuejs.web.VueBindFilter"/>
 
     <vuejs.templateScopesProvider
       implementation="org.jetbrains.vuejs.codeInsight.template.VueStandardSymbolsScopesProvider"

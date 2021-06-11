@@ -1,5 +1,5 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.jetbrains.vuejs
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+package org.jetbrains.vuejs.web
 
 import com.intellij.javascript.web.WebFramework
 import com.intellij.javascript.web.lang.html.WebFrameworkHtmlFileType
@@ -7,6 +7,7 @@ import com.intellij.javascript.web.symbols.SymbolKind
 import com.intellij.javascript.web.symbols.WebSymbol
 import com.intellij.javascript.web.symbols.WebSymbolsContainer
 import com.intellij.lang.javascript.JSStringUtil
+import org.jetbrains.vuejs.VuejsIcons
 import org.jetbrains.vuejs.lang.html.VueFileType
 import javax.swing.Icon
 
