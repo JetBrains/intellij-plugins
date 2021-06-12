@@ -50,6 +50,7 @@ interface VueContextProvider {
 
   companion object {
     @Suppress("DEPRECATION")
+    @ApiStatus.ScheduledForRemoval(inVersion = "2022.1")
     @Deprecated(message = "Use WebFrameworkContext API instead.", level = DeprecationLevel.WARNING)
     val VUE_CONTEXT_PROVIDER_EP = ExtensionPointName.create<VueContextProvider>("com.intellij.vuejs.contextProvider")
   }
