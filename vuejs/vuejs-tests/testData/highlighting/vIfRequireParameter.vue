@@ -1,0 +1,1 @@
+<template><div <warning descr="Wrong attribute value">v-if</warning>></div></template>
