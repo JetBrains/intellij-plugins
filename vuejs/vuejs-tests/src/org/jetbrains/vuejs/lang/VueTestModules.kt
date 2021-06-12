@@ -6,14 +6,13 @@ import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import com.intellij.openapi.util.EmptyRunnable
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.runInEdtAndWait
-import com.intellij.util.ui.UIUtil
 
 fun CodeInsightTestFixture.configureVueDependencies(vararg modules: VueTestModule) {
   createPackageJsonWithVueDependency(
     this, modules.asSequence()
     .filter { it.folder != "vue" }
     .flatMap { it.packageNames.asSequence() }
-    .joinToString { "\"${it}\": \"0.0.0\"" })
+    .joinToString { "\"${it}\": \"*\"" })
   for (module in modules) {
     tempDirFixture.copyAll("${getVueTestDataPath()}/modules/${module.folder}/node_modules", "node_modules")
   }
