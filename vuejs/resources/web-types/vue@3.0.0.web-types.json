@@ -31,7 +31,13 @@
             {
               "name": "Component property",
               "pattern": {
-                "items": "props"
+                "items": "props",
+                "or": [
+                  "#item",
+                  {
+                    "regex": "(?!v-).*"
+                  }
+                ]
               }
             }
           ]
@@ -630,6 +636,12 @@
             "pattern": {
               "items": [
                 "/html/events"
+              ],
+              "or": [
+                "#item",
+                {
+                  "regex": ".*"
+                }
               ]
             }
           },
