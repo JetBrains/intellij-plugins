@@ -44,6 +44,9 @@ Please report any issues in the <a href="https://youtrack.jetbrains.com/issues/W
     <actionOnSaveInfoProvider id="PrettierOnSaveInfoProvider"
                               implementation="com.intellij.prettierjs.PrettierConfigurable$PrettierOnSaveInfoProvider"
                               order="after FormatOnSaveActionProvider, after EsLintOnSaveInfoProvider, before BuildOnSaveInfoProvider, before FileWatcherOnSaveActionProvider, before UploadOnSaveActionProvider"/>
+    <actionOnSave id="PrettierActionOnSave"
+                  implementation="com.intellij.prettierjs.PrettierActionOnSave"
+                  order="after ESLintActionOnSave"/>
 
     <fileType name="JSON" language="JSON" fileNames=".prettierrc"/>
     <lang.substitutor language="JSON" implementationClass="com.intellij.prettierjs.config.PrettierConfigLanguageSubstitutor"/>
@@ -76,10 +79,4 @@ Please report any issues in the <a href="https://youtrack.jetbrains.com/issues/W
   <extensions defaultExtensionNs="com.intellij.json">
     <jsonSchemaEnabler implementation="com.intellij.prettierjs.config.PrettierJsonSchemaInJsEnabler"/>
   </extensions>
-  <extensions defaultExtensionNs="JavaScript">
-    <linterSaveAction id="PrettierSaveAction"
-                      implementation="com.intellij.prettierjs.PrettierSaveAction"
-                      order="after ESLintSaveAction"/>
-  </extensions>
-
 </idea-plugin>
