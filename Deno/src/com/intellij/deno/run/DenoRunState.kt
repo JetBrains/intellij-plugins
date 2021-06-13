@@ -14,13 +14,13 @@ import com.intellij.javascript.debugger.CommandLineDebugConfigurator
 import com.intellij.javascript.debugger.execution.DebuggableProcessState
 import com.intellij.javascript.nodejs.NodeCommandLineUtil
 import com.intellij.javascript.nodejs.debug.NodeDebugCommandLineConfigurator
-import com.intellij.javascript.nodejs.debug.NodeLocalDebuggableRunProfileState
+import com.intellij.javascript.nodejs.debug.NodeDebuggableRunProfileState
 import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.terminal.TerminalExecutionConsole
 import org.jetbrains.concurrency.Promise
 
 class DenoRunState(environment: ExecutionEnvironment, runConfiguration: DenoRunConfiguration) :
-  NodeLocalDebuggableRunProfileState,
+  NodeDebuggableRunProfileState,
   DebuggableProcessState<DenoRunConfiguration>(runConfiguration, environment) {
 
   override fun execute(configurator: CommandLineDebugConfigurator?): Promise<ExecutionResult> =
