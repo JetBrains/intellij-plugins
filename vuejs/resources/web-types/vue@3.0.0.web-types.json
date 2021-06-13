@@ -31,11 +31,18 @@
             {
               "name": "Component property",
               "pattern": {
-                "items": "props",
                 "or": [
-                  "#item",
                   {
-                    "regex": "(?!v-).*"
+                    "items": "props",
+                    "priority": "high"
+                  },
+                  {
+                    "template": [
+                      {
+                        "regex": "(?!v-).*"
+                      }
+                    ],
+                    "priority": "lowest"
                   }
                 ]
               }
@@ -300,7 +307,7 @@
           "props": [
             {
               "name": "name",
-              "description": "Used to automatically generate transition CSS class names. e.g. `name: 'fade'` will auto expand to `.fade-enter`, `,.fade-enter-active`, etc.",
+              "description": "Used to automatically generate transition CSS class names. e.g. `name: 'fade'` will auto expand to `.fade-enter`, `.fade-enter-active`, etc.",
               "attribute-value": {
                 "type": "string"
               }
@@ -634,13 +641,17 @@
             "name": "event name",
             "description": "Optional event name",
             "pattern": {
-              "items": [
-                "/html/events"
-              ],
               "or": [
-                "#item",
                 {
-                  "regex": ".*"
+                  "items": "/html/events"
+                },
+                {
+                  "template": [
+                    {
+                      "regex": "(?!\\.).*"
+                    }
+                  ],
+                  "priority": "lowest"
                 }
               ]
             }
