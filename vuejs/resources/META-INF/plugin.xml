@@ -183,12 +183,6 @@
     <javascript.web.context framework="vue"
                             implementation="org.jetbrains.vuejs.context.VueFileContext"
                             id="vue.file"/>
-    <javascript.web.context framework="vue"
-                            implementation="org.jetbrains.vuejs.context.VueNodePackageContext"
-                            id="vue.nodePackage"/>
-    <javascript.web.context framework="vue"
-                            implementation="org.jetbrains.vuejs.context.VueLibraryContext"
-                            id="vue.js.libs"/>
     <javascript.web.context framework="vue" implementation="org.jetbrains.vuejs.context.VueLegacyContext"
                             id="vue.legacy" order="last"/>
 
