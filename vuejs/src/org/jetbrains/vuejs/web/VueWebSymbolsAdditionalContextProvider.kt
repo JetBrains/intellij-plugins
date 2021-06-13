@@ -37,6 +37,15 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
   companion object {
     const val KIND_VUE_TOP_LEVEL_ELEMENT = "vue-file-top-elements"
     const val KIND_VUE_AVAILABLE_SLOTS = "vue-available-slots"
+
+    private fun <T> List<T>.mapWithNameFilter(name: String?, mapper: (T) -> WebSymbol): List<WebSymbol> =
+      if (name != null) {
+        asSequence()
+          .map(mapper)
+          .filter { it.name == name }
+          .toList()
+      }
+      else this.map(mapper)
   }
 
   override fun getAdditionalContext(element: PsiElement?, framework: String?): List<WebSymbolsContainer> =
@@ -229,7 +238,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
                             params: WebSymbolsNameMatchQueryParams,
                             context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
       if ((namespace == null || namespace == Namespace.HTML) && kind == KIND_VUE_AVAILABLE_SLOTS)
-        getAvailableSlots(tag, true)
+        getAvailableSlots(tag, name, true)
       else emptyList()
   }
 
@@ -292,10 +301,12 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
             props.map { InputPropWrapper(name ?: it.name, it) }
           }
           KIND_HTML_EVENTS -> {
-            (item as? VueContainer)?.emits?.map { EmitCallWrapper(it) } ?: emptyList()
+            (item as? VueContainer)?.emits?.mapWithNameFilter(name) { EmitCallWrapper(it) }
+            ?: emptyList()
           }
           KIND_HTML_SLOTS -> {
-            (item as? VueContainer)?.slots?.map { SlotWrapper(it) } ?: emptyList()
+            (item as? VueContainer)?.slots?.mapWithNameFilter(name) { SlotWrapper(it) }
+            ?: emptyList()
           }
           else -> emptyList()
         }
@@ -357,5 +368,6 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
       get() = item.source
 
   }
+
 
 }
