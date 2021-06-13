@@ -311,6 +311,18 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
 
     override val jsType: JSType?
       get() = item.jsType
+
+    override val required: Boolean
+      get() = item.required
+
+    override val attributeValue: WebSymbol.AttributeValue =
+      object : WebSymbol.AttributeValue {
+        override val default: String?
+          get() = item.defaultValue
+
+        override val jsType: JSType?
+          get() = item.jsType
+      }
   }
 
   private class EmitCallWrapper(emitCall: VueEmitCall) : NamedSymbolWrapper<VueEmitCall>(emitCall) {
@@ -329,6 +341,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
 
     override val jsType: JSType?
       get() = item.scope
+
   }
 
   private class DirectiveWrapper(matchedName: String, directive: VueDirective) :
