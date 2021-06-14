@@ -1,6 +1,7 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.prettierjs;
 
+import com.intellij.codeInsight.actions.FormatOnSaveActionInfo;
 import com.intellij.ide.actionsOnSave.impl.ActionsOnSaveFileDocumentManagerListener;
 import com.intellij.lang.javascript.linter.GlobPatternUtil;
 import com.intellij.openapi.editor.Document;
@@ -31,6 +32,11 @@ public class PrettierActionOnSave extends ActionsOnSaveFileDocumentManagerListen
   public void processDocuments(@NotNull Project project, @NotNull Document @NotNull [] documents) {
     PrettierConfiguration prettierConfiguration = PrettierConfiguration.getInstance(project);
     if (!prettierConfiguration.isRunOnSave()) return;
+
+    if (prettierConfiguration.isRunOnReformat() && FormatOnSaveActionInfo.isReformatOnSaveEnabled(project)) {
+      // already processed as com.intellij.prettierjs.PrettierPostFormatProcessor
+      return;
+    }
 
     FileDocumentManager manager = FileDocumentManager.getInstance();
     List<VirtualFile> files = ContainerUtil.mapNotNull(documents, document -> {
