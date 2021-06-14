@@ -8,6 +8,7 @@ import com.intellij.javascript.web.symbols.WebSymbol
 import com.intellij.javascript.web.symbols.WebSymbolsContainer
 import com.intellij.lang.javascript.JSStringUtil
 import org.jetbrains.vuejs.VuejsIcons
+import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.lang.html.VueFileType
 import javax.swing.Icon
 
@@ -26,9 +27,9 @@ class VueFramework : WebFramework() {
       if (forQuery) {
         when (kind) {
           WebSymbol.KIND_HTML_VUE_COMPONENTS ->
-            listOf(name, JSStringUtil.toKebabCase(name, false, true, true))
+            listOf(name, fromAsset(name, true))
           WebSymbol.KIND_HTML_VUE_COMPONENT_PROPS ->
-            listOf(JSStringUtil.toKebabCase(name, true, true, true))
+            listOf(fromAsset(name))
           else -> emptyList()
         }
       }
@@ -38,9 +39,9 @@ class VueFramework : WebFramework() {
             if (name.contains('-'))
               listOf(name)
             else
-              listOf(JSStringUtil.toKebabCase(name, false, true, true))
+              listOf(fromAsset(name, true))
           WebSymbol.KIND_HTML_VUE_COMPONENT_PROPS ->
-            listOf(JSStringUtil.toKebabCase(name, true, true, true))
+            listOf(fromAsset(name))
           else -> emptyList()
         }
       }
@@ -54,8 +55,8 @@ class VueFramework : WebFramework() {
         WebSymbol.KIND_HTML_VUE_COMPONENTS ->  if (name.contains('-'))
           listOf(name)
         else
-          listOf(name, JSStringUtil.toKebabCase(name, true, true, true))
-        WebSymbol.KIND_HTML_VUE_COMPONENT_PROPS -> listOf(JSStringUtil.toKebabCase(name, true, true, true))
+          listOf(name, fromAsset(name))
+        WebSymbol.KIND_HTML_VUE_COMPONENT_PROPS -> listOf(fromAsset(name))
         else -> emptyList()
       }
     }

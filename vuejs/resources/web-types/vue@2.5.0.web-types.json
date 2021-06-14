@@ -124,6 +124,12 @@
           "description": "Attaches an event listener to the element. The event type is denoted by the argument. The expression can be a method name, an inline statement, or omitted if there are modifiers present.\n\nWhen used on a normal element, it listens to *native DOM events* only. When used on a custom element component, it listens to *custom events* emitted on that child component.\n\nWhen listening to native DOM events, the method receives the native event as the only argument. If using inline statement, the statement has access to the special `$event` property: `v-on:click=\"handle('ok', $event)\"`.\n\n`v-on` also supports binding to an object of event/listener pairs without an argument. Note when using the object syntax, it does not support any modifiers.",
           "doc-url": "https://v3.vuejs.org/api/directives.html#v-on",
           "virtual": true,
+          "value": {
+            "kind": "expression",
+            "parser": "vue:expression",
+            "type": "any",
+            "required": false
+          },
           "pattern": {
             "proximity": 10,
             "delegate": "/html/vue-directives/on",
@@ -154,6 +160,12 @@
           "description": "Dynamically bind one or more attributes, or a component prop to an expression.\n\nWhen used to bind the `class` or `style` attribute, it supports additional value types such as Array or Objects. See linked guide section below for more details.\n\nWhen used for prop binding, the prop must be properly declared in the child component.\n\nWhen used without an argument, can be used to bind an object containing attribute name-value pairs. Note in this mode `class` and `style` does not support Array or Objects.",
           "doc-url": "https://v3.vuejs.org/api/directives.html#v-bind",
           "virtual": true,
+          "value": {
+            "kind": "expression",
+            "parser": "vue:expression",
+            "type": "any",
+            "required": false
+          },
           "pattern": {
             "proximity": 10,
             "delegate": "/html/vue-directives/bind",
@@ -185,6 +197,9 @@
           "doc-url": "https://v3.vuejs.org/api/directives.html#v-slot",
           "virtual": true,
           "value": {
+            "kind": "expression",
+            "parser": "vue:expression",
+            "type": "any",
             "required": false
           },
           "pattern": {

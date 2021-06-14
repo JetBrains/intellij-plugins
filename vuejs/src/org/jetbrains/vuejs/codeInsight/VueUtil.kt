@@ -75,7 +75,7 @@ const val ATTR_MODIFIER_PREFIX = '.'
 val VUE_NOTIFICATIONS: NotificationGroup
   get() = NotificationGroupManager.getInstance().getNotificationGroup("Vue")
 
-fun fromAsset(name: String): String {
+fun fromAsset(name: String, hyphenBeforeDigit: Boolean = false): String {
   val result = StringBuilder()
   for (ch in name) {
     when {
@@ -84,6 +84,12 @@ fun fromAsset(name: String): String {
           result.append('-')
         }
         result.append(StringUtil.toLowerCase(ch))
+      }
+      ch in '0'..'9' -> {
+        if (hyphenBeforeDigit) {
+          result.append('-')
+        }
+        result.append(ch)
       }
       else -> result.append(ch)
     }
