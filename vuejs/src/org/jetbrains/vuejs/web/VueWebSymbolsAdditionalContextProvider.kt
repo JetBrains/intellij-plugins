@@ -16,6 +16,7 @@ import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.lang.javascript.psi.types.primitives.JSBooleanType
 import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -37,6 +38,8 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
   companion object {
     const val KIND_VUE_TOP_LEVEL_ELEMENT = "vue-file-top-elements"
     const val KIND_VUE_AVAILABLE_SLOTS = "vue-available-slots"
+    const val KIND_VUE_DIRECTIVE_ARGUMENT = "argument"
+    const val KIND_VUE_DIRECTIVE_MODIFIERS = "modifiers"
 
     private fun <T> List<T>.mapWithNameFilter(name: String?, mapper: (T) -> WebSymbol): List<WebSymbol> =
       if (name != null) {
@@ -331,6 +334,11 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
         override val default: String?
           get() = item.defaultValue
 
+        override val type: WebSymbol.AttributeValueType?
+          get() = if (item.jsType is JSBooleanType)
+            WebSymbol.AttributeValueType.HTML_BOOLEAN
+          else null
+
         override val jsType: JSType?
           get() = item.jsType
       }
@@ -367,7 +375,24 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
     override val source: PsiElement?
       get() = item.source
 
+    override fun getSymbols(namespace: Namespace?,
+                            kind: SymbolKind,
+                            name: String?,
+                            params: WebSymbolsNameMatchQueryParams,
+                            context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
+      if ((namespace == null || namespace == Namespace.HTML)
+          && (kind == KIND_VUE_DIRECTIVE_ARGUMENT || (name != null && kind == KIND_VUE_DIRECTIVE_MODIFIERS))) {
+        listOf(AnyWrapper(this.context, Namespace.HTML, kind, name ?: "Vue directive argument"))
+      }
+      else emptyList()
+
   }
 
+  private class AnyWrapper(override val context: WebSymbolsContainer.Context,
+                           override val namespace: Namespace,
+                           override val kind: SymbolKind,
+                           override val matchedName: String) : WebSymbol {
+
+  }
 
 }

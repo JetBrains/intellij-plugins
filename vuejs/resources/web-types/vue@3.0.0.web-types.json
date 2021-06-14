@@ -128,13 +128,16 @@
               "$...",
               {
                 "delegate": "argument",
+                "template": [
+                  "#item:attribute or property name"
+                ],
                 "required": true
               },
               {
                 "items": "modifiers",
                 "template": [
                   ".",
-                  "#item"
+                  "#item:modifier"
                 ],
                 "required": false,
                 "repeat": true
@@ -155,13 +158,16 @@
               "$...",
               {
                 "delegate": "argument",
-                "required": true
+                "required": true,
+                "template": [
+                  "#item:event name"
+                ]
               },
               {
                 "items": "modifiers",
                 "template": [
                   ".",
-                  "#item"
+                  "#item:modifier"
                 ],
                 "required": false,
                 "repeat": true
@@ -185,13 +191,16 @@
               "$...",
               {
                 "delegate": "argument",
-                "required": true
+                "required": true,
+                "template": [
+                  "#item:slot name"
+                ]
               },
               {
                 "items": "modifiers",
                 "template": [
                   ".",
-                  "#item"
+                  "#item:modifier"
                 ],
                 "required": false,
                 "repeat": true
@@ -297,7 +306,6 @@
               "name": "is",
               "description": "An HTML tag name, a Component name or Component class reference.",
               "attribute-value": {
-                "kind": "expression",
                 "type": [
                   "string",
                   "ComponentDefinition",

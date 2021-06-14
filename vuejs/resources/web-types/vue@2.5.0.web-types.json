@@ -37,14 +37,17 @@
                     "priority": "high"
                   },
                   {
-                    "template": [
-                      {
-                        "regex": "(?!v-).*"
-                      }
-                    ],
+                    "delegate": "vue-custom-prop",
                     "priority": "lowest"
                   }
                 ]
+              },
+              "vue-custom-prop": {
+                "name": "Custom Vue component property",
+                "pattern": "(?!v-).*",
+                "attribute-value": {
+                  "required": false
+                }
               }
             }
           ]
@@ -83,7 +86,7 @@
             "kind": "expression",
             "parser": "vue:expression",
             "type": "any",
-            "required": true
+            "required": false
           },
           "pattern": {
             "items": "/html/vue-directives",
@@ -125,13 +128,16 @@
               "$...",
               {
                 "delegate": "argument",
+                "template": [
+                  "#item:attribute or property name"
+                ],
                 "required": true
               },
               {
                 "items": "modifiers",
                 "template": [
                   ".",
-                  "#item"
+                  "#item:modifier"
                 ],
                 "required": false,
                 "repeat": true
@@ -152,13 +158,16 @@
               "$...",
               {
                 "delegate": "argument",
-                "required": true
+                "required": true,
+                "template": [
+                  "#item:event name"
+                ]
               },
               {
                 "items": "modifiers",
                 "template": [
                   ".",
-                  "#item"
+                  "#item:modifier"
                 ],
                 "required": false,
                 "repeat": true
@@ -171,6 +180,9 @@
           "description": "Denote named slots or slots that expect to receive props.",
           "doc-url": "https://v3.vuejs.org/api/directives.html#v-slot",
           "virtual": true,
+          "value": {
+            "required": false
+          },
           "pattern": {
             "proximity": 10,
             "delegate": "/html/vue-directives/slot",
@@ -179,13 +191,16 @@
               "$...",
               {
                 "delegate": "argument",
-                "required": true
+                "required": true,
+                "template": [
+                  "#item:slot name"
+                ]
               },
               {
                 "items": "modifiers",
                 "template": [
                   ".",
-                  "#item"
+                  "#item:modifier"
                 ],
                 "required": false,
                 "repeat": true
@@ -286,11 +301,11 @@
           "name": "Component",
           "doc-url": "https://vuejs.org/v2/api/#component",
           "description": "A “meta component” for rendering dynamic components. The actual component to render is determined by the `is` prop.",
-          "attributes": [
+          "props": [
             {
               "name": "is",
               "description": "An HTML tag name, a Component name or Component class reference.",
-              "value": {
+              "attribute-value": {
                 "type": [
                   "string",
                   "ComponentDefinition",
@@ -300,7 +315,7 @@
             },
             {
               "name": "inline-template",
-              "value": {
+              "attribute-value": {
                 "type": "html-boolean"
               }
             }
@@ -558,7 +573,8 @@
           "description": "Updates the element’s `textContent`. If you need to update the part of `textContent`, you should use `{{ Mustache }}` interpolations.",
           "doc-url": "https://vuejs.org/v2/api/#v-text",
           "attribute-value": {
-            "type": "string"
+            "type": "string",
+            "required": true
           }
         },
         {
@@ -566,18 +582,25 @@
           "description": "Updates the element’s `innerHTML`. *Note that the contents are inserted as plain HTML - they will not be compiled as Vue templates*. If you find yourself trying to compose templates using `v-html`, try to rethink the solution by using components instead.",
           "doc-url": "https://vuejs.org/v2/api/#v-html",
           "attribute-value": {
-            "type": "string"
+            "type": "string",
+            "required": true
           }
         },
         {
           "name": "show",
           "description": "Toggles the element’s `display` CSS property based on the truthy-ness of the expression value.\n\nThis directive triggers transitions when its condition changes.",
-          "doc-url": "https://vuejs.org/v2/api/#v-show"
+          "doc-url": "https://vuejs.org/v2/api/#v-show",
+          "attribute-value": {
+            "required": true
+          }
         },
         {
           "name": "if",
           "description": "Conditionally render the element based on the truthy-ness of the expression value. The element and its contained directives / components are destroyed and re-constructed during toggles. If the element is a `<template>` element, its content will be extracted as the conditional block.\n\nThis directive triggers transitions when its condition changes.",
-          "doc-url": "https://vuejs.org/v2/api/#v-if"
+          "doc-url": "https://vuejs.org/v2/api/#v-if",
+          "attribute-value": {
+            "required": true
+          }
         },
         {
           "name": "else",
@@ -590,7 +613,10 @@
         {
           "name": "else-if",
           "description": "Denote the “else if block” for `v-if`. Can be chained.",
-          "doc-url": "https://vuejs.org/v2/api/#v-else-if"
+          "doc-url": "https://vuejs.org/v2/api/#v-else-if",
+          "attribute-value": {
+            "required": true
+          }
         },
         {
           "name": "for",
@@ -598,7 +624,8 @@
           "doc-url": "https://vuejs.org/v2/api/#v-for",
           "attribute-value": {
             "parser": "vue:for",
-            "type": "void"
+            "type": "void",
+            "required": true
           }
         },
         {
@@ -607,7 +634,8 @@
           "doc-url": "https://vuejs.org/v2/api/#v-on",
           "attribute-value": {
             "parser": "vue:on",
-            "type": "void"
+            "type": "void",
+            "required": true
           },
           "argument": {
             "name": "event name",
@@ -631,11 +659,17 @@
           "modifiers": [
             {
               "name": "stop",
-              "description": "Call `event.stopPropagation()`."
+              "description": "Call `event.stopPropagation()`.",
+              "attribute-value": {
+                "required": false
+              }
             },
             {
               "name": "prevent",
-              "description": "Call `event.preventDefault()`."
+              "description": "Call `event.preventDefault()`.",
+              "attribute-value": {
+                "required": false
+              }
             },
             {
               "name": "capture",
@@ -807,7 +841,8 @@
           "description": "Create a two-way binding on a form input element or a component. For detailed usage and other notes, see the Guide section linked below.",
           "doc-url": "https://vuejs.org/v2/api/#v-model",
           "attribute-value": {
-            "type": "any"
+            "type": "any",
+            "required": true
           },
           "argument": {
             "name": "v-model prop/event pair to bind",
