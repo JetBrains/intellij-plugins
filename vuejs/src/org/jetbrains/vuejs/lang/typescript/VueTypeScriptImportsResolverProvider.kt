@@ -3,7 +3,10 @@ package org.jetbrains.vuejs.lang.typescript
 
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.typescript.modules.TypeScriptNodeReference
-import com.intellij.lang.typescript.tsconfig.*
+import com.intellij.lang.typescript.tsconfig.TypeScriptConfig
+import com.intellij.lang.typescript.tsconfig.TypeScriptFileImportsResolver
+import com.intellij.lang.typescript.tsconfig.TypeScriptImportResolveContext
+import com.intellij.lang.typescript.tsconfig.TypeScriptImportsResolverProvider
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
@@ -27,36 +30,15 @@ class VueTypeScriptImportsResolverProvider : TypeScriptImportsResolverProvider {
   override fun useExplicitExtension(extensionWithDot: String): Boolean = extensionWithDot == vueExtension
   override fun getExtensions(): Array<String> = defaultExtensionsWithDot
 
-  override fun createResolver(project: Project,
-                              context: TypeScriptImportResolveContext,
-                              contextFile: VirtualFile): TypeScriptFileImportsResolver? {
+  override fun contributeResolver(project: Project, config: TypeScriptConfig): TypeScriptFileImportsResolver? {
+    return VueFileImportsResolver(project, config.resolveContext, TypeScriptNodeReference.TS_PROCESSOR)
+  }
+
+  override fun contributeResolver(project: Project,
+                                  context: TypeScriptImportResolveContext,
+                                  contextFile: VirtualFile): TypeScriptFileImportsResolver? {
     if (!isVueContext(contextFile, project)) return null
 
-    val defaultProvider = TypeScriptImportsResolverProvider.getDefaultProvider(project, context, contextFile)
-    val vueResolver = VueFileImportsResolver(project, context, TypeScriptNodeReference.TS_PROCESSOR)
-    return flattenAndAppendResolver(defaultProvider, vueResolver)
-  }
-
-  override fun createResolver(project: Project, config: TypeScriptConfig): TypeScriptFileImportsResolver? {
-    val defaultProvider = TypeScriptImportsResolverProvider.getDefaultProvider(project, config)
-    val nodeProcessor = TypeScriptNodeReference.TS_PROCESSOR
-    val vueResolver = VueFileImportsResolver(project, config.resolveContext, nodeProcessor)
-    return flattenAndAppendResolver(defaultProvider, vueResolver)
-  }
-
-  private fun flattenAndAppendResolver(defaultProvider: TypeScriptFileImportsResolver,
-                                       vueResolver: VueFileImportsResolver): TypeScriptCompositeImportsResolverImpl {
-    val result = mutableListOf<TypeScriptFileImportsResolver>()
-    if (defaultProvider is TypeScriptCompositeImportsResolverImpl) {
-      result.addAll(defaultProvider.resolvers)
-    }
-    else {
-      result.add(defaultProvider)
-    }
-
-
-    result.add(vueResolver)
-
-    return TypeScriptCompositeImportsResolverImpl(result)
+    return VueFileImportsResolver(project, context, TypeScriptNodeReference.TS_PROCESSOR)
   }
 }

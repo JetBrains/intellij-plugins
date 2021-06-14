@@ -26,7 +26,7 @@ class VueFileImportsResolver(project: Project,
 
       ProgressManager.checkCanceled()
       val virtualFile = it.containingFile.virtualFile
-      if (virtualFile != null) {
+      if (virtualFile != null && fileTypes.contains(virtualFile.fileType)) {
         if (!processor.process(virtualFile)) return@processElements false
       }
       return@processElements true
