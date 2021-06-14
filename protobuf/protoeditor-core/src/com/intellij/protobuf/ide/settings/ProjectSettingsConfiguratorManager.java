@@ -93,16 +93,22 @@ public final class ProjectSettingsConfiguratorManager implements Disposable {
 
   private void configureSettingsIfNecessary() {
     PbProjectSettings settings = PbProjectSettings.getInstance(project);
-    if (settings.isAutoConfigEnabled()) {
-      PbProjectSettings newSettings = configure(settings);
-      if (newSettings != null && !settings.equals(newSettings)) {
-        settings.copyState(newSettings);
-        // Using ModalityState.NON_MODAL here ensures the caches are invalidated in a
-        // write-safe context, regardless of what context we were invoked from.
-        ApplicationManager.getApplication()
-            .invokeLater(() -> PbProjectSettings.notifyUpdated(project), ModalityState.NON_MODAL);
-      }
+    if (!settings.isAutoConfigEnabled()) {
+      return;
     }
+    ApplicationManager.getApplication()
+        .executeOnPooledThread(
+            () -> {
+              PbProjectSettings newSettings = configure(settings);
+              if (newSettings != null && !settings.equals(newSettings)) {
+                settings.copyState(newSettings);
+                // Using ModalityState.NON_MODAL here ensures the caches are invalidated in a
+                // write-safe context, regardless of what context we were invoked from.
+                ApplicationManager.getApplication()
+                    .invokeLater(
+                        () -> PbProjectSettings.notifyUpdated(project), ModalityState.NON_MODAL);
+              }
+            });
   }
 
   @Override
