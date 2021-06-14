@@ -10,8 +10,8 @@
     <div v-slot="propName"></div>
     <div v-slot></div>
 
-    <div #name="propName"></div>
-    <div #name></div>
+    <div #<warning descr="Unrecognized Slot name">name</warning>="propName"></div>
+    <div #<warning descr="Unrecognized Slot name">name</warning>></div>
 
     <div v-<warning descr="Unrecognized Vue directive">slots</warning>:<warning descr="Unrecognized argument">name</warning>="<weak_warning descr="Unresolved variable or type propName">propName</weak_warning>"></div>
     <div v-<warning descr="Unrecognized Vue directive">slots</warning>:<warning descr="Unrecognized argument">name</warning>></div>

@@ -6,7 +6,7 @@
 </head>
 <body>
 
-<div id="app" v-bind:foo="">
+<div id="app" v-bind:<warning descr="Unrecognized attribute or property name">foo</warning>="">
   [[ message<error descr="Expected end of expression"> </error>d ]] {{ message d }}
   <<warning descr="Unknown html tag foo">foo</warning>></<warning descr="Unknown html tag foo">foo</warning>>
   <bar v-bind:bar="message"></bar>
@@ -14,7 +14,7 @@
 </div>
 [[ mess d ]] {{ <weak_warning descr="Unresolved variable or type mess">mess</weak_warning><error descr="Expected end of expression"> </error>d}}
 <<warning descr="Unknown html tag bar">bar</warning>></<warning descr="Unknown html tag bar">bar</warning>>
-<div <warning descr="Attribute v-foo is not allowed here">v-foo</warning>=""></div>
+<div v-<warning descr="Unrecognized Vue directive">foo</warning>=""></div>
 
 <script>
   const app = new <weak_warning descr="Unresolved type Vue">Vue</weak_warning>({
