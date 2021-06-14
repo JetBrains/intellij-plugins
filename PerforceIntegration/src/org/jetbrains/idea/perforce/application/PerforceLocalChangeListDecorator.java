@@ -15,7 +15,7 @@ import java.util.Collection;
 final class PerforceLocalChangeListDecorator implements ChangeListDecorator {
   private final Project myProject;
 
-  public PerforceLocalChangeListDecorator(final Project project) {
+  PerforceLocalChangeListDecorator(final Project project) {
     myProject = project;
   }
 

@@ -63,7 +63,7 @@ final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramOb
   private final AbstractDiagramElementManager<DiagramObject> myElementManager;
   private final DiagramColorManagerBase myColorManager;
 
-  public AngularUiRouterDiagramProvider() {
+  AngularUiRouterDiagramProvider() {
     myResolver = new DiagramVfsResolver<>() {
       @Override
       public String getQualifiedName(DiagramObject element) {

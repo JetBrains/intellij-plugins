@@ -19,16 +19,16 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
 import com.intellij.protobuf.lang.PbLanguage;
 import com.intellij.protobuf.lang.psi.PbElement;
 import com.intellij.protobuf.lang.psi.PbFile;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
 abstract class PbElementBase extends ASTWrapperPsiElement
     implements PbElement, PbOverridableElement {
 
-  public PbElementBase(ASTNode node) {
+  PbElementBase(ASTNode node) {
     super(node);
   }
 

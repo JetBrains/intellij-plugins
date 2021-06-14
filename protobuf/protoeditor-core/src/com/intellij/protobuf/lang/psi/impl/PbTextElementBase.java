@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 abstract class PbTextElementBase extends ASTWrapperPsiElement implements PbTextElement {
 
-  public PbTextElementBase(ASTNode node) {
+  PbTextElementBase(ASTNode node) {
     super(node);
   }
 
