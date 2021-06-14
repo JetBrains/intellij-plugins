@@ -1,6 +1,7 @@
 package org.jetbrains.idea.perforce.application;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.options.advanced.AdvancedSettings;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.ThrowableComputable;
@@ -29,7 +30,6 @@ import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 
 import java.io.File;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author peter
@@ -115,7 +115,7 @@ public class PerforceUnversionedTracker {
   private static Set<VirtualFile> getIgnoredFiles(Project project, P4Connection connection, List<VirtualFile> toCheckIgnored)
     throws VcsException {
 
-    if (toCheckIgnored.isEmpty() || !Registry.is("p4.process.ignored")) {
+    if (toCheckIgnored.isEmpty() || !AdvancedSettings.getBoolean("vcs.process.ignored")) {
       return Collections.emptySet();
     }
 
