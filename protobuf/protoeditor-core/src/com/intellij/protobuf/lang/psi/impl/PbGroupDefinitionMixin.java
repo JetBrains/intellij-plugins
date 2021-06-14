@@ -16,6 +16,7 @@
 package com.intellij.protobuf.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.util.CachedValueProvider.Result;
 import com.intellij.psi.util.CachedValuesManager;
@@ -30,6 +31,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 abstract class PbGroupDefinitionMixin extends PbStubbedSymbolOwnerBase<PbGroupDefinitionStub>
     implements PbGroupDefinition {
@@ -129,6 +131,15 @@ abstract class PbGroupDefinitionMixin extends PbStubbedSymbolOwnerBase<PbGroupDe
         return Collections.emptyList();
       }
       return options;
+    }
+
+    @Override
+    public boolean isEquivalentTo(PsiElement another) {
+      if (super.isEquivalentTo(another)) {
+        return true;
+      }
+      return another instanceof GroupDefinitionField
+          && Objects.equals(getText(), another.getText());
     }
   }
 }
