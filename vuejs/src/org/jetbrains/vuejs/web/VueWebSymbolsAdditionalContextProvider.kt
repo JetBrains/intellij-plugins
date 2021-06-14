@@ -333,14 +333,6 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
       object : WebSymbol.AttributeValue {
         override val default: String?
           get() = item.defaultValue
-
-        override val type: WebSymbol.AttributeValueType?
-          get() = if (item.jsType is JSBooleanType)
-            WebSymbol.AttributeValueType.HTML_BOOLEAN
-          else null
-
-        override val jsType: JSType?
-          get() = item.jsType
       }
   }
 

@@ -42,6 +42,10 @@
                   }
                 ]
               },
+              "value": {
+                "type": "of-match",
+                "kind": "plain"
+              },
               "vue-custom-prop": {
                 "name": "Custom Vue component property",
                 "pattern": "(?!v-).*",
@@ -305,19 +309,15 @@
             {
               "name": "is",
               "description": "An HTML tag name, a Component name or Component class reference.",
-              "attribute-value": {
-                "type": [
-                  "string",
-                  "ComponentDefinition",
-                  "ComponentConstructor"
-                ]
-              }
+              "type": [
+                "string",
+                "ComponentDefinition",
+                "ComponentConstructor"
+              ]
             },
             {
               "name": "inline-template",
-              "attribute-value": {
-                "type": "html-boolean"
-              }
+              "type": "boolean"
             }
           ]
         },
@@ -329,99 +329,71 @@
               "name": "name",
               "description": "Used to automatically generate transition CSS class names. e.g. `name: 'fade'` will auto expand to `.fade-enter`, `,.fade-enter-active`, etc.",
               "default": "\"v\"",
-              "attribute-value": {
-                "type": "string"
-              }
+              "type": "string"
             },
             {
               "name": "appear",
               "description": "Whether to apply transition on initial render.",
-              "attribute-value": {
-                "type": "html-boolean"
-              },
+              "type": "boolean",
               "default": "false"
             },
             {
               "name": "css",
               "description": "Whether to apply CSS transition classes. Defaults to `true`. If set to `false`, will only trigger JavaScript hooks registered via component events.",
               "default": "true",
-              "attribute-value": {
-                "type": "html-boolean"
-              }
+              "type": "boolean"
             },
             {
               "name": "type",
               "description": "Specifies the type of transition events to wait for to determine transition end timing. Available values are `\"transition\"` and `\"animation\"`. By default, it will automatically detect the type that has a longer duration.",
-              "attribute-value": {
-                "type": [
-                  "\"transition\"",
-                  "\"animation\""
-                ]
-              }
+              "type": [
+                "\"transition\"",
+                "\"animation\""
+              ]
             },
             {
               "name": "duration",
               "description": "Specifies the duration of transition. By default, Vue waits for the first `transitionend` or `animationend` event on the root transition element.",
-              "attribute-value": {
-                "type": [
-                  "number",
-                  "{ enter: number, leave: number }"
-                ]
-              }
+              "type": [
+                "number",
+                "{ enter: number, leave: number }"
+              ]
             },
             {
               "name": "enterClass",
-              "attribute-value": {
-                "type": "string"
-              }
+              "type": "string"
             },
             {
               "name": "leaveClass",
-              "attribute-value": {
-                "type": "string"
-              }
+              "type": "string"
             },
             {
               "name": "appearClass",
-              "attribute-value": {
-                "type": "string"
-              }
+              "type": "string"
             },
             {
               "name": "enterToClass",
-              "attribute-value": {
-                "type": "string"
-              }
+              "type": "string"
             },
             {
               "name": "leaveToClass",
-              "attribute-value": {
-                "type": "string"
-              }
+              "type": "string"
             },
             {
               "name": "appearToClass",
-              "attribute-value": {
-                "type": "string"
-              }
+              "type": "string"
             },
             {
               "name": "enterActiveClass",
-              "attribute-value": {
-                "type": "string"
-              }
+              "type": "string"
             },
             {
               "name": "leaveActiveClass",
-              "attribute-value": {
-                "type": "string"
-              }
+              "type": "string"
             },
             {
               "name": "appearActiveClass",
-              "attribute-value": {
-                "type": "string"
-              }
+              "type": "string"
             }
           ],
           "events": [
@@ -502,9 +474,7 @@
             {
               "name": "tag",
               "default": "\"span\"",
-              "attribute-value": {
-                "type": "string"
-              }
+              "type": "string"
             },
             {
               "name": "moveClass",
@@ -520,34 +490,25 @@
             {
               "name": "include",
               "description": "Only components with matching names will be cached.",
-              "attribute-value": {
-                "kind": "expression",
-                "type": [
-                  "string",
-                  "RegExp",
-                  "(string|RegExp)[]"
-                ]
-              }
+              "type": [
+                "string",
+                "RegExp",
+                "(string|RegExp)[]"
+              ]
             },
             {
               "name": "exclude",
               "description": "Any component with a matching name will not be cached.",
-              "attribute-value": {
-                "kind": "expression",
-                "type": [
-                  "string",
-                  "RegExp",
-                  "(string|RegExp)[]"
-                ]
-              }
+              "type": [
+                "string",
+                "RegExp",
+                "(string|RegExp)[]"
+              ]
             },
             {
               "name": "max",
               "description": "The maximum number of component instances to cache.",
-              "attribute-value": {
-                "kind": "expression",
-                "type": "number"
-              }
+              "type": "number"
             }
           ]
         },
@@ -559,10 +520,7 @@
             {
               "name": "name",
               "description": "Used for named slot.",
-              "attribute-value": {
-                "kind": "expression",
-                "type": "string"
-              }
+              "type": "string"
             }
           ]
         }
