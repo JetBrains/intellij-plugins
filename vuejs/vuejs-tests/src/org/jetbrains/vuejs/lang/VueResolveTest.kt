@@ -1889,8 +1889,12 @@ export default class UsageComponent extends Vue {
       Pair("<relative-module<caret>-default>", "export default class {\n  def: string\n}")
     )
       .forEach { testCase ->
-        TestCase.assertEquals(testCase.value,
-                              myFixture.resolveReference(testCase.key).let { it as JSImplicitElement }.context!!.text)
+        TestCase.assertEquals(
+          testCase.value,
+          myFixture.resolveReference(testCase.key)
+            .let {
+              (it as? JSImplicitElement)?.context ?: it
+            }.text)
       }
   }
 
@@ -1940,8 +1944,7 @@ export default class UsageComponent extends Vue {
     for ((filterName, resolvedItemText) in listOf(
       Pair("localFilter", "localFilter: function (arg1, arg2, arg3) { return true }"),
       Pair("globalFilter", "function (value) { return 12 }"),
-      Pair("appFilter", "appFilter: function (value, param) { return \"\" }"),
-      Pair("webTypesFilter", "declare function myFilter(value: boolean): string")
+      Pair("appFilter", "appFilter: function (value, param) { return \"\" }")
     )) {
       val element = myFixture.resolveReference("<caret>${filterName}")
       TestCase.assertEquals(filterName, resolvedItemText, element.text)

@@ -37,14 +37,17 @@
                     "priority": "high"
                   },
                   {
-                    "template": [
-                      {
-                        "regex": "(?!v-).*"
-                      }
-                    ],
+                    "delegate": "vue-custom-prop",
                     "priority": "lowest"
                   }
                 ]
+              },
+              "vue-custom-prop": {
+                "name": "Custom Vue component property",
+                "pattern": "(?!v-).*",
+                "attribute-value": {
+                  "required": false
+                }
               }
             }
           ]
@@ -83,7 +86,7 @@
             "kind": "expression",
             "parser": "vue:expression",
             "type": "any",
-            "required": true
+            "required": false
           },
           "pattern": {
             "items": "/html/vue-directives",
@@ -171,6 +174,9 @@
           "description": "Denote named slots or slots that expect to receive props.",
           "doc-url": "https://v3.vuejs.org/api/directives.html#v-slot",
           "virtual": true,
+          "value": {
+            "required": false
+          },
           "pattern": {
             "proximity": 10,
             "delegate": "/html/vue-directives/slot",
@@ -586,7 +592,8 @@
           "description": "Updates the element’s `textContent`. If you need to update the part of `textContent`, you should use `{{ Mustache }}` interpolations.",
           "doc-url": "https://v3.vuejs.org/api/directives.html#v-text",
           "attribute-value": {
-            "type": "string"
+            "type": "string",
+            "required": true
           }
         },
         {
@@ -594,18 +601,25 @@
           "description": "Updates the element’s `innerHTML`. *Note that the contents are inserted as plain HTML - they will not be compiled as Vue templates*. If you find yourself trying to compose templates using `v-html`, try to rethink the solution by using components instead.",
           "doc-url": "https://v3.vuejs.org/api/directives.html#v-html",
           "attribute-value": {
-            "type": "string"
+            "type": "string",
+            "required": true
           }
         },
         {
           "name": "show",
           "description": "Toggles the element’s `display` CSS property based on the truthy-ness of the expression value.\n\nThis directive triggers transitions when its condition changes.",
-          "doc-url": "https://v3.vuejs.org/api/directives.html#v-show"
+          "doc-url": "https://v3.vuejs.org/api/directives.html#v-show",
+          "attribute-value": {
+            "required": true
+          }
         },
         {
           "name": "if",
           "description": "Conditionally render the element based on the truthy-ness of the expression value. The element and its contained directives / components are destroyed and re-constructed during toggles. If the element is a `<template>` element, its content will be extracted as the conditional block.\n\nThis directive triggers transitions when its condition changes.",
-          "doc-url": "https://v3.vuejs.org/api/directives.html#v-if"
+          "doc-url": "https://v3.vuejs.org/api/directives.html#v-if",
+          "attribute-value": {
+            "required": true
+          }
         },
         {
           "name": "else",
@@ -618,7 +632,10 @@
         {
           "name": "else-if",
           "description": "Denote the “else if block” for `v-if`. Can be chained.",
-          "doc-url": "https://v3.vuejs.org/api/directives.html#v-else-if"
+          "doc-url": "https://v3.vuejs.org/api/directives.html#v-else-if",
+          "attribute-value": {
+            "required": true
+          }
         },
         {
           "name": "for",
@@ -626,7 +643,8 @@
           "doc-url": "https://v3.vuejs.org/api/directives.html#v-for",
           "attribute-value": {
             "parser": "vue:for",
-            "type": "void"
+            "type": "void",
+            "required": true
           }
         },
         {
@@ -635,7 +653,8 @@
           "doc-url": "https://v3.vuejs.org/api/directives.html#v-on",
           "attribute-value": {
             "parser": "vue:on",
-            "type": "void"
+            "type": "void",
+            "required": true
           },
           "argument": {
             "name": "event name",
@@ -659,11 +678,17 @@
           "modifiers": [
             {
               "name": "stop",
-              "description": "Call `event.stopPropagation()`."
+              "description": "Call `event.stopPropagation()`.",
+              "attribute-value": {
+                "required": false
+              }
             },
             {
               "name": "prevent",
-              "description": "Call `event.preventDefault()`."
+              "description": "Call `event.preventDefault()`.",
+              "attribute-value": {
+                "required": false
+              }
             },
             {
               "name": "capture",
@@ -816,7 +841,8 @@
           "description": "Create a two-way binding on a form input element or a component. For detailed usage and other notes, see the Guide section.",
           "doc-url": "https://v3.vuejs.org/api/directives.html#v-model",
           "attribute-value": {
-            "type": "any"
+            "type": "any",
+            "required": true
           },
           "argument": {
             "name": "v-model prop/event pair to bind",
@@ -897,7 +923,8 @@
           "description": "When using in-DOM templates, the template is subject to native HTML parsing rules. Some HTML elements, such as `<ul>`, `<ol>`, `<table>` and `<select>` have restrictions on what elements can appear inside them, and some elements such as `<li>`, `<tr>`, and `<option>` can only appear inside certain other elements. As a workaround, we can use `v-is` directive on these elements.",
           "doc-url": "https://v3.vuejs.org/api/directives.html#v-is",
           "attribute-value": {
-            "type": "string"
+            "type": "string",
+            "required": true
           }
         }
       ]
