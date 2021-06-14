@@ -181,8 +181,7 @@ public final class PerforceManager  {
     myPerforceBaseInfoWorker.stop();
   }
 
-  @NotNull
-  protected Map<String, List<String>> getCachedInfo(P4Connection connection) throws VcsException {
+  @NotNull Map<String, List<String>> getCachedInfo(P4Connection connection) throws VcsException {
     final Map<String, List<String>> info = myPerforceBaseInfoWorker.getInfo(connection);
     if (info == null) {
       ProgressManager.checkCanceled();
@@ -191,8 +190,7 @@ public final class PerforceManager  {
     return info;
   }
 
-  @NotNull
-  protected ClientData getCachedClients(@Nullable P4Connection connection) throws VcsException {
+  @NotNull ClientData getCachedClients(@Nullable P4Connection connection) throws VcsException {
     ClientData client = myPerforceBaseInfoWorker.getClient(connection);
     if (client == null) {
       ProgressManager.checkCanceled();
@@ -206,8 +204,7 @@ public final class PerforceManager  {
     return myPerforceBaseInfoWorker.getCachedInfo(connection);
   }
 
-  @Nullable
-  protected ClientData getClientOnlyCached(final P4Connection connection) throws VcsException {
+  @Nullable ClientData getClientOnlyCached(final P4Connection connection) throws VcsException {
     return myPerforceBaseInfoWorker.getCachedClient(connection);
   }
 
