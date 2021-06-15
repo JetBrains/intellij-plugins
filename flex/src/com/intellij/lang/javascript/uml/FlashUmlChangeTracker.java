@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.uml;
 
 import com.intellij.diagram.ChangeTracker;
@@ -103,7 +103,7 @@ final class FlashUmlChangeTracker extends ChangeTracker<JSClass, JSNamedElement,
 
   private Map<JSClass, FileStatus> myNodeElements;
 
-  FlashUmlChangeTracker(Project project, @Nullable PsiFile before, @Nullable PsiFile after) {
+  public FlashUmlChangeTracker(Project project, @Nullable PsiFile before, @Nullable PsiFile after) {
     super(project, before, after);
   }
 

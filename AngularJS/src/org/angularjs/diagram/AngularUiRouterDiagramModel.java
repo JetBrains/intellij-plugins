@@ -24,7 +24,7 @@ final class AngularUiRouterDiagramModel extends DiagramDataModel<DiagramObject> 
   private final @NotNull List<AngularUiRouterNode> myNodes;
   private final @NotNull List<AngularUiRouterEdge> myEdges;
 
-  AngularUiRouterDiagramModel(final @NotNull Project project,
+  public AngularUiRouterDiagramModel(final @NotNull Project project,
                                      VirtualFile rootFile, final @NotNull AngularUiRouterDiagramProvider provider,
                                      final @NotNull List<AngularUiRouterNode> nodes,
                                      final @NotNull List<AngularUiRouterEdge> edges) {

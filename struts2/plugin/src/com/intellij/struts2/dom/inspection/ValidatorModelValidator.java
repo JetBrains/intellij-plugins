@@ -48,7 +48,7 @@ final class ValidatorModelValidator extends ValidatorBase {
   @NonNls
   private static final String FILENAME_EXTENSION_VALIDATION_XML = "-validation.xml";
 
-  ValidatorModelValidator() {
+  public ValidatorModelValidator() {
     super("Struts 2 Validation Model Validator", StrutsBundle.message("inspections.validator.model.validator"),
           StrutsBundle.message("inspections.validator.model.validator.progress")
     );
