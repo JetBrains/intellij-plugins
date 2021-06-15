@@ -21,11 +21,12 @@
 
   <category>JVM Frameworks</category>
 
-  <!-- required dependencies -->
-  <depends>com.intellij.javaee</depends>
-  <depends>com.intellij.javaee.web</depends>
-  <depends>JavaScript</depends>
-  <depends>com.intellij.java-i18n</depends>
+  <dependencies>
+    <plugin id="com.intellij.javaee"/>
+    <plugin id="com.intellij.javaee.web"/>
+    <plugin id="JavaScript"/>
+    <plugin id="com.intellij.java-i18n"/>
+  </dependencies>
 
   <!-- optional dependencies -->
   <depends optional="true" config-file="struts2-freemarker.xml">com.intellij.freemarker</depends>

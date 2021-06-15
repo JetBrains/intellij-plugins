@@ -18,8 +18,9 @@
     </ul>
   ]]></description>
 
-  <depends>com.intellij.modules.platform</depends>
-  <depends>com.intellij.modules.lang</depends>
+  <dependencies>
+    <plugin id="com.intellij.modules.lang"/>
+  </dependencies>
 
   <depends config-file="golang_optional.xml" optional="true">org.jetbrains.plugins.go</depends>
   <depends config-file="python_optional.xml" optional="true">com.intellij.modules.python</depends>
