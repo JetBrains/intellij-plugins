@@ -43,7 +43,7 @@ import java.util.Set;
  * @author Yann C&eacute;bron
  */
 final class Struts2ModelValidator extends ValidatorBase {
-  Struts2ModelValidator() {
+  public Struts2ModelValidator() {
     super("Struts 2 Model Validator", StrutsBundle.message("inspections.struts2.model.validator"),
           StrutsBundle.message("inspections.struts2.model.validator.progress"));
   }
