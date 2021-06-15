@@ -2,26 +2,23 @@
 package org.jetbrains.vuejs.model
 
 import com.intellij.javascript.nodejs.PackageJsonData
-import com.intellij.javascript.nodejs.library.NodeModulesDirectoryManager
-import com.intellij.javascript.nodejs.library.yarn.YarnPnpManager
+import com.intellij.javascript.web.symbols.WebSymbolsRegistryManager
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.library.JSLibraryUtil.NODE_MODULES
-import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
-import com.intellij.psi.search.FilenameIndex
-import com.intellij.psi.search.GlobalSearchScopesCore
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.vuejs.model.source.VueSourceGlobal
+import org.jetbrains.vuejs.model.source.VueSourcePlugin
 import java.util.concurrent.ConcurrentHashMap
 
 internal class VueGlobalImpl(override val project: Project, private val packageJsonUrl: String)
@@ -52,47 +49,17 @@ internal class VueGlobalImpl(override val project: Project, private val packageJ
 
   private fun buildPluginsList(): Result<List<VuePlugin>> {
     val result = mutableListOf<VuePlugin>()
-    val dependencies = mutableSetOf<Any>()
-    dependencies.add(VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
-    dependencies.add(NodeModulesDirectoryManager.getInstance(project).nodeModulesDirChangeTracker)
+    val webSymbolsRegistryManager = WebSymbolsRegistryManager.getInstance(project)
+    val dependencies = mutableListOf<Any>(VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
     packageJson?.let { file ->
-      val yarnPnpManager = YarnPnpManager.getInstance(project)
-      val visiblePackages = if (yarnPnpManager.isUnderPnp(file)) {
-        mutableSetOf<String>()
-      }
-      else null
-      PackageJsonUtil.processUpPackageJsonFilesInAllScope(file) { candidate ->
-        visiblePackages?.addAll(PackageJsonData.getOrCreate(candidate).allDependencies)
-        result.addAll(getPlugins(candidate))
-        dependencies.add(candidate)
-        true
-      }
-      visiblePackages
-        ?.asSequence()
-        ?.mapNotNull {
-          yarnPnpManager.findInstalledPackageDir(file, it)
-            ?.let { dir -> PackageJsonUtil.findChildPackageJsonFile(dir) }
-        }
-        ?.filter { isVueLibrary(it) }
-        ?.map { VuePluginImpl(project, it) }
-        ?.toCollection(result)
+      dependencies.add(webSymbolsRegistryManager.getModificationTracker(file))
+      webSymbolsRegistryManager.getNodeModulesWithoutWebTypes(file)
+        .filter { isVueLibrary(it) }
+        .map { VueSourcePlugin(project, it.packageJsonFile) }
+        .toCollection(result)
     }
-    return Result.create(result, *dependencies.toTypedArray())
+    return Result.create(result, dependencies)
   }
-
-  private fun getPlugins(packageJson: VirtualFile): Sequence<VuePlugin> =
-    NodeModuleUtil.findNodeModulesByPackageJson(packageJson)
-      ?.let {
-        FilenameIndex.getVirtualFilesByName(
-          PackageJsonUtil.FILE_NAME,
-          GlobalSearchScopesCore.directoryScope(project, it, true)
-        )
-      }
-      ?.asSequence()
-      ?.filter { isVueLibrary(it) }
-      ?.map { VuePluginImpl(project, it) }
-    ?: emptySequence()
-
 
   private fun buildElementToParentMap(): MultiMap<VueScopeElement, VueEntitiesContainer> {
     val result = MultiMap<VueScopeElement, VueEntitiesContainer>()
@@ -173,11 +140,9 @@ internal class VueGlobalImpl(override val project: Project, private val packageJ
       return result
     }
 
-    private fun isVueLibrary(it: VirtualFile): Boolean {
-      val data = PackageJsonData.getOrCreate(it)
-      return data.name == "vue"
-             || data.containsOneOfDependencyOfAnyType("vue-loader", "vue-latest", "vue", "vue-template-compiler")
-    }
+    private fun isVueLibrary(data: PackageJsonData): Boolean =
+      data.name == "vue"
+      || data.containsOneOfDependencyOfAnyType("vue-loader", "vue-latest", "vue", "vue-template-compiler")
 
   }
 }
