@@ -26,8 +26,10 @@
     </ul>
   ]]></description>
 
-  <depends>com.intellij.modules.lang</depends>
-  <depends>org.jetbrains.plugins.yaml</depends>
+  <dependencies>
+    <plugin id="com.intellij.modules.lang"/>
+    <plugin id="org.jetbrains.plugins.yaml"/>
+  </dependencies>
 
   <actions>
     <action id="NewJsonCloudFormationFile" class="com.intellij.aws.cloudformation.CreateJsonTemplateFileAction">
