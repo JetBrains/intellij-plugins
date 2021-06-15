@@ -18,13 +18,13 @@ package com.intellij.protobuf.lang.findusages;
 import com.intellij.lang.cacheBuilder.DefaultWordsScanner;
 import com.intellij.lang.cacheBuilder.WordsScanner;
 import com.intellij.lang.findUsages.FindUsagesProvider;
+import com.intellij.protobuf.ide.PbIdeBundle;
+import com.intellij.protobuf.lang.PbParserDefinition;
+import com.intellij.protobuf.lang.psi.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.QualifiedName;
 import com.intellij.util.ObjectUtils;
-import com.intellij.protobuf.ide.PbIdeBundle;
-import com.intellij.protobuf.lang.PbParserDefinition;
-import com.intellij.protobuf.lang.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,29 +46,29 @@ public class PbFindUsagesProvider implements FindUsagesProvider {
   @Override
   public String getType(@NotNull PsiElement element) {
     if (element instanceof PbFile) {
-      return PbIdeBundle.message("type.file");
+      return PbIdeBundle.message("proto.type.file");
     } else if (element instanceof PbPackageName) {
-      return PbIdeBundle.message("type.package");
+      return PbIdeBundle.message("proto.type.package");
     } else if (element instanceof PbGroupDefinition) {
-      return PbIdeBundle.message("type.group");
+      return PbIdeBundle.message("proto.type.group");
     } else if (element instanceof PbField) {
-      return PbIdeBundle.message("type.field");
+      return PbIdeBundle.message("proto.type.field");
     } else if (element instanceof PbMessageType) {
-      return PbIdeBundle.message("type.message");
+      return PbIdeBundle.message("proto.type.message");
     } else if (element instanceof PbEnumDefinition) {
-      return PbIdeBundle.message("type.enum");
+      return PbIdeBundle.message("proto.type.enum");
     } else if (element instanceof PbEnumValue) {
-      return PbIdeBundle.message("type.enum.value");
+      return PbIdeBundle.message("proto.type.enum.value");
     } else if (element instanceof PbOneofDefinition) {
-      return PbIdeBundle.message("type.oneof");
+      return PbIdeBundle.message("proto.type.oneof");
     } else if (element instanceof PbServiceDefinition) {
-      return PbIdeBundle.message("type.service");
+      return PbIdeBundle.message("proto.type.service");
     } else if (element instanceof PbServiceMethod) {
-      return PbIdeBundle.message("type.method");
+      return PbIdeBundle.message("proto.type.method");
     } else if (element instanceof PbServiceStream) {
-      return PbIdeBundle.message("type.stream");
+      return PbIdeBundle.message("proto.type.stream");
     }
-    return element.toString();
+    return PbIdeBundle.message("proto.type.unknown");
   }
 
   @NotNull
@@ -77,6 +77,7 @@ public class PbFindUsagesProvider implements FindUsagesProvider {
     return getNodeText(psiElement, true);
   }
 
+  @SuppressWarnings("HardCodedStringLiteral")
   @NotNull
   @Override
   public String getNodeText(@NotNull PsiElement psiElement, boolean useFullName) {

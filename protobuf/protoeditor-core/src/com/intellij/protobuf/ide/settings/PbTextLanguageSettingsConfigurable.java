@@ -26,13 +26,11 @@ public class PbTextLanguageSettingsConfigurable
     extends ConfigurableBase<PbTextLanguageSettingsForm, PbTextLanguageSettings> {
 
   private static final String ID = "google.prototext.language";
-  private static final String DISPLAY_NAME =
-      PbIdeBundle.message("prototext.settings.project.display");
 
   private final Project project;
 
   public PbTextLanguageSettingsConfigurable(Project project) {
-    super(ID, DISPLAY_NAME, /* helpTopic= */ null);
+    super(ID, PbIdeBundle.message("prototext.settings.project.display"), /* helpTopic= */ null);
     this.project = project;
   }
 

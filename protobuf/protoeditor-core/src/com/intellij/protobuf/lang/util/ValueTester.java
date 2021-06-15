@@ -16,6 +16,7 @@
 package com.intellij.protobuf.lang.util;
 
 import com.intellij.protobuf.lang.psi.ProtoLiteral;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -35,6 +36,7 @@ public interface ValueTester {
    * @param value the value to test
    * @return an error message if the value is not assignable, or <code>null</code> if it is
    */
+  @Nls
   @Nullable
   String testValue(@Nullable ProtoLiteral value);
 }

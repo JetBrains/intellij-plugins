@@ -15,13 +15,12 @@
  */
 package com.intellij.protobuf.ide.settings;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ex.ProjectRootManagerEx;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.serviceContainer.NonInjectable;
 import com.intellij.util.xmlb.XmlSerializer;
@@ -96,6 +95,7 @@ public class PbProjectSettings implements PersistentStateComponent<PbProjectSett
     state.importPathEntries = importPathEntries;
   }
 
+  @NlsSafe
   public String getDescriptorPath() {
     return state.descriptorPath;
   }
@@ -144,7 +144,9 @@ public class PbProjectSettings implements PersistentStateComponent<PbProjectSett
    * that "something.proto" exists in "/mycompany/myproject/src/protos".
    */
   public static final class ImportPathEntry {
+    @NlsSafe
     private String location;
+    @NlsSafe
     private String prefix;
 
     public ImportPathEntry(String location, String prefix) {
@@ -200,6 +202,7 @@ public class PbProjectSettings implements PersistentStateComponent<PbProjectSett
   static class State {
     public boolean autoConfigEnabled = true;
     public List<ImportPathEntry> importPathEntries = new ArrayList<>();
+    @NlsSafe
     public String descriptorPath = "";
   }
 }

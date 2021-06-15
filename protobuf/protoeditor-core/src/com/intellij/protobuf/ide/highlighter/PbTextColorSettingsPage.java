@@ -20,6 +20,7 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.options.colors.AttributesDescriptor;
 import com.intellij.openapi.options.colors.ColorDescriptor;
 import com.intellij.openapi.options.colors.ColorSettingsPage;
+import com.intellij.protobuf.ide.PbIdeBundle;
 import com.intellij.protobuf.ide.util.PbIcons;
 import com.intellij.protobuf.ide.util.ResourceUtil;
 import org.jetbrains.annotations.NotNull;
@@ -33,25 +34,24 @@ import java.util.Map;
 public class PbTextColorSettingsPage implements ColorSettingsPage {
 
   private static final AttributesDescriptor[] DESCRIPTORS =
-      new AttributesDescriptor[] {
-        new AttributesDescriptor("Identifier", PbTextSyntaxHighlighter.IDENTIFIER),
-        new AttributesDescriptor("Keyword", PbTextSyntaxHighlighter.KEYWORD),
-        new AttributesDescriptor("Number", PbTextSyntaxHighlighter.NUMBER),
-        new AttributesDescriptor("String", PbTextSyntaxHighlighter.STRING),
-        new AttributesDescriptor("Enum Value", PbTextSyntaxHighlighter.ENUM_VALUE),
-        new AttributesDescriptor("Line Comment", PbTextSyntaxHighlighter.LINE_COMMENT),
-        new AttributesDescriptor("Operator", PbTextSyntaxHighlighter.OPERATION_SIGN),
-        new AttributesDescriptor("Braces", PbTextSyntaxHighlighter.BRACES),
-        new AttributesDescriptor("Brackets", PbTextSyntaxHighlighter.BRACKETS),
-        new AttributesDescriptor("Dot", PbTextSyntaxHighlighter.DOT),
-        new AttributesDescriptor("Semicolon", PbTextSyntaxHighlighter.SEMICOLON),
-        new AttributesDescriptor("Comma", PbTextSyntaxHighlighter.COMMA),
-        new AttributesDescriptor(
-            "Valid Escape Sequence", PbTextSyntaxHighlighter.VALID_STRING_ESCAPE),
-        new AttributesDescriptor(
-            "Invalid Escape Sequence", PbTextSyntaxHighlighter.INVALID_STRING_ESCAPE),
-        new AttributesDescriptor("Comment Directive", PbTextSyntaxHighlighter.COMMENT_DIRECTIVE),
-      };
+    new AttributesDescriptor[]{
+      new AttributesDescriptor(PbIdeBundle.message("prototext.type.identifier"), PbTextSyntaxHighlighter.IDENTIFIER),
+      new AttributesDescriptor(PbIdeBundle.message("prototext.type.keyword"), PbTextSyntaxHighlighter.KEYWORD),
+      new AttributesDescriptor(PbIdeBundle.message("prototext.type.number"), PbTextSyntaxHighlighter.NUMBER),
+      new AttributesDescriptor(PbIdeBundle.message("prototext.type.string"), PbTextSyntaxHighlighter.STRING),
+      new AttributesDescriptor(PbIdeBundle.message("prototext.type.enum.value"), PbTextSyntaxHighlighter.ENUM_VALUE),
+      new AttributesDescriptor(PbIdeBundle.message("prototext.type.line.comment"), PbTextSyntaxHighlighter.LINE_COMMENT),
+      new AttributesDescriptor(PbIdeBundle.message("prototext.type.operator"), PbTextSyntaxHighlighter.OPERATION_SIGN),
+      new AttributesDescriptor(PbIdeBundle.message("prototext.type.braces"), PbTextSyntaxHighlighter.BRACES),
+      new AttributesDescriptor(PbIdeBundle.message("prototext.type.brackets"), PbTextSyntaxHighlighter.BRACKETS),
+      new AttributesDescriptor(PbIdeBundle.message("prototext.type.dot"), PbTextSyntaxHighlighter.DOT),
+      new AttributesDescriptor(PbIdeBundle.message("prototext.type.semicolon"), PbTextSyntaxHighlighter.SEMICOLON),
+      new AttributesDescriptor(PbIdeBundle.message("prototext.type.comma"), PbTextSyntaxHighlighter.COMMA),
+      new AttributesDescriptor(PbIdeBundle.message("prototext.type.valid.escape.sequence"), PbTextSyntaxHighlighter.VALID_STRING_ESCAPE),
+      new AttributesDescriptor(PbIdeBundle.message("prototext.type.invalid.escape.sequence"),
+                               PbTextSyntaxHighlighter.INVALID_STRING_ESCAPE),
+      new AttributesDescriptor(PbIdeBundle.message("prototext.type.comment.directive"), PbTextSyntaxHighlighter.COMMENT_DIRECTIVE),
+    };
 
   @Nullable
   @Override
@@ -96,6 +96,6 @@ public class PbTextColorSettingsPage implements ColorSettingsPage {
   @NotNull
   @Override
   public String getDisplayName() {
-    return "Protocol Buffer Text";
+    return PbIdeBundle.message("prototext.name");
   }
 }

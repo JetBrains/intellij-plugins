@@ -18,18 +18,17 @@ package com.intellij.protobuf.ide.style;
 import com.intellij.application.options.CodeStyleAbstractConfigurable;
 import com.intellij.application.options.CodeStyleAbstractPanel;
 import com.intellij.application.options.TabbedLanguageCodeStylePanel;
+import com.intellij.protobuf.ide.PbIdeBundle;
+import com.intellij.protobuf.lang.PbTextLanguage;
 import com.intellij.psi.codeStyle.CodeStyleConfigurable;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsProvider;
 import com.intellij.psi.codeStyle.CustomCodeStyleSettings;
-import com.intellij.protobuf.lang.PbTextLanguage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** {@link CodeStyleSettingsProvider} for use with prototext files. */
 public class PbTextCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
-
-  private static final String DISPLAY_NAME = "Protocol Buffer Text";
 
   @Override
   public CustomCodeStyleSettings createCustomSettings(CodeStyleSettings settings) {
@@ -38,14 +37,14 @@ public class PbTextCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
 
   @Override
   public String getConfigurableDisplayName() {
-    return DISPLAY_NAME;
+    return PbIdeBundle.message("prototext.name");
   }
 
   @NotNull
   @Override
   public CodeStyleConfigurable createConfigurable(
       @NotNull CodeStyleSettings settings, @NotNull CodeStyleSettings originalSettings) {
-    return new CodeStyleAbstractConfigurable(settings, originalSettings, DISPLAY_NAME) {
+    return new CodeStyleAbstractConfigurable(settings, originalSettings, PbIdeBundle.message("prototext.name")) {
       @Override
       protected CodeStyleAbstractPanel createPanel(CodeStyleSettings settings) {
         return new ProtoTextCodeStyleMainPanel(getCurrentSettings(), settings);

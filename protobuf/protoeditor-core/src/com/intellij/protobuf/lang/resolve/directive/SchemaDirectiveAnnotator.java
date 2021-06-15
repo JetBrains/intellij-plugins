@@ -15,19 +15,20 @@
  */
 package com.intellij.protobuf.lang.resolve.directive;
 
+import com.intellij.codeInspection.util.InspectionMessage;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiComment;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
 import com.intellij.protobuf.ide.highlighter.PbTextSyntaxHighlighter;
 import com.intellij.protobuf.lang.PbLangBundle;
 import com.intellij.protobuf.lang.psi.PbMessageType;
 import com.intellij.protobuf.lang.psi.PbTextFile;
 import com.intellij.protobuf.lang.resolve.PbImportReference;
 import com.intellij.protobuf.lang.resolve.directive.SchemaComment.Type;
+import com.intellij.psi.PsiComment;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
 
 /** An annotator that highlights directive comments and marks unresolved symbols with warnings. */
@@ -40,7 +41,7 @@ public class SchemaDirectiveAnnotator implements Annotator {
     }
   }
 
-  private void annotateDirectiveComment(PsiComment comment, AnnotationHolder holder) {
+  private static void annotateDirectiveComment(PsiComment comment, AnnotationHolder holder) {
     SchemaDirective directive = SchemaDirective.find(comment.getContainingFile());
     if (directive == null) {
       return;
@@ -101,7 +102,8 @@ public class SchemaDirectiveAnnotator implements Annotator {
   }
 
   @NotNull
-  private String missingNameWarning(SchemaComment.Type type) {
+  @InspectionMessage
+  private static String missingNameWarning(SchemaComment.Type type) {
     switch (type) {
       case FILE:
       case IMPORT:
@@ -113,7 +115,8 @@ public class SchemaDirectiveAnnotator implements Annotator {
     }
   }
 
-  private String cannotResolveWarning(PsiReference ref, String name) {
+  @InspectionMessage
+  private static String cannotResolveWarning(PsiReference ref, String name) {
     if (ref instanceof PbImportReference) {
       return PbLangBundle.message("cannot.resolve.import", name);
     }

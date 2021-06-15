@@ -26,12 +26,11 @@ public class PbLanguageSettingsConfigurable
     extends ConfigurableBase<PbLanguageSettingsForm, PbProjectSettings> {
 
   private static final String ID = "google.protobuf.language";
-  private static final String DISPLAY_NAME = PbIdeBundle.message("settings.project.display");
 
   private final Project project;
 
   public PbLanguageSettingsConfigurable(Project project) {
-    super(ID, DISPLAY_NAME, null);
+    super(ID, PbIdeBundle.message("settings.project.display"), null);
     this.project = project;
   }
 
