@@ -196,7 +196,6 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
       var builder = WebSymbolCodeCompletionItem.create(
         name = name,
         source = wrapper,
-        icon = VuejsIcons.Vue,
         typeText = wrapper.context.packageName,
         priority = priorityOf(proximity),
         proximity = proximityOf(proximity))
