@@ -1,10 +1,11 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.formatter;
 
 import com.intellij.application.options.IndentOptionsEditor;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.psi.codeStyle.*;
 import com.intellij.util.ArrayUtilRt;
 import org.jetbrains.annotations.NotNull;
@@ -20,6 +21,8 @@ import static com.intellij.psi.codeStyle.CodeStyleSettingsCustomizableOptions.ge
  * @author Rustam Vishnyakov
  */
 public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSettingsProvider {
+  public static final @NlsSafe String CONFIGURABLE_DISPLAY_NAME = "ActionScript";
+
   @NotNull
   @Override
   public Language getLanguage() {
@@ -46,7 +49,7 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
   @Nullable
   @Override
   public String getConfigurableDisplayName() {
-    return "ActionScript";
+    return CONFIGURABLE_DISPLAY_NAME;
   }
 
   @Override
