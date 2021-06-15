@@ -3,4 +3,5 @@ package org.jetbrains.vuejs.model
 
 interface VuePlugin : VueEntitiesContainer {
   val moduleName: String?
+  val moduleVersion: String?
 }
