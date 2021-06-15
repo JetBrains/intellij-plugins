@@ -5,6 +5,7 @@
   "version": "2.3.0",
   "js-types-syntax": "typescript",
   "description-markup": "markdown",
+  "default-icon": "icons/vue.svg",
   "framework-config": {
     "enable-when": {
       "node-packages": [
