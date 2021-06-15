@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang.html.psi.arrangement
 
 import com.intellij.psi.codeStyle.arrangement.ArrangementSettingsSerializer
@@ -7,9 +7,12 @@ import com.intellij.psi.codeStyle.arrangement.match.StdArrangementEntryMatcher
 import com.intellij.psi.codeStyle.arrangement.match.StdArrangementMatchRule
 import com.intellij.psi.codeStyle.arrangement.model.ArrangementAtomMatchCondition
 import com.intellij.psi.codeStyle.arrangement.model.ArrangementCompositeMatchCondition
+import com.intellij.psi.codeStyle.arrangement.std.ArrangementStandardSettingsAware.ArrangementTabInfo
 import com.intellij.psi.codeStyle.arrangement.std.StdArrangementSettings
 import com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens
 import com.intellij.xml.arrangement.HtmlRearranger
+import org.jetbrains.vuejs.VuejsIcons
+import org.jetbrains.vuejs.lang.html.VueLanguage
 
 class VueRearranger : HtmlRearranger() {
 
@@ -20,6 +23,11 @@ class VueRearranger : HtmlRearranger() {
 
   override fun getSerializer(): ArrangementSettingsSerializer {
     return SETTINGS_SERIALIZER
+  }
+
+  override fun getArrangementTabInfos(): Collection<ArrangementTabInfo> {
+    val displayName = VueLanguage.INSTANCE.displayName
+    return listOf(ArrangementTabInfo(VuejsIcons.Vue, displayName, displayName))
   }
 
   companion object {
