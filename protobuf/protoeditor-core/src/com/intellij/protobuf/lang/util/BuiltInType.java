@@ -24,6 +24,7 @@ import com.intellij.protobuf.lang.psi.ProtoNumberValue.IntegerFormat;
 import com.intellij.protobuf.lang.psi.ProtoNumberValue.SourceType;
 import com.intellij.protobuf.lang.psi.ProtoStringValue;
 import com.intellij.protobuf.lang.util.ValueTester.ValueTesterType;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -114,6 +115,7 @@ public enum BuiltInType {
       this.unsigned = unsigned;
     }
 
+    @Nls
     @NotNull
     @Override
     public ValueTester getValueTester(ValueTesterType type) {
@@ -138,6 +140,7 @@ public enum BuiltInType {
   }
 
   private static class FloatTester implements ValueTesterFactory {
+    @Nls
     @NotNull
     @Override
     public ValueTester getValueTester(ValueTesterType type) {
@@ -164,25 +167,25 @@ public enum BuiltInType {
             boolean valid;
             if (number.isNegative()) {
               valid =
-                  type == ValueTester.ValueTesterType.DEFAULT
-                      ? number.isValidInt65()
-                      : number.isValidInt64();
+                type == ValueTester.ValueTesterType.DEFAULT
+                ? number.isValidInt65()
+                : number.isValidInt64();
             } else {
               valid = number.isValidUint64();
             }
             return valid ? null : PbLangBundle.message("integer.value.out.of.range");
           case FLOAT:
             return number.isValidDouble()
-                ? null
-                : PbLangBundle.message("invalid.floating.point.value");
+                   ? null
+                   : PbLangBundle.message("invalid.floating.point.value");
           case INF:
             return type == ValueTester.ValueTesterType.OPTION
-                ? PbLangBundle.message("not.allowed.as.option.value", "inf")
-                : null;
+                   ? PbLangBundle.message("not.allowed.as.option.value", "inf")
+                   : null;
           case NAN:
             return type == ValueTester.ValueTesterType.OPTION
-                ? PbLangBundle.message("not.allowed.as.option.value", "nan")
-                : null;
+                   ? PbLangBundle.message("not.allowed.as.option.value", "nan")
+                   : null;
         }
         return PbLangBundle.message("floating.point.value.expected");
       };
@@ -190,6 +193,7 @@ public enum BuiltInType {
   }
 
   private static class StringTester implements ValueTesterFactory {
+    @Nls
     @NotNull
     @Override
     public ValueTester getValueTester(ValueTesterType type) {
@@ -203,6 +207,7 @@ public enum BuiltInType {
   }
 
   private static class BooleanTester implements ValueTesterFactory {
+    @Nls
     @NotNull
     @Override
     public ValueTester getValueTester(ValueTesterType type) {

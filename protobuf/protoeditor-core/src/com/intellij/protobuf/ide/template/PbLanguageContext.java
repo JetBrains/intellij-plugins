@@ -17,19 +17,20 @@ package com.intellij.protobuf.ide.template;
 
 import com.intellij.codeInsight.template.TemplateActionContext;
 import com.intellij.codeInsight.template.TemplateContextType;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.util.PsiUtilCore;
+import com.intellij.openapi.util.NlsContexts;
+import com.intellij.protobuf.ide.PbIdeBundle;
 import com.intellij.protobuf.lang.PbLanguage;
 import com.intellij.protobuf.lang.psi.*;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.util.PsiUtilCore;
 import org.jetbrains.annotations.NotNull;
 
 /** Defines a Live Template context for protobuf files types. */
 class PbLanguageContext extends TemplateContextType {
 
   PbLanguageContext() {
-    super("PROTO", "Protocol Buffers");
+    super("PROTO", PbIdeBundle.message("settings.project.display"));
   }
 
   @Override
@@ -43,7 +44,7 @@ class PbLanguageContext extends TemplateContextType {
 
     private final Class<? extends PbBlockBody> bodyClass;
 
-    BlockBodyContext(String id, String presentableName, Class<? extends PbBlockBody> bodyClass) {
+    BlockBodyContext(String id, @NlsContexts.Label String presentableName, Class<? extends PbBlockBody> bodyClass) {
       super(id, presentableName, PbLanguageContext.class);
       this.bodyClass = bodyClass;
     }
@@ -60,35 +61,35 @@ class PbLanguageContext extends TemplateContextType {
   /** {@link TemplateContextType} implementation that matches within an extend body. */
   static class ExtendBody extends BlockBodyContext {
     ExtendBody() {
-      super("PROTO_EXTEND", "Extend", PbExtendBody.class);
+      super("PROTO_EXTEND", PbIdeBundle.message("template.type.extend"), PbExtendBody.class);
     }
   }
 
   /** {@link TemplateContextType} implementation that matches within an enum. */
   static class EnumBody extends BlockBodyContext {
     EnumBody() {
-      super("PROTO_ENUM", "Enum", PbEnumBody.class);
+      super("PROTO_ENUM", PbIdeBundle.message("template.type.enum"), PbEnumBody.class);
     }
   }
 
   /** {@link TemplateContextType} implementation that matches within a message. */
   static class MessageBody extends BlockBodyContext {
     MessageBody() {
-      super("PROTO_MESSAGE", "Message", PbMessageBody.class);
+      super("PROTO_MESSAGE", PbIdeBundle.message("template.type.message"), PbMessageBody.class);
     }
   }
 
   /** {@link TemplateContextType} implementation that matches within a oneof. */
   static class OneofBody extends BlockBodyContext {
     OneofBody() {
-      super("PROTO_ONEOF", "Oneof", PbOneofBody.class);
+      super("PROTO_ONEOF", PbIdeBundle.message("template.type.extend"), PbOneofBody.class);
     }
   }
 
   /** {@link TemplateContextType} implementation that matches within a service. */
   static class ServiceBody extends BlockBodyContext {
     ServiceBody() {
-      super("PROTO_SERVICE", "Service", PbServiceBody.class);
+      super("PROTO_SERVICE", PbIdeBundle.message("template.type.service"), PbServiceBody.class);
     }
   }
 }

@@ -16,6 +16,7 @@
 package com.intellij.protobuf.lang;
 
 import com.intellij.openapi.fileTypes.LanguageFileType;
+import com.intellij.protobuf.ide.PbIdeBundle;
 import com.intellij.protobuf.ide.util.PbIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,7 +43,7 @@ public class PbTextFileType extends LanguageFileType {
   @NotNull
   @Override
   public String getDescription() {
-    return "Protocol Buffer Text";
+    return PbIdeBundle.message("prototext.name.sentence");
   }
 
   @NotNull

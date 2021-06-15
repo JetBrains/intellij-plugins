@@ -20,6 +20,7 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.options.colors.AttributesDescriptor;
 import com.intellij.openapi.options.colors.ColorDescriptor;
 import com.intellij.openapi.options.colors.ColorSettingsPage;
+import com.intellij.protobuf.ide.PbIdeBundle;
 import com.intellij.protobuf.ide.util.PbIcons;
 import com.intellij.protobuf.ide.util.ResourceUtil;
 import org.jetbrains.annotations.NotNull;
@@ -32,25 +33,26 @@ import java.util.Map;
 public class PbColorSettingsPage implements ColorSettingsPage {
 
   private static final AttributesDescriptor[] DESCRIPTORS =
-      new AttributesDescriptor[] {
-        new AttributesDescriptor("Identifier", PbSyntaxHighlighter.IDENTIFIER),
-        new AttributesDescriptor("Number", PbSyntaxHighlighter.NUMBER),
-        new AttributesDescriptor("Keyword", PbSyntaxHighlighter.KEYWORD),
-        new AttributesDescriptor("String", PbSyntaxHighlighter.STRING),
-        new AttributesDescriptor("Enum Value", PbSyntaxHighlighter.ENUM_VALUE),
-        new AttributesDescriptor("Block Comment", PbSyntaxHighlighter.BLOCK_COMMENT),
-        new AttributesDescriptor("Line Comment", PbSyntaxHighlighter.LINE_COMMENT),
-        new AttributesDescriptor("Operator", PbSyntaxHighlighter.OPERATION_SIGN),
-        new AttributesDescriptor("Braces", PbSyntaxHighlighter.BRACES),
-        new AttributesDescriptor("Brackets", PbSyntaxHighlighter.BRACKETS),
-        new AttributesDescriptor("Parentheses", PbSyntaxHighlighter.PARENTHESES),
-        new AttributesDescriptor("Dot", PbSyntaxHighlighter.DOT),
-        new AttributesDescriptor("Semicolon", PbSyntaxHighlighter.SEMICOLON),
-        new AttributesDescriptor("Comma", PbSyntaxHighlighter.COMMA),
-        new AttributesDescriptor("Valid Escape Sequence", PbSyntaxHighlighter.VALID_STRING_ESCAPE),
-        new AttributesDescriptor(
-            "Invalid Escape Sequence", PbSyntaxHighlighter.INVALID_STRING_ESCAPE),
-      };
+    new AttributesDescriptor[]{
+      new AttributesDescriptor(PbIdeBundle.message("attribute.descriptor.identifier"), PbSyntaxHighlighter.IDENTIFIER),
+      new AttributesDescriptor(PbIdeBundle.message("attribute.descriptor.number"), PbSyntaxHighlighter.NUMBER),
+      new AttributesDescriptor(PbIdeBundle.message("attribute.descriptor.keyboard"), PbSyntaxHighlighter.KEYWORD),
+      new AttributesDescriptor(PbIdeBundle.message("attribute.descriptor.string"), PbSyntaxHighlighter.STRING),
+      new AttributesDescriptor(PbIdeBundle.message("attribute.descriptor.enum"), PbSyntaxHighlighter.ENUM_VALUE),
+      new AttributesDescriptor(PbIdeBundle.message("attribute.descriptor.block.comment"), PbSyntaxHighlighter.BLOCK_COMMENT),
+      new AttributesDescriptor(PbIdeBundle.message("attribute.descriptor.line.comment"), PbSyntaxHighlighter.LINE_COMMENT),
+      new AttributesDescriptor(PbIdeBundle.message("attribute.descriptor.operator"), PbSyntaxHighlighter.OPERATION_SIGN),
+      new AttributesDescriptor(PbIdeBundle.message("attribute.descriptor.braces"), PbSyntaxHighlighter.BRACES),
+      new AttributesDescriptor(PbIdeBundle.message("attribute.descriptor.brackets"), PbSyntaxHighlighter.BRACKETS),
+      new AttributesDescriptor(PbIdeBundle.message("attribute.descriptor.parentheses"), PbSyntaxHighlighter.PARENTHESES),
+      new AttributesDescriptor(PbIdeBundle.message("attribute.descriptor.dot"), PbSyntaxHighlighter.DOT),
+      new AttributesDescriptor(PbIdeBundle.message("attribute.descriptor.semicolon"), PbSyntaxHighlighter.SEMICOLON),
+      new AttributesDescriptor(PbIdeBundle.message("attribute.descriptor.comma"), PbSyntaxHighlighter.COMMA),
+      new AttributesDescriptor(PbIdeBundle.message("attribute.descriptor.valid.escape.sequence"),
+                               PbSyntaxHighlighter.VALID_STRING_ESCAPE),
+      new AttributesDescriptor(PbIdeBundle.message("attribute.descriptor.invalid.escape.sequence"),
+                               PbSyntaxHighlighter.INVALID_STRING_ESCAPE),
+    };
 
   @Nullable
   @Override
@@ -95,6 +97,6 @@ public class PbColorSettingsPage implements ColorSettingsPage {
   @NotNull
   @Override
   public String getDisplayName() {
-    return "Protocol Buffer";
+    return PbIdeBundle.message("plugin.name");
   }
 }

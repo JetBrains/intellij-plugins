@@ -17,16 +17,16 @@ package com.intellij.protobuf.ide.template;
 
 import com.intellij.codeInsight.template.TemplateActionContext;
 import com.intellij.codeInsight.template.TemplateContextType;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiUtilCore;
+import com.intellij.protobuf.ide.PbIdeBundle;
 import com.intellij.protobuf.lang.PbTextLanguage;
+import com.intellij.psi.util.PsiUtilCore;
 import org.jetbrains.annotations.NotNull;
 
 /** Defines a Live Template context for prototext files (or text format options in .proto). */
 class PbTextLanguageContext extends TemplateContextType {
 
   PbTextLanguageContext() {
-    super("PROTOTEXT", "Protocol Buffers Text");
+    super("PROTOTEXT", PbIdeBundle.message("prototext.name.sentence"));
   }
 
   @Override

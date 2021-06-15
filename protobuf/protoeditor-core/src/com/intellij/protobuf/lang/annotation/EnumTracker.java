@@ -17,16 +17,17 @@ package com.intellij.protobuf.lang.annotation;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.*;
+import com.intellij.codeInspection.util.InspectionMessage;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.HighlightSeverity;
+import com.intellij.protobuf.lang.PbLangBundle;
+import com.intellij.protobuf.lang.psi.*;
+import com.intellij.protobuf.lang.psi.util.PbPsiUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.protobuf.lang.PbLangBundle;
-import com.intellij.protobuf.lang.psi.*;
-import com.intellij.protobuf.lang.psi.util.PbPsiUtil;
 
 import java.util.*;
 
@@ -86,15 +87,15 @@ final class EnumTracker {
     new ProblemsVisitor().visit(enumDefinition);
   }
 
-  private void queueError(PbElement element, PsiElement annotationElement, String message) {
+  private void queueError(PbElement element, PsiElement annotationElement, @InspectionMessage String message) {
     queuedAnnotations.put(element, new ProblemAnnotation(annotationElement, message));
   }
 
   private static class ProblemAnnotation {
     final PsiElement annotationElement;
-    final String message;
+    @InspectionMessage final String message;
 
-    ProblemAnnotation(PsiElement annotationElement, String message) {
+    ProblemAnnotation(PsiElement annotationElement, @InspectionMessage String message) {
       this.annotationElement = annotationElement;
       this.message = message;
     }

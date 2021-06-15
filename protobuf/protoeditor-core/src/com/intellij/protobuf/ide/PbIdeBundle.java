@@ -16,6 +16,7 @@
 package com.intellij.protobuf.ide;
 
 import com.intellij.AbstractBundle;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.PropertyKey;
 
@@ -33,6 +34,7 @@ public class PbIdeBundle {
 
   private PbIdeBundle() {}
 
+  @Nls
   public static String message(@PropertyKey(resourceBundle = BUNDLE) String key, Object... params) {
     return AbstractBundle.message(getBundle(), key, params);
   }

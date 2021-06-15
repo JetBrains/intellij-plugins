@@ -21,18 +21,17 @@ import com.intellij.application.options.TabbedLanguageCodeStylePanel;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.editor.highlighter.EditorHighlighterFactory;
+import com.intellij.protobuf.ide.PbIdeBundle;
+import com.intellij.protobuf.ide.highlighter.PbSyntaxHighlighter;
+import com.intellij.protobuf.lang.PbLanguage;
 import com.intellij.psi.codeStyle.CodeStyleConfigurable;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsProvider;
 import com.intellij.psi.codeStyle.CustomCodeStyleSettings;
-import com.intellij.protobuf.ide.highlighter.PbSyntaxHighlighter;
-import com.intellij.protobuf.lang.PbLanguage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class PbCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
-
-  private static final String DISPLAY_NAME = "Protocol Buffer";
 
   @Override
   public CustomCodeStyleSettings createCustomSettings(CodeStyleSettings settings) {
@@ -41,14 +40,14 @@ public class PbCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
 
   @Override
   public String getConfigurableDisplayName() {
-    return DISPLAY_NAME;
+    return PbIdeBundle.message("plugin.name");
   }
 
   @NotNull
   @Override
   public CodeStyleConfigurable createConfigurable(
       @NotNull CodeStyleSettings settings, @NotNull CodeStyleSettings originalSettings) {
-    return new CodeStyleAbstractConfigurable(settings, originalSettings, DISPLAY_NAME) {
+    return new CodeStyleAbstractConfigurable(settings, originalSettings, PbIdeBundle.message("plugin.name")) {
       @Override
       protected CodeStyleAbstractPanel createPanel(CodeStyleSettings settings) {
         return new ProtoCodeStyleMainPanel(getCurrentSettings(), settings);

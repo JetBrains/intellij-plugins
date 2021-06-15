@@ -23,20 +23,23 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.util.NlsContexts;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.protobuf.ide.PbIdeBundle;
+import com.intellij.protobuf.ide.settings.PbProjectSettings.ImportPathEntry;
+import com.intellij.protobuf.lang.resolve.FileResolveProvider;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.ui.table.TableView;
 import com.intellij.util.PlatformIcons;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.*;
 import com.intellij.util.ui.components.BorderLayoutPanel;
 import com.intellij.util.ui.table.IconTableCellRenderer;
-import com.intellij.protobuf.ide.PbIdeBundle;
-import com.intellij.protobuf.ide.settings.PbProjectSettings.ImportPathEntry;
-import com.intellij.protobuf.lang.resolve.FileResolveProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -104,8 +107,7 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
     autoConfigCheckbox.setSelected(settings.isAutoConfigEnabled());
     descriptorPathField.setSelectedItem(settings.getDescriptorPath());
     importPathModel.setItems(new ArrayList<>());
-    importPathModel.addRows(
-        settings.getImportPathEntries().stream().map(ImportPath::new).collect(Collectors.toList()));
+    importPathModel.addRows(ContainerUtil.map(settings.getImportPathEntries(), ImportPath::new));
   }
 
   private void applyNoNotify(@NotNull PbProjectSettings settings) {
@@ -243,22 +245,24 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
     PbProjectSettings currentSettings = originalSettings.copy();
     applyNoNotify(currentSettings);
     PbProjectSettings newSettings =
-        ProjectSettingsConfiguratorManager.getInstance(project).configure(currentSettings.copy());
+      ProjectSettingsConfiguratorManager.getInstance(project).configure(currentSettings.copy());
     loadSettings(newSettings != null ? newSettings : currentSettings);
   }
 
-  /** Return a descriptor that can select folders and jar file contents. */
-  private static FileChooserDescriptor getFileChooserDescriptor(String title) {
+  /**
+   * Return a descriptor that can select folders and jar file contents.
+   */
+  private static FileChooserDescriptor getFileChooserDescriptor(@NlsContexts.DialogTitle String title) {
     FileChooserDescriptor descriptor =
-        new FileChooserDescriptor(
-                false, // chooseFiles
-                true, // chooseFolders
-                false, // chooseJars
-                false, // chooseJarsAsFiles
-                true, // chooseJarContents
-                false) // chooseMultiple
-            .withShowFileSystemRoots(true)
-            .withShowHiddenFiles(true);
+      new FileChooserDescriptor(
+        false, // chooseFiles
+        true, // chooseFolders
+        false, // chooseJars
+        false, // chooseJarsAsFiles
+        true, // chooseJarContents
+        false) // chooseMultiple
+        .withShowFileSystemRoots(true)
+        .withShowHiddenFiles(true);
     if (title != null) {
       descriptor.setTitle(title);
     }
@@ -267,7 +271,7 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
 
   private class LocationColumn extends ColumnInfo<ImportPath, String> {
 
-    LocationColumn(String name) {
+    LocationColumn(@NlsContexts.ColumnName String name) {
       super(name);
     }
 
@@ -319,7 +323,7 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
   }
 
   private static class PrefixColumn extends ColumnInfo<ImportPath, String> {
-    PrefixColumn(String name) {
+    PrefixColumn(@NlsContexts.ColumnName String name) {
       super(name);
     }
 
@@ -349,7 +353,9 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
   }
 
   private static class ImportPath {
+    @NlsSafe
     String location;
+    @NlsSafe
     String prefix;
 
     ImportPath(ImportPathEntry entry) {
@@ -368,11 +374,12 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
   }
 
   private static class LocationCellEditor extends AbstractTableCellEditor {
+    @NlsContexts.DialogTitle
     private final String title;
     private final Project project;
     private CellEditorComponentWithBrowseButton<JTextField> component = null;
 
-    LocationCellEditor(@Nullable String title, @Nullable Project project) {
+    LocationCellEditor(@Nullable @NlsContexts.DialogTitle String title, @Nullable Project project) {
       this.title = title;
       this.project = project;
     }
