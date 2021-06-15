@@ -55,7 +55,7 @@ internal class VueGlobalImpl(override val project: Project, private val packageJ
       dependencies.add(webSymbolsRegistryManager.getModificationTracker(file))
       webSymbolsRegistryManager.getNodeModulesWithoutWebTypes(file)
         .filter { isVueLibrary(it) }
-        .map { VueSourcePlugin(project, it.packageJsonFile) }
+        .map { VueSourcePlugin(project, it.name, it.version?.toString(), it.packageJsonFile) }
         .toCollection(result)
     }
     return Result.create(result, dependencies)

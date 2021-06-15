@@ -16,12 +16,12 @@ import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
-import com.intellij.lang.javascript.psi.types.primitives.JSBooleanType
 import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.xml.XmlTag
+import com.intellij.util.castSafelyTo
 import com.intellij.util.containers.Stack
 import org.jetbrains.vuejs.VuejsIcons
 import org.jetbrains.vuejs.codeInsight.detectVueScriptLanguage
@@ -49,6 +49,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
           .toList()
       }
       else this.map(mapper)
+
   }
 
   override fun getAdditionalContext(element: PsiElement?, framework: String?): List<WebSymbolsContainer> =
@@ -62,22 +63,11 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
       }
     ?: emptyList()
 
-  private abstract class VueWrapperBase : WebSymbolsContainer,
-                                          WebSymbolsContainer.Context {
-    val context: WebSymbolsContainer.Context
-      get() = this
+  private abstract class VueWrapperBase : WebSymbolsContainer {
 
     val namespace: Namespace
       get() = Namespace.HTML
 
-    override val framework: FrameworkId?
-      get() = VUE_FRAMEWORK
-
-    override val packageName: String
-      get() = "Vue project source"
-
-    override val version: String?
-      get() = null
   }
 
   private class EntityContainerWrapper(private val containingFile: PsiFile,
@@ -154,12 +144,9 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
                 if ((component.source as? JSImplicitElement)?.context == containingFile) {
                   return true
                 }
-                val moduleName: String? = if (component.parents.size == 1) {
-                  (component.parents.first() as? VuePlugin)?.moduleName
-                }
-                else null
+                // TODO replace with params.registry.getNameVariants(VUE_FRAMEWORK, Namespace.HTML, kind, name)
                 listOf(toAsset(name).capitalize(), fromAsset(name)).forEach {
-                  result.add(createVueLookup(component, it, scriptLanguage, proximity, moduleName))
+                  result.add(createVueLookup(component, it, scriptLanguage, proximity))
                 }
                 return true
               }
@@ -203,14 +190,14 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
     private fun createVueLookup(component: VueComponent,
                                 name: String,
                                 scriptLanguage: String?,
-                                proximity: VueModelVisitor.Proximity,
-                                moduleName: String? = null): WebSymbolCodeCompletionItem {
+                                proximity: VueModelVisitor.Proximity): WebSymbolCodeCompletionItem {
       val element = component.source
+      val wrapper = ComponentWrapper(name, component)
       var builder = WebSymbolCodeCompletionItem.create(
         name = name,
-        source = ComponentWrapper(name, component),
+        source = wrapper,
         icon = VuejsIcons.Vue,
-        typeText = moduleName,
+        typeText = wrapper.context.packageName,
         priority = priorityOf(proximity),
         proximity = proximityOf(proximity))
 
@@ -262,8 +249,10 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
     override fun hashCode(): Int = Objects.hash(matchedName, item)
   }
 
-  private abstract class NamedSymbolWrapper<T : VueNamedSymbol>(item: T, matchedName: String = item.name) : DocumentedItemWrapper<T>(
-    matchedName, item) {
+  private abstract class NamedSymbolWrapper<T : VueNamedSymbol>(item: T, matchedName: String = item.name,
+                                                                override val context: WebSymbolsContainer.Context)
+    : DocumentedItemWrapper<T>(matchedName, item) {
+
     override val name: String
       get() = item.name
 
@@ -271,8 +260,33 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
       get() = item.source
   }
 
+  private abstract class ScopeElementWrapper<T : VueDocumentedItem>(matchedName: String, item: T) :
+    DocumentedItemWrapper<T>(matchedName, item) {
+
+    override val context: WebSymbolsContainer.Context =
+      object : WebSymbolsContainer.Context {
+
+        override val framework: FrameworkId
+          get() = VUE_FRAMEWORK
+
+        override val packageName: String?
+          get() = (item as VueScopeElement).parents
+            .takeIf { it.size == 1 }
+            ?.get(0)
+            ?.castSafelyTo<VuePlugin>()
+            ?.moduleName
+
+        override val version: String?
+          get() = (item as VueScopeElement).parents
+            .takeIf { it.size == 1 }
+            ?.get(0)
+            ?.castSafelyTo<VuePlugin>()
+            ?.moduleVersion
+      }
+  }
+
   private class ComponentWrapper(matchedName: String, component: VueComponent) :
-    DocumentedItemWrapper<VueComponent>(matchedName, component) {
+    ScopeElementWrapper<VueComponent>(matchedName, component) {
 
     override val kind: SymbolKind
       get() = KIND_HTML_VUE_COMPONENTS
@@ -301,14 +315,14 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
                 return true
               }
             })
-            props.map { InputPropWrapper(name ?: it.name, it) }
+            props.map { InputPropWrapper(name ?: it.name, it, this.context) }
           }
           KIND_HTML_EVENTS -> {
-            (item as? VueContainer)?.emits?.mapWithNameFilter(name) { EmitCallWrapper(it) }
+            (item as? VueContainer)?.emits?.mapWithNameFilter(name) { EmitCallWrapper(it, this.context) }
             ?: emptyList()
           }
           KIND_HTML_SLOTS -> {
-            (item as? VueContainer)?.slots?.mapWithNameFilter(name) { SlotWrapper(it) }
+            (item as? VueContainer)?.slots?.mapWithNameFilter(name) { SlotWrapper(it, this.context) }
             ?: emptyList()
           }
           else -> emptyList()
@@ -317,8 +331,8 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
 
   }
 
-  private class InputPropWrapper(matchedName: String, property: VueInputProperty)
-    : NamedSymbolWrapper<VueInputProperty>(property, matchedName) {
+  private class InputPropWrapper(matchedName: String, property: VueInputProperty, context: WebSymbolsContainer.Context)
+    : NamedSymbolWrapper<VueInputProperty>(property, matchedName, context) {
 
     override val kind: SymbolKind
       get() = KIND_HTML_VUE_COMPONENT_PROPS
@@ -336,7 +350,8 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
       }
   }
 
-  private class EmitCallWrapper(emitCall: VueEmitCall) : NamedSymbolWrapper<VueEmitCall>(emitCall) {
+  private class EmitCallWrapper(emitCall: VueEmitCall, context: WebSymbolsContainer.Context)
+    : NamedSymbolWrapper<VueEmitCall>(emitCall, context = context) {
 
     override val kind: SymbolKind
       get() = KIND_HTML_EVENTS
@@ -345,7 +360,8 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
       get() = item.eventJSType
   }
 
-  private class SlotWrapper(slot: VueSlot) : NamedSymbolWrapper<VueSlot>(slot) {
+  private class SlotWrapper(slot: VueSlot, context: WebSymbolsContainer.Context)
+    : NamedSymbolWrapper<VueSlot>(slot, context = context) {
 
     override val kind: SymbolKind
       get() = KIND_HTML_SLOTS
@@ -356,7 +372,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
   }
 
   private class DirectiveWrapper(matchedName: String, directive: VueDirective) :
-    DocumentedItemWrapper<VueDirective>(matchedName, directive) {
+    ScopeElementWrapper<VueDirective>(matchedName, directive) {
 
     override val kind: SymbolKind
       get() = KIND_HTML_VUE_DIRECTIVES

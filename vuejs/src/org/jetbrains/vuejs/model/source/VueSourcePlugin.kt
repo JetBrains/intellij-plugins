@@ -18,9 +18,10 @@ import org.jetbrains.vuejs.index.VUETIFY_MODULE
 import org.jetbrains.vuejs.model.*
 
 class VueSourcePlugin constructor(private val project: Project,
+                                  override val moduleName: String?,
+                                  override val moduleVersion: String?,
                                   private val packageJsonFile: VirtualFile) : UserDataHolderBase(), VuePlugin {
 
-  override val moduleName: String? = null
   override val parents: List<VueEntitiesContainer> = emptyList()
 
   override val directives: Map<String, VueDirective> = emptyMap()
