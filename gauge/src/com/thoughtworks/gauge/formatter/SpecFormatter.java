@@ -35,13 +35,32 @@ import com.thoughtworks.gauge.GaugeBundle;
 import com.thoughtworks.gauge.NotificationGroups;
 import com.thoughtworks.gauge.settings.GaugeSettingsModel;
 import com.thoughtworks.gauge.util.GaugeUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
 import static com.thoughtworks.gauge.util.GaugeUtil.getGaugeSettings;
 
 public final class SpecFormatter extends AnAction {
-  private static final Logger LOG = Logger.getInstance(SpecFormatter.class);
+  @Override
+  public void update(@NotNull AnActionEvent e) {
+    boolean available = false;
+
+    Project project = e.getData(CommonDataKeys.PROJECT);
+    if (project != null) {
+      FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+      VirtualFile[] selectedFiles = fileEditorManager.getSelectedFiles();
+      if (selectedFiles.length > 0) {
+        VirtualFile selectedFile = selectedFiles[0];
+        Document doc = FileDocumentManager.getInstance().getDocument(selectedFile);
+        if (doc != null) {
+          available = true;
+        }
+      }
+    }
+
+    e.getPresentation().setEnabledAndVisible(available);
+  }
 
   @Override
   public void actionPerformed(AnActionEvent anActionEvent) {
@@ -81,7 +100,7 @@ public final class SpecFormatter extends AnAction {
       selectedFile.refresh(false, false);
     }
     catch (Exception e) {
-      LOG.debug(e);
+      Logger.getInstance(SpecFormatter.class).debug(e);
       Messages.showErrorDialog(GaugeBundle.message("dialog.message.error.on.formatting.spec"),
                                GaugeBundle.message("dialog.title.format.error"));
     }
