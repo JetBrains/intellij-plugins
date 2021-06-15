@@ -31,13 +31,15 @@
   <vendor>JetBrains</vendor>
   <category>JavaScript Frameworks and Tools</category>
 
+  <content>
+    <module name="intellij.vuejs/prettier"/>
+    <module name="intellij.vuejs/copyright"/>
+  </content>
   <dependencies>
     <plugin id="JavaScript"/>
     <plugin id="com.intellij.css"/>
   </dependencies>
   <depends optional="true" config-file="js-debugger.xml">JavaScriptDebugger</depends>
-  <depends optional="true" config-file="vue-copyright.xml">com.intellij.copyright</depends>
-  <depends optional="true" config-file="prettier.xml">intellij.prettierJS</depends>
 
   <extensionPoints>
     <!--suppress PluginXmlValidity -->

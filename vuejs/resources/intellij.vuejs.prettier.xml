@@ -1,4 +1,7 @@
 <idea-plugin package="org.jetbrains.vuejs.libraries.prettier">
+  <dependencies>
+    <plugin id="intellij.prettierJS"/>
+  </dependencies>
   <extensions defaultExtensionNs="com.intellij">
     <prettierjs.codeStyleInstaller implementation="org.jetbrains.vuejs.libraries.prettier.VuePrettierCodeStyleInstaller"/>
   </extensions>
