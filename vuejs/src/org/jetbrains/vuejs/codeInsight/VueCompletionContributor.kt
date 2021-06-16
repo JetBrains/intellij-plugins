@@ -3,7 +3,7 @@ package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.codeInsight.completion.CompletionContributor
 import com.intellij.codeInsight.completion.CompletionType
-import com.intellij.javascript.web.css.CssInBindingExpressionCompletionProvider
+import com.intellij.javascript.web.codeInsight.css.CssInBindingExpressionCompletionProvider
 import com.intellij.lang.Language
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.patterns.JSPatterns
