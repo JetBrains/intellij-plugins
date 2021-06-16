@@ -13,7 +13,6 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.text.VersionComparatorUtil
-import icons.FeaturesTrainerIcons
 import org.jetbrains.plugins.ruby.RBundle
 import org.jetbrains.plugins.ruby.gem.GemDependency
 import org.jetbrains.plugins.ruby.gem.GemInstallUtil
@@ -22,6 +21,7 @@ import org.jetbrains.plugins.ruby.ruby.RModuleUtil
 import org.jetbrains.plugins.ruby.ruby.sdk.RubySdkType
 import org.jetbrains.plugins.ruby.ruby.sdk.RubyVersionUtil
 import org.jetbrains.plugins.ruby.version.management.SdkRefresher
+import training.FeaturesTrainerIcons
 import training.lang.AbstractLangSupport
 import training.learn.LearnBundle
 import training.learn.exceptons.InvalidSdkException
@@ -30,7 +30,7 @@ import training.project.ReadMeCreator
 import training.util.getFeedbackLink
 import java.io.File
 
-class RubyLangSupport : AbstractLangSupport() {
+internal class RubyLangSupport : AbstractLangSupport() {
   private val rubyProjectName: String
     get() = "RubyMineLearningProject"
 
@@ -104,7 +104,7 @@ class RubyLangSupport : AbstractLangSupport() {
       val tempDirectory = FileUtil.createTempDirectory("bundler_gem", null, true)
       val bundlerGem = File(tempDirectory, "bundler-2.0.1.gem")
       val bundler = RubyLangSupport::class.java.getResourceAsStream("/learnProjects/ruby/gems/bundler-2.0.1.gem")
-      FileUtil.writeToFile(bundlerGem, FileUtil.loadBytes(bundler))
+      FileUtil.writeToFile(bundlerGem, bundler.readAllBytes())
 
       val module = project.module
       GemInstallUtil.installGemsRequirements(sdk,
