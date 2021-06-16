@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static com.intellij.javascript.web.css.refs.CssClassInJSLiteralOrIdentifierReferenceProvider.getClassesFromEmbeddedContent;
+import static com.intellij.javascript.web.codeInsight.css.refs.CssClassInJSLiteralOrIdentifierReferenceProvider.getClassesFromEmbeddedContent;
 import static org.angular2.lang.html.parser.Angular2AttributeNameParser.parse;
 import static org.angular2.lang.html.psi.PropertyBindingType.CLASS;
 
