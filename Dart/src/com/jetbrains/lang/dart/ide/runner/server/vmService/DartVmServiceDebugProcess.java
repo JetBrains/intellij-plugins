@@ -720,7 +720,6 @@ public final class DartVmServiceDebugProcess extends XDebugProcess {
     if (uri.startsWith("file:///")) return uri;
     if (uri.startsWith("file://")) return "file:///" + uri.substring("file://".length());
     if (uri.startsWith("file:/")) return "file:///" + uri.substring("file:/".length());
-    if (uri.startsWith("file:")) return "file:///" + uri.substring("file:".length());
-    return uri;
+    return "file:///" + uri.substring("file:".length());
   }
 }
