@@ -23,7 +23,6 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.castSafelyTo
 import com.intellij.util.containers.Stack
-import org.jetbrains.vuejs.VuejsIcons
 import org.jetbrains.vuejs.codeInsight.detectVueScriptLanguage
 import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
 import org.jetbrains.vuejs.codeInsight.fromAsset
