@@ -19,6 +19,7 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.util.JavaParametersUtil;
 import com.intellij.junit4.ExpectedPatterns;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.options.SettingsEditorGroup;
@@ -75,8 +76,10 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
 
         final int classPathType = JavaParameters.JDK_AND_CLASSES_AND_TESTS;
         final String jreHome = getTargetEnvironmentRequest() == null && isAlternativeJrePathEnabled() ? getAlternativeJrePath() : null;
-        JavaParametersUtil.configureModule(module, params, classPathType, jreHome);
-        JavaParametersUtil.configureConfiguration(params, CucumberJavaRunConfiguration.this);
+        ReadAction.run(() -> {
+          JavaParametersUtil.configureModule(module, params, classPathType, jreHome);
+          JavaParametersUtil.configureConfiguration(params, CucumberJavaRunConfiguration.this);
+        });
 
         String[] paths = getSMRunnerPaths();
         for (String path : paths) {
@@ -84,8 +87,10 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
         }
 
         params.setMainClass(getMainClassName());
-        JavaRunConfigurationExtensionManager.getInstance()
-          .updateJavaParameters(CucumberJavaRunConfiguration.this, params, getRunnerSettings(), executor);
+        ReadAction.run(() -> {
+          JavaRunConfigurationExtensionManager.getInstance()
+            .updateJavaParameters(CucumberJavaRunConfiguration.this, params, getRunnerSettings(), executor);
+        });
 
         final String glueValue = getGlue();
         if (glueValue != null && !StringUtil.isEmpty(glueValue)) {
