@@ -109,7 +109,10 @@ public class CucumberStepReference implements PsiPolyVariantReference {
     List<AbstractStepDefinition> stepDefinitions = CachedValuesManager.getCachedValue(featureFile, () -> {
       List<AbstractStepDefinition> allStepDefinition = new ArrayList<>();
       for (CucumberJvmExtensionPoint e : frameworks) {
-        allStepDefinition.addAll(e.loadStepsFor(featureFile, module));
+        List<AbstractStepDefinition> frameworkStepDefinitions = e.loadStepsFor(featureFile, module);
+        if (frameworkStepDefinitions != null) {
+          allStepDefinition.addAll(frameworkStepDefinitions);
+        }
       }
       return CachedValueProvider.Result.create(allStepDefinition, PsiModificationTracker.MODIFICATION_COUNT);
     });
