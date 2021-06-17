@@ -29,7 +29,10 @@ class VueHighlightingTest : BasePlatformTestCase() {
     myFixture.enableInspections(VueInspectionsProvider())
   }
 
-  private fun doTest(packageJsonDependencies: String? = null, addNodeModules: List<VueTestModule> = emptyList(), extension:String = "vue", vararg files: String) {
+  private fun doTest(packageJsonDependencies: String? = null,
+                     addNodeModules: List<VueTestModule> = emptyList(),
+                     extension: String = "vue",
+                     vararg files: String) {
     if (packageJsonDependencies != null) {
       createPackageJsonWithVueDependency(myFixture, packageJsonDependencies)
     }
@@ -113,9 +116,9 @@ const props = {seeMe: {}}
 
   fun testCompRequiredAttributesTestTS() = doTest("")
 
-  fun testRequiredAttributeWithModifierTest() =doDirTest()
+  fun testRequiredAttributeWithModifierTest() = doDirTest()
 
-  fun testRequiredAttributeWithVModel() =doDirTest()
+  fun testRequiredAttributeWithVModel() = doDirTest()
 
   fun testVueAttributeInCustomTag() = doTest()
 
@@ -125,7 +128,7 @@ const props = {seeMe: {}}
 
   fun testTopLevelThisInInjection() = doTest()
 
-  fun testGlobalComponentLiteral() =doDirTest()
+  fun testGlobalComponentLiteral() = doDirTest()
 
   fun testExternalMixin() = doDirTest()
 
@@ -236,7 +239,7 @@ const props = {seeMe: {}}
 
   fun testEmptyTagsForVueAreAllowed() = doTest()
 
-  fun testBuiltinTagsHighlighting() =doTest(addNodeModules = listOf(VueTestModule.VUE_2_5_3))
+  fun testBuiltinTagsHighlighting() = doTest(addNodeModules = listOf(VueTestModule.VUE_2_5_3))
 
   fun testNonPropsAttributesAreNotHighlighted() = doTest()
 

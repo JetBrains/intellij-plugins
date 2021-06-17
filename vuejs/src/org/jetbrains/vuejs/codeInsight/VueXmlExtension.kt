@@ -2,19 +2,20 @@
 package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.javascript.web.codeInsight.html.WebSymbolsXmlExtension
+import com.intellij.javascript.web.codeInsight.html.elements.WebSymbolElementDescriptor
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.psi.PsiFile
 import com.intellij.psi.xml.XmlTag
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
-import org.jetbrains.vuejs.codeInsight.tags.VueElementDescriptor
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueModelDirectiveProperties
 import org.jetbrains.vuejs.model.VueModelManager
+import org.jetbrains.vuejs.web.getModel
 
 class VueXmlExtension : WebSymbolsXmlExtension() {
   override fun isAvailable(file: PsiFile?): Boolean =
@@ -41,7 +42,7 @@ class VueXmlExtension : WebSymbolsXmlExtension() {
       var name: String? = null
       if (info is VueAttributeNameParser.VueDirectiveInfo) {
         if (info.directiveKind == VueAttributeNameParser.VueDirectiveKind.MODEL) {
-          name = (tag.descriptor as? VueElementDescriptor)?.getModel()?.prop
+          name = (tag.descriptor as? WebSymbolElementDescriptor)?.getModel()?.prop
                  ?: VueModelDirectiveProperties.DEFAULT_PROP
         }
         else if (info.directiveKind === VueAttributeNameParser.VueDirectiveKind.BIND

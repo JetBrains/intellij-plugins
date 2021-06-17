@@ -1,5 +1,6 @@
 package org.jetbrains.vuejs.intentions.expandVModel
 
+import com.intellij.javascript.web.codeInsight.html.elements.WebSymbolElementDescriptor
 import com.intellij.lang.javascript.intentions.JavaScriptIntention
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.command.CommandProcessor
@@ -12,8 +13,8 @@ import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueDirectiveInfo
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueDirectiveKind
-import org.jetbrains.vuejs.codeInsight.tags.VueElementDescriptor
 import org.jetbrains.vuejs.context.isVueContext
+import org.jetbrains.vuejs.web.getModel
 
 class VueExpandVModelIntention : JavaScriptIntention() {
   override fun getFamilyName(): String = VueBundle.message("vue.template.intention.v-model.expand.family.name")
@@ -24,7 +25,7 @@ class VueExpandVModelIntention : JavaScriptIntention() {
     return element.node.elementType == XmlElementType.XML_NAME
            && element.parent?.node?.elementType == XmlElementType.XML_ATTRIBUTE
            && element.parent.isValid
-           && (element.parent as XmlAttribute).parent.descriptor is VueElementDescriptor
+           && (element.parent as XmlAttribute).parent.descriptor is WebSymbolElementDescriptor
            && isValidVModel(element.parent as XmlAttribute)
            && isVueContext(element)
   }
@@ -40,7 +41,7 @@ class VueExpandVModelIntention : JavaScriptIntention() {
     val parent: PsiElement = psiElement.parent
     val modelAttribute = parent as XmlAttribute
     val componentTag = modelAttribute.parent
-    val componentDescriptor = componentTag.descriptor as? VueElementDescriptor ?: return
+    val componentDescriptor = componentTag.descriptor as? WebSymbolElementDescriptor ?: return
 
     val model = componentDescriptor.getModel()
     var event = model.event
