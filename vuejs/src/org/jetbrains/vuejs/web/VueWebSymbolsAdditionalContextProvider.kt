@@ -30,6 +30,8 @@ import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.model.VueModelDirectiveProperties.Companion.DEFAULT_EVENT
+import org.jetbrains.vuejs.model.VueModelDirectiveProperties.Companion.DEFAULT_PROP
 import java.util.*
 
 class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvider {
@@ -37,8 +39,12 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
   companion object {
     const val KIND_VUE_TOP_LEVEL_ELEMENT = "vue-file-top-elements"
     const val KIND_VUE_AVAILABLE_SLOTS = "vue-available-slots"
+    const val KIND_VUE_MODEL = "vue-model"
     const val KIND_VUE_DIRECTIVE_ARGUMENT = "argument"
     const val KIND_VUE_DIRECTIVE_MODIFIERS = "modifiers"
+
+    const val PROP_VUE_MODEL_PROP = "prop"
+    const val PROP_VUE_MODEL_EVENT = "event"
 
     private fun <T> List<T>.mapWithNameFilter(name: String?, mapper: (T) -> WebSymbol): List<WebSymbol> =
       if (name != null) {
@@ -323,6 +329,14 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
             (item as? VueContainer)?.slots?.mapWithNameFilter(name) { SlotWrapper(it, this.context) }
             ?: emptyList()
           }
+          KIND_VUE_MODEL -> {
+            (item as? VueContainer)?.model?.takeIf {
+              it.prop != DEFAULT_PROP || it.event != DEFAULT_EVENT
+            }?.let {
+              listOf(VueModelWrapper(this.context, it))
+            }
+            ?: emptyList()
+          }
           else -> emptyList()
         }
       else emptyList()
@@ -392,6 +406,19 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
       }
       else emptyList()
 
+  }
+
+  private class VueModelWrapper(override val context: WebSymbolsContainer.Context,
+                                private val vueModel: VueModelDirectiveProperties) : WebSymbol {
+
+    override val namespace: Namespace get() = Namespace.HTML
+    override val kind: SymbolKind get() = KIND_VUE_MODEL
+
+    override val properties: Map<String, Any>
+      get() = mapOf(
+        Pair(PROP_VUE_MODEL_PROP, vueModel.prop),
+        Pair(PROP_VUE_MODEL_EVENT, vueModel.event),
+      )
   }
 
   private class AnyWrapper(override val context: WebSymbolsContainer.Context,
