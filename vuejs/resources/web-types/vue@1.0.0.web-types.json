@@ -35,7 +35,7 @@
                 "or": [
                   {
                     "items": "props",
-                    "priority": "high"
+                    "priority": "highest"
                   },
                   {
                     "delegate": "vue-custom-prop",
@@ -258,13 +258,16 @@
           "deprecated": true
         },
         {
-          "name": "ref"
+          "name": "ref",
+          "priority": "low"
         },
         {
-          "name": "is"
+          "name": "is",
+          "priority": "low"
         },
         {
-          "name": "key"
+          "name": "key",
+          "priority": "low"
         }
       ],
       "vue-file-top-elements": [
