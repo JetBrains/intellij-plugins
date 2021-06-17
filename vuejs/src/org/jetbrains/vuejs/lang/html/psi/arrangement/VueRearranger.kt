@@ -7,12 +7,9 @@ import com.intellij.psi.codeStyle.arrangement.match.StdArrangementEntryMatcher
 import com.intellij.psi.codeStyle.arrangement.match.StdArrangementMatchRule
 import com.intellij.psi.codeStyle.arrangement.model.ArrangementAtomMatchCondition
 import com.intellij.psi.codeStyle.arrangement.model.ArrangementCompositeMatchCondition
-import com.intellij.psi.codeStyle.arrangement.std.ArrangementStandardSettingsAware.ArrangementTabInfo
 import com.intellij.psi.codeStyle.arrangement.std.StdArrangementSettings
 import com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens
 import com.intellij.xml.arrangement.HtmlRearranger
-import org.jetbrains.vuejs.VuejsIcons
-import org.jetbrains.vuejs.lang.html.VueLanguage
 
 class VueRearranger : HtmlRearranger() {
 
@@ -23,11 +20,6 @@ class VueRearranger : HtmlRearranger() {
 
   override fun getSerializer(): ArrangementSettingsSerializer {
     return SETTINGS_SERIALIZER
-  }
-
-  override fun getArrangementTabInfos(): Collection<ArrangementTabInfo> {
-    val displayName = VueLanguage.INSTANCE.displayName
-    return listOf(ArrangementTabInfo(VuejsIcons.Vue, displayName, displayName))
   }
 
   companion object {
