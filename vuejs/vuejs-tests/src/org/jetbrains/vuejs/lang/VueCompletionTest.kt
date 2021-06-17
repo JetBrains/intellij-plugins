@@ -1373,10 +1373,10 @@ export default class ComponentInsertion extends Vue {
     myFixture.configureVueDependencies(VueTestModule.VUETIFY_1_2_10, VueTestModule.SHARDS_VUE_1_0_5)
     myFixture.configureFromTempProjectFile("App.vue")
     myFixture.completeBasic()
-    assertEquals(listOf("!HW#null#100", "DCardHeader#@shards/vue#80", "HelloApp#null#90", "HelloWorld#null#50", "HeyWorld#null#80",
-                        "VBottomSheet#vuetify#80", "VBottomSheetTransition#vuetify#80", "VCheckbox#vuetify#80", "VChip#vuetify#80",
-                        "VDatePickerHeader#vuetify#80", "VDatePickerMonthTable#vuetify#80", "VHover#vuetify#80",
-                        "VStepperHeader#vuetify#80", "VSubheader#vuetify#80", "VSwitch#vuetify#80"),
+    assertEquals(listOf("!HW#null#100", "HelloApp#null#50", "DCardHeader#@shards/vue#10", "HeyWorld#null#10",
+                        "VBottomSheet#vuetify#10", "VBottomSheetTransition#vuetify#10", "VCheckbox#vuetify#10", "VChip#vuetify#10",
+                        "VDatePickerHeader#vuetify#10", "VDatePickerMonthTable#vuetify#10", "VHover#vuetify#10",
+                        "VStepperHeader#vuetify#10", "VSubheader#vuetify#10", "VSwitch#vuetify#10", "HelloWorld#null#1"),
                  myFixture.renderLookupItems(renderPriority = true, renderTypeText = true)
                    .filter { !it.contains("html") })
   }
@@ -1389,8 +1389,8 @@ export default class ComponentInsertion extends Vue {
       <template>
     """)
     myFixture.completeBasic()
-    assertEquals(listOf("Component#vue#80", "KeepAlive#vue#80", "Slot#vue#80", "Transition#vue#80", "TransitionGroup#vue#80",
-                        "component#vue#80", "keep-alive#vue#80", "slot#vue#80", "transition#vue#80", "transition-group#vue#80"),
+    assertEquals(listOf("Component#vue#10", "KeepAlive#vue#10", "Slot#vue#10", "Transition#vue#10", "TransitionGroup#vue#10",
+                        "component#vue#10", "keep-alive#vue#10", "slot#vue#10", "transition#vue#10", "transition-group#vue#10"),
                  myFixture.renderLookupItems(renderPriority = true, renderTypeText = true)
                    .filter { !it.contains("http://www.w3.org") })
   }
