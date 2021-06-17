@@ -10,6 +10,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.util.ProgressWindow;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.Ref;
@@ -362,12 +363,16 @@ public final class CucumberJavaUtil {
 
     PsiClass parameterTypeClass = ClassUtil.findPsiClass(PsiManager.getInstance(module.getProject()), PARAMETER_TYPE_CLASS);
     if (parameterTypeClass != null) {
-      for (PsiMethod method: parameterTypeClass.getMethods()) {
-        if (method.getModifierList().hasModifierProperty(PsiModifier.PUBLIC) &&
-            method.getModifierList().hasModifierProperty(PsiModifier.STATIC) || method.isConstructor()) {
-          JavaFindUsagesHelper.processElementUsages(method, options, processor);
+      ProgressWindow progressWindow = new ProgressWindow(true, module.getProject());
+      ProgressManager.getInstance().runProcess(() -> {
+        for (PsiMethod method: parameterTypeClass.getMethods()) {
+          ProgressManager.checkCanceled();
+          if (method.getModifierList().hasModifierProperty(PsiModifier.PUBLIC) &&
+              method.getModifierList().hasModifierProperty(PsiModifier.STATIC) || method.isConstructor()) {
+            JavaFindUsagesHelper.processElementUsages(method, options, processor);
+          }
         }
-      }
+      }, progressWindow);
     }
 
     for (UsageInfo ui: processor.getResults()) {
