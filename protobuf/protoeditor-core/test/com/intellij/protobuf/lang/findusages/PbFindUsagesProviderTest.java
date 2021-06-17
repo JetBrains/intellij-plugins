@@ -22,7 +22,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.usages.impl.rules.UsageType;
-import com.intellij.usages.impl.rules.UsageTypeProvider;
 import com.intellij.util.containers.ContainerUtil;
 
 import java.util.Collection;
@@ -33,8 +32,6 @@ import static com.intellij.testFramework.EditorTestUtil.CARET_TAG;
 
 /** Tests for {@link PbFindUsagesProvider}. */
 public class PbFindUsagesProviderTest extends PbCodeInsightFixtureTestCase {
-
-  private static final UsageTypeProvider USAGE_TYPE_PROVIDER = new PbUsageTypeProvider();
 
   @Override
   public void setUp() throws Exception {
@@ -253,7 +250,7 @@ public class PbFindUsagesProviderTest extends PbCodeInsightFixtureTestCase {
         .stream()
         .map(
             usageInfo -> {
-              UsageType usageType = USAGE_TYPE_PROVIDER.getUsageType(usageInfo.getElement());
+              UsageType usageType = new PbUsageTypeProvider().getUsageType(usageInfo.getElement());
               return usageType != null ? usageType.toString() : UsageType.UNCLASSIFIED.toString();
             })
         .collect(Collectors.toList());
