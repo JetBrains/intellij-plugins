@@ -68,6 +68,22 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
       }
     ?: emptyList()
 
+  class VueSymbolsCodeCompletionItemCustomizer : WebSymbolCodeCompletionItemCustomizer {
+    override fun customize(codeCompletionItem: WebSymbolCodeCompletionItem,
+                           namespace: Namespace, kind: SymbolKind): WebSymbolCodeCompletionItem =
+      if (namespace == Namespace.HTML)
+        when (kind) {
+          WebSymbol.KIND_HTML_ATTRIBUTES ->
+            codeCompletionItem.source
+              ?.takeIf { it.kind == KIND_HTML_VUE_COMPONENT_PROPS }
+              ?.jsType?.getTypeText(JSType.TypeTextFormat.PRESENTABLE)
+              ?.let { codeCompletionItem.withTypeText(it) }
+            ?: codeCompletionItem
+          else -> codeCompletionItem
+        }
+      else codeCompletionItem
+  }
+
   private abstract class VueWrapperBase : WebSymbolsContainer {
 
     val namespace: Namespace
@@ -151,7 +167,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
                 }
                 // TODO replace with params.registry.getNameVariants(VUE_FRAMEWORK, Namespace.HTML, kind, name)
                 listOf(toAsset(name).capitalize(), fromAsset(name)).forEach {
-                  result.add(createVueLookup(component, it, scriptLanguage, proximity))
+                  result.add(createVueComponentLookup(component, it, scriptLanguage, proximity))
                 }
                 return true
               }
@@ -164,8 +180,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
               override fun visitDirective(name: String, directive: VueDirective, proximity: Proximity): Boolean {
                 result.add(WebSymbolCodeCompletionItem.create(fromAsset(name),
                                                               source = DirectiveWrapper(name, directive),
-                                                              priority = priorityOf(proximity),
-                                                              proximity = proximityOf(proximity)))
+                                                              priority = priorityOf(proximity)))
                 return true
               }
             }, VueModelVisitor.Proximity.GLOBAL)
@@ -181,29 +196,21 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
     private fun priorityOf(proximity: VueModelVisitor.Proximity): Priority =
       when (proximity) {
         VueModelVisitor.Proximity.LOCAL -> Priority.HIGHEST
-        VueModelVisitor.Proximity.PLUGIN, VueModelVisitor.Proximity.APP -> Priority.HIGH
-        VueModelVisitor.Proximity.GLOBAL -> Priority.HIGH
-        VueModelVisitor.Proximity.OUT_OF_SCOPE -> Priority.NORMAL
+        VueModelVisitor.Proximity.APP -> Priority.HIGH
+        VueModelVisitor.Proximity.PLUGIN, VueModelVisitor.Proximity.GLOBAL -> Priority.NORMAL
+        VueModelVisitor.Proximity.OUT_OF_SCOPE -> Priority.LOW
       }
 
-    private fun proximityOf(proximity: VueModelVisitor.Proximity): Int =
-      when (proximity) {
-        VueModelVisitor.Proximity.PLUGIN, VueModelVisitor.Proximity.APP -> 1
-        else -> 0
-      }
-
-    private fun createVueLookup(component: VueComponent,
-                                name: String,
-                                scriptLanguage: String?,
-                                proximity: VueModelVisitor.Proximity): WebSymbolCodeCompletionItem {
+    private fun createVueComponentLookup(component: VueComponent,
+                                         name: String,
+                                         scriptLanguage: String?,
+                                         proximity: VueModelVisitor.Proximity): WebSymbolCodeCompletionItem {
       val element = component.source
       val wrapper = ComponentWrapper(name, component)
       var builder = WebSymbolCodeCompletionItem.create(
         name = name,
         source = wrapper,
-        typeText = wrapper.context.packageName,
-        priority = priorityOf(proximity),
-        proximity = proximityOf(proximity))
+        priority = priorityOf(proximity))
 
       if (proximity == VueModelVisitor.Proximity.OUT_OF_SCOPE && element != null) {
         val settings = JSApplicationSettings.getInstance()
