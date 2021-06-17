@@ -1218,7 +1218,8 @@ export default class ComponentInsertion extends Vue {
   fun testEventsAfterVOn() {
     myFixture.configureByText("foo.vue", "<template> <MyComponent v-on:cl<caret> </template>")
     myFixture.completeBasic()
-    assertSameElements(myFixture.lookupElementStrings!!, "auxclick", "click", "close", "dblclick", ".capture", ".once", ".passive", ".prevent", ".self", ".stop")
+    assertSameElements(myFixture.lookupElementStrings!!, "auxclick", "click", "close", "dblclick", ".capture", ".once", ".passive",
+                       ".prevent", ".self", ".stop")
 
     myFixture.configureByText("foo.vue", "<template> <div v-on:<caret> </template>")
     myFixture.completeBasic()
@@ -1377,8 +1378,7 @@ export default class ComponentInsertion extends Vue {
                         "VDatePickerHeader#vuetify#80", "VDatePickerMonthTable#vuetify#80", "VHover#vuetify#80",
                         "VStepperHeader#vuetify#80", "VSubheader#vuetify#80", "VSwitch#vuetify#80"),
                  myFixture.renderLookupItems(renderPriority = true, renderTypeText = true)
-                   .filter { !it.contains("html") }
-                   .sorted())
+                   .filter { !it.contains("html") })
   }
 
   fun testCompletionPriorityAndHintsBuiltInTags() {
@@ -1392,8 +1392,7 @@ export default class ComponentInsertion extends Vue {
     assertEquals(listOf("Component#vue#80", "KeepAlive#vue#80", "Slot#vue#80", "Transition#vue#80", "TransitionGroup#vue#80",
                         "component#vue#80", "keep-alive#vue#80", "slot#vue#80", "transition#vue#80", "transition-group#vue#80"),
                  myFixture.renderLookupItems(renderPriority = true, renderTypeText = true)
-                   .filter { !it.contains("http://www.w3.org") }
-                   .sorted())
+                   .filter { !it.contains("http://www.w3.org") })
   }
 
   fun testDirectiveCompletionOnComponent() {
@@ -1435,16 +1434,15 @@ export default class ComponentInsertion extends Vue {
     """)
     myFixture.completeBasic()
     assertEquals(
-      listOf("!color#100", "!dismissible#100", "!icon#100", "!mode#100", "!origin#100", "!outline#100", "!transition#100",
-             "!type#100", "!value#100", "about#25", "accesskey#25", "align#25", "autocapitalize#25", "autofocus#25",
-             "class#25", "content#25", "contenteditable#25", "datafld#25", "dataformatas#25", "datasrc#25", "datatype#25",
-             "dir#25", "draggable#25", "hidden#25", "id#25", "inlist#25", "inputmode#25", "is#25", "itemid#25", "itemprop#25",
-             "itemref#25", "itemscope#25", "itemtype#25", "key#25", "lang#25", "nonce#25", "prefix#25", "property#25", "rel#25",
-             "resource#25", "rev#25", "role#25", "slot#25", "spellcheck#25", "style#25", "tabindex#25", "title#25",
-             "translate#25", "typeof#25", "vocab#25"),
-      myFixture.renderLookupItems(renderPriority = true, renderTypeText = false)
-        .filter { !it.contains("aria-") }
-        .sorted())
+      listOf("!color#100+7", "!dismissible#100+7", "!icon#100+7", "!mode#100+7", "!origin#100+7", "!outline#100+7", "!transition#100+7",
+             "!type#100+7", "!value#100+7", "about#1+6", "accesskey#1+6", "align#1+6", "autocapitalize#1+6", "autofocus#1+6", "class#1+6",
+             "content#1+6", "contenteditable#1+6", "datafld#1+6", "dataformatas#1+6", "datasrc#1+6", "datatype#1+6", "dir#1+6",
+             "draggable#1+6", "hidden#1+6", "id#1+6", "inlist#1+6", "inputmode#1+6", "is#1+6", "itemid#1+6", "itemprop#1+6", "itemref#1+6",
+             "itemscope#1+6", "itemtype#1+6", "lang#1+6", "nonce#1+6", "prefix#1+6", "property#1+6", "rel#1+6", "resource#1+6", "rev#1+6",
+             "role#1+6", "spellcheck#1+6", "style#1+6", "tabindex#1+6", "title#1+6", "translate#1+6", "typeof#1+6", "vocab#1+6",
+             "key#1+5", "ref#1+5", "~slot#0+5"),
+      myFixture.renderLookupItems(renderPriority = true, renderTypeText = false, renderProximity = true)
+        .filter { !it.contains("aria-") })
   }
 
   fun testBindProposalsStdTag() {
@@ -1475,18 +1473,18 @@ export default class ComponentInsertion extends Vue {
     """)
     myFixture.completeBasic()
     assertEquals(
-      listOf("!color#100", "!dismissible#100", "!icon#100", "!mode#100", "!origin#100", "!outline#100", "!transition#100",
-             "!type#100", "!value#100", "about#0", "accesskey#0", "align#0", "autocapitalize#0", "autofocus#0", "class#0",
-             "content#0", "contenteditable#0", "datafld#0", "dataformatas#0", "datasrc#0", "datatype#0", "dir#0", "draggable#0",
-             "hidden#0", "id#0", "inlist#0", "inputmode#0", "is#25", "itemid#0", "itemprop#0", "itemref#0", "itemscope#0",
-             "itemtype#0", "key#25", "nonce#0", "prefix#0", "property#0", "ref#25", "rel#0", "resource#0", "rev#0", "role#0", "slot#0",
-             "slot-scope#0", "spellcheck#0", "style#0", "tabindex#0", "title#0", "translate#0", "typeof#0", "v-bind#25",
-             "v-bind:#25", "v-cloak#25", "v-else#25", "v-else-if#25", "v-for#25", "v-html#25", "v-if#25", "v-model#25",
-             "v-on:#25", "v-once#25", "v-pre#25", "v-show#25", "v-slot#25", "v-slot:#25", "v-text#25", "vocab#0", "xml:base#0",
-             "xml:lang#0", "xml:space#0"),
-      myFixture.renderLookupItems(renderPriority = true, renderTypeText = false)
-        .filter { !it.contains("aria-") && !it.startsWith("on") }
-        .sorted())
+      listOf("!color#100+12", "!dismissible#100+12", "!icon#100+12", "!mode#100+12", "!origin#100+12", "!outline#100+12",
+             "!transition#100+12", "!type#100+12", "!value#100+12", "##10+10", ":#10+10", "@#10+10", "v-bind:#10+5", "v-model:#10+5",
+             "v-on:#10+5", "v-slot:#10+5", "v-bind#10+0", "v-cloak#10+0", "v-else#10+0", "v-else-if#10+0", "v-for#10+0", "v-html#10+0",
+             "v-if#10+0", "v-is#10+0", "v-model#10+0", "v-on#10+0", "v-once#10+0", "v-pre#10+0", "v-show#10+0", "v-slot#10+0",
+             "v-text#10+0", "is#1+0", "key#1+0", "ref#1+0", "about#0+0", "accesskey#0+0", "align#0+0", "autocapitalize#0+0",
+             "autofocus#0+0", "class#0+0", "content#0+0", "contenteditable#0+0", "datafld#0+0", "dataformatas#0+0", "datasrc#0+0",
+             "datatype#0+0", "dir#0+0", "draggable#0+0", "hidden#0+0", "id#0+0", "inlist#0+0", "inputmode#0+0", "itemid#0+0",
+             "itemprop#0+0", "itemref#0+0", "itemscope#0+0", "itemtype#0+0", "lang#0+0", "nonce#0+0", "prefix#0+0", "property#0+0",
+             "rel#0+0", "resource#0+0", "rev#0+0", "role#0+0", "~slot#0+0", "~slot-scope#0+0", "spellcheck#0+0", "style#0+0",
+             "tabindex#0+0", "title#0+0", "translate#0+0", "typeof#0+0", "vocab#0+0", "xml:base#0+0", "xml:lang#0+0", "xml:space#0+0"),
+      myFixture.renderLookupItems(renderPriority = true, renderTypeText = false, renderProximity = true)
+        .filter { !it.contains("aria-") && !it.startsWith("on") })
   }
 
   fun testComplexComponentDecoratorCompletion() {
