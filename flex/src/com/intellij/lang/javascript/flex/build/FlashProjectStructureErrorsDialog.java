@@ -54,7 +54,7 @@ public class FlashProjectStructureErrorsDialog extends DialogWrapper {
 
     myTree.setCellRenderer(new ColoredTreeCellRenderer() {
       @Override
-      public void customizeCellRenderer(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row,
+      public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row,
                                         boolean hasFocus) {
         final DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode)value;
         final Object userObject = treeNode.getUserObject();

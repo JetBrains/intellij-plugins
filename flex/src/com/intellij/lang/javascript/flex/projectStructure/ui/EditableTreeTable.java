@@ -9,6 +9,7 @@ import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.ui.EditableModel;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.tree.TreeUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.table.JTableHeader;
@@ -34,7 +35,7 @@ abstract class EditableTreeTable<T> extends TreeTable {
     final ColoredTreeCellRenderer r = new ColoredTreeCellRenderer() {
 
       @Override
-      public void customizeCellRenderer(JTree tree,
+      public void customizeCellRenderer(@NotNull JTree tree,
                                         Object value,
                                         boolean selected,
                                         boolean expanded,

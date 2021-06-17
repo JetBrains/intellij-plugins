@@ -157,7 +157,7 @@ public class JobsMasterDetails extends MasterDetailsComponent {
 
       myTop = new ColoredTreeCellRenderer() {
         @Override
-        public void customizeCellRenderer(JTree tree,
+        public void customizeCellRenderer(@NotNull JTree tree,
                                           Object value,
                                           boolean selected,
                                           boolean expanded,

@@ -142,7 +142,7 @@ public final class ChooseBuildConfigurationDialog extends DialogWrapper {
     });
     myTree.setCellRenderer(new ColoredTreeCellRenderer() {
       @Override
-      public void customizeCellRenderer(JTree tree,
+      public void customizeCellRenderer(@NotNull JTree tree,
                                         Object value,
                                         boolean selected,
                                         boolean expanded,
