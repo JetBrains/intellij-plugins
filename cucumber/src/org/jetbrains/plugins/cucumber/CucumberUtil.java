@@ -3,6 +3,7 @@ package org.jetbrains.plugins.cucumber;
 
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
@@ -18,6 +19,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
+import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 import org.jetbrains.plugins.cucumber.steps.reference.CucumberStepReference;
 import org.jetbrains.plugins.cucumber.steps.search.CucumberStepSearchUtil;
 
@@ -492,5 +494,11 @@ public final class CucumberUtil {
       }
     }
     return null;
+  }
+
+  @NotNull
+  public static List<AbstractStepDefinition> loadFrameworkSteps(@NotNull CucumberJvmExtensionPoint framework, @Nullable PsiFile featureFile, @NotNull Module module) {
+    List<AbstractStepDefinition> result = framework.loadStepsFor(featureFile, module);
+    return result != null ? result : Collections.emptyList();
   }
 }

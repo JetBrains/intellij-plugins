@@ -51,6 +51,7 @@ public interface CucumberJvmExtensionPoint {
    * @param module
    * @return
    */
+  @Nullable
   List<AbstractStepDefinition> loadStepsFor(@Nullable PsiFile featureFile, @NotNull Module module);
 
   Collection<? extends PsiFile> getStepDefinitionContainers(@NotNull GherkinFile file);
