@@ -21,14 +21,16 @@ class VueExpandVModelIntention : JavaScriptIntention() {
   override fun getText(): String = this.familyName
   private val validModifiers = setOf("lazy", "number", "trim")
 
-  override fun isAvailable(project: Project, editor: Editor?, element: PsiElement): Boolean {
-    return element.node.elementType == XmlElementType.XML_NAME
-           && element.parent?.node?.elementType == XmlElementType.XML_ATTRIBUTE
-           && element.parent.isValid
-           && (element.parent as XmlAttribute).parent.descriptor is WebSymbolElementDescriptor
-           && isValidVModel(element.parent as XmlAttribute)
+  override fun isAvailable(project: Project, editor: Editor?, element: PsiElement): Boolean =
+    element.node.elementType == XmlElementType.XML_NAME
+           && element.parent
+             ?.let {
+               it.node.elementType == XmlElementType.XML_ATTRIBUTE
+               && it.isValid  && it is XmlAttribute
+               && it.parent?.descriptor is WebSymbolElementDescriptor
+               && isValidVModel(it)
+             } == true
            && isVueContext(element)
-  }
 
   private fun isValidVModel(attribute: XmlAttribute): Boolean {
     val info = VueAttributeNameParser.parse((attribute.name), attribute.parent)

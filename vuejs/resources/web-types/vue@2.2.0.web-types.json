@@ -73,10 +73,13 @@
         },
         {
           "name": "slot",
-          "extension": true,
-          "attributes": [
+          "description": "`<slot>` serve as content distribution outlets in component templates. `<slot>` itself will be replaced.",
+          "doc-url": "https://v3.vuejs.org/api/built-in-components.html#slot",
+          "props": [
             {
-              "name": "name"
+              "name": "name",
+              "description": "Used for named slot.",
+              "type": "string"
             }
           ]
         }
@@ -258,6 +261,7 @@
         {
           "name": "style",
           "priority": "high",
+          "description": "The top-level `<style>` element serves as a container for the component styles.",
           "attributes": [
             {
               "name": "lang"
@@ -282,6 +286,7 @@
         {
           "name": "script",
           "priority": "high",
+          "description": "The top-level `<script>` element serves as a container for the component code.",
           "attributes": [
             {
               "name": "lang"
@@ -303,6 +308,7 @@
         {
           "name": "template",
           "priority": "high",
+          "description": "The top-level `<template>` element serves as a container for the component template contents.",
           "attributes": [
             {
               "name": "lang"
@@ -523,18 +529,6 @@
                 "RegExp",
                 "(string|RegExp)[]"
               ]
-            }
-          ]
-        },
-        {
-          "name": "Slot",
-          "description": "`<slot>` serve as content distribution outlets in component templates. `<slot>` itself will be replaced.",
-          "doc-url": "https://vuejs.org/v2/api/#slot",
-          "props": [
-            {
-              "name": "name",
-              "description": "Used for named slot.",
-              "type": "string"
             }
           ]
         }

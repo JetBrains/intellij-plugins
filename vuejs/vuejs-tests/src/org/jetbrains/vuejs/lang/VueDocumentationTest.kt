@@ -2,37 +2,25 @@ package org.jetbrains.vuejs.lang
 
 import com.intellij.codeInsight.documentation.DocumentationManager
 import com.intellij.lang.documentation.ExternalDocumentationProvider
+import com.intellij.lang.javascript.JSAbstractDocumentationTest
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 
-class VueDocumentationTest : BasePlatformTestCase() {
-  override fun getTestDataPath(): String = getVueTestDataPath() + "/"
+class VueDocumentationTest : JSAbstractDocumentationTest() {
 
-  fun testDocumentationFromDefinitions() {
+  override fun getBasePath(): String = "/"
+  override fun getExtension(): String = "vue"
+
+  override fun getTestDataPath(): String = getVueTestDataPath() + "/documentation"
+
+  fun testFromDefinitions() {
     myFixture.configureVueDependencies(VueTestModule.VUE_2_5_3)
-    myFixture.configureByText("testDocumentationFromDefinitions.vue", """
-<script>
-  export default {
-    <caret>mixins: []
-  }
-</script>
-""")
-    val elementAtCaret = myFixture.elementAtCaret
-    val documentationProvider = DocumentationManager.getProviderFromElement(elementAtCaret)
-    val inlineDoc = documentationProvider.generateDoc(elementAtCaret, elementAtCaret)
-
-    TestCase.assertNotNull(inlineDoc)
-    TestCase.assertTrue(inlineDoc!!.trim().contains("Fictive mixins comment"))
+    defaultTest()
   }
 
   fun testTSLibraryElement() {
     createPackageJsonWithVueDependency(myFixture, "")
-    myFixture.configureByText("testDocumentationFromDefinitions.vue", """
-<script>
-  const foo: Promise
-  foo.th<caret>en()
-</script>
-""")
+    myFixture.configureByFile("TSLibraryElement.vue")
     val element = myFixture.file.findElementAt(myFixture.caretOffset)
     val elementAtCaret = myFixture.elementAtCaret
     val documentationProvider = DocumentationManager.getProviderFromElement(elementAtCaret, element)
@@ -40,6 +28,27 @@ class VueDocumentationTest : BasePlatformTestCase() {
     val urls = documentationProvider.getUrlFor(elementAtCaret, element)
     TestCase.assertNotNull(urls)
     TestCase.assertNull("$urls", documentationProvider.fetchExternalDocumentation(project, elementAtCaret, urls, false))
+  }
+
+  fun testTopLevelTemplate() {
+    defaultTest()
+  }
+
+  fun testInnerLevelTemplate() {
+    defaultTest()
+  }
+
+  fun testInnerLevelTemplateStdAttr() {
+    defaultTest()
+  }
+
+  fun testInnerLevelTemplateStdAttrNoDoc() {
+    val testName = getTestName(false)
+    doTest(testName, extension, testName, false, Check.Null)
+  }
+
+  fun testInnerLevelTemplateCustomAttr() {
+    defaultTest()
   }
 
 }

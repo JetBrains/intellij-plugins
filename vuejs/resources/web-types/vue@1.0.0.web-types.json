@@ -274,6 +274,7 @@
         {
           "name": "style",
           "priority": "high",
+          "description": "The top-level `<style>` element serves as a container for the component styles.",
           "attributes": [
             {
               "name": "lang"
@@ -298,6 +299,7 @@
         {
           "name": "script",
           "priority": "high",
+          "description": "The top-level `<script>` element serves as a container for the component code.",
           "attributes": [
             {
               "name": "lang"
@@ -319,6 +321,7 @@
         {
           "name": "template",
           "priority": "high",
+          "description": "The top-level `<template>` element serves as a container for the component template contents.",
           "attributes": [
             {
               "name": "lang"
