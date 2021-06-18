@@ -5,6 +5,7 @@ import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection
 import com.intellij.javascript.web.assertUnresolvedReference
 import com.intellij.javascript.web.resolveReference
 import com.intellij.lang.javascript.JSTestUtils.setWebpack
+import com.intellij.lang.javascript.buildTools.webpack.WebPackConfigPath
 import com.intellij.lang.javascript.buildTools.webpack.WebPackResolve
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.css.inspections.invalid.CssUnknownTargetInspection
@@ -20,8 +21,8 @@ class VueLoaderTest  : BasePlatformTestCase() {
     super.setUp()
     myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10)
     val resolve = WebPackResolve(
-      mapOf(Pair("@", "src"), Pair("foo", "src")),
-      mutableListOf(myFixture.tempDirFixture.getFile(".")!!.path)
+      mapOf(Pair("@", WebPackConfigPath("src")), Pair("foo", WebPackConfigPath("src"))),
+      mutableListOf(WebPackConfigPath(myFixture.tempDirFixture.getFile(".")!!.path))
     )
     setWebpack(project, resolve, testRootDisposable)
   }
