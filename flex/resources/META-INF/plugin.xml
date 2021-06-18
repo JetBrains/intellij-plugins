@@ -53,7 +53,7 @@
                              order="before moveFileOrDir, before moveJavaFileOrDir"/>
     <refactoring.moveHandler implementation="com.intellij.javascript.flex.refactoring.moveMembers.ActionScriptMoveMembersHandler"/>
     <fileType name="SWF" implementationClass="com.intellij.javascript.flex.SwfFileType" fieldName="SWF_FILE_TYPE" extensions="swf"/>
-    <fileType name="MXML" implementationClass="com.intellij.lang.javascript.flex.MxmlFileType" fieldName="MXML" extensions="mxml;fxg" language="Mxml"/>
+    <fileType name="MXML" implementationClass="com.intellij.lang.javascript.flex.MxmlFileType" fieldName="MXML" extensions="fxg;mxml" language="Mxml"/>
     <lang.parserDefinition language="Mxml" implementationClass="com.intellij.javascript.flex.MxmlParserDefinition"/>
     <todoIndexer filetype="MXML" implementationClass="com.intellij.javascript.flex.MxmlTodoIndexer"/>
     <standardResourceProvider implementation="com.intellij.javascript.flex.FlexApplicationComponent"/>
