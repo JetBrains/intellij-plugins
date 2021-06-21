@@ -1,8 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.editor
 
-import com.intellij.lang.LanguageUtil
-import com.intellij.lang.injection.MultiHostInjector
+ import com.intellij.lang.injection.MultiHostInjector
 import com.intellij.lang.injection.MultiHostRegistrar
 import com.intellij.lang.javascript.JSInjectionBracesUtil
 import com.intellij.lang.javascript.JSInjectionBracesUtil.injectInXmlTextByDelimiters
@@ -17,19 +16,15 @@ import com.intellij.openapi.util.Pair
 import com.intellij.psi.ElementManipulators
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiLanguageInjectionHost
-import com.intellij.psi.impl.source.html.HtmlDocumentImpl
 import com.intellij.psi.impl.source.xml.XmlAttributeValueImpl
 import com.intellij.psi.impl.source.xml.XmlTextImpl
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
-import com.intellij.psi.xml.XmlTag
 import com.intellij.util.NullableFunction
-import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.es6Unquote
 import org.jetbrains.vuejs.codeInsight.getStringLiteralsFromInitializerArray
-import org.jetbrains.vuejs.codeInsight.tags.CUSTOM_TOP_LEVEL_TAGS
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.VueFrameworkHandler
 import org.jetbrains.vuejs.index.VueOptionsIndex
@@ -45,10 +40,10 @@ import org.jetbrains.vuejs.model.source.DELIMITERS_PROP
 import org.jetbrains.vuejs.model.source.TEMPLATE_PROP
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.onlyLocal
 import org.jetbrains.vuejs.model.source.VueSourceContainer
-import java.util.*
 
 class VueInjector : MultiHostInjector {
   companion object {
+
     private val delimitersOptionHolders = setOf("Vue.config.delimiters", "Vue.options.delimiters")
 
     val BRACES_FACTORY: NullableFunction<PsiElement, Pair<String, String>> = JSInjectionBracesUtil.delimitersFactory(
@@ -120,18 +115,6 @@ class VueInjector : MultiHostInjector {
       }
       return
     }
-
-    (context as? XmlTextImpl)
-      ?.parent?.castSafelyTo<XmlTag>()
-      ?.takeIf { it.context is HtmlDocumentImpl }
-      ?.let { CUSTOM_TOP_LEVEL_TAGS[it.name.toLowerCase(Locale.US)]?.invoke(it, context) }
-      ?.takeIf { LanguageUtil.isInjectableLanguage(it) }
-      ?.let {
-        registrar.startInjecting(it)
-          .addPlace(null, null, context, ElementManipulators.getValueTextRange(context))
-          .doneInjecting()
-        return
-      }
 
     if (context is XmlTextImpl || context is XmlAttributeValueImpl) {
       val braces = BRACES_FACTORY.`fun`(context) ?: return

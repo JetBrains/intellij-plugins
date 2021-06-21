@@ -1625,13 +1625,27 @@ export default class ComponentInsertion extends Vue {
                            "exampleMethod", "anotherMethod")
   }
 
-  fun testTopLevelTags() {
+  fun testTopLevelTagsNoI18n() {
     createPackageJsonWithVueDependency(myFixture)
-    for ((tag, list) in listOf(
+
+    myFixture.configureByText("test.vue", "<<caret>")
+    myFixture.completeBasic()
+    assertDoesntContain(myFixture.lookupElementStrings!!, "i18n")
+  }
+
+  fun testTopLevelTags() {
+    createPackageJsonWithVueDependency(myFixture, """ "vue-i18n": "*" """)
+    val toTest = listOf(
+      Pair("i18n", listOf("lang")),
       Pair("template", listOf("lang", "src", "functional")),
       Pair("script", listOf("lang", "id", "src")),
       Pair("style", listOf("lang", "src", "module", "scoped"))
-    )) {
+    )
+    myFixture.configureByText("test.vue", "<<caret>")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, toTest.map { it.first })
+
+    for ((tag, list) in toTest) {
       myFixture.configureByText("test.vue", "<$tag <caret>")
       myFixture.completeBasic()
       assertContainsElements(myFixture.lookupElementStrings!!, list)

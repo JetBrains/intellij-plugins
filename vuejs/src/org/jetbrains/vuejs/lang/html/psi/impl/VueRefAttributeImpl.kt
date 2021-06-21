@@ -24,7 +24,7 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.refactoring.suggested.startOffset
 import org.jetbrains.vuejs.codeInsight.ATTR_DIRECTIVE_PREFIX
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueDirectiveKind
-import org.jetbrains.vuejs.codeInsight.tags.resolveComponent
+import org.jetbrains.vuejs.codeInsight.resolveLocalComponent
 import org.jetbrains.vuejs.lang.html.psi.VueRefAttribute
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueRegularComponent
@@ -57,7 +57,7 @@ class VueRefAttributeImpl : XmlStubBasedAttributeBase<VueRefAttributeStubImpl>, 
   private fun resolveTagType(): JSType? {
     val component = VueModelManager.findEnclosingContainer(this) as? VueRegularComponent ?: return null
     val source = JSTypeSourceFactory.createTypeSource(this, true)
-    return (resolveComponent(component, containingTagName, containingFile.originalFile)
+    return (resolveLocalComponent(component, containingTagName, containingFile.originalFile)
               .takeIf { it.isNotEmpty() }
               ?.map { it.thisType }
               ?.let { JSCompositeTypeFactory.createUnionType(source, it) }

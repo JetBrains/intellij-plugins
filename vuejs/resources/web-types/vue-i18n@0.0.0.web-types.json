@@ -1,0 +1,24 @@
+{
+  "$schema": "../../../../plugins/JavaScriptLanguage/web-platform/web-types-gen/resources/web-types.json",
+  "framework": "vue",
+  "name": "vue-i18n",
+  "version": "0.0.0",
+  "js-types-syntax": "typescript",
+  "description-markup": "markdown",
+  "contributions": {
+    "html": {
+      "vue-file-top-elements": [
+        {
+          "name": "i18n",
+          "description": "If you are building Vue component or Vue application using single file components, you can manage the locale messages with `i18n` custom block. You need to install `vue-loader` and `vue-i18n-loader` to use `<i18n>` custom top level blocks",
+          "doc-url": "https://kazupon.github.io/vue-i18n/guide/sfc.html#basic-usage",
+          "attributes": [
+            {
+              "name": "lang"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

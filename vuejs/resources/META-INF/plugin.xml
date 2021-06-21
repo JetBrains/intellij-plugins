@@ -133,7 +133,7 @@
 
     <!--suppress PluginXmlValidity -->
     <multiHostInjector implementation="org.jetbrains.vuejs.editor.VueInjector"
-                       order="before JSConfigurationInjector, after TemporaryPlacesInjector"
+                       order="before JSConfigurationInjector, before WebSymbolsHtmlText, after TemporaryPlacesInjector"
                        id="VueInjector"/>
 
     <internalFileTemplate name="Vue Single File Component"/>
@@ -195,8 +195,11 @@
     <javascript.webTypes source="web-types/vue@2.4.0.web-types.json"/>
     <javascript.webTypes source="web-types/vue@2.5.0.web-types.json"/>
     <javascript.webTypes source="web-types/vue@3.0.0.web-types.json" enableByDefault="true"/>
+    <javascript.webTypes source="web-types/vue-i18n@0.0.0.web-types.json"/>
 
-    <javascript.web.additionalContextProvider implementation="org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider"/>
+    <javascript.web.additionalContextProvider implementation="org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider" id="vue"/>
+    <javascript.web.additionalContextProvider implementation="org.jetbrains.vuejs.libraries.i18n.VueI18nAdditionalContextProvider" id="vue-i18n"/>
+
     <javascript.web.symbolsFilter name="vue-bind" implementation="org.jetbrains.vuejs.web.VueBindFilter"/>
     <javascript.web.symbolCodeCompletionItemCustomizer
       implementation="org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider$VueSymbolsCodeCompletionItemCustomizer"/>
@@ -241,9 +244,6 @@
     <vuejs.containerInfoProvider implementation="org.jetbrains.vuejs.libraries.cssModules.VueCssModulesInfoProvider"
                                  id="css-modules"/>
 
-
-    <lang.documentationProvider implementationClass="org.jetbrains.vuejs.codeInsight.documentation.VueDocumentationProvider"
-                                language="Vue" order="before html"/>
     <lang.documentationProvider implementationClass="org.jetbrains.vuejs.codeInsight.documentation.VueDocumentationProvider"
                                 language="VueJS"/>
   </extensions>

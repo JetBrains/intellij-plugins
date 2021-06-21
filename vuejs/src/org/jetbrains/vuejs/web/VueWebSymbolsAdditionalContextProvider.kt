@@ -37,7 +37,7 @@ import java.util.*
 class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvider {
 
   companion object {
-    const val KIND_VUE_TOP_LEVEL_ELEMENT = "vue-file-top-elements"
+    const val KIND_VUE_TOP_LEVEL_ELEMENTS = "vue-file-top-elements"
     const val KIND_VUE_AVAILABLE_SLOTS = "vue-available-slots"
     const val KIND_VUE_MODEL = "vue-model"
     const val KIND_VUE_DIRECTIVE_ARGUMENT = "argument"
@@ -105,8 +105,9 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
           KIND_HTML_ELEMENTS -> {
             if (containingFile.virtualFile?.fileType == VueFileType.INSTANCE && isTopLevelTag) {
               params.registry.runNameMatchQuery(
-                if (name == null) listOf(NAMESPACE_HTML, KIND_VUE_TOP_LEVEL_ELEMENT)
-                else listOf(NAMESPACE_HTML, KIND_VUE_TOP_LEVEL_ELEMENT, name)
+                if (name == null) listOf(NAMESPACE_HTML, KIND_VUE_TOP_LEVEL_ELEMENTS)
+                else listOf(NAMESPACE_HTML, KIND_VUE_TOP_LEVEL_ELEMENTS, name),
+                context = context
               )
                 .map {
                   WebSymbolMatch(it.name, it.nameSegments, Namespace.HTML, KIND_HTML_ELEMENTS, it.context)
@@ -156,6 +157,16 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
                                     context: Stack<WebSymbolsContainer>): List<WebSymbolCodeCompletionItem> =
       if (namespace == null || namespace == Namespace.HTML)
         when (kind) {
+          KIND_HTML_ELEMENTS -> {
+            if (containingFile.virtualFile?.fileType == VueFileType.INSTANCE && isTopLevelTag) {
+              params.registry.runCodeCompletionQuery(
+                if (name == null) listOf(NAMESPACE_HTML, KIND_VUE_TOP_LEVEL_ELEMENTS)
+                else listOf(NAMESPACE_HTML, KIND_VUE_TOP_LEVEL_ELEMENTS, name),
+                params.position, context = context
+              )
+            }
+            else emptyList()
+          }
           KIND_HTML_VUE_COMPONENTS -> {
             val result = mutableListOf<WebSymbolCodeCompletionItem>()
             val scriptLanguage = detectVueScriptLanguage(containingFile)
