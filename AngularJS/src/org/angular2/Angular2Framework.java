@@ -3,18 +3,25 @@ package org.angular2;
 
 import com.intellij.javascript.web.WebFramework;
 import com.intellij.javascript.web.lang.html.WebFrameworkHtmlFileType;
+import icons.AngularJSIcons;
 import org.angular2.lang.html.Angular2HtmlFileType;
 import org.angular2.lang.svg.Angular2SvgFileType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
+import javax.swing.*;
 
 public class Angular2Framework extends WebFramework {
 
   @NotNull
   public static WebFramework getInstance() {
     return WebFramework.get("angular");
+  }
+
+  @Nullable
+  @Override
+  public Icon getIcon() {
+    return AngularJSIcons.Angular2;
   }
 
   @NotNull
