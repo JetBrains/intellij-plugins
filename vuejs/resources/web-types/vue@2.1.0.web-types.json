@@ -50,6 +50,7 @@
               "vue-custom-prop": {
                 "name": "Custom Vue component property",
                 "pattern": "(?!v-).*",
+                "doc-hide-pattern": true,
                 "attribute-value": {
                   "required": false
                 }
