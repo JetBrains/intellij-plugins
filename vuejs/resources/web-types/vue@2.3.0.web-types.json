@@ -76,11 +76,13 @@
           "name": "slot",
           "description": "`<slot>` serve as content distribution outlets in component templates. `<slot>` itself will be replaced.",
           "doc-url": "https://v3.vuejs.org/api/built-in-components.html#slot",
-          "props": [
+          "attributes": [
             {
               "name": "name",
               "description": "Used for named slot.",
-              "type": "string"
+              "value": {
+                "type": "string"
+              }
             }
           ]
         }
