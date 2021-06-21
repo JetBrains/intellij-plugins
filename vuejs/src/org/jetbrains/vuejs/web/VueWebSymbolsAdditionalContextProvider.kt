@@ -32,6 +32,7 @@ import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.VueModelDirectiveProperties.Companion.DEFAULT_EVENT
 import org.jetbrains.vuejs.model.VueModelDirectiveProperties.Companion.DEFAULT_PROP
+import org.jetbrains.vuejs.model.source.VueUnresolvedComponent
 import java.util.*
 
 class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvider {
@@ -345,7 +346,12 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
           }
           KIND_HTML_SLOTS -> {
             (item as? VueContainer)?.slots?.mapWithNameFilter(name) { SlotWrapper(it, this.context) }
-            ?: emptyList()
+            ?: if (!name.isNullOrEmpty()
+                   && ((item is VueContainer && item.template == null)
+                       || item is VueUnresolvedComponent)) {
+              listOf(WebSymbolMatch(name, listOf(WebSymbol.NameSegment(0, name.length)), Namespace.HTML, KIND_HTML_SLOTS, this.context))
+            }
+            else emptyList()
           }
           KIND_VUE_MODEL -> {
             (item as? VueContainer)?.model?.takeIf {
