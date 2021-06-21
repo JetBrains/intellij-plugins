@@ -14,6 +14,7 @@ import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptAsExpression
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.evaluable.JSApplyNewType
 import com.intellij.lang.javascript.psi.types.evaluable.JSReturnedExpressionType
@@ -52,6 +53,10 @@ import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.index.resolveLocally
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpression
 import org.jetbrains.vuejs.lang.html.VueLanguage
+import org.jetbrains.vuejs.model.VueComponent
+import org.jetbrains.vuejs.model.VueEntitiesContainer
+import org.jetbrains.vuejs.model.VueModelProximityVisitor
+import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.source.PROPS_REQUIRED_PROP
 import org.jetbrains.vuejs.model.source.PROPS_TYPE_PROP
 import org.jetbrains.vuejs.types.asCompleteType
@@ -349,4 +354,20 @@ fun <T : PsiElement> resolveSymbolFromNodeModule(scope: PsiElement?, moduleName:
       }
     create(null, PsiModificationTracker.MODIFICATION_COUNT)
   }
+}
+
+fun resolveLocalComponent(context: VueEntitiesContainer, tagName: String, containingFile: PsiFile): List<VueComponent> {
+  val result = mutableListOf<VueComponent>()
+  val normalizedTagName = fromAsset(tagName)
+  context.acceptEntities(object : VueModelProximityVisitor() {
+    override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
+      return acceptSameProximity(proximity, fromAsset(name) == normalizedTagName) {
+        // Cannot self refer without export declaration with component name
+        if ((component.source as? JSImplicitElement)?.context != containingFile) {
+          result.add(component)
+        }
+      }
+    }
+  }, VueModelVisitor.Proximity.GLOBAL)
+  return result
 }
