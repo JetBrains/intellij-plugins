@@ -338,6 +338,8 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
   // TODO add special inspection for unused slot scope parameters - WEB-43893
   fun testSlotSyntax() = doTest()
 
+  fun testSlotName() = doTest()
+
   fun testVueExtendSyntax() = doDirTest(addNodeModules = listOf(VueTestModule.VUE_2_5_3))
 
   fun testBootstrapVue() = doTest(addNodeModules = listOf(VueTestModule.BOOTSTRAP_VUE_2_0_0_RC_11))
