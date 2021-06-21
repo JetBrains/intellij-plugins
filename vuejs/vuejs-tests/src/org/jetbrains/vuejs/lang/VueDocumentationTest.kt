@@ -51,4 +51,8 @@ class VueDocumentationTest : JSAbstractDocumentationTest() {
     defaultTest()
   }
 
+  fun testCustomComponentProperty() {
+    defaultTest()
+  }
+
 }
