@@ -617,7 +617,8 @@
             "pattern": {
               "or": [
                 {
-                  "items": "/html/events"
+                  "items": "/html/events",
+                  "priority": "normal"
                 },
                 {
                   "template": [

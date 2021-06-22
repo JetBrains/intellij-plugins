@@ -608,11 +608,13 @@
           },
           "argument": {
             "name": "event name",
-            "description": "Optional event name",
+            "description": "Event name",
+            "required": true,
             "pattern": {
               "or": [
                 {
-                  "items": "/html/events"
+                  "items": "/html/events",
+                  "priority": "normal"
                 },
                 {
                   "template": [
