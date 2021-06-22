@@ -25,7 +25,14 @@ class VueI18nAdditionalContextProvider : WebSymbolsAdditionalContextProvider {
     else emptyList()
 
   private class I18nTagInjectionKind(private val tag: HtmlTag) : WebSymbolsContainer {
-    override fun getModificationCount(): Long = 0
+    override fun equals(other: Any?): Boolean =
+      other is I18nTagInjectionKind
+      && other.tag == tag
+
+    override fun hashCode(): Int =
+      tag.hashCode()
+
+    override fun getModificationCount(): Long = tag.containingFile.modificationStamp
 
     override fun getSymbols(namespace: WebSymbolsContainer.Namespace?,
                             kind: SymbolKind,
