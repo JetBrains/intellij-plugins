@@ -3,7 +3,7 @@ package org.jetbrains.ruby.ift.lesson.refactorings
 
 import com.intellij.openapi.project.Project
 import com.intellij.refactoring.RefactoringBundle
-import com.intellij.ui.components.JBList
+import com.intellij.ui.EngravedLabel
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.Types
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.fqn.FQN
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.SymbolUtil
@@ -37,15 +37,20 @@ class RubyRefactorMenuLesson
   override val lessonContent: LessonContext.() -> Unit
     get() = {
       prepareSample(sample)
-      actionTask("Refactorings.QuickListPopupAction") {
+      task("Refactorings.QuickListPopupAction") {
+        text(RubyLessonsBundle.message("ruby.refactoring.menu.invoke.refactoring.list", action(it)))
+        val refactoringMenuTitle = RefactoringBundle.message("refactor.this.title")
+        triggerByUiComponentAndHighlight(false, false) { ui: EngravedLabel ->
+          ui.text?.contains(refactoringMenuTitle) == true
+        }
         restoreIfModifiedOrMoved()
-        RubyLessonsBundle.message("ruby.refactoring.menu.invoke.refactoring.list", action(it))
+        test { actions(it) }
       }
       task(RefactoringBundle.message("push.members.down.title")) {
         text(RubyLessonsBundle.message("ruby.refactoring.menu.use.push.method.down", strong(it), code("meow()")))
         trigger("MemberPushDown") { checkMethodMoved(project) }
         restoreState(delayMillis = defaultRestoreDelay) {
-          focusOwner !is JBList<*> && !checkInsidePushDownDialog()
+          previous.ui?.isShowing != true && !checkInsidePushDownDialog()
         }
         test {
           ideFrame {
