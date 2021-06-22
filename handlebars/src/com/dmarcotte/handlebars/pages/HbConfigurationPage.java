@@ -27,9 +27,9 @@ public class HbConfigurationPage implements SearchableConfigurable {
   private JComboBox<Language> myCommenterLanguage;
   private JCheckBox myAutocompleteMustaches;
   private JCheckBox htmlAsHb;
-  private final Project myProject;
+  private final @NotNull Project myProject;
 
-  public HbConfigurationPage(Project project) {
+  public HbConfigurationPage(@NotNull Project project) {
     myProject = project;
   }
 
