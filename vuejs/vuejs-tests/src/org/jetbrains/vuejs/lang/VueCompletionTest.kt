@@ -1209,6 +1209,10 @@ export default class ComponentInsertion extends Vue {
                                              "@canplaythrough", "@change", "@click", "@close", "@contextmenu",
                                              "@copy", "@cuechange", "@cut", "@dblclick")
 
+    myFixture.configureByText("foo.vue", "<template> <BAlert @inp<caret> </template>")
+    myFixture.completeBasic()
+    myFixture.assertPreferredCompletionItems(0, "@input", ".capture", ".once", ".passive", ".prevent")
+
     myFixture.configureByText("foo.vue", "<template> <div @c<caret> </template>")
     myFixture.completeBasic()
     assertSameElements(myFixture.lookupElementStrings!!, "@copy", "@cancel", "@click", "@canplaythrough", "@close",
