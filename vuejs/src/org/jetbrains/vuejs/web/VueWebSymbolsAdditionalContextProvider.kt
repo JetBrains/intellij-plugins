@@ -17,6 +17,7 @@ import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.settings.JSApplicationSettings
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiModificationTracker
@@ -95,6 +96,18 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
   private class EntityContainerWrapper(private val containingFile: PsiFile,
                                        private val container: VueEntitiesContainer,
                                        private val isTopLevelTag: Boolean) : VueWrapperBase() {
+
+    override fun hashCode(): Int = containingFile.hashCode()
+
+    override fun equals(other: Any?): Boolean =
+      other is EntityContainerWrapper
+      && other.containingFile == containingFile
+      && other.container == container
+      && other.isTopLevelTag == isTopLevelTag
+
+    override fun getModificationCount(): Long =
+      PsiModificationTracker.SERVICE.getInstance(containingFile.project).modificationCount +
+      VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS.modificationCount
 
     override fun getSymbols(namespace: Namespace?,
                             kind: String,
@@ -202,9 +215,6 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
         }
       else emptyList()
 
-    override fun getModificationCount(): Long =
-      PsiModificationTracker.SERVICE.getInstance(containingFile.project).modificationCount
-
     private fun priorityOf(proximity: VueModelVisitor.Proximity): Priority =
       when (proximity) {
         VueModelVisitor.Proximity.LOCAL -> Priority.HIGHEST
@@ -244,7 +254,15 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
   }
 
   private class AvailableSlotsContainer(private val tag: XmlTag) : WebSymbolsContainer {
-    override fun getModificationCount(): Long = 0
+
+    override fun hashCode(): Int = tag.hashCode()
+
+    override fun equals(other: Any?): Boolean =
+      other is AvailableSlotsContainer
+      && other.tag == tag
+
+    override fun getModificationCount(): Long = tag.containingFile.modificationStamp
+
     override fun getSymbols(namespace: Namespace?,
                             kind: SymbolKind,
                             name: String?,
