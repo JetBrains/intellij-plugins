@@ -16,15 +16,10 @@ public class HbLanguageSubstitutor extends LanguageSubstitutor {
   @Nullable
   @Override
   public Language getLanguage(@NotNull VirtualFile file, @NotNull Project project) {
-    if (HbConfig.shouldOpenHtmlAsHandlebars(project) &&
-        FileTypeRegistry.getInstance().isFileOfType(file, HtmlFileType.INSTANCE)) {
-      if (file instanceof LightVirtualFile) {
-        return null;
-      }
-
-      return HbLanguage.INSTANCE;
+    if (file instanceof LightVirtualFile) {
+      return null;
     }
-
-    return null;
+    return HbConfig.shouldOpenHtmlAsHandlebars(project) &&
+           FileTypeRegistry.getInstance().isFileOfType(file, HtmlFileType.INSTANCE) ? HbLanguage.INSTANCE : null;
   }
 }
