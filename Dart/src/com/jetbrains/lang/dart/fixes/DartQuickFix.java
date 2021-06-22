@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.fixes;
 
 import com.intellij.CommonBundle;
@@ -23,7 +23,6 @@ import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.assists.AssistUtils;
 import com.jetbrains.lang.dart.assists.DartSourceEditException;
-import com.jetbrains.lang.dart.ide.annotator.DartProblemGroup;
 import org.dartlang.analysis.server.protocol.SourceChange;
 import org.dartlang.analysis.server.protocol.SourceFileEdit;
 import org.jetbrains.annotations.NotNull;
@@ -38,7 +37,6 @@ public final class DartQuickFix implements IntentionAction, Comparable<Intention
   @NotNull private final DartQuickFixSet myQuickFixSet;
   private final int myIndex;
   @Nullable private SourceChange mySourceChange;
-  @Nullable private DartProblemGroup.DartSuppressAction mySuppressActionDelegate;
 
   public DartQuickFix(@NotNull final DartQuickFixSet quickFixSet, final int index) {
     myIndex = index;
@@ -48,10 +46,6 @@ public final class DartQuickFix implements IntentionAction, Comparable<Intention
   @NotNull
   @Override
   public String getFamilyName() {
-    if (mySuppressActionDelegate != null) {
-      return mySuppressActionDelegate.getFamilyName();
-    }
-
     return getText();
   }
 
@@ -59,10 +53,6 @@ public final class DartQuickFix implements IntentionAction, Comparable<Intention
   @Override
   public String getText() {
     myQuickFixSet.ensureInitialized();
-
-    if (mySuppressActionDelegate != null) {
-      return mySuppressActionDelegate.getText();
-    }
 
     if (mySourceChange == null) return "";
 
@@ -82,11 +72,6 @@ public final class DartQuickFix implements IntentionAction, Comparable<Intention
   public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
     if (editor == null || file == null) {
       // not sure this can ever happen
-      return;
-    }
-
-    if (mySuppressActionDelegate != null) {
-      mySuppressActionDelegate.invoke(project, editor, file);
       return;
     }
 
@@ -143,10 +128,6 @@ public final class DartQuickFix implements IntentionAction, Comparable<Intention
 
     myQuickFixSet.ensureInitialized();
 
-    if (mySuppressActionDelegate != null) {
-      return mySuppressActionDelegate.isAvailable(project, editor, file);
-    }
-
     if (mySourceChange == null) return false;
 
     final List<SourceFileEdit> fileEdits = mySourceChange.getEdits();
@@ -165,10 +146,6 @@ public final class DartQuickFix implements IntentionAction, Comparable<Intention
 
   void setSourceChange(@Nullable final SourceChange sourceChange) {
     mySourceChange = sourceChange;
-  }
-
-  void setSuppressActionDelegate(@Nullable final DartProblemGroup.DartSuppressAction suppressActionDelegate) {
-    mySuppressActionDelegate = suppressActionDelegate;
   }
 
   @Override
