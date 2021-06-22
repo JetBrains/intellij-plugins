@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.annotator;
 
 import com.intellij.codeInsight.intention.IntentionAction;
@@ -11,59 +11,112 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.fixes.DartQuickFix;
 import com.jetbrains.lang.dart.psi.DartFile;
-import org.dartlang.analysis.server.protocol.AnalysisErrorSeverity;
-import org.jetbrains.annotations.Nls;
+import org.dartlang.analysis.server.protocol.SourceChange;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DartProblemGroup implements SuppressableProblemGroup {
   private static final SuppressIntentionAction[] NO_ACTIONS = {};
 
-  @NotNull private final String myErrorCode;
-  @NotNull private final String myErrorSeverity;
+  private final @Nullable String myErrorCode;
 
-  public DartProblemGroup(@NotNull final String errorCode, @NotNull final String errorSeverity) {
+  private boolean myShowOwnSuppressActions;
+  private @Nullable List<DartServerBasedIgnoreAction> myIgnoreFixes;
+
+  public DartProblemGroup(@Nullable String errorCode) {
     myErrorCode = errorCode;
-    myErrorSeverity = errorSeverity;
+  }
+
+  public void setShowOwnSuppressActions(boolean showOwnSuppressActions) {
+    myShowOwnSuppressActions = showOwnSuppressActions;
+  }
+
+  public void addIgnoreFix(@NotNull SourceChange sourceChange) {
+    if (myIgnoreFixes == null) {
+      myIgnoreFixes = new ArrayList<>(2);
+    }
+    int index = myIgnoreFixes.size();
+    myIgnoreFixes.add(new DartServerBasedIgnoreAction(index, sourceChange));
   }
 
   @Override
-  public SuppressIntentionAction @NotNull [] getSuppressActions(@Nullable final PsiElement element) {
-    if (element != null && element.getContainingFile() instanceof DartFile) {
+  public SuppressIntentionAction @NotNull [] getSuppressActions(@Nullable PsiElement element) {
+    if (myIgnoreFixes != null) {
+      return myIgnoreFixes.toArray(SuppressIntentionAction.EMPTY_ARRAY);
+    }
+
+    if (myShowOwnSuppressActions && myErrorCode != null && element != null && element.getContainingFile() instanceof DartFile) {
       return new SuppressIntentionAction[]{
-        new DartSuppressAction(myErrorCode, myErrorSeverity, false, false),
-        new DartSuppressAction(myErrorCode, myErrorSeverity, false, true)
+        new DartSuppressAction(myErrorCode, false),
+        new DartSuppressAction(myErrorCode, true)
       };
     }
+
     return NO_ACTIONS;
   }
 
-  @Nullable
   @Override
-  public String getProblemName() {
+  public @Nullable String getProblemName() {
     return null;
   }
 
+  private static class DartServerBasedIgnoreAction extends SuppressIntentionAction implements Comparable<IntentionAction> {
+    private final int myIndex;
+    private final @NotNull SourceChange mySourceChange;
+
+    private DartServerBasedIgnoreAction(int index, @NotNull SourceChange sourceChange) {
+      myIndex = index;
+      mySourceChange = sourceChange;
+    }
+
+    @Override
+    public @NotNull String getText() {
+      return mySourceChange.getMessage();
+    }
+
+    @Override
+    public @NotNull String getFamilyName() {
+      return DartBundle.message("intention.family.name.suppress.errors.and.warnings.in.dart.code");
+    }
+
+    @Override
+    public void invoke(@NotNull Project project, Editor editor, @NotNull PsiElement element) throws IncorrectOperationException {
+      DartQuickFix.doInvoke(project, editor, element.getContainingFile(), mySourceChange, null);
+    }
+
+    @Override
+    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
+      return DartQuickFix.isAvailable(project, mySourceChange);
+    }
+
+    @Override
+    public int compareTo(@NotNull IntentionAction o) {
+      if (o instanceof DartServerBasedIgnoreAction) {
+        return myIndex - ((DartServerBasedIgnoreAction)o).myIndex;
+      }
+      return 0;
+    }
+  }
+
   public static class DartSuppressAction extends SuppressIntentionAction implements Comparable<IntentionAction> {
-    public static final String IGNORE_PREFIX = "ignore:";
-    @NotNull private final String myErrorCode;
-    @NotNull private final String myErrorSeverity;
+    private static final String IGNORE_PREFIX = "ignore:";
+
+    private final @NotNull String myErrorCode;
     private final boolean myEolComment;
 
     /**
      * @param eolComment {@code true} means that {@code //ignore} comment should be placed in the end of the current line, {@code false} -> on previous line
      */
-    public DartSuppressAction(@NotNull String errorCode, @NotNull String errorSeverity, boolean topLevelAction, boolean eolComment) {
+    public DartSuppressAction(@NotNull String errorCode, boolean eolComment) {
       myErrorCode = errorCode;
-      myErrorSeverity = errorSeverity;
       myEolComment = eolComment;
-      String severityText = errorSeverity.equals(AnalysisErrorSeverity.INFO) ? "warning" : StringUtil.toLowerCase(errorSeverity);
-      if (topLevelAction) {
-        // Suppress 'unused_local' warning
-        setText(DartBundle.message("intention.text.suppress.0.1", errorCode, severityText));
-      }
-      else if (eolComment) {
+
+      if (eolComment) {
         // Suppress 'unused_local' using EOL comment
         setText(DartBundle.message("intention.text.suppress.0.using.eol.comment", errorCode));
       }
@@ -73,10 +126,8 @@ public class DartProblemGroup implements SuppressableProblemGroup {
       }
     }
 
-    @Nls
-    @NotNull
     @Override
-    public String getFamilyName() {
+    public @NotNull String getFamilyName() {
       return DartBundle.message("intention.family.name.suppress.errors.and.warnings.in.dart.code");
     }
 
@@ -89,9 +140,8 @@ public class DartProblemGroup implements SuppressableProblemGroup {
     }
 
     @Override
-    public boolean isAvailable(@NotNull final Project project, final Editor editor, @NotNull final PsiElement element) {
+    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
       if (editor == null) return false;
-      if (myErrorSeverity.equals(AnalysisErrorSeverity.ERROR)) return false;
 
       final Document document = editor.getDocument();
       final int line = document.getLineNumber(element.getTextRange().getStartOffset());
@@ -104,7 +154,7 @@ public class DartProblemGroup implements SuppressableProblemGroup {
       }
     }
 
-    private static boolean hasEolIgnoreComment(@NotNull final Document document, final int line) {
+    private static boolean hasEolIgnoreComment(@NotNull Document document, int line) {
       final CharSequence lineText =
         document.getCharsSequence().subSequence(document.getLineStartOffset(line), document.getLineEndOffset(line));
       if (!StringUtil.contains(lineText, IGNORE_PREFIX)) return false;
@@ -124,7 +174,7 @@ public class DartProblemGroup implements SuppressableProblemGroup {
       return false;
     }
 
-    private static boolean hasIgnoreCommentOnPrevLine(@NotNull final Document document, final int line) {
+    private static boolean hasIgnoreCommentOnPrevLine(@NotNull Document document, int line) {
       if (line == 0) return false;
 
       final CharSequence prevLine =
@@ -152,9 +202,7 @@ public class DartProblemGroup implements SuppressableProblemGroup {
     }
 
     @Override
-    public void invoke(@NotNull final Project project,
-                       final Editor editor,
-                       @NotNull final PsiElement element) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, @NotNull PsiElement element) throws IncorrectOperationException {
       if (editor == null) return;
 
       final Document document = editor.getDocument();
@@ -178,7 +226,7 @@ public class DartProblemGroup implements SuppressableProblemGroup {
       }
     }
 
-    private static void appendErrorCode(@NotNull final Document document, final int line, @NotNull final String errorCode) {
+    private static void appendErrorCode(@NotNull Document document, int line, @NotNull String errorCode) {
       final int lineEndOffset = document.getLineEndOffset(line);
       int index = lineEndOffset - 1;
       while (index >= 0 && document.getCharsSequence().charAt(index) == ' ') {
@@ -187,7 +235,7 @@ public class DartProblemGroup implements SuppressableProblemGroup {
       document.replaceString(index + 1, lineEndOffset, ", " + errorCode);
     }
 
-    private static void addEolComment(@NotNull final Document document, final int line, @NotNull final String errorCode) {
+    private static void addEolComment(@NotNull Document document, int line, @NotNull String errorCode) {
       final int lineStartOffset = document.getLineStartOffset(line);
       final int lineEndOffset = document.getLineEndOffset(line);
       final CharSequence lineText = document.getCharsSequence().subSequence(lineStartOffset, lineEndOffset);
@@ -205,7 +253,7 @@ public class DartProblemGroup implements SuppressableProblemGroup {
       }
     }
 
-    private static void addCommentOnPrevLine(@NotNull final Document document, final int line, @NotNull final String errorCode) {
+    private static void addCommentOnPrevLine(@NotNull Document document, int line, @NotNull String errorCode) {
       final int lineStartOffset = document.getLineStartOffset(line);
       int offset = 0;
       while (document.getCharsSequence().charAt(lineStartOffset + offset) == ' ') {

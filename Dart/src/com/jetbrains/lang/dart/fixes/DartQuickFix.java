@@ -73,9 +73,17 @@ public final class DartQuickFix implements IntentionAction, Comparable<Intention
       return;
     }
 
-    if (mySourceChange == null) return;
+    if (mySourceChange != null) {
+      doInvoke(project, editor, file, mySourceChange, this);
+    }
+  }
 
-    final SourceFileEdit fileEdit = mySourceChange.getEdits().get(0);
+  public static void doInvoke(@NotNull Project project,
+                              @NotNull Editor editor,
+                              @NotNull PsiFile file,
+                              @NotNull SourceChange sourceChange,
+                              @Nullable DartQuickFix dartQuickFix) {
+    final SourceFileEdit fileEdit = sourceChange.getEdits().get(0);
     final String filePath = FileUtil.toSystemIndependentName(fileEdit.getFile());
 
     final VirtualFile virtualFile;
@@ -89,7 +97,7 @@ public final class DartQuickFix implements IntentionAction, Comparable<Intention
         final VirtualFile directory = VfsUtil.createDirectoryIfMissing(directoryPath);
         if (directory == null) throw new IOException("failed to create folder " + FileUtil.toSystemDependentName(directoryPath));
 
-        virtualFile = directory.createChildData(this, PathUtil.getFileName(filePath));
+        virtualFile = directory.createChildData(sourceChange, PathUtil.getFileName(filePath));
       }
       catch (IOException e) {
         final String message = DartBundle.message("failed.to.create.file.0.1", FileUtil.toSystemDependentName(filePath), e.getMessage());
@@ -108,9 +116,12 @@ public final class DartQuickFix implements IntentionAction, Comparable<Intention
     final Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
     if (document == null) return;
 
-    DartAnalysisServerService.getInstance(project).fireBeforeQuickFixInvoked(this, editor, file);
+    if (dartQuickFix != null) {
+      DartAnalysisServerService.getInstance(project).fireBeforeQuickFixInvoked(dartQuickFix, editor, file);
+    }
+
     try {
-      AssistUtils.applySourceChange(project, mySourceChange, true);
+      AssistUtils.applySourceChange(project, sourceChange, true);
     }
     catch (DartSourceEditException e) {
       CommonRefactoringUtil.showErrorHint(project, editor, e.getMessage(), CommonBundle.getErrorTitle(), null);
@@ -126,9 +137,11 @@ public final class DartQuickFix implements IntentionAction, Comparable<Intention
 
     myQuickFixSet.ensureInitialized();
 
-    if (mySourceChange == null) return false;
+    return mySourceChange != null && isAvailable(project, mySourceChange);
+  }
 
-    final List<SourceFileEdit> fileEdits = mySourceChange.getEdits();
+  public static boolean isAvailable(@NotNull Project project, @NotNull SourceChange sourceChange) {
+    final List<SourceFileEdit> fileEdits = sourceChange.getEdits();
     if (fileEdits.size() != 1) return false;
 
     final SourceFileEdit fileEdit = fileEdits.get(0);
