@@ -186,8 +186,7 @@ public final class DartAnnotator implements Annotator {
 
     processDartRegionsInRange(notYetAppliedErrors, element.getTextRange(), err -> {
       VirtualFile vFile = element.getContainingFile().getVirtualFile();
-      DartQuickFixSet quickFixSet = new DartQuickFixSet(element.getManager(), vFile, err.getOffset(), err.getCode());
-      createAnnotation(holder, err, quickFixSet.getQuickFixes());
+      createAnnotation(holder, err, new DartQuickFixSet(element.getManager(), vFile, err.getOffset(), err.getCode()));
     });
 
     processDartRegionsInRange(notYetAppliedHighlighting, element.getTextRange(), region -> {
@@ -268,9 +267,9 @@ public final class DartAnnotator implements Annotator {
     }
   }
 
-  private static void createAnnotation(@NotNull final AnnotationHolder holder,
-                                       @NotNull final DartServerData.DartError error,
-                                       @NotNull List<DartQuickFix> fixes) {
+  private static void createAnnotation(@NotNull AnnotationHolder holder,
+                                       @NotNull DartServerData.DartError error,
+                                       @NotNull DartQuickFixSet quickFixSet) {
     final TextRange textRange = new TextRange(error.getOffset(), error.getOffset() + error.getLength());
     final String severity = error.getSeverity();
     final String message = error.getMessage();
@@ -304,9 +303,9 @@ public final class DartAnnotator implements Annotator {
       builder = builder.textAttributes(textAttributesKey);
     }
     if (error.getCode() != null) {
-      builder = builder.problemGroup(new DartProblemGroup(error.getCode(), error.getSeverity()));
+      builder = builder.problemGroup(quickFixSet.getProblemGroup());
     }
-    for (DartQuickFix fix : fixes) {
+    for (DartQuickFix fix : quickFixSet.getQuickFixes()) {
       builder = builder.withFix(fix);
     }
     builder.create();
