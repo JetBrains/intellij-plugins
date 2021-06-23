@@ -31,6 +31,7 @@ public final class LibHelperFactory {
 
   // Check if it is a maven module first, java deps will be added via maven so project libs dont need to be changed
   public LibHelper helperFor(Module module) {
+    if (module.isDisposed()) return NO_GAUGE_MODULE;
     if (!isGaugeProject(module)) return NO_GAUGE_MODULE;
 
     if (GaugeUtil.isMavenModule(module) || GaugeUtil.isGradleModule(module)) {
