@@ -17,6 +17,7 @@ package org.jetbrains.idea.perforce.application;
 
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.PerformInBackgroundOption;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vcs.CheckinProjectPanel;
@@ -179,7 +180,7 @@ public class PerforceCheckinEnvironment implements CheckinEnvironment{
       operations.add(new P4DeleteOperation(list == null ? manager.getDefaultListName() : list.getName(), file));
     }
     VcsOperationLog.getInstance(myProject).queueOperations(operations, PerforceBundle.message("file.removing.files"),
-                                                       VcsConfiguration.getInstance(myProject).getAddRemoveOption());
+                                                           PerformInBackgroundOption.ALWAYS_BACKGROUND);
     return Collections.emptyList();
   }
 
@@ -192,7 +193,7 @@ public class PerforceCheckinEnvironment implements CheckinEnvironment{
       ops.add(new P4AddOperation(activeChangeList, file));
     }
     VcsOperationLog.getInstance(myProject).queueOperations(ops, PerforceBundle.message("progress.title.running.perforce.commands"),
-                                                       VcsConfiguration.getInstance(myProject).getAddRemoveOption());
+                                                           PerformInBackgroundOption.ALWAYS_BACKGROUND);
     return Collections.emptyList();
   }
 

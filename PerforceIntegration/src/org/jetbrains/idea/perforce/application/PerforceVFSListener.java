@@ -123,9 +123,8 @@ public final class PerforceVFSListener extends VcsVFSListener {
   protected void performAdding(@NotNull final Collection<VirtualFile> addedFiles, @NotNull final Map<VirtualFile, VirtualFile> copyFromMap) {
 
     final String title = PerforceBundle.message("progress.title.running.perforce.commands");
-    final PerformInBackgroundOption option = VcsConfiguration.getInstance(myProject).getAddRemoveOption();
     List<VcsOperation> operations = createOperations(addedFiles, copyFromMap);
-    VcsOperationLog.getInstance(myProject).queueOperations(operations, title, option);
+    VcsOperationLog.getInstance(myProject).queueOperations(operations, title, PerformInBackgroundOption.ALWAYS_BACKGROUND);
   }
 
   private List<VcsOperation> createOperations(Collection<VirtualFile> addedFiles, final Map<VirtualFile, VirtualFile> copyFromMap) {
@@ -210,8 +209,8 @@ public final class PerforceVFSListener extends VcsVFSListener {
     }
 
     VcsOperationLog.getInstance(myProject).queueOperations(operations,
-                                                       PerforceBundle.message("progress.title.running.perforce.commands"),
-                                                       VcsConfiguration.getInstance(myProject).getAddRemoveOption());
+                                                           PerforceBundle.message("progress.title.running.perforce.commands"),
+                                                           PerformInBackgroundOption.ALWAYS_BACKGROUND);
   }
 
   @Override
@@ -245,7 +244,7 @@ public final class PerforceVFSListener extends VcsVFSListener {
     VcsOperationLog.getInstance(myProject).queueOperations(
       Collections.singletonList(op),
       PerforceBundle.message("progress.title.running.perforce.commands"),
-      VcsConfiguration.getInstance(myProject).getEditOption());
+      PerformInBackgroundOption.ALWAYS_BACKGROUND);
   }
 
   public static void updateLastUnchangedContent(VirtualFile file, final ChangeListManager changeListManager) {

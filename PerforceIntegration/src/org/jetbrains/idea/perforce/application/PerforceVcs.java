@@ -202,7 +202,7 @@ public final class PerforceVcs extends AbstractVcs {
       operations.add(new P4EditOperation(list.getName(), vFile));
     }
     VcsOperationLog.getInstance(myProject).queueOperations(operations, PerforceBundle.message("progress.title.perforce.edit"),
-                    VcsConfiguration.getInstance(myProject).getEditOption());
+                                                           PerformInBackgroundOption.ALWAYS_BACKGROUND);
   }
 
   @Nullable
