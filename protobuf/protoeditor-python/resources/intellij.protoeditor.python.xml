@@ -1,5 +1,7 @@
 <idea-plugin package="com.intellij.protobuf.python">
-  <depends>com.intellij.modules.python</depends>
+  <dependencies>
+    <plugin id="com.intellij.modules.python"/>
+  </dependencies>
 
   <extensions defaultExtensionNs="com.intellij">
     <!-- Python -> proto goto -->
