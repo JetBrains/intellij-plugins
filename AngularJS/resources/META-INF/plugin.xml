@@ -179,8 +179,6 @@
     <directoryProjectConfigurator implementation="org.angular2.cli.AngularJSProjectConfigurator"
                                   order="after PlatformProjectConfigurator"/>
     <framework.detector implementation="org.angular2.cli.AngularJSFrameworkDetector"/>
-    <fileType name="tsconfig"
-              fileNamesCaseInsensitive="tsconfig.app.json;tsconfig.lib.json;tsconfig.spec.json;tsconfig.e2e.json;tsconfig.editor.json"/>
     <stubIndex implementation="org.angular2.index.Angular2TemplateUrlIndex"/>
     <stubIndex implementation="org.angular2.index.Angular2SourcePipeIndex"/>
     <stubIndex implementation="org.angular2.index.Angular2SourceDirectiveIndex"/>
