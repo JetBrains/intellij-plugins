@@ -17,15 +17,19 @@ public enum Type {
 
   public static final class Categories {
     public static final DiagramCategory STATE =
-      new DiagramCategory(AngularJSBundle.message("category.name.states"), AllIcons.Hierarchy.Class, true);
+      new DiagramCategory(AngularJSBundle.messagePointer("category.name.states"), AllIcons.Hierarchy.Class, true);
+
     public static final DiagramCategory VIEW =
-      new DiagramCategory(AngularJSBundle.message("category.name.views"), AllIcons.Actions.Forward, true);
+      new DiagramCategory(AngularJSBundle.messagePointer("category.name.views"), AllIcons.Actions.Forward, true);
+
     public static final DiagramCategory TEMPLATE =
-      new DiagramCategory(AngularJSBundle.message("category.name.templates"), AllIcons.Actions.EditSource, true);
+      new DiagramCategory(AngularJSBundle.messagePointer("category.name.templates"), AllIcons.Actions.EditSource, true);
+
     public static final DiagramCategory TEMPLATE_PLACEHOLDER = new DiagramCategory(
-      AngularJSBundle.message("category.name.templateplaceholders"), AllIcons.Actions.Unselectall, true);
+      AngularJSBundle.messagePointer("category.name.templateplaceholders"), AllIcons.Actions.Unselectall, true);
+
     public static final DiagramCategory TOP_LEVEL_TEMPLATE =
-      new DiagramCategory(AngularJSBundle.message("category.name.topleveltemplate"), AllIcons.Actions.EditSource, true);
+      new DiagramCategory(AngularJSBundle.messagePointer("category.name.topleveltemplate"), AllIcons.Actions.EditSource, true);
   }
 
   private final DiagramCategory myCategory;

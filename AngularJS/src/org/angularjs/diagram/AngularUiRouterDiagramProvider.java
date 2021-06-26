@@ -508,10 +508,10 @@ final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramOb
       }
 
       @Override
-      public @NotNull JComponent createNodeComponent(DiagramNode<DiagramObject> node,
-                                                     DiagramBuilder builder,
-                                                     Point basePoint,
-                                                     JPanel wrapper) {
+      public @NotNull JComponent createNodeComponent(@NotNull DiagramNode<DiagramObject> node,
+                                                     @NotNull DiagramBuilder builder,
+                                                     @NotNull Point basePoint,
+                                                     @NotNull JPanel wrapper) {
         final DiagramNodeContainer container = new DiagramNodeContainer(node, builder, basePoint);
         if (!GraphViewUtil.isPrintMode()) {
           if (!node.getIdentifyingElement().getErrors().isEmpty()) {
