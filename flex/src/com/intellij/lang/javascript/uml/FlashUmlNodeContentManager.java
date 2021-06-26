@@ -14,13 +14,13 @@ import org.jetbrains.annotations.Nullable;
 
 public class FlashUmlNodeContentManager extends AbstractDiagramNodeContentManager {
   private final DiagramCategory myFields =
-    new DiagramCategory(DiagramBundle.message("category.name.fields"), PlatformIcons.FIELD_ICON);
+    new DiagramCategory(DiagramBundle.messagePointer("category.name.fields"), PlatformIcons.FIELD_ICON);
   private final DiagramCategory myConstructors =
-    new DiagramCategory(DiagramBundle.message("category.name.constructors"), JSFunctionImpl.CONSTRUCTOR_ICON);
+    new DiagramCategory(DiagramBundle.messagePointer("category.name.constructors"), JSFunctionImpl.CONSTRUCTOR_ICON);
   private final DiagramCategory myMethods =
-    new DiagramCategory(DiagramBundle.message("category.name.methods"), PlatformIcons.METHOD_ICON);
+    new DiagramCategory(DiagramBundle.messagePointer("category.name.methods"), PlatformIcons.METHOD_ICON);
   private final DiagramCategory myProperties =
-    new DiagramCategory(DiagramBundle.message("category.name.properties"), PlatformIcons.PROPERTY_ICON);
+    new DiagramCategory(DiagramBundle.messagePointer("category.name.properties"), PlatformIcons.PROPERTY_ICON);
 
   private final DiagramCategory[] myCategories = {myFields, myConstructors, myMethods, myProperties};
 
