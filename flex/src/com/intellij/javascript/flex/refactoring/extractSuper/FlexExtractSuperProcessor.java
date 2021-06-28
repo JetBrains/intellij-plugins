@@ -281,20 +281,15 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
     else {
       if (myMode == JSExtractSuperMode.ExtractSuperTurnRefs) {
         createSuperClassifier(formatters);
-        if (myTargetClass != null) {
-          rebindReferencesToTarget(usages, formatters);
-        }
+      }
+      else if (ActionScriptResolveUtil.isFileLocalSymbol(mySourceClass)) {
+        renameOriginalFileLocalClass(formatters);
       }
       else {
-        if (ActionScriptResolveUtil.isFileLocalSymbol(mySourceClass)) {
-          renameOriginalFileLocalClass(formatters);
-        }
-        else {
-          renameOriginalClass(formatters);
-        }
-        if (myTargetClass != null) {
-          rebindReferencesToTarget(usages, formatters);
-        }
+        renameOriginalClass(formatters);
+      }
+      if (myTargetClass != null) {
+        rebindReferencesToTarget(usages, formatters);
       }
     }
     JSRefactoringUtil.format(formatters);
