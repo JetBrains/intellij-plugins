@@ -108,12 +108,12 @@
                              key="gauge.inspection.group"
                              instance="com.thoughtworks.gauge.settings.GaugeSettings"/>
     <intentionAction>
-      <category>Gauge</category>
+      <categoryKey>gauge.intention.category</categoryKey>
       <className>com.thoughtworks.gauge.intention.ConvertToDynamicArgIntention</className>
       <descriptionDirectoryName>ConvertToDynamicArgIntention</descriptionDirectoryName>
     </intentionAction>
     <intentionAction>
-      <category>Gauge</category>
+      <categoryKey>gauge.intention.category</categoryKey>
       <className>com.thoughtworks.gauge.intention.ConvertToStaticArgIntention</className>
       <descriptionDirectoryName>ConvertToStaticArgIntention</descriptionDirectoryName>
     </intentionAction>
