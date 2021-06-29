@@ -2,6 +2,7 @@
 package com.intellij.prettierjs;
 
 import com.google.gson.JsonObject;
+import com.intellij.javascript.nodejs.execution.NodeTargetRun;
 import com.intellij.javascript.nodejs.interpreter.NodeCommandLineConfigurator;
 import com.intellij.javascript.nodejs.library.yarn.YarnPnpNodePackage;
 import com.intellij.javascript.nodejs.util.NodePackage;
@@ -100,6 +101,12 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
   private static class Protocol extends JSLanguageServiceNodeStdProtocolBase {
     Protocol(@NotNull Project project, @NotNull Consumer<?> readyConsumer) {
       super("prettier", project, readyConsumer);
+    }
+
+    @Override
+    protected void addNodeProcessAdditionalArguments(@NotNull NodeTargetRun targetRun) {
+      super.addNodeProcessAdditionalArguments(targetRun);
+      targetRun.path(JSLanguageServiceUtil.getPluginDirectory(this.getClass(), "prettierLanguageService").getAbsolutePath());
     }
 
     @Override

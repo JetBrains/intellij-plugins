@@ -2,6 +2,7 @@
 package com.intellij.lang.javascript.linter.tslint.service;
 
 import com.google.gson.*;
+import com.intellij.javascript.nodejs.execution.NodeTargetRun;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.linter.AutodetectLinterPackage;
 import com.intellij.lang.javascript.linter.ExtendedLinterState;
@@ -216,6 +217,12 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
       result.pluginPath = LocalFilePath.create(
         JSLanguageServiceUtil.getPluginDirectory(getClass(), "js/languageService/tslint-plugin-provider.js").getAbsolutePath());
       return result;
+    }
+
+    @Override
+    protected void addNodeProcessAdditionalArguments(@NotNull NodeTargetRun targetRun) {
+      super.addNodeProcessAdditionalArguments(targetRun);
+      targetRun.path(JSLanguageServiceUtil.getPluginDirectory(getClass(), "js").getAbsolutePath());
     }
 
     @Override
