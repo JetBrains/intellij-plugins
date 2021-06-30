@@ -183,6 +183,8 @@
     <!-- Live templates -->
     <liveTemplateContext
       implementation="com.intellij.protobuf.ide.template.PbTextLanguageContext"/>
+
+    <dependencySupport coordinate="com.google.protobuf:protobuf-java" kind="java"/>
   </extensions>
 
   <actions>
