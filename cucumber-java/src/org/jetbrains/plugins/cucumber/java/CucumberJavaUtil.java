@@ -362,12 +362,15 @@ public final class CucumberJavaUtil {
 
     PsiClass parameterTypeClass = ClassUtil.findPsiClass(PsiManager.getInstance(module.getProject()), PARAMETER_TYPE_CLASS);
     if (parameterTypeClass != null) {
-      for (PsiMethod method: parameterTypeClass.getMethods()) {
-        if (method.getModifierList().hasModifierProperty(PsiModifier.PUBLIC) &&
-            method.getModifierList().hasModifierProperty(PsiModifier.STATIC) || method.isConstructor()) {
-          JavaFindUsagesHelper.processElementUsages(method, options, processor);
+      ProgressManager.getInstance().runProcess(() -> {
+        for (PsiMethod method: parameterTypeClass.getMethods()) {
+          ProgressManager.checkCanceled();
+          if (method.getModifierList().hasModifierProperty(PsiModifier.PUBLIC) &&
+              method.getModifierList().hasModifierProperty(PsiModifier.STATIC) || method.isConstructor()) {
+            JavaFindUsagesHelper.processElementUsages(method, options, processor);
+          }
         }
-      }
+      }, null);
     }
 
     for (UsageInfo ui: processor.getResults()) {
