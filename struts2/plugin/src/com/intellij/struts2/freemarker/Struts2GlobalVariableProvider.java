@@ -30,7 +30,7 @@ import com.intellij.psi.CommonClassNames;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiClassType;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.impl.source.jsp.JspManager;
+import com.intellij.jsp.JspManager;
 import com.intellij.psi.util.PsiTypesUtil;
 import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlFile;
