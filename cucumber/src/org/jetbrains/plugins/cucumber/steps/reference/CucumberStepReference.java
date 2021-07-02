@@ -14,6 +14,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
+import org.jetbrains.plugins.cucumber.CucumberUtil;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinStepImpl;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 import org.jetbrains.plugins.cucumber.steps.CucumberStepHelper;
@@ -109,10 +110,7 @@ public class CucumberStepReference implements PsiPolyVariantReference {
     List<AbstractStepDefinition> stepDefinitions = CachedValuesManager.getCachedValue(featureFile, () -> {
       List<AbstractStepDefinition> allStepDefinition = new ArrayList<>();
       for (CucumberJvmExtensionPoint e : frameworks) {
-        List<AbstractStepDefinition> frameworkStepDefinitions = e.loadStepsFor(featureFile, module);
-        if (frameworkStepDefinitions != null) {
-          allStepDefinition.addAll(frameworkStepDefinitions);
-        }
+        allStepDefinition.addAll(CucumberUtil.loadFrameworkSteps(e, featureFile, module));
       }
       return CachedValueProvider.Result.create(allStepDefinition, PsiModificationTracker.MODIFICATION_COUNT);
     });
