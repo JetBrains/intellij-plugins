@@ -716,6 +716,8 @@ ServiceMethod ::= rpc Identifier '(' ServiceMethodType ')' returns '(' ServiceMe
     'com.intellij.protobuf.lang.psi.PbOptionStatementOwner'
   ]
   mixin = 'com.intellij.protobuf.lang.psi.impl.PbServiceMethodMixin'
+  stubClass = 'com.intellij.protobuf.lang.stub.PbServiceMethodStub'
+  elementTypeFactory = 'com.intellij.protobuf.lang.stub.type.PbStubElementTypes.get'
   methods = [
     nameIdentifier = 'IDENTIFIER_LITERAL'
   ]

@@ -16,8 +16,6 @@
 package com.intellij.protobuf.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiComment;
-import com.intellij.psi.util.QualifiedName;
 import com.intellij.protobuf.ide.util.PbIcons;
 import com.intellij.protobuf.lang.descriptor.Descriptor;
 import com.intellij.protobuf.lang.descriptor.DescriptorOptionType;
@@ -26,6 +24,11 @@ import com.intellij.protobuf.lang.psi.PbMethodOptions;
 import com.intellij.protobuf.lang.psi.PbOptionStatement;
 import com.intellij.protobuf.lang.psi.PbServiceMethod;
 import com.intellij.protobuf.lang.psi.util.PbCommentUtil;
+import com.intellij.protobuf.lang.stub.PbServiceMethodStub;
+import com.intellij.psi.PsiComment;
+import com.intellij.psi.stubs.IStubElementType;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.util.QualifiedName;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,10 +36,14 @@ import javax.swing.*;
 import java.util.Collections;
 import java.util.List;
 
-abstract class PbServiceMethodMixin extends PbNamedElementBase implements PbServiceMethod {
+abstract class PbServiceMethodMixin extends PbStubbedNamedDefinitionBase<PbServiceMethodStub> implements PbServiceMethod {
 
   PbServiceMethodMixin(ASTNode node) {
     super(node);
+  }
+
+  PbServiceMethodMixin(PbServiceMethodStub stub, IStubElementType type) {
+    super(stub, type);
   }
 
   @NotNull
@@ -77,5 +84,10 @@ abstract class PbServiceMethodMixin extends PbNamedElementBase implements PbServ
       return Collections.emptyList();
     }
     return methodOptions.getOptionStatements();
+  }
+
+  @Override
+  public @Nullable PbBlockBody getBody() {
+    return PsiTreeUtil.getChildOfType(this, PbMethodOptions.class);
   }
 }
