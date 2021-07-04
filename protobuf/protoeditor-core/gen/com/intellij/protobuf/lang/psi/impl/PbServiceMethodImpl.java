@@ -10,12 +10,18 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static com.intellij.protobuf.lang.psi.PbTypes.*;
 import com.intellij.protobuf.lang.psi.*;
 import com.intellij.protobuf.lang.psi.util.PbPsiImplUtil;
+import com.intellij.protobuf.lang.stub.PbServiceMethodStub;
+import com.intellij.psi.stubs.IStubElementType;
 import static com.intellij.protobuf.lang.psi.ProtoTokenTypes.*;
 
 public class PbServiceMethodImpl extends PbServiceMethodMixin implements PbServiceMethod {
 
   public PbServiceMethodImpl(ASTNode node) {
     super(node);
+  }
+
+  public PbServiceMethodImpl(PbServiceMethodStub stub, IStubElementType type) {
+    super(stub, type);
   }
 
   public void accept(@NotNull PbVisitor visitor) {

@@ -45,7 +45,7 @@ public interface PbTypes {
   IElementType RESERVED_STATEMENT = new PbElementType("RESERVED_STATEMENT");
   IElementType SERVICE_BODY = PbCustomTypes.get("SERVICE_BODY");
   IElementType SERVICE_DEFINITION = PbStubElementTypes.get("SERVICE_DEFINITION");
-  IElementType SERVICE_METHOD = new PbElementType("SERVICE_METHOD");
+  IElementType SERVICE_METHOD = PbStubElementTypes.get("SERVICE_METHOD");
   IElementType SERVICE_METHOD_TYPE = new PbElementType("SERVICE_METHOD_TYPE");
   IElementType SERVICE_STREAM = new PbElementType("SERVICE_STREAM");
   IElementType SIMPLE_FIELD = new PbElementType("SIMPLE_FIELD");
