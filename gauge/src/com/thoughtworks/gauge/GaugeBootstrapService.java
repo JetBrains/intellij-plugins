@@ -94,7 +94,7 @@ public final class GaugeBootstrapService implements Disposable {
             return new LibHelperFactory().helperFor(module);
           }
         });
-        if (helper == LibHelperFactory.NO_GAUGE_MODULE) continue;
+        if (helper == LibHelperFactory.NO_GAUGE_MODULE || helper == null) continue;
 
         indicator.setText(GaugeBundle.message("gauge.init.connection.for", module.getName()));
         helper.initConnection();
