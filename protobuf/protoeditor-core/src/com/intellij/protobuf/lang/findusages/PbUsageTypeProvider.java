@@ -15,12 +15,12 @@
  */
 package com.intellij.protobuf.lang.findusages;
 
+import com.intellij.protobuf.lang.PbLangBundle;
+import com.intellij.protobuf.lang.psi.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.usages.impl.rules.UsageType;
 import com.intellij.usages.impl.rules.UsageTypeProvider;
-import com.intellij.protobuf.lang.PbLangBundle;
-import com.intellij.protobuf.lang.psi.*;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -45,6 +45,10 @@ public class PbUsageTypeProvider implements UsageTypeProvider {
     return new UsageType(() -> PbLangBundle.message("usage.option.expr.reference"));
   }
 
+  public static UsageType serviceMethod() {
+    return new UsageType(() -> PbLangBundle.message("usage.service.method.reference"));
+  }
+
   @Nullable
   @Override
   public UsageType getUsageType(PsiElement element) {
@@ -59,6 +63,9 @@ public class PbUsageTypeProvider implements UsageTypeProvider {
       }
       if (owner instanceof PbServiceDefinition) {
         return serviceType();
+      }
+      if (owner instanceof PbServiceMethod) {
+        return serviceMethod();
       }
     }
     if (PsiTreeUtil.getParentOfType(element, PbOptionExpression.class) != null) {

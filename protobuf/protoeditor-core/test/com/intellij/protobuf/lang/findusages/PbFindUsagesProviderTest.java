@@ -15,21 +15,21 @@
  */
 package com.intellij.protobuf.lang.findusages;
 
+import com.intellij.protobuf.TestUtils;
+import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
+import com.intellij.protobuf.lang.psi.PbSymbol;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.usages.impl.rules.UsageType;
 import com.intellij.usages.impl.rules.UsageTypeProvider;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.protobuf.TestUtils;
-import com.intellij.protobuf.fixtures.PbCodeInsightFixtureTestCase;
-import com.intellij.protobuf.lang.psi.PbSymbol;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-import static com.intellij.testFramework.EditorTestUtil.CARET_TAG;
 import static com.intellij.protobuf.TestUtils.notNull;
+import static com.intellij.testFramework.EditorTestUtil.CARET_TAG;
 
 /** Tests for {@link PbFindUsagesProvider}. */
 public class PbFindUsagesProviderTest extends PbCodeInsightFixtureTestCase {
@@ -148,11 +148,11 @@ public class PbFindUsagesProviderTest extends PbCodeInsightFixtureTestCase {
     assertEquals(204, fileDef.getText().indexOf("Foo {}"));
     assertEquals(84, fileUser.getText().indexOf("Foo.Bar Foo = 777;"));
     assertSameElements(
-        describeUsageTypeNames(usageInfos),
-        PbUsageTypeProvider.fieldDeclaration().toString(),
-        PbUsageTypeProvider.serviceType().toString(),
-        PbUsageTypeProvider.extendDefinition().toString(),
-        PbUsageTypeProvider.fieldDeclaration().toString());
+      describeUsageTypeNames(usageInfos),
+      PbUsageTypeProvider.fieldDeclaration().toString(),
+      PbUsageTypeProvider.serviceMethod().toString(),
+      PbUsageTypeProvider.extendDefinition().toString(),
+      PbUsageTypeProvider.fieldDeclaration().toString());
   }
 
   public void testMessageNamedMessage() {
