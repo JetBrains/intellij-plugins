@@ -64,9 +64,11 @@ public final class GaugeProjectListener implements ProjectManagerListener {
 
   @Override
   public void projectClosing(@NotNull Project project) {
-    GaugeBootstrapService bootstrapService = GaugeBootstrapService.getInstance(project);
-    for (Module module : ModuleManager.getInstance(project).getModules()) {
-      bootstrapService.disposeComponent(module);
-    }
+    ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
+      GaugeBootstrapService bootstrapService = GaugeBootstrapService.getInstance(project);
+      for (Module module : ModuleManager.getInstance(project).getModules()) {
+        bootstrapService.disposeComponent(module);
+      }
+    }, GaugeBundle.message("gauge.dispose.progress"), true, project);
   }
 }
