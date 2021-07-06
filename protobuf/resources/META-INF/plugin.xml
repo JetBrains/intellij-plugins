@@ -190,10 +190,9 @@
   <actions>
     <action
       class="com.intellij.protobuf.ide.actions.InsertSchemaDirectiveAction"
-      id="prototext.InsertSchemaDirective"
-      text="Insert Schema Annotation"
-      description="Insert a reference to this file's root protobuf message, enabling completion, validation, and other features">
+      id="prototext.InsertSchemaDirective">
       <add-to-group group-id="EditorPopupMenu"/>
     </action>
   </actions>
+  <resource-bundle>messages.protobuf-ide</resource-bundle>
 </idea-plugin>
