@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.search.JSClassSearch;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.Processor;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -17,7 +18,7 @@ import java.util.HashSet;
 public class FlashUmlImplementationsProvider extends ImplementationsProvider<Object> {
 
   @Override
-  public Object[] getElements(Object element, Project project) {
+  public Object @NotNull [] getElements(Object element, @NotNull Project project) {
     JSClass clazz = (JSClass)element;
     final Collection<PsiElement> inheritors = Collections.synchronizedSet(new HashSet<>());
 
@@ -39,12 +40,12 @@ public class FlashUmlImplementationsProvider extends ImplementationsProvider<Obj
   }
 
   @Override
-  public String getHeaderName(Object element, Project project) {
+  public @NotNull String getHeaderName(Object element, @NotNull Project project) {
     return FlexBundle.message("javascript.uml.show.implementations.header", ((JSClass)element).getName());
   }
 
   @Override
-  public Comparator<Object> getComparator() {
+  public @NotNull Comparator<Object> getComparator() {
     return (o1, o2) -> PSI_COMPARATOR.compare((PsiElement)o1, (PsiElement)o2);
   }
 }

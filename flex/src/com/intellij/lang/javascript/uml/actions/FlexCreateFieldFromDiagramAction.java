@@ -14,6 +14,7 @@ import com.intellij.lang.javascript.refactoring.JSVisibilityUtil;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.PlatformIcons;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Konstantin Bulenkov
@@ -64,7 +65,7 @@ public class FlexCreateFieldFromDiagramAction extends NewJSMemberActionBase {
   }
 
   @Override
-  public String getActionName() {
+  public @NotNull String getActionName() {
     return JavaScriptBundle.message("new.field.action.description");
   }
 }
