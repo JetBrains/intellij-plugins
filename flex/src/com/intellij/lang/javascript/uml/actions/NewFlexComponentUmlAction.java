@@ -14,6 +14,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.util.IncorrectOperationException;
 import icons.JavaScriptPsiIcons;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -26,7 +27,7 @@ public class NewFlexComponentUmlAction extends NewJSClassUmlActionBase {
   }
 
   @Override
-  public String getActionName() {
+  public @NotNull String getActionName() {
     return FlexBundle.message("new.flex.component.command.name");
   }
 

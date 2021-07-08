@@ -23,6 +23,7 @@ import com.intellij.openapi.graph.GraphManager;
 import com.intellij.openapi.graph.builder.GraphBuilder;
 import com.intellij.openapi.graph.builder.GraphBuilderFactory;
 import com.intellij.openapi.graph.builder.util.GraphViewUtil;
+import com.intellij.openapi.graph.services.GraphSelectionService;
 import com.intellij.openapi.graph.view.Graph2D;
 import com.intellij.openapi.graph.view.Graph2DView;
 import com.intellij.openapi.graph.view.Overview;
@@ -102,7 +103,7 @@ public class Struts2GraphComponent extends JPanel implements DataProvider, Dispo
 
   public List<DomElement> getSelectedDomElements() {
     final var selected = new ArrayList<DomElement>();
-    GraphViewUtil.forEachSelectedNode(myBuilder.getGraph(), node -> {
+    GraphSelectionService.getInstance().forEachSelectedNode(myBuilder.getGraph(), node -> {
       final var nodeObject = myBuilder.getNodeObject(node);
       if (nodeObject != null) {
         ContainerUtil.addIfNotNull(selected, nodeObject.getIdentifyingElement());

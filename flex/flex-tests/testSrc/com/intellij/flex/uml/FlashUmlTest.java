@@ -5,7 +5,6 @@ import com.intellij.codeInsight.JavaCodeInsightTestCase;
 import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.diagram.*;
 import com.intellij.diagram.settings.DiagramConfiguration;
-import com.intellij.diagram.util.DiagramUtils;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.ide.DataManager;
 import com.intellij.lang.javascript.JSTestOption;
@@ -23,6 +22,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil;
+import com.intellij.openapi.graph.services.GraphCanvasLocationService;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ContentEntry;
@@ -179,7 +179,7 @@ public class FlashUmlTest extends JavaCodeInsightTestCase {
           @SuppressWarnings("unchecked")
           DiagramNode<?> node = ((DiagramDataModel<Object>)model).addElement(c);
           if (node != null) {
-            builder.createDraggedNode(node, node.getTooltip(), DiagramUtils.getBestPositionForNode(builder));
+            builder.createDraggedNode(node, node.getTooltip(), GraphCanvasLocationService.getInstance().getBestPositionForNode(builder.getGraphBuilder()));
             builder.updateGraph();
           }
         }

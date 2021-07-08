@@ -14,6 +14,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.util.IncorrectOperationException;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -27,7 +28,7 @@ public class NewActionScriptClassUmlAction extends NewJSClassUmlActionBase {
   }
 
   @Override
-  public String getActionName() {
+  public @NotNull String getActionName() {
     return FlexBundle.message("new.actionscript.class.command.name");
   }
 

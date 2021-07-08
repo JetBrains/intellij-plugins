@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSFunctionImpl;
 import com.intellij.lang.javascript.refactoring.JSVisibilityUtil;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Konstantin Bulenkov
@@ -36,7 +37,7 @@ public class FlexCreateConstructorFromDiagramAction extends JSCreateMethodAction
   }
 
   @Override
-  public String getActionName() {
+  public @NotNull String getActionName() {
     return JavaScriptBundle.message("new.constructor.action.description");
   }
 }

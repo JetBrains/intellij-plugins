@@ -13,7 +13,7 @@ import com.intellij.lang.javascript.validation.fixes.CreateClassParameters;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.graph.base.Node;
-import com.intellij.openapi.graph.builder.util.GraphViewUtil;
+import com.intellij.openapi.graph.services.GraphSelectionService;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
@@ -95,7 +95,7 @@ public abstract class NewJSClassUmlActionBase extends DiagramCreateNewElementAct
 
     String aPackage = null;
     PsiDirectory directory = null;
-    final List<Node> nodes = GraphViewUtil.getSelectedNodes(builder.getGraph());
+    final List<Node> nodes = GraphSelectionService.getInstance().getSelectedNodes(builder.getGraph());
     if (nodes.size() == 1) {
       DiagramNode node = builder.getNodeObject(nodes.get(0));
       if (node != null) {
