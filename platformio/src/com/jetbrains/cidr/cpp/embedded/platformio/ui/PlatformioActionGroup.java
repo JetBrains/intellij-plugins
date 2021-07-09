@@ -20,7 +20,7 @@ public class PlatformioActionGroup extends ActionGroup {
   }
 
   @Override
-  public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e, ActionManager manager) {
+  public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e, @NotNull ActionManager manager) {
     return ((ActionGroup)manager.getAction("platformio-group")).getChildren(e, manager);
   }
 
