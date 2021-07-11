@@ -51,6 +51,8 @@ Plugin source code was previously located at <a href="https://github.com/kropp/i
     <runConfigurationProducer implementation="com.jetbrains.lang.makefile.MakefileRunConfigurationProducer"/>
     <codeStyleSettingsProvider implementation="com.jetbrains.lang.makefile.MakefileCodeStyleSettingsProvider"/>
     <langCodeStyleSettingsProvider implementation="com.jetbrains.lang.makefile.MakefileLangCodeStyleSettingsProvider"/>
+    <lang.formatter language="Makefile" implementationClass="com.jetbrains.lang.makefile.MakefileFormattingModelBuilder" />
+    <lang.emacs language="Makefile" implementationClass="com.jetbrains.lang.makefile.MakefileEmacsHandler" />
     <lang.elementManipulator implementationClass="com.jetbrains.lang.makefile.psi.MakefilePrerequisiteManipulator"
                              forClass="com.jetbrains.lang.makefile.psi.impl.MakefilePrerequisiteImpl"/>
     <lang.elementManipulator implementationClass="com.jetbrains.lang.makefile.psi.MakefileVariableUsageManipulator"
