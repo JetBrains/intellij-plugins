@@ -49,12 +49,15 @@ class DebuggingFirstPartLesson
 
         task {
           triggerByUiComponentAndHighlight { ui: SingleHeightTabs.SingleHeightLabel ->
-            ui.info.text == XDebuggerBundle.message("debugger.session.tab.console.content.name")
+            ui.info.text == JSDebuggerBundle.message("js.console.node.process.name")
           }
         }
         task {
           text(JsDebugLessonsBundle.message("js.debugger.part.1.tool.window.1", UIBundle.message("tool.window.name.debug")))
-          text(JsDebugLessonsBundle.message("js.debugger.part.1.tool.window.2", strong(XDebuggerBundle.message("xdebugger.default.content.title")), strong(XDebuggerBundle.message("debugger.session.tab.variables.title")), strong(XDebuggerBundle.message("debugger.session.tab.frames.title")), strong(XDebuggerBundle.message("debugger.session.tab.console.content.name"))))
+          text(JsDebugLessonsBundle.message("js.debugger.part.1.tool.window.2", strong(XDebuggerBundle.message("xdebugger.default.content.title")), 
+                                            strong(XDebuggerBundle.message("debugger.session.tab.variables.title")), 
+                                            strong(XDebuggerBundle.message("debugger.session.tab.frames.title")), 
+                                            strong(JSDebuggerBundle.message("js.console.node.process.name"))))
           stateCheck {
             val text = focusOwner.toString()
             text.contains("Terminal") 
@@ -68,7 +71,7 @@ class DebuggingFirstPartLesson
         }
         task {
           text(JsDebugLessonsBundle.message("js.debugger.part.1.scripts.tab",
-                                            strong(XDebuggerBundle.message("debugger.session.tab.console.content.name")),
+                                            strong(JSDebuggerBundle.message("js.console.node.process.name")),
                                             strong(JSDebuggerBundle.message("js.console.debug.name")),
                                             strong(JSDebuggerBundle.message("js.scripts.tab.title"))))
           stateCheck {
