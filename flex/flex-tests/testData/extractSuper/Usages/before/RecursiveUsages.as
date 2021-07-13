@@ -1,9 +1,6 @@
 package {
 public class RecursiveUsages {
     public function RecursiveUsages() {
-        var v1: SourceClass = v1;
-        v1 = v1;
-
         var v2: SourceClass;
         v2 = v3;
         v3 = v2;

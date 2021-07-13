@@ -84,7 +84,7 @@ public class ActionScriptResolveTest extends BaseJSResolveTestCase {
 
   public void testResolveInClass() {
     String fileText = "class A { function get aaa() {} function foo() {\n" +
-                      "  var aaa = a<caret>aa;\n}" +
+                      "  var bbb = a<caret>aa;\n}" +
                       "}";
 
     PsiPolyVariantReference ref = configureByFileText(fileText);
