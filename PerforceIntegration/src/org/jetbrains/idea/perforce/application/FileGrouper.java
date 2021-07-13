@@ -5,9 +5,9 @@ import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.vcs.FilePath;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.NullableFunction;
+import com.intellij.util.containers.CollectionFactory;
+import com.intellij.util.containers.HashingStrategy;
 import com.intellij.util.containers.MultiMap;
-import it.unimi.dsi.fastutil.Hash;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import org.jetbrains.idea.perforce.perforce.P4File;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManager;
@@ -22,7 +22,7 @@ import java.util.Collection;
 public final class FileGrouper {
   private static <T> MultiMap<P4Connection, T> distributeByConnection(Collection<? extends T> files, NullableFunction<? super T, ? extends P4Connection> fun) {
     //todo P4ParametersConnection.equals should be based on client+server+user
-    MultiMap<P4Connection, T> sortedFiles = new MultiMap<>(new Object2ObjectOpenCustomHashMap<>(new Hash.Strategy<>() {
+    MultiMap<P4Connection, T> sortedFiles = new MultiMap<>(CollectionFactory.createCustomHashingStrategyMap(new HashingStrategy<>() {
       @Override
       public int hashCode(P4Connection object) {
         return object == null ? 0 : object.getConnectionKey().hashCode();
