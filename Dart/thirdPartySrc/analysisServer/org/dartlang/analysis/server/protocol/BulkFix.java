@@ -24,57 +24,57 @@ import java.util.Iterator;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * A suggestion from an edit.dartfix request.
+ * A description of bulk fixes to a library.
  *
  * @coverage dart.server.generated.types
  */
 @SuppressWarnings("unused")
-public class DartFixSuggestion {
+public class BulkFix {
 
-  public static final DartFixSuggestion[] EMPTY_ARRAY = new DartFixSuggestion[0];
+  public static final BulkFix[] EMPTY_ARRAY = new BulkFix[0];
 
-  public static final List<DartFixSuggestion> EMPTY_LIST = Lists.newArrayList();
-
-  /**
-   * A human readable description of the suggested change.
-   */
-  private final String description;
+  public static final List<BulkFix> EMPTY_LIST = Lists.newArrayList();
 
   /**
-   * The location of the suggested change.
+   * The path of the library.
    */
-  private final Location location;
+  private final String path;
 
   /**
-   * Constructor for {@link DartFixSuggestion}.
+   * A list of bulk fix details.
    */
-  public DartFixSuggestion(String description, Location location) {
-    this.description = description;
-    this.location = location;
+  private final List<BulkFixDetail> fixes;
+
+  /**
+   * Constructor for {@link BulkFix}.
+   */
+  public BulkFix(String path, List<BulkFixDetail> fixes) {
+    this.path = path;
+    this.fixes = fixes;
   }
 
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof DartFixSuggestion) {
-      DartFixSuggestion other = (DartFixSuggestion) obj;
+    if (obj instanceof BulkFix) {
+      BulkFix other = (BulkFix) obj;
       return
-        ObjectUtilities.equals(other.description, description) &&
-        ObjectUtilities.equals(other.location, location);
+        ObjectUtilities.equals(other.path, path) &&
+        ObjectUtilities.equals(other.fixes, fixes);
     }
     return false;
   }
 
-  public static DartFixSuggestion fromJson(JsonObject jsonObject) {
-    String description = jsonObject.get("description").getAsString();
-    Location location = jsonObject.get("location") == null ? null : Location.fromJson(jsonObject.get("location").getAsJsonObject());
-    return new DartFixSuggestion(description, location);
+  public static BulkFix fromJson(JsonObject jsonObject) {
+    String path = jsonObject.get("path").getAsString();
+    List<BulkFixDetail> fixes = BulkFixDetail.fromJsonArray(jsonObject.get("fixes").getAsJsonArray());
+    return new BulkFix(path, fixes);
   }
 
-  public static List<DartFixSuggestion> fromJsonArray(JsonArray jsonArray) {
+  public static List<BulkFix> fromJsonArray(JsonArray jsonArray) {
     if (jsonArray == null) {
       return EMPTY_LIST;
     }
-    ArrayList<DartFixSuggestion> list = new ArrayList<DartFixSuggestion>(jsonArray.size());
+    ArrayList<BulkFix> list = new ArrayList<BulkFix>(jsonArray.size());
     Iterator<JsonElement> iterator = jsonArray.iterator();
     while (iterator.hasNext()) {
       list.add(fromJson(iterator.next().getAsJsonObject()));
@@ -83,33 +83,35 @@ public class DartFixSuggestion {
   }
 
   /**
-   * A human readable description of the suggested change.
+   * A list of bulk fix details.
    */
-  public String getDescription() {
-    return description;
+  public List<BulkFixDetail> getFixes() {
+    return fixes;
   }
 
   /**
-   * The location of the suggested change.
+   * The path of the library.
    */
-  public Location getLocation() {
-    return location;
+  public String getPath() {
+    return path;
   }
 
   @Override
   public int hashCode() {
     HashCodeBuilder builder = new HashCodeBuilder();
-    builder.append(description);
-    builder.append(location);
+    builder.append(path);
+    builder.append(fixes);
     return builder.toHashCode();
   }
 
   public JsonObject toJson() {
     JsonObject jsonObject = new JsonObject();
-    jsonObject.addProperty("description", description);
-    if (location != null) {
-      jsonObject.add("location", location.toJson());
+    jsonObject.addProperty("path", path);
+    JsonArray jsonArrayFixes = new JsonArray();
+    for (BulkFixDetail elt : fixes) {
+      jsonArrayFixes.add(elt.toJson());
     }
+    jsonObject.add("fixes", jsonArrayFixes);
     return jsonObject;
   }
 
@@ -117,10 +119,10 @@ public class DartFixSuggestion {
   public String toString() {
     StringBuilder builder = new StringBuilder();
     builder.append("[");
-    builder.append("description=");
-    builder.append(description + ", ");
-    builder.append("location=");
-    builder.append(location);
+    builder.append("path=");
+    builder.append(path + ", ");
+    builder.append("fixes=");
+    builder.append(StringUtils.join(fixes, ", "));
     builder.append("]");
     return builder.toString();
   }

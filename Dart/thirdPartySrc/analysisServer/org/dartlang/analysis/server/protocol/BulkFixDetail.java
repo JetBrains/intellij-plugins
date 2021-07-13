@@ -24,57 +24,57 @@ import java.util.Iterator;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * A "fix" that can be specified in an edit.dartfix request.
+ * A description of a fix applied to a library.
  *
  * @coverage dart.server.generated.types
  */
 @SuppressWarnings("unused")
-public class DartFix {
+public class BulkFixDetail {
 
-  public static final DartFix[] EMPTY_ARRAY = new DartFix[0];
+  public static final BulkFixDetail[] EMPTY_ARRAY = new BulkFixDetail[0];
 
-  public static final List<DartFix> EMPTY_LIST = Lists.newArrayList();
-
-  /**
-   * The name of the fix.
-   */
-  private final String name;
+  public static final List<BulkFixDetail> EMPTY_LIST = Lists.newArrayList();
 
   /**
-   * A human readable description of the fix.
+   * The code of the diagnostic associated with the fix.
    */
-  private final String description;
+  private final String code;
 
   /**
-   * Constructor for {@link DartFix}.
+   * The number times the associated diagnostic was fixed in the associated source edit.
    */
-  public DartFix(String name, String description) {
-    this.name = name;
-    this.description = description;
+  private final int occurrences;
+
+  /**
+   * Constructor for {@link BulkFixDetail}.
+   */
+  public BulkFixDetail(String code, int occurrences) {
+    this.code = code;
+    this.occurrences = occurrences;
   }
 
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof DartFix) {
-      DartFix other = (DartFix) obj;
+    if (obj instanceof BulkFixDetail) {
+      BulkFixDetail other = (BulkFixDetail) obj;
       return
-        ObjectUtilities.equals(other.name, name) &&
-        ObjectUtilities.equals(other.description, description);
+        ObjectUtilities.equals(other.code, code) &&
+        other.occurrences == occurrences;
     }
     return false;
   }
 
-  public static DartFix fromJson(JsonObject jsonObject) {
-    String name = jsonObject.get("name").getAsString();
-    String description = jsonObject.get("description") == null ? null : jsonObject.get("description").getAsString();
-    return new DartFix(name, description);
+  public static BulkFixDetail fromJson(JsonObject jsonObject) {
+    String code = jsonObject.get("code").getAsString();
+    int occurrences = jsonObject.get("occurrences").getAsInt();
+    return new BulkFixDetail(code, occurrences);
   }
 
-  public static List<DartFix> fromJsonArray(JsonArray jsonArray) {
+  public static List<BulkFixDetail> fromJsonArray(JsonArray jsonArray) {
     if (jsonArray == null) {
       return EMPTY_LIST;
     }
-    ArrayList<DartFix> list = new ArrayList<DartFix>(jsonArray.size());
+    ArrayList<BulkFixDetail> list = new ArrayList<BulkFixDetail>(jsonArray.size());
     Iterator<JsonElement> iterator = jsonArray.iterator();
     while (iterator.hasNext()) {
       list.add(fromJson(iterator.next().getAsJsonObject()));
@@ -83,33 +83,31 @@ public class DartFix {
   }
 
   /**
-   * A human readable description of the fix.
+   * The code of the diagnostic associated with the fix.
    */
-  public String getDescription() {
-    return description;
+  public String getCode() {
+    return code;
   }
 
   /**
-   * The name of the fix.
+   * The number times the associated diagnostic was fixed in the associated source edit.
    */
-  public String getName() {
-    return name;
+  public int getOccurrences() {
+    return occurrences;
   }
 
   @Override
   public int hashCode() {
     HashCodeBuilder builder = new HashCodeBuilder();
-    builder.append(name);
-    builder.append(description);
+    builder.append(code);
+    builder.append(occurrences);
     return builder.toHashCode();
   }
 
   public JsonObject toJson() {
     JsonObject jsonObject = new JsonObject();
-    jsonObject.addProperty("name", name);
-    if (description != null) {
-      jsonObject.addProperty("description", description);
-    }
+    jsonObject.addProperty("code", code);
+    jsonObject.addProperty("occurrences", occurrences);
     return jsonObject;
   }
 
@@ -117,10 +115,10 @@ public class DartFix {
   public String toString() {
     StringBuilder builder = new StringBuilder();
     builder.append("[");
-    builder.append("name=");
-    builder.append(name + ", ");
-    builder.append("description=");
-    builder.append(description);
+    builder.append("code=");
+    builder.append(code + ", ");
+    builder.append("occurrences=");
+    builder.append(occurrences);
     builder.append("]");
     return builder.toString();
   }
