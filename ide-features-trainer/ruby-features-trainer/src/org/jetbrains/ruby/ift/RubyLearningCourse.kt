@@ -18,7 +18,6 @@ import org.jetbrains.ruby.ift.lesson.refactorings.RubyRefactorMenuLesson
 import org.jetbrains.ruby.ift.lesson.refactorings.RubyRenameLesson
 import training.learn.CourseManager
 import training.learn.LessonsBundle
-import training.learn.course.IftModule
 import training.learn.course.LearningCourseBase
 import training.learn.course.LearningModule
 import training.learn.course.LessonType
@@ -29,16 +28,9 @@ import training.learn.lesson.general.assistance.QuickPopupsLesson
 import training.learn.lesson.general.navigation.FindInFilesLesson
 import training.learn.lesson.general.refactorings.ExtractMethodCocktailSortLesson
 import training.learn.lesson.general.refactorings.ExtractVariableFromBubbleLesson
-import training.util.switchOnExperimentalLessons
 
 class RubyLearningCourse : LearningCourseBase(RubyLanguage.INSTANCE.id) {
-  override fun modules(): Collection<IftModule> {
-    val gitModule = if (switchOnExperimentalLessons) {
-      CourseManager.instance.findCommonModules("Git")
-    }
-    else emptyList()
-    return stableModules() + gitModule
-  }
+  override fun modules() = stableModules() + CourseManager.instance.findCommonModules("Git")
 
   private fun stableModules() = listOf(
     LearningModule(name = LessonsBundle.message("editor.basics.module.name"),
