@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server.vmService;
 
 import com.google.common.base.Charsets;
@@ -61,7 +61,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public final class DartVmServiceDebugProcess extends XDebugProcess {
+/**
+ * The {@link com.intellij.xdebugger.XDebugProcess} for the Dart VM debug process.
+ * <p>
+ * This classes has intentionally been left extensible for downstream plugins.
+ */
+public class DartVmServiceDebugProcess extends XDebugProcess {
   private static final Logger LOG = Logger.getInstance(DartVmServiceDebugProcess.class.getName());
 
   private static final String ORG_DARTLANG_APP_PREFIX = "org-dartlang-app://";
@@ -295,7 +300,7 @@ public final class DartVmServiceDebugProcess extends XDebugProcess {
     });
   }
 
-  void scheduleConnect(@NotNull String url) {
+  protected void scheduleConnect(@NotNull String url) {
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
       long startTime = System.currentTimeMillis();
 
