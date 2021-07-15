@@ -9,7 +9,7 @@ abstract class MakefileRecipeElementImpl(node: ASTNode) : ASTWrapperPsiElement(n
     return MakefileRecipeTextEscaper(this)
   }
 
-  override fun updateText(text: String): PsiLanguageInjectionHost {
+  override fun updateText(text: String): MakefileRecipe {
     val command = MakefileElementFactory.createRecipe(project, text)
     return this.replace(command) as MakefileRecipe
   }

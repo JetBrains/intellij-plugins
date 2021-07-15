@@ -9,7 +9,7 @@ abstract class MakefileSubstitutionInjectionHost(node: ASTNode) : ASTWrapperPsiE
     return MakefileSubstitutionTextEscaper(this)
   }
 
-  override fun updateText(text: String): PsiLanguageInjectionHost {
+  override fun updateText(text: String): MakefileSubstitution {
     val command = MakefileElementFactory.createSubstitution(project, text)
     return this.replace(command) as MakefileSubstitution
   }

@@ -52,9 +52,9 @@ Plugin source code was previously located at <a href="https://github.com/kropp/i
     <codeStyleSettingsProvider implementation="com.jetbrains.lang.makefile.MakefileCodeStyleSettingsProvider"/>
     <langCodeStyleSettingsProvider implementation="com.jetbrains.lang.makefile.MakefileLangCodeStyleSettingsProvider"/>
     <lang.elementManipulator implementationClass="com.jetbrains.lang.makefile.psi.MakefilePrerequisiteManipulator"
-                             forClass="com.jetbrains.lang.makefile.psi.impl.MakefilePrerequisiteImpl"/>
+                             forClass="com.jetbrains.lang.makefile.psi.MakefilePrerequisite"/>
     <lang.elementManipulator implementationClass="com.jetbrains.lang.makefile.psi.MakefileVariableUsageManipulator"
-                             forClass="com.jetbrains.lang.makefile.psi.impl.MakefileVariableUsageImpl"/>
+                             forClass="com.jetbrains.lang.makefile.psi.MakefileVariableUsage"/>
     <documentationProvider implementation="com.jetbrains.lang.makefile.MakefileDocumentationProvider"/>
     <spellchecker.support language="Makefile" implementationClass="com.jetbrains.lang.makefile.MakefileSpellcheckingStrategy" />
     <multiHostInjector implementation="com.jetbrains.lang.makefile.MakefileShellLanguageInjector"/>

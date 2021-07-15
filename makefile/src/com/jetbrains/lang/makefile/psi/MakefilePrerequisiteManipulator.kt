@@ -1,9 +1,9 @@
 package com.jetbrains.lang.makefile.psi
 
-import com.intellij.openapi.util.*
-import com.intellij.psi.*
-import com.jetbrains.lang.makefile.psi.impl.*
+import com.intellij.openapi.util.TextRange
+import com.intellij.psi.AbstractElementManipulator
 
-class MakefilePrerequisiteManipulator : AbstractElementManipulator<MakefilePrerequisiteImpl>() {
-  override fun handleContentChange(element: MakefilePrerequisiteImpl, textRange: TextRange, newContent: String) = element.updateText(newContent)
+class MakefilePrerequisiteManipulator : AbstractElementManipulator<MakefilePrerequisite>() {
+  override fun handleContentChange(element: MakefilePrerequisite, textRange: TextRange, newContent: String): MakefilePrerequisite =
+    element.updateText(newContent)
 }
