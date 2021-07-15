@@ -42,5 +42,6 @@
     <orderEntry type="module" module-name="intellij.platform.codeStyle.impl" />
     <orderEntry type="library" name="caffeine" level="project" />
     <orderEntry type="module" module-name="intellij.javascript.web" />
+    <orderEntry type="library" name="Velocity" level="project" />
   </component>
 </module>
