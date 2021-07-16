@@ -3,6 +3,7 @@ package com.thoughtworks.gauge;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -109,8 +110,10 @@ public final class GaugeBootstrapService implements Disposable {
       }
     }
 
-    runWriteCommandAction(myProject, GaugeBundle.message("gauge.restart.inspections"), GaugeBundle.GAUGE, () -> {
-      DaemonCodeAnalyzer.getInstance(myProject).restart();
+    ApplicationManager.getApplication().invokeLater(() -> {
+      WriteAction.run(() -> {
+        DaemonCodeAnalyzer.getInstance(myProject).restart();
+      });
     });
   }
 
