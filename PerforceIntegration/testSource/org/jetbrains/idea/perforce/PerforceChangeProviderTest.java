@@ -1,6 +1,7 @@
 package org.jetbrains.idea.perforce;
 
 import com.intellij.execution.process.ProcessOutput;
+import com.intellij.idea.Bombed;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.SystemInfo;
@@ -926,6 +927,7 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
   }
 
   @Test
+  @Bombed(year = 2021, month = Calendar.AUGUST, day = 20, user = "AMPivovarov")
   public void testTwoRootsWithSameConnection() {
     VirtualFile dir1 = createDirInCommand(myWorkingCopyDir, "dir1");
     VirtualFile dir2 = createDirInCommand(myWorkingCopyDir, "dir2");
@@ -956,7 +958,9 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
     assertSize(2, getChangeListManager().getAllChanges());
   }
 
-  @Test public void testRefreshIsFastForManyRootsWithSameConnection() {
+  @Test
+  @Bombed(year = 2021, month = Calendar.AUGUST, day = 20, user = "AMPivovarov")
+  public void testRefreshIsFastForManyRootsWithSameConnection() {
     int changeListCount = 10;
     int rootCount = 20;
     List<VirtualFile> roots = new ArrayList<>();
@@ -1147,7 +1151,9 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
     assertEmpty(getChangeListManager().getDeletedFiles());
   }
 
-  @Test public void testTwoWorkspaces() {
+  @Test
+  @Bombed(year = 2021, month = Calendar.AUGUST, day = 20, user = "AMPivovarov")
+  public void testTwoWorkspaces() {
     enableSilentOperation(VcsConfiguration.StandardConfirmation.ADD);
 
     VirtualFile dir1 = createDirInCommand(myWorkingCopyDir, "dir1");
