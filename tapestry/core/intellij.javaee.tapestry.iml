@@ -33,7 +33,7 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="Velocity" level="project" />
-    <orderEntry type="library" exported="" name="CGLIB" level="project" />
+    <orderEntry type="library" name="CGLIB" level="project" />
     <orderEntry type="module" module-name="intellij.platform.ide" exported="" />
     <orderEntry type="module" module-name="intellij.platform.lang" exported="" />
     <orderEntry type="module" module-name="intellij.java" exported="" />
