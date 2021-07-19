@@ -15,39 +15,23 @@
  */
 package com.intellij.protobuf.ide;
 
-import com.intellij.AbstractBundle;
+import com.intellij.DynamicBundle;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.PropertyKey;
 
-import java.lang.ref.Reference;
-import java.lang.ref.SoftReference;
-import java.util.ResourceBundle;
-
-/** Resource bundle for proto messages. */
-public class PbIdeBundle {
-
-  private static Reference<ResourceBundle> ourBundle;
+public final class PbIdeBundle extends DynamicBundle {
+  private static final PbIdeBundle INSTANCE = new PbIdeBundle();
 
   @NonNls
   private static final String BUNDLE = "messages.protobuf-ide";
 
-  private PbIdeBundle() {}
+  private PbIdeBundle() {
+    super(BUNDLE);
+  }
 
   @Nls
   public static String message(@PropertyKey(resourceBundle = BUNDLE) String key, Object... params) {
-    return AbstractBundle.message(getBundle(), key, params);
-  }
-
-  private static ResourceBundle getBundle() {
-    ResourceBundle bundle = null;
-    if (ourBundle != null) {
-      bundle = ourBundle.get();
-    }
-    if (bundle == null) {
-      bundle = ResourceBundle.getBundle(BUNDLE);
-      ourBundle = new SoftReference<>(bundle);
-    }
-    return bundle;
+    return INSTANCE.getMessage(key, params);
   }
 }
