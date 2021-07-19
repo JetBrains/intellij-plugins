@@ -2,11 +2,8 @@ package com.intellij.aws.cloudformation.tests
 
 import com.intellij.aws.cloudformation.CloudFormationPsiUtils
 import com.intellij.json.psi.JsonFile
-import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.fileTypes.PlainTextFileType
-import com.intellij.openapi.rd.attach
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase
