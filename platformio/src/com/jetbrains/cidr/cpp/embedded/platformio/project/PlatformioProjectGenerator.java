@@ -82,6 +82,11 @@ public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<BoardI
     return EMBEDDED_PROJECTS_GROUP_NAME;
   }
 
+  @Override
+  public int getGroupOrder() {
+    return GroupOrders.EMBEDDED.order + 1;
+  }
+
   @Nls
   @NotNull
   @Override
