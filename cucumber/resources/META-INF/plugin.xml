@@ -95,6 +95,8 @@
       <categoryKey>intention.family.name.cucumber</categoryKey>
     </intentionAction>
     <multiHostInjector implementation="org.jetbrains.plugins.cucumber.injector.GherkinLanguageInjector"/>
+    <lang.elementManipulator forClass="org.jetbrains.plugins.cucumber.psi.GherkinPystring"
+                             implementationClass="org.jetbrains.plugins.cucumber.GherkinPyStringManipulator"/>
   </extensions>
 
   <extensionPoints>
