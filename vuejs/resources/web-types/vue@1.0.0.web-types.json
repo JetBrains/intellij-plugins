@@ -96,6 +96,24 @@
               "required": true
             }
           ]
+        },
+        {
+          "name": "textarea",
+          "extension": true,
+          "vue-special-properties": [
+            {
+              "name": "value"
+            }
+          ]
+        },
+        {
+          "name": "select",
+          "extension": true,
+          "vue-special-properties": [
+            {
+              "name": "value"
+            }
+          ]
         }
       ],
       "attributes": [
@@ -599,7 +617,8 @@
                   "path": "/html/attributes",
                   "includeVirtual": false,
                   "filter": "vue-bind"
-                }
+                },
+                "/html/vue-special-properties"
               ]
             }
           },
