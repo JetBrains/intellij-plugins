@@ -14,7 +14,26 @@
           "doc-url": "https://kazupon.github.io/vue-i18n/guide/sfc.html#basic-usage",
           "attributes": [
             {
-              "name": "lang"
+              "name": "lang",
+              "doc-url": "https://kazupon.github.io/vue-i18n/guide/sfc.html#basic-usage",
+              "description": "Allows to specify explicit name of language used with the block.",
+              "value": {
+                "type": "enum"
+              },
+              "values": [
+                {
+                  "name": "json"
+                },
+                {
+                  "name": "yaml"
+                }
+              ]
+            },
+            {
+              "name": "locale"
+            },
+            {
+              "name": "src"
             }
           ]
         }
