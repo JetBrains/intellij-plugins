@@ -128,6 +128,8 @@ const props = {seeMe: {}}
 
   fun testTopLevelThisInInjection() = doTest()
 
+  fun testTextarea() = doTest()
+
   fun testGlobalComponentLiteral() = doDirTest()
 
   fun testExternalMixin() = doDirTest()
