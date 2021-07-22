@@ -8,10 +8,10 @@ import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueEntitiesContainer
 import org.jetbrains.vuejs.model.getDefaultVueComponentInstanceType
 
-class VueUnresolvedComponent(private val context: PsiElement) : VueComponent {
+class VueUnresolvedComponent(private val context: PsiElement,
+                             override val source: PsiElement?,
+                             override val defaultName: String?) : VueComponent {
 
-  override val defaultName: String? = null
-  override val source: PsiElement? = null
   override val parents: List<VueEntitiesContainer> = emptyList()
 
   override val thisType: JSType
