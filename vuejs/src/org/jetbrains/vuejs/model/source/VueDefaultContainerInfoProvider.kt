@@ -157,7 +157,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
             else -> getComponentDescriptor(meaningfulElement as? JSElement)
               ?.let { VueModelManager.getComponent(it) }
           }
-          ?: VueUnresolvedComponent(declaration)
+          ?: VueUnresolvedComponent(declaration, element, element.name)
         }
         .distinctKeys()
         .into(mutableMapOf<String, VueComponent>())
