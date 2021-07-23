@@ -53,8 +53,8 @@ class BrowseShelfAction : DumbAwareAction(PerforceBundle.messagePointer("shelf.b
       val browser = SimpleChangesBrowser(project, true, false)
       browser.setInclusionChangedListener { dialogBuilder.setOkActionEnabled(browser.includedChanges.isNotEmpty()) }
 
-      browser.setIncludedChanges(changes)
       browser.setChangesToDisplay(changes)
+      browser.setIncludedChanges(changes)
       browser.addToolbarAction(object : DumbAwareAction(PerforceBundle.messagePointer("shelf.unshelve"),
                                                         PerforceBundle.messagePointer("shelf.unshelve.action.description"),
                                                         AllIcons.Vcs.Unshelve) {
