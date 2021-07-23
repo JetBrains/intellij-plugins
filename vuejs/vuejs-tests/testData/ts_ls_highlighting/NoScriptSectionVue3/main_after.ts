@@ -3,4 +3,4 @@ import App from "./NoScriptSection.vue";
 
 createApp(App).mount("#app");
 
-let a: number = App
+let <error>a</error>: number = App

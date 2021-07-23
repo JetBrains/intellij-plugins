@@ -18,9 +18,8 @@ internal class VueTypeScriptServiceHighlightingPassFactoryRegistrar : TextEditor
         return if (service is VueTypeScriptService) service else null
       }
 
-      override fun isAcceptablePsiFile(file: PsiFile): Boolean {
-        return file.fileType == VueFileType.INSTANCE
-      }
+      override fun isAcceptablePsiFile(file: PsiFile): Boolean = 
+        (file.virtualFile?.fileType ?: file.fileType) == VueFileType.INSTANCE
     }
 
     val factory = MyFactory()
