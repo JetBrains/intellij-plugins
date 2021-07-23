@@ -35,7 +35,7 @@ class BrowseShelfAction : DumbAwareAction(PerforceBundle.messagePointer("shelf.b
 
   override fun update(e: AnActionEvent) {
     val project = e.getData(CommonDataKeys.PROJECT)
-    e.presentation.isEnabledAndVisible = !getShelvedChanges(project, e).isEmpty()
+    e.presentation.isEnabledAndVisible = getShelvedChanges(project, e).isNotEmpty()
   }
 
   override fun actionPerformed(e: AnActionEvent) {
@@ -60,7 +60,7 @@ class BrowseShelfAction : DumbAwareAction(PerforceBundle.messagePointer("shelf.b
                                                         AllIcons.Vcs.Unshelve) {
 
         override fun update(e: AnActionEvent) {
-          e.presentation.isEnabled = !browser.includedChanges.isEmpty()
+          e.presentation.isEnabled = browser.includedChanges.isNotEmpty()
         }
 
         override fun actionPerformed(e: AnActionEvent) {
@@ -76,7 +76,7 @@ class BrowseShelfAction : DumbAwareAction(PerforceBundle.messagePointer("shelf.b
       dialogBuilder.setOkOperation {
         FileDocumentManager.getInstance().saveAllDocuments() // to ensure Perforce will see up-to-date file content
         val selected = browser.includedChanges
-        if (!selected.isEmpty()) {
+        if (selected.isNotEmpty()) {
           unshelveChanges(selected.map { (it as ShelvedChange.IdeaChange).original }, project, true)
           dialogBuilder.dialogWrapper.close(DialogWrapper.OK_EXIT_CODE)
         }
@@ -113,10 +113,7 @@ class BrowseShelfAction : DumbAwareAction(PerforceBundle.messagePointer("shelf.b
         deleteFromShelf(paths, project)
       }
 
-      val dirtyFiles = selected.map {
-        val file = it.file
-        if (file != null) VcsUtil.getFilePath(file) else null
-      }.filterNotNull()
+      val dirtyFiles = selected.mapNotNull { it.file?.let { file -> VcsUtil.getFilePath(file) } }
 
       dirtyFiles.forEach {
         val file = LocalFileSystem.getInstance().refreshAndFindFileByPath(it.path)
@@ -141,7 +138,7 @@ class BrowseShelfAction : DumbAwareAction(PerforceBundle.messagePointer("shelf.b
     }
 
     private fun handleUnshelveException(connection: P4Connection, unshelveException: VcsException, project: Project, specs: Collection<String>?) {
-      val msg = unshelveException.message!!
+      val msg = unshelveException.message
       if ("needs resolve" in msg) {
         val toResolve: LinkedHashSet<VirtualFile>
         try {
