@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.service
 
 import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase.checkHighlightByFile
 import com.intellij.lang.javascript.service.JSLanguageService
 import com.intellij.lang.javascript.service.JSLanguageServiceBase
 import com.intellij.lang.javascript.service.JSLanguageServiceProvider
@@ -129,7 +130,7 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
     doTestWithCopyDirectory()
     myFixture.configureByFile("main.ts")
-    checkHighlightingByOptions(false)
+    checkHighlightByFile(myFixture, testDataPath + "/" + getTestName(false) + "/main_after.ts")
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS26)
@@ -149,6 +150,19 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
     doTestWithCopyDirectory()
     myFixture.type('\b')
     checkAfterFile("vue")
+  }
+
+  @TypeScriptVersion(TypeScriptVersions.TS26)
+  fun testSimpleVueScriptChanges() {
+    doTestWithCopyDirectory()
+    repeat(10) {
+      myFixture.type("x")
+      checkHighlightByFile(myFixture, "$testDataPath/SimpleVueScriptChanges/test_tsx.vue")
+      myFixture.type("\b\b\bjs")
+      checkHighlightByFile(myFixture, "$testDataPath/SimpleVueScriptChanges/test_js.vue")
+      myFixture.type("\b\bts")
+      checkHighlightByFile(myFixture, "$testDataPath/SimpleVueScriptChanges/test_ts.vue")
+    }
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS26)

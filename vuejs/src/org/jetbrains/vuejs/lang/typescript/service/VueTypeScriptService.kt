@@ -69,7 +69,7 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
   override fun isServiceEnabled(context: VirtualFile): Boolean {
     if (!super.isServiceEnabled(context)) return false
     if (context.fileType is VueFileType) return true
-    
+
     //other files
     return isVueContext(context, myProject)
   }
