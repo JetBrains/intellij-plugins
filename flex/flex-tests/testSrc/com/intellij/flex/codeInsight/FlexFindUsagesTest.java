@@ -2,7 +2,6 @@ package com.intellij.flex.codeInsight;
 
 import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.lang.actionscript.psi.impl.ActionScriptVariableImpl;
 import com.intellij.lang.javascript.JSAbstractFindUsagesTest;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
@@ -81,7 +80,7 @@ public class FlexFindUsagesTest extends JSAbstractFindUsagesTest {
   public void testFindPrivateVarInMxml() {
     FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
     PsiReference[] references = findElementAtCaret("21.mxml");
-    assertEquals("Mxml component private variable", 3, references.length);
+    assertEquals("Mxml component private variable", 2, references.length);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
@@ -119,7 +118,7 @@ public class FlexFindUsagesTest extends JSAbstractFindUsagesTest {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.JS_1_8_5, getProject(), () -> {
       String testName = getTestName(false);
       PsiReference[] references = findElementAtCaret(testName + ".js", testName + ".mxml", testName + ".js2");
-      assertEquals(3, references.length);
+      assertEquals(2, references.length);
     });
   }
 
@@ -127,7 +126,7 @@ public class FlexFindUsagesTest extends JSAbstractFindUsagesTest {
   public void testNoDynamicUsages() {
     String testName = getTestName(false);
     PsiReference[] references = findElementAtCaret(testName + ".js2");
-    assertEquals(3, references.length);
+    assertEquals(2, references.length);
   }
 
   public void testSuperCall() {
@@ -167,7 +166,6 @@ public class FlexFindUsagesTest extends JSAbstractFindUsagesTest {
 
   public void testUnrelatedUnqualifiedDefinition() {
     PsiReference[] references = findElementAtCaret(getTestName(false) + ".as"); // IDEA-189640
-    assertEquals(1, references.length);
-    assertInstanceOf(references[0].getElement().getParent(), ActionScriptVariableImpl.class);
+    assertEquals(0, references.length);
   }
 }

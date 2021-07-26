@@ -68,7 +68,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
   public void testJSNamespace() {
     String testName = getTestName(false);
     doTest("BBB", testName + "_after.js2", testName + ".js2", testName + "_2.js2");
-    assertEquals(5, findRenamedRefsToReferencedElementAtCaret().length);
+    assertEquals(4, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
   public void testJSNamespace2() {
@@ -262,7 +262,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
       testName + "/foo/" + testName + "_2.as",
       testName + "/foo/" + testName + "_3.mxml"
     );
-    assertEquals(9, findRenamedRefsToReferencedElementAtCaret().length);
+    assertEquals(8, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
@@ -277,7 +277,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
     String testName = getTestName(false);
     doTest("yyy", testName + "_after.as", testName + ".as", testName + "_2.as");
     FileBasedIndex.getInstance().ensureUpToDate(JSPackageIndex.INDEX_ID, myFixture.getProject(), null);
-    assertEquals(8, findRenamedRefsToReferencedElementAtCaret().length);
+    assertEquals(7, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
