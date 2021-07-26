@@ -425,11 +425,6 @@ public class PerforceCheckinComponent implements CheckinChangeListSpecificCompon
   }
 
   @Override
-  public void refresh() {
-
-  }
-
-  @Override
   public void saveState() {
     if (myCurrent != null && myCurrent.hasDefaultName()) {
       keepDefaultListJobs();

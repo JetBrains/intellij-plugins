@@ -27,10 +27,6 @@ public class PerforceCheckinOptionsPanel implements RefreshableOnComponent {
   }
 
   @Override
-  public void refresh() {
-  }
-
-  @Override
   public void saveState() {
     PerforceSettings.getSettings(myProject).REVERT_UNCHANGED_FILES_CHECKIN = myChkRevertUnchanged.isSelected();
   }

@@ -107,7 +107,7 @@ public class RevertAllUnchangedFilesAction extends DumbAwareAction {
 
     refreshAndDirty(project, roots);
     if (panel != null) {
-      panel.refresh();
+      panel.restoreState();
     }
 
     if (!exceptions.isEmpty()) {
