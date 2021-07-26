@@ -99,6 +99,7 @@ public final class ProjectSettingsConfiguratorManager implements Disposable {
     ApplicationManager.getApplication()
         .executeOnPooledThread(
             () -> {
+              if (project.isDisposed()) return;
               PbProjectSettings newSettings = configure(settings);
               if (newSettings != null && !settings.equals(newSettings)) {
                 settings.copyState(newSettings);
