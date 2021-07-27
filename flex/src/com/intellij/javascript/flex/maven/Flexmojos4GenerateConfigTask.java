@@ -12,7 +12,8 @@ import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
-import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl;
+import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider;
+import com.intellij.openapi.externalSystem.service.project.ProjectDataManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.SimpleJavaSdkType;
@@ -326,7 +327,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
             final Module module = mavenProjectsManager.findModule(mavenProject);
             if (module == null) return true;
 
-            IdeModifiableModelsProviderImpl provider = new IdeModifiableModelsProviderImpl(project);
+            IdeModifiableModelsProvider provider = ProjectDataManager.getInstance().createModifiableModelsProvider(project);
             MavenRootModelAdapter a = new MavenRootModelAdapter(new MavenRootModelAdapterLegacyImpl(mavenProject, module, provider));
             for (String sourceRoot : sourceRoots) {
               a.addSourceFolder(sourceRoot, JavaSourceRootType.SOURCE);
