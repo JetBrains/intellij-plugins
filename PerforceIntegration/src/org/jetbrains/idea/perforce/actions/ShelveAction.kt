@@ -13,10 +13,7 @@ import com.intellij.openapi.vcs.changes.actions.AbstractCommitChangesAction
 import com.intellij.util.containers.MultiMap
 import com.intellij.vcsUtil.VcsUtil
 import org.jetbrains.idea.perforce.PerforceBundle
-import org.jetbrains.idea.perforce.application.FileGrouper
-import org.jetbrains.idea.perforce.application.PerforceManager
-import org.jetbrains.idea.perforce.application.PerforceNumberNameSynchronizer
-import org.jetbrains.idea.perforce.application.PerforceVcs
+import org.jetbrains.idea.perforce.application.*
 import org.jetbrains.idea.perforce.operations.RefreshForVcs
 import org.jetbrains.idea.perforce.perforce.P4File
 import org.jetbrains.idea.perforce.perforce.PerforceRunner
@@ -44,7 +41,7 @@ class ShelveAction : AbstractCommitChangesAction() {
       presentation.isEnabledAndVisible = false
     }
     else {
-      val connections = getConnections(project, changes.asList()).keySet()
+      val connections = getConnections(project, changes.filterNot { it is ShelvedChange.IdeaChange }).keySet()
       presentation.isEnabledAndVisible = connections.isNotEmpty() && connections.all { supportsShelve(project, it) }
     }
   }
