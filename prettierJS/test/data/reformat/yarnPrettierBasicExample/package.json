@@ -1,0 +1,9 @@
+{
+  "name": "pnp-prettier-example",
+  "dependencies": {
+    "prettier": "2.3.2"
+  },
+  "prettier": {
+    "singleQuote": true
+  }
+}
