@@ -145,7 +145,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       errorHandler.showError(project, editor, message, () -> installPackage(project));
       return false;
     }
-    SemVer nodePackageVersion = nodePackage.getVersion();
+    SemVer nodePackageVersion = nodePackage.getVersion(project);
     if (nodePackageVersion != null && nodePackageVersion.compareTo(PrettierUtil.MIN_VERSION) < 0) {
       errorHandler.showError(project, editor,
                              PrettierBundle.message("error.unsupported.version", PrettierUtil.MIN_VERSION.getRawVersion()), null);

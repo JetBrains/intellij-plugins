@@ -115,10 +115,10 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
     override fun getActionOnSaveName() = PrettierBundle.message("run.on.save.checkbox.on.actions.on.save.page")
 
     override fun getCommentAccordingToStoredState() =
-      PrettierConfiguration.getInstance(project).let { getComment(it.`package`.version, it.filesPattern) }
+      PrettierConfiguration.getInstance(project).let { getComment(it.`package`.getVersion(project), it.filesPattern) }
 
     override fun getCommentAccordingToUiState(configurable: PrettierConfigurable) =
-      getComment(configurable.packageField!!.selectedRef.constantPackage?.version,
+      getComment(configurable.packageField!!.selectedRef.constantPackage?.getVersion(project),
                  configurable.runForFilesField!!.text.trim())
 
     private fun getComment(prettierVersion: @Nullable SemVer?, filesPattern: @NotNull String): ActionOnSaveComment? {
