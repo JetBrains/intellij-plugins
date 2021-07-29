@@ -66,12 +66,12 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
 
   override fun getProcessName(): String = "Vue TypeScript"
 
-  override fun isServiceEnabled(context: VirtualFile): Boolean {
-    if (!super.isServiceEnabled(context)) return false
-    if (context.fileType is VueFileType) return true
+  override fun isDisabledByContext(context: VirtualFile): Boolean {
+    if (super.isDisabledByContext(context)) return true
+    if (context.fileType is VueFileType) return false
 
     //other files
-    return isVueContext(context, myProject)
+    return !isVueContext(context, myProject)
   }
 
   override fun createProtocol(readyConsumer: Consumer<*>, tsServicePath: String): JSLanguageServiceProtocol {
@@ -96,7 +96,7 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
 
     val virtualFile = file.virtualFile ?: return false
 
-    if (!isServiceEnabled(virtualFile) || !checkAnnotationProvider(file)) return false
+    if (isDisabledByContext(virtualFile) || !checkAnnotationProvider(file)) return false
 
     val module = findModule(file)
     if (module == null || !DialectDetector.isTypeScript(module)) return false
