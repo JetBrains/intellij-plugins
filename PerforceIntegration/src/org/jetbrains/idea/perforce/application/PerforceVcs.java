@@ -50,7 +50,7 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.perforce.PerforceBundle;
-import org.jetbrains.idea.perforce.actions.BrowseShelfAction;
+import org.jetbrains.idea.perforce.actions.ShelfUtils;
 import org.jetbrains.idea.perforce.merge.PerforceMergeProvider;
 import org.jetbrains.idea.perforce.operations.P4EditOperation;
 import org.jetbrains.idea.perforce.operations.VcsOperation;
@@ -590,11 +590,11 @@ public final class PerforceVcs extends AbstractVcs {
                                    new String[]{PerforceBundle.message("shelf.browse.mnemonic"), IdeBundle.message("button.remove"), Messages.getCancelButton()}, 0,
                                    Messages.getQuestionIcon());
       if (rc == 1) {
-        BrowseShelfAction.deleteFromShelf(shelvedChanges, myProject);
+        ShelfUtils.deleteFromShelf(shelvedChanges, myProject);
         return ThreeState.YES;
       }
       if (rc == 0) {
-        BrowseShelfAction.browseShelf(myProject, shelvedChanges);
+        ShelfUtils.browseShelf(myProject, shelvedChanges);
       }
       return ThreeState.NO;
     }

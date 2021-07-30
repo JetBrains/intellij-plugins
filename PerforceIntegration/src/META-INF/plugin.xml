@@ -53,13 +53,9 @@
       <add-to-group group-id="ChangesViewPopupMenu" relative-to-action="EditSource" anchor="after"/>
     </action>
 
-    <action id="BrowseShelf" class="org.jetbrains.idea.perforce.actions.BrowseShelfAction">
+    <action id="Perforce.Shelve" class="org.jetbrains.idea.perforce.actions.ShelveAction">
       <add-to-group group-id="PerforceDirect.Menu" relative-to-action="Compare.Selected" anchor="after"/>
       <add-to-group group-id="ChangesViewPopupMenu" relative-to-action="ChangesView.Shelve" anchor="before"/>
-    </action>
-    <action id="Perforce.Shelve" class="org.jetbrains.idea.perforce.actions.ShelveAction">
-      <add-to-group group-id="PerforceDirect.Menu" relative-to-action="BrowseShelf" anchor="before"/>
-      <add-to-group group-id="ChangesViewPopupMenu" relative-to-action="BrowseShelf" anchor="before"/>
     </action>
     <action id="Perforce.Unshelve" class="org.jetbrains.idea.perforce.actions.UnshelveAction">
       <add-to-group group-id="ChangesViewPopupMenu" relative-to-action="Perforce.Shelve" anchor="after"/>

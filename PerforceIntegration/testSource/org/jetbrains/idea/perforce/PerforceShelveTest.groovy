@@ -5,7 +5,7 @@ import com.intellij.openapi.vcs.changes.Change
 import com.intellij.openapi.vcs.changes.LocalChangeList
 import com.intellij.openapi.vcs.changes.ui.RollbackWorker
 import com.intellij.openapi.vfs.VfsUtil
-import org.jetbrains.idea.perforce.actions.BrowseShelfAction
+import org.jetbrains.idea.perforce.actions.ShelfUtils
 import org.jetbrains.idea.perforce.actions.ShelveAction
 import org.jetbrains.idea.perforce.application.PerforceManager
 import org.jetbrains.idea.perforce.application.PerforceNumberNameSynchronizer
@@ -79,7 +79,7 @@ class PerforceShelveTest extends PerforceTestCase {
     assert VfsUtil.loadText(file) == ''
 
     def xxx = findNotNullChangeList('xxx')
-    BrowseShelfAction.unshelveChanges(shelf.getShelvedChanges(xxx), myProject, true)
+    ShelfUtils.unshelveChanges(shelf.getShelvedChanges(xxx), myProject, true)
     changeListManager.waitUntilRefreshed()
     
     assert changeListManager.changeListsCopy.size() == 2
@@ -111,7 +111,7 @@ class PerforceShelveTest extends PerforceTestCase {
     def shelved = shelf.getShelvedChanges(list)
     assert shelved.collect { it.depotPath } as Set == ["//depot/a.txt", "//depot/b.txt"] as Set
 
-    BrowseShelfAction.unshelveChanges(shelved, myProject, true)
+    ShelfUtils.unshelveChanges(shelved, myProject, true)
     changeListManager.waitUntilRefreshed()
     assert changeListManager.allChanges.collect { it.type } == [Change.Type.MOVED]
   }

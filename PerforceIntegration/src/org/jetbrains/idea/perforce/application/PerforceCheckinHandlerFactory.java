@@ -13,8 +13,8 @@ import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.perforce.PerforceBundle;
-import org.jetbrains.idea.perforce.actions.BrowseShelfAction;
 import org.jetbrains.idea.perforce.actions.RevertAllUnchangedFilesAction;
+import org.jetbrains.idea.perforce.actions.ShelfUtils;
 import org.jetbrains.idea.perforce.perforce.PerforceSettings;
 import org.jetbrains.idea.perforce.perforce.login.PerforceLoginManager;
 
@@ -56,7 +56,7 @@ public class PerforceCheckinHandlerFactory extends VcsCheckinHandlerFactory {
             if (rc == Messages.NO) {
               return ReturnResult.CANCEL;
             }
-            BrowseShelfAction.deleteFromShelf(shelvedChanges, project);
+            ShelfUtils.deleteFromShelf(shelvedChanges, project);
           }
         }
 

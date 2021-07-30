@@ -34,7 +34,7 @@ open class UnshelveActionBase(val delete: Boolean,
     FileDocumentManager.getInstance().saveAllDocuments()
     val changes = e.getRequiredData(VcsDataKeys.CHANGES)
 
-    BrowseShelfAction.unshelveChanges(changes.map { (it as ShelvedChange.IdeaChange).original }, e.project!!, delete)
+    ShelfUtils.unshelveChanges(changes.map { (it as ShelvedChange.IdeaChange).original }, e.project!!, delete)
   }
 }
 
