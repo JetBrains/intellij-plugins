@@ -61,6 +61,12 @@
       <add-to-group group-id="PerforceDirect.Menu" relative-to-action="BrowseShelf" anchor="before"/>
       <add-to-group group-id="ChangesViewPopupMenu" relative-to-action="BrowseShelf" anchor="before"/>
     </action>
+    <action id="Perforce.Unshelve" class="org.jetbrains.idea.perforce.actions.UnshelveAction">
+      <add-to-group group-id="ChangesViewPopupMenu" relative-to-action="Perforce.Shelve" anchor="after"/>
+    </action>
+    <action id="Perforce.Unshelve.And.Delete" class="org.jetbrains.idea.perforce.actions.UnshelveAndDeleteAction">
+      <add-to-group group-id="ChangesViewPopupMenu" relative-to-action="Perforce.Unshelve" anchor="after"/>
+    </action>
 
     <action id="Perforce.SyncToRevision" class="org.jetbrains.idea.perforce.actions.SyncToRevisionAction">
       <add-to-group group-id="IncomingChangesToolbar"/>

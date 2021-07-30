@@ -25,15 +25,6 @@ import javax.swing.JComponent
  */
 class ShelveAction : AbstractCommitChangesAction() {
 
-  private fun supportsShelve(project: Project, connection: P4Connection): Boolean {
-    try {
-      return PerforceManager.getInstance(project).getServerVersion(connection)?.supportsShelve() == true
-    }
-    catch (e: VcsException) {
-      return false
-    }
-  }
-
   override fun update(vcsContext: VcsContext, presentation: Presentation) {
     val changes = vcsContext.selectedChanges
     val project = vcsContext.project
@@ -64,7 +55,9 @@ class ShelveAction : AbstractCommitChangesAction() {
   }
 
   companion object {
-    @VisibleForTesting @JvmStatic fun shelveChanges(project: Project, commitMessage: String?, changes: Collection<Change>) {
+    @VisibleForTesting
+    @JvmStatic
+    fun shelveChanges(project: Project, commitMessage: String?, changes: Collection<Change>) {
       for ((list, listChanges) in changes.groupBy { ChangeListManager.getInstance(project).getChangeList(it) }) {
         shelveChanges(project, commitMessage, listChanges, list)
       }
@@ -81,7 +74,8 @@ class ShelveAction : AbstractCommitChangesAction() {
       for ((connection, filePaths) in connections.entrySet()) {
         try {
           val existingList = when (commitMessage) {
-            changeList?.name -> PerforceNumberNameSynchronizer.getInstance(project).getNumber(connection.connectionKey, commitMessage.orEmpty())
+            changeList?.name -> PerforceNumberNameSynchronizer.getInstance(project).getNumber(connection.connectionKey,
+                                                                                              commitMessage.orEmpty())
             else -> null
           }
           val list = existingList ?: runner.createChangeList(commitMessage, connection, null)
@@ -111,7 +105,7 @@ class ShelveAction : AbstractCommitChangesAction() {
       }
     }
 
-    private fun getConnections(project: Project, changes: Collection<Change>): MultiMap<P4Connection, FilePath> {
+    fun getConnections(project: Project, changes: Collection<Change>): MultiMap<P4Connection, FilePath> {
       return FileGrouper.distributePathsByConnection(changes.flatMapTo(linkedSetOf<FilePath>()) { change ->
         val beforeFile = change.beforeRevision?.file
         val afterFile = change.afterRevision?.file
@@ -121,6 +115,15 @@ class ShelveAction : AbstractCommitChangesAction() {
           else -> emptyList()
         }
       }, project)
+    }
+
+    fun supportsShelve(project: Project, connection: P4Connection): Boolean {
+      try {
+        return PerforceManager.getInstance(project).getServerVersion(connection)?.supportsShelve() == true
+      }
+      catch (e: VcsException) {
+        return false
+      }
     }
   }
 }
