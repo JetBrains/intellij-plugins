@@ -6,7 +6,7 @@ import com.intellij.lang.javascript.ecmascript6.types.JSTypeSignatureChooser
 import com.intellij.lang.javascript.findUsages.JSReadWriteAccessDetector
 import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSFunctionItem
-import com.intellij.lang.javascript.psi.JSPsiElementBase
+import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.lang.javascript.psi.JSThisExpression
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
@@ -18,6 +18,7 @@ import com.intellij.psi.ResolveResult
 import com.intellij.util.Processor
 import com.intellij.util.SmartList
 import org.apache.commons.lang.StringUtils
+import org.jetbrains.vuejs.codeInsight.declaredName
 import org.jetbrains.vuejs.codeInsight.template.VueTemplateScopesResolver
 import org.jetbrains.vuejs.lang.expr.psi.VueJSFilterReferenceExpression
 import org.jetbrains.vuejs.model.VueFilter
@@ -34,7 +35,7 @@ class VueJSReferenceExpressionResolver(referenceExpression: JSReferenceExpressio
       val container = VueModelManager.findEnclosingContainer(expression)
       val filters = mutableListOf<VueFilter>()
       val referenceName = expression.referenceName
-      container?.acceptEntities(object : VueModelProximityVisitor() {
+      container.acceptEntities(object : VueModelProximityVisitor() {
         override fun visitFilter(name: String, filter: VueFilter, proximity: Proximity): Boolean {
           return acceptSameProximity(proximity, name == referenceName) {
             filters.add(filter)
@@ -83,8 +84,8 @@ class VueJSReferenceExpressionResolver(referenceExpression: JSReferenceExpressio
     val results = SmartList<ResolveResult>()
     val name = StringUtils.uncapitalize(myReferencedName)
     VueTemplateScopesResolver.resolve(myRef, Processor { resolveResult ->
-      val element = resolveResult.element as? JSPsiElementBase
-      if (element != null && name == StringUtils.uncapitalize(element.name)) {
+      val element = resolveResult.element as? JSPsiNamedElementBase
+      if (element != null && name == StringUtils.uncapitalize(element.declaredName)) {
         remapSetterGetterIfNeeded(results, resolveResult, access)
         return@Processor false
       }

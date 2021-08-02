@@ -12,8 +12,8 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.contextOfType
 import com.intellij.refactoring.suggested.startOffset
 import com.intellij.util.castSafelyTo
-import org.jetbrains.vuejs.codeInsight.getStubSafeCallArguments
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
+import org.jetbrains.vuejs.codeInsight.stubSafeCallArguments
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.GETTERS
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.ROOT_GETTERS
@@ -58,7 +58,7 @@ open class VuexHelpersContextNamespace(private val decorator: Boolean) : VuexSto
       if (location is JSVariable)
         getNamespaceFromHelpersVar(location, decorator)
       else
-        getStubSafeCallArguments(call)
+        call.stubSafeCallArguments
           .getOrNull(0)
           ?.castSafelyTo<JSLiteralExpression>()
           ?.let { getTextIfLiteral(it) }

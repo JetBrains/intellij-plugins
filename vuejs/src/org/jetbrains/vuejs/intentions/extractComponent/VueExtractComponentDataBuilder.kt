@@ -3,13 +3,10 @@ package org.jetbrains.vuejs.intentions.extractComponent
 
 import com.intellij.javascript.web.codeInsight.html.refs.WebSymbolTagNameReference
 import com.intellij.lang.ecmascript6.psi.ES6ImportDeclaration
-import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.ecmascript6.psi.impl.ES6CreateImportUtil
 import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil.ES6_IMPORT_DECLARATION
-import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.psi.JSCallExpression
-import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
@@ -31,10 +28,8 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.util.castSafelyTo
 import com.intellij.xml.util.HtmlUtil.STYLE_TAG_NAME
 import com.intellij.xml.util.HtmlUtil.TEMPLATE_TAG_NAME
-import org.jetbrains.vuejs.codeInsight.detectLanguage
-import org.jetbrains.vuejs.codeInsight.fromAsset
+import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler
-import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.index.VueFileVisitor
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.index.findScriptTag
@@ -43,7 +38,7 @@ import org.jetbrains.vuejs.lang.html.VueFileType
 
 class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
   private val containingFile = list[0].containingFile
-  private val scriptTag = if (containingFile is XmlFile) findScriptTag(containingFile) else null
+  private val scriptTag = if (containingFile is XmlFile) findScriptTag(containingFile, false) else null
   private val scriptLanguage = detectLanguage(scriptTag)
   private val templateLanguage = detectLanguage(findTemplate())
   private val styleTags = findStyles(containingFile)
@@ -77,21 +72,17 @@ class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
   }
 
   private fun processVueComponent(ref: WebSymbolTagNameReference) {
-    if (scriptTag == null) return
-    val content = PsiTreeUtil.findChildOfType(scriptTag, JSEmbeddedContent::class.java) ?: return
-
-    val declarations = JSResolveUtil.getStubbedChildren(content, ES6_IMPORT_DECLARATION)
-    val foundImport = declarations.firstOrNull { declaration ->
-      val importDeclaration = declaration as ES6ImportDeclaration
-      val byName = importDeclaration.importedBindings.firstOrNull {
-        !it.isNamespaceImport && it.name != null &&
-        fromAsset(
-          ref.nameElement.text) == fromAsset(
-          it.name!!)
-      }
-      return@firstOrNull byName != null
-    } as? ES6ImportDeclaration ?: return
-
+    val name = fromAsset(ref.nameElement.text)
+    val foundImport = sequenceOf(findModule(scriptTag, false), findModule(scriptTag, true))
+                        .filterNotNull()
+                        .flatMap { JSResolveUtil.getStubbedChildren(it, ES6_IMPORT_DECLARATION).asSequence() }
+                        .filterIsInstance<ES6ImportDeclaration>()
+                        .firstOrNull { importDeclaration ->
+                          importDeclaration.importedBindings.find { binding ->
+                            !binding.isNamespaceImport && binding.name.let { it != null && name == fromAsset(it) }
+                          } != null
+                        }
+                      ?: return
     importsToCopy[toAsset(ref.nameElement.text).capitalize()] = foundImport
   }
 
@@ -265,13 +256,10 @@ export default {
   }
 
   private fun optimizeUnusedComponentsAndImports(file: PsiFile) {
-    val content = findModule(file) ?: return
-    val defaultExport = ES6PsiUtil.findDefaultExport(content) as? JSExportAssignment
-    val component = defaultExport?.stubSafeElement as? JSObjectLiteralExpression
-
-    val components = (component?.findProperty("components")?.value as? JSObjectLiteralExpression)?.properties
-    if (components != null && components.isNotEmpty()) {
-      val names = components.map { toAsset(it.name ?: "").capitalize() }.toMutableSet()
+    val componentsInitializer = objectLiteralFor(findDefaultExport(findModule(file, false)))
+      ?.findProperty("components")?.value?.castSafelyTo<JSObjectLiteralExpression>()?.properties
+    if (componentsInitializer != null && componentsInitializer.isNotEmpty()) {
+      val names = componentsInitializer.map { toAsset(it.name ?: "").capitalize() }.toMutableSet()
       (file as XmlFile).accept(object : VueFileVisitor() {
         override fun visitElement(element: PsiElement) {
           if (element is XmlTag) {
@@ -280,10 +268,9 @@ export default {
           if (scriptTag != element) recursion(element)
         }
       })
-      components.filter { it.name != null && names.contains(toAsset(it.name!!).capitalize()) }.forEach { it.delete() }
-      ES6CreateImportUtil.optimizeImports(file)
+      componentsInitializer.filter { it.name != null && names.contains(toAsset(it.name!!).capitalize()) }.forEach { it.delete() }
     }
-
+    ES6CreateImportUtil.optimizeImports(file)
     optimizeAndRemoveEmptyStyles(file)
   }
 

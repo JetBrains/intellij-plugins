@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.service
 
+import com.intellij.application.options.RegistryManager
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase.checkHighlightByFile
 import com.intellij.lang.javascript.service.JSLanguageService
@@ -14,6 +15,7 @@ import com.intellij.testFramework.JUnit38AssumeSupportRunner
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.ui.UIUtil
 import junit.framework.TestCase
+import org.jetbrains.vuejs.lang.VueInspectionsProvider
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies
 import org.jetbrains.vuejs.lang.typescript.service.VueTypeScriptService
@@ -117,11 +119,19 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
     checkHighlightingByOptions(false)
   }
 
-  @TypeScriptVersion(TypeScriptVersions.TS26)
+  @TypeScriptVersion(TypeScriptVersions.TS36)
   fun testScriptSetup() {
+    //RegistryManager.getInstance().get("typescript.service.node.arguments").setValue("--inspect", myFixture.projectDisposable)
+    myFixture.enableInspections(VueInspectionsProvider())
     myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
     doTestWithCopyDirectory()
     myFixture.configureFromTempProjectFile("ScriptSetup2.vue")
+    myFixture.checkHighlighting()
+    myFixture.configureFromTempProjectFile("ScriptSetup3.vue")
+    myFixture.checkHighlighting()
+    myFixture.configureFromTempProjectFile("ScriptSetup4.vue")
+    myFixture.checkHighlighting()
+    myFixture.configureFromTempProjectFile("ScriptSetup5.vue")
     myFixture.checkHighlighting()
   }
 

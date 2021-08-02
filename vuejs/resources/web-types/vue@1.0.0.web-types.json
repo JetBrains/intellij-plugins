@@ -328,12 +328,6 @@
             },
             {
               "name": "src"
-            },
-            {
-              "name": "setup",
-              "value": {
-                "kind": "no-value"
-              }
             }
           ]
         },

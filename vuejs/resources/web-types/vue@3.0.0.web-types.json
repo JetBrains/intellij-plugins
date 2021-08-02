@@ -321,7 +321,8 @@
             {
               "name": "setup",
               "value": {
-                "kind": "no-value"
+                "kind": "expression",
+                "required": false
               }
             }
           ]

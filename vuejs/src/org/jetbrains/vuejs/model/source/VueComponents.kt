@@ -92,7 +92,8 @@ class VueComponents {
     }
 
     fun getComponentDescriptor(element: PsiElement?): VueSourceEntityDescriptor? =
-      when (val resolved = resolveElementTo(element, JSObjectLiteralExpression::class, JSCallExpression::class, JSClass::class)) {
+      when (val resolved = resolveElementTo(element, JSObjectLiteralExpression::class, JSCallExpression::class,
+                                            JSClass::class, JSEmbeddedContent::class)) {
         // {...}
         is JSObjectLiteralExpression -> VueSourceEntityDescriptor(resolved)
 
@@ -109,6 +110,11 @@ class VueComponents {
         is JSClass ->
           VueSourceEntityDescriptor(getComponentDecorator(resolved)?.let { getDescriptorFromDecorator(it) },
                                     resolved)
+
+        // <script setup>
+        is JSEmbeddedContent ->
+          VueSourceEntityDescriptor(source = resolved.containingFile)
+
         else -> null
       }
 
@@ -141,7 +147,7 @@ class VueComponents {
   }
 }
 
-open class VueSourceEntityDescriptor(val initializer: JSElement? /* JSObjectLiteralExpression | JSFile */ = null,
+open class VueSourceEntityDescriptor(val initializer: JSElement? /* JSObjectLiteralExpression | PsiFile */ = null,
                                      val clazz: JSClass? = null,
                                      val source: PsiElement = clazz ?: initializer!!) {
   init {

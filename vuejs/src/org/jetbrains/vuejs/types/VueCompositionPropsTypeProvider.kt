@@ -13,7 +13,7 @@ import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.source.SETUP_METHOD
 
 object VueCompositionPropsTypeProvider {
-  fun addTypeFromResolveResult(evaluator: JSTypeEvaluator, context: JSEvaluateContext, result: PsiElement): Boolean {
+  fun addTypeFromResolveResult(evaluator: JSTypeEvaluator, result: PsiElement): Boolean {
     if (result is JSParameter && PsiTreeUtil.getStubChildOfType(result.context, JSParameter::class.java) == result) {
       val method = result.context?.let { (it as? JSParameterList)?.context ?: it }?.castSafelyTo<JSFunction>() ?: return false
       val initializer = method.context
@@ -23,16 +23,13 @@ object VueCompositionPropsTypeProvider {
           || !isVueContext(method)
       ) return false
       VueModelManager.getComponent(initializer)
-        ?.thisType?.asRecordType()
-        ?.findPropertySignature("\$props")
-        ?.jsType
         ?.let {
-          evaluator.addType(it)
+          evaluator.addType(VuePropsType(it))
           return true
         }
     }
     return false
   }
 
-  fun useOnlyCompleteMatch(type: JSType, evaluateContext: JSEvaluateContext): Boolean = type is VueCompleteType
+  fun useOnlyCompleteMatch(type: JSType): Boolean = type is VueCompleteType
 }

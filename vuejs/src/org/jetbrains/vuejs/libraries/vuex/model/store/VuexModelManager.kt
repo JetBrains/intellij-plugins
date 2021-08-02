@@ -14,8 +14,8 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.castSafelyTo
-import org.jetbrains.vuejs.codeInsight.getStubSafeCallArguments
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
+import org.jetbrains.vuejs.codeInsight.stubSafeCallArguments
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.libraries.nuxt.model.NuxtModelManager
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.REGISTER_MODULE
@@ -69,7 +69,7 @@ object VuexModelManager {
     val implicitElement = call.indexingData?.implicitElements?.find { it.userString == VuexStoreIndex.JS_KEY }
                           ?: return null
 
-    val arguments = getStubSafeCallArguments(call)
+    val arguments = call.stubSafeCallArguments
     val nameElement = arguments.getOrNull(0)
                       ?: return null
     val path = getTextIfLiteral(nameElement)

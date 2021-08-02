@@ -2,7 +2,7 @@
   <button @click='inc'>{{ count }}</button>
   <button @click='dec'>{{ count }}</button>
   <button>{{<weak_warning descr="Unresolved variable or type foo">foo</weak_warning>}}</button>
-  <button>{{<weak_warning descr="Unresolved variable or type bar">bar</weak_warning>}}</button>
+  <button>{{bar}}</button>
 </template>
 
 <script setup lang='ts'>

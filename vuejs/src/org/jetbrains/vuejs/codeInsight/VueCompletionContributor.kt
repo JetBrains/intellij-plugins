@@ -29,6 +29,9 @@ class VueCompletionContributor : CompletionContributor() {
            psiElement(JSTokenTypes.IDENTIFIER)
              .withParent(JSPatterns.jsReferenceExpression().withFirstChild(psiElement(JSThisExpression::class.java))),
            VueThisInstanceCompletionProvider())
+    extend(CompletionType.BASIC,
+           psiElement(JSTokenTypes.IDENTIFIER).withParent(JSPatterns.jsReferenceExpression()),
+           VueScriptScopeCompletionProvider())
   }
 
   // TODO merge with Angular

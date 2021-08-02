@@ -14,6 +14,7 @@ import com.intellij.xml.util.HtmlUtil
 import com.intellij.xml.util.HtmlUtil.TEMPLATE_TAG_NAME
 import com.intellij.xml.util.XmlTagUtil
 import org.jetbrains.vuejs.VueBundle
+import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
@@ -23,9 +24,15 @@ class DuplicateTagInspection : LocalInspectionTool() {
       override fun visitXmlTag(tag: XmlTag?) {
         if (tag?.language != VueLanguage.INSTANCE
             || tag.containingFile.originalFile.virtualFile.fileType != VueFileType.INSTANCE) return
-        if (TEMPLATE_TAG_NAME != tag.name && !HtmlUtil.isScriptTag(tag)) return
+        val templateTag = TEMPLATE_TAG_NAME == tag.name
+        val scriptTag = HtmlUtil.isScriptTag(tag)
+        if (!templateTag && !scriptTag) return
         val parent = tag.parent as? XmlDocument ?: return
-        if (PsiTreeUtil.getChildrenOfType(parent, XmlTag::class.java).any { it != tag && it.name == tag.name }) {
+        val isScriptSetup = scriptTag && tag.getAttribute(SETUP_ATTRIBUTE_NAME) != null
+        if (PsiTreeUtil.getChildrenOfType(parent, XmlTag::class.java).any {
+            it != tag && ((scriptTag && HtmlUtil.isScriptTag(it) && isScriptSetup == (it.getAttribute(SETUP_ATTRIBUTE_NAME) != null))
+                          || (templateTag && it.name == TEMPLATE_TAG_NAME))
+          }) {
           val tagName = XmlTagUtil.getStartTagNameElement(tag)
           holder.registerProblem(tagName ?: tag,
                                  VueBundle.message("vue.inspection.message.duplicate.tag", tag.name),

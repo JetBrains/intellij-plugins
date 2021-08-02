@@ -1,4 +1,4 @@
-<script lang="ts">
+<script>
 import {defineComponent} from "vue"
 const foo = 123
 export default defineComponent({
@@ -6,7 +6,7 @@ export default defineComponent({
     a: Boolean
   }
 })
-<error descr="TS2304: Cannot find name 'bar'.">bar</error> = 234;
+<error descr="Unresolved variable or type bar">bar</error> = 234;
 </script>
 
 <script setup lang='ts'>

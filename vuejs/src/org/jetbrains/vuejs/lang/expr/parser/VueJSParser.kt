@@ -6,7 +6,10 @@ import com.intellij.lang.ecmascript6.parsing.ES6ExpressionParser
 import com.intellij.lang.ecmascript6.parsing.ES6FunctionParser
 import com.intellij.lang.ecmascript6.parsing.ES6Parser
 import com.intellij.lang.ecmascript6.parsing.ES6StatementParser
-import com.intellij.lang.javascript.*
+import com.intellij.lang.javascript.JSElementTypes
+import com.intellij.lang.javascript.JSStubElementTypes
+import com.intellij.lang.javascript.JSTokenTypes
+import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.parsing.JSPsiTypeParser
 import com.intellij.lang.javascript.parsing.JavaScriptParser
 import com.intellij.psi.tree.IElementType
@@ -39,6 +42,7 @@ class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
             }
           VueAttributeKind.SLOT_SCOPE -> VueJSStatementParser::parseSlotPropsExpression
           VueAttributeKind.SCOPE -> VueJSStatementParser::parseSlotPropsExpression
+          VueAttributeKind.SCRIPT_SETUP -> VueJSStatementParser::parseScriptSetupExpression
           else -> VueJSStatementParser::parseRegularExpression
         }
       VueJSParser(builder, false).statementParser.let {
@@ -125,11 +129,17 @@ class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
     }
 
     fun parseSlotPropsExpression() {
-      val slotPropsParameterList = builder.mark()
+      parseParametersExpression(VueJSElementTypes.SLOT_PROPS_EXPRESSION, VueJSStubElementTypes.SLOT_PROPS_PARAMETER)
+    }
+
+    fun parseScriptSetupExpression() {
+      parseParametersExpression(VueJSElementTypes.SCRIPT_SETUP_EXPRESSION, VueJSStubElementTypes.SCRIPT_SETUP_PARAMETER)
+    }
+
+    private fun parseParametersExpression(exprType: IElementType, paramType: IElementType) {
+      val parametersList = builder.mark()
       val functionParser = object : ES6FunctionParser<VueJSParser>(this@VueJSParser) {
-        override fun getParameterType(): IElementType {
-          return VueJSStubElementTypes.SLOT_PROPS_PARAMETER
-        }
+        override fun getParameterType(): IElementType = paramType
       }
       var first = true
       while (!builder.eof()) {
@@ -158,8 +168,8 @@ class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
         }
         functionParser.parseSingleParameter(parameter)
       }
-      slotPropsParameterList.done(JSStubElementTypes.PARAMETER_LIST)
-      slotPropsParameterList.precede().done(VueJSElementTypes.SLOT_PROPS_EXPRESSION)
+      parametersList.done(JSStubElementTypes.PARAMETER_LIST)
+      parametersList.precede().done(exprType)
     }
 
     internal fun parseRest(initialReported: Boolean = false) {

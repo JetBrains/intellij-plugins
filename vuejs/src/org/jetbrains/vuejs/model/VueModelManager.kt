@@ -30,7 +30,6 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.util.castSafelyTo
 import com.intellij.xml.util.HtmlUtil
 import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
-import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.findDefaultExport
 import org.jetbrains.vuejs.codeInsight.getHostFile
 import org.jetbrains.vuejs.codeInsight.toAsset
@@ -44,11 +43,11 @@ class VueModelManager {
 
   companion object {
 
-    fun getGlobal(context: PsiElement): VueGlobal? {
+    fun getGlobal(context: PsiElement): VueGlobal {
       return VueGlobalImpl.get(context)
     }
 
-    fun findEnclosingContainer(templateElement: PsiElement): VueEntitiesContainer? {
+    fun findEnclosingContainer(templateElement: PsiElement): VueEntitiesContainer {
       return findComponent(templateElement) as? VueEntitiesContainer
              ?: findVueApp(templateElement)
              ?: getGlobal(templateElement)
@@ -78,12 +77,14 @@ class VueModelManager {
 
     fun findEnclosingComponent(jsElement: JSElement): VueComponent? {
       var context: PsiElement = PsiTreeUtil.getContextOfType(jsElement, false,
-                                                             JSObjectLiteralExpression::class.java, JSClass::class.java)
+                                                             JSObjectLiteralExpression::class.java, JSClass::class.java,
+                                                             JSEmbeddedContent::class.java)
                                 ?: return null
       // Find the outermost JSObjectLiteralExpression or first enclosing class
       while (context is JSObjectLiteralExpression) {
         val superContext = PsiTreeUtil.getContextOfType(context, true,
-                                                        JSObjectLiteralExpression::class.java, JSClass::class.java)
+                                                        JSObjectLiteralExpression::class.java, JSClass::class.java,
+                                                        JSEmbeddedContent::class.java)
         if (superContext == null) {
           break
         }
@@ -247,8 +248,8 @@ class VueModelManager {
     private fun getDescriptorFromVueModule(element: PsiElement): VueSourceEntityDescriptor? {
       val file = element as? XmlFile ?: element.containingFile as? XmlFile
       if (file != null && file.fileType == VueFileType.INSTANCE) {
-        val script = findScriptTag(file)
-        if (script != null && !hasAttribute(script, SETUP_ATTRIBUTE_NAME)) {
+        val script = findScriptTag(file, false)
+        if (script != null) {
           findDefaultExport(
             resolveTagSrcReference(script) as? PsiFile
             ?: PsiTreeUtil.getStubChildOfType(script, JSEmbeddedContent::class.java)
@@ -263,7 +264,7 @@ class VueModelManager {
     }
 
     private fun findVueApp(templateElement: PsiElement): VueApp? {
-      val global = getGlobal(templateElement) ?: return null
+      val global = getGlobal(templateElement)
       val xmlElement =
         if (templateElement is XmlElement) {
           templateElement
