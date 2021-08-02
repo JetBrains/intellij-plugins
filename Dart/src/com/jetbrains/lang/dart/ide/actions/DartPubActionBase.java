@@ -15,6 +15,7 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.IdeBundle;
+import com.intellij.ide.IdeCoreBundle;
 import com.intellij.ide.actions.CloseActiveTabAction;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
@@ -287,7 +288,7 @@ public abstract class DartPubActionBase extends AnAction implements DumbAware {
     processHandler.addProcessListener(new ProcessAdapter() {
       @Override
       public void processTerminated(final @NotNull ProcessEvent event) {
-        console.print(IdeBundle.message("finished.with.exit.code.text.message", event.getExitCode()), ConsoleViewContentType.SYSTEM_OUTPUT);
+        console.print(IdeCoreBundle.message("finished.with.exit.code.text.message", event.getExitCode()), ConsoleViewContentType.SYSTEM_OUTPUT);
       }
     });
 

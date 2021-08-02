@@ -10,6 +10,7 @@ import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.ide.IdeBundle;
+import com.intellij.ide.IdeCoreBundle;
 import com.intellij.ide.actions.RevealFileAction;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
@@ -1397,7 +1398,7 @@ public class FlexDebugProcess extends XDebugProcess {
           adlProcess.destroy();
           try {
             int exitCode = adlProcess.exitValue();
-            myConsoleView.print(ADL_PREFIX + IdeBundle.message("finished.with.exit.code.text.message", exitCode) + "\n",
+            myConsoleView.print(ADL_PREFIX + IdeCoreBundle.message("finished.with.exit.code.text.message", exitCode) + "\n",
                                 exitCode == 0 ? ConsoleViewContentType.SYSTEM_OUTPUT : ConsoleViewContentType.ERROR_OUTPUT);
           }
           catch (IllegalThreadStateException ignore) {
