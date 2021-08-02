@@ -8,11 +8,12 @@ import com.intellij.lang.javascript.completion.JSCompletionUtil
 import com.intellij.lang.javascript.completion.JSLookupPriority
 import com.intellij.lang.javascript.completion.JSLookupPriority.*
 import com.intellij.lang.javascript.completion.JSLookupUtilImpl
-import com.intellij.lang.javascript.psi.JSPsiElementBase
+import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.lang.javascript.psi.JSThisExpression
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference
 import com.intellij.util.ProcessingContext
 import com.intellij.util.Processor
@@ -31,7 +32,7 @@ class VueJSCompletionProvider : CompletionProvider<CompletionParameters>() {
     }
     if (ref is VueJSFilterReferenceExpression) {
       val container = VueModelManager.findEnclosingContainer(ref)
-      container?.acceptEntities(object : VueModelVisitor() {
+      container.acceptEntities(object : VueModelVisitor() {
         override fun visitFilter(name: String, filter: VueFilter, proximity: Proximity): Boolean {
           if (proximity !== Proximity.OUT_OF_SCOPE) {
             (filter.source
@@ -47,13 +48,14 @@ class VueJSCompletionProvider : CompletionProvider<CompletionParameters>() {
     }
     else if (ref is JSReferenceExpressionImpl && ref.qualifier is JSThisExpression?) {
       VueTemplateScopesResolver.resolve(ref, Processor { resolveResult ->
-        val element = resolveResult.element as? JSPsiElementBase
+        val element = resolveResult.element as? JSPsiNamedElementBase
         if (element != null) {
-          result.consume(JSCompletionUtil.withJSLookupPriority(JSLookupUtilImpl.createLookupElement(element),
-                                                               if (element.name?.startsWith("$") == true)
-                                                                 LOCAL_SCOPE_MAX_PRIORITY_EXOTIC
-                                                               else
-                                                                 LOCAL_SCOPE_MAX_PRIORITY))
+          result.consume(JSCompletionUtil.withJSLookupPriority(
+            JSLookupUtilImpl.createLookupElement(element, StringUtil.notNullize(element.declaredName)),
+            if (element.declaredName?.startsWith("$") == true)
+              LOCAL_SCOPE_MAX_PRIORITY_EXOTIC
+            else
+              LOCAL_SCOPE_MAX_PRIORITY))
         }
         true
       })

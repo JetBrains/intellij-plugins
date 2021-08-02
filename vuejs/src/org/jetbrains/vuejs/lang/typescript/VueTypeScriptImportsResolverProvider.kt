@@ -22,15 +22,15 @@ class VueTypeScriptImportsResolverProvider : TypeScriptImportsResolverProvider {
     if (file.fileType != VueFileType.INSTANCE) return false
 
     val psiFile = PsiManager.getInstance(project).findFile(file) ?: return false
-    val module = findModule(psiFile)
 
-    return module != null && DialectDetector.isTypeScript(module)
+    return findModule(psiFile, true)?.let { DialectDetector.isTypeScript(it) } == true ||
+           findModule(psiFile, false)?.let { DialectDetector.isTypeScript(it) } == true
   }
 
   override fun useExplicitExtension(extensionWithDot: String): Boolean = extensionWithDot == vueExtension
   override fun getExtensions(): Array<String> = defaultExtensionsWithDot
 
-  override fun contributeResolver(project: Project, config: TypeScriptConfig): TypeScriptFileImportsResolver? {
+  override fun contributeResolver(project: Project, config: TypeScriptConfig): TypeScriptFileImportsResolver {
     return VueFileImportsResolver(project, config.resolveContext, TypeScriptNodeReference.TS_PROCESSOR)
   }
 

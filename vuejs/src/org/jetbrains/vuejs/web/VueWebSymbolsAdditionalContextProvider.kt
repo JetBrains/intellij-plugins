@@ -21,6 +21,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.castSafelyTo
 import com.intellij.util.containers.Stack
@@ -29,6 +30,7 @@ import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler
 import org.jetbrains.vuejs.codeInsight.toAsset
+import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.VueModelDirectiveProperties.Companion.DEFAULT_EVENT
@@ -135,8 +137,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
             container.acceptEntities(object : VueModelProximityVisitor() {
               override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
                 return acceptSameProximity(proximity, normalizedTagName == null || fromAsset(name) == normalizedTagName) {
-                  // Cannot self refer without export declaration with component name
-                  if ((component.source as? JSImplicitElement)?.context != containingFile) {
+                  if (isNotIncorrectlySelfReferred(component)) {
                     result.add(component)
                   }
                 }
@@ -187,12 +188,11 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
             container.acceptEntities(object : VueModelVisitor() {
               override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
                 // Cannot self refer without export declaration with component name
-                if ((component.source as? JSImplicitElement)?.context == containingFile) {
-                  return true
-                }
-                // TODO replace with params.registry.getNameVariants(VUE_FRAMEWORK, Namespace.HTML, kind, name)
-                listOf(toAsset(name).capitalize(), fromAsset(name)).forEach {
-                  result.add(createVueComponentLookup(component, it, scriptLanguage, proximity))
+                if (isNotIncorrectlySelfReferred(component)) {
+                  // TODO replace with params.registry.getNameVariants(VUE_FRAMEWORK, Namespace.HTML, kind, name)
+                  listOf(toAsset(name).capitalize(), fromAsset(name)).forEach {
+                    result.add(createVueComponentLookup(component, it, scriptLanguage, proximity))
+                  }
                 }
                 return true
               }
@@ -214,6 +214,13 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
           else -> emptyList()
         }
       else emptyList()
+
+    // Cannot self refer without export declaration with component name or script setup
+    private fun isNotIncorrectlySelfReferred(component: VueComponent) =
+      (component.source as? JSImplicitElement)?.context.let { context ->
+        context != containingFile
+        || context.containingFile.castSafelyTo<XmlFile>()?.let { findScriptTag(it, true) } != null
+      }
 
     private fun priorityOf(proximity: VueModelVisitor.Proximity): Priority =
       when (proximity) {
@@ -466,8 +473,6 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
   private class AnyWrapper(override val context: WebSymbolsContainer.Context,
                            override val namespace: Namespace,
                            override val kind: SymbolKind,
-                           override val matchedName: String) : WebSymbol {
-
-  }
+                           override val matchedName: String) : WebSymbol
 
 }

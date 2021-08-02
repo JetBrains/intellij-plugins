@@ -34,10 +34,10 @@ class VueES6ModuleFileIncludeProvider : FileIncludeProvider() {
   override fun getIncludeInfos(content: FileContent): Array<FileIncludeInfo> {
     if (!ES6FileIncludeProvider.checkTextHasFromKeyword(content)) return emptyArray()
 
-    val psiFile = content.psiFile
-    val module = findModule(psiFile) ?: return emptyArray()
 
-    val importDeclarations = ES6ImportPsiUtil.getImportDeclarations(module)
+    val psiFile = content.psiFile
+    val importDeclarations = (findModule(psiFile, false)?.let { ES6ImportPsiUtil.getImportDeclarations(it) } ?: emptyList()) +
+                             (findModule(psiFile, true)?.let { ES6ImportPsiUtil.getImportDeclarations(it) } ?: emptyList())
 
     val result = importDeclarations.map {
       val importModuleText = it.importModuleText

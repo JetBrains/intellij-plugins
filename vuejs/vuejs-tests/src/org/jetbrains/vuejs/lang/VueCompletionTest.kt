@@ -1851,6 +1851,33 @@ export default {
     assertEquals("foo-bar, foo-bar2, foo-bar3, foo-bar4", (myFixture.lookupElementStrings ?: emptyList()).joinToString())
   }
 
+  fun testScriptSetup() {
+    myFixture.configureByFile("scriptSetup.vue")
+    myFixture.moveToOffsetBySignature(":count=\"<caret>count\"")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.renderLookupItems(false, true), "count#null", "inc#function(): void")
+
+    myFixture.moveToOffsetBySignature(" v<caret>/>")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "v-click-outside")
+
+    myFixture.moveToOffsetBySignature(":<caret>foo=")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, ":foo")
+
+    myFixture.moveToOffsetBySignature("<<caret>Foo")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "Foo", "ScriptSetup")
+
+    myFixture.moveToOffsetBySignature("<caret>\n// write")
+    myFixture.type("fo")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "foos")
+    myFixture.type("os.")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "foo")
+  }
+
   private fun assertDoesntContainVueLifecycleHooks() {
     myFixture.completeBasic()
     assertDoesntContain(myFixture.lookupElementStrings!!, "\$el", "\$options", "\$parent")

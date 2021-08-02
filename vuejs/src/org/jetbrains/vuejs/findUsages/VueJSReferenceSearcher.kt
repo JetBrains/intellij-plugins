@@ -2,9 +2,7 @@
 package org.jetbrains.vuejs.findUsages
 
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
-import com.intellij.lang.javascript.psi.JSField
-import com.intellij.lang.javascript.psi.JSFunction
-import com.intellij.lang.javascript.psi.JSParameter
+import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement
@@ -12,15 +10,21 @@ import com.intellij.lang.javascript.psi.util.JSUtils
 import com.intellij.lang.typescript.psi.TypeScriptPsiUtil
 import com.intellij.openapi.application.QueryExecutorBase
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.QuerySearchRequest
 import com.intellij.psi.search.SearchRequestCollector
+import com.intellij.psi.search.UsageSearchContext
 import com.intellij.psi.search.searches.ReferencesSearch
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.xml.XmlTag
 import com.intellij.util.PairProcessor
 import com.intellij.util.Processor
 import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.VueBundle
+import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
+import org.jetbrains.vuejs.codeInsight.declaredName
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.findModule
@@ -32,11 +36,33 @@ class VueJSReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.
 
   override fun processQuery(queryParameters: ReferencesSearch.SearchParameters, consumer: Processor<in PsiReference>) {
     val element = queryParameters.elementToSearch
+    val searchScope = queryParameters.effectiveSearchScope
+    val elementName = (element as? JSPsiNamedElementBase)?.declaredName
+
+    // Script setup import/export
+    if (elementName != null
+        && searchScope is LocalSearchScope
+        && searchScope.scope.find { it is JSEmbeddedContent } != null) {
+      val scriptTag = PsiTreeUtil.getParentOfType(element, XmlTag::class.java, false, PsiFile::class.java)
+      if (scriptTag?.getAttribute(SETUP_ATTRIBUTE_NAME) != null) {
+        val template = (VueModelManager.findEnclosingContainer(scriptTag) as? VueRegularComponent)?.template?.source
+        if (template != null) {
+          queryParameters.optimizer.searchWord(
+            elementName,
+            LocalSearchScope(template),
+            UsageSearchContext.IN_CODE,
+            true, element)
+        }
+      }
+      return
+    }
+
     val component = VueRefactoringUtils.getComponent(element)
 
     if (component != null) {
       // TODO migrate to use VueModelManager.findEnclosingComponent()
-      val content = findModule(element) ?: return
+      // TODO support script setup syntax
+      val content = findModule(element, false) ?: return
       val defaultExport = ES6PsiUtil.findDefaultExport(content) as? PsiElement ?: return
       val collector = SearchRequestCollector(queryParameters.optimizer.searchSession)
       queryParameters.optimizer.searchQuery(
@@ -44,9 +70,8 @@ class VueJSReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.
                            false, PairProcessor { reference, _ -> consumer.process(reference) }))
       //We are searching for <component-a> and <ComponentA> tags
       //Original component name can't be fromAsset (name: "component-a")
-      val names = setOf(component.name, toAsset(component.name))
-      for (name in names) {
-        queryParameters.optimizer.searchWord(name, queryParameters.effectiveSearchScope, false,
+      sequenceOf(component.name, toAsset(component.name)).forEach {
+        queryParameters.optimizer.searchWord(it, queryParameters.effectiveSearchScope, false,
                                              component)
       }
     }
@@ -64,8 +89,8 @@ class VueJSReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.
           ?.template
           ?.source
           ?.let {
-            val searchScope = LocalSearchScope(arrayOf(it), VueBundle.message("vue.search.scope.template.name"), false)
-            queryParameters.optimizer.searchWord(name, searchScope, true, element)
+            val localSearchScope = LocalSearchScope(arrayOf(it), VueBundle.message("vue.search.scope.template.name"), false)
+            queryParameters.optimizer.searchWord(name, localSearchScope, true, element)
           }
       }
     }

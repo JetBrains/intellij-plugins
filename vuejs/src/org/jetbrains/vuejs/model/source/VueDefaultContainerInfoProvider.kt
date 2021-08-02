@@ -17,7 +17,10 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.castSafelyTo
 import one.util.streamex.StreamEx
-import org.jetbrains.vuejs.codeInsight.*
+import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
+import org.jetbrains.vuejs.codeInsight.getRequiredFromPropOptions
+import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
+import org.jetbrains.vuejs.codeInsight.objectLiteralFor
 import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.getComponentDescriptor
@@ -195,8 +198,8 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
   }
 
 
-  private class VueSourceInputProperty(override val name: String,
-                                       sourceElement: PsiElement) : VueInputProperty {
+  class VueSourceInputProperty(override val name: String,
+                               sourceElement: PsiElement) : VueInputProperty {
 
     override val source: VueImplicitElement =
       VueImplicitElement(name, (sourceElement as? JSProperty)?.let { VueSourcePropType(it) },

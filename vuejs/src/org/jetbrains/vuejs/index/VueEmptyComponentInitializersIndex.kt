@@ -13,7 +13,6 @@ import com.intellij.psi.xml.XmlFile
 import com.intellij.util.castSafelyTo
 import com.intellij.util.indexing.*
 import com.intellij.util.io.KeyDescriptor
-import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.libraries.componentDecorator.findComponentDecorator
 import org.jetbrains.vuejs.model.source.VueComponents
@@ -27,8 +26,8 @@ class VueEmptyComponentInitializersIndex : ScalarIndexExtension<Boolean>() {
 
   override fun getIndexer(): DataIndexer<Boolean, Void, FileContent> = DataIndexer { inputData ->
     inputData.psiFile.let { file ->
-      file is XmlFile && findScriptTag(file).let { script ->
-        if (script == null || hasAttribute(script, SETUP_ATTRIBUTE_NAME)) {
+      file is XmlFile && findScriptTag(file, false).let { script ->
+        if (script == null) {
           true
         }
         else {
