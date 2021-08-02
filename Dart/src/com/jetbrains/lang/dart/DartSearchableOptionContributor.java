@@ -1,7 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart;
 
-import com.intellij.application.options.CodeCompletionOptions;
+import com.intellij.application.options.CodeCompletionConfigurable;
 import com.intellij.ide.ui.search.SearchableOptionContributor;
 import com.intellij.ide.ui.search.SearchableOptionProcessor;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +18,7 @@ final class DartSearchableOptionContributor extends SearchableOptionContributor 
     processor.addOptions(DartBundle.message("checkbox.collapse.generic.parameters"), null,
                          "Code Folding: collapse Dart generic parameters by default", "editor.preferences.folding", null, false);
     processor.addOptions("dart " + DartBundle.message("dart.smartKeys.insertDefaultArgValues.text"), null,
-                         "Dart: " + DartBundle.message("dart.smartKeys.insertDefaultArgValues.text"), CodeCompletionOptions.ID, null,
+                         "Dart: " + DartBundle.message("dart.smartKeys.insertDefaultArgValues.text"), CodeCompletionConfigurable.ID, null,
                          false);
 
     processor.addOptions("Dart SDK path", null,
