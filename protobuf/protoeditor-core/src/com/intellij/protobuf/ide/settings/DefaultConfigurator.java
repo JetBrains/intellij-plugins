@@ -60,14 +60,14 @@ public final class DefaultConfigurator implements ProjectSettingsConfigurator {
 
   @Nullable
   static ImportPathEntry getBuiltInIncludeEntry() {
-    URL descriptorUrl = DefaultConfigurator.class.getClassLoader().getResource("protobuf/descriptor.proto");
-    if (descriptorUrl == null) {
+    URL includedDescriptorsDirectoryUrl = DefaultConfigurator.class.getClassLoader().getResource("include");
+    if (includedDescriptorsDirectoryUrl == null) {
       return null;
     }
-    VirtualFile descriptorFile = VfsUtil.findFileByURL(descriptorUrl);
-    if (descriptorFile == null || descriptorFile.getParent() == null) {
+    VirtualFile descriptorsDirectory = VfsUtil.findFileByURL(includedDescriptorsDirectoryUrl);
+    if (descriptorsDirectory == null || !descriptorsDirectory.isDirectory()) {
       return null;
     }
-    return new ImportPathEntry(descriptorFile.getParent().getUrl(), null);
+    return new ImportPathEntry(descriptorsDirectory.getUrl(), null);
   }
 }
