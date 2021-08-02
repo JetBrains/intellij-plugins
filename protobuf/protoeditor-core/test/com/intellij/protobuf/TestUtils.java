@@ -24,11 +24,11 @@ import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
-import com.intellij.testFramework.UsefulTestCase;
 import com.intellij.protobuf.ide.util.ResourceUtil;
 import com.intellij.protobuf.lang.PbFileType;
 import com.intellij.protobuf.lang.resolve.FileResolveProvider;
 import com.intellij.protobuf.lang.resolve.LocalRootsFileResolveProvider;
+import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -118,7 +118,7 @@ public final class TestUtils {
   }
 
   public static String getOpensourceDescriptorText() throws IOException {
-    return ResourceUtil.readPathAsString("/protobuf/descriptor.proto");
+    return ResourceUtil.readPathAsString("/include/google/protobuf/descriptor.proto");
   }
 
   @NotNull
