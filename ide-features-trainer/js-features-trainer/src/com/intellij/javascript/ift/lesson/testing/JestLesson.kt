@@ -17,7 +17,6 @@ import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.fileEditor.impl.EditorWindow
 import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.ui.UIBundle
 import com.intellij.ui.treeStructure.Tree
 import training.dsl.*
 import training.dsl.LessonUtil.highlightBreakpointGutter
@@ -86,7 +85,7 @@ class JestLesson
             LearningUiHighlightingManager.clearHighlights()
           }
           text(JsLessonsBundle.message("js.testing.jest.navigate.1",
-                                       strong(UIBundle.message("tool.window.name.run")),
+                                       strong(ExecutionBundle.message("tool.window.name.run")),
                                        icon(AllIcons.RunConfigurations.TestState.Run),
                                        icon(AllIcons.RunConfigurations.RerunFailedTests),
                                        icon(AllIcons.RunConfigurations.ShowPassed),

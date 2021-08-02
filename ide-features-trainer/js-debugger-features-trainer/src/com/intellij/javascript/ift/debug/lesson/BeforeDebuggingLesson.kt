@@ -7,7 +7,6 @@ import com.intellij.execution.impl.RunConfigurable
 import com.intellij.javascript.ift.debug.JsDebugLessonsBundle
 import com.intellij.javascript.ift.debug.setLanguageLevel
 import com.intellij.openapi.editor.impl.EditorComponentImpl
-import com.intellij.ui.UIBundle
 import com.intellij.ui.treeStructure.Tree
 import training.dsl.*
 import training.learn.course.KLesson
@@ -47,7 +46,7 @@ class BeforeDebuggingLesson
         task("HideActiveWindow") {
           text(
             JsDebugLessonsBundle.message("js.debugger.before.describe.tool.window",
-                                         action("RunClass"), strong(UIBundle.message("tool.window.name.run")), action(it)))
+                                         action("RunClass"), strong(ExecutionBundle.message("tool.window.name.run")), action(it)))
           checkToolWindowState("Run", false)
         }
 
