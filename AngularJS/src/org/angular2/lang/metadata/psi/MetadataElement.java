@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class MetadataElement<Stub extends MetadataElementStub<?>> extends FakePsiElement implements StubBasedPsiElement<Stub> {
   private final Stub myStub;
-  private final NotNullLazyValue<PsiElement[]> children = NotNullLazyValue.atomicLazy(() -> {
+  private final NotNullLazyValue<PsiElement[]> children = NotNullLazyValue.lazy(() -> {
     return ContainerUtil.map2Array(getStub().getChildrenStubs(), PsiElement.class, s -> s.getPsi());
   });
 

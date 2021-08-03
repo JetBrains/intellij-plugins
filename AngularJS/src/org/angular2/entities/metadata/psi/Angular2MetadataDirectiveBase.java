@@ -26,16 +26,16 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
   extends Angular2MetadataDeclaration<Stub>
   implements Angular2Directive {
 
-  private final NotNullLazyValue<List<String>> myExportAsList = NotNullLazyValue.atomicLazy(() -> {
+  private final NotNullLazyValue<List<String>> myExportAsList = NotNullLazyValue.lazy(() -> {
     String exportAsString = getStub().getExportAs();
     return exportAsString == null
            ? Collections.emptyList()
            : StringUtil.split(exportAsString, ",");
   });
-  private final NotNullLazyValue<Angular2DirectiveSelector> mySelector = NotNullLazyValue.atomicLazy(() -> {
+  private final NotNullLazyValue<Angular2DirectiveSelector> mySelector = NotNullLazyValue.lazy(() -> {
     return new Angular2DirectiveSelectorImpl(() -> notNull(getTypeScriptClass(), this), getStub().getSelector(), null);
   });
-  private final NotNullLazyValue<Collection<? extends Angular2DirectiveAttribute>> myAttributes = NotNullLazyValue.atomicLazy(this::buildAttributes);
+  private final NotNullLazyValue<Collection<? extends Angular2DirectiveAttribute>> myAttributes = NotNullLazyValue.lazy(this::buildAttributes);
 
   public Angular2MetadataDirectiveBase(@NotNull Stub element) {
     super(element);
