@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.Objects;
 
 public class DenoRunConfiguration extends DebuggableProcessRunConfigurationBase implements NodeJSDebuggableConfiguration,
                                                                                            DebuggableProcessRunConfiguration,
@@ -131,7 +132,7 @@ public class DenoRunConfiguration extends DebuggableProcessRunConfigurationBase 
   @Override
   public @Nullable NodeJsInterpreter getInterpreter() {
     String path = getExePath();
-    return new DenoInterpreter(path == null ? computeDefaultExePath() : path);
+    return new DenoInterpreter(path == null ? Objects.requireNonNull(computeDefaultExePath()) : path);
   }
 
   @Override

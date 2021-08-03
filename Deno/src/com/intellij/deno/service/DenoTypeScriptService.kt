@@ -13,7 +13,7 @@ class DenoTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proj
     }
   }
 
-  override fun createProtocol(readyConsumer: Consumer<*>, tsServicePath: String): JSLanguageServiceProtocol? {
+  override fun createProtocol(readyConsumer: Consumer<*>, tsServicePath: String): JSLanguageServiceProtocol {
     return DenoTypeScriptServiceProtocol(myProject, mySettings, readyConsumer, createEventConsumer(), "deno-typescript",
                                          tsServicePath)
   }

@@ -9,15 +9,10 @@ import com.intellij.openapi.vfs.VirtualFile
 
 class DenoTypeScriptServiceProvider(val project: Project) : JSLanguageServiceProvider {
 
-  override fun isHighlightingCandidate(file: VirtualFile): Boolean {
-    return TypeScriptCompilerSettings.acceptFileType(file.fileType)
-  }
+  override fun isHighlightingCandidate(file: VirtualFile) = TypeScriptCompilerSettings.acceptFileType(file.fileType)
 
-  override fun getService(file: VirtualFile): JSLanguageService? {
-    return if (DenoSettings.getService(project).isUseDeno()) DenoTypeScriptService.getInstance(project) else null
-  }
+  override fun getService(file: VirtualFile) = allServices.firstOrNull()
 
-  override fun getAllServices(): List<JSLanguageService> {
-    return if (DenoSettings.getService(project).isUseDeno()) listOf(DenoTypeScriptService.getInstance(project)) else emptyList()
-  }
+  override fun getAllServices() =
+    if (DenoSettings.getService(project).isUseDeno()) listOf(DenoTypeScriptService.getInstance(project)) else emptyList()
 }

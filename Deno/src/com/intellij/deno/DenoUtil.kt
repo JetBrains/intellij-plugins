@@ -6,8 +6,6 @@ import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.SystemInfoRt
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.SystemProperties
-import com.intellij.util.containers.ContainerUtil
-import com.intellij.util.containers.addIfNotNull
 import java.io.File
 
 object DenoUtil {
@@ -37,7 +35,7 @@ object DenoUtil {
   }
 
   private fun getDenoDirPath(): String {
-    val denoDir = System.getenv("DENO_DIR");
+    val denoDir = System.getenv("DENO_DIR")
     if (denoDir != null) {
       return denoDir
     }

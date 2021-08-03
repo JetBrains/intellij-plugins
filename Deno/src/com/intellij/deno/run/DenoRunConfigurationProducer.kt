@@ -5,7 +5,6 @@ import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.actions.LazyRunConfigurationProducer
 import com.intellij.execution.configurations.runConfigurationType
 import com.intellij.execution.util.ScriptFileUtil
-import com.intellij.ide.scratch.ScratchUtil
 import com.intellij.javascript.debugger.execution.DebuggableProcessRunConfigurationBase
 import com.intellij.lang.javascript.JavaScriptFileType
 import com.intellij.lang.javascript.TypeScriptFileType
