@@ -36,7 +36,7 @@ public final class Angular2DirectiveSelectorImpl implements Angular2DirectiveSel
     myStaticParent = element;
     myText = text;
     myCreateRange = createRange != null ? createRange : a -> TextRange.EMPTY_RANGE;
-    mySimpleSelectors = NotNullLazyValue.atomicLazy(() -> {
+    mySimpleSelectors = NotNullLazyValue.lazy(() -> {
       if (myText == null) {
         return Collections.emptyList();
       }
@@ -47,7 +47,7 @@ public final class Angular2DirectiveSelectorImpl implements Angular2DirectiveSel
         return Collections.emptyList();
       }
     });
-    mySimpleSelectorsWithPsi = NotNullLazyValue.atomicLazy(() -> {
+    mySimpleSelectorsWithPsi = NotNullLazyValue.lazy(() -> {
         if (myText == null) {
           return Collections.emptyList();
         }
@@ -71,7 +71,7 @@ public final class Angular2DirectiveSelectorImpl implements Angular2DirectiveSel
     myLazyParent = ClearableLazyValue.createAtomic(element);
     myText = text;
     myCreateRange = createRange != null ? createRange : a -> TextRange.EMPTY_RANGE;
-    mySimpleSelectors = NotNullLazyValue.atomicLazy(() -> {
+    mySimpleSelectors = NotNullLazyValue.lazy(() -> {
           if (myText == null) {
             return Collections.emptyList();
           }
@@ -82,7 +82,7 @@ public final class Angular2DirectiveSelectorImpl implements Angular2DirectiveSel
             return Collections.emptyList();
           }
         });
-    mySimpleSelectorsWithPsi = NotNullLazyValue.atomicLazy(() -> {
+    mySimpleSelectorsWithPsi = NotNullLazyValue.lazy(() -> {
         if (myText == null) {
           return Collections.emptyList();
         }
