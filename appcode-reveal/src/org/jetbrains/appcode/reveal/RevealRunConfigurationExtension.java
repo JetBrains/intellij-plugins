@@ -13,7 +13,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.options.SettingsEditor;
-import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.ui.DoNotAskOption;
 import com.intellij.openapi.ui.MessageDialogBuilder;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.Key;
@@ -225,7 +225,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
       UIUtil.invokeAndWaitIfNeeded((Runnable)() -> {
         response[0] = MessageDialogBuilder.yesNo(RevealBundle.message("dialog.title.reveal"),
                                                  RevealBundle.message("project.is.not.configured.with.reveal.library"))
-          .doNotAsk(new DialogWrapper.DoNotAskOption() {
+          .doNotAsk(new DoNotAskOption() {
             @Override
             public boolean isToBeShown() {
               return true;

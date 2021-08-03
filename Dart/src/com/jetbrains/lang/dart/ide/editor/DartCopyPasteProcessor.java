@@ -14,6 +14,7 @@ import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.ui.DoNotAskOption;
 import com.intellij.openapi.ui.MessageDialogBuilder;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -112,7 +113,7 @@ public final class DartCopyPasteProcessor extends CopyPastePostProcessor<DartCop
         final String message = DartBundle.message("dialog.paste.on.import.text");
         final String title = DartBundle.message("dialog.paste.on.import.title");
 
-        final DialogWrapper.DoNotAskOption doNotAskOption = new DialogWrapper.DoNotAskOption.Adapter() {
+        final DoNotAskOption doNotAskOption = new DoNotAskOption.Adapter() {
           @Override
           public boolean shouldSaveOptionsOnCancel() {
             return true;
