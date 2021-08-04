@@ -51,8 +51,8 @@ import com.intellij.util.ui.FormBuilder;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import com.thoughtworks.gauge.GaugeBootstrapService;
-import com.thoughtworks.gauge.GaugeConstants;
 import com.thoughtworks.gauge.GaugeBundle;
+import com.thoughtworks.gauge.GaugeConstants;
 import com.thoughtworks.gauge.core.GaugeVersion;
 import com.thoughtworks.gauge.core.GaugeVersionInfo;
 import com.thoughtworks.gauge.exception.GaugeNotFoundException;
@@ -153,13 +153,13 @@ final class GaugeModuleBuilder extends ModuleBuilder {
     module.putUserData(ExternalSystemDataKeys.NEWLY_CREATED_PROJECT, Boolean.TRUE);
 
     StartupManager.getInstance(module.getProject()).runAfterOpened(() -> {
-      ModalityUiUtil.invokeLaterIfNeeded(() -> {
+      ModalityUiUtil.invokeLaterIfNeeded(ModalityState.NON_MODAL, module.getDisposed(), () -> {
         if (module.isDisposed()) return;
 
         new ReformatCodeProcessor(module.getProject(), module, false).run();
 
         importProject(module, mySelectedTemplate);
-      }, ModalityState.NON_MODAL, module.getDisposed());
+      });
     });
   }
 

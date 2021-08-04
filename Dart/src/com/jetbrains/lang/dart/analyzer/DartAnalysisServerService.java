@@ -798,9 +798,9 @@ public final class DartAnalysisServerService implements Disposable {
   }
 
   void updateCurrentFile() {
-    ModalityUiUtil.invokeLaterIfNeeded(() -> DartProblemsView.getInstance(myProject).setCurrentFile(getCurrentOpenFile()),
-                                       ModalityState.NON_MODAL,
-                                       myDisposedCondition);
+    ModalityUiUtil.invokeLaterIfNeeded(ModalityState.NON_MODAL, myDisposedCondition,
+                                       () -> DartProblemsView.getInstance(myProject).setCurrentFile(getCurrentOpenFile())
+    );
   }
 
   public boolean isInIncludedRoots(@Nullable final VirtualFile vFile) {

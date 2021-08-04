@@ -103,13 +103,13 @@ public final class DartProblemsView implements PersistentStateComponent<DartProb
         @Override
         public void analysisStarted() {
           myAnalysisIsBusy = true;
-          ModalityUiUtil.invokeLaterIfNeeded(() -> updateIcon(), ModalityState.NON_MODAL, myProject.getDisposed());
+          ModalityUiUtil.invokeLaterIfNeeded(ModalityState.NON_MODAL, myProject.getDisposed(), () -> updateIcon());
         }
 
         @Override
         public void analysisFinished() {
           myAnalysisIsBusy = false;
-          ModalityUiUtil.invokeLaterIfNeeded(() -> updateIcon(), ModalityState.NON_MODAL, myProject.getDisposed());
+          ModalityUiUtil.invokeLaterIfNeeded(ModalityState.NON_MODAL, myProject.getDisposed(), () -> updateIcon());
         }
       }
     );
