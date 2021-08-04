@@ -1,7 +1,6 @@
 package com.intellij.deno.service
 
 import com.intellij.deno.DenoSettings
-import com.intellij.lang.javascript.service.JSLanguageService
 import com.intellij.lang.javascript.service.JSLanguageServiceProvider
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
 import com.intellij.openapi.project.Project
