@@ -1,8 +1,8 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.service
 
-import com.intellij.application.options.RegistryManager
 import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.javascript.web.moveToOffsetBySignature
 import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase.checkHighlightByFile
 import com.intellij.lang.javascript.service.JSLanguageService
 import com.intellij.lang.javascript.service.JSLanguageServiceBase
@@ -119,9 +119,23 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
     checkHighlightingByOptions(false)
   }
 
+
+  @TypeScriptVersion(TypeScriptVersions.TS26)
+  fun testFileCreation() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_2_5_3)
+    myFixture.configureByFile("tsconfig.json")
+    myFixture.configureByText("test.ts", "<error descr=\"TS2304: Cannot find name 'foo'.\">foo</error>")
+    myFixture.checkHighlighting()
+    myFixture.configureByText("test.vue", "<script lang='<caret>'></script>")
+    myFixture.checkHighlighting()
+    myFixture.type("ts")
+    myFixture.moveToOffsetBySignature("><caret></")
+    myFixture.type("<error descr=\"TS2304: Cannot find name 'foo'.\">foo</error")
+    myFixture.checkHighlighting()
+  }
+
   @TypeScriptVersion(TypeScriptVersions.TS36)
   fun testScriptSetup() {
-    //RegistryManager.getInstance().get("typescript.service.node.arguments").setValue("--inspect", myFixture.projectDisposable)
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
     doTestWithCopyDirectory()
