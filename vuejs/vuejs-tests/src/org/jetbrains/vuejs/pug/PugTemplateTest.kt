@@ -50,6 +50,14 @@ class PugTemplateTest : BasePlatformTestCase() {
     doCommenterTest(false)
   }
 
+  fun testHtmlTagTyping() {
+    myFixture.configureByFile("htmlTagTyping.vue")
+    myFixture.type("te")
+    myFixture.completeBasic()
+    myFixture.type("\n")
+    myFixture.checkResultByFile("htmlTagTyping_after.vue")
+  }
+
   private fun doCommenterTest(lineCommenter: Boolean) {
     val name = getTestName(true)
     myFixture.configureByFile("$name.vue")
