@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterface
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.*
+import com.intellij.openapi.util.RecursionManager
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
@@ -26,12 +27,16 @@ import java.util.*
 
 interface VueInstanceOwner : VueScopeElement {
   val thisType: JSType
-    get() = if (source != null && this is UserDataHolder) {
-      CachedValuesManager.getManager(source!!.project).getCachedValue(this) {
-        CachedValueProvider.Result.create(buildInstanceType(this), PsiModificationTracker.MODIFICATION_COUNT)
+    get() = source?.let { source ->
+      val owner = this
+      if (owner !is UserDataHolder) return@let null
+      val project = source.project
+      RecursionManager.doPreventingRecursion(Pair(source, VueInstanceOwner::class.java), true) {
+        CachedValuesManager.getManager(project).getCachedValue(owner) {
+          CachedValueProvider.Result.create(buildInstanceType(owner), PsiModificationTracker.MODIFICATION_COUNT)
+        }
       }
-    }
-    else null ?: JSAnyType.get(source, false)
+    } ?: JSAnyType.get(source, false)
 }
 
 fun getDefaultVueComponentInstanceType(context: PsiElement?): JSType? =
