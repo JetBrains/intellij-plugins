@@ -465,7 +465,7 @@ final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramOb
       }
 
       @Override
-      public @Nullable Object getData(@NotNull String dataId, List<DiagramNode<DiagramObject>> list, DiagramBuilder builder) {
+      public @Nullable Object getData(@NotNull String dataId, @NotNull List<DiagramNode<DiagramObject>> list, @NotNull DiagramBuilder builder) {
         if (CommonDataKeys.PSI_ELEMENT.is(dataId) && list.size() == 1) {
           final SmartPsiElementPointer target = list.get(0).getIdentifyingElement().getNavigationTarget();
           return target == null ? null : target.getElement();
