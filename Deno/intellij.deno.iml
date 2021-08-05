@@ -24,5 +24,8 @@
     <orderEntry type="module" module-name="intellij.platform.core.ui" />
     <orderEntry type="module" module-name="intellij.platform.ide.util.io" />
     <orderEntry type="library" name="kotlinx-coroutines-jdk8" level="project" />
+    <orderEntry type="library" name="org.eclipse.lsp4j:org.eclipse.lsp4j.jsonrpc:0.12.0" level="project" />
+    <orderEntry type="library" name="org.eclipse.lsp4j:org.eclipse.lsp4j:0.12.0" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.lsp" />
   </component>
 </module>

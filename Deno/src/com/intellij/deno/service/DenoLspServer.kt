@@ -10,9 +10,11 @@ import com.intellij.openapi.editor.event.DocumentListener
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import org.eclipse.lsp4j.services.LanguageServer
 
 class DenoLspServer(client: Client) : DocumentListener, Disposable {
   private var client: Client? = client
+  private var server: LanguageServer? = null
   private var _version: String? = null
 
   val version get() = _version ?: "..."
