@@ -5,12 +5,12 @@ import com.intellij.lang.javascript.library.JSCDNLibManager
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.psi.PsiFile
 import com.intellij.psi.XmlRecursiveElementVisitor
-import com.intellij.psi.impl.source.html.HtmlLikeFile
 import com.intellij.psi.impl.source.xml.XmlTagImpl
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.xml.XmlTag
 import com.intellij.javascript.web.context.WebFrameworkContext
+import com.intellij.lang.html.HtmlCompatibleFile
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.xml.util.HtmlUtil
@@ -30,7 +30,7 @@ class VueFileContext : WebFrameworkContext {
         || (vf == null && file.language == VueLanguage.INSTANCE)) {
       return true
     }
-    if (file is HtmlLikeFile) {
+    if (file is HtmlCompatibleFile) {
       return CachedValuesManager.getCachedValue(file) {
         CachedValueProvider.Result.create(hasVueLibraryImport(file), file)
       }
