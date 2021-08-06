@@ -5,6 +5,7 @@ import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.impl.LookupImpl
+import com.intellij.idea.Bombed
 import com.intellij.javascript.web.moveToOffsetBySignature
 import com.intellij.javascript.web.renderLookupItems
 import com.intellij.lang.javascript.BaseJSCompletionTestCase.*
@@ -1738,6 +1739,9 @@ export default class ComponentInsertion extends Vue {
     assertDoesntContain(myFixture.lookupElementStrings!!, "component-four", "ComponentFour")
   }
 
+  @Bombed(year = 2022, month = 12, day = 31,
+          description = "This feature needs to be reimplemented after migration to web-types",
+          user = "piotr.tomiak")
   fun testNoDuplicateCompletionProposals() {
     myFixture.configureByFile("noDupedAttrs.vue")
     myFixture.completeBasic()
