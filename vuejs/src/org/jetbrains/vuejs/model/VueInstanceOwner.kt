@@ -28,13 +28,11 @@ import java.util.*
 interface VueInstanceOwner : VueScopeElement {
   val thisType: JSType
     get() = source?.let { source ->
-      val owner = this
-      if (owner !is UserDataHolder) return@let null
-      val project = source.project
-      RecursionManager.doPreventingRecursion(Pair(source, VueInstanceOwner::class.java), true) {
-        CachedValuesManager.getManager(project).getCachedValue(owner) {
-          CachedValueProvider.Result.create(buildInstanceType(owner), PsiModificationTracker.MODIFICATION_COUNT)
-        }
+      if (this !is UserDataHolder) return@let null
+      CachedValuesManager.getManager(source.project).getCachedValue(this) {
+        CachedValueProvider.Result.create(RecursionManager.doPreventingRecursion(this.source!!, true) {
+          buildInstanceType(this)
+        }, PsiModificationTracker.MODIFICATION_COUNT)
       }
     } ?: JSAnyType.get(source, false)
 }
