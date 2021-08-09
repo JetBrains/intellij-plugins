@@ -386,8 +386,16 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
 
   fun testMultipleScriptTagsInVue() = doTest("")
 
-  fun testCompositionApiBasic() {
+  fun testCompositionApiBasic_0_4_0() {
     myFixture.configureVueDependencies(VueTestModule.COMPOSITION_API_0_4_0)
+    myFixture.configureByFile("compositeComponent1.vue")
+    myFixture.checkHighlighting()
+    myFixture.configureByFile("compositeComponent2.vue")
+    myFixture.checkHighlighting()
+  }
+
+  fun testCompositionApiBasic_1_0_0() {
+    myFixture.configureVueDependencies(VueTestModule.COMPOSITION_API_1_0_0)
     myFixture.configureByFile("compositeComponent1.vue")
     myFixture.checkHighlighting()
     myFixture.configureByFile("compositeComponent2.vue")
