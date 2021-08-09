@@ -36,6 +36,8 @@ object VueCompositionInfoHelper {
       CachedValuesManager.getCachedValue(file) {
         val unwrapRef = resolveSymbolFromNodeModule(file, VUE_MODULE,
                                                     UNWRAP_REF_TYPE, TypeScriptTypeAlias::class.java)
+                        ?: resolveSymbolFromNodeModule(file, COMPOSITION_API_MODULE,
+                                                       UNWRAP_REF_TYPE, TypeScriptTypeAlias::class.java)
                         ?: resolveSymbolFromNodeModule(
                           file, "$COMPOSITION_API_MODULE/dist/reactivity/ref",
                           UNWRAP_REF_TYPE, TypeScriptTypeAlias::class.java)

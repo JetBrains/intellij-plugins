@@ -28,7 +28,8 @@ fun CodeInsightTestFixture.configureVueDependencies(vararg modules: VueTestModul
 enum class VueTestModule(val folder: String, vararg packageNames: String) {
   BOOTSTRAP_VUE_2_0_0_RC_11("bootstrap-vue"),
   BUEFY_0_6_2("buefy"),
-  COMPOSITION_API_0_4_0("composition-api", "@vue/composition-api"),
+  COMPOSITION_API_0_4_0("composition-api/0.4.0", "@vue/composition-api"),
+  COMPOSITION_API_1_0_0("composition-api/1.0.0", "@vue/composition-api"),
   ELEMENT_UI_2_0_5("element-ui"),
   IVIEW_2_8_0("iview"),
   MINT_UI_2_2_3("mint-ui"),
