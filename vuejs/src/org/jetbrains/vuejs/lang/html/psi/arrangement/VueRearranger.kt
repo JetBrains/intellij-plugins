@@ -14,7 +14,7 @@ import com.intellij.xml.arrangement.HtmlRearranger
 class VueRearranger : HtmlRearranger() {
 
 
-  override fun getDefaultSettings(): StdArrangementSettings? {
+  override fun getDefaultSettings(): StdArrangementSettings {
     return DEFAULT_SETTINGS
   }
 
@@ -38,9 +38,9 @@ class VueRearranger : HtmlRearranger() {
     GLOBAL("(v-bind:|:)?id"),
     UNIQUE("(v-bind:|:)?(ref|key|slot|slot-scope)|v-slot"),
     TWO_WAY_BINDING("v-model"),
-    OTHER_DIRECTIVES("v-(?!on:|bind:|(html|text)$).+"),
-    OTHER_ATTR("(?!v-on:|@|v-html$|v-text$).+"),
-    EVENTS("(v-on:|@)\\w+"),
+    OTHER_DIRECTIVES("v-(?!on:|bind:|(html|text|bind|on)$).+"),
+    OTHER_ATTR("(?!v-on:|@|v-on$|v-html$|v-text$).+"),
+    EVENTS("((v-on:|@)\\w+)|v-on$"),
     CONTENT("v-html|v-text");
 
     fun createRule(): StdArrangementMatchRule {
