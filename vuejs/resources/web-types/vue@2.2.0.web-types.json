@@ -84,6 +84,17 @@
                 "type": "string"
               }
             }
+          ],
+          "vue-special-properties": [
+            {
+              "name": "Scoped slot binding",
+              "pattern": "(?!v-).*",
+              "doc-hide-pattern": true,
+              "priority": "low",
+              "attribute-value": {
+                "required": true
+              }
+            }
           ]
         },
         {
@@ -239,15 +250,6 @@
                 "template": [
                   "#item:slot name"
                 ]
-              },
-              {
-                "items": "modifiers",
-                "template": [
-                  ".",
-                  "#item:modifier"
-                ],
-                "required": false,
-                "repeat": true
               }
             ]
           }
