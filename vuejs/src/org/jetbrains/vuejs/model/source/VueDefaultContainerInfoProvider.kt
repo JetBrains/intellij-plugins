@@ -25,6 +25,7 @@ import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.getComponentDescriptor
 import org.jetbrains.vuejs.types.VueSourcePropType
+import org.jetbrains.vuejs.types.optionalIf
 
 class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedContainerInfoProvider(::VueSourceContainerInfo) {
 
@@ -201,11 +202,12 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
   class VueSourceInputProperty(override val name: String,
                                sourceElement: PsiElement) : VueInputProperty {
 
+    override val required: Boolean = getRequiredFromPropOptions((sourceElement as? JSProperty)?.value)
     override val source: VueImplicitElement =
-      VueImplicitElement(name, (sourceElement as? JSProperty)?.let { VueSourcePropType(it) },
+      VueImplicitElement(name, (sourceElement as? JSProperty)?.let { VueSourcePropType(it) }?.optionalIf(!required),
                          sourceElement, JSImplicitElement.Type.Property, true)
     override val jsType: JSType? = source.jsType
-    override val required: Boolean = getRequiredFromPropOptions((sourceElement as? JSProperty)?.value)
+
   }
 
   private class VueSourceDataProperty(override val name: String,

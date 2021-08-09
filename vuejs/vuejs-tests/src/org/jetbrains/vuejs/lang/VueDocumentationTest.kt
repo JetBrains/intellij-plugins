@@ -58,4 +58,16 @@ class VueDocumentationTest : JSAbstractDocumentationTest() {
     defaultTest()
   }
 
+  fun testRequiredPropertyTS() {
+    defaultTest()
+  }
+
+  fun testNotRequiredPropertyTS() {
+    defaultTest()
+  }
+
+  fun testNotRequiredPropertyJS() {
+    defaultTest()
+  }
+
 }
