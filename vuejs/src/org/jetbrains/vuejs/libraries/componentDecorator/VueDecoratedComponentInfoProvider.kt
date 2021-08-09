@@ -16,6 +16,7 @@ import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInfo
+import org.jetbrains.vuejs.types.optionalIf
 import java.util.*
 
 class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedContainerInfoProvider(::VueDecoratedComponentInfo) {
@@ -144,10 +145,11 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
     private class VueDecoratedInputProperty(name: String, member: PropertySignature, decorator: ES6Decorator?, decoratorArgumentIndex: Int)
       : VueDecoratedProperty(name, member), VueInputProperty {
 
-      override val jsType: JSType = VueDecoratedComponentPropType(member, decorator, decoratorArgumentIndex)
-      override val required: Boolean by lazy(LazyThreadSafetyMode.NONE) {
+      override val required: Boolean =
         getRequiredFromPropOptions(getDecoratorArgument(decorator, decoratorArgumentIndex))
-      }
+
+      override val jsType: JSType = VueDecoratedComponentPropType(member, decorator, decoratorArgumentIndex)
+        .optionalIf(!required)
     }
 
     private class VueDecoratedComputedProperty(name: String,
