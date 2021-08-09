@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.lang
 import com.intellij.codeInsight.documentation.DocumentationManager
 import com.intellij.lang.documentation.ExternalDocumentationProvider
 import com.intellij.lang.javascript.JSAbstractDocumentationTest
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 
 class VueDocumentationTest : JSAbstractDocumentationTest() {
@@ -52,6 +51,10 @@ class VueDocumentationTest : JSAbstractDocumentationTest() {
   }
 
   fun testCustomComponentProperty() {
+    defaultTest()
+  }
+
+  fun testUnknownParentTag() {
     defaultTest()
   }
 
