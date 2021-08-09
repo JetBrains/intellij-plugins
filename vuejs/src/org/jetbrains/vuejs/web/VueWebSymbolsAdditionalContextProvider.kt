@@ -370,7 +370,17 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
             ?: emptyList()
           }
           KIND_HTML_SLOTS -> {
-            (item as? VueContainer)?.slots?.mapWithNameFilter(name) { SlotWrapper(it, this.context) }
+            (item as? VueContainer)?.slots
+              ?.asSequence()
+              ?.let { slots ->
+                if (name != null)
+                  slots.filter { it.pattern?.matches(name) ?: (it.name == name) }
+                else
+                  // TODO: web-types - expose API for patterns in WebSymbol
+                  slots.filter { it.pattern == null }
+              }
+              ?.map { SlotWrapper(it, this.context) }
+              ?.toList()
             ?: if (!name.isNullOrEmpty()
                    && ((item is VueContainer && item.template == null)
                        || item is VueUnresolvedComponent)) {
