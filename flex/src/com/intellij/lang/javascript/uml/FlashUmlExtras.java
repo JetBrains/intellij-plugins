@@ -7,6 +7,7 @@ import com.intellij.diagram.extras.DiagramExtras;
 import com.intellij.diagram.settings.DiagramConfigElement;
 import com.intellij.diagram.settings.DiagramConfigGroup;
 import com.intellij.diagram.util.DiagramUtils;
+import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.uml.utils.DiagramBundle;
 import org.jetbrains.annotations.NotNull;
@@ -45,8 +46,8 @@ public final class FlashUmlExtras extends DiagramExtras<Object> {
   }
 
   @Override
-  public DiagramAddElementAction getAddElementHandler() {
-    return DEFAULT_ADD_HANDLER;
+  public AnAction getAddElementHandler() {
+    return DiagramAddElementAction.DEFAULT_ADD_HANDLER;
   }
 
   @Override
