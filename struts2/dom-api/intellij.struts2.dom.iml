@@ -11,9 +11,9 @@
     <orderEntry type="module" module-name="intellij.xml.dom" />
     <orderEntry type="module" module-name="intellij.java.jam" />
     <orderEntry type="module" module-name="intellij.platform.ide" />
-    <orderEntry type="module" module-name="intellij.java.impl" />
     <orderEntry type="module" module-name="intellij.java" />
     <orderEntry type="module" module-name="intellij.idea.ultimate.icons" />
     <orderEntry type="module" module-name="intellij.platform.core.ui" />
+    <orderEntry type="module" module-name="intellij.java.impl" />
   </component>
 </module>
