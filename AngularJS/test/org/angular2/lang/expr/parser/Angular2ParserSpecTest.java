@@ -145,6 +145,23 @@ public class Angular2ParserSpecTest {
             expectActionError("{(:0}", "Expected identifier, keyword, or string");
             expectActionError("{1234:0}", "Expected identifier, keyword, or string");
           });
+
+          it("should parse property shorthand declarations", () -> {
+            checkAction("{a, b, c}", "{a: a, b: b, c: c}");
+            checkAction("{a: 1, b}", "{a: 1, b: b}");
+            checkAction("{a, b: 1}", "{a: a, b: 1}");
+            checkAction("{a: 1, b, c: 2}", "{a: 1, b: b, c: 2}");
+          });
+
+          it("should not allow property shorthand declaration on quoted properties", () -> {
+            expectActionError("{\"a-b\"}", ": expected");
+          });
+
+          it("should not infer invalid identifiers as shorthand property declarations", () -> {
+            expectActionError("{a.b}", ": expected");
+            expectActionError("{a[\"b\"]}", ": expected");
+            expectActionError("{1234}", "Expected identifier, keyword, or string");
+          });
         });
 
         describe("member access", () -> {

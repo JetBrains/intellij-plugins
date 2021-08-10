@@ -3,6 +3,7 @@ package org.angular2.lang.expr.parser;
 
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.WhitespacesBinders;
+import com.intellij.lang.ecmascript6.ES6StubElementTypes;
 import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.parsing.*;
 import com.intellij.openapi.util.Ref;
@@ -464,6 +465,16 @@ public class Angular2Parser extends JavaScriptParser<Angular2Parser.Angular2Expr
     @AdvancesLexer
     protected boolean parsePropertyNoMarker(PsiBuilder.Marker property) {
       final IElementType firstToken = builder.getTokenType();
+      final IElementType secondToken = builder.lookAhead(1);
+
+      if (myJavaScriptParser.isIdentifierName(firstToken) && // Angular, in contrast to ECMAScript, accepts Reserved Words here
+          (secondToken == JSTokenTypes.COMMA || secondToken == JSTokenTypes.RBRACE)) {
+        final PsiBuilder.Marker ref = builder.mark();
+        builder.advanceLexer();
+        ref.done(JSElementTypes.REFERENCE_EXPRESSION);
+        property.done(ES6StubElementTypes.PROPERTY);
+        return true;
+      }
 
       if (PROPERTY_NAMES.contains(firstToken)) {
         String errorMessage = validateLiteral();
