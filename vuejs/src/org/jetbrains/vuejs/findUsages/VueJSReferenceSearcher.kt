@@ -25,6 +25,7 @@ import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.declaredName
+import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.findModule
@@ -36,25 +37,24 @@ class VueJSReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.
 
   override fun processQuery(queryParameters: ReferencesSearch.SearchParameters, consumer: Processor<in PsiReference>) {
     val element = queryParameters.elementToSearch
-    val searchScope = queryParameters.effectiveSearchScope
     val elementName = (element as? JSPsiNamedElementBase)?.declaredName
 
     // Script setup import/export
-    if (elementName != null
-        && searchScope is LocalSearchScope
-        && searchScope.scope.find { it is JSEmbeddedContent } != null) {
-      val scriptTag = PsiTreeUtil.getParentOfType(element, XmlTag::class.java, false, PsiFile::class.java)
+    if (elementName != null) {
+      val scriptTag = PsiTreeUtil.getContextOfType(element, XmlTag::class.java, false, PsiFile::class.java)
       if (scriptTag?.getAttribute(SETUP_ATTRIBUTE_NAME) != null) {
         val template = (VueModelManager.findEnclosingContainer(scriptTag) as? VueRegularComponent)?.template?.source
         if (template != null) {
-          queryParameters.optimizer.searchWord(
-            elementName,
-            LocalSearchScope(template),
-            UsageSearchContext.IN_CODE,
-            true, element)
+          sequenceOf(elementName, fromAsset(elementName)).forEach {
+            queryParameters.optimizer.searchWord(
+              it,
+              LocalSearchScope(template),
+              UsageSearchContext.IN_CODE,
+              true, element)
+          }
+          return
         }
       }
-      return
     }
 
     val component = VueRefactoringUtils.getComponent(element)
