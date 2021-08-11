@@ -1,0 +1,47 @@
+JSFile:test.safe-access.action
+  Angular2Action
+    JSExpressionStatement
+      JSReferenceExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('a')
+        PsiElement(JS:ELVIS)('?.')
+        PsiElement(JS:IDENTIFIER)('optional')
+------
+JSFile:test.safe-access.action
+  Angular2Action
+    JSExpressionStatement
+      JSIndexedPropertyAccessExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('a')
+        PsiElement(JS:ELVIS)('?.')
+        PsiElement(JS:LBRACKET)('[')
+        JSLiteralExpression
+          PsiElement(JS:STRING_LITERAL)('"optional"')
+        PsiElement(JS:RBRACKET)(']')
+------
+JSFile:test.safe-access.action
+  Angular2Action
+    JSExpressionStatement
+      JSCallExpression
+        JSReferenceExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('a')
+          PsiElement(JS:ELVIS)('?.')
+          PsiElement(JS:IDENTIFIER)('toString')
+        JSArgumentList
+          PsiElement(JS:LPAR)('(')
+          PsiElement(JS:RPAR)(')')
+------
+JSFile:test.safe-access.action
+  Angular2Action
+    JSExpressionStatement
+      JSCallExpression
+        JSReferenceExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('a')
+          PsiElement(JS:DOT)('.')
+          PsiElement(JS:IDENTIFIER)('toString')
+        PsiElement(JS:ELVIS)('?.')
+        JSArgumentList
+          PsiElement(JS:LPAR)('(')
+          PsiElement(JS:RPAR)(')')
