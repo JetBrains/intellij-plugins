@@ -59,5 +59,10 @@ JSFile:test.nested.binding
                 Angular2PipeReferenceExpression
                   PsiElement(JS:IDENTIFIER)('escape')
               PsiElement(JS:RPAR)(')')
+          PsiElement(JS:COMMA)(',')
+          PsiWhiteSpace(' ')
+          ES6Property
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('hello')
           PsiWhiteSpace(' ')
           PsiElement(JS:RBRACE)('}')
