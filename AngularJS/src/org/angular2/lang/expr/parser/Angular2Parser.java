@@ -14,6 +14,7 @@ import com.intellij.util.Consumer;
 import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.Angular2LangUtil;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.Nullable;
 
 import static org.angular2.lang.expr.lexer.Angular2TokenTypes.*;
 import static org.angular2.lang.expr.parser.Angular2ElementTypes.*;
@@ -433,9 +434,13 @@ public class Angular2Parser extends JavaScriptParser<Angular2Parser.Angular2Expr
     }
 
     @Override
+    protected @Nullable IElementType getSafeAccessOperator() {
+      return JSTokenTypes.ELVIS;
+    }
+
+    @Override
     protected boolean isReferenceQualifierSeparator(IElementType tokenType) {
-      return tokenType == ELVIS
-             || tokenType == JSTokenTypes.DOT;
+      return tokenType == JSTokenTypes.DOT || tokenType == getSafeAccessOperator();
     }
 
     @Override
