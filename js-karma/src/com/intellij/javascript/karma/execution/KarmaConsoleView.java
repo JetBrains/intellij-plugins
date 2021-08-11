@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.ExecutionResult;
@@ -20,7 +20,6 @@ import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.execution.ui.layout.LayoutAttractionPolicy;
 import com.intellij.execution.ui.layout.LayoutViewOptions;
 import com.intellij.execution.ui.layout.PlaceInGrid;
-import com.intellij.icons.AllIcons;
 import com.intellij.ide.browsers.OpenUrlHyperlinkInfo;
 import com.intellij.javascript.debugger.JSDebugTabLayouter;
 import com.intellij.javascript.debugger.JavaScriptDebugProcess;
@@ -75,7 +74,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     final Content consoleContent = ui.createContent(ExecutionConsole.CONSOLE_CONTENT_ID,
                                                     getComponent(),
                                                     KarmaBundle.message("console.test_run_tab.name"),
-                                                    AllIcons.Debugger.Console,
+                                                    null,
                                                     getPreferredFocusableComponent());
     ui.addContent(consoleContent, 1, PlaceInGrid.bottom, false);
 
