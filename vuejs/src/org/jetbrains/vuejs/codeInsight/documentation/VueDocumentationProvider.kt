@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight.documentation
 
 import com.intellij.lang.documentation.DocumentationMarkup.*
@@ -11,13 +11,14 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.impl.FakePsiElement
 import com.intellij.util.castSafelyTo
+import org.jetbrains.annotations.Nls
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.refs.VueJSReferenceExpressionResolver
 import org.jetbrains.vuejs.lang.expr.psi.VueJSFilterReferenceExpression
 
 class VueDocumentationProvider : DocumentationProvider {
 
-  override fun getQuickNavigateInfo(element: PsiElement?, originalElement: PsiElement?): String? {
+  override fun getQuickNavigateInfo(element: PsiElement?, originalElement: PsiElement?): @Nls String? {
     return null
   }
 
@@ -32,7 +33,7 @@ class VueDocumentationProvider : DocumentationProvider {
       ?.let { PsiWrappedVueDocumentedItem(it.first, it.second) }
   }
 
-  override fun generateDoc(element: PsiElement?, originalElement: PsiElement?): String? {
+  override fun generateDoc(element: PsiElement?, originalElement: PsiElement?): @Nls String? {
     return (element as? PsiWrappedVueDocumentedItem)
       ?.let { generateDoc(it.item) }
   }

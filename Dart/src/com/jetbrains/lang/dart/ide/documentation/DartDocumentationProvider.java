@@ -17,6 +17,7 @@ import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.dartlang.analysis.server.protocol.HoverInformation;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,7 +28,7 @@ public class DartDocumentationProvider implements DocumentationProvider {
   private static final String BASE_DART_DOC_URL = "https://api.dart.dev/stable/";
 
   @Override
-  public String generateDoc(@NotNull final PsiElement element, @Nullable final PsiElement originalElement) {
+  public @Nls String generateDoc(@NotNull final PsiElement element, @Nullable final PsiElement originalElement) {
     // in case of code completion 'element' comes from completion list and has nothing to do with 'originalElement',
     // but for Quick Doc in editor we should prefer building docs for 'originalElement' because such doc has info about propagated type
     final PsiElement elementForDocs = resolvesTo(originalElement, element) ? originalElement : element;
@@ -62,7 +63,7 @@ public class DartDocumentationProvider implements DocumentationProvider {
   }
 
   @Override
-  public String getQuickNavigateInfo(final PsiElement element, final PsiElement originalElement) {
+  public @Nls String getQuickNavigateInfo(final PsiElement element, final PsiElement originalElement) {
     final PsiElement elementForInfo = resolvesTo(originalElement, element) ? originalElement : element;
     final HoverInformation hover = getSingleHover(elementForInfo);
     if (hover != null) {

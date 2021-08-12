@@ -17,11 +17,12 @@ package com.intellij.protobuf.ide.documentation;
 
 import com.intellij.lang.documentation.AbstractDocumentationProvider;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.protobuf.lang.psi.PbCommentOwner;
+import com.intellij.protobuf.lang.psi.util.PbCommentUtil;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
-import com.intellij.protobuf.lang.psi.PbCommentOwner;
-import com.intellij.protobuf.lang.psi.util.PbCommentUtil;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -31,7 +32,7 @@ public class PbDocumentationProvider extends AbstractDocumentationProvider {
 
   @Nullable
   @Override
-  public String getQuickNavigateInfo(PsiElement element, PsiElement originalElement) {
+  public @Nls String getQuickNavigateInfo(PsiElement element, PsiElement originalElement) {
     return null;
   }
 
@@ -43,7 +44,7 @@ public class PbDocumentationProvider extends AbstractDocumentationProvider {
 
   @Nullable
   @Override
-  public String generateDoc(PsiElement element, @Nullable PsiElement originalElement) {
+  public @Nls String generateDoc(PsiElement element, @Nullable PsiElement originalElement) {
     if (!(element instanceof PbCommentOwner)) {
       return null;
     }

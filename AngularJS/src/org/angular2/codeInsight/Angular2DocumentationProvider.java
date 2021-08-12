@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight;
 
 import com.intellij.lang.documentation.AbstractDocumentationProvider;
@@ -21,6 +21,7 @@ import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Entity;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +31,7 @@ public class Angular2DocumentationProvider extends AbstractDocumentationProvider
   private final TypeScriptDocumentationProvider myTsProvider = new TypeScriptDocumentationProvider();
 
   @Override
-  public @Nullable String generateDoc(PsiElement element, @Nullable PsiElement originalElement) {
+  public @Nls @Nullable String generateDoc(PsiElement element, @Nullable PsiElement originalElement) {
     return myTsProvider.generateDoc(element, originalElement);
   }
 

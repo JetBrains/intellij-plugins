@@ -5,10 +5,11 @@ import com.intellij.lang.documentation.DocumentationProvider
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import org.jetbrains.annotations.Nls
 import org.jetbrains.yaml.psi.YAMLScalar
 
 class CloudFormationDocumentationProvider : DocumentationProvider {
-  override fun generateDoc(element: PsiElement?, originalElement: PsiElement?): String? {
+  override fun generateDoc(element: PsiElement?, originalElement: PsiElement?): @Nls String? {
     val docElement = getDocElement(originalElement) ?: return null
     val parsed = CloudFormationParser.parse(docElement.containingFile)
 

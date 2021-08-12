@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.documentation;
 
 import com.intellij.codeInsight.documentation.AbstractExternalFilter;
@@ -38,6 +38,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.*;
 import gnu.trove.THashMap;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -103,7 +104,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
   }
 
   @Override
-  public String generateDoc(PsiElement _element, PsiElement originalElement) {
+  public @Nls String generateDoc(PsiElement _element, PsiElement originalElement) {
     String doc = super.generateDoc(_element, originalElement);
     if (doc != null && doc.contains(DocumentationMarkup.CONTENT_START)) {
       return doc;
