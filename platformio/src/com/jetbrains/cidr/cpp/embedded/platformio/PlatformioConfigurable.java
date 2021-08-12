@@ -56,4 +56,9 @@ public class PlatformioConfigurable implements SearchableConfigurable {
   public static String getPioLocation() {
     return PropertiesComponent.getInstance().getValue(PIO_LOCATION_KEY, "").trim();
   }
+
+  @Override
+  public @Nullable String getHelpTopic() {
+    return "settings.plugin.platformio";
+  }
 }
