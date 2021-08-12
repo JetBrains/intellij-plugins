@@ -90,7 +90,6 @@ public class RequestUtilities {
   private static final String METHOD_ANALYTICS_SEND_TIMING = "analytics.sendTiming";
 
   // Edit domain
-  private static final String METHOD_EDIT_DARTFIX = "edit.dartfix";
   private static final String METHOD_EDIT_FORMAT = "edit.format";
   private static final String METHOD_EDIT_GET_ASSISTS = "edit.getAssists";
   private static final String METHOD_EDIT_GET_AVAILABLE_REFACTORING = "edit.getAvailableRefactorings";
@@ -487,47 +486,6 @@ public class RequestUtilities {
     JsonObject params = new JsonObject();
     params.add(SUBSCRIPTIONS, buildJsonElement(subscriptions));
     return buildJsonObjectRequest(idValue, METHOD_COMPLETION_SET_SUBSCRIPTIONS, params);
-  }
-
-  /**
-   * Generate and return a {@value #METHOD_EDIT_DARTFIX} request.
-   * <p>
-   * <pre>
-   * request: {
-   *   "id": String
-   *   "method": "edit.dartfix"
-   *   "params": {
-   *     "included": List&lt;FilePath&gt;
-   *     "includedFixes": optional List&lt;String&gt;
-   *     "includePedanticFixes": optional boolean
-   *     "includeRequiredFixes": optional boolean
-   *     "excludedFixes": optional List&lt;FilePath&gt;
-   *     "outputDir": optional String
-   *   }
-   * }
-   * </pre>
-   */
-  public static JsonObject generateEditDartfix(String idValue,
-                                               List<String> included,
-                                               List<String> includedFixes,
-                                               boolean includePedanticFixes,
-                                               List<String> excludedFixes,
-                                               int port,
-                                               String outputDir) {
-    JsonObject params = new JsonObject();
-    params.add(INCLUDED, buildJsonElement(included));
-    if (includedFixes != null) {
-      params.add(INCLUDED_FIXES, buildJsonElement(includedFixes));
-    }
-    params.addProperty(INCLUDED_PEDANTIC_FIXES, includePedanticFixes);
-    if (excludedFixes != null) {
-      params.add(EXCLUDED_FIXES, buildJsonElement(excludedFixes));
-    }
-    params.addProperty(PORT, port);
-    if (outputDir != null) {
-      params.addProperty(OUTPUT_DIR, outputDir);
-    }
-    return buildJsonObjectRequest(idValue, METHOD_EDIT_DARTFIX, params);
   }
 
   /**
