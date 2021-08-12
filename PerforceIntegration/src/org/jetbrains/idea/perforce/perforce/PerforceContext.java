@@ -53,6 +53,11 @@ class PerforceContext {
     }
 
     @Override
+    public String getPathToIgnore() {
+      return myDelegate.getPathToIgnore();
+    }
+
+    @Override
     public Project getProject() {
       return myDelegate.getProject();
     }

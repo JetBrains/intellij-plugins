@@ -44,7 +44,7 @@ public class P4ConnectionCalculator {
     final PerforceVcs vcs = PerforceVcs.getInstance(myProject);
     final PerforceSettings settings = PerforceSettings.getSettings(myProject);
     final PerforcePhysicalConnectionParameters physicalParameters =
-      new PerforcePhysicalConnectionParameters(settings.getPathToExec(), myProject, settings.getServerTimeout(), settings.getCharsetName());
+      new PerforcePhysicalConnectionParameters(settings.getPathToExec(), settings.getPathToIgnore(), myProject, settings.getServerTimeout(), settings.getCharsetName());
 
     final List<VirtualFile> detailedVcsMappings = vcsManager.getDetailedVcsMappings(vcs);
 

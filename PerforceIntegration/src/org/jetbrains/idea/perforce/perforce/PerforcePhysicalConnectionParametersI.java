@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface PerforcePhysicalConnectionParametersI {
   String getPathToExec();
+  String getPathToIgnore();
   Project getProject();
   void disable();
 

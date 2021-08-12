@@ -82,6 +82,12 @@ public class ConfigPanel {
   private JCheckBox mySwitchToOffline;
   private JPanel myConfigSettingsPanel;
   private JBLabel myP4ConfigWarningLabel;
+  private JRadioButton myUseP4IGNOREOrDefaultRadioButton;
+  private JBLabel myP4IgnoreWarningLabel;
+  private JPanel myIgnoreSettingsPanel;
+  private JLabel myIgnoreLabel;
+  private JRadioButton myUseIgnoreSettingsRadioButton;
+  private TextFieldWithBrowseButton m_pathToIgnore;
 
   @NlsSafe private static final String CHARSET_ISO8859_1 = "iso8859-1";
   @NlsSafe private static final String CHARSET_ISO8859_15 = "iso8859-15";
@@ -100,11 +106,21 @@ public class ConfigPanel {
     final ActionListener actionListener = new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        reenableConnectPane();
+        reenableConnectPanel();
       }
     };
     myUseConnectionParametersRadioButton.addActionListener(actionListener);
     myUseP4CONFIGOrDefaultRadioButton.addActionListener(actionListener);
+
+    final ButtonGroup ignoreBg = new ButtonGroup();
+    ignoreBg.add(myUseIgnoreSettingsRadioButton);
+    ignoreBg.add(myUseP4IGNOREOrDefaultRadioButton);
+    final ActionListener ignoreActionListener = new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) { reenableIgnorePanel(); }
+    };
+    myUseIgnoreSettingsRadioButton.addActionListener(ignoreActionListener);
+    myUseP4IGNOREOrDefaultRadioButton.addActionListener(ignoreActionListener);
 
     myTestConnectionButton.addActionListener(new ActionListener() {
       @Override
@@ -167,7 +183,15 @@ public class ConfigPanel {
         super.onFileChosen(chosenFile);
       }
     });
-    reenableConnectPane();
+
+    m_pathToIgnore.addBrowseFolderListener(PerforceBundle.message("dialog.title.path.to.p4.ignore"),
+                                           PerforceBundle.message("dialog.description.path.to.p4.ignore"),
+                                           project,
+                                           FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor());
+
+    reenableConnectPanel();
+
+    reenableIgnorePanel();
 
     if (myProject.isDefault()) {
       hideProjectSpecificControls();
@@ -175,11 +199,15 @@ public class ConfigPanel {
 
     myP4ConfigWarningLabel.setVisible(!P4ConfigHelper.hasP4ConfigSettingInEnvironment());
     RelativeFont.SMALL.install(myP4ConfigWarningLabel);
+
+    myP4IgnoreWarningLabel.setVisible(!P4ConfigHelper.hasP4IgnoreSettingInEnvironment());
+    RelativeFont.SMALL.install(myP4IgnoreWarningLabel);
   }
 
   private void hideProjectSpecificControls() {
     myIsEnabled.setVisible(false);
     myConfigSettingsPanel.setVisible(false);
+    myIgnoreSettingsPanel.setVisible(false);
     myTestConnectionButton.setVisible(false);
   }
 
@@ -187,7 +215,7 @@ public class ConfigPanel {
     PerforceConnectionManager.getInstance(myProject).updateConnections();
   }
 
-  private void reenableConnectPane() {
+  private void reenableConnectPanel() {
     boolean useP4Conf = myUseP4CONFIGOrDefaultRadioButton.isSelected();
     m_port.setEnabled(!useP4Conf);
     m_client.setEnabled(!useP4Conf);
@@ -201,15 +229,25 @@ public class ConfigPanel {
     myTestConnectionButton.setEnabled(! myProject.isDefault() || ! useP4Conf);
   }
 
+  private void reenableIgnorePanel() {
+    boolean useP4Ignore = myUseP4IGNOREOrDefaultRadioButton.isSelected();
+
+    myIgnoreLabel.setEnabled(!useP4Ignore);
+    m_pathToIgnore.setEnabled(!useP4Ignore);
+  }
+
   public void resetFrom(PerforceSettings settings) {
     myUseP4CONFIGOrDefaultRadioButton.setSelected(settings.useP4CONFIG);
     myUseConnectionParametersRadioButton.setSelected(! settings.useP4CONFIG);
+    myUseP4IGNOREOrDefaultRadioButton.setSelected(settings.useP4IGNORE);
+    myUseIgnoreSettingsRadioButton.setSelected(! settings.useP4IGNORE);
     m_port.setText(settings.port);
     m_client.setText(settings.client);
     m_user.setText(settings.user);
     m_showCmds.setSelected(settings.showCmds);
     m_pathToExec.setText(settings.pathToExec);
     myP4VCPathField.setText(settings.PATH_TO_P4VC);
+    m_pathToIgnore.setText(settings.pathToIgnore);
 
     final File dumpFile = PerforceRunner.getDumpFile();
     if (dumpFile.exists()) {
@@ -247,7 +285,9 @@ public class ConfigPanel {
 
     myCharset.setSelectedItem(settings.CHARSET);
 
-    reenableConnectPane();
+    reenableConnectPanel();
+
+    reenableIgnorePanel();
   }
 
   public void applyTo(PerforceSettings settings) {
@@ -263,10 +303,12 @@ public class ConfigPanel {
 
   private void applyImpl(PerforceSettings settings) {
     settings.useP4CONFIG = myUseP4CONFIGOrDefaultRadioButton.isSelected();
+    settings.useP4IGNORE = myUseP4IGNOREOrDefaultRadioButton.isSelected();
     settings.port = m_port.getText();
     settings.client = m_client.getText();
     settings.user = m_user.getText();
     settings.showCmds = m_showCmds.isSelected();
+    settings.pathToIgnore = m_pathToIgnore.getText();
     boolean execChanged = !Objects.equals(settings.pathToExec, m_pathToExec.getText());
     settings.pathToExec = m_pathToExec.getText();
     if (execChanged) {
@@ -295,6 +337,8 @@ public class ConfigPanel {
     if (settings.showCmds != m_showCmds.isSelected()) return false;
     if (settings.SHOW_BRANCHES_HISTORY != myShowBranchingHistory.isSelected()) return false;
     if (!Objects.equals(settings.pathToExec, m_pathToExec.getText().trim())) return false;
+    if (!Objects.equals(settings.pathToIgnore, m_pathToIgnore.getText().trim())) return false;
+    if (settings.useP4IGNORE != myUseP4IGNOREOrDefaultRadioButton.isSelected()) return false;
     if (!Objects.equals(settings.PATH_TO_P4VC, myP4VCPathField.getText().trim())) return false;
     if (! Comparing.equal(settings.USE_PERFORCE_JOBS, myUsePerforceJobs.isSelected())) return false;
     if (! Comparing.equal(settings.myCanGoOffline, mySwitchToOffline.isSelected())) return false;

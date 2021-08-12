@@ -278,6 +278,9 @@ public abstract class AbstractP4Connection implements P4Connection {
     }
     cmd.addParameters(connArgs);
     cmd.addParameters(p4args);
+    if(perforceSettings.getPathToIgnore() != null) {
+      return cmd.withEnvironment(P4ConfigHelper.P4_IGNORE, perforceSettings.getPathToIgnore());
+    }
     return cmd;
   }
 

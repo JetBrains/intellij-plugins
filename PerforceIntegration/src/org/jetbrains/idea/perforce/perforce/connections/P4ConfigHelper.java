@@ -18,15 +18,23 @@ import java.util.Map;
  */
 public class P4ConfigHelper {
   @NonNls public static final String P4_CONFIG = "P4CONFIG";
+  @NonNls public static final String P4_IGNORE = "P4IGNORE";
 
   public static boolean hasP4ConfigSettingInEnvironment() {
     return EnvironmentUtil.getValue(P4_CONFIG) != null;
+  }
+
+  public static boolean hasP4IgnoreSettingInEnvironment() {
+    return EnvironmentUtil.getValue(P4_IGNORE) != null;
   }
 
   @Nullable
   public static String getP4ConfigFileName() {
     return EnvironmentUtil.getValue(P4_CONFIG);
   }
+
+  @Nullable
+  public static String getP4IgnoreVariable() { return EnvironmentUtil.getValue(P4_IGNORE); }
 
   private final Map<File, File> myAlreadyFoundConfigs = new HashMap<>();
 

@@ -8,12 +8,14 @@ import org.jetbrains.annotations.NotNull;
  */
 public class PerforcePhysicalConnectionParameters implements PerforcePhysicalConnectionParametersI {
   private final String myPathToExecute;
+  private final String myPathToIgnore;
   private final Project myProject;
   private final int myServerTimeout;
   private final String myCharsetName;
 
-  public PerforcePhysicalConnectionParameters(String pathToExecute, Project project, int serverTimeout, String charsetName) {
+  public PerforcePhysicalConnectionParameters(String pathToExecute, String pathToIgnore, Project project, int serverTimeout, String charsetName) {
     myPathToExecute = pathToExecute;
+    myPathToIgnore = pathToIgnore;
     myProject = project;
     myServerTimeout = serverTimeout;
     myCharsetName = charsetName;
@@ -22,6 +24,11 @@ public class PerforcePhysicalConnectionParameters implements PerforcePhysicalCon
   @Override
   public String getPathToExec() {
     return myPathToExecute;
+  }
+
+  @Override
+  public String getPathToIgnore() {
+    return myPathToIgnore;
   }
 
   @Override

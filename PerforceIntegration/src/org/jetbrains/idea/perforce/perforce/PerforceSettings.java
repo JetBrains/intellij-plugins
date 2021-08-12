@@ -33,6 +33,7 @@ import com.intellij.openapi.vcs.changes.*;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.impl.DebugUtil;
 import com.intellij.util.ArrayUtilRt;
+import com.intellij.util.EnvironmentUtil;
 import com.intellij.util.messages.Topic;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.MapAnnotation;
@@ -45,6 +46,7 @@ import org.jetbrains.idea.perforce.ServerVersion;
 import org.jetbrains.idea.perforce.application.ConnectionKey;
 import org.jetbrains.idea.perforce.application.PerforceManager;
 import org.jetbrains.idea.perforce.operations.VcsOperationLog;
+import org.jetbrains.idea.perforce.perforce.connections.P4ConfigHelper;
 import org.jetbrains.idea.perforce.perforce.connections.P4Connection;
 import org.jetbrains.idea.perforce.perforce.connections.PerforceConnectionManager;
 import org.jetbrains.idea.perforce.perforce.login.PerforceLoginManager;
@@ -73,12 +75,14 @@ public final class PerforceSettings implements PersistentStateComponent<Perforce
   public Map<ConnectionId, ParticularConnectionSettings> myConnectionSettings = new LinkedHashMap<>();
 
   public boolean useP4CONFIG = true;
+  public boolean useP4IGNORE = true;
   public String port = "<perforce_server>:1666";
   public String client = "";
   public String user = "";
   public boolean showCmds = false;
 
   public @NlsSafe String pathToExec = "p4";
+  public @NlsSafe String pathToIgnore = ".p4ignore";
   public @NlsSafe String PATH_TO_P4VC = "p4vc";
 
   public boolean myCanGoOffline = true;
@@ -153,6 +157,14 @@ public final class PerforceSettings implements PersistentStateComponent<Perforce
   @Override
   public String getPathToExec() {
     return pathToExec;
+  }
+
+  public String getPathToIgnore() {
+    if(useP4IGNORE) {
+      return P4ConfigHelper.getP4IgnoreVariable();
+    }
+
+    return pathToIgnore;
   }
 
   @Override
