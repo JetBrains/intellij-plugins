@@ -77,6 +77,12 @@ public class RequestErrorCode {
   public static final String GET_ERRORS_INVALID_FILE = "GET_ERRORS_INVALID_FILE";
 
   /**
+   * An "edit.getFixes" request specified a FilePath which does not match a file currently subject to
+   * analysis.
+   */
+  public static final String GET_FIXES_INVALID_FILE = "GET_FIXES_INVALID_FILE";
+
+  /**
    * An "analysis.getImportedElements" request specified a FilePath that does not match a file
    * currently subject to analysis.
    */
@@ -190,12 +196,6 @@ public class RequestErrorCode {
    * An "edit.sortMembers" request specified a Dart file that has scan or parse errors.
    */
   public static final String SORT_MEMBERS_PARSE_ERRORS = "SORT_MEMBERS_PARSE_ERRORS";
-
-  /**
-   * A dartfix request was received containing the name of a fix which does not match the name of any
-   * known fixes.
-   */
-  public static final String UNKNOWN_FIX = "UNKNOWN_FIX";
 
   /**
    * A request was received which the analysis server does not recognize, or cannot handle in its

@@ -85,7 +85,6 @@ public final class DartAnalysisServerService implements Disposable {
   private static final long CHECK_CANCELLED_PERIOD = 10;
   private static final long SEND_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long EDIT_FORMAT_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
-  private static final long EDIT_DARTFIX_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
   private static final long EDIT_ORGANIZE_DIRECTIVES_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(300);
   private static final long EDIT_SORT_MEMBERS_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
   private static final long GET_HOVER_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
@@ -886,7 +885,7 @@ public final class DartAnalysisServerService implements Disposable {
       final FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
 
       // some documents in myChangedDocuments may be updated by external change, such as switch branch, that's why we track them,
-      // getUnsavedDocuments() is not enough, we must make sure that overlaid content is sent for for myChangedDocuments as well (to trigger DAS notifications)
+      // getUnsavedDocuments() is not enough, we must make sure that overlaid content is sent for myChangedDocuments as well (to trigger DAS notifications)
       final Set<Document> documents = new HashSet<>(myChangedDocuments);
       myChangedDocuments.clear();
       ContainerUtil.addAll(documents, fileDocumentManager.getUnsavedDocuments());
@@ -904,7 +903,7 @@ public final class DartAnalysisServerService implements Disposable {
         }
       }
 
-      // oldTrackedFiles at this point contains only those files that are not in FileDocumentManager.getUnsavedDocuments() any more
+      // oldTrackedFiles at this point contains only those files that are not in FileDocumentManager.getUnsavedDocuments() anymore
       for (String oldPath : oldTrackedFiles) {
         final Long removed = myFilePathWithOverlaidContentToTimestamp.remove(oldPath);
         LOG.assertTrue(removed != null, oldPath);
@@ -1269,7 +1268,7 @@ public final class DartAnalysisServerService implements Disposable {
 
   /**
    * If server responds in less than {@code GET_FIXES_TIMEOUT_EDT} / {@code GET_FIXES_TIMEOUT} then this method can be considered synchronous: when exiting this method
-   * {@code consumer} is already notified. Otherwise this method is async.
+   * {@code consumer} is already notified. Otherwise, this method is async.
    */
   public void askForFixesAndWaitABitIfReceivedQuickly(@NotNull final VirtualFile file,
                                                       final int _offset,
@@ -1455,7 +1454,7 @@ public final class DartAnalysisServerService implements Disposable {
 
       @Override
       public void onError(@NotNull final RequestError error) {
-        // Not a problem. Happens if a file is outside of the project, or server is just not ready yet.
+        // Not a problem. Happens if a file is outside the project, or server is just not ready yet.
         latch.countDown();
       }
     });
@@ -1464,52 +1463,6 @@ public final class DartAnalysisServerService implements Disposable {
 
     if (latch.getCount() > 0) {
       logTookTooLongMessage("completion_getSuggestions", GET_SUGGESTIONS_TIMEOUT, filePath);
-    }
-
-    return resultRef.get();
-  }
-
-  @Nullable
-  public List<SourceFileEdit> edit_dartfixNNBD(final @NotNull List<? extends VirtualFile> files) {
-    return edit_dartfix(files, Collections.singletonList(RemoteAnalysisServerImpl.DART_FIX_INFO_NON_NULLABLE));
-  }
-
-  @Nullable
-  private List<SourceFileEdit> edit_dartfix(final @NotNull List<? extends VirtualFile> files, @NotNull final List<String> includedFixes) {
-    final AnalysisServer server = myServer;
-    if (server == null) {
-      return null;
-    }
-
-    final ArrayList<String> filePaths = new ArrayList<>(files.size());
-    for (VirtualFile file : files) {
-      filePaths.add(FileUtil.toSystemDependentName(file.getPath()));
-    }
-
-    final Ref<List<SourceFileEdit>> resultRef = new Ref<>();
-
-    final CountDownLatch latch = new CountDownLatch(1);
-    server.edit_dartfix(filePaths, includedFixes, false, Collections.emptyList(), 0, null, new DartfixConsumer() {
-      @Override
-      public void computedDartfix(List<DartFixSuggestion> suggestions,
-                                  List<DartFixSuggestion> otherSuggestions,
-                                  boolean hasErrors,
-                                  List<SourceFileEdit> edits) {
-        resultRef.set(edits);
-        latch.countDown();
-      }
-
-      @Override
-      public void onError(RequestError error) {
-        logError("edit_dartfix()", StringUtil.join(filePaths, ", "), error);
-        latch.countDown();
-      }
-    });
-
-    awaitForLatchCheckingCanceled(server, latch, EDIT_DARTFIX_TIMEOUT);
-
-    if (latch.getCount() > 0) {
-      logTookTooLongMessage("edit_dartfix", EDIT_DARTFIX_TIMEOUT, StringUtil.join(filePaths, ", "));
     }
 
     return resultRef.get();
@@ -1835,7 +1788,7 @@ public final class DartAnalysisServerService implements Disposable {
                                                                                                       @NotNull List<RuntimeCompletionExpression> expressions) {
     final AnalysisServer server = myServer;
     if (server == null) {
-      return new Pair<>(new ArrayList<CompletionSuggestion>(), new ArrayList<RuntimeCompletionExpression>());
+      return new Pair<>(new ArrayList<>(), new ArrayList<>());
     }
 
     final String contextFilePath = FileUtil.toSystemDependentName(contextFile.getPath());
@@ -1928,9 +1881,7 @@ public final class DartAnalysisServerService implements Disposable {
 
       final String runtimePath = FileUtil.toSystemDependentName(DartSdkUtil.getDartExePath(sdk));
 
-      //noinspection HardCodedStringLiteral
       String analysisServerPath = FileUtil.toSystemDependentName(mySdkHome + "/bin/snapshots/analysis_server.dart.snapshot");
-      //noinspection HardCodedStringLiteral
       analysisServerPath = System.getProperty("dart.server.path", analysisServerPath);
 
       String dasStartupErrorMessage = "";
