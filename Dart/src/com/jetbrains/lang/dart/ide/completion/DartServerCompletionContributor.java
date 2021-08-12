@@ -589,6 +589,8 @@ public class DartServerCompletionContributor extends CompletionContributor {
       null,
       0,
       0,
+      0,
+      0,
       element.isDeprecated(),
       false,
       null,

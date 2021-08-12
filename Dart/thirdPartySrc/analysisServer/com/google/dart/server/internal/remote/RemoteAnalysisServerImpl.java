@@ -93,12 +93,6 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   private final AtomicLong lastRequestTime = new AtomicLong(0);
 
   /**
-   * The following is a subset of the list provided in the `allFixes` list,
-   * dart-sdk-dir/analysis_server/lib/src/edit/fix/dartfix_info.dart
-   */
-  public static final String DART_FIX_INFO_NON_NULLABLE = "non-nullable";
-
-  /**
    * The listener that will receive notification when new analysis results become available.
    */
   private final BroadcastAnalysisServerListener listener = new BroadcastAnalysisServerListener();
@@ -329,10 +323,6 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
-  public void completion_listTokenDetails(String file, ListTokenDetailsConsumer consumer) {
-  }
-
-  @Override
   public void completion_setSubscriptions(List<String> subscriptions) {
     String id = generateUniqueId();
     if (subscriptions == null) {
@@ -353,21 +343,7 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
-  public void edit_dartfix(List<String> included,
-                           List<String> includedFixes,
-                           boolean includePedanticFixes,
-                           List<String> excludedFixes,
-                           int port,
-                           String outputDir,
-                           DartfixConsumer consumer) {
-    String id = generateUniqueId();
-    sendRequestToServer(id, RequestUtilities
-                          .generateEditDartfix(id, included, includedFixes, includePedanticFixes, excludedFixes, port, outputDir),
-                        consumer);
-  }
-
-  @Override
-  public void edit_bulkFixes(List<String> included, BulkFixesConsumer consumer) {}
+  public void edit_bulkFixes(List<String> included, boolean inTestMode, BulkFixesConsumer consumer) {}
 
   @Override
   public void edit_format(String file, int selectionOffset, int selectionLength, int lineLength, FormatConsumer consumer) {
@@ -385,10 +361,6 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   public void edit_getAvailableRefactorings(String file, int offset, int length, GetAvailableRefactoringsConsumer consumer) {
     String id = generateUniqueId();
     sendRequestToServer(id, RequestUtilities.generateEditGetAvaliableRefactorings(id, file, offset, length), consumer);
-  }
-
-  @Override
-  public void edit_getDartfixInfo(GetDartfixInfoConsumer consumer) {
   }
 
   @Override
