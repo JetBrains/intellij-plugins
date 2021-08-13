@@ -149,6 +149,13 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
     myFixture.checkHighlighting()
   }
 
+  @TypeScriptVersion(TypeScriptVersions.TS36)
+  fun testScriptSetupImportResolve() {
+    myFixture.enableInspections(VueInspectionsProvider())
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
+    doTestWithCopyDirectory()
+  }
+
   @TypeScriptVersion(TypeScriptVersions.TS26)
   fun testNoScriptSectionVue3() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
