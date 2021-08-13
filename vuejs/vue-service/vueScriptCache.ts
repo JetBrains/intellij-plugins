@@ -134,6 +134,15 @@ export class VueScriptCache {
       if (scriptSetupEndLoc >= 0 ) {
         result = result.substring(0, scriptSetupEndLoc) + " ".repeat(5) + result.substring(scriptSetupEndLoc + 5)
       }
+    } else if (hadScriptSetup && hadScriptNormal) {
+      // Add imports at the end of the file
+      result += "\n;"
+      const r = /import[^'"]*['"]([^'"]*)['"]/g;
+      const fragmentToMatch = result.substring(scriptSetupStartLoc, scriptSetupEndLoc)
+      let match: RegExpMatchArray
+      while ((match = r.exec(fragmentToMatch)) !== null) {
+        result += `import "${match[1]}";\n`
+      }
     }
 
     const snapshot = ts_impl.ScriptSnapshot.fromString(result);
