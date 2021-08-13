@@ -150,7 +150,7 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS36)
-  fun testScriptSetupImportResolve() {
+  fun testScriptSetupImportResolveBothScripts() {
     myFixture.enableInspections(VueInspectionsProvider())
     myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
     doTestWithCopyDirectory()
