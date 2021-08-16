@@ -16,6 +16,7 @@
 package com.intellij.protobuf.ide.documentation;
 
 import com.intellij.lang.documentation.AbstractDocumentationProvider;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.protobuf.lang.psi.PbCommentOwner;
 import com.intellij.protobuf.lang.psi.util.PbCommentUtil;
@@ -55,6 +56,7 @@ public class PbDocumentationProvider extends AbstractDocumentationProvider {
       return null;
     }
 
+    @NlsSafe
     StringBuilder commentBuilder = new StringBuilder("<pre>");
     for (String line : PbCommentUtil.extractText(comments)) {
       commentBuilder.append(StringUtil.escapeXmlEntities(line));
