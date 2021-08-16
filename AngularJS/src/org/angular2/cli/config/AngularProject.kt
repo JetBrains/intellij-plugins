@@ -2,6 +2,8 @@
 package org.angular2.cli.config
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.intellij.lang.Language
+import com.intellij.lang.css.CSSLanguage
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 
@@ -29,6 +31,8 @@ abstract class AngularProject(internal val angularCliFolder: VirtualFile, intern
   abstract val tsLintConfigurations: List<AngularLintConfiguration>
 
   abstract val type: AngularProjectType?
+
+  abstract val inlineStyleLanguage: Language?
 
   internal open fun resolveFile(filePath: String?): VirtualFile? {
     return filePath?.let { path ->
@@ -118,6 +122,11 @@ internal class AngularProjectImpl(override val name: String,
   override val type: AngularProjectType?
     get() = ngProject.projectType
 
+  override val inlineStyleLanguage: Language?
+    get() {
+      val text = ngProject.targets?.build?.options?.inlineStyleLanguage
+      return CSSLanguage.INSTANCE.dialects.firstOrNull { it.id.equals(text, ignoreCase = true) }
+    }
 }
 
 internal class AngularLegacyProjectImpl(private val angularJson: AngularJson,
@@ -161,6 +170,9 @@ internal class AngularLegacyProjectImpl(private val angularJson: AngularJson,
     }
 
   override val type: AngularProjectType?
+    get() = null
+
+  override val inlineStyleLanguage: Language?
     get() = null
 
   override fun resolveFile(filePath: String?): VirtualFile? {
