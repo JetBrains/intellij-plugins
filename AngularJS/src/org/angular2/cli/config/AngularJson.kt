@@ -85,6 +85,9 @@ internal class AngularJsonTest {
 internal class AngularJsonTestOptions {
   @JsonProperty("karmaConfig")
   val karmaConfig: String? = null
+
+  @JsonProperty("inlineStyleLanguage")
+  val inlineStyleLanguage: String? = null
 }
 
 internal class AngularJsonBuild {
@@ -104,10 +107,12 @@ internal open class AngularJsonBuildOptionsBase {
   @JsonAlias("tsconfig")
   val tsConfig: String? = null
 
+  @JsonProperty("inlineStyleLanguage")
+  val inlineStyleLanguage: String? = null
+
   @JsonProperty("styles")
   @JsonDeserialize(using = StringOrObjectWithInputDeserializer::class)
   val styles: List<String>? = null
-
 }
 
 internal class AngularJsonBuildOptions : AngularJsonBuildOptionsBase()
