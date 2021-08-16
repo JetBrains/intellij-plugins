@@ -454,6 +454,11 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
 
   fun testCompositionPropsJS() = doTest()
 
+  fun testCssSelectors() {
+    myFixture.enableInspections(CssInvalidPseudoSelectorInspection())
+    doTest()
+  }
+
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {
