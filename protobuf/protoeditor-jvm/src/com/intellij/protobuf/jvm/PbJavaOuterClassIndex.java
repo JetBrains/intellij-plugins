@@ -24,7 +24,7 @@ import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.FileBasedIndex.InputFilter;
 import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.KeyDescriptor;
-import com.intellij.protobuf.jvm.names.NameGenerator;
+import com.intellij.protobuf.jvm.names.JavaNameGenerator;
 import com.intellij.protobuf.jvm.names.NameGeneratorSelector;
 import com.intellij.protobuf.lang.PbFileType;
 import com.intellij.protobuf.lang.psi.PbFile;
@@ -115,9 +115,9 @@ public class PbJavaOuterClassIndex extends ScalarIndexExtension<String> {
     /** Return all of the java outer class names that can be generated from this proto file. */
     @NotNull
     private Collection<String> computeOuterClassNames(PbFile file) {
-      List<NameGenerator> nameGenerators = NameGeneratorSelector.selectForFile(file);
+      List<JavaNameGenerator> nameGenerators = NameGeneratorSelector.selectForFile(file);
       List<String> results = new ArrayList<>();
-      for (NameGenerator nameGenerator : nameGenerators) {
+      for (JavaNameGenerator nameGenerator : nameGenerators) {
         results.addAll(nameGenerator.outerClassNames());
       }
       return results;

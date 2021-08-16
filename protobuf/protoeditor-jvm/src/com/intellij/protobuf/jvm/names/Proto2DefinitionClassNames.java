@@ -29,7 +29,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /** Class name generation schemes common to various java_api_version = 2 variants. */
-class Proto2DefinitionClassNames {
+public class Proto2DefinitionClassNames {
 
   // A suffix that will be appended to the file's outer class name if the name
   // conflicts with some other types defined in the file.
@@ -47,7 +47,7 @@ class Proto2DefinitionClassNames {
   private final String outerClassName;
   private final boolean isMultipleFiles;
 
-  Proto2DefinitionClassNames(
+  public Proto2DefinitionClassNames(
       PbFile file,
       QualifiedName protoPackage,
       String descriptorPackage,
@@ -64,7 +64,7 @@ class Proto2DefinitionClassNames {
     this.isMultipleFiles = isMultipleFiles;
   }
 
-  Set<String> outerClassNames(NameGenerator nameGenerator) {
+  public Set<String> outerClassNames(JavaNameGenerator nameGenerator) {
     // There's at least the outer class for the descriptor (or class containing all messages)
     ImmutableSet.Builder<String> names = ImmutableSet.builder();
     names.add(descriptorPackage + classPrefix + outerClassName);
@@ -75,7 +75,7 @@ class Proto2DefinitionClassNames {
   }
 
   private void collectMultipleFileOuterClassNames(
-      NameGenerator nameGenerator, ImmutableSet.Builder<String> results) {
+    JavaNameGenerator nameGenerator, ImmutableSet.Builder<String> results) {
     // Top level enums and messages (not nested ones).
     // Presence of services depends on the option java_generic_services or plugins.
     // We don't attempt to index services for now.
@@ -91,7 +91,7 @@ class Proto2DefinitionClassNames {
     }
   }
 
-  static String getDefaultOuterClassName(PbFile file) {
+  public static String getDefaultOuterClassName(PbFile file) {
     String defaultName =
         NameUtils.underscoreToCapitalizedCamelCase(
             FileUtil.getNameWithoutExtension(file.getName()));
@@ -102,17 +102,17 @@ class Proto2DefinitionClassNames {
   }
 
   @Nullable
-  String messageClassName(PbMessageType messageType) {
+  public String messageClassName(PbMessageType messageType) {
     return typeClassName(messageType);
   }
 
   @Nullable
-  String enumClassName(PbEnumDefinition enumDefinition) {
+  public String enumClassName(PbEnumDefinition enumDefinition) {
     return typeClassName(enumDefinition);
   }
 
   @Nullable
-  String oneofEnumClassName(PbOneofDefinition oneof) {
+  public String oneofEnumClassName(PbOneofDefinition oneof) {
     QualifiedName typeName = oneof.getQualifiedName();
     if (typeName == null) {
       return null;

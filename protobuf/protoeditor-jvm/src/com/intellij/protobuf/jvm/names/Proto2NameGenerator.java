@@ -26,12 +26,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Set;
 
 /** Enumerates the Java element for java_api_version = 2. */
-public class Proto2NameGenerator implements NameGenerator {
+public class Proto2NameGenerator implements JavaNameGenerator {
 
   private static final String CLASS_PREFIX = ".";
   private final Proto2DefinitionClassNames proto2DefinitionClassNames;
 
-  Proto2NameGenerator(
+  public Proto2NameGenerator(
       PbFile file, String javaPackage, String outerClassName, boolean isMultipleFiles) {
     proto2DefinitionClassNames =
         new Proto2DefinitionClassNames(
@@ -147,7 +147,7 @@ public class Proto2NameGenerator implements NameGenerator {
     if (field.getName() == null) {
       return ImmutableSet.of();
     }
-    String fieldName = NameGenerator.fieldName(field);
+    String fieldName = JavaNameGenerator.fieldName(field);
     ImmutableSet.Builder<String> fieldNames = ImmutableSet.builder();
     String capitalCamelName = NameUtils.underscoreToCapitalizedCamelCase(fieldName);
     String messageQualifier = "";

@@ -28,9 +28,9 @@ class Proto2NameMatcher implements NameMatcher {
 
   private final String fullyQualifiedClassName;
   private final String elementName;
-  private final NameGenerator generator;
+  private final JavaNameGenerator generator;
 
-  Proto2NameMatcher(PbJavaGotoDeclarationContext context, NameGenerator generator) {
+  Proto2NameMatcher(PbJavaGotoDeclarationContext context, JavaNameGenerator generator) {
     PsiClass normalizedContextClass = normalizeClassContext(context.javaClass);
     String elementName = context.resolvedElement.getName();
     if (normalizedContextClass != context.javaClass) {
