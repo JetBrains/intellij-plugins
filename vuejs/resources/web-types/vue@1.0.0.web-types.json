@@ -129,6 +129,19 @@
       ],
       "attributes": [
         {
+          "name": "data-*",
+          "description": "The `data-*` global attributes form a class of attributes called custom data attributes, that allow proprietary information to be exchanged between the HTML and its DOM representation by scripts.",
+          "doc-url": "https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/data-*",
+          "pattern": {
+            "template": [
+              "data-",
+              {
+                "regex": ".*"
+              }
+            ]
+          }
+        },
+        {
           "name": "Vue directive",
           "description": "Directives are special attributes with the `v-` prefix. Directive attribute values are expected to be a single JavaScript expression (with the exception of `v-for` and `v-on`). A directive's job is to reactively apply side effects to the DOM when the value of its expression changes.",
           "doc-url": "https://v3.vuejs.org/guide/template-syntax.html#directives",
