@@ -48,7 +48,6 @@ class VueCompositionInfoProvider : VueContainerInfoProvider {
 
     private fun getSetupFunctionType(initializer: JSObjectLiteralExpression): JSType? =
       resolveElementTo(initializer.findProperty(SETUP_METHOD), JSFunction::class)
-        ?.castSafelyTo<JSFunction>()
         ?.returnType
         ?.let { returnType ->
           (returnType as? JSAsyncReturnType)

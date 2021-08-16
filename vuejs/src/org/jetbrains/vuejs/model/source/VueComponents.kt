@@ -14,10 +14,12 @@ import com.intellij.lang.javascript.psi.util.JSProjectUtil
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
+import com.intellij.psi.impl.source.html.HtmlFileImpl
 import com.intellij.psi.util.*
 import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.codeInsight.resolveElementTo
 import org.jetbrains.vuejs.index.getVueIndexData
+import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.libraries.componentDecorator.isComponentDecorator
 
 /**
@@ -93,7 +95,7 @@ class VueComponents {
 
     fun getComponentDescriptor(element: PsiElement?): VueSourceEntityDescriptor? =
       when (val resolved = resolveElementTo(element, JSObjectLiteralExpression::class, JSCallExpression::class,
-                                            JSClass::class, JSEmbeddedContent::class)) {
+                                            JSClass::class, JSEmbeddedContent::class, HtmlFileImpl::class)) {
         // {...}
         is JSObjectLiteralExpression -> VueSourceEntityDescriptor(resolved)
 
@@ -114,6 +116,12 @@ class VueComponents {
         // <script setup>
         is JSEmbeddedContent ->
           VueSourceEntityDescriptor(source = resolved.containingFile)
+
+        // Vue file without script section
+        is HtmlFileImpl ->
+          if (resolved.virtualFile?.fileType == VueFileType.INSTANCE)
+            VueSourceEntityDescriptor(source = resolved)
+          else null
 
         else -> null
       }

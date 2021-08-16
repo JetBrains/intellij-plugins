@@ -23,10 +23,13 @@ class VueSourceComponent(sourceElement: JSImplicitElement,
                          private val indexData: VueIndexData?)
   : VueSourceContainer(sourceElement, descriptor), VueRegularComponent {
 
+  override val nameElement: PsiElement?
+    get() = descriptor.initializer?.castSafelyTo<JSObjectLiteralExpression>()
+      ?.findProperty(NAME_PROP)?.value
+
   override val defaultName: String?
     get() = indexData?.originalName
-            ?: getTextIfLiteral(descriptor.initializer?.castSafelyTo<JSObjectLiteralExpression>()
-                                  ?.findProperty(NAME_PROP)?.value)
+            ?: getTextIfLiteral(nameElement)
 
   override val slots: List<VueSlot>
     get() {

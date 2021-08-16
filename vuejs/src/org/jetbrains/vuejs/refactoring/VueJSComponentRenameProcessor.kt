@@ -2,9 +2,7 @@
 package org.jetbrains.vuejs.refactoring
 
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
-import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.refactoring.JSDefaultRenameProcessor
-import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.html.HtmlTag
@@ -13,12 +11,13 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.listeners.RefactoringElementListener
 import com.intellij.refactoring.rename.RenameUtil
 import com.intellij.usageView.UsageInfo
+import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.toAsset
-import org.jetbrains.vuejs.index.VueComponentsIndex
+import org.jetbrains.vuejs.model.VueModelManager
+import org.jetbrains.vuejs.model.VueRegularComponent
 
 class VueJSComponentRenameProcessor : JSDefaultRenameProcessor() {
-
 
   override fun renameElement(element: PsiElement, newName: String, usages: Array<out UsageInfo>, listener: RefactoringElementListener?) {
     for (usage in usages) {
@@ -34,17 +33,13 @@ class VueJSComponentRenameProcessor : JSDefaultRenameProcessor() {
 
   override fun findReferences(element: PsiElement,
                               searchScope: SearchScope,
-                              searchInCommentsAndStrings: Boolean): MutableCollection<PsiReference> {
-    return ReferencesSearch.search(element, searchScope).findAll()
-  }
+                              searchInCommentsAndStrings: Boolean): MutableCollection<PsiReference> =
+    ReferencesSearch.search(element, searchScope).findAll()
 
-  override fun canProcessElement(element: PsiElement): Boolean {
-    return VueRefactoringUtils.isComponentName(element)
-  }
+  override fun canProcessElement(element: PsiElement): Boolean =
+    (element is JSImplicitElement
+     && VueModelManager.findEnclosingComponent(element)
+       .castSafelyTo<VueRegularComponent>()
+       ?.nameElement == element.context)
 
-  override fun substituteElementToRename(element: PsiElement, editor: Editor?): PsiElement? {
-    return element as? JSImplicitElement ?: JSImplicitElementImpl.Builder(element.text, element)
-      .setUserString(VueComponentsIndex.JS_KEY)
-      .toImplicitElement()
-  }
 }

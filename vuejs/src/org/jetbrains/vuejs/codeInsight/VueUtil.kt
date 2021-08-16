@@ -137,7 +137,7 @@ fun getStringLiteralsFromInitializerArray(holder: PsiElement): List<JSLiteralExp
 @StubSafe
 fun getTextIfLiteral(holder: PsiElement?): String? =
   (if (holder is JSReferenceExpression) {
-    resolveLocally(holder).mapNotNull { (it as? JSVariable)?.initializerOrStub }.firstOrNull()
+    resolveLocally(holder).firstNotNullOfOrNull { (it as? JSVariable)?.initializerOrStub }
   }
   else holder)
     ?.castSafelyTo<JSLiteralExpression>()
@@ -160,17 +160,20 @@ fun detectVueScriptLanguage(file: PsiFile): String? {
 val BOOLEAN_TYPE get() = JSBooleanType(true, JSTypeSource.EXPLICITLY_DECLARED, JSTypeContext.INSTANCE)
 
 fun objectLiteralFor(element: PsiElement?): JSObjectLiteralExpression? {
-  return resolveElementTo(element, JSObjectLiteralExpression::class) as? JSObjectLiteralExpression?
+  return resolveElementTo(element, JSObjectLiteralExpression::class)
 }
 
-fun resolveElementTo(element: PsiElement?, vararg classes: KClass<out JSElement>): JSElement? {
+fun <T: PsiElement> resolveElementTo(element: PsiElement?, vararg classes: KClass<out T>): T? {
   val queue = ArrayDeque<PsiElement>()
   queue.add(element ?: return null)
   val visited = HashSet<PsiElement>()
   loop@ while (!queue.isEmpty()) {
     val cur = queue.removeFirst()
     if (visited.add(cur)) {
-      if (cur !is JSEmbeddedContent && classes.any { it.isInstance(cur) }) return cur as? JSElement
+      if (cur !is JSEmbeddedContent && classes.any { it.isInstance(cur) }) {
+        @Suppress("UNCHECKED_CAST")
+        return cur as T
+      }
       when (cur) {
         is JSFunction -> {
           JSStubBasedPsiTreeUtil.findReturnedExpressions(cur).asSequence()
@@ -203,7 +206,10 @@ fun resolveElementTo(element: PsiElement?, vararg classes: KClass<out JSElement>
             if (regularScript != null) {
               queue.add(regularScript)
             }
-            else return cur
+            else {
+              @Suppress("UNCHECKED_CAST")
+              return cur as T
+            }
           }
           else findDefaultExport(cur)?.let { queue.add(it) }
         }

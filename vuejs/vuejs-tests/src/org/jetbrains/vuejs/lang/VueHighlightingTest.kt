@@ -443,6 +443,11 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
     doTest(addNodeModules = listOf(VueTestModule.VUE_3_0_0))
   }
 
+  fun testScriptSetupComponentImports() {
+    myFixture.enableInspections(ES6UnusedImportsInspection())
+    doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_0_0))
+  }
+
   fun testMissingLabelSuppressed() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
     myFixture.enableInspections(HtmlFormInputWithoutLabelInspection())
