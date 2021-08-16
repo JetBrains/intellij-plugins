@@ -1,15 +1,14 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.findUsages
 
-import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.util.JSUtils
 import com.intellij.lang.typescript.psi.TypeScriptPsiUtil
 import com.intellij.openapi.application.QueryExecutorBase
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.LocalSearchScope
@@ -25,13 +24,14 @@ import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.declaredName
+import org.jetbrains.vuejs.codeInsight.findDefaultExport
 import org.jetbrains.vuejs.codeInsight.fromAsset
-import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.findModule
+import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueRegularComponent
-import org.jetbrains.vuejs.refactoring.VueRefactoringUtils
+import org.jetbrains.vuejs.model.source.VueComponents
 
 class VueJSReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters>(true) {
 
@@ -39,40 +39,53 @@ class VueJSReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.
     val element = queryParameters.elementToSearch
     val elementName = (element as? JSPsiNamedElementBase)?.declaredName
 
-    // Script setup import/export
     if (elementName != null) {
+      // Script setup local vars
       val scriptTag = PsiTreeUtil.getContextOfType(element, XmlTag::class.java, false, PsiFile::class.java)
-      if (scriptTag?.getAttribute(SETUP_ATTRIBUTE_NAME) != null) {
-        val template = (VueModelManager.findEnclosingContainer(scriptTag) as? VueRegularComponent)?.template?.source
-        if (template != null) {
-          sequenceOf(elementName, fromAsset(elementName)).forEach {
-            queryParameters.optimizer.searchWord(
-              it,
-              LocalSearchScope(template),
-              UsageSearchContext.IN_CODE,
-              true, element)
-          }
-          return
+      if (scriptTag?.getAttribute(SETUP_ATTRIBUTE_NAME) != null &&
+          scriptTag.containingFile.virtualFile?.fileType == VueFileType.INSTANCE) {
+        sequenceOf(elementName, fromAsset(elementName)).forEach {
+          queryParameters.optimizer.searchWord(
+            it,
+            LocalSearchScope(scriptTag.containingFile),
+            UsageSearchContext.IN_CODE,
+            false, element)
         }
+        return
       }
-    }
 
-    val component = VueRefactoringUtils.getComponent(element)
+      // Components
+      val component = if (element is JSImplicitElement && element.context is JSLiteralExpression)
+        VueModelManager.findEnclosingComponent(element)?.takeIf { (it as? VueRegularComponent)?.nameElement == element.context }
+      else
+        VueComponents.getComponentDescriptor(element)?.let { VueModelManager.getComponent (it) }
+      if (component != null && isVueContext(component.source ?: element)) {
+        // Add search for default export if present
+        if (element is JSImplicitElement) {
+          findDefaultExport(findModule(component.source?.containingFile, false))?.let { defaultExport ->
+            val collector = SearchRequestCollector(queryParameters.optimizer.searchSession)
+            queryParameters.optimizer.searchQuery(
+              QuerySearchRequest(ReferencesSearch.search(defaultExport, queryParameters.effectiveSearchScope), collector,
+                false, PairProcessor { reference, _ -> consumer.process(reference) }))
+          }
+        }
 
-    if (component != null) {
-      // TODO migrate to use VueModelManager.findEnclosingComponent()
-      // TODO support script setup syntax
-      val content = findModule(element, false) ?: return
-      val defaultExport = ES6PsiUtil.findDefaultExport(content) as? PsiElement ?: return
-      val collector = SearchRequestCollector(queryParameters.optimizer.searchSession)
-      queryParameters.optimizer.searchQuery(
-        QuerySearchRequest(ReferencesSearch.search(defaultExport, queryParameters.effectiveSearchScope), collector,
-                           false, PairProcessor { reference, _ -> consumer.process(reference) }))
-      //We are searching for <component-a> and <ComponentA> tags
-      //Original component name can't be fromAsset (name: "component-a")
-      sequenceOf(component.name, toAsset(component.name)).forEach {
-        queryParameters.optimizer.searchWord(it, queryParameters.effectiveSearchScope, false,
-                                             component)
+        // Extend search scope to the whole Vue file if needed
+        val searchScope = queryParameters.effectiveSearchScope.let { scope ->
+          val embeddedContents = (scope as? LocalSearchScope)?.scope
+            ?.filterIsInstance<JSEmbeddedContent>()
+            ?.filter { it.containingFile.virtualFile?.fileType == VueFileType.INSTANCE }
+          if (!embeddedContents.isNullOrEmpty()) {
+            scope.union(LocalSearchScope(embeddedContents.map { it.containingFile }.toTypedArray()))
+          }
+          else scope
+        }
+
+        val searchTarget = if (element is JSImplicitElement) component.source ?: element else element
+        sequenceOf(elementName, fromAsset(elementName)).forEach {
+          queryParameters.optimizer.searchWord(it, searchScope, false, searchTarget)
+        }
+        return
       }
     }
 

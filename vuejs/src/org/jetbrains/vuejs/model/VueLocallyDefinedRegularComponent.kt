@@ -1,13 +1,28 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model
 
+import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
+import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.lang.javascript.psi.JSType
 import org.jetbrains.vuejs.codeInsight.declaredName
 import org.jetbrains.vuejs.codeInsight.documentation.VueItemDocumentation
 
 class VueLocallyDefinedRegularComponent(private val delegate: VueRegularComponent,
-                                        override val source: JSPsiNamedElementBase) : VueRegularComponent {
+                                        source: JSPsiNamedElementBase) : VueRegularComponent {
+
+  override val nameElement: JSPsiNamedElementBase get() = source
+
+  override val source: JSPsiNamedElementBase by lazy(LazyThreadSafetyMode.NONE) {
+    if (source is ES6ImportSpecifier)
+      ES6PsiUtil.resolveSymbolForSpecifier(source).asSequence()
+        .filter { it.isValidResult }
+        .map { it.element }
+        .firstOrNull() as? JSPsiNamedElementBase
+      ?: source
+    else
+      source
+  }
   override val defaultName: String?
     get() = source.declaredName
 
