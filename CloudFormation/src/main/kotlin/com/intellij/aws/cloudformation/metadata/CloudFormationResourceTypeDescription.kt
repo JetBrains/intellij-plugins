@@ -1,8 +1,10 @@
 package com.intellij.aws.cloudformation.metadata
 
+import org.jetbrains.annotations.Nls
+
 data class CloudFormationResourceTypeDescription(
-    val description: String,
-    val properties: Map<String, String>,
-    val attributes: Map<String, String>
+  @Nls val description: String,
+  val properties: Map<String, String>,
+  val attributes: Map<String, String>
 )
 

@@ -62,12 +62,14 @@ class CloudFormationDocumentationProvider : DocumentationProvider {
     return if (originalElement.parent is JsonStringLiteral || originalElement.parent is YAMLScalar) originalElement.parent else originalElement
   }
 
+  @Nls
   private fun createResourceDescription(match: ResourceTypeValueMatch): String? {
     val typeName = match.resource.typeName ?: return null
     val resourceType = CloudFormationMetadataProvider.DESCRIPTIONS.resourceTypes[typeName] ?: return null
     return resourceType.description
   }
 
+  @NlsSafe
   private fun createPropertyDescription(match: ResourcePropertyNameMatch): String? {
     val typeName = match.resource.typeName ?: return null
 
