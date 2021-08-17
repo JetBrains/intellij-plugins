@@ -41,6 +41,10 @@ public class DartParsingTest extends ParsingTestCase {
     doTest();
   }
 
+  public void testConstructorTearoffs() {
+    doTest();
+  }
+
   public void testEnum() {
     doTest();
   }
