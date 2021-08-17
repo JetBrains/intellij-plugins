@@ -72,4 +72,8 @@ class VueModuleImportTest : JSImportHighlightingAndCompletionLightTestBase() {
     doTestWithCopyDirectory(1, true, extension)
     checkAfterFile(extension)
   }
+
+  fun testReExportWIthJs() {
+    doTestWithCopyDirectory(1, true, "ts")
+  }
 }
