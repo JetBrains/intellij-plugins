@@ -137,7 +137,7 @@ fun getStringLiteralsFromInitializerArray(holder: PsiElement): List<JSLiteralExp
 @StubSafe
 fun getTextIfLiteral(holder: PsiElement?): String? =
   (if (holder is JSReferenceExpression) {
-    resolveLocally(holder).firstNotNullOfOrNull { (it as? JSVariable)?.initializerOrStub }
+    resolveLocally(holder).mapNotNull { (it as? JSVariable)?.initializerOrStub }.firstOrNull()
   }
   else holder)
     ?.castSafelyTo<JSLiteralExpression>()
