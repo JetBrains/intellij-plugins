@@ -23,6 +23,7 @@ import training.learn.course.LearningModule
 import training.learn.course.LessonType
 import training.learn.lesson.general.*
 import training.learn.lesson.general.assistance.CodeFormatLesson
+import training.learn.lesson.general.assistance.LocalHistoryLesson
 import training.learn.lesson.general.assistance.ParameterInfoLesson
 import training.learn.lesson.general.assistance.QuickPopupsLesson
 import training.learn.lesson.general.navigation.FindInFilesLesson
@@ -79,6 +80,7 @@ class RubyLearningCourse : LearningCourseBase(RubyLanguage.INSTANCE.id) {
                    moduleType = LessonType.SINGLE_EDITOR) {
       fun ls(sampleName: String) = loadSample("CodeAssistance/$sampleName")
       listOf(
+        LocalHistoryLesson(),
         CodeFormatLesson(ls("CodeFormat.rb.sample"), false),
         ParameterInfoLesson(ls("ParameterInfo.rb.sample")),
         QuickPopupsLesson(ls("QuickPopups.rb.sample")),
