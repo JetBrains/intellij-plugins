@@ -3,6 +3,7 @@ package com.intellij.aws.cloudformation
 import com.intellij.json.psi.JsonStringLiteral
 import com.intellij.lang.documentation.DocumentationProvider
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.util.NlsSafe
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.annotations.Nls
@@ -77,11 +78,11 @@ class CloudFormationDocumentationProvider : DocumentationProvider {
     val propertyDescription = resourceTypeDescription.properties[match.name.value] ?: return ""
 
     val document =
-        "<h1>${propertyMetadata.name} ($typeName)</h1>" +
-        propertyDescription +
-        "<p><i>Required:</i> " + propertyMetadata.required + "</p>" +
-        propertyMetadata.type +
-        propertyMetadata.updateRequires
+      "<h1>${propertyMetadata.name} ($typeName)</h1>" +
+      propertyDescription +
+      "<p><i>${CloudFormationBundle.message("required.property")}:</i> " + propertyMetadata.required + "</p>" +
+      propertyMetadata.type +
+      propertyMetadata.updateRequires
 
     return document
   }
