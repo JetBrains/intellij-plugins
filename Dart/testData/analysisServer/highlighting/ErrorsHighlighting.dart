@@ -13,9 +13,9 @@ main() {
 }
 
 @deprecated
-int <weak_warning descr="This function has a return type of 'int', but doesn't end with a return statement." type="WEAK_WARNING">bar</weak_warning>(){}
+int <error descr="The body might complete normally, causing 'null' to be returned, but the return type is a potentially non-nullable type.">bar</error>(){}
 
 // TODO highlighted by IDE engine
 class <warning descr="The declaration '_Foo' isn't referenced.">_Foo</warning> {
-  int <warning descr="The value of the field '_unusedField' isn't used." type="UNUSED_SYMBOL">_unusedField</warning>;
+  int <warning descr="The value of the field '_unusedField' isn't used." type="UNUSED_SYMBOL">_unusedField</warning> = 0;
 }
