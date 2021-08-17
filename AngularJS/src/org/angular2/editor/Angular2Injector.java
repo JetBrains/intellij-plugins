@@ -71,15 +71,15 @@ public class Angular2Injector implements MultiHostInjector {
 
     JSLiteralExpression literalExpression = (JSLiteralExpression)context;
 
-    if (parent instanceof JSProperty && Objects.equals(((JSProperty)parent).getName(), "template")) {
+    if (isPropertyWithName(parent, "template")) {
       injectIntoDecoratorExpr(registrar, literalExpression, parent, Angular2HtmlLanguage.INSTANCE, null);
+      return;
     }
 
     PsiElement grandParent = parent.getParent();
-    if (parent instanceof JSArrayLiteralExpression
-        && grandParent instanceof JSProperty
-        && Objects.equals(((JSProperty)grandParent).getName(), "styles")) {
+    if (parent instanceof JSArrayLiteralExpression && isPropertyWithName(grandParent, "styles")) {
       injectIntoDecoratorExpr(registrar, literalExpression, grandParent, getCssDialect(literalExpression), null);
+      return;
     }
 
     if (injectIntoEmbeddedLiteral(registrar, literalExpression, parent)) {
@@ -91,7 +91,7 @@ public class Angular2Injector implements MultiHostInjector {
       final String fileExtension;
       if (name != null && (fileExtension = getExpressionFileExtension(literalExpression.getTextLength(), name, true)) != null) {
         PsiElement ancestor = parent.getParent().getParent();
-        if (ancestor instanceof JSProperty && "host".equals(((JSProperty)ancestor).getName())) {
+        if (isPropertyWithName(ancestor, "host")) {
           injectIntoDecoratorExpr(registrar, literalExpression, ancestor, Angular2Language.INSTANCE, fileExtension);
         }
       }
@@ -189,5 +189,9 @@ public class Angular2Injector implements MultiHostInjector {
   private static void inject(@NotNull MultiHostRegistrar registrar, @NotNull JSLiteralExpression context, @NotNull Language language,
                              @Nullable String extension) {
     JSInjectionUtil.injectInQuotedLiteral(registrar, language, extension, context, null, null);
+  }
+
+  private static boolean isPropertyWithName(PsiElement element, String requiredName) {
+    return element instanceof JSProperty && Objects.equals(((JSProperty)element).getName(), requiredName);
   }
 }
