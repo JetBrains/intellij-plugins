@@ -13,6 +13,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.SmartList;
 import com.intellij.util.text.MarkdownUtil;
+import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.sdk.DartSdk;
@@ -21,6 +22,7 @@ import com.jetbrains.lang.dart.util.DartPresentableUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.util.UsefulPsiTreeUtil;
 import com.petebevin.markdown.MarkdownProcessor;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,8 +38,7 @@ public final class DartDocUtil {
   private static final String GT = "&gt;";
   private static final String LT = "&lt;";
 
-  @Nullable
-  public static String generateDoc(final PsiElement element) {
+  public static @Nullable @Nls String generateDoc(final PsiElement element) {
     if (!(element instanceof DartComponent) && !(element.getParent() instanceof DartComponent)) {
       return null;
     }
@@ -136,14 +137,14 @@ public final class DartDocUtil {
     return ArrayUtil.toStringArray(result);
   }
 
-  public static @NotNull String generateDoc(@NotNull Project project,
-                                            @Nullable @NlsSafe String signature,
-                                            boolean signatureIsHtml,
-                                            @Nullable @NlsSafe String docText,
-                                            @Nullable @NlsSafe String containingLibraryName,
-                                            @Nullable @NlsSafe String containingClassDescription,
-                                            @Nullable @NlsSafe String staticType,
-                                            boolean compactPresentation) {
+  public static @NotNull @NlsSafe String generateDoc(@NotNull Project project,
+                                                     @Nullable @NlsSafe String signature,
+                                                     boolean signatureIsHtml,
+                                                     @Nullable @NlsSafe String docText,
+                                                     @Nullable @NlsSafe String containingLibraryName,
+                                                     @Nullable @NlsSafe String containingClassDescription,
+                                                     @Nullable @NlsSafe String staticType,
+                                                     boolean compactPresentation) {
     final boolean hasContainingLibraryName = StringUtil.isNotEmpty(containingLibraryName);
     final boolean hasContainingClassDescription = StringUtil.isNotEmpty(containingClassDescription);
     final boolean hasStaticType = StringUtil.isNotEmpty(staticType);
@@ -173,7 +174,7 @@ public final class DartDocUtil {
     }
     if (hasContainingClassDescription) {
       builder.append("<br>");
-      builder.append("<b>Containing class:</b> ");
+      builder.append("<b>").append(DartBundle.message("doc.popup.containing.class")).append("</b> ");
       builder.append(StringUtil.escapeXmlEntities(containingClassDescription));
       builder.append("<br>");
     }
@@ -181,7 +182,7 @@ public final class DartDocUtil {
       if (!compactPresentation) {
         builder.append("<br>");
       }
-      builder.append("<b>Type:</b> ");
+      builder.append("<b>").append(DartBundle.message("doc.popup.type")).append("</b> ");
       builder.append(StringUtil.escapeXmlEntities(staticType));
       builder.append("<br>");
     }
@@ -250,8 +251,7 @@ public final class DartDocUtil {
     return builder.toString();
   }
 
-  @Nullable
-  public static String getSignature(@NotNull PsiElement element) {
+  public static @Nullable @NlsSafe String getSignature(@NotNull PsiElement element) {
     if (!(element instanceof DartComponent)) {
       element = element.getParent();
     }

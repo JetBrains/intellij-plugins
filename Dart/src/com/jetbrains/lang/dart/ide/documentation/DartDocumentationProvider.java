@@ -86,14 +86,14 @@ public class DartDocumentationProvider implements DocumentationProvider {
     return docUrl == null ? null : Collections.singletonList(docUrl);
   }
 
-  public static @NotNull String buildHoverTextServer(@NotNull Project project, @NotNull HoverInformation hover) {
+  public static @NotNull @Nls String buildHoverTextServer(@NotNull Project project, @NotNull HoverInformation hover) {
     final String elementDescription = StringUtil.trim(hover.getElementDescription());
     final String staticType = elementDescription == null || elementDescription.equals(hover.getStaticType()) ? null : hover.getStaticType();
     final String containingLibraryName = StringUtil.trim(hover.getContainingLibraryName());
     return DartDocUtil.generateDoc(project, elementDescription, false, null, containingLibraryName, null, staticType, true);
   }
 
-  public static @NotNull String generateDocServer(@NotNull Project project, @NotNull HoverInformation hover) {
+  public static @NotNull @Nls String generateDocServer(@NotNull Project project, @NotNull HoverInformation hover) {
     final String elementDescription = StringUtil.trim(hover.getElementDescription());
     final String containingLibraryName = StringUtil.trim(hover.getContainingLibraryName());
     final String containingClassDescription = StringUtil.trim(hover.getContainingClassDescription());
