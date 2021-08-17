@@ -17,7 +17,7 @@
   <info textAttributesKey="DART_TOP_LEVEL_SETTER_REFERENCE">topLevelSetter</info> = true;
 }
 
-<info textAttributesKey="DART_CLASS">Object</info> <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">topLevelVariable</info>;
+<info textAttributesKey="DART_CLASS">Object</info> <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">topLevelVariable</info> = 0;
 
 void <info textAttributesKey="DART_TOP_LEVEL_FUNCTION_DECLARATION">topLevelFunction</info>(<info textAttributesKey="DART_DYNAMIC_PARAMETER_DECLARATION">param</info>) {
   <info textAttributesKey="DART_TOP_LEVEL_FUNCTION_REFERENCE">topLevelFunction</info>(1);
@@ -51,7 +51,7 @@ class <info textAttributesKey="DART_CLASS">Foo</info> {
   <info textAttributesKey="DART_CLASS">Foo</info>(){}
   <info textAttributesKey="DART_CLASS">Foo</info>.<info textAttributesKey="DART_CONSTRUCTOR">from</info>(){}
   <info textAttributesKey="DART_CLASS">Foo</info>.<info textAttributesKey="DART_CONSTRUCTOR">redirect</info>() : this.<info textAttributesKey="DART_CONSTRUCTOR">from</info>();
-  <weak_warning descr="This function has a return type of 'Foo', but doesn't end with a return statement." textAttributesKey="DART_HINT"><info textAttributesKey="DART_KEYWORD">factory</info> <info textAttributesKey="DART_CLASS">Foo</info>.<info textAttributesKey="DART_CONSTRUCTOR">factory</info>() {}</weak_warning>
+<info descr="null" textAttributesKey="DART_KEYWORD">factory</info> <error descr="The body might complete normally, causing 'null' to be returned, but the return type is a potentially non-nullable type." textAttributesKey="DART_ERROR"><info descr="null" textAttributesKey="DART_CLASS">Foo</info>.factory</error>() {}
 }
 
 /// [<info textAttributesKey="DART_CLASS">Foo1</info>] is good []
@@ -104,7 +104,7 @@ class <info textAttributesKey="DART_CLASS">Foo2</info><<info textAttributesKey="
 
   <info textAttributesKey="DART_TYPE_NAME_DYNAMIC">dynamic</info> <info textAttributesKey="DART_INSTANCE_METHOD_DECLARATION">abstractMethod</info>();
 
-  <info textAttributesKey="DART_ANNOTATION">@<error descr="The name 'deprecated' isn't a class." textAttributesKey="DART_ERROR">deprecated</error>(</info>"foo"<info textAttributesKey="DART_ANNOTATION">)</info>
+  <error descr="Annotation must be either a const variable reference or const constructor invocation." textAttributesKey="DART_ERROR"><info descr="null" textAttributesKey="DART_ANNOTATION">@deprecated(</info>"foo")</error>
   var <info textAttributesKey="DART_INSTANCE_FIELD_DECLARATION">listLiteral</info> = [1, "", <info textAttributesKey="DART_CLASS">Object</info>];
 
   var <info textAttributesKey="DART_INSTANCE_FIELD_DECLARATION">mapLiteral</info> = {
