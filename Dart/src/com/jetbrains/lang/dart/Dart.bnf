@@ -313,7 +313,7 @@ private functionNative ::= 'native' (stringLiteralExpression ';' | ';' | stringL
 
 methodDeclaration ::= metadata* ('external' | 'static' | 'const')* methodDeclarationPrivate initializers? (';' | functionBodyOrNative | redirection)?
 {pin=3 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartMethodDeclarationImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
-private methodDeclarationPrivate ::= returnType (<<methodNameWrapper>> | 'new') typeParameters? formalParameterList | !untypedFunctionType (<<methodNameWrapper>> | 'new') typeParameters? formalParameterList // todo remove, use functionSignature as in spec
+private methodDeclarationPrivate ::= returnType <<methodNameWrapper>> typeParameters? formalParameterList | !untypedFunctionType (<<methodNameWrapper>> | 'new') typeParameters? formalParameterList // todo remove, use functionSignature as in spec
 
 namedConstructorDeclaration ::= metadata* ('external' | 'const')* componentName '.' (componentName | 'new') formalParameterList initializers? (';' | functionBodyOrNative | redirection)?
 {pin=6 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent" methods = [getComponentName]}

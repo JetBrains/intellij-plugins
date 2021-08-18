@@ -4140,7 +4140,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // returnType (<<methodNameWrapper>> | 'new') typeParameters? formalParameterList | !untypedFunctionType (<<methodNameWrapper>> | 'new') typeParameters? formalParameterList
+  // returnType <<methodNameWrapper>> typeParameters? formalParameterList | !untypedFunctionType (<<methodNameWrapper>> | 'new') typeParameters? formalParameterList
   static boolean methodDeclarationPrivate(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "methodDeclarationPrivate")) return false;
     boolean r;
@@ -4151,26 +4151,15 @@ public class DartParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // returnType (<<methodNameWrapper>> | 'new') typeParameters? formalParameterList
+  // returnType <<methodNameWrapper>> typeParameters? formalParameterList
   private static boolean methodDeclarationPrivate_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "methodDeclarationPrivate_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = returnType(b, l + 1);
-    r = r && methodDeclarationPrivate_0_1(b, l + 1);
+    r = r && methodNameWrapper(b, l + 1);
     r = r && methodDeclarationPrivate_0_2(b, l + 1);
     r = r && formalParameterList(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // <<methodNameWrapper>> | 'new'
-  private static boolean methodDeclarationPrivate_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "methodDeclarationPrivate_0_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = methodNameWrapper(b, l + 1);
-    if (!r) r = consumeToken(b, NEW);
     exit_section_(b, m, null, r);
     return r;
   }
