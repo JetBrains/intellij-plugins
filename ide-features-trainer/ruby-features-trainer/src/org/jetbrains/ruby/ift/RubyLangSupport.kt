@@ -90,7 +90,7 @@ internal class RubyLangSupport : AbstractLangSupport() {
     RModuleUtil.getInstance().changeModuleSdk(sdk, project.module)
   }
 
-  override val defaultProjectName: String
+  override val contentRootDirectoryName: String
     get() = rubyProjectName
 
   override val primaryLanguage: String

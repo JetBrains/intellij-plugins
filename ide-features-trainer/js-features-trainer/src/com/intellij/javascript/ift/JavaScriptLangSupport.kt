@@ -18,7 +18,7 @@ class JavaScriptLangSupport : AbstractLangSupport() {
   override val primaryLanguage: String
     get() = lang
 
-  override val defaultProjectName: String = "LearnJavaScriptProject"
+  override val contentRootDirectoryName: String = "LearnJavaScriptProject"
 
   override val defaultProductName: String = "WebStorm"
 
