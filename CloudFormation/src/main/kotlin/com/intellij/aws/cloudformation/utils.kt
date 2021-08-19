@@ -7,5 +7,5 @@ inline fun <reified T> lookupSection(sections: Collection<CfnNode>): T? = sectio
 
 inline fun <reified T : Any> Collection<*>.ofType(): Collection<T> = this.mapNotNull { it as? T }
 
-fun <T> T.toOptionalValue(): Optional<T> = Optional.of(this)
+fun <T : Any> T.toOptionalValue(): Optional<T> = Optional.of(this)
 
