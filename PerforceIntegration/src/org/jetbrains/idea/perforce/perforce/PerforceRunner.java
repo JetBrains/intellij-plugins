@@ -96,7 +96,7 @@ public final class PerforceRunner implements PerforceRunnerI {
   private static final int OPENED_SIZE = 50;
 
   @NonNls static final String PASSWORD_INVALID_MESSAGE = "Perforce password (P4PASSWD) invalid or unset";
-  @NonNls public static final String PASSWORD_INVALID_MESSAGE2 = "Password invalid.";
+  @NlsSafe public static final String PASSWORD_INVALID_MESSAGE2 = "Password invalid.";
   @NonNls private static final String SESSION_EXPIRED_MESSAGE = "Your session has expired";
   @NonNls public static final String FILES_UP_TO_DATE = "file(s) up-to-date.";
   @NonNls private static final String PASSWORD_NOT_ALLOWED_MESSAGE = "Password not allowed at this server security level";
