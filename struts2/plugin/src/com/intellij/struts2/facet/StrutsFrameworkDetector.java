@@ -62,7 +62,7 @@ public class StrutsFrameworkDetector extends FacetBasedFrameworkDetector<StrutsF
   @Override
   public boolean isSuitableUnderlyingFacetConfiguration(final FacetConfiguration underlying,
                                                         final StrutsFacetConfiguration configuration,
-                                                        final Set<VirtualFile> files) {
+                                                        final Set<? extends VirtualFile> files) {
     return WebUtilImpl.isWebFacetConfigurationContainingFiles(underlying, files);
   }
 }

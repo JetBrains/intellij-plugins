@@ -34,7 +34,7 @@ public class OsmorcFrameworkDetector extends FacetBasedFrameworkDetector<OsmorcF
   }
 
   @Override
-  protected OsmorcFacetConfiguration createConfiguration(Collection<VirtualFile> files) {
+  protected OsmorcFacetConfiguration createConfiguration(Collection<? extends VirtualFile> files) {
     OsmorcFacetConfiguration osmorcFacetConfiguration = getFacetType().createDefaultConfiguration();
     osmorcFacetConfiguration.setManifestGenerationMode(ManifestGenerationMode.Manually);
     osmorcFacetConfiguration.setManifestLocation(ContainerUtil.getFirstItem(files).getPath());
