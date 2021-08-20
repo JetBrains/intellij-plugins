@@ -4,7 +4,7 @@ package org.jetbrains.vuejs.model
 import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.lang.javascript.psi.JSType
 import org.jetbrains.vuejs.codeInsight.documentation.VueItemDocumentation
-import org.jetbrains.vuejs.codeInsight.resolveImportSpecifiers
+import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
 
 class VueLocallyDefinedRegularComponent(private val delegate: VueRegularComponent,
                                         source: JSPsiNamedElementBase) : VueRegularComponent {
@@ -12,7 +12,7 @@ class VueLocallyDefinedRegularComponent(private val delegate: VueRegularComponen
   override val nameElement: JSPsiNamedElementBase get() = source
 
   override val source: JSPsiNamedElementBase by lazy(LazyThreadSafetyMode.NONE) {
-    source.resolveImportSpecifiers()
+    source.resolveIfImportSpecifier()
   }
   override val defaultName: String?
     get() = source.name
