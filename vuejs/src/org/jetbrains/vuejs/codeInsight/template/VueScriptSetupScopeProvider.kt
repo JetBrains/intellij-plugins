@@ -9,7 +9,7 @@ import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementResolveResult
 import com.intellij.psi.ResolveResult
-import org.jetbrains.vuejs.codeInsight.resolveImportSpecifiers
+import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.model.VueImplicitElement
 import org.jetbrains.vuejs.model.source.VueCompositionInfoHelper
@@ -26,7 +26,7 @@ class VueScriptSetupScopeProvider : VueTemplateScopesProvider() {
     override fun resolve(consumer: Consumer<in ResolveResult>) {
       val unwrapRef = VueCompositionInfoHelper.getUnwrapRefType(module)
       JSStubBasedPsiTreeUtil.processDeclarationsInScope(module, { element, _ ->
-        val resolved = (element as? JSPsiNamedElementBase)?.resolveImportSpecifiers()
+        val resolved = (element as? JSPsiNamedElementBase)?.resolveIfImportSpecifier()
         val jsType = (resolved as? JSTypeOwner)?.jsType
         val name = resolved?.name
         val elementToConsume = if (jsType != null && name != null) {
