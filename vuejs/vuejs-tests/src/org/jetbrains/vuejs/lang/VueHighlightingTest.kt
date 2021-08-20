@@ -339,7 +339,10 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
   fun testVSlotSyntax() = doTest()
 
   // TODO add special inspection for unused slot scope parameters - WEB-43893
-  fun testSlotSyntax() = doTest()
+  fun testSlotSyntax() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10)
+    doTest()
+  }
 
   fun testSlotName() = doTest()
 
