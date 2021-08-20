@@ -1,6 +1,7 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.source
 
+import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
 import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.evaluation.JSCodeBasedTypeFactory
 import com.intellij.lang.javascript.psi.*
@@ -19,7 +20,10 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.xml.XmlFile
 import com.intellij.util.ProcessingContext
 import com.intellij.util.castSafelyTo
-import org.jetbrains.vuejs.codeInsight.*
+import org.jetbrains.vuejs.codeInsight.collectPropertiesRecursively
+import org.jetbrains.vuejs.codeInsight.getStringLiteralsFromInitializerArray
+import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
+import org.jetbrains.vuejs.codeInsight.stubSafeCallArguments
 import org.jetbrains.vuejs.index.VueFrameworkHandler
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.model.*
@@ -62,7 +66,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
       JSStubBasedPsiTreeUtil.processDeclarationsInScope(
         module,
         { element, _ ->
-          val name = (element as? JSPsiNamedElementBase)?.declaredName
+          val name = (element as? JSPsiNamedElementBase)?.let { if (it is ES6ImportSpecifier) it.declaredName else it.name }
           if (name?.getOrNull(0)?.isUpperCase() == true) {
             VueModelManager.getComponent(element)
               ?.let { components[name] = if (it is VueRegularComponent) VueLocallyDefinedRegularComponent(it, element) else it }
