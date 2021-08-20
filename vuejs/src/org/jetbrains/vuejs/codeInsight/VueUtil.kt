@@ -111,9 +111,9 @@ fun toAsset(name: String): String {
   return result.toString()
 }
 
-fun JSPsiNamedElementBase.resolveImportSpecifiers(): JSPsiNamedElementBase =
+fun JSPsiNamedElementBase.resolveIfImportSpecifier(): JSPsiNamedElementBase =
   (this as? ES6ImportSpecifier)
-    ?.let { ES6PsiUtil.resolveSymbolForSpecifier(this) }
+    ?.multiResolve(false)
     ?.asSequence()
     ?.mapNotNull { it.takeIf { it.isValidResult }?.element as? JSPsiNamedElementBase }
     ?.firstOrNull()
