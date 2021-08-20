@@ -51,8 +51,8 @@ class VueJSCompletionProvider : CompletionProvider<CompletionParameters>() {
         val element = resolveResult.element as? JSPsiNamedElementBase
         if (element != null) {
           result.consume(JSCompletionUtil.withJSLookupPriority(
-            JSLookupUtilImpl.createLookupElement(element, StringUtil.notNullize(element.declaredName)),
-            if (element.declaredName?.startsWith("$") == true)
+            JSLookupUtilImpl.createLookupElement(element, StringUtil.notNullize(element.name)),
+            if (element.name?.startsWith("$") == true)
               LOCAL_SCOPE_MAX_PRIORITY_EXOTIC
             else
               LOCAL_SCOPE_MAX_PRIORITY))

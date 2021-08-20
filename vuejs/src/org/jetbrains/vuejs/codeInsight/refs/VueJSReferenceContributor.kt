@@ -100,7 +100,7 @@ class VueJSReferenceContributor : PsiReferenceContributor() {
       if (element !is JSReferenceExpression || element.qualifier != null) return PsiReference.EMPTY_ARRAY
       val name = element.referenceName ?: return PsiReference.EMPTY_ARRAY
       return VueScriptAdditionalScopeProvider.getAdditionalScopeSymbols(element)
-        .find { it.declaredName == name }
+        .find { it.name == name }
         ?.let {
           arrayOf(object : PsiReferenceBase<JSReferenceExpression>(element, false) {
             override fun resolve(): PsiElement = it

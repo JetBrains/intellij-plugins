@@ -23,7 +23,6 @@ import com.intellij.util.Processor
 import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
-import org.jetbrains.vuejs.codeInsight.declaredName
 import org.jetbrains.vuejs.codeInsight.findDefaultExport
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.context.isVueContext
@@ -37,7 +36,7 @@ class VueJSReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.
 
   override fun processQuery(queryParameters: ReferencesSearch.SearchParameters, consumer: Processor<in PsiReference>) {
     val element = queryParameters.elementToSearch
-    val elementName = (element as? JSPsiNamedElementBase)?.declaredName
+    val elementName = (element as? JSPsiNamedElementBase)?.name
 
     if (elementName != null) {
       // Script setup local vars
@@ -58,7 +57,19 @@ class VueJSReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.
       val component = if (element is JSImplicitElement && element.context is JSLiteralExpression)
         VueModelManager.findEnclosingComponent(element)?.takeIf { (it as? VueRegularComponent)?.nameElement == element.context }
       else
-        VueComponents.getComponentDescriptor(element)?.let { VueModelManager.getComponent (it) }
+        VueComponents.getComponentDescriptor(element)?.let { VueModelManager.getComponent(it) }
+
+      // Extend search scope to the whole Vue file if needed
+      val searchScope = queryParameters.effectiveSearchScope.let { scope ->
+        val embeddedContents = (scope as? LocalSearchScope)?.scope
+          ?.filterIsInstance<JSEmbeddedContent>()
+          ?.filter { it.containingFile.virtualFile?.fileType == VueFileType.INSTANCE }
+        if (!embeddedContents.isNullOrEmpty()) {
+          scope.union(LocalSearchScope(embeddedContents.map { it.containingFile }.toTypedArray()))
+        }
+        else scope
+      }
+
       if (component != null && isVueContext(component.source ?: element)) {
         // Add search for default export if present
         if (element is JSImplicitElement) {
@@ -70,21 +81,15 @@ class VueJSReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.
           }
         }
 
-        // Extend search scope to the whole Vue file if needed
-        val searchScope = queryParameters.effectiveSearchScope.let { scope ->
-          val embeddedContents = (scope as? LocalSearchScope)?.scope
-            ?.filterIsInstance<JSEmbeddedContent>()
-            ?.filter { it.containingFile.virtualFile?.fileType == VueFileType.INSTANCE }
-          if (!embeddedContents.isNullOrEmpty()) {
-            scope.union(LocalSearchScope(embeddedContents.map { it.containingFile }.toTypedArray()))
-          }
-          else scope
-        }
-
         val searchTarget = if (element is JSImplicitElement) component.source ?: element else element
         sequenceOf(elementName, fromAsset(elementName)).forEach {
           queryParameters.optimizer.searchWord(it, searchScope, false, searchTarget)
         }
+        return
+      }
+
+      if (queryParameters.effectiveSearchScope != searchScope) {
+        queryParameters.optimizer.searchWord(elementName, searchScope, true, element)
         return
       }
     }
