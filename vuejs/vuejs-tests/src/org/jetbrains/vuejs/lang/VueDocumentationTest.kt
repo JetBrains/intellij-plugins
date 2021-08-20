@@ -47,6 +47,7 @@ class VueDocumentationTest : JSAbstractDocumentationTest() {
   }
 
   fun testInnerLevelTemplateCustomAttr() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10)
     defaultTest()
   }
 

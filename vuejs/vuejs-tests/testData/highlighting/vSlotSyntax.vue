@@ -18,7 +18,7 @@
     <div v-<warning descr="Unrecognized Vue directive">slots</warning>="<weak_warning descr="Unresolved variable or type propName">propName</weak_warning>"></div>
     <div v-<warning descr="Unrecognized Vue directive">slots</warning>></div>
 
-    <div #<warning descr="Missing name"></warning>="propName"></div>
-    <div #<warning descr="Missing name"></warning>></div>
+    <div #<warning descr="Missing slot name"></warning>="propName"></div>
+    <div #<warning descr="Missing slot name"></warning>></div>
   </div>
 </template>
