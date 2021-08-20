@@ -2,7 +2,7 @@
   "$schema": "../../../../plugins/JavaScriptLanguage/web-platform/web-types-gen/resources/web-types.json",
   "framework": "vue",
   "name": "vue",
-  "version": "2.0.0",
+  "version": "2.6.0",
   "js-types-syntax": "typescript",
   "description-markup": "markdown",
   "default-icon": "icons/vue.svg",
@@ -241,9 +241,58 @@
           }
         },
         {
-          "name": "scope",
-          "description": "**Replaced by slot-scope in 2.5.0+. Prefer v-slot in 2.6.0+.**\n\nUsed to denote a `<template>` element as a scoped slot.",
-          "doc-url": "https://vuejs.org/v2/api/#scope-removed",
+          "name": "v-slot alias",
+          "description": "Denote named slots or slots that expect to receive props.",
+          "doc-url": "https://v3.vuejs.org/api/directives.html#v-slot",
+          "virtual": true,
+          "value": {
+            "kind": "expression",
+            "parser": "vue:slot-scope",
+            "type": "any",
+            "required": false
+          },
+          "pattern": {
+            "proximity": 10,
+            "items": "vue-available-slots",
+            "template": [
+              "#",
+              "$...",
+              "#item:slot name"
+            ]
+          }
+        },
+        {
+          "name": "v-slot",
+          "description": "Denote named slots or slots that expect to receive props.",
+          "doc-url": "https://v3.vuejs.org/api/directives.html#v-slot",
+          "virtual": true,
+          "value": {
+            "kind": "expression",
+            "parser": "vue:slot-scope",
+            "type": "any",
+            "required": false
+          },
+          "pattern": {
+            "template": [
+              "v-slot",
+              {
+                "items": "vue-available-slots",
+                "required": false,
+                "proximity": 5,
+                "template": [
+                  ":",
+                  "#...",
+                  "#item:slot name"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "slot-scope",
+          "description": "**Prefer v-slot in 2.6.0+**\n\nUsed to denote an element or component as a scoped slot. The attribute’s value should be a valid JavaScript expression that can appear in the argument position of a function signature. This means in supported environments you can also use ES2015 destructuring in the expression. Serves as a replacement for `scope` in 2.5.0+.\n\nThis attribute does not support dynamic binding.",
+          "doc-url": "https://vuejs.org/v2/api/#slot-scope-deprecated",
+          "deprecated": true,
           "virtual": true,
           "value": {
             "kind": "expression",
@@ -254,6 +303,7 @@
           "name": "slot",
           "description": "**Prefer v-slot in 2.6.0+**\n\nUsed on content inserted into child components to indicate which named slot the content belongs to.",
           "doc-url": "https://vuejs.org/v2/api/#slot-deprecated",
+          "deprecated": true,
           "value": {
             "kind": "plain",
             "type": "enum"
@@ -416,6 +466,14 @@
               ]
             },
             {
+              "name": "duration",
+              "description": "Specifies the duration of transition. By default, Vue waits for the first `transitionend` or `animationend` event on the root transition element.",
+              "type": [
+                "number",
+                "{ enter: number, leave: number }"
+              ]
+            },
+            {
               "name": "enterClass",
               "type": "string"
             },
@@ -425,6 +483,18 @@
             },
             {
               "name": "appearClass",
+              "type": "string"
+            },
+            {
+              "name": "enterToClass",
+              "type": "string"
+            },
+            {
+              "name": "leaveToClass",
+              "type": "string"
+            },
+            {
+              "name": "appearToClass",
               "type": "string"
             },
             {
@@ -529,7 +599,32 @@
         {
           "name": "KeepAlive",
           "doc-url": "https://vuejs.org/v2/api/#keep-alive",
-          "description": "When wrapped around a dynamic component, `<keep-alive>` caches the inactive component instances without destroying them. Similar to `<transition>`, `<keep-alive>` is an abstract component: it doesn’t render a DOM element itself, and doesn’t show up in the component parent chain."
+          "description": "When wrapped around a dynamic component, `<keep-alive>` caches the inactive component instances without destroying them. Similar to `<transition>`, `<keep-alive>` is an abstract component: it doesn’t render a DOM element itself, and doesn’t show up in the component parent chain.",
+          "props": [
+            {
+              "name": "include",
+              "description": "Only components with matching names will be cached.",
+              "type": [
+                "string",
+                "RegExp",
+                "(string|RegExp)[]"
+              ]
+            },
+            {
+              "name": "exclude",
+              "description": "Any component with a matching name will not be cached.",
+              "type": [
+                "string",
+                "RegExp",
+                "(string|RegExp)[]"
+              ]
+            },
+            {
+              "name": "max",
+              "description": "The maximum number of component instances to cache.",
+              "type": "number"
+            }
+          ]
         }
       ],
       "vue-directives": [
@@ -576,6 +671,14 @@
           }
         },
         {
+          "name": "else-if",
+          "description": "Denote the “else if block” for `v-if`. Can be chained.",
+          "doc-url": "https://vuejs.org/v2/api/#v-else-if",
+          "attribute-value": {
+            "required": true
+          }
+        },
+        {
           "name": "for",
           "description": "Render the element or template block multiple times based on the source data. The directive’s value must use the special syntax `alias in expression` to provide an alias for the current element being iterated on. Alternatively, you can also specify an alias for the index (or the key if used on an Object). The default behavior of `v-for` will try to patch the elements in-place without moving them. To force it to reorder elements, you need to provide an ordering hint with the `key` special attribute.",
           "doc-url": "https://vuejs.org/v2/api/#v-for",
@@ -596,8 +699,7 @@
           },
           "argument": {
             "name": "event name",
-            "description": "Event name",
-            "required": true,
+            "description": "Optional event name",
             "pattern": {
               "or": [
                 {
@@ -652,6 +754,10 @@
             {
               "name": "once",
               "description": "Trigger handler at most once."
+            },
+            {
+              "name": "passive",
+              "description": "attaches a DOM event with `{ passive: true }`."
             }
           ],
           "events": [
@@ -781,6 +887,14 @@
             {
               "name": "prop",
               "description": "Bind as a DOM property instead of an attribute. If the tag is a component then `.prop` will set the property on the component’s `$el`"
+            },
+            {
+              "name": "camel",
+              "description": "Transform the kebab-case attribute name into camelCase."
+            },
+            {
+              "name": "sync",
+              "description": "A syntax sugar that expands into a `v-on` handler for updating the bound value"
             }
           ]
         },
