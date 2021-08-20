@@ -111,8 +111,13 @@ fun toAsset(name: String): String {
   return result.toString()
 }
 
-val JSPsiNamedElementBase.declaredName: String?
-  get() = name ?: (this as? ES6ImportSpecifier)?.declaredName
+fun JSPsiNamedElementBase.resolveImportSpecifiers(): JSPsiNamedElementBase =
+  (this as? ES6ImportSpecifier)
+    ?.let { ES6PsiUtil.resolveSymbolForSpecifier(this) }
+    ?.asSequence()
+    ?.mapNotNull { it.takeIf { it.isValidResult }?.element as? JSPsiNamedElementBase }
+    ?.firstOrNull()
+  ?: this
 
 private val QUOTES = setOf('\'', '"', '`')
 
@@ -124,8 +129,8 @@ fun es6Unquote(s: String): String {
 
 fun getStringLiteralsFromInitializerArray(holder: PsiElement): List<JSLiteralExpression> {
   return JSStubBasedPsiTreeUtil.findDescendants<JSLiteralExpression>(holder,
-                                                                     TokenSet.create(JSStubElementTypes.LITERAL_EXPRESSION,
-                                                                                     JSStubElementTypes.STRING_TEMPLATE_EXPRESSION))
+    TokenSet.create(JSStubElementTypes.LITERAL_EXPRESSION,
+      JSStubElementTypes.STRING_TEMPLATE_EXPRESSION))
     .filter {
       val context = it.context
       !it.significantValue.isNullOrBlank() &&
@@ -163,7 +168,7 @@ fun objectLiteralFor(element: PsiElement?): JSObjectLiteralExpression? {
   return resolveElementTo(element, JSObjectLiteralExpression::class)
 }
 
-fun <T: PsiElement> resolveElementTo(element: PsiElement?, vararg classes: KClass<out T>): T? {
+fun <T : PsiElement> resolveElementTo(element: PsiElement?, vararg classes: KClass<out T>): T? {
   val queue = ArrayDeque<PsiElement>()
   queue.add(element ?: return null)
   val visited = HashSet<PsiElement>()
@@ -200,7 +205,7 @@ fun <T: PsiElement> resolveElementTo(element: PsiElement?, vararg classes: KClas
         is JSEmbeddedContent -> {
           if (cur.parent.let { tag ->
               tag is XmlTag && PsiTreeUtil.getStubChildrenOfTypeAsList(tag,
-                                                                       XmlAttribute::class.java).find { it.name == SETUP_ATTRIBUTE_NAME } != null
+                XmlAttribute::class.java).find { it.name == SETUP_ATTRIBUTE_NAME } != null
             }) {
             val regularScript = findModule(cur, false)
             if (regularScript != null) {
@@ -280,7 +285,7 @@ private fun getJSTypeFromConstructor(expression: JSExpression): JSType =
     ?.arguments?.getOrNull(0)
     ?.asCompleteType()
   ?: JSApplyNewType(JSTypeofTypeImpl(expression, JSTypeSourceFactory.createTypeSource(expression, false)),
-                    JSTypeSourceFactory.createTypeSource(expression.containingFile, false))
+    JSTypeSourceFactory.createTypeSource(expression.containingFile, false))
 
 fun getRequiredFromPropOptions(expression: JSExpression?): Boolean =
   (expression as? JSObjectLiteralExpression)

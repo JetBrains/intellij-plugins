@@ -18,7 +18,6 @@ import com.intellij.psi.ResolveResult
 import com.intellij.util.Processor
 import com.intellij.util.SmartList
 import org.apache.commons.lang.StringUtils
-import org.jetbrains.vuejs.codeInsight.declaredName
 import org.jetbrains.vuejs.codeInsight.template.VueTemplateScopesResolver
 import org.jetbrains.vuejs.lang.expr.psi.VueJSFilterReferenceExpression
 import org.jetbrains.vuejs.model.VueFilter
@@ -85,7 +84,7 @@ class VueJSReferenceExpressionResolver(referenceExpression: JSReferenceExpressio
     val name = StringUtils.uncapitalize(myReferencedName)
     VueTemplateScopesResolver.resolve(myRef, Processor { resolveResult ->
       val element = resolveResult.element as? JSPsiNamedElementBase
-      if (element != null && name == StringUtils.uncapitalize(element.declaredName)) {
+      if (element != null && name == StringUtils.uncapitalize(element.name)) {
         remapSetterGetterIfNeeded(results, resolveResult, access)
         return@Processor false
       }

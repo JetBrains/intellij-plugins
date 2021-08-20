@@ -9,7 +9,7 @@ import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementResolveResult
 import com.intellij.psi.ResolveResult
-import org.jetbrains.vuejs.codeInsight.declaredName
+import org.jetbrains.vuejs.codeInsight.resolveImportSpecifiers
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.model.VueImplicitElement
 import org.jetbrains.vuejs.model.source.VueCompositionInfoHelper
@@ -26,13 +26,14 @@ class VueScriptSetupScopeProvider : VueTemplateScopesProvider() {
     override fun resolve(consumer: Consumer<in ResolveResult>) {
       val unwrapRef = VueCompositionInfoHelper.getUnwrapRefType(module)
       JSStubBasedPsiTreeUtil.processDeclarationsInScope(module, { element, _ ->
-        val jsType = (element as? JSTypeOwner)?.jsType
-        val name = (element as? JSPsiNamedElementBase)?.declaredName
+        val resolved = (element as? JSPsiNamedElementBase)?.resolveImportSpecifiers()
+        val jsType = (resolved as? JSTypeOwner)?.jsType
+        val name = resolved?.name
         val elementToConsume = if (jsType != null && name != null) {
           val unwrappedType = VueCompositionInfoHelper.unwrapType(jsType, unwrapRef)
-          VueImplicitElement(name, unwrappedType, element, JSImplicitElement.Type.Property, true)
+          VueImplicitElement(name, unwrappedType, resolved, JSImplicitElement.Type.Property, true)
         }
-        else element
+        else (resolved ?: element)
         consumer.accept(PsiElementResolveResult(elementToConsume, true)).let { true }
       }, false)
     }
