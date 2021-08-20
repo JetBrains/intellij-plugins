@@ -199,6 +199,7 @@
     <javascript.webTypes source="web-types/vue@2.3.0.web-types.json"/>
     <javascript.webTypes source="web-types/vue@2.4.0.web-types.json"/>
     <javascript.webTypes source="web-types/vue@2.5.0.web-types.json"/>
+    <javascript.webTypes source="web-types/vue@2.6.0.web-types.json"/>
     <javascript.webTypes source="web-types/vue@3.0.0.web-types.json" enableByDefault="true"/>
     <javascript.webTypes source="web-types/vue-i18n@0.0.0.web-types.json"/>
 
