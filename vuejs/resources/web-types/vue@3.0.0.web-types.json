@@ -253,14 +253,35 @@
           },
           "pattern": {
             "proximity": 10,
-            "delegate": "/html/vue-directives/slot",
+            "items": "vue-available-slots",
             "template": [
               "#",
               "$...",
+              "#item:slot name"
+            ]
+          }
+        },
+        {
+          "name": "slot",
+          "description": "Denote named slots or slots that expect to receive props.",
+          "doc-url": "https://v3.vuejs.org/api/directives.html#v-slot",
+          "virtual": true,
+          "value": {
+            "kind": "expression",
+            "parser": "vue:expression",
+            "type": "any",
+            "required": false
+          },
+          "pattern": {
+            "template": [
+              "v-slot",
               {
-                "delegate": "argument",
-                "required": true,
+                "items": "vue-available-slots",
+                "required": false,
+                "proximity": 5,
                 "template": [
+                  ":",
+                  "#...",
                   "#item:slot name"
                 ]
               }
@@ -268,29 +289,37 @@
           }
         },
         {
-          "name": "slot-scope",
-          "deprecated": true,
-          "virtual": true,
-          "value": {
-            "kind": "expression",
-            "parser": "vue:slot-scope"
-          }
-        },
-        {
-          "name": "slot",
-          "deprecated": true
-        },
-        {
           "name": "ref",
-          "priority": "low"
+          "priority": "low",
+          "proximity": 10,
+          "description": "`ref` is used to register a reference to an element or a child component. The reference will be registered under the parent component's `$refs` object. If used on a plain DOM element, the reference will be that element; if used on a child component, the reference will be component instance.",
+          "doc-url": "https://v3.vuejs.org/api/special-attributes.html#ref"
         },
         {
           "name": "is",
-          "priority": "low"
+          "priority": "low",
+          "proximity": 10,
+          "doc-url": "https://v3.vuejs.org/api/special-attributes.html#is",
+          "description": "Used for [dynamic components](https://v3.vuejs.org/guide/component-dynamic-async.html).",
+          "value": {
+            "type": [
+              "string",
+              "object"
+            ]
+          }
         },
         {
           "name": "key",
-          "priority": "low"
+          "priority": "low",
+          "proximity": 10,
+          "description": "The `key` special attribute is primarily used as a hint for Vue's virtual DOM algorithm to identify VNodes when diffing the new list of nodes against the old list. Without keys, Vue uses an algorithm that minimizes element movement and tries to patch/reuse elements of the same type in-place as much as possible. With keys, it will reorder elements based on the order change of keys, and elements with keys that are no longer present will always be removed/destroyed.\n\nChildren of the same common parent must have **unique keys**. Duplicate keys will cause render errors.\n\nThe most common use case is combined with `v-for`.",
+          "doc-url": "https://v3.vuejs.org/api/special-attributes.html#key",
+          "value": {
+            "type": [
+              "number",
+              "string"
+            ]
+          }
         }
       ],
       "vue-file-top-elements": [
@@ -893,22 +922,6 @@
               }
             }
           ]
-        },
-        {
-          "name": "slot",
-          "description": "Denote named slots or slots that expect to receive props.",
-          "doc-url": "https://v3.vuejs.org/api/directives.html#v-slot",
-          "attribute-value": {
-            "parser": "vue:slot",
-            "type": "void"
-          },
-          "argument": {
-            "name": "Slot name",
-            "description": "Slot name (optional, defaults to `default`)",
-            "pattern": {
-              "items": "vue-available-slots"
-            }
-          }
         },
         {
           "name": "pre",

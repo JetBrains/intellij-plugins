@@ -252,42 +252,6 @@
           }
         },
         {
-          "name": "v-slot alias",
-          "description": "Denote named slots or slots that expect to receive props.",
-          "doc-url": "https://v3.vuejs.org/api/directives.html#v-slot",
-          "virtual": true,
-          "value": {
-            "kind": "expression",
-            "parser": "vue:expression",
-            "type": "any",
-            "required": false
-          },
-          "pattern": {
-            "proximity": 10,
-            "delegate": "/html/vue-directives/slot",
-            "template": [
-              "#",
-              "$...",
-              {
-                "delegate": "argument",
-                "required": true,
-                "template": [
-                  "#item:slot name"
-                ]
-              },
-              {
-                "items": "modifiers",
-                "template": [
-                  ".",
-                  "#item:modifier"
-                ],
-                "required": false,
-                "repeat": true
-              }
-            ]
-          }
-        },
-        {
           "name": "slot-scope",
           "deprecated": true,
           "virtual": true,
