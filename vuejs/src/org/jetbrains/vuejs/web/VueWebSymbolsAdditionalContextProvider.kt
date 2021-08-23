@@ -67,8 +67,8 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
       ?.let { VueModelManager.findEnclosingContainer(it) }
       ?.let {
         listOfNotNull(EntityContainerWrapper(element.containingFile.originalFile, it,
-                                             (element as? XmlTag)?.let { tag -> tag.parentTag == null } == true),
-                      (element as? XmlTag)?.let { tag -> AvailableSlotsContainer(tag) })
+          (element as? XmlTag)?.let { tag -> tag.parentTag == null } == true),
+          (element as? XmlTag)?.let { tag -> AvailableSlotsContainer(tag) })
       }
     ?: emptyList()
 
@@ -133,30 +133,34 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
           }
           KIND_HTML_VUE_COMPONENTS -> {
             val result = mutableListOf<VueComponent>()
-            val normalizedTagName = name?.let { fromAsset(it) }
-            container.acceptEntities(object : VueModelProximityVisitor() {
-              override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
-                return acceptSameProximity(proximity, normalizedTagName == null || fromAsset(name) == normalizedTagName) {
-                  if (isNotIncorrectlySelfReferred(component)) {
-                    result.add(component)
+            if (params.registry.allowResolve) {
+              val normalizedTagName = name?.let { fromAsset(it) }
+              container.acceptEntities(object : VueModelProximityVisitor() {
+                override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
+                  return acceptSameProximity(proximity, normalizedTagName == null || fromAsset(name) == normalizedTagName) {
+                    if (isNotIncorrectlySelfReferred(component)) {
+                      result.add(component)
+                    }
                   }
                 }
-              }
-            }, VueModelVisitor.Proximity.GLOBAL)
+              }, VueModelVisitor.Proximity.GLOBAL)
+            }
             result.mapNotNull {
               ComponentWrapper(name ?: it.defaultName ?: return@mapNotNull null, it)
             }
           }
           KIND_HTML_VUE_DIRECTIVES -> {
-            val searchName = name?.let { fromAsset(it) }
             val directives = mutableListOf<VueDirective>()
-            container.acceptEntities(object : VueModelProximityVisitor() {
-              override fun visitDirective(name: String, directive: VueDirective, proximity: Proximity): Boolean {
-                return acceptSameProximity(proximity, searchName == null || fromAsset(name) == searchName) {
-                  directives.add(directive)
+            if (params.registry.allowResolve) {
+              val searchName = name?.let { fromAsset(it) }
+              container.acceptEntities(object : VueModelProximityVisitor() {
+                override fun visitDirective(name: String, directive: VueDirective, proximity: Proximity): Boolean {
+                  return acceptSameProximity(proximity, searchName == null || fromAsset(name) == searchName) {
+                    directives.add(directive)
+                  }
                 }
-              }
-            }, VueModelVisitor.Proximity.GLOBAL)
+              }, VueModelVisitor.Proximity.GLOBAL)
+            }
             directives.mapNotNull {
               DirectiveWrapper(name ?: it.defaultName ?: return@mapNotNull null, it)
             }
@@ -184,31 +188,35 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
           }
           KIND_HTML_VUE_COMPONENTS -> {
             val result = mutableListOf<WebSymbolCodeCompletionItem>()
-            val scriptLanguage = detectVueScriptLanguage(containingFile)
-            container.acceptEntities(object : VueModelVisitor() {
-              override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
-                // Cannot self refer without export declaration with component name
-                if (isNotIncorrectlySelfReferred(component)) {
-                  // TODO replace with params.registry.getNameVariants(VUE_FRAMEWORK, Namespace.HTML, kind, name)
-                  listOf(toAsset(name).capitalize(), fromAsset(name)).forEach {
-                    result.add(createVueComponentLookup(component, it, scriptLanguage, proximity))
+            if (params.registry.allowResolve) {
+              val scriptLanguage = detectVueScriptLanguage(containingFile)
+              container.acceptEntities(object : VueModelVisitor() {
+                override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
+                  // Cannot self refer without export declaration with component name
+                  if (isNotIncorrectlySelfReferred(component)) {
+                    // TODO replace with params.registry.getNameVariants(VUE_FRAMEWORK, Namespace.HTML, kind, name)
+                    listOf(toAsset(name).capitalize(), fromAsset(name)).forEach {
+                      result.add(createVueComponentLookup(component, it, scriptLanguage, proximity))
+                    }
                   }
+                  return true
                 }
-                return true
-              }
-            }, VueModelVisitor.Proximity.OUT_OF_SCOPE)
+              }, VueModelVisitor.Proximity.OUT_OF_SCOPE)
+            }
             result
           }
           KIND_HTML_VUE_DIRECTIVES -> {
             val result = mutableListOf<WebSymbolCodeCompletionItem>()
-            container.acceptEntities(object : VueModelVisitor() {
-              override fun visitDirective(name: String, directive: VueDirective, proximity: Proximity): Boolean {
-                result.add(WebSymbolCodeCompletionItem.create(fromAsset(name),
-                                                              source = DirectiveWrapper(name, directive),
-                                                              priority = priorityOf(proximity)))
-                return true
-              }
-            }, VueModelVisitor.Proximity.GLOBAL)
+            if (params.registry.allowResolve) {
+              container.acceptEntities(object : VueModelVisitor() {
+                override fun visitDirective(name: String, directive: VueDirective, proximity: Proximity): Boolean {
+                  result.add(WebSymbolCodeCompletionItem.create(fromAsset(name),
+                    source = DirectiveWrapper(name, directive),
+                    priority = priorityOf(proximity)))
+                  return true
+                }
+              }, VueModelVisitor.Proximity.GLOBAL)
+            }
             result
           }
           else -> emptyList()
@@ -275,7 +283,9 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
                             name: String?,
                             params: WebSymbolsNameMatchQueryParams,
                             context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
-      if ((namespace == null || namespace == Namespace.HTML) && kind == KIND_VUE_AVAILABLE_SLOTS)
+      if ((namespace == null || namespace == Namespace.HTML)
+          && kind == KIND_VUE_AVAILABLE_SLOTS
+          && params.registry.allowResolve)
         getAvailableSlots(tag, name, true)
       else emptyList()
   }
@@ -376,7 +386,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
                 if (name != null)
                   slots.filter { it.pattern?.matches(name) ?: (it.name == name) }
                 else
-                  // TODO: web-types - expose API for patterns in WebSymbol
+                // TODO: web-types - expose API for patterns in WebSymbol
                   slots.filter { it.pattern == null }
               }
               ?.map { SlotWrapper(it, this.context) }
