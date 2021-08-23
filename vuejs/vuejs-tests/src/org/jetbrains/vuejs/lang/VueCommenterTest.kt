@@ -44,6 +44,44 @@ class VueCommenterTest : BasePlatformTestCase() {
 
     htmlSettings.BLOCK_COMMENT_AT_FIRST_COLUMN = true
     htmlSettings.LINE_COMMENT_AT_FIRST_COLUMN = false
+    doTest(0, "CommentByBlockComment")
+
+    htmlSettings.BLOCK_COMMENT_AT_FIRST_COLUMN = false
+    htmlSettings.LINE_COMMENT_AT_FIRST_COLUMN = true
+    doTest(0, "CommentByBlockComment")
+
+    htmlSettings.BLOCK_COMMENT_AT_FIRST_COLUMN = true
+    htmlSettings.LINE_COMMENT_AT_FIRST_COLUMN = true
+    doTest(0, "CommentByBlockComment")
+  }
+
+  fun testCommentByBlockComment2() = JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) {
+    val htmlSettings = it.getCommonSettings(HTMLLanguage.INSTANCE)
+    htmlSettings.BLOCK_COMMENT_AT_FIRST_COLUMN = false
+    htmlSettings.LINE_COMMENT_AT_FIRST_COLUMN = false
+    doTest(0, "CommentByBlockComment")
+
+    htmlSettings.BLOCK_COMMENT_AT_FIRST_COLUMN = true
+    htmlSettings.LINE_COMMENT_AT_FIRST_COLUMN = false
+    doTest(1, "CommentByBlockComment")
+
+    htmlSettings.BLOCK_COMMENT_AT_FIRST_COLUMN = false
+    htmlSettings.LINE_COMMENT_AT_FIRST_COLUMN = true
+    doTest(0, "CommentByBlockComment")
+
+    htmlSettings.BLOCK_COMMENT_AT_FIRST_COLUMN = true
+    htmlSettings.LINE_COMMENT_AT_FIRST_COLUMN = true
+    doTest(1, "CommentByBlockComment")
+  }
+
+  fun testCommentByBlockComment3() = JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) {
+    val htmlSettings = it.getCommonSettings(HTMLLanguage.INSTANCE)
+    htmlSettings.BLOCK_COMMENT_AT_FIRST_COLUMN = false
+    htmlSettings.LINE_COMMENT_AT_FIRST_COLUMN = false
+    doTest(0, "CommentByBlockComment")
+
+    htmlSettings.BLOCK_COMMENT_AT_FIRST_COLUMN = true
+    htmlSettings.LINE_COMMENT_AT_FIRST_COLUMN = false
     doTest(1, "CommentByBlockComment")
 
     htmlSettings.BLOCK_COMMENT_AT_FIRST_COLUMN = false
