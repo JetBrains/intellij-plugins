@@ -36,10 +36,7 @@ import com.intellij.util.PathUtil
 import com.intellij.util.SmartList
 import com.intellij.util.castSafelyTo
 import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
-import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
-import org.jetbrains.vuejs.codeInsight.es6Unquote
-import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
-import org.jetbrains.vuejs.codeInsight.toAsset
+import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes
 import org.jetbrains.vuejs.libraries.componentDecorator.isComponentDecorator
@@ -455,7 +452,7 @@ fun findModule(element: PsiElement?, setup: Boolean): JSEmbeddedContent? =
 @StubSafe
 fun findScriptTag(xmlFile: XmlFile, setup: Boolean): XmlTag? =
   findTopLevelVueTag(xmlFile, SCRIPT_TAG_NAME) {
-    setup xor (it.getAttribute(SETUP_ATTRIBUTE_NAME) == null)
+    setup xor (it.stubSafeGetAttribute(SETUP_ATTRIBUTE_NAME) == null)
   }
 
 @StubSafe

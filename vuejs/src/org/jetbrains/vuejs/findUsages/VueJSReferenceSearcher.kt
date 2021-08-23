@@ -25,6 +25,7 @@ import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.findDefaultExport
 import org.jetbrains.vuejs.codeInsight.fromAsset
+import org.jetbrains.vuejs.codeInsight.stubSafeGetAttribute
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.lang.html.VueFileType
@@ -41,7 +42,7 @@ class VueJSReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.
     if (elementName != null) {
       // Script setup local vars
       val scriptTag = PsiTreeUtil.getContextOfType(element, XmlTag::class.java, false, PsiFile::class.java)
-      if (scriptTag?.getAttribute(SETUP_ATTRIBUTE_NAME) != null &&
+      if (scriptTag?.stubSafeGetAttribute (SETUP_ATTRIBUTE_NAME) != null &&
           scriptTag.containingFile.virtualFile?.fileType == VueFileType.INSTANCE) {
         sequenceOf(elementName, fromAsset(elementName)).forEach {
           queryParameters.optimizer.searchWord(

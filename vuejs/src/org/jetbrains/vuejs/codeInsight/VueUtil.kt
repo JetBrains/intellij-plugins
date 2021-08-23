@@ -248,6 +248,16 @@ fun collectPropertiesRecursively(element: JSObjectLiteralExpression): List<Pair<
   return result
 }
 
+val XmlTag.stubSafeAttributes: List<XmlAttribute> get() =
+  if (isStubBased(this)) {
+    PsiTreeUtil.getStubChildrenOfTypeAsList(this, XmlAttribute::class.java)
+  } else {
+    this.attributes.filter { isStubBased(it) }
+  }
+
+fun XmlTag.stubSafeGetAttribute(qname: String): XmlAttribute? =
+  stubSafeAttributes.find { it.name == qname }
+
 val JSCallExpression.stubSafeCallArguments: List<PsiElement>
   get() {
     if (isStubBased(this)) {
