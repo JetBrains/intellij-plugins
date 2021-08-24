@@ -34,7 +34,7 @@ public class TemplatesNavigation extends ActionGroup implements DumbAware {
      */
     @Override
     public void update(@NotNull AnActionEvent event) {
-        final boolean isTapestryModule = TapestryUtils.isTapestryModule(event.getData(LangDataKeys.MODULE));
+        final boolean isTapestryModule = TapestryUtils.isTapestryModule(event.getData(PlatformCoreDataKeys.MODULE));
         final Presentation presentation = event.getPresentation();
         presentation.setEnabledAndVisible(isTapestryModule);
     }
@@ -67,7 +67,7 @@ public class TemplatesNavigation extends ActionGroup implements DumbAware {
                     return EMPTY_ACTION_ARRAY;
                 }
 
-              Module module = event.getData(LangDataKeys.MODULE);
+              Module module = event.getData(PlatformCoreDataKeys.MODULE);
               tapestryElement = PresentationLibraryElement.createProjectElementInstance(
                 new IntellijJavaClassType(module, psiClass.getContainingFile()),
                 TapestryModuleSupportLoader.getTapestryProject(module));

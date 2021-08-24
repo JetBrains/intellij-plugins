@@ -49,13 +49,13 @@ public final class ChooseActiveBuildConfigurationAction extends DumbAwareAction 
   }
 
   private static boolean isEnabled(final DataContext dataContext) {
-    Module module = LangDataKeys.MODULE.getData(dataContext);
+    Module module = PlatformCoreDataKeys.MODULE.getData(dataContext);
     return module != null && ModuleType.get(module) == FlexModuleType.getInstance();
   }
 
   @Override
   public void actionPerformed(@NotNull final AnActionEvent e) {
-    Module module = e.getData(LangDataKeys.MODULE);
+    Module module = e.getData(PlatformCoreDataKeys.MODULE);
     if (module != null) {
       createPopup(module, e.getDataContext()).showInBestPositionFor(e.getDataContext());
     }

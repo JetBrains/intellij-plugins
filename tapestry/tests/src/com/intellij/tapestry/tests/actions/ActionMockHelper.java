@@ -111,7 +111,7 @@ public class ActionMockHelper {
 
     private DataContext createDataContext() {
         DataContext dataContextMock = createMock(DataContext.class);
-        expect(dataContextMock.getData(LangDataKeys.MODULE)).andReturn(_moduleMock).anyTimes();
+        expect(dataContextMock.getData(PlatformCoreDataKeys.MODULE)).andReturn(_moduleMock).anyTimes();
 
         return dataContextMock;
     }

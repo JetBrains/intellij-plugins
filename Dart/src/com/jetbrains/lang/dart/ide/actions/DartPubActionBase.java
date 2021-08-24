@@ -14,7 +14,6 @@ import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.icons.AllIcons;
-import com.intellij.ide.IdeBundle;
 import com.intellij.ide.IdeCoreBundle;
 import com.intellij.ide.actions.CloseActiveTabAction;
 import com.intellij.notification.Notification;
@@ -120,7 +119,7 @@ public abstract class DartPubActionBase extends AnAction implements DumbAware {
   }
 
   private static @Nullable Pair<Module, VirtualFile> getModuleAndPubspecYamlFile(final AnActionEvent e) {
-    final Module module = e.getData(LangDataKeys.MODULE);
+    final Module module = e.getData(PlatformCoreDataKeys.MODULE);
     final PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
 
     if (module != null && psiFile != null && psiFile.getName().equalsIgnoreCase(PUBSPEC_YAML)) {

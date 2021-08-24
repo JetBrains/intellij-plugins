@@ -44,7 +44,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     val file = e.getData(PlatformDataKeys.VIRTUAL_FILE) ?: return
-    val editor = e.getData(PlatformDataKeys.FILE_EDITOR)
+    val editor = e.getData(PlatformCoreDataKeys.FILE_EDITOR)
     val cli = AngularCliUtil.findAngularCliFolder(project, file) ?: return
 
     if (!AngularCliUtil.hasAngularCLIPackageInstalled(project, cli)) {

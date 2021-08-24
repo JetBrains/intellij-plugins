@@ -39,7 +39,7 @@ public class ClassTemplateNavigation extends AnAction {
 
     Module module;
     try {
-      module = event.getData(LangDataKeys.MODULE);
+      module = event.getData(PlatformCoreDataKeys.MODULE);
     }
     catch (Throwable ex) {
       presentation.setEnabledAndVisible(false);
@@ -70,7 +70,7 @@ public class ClassTemplateNavigation extends AnAction {
     Project project = event.getData(CommonDataKeys.PROJECT);
 
     PsiFile psiFile = getEventPsiFile(event);
-    Module module = event.getData(LangDataKeys.MODULE);
+    Module module = event.getData(PlatformCoreDataKeys.MODULE);
     if (psiFile == null || module == null) return;
     String presentationText = event.getPresentation().getText();
     VirtualFile navigationTarget = findNavigationTarget(psiFile, module, presentationText);

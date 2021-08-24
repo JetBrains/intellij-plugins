@@ -2,7 +2,7 @@ package com.intellij.tapestry.intellij.actions.createnew;
 
 import com.intellij.CommonBundle;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.LangDataKeys;
+import com.intellij.openapi.actionSystem.PlatformCoreDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.ui.DialogBuilder;
@@ -15,8 +15,6 @@ import com.intellij.tapestry.intellij.util.TapestryUtils;
 import com.intellij.tapestry.intellij.util.Validators;
 import com.intellij.tapestry.intellij.view.nodes.ComponentsNode;
 import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
 
 /**
  * Action that creates a new component.
@@ -36,7 +34,7 @@ public class AddNewComponentAction extends AddNewElementAction<ComponentsNode> {
    */
   @Override
   public void actionPerformed(@NotNull AnActionEvent event) {
-    Module module = event.getData(LangDataKeys.MODULE);
+    Module module = event.getData(PlatformCoreDataKeys.MODULE);
     if (module == null) return;
 
     String defaultComponentPath = getDefaultElementPath(event, module);

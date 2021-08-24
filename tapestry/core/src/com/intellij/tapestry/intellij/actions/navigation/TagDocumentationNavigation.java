@@ -3,7 +3,7 @@ package com.intellij.tapestry.intellij.actions.navigation;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.LangDataKeys;
+import com.intellij.openapi.actionSystem.PlatformCoreDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -38,7 +38,7 @@ public class TagDocumentationNavigation extends AnAction {
 
     Project project = event.getData(CommonDataKeys.PROJECT);
     if (project == null) return;
-    Module module = event.getData(LangDataKeys.MODULE);
+    Module module = event.getData(PlatformCoreDataKeys.MODULE);
 
     TapestryComponent component = getTapestryComponent(event);
     if (component == null) return;

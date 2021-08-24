@@ -375,7 +375,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
       return myIdeView;
     }
 
-    if (LangDataKeys.MODULE.is(dataId)) {
+    if (PlatformCoreDataKeys.MODULE.is(dataId)) {
       final NodeDescriptor nodeDescriptor = getSelectedDescriptor();
       if (nodeDescriptor != null) {
         if (nodeDescriptor instanceof TapestryNode) {
@@ -469,7 +469,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
             }
 
             if (selectedNode instanceof PageNode || selectedNode instanceof ComponentNode || selectedNode instanceof MixinNode) {
-              toolWindow.update((Module)getData(LangDataKeys.MODULE.getName()), selectedNode.getElement(),
+              toolWindow.update((Module)getData(PlatformCoreDataKeys.MODULE.getName()), selectedNode.getElement(),
                                 Collections.singletonList(((PresentationLibraryElement)selectedNode.getElement()).getElementClass()));
             }
 
@@ -479,7 +479,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
                       .getParent()).getUserObject());
 
               if (parentSelectedNode.getElement() instanceof PresentationLibraryElement) {
-                toolWindow.update((Module)getData(LangDataKeys.MODULE.getName()), parentSelectedNode.getElement(),
+                toolWindow.update((Module)getData(PlatformCoreDataKeys.MODULE.getName()), parentSelectedNode.getElement(),
                                   Collections
                                     .singletonList(((PresentationLibraryElement)parentSelectedNode.getElement()).getElementClass()));
               }
@@ -512,7 +512,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
                 }
 
                 if (component != null) {
-                  toolWindow.update((Module)getData(LangDataKeys.MODULE.getName()), component,
+                  toolWindow.update((Module)getData(PlatformCoreDataKeys.MODULE.getName()), component,
                                     Collections.singletonList(component.getElementClass()));
                 }
               }

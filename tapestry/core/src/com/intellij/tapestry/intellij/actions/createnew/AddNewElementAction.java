@@ -41,7 +41,7 @@ public abstract class AddNewElementAction<T extends PackageNode> extends AnActio
     boolean enabled = false;
     Presentation presentation = event.getPresentation();
 
-    Module module = event.getData(LangDataKeys.MODULE);
+    Module module = event.getData(PlatformCoreDataKeys.MODULE);
 
     if (!TapestryUtils.isTapestryModule(module)) {
       presentation.setEnabledAndVisible(false);

@@ -16,7 +16,7 @@ import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRuntimeConfigurationProducer;
 import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.LangDataKeys;
+import com.intellij.openapi.actionSystem.PlatformCoreDataKeys;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import org.jetbrains.annotations.NotNull;
@@ -59,7 +59,7 @@ public class FlexUnitConfigurationTest extends JavaCodeInsightTestCase implement
 
   @Override
   public Object getData(@NotNull final String dataId) {
-    return LangDataKeys.MODULE.is(dataId) ? myModule : super.getData(dataId);
+    return PlatformCoreDataKeys.MODULE.is(dataId) ? myModule : super.getData(dataId);
   }
 
   private void defaultTest() throws Exception {
