@@ -74,11 +74,7 @@ class VueJSTypeEvaluator(context: JSEvaluateContext)
             getVForVarType(collectionExpr, ::JSNumberType)
           }
           else {
-            val indexerTypes = JSRecordType.IndexSignatureKind.values()
-              .asSequence()
-              .mapNotNull { recordType.findIndexer(it) }
-              .map { it.memberParameterType }
-              .toList()
+            val indexerTypes = recordType.indexSignatures.map { it.memberParameterType }
 
             when {
               indexerTypes.isNotEmpty() -> getVForVarType(collectionExpr, *indexerTypes.toTypedArray())
