@@ -2,7 +2,6 @@
 package org.jetbrains.vuejs.libraries.nuxt.model.impl
 
 import com.intellij.ide.util.PropertiesComponent
-import com.intellij.javascript.nodejs.NodeModuleDirectorySearchProcessor
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil
 import com.intellij.javascript.nodejs.PackageJsonData
 import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
@@ -25,10 +24,7 @@ import com.intellij.util.text.SemVer
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.VUE_NOTIFICATIONS
 import org.jetbrains.vuejs.codeInsight.resolveSymbolFromNodeModule
-import org.jetbrains.vuejs.libraries.nuxt.NUXT_2_9_0
-import org.jetbrains.vuejs.libraries.nuxt.NUXT_CONFIG_PKG
-import org.jetbrains.vuejs.libraries.nuxt.NUXT_PKG
-import org.jetbrains.vuejs.libraries.nuxt.NUXT_TYPES_PKG
+import org.jetbrains.vuejs.libraries.nuxt.*
 import org.jetbrains.vuejs.libraries.nuxt.actions.InstallNuxtTypesAction
 import org.jetbrains.vuejs.libraries.nuxt.model.NuxtApplication
 import org.jetbrains.vuejs.libraries.nuxt.model.NuxtConfig
@@ -89,7 +85,8 @@ class NuxtApplicationImpl(override val configFile: VirtualFile, override val pro
   override val config: NuxtConfig
     get() = PsiManager.getInstance(project).findFile(configFile)?.let { file ->
       CachedValuesManager.getCachedValue(file) {
-        CachedValueProvider.Result.create(NuxtConfigImpl(file), file, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
+        CachedValueProvider.Result.create(NuxtConfigImpl(file, nuxtVersion?.isGreaterOrEqualThan(NUXT_2_15_0) != false),
+          file, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
       }
     } ?: EmptyNuxtConfig
 

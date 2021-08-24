@@ -10,7 +10,9 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.castSafelyTo
+import com.intellij.util.containers.MultiMap
 import org.jetbrains.vuejs.codeInsight.fromAsset
+import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
 
 class NuxtComponentProvider : VueContainerInfoProvider {
@@ -22,30 +24,39 @@ class NuxtComponentProvider : VueContainerInfoProvider {
       ?.let { config ->
         val resolvedDirs = config.components.asSequence()
           .mapNotNull { componentDir -> resolvePath(config.file!!, componentDir)?.let { Pair(it, componentDir) } }
-          .sortedBy { dir -> -dir.first.path.count { it == '\\' || it == '/' } }
+          .sortedWith(
+            Comparator.comparingInt<Pair<VirtualFile, NuxtConfig.ComponentsDirectoryConfig>> { it.second.level }
+              .thenComparingInt { dir -> -dir.first.path.count { it == '\\' || it == '/' } })
           .toList()
 
-        sourceComponents.local.flatMap { (_, component) ->
-          val componentFile = component.source?.containingFile?.virtualFile
-                              ?: return@flatMap emptySequence()
-          val componentDirConfig = resolvedDirs.find { VfsUtil.isAncestor(it.first, componentFile, true) }?.second
-          if (componentDirConfig != null
-              && componentFile.extension.let { componentDirConfig.extensions.contains(it) }) {
-            val prefix = componentDirConfig.prefix
-            val name = fromAsset(componentFile.nameWithoutExtension).let {
-              when {
-                prefix.isEmpty() -> it
-                it.startsWith(prefix) -> it
-                else -> "$prefix-$it"
-              }
+        sourceComponents.local.entrySet()
+          .asSequence()
+          .flatMap { it.value }
+          .flatMap { component ->
+            val componentFile = component.source?.containingFile?.virtualFile
+                                ?: return@flatMap emptySequence()
+            val index = resolvedDirs.indexOfFirst { VfsUtil.isAncestor(it.first, componentFile, true) }
+            if (index < 0) return@flatMap emptySequence()
+            val componentDirConfig = resolvedDirs[index].second
+            if (componentFile.extension.let { componentDirConfig.extensions.contains(it) }) {
+              val prefix = componentDirConfig.prefix.let { if (it.isNotEmpty()) "$it-" else it }
+              val dirPrefix = if (componentDirConfig.pathPrefix) {
+                VfsUtil.getRelativePath(componentFile.parent, resolvedDirs[index].first, '-')
+                  ?.takeIf { it.isNotEmpty() }
+                  ?.let{ fromAsset(it).replace(MULTI_HYPHEN_REGEX, "-") + "-" } ?: ""
+              } else ""
+              val baseName = fromAsset(componentFile.nameWithoutExtension)
+              val name = if (prefix.isNotEmpty() && (baseName.startsWith(prefix) || baseName == componentDirConfig.prefix)) {
+                baseName
+              } else "$prefix$dirPrefix$baseName"
+              sequenceOf(Triple(name, component, index), Triple("lazy-$name", component, index))
             }
-            sequenceOf(Pair(name, component), Pair("lazy-$name", component))
+            else emptySequence()
           }
-          else emptySequence()
-        }
+          .sortedBy { it.third }
           .distinctBy { it.first }
-          .toMap()
-          .let { VueContainerInfoProvider.ComponentsInfo(emptyMap(), it) }
+          .fold(MultiMap.create<String, VueComponent>()) { map, (name, component) -> map.also { it.putValue(name, component) } }
+          .let { VueContainerInfoProvider.ComponentsInfo(MultiMap.empty(), it) }
       }
 
   private fun resolvePath(configFile: PsiFile, componentDir: NuxtConfig.ComponentsDirectoryConfig): VirtualFile? =
@@ -66,6 +77,7 @@ class NuxtComponentProvider : VueContainerInfoProvider {
 
   companion object {
     val webpackReferenceProvider = WebPackReferenceContributor()
+    private val MULTI_HYPHEN_REGEX = Regex("-{2,}")
   }
 
 }

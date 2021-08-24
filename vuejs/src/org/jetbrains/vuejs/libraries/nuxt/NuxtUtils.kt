@@ -13,3 +13,4 @@ const val NUXT_CONFIG_FILE = "nuxt.config.js"
 
 val NUXT_2_9_0 = SemVer("2.9.0", 2, 9, 0)
 val NUXT_2_13_0 = SemVer("2.13.0", 2, 13, 0)
+val NUXT_2_15_0 = SemVer("2.15.0", 2, 15, 0)
