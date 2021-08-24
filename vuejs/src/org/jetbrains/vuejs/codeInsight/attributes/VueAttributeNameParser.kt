@@ -221,7 +221,7 @@ class VueAttributeNameParser private constructor() {
     KEY("key"),
     SCOPE("scope", injectJS = true, deprecated = true, requiresTag = TEMPLATE_TAG_NAME, onlyTopLevelTag = false),
     SLOT_SCOPE("slot-scope", injectJS = true, deprecated = true),
-    SLOT_NAME(SLOT_NAME_ATTRIBUTE, injectJS = false, requiresTag = SLOT_TAG_NAME),
+    SLOT_NAME(SLOT_NAME_ATTRIBUTE, injectJS = false, requiresTag = SLOT_TAG_NAME, onlyTopLevelTag = false),
     STYLE_SCOPED("scoped", requiresValue = false, requiresTag = STYLE_TAG_NAME),
     STYLE_MODULE(MODULE_ATTRIBUTE_NAME, requiresValue = false, requiresTag = STYLE_TAG_NAME),
     STYLE_SRC(SRC_ATTRIBUTE_NAME, requiresTag = STYLE_TAG_NAME),
@@ -232,7 +232,9 @@ class VueAttributeNameParser private constructor() {
     SCRIPT_ID(ID_ATTRIBUTE_NAME, requiresTag = SCRIPT_TAG_NAME, onlyTopLevelTag = false),
     SCRIPT_SRC(SRC_ATTRIBUTE_NAME, requiresTag = SCRIPT_TAG_NAME),
     SCRIPT_LANG(LANG_ATTRIBUTE_NAME, requiresTag = SCRIPT_TAG_NAME),
-    SCRIPT_SETUP(SETUP_ATTRIBUTE_NAME, requiresValue = false, requiresTag = SCRIPT_TAG_NAME),
+    SCRIPT_SETUP(SETUP_ATTRIBUTE_NAME, injectJS = true, requiresValue = false, requiresTag = SCRIPT_TAG_NAME,
+      /* Should actually be only a top level tag, but HTML lexer is unable to distinguish that */
+                 onlyTopLevelTag = false),
     ;
 
     fun isValidIn(context: String?, isTopLevel: Boolean): Boolean {

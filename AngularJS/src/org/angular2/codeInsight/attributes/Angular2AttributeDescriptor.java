@@ -11,7 +11,7 @@ import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelations;
 import com.intellij.lang.javascript.psi.types.primitives.JSBooleanType;
 import com.intellij.lang.javascript.psi.types.primitives.JSPrimitiveType;
 import com.intellij.lang.javascript.psi.types.primitives.JSStringType;
-import com.intellij.openapi.util.AtomicNullableLazyValue;
+import com.intellij.openapi.util.NullableLazyValue;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -125,7 +125,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   private final @NotNull String myAttributeName;
   private final @NotNull Angular2AttributeNameParser.AttributeInfo myInfo;
   private final boolean myImplied;
-  private final AtomicNullableLazyValue<JSType> myJSType = AtomicNullableLazyValue.createValue(this::buildJSType);
+  private final NullableLazyValue<JSType> myJSType = NullableLazyValue.createValue(this::buildJSType);
   private final XmlAttributeDescriptor myOverriddenHtmlDescriptor;
 
   protected Angular2AttributeDescriptor(@NotNull XmlTag xmlTag,
@@ -177,8 +177,8 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
       assert myAttributeName.equals(ngOther.myAttributeName)
              && myInfo.isEquivalent(ngOther.myInfo)
         : "Cannot merge attributes with different names or non-equivalent infos: "
-          + myAttributeName + " " + myInfo.toString() + " != "
-          + ngOther.myAttributeName + " " + ngOther.myInfo.toString();
+          + myAttributeName + " " + myInfo + " != "
+          + ngOther.myAttributeName + " " + ngOther.myInfo;
       assert myResolver.getScope() == ngOther.myResolver.getScope()
         : "Cannot merge attributes from different tags";
       Set<Object> sources = new HashSet<>(myResolver.getSources());

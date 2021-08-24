@@ -37,7 +37,7 @@ import org.jetbrains.annotations.Nullable;
 
 abstract class PbOptionNameMixin extends PbElementBase implements PbOptionName {
 
-  private static final Logger logger = Logger.getInstance(PbOptionNameReference.class);
+  private static final Logger logger = Logger.getInstance(PbOptionNameMixin.class);
 
   PbOptionNameMixin(ASTNode node) {
     super(node);

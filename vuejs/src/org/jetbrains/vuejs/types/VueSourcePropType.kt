@@ -9,7 +9,7 @@ import org.jetbrains.vuejs.codeInsight.getJSTypeFromPropOptions
 class VueSourcePropType private constructor(typeSource: JSTypeSource, private val property: JSProperty)
   : JSSimpleTypeBaseImpl(typeSource), JSCodeBasedType {
 
-  constructor(property: JSProperty) : this(JSTypeSourceFactory.createTypeSource(property, false), property)
+  constructor(property: JSProperty) : this(JSTypeSourceFactory.createTypeSource(property, true), property)
 
   override fun copyWithNewSource(source: JSTypeSource): JSType =
     VueSourcePropType(source, property)

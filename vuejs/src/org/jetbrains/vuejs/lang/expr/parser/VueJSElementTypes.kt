@@ -29,6 +29,9 @@ object VueJSElementTypes {
   val SLOT_PROPS_EXPRESSION: IElementType = VueJSExpressionElementType(
     "SLOT_PROPS_EXPRESSION", ::VueJSSlotPropsExpressionImpl)
 
+  val SCRIPT_SETUP_EXPRESSION: IElementType = VueJSExpressionElementType(
+    "SCRIPT_SETUP_EXPRESSION", ::VueJSScriptSetupExpressionImpl)
+
   val EMBEDDED_EXPR_STATEMENT: IElementType = VueJSElementType(
     "VUE:EMBEDDED_EXPR_STATEMENT", ::VueJSEmbeddedExpressionImpl)
 

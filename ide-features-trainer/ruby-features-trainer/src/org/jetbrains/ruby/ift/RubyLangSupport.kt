@@ -56,14 +56,14 @@ internal class RubyLangSupport : AbstractLangSupport() {
     }
   }
 
-  override fun getSdkForProject(project: Project): Sdk? {
+  override fun getSdkForProject(project: Project, selectedSdk: Sdk?): Sdk? {
     return try {
-      super.getSdkForProject(project)
+      super.getSdkForProject(project, selectedSdk)
     }
     catch (e: NoSdkException) {
       SdkRefresher.refreshAll()
       try {
-        super.getSdkForProject(project)
+        super.getSdkForProject(project, selectedSdk)
       }
       catch (e: NoSdkException) {
         showSdkNotFoundDialog(project)

@@ -14,6 +14,7 @@ import org.jetbrains.vuejs.model.VueInstanceOwner
 import org.jetbrains.vuejs.model.VueNamedEntity
 import org.jetbrains.vuejs.model.VueRegularComponent
 import org.jetbrains.vuejs.model.getDefaultVueComponentInstanceType
+import org.jetbrains.vuejs.model.source.INSTANCE_REFS_PROP
 
 class VueRefsType(source: JSTypeSource,
                   private val instanceOwner: VueInstanceOwner) : JSSimpleTypeBaseImpl(source), JSCodeBasedType, VueCompleteType {
@@ -50,7 +51,7 @@ class VueRefsType(source: JSTypeSource,
     }
     getDefaultVueComponentInstanceType(instanceOwner.source)
       ?.asRecordType()
-      ?.findPropertySignature("\$refs")
+      ?.findPropertySignature(INSTANCE_REFS_PROP)
       ?.jsType
       ?.asRecordType()
       ?.findIndexer(JSRecordType.IndexSignatureKind.STRING)

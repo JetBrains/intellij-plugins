@@ -60,7 +60,7 @@ public class PbAnnotator implements Annotator {
           BuiltInType.SFIXED64);
 
   @Override
-  public void annotate(PsiElement element, @NotNull final AnnotationHolder holder) {
+  public void annotate(@NotNull PsiElement element, @NotNull final AnnotationHolder holder) {
     element.accept(
         new PbVisitor() {
           @Override

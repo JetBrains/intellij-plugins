@@ -17,11 +17,15 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.castSafelyTo
 import one.util.streamex.StreamEx
-import org.jetbrains.vuejs.codeInsight.*
+import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
+import org.jetbrains.vuejs.codeInsight.getRequiredFromPropOptions
+import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
+import org.jetbrains.vuejs.codeInsight.objectLiteralFor
 import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.getComponentDescriptor
 import org.jetbrains.vuejs.types.VueSourcePropType
+import org.jetbrains.vuejs.types.optionalIf
 
 class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedContainerInfoProvider(::VueSourceContainerInfo) {
 
@@ -157,7 +161,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
             else -> getComponentDescriptor(meaningfulElement as? JSElement)
               ?.let { VueModelManager.getComponent(it) }
           }
-          ?: VueUnresolvedComponent(declaration)
+          ?: VueUnresolvedComponent(declaration, element, element.name)
         }
         .distinctKeys()
         .into(mutableMapOf<String, VueComponent>())
@@ -195,14 +199,15 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
   }
 
 
-  private class VueSourceInputProperty(override val name: String,
-                                       sourceElement: PsiElement) : VueInputProperty {
+  class VueSourceInputProperty(override val name: String,
+                               sourceElement: PsiElement) : VueInputProperty {
 
+    override val required: Boolean = getRequiredFromPropOptions((sourceElement as? JSProperty)?.value)
     override val source: VueImplicitElement =
-      VueImplicitElement(name, (sourceElement as? JSProperty)?.let { VueSourcePropType(it) },
+      VueImplicitElement(name, (sourceElement as? JSProperty)?.let { VueSourcePropType(it) }?.optionalIf(!required),
                          sourceElement, JSImplicitElement.Type.Property, true)
     override val jsType: JSType? = source.jsType
-    override val required: Boolean = getRequiredFromPropOptions((sourceElement as? JSProperty)?.value)
+
   }
 
   private class VueSourceDataProperty(override val name: String,

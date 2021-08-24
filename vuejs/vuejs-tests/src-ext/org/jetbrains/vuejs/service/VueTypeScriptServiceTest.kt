@@ -2,6 +2,8 @@
 package org.jetbrains.vuejs.service
 
 import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.javascript.web.moveToOffsetBySignature
+import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase.checkHighlightByFile
 import com.intellij.lang.javascript.service.JSLanguageService
 import com.intellij.lang.javascript.service.JSLanguageServiceBase
 import com.intellij.lang.javascript.service.JSLanguageServiceProvider
@@ -13,6 +15,7 @@ import com.intellij.testFramework.JUnit38AssumeSupportRunner
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.ui.UIUtil
 import junit.framework.TestCase
+import org.jetbrains.vuejs.lang.VueInspectionsProvider
 import org.jetbrains.vuejs.lang.VueTestModule
 import org.jetbrains.vuejs.lang.configureVueDependencies
 import org.jetbrains.vuejs.lang.typescript.service.VueTypeScriptService
@@ -116,12 +119,41 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
     checkHighlightingByOptions(false)
   }
 
+
   @TypeScriptVersion(TypeScriptVersions.TS26)
+  fun testFileCreation() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_2_5_3)
+    myFixture.configureByFile("tsconfig.json")
+    myFixture.configureByText("test.ts", "<error descr=\"TS2304: Cannot find name 'foo'.\">foo</error>")
+    myFixture.checkHighlighting()
+    myFixture.configureByText("test.vue", "<script lang='<caret>'></script>")
+    myFixture.checkHighlighting()
+    myFixture.type("ts")
+    myFixture.moveToOffsetBySignature("><caret></")
+    myFixture.type("<error descr=\"TS2304: Cannot find name 'foo'.\">foo</error")
+    myFixture.checkHighlighting()
+  }
+
+  @TypeScriptVersion(TypeScriptVersions.TS36)
   fun testScriptSetup() {
+    myFixture.enableInspections(VueInspectionsProvider())
     myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
     doTestWithCopyDirectory()
     myFixture.configureFromTempProjectFile("ScriptSetup2.vue")
     myFixture.checkHighlighting()
+    myFixture.configureFromTempProjectFile("ScriptSetup3.vue")
+    myFixture.checkHighlighting()
+    myFixture.configureFromTempProjectFile("ScriptSetup4.vue")
+    myFixture.checkHighlighting()
+    myFixture.configureFromTempProjectFile("ScriptSetup5.vue")
+    myFixture.checkHighlighting()
+  }
+
+  @TypeScriptVersion(TypeScriptVersions.TS36)
+  fun testScriptSetupImportResolveBothScripts() {
+    myFixture.enableInspections(VueInspectionsProvider())
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
+    doTestWithCopyDirectory()
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS26)
@@ -129,7 +161,7 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
     doTestWithCopyDirectory()
     myFixture.configureByFile("main.ts")
-    checkHighlightingByOptions(false)
+    checkHighlightByFile(myFixture, testDataPath + "/" + getTestName(false) + "/main_after.ts")
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS26)
@@ -149,6 +181,19 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
     doTestWithCopyDirectory()
     myFixture.type('\b')
     checkAfterFile("vue")
+  }
+
+  @TypeScriptVersion(TypeScriptVersions.TS26)
+  fun testSimpleVueScriptChanges() {
+    doTestWithCopyDirectory()
+    repeat(10) {
+      myFixture.type("x")
+      checkHighlightByFile(myFixture, "$testDataPath/SimpleVueScriptChanges/test_tsx.vue")
+      myFixture.type("\b\b\bjs")
+      checkHighlightByFile(myFixture, "$testDataPath/SimpleVueScriptChanges/test_js.vue")
+      myFixture.type("\b\bts")
+      checkHighlightByFile(myFixture, "$testDataPath/SimpleVueScriptChanges/test_ts.vue")
+    }
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS26)
@@ -172,10 +217,15 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
     WriteAction.runAndWait<Exception> {
       myFixture.tempDirFixture.findOrCreateDir(".").refresh(false, true)
     }
-    TestCase.assertEquals(listOf("NoVueCompileOnSave.vue", "NoVueCompileOnSaveClear.vue",
-                                 "shims-vue.d.ts", "test.d.ts", "test.js", "test.js.map", "test.ts", "tsconfig.json"),
-                          myFixture.tempDirFixture.findOrCreateDir(".")
-                            .children.asSequence().map { it.name }.sorted().toList())
+    val files = myFixture.tempDirFixture.findOrCreateDir(".")
+      .children.asSequence().map { it.name }.sorted().toList()
+    // There is race condition here and the files won't be compiled always.
+    // However, if they are compiled we can ensure that there are no results for Vue files.
+    if (files.contains("test.js.map")) {
+      TestCase.assertEquals(listOf("NoVueCompileOnSave.vue", "NoVueCompileOnSaveClear.vue",
+                                   "shims-vue.d.ts", "test.d.ts", "test.js", "test.js.map", "test.ts", "tsconfig.json"),
+                            files)
+    }
   }
 
   companion object {

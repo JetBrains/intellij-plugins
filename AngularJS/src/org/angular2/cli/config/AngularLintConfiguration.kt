@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.linter.tslint.TslintUtil
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
 import com.intellij.openapi.util.AtomicNullableLazyValue
 import com.intellij.openapi.util.NotNullLazyValue
+import com.intellij.openapi.util.NullableLazyValue
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.nullize
@@ -14,10 +15,10 @@ import com.intellij.util.text.minimatch.Minimatch
 class AngularLintConfiguration internal constructor(private val ngProject: AngularProject,
                                                     private val config: AngularJsonLintOptions,
                                                     val name: String? = null) {
-  private val myIncludes = AtomicNullableLazyValue.createValue {
+  private val myIncludes = NullableLazyValue.createValue {
     config.files.mapNotNull(::createGlobMatcher).nullize()
   }
-  private val myExcludes = NotNullLazyValue.atomicLazy {
+  private val myExcludes = NotNullLazyValue.lazy {
     config.exclude.mapNotNull(::createGlobMatcher)
   }
 

@@ -21,6 +21,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.castSafelyTo
 import com.intellij.util.containers.Stack
@@ -29,6 +30,7 @@ import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler
 import org.jetbrains.vuejs.codeInsight.toAsset
+import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.VueModelDirectiveProperties.Companion.DEFAULT_EVENT
@@ -65,8 +67,8 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
       ?.let { VueModelManager.findEnclosingContainer(it) }
       ?.let {
         listOfNotNull(EntityContainerWrapper(element.containingFile.originalFile, it,
-                                             (element as? XmlTag)?.let { tag -> tag.parentTag == null } == true),
-                      (element as? XmlTag)?.let { tag -> AvailableSlotsContainer(tag) })
+          (element as? XmlTag)?.let { tag -> tag.parentTag == null } == true),
+          (element as? XmlTag)?.let { tag -> AvailableSlotsContainer(tag) })
       }
     ?: emptyList()
 
@@ -131,31 +133,34 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
           }
           KIND_HTML_VUE_COMPONENTS -> {
             val result = mutableListOf<VueComponent>()
-            val normalizedTagName = name?.let { fromAsset(it) }
-            container.acceptEntities(object : VueModelProximityVisitor() {
-              override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
-                return acceptSameProximity(proximity, normalizedTagName == null || fromAsset(name) == normalizedTagName) {
-                  // Cannot self refer without export declaration with component name
-                  if ((component.source as? JSImplicitElement)?.context != containingFile) {
-                    result.add(component)
+            if (params.registry.allowResolve) {
+              val normalizedTagName = name?.let { fromAsset(it) }
+              container.acceptEntities(object : VueModelProximityVisitor() {
+                override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
+                  return acceptSameProximity(proximity, normalizedTagName == null || fromAsset(name) == normalizedTagName) {
+                    if (isNotIncorrectlySelfReferred(component)) {
+                      result.add(component)
+                    }
                   }
                 }
-              }
-            }, VueModelVisitor.Proximity.GLOBAL)
+              }, VueModelVisitor.Proximity.GLOBAL)
+            }
             result.mapNotNull {
               ComponentWrapper(name ?: it.defaultName ?: return@mapNotNull null, it)
             }
           }
           KIND_HTML_VUE_DIRECTIVES -> {
-            val searchName = name?.let { fromAsset(it) }
             val directives = mutableListOf<VueDirective>()
-            container.acceptEntities(object : VueModelProximityVisitor() {
-              override fun visitDirective(name: String, directive: VueDirective, proximity: Proximity): Boolean {
-                return acceptSameProximity(proximity, searchName == null || fromAsset(name) == searchName) {
-                  directives.add(directive)
+            if (params.registry.allowResolve) {
+              val searchName = name?.let { fromAsset(it) }
+              container.acceptEntities(object : VueModelProximityVisitor() {
+                override fun visitDirective(name: String, directive: VueDirective, proximity: Proximity): Boolean {
+                  return acceptSameProximity(proximity, searchName == null || fromAsset(name) == searchName) {
+                    directives.add(directive)
+                  }
                 }
-              }
-            }, VueModelVisitor.Proximity.GLOBAL)
+              }, VueModelVisitor.Proximity.GLOBAL)
+            }
             directives.mapNotNull {
               DirectiveWrapper(name ?: it.defaultName ?: return@mapNotNull null, it)
             }
@@ -183,37 +188,47 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
           }
           KIND_HTML_VUE_COMPONENTS -> {
             val result = mutableListOf<WebSymbolCodeCompletionItem>()
-            val scriptLanguage = detectVueScriptLanguage(containingFile)
-            container.acceptEntities(object : VueModelVisitor() {
-              override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
-                // Cannot self refer without export declaration with component name
-                if ((component.source as? JSImplicitElement)?.context == containingFile) {
+            if (params.registry.allowResolve) {
+              val scriptLanguage = detectVueScriptLanguage(containingFile)
+              container.acceptEntities(object : VueModelVisitor() {
+                override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
+                  // Cannot self refer without export declaration with component name
+                  if (isNotIncorrectlySelfReferred(component)) {
+                    // TODO replace with params.registry.getNameVariants(VUE_FRAMEWORK, Namespace.HTML, kind, name)
+                    listOf(toAsset(name).capitalize(), fromAsset(name)).forEach {
+                      result.add(createVueComponentLookup(component, it, scriptLanguage, proximity))
+                    }
+                  }
                   return true
                 }
-                // TODO replace with params.registry.getNameVariants(VUE_FRAMEWORK, Namespace.HTML, kind, name)
-                listOf(toAsset(name).capitalize(), fromAsset(name)).forEach {
-                  result.add(createVueComponentLookup(component, it, scriptLanguage, proximity))
-                }
-                return true
-              }
-            }, VueModelVisitor.Proximity.OUT_OF_SCOPE)
+              }, VueModelVisitor.Proximity.OUT_OF_SCOPE)
+            }
             result
           }
           KIND_HTML_VUE_DIRECTIVES -> {
             val result = mutableListOf<WebSymbolCodeCompletionItem>()
-            container.acceptEntities(object : VueModelVisitor() {
-              override fun visitDirective(name: String, directive: VueDirective, proximity: Proximity): Boolean {
-                result.add(WebSymbolCodeCompletionItem.create(fromAsset(name),
-                                                              source = DirectiveWrapper(name, directive),
-                                                              priority = priorityOf(proximity)))
-                return true
-              }
-            }, VueModelVisitor.Proximity.GLOBAL)
+            if (params.registry.allowResolve) {
+              container.acceptEntities(object : VueModelVisitor() {
+                override fun visitDirective(name: String, directive: VueDirective, proximity: Proximity): Boolean {
+                  result.add(WebSymbolCodeCompletionItem.create(fromAsset(name),
+                    source = DirectiveWrapper(name, directive),
+                    priority = priorityOf(proximity)))
+                  return true
+                }
+              }, VueModelVisitor.Proximity.GLOBAL)
+            }
             result
           }
           else -> emptyList()
         }
       else emptyList()
+
+    // Cannot self refer without export declaration with component name or script setup
+    private fun isNotIncorrectlySelfReferred(component: VueComponent) =
+      (component.source as? JSImplicitElement)?.context.let { context ->
+        context != containingFile
+        || context.containingFile.castSafelyTo<XmlFile>()?.let { findScriptTag(it, true) } != null
+      }
 
     private fun priorityOf(proximity: VueModelVisitor.Proximity): Priority =
       when (proximity) {
@@ -268,7 +283,9 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
                             name: String?,
                             params: WebSymbolsNameMatchQueryParams,
                             context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
-      if ((namespace == null || namespace == Namespace.HTML) && kind == KIND_VUE_AVAILABLE_SLOTS)
+      if ((namespace == null || namespace == Namespace.HTML)
+          && kind == KIND_VUE_AVAILABLE_SLOTS
+          && params.registry.allowResolve)
         getAvailableSlots(tag, name, true)
       else emptyList()
   }
@@ -363,7 +380,17 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
             ?: emptyList()
           }
           KIND_HTML_SLOTS -> {
-            (item as? VueContainer)?.slots?.mapWithNameFilter(name) { SlotWrapper(it, this.context) }
+            (item as? VueContainer)?.slots
+              ?.asSequence()
+              ?.let { slots ->
+                if (name != null)
+                  slots.filter { it.pattern?.matches(name) ?: (it.name == name) }
+                else
+                // TODO: web-types - expose API for patterns in WebSymbol
+                  slots.filter { it.pattern == null }
+              }
+              ?.map { SlotWrapper(it, this.context) }
+              ?.toList()
             ?: if (!name.isNullOrEmpty()
                    && ((item is VueContainer && item.template == null)
                        || item is VueUnresolvedComponent)) {
@@ -466,8 +493,6 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
   private class AnyWrapper(override val context: WebSymbolsContainer.Context,
                            override val namespace: Namespace,
                            override val kind: SymbolKind,
-                           override val matchedName: String) : WebSymbol {
-
-  }
+                           override val matchedName: String) : WebSymbol
 
 }

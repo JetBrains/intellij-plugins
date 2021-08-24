@@ -8,11 +8,15 @@ import com.intellij.javascript.nodejs.library.yarn.YarnPnpNodePackage;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.service.*;
 import com.intellij.lang.javascript.service.protocol.*;
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent;
@@ -107,6 +111,20 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
     protected void addNodeProcessAdditionalArguments(@NotNull NodeTargetRun targetRun) {
       super.addNodeProcessAdditionalArguments(targetRun);
       targetRun.path(JSLanguageServiceUtil.getPluginDirectory(this.getClass(), "prettierLanguageService").getAbsolutePath());
+    }
+
+    @Override
+    protected String getWorkingDirectory() {
+      Application application = ApplicationManager.getApplication();
+      if (application != null && application.isUnitTestMode()) {
+        // `myProject.getBasePath()` returns a non-existent directory in unit test mode
+        // The problem is that Yarn Pnp can't detect .pnp.cjs when process is started in a non-existent directory.
+        VirtualFile file = ProjectUtil.guessProjectDir(myProject);
+        if (file != null) {
+          return file.getPath();
+        }
+      }
+      return super.getWorkingDirectory();
     }
 
     @Override

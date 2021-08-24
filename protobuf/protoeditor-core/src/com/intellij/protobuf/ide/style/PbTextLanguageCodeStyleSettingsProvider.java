@@ -72,6 +72,7 @@ public class PbTextLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSe
   protected void customizeDefaults(
       @NotNull CommonCodeStyleSettings commonSettings, @NotNull CommonCodeStyleSettings.IndentOptions indentOptions) {
 
+    commonSettings.SPACE_WITHIN_BRACES = true;
     commonSettings.SPACE_BEFORE_COLON = false;
     commonSettings.SPACE_AFTER_COLON = true;
 

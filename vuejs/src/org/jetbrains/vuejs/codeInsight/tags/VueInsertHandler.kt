@@ -94,6 +94,15 @@ class VueInsertHandler : XmlTagInsertHandler() {
                               editor: Editor?,
                               isClass: Boolean = false) {
       val file: XmlFile = context as? XmlFile ?: context.containingFile as? XmlFile ?: return
+      val decapitalized = toAsset(name).decapitalize()
+      val capitalizedName = decapitalized.capitalize()
+
+      val scriptSetup = findScriptTag(file, true)?.children?.find { it is JSEmbeddedContent }
+      if (scriptSetup != null) {
+        ES6ImportPsiUtil.insertJSImport(scriptSetup, capitalizedName, ImportExportType.DEFAULT, importedFile, editor)
+        return
+      }
+
       val defaultExport = findOrCreateDefaultExport(file, isClass)
       val defaultExportElement = defaultExport.stubSafeElement
       var obj = VueComponents.getComponentDescriptor(defaultExportElement)?.initializer
@@ -109,8 +118,7 @@ class VueInsertHandler : XmlTagInsertHandler() {
       }
 
       val components = componentProperty(obj as? JSObjectLiteralExpression ?: return).value as? JSObjectLiteralExpression ?: return
-      val decapitalized = toAsset(name).decapitalize()
-      val capitalizedName = decapitalized.capitalize()
+
       if (components.findProperty(decapitalized) != null || components.findProperty(capitalizedName) != null) return
       val newProperty = JSPsiElementFactory.createJSExpression("{ $capitalizedName }", obj,
                                                                JSObjectLiteralExpression::class.java).firstProperty!!
@@ -122,7 +130,7 @@ class VueInsertHandler : XmlTagInsertHandler() {
     }
 
     private fun findOrCreateDefaultExport(file: XmlFile, isClass: Boolean): JSExportAssignment {
-      val scriptTag = findScriptTag(file)
+      val scriptTag = findScriptTag(file, false)
       val fileName = FileUtil.getNameWithoutExtension(file.name)
       if (scriptTag == null) {
         val dummyScript = createDummyScript(file.project, null, isClass, fileName)

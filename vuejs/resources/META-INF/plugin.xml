@@ -127,10 +127,12 @@
                      key="vue.inspection.display.name.duplicate.tag" bundle="messages.VueBundle"/>
     <intentionAction>
       <className>org.jetbrains.vuejs.intentions.extractComponent.VueExtractComponentIntention</className>
+      <!--suppress PluginXmlI18n -->
       <category>VueJS</category>
     </intentionAction>
     <intentionAction>
       <className>org.jetbrains.vuejs.intentions.expandVModel.VueExpandVModelIntention</className>
+      <!--suppress PluginXmlI18n -->
       <category>VueJS</category>
     </intentionAction>
 
@@ -197,7 +199,10 @@
     <javascript.webTypes source="web-types/vue@2.3.0.web-types.json"/>
     <javascript.webTypes source="web-types/vue@2.4.0.web-types.json"/>
     <javascript.webTypes source="web-types/vue@2.5.0.web-types.json"/>
-    <javascript.webTypes source="web-types/vue@3.0.0.web-types.json" enableByDefault="true"/>
+    <javascript.webTypes source="web-types/vue@2.6.0.web-types.json"/>
+    <javascript.webTypes source="web-types/vue@3.0.0.web-types.json"/>
+    <javascript.webTypes source="web-types/vue@3.1.0.web-types.json"/>
+    <javascript.webTypes source="web-types/vue@3.2.0.web-types.json" enableByDefault="true"/>
     <javascript.webTypes source="web-types/vue-i18n@0.0.0.web-types.json"/>
 
     <javascript.web.additionalContextProvider implementation="org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider" id="vue"/>
@@ -215,6 +220,10 @@
       implementation="org.jetbrains.vuejs.codeInsight.template.VueTemplateElementsScopeProvider"
       id="templateElements"/>
     <vuejs.templateScopesProvider
+      implementation="org.jetbrains.vuejs.codeInsight.template.VueScriptSetupScopeProvider"
+      id="scriptSetupScope"
+      order="after templateElements, before containerScope"/>
+    <vuejs.templateScopesProvider
       implementation="org.jetbrains.vuejs.codeInsight.template.VueContainerScopeProvider"
       id="containerScope"
       order="after templateElements"/>
@@ -226,6 +235,9 @@
                                  order="after default, before decoratedComponent"/>
     <vuejs.containerInfoProvider implementation="org.jetbrains.vuejs.model.source.VueCompositionInfoProvider"
                                  id="composition"
+                                 order="after default, before decoratedComponent"/>
+    <vuejs.containerInfoProvider implementation="org.jetbrains.vuejs.model.source.VueScriptSetupInfoProvider"
+                                 id="scriptSetup"
                                  order="after default, before decoratedComponent"/>
     <vuejs.containerInfoProvider implementation="org.jetbrains.vuejs.libraries.componentDecorator.VueDecoratedComponentInfoProvider"
                                  id="decoratedComponent"
@@ -263,7 +275,7 @@
     <elementScopeProvider implementation="org.jetbrains.vuejs.VueElementResolveScopeProvider"/>
     <indexedFileTypeProvider implementation="org.jetbrains.vuejs.lang.html.VueIndexedFileTypeProvider"/>
 
-    <frameworkIndexingHandler implementation="org.jetbrains.vuejs.index.VueFrameworkHandler" version="13"/>
+    <frameworkIndexingHandler implementation="org.jetbrains.vuejs.index.VueFrameworkHandler" version="14"/>
     <frameworkIndexingHandler implementation="org.jetbrains.vuejs.libraries.vuex.index.VuexFrameworkHandler" version="7"/>
     <frameworkIndexingHandler implementation="org.jetbrains.vuejs.libraries.templateLoader.TemplateLoaderFrameworkHandler" version="1"/>
 

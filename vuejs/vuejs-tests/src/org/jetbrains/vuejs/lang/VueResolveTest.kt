@@ -1845,6 +1845,21 @@ export default class UsageComponent extends Vue {
     assertEquals("foo", component.model.event)
   }
 
+  fun testResolveToUnresolvedComponent() {
+    myFixture.configureByText("a.vue","""
+       <script>
+        import Foo from "foo.vue"
+        export default {
+          components: { Foo }
+        }
+      </script>
+      <template><Foo></Foo></template>
+    """.trimIndent())
+    myFixture.resolveReference("<F<caret>oo>")
+      .parent.text
+      .let { TestCase.assertEquals("{ Foo }", it) }
+  }
+
   fun testAtComponentResolution() {
     val file = myFixture.configureByFile("at_component.vue")
     val component = VueModelManager.findEnclosingContainer(file) as VueRegularComponent

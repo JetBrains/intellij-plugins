@@ -2,10 +2,7 @@
 package org.jetbrains.vuejs.codeInsight.refs
 
 import com.intellij.lang.javascript.patterns.JSPatterns
-import com.intellij.lang.javascript.psi.JSElement
-import com.intellij.lang.javascript.psi.JSLiteralExpression
-import com.intellij.lang.javascript.psi.JSReferenceExpression
-import com.intellij.lang.javascript.psi.JSThisExpression
+import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.impl.JSPropertyImpl
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.resolve.CachingPolyReferenceBase
@@ -23,7 +20,7 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ProcessingContext
 import com.intellij.util.castSafelyTo
-import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
+import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.VueIdIndex
 import org.jetbrains.vuejs.model.VueModelManager
@@ -37,6 +34,7 @@ class VueJSReferenceContributor : PsiReferenceContributor() {
     registrar.registerReferenceProvider(THIS_INSIDE_COMPONENT, VueComponentLocalReferenceProvider())
     registrar.registerReferenceProvider(COMPONENT_NAME, VueComponentNameReferenceProvider())
     registrar.registerReferenceProvider(TEMPLATE_ID_REF, VueTemplateIdReferenceProvider())
+    registrar.registerReferenceProvider(PlatformPatterns.psiElement(JSReferenceExpression::class.java), VueScriptScopeReferenceProvider())
   }
 
   companion object {
@@ -97,6 +95,20 @@ class VueJSReferenceContributor : PsiReferenceContributor() {
     }
   }
 
+  private class VueScriptScopeReferenceProvider : PsiReferenceProvider() {
+    override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> {
+      if (element !is JSReferenceExpression || element.qualifier != null) return PsiReference.EMPTY_ARRAY
+      val name = element.referenceName ?: return PsiReference.EMPTY_ARRAY
+      return VueScriptAdditionalScopeProvider.getAdditionalScopeSymbols(element)
+        .find { it.name == name }
+        ?.let {
+          arrayOf(object : PsiReferenceBase<JSReferenceExpression>(element, false) {
+            override fun resolve(): PsiElement = it
+          })
+        }
+             ?: PsiReference.EMPTY_ARRAY
+    }
+  }
 
   private class VueComponentLocalReference(reference: JSReferenceExpressionImpl,
                                            textRange: TextRange?)

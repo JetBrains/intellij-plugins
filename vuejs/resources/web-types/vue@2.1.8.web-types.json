@@ -84,10 +84,52 @@
                 "type": "string"
               }
             }
+          ],
+          "vue-special-properties": [
+            {
+              "name": "Scoped slot binding",
+              "pattern": "(?!v-).*",
+              "doc-hide-pattern": true,
+              "priority": "low",
+              "attribute-value": {
+                "required": true
+              }
+            }
+          ]
+        },
+        {
+          "name": "textarea",
+          "extension": true,
+          "vue-special-properties": [
+            {
+              "name": "value"
+            }
+          ]
+        },
+        {
+          "name": "select",
+          "extension": true,
+          "vue-special-properties": [
+            {
+              "name": "value"
+            }
           ]
         }
       ],
       "attributes": [
+        {
+          "name": "data-*",
+          "description": "The `data-*` global attributes form a class of attributes called custom data attributes, that allow proprietary information to be exchanged between the HTML and its DOM representation by scripts.",
+          "doc-url": "https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/data-*",
+          "pattern": {
+            "template": [
+              "data-",
+              {
+                "regex": ".*"
+              }
+            ]
+          }
+        },
         {
           "name": "Vue directive",
           "description": "Directives are special attributes with the `v-` prefix. Directive attribute values are expected to be a single JavaScript expression (with the exception of `v-for` and `v-on`). A directive's job is to reactively apply side effects to the DOM when the value of its expression changes.",
@@ -199,44 +241,9 @@
           }
         },
         {
-          "name": "v-slot alias",
-          "description": "Denote named slots or slots that expect to receive props.",
-          "doc-url": "https://v3.vuejs.org/api/directives.html#v-slot",
-          "virtual": true,
-          "value": {
-            "kind": "expression",
-            "parser": "vue:expression",
-            "type": "any",
-            "required": false
-          },
-          "pattern": {
-            "proximity": 10,
-            "delegate": "/html/vue-directives/slot",
-            "template": [
-              "#",
-              "$...",
-              {
-                "delegate": "argument",
-                "required": true,
-                "template": [
-                  "#item:slot name"
-                ]
-              },
-              {
-                "items": "modifiers",
-                "template": [
-                  ".",
-                  "#item:modifier"
-                ],
-                "required": false,
-                "repeat": true
-              }
-            ]
-          }
-        },
-        {
-          "name": "slot-scope",
-          "deprecated": true,
+          "name": "scope",
+          "description": "**Replaced by slot-scope in 2.5.0+. Prefer v-slot in 2.6.0+.**\n\nUsed to denote a `<template>` element as a scoped slot.",
+          "doc-url": "https://vuejs.org/v2/api/#scope-removed",
           "virtual": true,
           "value": {
             "kind": "expression",
@@ -245,19 +252,54 @@
         },
         {
           "name": "slot",
-          "deprecated": true
+          "description": "**Prefer v-slot in 2.6.0+**\n\nUsed on content inserted into child components to indicate which named slot the content belongs to.",
+          "doc-url": "https://vuejs.org/v2/api/#slot-deprecated",
+          "value": {
+            "kind": "plain",
+            "type": "enum"
+          },
+          "values": {
+            "pattern": {
+              "items": "vue-available-slots"
+            }
+          }
         },
         {
           "name": "ref",
-          "priority": "low"
+          "priority": "low",
+          "proximity": 10,
+          "description": "`ref` is used to register a reference to an element or a child component. The reference will be registered under the parent component’s `$refs` object. If used on a plain DOM element, the reference will be that element; if used on a child component, the reference will be component instance.",
+          "doc-url": "https://vuejs.org/v2/api/#ref",
+          "value": {
+            "type": "string"
+          }
         },
         {
           "name": "is",
-          "priority": "low"
+          "priority": "low",
+          "proximity": 10,
+          "description": "Used for [dynamic components](https://vuejs.org/v2/guide/components.html#Dynamic-Components) and to work around [limitations of in-DOM templates](https://vuejs.org/v2/guide/components.html#DOM-Template-Parsing-Caveats).",
+          "doc-url": "https://vuejs.org/v2/api/#is",
+          "value": {
+            "type": [
+              "string",
+              "object"
+            ]
+          }
         },
         {
           "name": "key",
-          "priority": "low"
+          "priority": "low",
+          "proximity": 10,
+          "description": "The `key` special attribute is primarily used as a hint for Vue’s virtual DOM algorithm to identify VNodes when diffing the new list of nodes against the old list. Without keys, Vue uses an algorithm that minimizes element movement and tries to patch/reuse elements of the same type in-place as much as possible. With keys, it will reorder elements based on the order change of keys, and elements with keys that are no longer present will always be removed/destroyed.\n\nChildren of the same common parent must have unique keys. Duplicate keys will cause render errors.\n\nThe most common use case is combined with v-for:",
+          "doc-url": "https://vuejs.org/v2/api/#key",
+          "value": {
+            "type": [
+              "string",
+              "number",
+              "boolean"
+            ]
+          }
         }
       ],
       "vue-file-top-elements": [
@@ -299,12 +341,6 @@
             },
             {
               "name": "src"
-            },
-            {
-              "name": "setup",
-              "value": {
-                "kind": "no-value"
-              }
             }
           ]
         },
@@ -776,7 +812,8 @@
                   "path": "/html/attributes",
                   "includeVirtual": false,
                   "filter": "vue-bind"
-                }
+                },
+                "/html/vue-special-properties"
               ]
             }
           },
@@ -824,22 +861,6 @@
               "description": "Trim input"
             }
           ]
-        },
-        {
-          "name": "slot",
-          "description": "Denote named slots or slots that expect to receive props.",
-          "doc-url": "https://vuejs.org/v2/api/#v-slot",
-          "attribute-value": {
-            "parser": "vue:slot",
-            "type": "void"
-          },
-          "argument": {
-            "name": "Slot name",
-            "description": "Slot name (optional, defaults to `default`)",
-            "pattern": {
-              "items": "vue-available-slots"
-            }
-          }
         },
         {
           "name": "pre",

@@ -133,10 +133,21 @@ JSFile:test.object.action
       JSObjectLiteralExpression
         PsiElement(JS:LBRACE)('{')
         PsiWhiteSpace(' ')
-        JSProperty
-          PsiElement(JS:IDENTIFIER)('a')
-          PsiErrorElement:: expected
-            <empty list>
+        ES6Property
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('a')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:RBRACE)('}')
+------
+JSFile:test.object.action
+  Angular2Action
+    JSExpressionStatement
+      JSObjectLiteralExpression
+        PsiElement(JS:LBRACE)('{')
+        PsiWhiteSpace(' ')
+        ES6Property
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('break')
         PsiWhiteSpace(' ')
         PsiElement(JS:RBRACE)('}')
 ------

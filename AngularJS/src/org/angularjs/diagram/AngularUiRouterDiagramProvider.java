@@ -9,16 +9,16 @@ import com.intellij.icons.AllIcons;
 import com.intellij.lang.javascript.modules.diagram.JSModulesDiagramUtils;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.graph.GraphLayoutManager;
 import com.intellij.openapi.graph.GraphManager;
-import com.intellij.openapi.graph.GraphUtil;
 import com.intellij.openapi.graph.base.Edge;
-import com.intellij.openapi.graph.builder.util.GraphViewUtil;
 import com.intellij.openapi.graph.geom.YPoint;
 import com.intellij.openapi.graph.layout.CanonicMultiStageLayouter;
 import com.intellij.openapi.graph.layout.Layouter;
 import com.intellij.openapi.graph.layout.ParallelEdgeLayouter;
 import com.intellij.openapi.graph.layout.organic.SmartOrganicLayouter;
+import com.intellij.openapi.graph.services.GraphExportService;
+import com.intellij.openapi.graph.services.GraphLayoutService;
+import com.intellij.openapi.graph.services.GraphSelectionService;
 import com.intellij.openapi.graph.settings.GraphSettings;
 import com.intellij.openapi.graph.view.*;
 import com.intellij.openapi.project.Project;
@@ -334,7 +334,7 @@ final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramOb
         try {
           inUpdate = true;
           myEdgeRealizers.clear();
-          final List<DiagramNode<?>> nodes = GraphUtil.getSelectedNodes(getGraphBuilder());
+          final List<DiagramNode<?>> nodes = GraphSelectionService.getInstance().getSelectedModelNodes(getGraphBuilder());
           super.update();
           myEdgesPositions.clear();
           final DiagramBuilder builder = getBuilder();
@@ -387,7 +387,7 @@ final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramOb
       private void updateBySelection(DiagramNode node) {
         myVisibleEdges.clear();
         UmlGraphBuilder builder = (UmlGraphBuilder)graph.getDataProvider(DiagramDataKeys.GRAPH_BUILDER).get(null);
-        final List<DiagramNode<?>> nodes = new ArrayList<>(GraphUtil.getSelectedNodes(builder));
+        final List<DiagramNode<?>> nodes = new ArrayList<>(GraphSelectionService.getInstance().getSelectedModelNodes(builder));
         if (node != null && !nodes.contains(node)) nodes.add(node);
         DiagramNode selected = null;
         for (DiagramEdge edge : builder.getEdgeObjects()) {
@@ -478,7 +478,7 @@ final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramOb
 
       @Override
       public @NotNull Layouter getCustomLayouter(GraphSettings settings, Project project) {
-        final SmartOrganicLayouter layouter = GraphLayoutManager.getInstance().getOrganicLayouter();
+        final SmartOrganicLayouter layouter = GraphLayoutService.getInstance().getOrganicLayouter();
         layouter.setNodeEdgeOverlapAvoided(true);
 
         layouter.setNodeSizeAware(true);
@@ -490,11 +490,11 @@ final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramOb
 
         final List<CanonicMultiStageLayouter> list = new ArrayList<>();
         list.add(layouter);
-        list.add(GraphLayoutManager.getInstance().getBalloonLayouter());
-        list.add(GraphLayoutManager.getInstance().getCircularLayouter());
-        list.add(GraphLayoutManager.getInstance().getDirectedOrthogonalLayouter());
+        list.add(GraphLayoutService.getInstance().getBalloonLayouter());
+        list.add(GraphLayoutService.getInstance().getCircularLayouter());
+        list.add(GraphLayoutService.getInstance().getDirectedOrthogonalLayouter());
         //list.add(settings.getGroupLayouter());
-        list.add(GraphLayoutManager.getInstance().getHVTreeLayouter());
+        list.add(GraphLayoutService.getInstance().getHVTreeLayouter());
         //list.add(settings.getChannelLayouter());
         for (CanonicMultiStageLayouter current : list) {
           final ParallelEdgeLayouter parallelEdgeLayouter = GraphManager.getGraphManager().createParallelEdgeLayouter();
@@ -508,12 +508,12 @@ final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramOb
       }
 
       @Override
-      public @NotNull JComponent createNodeComponent(DiagramNode<DiagramObject> node,
-                                                     DiagramBuilder builder,
-                                                     Point basePoint,
-                                                     JPanel wrapper) {
+      public @NotNull JComponent createNodeComponent(@NotNull DiagramNode<DiagramObject> node,
+                                                     @NotNull DiagramBuilder builder,
+                                                     @NotNull Point basePoint,
+                                                     @NotNull JPanel wrapper) {
         final DiagramNodeContainer container = new DiagramNodeContainer(node, builder, basePoint);
-        if (!GraphViewUtil.isPrintMode()) {
+        if (!GraphExportService.getInstance().isPrintMode()) {
           if (!node.getIdentifyingElement().getErrors().isEmpty()) {
             container.setBorder(ERROR_BORDER);
           }

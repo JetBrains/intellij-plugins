@@ -2,11 +2,11 @@
 package org.jetbrains.vuejs.libraries.nuxt.codeInsight
 
 
+import com.intellij.lang.html.HtmlCompatibleFile
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFileSystemItem
-import com.intellij.psi.impl.source.html.HtmlLikeFile
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceHelper
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.libraries.nuxt.model.NuxtModelManager
@@ -15,7 +15,7 @@ class NuxtFileReferenceHelper : FileReferenceHelper() {
 
   override fun isMine(project: Project, file: VirtualFile): Boolean {
     return getPsiFileSystemItem(project, file)?.let {
-      it is HtmlLikeFile
+      it is HtmlCompatibleFile
       && isVueContext(it)
       && NuxtModelManager.getApplication(it) != null
     } == true

@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class FlashUmlRelationshipManager implements DiagramRelationshipManager<Object> {
-  private static final DiagramCategory[] CATEGORIES = {new DiagramCategory(DiagramBundle.message("category.name.dependencies"), null)};
+  private static final DiagramCategory[] CATEGORIES = {new DiagramCategory(DiagramBundle.messagePointer("category.name.dependencies"), null)};
 
   @Override
   @Nullable

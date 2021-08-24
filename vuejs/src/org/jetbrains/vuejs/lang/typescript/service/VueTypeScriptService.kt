@@ -11,13 +11,14 @@ import com.intellij.lang.javascript.service.protocol.JSLanguageServiceSimpleComm
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceAnnotationResult
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
 import com.intellij.lang.typescript.compiler.languageService.codeFixes.TypeScriptLanguageServiceFixSet
-import com.intellij.lang.typescript.compiler.languageService.protocol.TypeScriptLanguageServiceCache
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.ConfigureRequest
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.ConfigureRequestArguments
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.FileExtensionInfo
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
 import com.intellij.openapi.application.ReadAction
+import com.intellij.openapi.editor.Document
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
@@ -39,37 +40,47 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
   override fun postprocessErrors(file: PsiFile, errors: MutableList<JSAnnotationError>): List<JSAnnotationError> {
     if (file.virtualFile != null && isVueFile(file.virtualFile)) {
       return ReadAction.compute<List<JSAnnotationError>, Throwable> {
-        val document = PsiDocumentManager.getInstance(file.project).getDocument(file)
-        val module = findModule(file)
-        if (module != null && document != null) {
-          val startOffset = module.textRange.startOffset
-          val startLine = document.getLineNumber(startOffset)
-          val startColumn = startOffset - document.getLineStartOffset(startLine)
-          val endOffset = module.textRange.endOffset
-          val endLine = document.getLineNumber(endOffset)
-          val endColumn = endOffset - document.getLineStartOffset(endLine)
-          return@compute errors.filter { error -> isWithinRange(error, startLine, startColumn, endLine, endColumn) }
+        val document = PsiDocumentManager.getInstance(file.project).getDocument(file) ?: return@compute emptyList()
+        val regularModuleRangeFilter = getRangeFilter(file, false, document)
+        val scriptModuleRangeFilter = getRangeFilter(file, true, document)
+        return@compute errors.filter {
+          it is JSLanguageServiceAnnotationResult && (
+            regularModuleRangeFilter?.invoke(it) == true || (scriptModuleRangeFilter?.invoke(it) == true && !skipScriptSetupError(it)))
         }
-        return@compute super.postprocessErrors(file, errors)
       }
     }
     return super.postprocessErrors(file, errors)
   }
 
-  private fun isWithinRange(error: JSAnnotationError, startLine: Int, startColumn: Int, endLine: Int, endColumn: Int): Boolean {
-    if (error !is JSLanguageServiceAnnotationResult) {
-      return false
-    }
-    return (error.line > startLine || error.line == startLine && error.column >= startColumn) &&
-           (error.endLine < endLine || error.endLine == endLine && error.endColumn <= endColumn)
+  private fun skipScriptSetupError(error: JSLanguageServiceAnnotationResult): Boolean =
+    error is TypeScriptLanguageServiceAnnotationResult &&
+    error.errorCode.let { it == 6133 || it == 1232 }
+
+  private fun getRangeFilter(file: PsiFile, setup: Boolean, document: Document): ((JSLanguageServiceAnnotationResult) -> Boolean)? {
+    val module = findModule(file, setup)?.takeIf { DialectDetector.isTypeScript(it) } ?: return null
+    val startOffset = module.textRange.startOffset
+    val startLine = document.getLineNumber(startOffset)
+    val startColumn = startOffset - document.getLineStartOffset(startLine)
+    val endOffset = module.textRange.endOffset
+    val endLine = document.getLineNumber(endOffset)
+    val endColumn = endOffset - document.getLineStartOffset(endLine)
+    return { error -> isWithinRange(error, startLine, startColumn, endLine, endColumn) }
   }
+
+  private fun isWithinRange(error: JSLanguageServiceAnnotationResult,
+                            startLine: Int,
+                            startColumn: Int,
+                            endLine: Int,
+                            endColumn: Int): Boolean =
+    (error.line > startLine || error.line == startLine && error.column >= startColumn) &&
+    (error.endLine < endLine || error.endLine == endLine && error.endColumn <= endColumn)
 
   override fun getProcessName(): String = "Vue TypeScript"
 
   override fun isServiceEnabled(context: VirtualFile): Boolean {
     if (!super.isServiceEnabled(context)) return false
     if (context.fileType is VueFileType) return true
-    
+
     //other files
     return isVueContext(context, myProject)
   }
@@ -98,8 +109,9 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
 
     if (!isServiceEnabled(virtualFile) || !checkAnnotationProvider(file)) return false
 
-    val module = findModule(file)
-    if (module == null || !DialectDetector.isTypeScript(module)) return false
+    if (findModule(file, false)?.let { DialectDetector.isTypeScript(it) } != true
+        && findModule(file, true)?.let { DialectDetector.isTypeScript(it) } != true)
+      return false
 
     val configForFile = getConfigForFile(virtualFile)
 
@@ -122,15 +134,13 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
     result[ConfigureRequest(arguments)] = Consumer {}
   }
 
-  override fun createLSCache(): TypeScriptLanguageServiceCache {
-    return VueTypeScriptServiceCache(myProject)
-  }
-
   override fun createFixSet(file: PsiFile,
                             cache: JSLanguageServiceFileCommandCache,
                             typescriptResult: TypeScriptLanguageServiceAnnotationResult): TypeScriptLanguageServiceFixSet {
-    val textRange = findModule(file)?.textRange
-    return TypeScriptLanguageServiceFixSet(file.project, cache, file.virtualFile, typescriptResult, textRange)
+    val textRanges = mutableListOf<TextRange>()
+    findModule(file, true)?.let { textRanges.add(it.textRange) }
+    findModule(file, false)?.let { textRanges.add(it.textRange) }
+    return TypeScriptLanguageServiceFixSet(file.project, cache, file.virtualFile, typescriptResult, textRanges)
   }
 
   private fun isVueFile(virtualFile: VirtualFile) = virtualFile.fileType == VueFileType.INSTANCE

@@ -50,6 +50,21 @@ class PugTemplateTest : BasePlatformTestCase() {
     doCommenterTest(false)
   }
 
+  fun testHtmlTagTyping() {
+    myFixture.configureByFile("htmlTagTyping.vue")
+    myFixture.type("te")
+    myFixture.completeBasic()
+    myFixture.type("\n")
+    myFixture.checkResultByFile("htmlTagTyping_after.vue")
+  }
+
+  fun testComponentCompletion() {
+    myFixture.configureByFiles("componentCompletion.vue", "htmlTagTyping.vue")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "HtmlTagTyping", "html-tag-typing",
+                           "template", "component", "suspense", "teleport")
+  }
+
   private fun doCommenterTest(lineCommenter: Boolean) {
     val name = getTestName(true)
     myFixture.configureByFile("$name.vue")

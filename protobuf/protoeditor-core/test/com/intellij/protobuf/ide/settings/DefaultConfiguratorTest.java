@@ -116,7 +116,7 @@ public class DefaultConfiguratorTest extends HeavyPlatformTestCase {
     VirtualFile descriptorDir =
         VirtualFileManager.getInstance().findFileByUrl(includeEntry.getLocation());
     assertNotNull(descriptorDir);
-    VirtualFile descriptorFile = descriptorDir.findFileByRelativePath("descriptor.proto");
+    VirtualFile descriptorFile = descriptorDir.findFileByRelativePath("google/protobuf/descriptor.proto");
     assertNotNull(descriptorFile);
     String text = VfsUtil.loadText(descriptorFile);
     // Simple check to make sure it's a descriptor.

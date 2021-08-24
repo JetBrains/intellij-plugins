@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.JSTestUtils.testWithinLanguageLevel
 import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
+import com.intellij.lang.javascript.inspections.ES6UnusedImportsInspection
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection
 import com.intellij.lang.javascript.library.JSCorePredefinedLibrariesProvider
 import com.intellij.psi.css.inspections.invalid.CssInvalidFunctionInspection
@@ -127,6 +128,8 @@ const props = {seeMe: {}}
   fun testVForInPug() = com.intellij.testFramework.runInInitMode { doTest() }
 
   fun testTopLevelThisInInjection() = doTest()
+
+  fun testTextarea() = doTest()
 
   fun testGlobalComponentLiteral() = doDirTest()
 
@@ -336,9 +339,14 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
   fun testVSlotSyntax() = doTest()
 
   // TODO add special inspection for unused slot scope parameters - WEB-43893
-  fun testSlotSyntax() = doTest()
+  fun testSlotSyntax() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_2_6_10)
+    doTest()
+  }
 
   fun testSlotName() = doTest()
+
+  fun testSlotNameBinding() = doTest()
 
   fun testVueExtendSyntax() = doDirTest(addNodeModules = listOf(VueTestModule.VUE_2_5_3))
 
@@ -384,8 +392,16 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
 
   fun testMultipleScriptTagsInVue() = doTest("")
 
-  fun testCompositionApiBasic() {
+  fun testCompositionApiBasic_0_4_0() {
     myFixture.configureVueDependencies(VueTestModule.COMPOSITION_API_0_4_0)
+    myFixture.configureByFile("compositeComponent1.vue")
+    myFixture.checkHighlighting()
+    myFixture.configureByFile("compositeComponent2.vue")
+    myFixture.checkHighlighting()
+  }
+
+  fun testCompositionApiBasic_1_0_0() {
+    myFixture.configureVueDependencies(VueTestModule.COMPOSITION_API_1_0_0)
     myFixture.configureByFile("compositeComponent1.vue")
     myFixture.checkHighlighting()
     myFixture.configureByFile("compositeComponent2.vue")
@@ -425,7 +441,15 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
 
   fun testAsyncSetup() = doTest(addNodeModules = listOf(VueTestModule.VUE_3_0_0))
 
-  fun testScriptSetup() = doTest(addNodeModules = listOf(VueTestModule.VUE_3_0_0))
+  fun testScriptSetup() {
+    myFixture.enableInspections(ES6UnusedImportsInspection())
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_0_0))
+  }
+
+  fun testScriptSetupComplexImports() {
+    myFixture.enableInspections(ES6UnusedImportsInspection())
+    doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_0_0))
+  }
 
   fun testMissingLabelSuppressed() {
     myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
@@ -437,6 +461,13 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
   fun testSuperComponentMixin() = doDirTest()
 
   fun testCompositionPropsJS() = doTest()
+
+  fun testCssSelectors() {
+    myFixture.enableInspections(CssInvalidPseudoSelectorInspection())
+    doTest()
+  }
+
+  fun testBindingToDataAttributes() = doTest()
 
 }
 

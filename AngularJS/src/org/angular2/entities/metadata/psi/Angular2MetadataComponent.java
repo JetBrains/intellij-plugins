@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 
 public final class Angular2MetadataComponent extends Angular2MetadataDirectiveBase<Angular2MetadataComponentStub> implements Angular2Component {
-  private final NotNullLazyValue<List<Angular2DirectiveSelector>> myNgContentSelectors = NotNullLazyValue.atomicLazy(() -> {
+  private final NotNullLazyValue<List<Angular2DirectiveSelector>> myNgContentSelectors = NotNullLazyValue.lazy(() -> {
     return ContainerUtil.map(getStub().getNgContentSelectors(), selector -> {
       return new Angular2DirectiveSelectorImpl(() -> ObjectUtils.notNull(getTypeScriptClass(), this), selector, null);
     });

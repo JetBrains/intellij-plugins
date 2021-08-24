@@ -14,6 +14,7 @@ import com.jetbrains.cidr.cpp.execution.CMakeRunConfigurationType;
 import icons.ClionEmbeddedPlatformioIcons;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
@@ -101,6 +102,11 @@ public class PlatformioConfigurationType extends CMakeRunConfigurationType {
   protected PlatformioDebugConfiguration createRunConfiguration(@NotNull Project project,
                                                                 @NotNull ConfigurationFactory configurationFactory) {
     return new PlatformioDebugConfiguration(project, configurationFactory);
+  }
+
+  @Override
+  public @Nullable String getHelpTopic() {
+    return "rundebugconfigs.platformio";
   }
 
   public class ToolConfigurationFactory extends ConfigurationFactory {

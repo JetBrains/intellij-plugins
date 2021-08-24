@@ -42,23 +42,35 @@ export class VueScriptCache {
     let isScript = false;
     const ts_impl = this.ts_impl
     let scriptKind = ts_impl.ScriptKind.JS;
-    let scriptSetup = false;
+    let inScriptSetup = false;
+    let addedScriptSetupPrefix = false;
+
+    let hadScriptSetup = false;
+    let hadScriptNormal = false;
+    let scriptSetupStartLoc = -1;
+    let scriptSetupEndLoc = -1;
     const parser = new Parser({
       onopentag(name: string, attribs: { [p: string]: string }) {
         if (name === "script" && level === 0) {
           isScript = true
+          inScriptSetup = false
           for (let attr in attribs) {
             if (attr.toLowerCase() == "lang") {
               const extension = attribs[attr].toLowerCase()
               switch (extension) {
-                case "js":
-                  scriptKind = ts_impl.ScriptKind.JS;
-                  break;
                 case "jsx":
-                  scriptKind = ts_impl.ScriptKind.JSX;
+                  if (scriptKind == ts_impl.ScriptKind.JS) {
+                    scriptKind = ts_impl.ScriptKind.JSX;
+                  } else {
+                    scriptKind = ts_impl.ScriptKind.TSX;
+                  }
                   break;
                 case "ts":
-                  scriptKind = ts_impl.ScriptKind.TS;
+                  if (scriptKind == ts_impl.ScriptKind.JS) {
+                    scriptKind = ts_impl.ScriptKind.TS;
+                  } else if (scriptKind == ts_impl.ScriptKind.JSX) {
+                    scriptKind = ts_impl.ScriptKind.TSX;
+                  }
                   break;
                 case "tsx":
                   scriptKind = ts_impl.ScriptKind.TSX;
@@ -66,20 +78,36 @@ export class VueScriptCache {
               }
             }
             if (attr.toLowerCase() == "setup") {
-              scriptSetup = true
+              inScriptSetup = true
+              addedScriptSetupPrefix = false
+              hadScriptSetup = true
             }
           }
+          hadScriptNormal = hadScriptNormal || !inScriptSetup
         }
         level++;
       },
       ontext(data: string) {
         if (isScript) {
           const lineCount = contents.substring(lastIndex, parser.startIndex).split("\n").length - 1
-          result += " ".repeat(parser.startIndex - lastIndex - lineCount) + "\n".repeat(lineCount) + data
+          let charsCount = parser.startIndex - lastIndex - lineCount
+          if (inScriptSetup && !addedScriptSetupPrefix) {
+            addedScriptSetupPrefix = true
+            scriptSetupStartLoc = result.length
+            result += ";(()=>{"
+            charsCount -= 7
+          }
+          result += " ".repeat(charsCount) + "\n".repeat(lineCount) + data
           lastIndex = parser.endIndex + 1
         }
       },
       onclosetag(name: string) {
+        if (inScriptSetup) {
+          scriptSetupEndLoc = result.length
+          result += "})();"
+          inScriptSetup = false
+          lastIndex += 5
+        }
         isScript = false;
         level--
       }
@@ -96,12 +124,29 @@ export class VueScriptCache {
       scriptKind = ts_impl.ScriptKind.TS;
     }
     // Support <script setup> syntax
-    else if (scriptSetup) {
+    else if (hadScriptSetup && !hadScriptNormal) {
       result = result + "; import __componentDefinition from '*.vue'; export default __componentDefinition;"
+
+      // Remove wrapper for imports to work properly
+      if (scriptSetupStartLoc >= 0 ) {
+        result = result.substring(0, scriptSetupStartLoc) + " ".repeat(7) + result.substring(scriptSetupStartLoc + 7)
+      }
+      if (scriptSetupEndLoc >= 0 ) {
+        result = result.substring(0, scriptSetupEndLoc) + " ".repeat(5) + result.substring(scriptSetupEndLoc + 5)
+      }
+    } else if (hadScriptSetup && hadScriptNormal) {
+      // Add imports at the end of the file
+      result += "\n;"
+      const r = /import[^'"]*['"]([^'"]*)['"]/g;
+      const fragmentToMatch = result.substring(scriptSetupStartLoc, scriptSetupEndLoc)
+      let match: RegExpMatchArray
+      while ((match = r.exec(fragmentToMatch)) !== null) {
+        result += `import "${match[1]}";\n`
+      }
     }
 
     const snapshot = ts_impl.ScriptSnapshot.fromString(result);
-    // Allow to retrieve script kind from snapshot
+    // Allow retrieving script kind from snapshot
     (<any>snapshot).scriptKind = scriptKind
     return {
       snapshot,
