@@ -7,10 +7,9 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAware;
-import com.intellij.openapi.project.Project;
 import com.intellij.xdebugger.XDebugSession;
-import com.intellij.xdebugger.XDebuggerManager;
 import com.intellij.xdebugger.frame.XStackFrame;
+import com.intellij.xdebugger.impl.ui.DebuggerUIUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceStackFrame;
 import org.jetbrains.annotations.NotNull;
@@ -47,15 +46,7 @@ public class DartPopFrameAction extends AnAction implements DumbAware {
 
   @Nullable
   private static DartVmServiceStackFrame getStackFrame(@NotNull final AnActionEvent e) {
-    final Project project = e.getProject();
-    if (project == null) return null;
-
-    XDebugSession session = e.getData(XDebugSession.DATA_KEY);
-
-    if (session == null) {
-      session = XDebuggerManager.getInstance(project).getCurrentSession();
-    }
-
+    XDebugSession session = DebuggerUIUtil.getSession(e);
     if (session != null) {
       XStackFrame frame = session.getCurrentStackFrame();
       if (frame instanceof DartVmServiceStackFrame) {
