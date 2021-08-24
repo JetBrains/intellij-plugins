@@ -33,4 +33,4 @@ class DenoLspServerDescriptor(project: Project, root: VirtualFile) : LspServerDe
   override fun useGenericHighlighting() = false
 }
 
-data class DenoInitializationOptions(val enable: Boolean = true)
+data class DenoInitializationOptions(val enable: Boolean = true, val lint: Boolean = true, val unstable: Boolean = true)

@@ -52,7 +52,7 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService {
   private fun createDescriptor(element: PsiElement) =
     LspServerManager.getServerDescriptors(element).find { it is DenoLspServerDescriptor }
 
-  private fun getDescriptor(element: PsiElement) = descriptor ?: createDescriptor(element)
+  private fun getDescriptor(element: PsiElement) = descriptor ?: createDescriptor(element)!!.also { descriptor = it }
 
   override fun isDisabledByContext(context: VirtualFile) = false
 
@@ -86,12 +86,12 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService {
 
   override fun highlight(file: PsiFile): CompletableFuture<List<JSAnnotationError>>? {
     LOG.info("highlight")
-    val server = getDescriptor(file)?.server
+    val server = getDescriptor(file).server
     val virtualFile = file.virtualFile
     FileDocumentManager.getInstance().getDocument(virtualFile)?.let {
-      server?.invoke(ForceDidChangeMethod(virtualFile, it))
+      server.invoke(ForceDidChangeMethod(virtualFile, it))
     }
-    return completedFuture(server?.getDiagnostics(virtualFile)?.map {
+    return completedFuture(server.getDiagnostics(virtualFile)?.map {
       DenoAnnotationError(it, virtualFile.canonicalPath)
     })
   }

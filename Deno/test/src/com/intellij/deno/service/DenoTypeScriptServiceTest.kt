@@ -1,36 +1,27 @@
 package com.intellij.deno.service
 
 import com.intellij.deno.DenoSettings
-import com.intellij.lang.javascript.service.JSLanguageService
-import com.intellij.lang.javascript.service.JSLanguageServiceBase
-import com.intellij.lang.javascript.service.JSLanguageServiceProvider
-import com.intellij.lang.javascript.typescript.service.TypeScriptServiceTestBase
-import com.intellij.testFramework.JUnit38AssumeSupportRunner
+import com.intellij.lang.javascript.modules.JSTempDirWithNodeInterpreterTest
 import com.intellij.openapi.editor.impl.DocumentImpl
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.testFramework.ExpectedHighlightingData
+import com.intellij.testFramework.JUnit38AssumeSupportRunner
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
-import com.intellij.util.containers.ContainerUtil
 import org.junit.runner.RunWith
 
 @RunWith(JUnit38AssumeSupportRunner::class)
-class DenoTypeScriptServiceTest : TypeScriptServiceTestBase() {
+class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
   var before = false
-
-  override fun getService(): JSLanguageServiceBase {
-    val services = JSLanguageServiceProvider.getLanguageServices(project)
-    return ContainerUtil.find(services
-    ) { el: JSLanguageService? -> el is DenoTypeScriptService } as JSLanguageServiceBase
-  }
 
   override fun setUp() {
     super.setUp()
-    val project = myFixture.project
     before = DenoSettings.getService(project).isUseDeno()
-    DenoSettings.getService(project).setUseDeno(true)
+    DenoSettings.getService(project).setUseDenoAndReload(true)
+    (myFixture as CodeInsightTestFixtureImpl).canChangeDocumentDuringHighlighting(true)
   }
 
   override fun tearDown() {
-    DenoSettings.getService(project).setUseDeno(before)
+    DenoSettings.getService(project).setUseDenoAndReload(before)
     super.tearDown()
   }
 
@@ -54,5 +45,9 @@ class DenoTypeScriptServiceTest : TypeScriptServiceTestBase() {
     data.init()
     (myFixture as CodeInsightTestFixtureImpl).collectAndCheckHighlighting(data)
     myFixture.checkResult(document.text)
+  }
+
+  private fun closeCurrentEditor() {
+    FileEditorManager.getInstance(project).closeFile(file.virtualFile)
   }
 }
