@@ -34,6 +34,7 @@ import com.intellij.ui.HyperlinkLabel;
 import com.intellij.ui.RelativeFont;
 import com.intellij.ui.components.JBLabel;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.perforce.PerforceBundle;
 import org.jetbrains.idea.perforce.application.*;
 import org.jetbrains.idea.perforce.perforce.connections.*;
@@ -43,15 +44,13 @@ import org.jetbrains.idea.perforce.perforce.login.LoginSupport;
 import org.jetbrains.idea.perforce.perforce.login.PerforceLoginManager;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class ConfigPanel {
   private JTextField m_port;
@@ -227,13 +226,42 @@ public class ConfigPanel {
     myClientLabel.setEnabled(!useP4Conf);
     myCharsetLabel.setEnabled(!useP4Conf);
     myTestConnectionButton.setEnabled(! myProject.isDefault() || ! useP4Conf);
+
+    reenableIgnorePanel();
+  }
+
+  private boolean shouldIgnorePanelBeEnabled() {
+    boolean useP4CONFIG = myUseP4CONFIGOrDefaultRadioButton.isSelected();
+    if (useP4CONFIG && P4ConfigHelper.hasP4ConfigSettingInEnvironment()) {
+      String basePath = myProject.getBasePath();
+      @Nullable String configFileName = P4ConfigHelper.getP4ConfigFileName();
+      P4ConnectionParameters params = P4ConnectionCalculator.getParametersFromConfig(new File(basePath), configFileName);
+
+      return params.getIgnoreFileName() == null;
+    }
+
+    return true;
+  }
+
+  private void setBorderForIgnorePanel(String title) {
+    Border etchedBorder = BorderFactory.createEtchedBorder();
+    Border etchedTitledBorder = BorderFactory.createTitledBorder(etchedBorder, title);
+    myIgnoreSettingsPanel.setBorder(etchedTitledBorder);
   }
 
   private void reenableIgnorePanel() {
     boolean useP4Ignore = myUseP4IGNOREOrDefaultRadioButton.isSelected();
 
-    myIgnoreLabel.setEnabled(!useP4Ignore);
-    m_pathToIgnore.setEnabled(!useP4Ignore);
+    boolean enablePanel = shouldIgnorePanelBeEnabled();
+
+    myIgnoreSettingsPanel.setEnabled(enablePanel);
+    setBorderForIgnorePanel(enablePanel ? "Ignore Settings" : "Ignore Settings (Set in P4CONFIG)");
+
+    myUseIgnoreSettingsRadioButton.setEnabled(enablePanel);
+    myUseP4IGNOREOrDefaultRadioButton.setEnabled(enablePanel);
+    myP4IgnoreWarningLabel.setEnabled(enablePanel);
+    myIgnoreLabel.setEnabled(enablePanel && !useP4Ignore);
+    m_pathToIgnore.setEnabled(enablePanel && !useP4Ignore);
   }
 
   public void resetFrom(PerforceSettings settings) {

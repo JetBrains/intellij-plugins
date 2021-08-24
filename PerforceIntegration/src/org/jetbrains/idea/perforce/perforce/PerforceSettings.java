@@ -159,8 +159,9 @@ public final class PerforceSettings implements PersistentStateComponent<Perforce
     return pathToExec;
   }
 
+  @Override
   public String getPathToIgnore() {
-    if(useP4IGNORE) {
+    if (useP4IGNORE) {
       return P4ConfigHelper.getP4IgnoreVariable();
     }
 
