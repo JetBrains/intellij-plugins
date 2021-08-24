@@ -584,10 +584,12 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   }
 
   public void testFunctionSignatureMismatch() {
+    enableCheckGuessedTypes();
     defaultTest();
   }
 
   public void testFunctionSignatureMismatch2() throws Exception {
+    enableCheckGuessedTypes();
     doSimpleHighlightingWithInvokeFixAndCheckResult("Change FunctionSignatureMismatch2.foo() signature");
   }
 
@@ -608,6 +610,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   }
 
   public void testFunctionSignatureMismatch7() throws Exception {
+    enableCheckGuessedTypes();
     doSimpleHighlightingWithInvokeFixAndCheckResult("Change FunctionSignatureMismatch7.foo() signature");
   }
 
@@ -637,6 +640,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   }
 
   public void testFunctionSignatureMismatch14() throws Exception {
+    enableCheckGuessedTypes();
     doSimpleHighlightingWithInvokeFixAndCheckResult("Change FunctionSignatureMismatch14.zz() signature");
   }
 
@@ -699,6 +703,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
   public void testQualifyReferencesInArguments() throws Exception {
+    enableCheckGuessedTypes();
     String testName = getTestName(false);
     String root = getTestDataPath() + getBasePath() + "/" + testName;
     Collection<HighlightInfo> infoCollection =
