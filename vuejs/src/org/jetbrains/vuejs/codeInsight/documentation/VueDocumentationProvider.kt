@@ -62,7 +62,8 @@ class VueDocumentationProvider : DocumentationProvider {
     }
   }
 
-  private fun generateDoc(item: VueItemDocumentation): String? {
+  @Nls
+  private fun generateDoc(item: VueItemDocumentation): String {
     val result = StringBuilder().append(DEFINITION_START)
     val name = item.defaultName ?: ""
     if (name.isBlank()) {
@@ -85,6 +86,7 @@ class VueDocumentationProvider : DocumentationProvider {
       }
       result.append(SECTIONS_END)
     }
+    @Suppress("HardCodedStringLiteral")
     return result.toString()
   }
 
