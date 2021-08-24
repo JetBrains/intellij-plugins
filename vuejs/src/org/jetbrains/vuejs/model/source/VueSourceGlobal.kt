@@ -13,8 +13,8 @@ import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.containers.MultiMap
 import com.intellij.util.indexing.FileBasedIndex
-import one.util.streamex.EntryStream
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.index.*
@@ -60,58 +60,65 @@ class VueSourceGlobal(override val project: Project, private val packageJsonUrl:
 
   private fun getComponents(global: Boolean): Map<String, VueComponent> =
     getCachedValue { scope ->
-      val componentsData = VueComponentsCalculation.calculateScopeComponents(scope, false)
 
-      val moduleComponents = componentsData.map
-
-      val localComponents: MutableMap<String, VueComponent> = EntryStream.of(moduleComponents)
-        .filterValues { !it.second }
-        .mapValues { VueModelManager.getComponent(it.first) }
-        .nonNullValues()
-        // TODO properly support multiple components with the same name
-        .distinctKeys()
-        .into(sortedMapOf())
-
-      val globalComponents: MutableMap<String, VueComponent> = EntryStream.of(moduleComponents)
-        .filterValues { it.second }
-        .mapValues { VueModelManager.getComponent(it.first) }
-        .nonNullValues()
-        // TODO properly support multiple components with the same name
-        .distinctKeys()
-        .into(sortedMapOf())
-
-      componentsData.libCompResolveMap.forEach { (alias, target) ->
-        localComponents[target]?.let { localComponents.putIfAbsent(alias, it) }
-        globalComponents[target]?.let { globalComponents.putIfAbsent(alias, it) }
-      }
+      val localComponents: MultiMap<String, VueComponent> = MultiMap.createLinked()
+      val globalComponents: MultiMap<String, VueComponent> = MultiMap.createLinked()
 
       // Add Vue files without regular initializer as possible imports
       val psiManager = PsiManager.getInstance(project)
       FileBasedIndex.getInstance().getFilesWithKey(
         VueEmptyComponentInitializersIndex.VUE_NO_INITIALIZER_COMPONENTS_INDEX, setOf(true),
         { file ->
-          val componentName = fromAsset(file.nameWithoutExtension)
-          if (!localComponents.containsKey(componentName)) {
-            psiManager.findFile(file)
-              ?.let { psiFile ->
-                VueModelManager.getComponent(VueSourceEntityDescriptor(source = psiFile))
-              }
-              ?.let { localComponents[componentName] = it }
-          }
+          psiManager.findFile(file)
+            ?.let { psiFile ->
+              VueModelManager.getComponent(VueSourceEntityDescriptor(source = psiFile))
+            }
+            ?.let { localComponents.putValue(fromAsset(file.nameWithoutExtension), it) }
           true
         }, scope)
 
+      // Add components from global and local indices
+      val componentsData = VueComponentsCalculation.calculateScopeComponents(scope, false)
+      val moduleComponents = componentsData.map
+
+      moduleComponents.entries
+        .asSequence()
+        .filter { !it.value.second }
+        .mapNotNull { (name, data) -> VueModelManager.getComponent(data.first)?.let { Pair(name, it) } }
+        .fold(localComponents) { map, (name, component) -> map.also { it.putValue(name, component) } }
+
+      moduleComponents.entries
+        .asSequence()
+        .filter { it.value.second }
+        .mapNotNull { (name, data) -> VueModelManager.getComponent(data.first)?.let { Pair(name, it) } }
+        .fold(globalComponents) { map, (name, component) -> map.also { it.putValue(name, component) } }
+
+      componentsData.libCompResolveMap.forEach { (alias, target) ->
+        localComponents[target].firstOrNull()
+          ?.let { if (localComponents[alias].isEmpty()) localComponents.putValue(alias, it) }
+        globalComponents[target].firstOrNull()
+          ?.let { if (globalComponents[alias].isEmpty()) globalComponents.putValue(alias, it) }
+      }
+
       // Contribute components from providers.
-      val sourceComponents = VueContainerInfoProvider.ComponentsInfo(localComponents.toMap(), globalComponents.toMap())
+      val sourceComponents = VueContainerInfoProvider.ComponentsInfo(localComponents.copy(), globalComponents.copy())
       VueContainerInfoProvider.getProviders()
         .mapNotNull { it.getAdditionalComponents(scope, sourceComponents) }
         .forEach {
-          globalComponents.putAll(it.global)
-          localComponents.putAll(it.local)
+          globalComponents.putAllValues(it.global)
+          localComponents.putAllValues(it.local)
         }
 
-      VueContainerInfoProvider.ComponentsInfo(localComponents.toMap(), globalComponents.toMap())
-    }.get(!global)
+      Pair(
+        localComponents.entrySet().asSequence()
+          .mapNotNull { (name, components) -> components.lastOrNull()?.let { Pair(name, it) } }
+          .sortedBy { it.first }.toMap(),
+        globalComponents.entrySet().asSequence()
+          .mapNotNull { (name, components) -> components.lastOrNull()?.let { Pair(name, it) } }
+          .sortedBy { it.first }.toMap())
+    }.let {
+      if (global) it.second else it.first
+    }
 
   private fun <T> getCachedValue(provider: (GlobalSearchScope) -> T): T {
     val psiFile: PsiFile? = VueGlobalImpl.findFileByUrl(packageJsonUrl)
@@ -128,7 +135,7 @@ class VueSourceGlobal(override val project: Project, private val packageJsonUrl:
       manager.getKeyForClass(provider::class.java),
       {
         Result.create(provider(searchScope), VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS,
-                      PsiModificationTracker.MODIFICATION_COUNT)
+          PsiModificationTracker.MODIFICATION_COUNT)
       },
       false)
   }

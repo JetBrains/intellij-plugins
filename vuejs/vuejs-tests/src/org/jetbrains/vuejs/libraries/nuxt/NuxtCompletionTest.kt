@@ -96,4 +96,24 @@ class NuxtCompletionTest : BasePlatformTestCase() {
     )
   }
 
+  fun testNuxtComponents2_15() {
+    myFixture.configureVueDependencies(VueTestModule.NUXT_2_15_6, VueTestModule.VUE_2_6_10)
+    WebPackConfigManager.getInstance(project).setConfig(WebPackConfig(WebPackResolve(mapOf("@" to WebPackConfigPath("/src"), "~" to WebPackConfigPath("/src")))))
+    myFixture.copyDirectoryToProject(getTestName(true), ".")
+    myFixture.configureFromTempProjectFile("index.vue")
+    myFixture.completeBasic()
+
+    assertContainsElements(
+      myFixture.lookupElementStrings!!,
+      "HooRegular", "HooComp", "HooSubFolderFoo12HooberComp", "HooSubFolderFoo12Special",
+      "LazyHooRegular", "LazyHooComp", "LazyHooSubFolderFoo12HooberComp", "LazyHooSubFolderFoo12Special",
+      "hoo-regular", "hoo-comp", "hoo-sub-folder-foo12-hoober-comp", "hoo-sub-folder-foo12-special",
+      "lazy-hoo-regular", "lazy-hoo-comp", "lazy-hoo-sub-folder-foo12-hoober-comp", "lazy-hoo-sub-folder-foo12-special"
+    )
+    assertDoesntContain(
+      myFixture.lookupElementStrings!!,
+      "HooSubFolderFoo12HooComp", "SubFolderFoo12HooComp"
+    )
+  }
+
 }
