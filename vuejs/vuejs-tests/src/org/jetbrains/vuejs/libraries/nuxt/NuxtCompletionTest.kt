@@ -59,7 +59,27 @@ class NuxtCompletionTest : BasePlatformTestCase() {
   fun testNuxtComponents() {
     myFixture.configureVueDependencies(VueTestModule.NUXT_2_13_2, VueTestModule.VUE_2_6_10)
     WebPackConfigManager.getInstance(project).setConfig(WebPackConfig(WebPackResolve(mapOf("@" to WebPackConfigPath("/src"), "~" to WebPackConfigPath("/src")))))
-    myFixture.copyDirectoryToProject("components", ".")
+    myFixture.copyDirectoryToProject(getTestName(true), ".")
+    myFixture.configureFromTempProjectFile("index.vue")
+    myFixture.completeBasic()
+
+    assertContainsElements(
+      myFixture.lookupElementStrings!!,
+      "Special", "LazySpecial", "Javascript", "LazyJavascript", "Regular", "LazyRegular",
+      "Prefixed", "LazyPrefixed", "PrefixedAnother", "LazyPrefixedAnother",
+      "special", "lazy-special", "javascript", "lazy-javascript", "regular", "lazy-regular",
+      "prefixed", "lazy-prefixed", "prefixed-another", "lazy-prefixed-another"
+    )
+    assertDoesntContain(
+      myFixture.lookupElementStrings!!,
+      "LazyPrefixedPrefixed", "lazy-prefixed-prefixed", "LazyAnother", "lazy-another", "LazyBad", "lazy-bad"
+    )
+  }
+
+  fun testNuxtComponentsWithDirsProperty() {
+    myFixture.configureVueDependencies(VueTestModule.NUXT_2_13_2, VueTestModule.VUE_2_6_10)
+    WebPackConfigManager.getInstance(project).setConfig(WebPackConfig(WebPackResolve(mapOf("@" to WebPackConfigPath("/src"), "~" to WebPackConfigPath("/src")))))
+    myFixture.copyDirectoryToProject(getTestName(true), ".")
     myFixture.configureFromTempProjectFile("index.vue")
     myFixture.completeBasic()
 

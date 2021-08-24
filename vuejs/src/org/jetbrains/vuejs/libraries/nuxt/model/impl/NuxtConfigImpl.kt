@@ -30,7 +30,7 @@ class NuxtConfigImpl(override val file: PsiFile) : NuxtConfig {
     configLiteral
       ?.findProperty("components")
       ?.let { property ->
-        when (val propertyValue = property.value) {
+        when (val propertyValue = property.value?.let { if (it is JSObjectLiteralExpression) it.findProperty("dirs")?.value else it }) {
           is JSLiteralExpression -> if (propertyValue.value == true) listOf(ComponentsDirectoryConfigImpl()) else emptyList()
           is JSArrayLiteralExpression -> propertyValue.expressions.mapNotNull { readComponentsDirectoriesConfig(it) }
           else -> emptyList()
