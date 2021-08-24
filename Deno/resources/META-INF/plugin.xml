@@ -1,4 +1,4 @@
-<idea-plugin url="https://github.com/JetBrains/intellij-plugins/tree/master/Deno" xmlns:xi="http://www.w3.org/2001/XInclude">
+<idea-plugin url="https://github.com/JetBrains/intellij-plugins/tree/master/Deno">
   <id>deno</id>
   <name>Deno</name>
   <category>JavaScript Frameworks and Tools</category>
@@ -18,8 +18,6 @@ Enable Deno support for the current project in <i>Preferences | Languages \& Fra
   <depends>com.intellij.modules.platform</depends>
   <depends>JavaScriptDebugger</depends>
   <resource-bundle>messages.DenoBundle</resource-bundle>
-
-  <xi:include href="/META-INF/lsp.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <extensions defaultExtensionNs="com.intellij">
     <projectConfigurable groupId="language" instance="com.intellij.deno.DenoConfigurable"/>
