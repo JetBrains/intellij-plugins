@@ -30,6 +30,8 @@ Enable Deno support for the current project in <i>Preferences | Languages \& Fra
 
     <annotator language="JavaScript" implementationClass="com.intellij.deno.inspection.DenoEditorNotificationAnnotator"/>
     <lang.inspectionSuppressor language="JavaScript" implementationClass="com.intellij.deno.inspection.DenoInspectionSuppressor"/>
+
+    <lsp.serverSupportProvider implementationClass="com.intellij.deno.service.DenoLspSupportProvider" language="TypeScript"/>
   </extensions>
   <extensions defaultExtensionNs="JavaScript">
     <languageServiceProvider order="first" implementation="com.intellij.deno.service.DenoTypeScriptServiceProvider"/>
