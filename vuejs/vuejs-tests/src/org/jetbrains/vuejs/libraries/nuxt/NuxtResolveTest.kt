@@ -26,4 +26,16 @@ class NuxtResolveTest : BasePlatformTestCase() {
       }
   }
 
+  fun testNoConfigFile() {
+    myFixture.configureVueDependencies(VueTestModule.NUXT_2_15_6, VueTestModule.VUEX_4_0_0, VueTestModule.VUE_2_6_10)
+    myFixture.copyDirectoryToProject(getTestName(true), ".")
+    myFixture.configureFromTempProjectFile("pages/index.vue")
+
+    myFixture.resolveReference("module1.prop<caret>InModule1")
+      .let { TestCase.assertEquals("module1.js", it.containingFile.virtualFile.name) }
+
+    myFixture.resolveReference("module2/up<caret>date")
+      .let { TestCase.assertEquals("module2.js", it.containingFile.virtualFile.name) }
+  }
+
 }

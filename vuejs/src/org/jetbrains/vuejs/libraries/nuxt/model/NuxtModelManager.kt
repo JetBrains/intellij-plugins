@@ -1,6 +1,8 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.nuxt.model
 
+import com.intellij.javascript.nodejs.PackageJsonData
+import com.intellij.javascript.nodejs.packageJson.PackageJsonFileManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
@@ -11,6 +13,7 @@ import com.intellij.psi.util.CachedValueProvider.Result.create
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.vuejs.libraries.nuxt.NUXT_CONFIG_FILE
 import org.jetbrains.vuejs.libraries.nuxt.NUXT_CONFIG_FILE_TS
+import org.jetbrains.vuejs.libraries.nuxt.NUXT_PKG
 import org.jetbrains.vuejs.libraries.nuxt.model.impl.NuxtApplicationImpl
 
 object NuxtModelManager {
@@ -33,11 +36,22 @@ object NuxtModelManager {
 
   private fun getNuxtApplicationMap(project: Project): Map<VirtualFile, NuxtApplication> =
     CachedValuesManager.getManager(project).getCachedValue(project) {
-      create<Map<VirtualFile, NuxtApplication>>(
-        FilenameIndex.getVirtualFilesByName(NUXT_CONFIG_FILE, GlobalSearchScope.projectScope(project)).asSequence()
-          .plus(FilenameIndex.getVirtualFilesByName(NUXT_CONFIG_FILE_TS, GlobalSearchScope.projectScope(project)))
-          .associateBy({ it.parent }, { NuxtApplicationImpl(it, project) }),
-        VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
+      FilenameIndex.getVirtualFilesByName(NUXT_CONFIG_FILE, GlobalSearchScope.projectScope(project)).asSequence()
+        .plus(FilenameIndex.getVirtualFilesByName(NUXT_CONFIG_FILE_TS, GlobalSearchScope.projectScope(project)))
+        .associateBy({ it.parent }, { NuxtApplicationImpl(it, project) })
+        .takeIf { it.isNotEmpty() }
+        ?.let {
+          create(it, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
+        }
+      ?: PackageJsonFileManager.getInstance(project).let { pkgJsonManager ->
+        pkgJsonManager.validPackageJsonFiles.asSequence()
+          .map { PackageJsonData.getOrCreate(it) }
+          .filter { it.containsOneOfDependencyOfAnyType(NUXT_PKG) }
+          .associateBy({ it.packageJsonFile.parent }, { NuxtApplicationImpl(it.packageJsonFile, project) })
+          .let {
+            create(it, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, pkgJsonManager.modificationTracker)
+          }
+      }
     }
 
   private fun findParentEntry(file: VirtualFile, nuxtApplicationMap: Map<VirtualFile, NuxtApplication>): NuxtApplication? {
