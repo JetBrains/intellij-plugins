@@ -10,6 +10,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValueProvider.Result.create
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.vuejs.libraries.nuxt.NUXT_CONFIG_FILE
+import org.jetbrains.vuejs.libraries.nuxt.NUXT_CONFIG_FILE_TS
 import org.jetbrains.vuejs.libraries.nuxt.model.impl.NuxtApplicationImpl
 
 object NuxtModelManager {
@@ -33,7 +34,8 @@ object NuxtModelManager {
   private fun getNuxtApplicationMap(project: Project): Map<VirtualFile, NuxtApplication> =
     CachedValuesManager.getManager(project).getCachedValue(project) {
       create<Map<VirtualFile, NuxtApplication>>(
-        FilenameIndex.getVirtualFilesByName(NUXT_CONFIG_FILE, GlobalSearchScope.projectScope(project))
+        FilenameIndex.getVirtualFilesByName(NUXT_CONFIG_FILE, GlobalSearchScope.projectScope(project)).asSequence()
+          .plus(FilenameIndex.getVirtualFilesByName(NUXT_CONFIG_FILE_TS, GlobalSearchScope.projectScope(project)))
           .associateBy({ it.parent }, { NuxtApplicationImpl(it, project) }),
         VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
     }
