@@ -255,7 +255,8 @@ public class ConfigPanel {
     boolean enablePanel = shouldIgnorePanelBeEnabled();
 
     myIgnoreSettingsPanel.setEnabled(enablePanel);
-    setBorderForIgnorePanel(enablePanel ? "Ignore Settings" : "Ignore Settings (Set in P4CONFIG)");
+    setBorderForIgnorePanel(enablePanel ? PerforceBundle.message("border.configure.ignore.settings")
+                                        : PerforceBundle.message("border.configure.ignore.settings.disabled"));
 
     myUseIgnoreSettingsRadioButton.setEnabled(enablePanel);
     myUseP4IGNOREOrDefaultRadioButton.setEnabled(enablePanel);
