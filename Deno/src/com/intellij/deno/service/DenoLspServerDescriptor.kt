@@ -31,6 +31,8 @@ class DenoLspServerDescriptor(project: Project, root: VirtualFile) : LspServerDe
   override fun useGenericCompletion() = false
 
   override fun useGenericHighlighting() = false
+
+  override fun useGenericNavigation() = false
 }
 
 data class DenoInitializationOptions(val enable: Boolean = true, val lint: Boolean = true, val unstable: Boolean = true)

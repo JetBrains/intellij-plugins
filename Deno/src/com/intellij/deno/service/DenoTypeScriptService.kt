@@ -31,6 +31,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
+import com.intellij.util.containers.toArray
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletableFuture.completedFuture
 import java.util.concurrent.Future
@@ -82,15 +83,17 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService {
     return completedFuture(items.map { DenoCompletionEntry(descriptor.getResolvedCompletionItem((it as DenoCompletionEntry).item)) })
   }
 
-  // TODO
-  override fun getNavigationFor(document: Document, sourceElement: PsiElement): Array<PsiElement>? = null
+  override fun getNavigationFor(document: Document, sourceElement: PsiElement) =
+    getDescriptor(sourceElement).getElementDefinitions(sourceElement).toArray(emptyArray())
 
-  // TODO
   override fun getSignatureHelp(file: PsiFile, context: CreateParameterInfoContext): Future<Stream<JSFunctionType>?>? = null
 
-  // TODO
-  override fun getQuickInfoAt(element: PsiElement, originalElement: PsiElement, originalFile: VirtualFile): CompletableFuture<String?> =
-    completedFuture(null)
+  override fun getQuickInfoAt(element: PsiElement, originalElement: PsiElement, originalFile: VirtualFile): CompletableFuture<String?> {
+    val raw = getDescriptor(element).getHoverInformation(element)
+    if (raw.isEmpty()) return completedFuture(null)
+    val trimmed = raw.substring("<html><body><pre>".length, raw.length - "</pre></body></html>".length)
+    return completedFuture(trimmed)
+  }
 
   override fun terminateStartedProcess() {
     descriptor?.stopServer()
