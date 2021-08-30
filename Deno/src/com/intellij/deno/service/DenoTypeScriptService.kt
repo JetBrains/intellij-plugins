@@ -23,6 +23,7 @@ import com.intellij.lsp.data.LspCompletionItem
 import com.intellij.lsp.data.LspDiagnostic
 import com.intellij.lsp.data.LspSeverity.*
 import com.intellij.lsp.methods.ForceDidChangeMethod
+import com.intellij.lsp.methods.HoverMethod
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -64,6 +65,8 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService {
     createDescriptor(it)
   }
 
+  fun start(file: PsiFile) = getDescriptor(file).getServer(project).start()
+
   override fun isDisabledByContext(context: VirtualFile) = false
 
   override fun getCompletionMergeStrategy(parameters: CompletionParameters, file: PsiFile, context: PsiElement): CompletionMergeStrategy =
@@ -71,7 +74,7 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService {
 
   override fun updateAndGetCompletionItems(virtualFile: VirtualFile, parameters: CompletionParameters): Future<List<CompletionEntry>?>? {
     val descriptor = getDescriptor(virtualFile) ?: return null
-    forceUpdate(descriptor.server, virtualFile)
+    forceUpdate(descriptor.getServer(project), virtualFile)
     return completedFuture(descriptor.getCompletionItems(parameters).map(::DenoCompletionEntry))
   }
 
@@ -88,20 +91,24 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService {
 
   override fun getSignatureHelp(file: PsiFile, context: CreateParameterInfoContext): Future<Stream<JSFunctionType>?>? = null
 
-  override fun getQuickInfoAt(element: PsiElement, originalElement: PsiElement, originalFile: VirtualFile): CompletableFuture<String?> {
-    val raw = getDescriptor(element).getHoverInformation(element)
-    if (raw.isEmpty()) return completedFuture(null)
-    val trimmed = raw.substring("<html><body><pre>".length, raw.length - "</pre></body></html>".length)
-    return completedFuture(trimmed)
+  fun quickInfo(element: PsiElement): String? {
+    val raw = getDescriptor(element).getServer(project).invokeSynchronously(HoverMethod.create(element)) ?: return null
+    LOG.info("Quick info for $element : $raw")
+    return raw.substring("<html><body><pre>".length, raw.length - "</pre></body></html>".length)
   }
 
+  override fun getQuickInfoAt(element: PsiElement, originalElement: PsiElement, originalFile: VirtualFile): CompletableFuture<String?> =
+    completedFuture(quickInfo(element))
+
   override fun terminateStartedProcess() {
-    descriptor?.stopServer()
+    if (!project.isDisposed) {
+      descriptor?.stopServer()
+    }
   }
 
   override fun highlight(file: PsiFile): CompletableFuture<List<JSAnnotationError>>? {
     LOG.info("highlight")
-    val server = getDescriptor(file).server
+    val server = getDescriptor(file).getServer(project)
     val virtualFile = file.virtualFile
     forceUpdate(server, virtualFile)
     return completedFuture(server.getDiagnostics(virtualFile)?.map {
