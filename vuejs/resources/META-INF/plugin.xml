@@ -222,7 +222,7 @@
     <vuejs.templateScopesProvider
       implementation="org.jetbrains.vuejs.codeInsight.template.VueScriptSetupScopeProvider"
       id="scriptSetupScope"
-      order="after templateElements, before containerScope"/>
+      order="after containerScope"/>
     <vuejs.templateScopesProvider
       implementation="org.jetbrains.vuejs.codeInsight.template.VueContainerScopeProvider"
       id="containerScope"
