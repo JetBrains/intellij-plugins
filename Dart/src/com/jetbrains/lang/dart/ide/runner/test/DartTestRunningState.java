@@ -106,7 +106,11 @@ public class DartTestRunningState extends DartCommandLineRunningState {
     DartTestRunnerParameters params = getParameters();
 
     StringBuilder builder = new StringBuilder();
-    builder.append(RUN_COMMAND);
+
+    boolean useDartTest = DartPubActionBase.isUseDartTestInsteadOfPubRunTest(sdk);
+    if (!useDartTest) {
+      builder.append(RUN_COMMAND);
+    }
 
     final boolean projectWithoutPubspec = Registry.is("dart.projects.without.pubspec", false);
     final String targetName = params.getTargetName();
@@ -162,7 +166,7 @@ public class DartTestRunningState extends DartCommandLineRunningState {
   protected void setupExePath(@NotNull GeneralCommandLine commandLine, @NotNull DartSdk sdk) {
     boolean useDartTest = DartPubActionBase.isUseDartTestInsteadOfPubRunTest(sdk);
     if (useDartTest) {
-      commandLine.setExePath(DartSdkUtil.getDartExePath(sdk));
+      commandLine.setExePath(FileUtil.toSystemDependentName(DartSdkUtil.getDartExePath(sdk)));
     }
     else {
       commandLine.setExePath(FileUtil.toSystemDependentName(DartSdkUtil.getPubPath(sdk)));
