@@ -467,6 +467,8 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
     doTest()
   }
 
+  fun testScriptSetupScopePriority() = doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2))
+
   fun testBindingToDataAttributes() = doTest()
 
 }
