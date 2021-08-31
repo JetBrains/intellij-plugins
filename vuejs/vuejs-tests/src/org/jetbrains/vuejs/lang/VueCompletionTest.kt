@@ -1491,7 +1491,7 @@ export default class ComponentInsertion extends Vue {
   }
 
   fun testAttributeNamePriorityVue32() {
-    doAttributeNamePriorityTest(VueTestModule.VUE_3_2_0)
+    doAttributeNamePriorityTest(VueTestModule.VUE_3_2_2)
   }
 
   fun testComplexComponentDecoratorCompletion() {
