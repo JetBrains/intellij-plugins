@@ -245,7 +245,7 @@ JSFile:MiscGotchas.js2
               PsiElement(JS:CATCH_KEYWORD)('catch')
               PsiElement(JS:LPAR)('(')
               PsiWhiteSpace(' ')
-              JSParameter
+              ActionScriptParameter
                 PsiElement(JS:IDENTIFIER)('error')
                 PsiElement(JS:COLON)(':')
                 PsiWhiteSpace(' ')
@@ -318,7 +318,7 @@ JSFile:MiscGotchas.js2
     PsiElement(JS:IDENTIFIER)('foo')
     JSParameterList
       PsiElement(JS:LPAR)('(')
-      JSParameter
+      ActionScriptParameter
         PsiElement(JS:IDENTIFIER)('f')
         PsiElement(JS:COLON)(':')
         JSReferenceExpression

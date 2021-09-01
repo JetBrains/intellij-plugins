@@ -42,7 +42,7 @@ JSFile:Basic.js2
     PsiElement(JS:IDENTIFIER)('aaa')
     JSParameterList
       PsiElement(JS:LPAR)('(')
-      JSParameter
+      ActionScriptParameter
         PsiElement(JS:IDENTIFIER)('a')
         PsiElement(JS:COLON)(':')
         PsiElement(JS:ANY_IDENTIFIER)('*')
@@ -63,7 +63,7 @@ JSFile:Basic.js2
     PsiElement(JS:IDENTIFIER)('aaa3')
     JSParameterList
       PsiElement(JS:LPAR)('(')
-      JSParameter
+      ActionScriptParameter
         PsiElement(JS:IDENTIFIER)('a')
         PsiElement(JS:COLON)(':')
         PsiElement(JS:ANY_IDENTIFIER)('*')
@@ -74,7 +74,7 @@ JSFile:Basic.js2
           PsiElement(JS:NULL_KEYWORD)('null')
       PsiElement(JS:COMMA)(',')
       PsiWhiteSpace(' ')
-      JSParameter
+      ActionScriptParameter
         PsiElement(JS:IDENTIFIER)('b')
         PsiElement(JS:COLON)(':')
         PsiElement(JS:INT_KEYWORD)('int')
@@ -87,7 +87,7 @@ JSFile:Basic.js2
             PsiElement(JS:NUMERIC_LITERAL)('1')
       PsiElement(JS:COMMA)(',')
       PsiWhiteSpace(' ')
-      JSParameter
+      ActionScriptParameter
         PsiElement(JS:IDENTIFIER)('c')
         PsiElement(JS:COLON)(':')
         PsiElement(JS:INT_KEYWORD)('int')
@@ -117,7 +117,7 @@ JSFile:Basic.js2
     PsiElement(JS:IDENTIFIER)('aaa4')
     JSParameterList
       PsiElement(JS:LPAR)('(')
-      JSParameter
+      ActionScriptParameter
         PsiElement(JS:IDENTIFIER)('a')
         PsiElement(JS:COLON)(':')
         PsiElement(JS:INT_KEYWORD)('int')
@@ -140,7 +140,7 @@ JSFile:Basic.js2
     PsiElement(JS:IDENTIFIER)('aaa2')
     JSParameterList
       PsiElement(JS:LPAR)('(')
-      JSParameter
+      ActionScriptParameter
         PsiElement(JS:IDENTIFIER)('a')
         PsiElement(JS:COLON)(':')
         PsiElement(JS:ANY_IDENTIFIER)('*')
@@ -227,7 +227,7 @@ JSFile:Basic.js2
         PsiElement(JS:IDENTIFIER)('bbb')
         JSParameterList
           PsiElement(JS:LPAR)('(')
-          JSParameter
+          ActionScriptParameter
             PsiElement(JS:IDENTIFIER)('a')
             PsiElement(JS:COLON)(':')
             PsiErrorElement:* or type name expected
@@ -246,7 +246,7 @@ JSFile:Basic.js2
     JSCatchBlock
       PsiElement(JS:CATCH_KEYWORD)('catch')
       PsiElement(JS:LPAR)('(')
-      JSParameter
+      ActionScriptParameter
         PsiElement(JS:IDENTIFIER)('e')
         PsiElement(JS:COLON)(':')
         JSReferenceExpression
@@ -265,15 +265,15 @@ JSFile:Basic.js2
     PsiElement(JS:IDENTIFIER)('functionName')
     JSParameterList
       PsiElement(JS:LPAR)('(')
-      JSParameter
+      ActionScriptParameter
         PsiElement(JS:IDENTIFIER)('parameter0')
       PsiElement(JS:COMMA)(',')
       PsiWhiteSpace(' ')
-      JSParameter
+      ActionScriptParameter
         PsiElement(JS:IDENTIFIER)('parameter1')
       PsiElement(JS:COMMA)(',')
       PsiWhiteSpace(' ')
-      JSParameter
+      ActionScriptParameter
         PsiElement(JS:DOT_DOT_DOT)('...')
         PsiElement(JS:IDENTIFIER)('rest')
       PsiElement(JS:RPAR)(')')

@@ -2,6 +2,7 @@
 package com.intellij.lang.javascript.flex.importer;
 
 import com.intellij.lang.actionscript.psi.stubs.impl.ActionScriptFunctionStubImpl;
+import com.intellij.lang.actionscript.psi.stubs.impl.ActionScriptParameterStubImpl;
 import com.intellij.lang.actionscript.psi.stubs.impl.ActionScriptVariableStubImpl;
 import com.intellij.lang.javascript.JSStubElementTypes;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
@@ -57,7 +58,7 @@ final class AS3InterfaceStubDumper extends AS3InterfaceDumper {
                                String parentName,
                                @Nullable Multiname value,
                                boolean rest) {
-    new JSParameterStubImpl(
+    new ActionScriptParameterStubImpl(
       name,
       rest,
       rest ? serializeQName(JSCommonTypeNames.ARRAY_CLASS_NAME) : getTypeRef(type, parentName, true),

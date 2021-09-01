@@ -49,7 +49,7 @@ JSFile:ObjectLiteral.js2
           PsiElement(JS:IDENTIFIER)('bbb')
           JSParameterList
             PsiElement(JS:LPAR)('(')
-            JSParameter
+            ActionScriptParameter
               PsiElement(JS:IDENTIFIER)('a')
             PsiElement(JS:RPAR)(')')
           PsiWhiteSpace(' ')

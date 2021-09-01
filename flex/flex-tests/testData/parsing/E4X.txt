@@ -155,7 +155,7 @@ JSFile:E4X.js2
     PsiElement(JS:IDENTIFIER)('metricToImperial')
     JSParameterList
       PsiElement(JS:LPAR)('(')
-      JSParameter
+      ActionScriptParameter
         PsiElement(JS:IDENTIFIER)('cms')
       PsiElement(JS:RPAR)(')')
     PsiWhiteSpace(' ')

@@ -291,7 +291,7 @@ JSFile:ClassesPackagesNamespaces.js2
         PsiElement(JS:IDENTIFIER)('eventsToHandle')
         JSParameterList
           PsiElement(JS:LPAR)('(')
-          JSParameter
+          ActionScriptParameter
             PsiElement(JS:IDENTIFIER)('o')
             PsiElement(JS:COLON)(':')
             JSReferenceExpression
