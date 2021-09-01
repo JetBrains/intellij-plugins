@@ -16,6 +16,7 @@ import com.intellij.lang.typescript.compiler.TypeScriptService
 import com.intellij.lang.typescript.compiler.TypeScriptService.CompletionEntry
 import com.intellij.lang.typescript.compiler.TypeScriptService.CompletionMergeStrategy
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
+import com.intellij.lang.typescript.compiler.languageService.TypeScriptMessageBus
 import com.intellij.lsp.LspServer
 import com.intellij.lsp.LspServerDescriptor
 import com.intellij.lsp.LspServerManager
@@ -55,9 +56,13 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService {
   }
 
   private var descriptor: LspServerDescriptor? = null
+  private val openedFiles = mutableListOf<VirtualFile>()
 
   private fun createDescriptor(element: PsiElement) =
-    LspServerManager.getServerDescriptors(element).find { it is DenoLspServerDescriptor }!!.also { descriptor = it }
+    LspServerManager
+      .getServerDescriptors(element)
+      .find { it is DenoLspServerDescriptor }!!
+      .also { descriptor = it; TypeScriptMessageBus.get(project).changed() }
 
   private fun getDescriptor(element: PsiElement) = descriptor ?: createDescriptor(element)
 
@@ -65,9 +70,31 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService {
     createDescriptor(it)
   }
 
-  fun start(file: PsiFile) = getDescriptor(file).getServer(project).start()
+  private fun <T> withServer(action: LspServer.() -> T): T? = descriptor?.getServer(project)?.action()
+
+  override val name = "Deno LSP"
 
   override fun isDisabledByContext(context: VirtualFile) = false
+
+  override fun isServiceCreated() = withServer { isRunning || isMalfunctioned } ?: false
+
+  override fun showStatusBar() = withServer { totalFilesOpened != 0 } ?: false
+
+  override fun getStatusText() = withServer {
+    when {
+      isRunning -> "Deno LSP"
+      isMalfunctioned -> "Deno LSP ⚠"
+      else -> "..."
+    }
+  }
+
+  override fun openEditor(file: VirtualFile) {
+    openedFiles.add(file)
+  }
+
+  override fun closeLastEditor(file: VirtualFile) {
+    openedFiles.remove(file)
+  }
 
   override fun getCompletionMergeStrategy(parameters: CompletionParameters, file: PsiFile, context: PsiElement): CompletionMergeStrategy =
     TypeScriptLanguageServiceUtil.getCompletionMergeStrategy(parameters, file, context)
@@ -100,9 +127,11 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService {
   override fun getQuickInfoAt(element: PsiElement, originalElement: PsiElement, originalFile: VirtualFile): CompletableFuture<String?> =
     completedFuture(quickInfo(element))
 
-  override fun terminateStartedProcess() {
-    if (!project.isDisposed) {
-      descriptor?.stopServer()
+  override fun restart(recreateToolWindow: Boolean) {
+    val descriptor = descriptor
+    if (!project.isDisposed && descriptor != null) {
+      descriptor.restart()
+      TypeScriptMessageBus.get(project).changed()
     }
   }
 
@@ -127,7 +156,7 @@ fun forceUpdate(server: LspServer, virtualFile: VirtualFile) {
   }
 }
 
-class DenoCompletionEntry(internal val item: LspCompletionItem): CompletionEntry {
+class DenoCompletionEntry(internal val item: LspCompletionItem) : CompletionEntry {
   override val name: String get() = item.label
 
   override fun intoLookupElement() = item.intoLookupElement()

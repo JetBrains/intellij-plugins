@@ -49,7 +49,7 @@ class DenoSettings(val project: Project) : PersistentStateComponent<DenoState> {
 
     WriteAction.run(
       ThrowableRunnable<ConfigurationException> {
-        TypeScriptService.restartServices(project)
+        TypeScriptService.restartServices(project, true)
 
         val newRoots = libraryProvider.getRootsToWatch(project)
         AdditionalLibraryRootsListener.fireAdditionalLibraryChanged(project, null, oldRoots, newRoots, "Deno")
