@@ -24,7 +24,7 @@ object OfficialExamplesSaver {
     val doc = Jsoup.parse(docText)
     for (key in doc.getElementsByTag("Key")) {
       val name = key.text()
-      val size = Integer.parseInt(key.parent().getElementsByTag("Size").first().text())
+      val size = Integer.parseInt(key.parent()?.getElementsByTag("Size")?.first()?.text())
 
       val fileUrl = url.resolve(name.replace(" ", "%20"))
 

@@ -168,18 +168,18 @@ object ResourceTypesSaver {
 
         if (sectionTitle == "Return Value" || sectionTitle == "Return Values") {
           for (term in vlist.select("span.term")) {
-            if (term.parent().parent().parent() !== vlist) {
+            if (term.parent()?.parent()?.parent() !== vlist) {
               continue
             }
 
-            val descr = term.parent().nextElementSibling()
+            val descr = term.parent()?.nextElementSibling()
             var name = term.text()
 
             if (name == "DomainArn (deprecated)") {
               name = "DomainArn"
             }
 
-            builder.addAttribute(name).description = descr.text()
+            builder.addAttribute(name).description = descr?.text()
           }
 
           continue
@@ -190,21 +190,21 @@ object ResourceTypesSaver {
         }
 
         for (term in vlist.select("span.term")) {
-          if (term.parent().parent().parent() !== vlist) {
+          if (term.parent()?.parent()?.parent() !== vlist) {
             continue
           }
 
-          val descr = term.parent().nextElementSibling()
+          val descr = term.parent()?.nextElementSibling()
           //descr.children().
-          val descrElements = descr.select("p")
+          val descrElements = descr?.select("p")
 
           val name = term.text()
 
           val href = term.previousElementSibling()
-          assert(href.tagName() == "a")
-          assert(href.hasAttr("id"))
-          val propertyId = href.attr("id")
-          assert(propertyId.contains(name, ignoreCase = true)) {
+          assert(href?.tagName() == "a")
+          assert(href?.hasAttr("id")?:false)
+          val propertyId = href?.attr("id")
+          assert(propertyId?.contains(name, ignoreCase = true)?:false) {
             "Property anchor id ($propertyId) should have a property name ($name) as substring in ${builder.url}"
           }
           val docUrl = doc.location().replace(".partial.html", ".html") + "#" + propertyId
@@ -219,27 +219,29 @@ object ResourceTypesSaver {
 
           propertyBuilder.description = ""
 
-          for (element in descrElements) {
-            if (element.parent() !== descr) {
-              continue
-            }
-
-            val text = element.text()
-
-            if (text.matches("[a-zA-Z ]+:.*".toRegex())) {
-              val split = text.split(":".toRegex(), 2).toTypedArray()
-              assert(split.size == 2) { text }
-
-              val fieldName = split[0].trim { it <= ' ' }
-              val fieldValue = split[1].trim { it <= ' ' }.replaceFirst("\\.$".toRegex(), "")
-
-              when (fieldName) {
-                "Required" -> requiredValue = fieldValue
-                "Type" -> typeValue = element.toString().replace("Type:", "")
-                "Update requires" -> propertyBuilder.updateRequires = element.toString().replace("Update requires:", "")
+          if (descrElements != null) {
+            for (element in descrElements) {
+              if (element.parent() !== descr) {
+                continue
               }
-            } else {
-              propertyBuilder.description = element.toString()
+
+              val text = element.text()
+
+              if (text.matches("[a-zA-Z ]+:.*".toRegex())) {
+                val split = text.split(":".toRegex(), 2).toTypedArray()
+                assert(split.size == 2) { text }
+
+                val fieldName = split[0].trim { it <= ' ' }
+                val fieldValue = split[1].trim { it <= ' ' }.replaceFirst("\\.$".toRegex(), "")
+
+                when (fieldName) {
+                  "Required" -> requiredValue = fieldValue
+                  "Type" -> typeValue = element.toString().replace("Type:", "")
+                  "Update requires" -> propertyBuilder.updateRequires = element.toString().replace("Update requires:", "")
+                }
+              } else {
+                propertyBuilder.description = element.toString()
+              }
             }
           }
 
