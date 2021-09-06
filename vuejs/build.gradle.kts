@@ -8,7 +8,6 @@ buildscript {
 repositories {
   mavenCentral()
   maven("https://cache-redirector.jetbrains.com/intellij-dependencies")
-  maven("https://cache-redirector.jetbrains.com/www.myget.org/F/rd-snapshots/maven")
 }
 
 plugins {
