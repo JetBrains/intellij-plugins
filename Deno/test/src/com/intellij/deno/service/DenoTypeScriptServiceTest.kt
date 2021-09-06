@@ -51,7 +51,7 @@ class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
     myFixture.checkResult(document.text)
   }
 
-  fun testDenoSimpleRename() {
+  fun _testDenoSimpleRename() {
     val foo = myFixture.configureByText("foo.ts", "import { Hello } from './bar.ts'\n" +
                                                   "const _hi<caret> = new Hello()")
     myFixture.configureByText("bar.ts", "export class Hell<caret>o {}")
