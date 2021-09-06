@@ -7,10 +7,13 @@ import com.intellij.lsp.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 
-class DenoLspSupportProvider : LspLazyServerSupportProvider() {
-  override fun canHandleFile(project: Project, virtualFile: VirtualFile) = DenoSettings.getService(project).isUseDeno()
-
-  override fun createServerDescriptor(project: Project, virtualFile: VirtualFile) = DenoLspServerDescriptor(project, virtualFile)
+class DenoLspSupportProvider : LspServerSupportProvider {
+  override fun getServerDescriptor(project: Project, virtualFile: VirtualFile) =
+    if (DenoSettings.getService(project).isUseDeno()) {
+      DenoLspServerDescriptor(project, virtualFile)
+    } else {
+      LspServerDescriptor.emptyDescriptor()
+    }
 }
 
 class DenoLspServerDescriptor(project: Project, root: VirtualFile) : LspServerDescriptorBase(project, root) {
@@ -27,6 +30,10 @@ class DenoLspServerDescriptor(project: Project, root: VirtualFile) : LspServerDe
   override fun useGenericHighlighting() = false
 
   override fun useGenericNavigation() = false
+
+  override fun equals(other: Any?) = other is DenoLspServerDescriptor && project == other.project
+
+  override fun hashCode() = 31 * project.hashCode() + this::class.hashCode()
 }
 
 data class DenoInitializationOptions(val enable: Boolean = true, val lint: Boolean = true, val unstable: Boolean = true)
