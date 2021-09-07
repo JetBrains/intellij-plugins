@@ -12,7 +12,7 @@ import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
-import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl;
+import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider;
 import com.intellij.openapi.externalSystem.service.project.ProjectDataManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.execution.MavenExternalParameters;
 import org.jetbrains.idea.maven.importing.MavenRootModelAdapter;
 import org.jetbrains.idea.maven.importing.MavenRootModelAdapterLegacyImpl;
-import org.jetbrains.idea.maven.importing.ModifiableModelsProviderProxyImpl;
+import org.jetbrains.idea.maven.importing.ModifiableModelsProviderProxyWrapper;
 import org.jetbrains.idea.maven.model.MavenId;
 import org.jetbrains.idea.maven.project.*;
 import org.jetbrains.idea.maven.utils.MavenProcessCanceledException;
@@ -328,10 +328,9 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
             final Module module = mavenProjectsManager.findModule(mavenProject);
             if (module == null) return true;
 
-            IdeModifiableModelsProviderImpl provider =
-              (IdeModifiableModelsProviderImpl)ProjectDataManager.getInstance().createModifiableModelsProvider(project);
+            IdeModifiableModelsProvider provider = ProjectDataManager.getInstance().createModifiableModelsProvider(project);
             MavenRootModelAdapter a = new MavenRootModelAdapter(new MavenRootModelAdapterLegacyImpl(mavenProject, module,
-                                                                                                    new ModifiableModelsProviderProxyImpl(provider, project)));
+                                                                                                    new ModifiableModelsProviderProxyWrapper(provider)));
             for (String sourceRoot : sourceRoots) {
               a.addSourceFolder(sourceRoot, JavaSourceRootType.SOURCE);
             }
