@@ -9,7 +9,7 @@ import org.testng.annotations.BeforeMethod;
 /**
  * Base class for all special case test classes.
  */
-public class AbstractSpecialCaseTest {
+public abstract class AbstractSpecialCaseTest {
     protected TapestryProject _tapestryProjectMock;
     protected IJavaTypeFinder _javaTypeFinderMock;
     protected ValueResolverContext _valueResolverContext;
