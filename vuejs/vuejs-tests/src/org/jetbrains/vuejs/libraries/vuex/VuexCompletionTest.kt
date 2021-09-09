@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.libraries.vuex
 
 import com.intellij.javascript.web.findOffsetBySignature
 import com.intellij.javascript.web.renderLookupItems
+import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.io.FileUtil
@@ -544,9 +545,11 @@ class VuexCompletionTest : BasePlatformTestCase() {
   fun testStorefrontThisCompletion() {
     myFixture.configureStore(VuexTestStore.Storefront)
     myFixture.configureByFile("storefront-mappers-JS.vue")
+    prepareFiles(project)
     checkItems(0, false, true, true, true)
 
     myFixture.configureByFile("storefront-mappers-TS.ts")
+    prepareFiles(project)
     checkItems(1, false, true, true, true)
   }
 
