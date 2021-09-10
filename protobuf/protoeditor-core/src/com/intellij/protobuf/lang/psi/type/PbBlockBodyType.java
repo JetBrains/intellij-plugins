@@ -18,15 +18,16 @@ package com.intellij.protobuf.lang.psi.type;
 import com.intellij.lang.*;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.project.Project;
+import com.intellij.protobuf.lang.PbParserDefinition;
+import com.intellij.protobuf.lang.psi.ProtoTokenTypes;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LazyParseableElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IErrorCounterReparseableElementType;
 import com.intellij.psi.tree.ILightLazyParseableElementType;
 import com.intellij.util.diff.FlyweightCapableTreeStructure;
-import com.intellij.protobuf.lang.PbParserDefinition;
-import com.intellij.protobuf.lang.psi.ProtoTokenTypes;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** A reparseable protobuf block element. */
@@ -38,13 +39,13 @@ class PbBlockBodyType extends IErrorCounterReparseableElementType
   }
 
   @Override
-  public ASTNode parseContents(final ASTNode chameleon) {
+  public ASTNode parseContents(final @NotNull ASTNode chameleon) {
     ParserDefinition parserDefinition = new PbParserDefinition();
     PsiElement psi = chameleon.getPsi();
     assert psi != null : chameleon;
     Project project = psi.getProject();
     PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon);
-    LightPsiParser parser = (LightPsiParser) parserDefinition.createParser(project);
+    LightPsiParser parser = (LightPsiParser)parserDefinition.createParser(project);
     parser.parseLight(this, builder);
     return builder.getTreeBuilt();
   }
