@@ -269,7 +269,33 @@ JSFile:test.js.v-for.expr
           PsiErrorElement:) expected
             <empty list>
           PsiWhiteSpace(' ')
-          PsiElement(JS:SHARP)('#')
+          PsiElement(JS:PRIVATE_IDENTIFIER)('#$')
+        PsiElement(JS:RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:OF_KEYWORD)('of')
+      PsiWhiteSpace(' ')
+      JSAttributeList
+        ES6Decorator
+          PsiElement(JS:AT)('@')
+      PsiErrorElement:'class' expected
+        <empty list>
+------
+JSFile:test.js.v-for.expr
+  VueJSEmbeddedExpression
+    VueJSVForExpression
+      JSParenthesizedExpression
+        PsiElement(JS:LPAR)('(')
+        JSVarStatement
+          VueJSVForVariable
+            PsiElement(JS:IDENTIFIER)('a')
+          PsiElement(JS:COMMA)(',')
+          PsiWhiteSpace(' ')
+          VueJSVForVariable
+            PsiElement(JS:IDENTIFIER)('f')
+          PsiErrorElement:) expected
+            <empty list>
+          PsiWhiteSpace(' ')
+          PsiElement(JS:XOR)('^')
           PsiElement(JS:IDENTIFIER)('$')
         PsiElement(JS:RPAR)(')')
       PsiWhiteSpace(' ')
