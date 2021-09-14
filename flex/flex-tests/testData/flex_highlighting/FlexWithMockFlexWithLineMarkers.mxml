@@ -6,7 +6,7 @@
 
     function <info descr="instance method">copy</info>() {
         <info descr="instance field">destination</info>.<info descr="instance method">text</info>=<info descr="instance field">source</info>.<info descr="instance method">text</info> = ' '
-        var <info descr="local variable">aaa</info>:<info>Function</info> = <info descr="instance method">copy_</info>
+        var <info descr="local function">aaa</info>:<info>Function</info> = <info descr="instance method">copy_</info>
     }
 
     function <info descr="instance method">copy_</info>() {
