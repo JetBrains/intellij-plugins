@@ -1,8 +1,7 @@
 <template>
   <div class="hello">
 
-    <!--  Fixme: msg should have an error, because its not being returned from setup and its not on the props-->
-    <h1>{{ msg }}</h1>
+    <h1>{{ <weak_warning descr="Unresolved variable or type msg">msg</weak_warning> }}</h1>
 
     {{ list }}
 

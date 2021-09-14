@@ -1,0 +1,1 @@
+<script>export default Vue.extend({name: 'FooBar2'});</script>

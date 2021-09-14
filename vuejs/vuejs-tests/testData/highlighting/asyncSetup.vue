@@ -1,7 +1,7 @@
 <template>
   <div>
     <p>{{ stories }}</p>
-    <p>{{ <weak_warning descr="Element is not exported">fooBar</weak_warning> }}</p>
+    <p>{{ <weak_warning descr="Unresolved variable or type fooBar">fooBar</weak_warning> }}</p>
     <div @input="getFoo()" />
   </div>
 </template>

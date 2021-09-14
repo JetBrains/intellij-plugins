@@ -1,0 +1,17 @@
+Foo#null
+ScriptSetup#null
+foo#null
+script-setup#null
+Component#vue
+KeepAlive#vue
+Suspense#vue
+Teleport#vue
+Transition#vue
+TransitionGroup#vue
+component#vue
+keep-alive#vue
+slot#vue
+suspense#vue
+teleport#vue
+transition#vue
+transition-group#vue

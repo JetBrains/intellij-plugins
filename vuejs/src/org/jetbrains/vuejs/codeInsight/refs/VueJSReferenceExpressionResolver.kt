@@ -12,6 +12,8 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.resolve.JSReferenceExpressionResolver
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult
+import com.intellij.lang.javascript.psi.resolve.ResolveResultSink
+import com.intellij.lang.javascript.psi.resolve.SinkResolveProcessor
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.psi.util.JSClassUtils
 import com.intellij.psi.ResolveResult
@@ -45,16 +47,21 @@ class VueJSReferenceExpressionResolver(referenceExpression: JSReferenceExpressio
     }
   }
 
-  override fun resolve(expression: JSReferenceExpressionImpl, incompleteCode: Boolean): Array<ResolveResult> {
-    if (myReferencedName == null) return ResolveResult.EMPTY_ARRAY
-    if (myRef is VueJSFilterReferenceExpression) {
-      return resolveFilterNameReference(myRef, incompleteCode)
+  override fun resolve(expression: JSReferenceExpressionImpl, incompleteCode: Boolean): Array<ResolveResult> =
+    when {
+      myReferencedName == null -> ResolveResult.EMPTY_ARRAY
+      myRef is VueJSFilterReferenceExpression -> resolveFilterNameReference(myRef, incompleteCode)
+      myQualifier is JSThisExpression -> resolveTemplateVariable(expression)
+      myQualifier == null -> resolveTemplateVariable(expression)
+        .ifEmpty { super.resolve(expression, incompleteCode) }
+      else -> super.resolve(expression, incompleteCode)
     }
-    if (myQualifier == null || myQualifier is JSThisExpression) {
-      resolveTemplateVariable(expression).let { if (it.isNotEmpty()) return it }
-    }
-    return super.resolve(expression, incompleteCode)
-  }
+
+  override fun resolveFromIndices(localProcessor: SinkResolveProcessor<ResolveResultSink>,
+                                  excludeGlobalTypeScript: Boolean,
+                                  includeTypeOnlyContextSymbols: Boolean): Array<ResolveResult> =
+    if (myQualifier == null) ResolveResult.EMPTY_ARRAY
+    else super.resolveFromIndices(localProcessor, excludeGlobalTypeScript, includeTypeOnlyContextSymbols)
 
   private fun resolveFilterNameReference(expression: VueJSFilterReferenceExpression, incompleteCode: Boolean): Array<ResolveResult> {
     if (!incompleteCode) {

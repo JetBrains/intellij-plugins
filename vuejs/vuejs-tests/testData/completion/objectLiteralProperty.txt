@@ -1,0 +1,2 @@
+!afo#number#7
+!boo#string#7

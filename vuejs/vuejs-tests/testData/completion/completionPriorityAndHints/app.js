@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import App from './App.vue'
+import App from './completionPriorityAndHints.vue'
 import HelloWorld from './components/HelloWorld'
 
 Vue.config.productionTip = false
