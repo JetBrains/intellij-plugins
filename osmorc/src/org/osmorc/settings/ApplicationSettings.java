@@ -26,6 +26,7 @@ package org.osmorc.settings;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.RoamingType;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.util.containers.ContainerUtil;
@@ -48,7 +49,7 @@ import java.util.Set;
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
-@State(name = "Osmorc", storages = @Storage("osmorc.xml"))
+@State(name = "Osmorc", storages = @Storage(value = "osmorc.xml", roamingType = RoamingType.DISABLED))
 public class ApplicationSettings implements PersistentStateComponent<ApplicationSettings> {
   private List<FrameworkInstanceDefinition> myInstances = new ArrayList<>();
   private List<LibraryBundlificationRule> myRules = ContainerUtil.newArrayList(new LibraryBundlificationRule());
