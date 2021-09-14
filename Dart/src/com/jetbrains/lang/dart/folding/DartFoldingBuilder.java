@@ -95,7 +95,7 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
       return SINGLE_LINE_DOC_COMMENT;                                                            // 4.3. Consequent single line doc comments
     }
     if (elementType == DartTokenTypesSets.SINGLE_LINE_COMMENT) return SINGLE_LINE_COMMENT;       // 4.4. Consequent single line comments
-    if (psiElement instanceof DartClassBody || psiElement instanceof DartEnumDefinition) {
+    if (psiElement instanceof DartClassBody || psiElement instanceof DartEnumDefinition || psiElement instanceof DartMixinDeclaration) {
       return BRACE_DOTS;                                                                         // 5.   Class body
     }
     if (psiElement instanceof DartFunctionBody) return BRACE_DOTS;                               // 6.   Function body
@@ -248,7 +248,13 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     for (PsiElement element : PsiTreeUtil.getChildrenOfAnyType(dartFile, DartClass.class, DartExtensionDeclaration.class)) {
       if (element instanceof DartClassDefinition) {
         final DartClassBody body = ((DartClassDefinition)element).getClassBody();
-        if (body != null && body.getTextLength() > 2) {
+        if (body != null && body.getTextLength() > 3) {
+          descriptors.add(new FoldingDescriptor(body, body.getTextRange()));
+        }
+      }
+      else if (element instanceof DartMixinDeclaration) {
+        final DartClassBody body = ((DartMixinDeclaration)element).getClassBody();
+        if (body.getTextLength() > 3) {
           descriptors.add(new FoldingDescriptor(body, body.getTextRange()));
         }
       }
@@ -261,7 +267,7 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
       }
       else if (element instanceof DartExtensionDeclaration) {
         final DartClassBody body = ((DartExtensionDeclaration)element).getClassBody();
-        if (body.getTextLength() > 2) {
+        if (body.getTextLength() > 3) {
           descriptors.add(new FoldingDescriptor(body, body.getTextRange()));
         }
       }
