@@ -5,10 +5,7 @@ import com.intellij.codeInspection.InspectionToolProvider;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
-import com.intellij.lang.javascript.inspections.JSUnresolvedFunctionInspection;
-import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection;
-import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
-import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
+import com.intellij.lang.javascript.inspections.*;
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection;
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection;
 import com.intellij.lang.typescript.inspections.TypeScriptValidateJSTypesInspection;
@@ -24,7 +21,6 @@ public class Angular2TemplateInspectionsProvider implements InspectionToolProvid
       AngularIncorrectTemplateDefinitionInspection.class,
       AngularInsecureBindingToEventInspection.class,
       AngularInvalidAnimationTriggerAssignmentInspection.class,
-      AngularInvalidExpressionResultTypeInspection.class,
       AngularInvalidTemplateReferenceVariableInspection.class,
       AngularMissingEventHandlerInspection.class,
       AngularMultipleStructuralDirectivesInspection.class,
@@ -43,6 +39,7 @@ public class Angular2TemplateInspectionsProvider implements InspectionToolProvid
       JSUnusedLocalSymbolsInspection.class,
       JSUnresolvedVariableInspection.class,
       JSUnresolvedFunctionInspection.class,
+      JSInvalidExpressionResultTypeInspection.class,
 
       HtmlUnknownAttributeInspection.class,
       HtmlUnknownTagInspection.class,

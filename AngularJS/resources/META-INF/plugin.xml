@@ -216,9 +216,6 @@
     <localInspection implementationClass="org.angular2.inspections.AngularMissingEventHandlerInspection"
                      groupKey="angular.inspection.group.name" enabledByDefault="true" language="HtmlCompatible"
                      level="ERROR" key="angular.inspection.missing-event-handler.name" bundle="messages.Angular2Bundle"/>
-    <localInspection implementationClass="org.angular2.inspections.AngularInvalidExpressionResultTypeInspection"
-                     groupKey="angular.inspection.group.name" enabledByDefault="true" language="Angular2"
-                     level="WARNING" key="angular.inspection.invalid-expr-result-type.name" bundle="messages.Angular2Bundle"/>
     <localInspection implementationClass="org.angular2.inspections.AngularInsecureBindingToEventInspection"
                      groupKey="angular.inspection.group.name" enabledByDefault="true" language="HtmlCompatible"
                      level="WARNING" key="angular.inspection.insecure-binding-to-event.name" bundle="messages.Angular2Bundle"/>

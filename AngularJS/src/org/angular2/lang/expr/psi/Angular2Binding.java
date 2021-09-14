@@ -2,6 +2,7 @@
 package org.angular2.lang.expr.psi;
 
 import com.intellij.lang.javascript.psi.JSExpression;
+import com.intellij.lang.javascript.psi.JSExpressionWithExpectedTypeHolder;
 import com.intellij.psi.xml.XmlAttribute;
 import org.angular2.Angular2InjectionUtils;
 import org.angular2.lang.html.psi.Angular2HtmlBananaBoxBinding;
@@ -9,8 +10,9 @@ import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface Angular2Binding extends Angular2EmbeddedExpression {
+public interface Angular2Binding extends Angular2EmbeddedExpression, JSExpressionWithExpectedTypeHolder {
 
+  @Override
   @Nullable
   JSExpression getExpression();
 

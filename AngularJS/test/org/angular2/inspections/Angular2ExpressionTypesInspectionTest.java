@@ -3,6 +3,7 @@ package org.angular2.inspections;
 
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.lang.javascript.TypeScriptTestUtil;
+import com.intellij.lang.javascript.inspections.JSInvalidExpressionResultTypeInspection;
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection;
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection;
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection;
@@ -20,7 +21,7 @@ public class Angular2ExpressionTypesInspectionTest extends Angular2CodeInsightFi
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    myFixture.enableInspections(AngularInvalidExpressionResultTypeInspection.class,
+    myFixture.enableInspections(JSInvalidExpressionResultTypeInspection.class,
                                 AngularUndefinedBindingInspection.class,
                                 HtmlUnknownAttributeInspection.class,
                                 TypeScriptValidateTypesInspection.class,

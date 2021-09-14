@@ -471,6 +471,8 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
 
   fun testBindingToDataAttributes() = doTest()
 
+  fun testPropertiesValidation() = doDirTest()
+
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {
