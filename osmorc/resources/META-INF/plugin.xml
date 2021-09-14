@@ -47,9 +47,15 @@
   <category>JVM Frameworks</category>
   <vendor>JetBrains</vendor>
 
-  <depends>com.intellij.modules.java</depends>
+  <dependencies>
+    <plugin id="com.intellij.java"/>
+  </dependencies>
+
+  <content>
+    <module name="intellij.osgi/javaee"/>
+  </content>
+
   <depends optional="true" config-file="osgi-maven-support.xml">org.jetbrains.idea.maven</depends>
-  <depends optional="true" config-file="with-ultimate.xml">com.intellij.javaee</depends>
 
   <resource-bundle>messages.OsmorcBundle</resource-bundle>
 
