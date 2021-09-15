@@ -187,7 +187,12 @@ public class FlashUmlTest extends JavaCodeInsightTestCase {
         assertModel(expectedPrefix, provider, actualOriginFqn, model);
       }
       finally {
-        configuration.categories.put(provider.getID(), originalCategories);
+        if (originalCategories == null) {
+          configuration.categories.remove(provider.getID());
+        }
+        else {
+          configuration.categories.put(provider.getID(), originalCategories);
+        }
       }
     }
     return builder;
