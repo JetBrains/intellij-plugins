@@ -132,8 +132,8 @@ public class DartReferenceImpl extends DartExpressionImpl implements DartReferen
 
     if (this instanceof DartCallExpression) {
       final DartExpression expression = ((DartCallExpression)this).getExpression();
-      final DartClassResolveResult leftResult = tryGetLeftResolveResult(expression);
       if (expression instanceof DartReference) {
+        final DartClassResolveResult leftResult = tryGetLeftResolveResult(expression);
         final DartClassResolveResult result =
           DartResolveUtil.getDartClassResolveResult(((DartReference)expression).resolve(), leftResult.getSpecialization());
         result.specialize(this);

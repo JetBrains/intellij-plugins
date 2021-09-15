@@ -29,15 +29,21 @@ public class DartIsExpressionImpl extends DartExpressionImpl implements DartIsEx
   }
 
   @Override
-  @NotNull
+  @Nullable
   public DartExpression getExpression() {
-    return findNotNullChildByClass(DartExpression.class);
+    return findChildByClass(DartExpression.class);
   }
 
   @Override
   @NotNull
   public DartType getType() {
     return findNotNullChildByClass(DartType.class);
+  }
+
+  @Override
+  @Nullable
+  public DartTypeArguments getTypeArguments() {
+    return findChildByClass(DartTypeArguments.class);
   }
 
 }
