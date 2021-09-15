@@ -5,9 +5,9 @@
             <mx:Component>
                 <mx:VBox>
                     <mx:Script><inject descr="null">
-                        use namespace mx_internal;
+                        use namespace <info descr="instance field">mx_internal</info>;
 
-                        mx_internal override function <lineMarker descr="Overrides method 'updateCallbacks' in mx.core.UIComponent"><info descr="instance method">update<caret>Callbacks</info></lineMarker>():void {
+                        <info descr="instance field">mx_internal</info> override function <lineMarker descr="Overrides method 'updateCallbacks' in mx.core.UIComponent"><info descr="instance method">update<caret>Callbacks</info></lineMarker>():void {
 
                         }
                         </inject></mx:Script>
@@ -20,9 +20,9 @@
             <mx:Component>
                 <mx:VBox>
                     <mx:Script><inject descr="null">
-                        use namespace mx_internal;
+                        use namespace <info descr="instance field">mx_internal</info>;
 
-                      mx_internal override function <lineMarker descr="Overrides method 'updateCallbacks' in mx.core.UIComponent"><info descr="instance method">updateCallbacks</info></lineMarker>():void {
+                      <info descr="instance field">mx_internal</info> override function <lineMarker descr="Overrides method 'updateCallbacks' in mx.core.UIComponent"><info descr="instance method">updateCallbacks</info></lineMarker>():void {
                             
                         }
                         </inject></mx:Script>
