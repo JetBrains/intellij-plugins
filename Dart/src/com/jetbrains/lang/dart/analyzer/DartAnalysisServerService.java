@@ -1630,8 +1630,7 @@ public final class DartAnalysisServerService implements Disposable {
 
       @Override
       public void onError(final RequestError error) {
-        if (RequestErrorCode.FILE_NOT_ANALYZED.equals(error.getCode()) ||
-            RequestErrorCode.ORGANIZE_DIRECTIVES_ERROR.equals(error.getCode())) {
+        if (RequestErrorCode.ORGANIZE_DIRECTIVES_ERROR.equals(error.getCode())) {
           LOG.info(getShortErrorMessage("edit_organizeDirectives()", filePath, error));
         }
         else {
@@ -2165,6 +2164,11 @@ public final class DartAnalysisServerService implements Disposable {
   }
 
   private void logError(@NonNls @NotNull final String methodName, @Nullable final String filePath, @NotNull final RequestError error) {
+    if (RequestErrorCode.FILE_NOT_ANALYZED.equals(error.getCode())) {
+      LOG.info(getShortErrorMessage(methodName, filePath, error));
+      return;
+    }
+
     final String trace = error.getStackTrace();
     final String partialTrace = trace == null || trace.isEmpty() ? "" : trace.substring(0, Math.min(trace.length(), 1000));
     final String message = getShortErrorMessage(methodName, filePath, error) + "\n" + partialTrace + "...";
