@@ -10,4 +10,7 @@ public interface DartValueExpression extends DartExpression {
   @NotNull
   List<DartExpression> getExpressionList();
 
+  @Nullable
+  DartTypeArguments getTypeArguments();
+
 }
