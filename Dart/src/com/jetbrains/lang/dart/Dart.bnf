@@ -613,7 +613,7 @@ parenthesizedExpression ::= '(' expressionInParentheses ')'
 private expressionInParentheses ::= expression | statement {recoverWhile=parenthesesRecovery}
 private parenthesesRecovery ::= !')'
 
-private callOrArrayAccessOrQualifiedRefExpression ::= (callExpression | arrayAccessExpression | qualifiedReferenceExpression | '!')*
+private callOrArrayAccessOrQualifiedRefExpression ::= (callExpression | arrayAccessExpression | qualifiedReferenceExpression | '!' | typeArguments)*
 
 private refOrThisOrSuperOrParenExpression ::= (referenceExpression | thisExpression | superExpression | << parenthesizedExpressionWrapper >>)
 

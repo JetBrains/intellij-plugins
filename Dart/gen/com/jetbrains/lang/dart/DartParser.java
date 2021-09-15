@@ -695,7 +695,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (callExpression | arrayAccessExpression | qualifiedReferenceExpression | '!')*
+  // (callExpression | arrayAccessExpression | qualifiedReferenceExpression | '!' | typeArguments)*
   static boolean callOrArrayAccessOrQualifiedRefExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "callOrArrayAccessOrQualifiedRefExpression")) return false;
     while (true) {
@@ -706,7 +706,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // callExpression | arrayAccessExpression | qualifiedReferenceExpression | '!'
+  // callExpression | arrayAccessExpression | qualifiedReferenceExpression | '!' | typeArguments
   private static boolean callOrArrayAccessOrQualifiedRefExpression_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "callOrArrayAccessOrQualifiedRefExpression_0")) return false;
     boolean r;
@@ -714,6 +714,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!r) r = arrayAccessExpression(b, l + 1);
     if (!r) r = qualifiedReferenceExpression(b, l + 1);
     if (!r) r = consumeToken(b, NOT);
+    if (!r) r = typeArguments(b, l + 1);
     return r;
   }
 

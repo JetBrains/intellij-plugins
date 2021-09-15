@@ -33,4 +33,10 @@ public class DartCascadeReferenceExpressionImpl extends DartReferenceImpl implem
     return findChildByClass(DartExpression.class);
   }
 
+  @Override
+  @Nullable
+  public DartTypeArguments getTypeArguments() {
+    return findChildByClass(DartTypeArguments.class);
+  }
+
 }

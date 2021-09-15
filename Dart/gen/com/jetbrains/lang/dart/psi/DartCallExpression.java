@@ -7,11 +7,11 @@ import com.intellij.psi.PsiElement;
 
 public interface DartCallExpression extends DartExpression, DartReference {
 
-  @NotNull
+  @Nullable
   DartExpression getExpression();
 
-  @Nullable
-  DartTypeArguments getTypeArguments();
+  @NotNull
+  List<DartTypeArguments> getTypeArgumentsList();
 
   @Nullable DartArguments getArguments();
 
