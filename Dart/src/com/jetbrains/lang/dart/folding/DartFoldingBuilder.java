@@ -339,13 +339,15 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
       }
       else if (psiElement instanceof DartCallExpression) {
         DartCallExpression dartCallExpression = (DartCallExpression)psiElement;
-        // test for capitalization test
-        final String methodName = dartCallExpression.getExpression().getText();
-        if (StringUtil.isCapitalized(methodName)) {
-          foldNonEmptyDartArguments(descriptors, dartCallExpression.getArguments());
-        }
-        else if (TEST_METHOD_NAME.equals(methodName) || GROUP_METHOD_NAME.equals(methodName)) {
-          foldTestDartArguments(descriptors, dartCallExpression.getArguments());
+        DartExpression expression = dartCallExpression.getExpression();
+        if (expression != null) {
+          String methodName = expression.getText();
+          if (StringUtil.isCapitalized(methodName)) {
+            foldNonEmptyDartArguments(descriptors, dartCallExpression.getArguments());
+          }
+          else if (TEST_METHOD_NAME.equals(methodName) || GROUP_METHOD_NAME.equals(methodName)) {
+            foldTestDartArguments(descriptors, dartCallExpression.getArguments());
+          }
         }
       }
     }

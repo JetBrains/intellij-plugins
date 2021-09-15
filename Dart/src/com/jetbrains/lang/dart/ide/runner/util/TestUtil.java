@@ -46,6 +46,7 @@ public class TestUtil {
   }
 
   private static boolean checkCalledFunctionName(@NotNull final DartCallExpression callExpression, @NotNull final String expectedName) {
-    return expectedName.equals(callExpression.getExpression().getText());
+    DartExpression expression = callExpression.getExpression();
+    return expression != null && expectedName.equals(expression.getText());
   }
 }
