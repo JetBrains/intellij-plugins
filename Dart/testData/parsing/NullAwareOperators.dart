@@ -1,3 +1,11 @@
+var a = b ? [5] : [6];
+var a = b ? [] : {};
+var a = b ? {} : {};
+var a = b ? {} : [];
+
+var x = y ? [5];
+var x = y ? [];
+
 class NAO1 {
   f(x,y,z) {
     var a = (x)?.y?.[b];
