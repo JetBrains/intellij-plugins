@@ -75,7 +75,7 @@ abstract class VuexContainerPropertyTypeBase(source: JSTypeSource,
             when (val jsType = property.jsType) {
               is VuexContainerPropertyTypeBase -> {
                 if (property.isConst) builder.append("readonly ")
-                val fixedName = JSSymbolUtil.quoteIfSpecialPropertyName(property.memberName, quote)
+                val fixedName = JSSymbolUtil.quoteIfSpecialPropertyName(property.memberName, property.isPrivateName, quote)
                 builder.append(fixedName)
                 builder.append(separator)
                 builder.append("object ")
