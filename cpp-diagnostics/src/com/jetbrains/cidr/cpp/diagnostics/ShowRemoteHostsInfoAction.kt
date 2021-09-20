@@ -60,10 +60,13 @@ class ShowRemoteHostsInfoAction : CidrProjectAction() {
   }
 
   private fun getRemoteEnvironments(workspaces: List<CidrWorkspace>, project: Project): List<CidrToolEnvironment> {
+    val isRemote: (T: CidrToolEnvironment) -> Boolean =
+      { it.hostMachine.isRemote && it.hostMachine.name.startsWith("Remote") }
+
     val activeRemoteEnvironments = workspaces
       .mapNotNull { it as? WorkspaceWithEnvironment }
       .flatMap { it.getEnvironment() }
-      .filter { it.hostMachine.isRemote }
+      .filter(isRemote)
 
     val allRemoteEnvironments = runReadAction { CPPToolchains.getInstance().toolchains }
       .mapNotNull {
@@ -73,7 +76,7 @@ class ShowRemoteHostsInfoAction : CidrProjectAction() {
                                            EnvironmentProblems(),
                                            false,
                                            null)
-      }.filter { it.hostMachine.isRemote }
+      }.filter(isRemote)
 
     return activeRemoteEnvironments + allRemoteEnvironments
   }
