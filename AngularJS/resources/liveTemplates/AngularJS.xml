@@ -1,40 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<templateSet group="AngularJS " replace="AngularJS">
+<templateSet group="AngularJS">
   <!--Contributed by Pawel Kozlowski-->
   <template name="ngdcf"
             value="function compile(tElement, tAttrs, transclude) {    &#10;      $END$&#10;      return function (scope, element, attrs) {                    &#10;      }&#10;}"
             description="A compile function" toReformat="false" toShortenFQNames="true">
     <context>
-      <option name="HTML_TEXT" value="false"/>
-      <option name="HTML" value="false"/>
-      <option name="XSL_TEXT" value="false"/>
-      <option name="XML" value="false"/>
-      <option name="CSS" value="false"/>
       <option name="JS_STATEMENT" value="true"/>
-      <option name="JSP" value="false"/>
-      <option name="HAML" value="false"/>
-      <option name="OTHER" value="false"/>
-      <option name="CSS_PROPERTY_VALUE" value="false"/>
-      <option name="CSS_DECLARATION_BLOCK" value="false"/>
-      <option name="CSS_RULESET_LIST" value="false"/>
     </context>
   </template>
   <template name="ngdlf" value="function (scope, element, attrs$ctrl$) {&#10;$END$    &#10;}"
             description="A linking function in a directive." toReformat="true" toShortenFQNames="true">
     <variable name="ctrl" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML_TEXT" value="false"/>
-      <option name="HTML" value="false"/>
-      <option name="XSL_TEXT" value="false"/>
-      <option name="XML" value="false"/>
-      <option name="CSS" value="false"/>
       <option name="JS_EXPRESSION" value="true"/>
-      <option name="JSP" value="false"/>
-      <option name="HAML" value="false"/>
-      <option name="OTHER" value="false"/>
-      <option name="CSS_PROPERTY_VALUE" value="false"/>
-      <option name="CSS_DECLARATION_BLOCK" value="false"/>
-      <option name="CSS_RULESET_LIST" value="false"/>
     </context>
   </template>
   <template name="ngdc"
@@ -44,39 +22,17 @@
     <variable name="injectables" expression="" defaultValue="" alwaysStopAt="true"/>
     <variable name="directiveAttrs" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML_TEXT" value="false"/>
-      <option name="HTML" value="false"/>
-      <option name="XSL_TEXT" value="false"/>
-      <option name="XML" value="false"/>
-      <option name="CSS" value="false"/>
-      <option name="JAVA_SCRIPT" value="true"/>
-      <option name="JSP" value="false"/>
-      <option name="HAML" value="false"/>
-      <option name="OTHER" value="false"/>
-      <option name="CSS_PROPERTY_VALUE" value="false"/>
-      <option name="CSS_DECLARATION_BLOCK" value="false"/>
-      <option name="CSS_RULESET_LIST" value="false"/>
+      <option name="JS_QUALIFIED_REFERENCE" value="true"/>
     </context>
   </template>
   <template name="ngdl"
-            value=".directive('$directiveName$', function($directiveDeps$) {&#10;&#10;    return function(scope, element, attrs$ctrl$) {&#10;        $END$&#10;    }&#10;});"
+            value="directive('$directiveName$', function($directiveDeps$) {&#10;&#10;    return function(scope, element, attrs$ctrl$) {&#10;        $END$&#10;    }&#10;});"
             description="A directive with a linking function only." toReformat="true" toShortenFQNames="true">
     <variable name="directiveName" expression="" defaultValue="" alwaysStopAt="true"/>
     <variable name="directiveDeps" expression="" defaultValue="" alwaysStopAt="true"/>
     <variable name="ctrl" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML_TEXT" value="false"/>
-      <option name="HTML" value="false"/>
-      <option name="XSL_TEXT" value="false"/>
-      <option name="XML" value="false"/>
-      <option name="CSS" value="false"/>
-      <option name="JAVA_SCRIPT" value="true"/>
-      <option name="JSP" value="false"/>
-      <option name="HAML" value="false"/>
-      <option name="OTHER" value="false"/>
-      <option name="CSS_PROPERTY_VALUE" value="false"/>
-      <option name="CSS_DECLARATION_BLOCK" value="false"/>
-      <option name="CSS_RULESET_LIST" value="false"/>
+      <option name="JS_QUALIFIED_REFERENCE" value="true"/>
     </context>
   </template>
   <template name="ngc" value="var $controllerName$ = function($scope, $injectables$) {&#10;    $END$&#10;} "
@@ -85,36 +41,14 @@
     <variable name="controllerName" expression="" defaultValue="" alwaysStopAt="true"/>
     <variable name="injectables" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML_TEXT" value="false"/>
-      <option name="HTML" value="false"/>
-      <option name="XSL_TEXT" value="false"/>
-      <option name="XML" value="false"/>
-      <option name="CSS" value="false"/>
       <option name="JS_STATEMENT" value="true"/>
-      <option name="JSP" value="false"/>
-      <option name="HAML" value="false"/>
-      <option name="OTHER" value="false"/>
-      <option name="CSS_PROPERTY_VALUE" value="false"/>
-      <option name="CSS_DECLARATION_BLOCK" value="false"/>
-      <option name="CSS_RULESET_LIST" value="false"/>
     </context>
   </template>
   <template name="ngfor" value="angular.forEach($iterateOver$, function(value, key){&#10;  $END$    &#10;});"
             description="angular.foreach loop" toReformat="true" toShortenFQNames="true">
     <variable name="iterateOver" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML_TEXT" value="false"/>
-      <option name="HTML" value="false"/>
-      <option name="XSL_TEXT" value="false"/>
-      <option name="XML" value="false"/>
-      <option name="CSS_PROPERTY_VALUE" value="false"/>
-      <option name="CSS_DECLARATION_BLOCK" value="false"/>
-      <option name="CSS_RULESET_LIST" value="false"/>
-      <option name="CSS" value="false"/>
       <option name="JS_STATEMENT" value="true"/>
-      <option name="JSP" value="false"/>
-      <option name="HAML" value="false"/>
-      <option name="OTHER" value="false"/>
     </context>
   </template>
 
@@ -125,16 +59,6 @@
     <context>
       <option name="HTML_TEXT" value="true"/>
       <option name="HTML" value="true"/>
-      <option name="XSL_TEXT" value="false"/>
-      <option name="XML" value="false"/>
-      <option name="CSS" value="false"/>
-      <option name="JAVA_SCRIPT" value="false"/>
-      <option name="JSP" value="false"/>
-      <option name="HAML" value="false"/>
-      <option name="OTHER" value="false"/>
-      <option name="CSS_PROPERTY_VALUE" value="false"/>
-      <option name="CSS_DECLARATION_BLOCK" value="false"/>
-      <option name="CSS_RULESET_LIST" value="false"/>
     </context>
   </template>
   <template name="ngsa"
@@ -145,16 +69,6 @@
     <context>
       <option name="HTML_TEXT" value="true"/>
       <option name="HTML" value="true"/>
-      <option name="XSL_TEXT" value="false"/>
-      <option name="XML" value="false"/>
-      <option name="CSS" value="false"/>
-      <option name="JAVA_SCRIPT" value="false"/>
-      <option name="JSP" value="false"/>
-      <option name="HAML" value="false"/>
-      <option name="OTHER" value="false"/>
-      <option name="CSS_PROPERTY_VALUE" value="false"/>
-      <option name="CSS_DECLARATION_BLOCK" value="false"/>
-      <option name="CSS_RULESET_LIST" value="false"/>
     </context>
   </template>
   <template name="ngst" value="&lt;script type=&quot;text/ng-template&quot; id=&quot;$id$&quot;&gt;&#10;    $END$&#10;&lt;/script&gt;"
@@ -163,16 +77,6 @@
     <context>
       <option name="HTML_TEXT" value="true"/>
       <option name="HTML" value="true"/>
-      <option name="XSL_TEXT" value="false"/>
-      <option name="XML" value="false"/>
-      <option name="CSS" value="false"/>
-      <option name="JAVA_SCRIPT" value="false"/>
-      <option name="JSP" value="false"/>
-      <option name="HAML" value="false"/>
-      <option name="OTHER" value="false"/>
-      <option name="CSS_PROPERTY_VALUE" value="false"/>
-      <option name="CSS_DECLARATION_BLOCK" value="false"/>
-      <option name="CSS_RULESET_LIST" value="false"/>
     </context>
   </template>
   <template name="ngb" value="{{$binding$}}$END$" description="A binding in AngularJS" toReformat="true" toShortenFQNames="true">
@@ -180,16 +84,6 @@
     <context>
       <option name="HTML_TEXT" value="true"/>
       <option name="HTML" value="true"/>
-      <option name="XSL_TEXT" value="false"/>
-      <option name="XML" value="false"/>
-      <option name="CSS_PROPERTY_VALUE" value="false"/>
-      <option name="CSS_DECLARATION_BLOCK" value="false"/>
-      <option name="CSS_RULESET_LIST" value="false"/>
-      <option name="CSS" value="false"/>
-      <option name="JAVA_SCRIPT" value="false"/>
-      <option name="JSP" value="false"/>
-      <option name="HAML" value="false"/>
-      <option name="OTHER" value="false"/>
     </context>
   </template>
 
@@ -198,18 +92,7 @@
     <variable name="moduleName" expression="" defaultValue="" alwaysStopAt="true"/>
     <variable name="moduleDependencies" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML_TEXT" value="false"/>
-      <option name="HTML" value="false"/>
-      <option name="XSL_TEXT" value="false"/>
-      <option name="XML" value="false"/>
-      <option name="CSS_PROPERTY_VALUE" value="false"/>
-      <option name="CSS_DECLARATION_BLOCK" value="false"/>
-      <option name="CSS_RULESET_LIST" value="false"/>
-      <option name="CSS" value="false"/>
       <option name="JS_STATEMENT" value="true"/>
-      <option name="JSP" value="false"/>
-      <option name="HAML" value="false"/>
-      <option name="OTHER" value="false"/>
     </context>
   </template>
   <template name="ngma" value="var $moduleName$ = angular.module('$moduleName$',[$moduleDeps$]);&#10;$END$"
@@ -218,18 +101,7 @@
     <variable name="moduleName" expression="" defaultValue="" alwaysStopAt="true"/>
     <variable name="moduleDeps" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML_TEXT" value="false"/>
-      <option name="HTML" value="false"/>
-      <option name="XSL_TEXT" value="false"/>
-      <option name="XML" value="false"/>
-      <option name="CSS" value="false"/>
       <option name="JS_STATEMENT" value="true"/>
-      <option name="JSP" value="false"/>
-      <option name="HAML" value="false"/>
-      <option name="OTHER" value="false"/>
-      <option name="CSS_PROPERTY_VALUE" value="false"/>
-      <option name="CSS_DECLARATION_BLOCK" value="false"/>
-      <option name="CSS_RULESET_LIST" value="false"/>
     </context>
   </template>
   <template name="ngmc"
@@ -239,18 +111,7 @@
     <variable name="moduleDeps" expression="" defaultValue="" alwaysStopAt="true"/>
     <variable name="configDeps" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML_TEXT" value="false"/>
-      <option name="HTML" value="false"/>
-      <option name="XSL_TEXT" value="false"/>
-      <option name="XML" value="false"/>
-      <option name="CSS_PROPERTY_VALUE" value="false"/>
-      <option name="CSS_DECLARATION_BLOCK" value="false"/>
-      <option name="CSS_RULESET_LIST" value="false"/>
-      <option name="CSS" value="false"/>
       <option name="JS_STATEMENT" value="true"/>
-      <option name="JSP" value="false"/>
-      <option name="HAML" value="false"/>
-      <option name="OTHER" value="false"/>
     </context>
   </template>
   <template name="ngmfa" value="factory('$factoryName$', function($dependencies$){&#10;  $END$&#10;});" description="A factory in a module"
@@ -258,18 +119,7 @@
     <variable name="factoryName" expression="" defaultValue="" alwaysStopAt="true"/>
     <variable name="dependencies" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML_TEXT" value="false"/>
-      <option name="HTML" value="false"/>
-      <option name="XSL_TEXT" value="false"/>
-      <option name="XML" value="false"/>
-      <option name="CSS_PROPERTY_VALUE" value="false"/>
-      <option name="CSS_DECLARATION_BLOCK" value="false"/>
-      <option name="CSS_RULESET_LIST" value="false"/>
-      <option name="CSS" value="false"/>
-      <option name="JAVA_SCRIPT" value="true"/>
-      <option name="JSP" value="false"/>
-      <option name="HAML" value="false"/>
-      <option name="OTHER" value="false"/>
+      <option name="JS_QUALIFIED_REFERENCE" value="true"/>
     </context>
   </template>
   <template name="ngms" value="service('$serviceName$', function($injectables$) {&#10;    $END$&#10;});"
@@ -278,18 +128,7 @@
     <variable name="serviceName" expression="" defaultValue="" alwaysStopAt="true"/>
     <variable name="injectables" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML_TEXT" value="false"/>
-      <option name="HTML" value="false"/>
-      <option name="XSL_TEXT" value="false"/>
-      <option name="XML" value="false"/>
-      <option name="CSS_PROPERTY_VALUE" value="false"/>
-      <option name="CSS_DECLARATION_BLOCK" value="false"/>
-      <option name="CSS_RULESET_LIST" value="false"/>
-      <option name="CSS" value="false"/>
-      <option name="JAVA_SCRIPT" value="true"/>
-      <option name="JSP" value="false"/>
-      <option name="HAML" value="false"/>
-      <option name="OTHER" value="false"/>
+      <option name="JS_QUALIFIED_REFERENCE" value="true"/>
     </context>
   </template>
   <template name="ngmfi"
@@ -300,18 +139,7 @@
     <variable name="injectables" expression="" defaultValue="" alwaysStopAt="true"/>
     <variable name="args" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML_TEXT" value="false"/>
-      <option name="HTML" value="false"/>
-      <option name="XSL_TEXT" value="false"/>
-      <option name="XML" value="false"/>
-      <option name="CSS_PROPERTY_VALUE" value="false"/>
-      <option name="CSS_DECLARATION_BLOCK" value="false"/>
-      <option name="CSS_RULESET_LIST" value="false"/>
-      <option name="CSS" value="false"/>
-      <option name="JAVA_SCRIPT" value="true"/>
-      <option name="JSP" value="false"/>
-      <option name="HAML" value="false"/>
-      <option name="OTHER" value="false"/>
+      <option name="JS_QUALIFIED_REFERENCE" value="true"/>
     </context>
   </template>
 
@@ -322,18 +150,7 @@
     <variable name="templateUrl" expression="" defaultValue="" alwaysStopAt="true"/>
     <variable name="controller" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML_TEXT" value="false"/>
-      <option name="HTML" value="false"/>
-      <option name="XSL_TEXT" value="false"/>
-      <option name="XML" value="false"/>
-      <option name="CSS_PROPERTY_VALUE" value="false"/>
-      <option name="CSS_DECLARATION_BLOCK" value="false"/>
-      <option name="CSS_RULESET_LIST" value="false"/>
-      <option name="CSS" value="false"/>
       <option name="JS_STATEMENT" value="true"/>
-      <option name="JSP" value="false"/>
-      <option name="HAML" value="false"/>
-      <option name="OTHER" value="false"/>
     </context>
   </template>
   <template name="ngrwr"
@@ -343,36 +160,14 @@
     <variable name="templateUrl" expression="" defaultValue="" alwaysStopAt="true"/>
     <variable name="controller" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML_TEXT" value="false"/>
-      <option name="HTML" value="false"/>
-      <option name="XSL_TEXT" value="false"/>
-      <option name="XML" value="false"/>
-      <option name="CSS_PROPERTY_VALUE" value="false"/>
-      <option name="CSS_DECLARATION_BLOCK" value="false"/>
-      <option name="CSS_RULESET_LIST" value="false"/>
-      <option name="CSS" value="false"/>
       <option name="JS_STATEMENT" value="true"/>
-      <option name="JSP" value="false"/>
-      <option name="HAML" value="false"/>
-      <option name="OTHER" value="false"/>
     </context>
   </template>
   <template name="ngro" value="$routeProvider.otherwise({redirectTo : '$url$'});&#10;$END$"
             description="Defines an otherwise condition of an AngularJS route." toReformat="true" toShortenFQNames="true">
     <variable name="url" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML_TEXT" value="false"/>
-      <option name="HTML" value="false"/>
-      <option name="XSL_TEXT" value="false"/>
-      <option name="XML" value="false"/>
-      <option name="CSS_PROPERTY_VALUE" value="false"/>
-      <option name="CSS_DECLARATION_BLOCK" value="false"/>
-      <option name="CSS_RULESET_LIST" value="false"/>
-      <option name="CSS" value="false"/>
       <option name="JS_STATEMENT" value="true"/>
-      <option name="JSP" value="false"/>
-      <option name="HAML" value="false"/>
-      <option name="OTHER" value="false"/>
     </context>
   </template>
 
@@ -382,18 +177,7 @@
     <variable name="functionName" expression="" defaultValue="" alwaysStopAt="true"/>
     <variable name="args" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML_TEXT" value="false"/>
-      <option name="HTML" value="false"/>
-      <option name="XSL_TEXT" value="false"/>
-      <option name="XML" value="false"/>
-      <option name="CSS" value="false"/>
       <option name="JS_STATEMENT" value="true"/>
-      <option name="JSP" value="false"/>
-      <option name="HAML" value="false"/>
-      <option name="OTHER" value="false"/>
-      <option name="CSS_PROPERTY_VALUE" value="false"/>
-      <option name="CSS_DECLARATION_BLOCK" value="false"/>
-      <option name="CSS_RULESET_LIST" value="false"/>
     </context>
   </template>
   <template name="$v" value="$scope.$variable$ = $value$;&#10;$END$"
@@ -401,18 +185,7 @@
     <variable name="variable" expression="" defaultValue="" alwaysStopAt="true"/>
     <variable name="value" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML_TEXT" value="false"/>
-      <option name="HTML" value="false"/>
-      <option name="XSL_TEXT" value="false"/>
-      <option name="XML" value="false"/>
-      <option name="CSS_PROPERTY_VALUE" value="false"/>
-      <option name="CSS_DECLARATION_BLOCK" value="false"/>
-      <option name="CSS_RULESET_LIST" value="false"/>
-      <option name="CSS" value="false"/>
       <option name="JS_STATEMENT" value="true"/>
-      <option name="JSP" value="false"/>
-      <option name="HAML" value="false"/>
-      <option name="OTHER" value="false"/>
     </context>
   </template>
   <template name="$va" value="$scope.$variable$ = $variable$;&#10;$END$"
@@ -420,18 +193,7 @@
             toReformat="true" toShortenFQNames="true">
     <variable name="variable" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML_TEXT" value="false"/>
-      <option name="HTML" value="false"/>
-      <option name="XSL_TEXT" value="false"/>
-      <option name="XML" value="false"/>
-      <option name="CSS_PROPERTY_VALUE" value="false"/>
-      <option name="CSS_DECLARATION_BLOCK" value="false"/>
-      <option name="CSS_RULESET_LIST" value="false"/>
-      <option name="CSS" value="false"/>
       <option name="JS_STATEMENT" value="true"/>
-      <option name="JSP" value="false"/>
-      <option name="HAML" value="false"/>
-      <option name="OTHER" value="false"/>
     </context>
   </template>
   <template name="$w" value="$scope.$watch('$watchExpr$',function(newValue, oldValue){&#10;  $END$&#10;});"
@@ -439,18 +201,7 @@
             toShortenFQNames="true">
     <variable name="watchExpr" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML_TEXT" value="false"/>
-      <option name="HTML" value="false"/>
-      <option name="XSL_TEXT" value="false"/>
-      <option name="XML" value="false"/>
-      <option name="CSS_PROPERTY_VALUE" value="false"/>
-      <option name="CSS_DECLARATION_BLOCK" value="false"/>
-      <option name="CSS_RULESET_LIST" value="false"/>
-      <option name="CSS" value="false"/>
       <option name="JS_STATEMENT" value="true"/>
-      <option name="JSP" value="false"/>
-      <option name="HAML" value="false"/>
-      <option name="OTHER" value="false"/>
     </context>
   </template>
   <template name="$on" value="$scope.$on('$eventName$', function(event, $args$) {&#10;    $END$&#10;});"
@@ -459,18 +210,7 @@
     <variable name="eventName" expression="" defaultValue="" alwaysStopAt="true"/>
     <variable name="args" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML_TEXT" value="false"/>
-      <option name="HTML" value="false"/>
-      <option name="XSL_TEXT" value="false"/>
-      <option name="XML" value="false"/>
-      <option name="CSS_PROPERTY_VALUE" value="false"/>
-      <option name="CSS_DECLARATION_BLOCK" value="false"/>
-      <option name="CSS_RULESET_LIST" value="false"/>
-      <option name="CSS" value="false"/>
       <option name="JS_STATEMENT" value="true"/>
-      <option name="JSP" value="false"/>
-      <option name="HAML" value="false"/>
-      <option name="OTHER" value="false"/>
     </context>
   </template>
   <template name="$b" value="$scope.$broadcast('$eventName$', $eventArgs$);&#10;$END$"
@@ -479,18 +219,7 @@
     <variable name="eventName" expression="" defaultValue="" alwaysStopAt="true"/>
     <variable name="eventArgs" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML_TEXT" value="false"/>
-      <option name="HTML" value="false"/>
-      <option name="XSL_TEXT" value="false"/>
-      <option name="XML" value="false"/>
-      <option name="CSS_PROPERTY_VALUE" value="false"/>
-      <option name="CSS_DECLARATION_BLOCK" value="false"/>
-      <option name="CSS_RULESET_LIST" value="false"/>
-      <option name="CSS" value="false"/>
       <option name="JS_STATEMENT" value="true"/>
-      <option name="JSP" value="false"/>
-      <option name="HAML" value="false"/>
-      <option name="OTHER" value="false"/>
     </context>
   </template>
   <template name="$e" value="$scope.$emit('$eventName$', $eventArgs$);&#10;$END$"
@@ -499,18 +228,7 @@
     <variable name="eventName" expression="" defaultValue="" alwaysStopAt="true"/>
     <variable name="eventArgs" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML_TEXT" value="false"/>
-      <option name="HTML" value="false"/>
-      <option name="XSL_TEXT" value="false"/>
-      <option name="XML" value="false"/>
-      <option name="CSS_PROPERTY_VALUE" value="false"/>
-      <option name="CSS_DECLARATION_BLOCK" value="false"/>
-      <option name="CSS_RULESET_LIST" value="false"/>
-      <option name="CSS" value="false"/>
       <option name="JS_STATEMENT" value="true"/>
-      <option name="JSP" value="false"/>
-      <option name="HAML" value="false"/>
-      <option name="OTHER" value="false"/>
     </context>
   </template>
 </templateSet>
