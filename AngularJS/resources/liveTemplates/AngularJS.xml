@@ -16,7 +16,7 @@
     </context>
   </template>
   <template name="ngdc"
-            value="directive('$directiveName$', function factory($injectables$) {&#10;  var directiveDefinitionObject = {   &#10;    $directiveAttrs$&#10;    compile: function compile(tElement, tAttrs, transclude) {    &#10;      $END$&#10;      return function (scope, element, attrs) {                    &#10;      }&#10;    }&#10;  };&#10;  return directiveDefinitionObject;&#10;})"
+            value="directive('$directiveName$', function factory($injectables$) {&#10;  return {   &#10;    $directiveAttrs$&#10;    compile: function compile(tElement, tAttrs, transclude) {    &#10;      $END$&#10;      return function (scope, element, attrs) {                    &#10;      }&#10;    }&#10;  };&#10;})"
             description="A directive with a compile function" toReformat="true" toShortenFQNames="true">
     <variable name="directiveName" expression="" defaultValue="" alwaysStopAt="true"/>
     <variable name="injectables" expression="" defaultValue="" alwaysStopAt="true"/>
