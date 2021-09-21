@@ -22,7 +22,7 @@
     <variable name="injectables" expression="" defaultValue="" alwaysStopAt="true"/>
     <variable name="directiveAttrs" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="JS_QUALIFIED_REFERENCE" value="true"/>
+      <option name="JS_DOT_PROPERTY_ACCESS" value="true"/>
     </context>
   </template>
   <template name="ngdl"
@@ -32,7 +32,7 @@
     <variable name="directiveDeps" expression="" defaultValue="" alwaysStopAt="true"/>
     <variable name="ctrl" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="JS_QUALIFIED_REFERENCE" value="true"/>
+      <option name="JS_DOT_PROPERTY_ACCESS" value="true"/>
     </context>
   </template>
   <template name="ngc" value="var $controllerName$ = function($scope, $injectables$) {&#10;    $END$&#10;} "
@@ -119,7 +119,7 @@
     <variable name="factoryName" expression="" defaultValue="" alwaysStopAt="true"/>
     <variable name="dependencies" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="JS_QUALIFIED_REFERENCE" value="true"/>
+      <option name="JS_DOT_PROPERTY_ACCESS" value="true"/>
     </context>
   </template>
   <template name="ngms" value="service('$serviceName$', function($injectables$) {&#10;    $END$&#10;});"
@@ -128,7 +128,7 @@
     <variable name="serviceName" expression="" defaultValue="" alwaysStopAt="true"/>
     <variable name="injectables" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="JS_QUALIFIED_REFERENCE" value="true"/>
+      <option name="JS_DOT_PROPERTY_ACCESS" value="true"/>
     </context>
   </template>
   <template name="ngmfi"
@@ -139,7 +139,7 @@
     <variable name="injectables" expression="" defaultValue="" alwaysStopAt="true"/>
     <variable name="args" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="JS_QUALIFIED_REFERENCE" value="true"/>
+      <option name="JS_DOT_PROPERTY_ACCESS" value="true"/>
     </context>
   </template>
 

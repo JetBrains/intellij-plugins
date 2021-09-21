@@ -6,7 +6,7 @@ import com.intellij.codeInsight.template.impl.TemplateSettings;
 import com.intellij.lang.javascript.JSLiveTemplatesTestBase;
 import org.angularjs.AngularTestUtil;
 
-public class AngularLiveTemplateTest extends JSLiveTemplatesTestBase {
+public class AngularJSLiveTemplateTest extends JSLiveTemplatesTestBase {
   @Override
   protected String getBasePath() {
     return "";
