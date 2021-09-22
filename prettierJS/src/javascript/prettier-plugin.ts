@@ -45,8 +45,8 @@ export class PrettierPlugin implements LanguagePlugin {
 
     private handleReformatCommand(args: FormatArguments): FormatResponse {
         let prettierApi = this.requirePrettierApi(args.prettierPath, args.packageJsonPath);
-
-        let options = {ignorePath: args.ignoreFilePath, withNodeModules: true};
+        let config = prettierApi.resolveConfig.sync(args.path, {useCache: true, editorconfig: true});
+        let options = {ignorePath: args.ignoreFilePath, withNodeModules: true, plugins: config.plugins};
         if (prettierApi.getFileInfo) {
             let fileInfo = prettierApi.getFileInfo.sync(args.path, options)
             if (fileInfo.ignored) {
