@@ -7,7 +7,10 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.ThrowableComputable;
-import com.intellij.openapi.vcs.*;
+import com.intellij.openapi.vcs.AbstractVcs;
+import com.intellij.openapi.vcs.FileStatus;
+import com.intellij.openapi.vcs.ProjectLevelVcsManager;
+import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.changes.*;
 import com.intellij.openapi.vfs.*;
 import com.intellij.util.messages.MessageBusConnection;
@@ -59,12 +62,7 @@ public class PerforceReadOnlyFileStateManager {
     };
 
     myConnection = myProject.getMessageBus().connect();
-    myConnection.subscribe(ProjectLevelVcsManager.VCS_CONFIGURATION_CHANGED, new VcsListener() {
-      @Override
-      public void directoryMappingChanged() {
-        scheduleTotalRescan.run();
-      }
-    });
+    myConnection.subscribe(ProjectLevelVcsManager.VCS_CONFIGURATION_CHANGED, () -> scheduleTotalRescan.run());
     VirtualFileManager.getInstance().addVirtualFileListener(new MyVfsListener(), parentDisposable);
     FrameStateManager.getInstance().addListener(myFrameStateListener);
     myConnection.subscribe(PerforceSettings.OFFLINE_MODE_EXITED, scheduleTotalRescan);
