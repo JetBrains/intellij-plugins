@@ -71,11 +71,12 @@ public abstract class DartPubActionBase extends AnAction implements DumbAware {
   private static final Key<PubToolWindowContentInfo> PUB_TOOL_WINDOW_CONTENT_INFO_KEY = Key.create("PUB_TOOL_WINDOW_CONTENT_INFO_KEY");
 
   private static final String DART_PUB_MIN_SDK_VERSION = "2.10";
+  private static final String DART_RUN_TEST_MIN_SDK_VERSION = "2.11";
 
   private static final AtomicBoolean ourInProgress = new AtomicBoolean(false);
 
-  public static boolean isUseDartTestInsteadOfPubRunTest(@NotNull DartSdk dartSdk) {
-    return StringUtil.compareVersionNumbers(dartSdk.getVersion(), DART_PUB_MIN_SDK_VERSION) >= 0;
+  public static boolean isUseDartRunTestInsteadOfPubRunTest(@NotNull DartSdk dartSdk) {
+    return StringUtil.compareVersionNumbers(dartSdk.getVersion(), DART_RUN_TEST_MIN_SDK_VERSION) >= 0;
   }
 
   public static void setupPubExePath(@NotNull GeneralCommandLine commandLine, @NotNull DartSdk dartSdk) {
