@@ -1,6 +1,7 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.cli.config
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
@@ -18,7 +19,10 @@ class AngularConfigFileListener : BulkFileListener {
 
       for (project in ProjectManager.getInstance().openProjects) {
         if (ProjectRootManager.getInstance(project).fileIndex.isInContent(file)) {
-          FileContentUtil.reparseOpenedFiles()
+          ApplicationManager.getApplication().invokeLater {
+            FileContentUtil.reparseOpenedFiles()
+          }
+          break
         }
       }
     }
