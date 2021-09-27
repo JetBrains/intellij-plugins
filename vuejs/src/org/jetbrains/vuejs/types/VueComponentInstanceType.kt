@@ -30,7 +30,7 @@ class VueComponentInstanceType(source: JSTypeSource,
   override fun isEquivalentToWithSameClass(type: JSType, context: ProcessingContext?, allowResolve: Boolean): Boolean {
     return (type is VueComponentInstanceType
             && type.instanceOwner == instanceOwner
-            && membersNames == membersNames)
+            && type.membersNames == membersNames)
   }
 
   override fun buildTypeTextImpl(format: JSType.TypeTextFormat, builder: JSTypeTextBuilder) {
