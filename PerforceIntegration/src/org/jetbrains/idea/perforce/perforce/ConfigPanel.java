@@ -33,6 +33,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.HyperlinkLabel;
 import com.intellij.ui.RelativeFont;
 import com.intellij.ui.components.JBLabel;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.perforce.PerforceBundle;
@@ -50,7 +51,10 @@ import javax.swing.event.HyperlinkListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class ConfigPanel {
   private JTextField m_port;
@@ -243,7 +247,7 @@ public class ConfigPanel {
     return true;
   }
 
-  private void setBorderForIgnorePanel(String title) {
+  private void setBorderForIgnorePanel(@Nls String title) {
     Border etchedBorder = BorderFactory.createEtchedBorder();
     Border etchedTitledBorder = BorderFactory.createTitledBorder(etchedBorder, title);
     myIgnoreSettingsPanel.setBorder(etchedTitledBorder);
