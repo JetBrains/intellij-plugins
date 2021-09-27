@@ -15,14 +15,11 @@
  */
 package com.intellij.protobuf.jvm;
 
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiClassType;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNamedElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.ObjectUtils;
 import com.intellij.protobuf.lang.psi.PbDefinition;
 import com.intellij.protobuf.lang.psi.PbFile;
+import com.intellij.psi.*;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -59,6 +56,10 @@ public class PbJavaGotoReferenceMatch {
     // This means it won't handle things like Class.nanoRepeatedField.len<caret>gth.
     // Eventually we should handle messageInstance<caret>Variable, etc. as well.
     PsiClass classContext = PsiTreeUtil.getContextOfType(resolved, PsiClass.class, false);
+    if (classContext == null && resolvedReference instanceof PsiMember) {
+      // Synthetic methods don't have context and implement getContainingClass directly.
+      classContext = ((PsiMember) resolvedReference).getContainingClass();
+    }
     if (classContext == null || !isPbGeneratedDefinition(classContext)) {
       return null;
     }
