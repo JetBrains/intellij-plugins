@@ -189,12 +189,12 @@ class PerforceMoveRenameTest extends PerforceTestCase {
     final VirtualFile foo = createDirectoryWithFiveFiles("foo")
     final VirtualFile bar = createDirectoryWithFiveFiles("bar")
     refreshChanges()
-    assertEquals(10, assertOneElement(getChangeListManager().getChangeListsCopy()).getChanges().size())
+    assertEquals(10, assertOneElement(getChangeListManager().getChangeLists()).getChanges().size())
     assertEmpty(getChangeListManager().getUnversionedFiles())
 
     submitDefaultList("initial")
     refreshChanges()
-    assertEmpty(assertOneElement(getChangeListManager().getChangeListsCopy()).getChanges())
+    assertEmpty(assertOneElement(getChangeListManager().getChangeLists()).getChanges())
     assertEmpty(getChangeListManager().getUnversionedFiles())
 
     renameFileInCommand(foo, "foo1")
@@ -202,13 +202,13 @@ class PerforceMoveRenameTest extends PerforceTestCase {
     getChangeListManager().waitUntilRefreshed()
 
     assertEmpty(getChangeListManager().getUnversionedFiles())
-    final Collection<Change> changes = assertOneElement(getChangeListManager().getChangeListsCopy()).getChanges()
+    final Collection<Change> changes = assertOneElement(getChangeListManager().getChangeLists()).getChanges()
     assertEquals(10, changes.size())
 
     rollbackChanges(changes as List)
     getChangeListManager().waitUntilRefreshed()
 
-    assertEmpty(assertOneElement(getChangeListManager().getChangeListsCopy()).getChanges())
+    assertEmpty(assertOneElement(getChangeListManager().getChangeLists()).getChanges())
     assertEmpty(getChangeListManager().getUnversionedFiles())
   }
 

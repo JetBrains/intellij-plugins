@@ -33,7 +33,6 @@ import com.intellij.openapi.vcs.changes.*;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.impl.DebugUtil;
 import com.intellij.util.ArrayUtilRt;
-import com.intellij.util.EnvironmentUtil;
 import com.intellij.util.messages.Topic;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.MapAnnotation;
@@ -241,7 +240,7 @@ public final class PerforceSettings implements PersistentStateComponent<Perforce
   private void saveUnchangedContentsForModifiedFiles() {
     ApplicationManager.getApplication().assertIsDispatchThread();
     ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
-      for (LocalChangeList list : ChangeListManager.getInstance(myProject).getChangeListsCopy()) {
+      for (LocalChangeList list : ChangeListManager.getInstance(myProject).getChangeLists()) {
         for (Change change : list.getChanges()) {
           final VirtualFile file = change.getVirtualFile();
           final ContentRevision before = change.getBeforeRevision();

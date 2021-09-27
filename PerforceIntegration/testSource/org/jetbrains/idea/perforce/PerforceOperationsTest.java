@@ -198,7 +198,7 @@ public class PerforceOperationsTest extends PerforceTestCase {
 
     assertEquals("xxx", assertOneElement(PerforceRunner.getInstance(myProject).getPendingChangeLists(getConnection())).getName());
 
-    assertSize(2, getChangeListManager().getChangeListsCopy());
+    assertSize(2, getChangeListManager().getChangeLists());
     assertEmpty(getChangeListManager().findChangeList(getChangeListManager().getDefaultListName()).getChanges());
 
     Change change = assertOneElement(getChangeListManager().findChangeList("xxx").getChanges());
@@ -206,7 +206,7 @@ public class PerforceOperationsTest extends PerforceTestCase {
 
     rollbackChange(change);
     getChangeListManager().waitUntilRefreshed();
-    assertEmpty(assertOneElement(getChangeListManager().getChangeListsCopy()).getChanges());
+    assertEmpty(assertOneElement(getChangeListManager().getChangeLists()).getChanges());
 
     assertEmpty(PerforceRunner.getInstance(myProject).getPendingChangeLists(getConnection()));
   }

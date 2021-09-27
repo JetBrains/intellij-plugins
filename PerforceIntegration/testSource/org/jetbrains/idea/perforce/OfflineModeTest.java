@@ -455,7 +455,7 @@ public class OfflineModeTest extends PerforceTestCase {
     rollbackChange(c);
     getChangeListManager().waitUntilRefreshed();
 
-    assertEmpty(assertOneElement(getChangeListManager().getChangeListsCopy()).getChanges());
+    assertEmpty(assertOneElement(getChangeListManager().getChangeLists()).getChanges());
 
     assertNotNull(myWorkingCopyDir.findFileByRelativePath("foo/a.txt"));
     assertNull(myWorkingCopyDir.findFileByRelativePath("bar/a.txt"));
@@ -588,7 +588,7 @@ public class OfflineModeTest extends PerforceTestCase {
 
     refreshChanges();
     final ChangeListManager clManager = ChangeListManagerImpl.getInstanceImpl(myProject);
-    final List<LocalChangeList> lists = clManager.getChangeListsCopy();
+    final List<LocalChangeList> lists = clManager.getChangeLists();
     Assert.assertEquals(2, lists.size());
     final LocalChangeList list = clManager.findChangeList("Second");
     Assert.assertEquals(1, list.getChanges().size());
@@ -664,7 +664,7 @@ public class OfflineModeTest extends PerforceTestCase {
     clManager.moveChangesTo(list, c);
 
     refreshChanges();
-    final List<LocalChangeList> lists = clManager.getChangeListsCopy();
+    final List<LocalChangeList> lists = clManager.getChangeLists();
     Assert.assertEquals(2, lists.size());
     Assert.assertEquals(1, clManager.findChangeList("Second").getChanges().size());
     final List<VcsOperation> pendingOps = VcsOperationLog.getInstance(myProject).getPendingOperations();
@@ -687,7 +687,7 @@ public class OfflineModeTest extends PerforceTestCase {
     final LocalChangeList list = clManager.addChangeList("Second", "");
     clManager.moveChangesTo(list, c);
 
-    final List<LocalChangeList> lists = clManager.getChangeListsCopy();
+    final List<LocalChangeList> lists = clManager.getChangeLists();
     Assert.assertEquals(2, lists.size());
     Assert.assertEquals(1, clManager.findChangeList("Second").getChanges().size());
     final List<VcsOperation> pendingOps = VcsOperationLog.getInstance(myProject).getPendingOperations();
@@ -708,7 +708,7 @@ public class OfflineModeTest extends PerforceTestCase {
     final LocalChangeList list = clManager.addChangeList("Second", "");
     clManager.moveChangesTo(list, c);
 
-    final List<LocalChangeList> lists = clManager.getChangeListsCopy();
+    final List<LocalChangeList> lists = clManager.getChangeLists();
     Assert.assertEquals(2, lists.size());
     Assert.assertEquals(1, clManager.findChangeList("Second").getChanges().size());
     final List<VcsOperation> pendingOps = VcsOperationLog.getInstance(myProject).getPendingOperations();

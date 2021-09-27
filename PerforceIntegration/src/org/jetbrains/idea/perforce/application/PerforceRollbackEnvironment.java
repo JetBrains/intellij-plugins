@@ -78,7 +78,7 @@ public class PerforceRollbackEnvironment implements RollbackEnvironment {
 
   private Map<Long, P4Connection> getChangeListsToDelete(List<? extends Change> changes, List<? super VcsException> vcsExceptions) {
     Map<Long, P4Connection> lists2Delete = new LinkedHashMap<>();
-    for (LocalChangeList list : ChangeListManager.getInstance(myProject).getChangeListsCopy()) {
+    for (LocalChangeList list : ChangeListManager.getInstance(myProject).getChangeLists()) {
       Collection<Change> reverted = list.getChanges();
       if (!reverted.isEmpty() && changes.containsAll(reverted)) {
         for (Change c : reverted) {

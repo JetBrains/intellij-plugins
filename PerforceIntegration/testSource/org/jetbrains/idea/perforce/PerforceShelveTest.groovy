@@ -34,7 +34,7 @@ class PerforceShelveTest extends PerforceTestCase {
     runP4WithClient("shelve", '-r', "-c", num as String)
 
     refreshChanges()
-    assert changeListManager.changeListsCopy.size() == 2
+    assert changeListManager.changeLists.size() == 2
 
     def xxx = findNotNullChangeList('xxx')
     assert shelf.getShelvedChanges(xxx).collect { it.depotPath } == ["//depot/b.txt"]
@@ -82,7 +82,7 @@ class PerforceShelveTest extends PerforceTestCase {
     ShelfUtils.unshelveChanges(shelf.getShelvedChanges(xxx), myProject, true)
     changeListManager.waitUntilRefreshed()
     
-    assert changeListManager.changeListsCopy.size() == 2
+    assert changeListManager.changeLists.size() == 2
     def change = assertOneElement(findNotNullChangeList('xxx').changes)
     assert change.type == Change.Type.MODIFICATION
     assert change.virtualFile == file
@@ -163,7 +163,7 @@ class PerforceShelveTest extends PerforceTestCase {
   }
 
   private LocalChangeList findNotNullChangeList(String name) {
-    def result = changeListManager.changeListsCopy.find { it.name == name }
+    def result = changeListManager.changeLists.find { it.name == name }
     assert result
     result
   }

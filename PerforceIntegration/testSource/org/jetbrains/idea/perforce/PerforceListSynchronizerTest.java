@@ -183,7 +183,7 @@ public class PerforceListSynchronizerTest extends PerforceTestCase {
     refreshChanges();
 
     DuringChangeListManagerUpdateTestScheme.checkFilesAreInList("descr1", getChangeListManager(), file);
-    assertSize(2, getChangeListManager().getChangeListsCopy());
+    assertSize(2, getChangeListManager().getChangeLists());
     getChangeListManager().setDefaultChangeList(getChangeListManager().findChangeList("descr1"));
 
     editListDescription(listNumber, "descr2");
@@ -191,7 +191,7 @@ public class PerforceListSynchronizerTest extends PerforceTestCase {
 
     DuringChangeListManagerUpdateTestScheme.checkFilesAreInList("descr2", getChangeListManager(), file);
     assertEquals("descr2", getChangeListManager().getDefaultChangeList().getName());
-    assertSize(2, getChangeListManager().getChangeListsCopy());
+    assertSize(2, getChangeListManager().getChangeLists());
   }
 
   @Test
@@ -459,7 +459,7 @@ public class PerforceListSynchronizerTest extends PerforceTestCase {
     createChangeList("xxx", Collections.emptyList());
     refreshChanges();
 
-    assertSize(2, getChangeListManager().getChangeListsCopy());
+    assertSize(2, getChangeListManager().getChangeLists());
     assertEmpty(getChangeListManager().findChangeList(getChangeListManager().getDefaultListName()).getChanges());
     assertEmpty(getChangeListManager().findChangeList("xxx").getChanges());
   }
@@ -478,7 +478,7 @@ public class PerforceListSynchronizerTest extends PerforceTestCase {
 
     assertEmpty(getChangeListManager().getUnversionedFiles());
     assertEquals(file1, getSingleChange().getVirtualFile());
-    assertEquals(getChangeListManager().getDefaultListName(), assertOneElement(getChangeListManager().getChangeListsCopy()).getName());
+    assertEquals(getChangeListManager().getDefaultListName(), assertOneElement(getChangeListManager().getChangeLists()).getName());
   }
 
   @Test
@@ -491,20 +491,20 @@ public class PerforceListSynchronizerTest extends PerforceTestCase {
     refreshChanges();
 
     assertEquals(file, assertOneElement(getChangeListManager().getAllChanges()).getVirtualFile());
-    assertSize(2, getChangeListManager().getChangeListsCopy());
+    assertSize(2, getChangeListManager().getChangeLists());
     
     getChangeListManager().removeChangeList("xxx");
     refreshChanges();
-    assertSize(1, getChangeListManager().getChangeListsCopy());
+    assertSize(1, getChangeListManager().getChangeLists());
     assertEquals(file, getSingleChange().getVirtualFile());
     
     moveToChangelist(num, "//depot/b.txt");
     refreshChanges();
-    assertSize(2, getChangeListManager().getChangeListsCopy()); // xxx is non-empty, so show it again
+    assertSize(2, getChangeListManager().getChangeLists()); // xxx is non-empty, so show it again
     
     moveToDefaultChangelist("//depot/b.txt");
     refreshChanges();
-    assertSize(2, getChangeListManager().getChangeListsCopy()); // still show xxx, because it wasn't deleted explicitly 
+    assertSize(2, getChangeListManager().getChangeLists()); // still show xxx, because it wasn't deleted explicitly
   }
 
   @Test

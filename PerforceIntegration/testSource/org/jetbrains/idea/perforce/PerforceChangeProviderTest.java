@@ -76,7 +76,7 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
 
     assertOrderedEquals(clManager.getUnversionedFiles(), file);
     assertTrue(clManager.isUnversioned(file));
-    assertEmpty(assertOneElement(clManager.getChangeListsCopy()).getChanges());
+    assertEmpty(assertOneElement(clManager.getChangeLists()).getChanges());
 
     addFile("a.txt");
 
@@ -341,7 +341,7 @@ public class PerforceChangeProviderTest extends PerforceTestCase {
     DuringChangeListManagerUpdateTestScheme.checkFilesAreInList(clManager.getDefaultListName(), clManager, renamed);
     assertFalse(clManager.isUnversioned(renamed));
 
-    final LocalChangeList list = assertOneElement(clManager.getChangeListsCopy());
+    final LocalChangeList list = assertOneElement(clManager.getChangeLists());
     Change change = assertOneElement(list.getChanges());
     Assert.assertEquals(Change.Type.MOVED, change.getType());
   }
