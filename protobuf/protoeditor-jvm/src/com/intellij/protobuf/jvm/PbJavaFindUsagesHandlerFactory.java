@@ -21,13 +21,13 @@ import com.intellij.find.findUsages.FindUsagesHandlerFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.NotNullLazyValue;
-import com.intellij.psi.*;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.protobuf.jvm.names.NameGenerator;
+import com.intellij.protobuf.jvm.names.JavaNameGenerator;
 import com.intellij.protobuf.jvm.names.NameGeneratorSelector;
 import com.intellij.protobuf.lang.psi.*;
 import com.intellij.protobuf.lang.psi.util.PbPsiUtil;
+import com.intellij.psi.*;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -95,17 +95,11 @@ public class PbJavaFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
     // non-specialized members could live in a base class for the sake of smaller code size.
     private static final boolean CHECK_BASES = false;
 
-    private final NotNullLazyValue<List<NameGenerator>> nameGenerators =
-        new NotNullLazyValue<List<NameGenerator>>() {
-          @NotNull
-          @Override
-          protected List<NameGenerator> compute() {
-            return NameGeneratorSelector.selectForFile(file);
-          }
-        };
+    private final NotNullLazyValue<List<JavaNameGenerator>> nameGenerators;
 
     ProtoToJavaConverter(PbFile file) {
       this.file = file;
+      this.nameGenerators = NotNullLazyValue.createValue(() -> NameGeneratorSelector.selectForFile(file));
     }
 
     private void setResults(Collection<? extends PsiElement> javaElements) {
@@ -163,12 +157,12 @@ public class PbJavaFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
       javaElements.addAll(oneofEnums);
       // Get the not-set enum value.
       javaElements.addAll(
-          protoToEnumConstants(oneof, NameGenerator::oneofNotSetEnumValueName, oneofEnums));
+          protoToEnumConstants(oneof, JavaNameGenerator::oneofNotSetEnumValueName, oneofEnums));
       setResults(javaElements);
     }
 
     private Collection<PsiClass> messageTypeClasses(PbMessageType messageType) {
-      return protoToClasses(messageType, NameGenerator::messageClassNames, (cls) -> !cls.isEnum());
+      return protoToClasses(messageType, JavaNameGenerator::messageClassNames, (cls) -> !cls.isEnum());
     }
 
     private Collection<PsiClass> enumDefinitionClasses(PbEnumDefinition enumDefinition) {
@@ -193,12 +187,12 @@ public class PbJavaFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
 
     private <ProtoT extends PbNamedElement> Collection<PsiClass> protoToClasses(
         ProtoT protoNamedType,
-        BiFunction<NameGenerator, ProtoT, Set<String>> toClassNames,
+        BiFunction<JavaNameGenerator, ProtoT, Set<String>> toClassNames,
         Predicate<PsiClass> classPredicate) {
       List<PsiClass> javaElements = new ArrayList<>();
       JavaPsiFacade javaPsiFacade = JavaPsiFacade.getInstance(file.getProject());
       GlobalSearchScope scope = getScope(file);
-      for (NameGenerator generator : nameGenerators.getValue()) {
+      for (JavaNameGenerator generator : nameGenerators.getValue()) {
         Set<String> classNames = toClassNames.apply(generator, protoNamedType);
         for (String className : classNames) {
           PsiClass[] classes = javaPsiFacade.findClasses(className, scope);
@@ -209,15 +203,15 @@ public class PbJavaFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
     }
 
     private Collection<PsiMember> fieldMembers(PbField field) {
-      return protoToMembers(field, NameGenerator::fieldMemberNames);
+      return protoToMembers(field, JavaNameGenerator::fieldMemberNames);
     }
 
     private Collection<PsiMember> oneofMessageMembers(PbOneofDefinition oneof) {
-      return protoToMembers(oneof, NameGenerator::oneofMemberNames);
+      return protoToMembers(oneof, JavaNameGenerator::oneofMemberNames);
     }
 
     private <ProtoT extends PbNamedElement> Collection<PsiMember> protoToMembers(
-        ProtoT protoElement, BiFunction<NameGenerator, ProtoT, Set<String>> toMemberNames) {
+        ProtoT protoElement, BiFunction<JavaNameGenerator, ProtoT, Set<String>> toMemberNames) {
       PbSymbolOwner owner = protoElement.getSymbolOwner();
       if (!PbPsiUtil.isMessageElement(owner)) {
         return Collections.emptyList();
@@ -228,7 +222,7 @@ public class PbJavaFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
         return Collections.emptyList();
       }
       List<PsiMember> javaElements = new ArrayList<>();
-      for (NameGenerator generator : nameGenerators.getValue()) {
+      for (JavaNameGenerator generator : nameGenerators.getValue()) {
         Collection<String> fieldMembers = toMemberNames.apply(generator, protoElement);
         for (PsiClass psiClass : parentClasses) {
           for (String qualifiedMember : fieldMembers) {
@@ -269,20 +263,20 @@ public class PbJavaFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
       if (enumParents.isEmpty()) {
         return Collections.emptyList();
       }
-      return protoToEnumConstants(enumValue, NameGenerator::enumValueName, enumParents);
+      return protoToEnumConstants(enumValue, JavaNameGenerator::enumValueName, enumParents);
     }
 
     private Collection<PsiField> oneofFieldEnumConstants(
         PbField oneofField, Collection<PsiClass> enumParents) {
-      return new ArrayList<>(protoToEnumConstants(oneofField, NameGenerator::oneofEnumValueName, enumParents));
+      return new ArrayList<>(protoToEnumConstants(oneofField, JavaNameGenerator::oneofEnumValueName, enumParents));
     }
 
     private <ProtoT extends PbNamedElement> Collection<PsiField> protoToEnumConstants(
         ProtoT protoElement,
-        BiFunction<NameGenerator, ProtoT, String> toEnumName,
+        BiFunction<JavaNameGenerator, ProtoT, String> toEnumName,
         Collection<PsiClass> enumParents) {
       List<PsiField> javaElements = new ArrayList<>();
-      for (NameGenerator generator : nameGenerators.getValue()) {
+      for (JavaNameGenerator generator : nameGenerators.getValue()) {
         String enumValueName = toEnumName.apply(generator, protoElement);
         if (enumValueName == null) {
           continue;

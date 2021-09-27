@@ -15,9 +15,9 @@
  */
 package com.intellij.protobuf.jvm.names;
 
-import com.intellij.psi.PsiClass;
 import com.intellij.protobuf.jvm.PbJavaGotoDeclarationContext;
 import com.intellij.protobuf.lang.psi.*;
+import com.intellij.psi.PsiClass;
 
 import java.util.Objects;
 
@@ -28,9 +28,9 @@ class Proto2NameMatcher implements NameMatcher {
 
   private final String fullyQualifiedClassName;
   private final String elementName;
-  private final NameGenerator generator;
+  private final JavaNameGenerator generator;
 
-  Proto2NameMatcher(PbJavaGotoDeclarationContext context, NameGenerator generator) {
+  Proto2NameMatcher(PbJavaGotoDeclarationContext context, JavaNameGenerator generator) {
     PsiClass normalizedContextClass = normalizeClassContext(context.javaClass);
     String elementName = context.resolvedElement.getName();
     if (normalizedContextClass != context.javaClass) {

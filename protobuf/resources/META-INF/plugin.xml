@@ -43,6 +43,10 @@
                     area="IDEA_PROJECT"
                     dynamic="true"
     />
+    <extensionPoint qualifiedName="com.intellij.protobuf.nameGeneratorContributor"
+                    interface="com.intellij.protobuf.lang.names.NameGeneratorContributor"
+                    dynamic="true"
+    />
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij.protobuf">

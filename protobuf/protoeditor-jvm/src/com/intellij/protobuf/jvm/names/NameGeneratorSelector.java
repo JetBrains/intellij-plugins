@@ -15,28 +15,34 @@
  */
 package com.intellij.protobuf.jvm.names;
 
-import com.intellij.openapi.util.Ref;
-import com.intellij.protobuf.lang.psi.*;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.google.common.collect.ImmutableList;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.protobuf.lang.names.NameGeneratorContributor;
+import com.intellij.protobuf.lang.names.NameGeneratorUtils;
+import com.intellij.protobuf.lang.psi.PbFile;
+import com.intellij.protobuf.lang.psi.PbOptionExpression;
 
 /**
- * Given a proto file, determines which {@link NameGenerator}s are most appropriate. This is based
+ * Given a proto file, determines which {@link JavaNameGenerator}s are most appropriate. This is based
  * on checking the file-level options.
  */
 public class NameGeneratorSelector {
+  private static final Logger log = Logger.getInstance(NameGeneratorSelector.class);
 
-  /** Return the list of generators that are most appropriate to the given file. */
-  public static List<NameGenerator> selectForFile(PbFile file) {
+  private NameGeneratorSelector() {}
+
+  /** Base options for protobufs. */
+  private static class Options {
     // See the descriptor.proto for option defaults.
-    Ref<Integer> javaApiVersion = Ref.create(2);
-    Ref<String> javaPackage = Ref.create();
-    Ref<String> javaOuterClassname = Ref.create();
-    Ref<Boolean> javaMultipleFiles = Ref.create(false);
-    Ref<Boolean> javaMutableApi = Ref.create(false);
-    Ref<String> javaMultipleFilesMutablePackage = Ref.create();
-    List<NameGenerator> generators = new ArrayList<>();
+    public String javaPackage;
+    public String javaOuterClassname;
+    public boolean javaMultipleFiles = false;
+  }
+
+  private static Options parseOptions(PbFile file) {
+    Options options = new Options();
+    options.javaPackage = file.getPackageQualifiedName().toString();
+    options.javaOuterClassname = Proto2DefinitionClassNames.getDefaultOuterClassName(file);
     for (PbOptionExpression optionExpression : file.getOptions()) {
       // TODO(jvoung): This isn't strictly correct way to match options by name.
       // E.g. another way to set java_package is:
@@ -45,74 +51,41 @@ public class NameGeneratorSelector {
       String optionName = optionExpression.getOptionName().getText();
       switch (optionName) {
         case "java_package":
-          parseStringOption(optionExpression, javaPackage);
+          NameGeneratorUtils.parseStringOption(optionExpression)
+            .ifPresent(s -> options.javaPackage = s);
           break;
         case "java_outer_classname":
-          parseStringOption(optionExpression, javaOuterClassname);
+          NameGeneratorUtils.parseStringOption(optionExpression)
+            .ifPresent(s -> options.javaOuterClassname = s);
           break;
         case "java_multiple_files":
-          parseBoolOption(optionExpression, javaMultipleFiles);
+          NameGeneratorUtils.parseBoolOption(optionExpression)
+            .ifPresent(b -> options.javaMultipleFiles = b);
           break;
         default:
-          // Other options are irrelevant.
       }
     }
+    return options;
+  }
 
-    // TODO(jvoung): Do we need to generate both api v2 mutable and api v1 sometimes (for bridging)?
-    if (javaApiVersion.get() == 1) {
-      generators.add(new Proto1NameGenerator(file, javaPackage.get()));
-    } else if (javaApiVersion.get() == 2) {
-      if (javaOuterClassname.isNull()) {
-        javaOuterClassname.set(Proto2DefinitionClassNames.getDefaultOuterClassName(file));
-      }
-      if (javaMutableApi.get()) {
-        if (javaMultipleFilesMutablePackage.isNull()) {
-          javaMultipleFilesMutablePackage.set("");
-        }
-        generators.add(
-            new Proto2MutableNameGenerator(
-                file,
-                javaPackage.get(),
-                javaMultipleFilesMutablePackage.get(),
-                javaOuterClassname.get(),
-                javaMultipleFiles.get()));
-      } else {
-        generators.add(
-            new Proto2NameGenerator(
-                file, javaPackage.get(), javaOuterClassname.get(), javaMultipleFiles.get()));
+  private static ImmutableList<JavaNameGenerator> contributeDefaultGenerators(PbFile file) {
+    Options options = parseOptions(file);
+    return ImmutableList.of(
+      new Proto2NameGenerator(
+        file, options.javaPackage, options.javaOuterClassname, options.javaMultipleFiles));
+  }
+
+  /** Return the list of generators that are most appropriate to the given file. */
+  public static ImmutableList<JavaNameGenerator> selectForFile(PbFile file) {
+    for (NameGeneratorContributor contributor : NameGeneratorContributor.EP_NAME.getExtensions()) {
+      if (contributor.isApplicable(file)) {
+        log.info(
+          "NameSelector using "
+          + contributor.getClass().getName()
+          + " for protobuf name generators");
+        return contributor.contributeGenerators(file, JavaNameGenerator.class);
       }
     }
-
-    return generators;
-  }
-
-  private static void parseIntOption(PbOptionExpression optionExpression, Ref<Integer> outValue) {
-    PbNumberValue numberValue = optionExpression.getNumberValue();
-    if (numberValue == null) {
-      return;
-    }
-    if (numberValue.getLongValue() != null) {
-      outValue.set(numberValue.getLongValue().intValue());
-    }
-  }
-
-  private static void parseStringOption(PbOptionExpression optionExpression, Ref<String> outValue) {
-    PbStringValue stringValue = optionExpression.getStringValue();
-    if (stringValue == null) {
-      return;
-    }
-    outValue.set(stringValue.getAsString());
-  }
-
-  private static void parseBoolOption(PbOptionExpression optionExpression, Ref<Boolean> outValue) {
-    PbIdentifierValue boolAsIdentifier = optionExpression.getIdentifierValue();
-    if (boolAsIdentifier == null) {
-      return;
-    }
-    Boolean value = boolAsIdentifier.getBooleanValue();
-    if (value == null) {
-      return;
-    }
-    outValue.set(value);
+    return contributeDefaultGenerators(file);
   }
 }
