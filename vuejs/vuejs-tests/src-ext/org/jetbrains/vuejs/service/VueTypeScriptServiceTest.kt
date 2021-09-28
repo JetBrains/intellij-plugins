@@ -9,9 +9,15 @@ import com.intellij.lang.javascript.service.JSLanguageServiceBase
 import com.intellij.lang.javascript.service.JSLanguageServiceProvider
 import com.intellij.lang.javascript.typescript.service.TypeScriptServiceTestBase
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
+import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.actionSystem.CommonDataKeys.*
+import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.refactoring.actions.RenameElementAction
+import com.intellij.refactoring.rename.PsiElementRenameHandler.DEFAULT_NAME
 import com.intellij.testFramework.JUnit38AssumeSupportRunner
+import com.intellij.testFramework.TestActionEvent
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.ui.UIUtil
 import junit.framework.TestCase
@@ -149,6 +155,35 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
     myFixture.checkHighlighting()
   }
 
+  @TypeScriptVersion(TypeScriptVersions.TS26)
+  fun testFileRename() {
+    myFixture.configureVueDependencies(VueTestModule.VUE_3_0_0)
+    myFixture.configureByFile("tsconfig.json")
+    myFixture.configureByText("bar.vue", "<script>foo</script>")
+    myFixture.configureByText("foo.vue", "<script lang='ts'>import * from 'bar.vue'</script>")
+    myFixture.configureByText("test.vue", "<script lang='ts'><error descr=\"TS2304: Cannot find name 'foo'.\">foo</error></script>")
+    myFixture.checkHighlighting()
+
+    //do the renaming
+    val action = RenameElementAction()
+    val e = TestActionEvent({ name ->
+      when (name) {
+        DEFAULT_NAME.name -> "newTest.vue"
+        PSI_ELEMENT.name -> myFixture.file
+        PROJECT.name -> myFixture.project
+        else -> null
+      }
+    }, action)
+    TestCase.assertTrue(ActionUtil.lastUpdateAndCheckDumb(action, e, true))
+    ActionUtil.performActionDumbAwareWithCallbacks(action, e)
+    TestCase.assertEquals("newTest.vue", myFixture.file.name)
+    WriteAction.runAndWait<Throwable> {
+      // We must set contents again, as previous call to `myFixture.checkHighlighting()` removed all markers.
+      myFixture.getDocument(myFixture.file).setText("<script lang='ts'><error descr=\"TS2304: Cannot find name 'bar'.\">bar</error></script>")
+    }
+    myFixture.checkHighlighting()
+  }
+
   @TypeScriptVersion(TypeScriptVersions.TS36)
   fun testScriptSetupImportResolveBothScripts() {
     myFixture.enableInspections(VueInspectionsProvider())
@@ -223,8 +258,8 @@ class VueTypeScriptServiceTest : TypeScriptServiceTestBase() {
     // However, if they are compiled we can ensure that there are no results for Vue files.
     if (files.contains("test.js.map")) {
       TestCase.assertEquals(listOf("NoVueCompileOnSave.vue", "NoVueCompileOnSaveClear.vue",
-                                   "shims-vue.d.ts", "test.d.ts", "test.js", "test.js.map", "test.ts", "tsconfig.json"),
-                            files)
+        "shims-vue.d.ts", "test.d.ts", "test.js", "test.js.map", "test.ts", "tsconfig.json"),
+        files)
     }
   }
 

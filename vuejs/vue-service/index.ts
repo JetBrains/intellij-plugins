@@ -2,14 +2,14 @@
 import * as ts from "typescript/lib/tsserverlibrary";
 import {VueScriptCache} from "./vueScriptCache"
 
-let patched = false;
+let ts_impl_patched = false;
 
 module.exports = function init(
   {typescript: ts_impl}: { typescript: typeof ts },
 ) {
   const ts_4_3_plus = Number.parseFloat(ts_impl.versionMajorMinor) >= 4.3
-  if (!patched) {
-    patched = true
+  if (!ts_impl_patched) {
+    ts_impl_patched = true
 
     // Don't output compilation results of `.vue` files. The DefaultSessionExtension#getFileWrite should actually be patched
     // to not populate the output list
@@ -169,25 +169,29 @@ module.exports = function init(
       tsLsHost.resolveModuleNames = (moduleNames: any, containingFile: any, _reusedNames: any, redirectedReference: any) =>
         ((<any>ts_impl).loadWithLocalCache || myLoadWithLocalCache)(moduleNames, containingFile, redirectedReference, loader);
 
-      // Strip non-TS content from the script
-      const _getScriptSnapshot = tsLsHost.getScriptSnapshot;
-      const vueScriptCache = new VueScriptCache(ts_impl,
-        fileName => _getScriptSnapshot.call(tsLsHost, fileName),
-        fileName => tsLsHost.getScriptVersion(fileName))
-      tsLsHost.getScriptSnapshot = function (fileName): ts.IScriptSnapshot {
-        if (fileName.endsWith(".vue")) {
-          return vueScriptCache.getScriptSnapshot(fileName)
+      // Avoid double-patching
+      if (!(tsLsHost as any)["__getScriptSnapshot__patched"]) {
+        (tsLsHost as any)["__getScriptSnapshot__patched"] = true
+        // Strip non-TS content from the script
+        const _getScriptSnapshot = tsLsHost.getScriptSnapshot;
+        const vueScriptCache = new VueScriptCache(ts_impl,
+          fileName => _getScriptSnapshot.call(tsLsHost, fileName),
+          fileName => tsLsHost.getScriptVersion(fileName))
+        tsLsHost.getScriptSnapshot = function (fileName): ts.IScriptSnapshot {
+          if (fileName.endsWith(".vue")) {
+            return vueScriptCache.getScriptSnapshot(fileName)
+          }
+          return _getScriptSnapshot.call(this, fileName);
         }
-        return _getScriptSnapshot.call(this, fileName);
-      }
 
-      // Provide script kind based on `lang` attribute
-      const _getScriptKind = tsLsHost.getScriptKind
-      tsLsHost.getScriptKind = function (fileName): ts.ScriptKind {
-        if (fileName.endsWith(".vue")) {
-          return vueScriptCache.getScriptKind(fileName)
+        // Provide script kind based on `lang` attribute
+        const _getScriptKind = tsLsHost.getScriptKind
+        tsLsHost.getScriptKind = function (fileName): ts.ScriptKind {
+          if (fileName.endsWith(".vue")) {
+            return vueScriptCache.getScriptKind(fileName)
+          }
+          return _getScriptKind.call(this, fileName)
         }
-        return _getScriptKind.call(this, fileName)
       }
 
       return tsLs;
