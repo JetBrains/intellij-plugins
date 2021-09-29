@@ -19,7 +19,6 @@ import com.intellij.ide.IdeBundle;
 import com.intellij.notification.impl.NotificationsConfigurationImpl;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.progress.PerformInBackgroundOption;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -124,11 +123,6 @@ public final class PerforceVcs extends AbstractVcs {
   @Override
   public String getShortNameWithMnemonic() {
     return PerforceBundle.message("perforce.name.with.mnemonic");
-  }
-
-  @Override
-  public Configurable getConfigurable() {
-    return null;
   }
 
   @Nullable
