@@ -1,7 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight.attributes
 
-import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
@@ -10,16 +9,16 @@ import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ArrayUtil
 import com.intellij.xml.impl.BasicXmlAttributeDescriptor
+import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.VuejsIcons
-import org.jetbrains.vuejs.codeInsight.BOOLEAN_TYPE
-import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeInfo
 import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
-import org.jetbrains.vuejs.model.VueInputProperty
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.VueModelVisitor.Proximity.*
 import javax.swing.Icon
 
+@Deprecated(message = "This class is no longer used. Instead Vue support depends on web symbol API and WebSymbolAttributeDescriptor")
+@ApiStatus.ScheduledForRemoval(inVersion = "2022.1")
 open class VueAttributeDescriptor(protected val tag: XmlTag,
                                   private val name: String,
                                   internal val element: PsiElement? = null,
@@ -30,18 +29,7 @@ open class VueAttributeDescriptor(protected val tag: XmlTag,
                                   isRequired: Boolean = false)
   : BasicXmlAttributeDescriptor(), PsiPresentableMetaData {
 
-  constructor(tag: XmlTag, name: String, prop: VueInputProperty) : this(
-    tag, name, prop.source, listOf(prop),
-    isRequired = prop.required,
-    acceptsNoValue = isBooleanProp(prop),
-    priority = AttributePriority.HIGH)
-
   private val _isRequired: Boolean = isRequired
-  private val info: NotNullLazyValue<VueAttributeInfo> = NotNullLazyValue.createValue {
-    VueAttributeNameParser.parse(getName(), tag)
-  }
-
-  fun getInfo(): VueAttributeInfo = info.value
 
   fun getSources(): List<VueDocumentedItem> = sources.toList()
 
@@ -86,12 +74,6 @@ open class VueAttributeDescriptor(protected val tag: XmlTag,
 
   override fun getTypeName(): String? = null
   override fun getIcon(): Icon = VuejsIcons.Vue
-
-  companion object {
-    private fun isBooleanProp(prop: VueInputProperty): Boolean {
-      return prop.jsType?.isDirectlyAssignableType(BOOLEAN_TYPE, null) ?: false
-    }
-  }
 
   enum class AttributePriority(val value: Double) {
     NONE(0.0),
