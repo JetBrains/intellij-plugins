@@ -1,4 +1,4 @@
-f(bool expr) {
+f() {
   switch (expr) {
     <spot></spot>
   }
