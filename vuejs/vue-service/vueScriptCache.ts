@@ -13,11 +13,11 @@ export class VueScriptCache {
   }
 
   getScriptKind(fileName: string): ts.ScriptKind {
-    return this.getUpToDateInfo(fileName).kind
+    return this.getUpToDateInfo(fileName)?.kind
   }
 
   getScriptSnapshot(fileName: string): ts.IScriptSnapshot {
-    return this.getUpToDateInfo(fileName).snapshot
+    return this.getUpToDateInfo(fileName)?.snapshot
   }
 
   private getUpToDateInfo(fileName: string): { snapshot: ts.IScriptSnapshot, kind: ts.ScriptKind } {
@@ -30,7 +30,7 @@ export class VueScriptCache {
       }
     }
     const snapshot = this.getHostScriptSnapshot(fileName)
-    if (snapshot == undefined) return undefined
+    if (snapshot === undefined || snapshot === null) return undefined
     const result = this.parseVue(snapshot.getText(0, snapshot.getLength()))
     this.cache.set(fileName, {...result, version: currentVersion})
     return result
