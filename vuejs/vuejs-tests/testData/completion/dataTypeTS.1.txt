@@ -1,4 +1,4 @@
 addItemToList#void
-msg#Number
+msg#number
 tasks#string[]
 userInput#string

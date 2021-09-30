@@ -1,4 +1,4 @@
-:foo#String
+:foo#string
 v-bind:#null
 v-model:#null
 v-on:#null

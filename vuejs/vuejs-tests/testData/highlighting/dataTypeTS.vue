@@ -1,5 +1,5 @@
 <template>
-    <div @click="this.userInput = <weak_warning descr="Assigned expression type Number is not assignable to type string">this.msg</weak_warning>"></div>
+    <div @click="this.userInput = <weak_warning descr="Assigned expression type number is not assignable to type string">this.msg</weak_warning>"></div>
 </template>
 
 <script lang="ts">
