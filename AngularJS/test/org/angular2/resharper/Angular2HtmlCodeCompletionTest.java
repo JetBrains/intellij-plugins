@@ -53,7 +53,7 @@ public class Angular2HtmlCodeCompletionTest extends Angular2ReSharperCompletionT
   protected boolean shouldSkipItem(@NotNull LookupElement element) {
     if (HIGH_PRIORITY_ONLY.contains(getName())) {
       return !(element instanceof PrioritizedLookupElement)
-             || ((PrioritizedLookupElement)element).getPriority() < Angular2AttributeDescriptor.AttributePriority.HIGH.getValue();
+             || ((PrioritizedLookupElement<?>)element).getPriority() < Angular2AttributeDescriptor.AttributePriority.HIGH.getValue();
     }
     if (IGNORED_ELEMENT_ATTRS.contains(element.getLookupString())
         || element.getLookupString().contains("aria-")) {

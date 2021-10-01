@@ -130,7 +130,7 @@ public final class Angular2DecoratorUtil {
   public static @Nullable JSObjectLiteralExpression getObjectLiteralInitializer(@Nullable ES6Decorator decorator) {
     for (PsiElement child : getStubChildrenOfTypeAsList(decorator, PsiElement.class)) {
       if (child instanceof JSCallExpression) {
-        StubElement<?> callStub = child instanceof StubBasedPsiElement ? ((StubBasedPsiElement)child).getStub() : null;
+        StubElement<?> callStub = child instanceof StubBasedPsiElement ? ((StubBasedPsiElement<?>)child).getStub() : null;
         if (callStub != null) {
           for (StubElement callChildStub : callStub.getChildrenStubs()) {
             PsiElement callChild = callChildStub.getPsi();

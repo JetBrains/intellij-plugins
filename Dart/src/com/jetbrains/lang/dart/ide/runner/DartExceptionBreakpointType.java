@@ -89,7 +89,7 @@ public class DartExceptionBreakpointType
       final boolean newValue = myBreakOnAllExceptions.isSelected();
       if (oldValue != newValue) {
         breakpoint.getProperties().setBreakOnAllExceptions(newValue);
-        ((XBreakpointBase)breakpoint).fireBreakpointChanged();
+        ((XBreakpointBase<?, ?, ?>)breakpoint).fireBreakpointChanged();
       }
     }
 

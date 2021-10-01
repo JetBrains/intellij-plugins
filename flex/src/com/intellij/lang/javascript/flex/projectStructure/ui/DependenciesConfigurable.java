@@ -651,7 +651,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-      final Object tableItem = ((EditableTreeTable)table).getItemAt(row);
+      final Object tableItem = ((EditableTreeTable<?>)table).getItemAt(row);
       if (tableItem instanceof MyTableItem && ((MyTableItem)tableItem).isLinkageEditable()) {
         myComboBoxTableRenderer.setFont(table.getFont());
         return myComboBoxTableRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);

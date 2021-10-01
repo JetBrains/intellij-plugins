@@ -57,8 +57,8 @@ public class BCCombo extends JComboBox {
       @Override
       protected void customizeCellRenderer(@NotNull JList list, Object value, int index, boolean selected, boolean hasFocus) {
         if (value instanceof Pair) {
-          final String moduleName = (String)((Pair)value).first;
-          final String configName = (String)((Pair)value).second;
+          final String moduleName = (String)((Pair<?, ?>)value).first;
+          final String configName = (String)((Pair<?, ?>)value).second;
           //setIcon(PlatformIcons.ERROR_INTRODUCTION_ICON);
           if (moduleName.isEmpty() || configName.isEmpty()) {
             append("[none]", SimpleTextAttributes.ERROR_ATTRIBUTES);
@@ -113,8 +113,8 @@ public class BCCombo extends JComboBox {
     final Object selectedItem = getSelectedItem();
 
     if (selectedItem instanceof Pair) {
-      params.setModuleName((String)((Pair)selectedItem).first);
-      params.setBCName((String)((Pair)selectedItem).second);
+      params.setModuleName((String)((Pair<?, ?>)selectedItem).first);
+      params.setBCName((String)((Pair<?, ?>)selectedItem).second);
     }
     else {
       assert selectedItem instanceof FlexBuildConfiguration : selectedItem;

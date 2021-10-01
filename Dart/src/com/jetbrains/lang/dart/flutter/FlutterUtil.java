@@ -72,7 +72,7 @@ public final class FlutterUtil {
       final Object flutterEntry = yaml.get("dependencies");
       //noinspection SimplifiableIfStatement
       if (flutterEntry instanceof Map) {
-        return ((Map)flutterEntry).containsKey("flutter");
+        return ((Map<?, ?>)flutterEntry).containsKey("flutter");
       }
 
       return false;

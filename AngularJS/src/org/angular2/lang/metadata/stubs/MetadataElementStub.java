@@ -65,8 +65,8 @@ public abstract class MetadataElementStub<Psi extends MetadataElement> extends S
   private int myFlags;
   private final NotNullLazyValue<Map<String, MetadataElementStub>> membersMap = NotNullLazyValue.lazy(() -> {
     return getChildrenStubs().stream()
-      .filter(stub -> ((MetadataElementStub)stub).getMemberName() != null)
-      .collect(Collectors.toMap(stub -> ((MetadataElementStub)stub).getMemberName(),
+      .filter(stub -> ((MetadataElementStub<?>)stub).getMemberName() != null)
+      .collect(Collectors.toMap(stub -> ((MetadataElementStub<?>)stub).getMemberName(),
                                 stub -> (MetadataElementStub)stub,
                                 (a, b) -> a));
   });

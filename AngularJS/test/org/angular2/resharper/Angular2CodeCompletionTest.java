@@ -39,7 +39,7 @@ public class Angular2CodeCompletionTest extends Angular2ReSharperCompletionTestB
     }
     if (HIGH_PRIORITY_ONLY.contains(getName())) {
       return !(element instanceof PrioritizedLookupElement)
-             || ((PrioritizedLookupElement)element).getPriority() < Angular2AttributeDescriptor.AttributePriority.HIGH.getValue();
+             || ((PrioritizedLookupElement<?>)element).getPriority() < Angular2AttributeDescriptor.AttributePriority.HIGH.getValue();
     }
     if (CAMEL_CASE_MATCH_ONLY.contains(getName())) {
       PsiElement el = myFixture.getFile().findElementAt(myFixture.getCaretOffset() - 1);

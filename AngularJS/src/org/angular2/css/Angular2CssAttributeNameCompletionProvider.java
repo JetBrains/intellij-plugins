@@ -77,14 +77,14 @@ public class Angular2CssAttributeNameCompletionProvider extends CompletionProvid
                                               @NotNull HtmlCssClassOrIdReference reference) {
     reference.addCompletions(parameters, result.getPrefixMatcher(), element -> {
       if (element instanceof PrioritizedLookupElement) {
-        LookupElementBuilder builder = ObjectUtils.tryCast(((PrioritizedLookupElement)element).getDelegate(),
+        LookupElementBuilder builder = ObjectUtils.tryCast(((PrioritizedLookupElement<?>)element).getDelegate(),
                                                            LookupElementBuilder.class);
         if (builder != null) {
           Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(
             parameters.getPosition().getText());
           element = PrioritizedLookupElement.withPriority(
             builder.withInsertHandler(new Angular2AttributeInsertHandler(true, () -> true, info.isCanonical ? "" : "]")),
-            ((PrioritizedLookupElement)element).getPriority());
+            ((PrioritizedLookupElement<?>)element).getPriority());
         }
       }
       result.addElement(element);

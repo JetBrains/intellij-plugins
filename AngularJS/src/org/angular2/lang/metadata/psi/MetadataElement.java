@@ -37,10 +37,10 @@ public abstract class MetadataElement<Stub extends MetadataElementStub<?>> exten
     if (stub == null) {
       throw new PsiInvalidElementAccessException(this);
     }
-    PsiFile result = ((PsiFileStubImpl)stub).getPsi();
+    PsiFile result = ((PsiFileStubImpl<?>)stub).getPsi();
     if (result == null) {
       throw new PsiInvalidElementAccessException(
-        this, "Metadata file psi has been cleared: " + ((PsiFileStubImpl)stub).getInvalidationReason());
+        this, "Metadata file psi has been cleared: " + ((PsiFileStubImpl<?>)stub).getInvalidationReason());
     }
     return result;
   }

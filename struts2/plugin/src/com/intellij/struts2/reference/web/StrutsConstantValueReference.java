@@ -62,7 +62,7 @@ class StrutsConstantValueReference extends PsiReferenceBase<XmlTag> implements E
 
     // additional variants (String only)
     if (converter instanceof ResolvingConverter) {
-      final Set additionalVariants = ((ResolvingConverter) converter).getAdditionalVariants(convertContext);
+      final Set additionalVariants = ((ResolvingConverter<?>) converter).getAdditionalVariants(convertContext);
       if (additionalVariants.contains(getValue())) {
         return myElement;
       }

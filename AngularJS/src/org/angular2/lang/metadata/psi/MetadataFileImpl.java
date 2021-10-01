@@ -105,7 +105,7 @@ public class MetadataFileImpl extends PsiBinaryFileImpl implements PsiFileWithSt
       myStub = null;
       if (stubTree != null) {
         //noinspection HardCodedStringLiteral
-        ((PsiFileStubImpl)stubTree.getRoot()).clearPsi("metadata onContentReload");
+        ((PsiFileStubImpl<?>)stubTree.getRoot()).clearPsi("metadata onContentReload");
       }
     }
   }

@@ -109,7 +109,7 @@ public final class PubspecYamlUtil {
 
       final Object packageEntryValue = packageEntry.getValue();
       if (packageEntryValue instanceof Map) {
-        final Object pathObj = ((Map)packageEntryValue).get(PATH);
+        final Object pathObj = ((Map<?, ?>)packageEntryValue).get(PATH);
         if (pathObj instanceof String) {
           final VirtualFile packageFolder = VfsUtilCore.findRelativeFile(pathObj + "/" + LIB_DIR_NAME, baseDir);
           if (packageFolder != null &&

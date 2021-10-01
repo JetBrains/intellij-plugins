@@ -63,13 +63,13 @@ public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAwa
           if (structureViewChild instanceof JSStructureViewElement) {
             PsiElement childElement = ((JSStructureViewElement)structureViewChild).getValue();
             if (childElement != null) {
-              result.add(new FlexClassMemberNode((JSElement)childElement, ((ProjectViewNode)parent).getSettings()));
+              result.add(new FlexClassMemberNode((JSElement)childElement, ((ProjectViewNode<?>)parent).getSettings()));
             }
           }
           else {
             Object value = structureViewChild.getValue();
             if (value != null) {
-              result.add(new UnknownNode(psiParent.getProject(), structureViewChild, value, ((ProjectViewNode)parent).getSettings()));
+              result.add(new UnknownNode(psiParent.getProject(), structureViewChild, value, ((ProjectViewNode<?>)parent).getSettings()));
             }
           }
         }
@@ -80,7 +80,7 @@ public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAwa
         Object o = child.getValue();
         if (o instanceof JSFileImpl && !(o instanceof PsiCompiledFile) && DialectDetector.isActionScript((PsiFile)o) ||
             o instanceof XmlFile && JavaScriptSupportLoader.isFlexMxmFile((PsiFile)o)) {
-          result.add(new FlexFileNode((PsiFile)o, ((ProjectViewNode)parent).getSettings()));
+          result.add(new FlexFileNode((PsiFile)o, ((ProjectViewNode<?>)parent).getSettings()));
           continue;
         }
         result.add(child);

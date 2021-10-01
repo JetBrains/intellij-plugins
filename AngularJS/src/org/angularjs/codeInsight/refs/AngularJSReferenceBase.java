@@ -45,7 +45,7 @@ public abstract class AngularJSReferenceBase<T extends PsiElement> extends PsiRe
 
     @Override
     public @Nullable PsiElement resolve(@NotNull PsiReference ref, boolean incompleteCode) {
-      return ((AngularJSReferenceBase)ref).resolveInner();
+      return ((AngularJSReferenceBase<?>)ref).resolveInner();
     }
   }
 }

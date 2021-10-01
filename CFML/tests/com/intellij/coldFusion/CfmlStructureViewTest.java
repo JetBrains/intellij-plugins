@@ -115,7 +115,7 @@ public class CfmlStructureViewTest extends CfmlCodeInsightFixtureTestCase {
   }
 
   private String getText(final Object item) {
-    final Object value = ((AbstractTreeNode)item).getValue();
+    final Object value = ((AbstractTreeNode<?>)item).getValue();
     if (value instanceof TreeElement) return ((TreeElement)value).getPresentation().getPresentableText();
     if (value instanceof Group) return ((Group)value).getPresentation().getPresentableText();
     Assert.fail("Unexpected tree node type: " + item);
