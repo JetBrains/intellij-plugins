@@ -1,6 +1,5 @@
 package org.jetbrains.idea.perforce
 
-import com.intellij.idea.Bombed
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.vcs.VcsConfiguration
 import com.intellij.openapi.vcs.VcsShowConfirmationOption
@@ -25,6 +24,7 @@ class PerforceAuthenticationTest extends PerforceTestCase {
   @Override
   void before() throws Exception {
     super.before()
+    unsetUseP4Config()
   }
 
   @Test
@@ -55,7 +55,6 @@ class PerforceAuthenticationTest extends PerforceTestCase {
   }
 
   @Test
-  @Bombed(year = 2021, month = Calendar.AUGUST, day = 20, user = "AMPivovarov")
   void "test separate connections for different p4config files"() {
     def dir1 = createDirInCommand(myWorkingCopyDir, "dir1")
     def dir2 = createDirInCommand(myWorkingCopyDir, "dir2")
@@ -73,7 +72,6 @@ class PerforceAuthenticationTest extends PerforceTestCase {
   }
   
   @Test
-  @Bombed(year = 2021, month = Calendar.AUGUST, day = 20, user = "AMPivovarov")
   void "test use default p4config file name when no P4CONFIG env variable is defined"() {
     assert !P4ConfigHelper.hasP4ConfigSettingInEnvironment()
     setStandardConfirmation("Perforce", VcsConfiguration.StandardConfirmation.ADD, VcsShowConfirmationOption.Value.DO_ACTION_SILENTLY)

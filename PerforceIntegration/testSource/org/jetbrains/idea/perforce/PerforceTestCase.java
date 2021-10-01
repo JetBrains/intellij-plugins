@@ -60,6 +60,7 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
   private static final Logger LOG = Logger.getInstance(PerforceTestCase.class);
 
   protected static final String TEST_P4CONFIG = "testP4config";
+  protected static final String DEFAULT_P4CONFIG = ".p4config";
   protected static final String P4_IGNORE_NAME = ".p4ignore";
   private static final int ourP4portInt = 5666;
   protected static final String ourP4port = String.valueOf(ourP4portInt);
@@ -68,6 +69,7 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
   protected TempDirTestFixture myTempDirFixture;
   protected File myClientRoot;
   protected File myP4IgnoreFile;
+  protected File myP4ConfigFile;
   protected final Disposable myTestRootDisposable = Disposer.newDisposable();
   private static boolean ourP4StartupFailure;
 
@@ -87,6 +89,7 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
     myClientRoot = createSubDirectory(tempDir, "clientRoot");
     setupP4Ignore();
     launchP4Server(tempDir, myClientBinaryPath);
+    setupP4Config();
 
     try {
       initProject(myClientRoot);
@@ -133,11 +136,20 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
 
   private void setupP4Ignore() throws IOException {
     myP4IgnoreFile = new File(myClientRoot, P4_IGNORE_NAME);
-    FileUtil.writeToFile(myP4IgnoreFile, P4_IGNORE_NAME);
+    FileUtil.writeToFile(myP4IgnoreFile, createP4Ignore());
     AbstractP4Connection.setTestEnvironment(ContainerUtil.newHashMap(
       Pair.create(P4ConfigFields.P4IGNORE.name(), myP4IgnoreFile.getAbsolutePath())
     ), myTestRootDisposable);
     VfsUtil.markDirtyAndRefresh(false, false, false, VfsUtil.findFileByIoFile(myP4IgnoreFile, true));
+  }
+
+  private void setupP4Config() throws IOException {
+    myP4ConfigFile = new File(myClientRoot, DEFAULT_P4CONFIG);
+    FileUtil.writeToFile(myP4ConfigFile, createP4Config("test"));
+    AbstractP4Connection.setTestEnvironment(ContainerUtil.newHashMap(
+      Pair.create(P4ConfigFields.P4CONFIG.name(), DEFAULT_P4CONFIG)
+    ), myTestRootDisposable);
+    VfsUtil.markDirtyAndRefresh(false, false, false, VfsUtil.findFileByIoFile(myP4ConfigFile, true));
   }
 
   protected void setupWorkspace() {
@@ -343,6 +355,10 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
            "P4PORT=localhost:" + ourP4port + System.lineSeparator();
   }
 
+  protected void unsetUseP4Config() {
+    AbstractP4Connection.getTestEnvironment().remove(P4ConfigFields.P4CONFIG.name());
+  }
+
   protected void openForEdit(final VirtualFile fileToEdit) {
     final VcsException[] exc = new VcsException[1];
     try {
@@ -398,6 +414,11 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
     PerforceSettings.getSettings(myProject).useP4CONFIG = true;
     AbstractP4Connection.setTestEnvironment(ContainerUtil.newHashMap(Pair.create(P4ConfigHelper.P4_CONFIG, p4ConfigName)), myTestRootDisposable);
     PerforceConnectionManager.getInstance(myProject).updateConnections();
+  }
+
+  protected static String createP4Ignore() {
+    return P4_IGNORE_NAME + System.lineSeparator() +
+           DEFAULT_P4CONFIG + System.lineSeparator();
   }
 
   protected void ignoreTestP4ConfigFiles() {
@@ -763,6 +784,7 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
   }
 
   protected void setupTwoClients(VirtualFile dir1, VirtualFile dir2) {
+    unsetUseP4Config();
     ignoreTestP4ConfigFiles();
     createIOFile(dir1, TEST_P4CONFIG, createP4Config("test"));
     createIOFile(dir2, TEST_P4CONFIG, createP4Config("dir2"));

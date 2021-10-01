@@ -27,6 +27,7 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -767,12 +768,15 @@ public class OfflineModeTest extends PerforceTestCase {
     goOffline();
     refreshChanges();
     VirtualFile fileB = createFileInCommand("b.txt", "");
+    List<FilePath> ignoredFiles = new ArrayList<>();
+    ignoredFiles.add(VcsUtil.getFilePath(myP4IgnoreFile, false));
+    ignoredFiles.add(VcsUtil.getFilePath(myP4ConfigFile, false));
     VcsDirtyScopeManager.getInstance(myProject).fileDirty(VcsUtil.getFilePath(new File(myClientRoot, "b.txt")));
     refreshVfs();
     refreshChanges();
     getChangeListManager().waitUntilRefreshed();
     assertSameElements(getChangeListManager().getUnversionedFiles(), fileB);
-    assertSameElements(getChangeListManager().getIgnoredFilePaths(), VcsUtil.getFilePath(myP4IgnoreFile, false));
+    assertSameElements(getChangeListManager().getIgnoredFilePaths(), ignoredFiles);
   }
 
   private VirtualFile createAndSubmit(final String fileName, final String content) {

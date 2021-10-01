@@ -1,12 +1,9 @@
 package org.jetbrains.idea.perforce;
 
-import com.intellij.idea.Bombed;
 import com.intellij.openapi.vcs.VcsConfiguration;
 import com.intellij.openapi.vcs.VcsTestUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.junit.Test;
-
-import java.util.Calendar;
 
 import static com.intellij.testFramework.UsefulTestCase.assertEmpty;
 import static junit.framework.Assert.assertEquals;
@@ -20,9 +17,7 @@ public class PerforceListenerTest extends PerforceTestCase {
     verifyOpened("b.txt", "add");
   }
 
-  @Test
-  @Bombed(year = 2021, month = Calendar.AUGUST, day = 20, user = "AMPivovarov")
-  public void testCopyToAnotherWorkspace() {
+  @Test public void testCopyToAnotherWorkspace() {
     enableSilentOperation(VcsConfiguration.StandardConfirmation.ADD);
 
     VirtualFile dir1 = createDirInCommand(myWorkingCopyDir, "dir1");
