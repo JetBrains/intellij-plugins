@@ -12,6 +12,8 @@ import com.intellij.javascript.web.symbols.WebSymbol.Companion.VUE_FRAMEWORK
 import com.intellij.javascript.web.symbols.WebSymbol.Priority
 import com.intellij.javascript.web.symbols.WebSymbolsContainer.Companion.NAMESPACE_HTML
 import com.intellij.javascript.web.symbols.WebSymbolsContainer.Namespace
+import com.intellij.javascript.web.symbols.patterns.RegExpPattern
+import com.intellij.javascript.web.symbols.patterns.WebSymbolsPattern
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.lang.javascript.psi.JSType
@@ -195,7 +197,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
                   // Cannot self refer without export declaration with component name
                   if (isNotIncorrectlySelfReferred(component)) {
                     // TODO replace with params.registry.getNameVariants(VUE_FRAMEWORK, Namespace.HTML, kind, name)
-                    listOf(toAsset(name).capitalize(), fromAsset(name)).forEach {
+                    listOf(toAsset(name).capitalize(Locale.US), fromAsset(name)).forEach {
                       result.add(createVueComponentLookup(component, it, scriptLanguage, proximity))
                     }
                   }
@@ -493,6 +495,11 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
   private class AnyWrapper(override val context: WebSymbolsContainer.Context,
                            override val namespace: Namespace,
                            override val kind: SymbolKind,
-                           override val matchedName: String) : WebSymbol
+                           override val matchedName: String) : WebSymbol {
+
+    override val pattern: WebSymbolsPattern
+      get() = RegExpPattern(".*", false)
+
+  }
 
 }
