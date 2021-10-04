@@ -70,7 +70,7 @@ public class DartModuleBuilder extends ModuleBuilder {
   }
 
   @Override
-  public ModuleType getModuleType() {
+  public ModuleType<?> getModuleType() {
     return WebModuleTypeBase.getInstance();
   }
 
