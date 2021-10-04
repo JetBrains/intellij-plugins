@@ -1,7 +1,7 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.prettierjs;
 
-import com.intellij.codeInsight.actions.onSave.FormatOnSaveActionInfo;
+import com.intellij.codeInsight.actions.onSave.FormatOnSaveOptions;
 import com.intellij.ide.actionsOnSave.impl.ActionsOnSaveFileDocumentManagerListener;
 import com.intellij.lang.javascript.linter.GlobPatternUtil;
 import com.intellij.openapi.editor.Document;
@@ -33,14 +33,18 @@ public class PrettierActionOnSave extends ActionsOnSaveFileDocumentManagerListen
     PrettierConfiguration prettierConfiguration = PrettierConfiguration.getInstance(project);
     if (!prettierConfiguration.isRunOnSave()) return;
 
-    if (prettierConfiguration.isRunOnReformat() && FormatOnSaveActionInfo.isReformatOnSaveEnabled(project)) {
-      // already processed as com.intellij.prettierjs.PrettierPostFormatProcessor
-      return;
-    }
-
     FileDocumentManager manager = FileDocumentManager.getInstance();
     List<VirtualFile> files = ContainerUtil.mapNotNull(documents, document -> {
-      return manager.getFile(document);
+      VirtualFile file = manager.getFile(document);
+      if (file != null && prettierConfiguration.isRunOnReformat()) {
+        FormatOnSaveOptions onSaveOptions = FormatOnSaveOptions.getInstance(project);
+        if (onSaveOptions.isFormatOnSaveEnabled() &&
+            (onSaveOptions.isAllFileTypesSelected() || onSaveOptions.isFileTypeSelected(file.getFileType()))) {
+          // already processed as com.intellij.prettierjs.PrettierPostFormatProcessor
+          return null;
+        }
+      }
+      return file;
     });
 
     List<VirtualFile> matchingFiles =
