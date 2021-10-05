@@ -16,7 +16,6 @@
 package com.intellij.protobuf.jvm.names;
 
 import com.google.common.collect.ImmutableList;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.protobuf.lang.names.NameGeneratorContributor;
 import com.intellij.protobuf.lang.names.NameGeneratorUtils;
 import com.intellij.protobuf.lang.psi.PbFile;
@@ -27,7 +26,6 @@ import com.intellij.protobuf.lang.psi.PbOptionExpression;
  * on checking the file-level options.
  */
 public class NameGeneratorSelector {
-  private static final Logger log = Logger.getInstance(NameGeneratorSelector.class);
 
   private NameGeneratorSelector() {}
 
@@ -79,10 +77,6 @@ public class NameGeneratorSelector {
   public static ImmutableList<JavaNameGenerator> selectForFile(PbFile file) {
     for (NameGeneratorContributor contributor : NameGeneratorContributor.EP_NAME.getExtensions()) {
       if (contributor.isApplicable(file)) {
-        log.info(
-          "NameSelector using "
-          + contributor.getClass().getName()
-          + " for protobuf name generators");
         return contributor.contributeGenerators(file, JavaNameGenerator.class);
       }
     }
