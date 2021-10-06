@@ -2,7 +2,7 @@
 package com.intellij.javascript.flex.resolve;
 
 import com.intellij.lang.actionscript.psi.ActionScriptPsiImplUtil;
-import com.intellij.lang.javascript.index.JSSymbolUtil;
+import com.intellij.lang.javascript.index.JSLocalNamespaceEvaluator;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSPsiElementBase;
@@ -103,7 +103,7 @@ public class ActionScriptAccessibilityProcessingHandler extends AccessibilityPro
         if (place instanceof JSReferenceExpression) {
           JSExpression qualifier = ((JSReferenceExpression)place).getQualifier();
           if (qualifier instanceof JSReferenceExpression) {
-            JSElement expression = JSSymbolUtil.calcRefExprValue((JSReferenceExpression)qualifier);
+            JSElement expression = JSLocalNamespaceEvaluator.calcRefExprValue((JSReferenceExpression)qualifier);
             if (expression instanceof JSReferenceExpression) {
               for (ResolveResult r : ((JSReferenceExpression)expression).multiResolve(false)) {
                 PsiElement rElement = r.getElement();
