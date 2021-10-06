@@ -104,7 +104,7 @@ public class ActionScriptAccessibilityProcessingHandler extends AccessibilityPro
           JSExpression qualifier = ((JSReferenceExpression)place).getQualifier();
           if (qualifier instanceof JSReferenceExpression) {
             JSElement expression = JSLocalNamespaceEvaluator.calcRefExprValue((JSReferenceExpression)qualifier);
-            if (expression instanceof JSReferenceExpression) {
+            if (expression instanceof JSReferenceExpression && expression != qualifier) {
               for (ResolveResult r : ((JSReferenceExpression)expression).multiResolve(false)) {
                 PsiElement rElement = r.getElement();
                 if (rElement instanceof JSClass) {
