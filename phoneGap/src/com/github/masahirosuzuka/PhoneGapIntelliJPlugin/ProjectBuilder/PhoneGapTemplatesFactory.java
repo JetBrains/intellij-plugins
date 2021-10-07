@@ -15,7 +15,7 @@ PhoneGapTemplatesFactory extends ProjectTemplatesFactory {
   }
 
   @Override
-  public ProjectTemplate @NotNull [] createTemplates(@Nullable String group, WizardContext context) {
+  public ProjectTemplate @NotNull [] createTemplates(@Nullable String group, @NotNull WizardContext context) {
     return new ProjectTemplate[]{new CordovaProjectGenerator()};
   }
 }
