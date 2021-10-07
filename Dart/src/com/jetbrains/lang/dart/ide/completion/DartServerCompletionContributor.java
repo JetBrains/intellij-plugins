@@ -112,6 +112,11 @@ public class DartServerCompletionContributor extends CompletionContributor {
                das.updateFilesContent();
 
                final int offset = InjectedLanguageManager.getInstance(project).injectedToHost(originalFile, parameters.getOffset());
+
+               for (DartCompletionTimerExtension extension : DartCompletionTimerExtension.getExtensions()) {
+                 extension.dartCompletionStart();
+               }
+
                final String completionId = das.completion_getSuggestions(file, offset);
                if (completionId == null) return;
 
