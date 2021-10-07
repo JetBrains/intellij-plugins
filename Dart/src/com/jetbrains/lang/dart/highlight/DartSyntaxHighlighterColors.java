@@ -152,7 +152,7 @@ public final class DartSyntaxHighlighterColors {
   public static final TextAttributesKey INSTANCE_METHOD_REFERENCE =
     createTextAttributesKey(DART_INSTANCE_METHOD_REFERENCE, DefaultLanguageHighlighterColors.FUNCTION_CALL);
   public static final TextAttributesKey INSTANCE_METHOD_TEAR_OFF =
-    createTextAttributesKey(DART_INSTANCE_METHOD_TEAR_OFF, DefaultLanguageHighlighterColors.FUNCTION_CALL);
+    createTextAttributesKey(DART_INSTANCE_METHOD_TEAR_OFF, DefaultLanguageHighlighterColors.INSTANCE_METHOD);
   public static final TextAttributesKey INSTANCE_SETTER_DECLARATION =
     createTextAttributesKey(DART_INSTANCE_SETTER_DECLARATION, INSTANCE_FIELD_DECLARATION);
   public static final TextAttributesKey INSTANCE_SETTER_REFERENCE =
@@ -197,7 +197,7 @@ public final class DartSyntaxHighlighterColors {
   public static final TextAttributesKey TOP_LEVEL_FUNCTION_REFERENCE =
     createTextAttributesKey(DART_TOP_LEVEL_FUNCTION_REFERENCE, DefaultLanguageHighlighterColors.FUNCTION_CALL);
   public static final TextAttributesKey TOP_LEVEL_FUNCTION_TEAR_OFF =
-    createTextAttributesKey(DART_TOP_LEVEL_FUNCTION_TEAR_OFF, DefaultLanguageHighlighterColors.FUNCTION_CALL);
+    createTextAttributesKey(DART_TOP_LEVEL_FUNCTION_TEAR_OFF, DefaultLanguageHighlighterColors.FUNCTION_DECLARATION);
   public static final TextAttributesKey TOP_LEVEL_GETTER_DECLARATION =
     createTextAttributesKey(DART_TOP_LEVEL_GETTER_DECLARATION, TOP_LEVEL_VARIABLE_DECLARATION);
   public static final TextAttributesKey TOP_LEVEL_GETTER_REFERENCE =
@@ -217,7 +217,7 @@ public final class DartSyntaxHighlighterColors {
   public static final TextAttributesKey CONSTRUCTOR =
     createTextAttributesKey(DART_CONSTRUCTOR, INSTANCE_METHOD_DECLARATION);
   public static final TextAttributesKey CONSTRUCTOR_TEAR_OFF =
-    createTextAttributesKey(DART_CONSTRUCTOR_TEAR_OFF, INSTANCE_METHOD_DECLARATION);
+    createTextAttributesKey(DART_CONSTRUCTOR_TEAR_OFF, CONSTRUCTOR);
 
   public static final TextAttributesKey DYNAMIC_LOCAL_VARIABLE_DECLARATION =
     createTextAttributesKey(DART_DYNAMIC_LOCAL_VARIABLE_DECLARATION, LOCAL_VARIABLE_DECLARATION);
@@ -233,5 +233,5 @@ public final class DartSyntaxHighlighterColors {
   public static final TextAttributesKey LOCAL_FUNCTION_REFERENCE =
     createTextAttributesKey(DART_LOCAL_FUNCTION_REFERENCE, LOCAL_VARIABLE_REFERENCE);
   public static final TextAttributesKey LOCAL_FUNCTION_TEAR_OFF =
-    createTextAttributesKey(DART_LOCAL_FUNCTION_TEAR_OFF, LOCAL_VARIABLE_REFERENCE);
+    createTextAttributesKey(DART_LOCAL_FUNCTION_TEAR_OFF, LOCAL_FUNCTION_DECLARATION);
 }

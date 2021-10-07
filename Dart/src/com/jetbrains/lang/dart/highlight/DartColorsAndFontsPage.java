@@ -223,7 +223,7 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
                                TOP_LEVEL_FUNCTION_DECLARATION),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.top.level.function.reference"),
                                TOP_LEVEL_FUNCTION_REFERENCE),
-      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.top.level.function.reference"),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.top.level.function.tearoff"),
                                TOP_LEVEL_FUNCTION_TEAR_OFF),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.top.level.getter.declaration"),
                                TOP_LEVEL_GETTER_DECLARATION),

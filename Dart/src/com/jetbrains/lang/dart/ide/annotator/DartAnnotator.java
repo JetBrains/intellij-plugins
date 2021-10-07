@@ -119,12 +119,15 @@ public final class DartAnnotator implements Annotator {
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.STATIC_GETTER_REFERENCE, DartSyntaxHighlighterColors.DART_STATIC_GETTER_REFERENCE);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.STATIC_METHOD_DECLARATION, DartSyntaxHighlighterColors.DART_STATIC_METHOD_DECLARATION);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.STATIC_METHOD_REFERENCE, DartSyntaxHighlighterColors.DART_STATIC_METHOD_REFERENCE);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.STATIC_METHOD_TEAR_OFF, DartSyntaxHighlighterColors.DART_STATIC_METHOD_TEAR_OFF);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.STATIC_SETTER_DECLARATION, DartSyntaxHighlighterColors.DART_STATIC_SETTER_DECLARATION);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.STATIC_SETTER_REFERENCE, DartSyntaxHighlighterColors.DART_STATIC_SETTER_REFERENCE);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.TOP_LEVEL_FUNCTION_DECLARATION,
                               DartSyntaxHighlighterColors.DART_TOP_LEVEL_FUNCTION_DECLARATION);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.TOP_LEVEL_FUNCTION_REFERENCE,
                               DartSyntaxHighlighterColors.DART_TOP_LEVEL_FUNCTION_REFERENCE);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.TOP_LEVEL_FUNCTION_TEAR_OFF,
+                              DartSyntaxHighlighterColors.DART_TOP_LEVEL_FUNCTION_TEAR_OFF);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.TOP_LEVEL_GETTER_DECLARATION,
                               DartSyntaxHighlighterColors.DART_TOP_LEVEL_GETTER_DECLARATION);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.TOP_LEVEL_GETTER_REFERENCE, DartSyntaxHighlighterColors.DART_TOP_LEVEL_GETTER_REFERENCE);
