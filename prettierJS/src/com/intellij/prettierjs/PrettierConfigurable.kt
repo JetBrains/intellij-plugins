@@ -105,6 +105,10 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
   class PrettierOnSaveInfoProvider : ActionOnSaveInfoProvider() {
     override fun getActionOnSaveInfos(context: ActionOnSaveContext):
       List<ActionOnSaveInfo> = listOf(PrettierOnSaveActionInfo(context))
+
+    override fun getSearchableOptions(): Collection<String> {
+      return listOf(PrettierBundle.message("run.on.save.checkbox.on.actions.on.save.page"))
+    }
   }
 
 
