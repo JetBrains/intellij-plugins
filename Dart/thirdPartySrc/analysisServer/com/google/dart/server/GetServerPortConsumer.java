@@ -13,10 +13,7 @@
  */
 package com.google.dart.server;
 
-import org.dartlang.analysis.server.protocol.ContextData;
 import org.dartlang.analysis.server.protocol.RequestError;
-
-import java.util.List;
 
 public interface GetServerPortConsumer extends Consumer {
   public void computedServerPort(int port);

@@ -23,5 +23,5 @@ public enum NotificationKind {
   ERRORS,
   HIGHLIGHTS,
   NAVIGATION,
-  OUTLINE;
+  OUTLINE
 }
