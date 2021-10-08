@@ -52,6 +52,7 @@ import com.jetbrains.lang.dart.assists.DartQuickAssistIntentionListener;
 import com.jetbrains.lang.dart.fixes.DartQuickFix;
 import com.jetbrains.lang.dart.fixes.DartQuickFixListener;
 import com.jetbrains.lang.dart.ide.actions.DartPubActionBase;
+import com.jetbrains.lang.dart.ide.completion.DartCompletionTimerExtension;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView;
 import com.jetbrains.lang.dart.ide.template.postfix.DartPostfixTemplateProvider;
 import com.jetbrains.lang.dart.sdk.DartSdk;
@@ -471,6 +472,10 @@ public final class DartAnalysisServerService implements Disposable {
           }
           for (final IncludedSuggestionSet includedSet : completionInfo.myIncludedSuggestionSets) {
             libraryRefConsumer.consumeLibraryRef(includedSet, includedKinds, includedRelevanceTags, completionInfo.myLibraryFilePathSD);
+          }
+
+          for (DartCompletionTimerExtension extension : DartCompletionTimerExtension.getExtensions()) {
+            extension.dartCompletionEnd();
           }
           return;
         }
@@ -1439,6 +1444,10 @@ public final class DartAnalysisServerService implements Disposable {
     final AnalysisServer server = myServer;
     if (server == null) {
       return null;
+    }
+
+    for (DartCompletionTimerExtension extension : DartCompletionTimerExtension.getExtensions()) {
+      extension.dartCompletionStart();
     }
 
     final String filePath = FileUtil.toSystemDependentName(file.getPath());
