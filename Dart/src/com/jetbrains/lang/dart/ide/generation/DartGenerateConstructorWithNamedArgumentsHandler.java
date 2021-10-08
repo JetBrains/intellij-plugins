@@ -1,0 +1,36 @@
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+package com.jetbrains.lang.dart.ide.generation;
+
+import com.intellij.util.containers.ContainerUtil;
+import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.DartComponentType;
+import com.jetbrains.lang.dart.psi.DartClass;
+import com.jetbrains.lang.dart.psi.DartComponent;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+
+public class DartGenerateConstructorWithNamedArgumentsHandler extends BaseDartGenerateHandler {
+  @Override
+  @NotNull
+  protected String getTitle() {
+    return DartBundle.message("dart.generate.constructor.with.named.arguments");
+  }
+
+  @Override
+  @NotNull
+  protected BaseCreateMethodsFix createFix(@NotNull final DartClass dartClass) {
+    return new CreateConstructorWithNamedArgumentsFix(dartClass);
+  }
+
+  @Override
+  protected void collectCandidates(@NotNull final DartClass dartClass, @NotNull final List<DartComponent> candidates) {
+    candidates.addAll(ContainerUtil.findAll(computeClassMembersMap(dartClass, false).values(),
+                                            component -> DartComponentType.typeOf(component) == DartComponentType.FIELD));
+  }
+
+  @Override
+  protected boolean doAllowEmptySelection() {
+    return true;
+  }
+}
