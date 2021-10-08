@@ -111,9 +111,12 @@
 
     <directoryIndexExcludePolicy implementation="org.jetbrains.vuejs.libraries.nuxt.index.NuxtIndexExcludePolicy"/>
 
-    <directoryProjectGenerator
-      implementation="org.jetbrains.vuejs.cli.VueCliProjectGenerator"/>  <!-- works in WebStorm and other SmallIDEs -->
-    <projectTemplatesFactory implementation="org.jetbrains.vuejs.cli.VueProjectTemplateFactory"/> <!-- works in IntelliJ IDEA -->
+    <!-- works in WebStorm and other SmallIDEs -->
+    <directoryProjectGenerator implementation="org.jetbrains.vuejs.cli.VueCliProjectGenerator"/>  
+    <!-- works in IDEA -->
+    <projectTemplatesFactory implementation="org.jetbrains.vuejs.cli.VueProjectTemplateFactory"/> 
+    <!-- works in new IDEA wizard --> 
+    <moduleBuilder builderClass="org.jetbrains.vuejs.cli.VueCLIProjectModuleBuilder" />
 
     <localInspection language="Vue" groupKey="vue.inspection.group.name" shortName="VueDataFunction"
                      enabledByDefault="true" level="WARNING"

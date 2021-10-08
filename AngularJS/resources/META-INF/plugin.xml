@@ -175,8 +175,9 @@
                      groupKey="angular.inspection.group.name" enabledByDefault="true" level="WARNING"
                      key="angular.inspection.aot-inaccessible-member.name" bundle="messages.Angular2Bundle"/>
     <directoryProjectGenerator implementation="org.angular2.cli.AngularCliProjectGenerator"/>
-    <moduleBuilder builderClass="org.angular2.cli.AngularCLIModuleBuilder"/>
-    <projectTemplatesFactory implementation="org.angularjs.AngularJSTemplateFactory"/>
+    <projectTemplatesFactory implementation="org.angular2.AngularAndAngularJSTemplateFactory"/>
+    <!-- works in new IDEA wizard -->
+    <moduleBuilder builderClass="org.angular2.AngularCLIModuleBuilder" />
     <directoryProjectConfigurator implementation="org.angular2.cli.AngularJSProjectConfigurator"
                                   order="after PlatformProjectConfigurator"/>
     <framework.detector implementation="org.angular2.cli.AngularJSFrameworkDetector"/>
