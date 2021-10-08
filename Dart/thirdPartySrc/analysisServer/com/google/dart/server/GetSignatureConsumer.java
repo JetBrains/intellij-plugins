@@ -26,11 +26,11 @@ import java.util.List;
  */
 public interface GetSignatureConsumer extends Consumer {
   /**
-   * @param name       The name of the function being invoked at the given offset.
-   * @param parameters A list of information about each of the parameters of the function being invoked.
-   * @param dartdoc    The dartdoc associated with the function being invoked. Other than the removal of the comment delimiters, including
-   *                   leading asterisks in the case of a block comment, the dartdoc is unprocessed markdown. This data is omitted if there
-   *                   is no referenced element, or if the element has no dartdoc.
+   * @param name           The name of the function being invoked at the given offset.
+   * @param parameterInfos A list of information about each of the parameters of the function being invoked.
+   * @param dartdoc        The dartdoc associated with the function being invoked. Other than the removal of the comment delimiters, including
+   *                       leading asterisks in the case of a block comment, the dartdoc is unprocessed markdown. This data is omitted if there
+   *                       is no referenced element, or if the element has no dartdoc.
    */
   public void computedSignature(String name, List<ParameterInfo> parameterInfos, String dartdoc);
 

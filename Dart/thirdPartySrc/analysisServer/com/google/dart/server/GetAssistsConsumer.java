@@ -28,7 +28,7 @@ public interface GetAssistsConsumer extends Consumer {
   /**
    * A set of {@link SourceChange}s that have been computed.
    * 
-   * @param proposals an array of computed {@link SourceChange}s
+   * @param sourceChanges an array of computed {@link SourceChange}s
    */
   public void computedSourceChanges(List<SourceChange> sourceChanges);
 
