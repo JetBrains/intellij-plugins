@@ -12,10 +12,12 @@ import com.intellij.lang.javascript.psi.resolve.ES6QualifiedNameResolver
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.util.JSProjectUtil
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.model.Pointer
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.html.HtmlFileImpl
 import com.intellij.psi.util.*
+import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.codeInsight.resolveElementTo
 import org.jetbrains.vuejs.index.getVueIndexData
@@ -190,5 +192,17 @@ open class VueSourceEntityDescriptor(val initializer: JSElement? /* JSObjectLite
   fun ensureValid() {
     sequenceOf(initializer, clazz, source)
       .forEach { element -> element?.let { PsiUtilCore.ensureValid(it) } }
+  }
+
+  fun createPointer(): Pointer<VueSourceEntityDescriptor> {
+    val initializer = this.initializer?.createSmartPointer()
+    val clazz = this.clazz?.createSmartPointer()
+    val source = this.source.createSmartPointer()
+    return Pointer {
+      val newInitializer = initializer?.let { it.dereference() ?: return@Pointer null }
+      val newClazz = clazz?.let { it.dereference() ?: return@Pointer null }
+      val newSource = source.dereference() ?: return@Pointer null
+      VueSourceEntityDescriptor(newInitializer, newClazz, newSource)
+    }
   }
 }

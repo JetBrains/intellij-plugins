@@ -3,16 +3,20 @@ package org.jetbrains.vuejs.model
 
 import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.lang.javascript.psi.JSType
+import com.intellij.model.Pointer
+import com.intellij.refactoring.suggested.createSmartPointer
 import org.jetbrains.vuejs.codeInsight.documentation.VueItemDocumentation
 import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
 
 class VueLocallyDefinedRegularComponent(private val delegate: VueRegularComponent,
                                         source: JSPsiNamedElementBase) : VueRegularComponent {
 
+  private val mySource = source
+
   override val nameElement: JSPsiNamedElementBase get() = source
 
   override val source: JSPsiNamedElementBase by lazy(LazyThreadSafetyMode.NONE) {
-    source.resolveIfImportSpecifier()
+    mySource.resolveIfImportSpecifier()
   }
   override val defaultName: String?
     get() = source.name
@@ -56,11 +60,21 @@ class VueLocallyDefinedRegularComponent(private val delegate: VueRegularComponen
   override val global: VueGlobal?
     get() = delegate.global
 
+  override fun createPointer(): Pointer<VueLocallyDefinedRegularComponent> {
+    val delegate = this.delegate.createPointer()
+    val source = this.source.createSmartPointer()
+    return Pointer {
+      val newDelegate = delegate.dereference() ?: return@Pointer null
+      val newSource = source.dereference() ?: return@Pointer null
+      VueLocallyDefinedRegularComponent(newDelegate, newSource)
+    }
+  }
+
   override fun equals(other: Any?): Boolean =
     other is VueLocallyDefinedRegularComponent
     && other.delegate == delegate
-    && other.element == element
+    && other.mySource == mySource
 
   override fun hashCode(): Int =
-    delegate.hashCode() + element.hashCode()
+    delegate.hashCode() + mySource.hashCode()
 }

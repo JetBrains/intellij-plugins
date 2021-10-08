@@ -3,10 +3,12 @@ package org.jetbrains.vuejs.libraries.i18n
 
 import com.intellij.javascript.web.symbols.*
 import com.intellij.lang.Language
+import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
 import com.intellij.psi.html.HtmlTag
 import com.intellij.psi.impl.source.xml.XmlTextImpl
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.containers.Stack
 import org.jetbrains.vuejs.codeInsight.LANG_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.lang.html.VueFileType
@@ -31,6 +33,13 @@ class VueI18nAdditionalContextProvider : WebSymbolsAdditionalContextProvider {
 
     override fun hashCode(): Int =
       tag.hashCode()
+
+    override fun createPointer(): Pointer<I18nTagInjectionKind> {
+      val tag = this.tag.createSmartPointer()
+      return Pointer {
+        tag.dereference()?.let { I18nTagInjectionKind(it) }
+      }
+    }
 
     override fun getModificationCount(): Long = tag.containingFile.modificationStamp
 
@@ -73,6 +82,9 @@ class VueI18nAdditionalContextProvider : WebSymbolsAdditionalContextProvider {
 
     override val properties: Map<String, Any>
       get() = mapOf(Pair(WebSymbol.PROP_INJECT_LANGUAGE, lang))
+
+    override fun createPointer(): Pointer<out WebSymbol> =
+      Pointer.hardPointer(this)
   }
 
 }

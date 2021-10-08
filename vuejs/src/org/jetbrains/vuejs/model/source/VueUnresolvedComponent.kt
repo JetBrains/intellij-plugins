@@ -3,7 +3,9 @@ package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.types.JSAnyType
+import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
+import com.intellij.refactoring.suggested.createSmartPointer
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueEntitiesContainer
 import org.jetbrains.vuejs.model.getDefaultVueComponentInstanceType
@@ -17,4 +19,14 @@ class VueUnresolvedComponent(private val context: PsiElement,
   override val thisType: JSType
     get() = getDefaultVueComponentInstanceType(context) ?: JSAnyType.get(context, false)
 
+  override fun createPointer(): Pointer<VueUnresolvedComponent> {
+    val context = this.context.createSmartPointer()
+    val source = this.source?.createSmartPointer()
+    val defaultName = this.defaultName
+    return Pointer {
+      val newContext = context.dereference() ?: return@Pointer null
+      val newSource = source?.let { it.dereference() ?: return@Pointer null }
+      VueUnresolvedComponent(newContext, newSource, defaultName)
+    }
+  }
 }

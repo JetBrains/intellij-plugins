@@ -20,7 +20,7 @@ interface VueContainer : VueEntitiesContainer {
   val model: VueModelDirectiveProperties
 }
 
-class VueModelDirectiveProperties(
+data class VueModelDirectiveProperties(
   val prop: String = DEFAULT_PROP,
   val event: String = DEFAULT_EVENT
 ) {
@@ -37,7 +37,7 @@ interface VueNamedSymbol : VueDocumentedItem {
 
 interface VueSlot : VueNamedSymbol {
   val scope: JSType? get() = null
-  val pattern: Regex? get() = null
+  val pattern: String? get() = null
 }
 
 interface VueEmitCall : VueNamedSymbol {

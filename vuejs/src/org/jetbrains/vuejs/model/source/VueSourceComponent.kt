@@ -5,11 +5,13 @@ import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.ecma6.JSStringTemplateExpression
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider.Result.create
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
+import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.*
@@ -38,6 +40,17 @@ class VueSourceComponent(sourceElement: JSImplicitElement,
         create(buildSlotsList(template), template.source)
       }
     }
+
+  override fun createPointer(): Pointer<VueSourceComponent> {
+    val descriptor = this.descriptor.createPointer()
+    val source = (this.source as JSImplicitElement).createSmartPointer()
+    val indexData = this.indexData
+    return Pointer {
+      val newDescriptor = descriptor.dereference() ?: return@Pointer null
+      val newSource = source.dereference() ?: return@Pointer null
+      VueSourceComponent(newSource, newDescriptor, indexData)
+    }
+  }
 
   companion object {
 
@@ -71,7 +84,7 @@ class VueSourceComponent(sourceElement: JSImplicitElement,
       return result
     }
 
-    private fun getSlotNameRegex(expr: JSExpression): Regex {
+    private fun getSlotNameRegex(expr: JSExpression): String {
       if (expr is JSStringTemplateExpression) {
         var lastIndex = 1
         val exprText = expr.text
@@ -86,13 +99,13 @@ class VueSourceComponent(sourceElement: JSImplicitElement,
         if (lastIndex < exprText.length - 1) {
           result.append(".*")
         }
-        return Regex(result.toString())
+        return result.toString()
       }
-      return Regex(".*")
+      return ".*"
     }
   }
 
-  private class VueSourceRegexSlot(override val pattern: Regex,
+  private class VueSourceRegexSlot(override val pattern: String?,
                                    override val source: PsiElement) : VueSlot {
     override val name: String
       get() = "Dynamic slot"

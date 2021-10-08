@@ -1,14 +1,16 @@
 package org.jetbrains.vuejs.lang
 
 import com.intellij.codeInsight.documentation.DocumentationManager
+import com.intellij.javascript.web.checkDocumentationAtCaret
+import com.intellij.javascript.web.checkNoDocumentationAtCaret
 import com.intellij.lang.documentation.ExternalDocumentationProvider
 import com.intellij.lang.javascript.JSAbstractDocumentationTest
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 
-class VueDocumentationTest : JSAbstractDocumentationTest() {
+class VueDocumentationTest : BasePlatformTestCase() {
 
   override fun getBasePath(): String = "/"
-  override fun getExtension(): String = "vue"
 
   override fun getTestDataPath(): String = getVueTestDataPath() + "/documentation"
 
@@ -42,8 +44,8 @@ class VueDocumentationTest : JSAbstractDocumentationTest() {
   }
 
   fun testInnerLevelTemplateStdAttrNoDoc() {
-    val testName = getTestName(false)
-    doTest(testName, extension, testName, false, Check.Null)
+    myFixture.configureByFile("${getTestName(false)}.vue")
+    myFixture.checkNoDocumentationAtCaret()
   }
 
   fun testInnerLevelTemplateCustomAttr() {
@@ -69,6 +71,11 @@ class VueDocumentationTest : JSAbstractDocumentationTest() {
 
   fun testNotRequiredPropertyJS() {
     defaultTest()
+  }
+
+  private fun defaultTest() {
+    myFixture.configureByFile("${getTestName(false)}.vue")
+    myFixture.checkDocumentationAtCaret()
   }
 
 }
