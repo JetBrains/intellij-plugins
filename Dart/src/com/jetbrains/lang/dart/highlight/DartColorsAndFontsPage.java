@@ -68,6 +68,7 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
     PREVIEW_TAGS.put("DART_ENUM", ENUM);
     PREVIEW_TAGS.put("DART_ENUM_CONSTANT", ENUM_CONSTANT);
     PREVIEW_TAGS.put("DART_FUNCTION_TYPE_ALIAS", FUNCTION_TYPE_ALIAS);
+    PREVIEW_TAGS.put("DART_TYPE_ALIAS", TYPE_ALIAS);
 
     PREVIEW_TAGS.put("DART_IDENTIFIER", IDENTIFIER);
     PREVIEW_TAGS.put("DART_INSTANCE_FIELD_DECLARATION", INSTANCE_FIELD_DECLARATION);
@@ -178,6 +179,7 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.enum"), ENUM),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.enum.constant"), ENUM_CONSTANT),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.function.type.alias"), FUNCTION_TYPE_ALIAS),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.type.alias"), TYPE_ALIAS),
 
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.identifier"), IDENTIFIER),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.instance.field.declaration"),

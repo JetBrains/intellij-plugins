@@ -138,6 +138,8 @@ public class DartAnnotator implements Annotator {
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.TOP_LEVEL_SETTER_REFERENCE, DartSyntaxHighlighterColors.DART_TOP_LEVEL_SETTER_REFERENCE);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.TOP_LEVEL_VARIABLE_DECLARATION,
                               DartSyntaxHighlighterColors.DART_TOP_LEVEL_VARIABLE_DECLARATION);
+    HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.TYPE_ALIAS,
+                              DartSyntaxHighlighterColors.DART_TYPE_ALIAS);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.TYPE_NAME_DYNAMIC, DartSyntaxHighlighterColors.DART_TYPE_NAME_DYNAMIC);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.TYPE_PARAMETER, DartSyntaxHighlighterColors.DART_TYPE_PARAMETER);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.UNRESOLVED_INSTANCE_MEMBER_REFERENCE,
