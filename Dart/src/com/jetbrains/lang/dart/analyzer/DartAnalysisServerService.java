@@ -1463,6 +1463,10 @@ public final class DartAnalysisServerService implements Disposable {
 
       @Override
       public void onError(@NotNull final RequestError error) {
+        for (DartCompletionTimerExtension extension : DartCompletionTimerExtension.getExtensions()) {
+          extension.dartCompletionError(StringUtil.notNullize(error.getCode()), StringUtil.notNullize(error.getMessage()),
+                                        StringUtil.notNullize(error.getStackTrace()));
+        }
         // Not a problem. Happens if a file is outside the project, or server is just not ready yet.
         latch.countDown();
       }
