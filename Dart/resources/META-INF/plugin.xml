@@ -26,6 +26,7 @@
 
   <extensionPoints>
     <extensionPoint name="completionExtension" interface="com.jetbrains.lang.dart.ide.completion.DartCompletionExtension" dynamic="true"/>
+    <extensionPoint name="completionTimerExtension" interface="com.jetbrains.lang.dart.ide.completion.DartCompletionTimerExtension" dynamic="true"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
