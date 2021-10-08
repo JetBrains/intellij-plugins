@@ -750,9 +750,6 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     //
     // Edit Domain
     //
-    else if (consumer instanceof DartfixConsumer) {
-      new DartfixProcessor((DartfixConsumer)consumer).process(resultObject, requestError);
-    }
     else if (consumer instanceof FormatConsumer) {
       new FormatProcessor((FormatConsumer)consumer).process(resultObject, requestError);
     }

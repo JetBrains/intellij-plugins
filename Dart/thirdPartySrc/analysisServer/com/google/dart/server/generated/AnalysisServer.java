@@ -32,7 +32,7 @@ public interface AnalysisServer {
 
   /**
    * Add the given listener to the list of listeners that will receive notification when
-     * requests are made by an analysis server client.
+   * requests are made by an analysis server client.
    *
    * @param listener the listener to be added
    */
@@ -840,7 +840,7 @@ public interface AnalysisServer {
 
   /**
    * Remove the given listener from the list of listeners that will receive notification when new
-     * analysis results become available.
+   * analysis results become available.
    *
    * @param listener the listener to be removed
    */
@@ -848,7 +848,7 @@ public interface AnalysisServer {
 
   /**
    * Remove the given listener from the list of listeners that will receive notification when
-     * requests are made by an analysis server client.
+   * requests are made by an analysis server client.
    *
    * @param listener the listener to be removed
    */
@@ -856,7 +856,7 @@ public interface AnalysisServer {
 
   /**
    * Remove the given listener from the list of listeners that will receive notification when
-     * responses are received by an analysis server client.
+   * responses are received by an analysis server client.
    *
    * @param listener the listener to be removed
    */
