@@ -16,6 +16,7 @@ public final class DartSyntaxHighlighterColors {
   public static final String DART_ANNOTATION = "DART_ANNOTATION";
   public static final String DART_CLASS = "DART_CLASS";
   public static final String DART_CONSTRUCTOR = "DART_CONSTRUCTOR";
+  public static final String DART_CONSTRUCTOR_TEAR_OFF = "DART_CONSTRUCTOR_TEAR_OFF";
 
   public static final String DART_DYNAMIC_LOCAL_VARIABLE_DECLARATION = "DART_DYNAMIC_LOCAL_VARIABLE_DECLARATION";
   public static final String DART_DYNAMIC_LOCAL_VARIABLE_REFERENCE = "DART_DYNAMIC_LOCAL_VARIABLE_REFERENCE";
@@ -33,6 +34,7 @@ public final class DartSyntaxHighlighterColors {
   public static final String DART_INSTANCE_GETTER_REFERENCE = "DART_INSTANCE_GETTER_REFERENCE";
   public static final String DART_INSTANCE_METHOD_DECLARATION = "DART_INSTANCE_METHOD_DECLARATION";
   public static final String DART_INSTANCE_METHOD_REFERENCE = "DART_INSTANCE_METHOD_REFERENCE";
+  public static final String DART_INSTANCE_METHOD_TEAR_OFF = "DART_INSTANCE_METHOD_TEAR_OFF";
   public static final String DART_INSTANCE_SETTER_DECLARATION = "DART_INSTANCE_SETTER_DECLARATION";
   public static final String DART_INSTANCE_SETTER_REFERENCE = "DART_INSTANCE_SETTER_REFERENCE";
 
@@ -43,6 +45,7 @@ public final class DartSyntaxHighlighterColors {
 
   public static final String DART_LOCAL_FUNCTION_DECLARATION = "DART_LOCAL_FUNCTION_DECLARATION";
   public static final String DART_LOCAL_FUNCTION_REFERENCE = "DART_LOCAL_FUNCTION_REFERENCE";
+  public static final String DART_LOCAL_FUNCTION_TEAR_OFF = "DART_LOCAL_FUNCTION_TEAR_OFF";
   public static final String DART_LOCAL_VARIABLE_DECLARATION = "DART_LOCAL_VARIABLE_DECLARATION";
   public static final String DART_LOCAL_VARIABLE_REFERENCE = "DART_LOCAL_VARIABLE_REFERENCE";
 
@@ -54,11 +57,13 @@ public final class DartSyntaxHighlighterColors {
   public static final String DART_STATIC_GETTER_REFERENCE = "DART_STATIC_GETTER_REFERENCE";
   public static final String DART_STATIC_METHOD_DECLARATION = "DART_STATIC_METHOD_DECLARATION";
   public static final String DART_STATIC_METHOD_REFERENCE = "DART_STATIC_METHOD_REFERENCE";
+  public static final String DART_STATIC_METHOD_TEAR_OFF = "DART_STATIC_METHOD_TEAR_OFF";
   public static final String DART_STATIC_SETTER_DECLARATION = "DART_STATIC_SETTER_DECLARATION";
   public static final String DART_STATIC_SETTER_REFERENCE = "DART_STATIC_SETTER_REFERENCE";
 
   public static final String DART_TOP_LEVEL_FUNCTION_DECLARATION = "DART_TOP_LEVEL_FUNCTION_DECLARATION";
   public static final String DART_TOP_LEVEL_FUNCTION_REFERENCE = "DART_TOP_LEVEL_FUNCTION_REFERENCE";
+  public static final String DART_TOP_LEVEL_FUNCTION_TEAR_OFF = "DART_TOP_LEVEL_FUNCTION_TEAR_OFF";
   public static final String DART_TOP_LEVEL_GETTER_DECLARATION = "DART_TOP_LEVEL_GETTER_DECLARATION";
   public static final String DART_TOP_LEVEL_GETTER_REFERENCE = "DART_TOP_LEVEL_GETTER_REFERENCE";
   public static final String DART_TOP_LEVEL_SETTER_DECLARATION = "DART_TOP_LEVEL_SETTER_DECLARATION";
@@ -146,6 +151,8 @@ public final class DartSyntaxHighlighterColors {
     createTextAttributesKey(DART_INSTANCE_METHOD_DECLARATION, DefaultLanguageHighlighterColors.INSTANCE_METHOD);
   public static final TextAttributesKey INSTANCE_METHOD_REFERENCE =
     createTextAttributesKey(DART_INSTANCE_METHOD_REFERENCE, DefaultLanguageHighlighterColors.FUNCTION_CALL);
+  public static final TextAttributesKey INSTANCE_METHOD_TEAR_OFF =
+    createTextAttributesKey(DART_INSTANCE_METHOD_TEAR_OFF, INSTANCE_METHOD_DECLARATION);
   public static final TextAttributesKey INSTANCE_SETTER_DECLARATION =
     createTextAttributesKey(DART_INSTANCE_SETTER_DECLARATION, INSTANCE_FIELD_DECLARATION);
   public static final TextAttributesKey INSTANCE_SETTER_REFERENCE =
@@ -176,6 +183,8 @@ public final class DartSyntaxHighlighterColors {
     createTextAttributesKey(DART_STATIC_METHOD_DECLARATION, DefaultLanguageHighlighterColors.STATIC_METHOD);
   public static final TextAttributesKey STATIC_METHOD_REFERENCE =
     createTextAttributesKey(DART_STATIC_METHOD_REFERENCE, DefaultLanguageHighlighterColors.STATIC_METHOD);
+  public static final TextAttributesKey STATIC_METHOD_TEAR_OFF =
+    createTextAttributesKey(DART_STATIC_METHOD_TEAR_OFF, STATIC_METHOD_DECLARATION);
   public static final TextAttributesKey STATIC_SETTER_DECLARATION =
     createTextAttributesKey(DART_STATIC_SETTER_DECLARATION, STATIC_FIELD_DECLARATION);
   public static final TextAttributesKey STATIC_SETTER_REFERENCE =
@@ -187,6 +196,8 @@ public final class DartSyntaxHighlighterColors {
     createTextAttributesKey(DART_TOP_LEVEL_FUNCTION_DECLARATION, DefaultLanguageHighlighterColors.FUNCTION_DECLARATION);
   public static final TextAttributesKey TOP_LEVEL_FUNCTION_REFERENCE =
     createTextAttributesKey(DART_TOP_LEVEL_FUNCTION_REFERENCE, DefaultLanguageHighlighterColors.FUNCTION_CALL);
+  public static final TextAttributesKey TOP_LEVEL_FUNCTION_TEAR_OFF =
+    createTextAttributesKey(DART_TOP_LEVEL_FUNCTION_TEAR_OFF, TOP_LEVEL_FUNCTION_DECLARATION);
   public static final TextAttributesKey TOP_LEVEL_GETTER_DECLARATION =
     createTextAttributesKey(DART_TOP_LEVEL_GETTER_DECLARATION, TOP_LEVEL_VARIABLE_DECLARATION);
   public static final TextAttributesKey TOP_LEVEL_GETTER_REFERENCE =
@@ -205,6 +216,8 @@ public final class DartSyntaxHighlighterColors {
 
   public static final TextAttributesKey CONSTRUCTOR =
     createTextAttributesKey(DART_CONSTRUCTOR, INSTANCE_METHOD_DECLARATION);
+  public static final TextAttributesKey CONSTRUCTOR_TEAR_OFF =
+    createTextAttributesKey(DART_CONSTRUCTOR_TEAR_OFF, CONSTRUCTOR);
 
   public static final TextAttributesKey DYNAMIC_LOCAL_VARIABLE_DECLARATION =
     createTextAttributesKey(DART_DYNAMIC_LOCAL_VARIABLE_DECLARATION, LOCAL_VARIABLE_DECLARATION);
@@ -219,4 +232,6 @@ public final class DartSyntaxHighlighterColors {
     createTextAttributesKey(DART_LOCAL_FUNCTION_DECLARATION, LOCAL_VARIABLE_DECLARATION);
   public static final TextAttributesKey LOCAL_FUNCTION_REFERENCE =
     createTextAttributesKey(DART_LOCAL_FUNCTION_REFERENCE, LOCAL_VARIABLE_REFERENCE);
+  public static final TextAttributesKey LOCAL_FUNCTION_TEAR_OFF =
+    createTextAttributesKey(DART_LOCAL_FUNCTION_TEAR_OFF, LOCAL_FUNCTION_DECLARATION);
 }
