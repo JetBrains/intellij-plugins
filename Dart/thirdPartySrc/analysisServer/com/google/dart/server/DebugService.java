@@ -19,5 +19,5 @@ package com.google.dart.server;
  * @coverage dart.server
  */
 public enum DebugService {
-  LAUNCH_DATA;
+  LAUNCH_DATA
 }

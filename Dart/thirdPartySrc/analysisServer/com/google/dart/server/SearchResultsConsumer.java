@@ -25,7 +25,6 @@ public interface SearchResultsConsumer extends Consumer {
   /**
    * {@link SearchResult}s have been computed.
    * 
-   * @param contextId the identifier of the context to search within
    * @param searchResults an array of {@link SearchResult}s computed so far
    * @param isLastResult is {@code true} if this is the last set of results
    */
