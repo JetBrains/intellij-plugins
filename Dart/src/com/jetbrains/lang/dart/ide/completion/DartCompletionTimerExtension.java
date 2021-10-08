@@ -7,7 +7,8 @@ import java.util.List;
 
 /**
  * This extension allows downstream plugins to measure the end-to-end completion time, calling one method just before the Dart Analysis
- * Server is called, and a second just before the UI is displayed to the user.
+ * Server is called, and a second just before the UI is displayed to the user. For each dartCompletionStart call, either dartCompletionEnd
+ * or dartCompletionError will always be called.
  * <p/>
  * For the DAS completion timing only, a RequestListener and ResponseListener can be attached to the analysis server already.
  */
@@ -24,4 +25,9 @@ public abstract class DartCompletionTimerExtension {
   public abstract void dartCompletionStart();
 
   public abstract void dartCompletionEnd();
+
+  /**
+   * The parameters match those of {@link org.dartlang.analysis.server.protocol.RequestError}.
+   */
+  public abstract void dartCompletionError(@NotNull String code, @NotNull String message, @NotNull String stackTrace);
 }
