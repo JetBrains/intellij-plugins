@@ -8,6 +8,7 @@ import com.intellij.codeInsight.lookup.impl.LookupImpl
 import com.intellij.idea.Bombed
 import com.intellij.javascript.web.checkListByFile
 import com.intellij.javascript.web.moveToOffsetBySignature
+import com.intellij.javascript.web.noAutoComplete
 import com.intellij.javascript.web.renderLookupItems
 import com.intellij.lang.javascript.BaseJSCompletionTestCase.*
 import com.intellij.lang.javascript.JSTestUtils
@@ -82,7 +83,7 @@ import compUI from 'compUI.vue'
   fun testCompleteWithImport() {
     configureTextsForCompleteLocalComponent()
 
-    noAutoComplete(Runnable {
+    noAutoComplete{
       myFixture.completeBasic()
       UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "to-import")
       myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
@@ -97,7 +98,7 @@ export default {
 }
 </script>
 """)
-    })
+    }
   }
 
   private fun configureTextsForCompleteLocalComponent(tsLang: Boolean = false) {
@@ -127,7 +128,7 @@ export default {
     val before = jsApplicationSettings.isUseJavaScriptAutoImport
     jsApplicationSettings.isUseJavaScriptAutoImport = false
     try {
-      noAutoComplete(Runnable {
+      noAutoComplete {
         myFixture.completeBasic()
         UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "to-import")
         myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
@@ -140,7 +141,7 @@ export default {
 }
 </script>
 """)
-      })
+      }
     }
     finally {
       jsApplicationSettings.isUseJavaScriptAutoImport = before
@@ -153,7 +154,7 @@ export default {
     val before = jsApplicationSettings.isUseTypeScriptAutoImport
     jsApplicationSettings.isUseTypeScriptAutoImport = false
     try {
-      noAutoComplete(Runnable {
+      noAutoComplete {
         myFixture.completeBasic()
         UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "to-import")
         myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
@@ -166,7 +167,7 @@ export default {
 }
 </script>
 """)
-      })
+      }
     }
     finally {
       jsApplicationSettings.isUseTypeScriptAutoImport = before
@@ -189,7 +190,7 @@ export default {
 </script>
 """)
 
-    noAutoComplete(Runnable {
+    noAutoComplete {
       myFixture.completeBasic()
       UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "ToImport")
       myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
@@ -204,7 +205,7 @@ export default {
 }
 </script>
 """)
-    })
+    }
   }
 
   fun testCompleteWithImportCreateScript() {
@@ -221,7 +222,7 @@ export default {
 </template>
 """)
 
-    noAutoComplete(Runnable {
+    noAutoComplete {
       myFixture.completeBasic()
       UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "to-import")
       myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
@@ -235,7 +236,7 @@ export default {
   components: {ToImport}
 }
 </script>""")
-    })
+    }
   }
 
   fun testCompleteWithImportCreateScriptNoExport() {
@@ -247,7 +248,7 @@ export default {
 </template>
 """)
 
-    noAutoComplete(Runnable {
+    noAutoComplete {
       myFixture.completeBasic()
       UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "to-import")
       myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
@@ -261,7 +262,7 @@ export default {
   components: {ToImport}
 }
 </script>""")
-    })
+    }
   }
 
   fun testCompleteWithoutImportForRenamedGlobalComponent() {
@@ -288,7 +289,7 @@ export default {
 </script>
 """)
 
-    noAutoComplete(Runnable {
+    noAutoComplete {
       myFixture.completeBasic()
       UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "renamed-component")
       myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
@@ -301,7 +302,7 @@ export default {
 }
 </script>
 """)
-    })
+    }
   }
 
   fun testCompleteWithoutImportForGlobalComponent() {
@@ -328,7 +329,7 @@ export default {
 </script>
 """)
 
-    noAutoComplete(Runnable {
+    noAutoComplete {
       myFixture.completeBasic()
       UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "lib2-component")
       myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
@@ -341,7 +342,7 @@ export default {
 }
 </script>
 """)
-    })
+    }
   }
 
   fun testCompleteAttributesFromProps() {
@@ -505,33 +506,22 @@ export default {
   }
 
   fun testInsertAttributeWithoutValue() {
-    noAutoComplete(Runnable {
+    noAutoComplete{
       myFixture.configureByText("InsertAttributeWithoutValue.vue", "<template v-onc<caret>></template>")
       myFixture.completeBasic()
       UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "v-once")
       myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
       myFixture.checkResult("<template v-once<caret>></template>")
-    })
+    }
   }
 
   fun testInsertAttributeWithValue() {
-    noAutoComplete(Runnable {
+    noAutoComplete {
       myFixture.configureByText("InsertAttributeWithValue.vue", "<template v-tex<caret>></template>")
       myFixture.completeBasic()
       UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "v-text")
       myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
       myFixture.checkResult("<template v-text=\"<caret>\"></template>")
-    })
-  }
-
-  private fun noAutoComplete(callback: Runnable) {
-    val old = CodeInsightSettings.getInstance().AUTOCOMPLETE_ON_CODE_COMPLETION
-    CodeInsightSettings.getInstance().AUTOCOMPLETE_ON_CODE_COMPLETION = false
-    try {
-      callback.run()
-    }
-    finally {
-      CodeInsightSettings.getInstance().AUTOCOMPLETE_ON_CODE_COMPLETION = old
     }
   }
 
@@ -565,7 +555,7 @@ export default {
   }
 </script>
 """)
-    noAutoComplete(Runnable {
+    noAutoComplete {
       myFixture.completeBasic()
       UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!,
         "first-mixin-prop", "second-mixin-prop", "hi2dden",
@@ -574,7 +564,7 @@ export default {
         "FirstMixinProp", "firstMixinProp",
         "SecondMixinProp", "secondMixinProp", "Hi2dden",
         "InterestingProp", "interestingProp")
-    })
+    }
   }
 
   fun testNoNotImportedMixinsInCompletion() {
@@ -603,14 +593,14 @@ export default {
   }
 </script>
 """)
-    noAutoComplete(Runnable {
+    noAutoComplete {
       myFixture.completeBasic()
       UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "hi2dden", "interesting-prop")
       UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!,
         "Hi2dden", "interestingProp", "InterestingProp",
         "FirstMixinProp", "firstMixinProp", "first-mixin-prop",
         "SecondMixinProp", "secondMixinProp", "second-mixin-prop")
-    })
+    }
   }
 
   fun testNoCompletionInVueAttributes() {
@@ -676,7 +666,7 @@ export default {
   }
 </script>
 """)
-    noAutoComplete(Runnable {
+    noAutoComplete {
       myFixture.completeBasic()
       TestCase.assertNotNull(myFixture.lookupElements)
       val item: LookupElement? = myFixture.lookupElements?.firstOrNull { "callMe" == it.lookupString }
@@ -684,7 +674,7 @@ export default {
       val presentation = TestLookupElementPresentation.renderReal(item!!)
       TestCase.assertEquals("number", presentation.typeText)
       TestCase.assertEquals("(aaa, bbb)" + getLocationPresentation("default.methods", "PrettyLookup.vue"), presentation.tailText)
-    })
+    }
   }
 
   fun testCompleteVBind() {
@@ -1140,7 +1130,7 @@ export default class ComponentInsertion extends Vue {
   }
 
   fun testNoImportInsertedForRecursivelyLocalComponent() {
-    noAutoComplete(Runnable {
+    noAutoComplete {
       defineRecursiveMixedMixins(myFixture)
       myFixture.configureByText("CompletionWithRecursiveMixins.vue", """
         <template>
@@ -1155,7 +1145,7 @@ export default class ComponentInsertion extends Vue {
           <HiddenComponent from-hidden="" from-d=""<caret>
         </template>
       """)
-    })
+    }
 
   }
 
@@ -1187,7 +1177,8 @@ export default class ComponentInsertion extends Vue {
     myFixture.configureByText("foo.vue", "<template> <div @c<caret> </template>")
     myFixture.completeBasic()
     assertSameElements(myFixture.lookupElementStrings!!, "@copy", "@cancel", "@click", "@canplaythrough", "@close",
-      "@change", "@canplay", "@cut", "@cuechange", "@contextmenu")
+      "@change", "@canplay", "@cut", "@cuechange", "@contextmenu", ".capture",
+      ".once", ".passive", ".prevent", ".self", ".stop")
   }
 
   fun testEventsAfterVOn() {

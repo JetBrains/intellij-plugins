@@ -86,7 +86,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
       if (namespace == Namespace.HTML)
         when (kind) {
           WebSymbol.KIND_HTML_ATTRIBUTES ->
-            codeCompletionItem.source
+            codeCompletionItem.symbol
               ?.takeIf { it.kind == KIND_HTML_VUE_COMPONENT_PROPS }
               ?.jsType?.getTypeText(JSType.TypeTextFormat.PRESENTABLE)
               ?.let { codeCompletionItem.withTypeText(it) }
@@ -231,7 +231,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
               container.acceptEntities(object : VueModelVisitor() {
                 override fun visitDirective(name: String, directive: VueDirective, proximity: Proximity): Boolean {
                   result.add(WebSymbolCodeCompletionItem.create(fromAsset(name),
-                    source = DirectiveWrapper(name, directive),
+                    symbol = DirectiveWrapper(name, directive),
                     priority = priorityOf(proximity)))
                   return true
                 }
@@ -266,7 +266,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
       val wrapper = ComponentWrapper(name, component)
       var builder = WebSymbolCodeCompletionItem.create(
         name = name,
-        source = wrapper,
+        symbol = wrapper,
         priority = priorityOf(proximity))
 
       if (proximity == VueModelVisitor.Proximity.OUT_OF_SCOPE && element != null) {
