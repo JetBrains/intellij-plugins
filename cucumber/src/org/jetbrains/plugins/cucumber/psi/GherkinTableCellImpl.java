@@ -47,15 +47,16 @@ public class GherkinTableCellImpl extends GherkinPsiElementBase implements Gherk
   @Override
   public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
     final LeafPsiElement content = PsiTreeUtil.getChildOfType(this, LeafPsiElement.class);
-    PsiElement[] elements = GherkinElementFactory.getTopLevelElements(getProject(), name);
-    getNode().replaceChild(content, elements[0].getNode());
+    if (content != null) {
+      PsiElement[] elements = GherkinElementFactory.getTopLevelElements(getProject(), name);
+      getNode().replaceChild(content, elements[0].getNode());
+    }
     return this;
   }
 
   @Override
   public PsiElement getNameIdentifier() {
-    final LeafPsiElement content = PsiTreeUtil.getChildOfType(this, LeafPsiElement.class);
-    return content;
+    return PsiTreeUtil.getChildOfType(this, LeafPsiElement.class);
   }
 
   @NotNull
