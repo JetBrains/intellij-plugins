@@ -3,7 +3,7 @@ import {Component, QueryList} from "@angular/core"
 
 @Component({
   template: `
-    <div *ngFor="let item of <error>12</error>">
+    <div *ngFor="let item of <error descr="Type 12 is not assignable to type NgIterable<T> | QueryList<T>...  Type 12 is not assignable to type Array<T> | Iterable<T> | QueryList<T>">12</error>">
 
     </div>
     <div *ngFor="let item of query">
@@ -12,7 +12,7 @@ import {Component, QueryList} from "@angular/core"
       {{item.charAt(<error descr="Argument type \"str\" is not assignable to parameter type number">"str"</error>)}}
       {{item.<error descr="Unresolved variable foo">foo</error>}}
     </div>
-    <div *ngFor="let item of <error>15</error>">
+    <div *ngFor="let item of <error descr="Type 15 is not assignable to type NgIterable<T> | QueryList<T>...  Type 15 is not assignable to type Array<T> | Iterable<T> | QueryList<T>">15</error>">
 
     </div>
   `

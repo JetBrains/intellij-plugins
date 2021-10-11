@@ -1,5 +1,5 @@
 <lib-my-lib [predicate<caret>]="foo"></lib-my-lib>
-<lib-my-lib [predicate]="<error>bar</error>"></lib-my-lib>
+<lib-my-lib [predicate]="<error descr="Type (test: number) => boolean is not assignable to type (arg: string) => boolean  Type string is not assignable to type number">bar</error>"></lib-my-lib>
 <lib-my-lib [predicate]="<error descr="Type 12 is not assignable to type (arg: string) => boolean">12</error>"></lib-my-lib>
 
 <lib-my-lib [withSetter]="<error descr="Type 12 is not assignable to type boolean">12</error>"></lib-my-lib>

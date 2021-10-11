@@ -14,7 +14,7 @@ import org.angular2.lang.types.Angular2PropertyBindingType
 
 class Angular2JSFrameworkSpecificHandler : JSFrameworkSpecificHandler {
   override fun findExpectedType(element: PsiElement, parent: PsiElement?, expectedTypeKind: JSExpectedTypeKind): JSType? {
-    if (parent is Angular2Binding) {
+    if (parent is Angular2Binding && parent.expression == element) {
       val attribute = Angular2BindingImpl.getEnclosingAttribute(parent)
       val descriptor = attribute?.descriptor as? Angular2AttributeDescriptor ?: return null
       val info = descriptor.info
@@ -23,7 +23,7 @@ class Angular2JSFrameworkSpecificHandler : JSFrameworkSpecificHandler {
       }
       return null
     }
-    if (parent is Angular2TemplateBinding) {
+    if (parent is Angular2TemplateBinding && parent.expression == element) {
       return parent.keyJSType
     }
     return null
