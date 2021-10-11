@@ -3,9 +3,12 @@ package org.jetbrains.plugins.cucumber.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
@@ -59,5 +62,14 @@ public class GherkinTableCellImpl extends GherkinPsiElementBase implements Gherk
   @Override
   public SearchScope getUseScope() {
     return new LocalSearchScope(getContainingFile());
+  }
+
+  @Override
+  public PsiReference @NotNull [] getReferences() {
+    return CachedValuesManager.getCachedValue(this, () -> CachedValueProvider.Result.create(getReferencesInner(), this));
+  }
+
+  private PsiReference[] getReferencesInner() {
+    return ReferenceProvidersRegistry.getReferencesFromProviders(this);
   }
 }
