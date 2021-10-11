@@ -41,18 +41,6 @@ public final class Angular2BindingImpl extends Angular2EmbeddedExpressionImpl im
     }
   }
 
-  @Override
-  public @Nullable JSType getExpectedType() {
-    var attribute = getEnclosingAttribute(this);
-    var descriptor = tryCast(doIfNotNull(attribute, XmlAttribute::getDescriptor), Angular2AttributeDescriptor.class);
-    if (descriptor == null) return null;
-    var info = descriptor.getInfo();
-    if (info.type == Angular2AttributeType.PROPERTY_BINDING || info.type == Angular2AttributeType.BANANA_BOX_BINDING) {
-      return new Angular2PropertyBindingType(attribute);
-    }
-    return null;
-  }
-
   static @Nullable JSExpression getExpression(Angular2EmbeddedExpressionImpl expression) {
     return Arrays.stream(expression.getChildren(JSExtendedLanguagesTokenSetProvider.EXPRESSIONS))
       .map(node -> node.getPsi(JSExpression.class))
@@ -67,7 +55,7 @@ public final class Angular2BindingImpl extends Angular2EmbeddedExpressionImpl im
       .orElse(null);
   }
 
-  static @Nullable XmlAttribute getEnclosingAttribute(Angular2EmbeddedExpression expression) {
+  public static @Nullable XmlAttribute getEnclosingAttribute(Angular2EmbeddedExpression expression) {
     XmlAttribute attribute = getParentOfType(expression, XmlAttribute.class);
     if (attribute == null) {
       attribute = getParentOfType(InjectedLanguageManager.getInstance(expression.getProject()).getInjectionHost(expression),

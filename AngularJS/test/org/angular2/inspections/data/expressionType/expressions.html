@@ -2,8 +2,8 @@
     <weak_warning descr="Property missingAttr is not provided by any applicable directives nor by my-comp element">[missingAttr]</weak_warning>="45 + 34"
     [plainNumber]="<error descr="Type string is not assignable to type number">12 + '12'</error>"
     [plainBoolean]="<error descr="Type string is not assignable to type boolean">12 + '12'</error>"
-    [simpleStringEnum]="<error descr="Type string is not assignable to type MyType">12 + '12'</error>"
-    [setterSimpleStringEnum]="<error descr="Type string is not assignable to type MyType">12 + '12'</error>"
+    [simpleStringEnum]="<error>12 + '12'</error>"
+    [setterSimpleStringEnum]="<error>12 + '12'</error>"
     [dependency]="12 + '12'"
     [model]="<error descr="Type string is not assignable to type NgModel">12 + '12'</error>"
 ></my-comp>
@@ -11,14 +11,14 @@
 <my-comp
     [plainNumber]="12 + 1.34"
     [plainBoolean]="<error descr="Type number is not assignable to type boolean">12 + 1.34</error>"
-    [simpleStringEnum]="<error descr="Type number is not assignable to type MyType">12 + 1.34</error>"
-    [setterSimpleStringEnum]="<error descr="Type number is not assignable to type MyType">12 + 1.34</error>"
+    [simpleStringEnum]="<error>12 + 1.34</error>"
+    [setterSimpleStringEnum]="<error>12 + 1.34</error>"
     [dependency]="<error descr="Type number is not assignable to type string">12 + 1.34</error>"
     [model]="<error descr="Type number is not assignable to type NgModel">12 + 1.34</error>"
 ></my-comp>
 
 <my-comp
-    [plainNumber]="<error descr="Type \"off\" | \"polite\" is not assignable to type number">true ? 'off' : 'polite'</error>"
+    [plainNumber]="<error>true ? 'off' : 'polite'</error>"
     [simpleStringEnum]="true ? 'off' : 'polite'"
     [setterSimpleStringEnum]="true ? 'off' : 'polite'"
     [dependency]="true ? 'off' : 'polite'"
@@ -29,18 +29,18 @@
     [dependency]="<error descr="Argument type 12 is not assignable to parameter type string">12</error> | lowercase"
 ></my-comp>
 <my-comp
-    [simpleStringEnum]="<error descr="Type string is not assignable to type MyType">'off' | lowercase</error>"
+    [simpleStringEnum]="<error>'off' | lowercase</error>"
     [dependency]="'12' | lowercase"
 ></my-comp>
 
 <my-comp
-    [dependency]="<error descr="Type NgModel | null is not assignable to type string">asyncModel() | async</error>"
+    [dependency]="<error>asyncModel() | async</error>"
     [model]="asyncModel() | async"
 ></my-comp>
 
 <my-comp
     [dependency]="asyncString() | async"
-    [model]="<error descr="Type string | null is not assignable to type NgModel">asyncString() | async</error>"
+    [model]="<error>asyncString() | async</error>"
 ></my-comp>
 
 <my-comp
@@ -63,13 +63,13 @@
 ></my-comp>
 
 <my-comp
-    [obj]="<error descr="Type {e: \"ddd\", f: \"test\"} is not assignable to type {f: string, e: MyType}">{f: 'test', e: 'ddd'}</error>"
+    [obj]="<error>{f: 'test', e: 'ddd'}</error>"
 ></my-comp>
 
 <input [ngModel]="true" #model="ngModel"/>
 
 <my-comp [predicate]="foo"></my-comp>
-<my-comp [predicate]="<error descr="Type (arg: number) => boolean is not assignable to type (arg: string) => false">bar</error>"></my-comp>
+<my-comp [predicate]="<error>bar</error>"></my-comp>
 
 <div (click)="asyncInferred().then()"></div>
 <div (click)="asyncInferred().<error descr="Unresolved function or method foo()">foo</error>()"></div>

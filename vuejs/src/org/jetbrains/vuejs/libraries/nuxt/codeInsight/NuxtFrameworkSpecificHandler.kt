@@ -6,20 +6,20 @@ import com.intellij.lang.javascript.frameworks.JSFrameworkSpecificHandler
 import com.intellij.lang.javascript.psi.*
 import com.intellij.psi.PsiElement
 import com.intellij.util.castSafelyTo
-import org.jetbrains.vuejs.libraries.nuxt.model.NuxtModelManager
 import org.jetbrains.vuejs.libraries.nuxt.NUXT_CONFIG_NAMES
+import org.jetbrains.vuejs.libraries.nuxt.model.NuxtModelManager
 
 class NuxtFrameworkSpecificHandler : JSFrameworkSpecificHandler {
 
-  override fun findExpectedType(parent: PsiElement, expectedTypeKind: JSExpectedTypeKind): JSType? {
-    if (parent is JSObjectLiteralExpression
-        && NUXT_CONFIG_NAMES.any { it == parent.containingFile.name }
-        && (parent.parent is ES6ExportDefaultAssignment
-            || parent.parent.castSafelyTo<JSAssignmentExpression>()
+  override fun findExpectedType(element: PsiElement, expectedTypeKind: JSExpectedTypeKind): JSType? {
+    if (element is JSObjectLiteralExpression
+        && NUXT_CONFIG_NAMES.any { it == element.containingFile.name }
+        && (element.parent is ES6ExportDefaultAssignment
+            || element.parent.castSafelyTo<JSAssignmentExpression>()
               ?.lOperand?.castSafelyTo<JSDefinitionExpression>()
               ?.expression?.castSafelyTo<JSReferenceExpression>()
               ?.referenceName == "exports")) {
-      return NuxtModelManager.getApplication(parent)?.getNuxtConfigType(parent)
+      return NuxtModelManager.getApplication(element)?.getNuxtConfigType(element)
     }
     return null
   }

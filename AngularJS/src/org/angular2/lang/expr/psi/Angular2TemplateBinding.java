@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface Angular2TemplateBinding extends JSStatement, JSExpressionWithExpectedTypeHolder {
+public interface Angular2TemplateBinding extends JSStatement {
 
   @NotNull
   String getKey();
@@ -25,7 +25,6 @@ public interface Angular2TemplateBinding extends JSStatement, JSExpressionWithEx
   @Nullable
   JSVariable getVariableDefinition();
 
-  @Override
   @Nullable
   JSExpression getExpression();
 

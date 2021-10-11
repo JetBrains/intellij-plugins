@@ -32,16 +32,16 @@ class VueFrameworkInsideScriptSpecificHandler : JSFrameworkSpecificHandler {
     }
   }
 
-  override fun findExpectedType(parent: PsiElement, expectedTypeKind: JSExpectedTypeKind): JSType? {
-    if (parent is JSObjectLiteralExpression) {
-      val language = DialectDetector.languageOfElement(parent)
-      if ((VueFileType.INSTANCE == parent.containingFile?.fileType
-           && isInsideScript(parent)
+  override fun findExpectedType(element: PsiElement, expectedTypeKind: JSExpectedTypeKind): JSType? {
+    if (element is JSObjectLiteralExpression) {
+      val language = DialectDetector.languageOfElement(element)
+      if ((VueFileType.INSTANCE == element.containingFile?.fileType
+           && isInsideScript(element)
            && VueJSLanguage.INSTANCE != language
-           && (VueFrameworkHandler.hasComponentIndicatorProperties(parent) || parent.context is ES6ExportDefaultAssignment))
-          || (parent.containingFile is JSFile && VueFrameworkHandler.hasComponentIndicatorProperties(parent)
-              && isVueContext(parent))) {
-        return getObjectLiteralTypeForComponent(parent)
+           && (VueFrameworkHandler.hasComponentIndicatorProperties(element) || element.context is ES6ExportDefaultAssignment))
+          || (element.containingFile is JSFile && VueFrameworkHandler.hasComponentIndicatorProperties(element)
+              && isVueContext(element))) {
+        return getObjectLiteralTypeForComponent(element)
       }
     }
     return null

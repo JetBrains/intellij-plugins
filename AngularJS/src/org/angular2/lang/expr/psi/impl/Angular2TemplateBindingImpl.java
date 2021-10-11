@@ -92,11 +92,6 @@ public class Angular2TemplateBindingImpl extends JSStatementImpl implements Angu
   }
 
   @Override
-  public @Nullable JSType getExpectedType() {
-    return getKeyJSType();
-  }
-
-  @Override
   public String toString() {
     return "Angular2TemplateBinding <" + getKey() + ", " + keyIsVar() + ", " + getName() + ">";
   }
