@@ -4,12 +4,12 @@ package org.jetbrains.vuejs.web
 import com.intellij.javascript.web.WebFramework
 import com.intellij.javascript.web.lang.html.WebFrameworkHtmlFileType
 import com.intellij.javascript.web.symbols.SymbolKind
-import com.intellij.javascript.web.symbols.WebSymbol
 import com.intellij.javascript.web.symbols.WebSymbolsContainer
-import com.intellij.lang.javascript.JSStringUtil
 import org.jetbrains.vuejs.VuejsIcons
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider.Companion.KIND_VUE_COMPONENTS
+import org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider.Companion.KIND_VUE_COMPONENT_PROPS
 import javax.swing.Icon
 
 class VueFramework : WebFramework() {
@@ -26,21 +26,21 @@ class VueFramework : WebFramework() {
     if (namespace == WebSymbolsContainer.Namespace.HTML) {
       if (forQuery) {
         when (kind) {
-          WebSymbol.KIND_HTML_VUE_COMPONENTS ->
+          KIND_VUE_COMPONENTS ->
             listOf(name, fromAsset(name, true))
-          WebSymbol.KIND_HTML_VUE_COMPONENT_PROPS ->
+          KIND_VUE_COMPONENT_PROPS ->
             listOf(fromAsset(name))
           else -> emptyList()
         }
       }
       else {
         when (kind) {
-          WebSymbol.KIND_HTML_VUE_COMPONENTS ->
+          KIND_VUE_COMPONENTS ->
             if (name.contains('-'))
               listOf(name)
             else
               listOf(fromAsset(name, true))
-          WebSymbol.KIND_HTML_VUE_COMPONENT_PROPS ->
+          KIND_VUE_COMPONENT_PROPS ->
             listOf(fromAsset(name))
           else -> emptyList()
         }
@@ -52,11 +52,11 @@ class VueFramework : WebFramework() {
   override fun getNameVariants(namespace: WebSymbolsContainer.Namespace, kind: SymbolKind, name: String): List<String> =
     if (namespace == WebSymbolsContainer.Namespace.HTML) {
       when (kind) {
-        WebSymbol.KIND_HTML_VUE_COMPONENTS ->  if (name.contains('-'))
+        KIND_VUE_COMPONENTS ->  if (name.contains('-'))
           listOf(name)
         else
           listOf(name, fromAsset(name))
-        WebSymbol.KIND_HTML_VUE_COMPONENT_PROPS -> listOf(fromAsset(name))
+        KIND_VUE_COMPONENT_PROPS -> listOf(fromAsset(name))
         else -> emptyList()
       }
     }
@@ -64,5 +64,6 @@ class VueFramework : WebFramework() {
 
   companion object {
     val instance get() = get("vue")
+    const val ID = "vue"
   }
 }

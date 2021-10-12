@@ -5,10 +5,6 @@ import com.intellij.javascript.web.symbols.*
 import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_ELEMENTS
 import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_EVENTS
 import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_SLOTS
-import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_VUE_COMPONENTS
-import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_VUE_COMPONENT_PROPS
-import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_VUE_DIRECTIVES
-import com.intellij.javascript.web.symbols.WebSymbol.Companion.VUE_FRAMEWORK
 import com.intellij.javascript.web.symbols.WebSymbol.NameSegment
 import com.intellij.javascript.web.symbols.WebSymbol.Priority
 import com.intellij.javascript.web.symbols.WebSymbolsContainer.Companion.NAMESPACE_HTML
@@ -48,6 +44,9 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
 
   companion object {
     const val KIND_VUE_TOP_LEVEL_ELEMENTS = "vue-file-top-elements"
+    const val KIND_VUE_COMPONENTS = "vue-components"
+    const val KIND_VUE_COMPONENT_PROPS = "props"
+    const val KIND_VUE_DIRECTIVES = "vue-directives"
     const val KIND_VUE_AVAILABLE_SLOTS = "vue-available-slots"
     const val KIND_VUE_MODEL = "vue-model"
     const val KIND_VUE_DIRECTIVE_ARGUMENT = "argument"
@@ -72,7 +71,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
 
   override fun getAdditionalContext(element: PsiElement?, framework: String?): List<WebSymbolsContainer> =
     element
-      ?.takeIf { framework == VUE_FRAMEWORK }
+      ?.takeIf { framework == VueFramework.ID }
       ?.let { VueModelManager.findEnclosingContainer(it) }
       ?.let {
         listOfNotNull(EntityContainerWrapper(element, it),
@@ -87,7 +86,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
         when (kind) {
           WebSymbol.KIND_HTML_ATTRIBUTES ->
             codeCompletionItem.symbol
-              ?.takeIf { it.kind == KIND_HTML_VUE_COMPONENT_PROPS }
+              ?.takeIf { it.kind == KIND_VUE_COMPONENT_PROPS }
               ?.jsType?.getTypeText(JSType.TypeTextFormat.PRESENTABLE)
               ?.let { codeCompletionItem.withTypeText(it) }
             ?: codeCompletionItem
@@ -146,12 +145,12 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
                 context = context
               )
                 .map {
-                  WebSymbolMatch(it.name, it.nameSegments, Namespace.HTML, KIND_HTML_ELEMENTS, it.context)
+                  WebSymbolMatch(it.name, it.nameSegments, Namespace.HTML, KIND_HTML_ELEMENTS, it.origin)
                 }
             }
             else emptyList()
           }
-          KIND_HTML_VUE_COMPONENTS -> {
+          KIND_VUE_COMPONENTS -> {
             val result = mutableListOf<VueComponent>()
             if (params.registry.allowResolve) {
               val normalizedTagName = name?.let { fromAsset(it) }
@@ -169,7 +168,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
               ComponentWrapper(name ?: it.defaultName ?: return@mapNotNull null, it)
             }
           }
-          KIND_HTML_VUE_DIRECTIVES -> {
+          KIND_VUE_DIRECTIVES -> {
             val directives = mutableListOf<VueDirective>()
             if (params.registry.allowResolve) {
               val searchName = name?.let { fromAsset(it) }
@@ -206,7 +205,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
             }
             else emptyList()
           }
-          KIND_HTML_VUE_COMPONENTS -> {
+          KIND_VUE_COMPONENTS -> {
             val result = mutableListOf<WebSymbolCodeCompletionItem>()
             if (params.registry.allowResolve) {
               val scriptLanguage = detectVueScriptLanguage(containingFile)
@@ -225,7 +224,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
             }
             result
           }
-          KIND_HTML_VUE_DIRECTIVES -> {
+          KIND_VUE_DIRECTIVES -> {
             val result = mutableListOf<WebSymbolCodeCompletionItem>()
             if (params.registry.allowResolve) {
               container.acceptEntities(object : VueModelVisitor() {
@@ -336,7 +335,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
 
   private abstract class NamedSymbolWrapper<T : VueNamedSymbol>(item: T,
                                                                 protected val owner: VueComponent,
-                                                                override val context: WebSymbolsContainer.Context)
+                                                                override val origin: WebSymbolsContainer.Origin)
     : DocumentedItemWrapper<T>(item.name, item) {
 
     override val name: String
@@ -350,7 +349,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
     abstract class NamedSymbolPointer<T : VueNamedSymbol>(wrapper: NamedSymbolWrapper<T>)
       : Pointer<NamedSymbolWrapper<T>> {
       val name = wrapper.item.name
-      val context = wrapper.context
+      val origin = wrapper.origin
       private val owner = wrapper.owner.createPointer()
 
       override fun dereference(): NamedSymbolWrapper<T>? =
@@ -371,11 +370,11 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
   private abstract class ScopeElementWrapper<T : VueDocumentedItem>(matchedName: String, item: T) :
     DocumentedItemWrapper<T>(matchedName, item) {
 
-    override val context: WebSymbolsContainer.Context =
-      object : WebSymbolsContainer.Context {
+    override val origin: WebSymbolsContainer.Origin =
+      object : WebSymbolsContainer.Origin {
 
         override val framework: FrameworkId
-          get() = VUE_FRAMEWORK
+          get() = VueFramework.ID
 
         override val packageName: String?
           get() = (item as VueScopeElement).parents
@@ -398,7 +397,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
 
 
     override val kind: SymbolKind
-      get() = KIND_HTML_VUE_COMPONENTS
+      get() = KIND_VUE_COMPONENTS
 
     override val name: String
       get() = item.defaultName ?: matchedName
@@ -413,7 +412,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
                             context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
       if (namespace == null || namespace == Namespace.HTML)
         when (kind) {
-          KIND_HTML_VUE_COMPONENT_PROPS -> {
+          KIND_VUE_COMPONENT_PROPS -> {
             val props = mutableListOf<VueInputProperty>()
             // TODO ambiguous resolution in case of duplicated names
             item.acceptPropertiesAndMethods(object : VueModelVisitor() {
@@ -422,22 +421,22 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
                 return true
               }
             })
-            props.mapWithNameFilter(name, params, context) { InputPropWrapper(it, item, this.context) }
+            props.mapWithNameFilter(name, params, context) { InputPropWrapper(it, item, this.origin) }
           }
           KIND_HTML_EVENTS -> {
             (item as? VueContainer)
               ?.emits
-              ?.mapWithNameFilter(name, params, context) { EmitCallWrapper(it, item, this.context) }
+              ?.mapWithNameFilter(name, params, context) { EmitCallWrapper(it, item, this.origin) }
             ?: emptyList()
           }
           KIND_HTML_SLOTS -> {
             (item as? VueContainer)
               ?.slots
-              ?.mapWithNameFilter(name, params, context) { SlotWrapper(it, item, this.context) }
+              ?.mapWithNameFilter(name, params, context) { SlotWrapper(it, item, this.origin) }
             ?: if (!name.isNullOrEmpty()
                    && ((item is VueContainer && item.template == null)
                        || item is VueUnresolvedComponent)) {
-              listOf(WebSymbolMatch(name, listOf(NameSegment(0, name.length)), Namespace.HTML, KIND_HTML_SLOTS, this.context))
+              listOf(WebSymbolMatch(name, listOf(NameSegment(0, name.length)), Namespace.HTML, KIND_HTML_SLOTS, this.origin))
             }
             else emptyList()
           }
@@ -445,7 +444,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
             (item as? VueContainer)?.model?.takeIf {
               it.prop != DEFAULT_PROP || it.event != DEFAULT_EVENT
             }?.let {
-              listOf(VueModelWrapper(this.context, it))
+              listOf(VueModelWrapper(this.origin, it))
             }
             ?: emptyList()
           }
@@ -464,11 +463,11 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
 
   private class InputPropWrapper(property: VueInputProperty,
                                  owner: VueComponent,
-                                 context: WebSymbolsContainer.Context)
-    : NamedSymbolWrapper<VueInputProperty>(property, owner, context) {
+                                 origin: WebSymbolsContainer.Origin)
+    : NamedSymbolWrapper<VueInputProperty>(property, owner, origin) {
 
     override val kind: SymbolKind
-      get() = KIND_HTML_VUE_COMPONENT_PROPS
+      get() = KIND_VUE_COMPONENT_PROPS
 
     override val jsType: JSType?
       get() = item.jsType
@@ -500,15 +499,15 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
         }
 
         override fun createWrapper(owner: VueComponent, symbol: VueInputProperty): NamedSymbolWrapper<VueInputProperty> =
-          InputPropWrapper(symbol, owner, context)
+          InputPropWrapper(symbol, owner, origin)
 
       }
   }
 
   private class EmitCallWrapper(emitCall: VueEmitCall,
                                 owner: VueComponent,
-                                context: WebSymbolsContainer.Context)
-    : NamedSymbolWrapper<VueEmitCall>(emitCall, context = context, owner = owner) {
+                                origin: WebSymbolsContainer.Origin)
+    : NamedSymbolWrapper<VueEmitCall>(emitCall, origin = origin, owner = owner) {
 
     override val kind: SymbolKind
       get() = KIND_HTML_EVENTS
@@ -523,15 +522,15 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
           (owner as? VueContainer)?.emits?.find { it.name == name }
 
         override fun createWrapper(owner: VueComponent, symbol: VueEmitCall): NamedSymbolWrapper<VueEmitCall> =
-          EmitCallWrapper(symbol, owner, context)
+          EmitCallWrapper(symbol, owner, origin)
 
       }
   }
 
   private class SlotWrapper(slot: VueSlot,
                             owner: VueComponent,
-                            context: WebSymbolsContainer.Context)
-    : NamedSymbolWrapper<VueSlot>(slot, context = context, owner = owner) {
+                            origin: WebSymbolsContainer.Origin)
+    : NamedSymbolWrapper<VueSlot>(slot, origin = origin, owner = owner) {
 
     override val pattern: WebSymbolsPattern?
       get() = item.pattern?.let { RegExpPattern(it, true) }
@@ -549,7 +548,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
           (owner as? VueContainer)?.slots?.find { it.name == name }
 
         override fun createWrapper(owner: VueComponent, symbol: VueSlot): NamedSymbolWrapper<VueSlot> =
-          SlotWrapper(symbol, owner, context)
+          SlotWrapper(symbol, owner, origin)
 
       }
 
@@ -559,7 +558,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
     ScopeElementWrapper<VueDirective>(matchedName, directive) {
 
     override val kind: SymbolKind
-      get() = KIND_HTML_VUE_DIRECTIVES
+      get() = KIND_VUE_DIRECTIVES
 
     override val name: String
       get() = item.defaultName ?: matchedName
@@ -574,7 +573,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
                             context: Stack<WebSymbolsContainer>): List<WebSymbolsContainer> =
       if ((namespace == null || namespace == Namespace.HTML)
           && (kind == KIND_VUE_DIRECTIVE_ARGUMENT || (name != null && kind == KIND_VUE_DIRECTIVE_MODIFIERS))) {
-        listOf(AnyWrapper(this.context, Namespace.HTML, kind, name ?: "Vue directive argument"))
+        listOf(AnyWrapper(this.origin, Namespace.HTML, kind, name ?: "Vue directive argument"))
       }
       else emptyList()
 
@@ -587,7 +586,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
     }
   }
 
-  private class VueModelWrapper(override val context: WebSymbolsContainer.Context,
+  private class VueModelWrapper(override val origin: WebSymbolsContainer.Origin,
                                 private val vueModel: VueModelDirectiveProperties) : WebSymbol {
 
     override val namespace: Namespace get() = Namespace.HTML
@@ -603,7 +602,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
       Pointer.hardPointer(this)
   }
 
-  private class AnyWrapper(override val context: WebSymbolsContainer.Context,
+  private class AnyWrapper(override val origin: WebSymbolsContainer.Origin,
                            override val namespace: Namespace,
                            override val kind: SymbolKind,
                            override val matchedName: String) : WebSymbol {

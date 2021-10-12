@@ -2,13 +2,14 @@
 package org.jetbrains.vuejs.web
 
 import com.intellij.javascript.web.symbols.*
+import org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider.Companion.KIND_VUE_COMPONENT_PROPS
 
 class VueBindFilter : WebSymbolsFilter {
   override fun filterCodeCompletions(codeCompletions: List<WebSymbolCodeCompletionItem>,
                                      registry: WebSymbolsRegistry,
                                      context: List<WebSymbolsContainer>,
                                      properties: Map<String, Any>): List<WebSymbolCodeCompletionItem> {
-    val props = registry.runNameMatchQuery(listOf(WebSymbolsContainer.NAMESPACE_HTML, WebSymbol.KIND_HTML_VUE_COMPONENT_PROPS),
+    val props = registry.runNameMatchQuery(listOf(WebSymbolsContainer.NAMESPACE_HTML, KIND_VUE_COMPONENT_PROPS),
                                context = context).mapTo(HashSet()) {it.name}
     return codeCompletions.filter { !it.name.startsWith("on") || props.contains(it.name)}
   }
@@ -17,7 +18,7 @@ class VueBindFilter : WebSymbolsFilter {
                                  registry: WebSymbolsRegistry,
                                  context: List<WebSymbolsContainer>,
                                  properties: Map<String, Any>): List<WebSymbol> {
-    val props = registry.runNameMatchQuery(listOf(WebSymbolsContainer.NAMESPACE_HTML, WebSymbol.KIND_HTML_VUE_COMPONENT_PROPS),
+    val props = registry.runNameMatchQuery(listOf(WebSymbolsContainer.NAMESPACE_HTML, KIND_VUE_COMPONENT_PROPS),
                                            context = context).mapTo(HashSet()) {it.name}
     return matches.filter { !it.name.startsWith("on") || props.contains(it.name) }
   }

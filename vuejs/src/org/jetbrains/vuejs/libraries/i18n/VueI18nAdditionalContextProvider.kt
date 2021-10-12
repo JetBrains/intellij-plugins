@@ -12,12 +12,13 @@ import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.containers.Stack
 import org.jetbrains.vuejs.codeInsight.LANG_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.web.VueFramework
 import org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider
 
 class VueI18nAdditionalContextProvider : WebSymbolsAdditionalContextProvider {
 
   override fun getAdditionalContext(element: PsiElement?, framework: String?): List<WebSymbolsContainer> =
-    if (framework == WebSymbol.VUE_FRAMEWORK
+    if (framework == VueFramework.ID
         && element is HtmlTag
         && element.name == "i18n"
         && element.parentTag == null
@@ -68,8 +69,8 @@ class VueI18nAdditionalContextProvider : WebSymbolsAdditionalContextProvider {
     override val matchedName: String
       get() = "i18n"
 
-    override val context: WebSymbolsContainer.Context =
-      WebSymbolsContainer.ContextData(WebSymbol.VUE_FRAMEWORK, "vue-i18n")
+    override val origin: WebSymbolsContainer.Origin =
+      WebSymbolsContainer.OriginData(VueFramework.ID, "vue-i18n")
 
     override val namespace: WebSymbolsContainer.Namespace
       get() = WebSymbolsContainer.Namespace.HTML
