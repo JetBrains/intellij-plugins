@@ -63,7 +63,7 @@ abstract class VuexContainerPropertyTypeBase(source: JSTypeSource,
         val useTypeScriptRecordTypeFormat = format == JSType.TypeTextFormat.CODE && isTypeScript
         val prefix = "    "
         val nextPrefix = if (useTypeScriptRecordTypeFormat) ";\n" else ",\n"
-        val separator = typeSeparator
+        val separator = getTypeSeparator(format)
         val quote = JSSymbolPresentationProvider.getDefaultQuote(source.sourceElement)[0]
 
         el.properties
@@ -77,7 +77,7 @@ abstract class VuexContainerPropertyTypeBase(source: JSTypeSource,
                 if (property.isConst) builder.append("readonly ")
                 val fixedName = JSSymbolUtil.quoteIfSpecialPropertyName(property.memberName, quote)
                 builder.append(fixedName)
-                builder.append(typeSeparator)
+                builder.append(separator)
                 builder.append("object ")
                 jsType.appendPseudoType(builder, false)
               }
