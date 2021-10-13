@@ -26,7 +26,7 @@ Prerequisites:
   Find plugins and install them. Restart IDE.
 
 1. Clone the following 2 repositories to neighbor folders (on Windows use a short path,
-   as there is a maximum length allowed):
+   as there is a maximum allowed length):
      - `git clone https://github.com/JetBrains/intellij-plugins`
      - `git clone https://github.com/JetBrains/intellij-community`
      
