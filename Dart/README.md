@@ -19,7 +19,9 @@ How to set up IntelliJ IDEA project for developing Dart Plugin.
 
 Prerequisites:
 - Git command line client
-- The latest IntelliJ IDEA Ultimate installed. Install 'Dart', 'Grammar-Kit'
+- The latest IntelliJ IDEA Ultimate installed. The following bundled plugins are enabled:
+  Git, Java Internationalization, IntelliLang, JUnit, Plugin DevKit, Properties, UI Designer.
+  Additionally install 'Dart', 'Grammar-Kit' and 'Polymer & Web Components' plugins:
   and 'Polymer & Web Components' plugins:
   start IntelliJ IDEA, on Welcome screen click Plugins.
   Find plugins and install them. Restart IDE.
