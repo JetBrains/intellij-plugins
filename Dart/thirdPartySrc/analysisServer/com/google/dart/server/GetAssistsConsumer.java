@@ -30,12 +30,12 @@ public interface GetAssistsConsumer extends Consumer {
    * 
    * @param sourceChanges an array of computed {@link SourceChange}s
    */
-  public void computedSourceChanges(List<SourceChange> sourceChanges);
+  void computedSourceChanges(List<SourceChange> sourceChanges);
 
   /**
    * If a set of assists cannot be passed back, some {@link RequestError} is passed back instead.
    * 
    * @param requestError the reason why a result was not passed back
    */
-  public void onError(RequestError requestError);
+  void onError(RequestError requestError);
 }

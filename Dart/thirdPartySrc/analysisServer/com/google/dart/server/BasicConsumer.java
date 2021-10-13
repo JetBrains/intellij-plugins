@@ -23,5 +23,5 @@ public interface BasicConsumer extends Consumer {
   /**
    * Response from server was received.
    */
-  public void received();
+  void received();
 }

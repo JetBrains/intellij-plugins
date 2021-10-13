@@ -33,7 +33,7 @@ public interface GetReachableSourcesConsumer extends Consumer {
    *          a specific URI is reachable from a given file, clients can check for its presence in
    *          the resulting key set.
    */
-  public void computedReachableSources(Map<String, List<String>> sources);
+  void computedReachableSources(Map<String, List<String>> sources);
 
   /**
    * If a transitive closure cannot be passed back, some {@link RequestError} is passed back
@@ -41,5 +41,5 @@ public interface GetReachableSourcesConsumer extends Consumer {
    * 
    * @param requestError the reason why a result was not passed back
    */
-  public void onError(RequestError requestError);
+  void onError(RequestError requestError);
 }

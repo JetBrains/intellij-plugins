@@ -25,7 +25,7 @@ public interface SetWidgetPropertyValueConsumer extends Consumer {
   /**
    * @param change The change that should be applied.
    */
-  public void computedSetWidgetPropertyValue(SourceChange change);
+  void computedSetWidgetPropertyValue(SourceChange change);
 
   /**
    * If a transitive closure cannot be passed back, some {@link RequestError} is passed back
@@ -33,5 +33,5 @@ public interface SetWidgetPropertyValueConsumer extends Consumer {
    *
    * @param requestError the reason why a result was not passed back
    */
-  public void onError(RequestError requestError);
+  void onError(RequestError requestError);
 }

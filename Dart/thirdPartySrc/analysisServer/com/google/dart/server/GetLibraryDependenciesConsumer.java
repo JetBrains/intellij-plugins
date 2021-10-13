@@ -33,7 +33,7 @@ public interface GetLibraryDependenciesConsumer extends Consumer {
    * @param packageMap a map of context source roots to maps of package names to lists of associated
    *          source directories
    */
-  public void computedDependencies(String[] libraries,
+  void computedDependencies(String[] libraries,
       Map<String, Map<String, List<String>>> packageMap);
 
   /**
@@ -41,5 +41,5 @@ public interface GetLibraryDependenciesConsumer extends Consumer {
    * 
    * @param requestError the reason why a result was not passed back
    */
-  public void onError(RequestError requestError);
+  void onError(RequestError requestError);
 }

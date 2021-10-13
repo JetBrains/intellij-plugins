@@ -36,7 +36,7 @@ public enum AnalysisServerErrorCode {
    * 
    * @param message the message template used to create the message to be displayed for the error
    */
-  private AnalysisServerErrorCode(String message) {
+  AnalysisServerErrorCode(String message) {
     this.message = message;
   }
 

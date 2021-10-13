@@ -38,9 +38,9 @@ public interface AnalysisServerListener {
    *
    * @param directories a list of the paths of the files that are being analyzed
    */
-  public void computedAnalyzedFiles(List<String> directories);
+  void computedAnalyzedFiles(List<String> directories);
 
-  public void computedAvailableSuggestions(@NotNull final List<AvailableSuggestionSet> changed,
+  void computedAvailableSuggestions(@NotNull final List<AvailableSuggestionSet> changed,
                                            @NotNull final int[] removed);
 
   /**
@@ -59,15 +59,15 @@ public interface AnalysisServerListener {
    *                          indicated completion
    * @param libraryFile       The library file that contains the file where completion was requested.
    */
-  public void computedCompletion(String completionId,
-                                 int replacementOffset,
-                                 int replacementLength,
-                                 List<CompletionSuggestion> completions,
-                                 List<IncludedSuggestionSet> includedSuggestionSets,
-                                 List<String> includedElementKinds,
-                                 List<IncludedSuggestionRelevanceTag> includedSuggestionRelevanceTags,
-                                 boolean isLast,
-                                 @Nullable String libraryFile);
+  void computedCompletion(String completionId,
+                          int replacementOffset,
+                          int replacementLength,
+                          List<CompletionSuggestion> completions,
+                          List<IncludedSuggestionSet> includedSuggestionSets,
+                          List<String> includedElementKinds,
+                          List<IncludedSuggestionRelevanceTag> includedSuggestionRelevanceTags,
+                          boolean isLast,
+                          @Nullable String libraryFile);
 
   /**
    * Reports the errors associated with a given file.
@@ -75,7 +75,7 @@ public interface AnalysisServerListener {
    * @param file   the file containing the errors
    * @param errors the errors contained in the file
    */
-  public void computedErrors(String file, List<AnalysisError> errors);
+  void computedErrors(String file, List<AnalysisError> errors);
 
   /**
    * A new collection of highlight regions has been computed for the given file. Each highlight
@@ -86,7 +86,7 @@ public interface AnalysisServerListener {
    * @param file       the file containing the highlight regions
    * @param highlights the highlight regions contained in the file
    */
-  public void computedHighlights(String file, List<HighlightRegion> highlights);
+  void computedHighlights(String file, List<HighlightRegion> highlights);
 
   /**
    * New collections of implemented classes and class members have been computed for the given file.
@@ -95,8 +95,8 @@ public interface AnalysisServerListener {
    * @param implementedClasses the classes defined in the file that are implemented or extended.
    * @param implementedMembers the member defined in the file that are implemented or overridden.
    */
-  public void computedImplemented(String file, List<ImplementedClass> implementedClasses,
-                                  List<ImplementedMember> implementedMembers);
+  void computedImplemented(String file, List<ImplementedClass> implementedClasses,
+                           List<ImplementedMember> implementedMembers);
 
   /**
    * New launch data has been computed.
@@ -106,7 +106,7 @@ public interface AnalysisServerListener {
    * @param referencedFiles a list of the Dart files that are referenced by the file, or
    *                        {@code null} for non-HTML files
    */
-  public void computedLaunchData(String file, String kind, String[] referencedFiles);
+  void computedLaunchData(String file, String kind, String[] referencedFiles);
 
   /**
    * A new collection of navigation regions has been computed for the given file. Each navigation
@@ -118,7 +118,7 @@ public interface AnalysisServerListener {
    * @param file       the file containing the navigation regions
    * @param highlights the highlight regions associated with the source
    */
-  public void computedNavigation(String file, List<NavigationRegion> targets);
+  void computedNavigation(String file, List<NavigationRegion> targets);
 
   /**
    * A new collection of occurrences that been computed for the given file. Each occurrences object
@@ -127,7 +127,7 @@ public interface AnalysisServerListener {
    * @param file             the file containing the occurrences
    * @param occurrencesArray the array of occurrences in the passed file
    */
-  public void computedOccurrences(String file, List<Occurrences> occurrencesArray);
+  void computedOccurrences(String file, List<Occurrences> occurrencesArray);
 
   /**
    * A new outline has been computed for the given file.
@@ -135,7 +135,7 @@ public interface AnalysisServerListener {
    * @param file    the file with which the outline is associated
    * @param outline the outline associated with the file
    */
-  public void computedOutline(String file, Outline outline);
+  void computedOutline(String file, Outline outline);
 
   /**
    * A new collection of overrides that have been computed for a given file. Each override array
@@ -144,9 +144,9 @@ public interface AnalysisServerListener {
    * @param file      the file with which the outline is associated
    * @param overrides the overrides associated with the file
    */
-  public void computedOverrides(String file, List<OverrideMember> overrides);
+  void computedOverrides(String file, List<OverrideMember> overrides);
 
-  public void computedClosingLabels(String file, List<ClosingLabel> labels);
+  void computedClosingLabels(String file, List<ClosingLabel> labels);
 
   /**
    * A new collection of search results have been computed for the given completion id.
@@ -156,7 +156,7 @@ public interface AnalysisServerListener {
    * @param last     {@code true} if this is the last set of results that will be returned for the
    *                 indicated search
    */
-  public void computedSearchResults(String searchId, List<SearchResult> results, boolean last);
+  void computedSearchResults(String searchId, List<SearchResult> results, boolean last);
 
   /**
    * Reports that any analysis results that were previously associated with the given files should
@@ -170,12 +170,12 @@ public interface AnalysisServerListener {
    * <p>
    * It is not possible to subscribe to or unsubscribe from this notification.
    */
-  public void flushedResults(List<String> files);
+  void flushedResults(List<String> files);
 
   /**
 
    */
-  public void requestError(RequestError requestError);
+  void requestError(RequestError requestError);
 
   /**
    * Reports that the server is running. This notification is issued once after the server has
@@ -183,7 +183,7 @@ public interface AnalysisServerListener {
    *
    * @param version the version of the server that is running
    */
-  public void serverConnected(String version);
+  void serverConnected(String version);
 
   /**
    * An error happened in the {@link AnalysisServer}.
@@ -194,7 +194,7 @@ public interface AnalysisServerListener {
    * @param stackTrace the stack trace associated with the generation of the error, used for
    *                   debugging the server
    */
-  public void serverError(boolean isFatal, String message, String stackTrace);
+  void serverError(boolean isFatal, String message, String stackTrace);
 
   /**
    * Reports that the server version is not compatible with the client version. All the requests
@@ -203,7 +203,7 @@ public interface AnalysisServerListener {
    * @param version is the actual version of the server if not {@code null}, or {@code null} if an
    *                error received as a version.
    */
-  public void serverIncompatibleVersion(String version);
+  void serverIncompatibleVersion(String version);
 
   /**
    * Reports the current status of the server.
@@ -213,7 +213,7 @@ public interface AnalysisServerListener {
    * @param pubStatus      the current pub status of the server, or {@code null} if there is no pub
    *                       status
    */
-  public void serverStatus(AnalysisStatus analysisStatus, PubStatus pubStatus);
+  void serverStatus(AnalysisStatus analysisStatus, PubStatus pubStatus);
 
   /**
    * Reports existing imports in a library.

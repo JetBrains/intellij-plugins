@@ -31,7 +31,7 @@ public interface GetAvailableRefactoringsConsumer extends Consumer {
    * @param refactoringKinds the kinds of refactorings that are valid for the given selection
    * @see RefactoringKind
    */
-  public void computedRefactoringKinds(List<String> refactoringKinds);
+  void computedRefactoringKinds(List<String> refactoringKinds);
 
   /**
    * If a set of refactoring kinds cannot be passed back, some {@link RequestError} is passed back
@@ -39,5 +39,5 @@ public interface GetAvailableRefactoringsConsumer extends Consumer {
    * 
    * @param requestError the reason why a result was not passed back
    */
-  public void onError(RequestError requestError);
+  void onError(RequestError requestError);
 }

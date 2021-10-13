@@ -27,7 +27,7 @@ public interface CreateContextConsumer extends Consumer {
    * 
    * @param contextId the id of the context that was computed
    */
-  public void computedExecutionContext(String contextId);
+  void computedExecutionContext(String contextId);
 
   /**
    * If an execution context cannot be passed back, some {@link RequestError} is passed back
@@ -35,5 +35,5 @@ public interface CreateContextConsumer extends Consumer {
    * 
    * @param requestError the reason why a result was not passed back
    */
-  public void onError(RequestError requestError);
+  void onError(RequestError requestError);
 }

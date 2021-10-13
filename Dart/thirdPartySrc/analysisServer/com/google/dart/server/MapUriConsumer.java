@@ -30,7 +30,7 @@ public interface MapUriConsumer extends Consumer {
    * @param uri the URI to which the file path was mapped. This field is omitted if the file field
    *          was not given in the request
    */
-  public void computedFileOrUri(String file, String uri);
+  void computedFileOrUri(String file, String uri);
 
   /**
    * If a file or uri was not mapped and cannot be passed back, some {@link RequestError} is passed
@@ -38,5 +38,5 @@ public interface MapUriConsumer extends Consumer {
    * 
    * @param requestError the reason why a result was not passed back
    */
-  public void onError(RequestError requestError);
+  void onError(RequestError requestError);
 }

@@ -22,5 +22,5 @@ import org.dartlang.analysis.server.protocol.RequestError;
  * @coverage dart.server
  */
 public interface JsonConsumer extends Consumer {
-  public void onResponse(JsonObject resultObject, RequestError requestError);
+  void onResponse(JsonObject resultObject, RequestError requestError);
 }

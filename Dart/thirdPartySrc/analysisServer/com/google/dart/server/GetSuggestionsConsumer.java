@@ -27,12 +27,12 @@ public interface GetSuggestionsConsumer extends Consumer {
    * 
    * @param completionId a completion id {@link String}
    */
-  public void computedCompletionId(String completionId);
+  void computedCompletionId(String completionId);
 
   /**
    * If a completion id cannot be passed back, some {@link RequestError} is passed back instead.
    * 
    * @param requestError the reason why a result was not passed back
    */
-  public void onError(RequestError requestError);
+  void onError(RequestError requestError);
 }

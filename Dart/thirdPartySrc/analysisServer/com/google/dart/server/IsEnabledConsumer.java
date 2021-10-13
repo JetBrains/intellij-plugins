@@ -16,7 +16,7 @@ package com.google.dart.server;
 import org.dartlang.analysis.server.protocol.RequestError;
 
 public interface IsEnabledConsumer extends Consumer {
-  public void isEnabled(Boolean value);
+  void isEnabled(Boolean value);
 
   default public void onError(RequestError requestError) {
   }

@@ -31,12 +31,12 @@ public interface FormatConsumer extends Consumer {
    * @param selectionOffset the offset of the selection after formatting the code
    * @param selectionLength the length of the selection after formatting the code
    */
-  public void computedFormat(List<SourceEdit> edits, int selectionOffset, int selectionLength);
+  void computedFormat(List<SourceEdit> edits, int selectionOffset, int selectionLength);
 
   /**
    * If a formatting edits cannot be passed back, some {@link RequestError} is passed back instead.
    * 
    * @param requestError the reason why a result was not passed back
    */
-  public void onError(RequestError requestError);
+  void onError(RequestError requestError);
 }

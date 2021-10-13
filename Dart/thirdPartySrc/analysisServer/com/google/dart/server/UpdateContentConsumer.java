@@ -23,5 +23,5 @@ public interface UpdateContentConsumer extends Consumer {
   /**
    * A response to the request was received.
    */
-  public void onResponse();
+  void onResponse();
 }

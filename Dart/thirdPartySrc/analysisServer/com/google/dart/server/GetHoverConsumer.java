@@ -29,12 +29,12 @@ public interface GetHoverConsumer extends Consumer {
    * 
    * @param hovers an array of computed {@link HoverInformation}s
    */
-  public void computedHovers(HoverInformation[] hovers);
+  void computedHovers(HoverInformation[] hovers);
 
   /**
    * If a result cannot be passed back, some {@link RequestError} is passed back instead.
    * 
    * @param requestError the reason why a result was not passed back
    */
-  public void onError(RequestError requestError);
+  void onError(RequestError requestError);
 }

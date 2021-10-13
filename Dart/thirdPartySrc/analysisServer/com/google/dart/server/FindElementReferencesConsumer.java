@@ -31,7 +31,7 @@ public interface FindElementReferencesConsumer extends Consumer {
    *          be returned in the search results. If no element was found at the given location, this
    *          field will be absent.
    */
-  public void computedElementReferences(String searchId, Element element);
+  void computedElementReferences(String searchId, Element element);
 
   /**
    * If a search id and element cannot be passed back, some {@link RequestError} is passed back
@@ -39,5 +39,5 @@ public interface FindElementReferencesConsumer extends Consumer {
    * 
    * @param requestError the reason why a result was not passed back
    */
-  public void onError(RequestError requestError);
+  void onError(RequestError requestError);
 }

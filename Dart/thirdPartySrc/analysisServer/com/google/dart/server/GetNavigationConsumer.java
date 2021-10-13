@@ -30,12 +30,12 @@ public interface GetNavigationConsumer extends Consumer {
    * 
    * @param regions the navigation regions within the requested region of the file
    */
-  public void computedNavigation(List<NavigationRegion> regions);
+  void computedNavigation(List<NavigationRegion> regions);
 
   /**
    * If a result cannot be passed back, some {@link RequestError} is passed back instead.
    * 
    * @param requestError the reason why a result was not passed back
    */
-  public void onError(RequestError requestError);
+  void onError(RequestError requestError);
 }

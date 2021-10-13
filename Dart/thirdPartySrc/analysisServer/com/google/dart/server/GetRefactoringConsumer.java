@@ -53,7 +53,7 @@ public interface GetRefactoringConsumer extends Consumer {
    *          will be omitted if the change field is omitted or if there are no potential edits for
    *          the refactoring.
    */
-  public void computedRefactorings(List<RefactoringProblem> initialProblems,
+  void computedRefactorings(List<RefactoringProblem> initialProblems,
       List<RefactoringProblem> optionsProblems, List<RefactoringProblem> finalProblems,
       RefactoringFeedback feedback, SourceChange change, List<String> potentialEdits);
 
@@ -62,5 +62,5 @@ public interface GetRefactoringConsumer extends Consumer {
    * 
    * @param requestError the reason why a result was not passed back
    */
-  public void onError(RequestError requestError);
+  void onError(RequestError requestError);
 }

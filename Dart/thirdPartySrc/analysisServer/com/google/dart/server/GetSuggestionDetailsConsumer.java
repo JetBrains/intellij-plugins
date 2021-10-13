@@ -17,7 +17,7 @@ import org.dartlang.analysis.server.protocol.RequestError;
 import org.dartlang.analysis.server.protocol.SourceChange;
 
 public interface GetSuggestionDetailsConsumer extends Consumer {
-  public void computedDetails(String completion, SourceChange change);
+  void computedDetails(String completion, SourceChange change);
 
-  public void onError(RequestError requestError);
+  void onError(RequestError requestError);
 }

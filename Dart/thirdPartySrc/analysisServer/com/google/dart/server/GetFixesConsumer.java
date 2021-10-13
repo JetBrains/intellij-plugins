@@ -32,12 +32,12 @@ public interface GetFixesConsumer extends Consumer {
    * 
    * @param errorFixesArray a list of computed error fixes
    */
-  public void computedFixes(List<AnalysisErrorFixes> errorFixesArray);
+  void computedFixes(List<AnalysisErrorFixes> errorFixesArray);
 
   /**
    * If a set of fixes cannot be passed back, some {@link RequestError} is passed back instead.
    * 
    * @param requestError the reason why a result was not passed back
    */
-  public void onError(RequestError requestError);
+  void onError(RequestError requestError);
 }

@@ -29,5 +29,5 @@ public interface InstrumentationLogger {
    * @param name the name used to uniquely identify the operation
    * @return the builder that was created
    */
-  public InstrumentationBuilder createBuilder(String name);
+  InstrumentationBuilder createBuilder(String name);
 }

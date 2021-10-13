@@ -29,12 +29,12 @@ public interface GetErrorsConsumer extends Consumer {
    * 
    * @param errors an array of computed {@link AnalysisError}s
    */
-  public void computedErrors(AnalysisError[] errors);
+  void computedErrors(AnalysisError[] errors);
 
   /**
    * If a set of errors cannot be passed back, some {@link RequestError} is passed back instead.
    * 
    * @param requestError the reason why a result was not passed back
    */
-  public void onError(RequestError requestError);
+  void onError(RequestError requestError);
 }

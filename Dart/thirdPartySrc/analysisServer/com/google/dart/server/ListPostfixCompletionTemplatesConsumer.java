@@ -5,7 +5,7 @@ import org.dartlang.analysis.server.protocol.RequestError;
 
 public interface ListPostfixCompletionTemplatesConsumer extends Consumer {
 
-  public void postfixCompletionTemplates(PostfixTemplateDescriptor[] templates);
+  void postfixCompletionTemplates(PostfixTemplateDescriptor[] templates);
 
-  public void onError(RequestError requestError);
+  void onError(RequestError requestError);
 }

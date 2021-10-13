@@ -32,7 +32,7 @@ public interface InstrumentationBuilder {
    * @param value the value of the data to be collected
    * @return this builder
    */
-  public InstrumentationBuilder data(String name, boolean value);
+  InstrumentationBuilder data(String name, boolean value);
 
   /**
    * Append the given data to the data being collected by this builder. The information is declared
@@ -43,7 +43,7 @@ public interface InstrumentationBuilder {
    * @param value the value of the data to be collected
    * @return this builder
    */
-  public InstrumentationBuilder data(String name, long value);
+  InstrumentationBuilder data(String name, long value);
 
   /**
    * Append the given data to the data being collected by this builder. The information is declared
@@ -54,7 +54,7 @@ public interface InstrumentationBuilder {
    * @param value the value of the data to be collected
    * @return this builder
    */
-  public InstrumentationBuilder data(String name, String value);
+  InstrumentationBuilder data(String name, String value);
 
   /**
    * Append the given data to the data being collected by this builder. The information is declared
@@ -65,7 +65,7 @@ public interface InstrumentationBuilder {
    * @param value the value of the data to be collected
    * @return this builder
    */
-  public InstrumentationBuilder data(String name, String[] value);
+  InstrumentationBuilder data(String name, String[] value);
 
   /**
    * Answer the {@link InstrumentationLevel} of this {@code InstrumentationBuilder}.
@@ -73,14 +73,14 @@ public interface InstrumentationBuilder {
    * @return one of {@link InstrumentationLevel#EVERYTHING}, {@link InstrumentationLevel#METRICS},
    *         {@link InstrumentationLevel#OFF}
    */
-  public InstrumentationLevel getInstrumentationLevel();
+  InstrumentationLevel getInstrumentationLevel();
 
   /**
    * Log the data that has been collected. The instrumentation builder should not be used after this
    * method is invoked. The behavior of any method defined on this interface that is used after this
    * method is invoked is undefined.
    */
-  public void log();
+  void log();
 
   /**
    * Log the data that has been collected. The instrumentation builder should not be used after this
@@ -89,7 +89,7 @@ public interface InstrumentationBuilder {
    * 
    * @param minTimeToLog if the total elapsed time is less than this, do not record
    */
-  public void log(int minTimeToLog);
+  void log(int minTimeToLog);
 
   /**
    * Append the given metric to the data being collected by this builder. The information is
@@ -100,7 +100,7 @@ public interface InstrumentationBuilder {
    * @param value the value of the data to be collected
    * @return this builder
    */
-  public InstrumentationBuilder metric(String name, boolean value);
+  InstrumentationBuilder metric(String name, boolean value);
 
   /**
    * Append the given metric to the data being collected by this builder. The information is
@@ -111,7 +111,7 @@ public interface InstrumentationBuilder {
    * @param value the value of the data to be collected
    * @return this builder
    */
-  public InstrumentationBuilder metric(String name, long value);
+  InstrumentationBuilder metric(String name, long value);
 
   /**
    * Append the given metric to the data being collected by this builder. The information is
@@ -122,7 +122,7 @@ public interface InstrumentationBuilder {
    * @param value the value of the data to be collected
    * @return this builder
    */
-  public InstrumentationBuilder metric(String name, String value);
+  InstrumentationBuilder metric(String name, String value);
 
   /**
    * Append the given metric to the data being collected by this builder. The information is
@@ -133,7 +133,7 @@ public interface InstrumentationBuilder {
    * @param value the value of the data to be collected
    * @return this builder
    */
-  public InstrumentationBuilder metric(String name, String[] value);
+  InstrumentationBuilder metric(String name, String[] value);
 
   /**
    * Append the given exception to the information being collected by this builder. The exception's
@@ -144,5 +144,5 @@ public interface InstrumentationBuilder {
    * 
    * @param exception the exception (may be {@code null})
    */
-  public InstrumentationBuilder record(Throwable exception);
+  InstrumentationBuilder record(Throwable exception);
 }

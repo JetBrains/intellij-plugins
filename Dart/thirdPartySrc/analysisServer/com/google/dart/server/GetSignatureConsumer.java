@@ -32,7 +32,7 @@ public interface GetSignatureConsumer extends Consumer {
    *                       leading asterisks in the case of a block comment, the dartdoc is unprocessed markdown. This data is omitted if there
    *                       is no referenced element, or if the element has no dartdoc.
    */
-  public void computedSignature(String name, List<ParameterInfo> parameterInfos, String dartdoc);
+  void computedSignature(String name, List<ParameterInfo> parameterInfos, String dartdoc);
 
   /**
    * If a transitive closure cannot be passed back, some {@link RequestError} is passed back
@@ -40,5 +40,5 @@ public interface GetSignatureConsumer extends Consumer {
    *
    * @param requestError the reason why a result was not passed back
    */
-  public void onError(RequestError requestError);
+  void onError(RequestError requestError);
 }

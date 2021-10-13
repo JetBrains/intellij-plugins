@@ -24,6 +24,6 @@ public interface AnalysisServerStatusListener {
    * 
    * @param isAlive {@code true} if server still alive
    */
-  public void isAliveServer(boolean isAlive);
+  void isAliveServer(boolean isAlive);
 
 }

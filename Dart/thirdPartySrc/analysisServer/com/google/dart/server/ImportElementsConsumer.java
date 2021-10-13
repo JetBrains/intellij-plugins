@@ -17,7 +17,7 @@ import org.dartlang.analysis.server.protocol.RequestError;
 import org.dartlang.analysis.server.protocol.SourceFileEdit;
 
 public interface ImportElementsConsumer extends Consumer {
-  public void computedImportedElements(SourceFileEdit edit);
+  void computedImportedElements(SourceFileEdit edit);
 
-  public void onError(RequestError requestError);
+  void onError(RequestError requestError);
 }

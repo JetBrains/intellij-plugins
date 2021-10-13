@@ -16,6 +16,6 @@ package com.google.dart.server;
 import org.dartlang.analysis.server.protocol.RequestError;
 
 public interface GetServerPortConsumer extends Consumer {
-  public void computedServerPort(int port);
-  public void onError(RequestError requestError);
+  void computedServerPort(int port);
+  void onError(RequestError requestError);
 }

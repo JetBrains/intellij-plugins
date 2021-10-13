@@ -24,7 +24,7 @@ import org.dartlang.analysis.server.protocol.SourceChange;
  */
 public interface GetStatementCompletionConsumer extends Consumer {
 
-  public void computedSourceChange(SourceChange sourceChange);
+  void computedSourceChange(SourceChange sourceChange);
 
-  public void onError(RequestError requestError);
+  void onError(RequestError requestError);
 }

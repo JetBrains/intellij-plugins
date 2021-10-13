@@ -28,12 +28,12 @@ public interface GetDiagnosticsConsumer extends Consumer {
   /**
    * @param contextDataList a list of analysis contexts.
    */
-  public void computedDiagnostics(List<ContextData> contextDataList);
+  void computedDiagnostics(List<ContextData> contextDataList);
 
   /**
    * If a list of analysis contexts cannot be passed back, some {@link RequestError} is passed back instead.
    *
    * @param requestError the reason why a result was not passed back
    */
-  public void onError(RequestError requestError);
+  void onError(RequestError requestError);
 }

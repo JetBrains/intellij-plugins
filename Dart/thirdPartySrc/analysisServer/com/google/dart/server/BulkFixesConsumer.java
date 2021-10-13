@@ -29,12 +29,12 @@ public interface BulkFixesConsumer extends Consumer {
    *
    * @param edits a list of edits
    */
-  public void computedSearchId(List<SourceFileEdit> edits);
+  void computedSearchId(List<SourceFileEdit> edits);
 
   /**
    * If a search id cannot be passed back, some {@link RequestError} is passed back instead.
    *
    * @param requestError the reason why a result was not passed back
    */
-  public void onError(RequestError requestError);
+  void onError(RequestError requestError);
 }

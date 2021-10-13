@@ -27,7 +27,7 @@ public interface GetVersionConsumer extends Consumer {
    * 
    * @param version the {@link String} version that has been retrieved
    */
-  public void computedVersion(String version);
+  void computedVersion(String version);
 
   /**
    * If a version {@link String} cannot be passed back, some {@link RequestError} is passed back
@@ -35,5 +35,5 @@ public interface GetVersionConsumer extends Consumer {
    * 
    * @param requestError the reason why a result was not passed back
    */
-  public void onError(RequestError requestError);
+  void onError(RequestError requestError);
 }

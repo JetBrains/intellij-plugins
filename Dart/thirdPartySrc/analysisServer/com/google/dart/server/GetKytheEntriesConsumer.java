@@ -30,7 +30,7 @@ public interface GetKytheEntriesConsumer extends Consumer {
    *                the file. This could be due to a referenced file that does not exist or generated files not being generated or passed
    *                before the call to "getKytheEntries".
    */
-  public void computedKytheEntries(List<KytheEntry> entries, List<String> files);
+  void computedKytheEntries(List<KytheEntry> entries, List<String> files);
 
   /**
    * If a transitive closure cannot be passed back, some {@link RequestError} is passed back
@@ -38,5 +38,5 @@ public interface GetKytheEntriesConsumer extends Consumer {
    *
    * @param requestError the reason why a result was not passed back
    */
-  public void onError(RequestError requestError);
+  void onError(RequestError requestError);
 }

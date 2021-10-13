@@ -20,7 +20,7 @@ import org.dartlang.analysis.server.protocol.RuntimeCompletionExpression;
 import java.util.List;
 
 public interface GetRuntimeCompletionConsumer extends Consumer {
-  public void computedResult(List<CompletionSuggestion> suggestions, List<RuntimeCompletionExpression> expressions);
+  void computedResult(List<CompletionSuggestion> suggestions, List<RuntimeCompletionExpression> expressions);
 
-  public void onError(RequestError requestError);
+  void onError(RequestError requestError);
 }

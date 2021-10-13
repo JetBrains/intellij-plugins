@@ -28,5 +28,5 @@ public interface SearchResultsConsumer extends Consumer {
    * @param searchResults an array of {@link SearchResult}s computed so far
    * @param isLastResult is {@code true} if this is the last set of results
    */
-  public void computed(SearchResult[] searchResults, boolean isLastResult);
+  void computed(SearchResult[] searchResults, boolean isLastResult);
 }

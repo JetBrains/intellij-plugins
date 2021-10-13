@@ -19,7 +19,7 @@ import org.dartlang.analysis.server.protocol.RequestError;
 import java.util.List;
 
 public interface GetImportedElementsConsumer extends Consumer {
-  public void computedImportedElements(List<ImportedElements> importedElements);
+  void computedImportedElements(List<ImportedElements> importedElements);
 
-  public void onError(RequestError requestError);
+  void onError(RequestError requestError);
 }

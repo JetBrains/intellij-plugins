@@ -35,12 +35,12 @@ public interface GetTypeHierarchyConsumer extends Consumer {
    *          absent if the code at the given file and offset does not represent a type, or if the
    *          file has not been sufficiently analyzed to allow a type hierarchy to be produced.
    */
-  public void computedHierarchy(List<TypeHierarchyItem> hierarchyItems);
+  void computedHierarchy(List<TypeHierarchyItem> hierarchyItems);
 
   /**
    * If hierarchy items cannot be passed back, some {@link RequestError} is passed back instead.
    * 
    * @param requestError the reason why a result was not passed back
    */
-  public void onError(RequestError requestError);
+  void onError(RequestError requestError);
 }

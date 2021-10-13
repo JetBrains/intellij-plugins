@@ -30,7 +30,7 @@ public interface GetWidgetDescriptionConsumer extends Consumer {
    *                   because they have type that we don't know how to edit, or for
    *                   compound properties that work as containers for sub-properties.
    */
-  public void computedGetWidgetDescription(List<FlutterWidgetProperty> properties);
+  void computedGetWidgetDescription(List<FlutterWidgetProperty> properties);
 
   /**
    * If a transitive closure cannot be passed back, some {@link RequestError} is passed back
@@ -38,5 +38,5 @@ public interface GetWidgetDescriptionConsumer extends Consumer {
    *
    * @param requestError the reason why a result was not passed back
    */
-  public void onError(RequestError requestError);
+  void onError(RequestError requestError);
 }

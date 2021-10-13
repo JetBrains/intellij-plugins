@@ -28,7 +28,7 @@ public interface GetElementDeclarationsConsumer extends Consumer {
    * @param declarations The list of declarations.
    * @param files        The list of the paths of files with declarations.
    */
-  public void computedElementDeclarations(List<ElementDeclaration> declarations, List<String> files);
+  void computedElementDeclarations(List<ElementDeclaration> declarations, List<String> files);
 
   /**
    * If a transitive closure cannot be passed back, some {@link RequestError} is passed back
@@ -36,5 +36,5 @@ public interface GetElementDeclarationsConsumer extends Consumer {
    *
    * @param requestError the reason why a result was not passed back
    */
-  public void onError(RequestError requestError);
+  void onError(RequestError requestError);
 }
