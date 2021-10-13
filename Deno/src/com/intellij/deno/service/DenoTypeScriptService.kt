@@ -33,7 +33,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
-import com.intellij.util.containers.toArray
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletableFuture.completedFuture
 import java.util.concurrent.Future
@@ -55,14 +54,23 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService {
     fun getInstance(project: Project): DenoTypeScriptService = project.getService(DenoTypeScriptService::class.java)
   }
 
+  @Volatile
   private var descriptor: LspServerDescriptor? = null
   private val openedFiles = mutableListOf<VirtualFile>()
 
-  private fun createDescriptor(element: PsiElement) =
-    LspServerManager
+  @Synchronized
+  private fun createDescriptor(element: PsiElement): LspServerDescriptor? {
+    if (descriptor != null) return descriptor
+
+    return LspServerManager
       .getServerDescriptors(element)
-      .find { it is DenoLspServerDescriptor }!!
-      .also { descriptor = it; TypeScriptMessageBus.get(project).changed() }
+      .find { it is DenoLspServerDescriptor }
+      .also {
+        val changed = descriptor != it
+        descriptor = it
+        if (changed) TypeScriptMessageBus.get(project).changed()
+      }
+  }
 
   private fun getDescriptor(element: PsiElement) = descriptor ?: createDescriptor(element)
 
@@ -113,13 +121,13 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService {
     return completedFuture(items.map { DenoCompletionEntry(descriptor.getResolvedCompletionItem((it as DenoCompletionEntry).item)) })
   }
 
-  override fun getNavigationFor(document: Document, sourceElement: PsiElement) =
-    getDescriptor(sourceElement).getElementDefinitions(sourceElement).toArray(emptyArray())
+  override fun getNavigationFor(document: Document, sourceElement: PsiElement): Array<PsiElement> =
+    getDescriptor(sourceElement)?.getElementDefinitions(sourceElement)?.toTypedArray() ?: emptyArray()
 
   override fun getSignatureHelp(file: PsiFile, context: CreateParameterInfoContext): Future<Stream<JSFunctionType>?>? = null
 
   fun quickInfo(element: PsiElement): String? {
-    val raw = getDescriptor(element).getServer(project).invokeSynchronously(HoverMethod.create(element)) ?: return null
+    val raw = getDescriptor(element)?.getServer(project)?.invokeSynchronously(HoverMethod.create(element)) ?: return null
     LOG.info("Quick info for $element : $raw")
     return raw.substring("<html><body><pre>".length, raw.length - "</pre></body></html>".length)
   }
@@ -136,8 +144,7 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService {
   }
 
   override fun highlight(file: PsiFile): CompletableFuture<List<JSAnnotationError>>? {
-    LOG.info("highlight")
-    val server = getDescriptor(file).getServer(project)
+    val server = getDescriptor(file)?.getServer(project) ?: return completedFuture(emptyList())
     val virtualFile = file.virtualFile
     forceUpdate(server, virtualFile)
     return completedFuture(server.getDiagnostics(virtualFile)?.map {
