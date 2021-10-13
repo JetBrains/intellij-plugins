@@ -1,6 +1,7 @@
 package com.intellij.deno.run;
 
 import com.intellij.deno.DenoBundle;
+import com.intellij.deno.DenoSettings;
 import com.intellij.deno.DenoUtil;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
@@ -41,7 +42,7 @@ public class DenoRunConfiguration extends DebuggableProcessRunConfigurationBase 
 
   @Override
   protected @Nullable String computeDefaultExePath() {
-    return DenoUtil.INSTANCE.getDenoExecutablePath();
+    return DenoSettings.Companion.getService(getProject()).getDenoPath();
   }
 
   @Override

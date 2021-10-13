@@ -18,7 +18,7 @@ object DenoUtil {
     return JSLanguageServiceUtil.getPluginDirectory(this::class.java, "deno-service/node_modules/typescript-deno-plugin/lib").path
   }
 
-  fun getDenoExecutablePath() = detectDenoPaths().firstOrNull()
+  fun getDefaultDenoExecutable() = detectDenoPaths().firstOrNull()
 
   private fun detectDenoPaths(): List<String> {
     val list = (if (SystemInfo.isWindows) sequenceOf("deno.bat", "deno.cmd", "deno.exe") else sequenceOf("deno"))

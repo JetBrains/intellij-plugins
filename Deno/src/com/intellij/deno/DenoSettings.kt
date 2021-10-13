@@ -14,6 +14,7 @@ import com.intellij.util.ThrowableRunnable
 
 class DenoState {
   var useDeno = false
+  var denoPath = ""
 }
 
 @State(name = "DenoSettings", storages = [Storage("deno.xml")])
@@ -40,6 +41,19 @@ class DenoSettings(val project: Project) : PersistentStateComponent<DenoState> {
 
   fun isUseDeno(): Boolean {
     return this.state.useDeno
+  }
+
+  fun getDenoPath(): String {
+    val denoPath = this.state.denoPath
+    if (denoPath.isEmpty()) {
+      return DenoUtil.getDefaultDenoExecutable() ?: ""
+    }
+    return denoPath
+  }
+
+  fun setDenoPath(path: String) {
+    val defaultPath = DenoUtil.getDefaultDenoExecutable() ?: ""
+    this.state.denoPath = if (defaultPath == path) "" else path
   }
 
   fun setUseDenoAndReload(useDeno: Boolean) {

@@ -3,6 +3,7 @@ package com.intellij.deno
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.openapi.util.NlsContexts.ConfigurableName
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.util.ui.FormBuilder
@@ -13,28 +14,36 @@ import javax.swing.JPanel
 class DenoConfigurable(private val project: Project) : Configurable {
 
   private val myUseDeno = JBCheckBox(DenoBundle.message("deno.enabled"))
+  private val myDenoPath = TextFieldWithBrowseButton()
 
   override fun getDisplayName(): @ConfigurableName String {
     return DenoBundle.message("deno.name")
   }
 
   override fun createComponent(): JComponent {
-    myUseDeno.isSelected = DenoSettings.getService(project).isUseDeno()
+    val service = DenoSettings.getService(project)
+    myUseDeno.isSelected = service.isUseDeno()
+    myDenoPath.text = service.getDenoPath()
     val mainFormBuilder = FormBuilder.createFormBuilder()
     mainFormBuilder.addComponent(myUseDeno)
+    mainFormBuilder.addLabeledComponent(DenoBundle.message("deno.path"), myDenoPath)
     val wrapper = JPanel(BorderLayout())
     wrapper.add(mainFormBuilder.panel, BorderLayout.NORTH)
     return wrapper
   }
 
   override fun isModified(): Boolean {
-    return myUseDeno.isSelected != DenoSettings.getService(project).isUseDeno()
+    val service = DenoSettings.getService(project)
+    return myUseDeno.isSelected != service.isUseDeno() ||
+           myDenoPath.text != service.getDenoPath()
   }
 
   @Throws(ConfigurationException::class)
   override fun apply() {
     if (isModified) {
-      DenoSettings.getService(project).setUseDenoAndReload(myUseDeno.isSelected)
+      val service = DenoSettings.getService(project)
+      service.setDenoPath(myDenoPath.text)
+      service.setUseDenoAndReload(myUseDeno.isSelected)
     }
   }
 }

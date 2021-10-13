@@ -11,15 +11,17 @@ class DenoLspSupportProvider : LspServerSupportProvider {
   override fun getServerDescriptor(project: Project, virtualFile: VirtualFile) =
     if (DenoSettings.getService(project).isUseDeno()) {
       DenoLspServerDescriptor(project, virtualFile)
-    } else {
+    }
+    else {
       LspServerDescriptor.emptyDescriptor()
     }
 }
 
 class DenoLspServerDescriptor(project: Project, root: VirtualFile) : LspServerDescriptorBase(project, root) {
-  override fun createStdioServerStartingCommandLine() = DenoUtil.getDenoExecutablePath()?.let {
-    GeneralCommandLine(it, "lsp")
-  } ?: throw Error("deno is not installed")
+  override fun createStdioServerStartingCommandLine() = DenoSettings.getService(project)
+                                                          .getDenoPath().ifEmpty { null }?.let {
+      GeneralCommandLine(it, "lsp")
+    } ?: throw Error("deno is not installed")
 
   override fun createInitializationOptions() = DenoInitializationOptions()
 
