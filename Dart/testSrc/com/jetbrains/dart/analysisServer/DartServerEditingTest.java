@@ -14,6 +14,7 @@ public class DartServerEditingTest extends CodeInsightFixtureTestCase {
     ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
   }
 
+  // fails because of https://github.com/dart-lang/sdk/issues/31456
   public void testInsertImportsOnPaste() {
     myFixture.configureByText("foo.dart", "import 'dart:math';\n" +
                                           "main() {\n" +
