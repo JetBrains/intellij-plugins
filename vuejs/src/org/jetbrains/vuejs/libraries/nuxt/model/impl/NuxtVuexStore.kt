@@ -64,7 +64,7 @@ abstract class NuxtVuexContainer(override val source: PsiDirectory) : VuexContai
     return CachedValuesManager.getCachedValue(source) {
       CachedValueProvider.Result.create(ConcurrentHashMap<String, Map<String, *>>(),
                                         arrayOf(PsiModificationTracker.MODIFICATION_COUNT, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS))
-    }.computeIfAbsent(key) { provider() } as Map<String, T>
+    }.getOrPut(key) { provider() } as Map<String, T>
   }
 
   private fun <T> get(symbolKind: String, constructor: (name: String, source: JSProperty) -> T): Map<String, T> {

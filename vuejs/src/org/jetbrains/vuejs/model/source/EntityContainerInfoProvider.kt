@@ -58,11 +58,11 @@ interface EntityContainerInfoProvider<T> {
       }
 
     protected abstract class InitializedContainerInfo(val declaration: JSElement) {
-      private val values: MutableMap<MemberAccessor<*>, Any?> = ConcurrentHashMap()
+      private val values: ConcurrentHashMap<MemberAccessor<*>, Any?> = ConcurrentHashMap()
 
       protected fun <T> get(accessor: MemberAccessor<T>): T {
         @Suppress("UNCHECKED_CAST")
-        return values.computeIfAbsent(accessor, Function { it.build(declaration) }) as T
+        return values.getOrPut(accessor) { accessor.build(declaration) } as T
       }
     }
 

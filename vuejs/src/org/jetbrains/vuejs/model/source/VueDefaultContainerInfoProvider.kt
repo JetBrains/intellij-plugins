@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
 import com.intellij.lang.javascript.psi.types.evaluable.JSApplyCallType
+import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import com.intellij.psi.StubBasedPsiElement
 import com.intellij.psi.impl.source.html.HtmlFileImpl
@@ -37,7 +38,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
 
     override val model: VueModelDirectiveProperties get() = get(MODEL)
 
-    override val delimiters: Pair<String, String>? get() = get(DELIMITERS)
+    override val delimiters: Pair<String, String>? get() = get(DELIMITERS).get()
     override val extends: List<VueMixin> get() = get(EXTENDS) + get(EXTENDS_CALL)
     override val components: Map<String, VueComponent> get() = get(COMPONENTS)
     override val directives: Map<String, VueDirective> get() = get(DIRECTIVES)
@@ -186,15 +187,15 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     }
   }
 
-  private class DelimitersAccessor : MemberAccessor<Pair<String, String>?>() {
-    override fun build(declaration: JSElement): Pair<String, String>? {
+  private class DelimitersAccessor : MemberAccessor<Ref<Pair<String, String>>>() {
+    override fun build(declaration: JSElement): Ref<Pair<String, String>> {
       val delimiters = ContainerMember.Delimiters.readMembers(declaration)
       if (delimiters.size == 2
           && delimiters[0].first.isNotBlank()
           && delimiters[1].first.isNotBlank()) {
-        return Pair(delimiters[0].first, delimiters[1].first)
+        return Ref(Pair(delimiters[0].first, delimiters[1].first))
       }
-      return null
+      return Ref(null)
     }
   }
 

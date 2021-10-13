@@ -79,7 +79,7 @@ class VueScriptSetupInfoProvider : VueContainerInfoProvider {
       )
       val fileName = FileUtil.getNameWithoutExtension(module.containingFile.name)
       VueModelManager.findEnclosingComponent(module)?.let { component ->
-        components.computeIfAbsent(fileName.capitalize()) { component }
+        components.putIfAbsent(fileName.capitalize(), component)
       }
       this.components = components
       this.directives = directives
