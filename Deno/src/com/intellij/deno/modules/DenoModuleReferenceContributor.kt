@@ -2,6 +2,9 @@ package com.intellij.deno.modules
 
 import com.google.common.hash.Hashing
 import com.intellij.deno.DenoSettings
+import com.intellij.json.psi.JsonFile
+import com.intellij.json.psi.JsonObject
+import com.intellij.json.psi.JsonStringLiteral
 import com.intellij.lang.ecmascript6.psi.impl.JSImportPathConfiguration
 import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
 import com.intellij.lang.javascript.frameworks.modules.JSBaseModuleReferenceContributor
@@ -12,11 +15,13 @@ import com.intellij.lang.javascript.modules.JSModuleNameInfoImpl
 import com.intellij.lang.javascript.modules.imports.JSImportDescriptor
 import com.intellij.lang.javascript.modules.imports.JSSimpleImportDescriptor
 import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiReferenceProvider
+import com.intellij.psi.util.PsiUtilCore
 import java.io.File
 import java.nio.charset.StandardCharsets
 
@@ -31,9 +36,16 @@ class DenoModuleReferenceContributor : JSBaseModuleReferenceContributor() {
                              offset: Int,
                              provider: PsiReferenceProvider?,
                              isCommonJS: Boolean): Array<PsiReference> {
-    val (withoutSchema, schema) = trimSchema(unquotedRefText) ?: return emptyArray()
-
     val denoDeps = DenoSettings.getService(host.project).getDenoCacheDeps()
+    return getReferencesForUrl(unquotedRefText, denoDeps, host, TextRange(offset, offset + unquotedRefText.length))
+  }
+
+  private fun getReferencesForUrl(unquotedRefText: String,
+                                  denoDeps: String,
+                                  host: PsiElement,
+                                  range: TextRange): Array<PsiReference> {
+    val (withoutSchema, schema) = trimSchema(unquotedRefText) ?: return resolveAsDenoLibFile(unquotedRefText, host, range, denoDeps)
+
     val firstPart = withoutSchema.indexOf("/")
     if (firstPart <= 0) return emptyArray()
     val directory = withoutSchema.substring(0, firstPart)
@@ -43,7 +55,33 @@ class DenoModuleReferenceContributor : JSBaseModuleReferenceContributor() {
       .toString()
 
     val url = "$denoDeps/$schema/$directory/$sha256hex"
-    return arrayOf(JSExactFileReference(host, TextRange(offset, unquotedRefText.length), listOf(url), null))
+    return arrayOf(JSExactFileReference(host, range, listOf(url), null))
+  }
+
+  private fun resolveAsDenoLibFile(unquotedRefText: String,
+                                   host: PsiElement,
+                                   range: TextRange,
+                                   denoDeps: String): Array<PsiReference> {
+    if (!unquotedRefText.startsWith(".")) return emptyArray()
+    val virtualFile = PsiUtilCore.getVirtualFile(host) ?: return emptyArray()
+    val path = virtualFile.path
+    if (!path.startsWith(denoDeps)) return emptyArray()
+
+    val metadata = virtualFile.parent.findChild(virtualFile.name + ".metadata.json")
+    if (metadata == null) return emptyArray()
+    val metaDataPsi = host.manager.findFile(metadata)
+    if (metaDataPsi !is JsonFile) return emptyArray()
+    val values = metaDataPsi.allTopLevelValues
+    for (topLevelValue in values) {
+      val property = (topLevelValue as? JsonObject)?.findProperty("url") ?: continue
+      val ownUrl = (property.value as? JsonStringLiteral)?.value ?: continue
+      val indexOfSuffix = ownUrl.lastIndexOf("/")
+      if (indexOfSuffix <= 0) continue
+      val relative = FileUtil.toCanonicalPath(ownUrl.substring(0, indexOfSuffix) + "/" + unquotedRefText, false) ?: continue
+      return getReferencesForUrl(relative, denoDeps, host, range)
+    }
+
+    return emptyArray()
   }
 
   @Suppress("HttpUrlsUsage")
