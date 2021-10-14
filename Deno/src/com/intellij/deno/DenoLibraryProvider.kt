@@ -1,5 +1,6 @@
 package com.intellij.deno
 
+import com.intellij.deno.service.DenoTypings
 import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
 import com.intellij.lang.javascript.library.JSSyntheticLibraryProvider
 import com.intellij.navigation.ItemPresentation
@@ -12,7 +13,7 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import javax.swing.Icon
 
-class DenoLibrary(private val libs: List<VirtualFile>) : SyntheticLibrary(), ItemPresentation {
+class DenoLibrary(private val libs: List<VirtualFile>) : SyntheticLibrary(), ItemPresentation, JSSyntheticLibraryProvider {
 
   override fun getExcludeFileCondition(): Condition<VirtualFile> = Condition {
     !it.isDirectory
@@ -42,22 +43,26 @@ class DenoLibraryProvider : AdditionalLibraryRootsProvider(), JSSyntheticLibrary
     val service = DenoSettings.getService(project)
     if (!service.isUseDeno()) return emptyList()
 
-    val libs = getLibs(service)
+    val libs = getLibs(project, service)
     if (libs.isEmpty()) return emptyList()
 
     return listOf(DenoLibrary(libs))
   }
 
-  private fun getLibs(settings: DenoSettings): List<VirtualFile> {
+  private fun getLibs(project: Project, settings: DenoSettings): List<VirtualFile> {
     val denoPackages = settings.getDenoCacheDeps()
-    val denoTypings = DenoUtil.getDenoTypings()
+    val typings = DenoTypings.getInstance(project)
+    val denoTypings = typings.getDenoTypings()
     val depsVirtualFile = LocalFileSystem.getInstance().findFileByPath(denoPackages)
-    val denoTypingsVirtualFile = LocalFileSystem.getInstance().findFileByPath(denoTypings)
+    var denoTypingsVirtualFile = LocalFileSystem.getInstance().findFileByPath(denoTypings)
+    if (denoTypingsVirtualFile == null) {
+      denoTypingsVirtualFile = LocalFileSystem.getInstance().findFileByPath(typings.getBundledTypings())
+    }
     return listOfNotNull(depsVirtualFile, denoTypingsVirtualFile)
   }
 
   override fun getRootsToWatch(project: Project): Collection<VirtualFile> {
     val service = DenoSettings.getService(project)
-    return if (!service.isUseDeno()) emptyList() else getLibs(service)
+    return if (!service.isUseDeno()) emptyList() else getLibs(project, service)
   }
 }

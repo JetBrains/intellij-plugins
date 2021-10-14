@@ -21,7 +21,7 @@ class DenoLspServerDescriptor(project: Project, root: VirtualFile) : LspServerDe
   override fun createStdioServerStartingCommandLine() = DenoSettings.getService(project)
                                                           .getDenoPath().ifEmpty { null }?.let {
       GeneralCommandLine(it, "lsp")
-    } ?: throw Error("deno is not installed")
+    } ?: throw RuntimeException("deno is not installed")
 
   override fun createInitializationOptions() = DenoInitializationOptions()
 

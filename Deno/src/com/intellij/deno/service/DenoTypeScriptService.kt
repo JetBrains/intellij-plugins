@@ -25,9 +25,11 @@ import com.intellij.lsp.data.LspDiagnostic
 import com.intellij.lsp.data.LspSeverity.*
 import com.intellij.lsp.methods.ForceDidChangeMethod
 import com.intellij.lsp.methods.HoverMethod
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.progress.util.BackgroundTaskUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
@@ -68,7 +70,7 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService {
       .also {
         val changed = descriptor != it
         descriptor = it
-        if (changed) TypeScriptMessageBus.get(project).changed()
+        if (changed) afterUpdatingDescriptor()
       }
   }
 
@@ -139,7 +141,20 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService {
     val descriptor = descriptor
     if (!project.isDisposed && descriptor != null) {
       descriptor.restart()
-      TypeScriptMessageBus.get(project).changed()
+      afterUpdatingDescriptor()
+    }
+  }
+
+  private fun afterUpdatingDescriptor() {
+    TypeScriptMessageBus.get(project).changed()
+    val instance = DenoTypings.getInstance(project)
+    BackgroundTaskUtil.executeOnPooledThread(project) {
+      if (instance.reload()) {
+        ApplicationManager.getApplication().invokeLater({
+          val service = DenoSettings.getService(project)
+          service.setUseDenoAndReload(service.isUseDeno(), false)
+        }, project.disposed)
+      }
     }
   }
 
