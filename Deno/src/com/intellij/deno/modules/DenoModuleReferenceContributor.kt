@@ -75,10 +75,11 @@ class DenoModuleReferenceContributor : JSBaseModuleReferenceContributor() {
     for (topLevelValue in values) {
       val property = (topLevelValue as? JsonObject)?.findProperty("url") ?: continue
       val ownUrl = (property.value as? JsonStringLiteral)?.value ?: continue
-      val indexOfSuffix = ownUrl.lastIndexOf("/")
+      val (ownPath, schema) = trimSchema(ownUrl) ?: continue
+      val indexOfSuffix = ownPath.lastIndexOf("/")
       if (indexOfSuffix <= 0) continue
-      val relative = FileUtil.toCanonicalPath(ownUrl.substring(0, indexOfSuffix) + "/" + unquotedRefText, false) ?: continue
-      return getReferencesForUrl(relative, denoDeps, host, range)
+      val toCanonicalPath = FileUtil.toCanonicalPath("${ownPath.substring(0, indexOfSuffix)}/$unquotedRefText", false)
+      return getReferencesForUrl("$schema://$toCanonicalPath", denoDeps, host, range)
     }
 
     return emptyArray()
