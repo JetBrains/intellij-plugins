@@ -13,7 +13,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import javax.swing.Icon
 
 class DenoLibrary(private val libs: List<VirtualFile>) : SyntheticLibrary(), ItemPresentation {
-  
+
   override fun getExcludeFileCondition(): Condition<VirtualFile> = Condition {
     !it.isDirectory
     && !TypeScriptUtil.isDefinitionFile(it)
@@ -39,16 +39,17 @@ class DenoLibrary(private val libs: List<VirtualFile>) : SyntheticLibrary(), Ite
 
 class DenoLibraryProvider : AdditionalLibraryRootsProvider(), JSSyntheticLibraryProvider {
   override fun getAdditionalProjectLibraries(project: Project): Collection<SyntheticLibrary> {
-    if (!DenoSettings.getService(project).isUseDeno()) return emptyList()
+    val service = DenoSettings.getService(project)
+    if (!service.isUseDeno()) return emptyList()
 
-    val libs = getLibs()
+    val libs = getLibs(service)
     if (libs.isEmpty()) return emptyList()
 
     return listOf(DenoLibrary(libs))
   }
 
-  private fun getLibs(): List<VirtualFile> {
-    val denoPackages = DenoUtil.getDenoPackagesPath()
+  private fun getLibs(settings: DenoSettings): List<VirtualFile> {
+    val denoPackages = settings.getDenoCacheDeps()
     val denoTypings = DenoUtil.getDenoTypings()
     val depsVirtualFile = LocalFileSystem.getInstance().findFileByPath(denoPackages)
     val denoTypingsVirtualFile = LocalFileSystem.getInstance().findFileByPath(denoTypings)
@@ -56,7 +57,7 @@ class DenoLibraryProvider : AdditionalLibraryRootsProvider(), JSSyntheticLibrary
   }
 
   override fun getRootsToWatch(project: Project): Collection<VirtualFile> {
-    if (!DenoSettings.getService(project).isUseDeno()) return emptyList()
-    return getLibs()
+    val service = DenoSettings.getService(project)
+    return if (!service.isUseDeno()) emptyList() else getLibs(service)
   }
 }

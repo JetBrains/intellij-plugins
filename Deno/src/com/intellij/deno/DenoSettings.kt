@@ -10,11 +10,13 @@ import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.AdditionalLibraryRootsListener
 import com.intellij.openapi.roots.AdditionalLibraryRootsProvider
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.ThrowableRunnable
 
 class DenoState {
   var useDeno = false
   var denoPath = ""
+  var denoCache = ""
 }
 
 @State(name = "DenoSettings", storages = [Storage("deno.xml")])
@@ -54,6 +56,22 @@ class DenoSettings(val project: Project) : PersistentStateComponent<DenoState> {
   fun setDenoPath(path: String) {
     val defaultPath = DenoUtil.getDefaultDenoExecutable() ?: ""
     this.state.denoPath = if (defaultPath == path) "" else path
+  }
+  
+  fun getDenoCache():String {
+    val denoCache = this.state.denoCache
+    if (denoCache.isEmpty()) {
+      return DenoUtil.getDenoCache()
+    }
+    return denoCache
+  }
+  
+  fun getDenoCacheDeps(): String {
+    return getDenoCache() + "/deps"
+  }
+  
+  fun setDenoCache(path: String) {
+    this.state.denoCache = if (DenoUtil.getDenoCache() == path) "" else path
   }
 
   fun setUseDenoAndReload(useDeno: Boolean) {

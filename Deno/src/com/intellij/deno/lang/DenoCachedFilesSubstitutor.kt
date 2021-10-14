@@ -15,7 +15,8 @@ class DenoCachedFilesSubstitutor : LanguageSubstitutor() {
 
     val extension = FileUtil.getExtension(file.nameSequence)
     if (extension.isNotEmpty()) return null
-    val denoPackagesPath = DenoUtil.getDenoPackagesPath()
-    return if (file.path.startsWith(denoPackagesPath)) JavaScriptSupportLoader.TYPESCRIPT else null
+
+    val cache = DenoSettings.getService(project).getDenoCache()
+    return if (cache.isNotEmpty() && file.path.startsWith(cache)) JavaScriptSupportLoader.TYPESCRIPT else null
   }
 }

@@ -166,9 +166,7 @@ fun forceUpdate(server: LspServer, virtualFile: VirtualFile) {
 class DenoCompletionEntry(internal val item: LspCompletionItem) : CompletionEntry {
   override val name: String get() = item.label
 
-  override fun intoLookupElement() = item.intoLookupElement()
-    .withTailText(" (Deno LSP)", true)
-    .withInsertHandler(JSInsertHandler.DEFAULT)
+  override fun intoLookupElement() = item.intoLookupElement().withInsertHandler(JSInsertHandler.DEFAULT)
 }
 
 class DenoAnnotationError(private val diagnostic: LspDiagnostic, private val path: String?) : JSAnnotationError {

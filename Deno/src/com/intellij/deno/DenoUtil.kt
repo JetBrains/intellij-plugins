@@ -9,11 +9,7 @@ import com.intellij.util.SystemProperties
 import java.io.File
 
 object DenoUtil {
-
-  fun getDenoPackagesPath(): String {
-    return FileUtil.toSystemIndependentName(getDenoDirPath()) + "/deps"
-  }
-
+  
   fun getDenoTypings(): String {
     return JSLanguageServiceUtil.getPluginDirectory(this::class.java, "deno-service/node_modules/typescript-deno-plugin/lib").path
   }
@@ -34,7 +30,11 @@ object DenoUtil {
     return if (File(path).exists()) listOf(path) else emptyList()
   }
 
-  private fun getDenoDirPath(): String {
+  fun getDenoCache(): String { 
+    return FileUtil.toSystemIndependentName(getDenoCacheInner())
+  }
+  
+  private fun getDenoCacheInner(): String {
     val denoDir = System.getenv("DENO_DIR")
     if (denoDir != null) {
       return denoDir
