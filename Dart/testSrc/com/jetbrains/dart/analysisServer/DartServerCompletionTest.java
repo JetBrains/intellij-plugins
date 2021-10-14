@@ -43,13 +43,13 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
     doTest(lookupToSelect, Lookup.NORMAL_SELECT_CHAR);
   }
 
-  private void doTest(@Nullable final String lookupToSelect, final char complationChar) {
+  private void doTest(@Nullable final String lookupToSelect, final char completionChar) {
     myFixture.configureByFile(getTestName(false) + ".dart");
     myFixture.doHighlighting(); // warm up
     myFixture.complete(CompletionType.BASIC);
 
     if (lookupToSelect != null) {
-      selectLookup(lookupToSelect, complationChar);
+      selectLookup(lookupToSelect, completionChar);
     }
 
     myFixture.checkResultByFile(getTestName(false) + ".after.dart");
@@ -187,6 +187,7 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
     assertNull(myFixture.getLookup());
   }
 
+  // fails because of the fix for https://github.com/dart-lang/sdk/issues/38326
   public void testNotYetImportedClass() {
     doTest();
   }
