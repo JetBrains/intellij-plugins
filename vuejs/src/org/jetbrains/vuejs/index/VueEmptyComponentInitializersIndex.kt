@@ -56,9 +56,7 @@ class VueEmptyComponentInitializersIndex : ScalarIndexExtension<Boolean>() {
 
   override fun getVersion(): Int = 7
 
-  override fun getInputFilter(): FileBasedIndex.InputFilter = FileBasedIndex.InputFilter {
-    it.fileType == VueFileType.INSTANCE
-  }
+  override fun getInputFilter(): FileBasedIndex.InputFilter = DefaultFileTypeSpecificInputFilter(VueFileType.INSTANCE)
 
   companion object {
     val VUE_NO_INITIALIZER_COMPONENTS_INDEX = ID.create<Boolean, Void>("VueNoScriptFilesIndex")
