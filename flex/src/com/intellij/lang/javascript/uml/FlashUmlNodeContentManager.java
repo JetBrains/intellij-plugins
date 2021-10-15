@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.uml;
 
 import com.intellij.diagram.AbstractDiagramNodeContentManager;
+import com.intellij.diagram.DiagramBuilder;
 import com.intellij.diagram.DiagramCategory;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSVariable;
@@ -30,9 +31,11 @@ public class FlashUmlNodeContentManager extends AbstractDiagramNodeContentManage
   }
 
   @Override
-  public boolean isInCategory(@Nullable Object obj, @NotNull DiagramCategory category) {
-    if (!(obj instanceof PsiElement)) return false;
-    PsiElement element = (PsiElement)obj;
+  public boolean isInCategory(@Nullable Object nodeElement, @Nullable Object item,
+                              @NotNull DiagramCategory category,
+                              @Nullable DiagramBuilder builder) {
+    if (!(item instanceof PsiElement)) return false;
+    PsiElement element = (PsiElement)item;
 
     if (JSUtils.getMemberContainingClass(element) == null) return false;
 

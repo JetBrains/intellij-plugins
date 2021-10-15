@@ -71,13 +71,9 @@ final class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
       final DiagramObject element = nodesBuilder.getRootNode().getIdentifyingElement();
 
       //noinspection unchecked,rawtypes
-      logStatistics(project, (DiagramProvider)diagramProvider, element, Collections.emptyList());
+      logStatistics(new DiagramSeed(project, (DiagramProvider)diagramProvider, element, Collections.emptyList()));
       //noinspection unchecked,rawtypes
-      final Runnable callback =
-        show(project, ((DiagramProvider)diagramProvider), element, Collections.emptyList(), getLocation(e.getDataContext(), e));
-      if (callback != null) {
-        callback.run();
-      }
+      show(project, ((DiagramProvider)diagramProvider), element, Collections.emptyList(), getLocation(e.getDataContext(), e));
     };
     if (graphBuilders.isEmpty()) {
       //noinspection DialogTitleCapitalization
