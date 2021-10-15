@@ -1,8 +1,13 @@
 package com.intellij.deno.service
 
 import com.intellij.codeInsight.completion.CompletionParameters
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
+import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.deno.DenoBundle
 import com.intellij.deno.DenoSettings
+import com.intellij.execution.ExecutionException
+import com.intellij.execution.configurations.GeneralCommandLine
+import com.intellij.execution.util.ExecUtil
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.completion.JSInsertHandler
 import com.intellij.lang.javascript.dialects.TypeScriptLanguageDialect
@@ -25,6 +30,7 @@ import com.intellij.lsp.data.LspDiagnostic
 import com.intellij.lsp.data.LspSeverity.*
 import com.intellij.lsp.methods.ForceDidChangeMethod
 import com.intellij.lsp.methods.HoverMethod
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Document
@@ -50,7 +56,7 @@ class DenoTypeScriptServiceProvider(val project: Project) : JSLanguageServicePro
     if (DenoSettings.getService(project).isUseDeno()) listOf(DenoTypeScriptService.getInstance(project)) else emptyList()
 }
 
-class DenoTypeScriptService(private val project: Project) : TypeScriptService {
+class DenoTypeScriptService(private val project: Project) : TypeScriptService, Disposable {
   companion object {
     private val LOG = Logger.getInstance(DenoTypeScriptService::class.java)
     fun getInstance(project: Project): DenoTypeScriptService = project.getService(DenoTypeScriptService::class.java)
@@ -115,6 +121,30 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService {
     return completedFuture(descriptor.getCompletionItems(parameters).map(::DenoCompletionEntry))
   }
 
+  override fun getServiceFixes(file: PsiFile, element: PsiElement?, result: JSAnnotationError): Collection<IntentionAction> {
+    if (element != null && (result is DenoAnnotationError)) {
+      val virtualFile = file.virtualFile
+      val descriptor = getDescriptor(virtualFile) ?: return emptyList()
+      return descriptor.getCodeActions(file, result.diagnostic) { command, _ ->
+        if (command == "deno.cache") {
+          //or implement using deno command 
+          val commandLine = GeneralCommandLine(DenoSettings.getService(project).getDenoPath(), "cache", virtualFile.path)
+          try {
+            ExecUtil.execAndGetOutput(commandLine)
+            DaemonCodeAnalyzer.getInstance(project).restart()
+          }
+          catch (e: ExecutionException) {
+            //skip
+          }
+
+          return@getCodeActions true
+        }
+        return@getCodeActions false
+      }
+    }
+    return emptyList()
+  }
+
   override fun getDetailedCompletionItems(virtualFile: VirtualFile,
                                           items: List<CompletionEntry>,
                                           document: Document,
@@ -148,7 +178,7 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService {
   private fun afterUpdatingDescriptor() {
     TypeScriptMessageBus.get(project).changed()
     val instance = DenoTypings.getInstance(project)
-    BackgroundTaskUtil.executeOnPooledThread(project) {
+    BackgroundTaskUtil.executeOnPooledThread(this) {
       if (instance.reload()) {
         ApplicationManager.getApplication().invokeLater({
           val service = DenoSettings.getService(project)
@@ -170,6 +200,7 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService {
   override fun canHighlight(file: PsiFile) = DialectDetector.isTypeScript(file)
 
   override fun isAcceptable(file: VirtualFile) = DialectDetector.getLanguageDialect(file, project) is TypeScriptLanguageDialect
+  override fun dispose() {}
 }
 
 fun forceUpdate(server: LspServer, virtualFile: VirtualFile) {
@@ -184,7 +215,7 @@ class DenoCompletionEntry(internal val item: LspCompletionItem) : CompletionEntr
   override fun intoLookupElement() = item.intoLookupElement().withInsertHandler(JSInsertHandler.DEFAULT)
 }
 
-class DenoAnnotationError(private val diagnostic: LspDiagnostic, private val path: String?) : JSAnnotationError {
+class DenoAnnotationError(val diagnostic: LspDiagnostic, private val path: String?) : JSAnnotationError {
   override fun getLine() = diagnostic.range.start.line
 
   override fun getColumn() = diagnostic.range.start.character
