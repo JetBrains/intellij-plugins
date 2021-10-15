@@ -2,14 +2,21 @@ package com.intellij.deno.service
 
 import com.intellij.codeInsight.documentation.DocumentationManager
 import com.intellij.deno.DenoSettings
+import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase
+import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.modules.JSTempDirWithNodeInterpreterTest
+import com.intellij.lang.javascript.typescript.TypeScriptFormatterTest
+import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.impl.DocumentImpl
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.progress.impl.CoreProgressManager
 import com.intellij.psi.PsiFile
+import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.testFramework.ExpectedHighlightingData
 import com.intellij.testFramework.JUnit38AssumeSupportRunner
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
+import com.intellij.util.ui.UIUtil
 import junit.framework.TestCase
 import org.junit.runner.RunWith
 
@@ -73,6 +80,39 @@ class DenoTypeScriptServiceTest : JSTempDirWithNodeInterpreterTest() {
     checkHighlightingByOptions(false)
     myFixture.renameElement(bar, "hello.ts")
     checkHighlightingByOptions(false)
+  }
+
+  fun testDenoReformat() {
+    TypeScriptFormatterTest.setTempSettings(project) {
+      it.FORCE_SEMICOLON_STYLE = true
+    }
+    myFixture.configureByText("foo.ts", "export class Foo {}")
+    myFixture.configureByText("bar.ts", "export class Bar {}")
+    myFixture.configureByText("test.ts", """
+      import {  Foo  } from './foo.ts'
+      import {  Bar  } from './bar.ts'
+      console.log(Foo)
+      console.log(Bar)
+      console.log(<error>Bar1</error>)
+    """.trimIndent())
+    checkHighlightingByOptions(false)
+    CommandProcessor.getInstance().executeCommand(project, {
+      WriteAction.run<RuntimeException> {
+        CodeStyleManager.getInstance(project).reformat(myFixture.file)
+      }
+    }, "write", null)
+    UIUtil.dispatchAllInvocationEvents()
+    //have to wait for the annotations, because diagnostics are async
+    JSTestUtils.waitForConditionWithTimeout({ false }, 2000)
+    myFixture.doHighlighting()
+    JSDaemonAnalyzerLightTestCase.checkHighlightingByText(myFixture, """
+      import {Foo} from './foo.ts';
+      import {Bar} from './bar.ts';
+
+      console.log(Foo);
+      console.log(Bar);
+      console.log(<error>Bar1</error>);
+    """.trimIndent(), true)
   }
 
   private fun close(file: PsiFile) {

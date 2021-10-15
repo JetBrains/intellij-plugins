@@ -29,6 +29,8 @@ class DenoLspServerDescriptor(project: Project, root: VirtualFile) : LspServerDe
 
   override fun useGenericCompletion() = false
 
+  override fun useFullTextDocumentSyncKind(): Boolean = true
+
   override fun useGenericHighlighting() = false
 
   override fun useGenericNavigation() = false
