@@ -13,7 +13,7 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import javax.swing.Icon
 
-class DenoLibrary(private val libs: List<VirtualFile>) : SyntheticLibrary(), ItemPresentation, JSSyntheticLibraryProvider {
+class DenoLibrary(private val libs: List<VirtualFile>) : SyntheticLibrary(), ItemPresentation {
 
   override fun getExcludeFileCondition(): Condition<VirtualFile> = Condition {
     !it.isDirectory

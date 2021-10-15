@@ -18,6 +18,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiReferenceProvider
@@ -67,22 +68,28 @@ class DenoModuleReferenceContributor : JSBaseModuleReferenceContributor() {
     val path = virtualFile.path
     if (!path.startsWith(denoDeps)) return emptyArray()
 
+    val ownUrl = getOwnUrlForFile(host, virtualFile) ?: return emptyArray()
+    val (ownPath, schema) = trimSchema(ownUrl) ?: return emptyArray()
+    val indexOfSuffix = ownPath.lastIndexOf("/")
+    if (indexOfSuffix <= 0) return emptyArray()
+    val toCanonicalPath = FileUtil.toCanonicalPath("${ownPath.substring(0, indexOfSuffix)}/$unquotedRefText", false)
+    return getReferencesForUrl("$schema://$toCanonicalPath", denoDeps, host, range)
+  }
+
+  private fun getOwnUrlForFile(place: PsiElement, virtualFile: VirtualFile): String? {
+    //todo cache to virtual file gist?
     val metadata = virtualFile.parent.findChild(virtualFile.name + ".metadata.json")
-    if (metadata == null) return emptyArray()
-    val metaDataPsi = host.manager.findFile(metadata)
-    if (metaDataPsi !is JsonFile) return emptyArray()
+    if (metadata == null) return null
+    val metaDataPsi = place.manager.findFile(metadata)
+    if (metaDataPsi !is JsonFile) return null
     val values = metaDataPsi.allTopLevelValues
     for (topLevelValue in values) {
       val property = (topLevelValue as? JsonObject)?.findProperty("url") ?: continue
-      val ownUrl = (property.value as? JsonStringLiteral)?.value ?: continue
-      val (ownPath, schema) = trimSchema(ownUrl) ?: continue
-      val indexOfSuffix = ownPath.lastIndexOf("/")
-      if (indexOfSuffix <= 0) continue
-      val toCanonicalPath = FileUtil.toCanonicalPath("${ownPath.substring(0, indexOfSuffix)}/$unquotedRefText", false)
-      return getReferencesForUrl("$schema://$toCanonicalPath", denoDeps, host, range)
+      val url = (property.value as? JsonStringLiteral)?.value
+      if (url != null) return url
     }
 
-    return emptyArray()
+    return null
   }
 
   @Suppress("HttpUrlsUsage")
@@ -99,6 +106,9 @@ class DenoModuleReferenceContributor : JSBaseModuleReferenceContributor() {
     if (moduleDescriptor !is JSModuleNameInfo) return emptyList()
     val resolvedModuleFile = moduleDescriptor.resolvedFile
     val moduleFileOrDirectory = moduleDescriptor.moduleFileOrDirectory
+    if (isCacheFile(configuration.place, resolvedModuleFile)) {
+      return buildForCachedFile(configuration, moduleDescriptor, baseDescriptor)
+    }
 
     if (!TypeScriptUtil.isTypeScriptFile(resolvedModuleFile) ||
         TypeScriptUtil.isDefinitionFile(resolvedModuleFile)
@@ -115,6 +125,22 @@ class DenoModuleReferenceContributor : JSBaseModuleReferenceContributor() {
     }
 
     val newInfo = JSModuleNameInfoImpl(externalModuleName, moduleFileOrDirectory, resolvedModuleFile, place, emptyArray(),
+      ExtensionSettings.EXACT)
+    return listOf(JSSimpleImportDescriptor(newInfo, baseDescriptor))
+  }
+
+  private fun isCacheFile(place: PsiElement, file: VirtualFile): Boolean {
+    val denoDeps = DenoSettings.getService(place.project).getDenoCacheDeps()
+    return file.path.startsWith(denoDeps)
+  }
+
+  private fun buildForCachedFile(configuration: JSImportPathConfiguration,
+                                 moduleDescriptor: JSModuleNameInfo,
+                                 baseDescriptor: JSImportDescriptor): List<JSImportDescriptor> {
+    val resolvedModuleFile = moduleDescriptor.resolvedFile
+    val moduleFileOrDirectory = moduleDescriptor.moduleFileOrDirectory
+    val ownUrlForFile = getOwnUrlForFile(configuration.place, resolvedModuleFile) ?: return emptyList()
+    val newInfo = JSModuleNameInfoImpl(ownUrlForFile, moduleFileOrDirectory, resolvedModuleFile, configuration.place, emptyArray(),
       ExtensionSettings.EXACT)
     return listOf(JSSimpleImportDescriptor(newInfo, baseDescriptor))
   }

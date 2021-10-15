@@ -24,8 +24,8 @@ Enable Deno support for the current project in <i>Preferences | Languages \& Fra
     <projectService serviceImplementation="com.intellij.deno.DenoSettings" />
     <projectService serviceImplementation="com.intellij.deno.service.DenoTypeScriptService" />
     <additionalLibraryRootsProvider implementation="com.intellij.deno.DenoLibraryProvider"/>
-    <lang.substitutor language="TEXT" implementationClass="com.intellij.deno.lang.DenoCachedFilesSubstitutor"/>
     <configurationType implementation="com.intellij.deno.run.DenoConfigurationType"/>
+    <fileTypeOverrider implementation="com.intellij.deno.lang.DenoFileTypeOverrider"/>
     <runConfigurationProducer implementation="com.intellij.deno.run.DenoRunConfigurationProducer" />
 
     <annotator language="JavaScript" implementationClass="com.intellij.deno.inspection.DenoEditorNotificationAnnotator"/>
