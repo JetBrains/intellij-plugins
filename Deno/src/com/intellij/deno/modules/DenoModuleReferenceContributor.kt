@@ -14,6 +14,7 @@ import com.intellij.lang.javascript.modules.JSModuleNameInfo
 import com.intellij.lang.javascript.modules.JSModuleNameInfo.ExtensionSettings
 import com.intellij.lang.javascript.modules.imports.JSImportDescriptor
 import com.intellij.lang.javascript.modules.imports.JSSimpleImportDescriptor
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
@@ -28,6 +29,8 @@ import java.nio.charset.StandardCharsets
 
 
 class DenoModuleReferenceContributor : JSBaseModuleReferenceContributor() {
+  private val urlKey = Key.create<String?>("deno.file.url")
+
   override fun isApplicable(host: PsiElement): Boolean {
     return DenoSettings.getService(host.project).isUseDeno()
   }
@@ -77,7 +80,9 @@ class DenoModuleReferenceContributor : JSBaseModuleReferenceContributor() {
   }
 
   private fun getOwnUrlForFile(place: PsiElement, virtualFile: VirtualFile): String? {
-    //todo cache to virtual file gist?
+    val userData = virtualFile.getUserData(urlKey)
+    if (userData != null) return userData
+
     val metadata = virtualFile.parent.findChild(virtualFile.name + ".metadata.json")
     if (metadata == null) return null
     val metaDataPsi = place.manager.findFile(metadata)
@@ -86,7 +91,10 @@ class DenoModuleReferenceContributor : JSBaseModuleReferenceContributor() {
     for (topLevelValue in values) {
       val property = (topLevelValue as? JsonObject)?.findProperty("url") ?: continue
       val url = (property.value as? JsonStringLiteral)?.value
-      if (url != null) return url
+      if (url != null) {
+        virtualFile.putUserData(urlKey, url)
+        return url
+      }
     }
 
     return null

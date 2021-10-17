@@ -171,7 +171,7 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService, D
     val descriptor = descriptor
     if (!project.isDisposed && descriptor != null) {
       descriptor.restart()
-      afterUpdatingDescriptor()
+      TypeScriptMessageBus.get(project).changed()
     }
   }
 
