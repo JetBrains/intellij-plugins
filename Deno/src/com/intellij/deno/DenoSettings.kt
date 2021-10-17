@@ -18,6 +18,15 @@ class DenoState {
   var useDeno = false
   var denoPath = ""
   var denoCache = ""
+  var denoInit = """
+    {
+      "enable": true,
+      "lint": true,
+      "unstable": true,
+      "importMap": "import_map.json",
+      "config": "deno.json"
+    }
+  """.trimIndent()
 }
 
 @State(name = "DenoSettings", storages = [Storage("deno.xml")])
@@ -77,6 +86,14 @@ class DenoSettings(val project: Project) : PersistentStateComponent<DenoState> {
 
   fun setUseDenoAndReload(useDeno: Boolean) {
     setUseDenoAndReload(useDeno, true)
+  }
+
+  fun getDenoInit(): String {
+    return state.denoInit
+  }
+
+  fun setDenoInit(denoInit: String) {
+    state.denoInit = denoInit
   }
 
   fun setUseDenoAndReload(useDeno: Boolean, restartService: Boolean) {
