@@ -9,9 +9,9 @@ import com.intellij.lang.ecmascript6.psi.impl.JSImportPathConfiguration
 import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
 import com.intellij.lang.javascript.frameworks.modules.JSBaseModuleReferenceContributor
 import com.intellij.lang.javascript.frameworks.modules.JSExactFileReference
+import com.intellij.lang.javascript.modules.JSModuleDescriptorFactory
 import com.intellij.lang.javascript.modules.JSModuleNameInfo
 import com.intellij.lang.javascript.modules.JSModuleNameInfo.ExtensionSettings
-import com.intellij.lang.javascript.modules.JSModuleNameInfoImpl
 import com.intellij.lang.javascript.modules.imports.JSImportDescriptor
 import com.intellij.lang.javascript.modules.imports.JSSimpleImportDescriptor
 import com.intellij.openapi.util.TextRange
@@ -124,7 +124,7 @@ class DenoModuleReferenceContributor : JSBaseModuleReferenceContributor() {
       externalModuleName = "./$externalModuleName"
     }
 
-    val newInfo = JSModuleNameInfoImpl(externalModuleName, moduleFileOrDirectory, resolvedModuleFile, place, emptyArray(),
+    val newInfo = JSModuleDescriptorFactory.createModuleDescriptor(externalModuleName, moduleFileOrDirectory, resolvedModuleFile, place, emptyArray(),
       ExtensionSettings.EXACT)
     return listOf(JSSimpleImportDescriptor(newInfo, baseDescriptor))
   }
@@ -140,7 +140,7 @@ class DenoModuleReferenceContributor : JSBaseModuleReferenceContributor() {
     val resolvedModuleFile = moduleDescriptor.resolvedFile
     val moduleFileOrDirectory = moduleDescriptor.moduleFileOrDirectory
     val ownUrlForFile = getOwnUrlForFile(configuration.place, resolvedModuleFile) ?: return emptyList()
-    val newInfo = JSModuleNameInfoImpl(ownUrlForFile, moduleFileOrDirectory, resolvedModuleFile, configuration.place, emptyArray(),
+    val newInfo = JSModuleDescriptorFactory.createModuleDescriptor(ownUrlForFile, moduleFileOrDirectory, resolvedModuleFile, configuration.place, emptyArray(),
       ExtensionSettings.EXACT)
     return listOf(JSSimpleImportDescriptor(newInfo, baseDescriptor))
   }
