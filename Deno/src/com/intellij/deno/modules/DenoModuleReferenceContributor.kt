@@ -105,28 +105,11 @@ class DenoModuleReferenceContributor : JSBaseModuleReferenceContributor() {
     val moduleDescriptor = baseDescriptor.moduleDescriptor
     if (moduleDescriptor !is JSModuleNameInfo) return emptyList()
     val resolvedModuleFile = moduleDescriptor.resolvedFile
-    val moduleFileOrDirectory = moduleDescriptor.moduleFileOrDirectory
     if (isCacheFile(configuration.place, resolvedModuleFile)) {
       return buildForCachedFile(configuration, moduleDescriptor, baseDescriptor)
     }
 
-    if (!TypeScriptUtil.isTypeScriptFile(resolvedModuleFile) ||
-        TypeScriptUtil.isDefinitionFile(resolvedModuleFile)
-    ) return emptyList()
-
-    val place = configuration.place
-    val contextFile = place.containingFile?.virtualFile
-    if (contextFile == null) return emptyList()
-
-    var externalModuleName = VfsUtilCore.findRelativePath(contextFile, moduleFileOrDirectory, '/')
-    if (externalModuleName == null) return emptyList()
-    if (!externalModuleName.startsWith(".") && !externalModuleName.startsWith(File.separator)) {
-      externalModuleName = "./$externalModuleName"
-    }
-
-    val newInfo = JSModuleDescriptorFactory.createModuleDescriptor(externalModuleName, moduleFileOrDirectory, resolvedModuleFile, place, emptyArray(),
-      ExtensionSettings.EXACT)
-    return listOf(JSSimpleImportDescriptor(newInfo, baseDescriptor))
+    return emptyList()
   }
 
   private fun isCacheFile(place: PsiElement, file: VirtualFile): Boolean {
@@ -140,8 +123,8 @@ class DenoModuleReferenceContributor : JSBaseModuleReferenceContributor() {
     val resolvedModuleFile = moduleDescriptor.resolvedFile
     val moduleFileOrDirectory = moduleDescriptor.moduleFileOrDirectory
     val ownUrlForFile = getOwnUrlForFile(configuration.place, resolvedModuleFile) ?: return emptyList()
-    val newInfo = JSModuleDescriptorFactory.createModuleDescriptor(ownUrlForFile, moduleFileOrDirectory, resolvedModuleFile, configuration.place, emptyArray(),
-      ExtensionSettings.EXACT)
+    val newInfo = JSModuleDescriptorFactory.createExactModuleDescriptor(ownUrlForFile, moduleFileOrDirectory, resolvedModuleFile,
+      configuration.place)
     return listOf(JSSimpleImportDescriptor(newInfo, baseDescriptor))
   }
 }

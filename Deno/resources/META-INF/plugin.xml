@@ -10,9 +10,9 @@
 </ul>
 Enable Deno support for the current project in <i>Preferences | Languages \& Frameworks | Deno</i>.
 ]]></description>
-  
+
   <vendor>JetBrains</vendor>
-  
+
   <depends>JavaScript</depends>
   <depends>com.intellij.css</depends>
   <depends>com.intellij.modules.platform</depends>
@@ -21,12 +21,12 @@ Enable Deno support for the current project in <i>Preferences | Languages \& Fra
 
   <extensions defaultExtensionNs="com.intellij">
     <projectConfigurable groupId="language" instance="com.intellij.deno.DenoConfigurable"/>
-    <projectService serviceImplementation="com.intellij.deno.DenoSettings" />
-    <projectService serviceImplementation="com.intellij.deno.service.DenoTypeScriptService" />
+    <projectService serviceImplementation="com.intellij.deno.DenoSettings"/>
+    <projectService serviceImplementation="com.intellij.deno.service.DenoTypeScriptService"/>
     <additionalLibraryRootsProvider implementation="com.intellij.deno.DenoLibraryProvider"/>
     <configurationType implementation="com.intellij.deno.run.DenoConfigurationType"/>
     <fileTypeOverrider implementation="com.intellij.deno.lang.DenoFileTypeOverrider"/>
-    <runConfigurationProducer implementation="com.intellij.deno.run.DenoRunConfigurationProducer" />
+    <runConfigurationProducer implementation="com.intellij.deno.run.DenoRunConfigurationProducer"/>
 
     <annotator language="JavaScript" implementationClass="com.intellij.deno.inspection.DenoEditorNotificationAnnotator"/>
     <lang.inspectionSuppressor language="JavaScript" implementationClass="com.intellij.deno.inspection.DenoInspectionSuppressor"/>
@@ -36,5 +36,6 @@ Enable Deno support for the current project in <i>Preferences | Languages \& Fra
   <extensions defaultExtensionNs="JavaScript">
     <languageServiceProvider order="first" implementation="com.intellij.deno.service.DenoTypeScriptServiceProvider"/>
     <moduleReferenceContributor implementation="com.intellij.deno.modules.DenoModuleReferenceContributor"/>
+    <importModulePathStrategy implementation="com.intellij.deno.modules.DenoImportModulePathStrategy"/>
   </extensions>
 </idea-plugin>
