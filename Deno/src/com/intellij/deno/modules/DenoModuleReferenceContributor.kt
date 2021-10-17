@@ -100,8 +100,8 @@ class DenoModuleReferenceContributor : JSBaseModuleReferenceContributor() {
   }
 
 
-  override fun getImportDescriptors(configuration: JSImportPathConfiguration,
-                                    baseDescriptor: JSImportDescriptor): List<JSImportDescriptor> {
+  override fun getAdditionalDescriptors(configuration: JSImportPathConfiguration,
+                                        baseDescriptor: JSImportDescriptor): List<JSImportDescriptor> {
     val moduleDescriptor = baseDescriptor.moduleDescriptor
     if (moduleDescriptor !is JSModuleNameInfo) return emptyList()
     val resolvedModuleFile = moduleDescriptor.resolvedFile
