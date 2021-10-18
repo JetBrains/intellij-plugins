@@ -96,9 +96,11 @@ class DenoSettings(val project: Project) : PersistentStateComponent<DenoState> {
     val libraryProvider = AdditionalLibraryRootsProvider.EP_NAME.findExtensionOrFail(DenoLibraryProvider::class.java)
     val oldRoots = libraryProvider.getRootsToWatch(project)
     val denoLspSupportProvider = DenoLspSupportProvider()
-    LspServerManager.getInstance(project).unloadProvider(denoLspSupportProvider)
-    setUseDeno(useDeno)
-    LspServerManager.getInstance(project).loadProvider(denoLspSupportProvider)
+    if (isUseDeno() != useDeno) {
+      LspServerManager.getInstance(project).unloadProvider(denoLspSupportProvider)
+      setUseDeno(useDeno)
+      LspServerManager.getInstance(project).loadProvider(denoLspSupportProvider)
+    }
 
     WriteAction.run(
       ThrowableRunnable<ConfigurationException> {

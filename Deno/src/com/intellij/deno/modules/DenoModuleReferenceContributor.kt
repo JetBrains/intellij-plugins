@@ -2,6 +2,9 @@ package com.intellij.deno.modules
 
 import com.google.common.hash.Hashing
 import com.google.gson.JsonParser
+import com.intellij.codeInsight.completion.PrioritizedLookupElement
+import com.intellij.codeInsight.lookup.LookupElement
+import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.deno.DenoSettings
 import com.intellij.javascript.JSModuleBaseReference
 import com.intellij.json.psi.JsonFile
@@ -15,7 +18,6 @@ import com.intellij.lang.javascript.frameworks.modules.JSUrlImportsUtil.trimSche
 import com.intellij.lang.javascript.modules.JSModuleDescriptorFactory
 import com.intellij.lang.javascript.modules.JSModuleNameInfo
 import com.intellij.lang.javascript.modules.imports.JSImportDescriptor
-import com.intellij.lang.javascript.modules.imports.JSModuleDescriptor
 import com.intellij.lang.javascript.modules.imports.JSSimpleImportDescriptor
 import com.intellij.openapi.components.PathMacroManager
 import com.intellij.openapi.project.guessProjectDir
@@ -124,6 +126,11 @@ class DenoModuleReferenceContributor : JSBaseModuleReferenceContributor() {
 
   override fun getDefaultWeight(): Int {
     return JSModuleBaseReference.ModuleTypes.PATH_MAPPING.weight()
+  }
+
+  override fun getLookupElements(unquotedEscapedText: String, host: PsiElement): Collection<LookupElement> {
+    val builder = LookupElementBuilder.create("https://deno.land").withIcon(JSUrlImportsUtil.getIcon())
+    return listOf(PrioritizedLookupElement.withPriority(builder, -1.0))
   }
 }
 

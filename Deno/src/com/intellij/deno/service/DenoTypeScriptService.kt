@@ -8,9 +8,13 @@ import com.intellij.deno.DenoSettings
 import com.intellij.execution.ExecutionException
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.util.ExecUtil
+import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil
 import com.intellij.lang.javascript.DialectDetector
+import com.intellij.lang.javascript.JSStringUtil
+import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.completion.JSInsertHandler
 import com.intellij.lang.javascript.dialects.TypeScriptLanguageDialect
+import com.intellij.lang.javascript.frameworks.modules.JSUrlImportsUtil
 import com.intellij.lang.javascript.integration.JSAnnotationError
 import com.intellij.lang.javascript.integration.JSAnnotationError.*
 import com.intellij.lang.javascript.psi.JSFunctionType
@@ -36,6 +40,7 @@ import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -89,8 +94,17 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService, D
   override fun openEditor(file: VirtualFile) {}
   override fun closeLastEditor(file: VirtualFile) {}
 
-  override fun getCompletionMergeStrategy(parameters: CompletionParameters, file: PsiFile, context: PsiElement): CompletionMergeStrategy =
-    TypeScriptLanguageServiceUtil.getCompletionMergeStrategy(parameters, file, context)
+  override fun getCompletionMergeStrategy(parameters: CompletionParameters, file: PsiFile, context: PsiElement): CompletionMergeStrategy {
+    //if (JSTokenTypes.STRING_LITERALS.contains(context.node.elementType)) {
+    //  JSFileReferencesUtil.getReferenceModuleText(context.parent)?.let {
+    //    if (JSUrlImportsUtil.startsWithRemoteUrlPrefix(JSStringUtil.unquoteStringLiteralValue(it))) {
+    //      return CompletionMergeStrategy.MERGE
+    //    }
+    //  }
+    //}
+
+    return TypeScriptLanguageServiceUtil.getCompletionMergeStrategy(parameters, file, context)
+  }
 
   override fun updateAndGetCompletionItems(virtualFile: VirtualFile, parameters: CompletionParameters): Future<List<CompletionEntry>?>? {
     val descriptor = getDescriptor(virtualFile) ?: return null
@@ -173,7 +187,7 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService, D
 
     return unsavedDocuments
       .mapNotNull { manager.getFile(it) }
-      .filter { vFile ->  !openFiles.contains(vFile) && isAcceptable(vFile) }
+      .filter { vFile -> !openFiles.contains(vFile) && isAcceptable(vFile) }
   }
 
   override fun canHighlight(file: PsiFile) = DialectDetector.isTypeScript(file)
