@@ -9,11 +9,9 @@ import com.intellij.psi.PsiElement
 class DenoImportModulePathStrategy : JSImportModulePathStrategy {
   override fun getPathSettings(place: PsiElement,
                                extensionWithDot: String): JSModuleNameInfo.ExtensionSettings? {
-    if (DialectDetector.isTypeScript(place)) {
-      if (DenoSettings.getService(place.project).isUseDeno() && 
-          extensionWithDot != ".d.ts") {
-        return JSModuleNameInfo.ExtensionSettings.FORCE_EXTENSION
-      }
+    if (DenoSettings.getService(place.project).isUseDeno() &&
+        extensionWithDot != ".d.ts") {
+      return JSModuleNameInfo.ExtensionSettings.FORCE_EXTENSION
     }
 
     return null

@@ -35,7 +35,7 @@ Enable Deno support for the current project in <i>Preferences | Languages \& Fra
   </extensions>
   <extensions defaultExtensionNs="JavaScript">
     <languageServiceProvider order="first" implementation="com.intellij.deno.service.DenoTypeScriptServiceProvider"/>
-    <moduleReferenceContributor implementation="com.intellij.deno.modules.DenoModuleReferenceContributor"/>
+    <moduleReferenceContributor id="deno" implementation="com.intellij.deno.modules.DenoModuleReferenceContributor"/>
     <importModulePathStrategy implementation="com.intellij.deno.modules.DenoImportModulePathStrategy"/>
   </extensions>
 </idea-plugin>
