@@ -28,13 +28,11 @@ import com.intellij.lsp.LspServerManager
 import com.intellij.lsp.data.LspCompletionItem
 import com.intellij.lsp.data.LspDiagnostic
 import com.intellij.lsp.data.LspSeverity.*
-import com.intellij.lsp.methods.ForceDidChangeMethod
 import com.intellij.lsp.methods.HoverMethod
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Document
-import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.progress.util.BackgroundTaskUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -117,7 +115,6 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService, D
 
   override fun updateAndGetCompletionItems(virtualFile: VirtualFile, parameters: CompletionParameters): Future<List<CompletionEntry>?>? {
     val descriptor = getDescriptor(virtualFile) ?: return null
-    forceUpdate(descriptor.getServer(project), virtualFile)
     return completedFuture(descriptor.getCompletionItems(parameters).map(::DenoCompletionEntry))
   }
 
@@ -191,7 +188,6 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService, D
   override fun highlight(file: PsiFile): CompletableFuture<List<JSAnnotationError>>? {
     val server = getDescriptor(file)?.getServer(project) ?: return completedFuture(emptyList())
     val virtualFile = file.virtualFile
-    forceUpdate(server, virtualFile)
     return completedFuture(server.getDiagnostics(virtualFile)?.map {
       DenoAnnotationError(it, virtualFile.canonicalPath)
     })
@@ -201,12 +197,6 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService, D
 
   override fun isAcceptable(file: VirtualFile) = DialectDetector.getLanguageDialect(file, project) is TypeScriptLanguageDialect
   override fun dispose() {}
-}
-
-fun forceUpdate(server: LspServer, virtualFile: VirtualFile) {
-  FileDocumentManager.getInstance().getDocument(virtualFile)?.let { document ->
-    server.invoke(ForceDidChangeMethod(virtualFile, document))
-  }
 }
 
 class DenoCompletionEntry(internal val item: LspCompletionItem) : CompletionEntry {
