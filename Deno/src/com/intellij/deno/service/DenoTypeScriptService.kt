@@ -30,16 +30,12 @@ import com.intellij.lsp.data.LspDiagnostic
 import com.intellij.lsp.data.LspSeverity.*
 import com.intellij.lsp.methods.HoverMethod
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Document
-import com.intellij.openapi.progress.util.BackgroundTaskUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiManager
-import com.intellij.psi.util.PsiUtilCore
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletableFuture.completedFuture
 import java.util.concurrent.Future
@@ -61,32 +57,15 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService, D
     fun getInstance(project: Project): DenoTypeScriptService = project.getService(DenoTypeScriptService::class.java)
   }
 
-  @Volatile
-  private var descriptor: LspServerDescriptor? = null
-  private val openedFiles = mutableListOf<VirtualFile>()
-
-  @Synchronized
-  private fun createDescriptor(element: PsiElement): LspServerDescriptor? {
-    if (!LspServerManager.isFileAcceptable(PsiUtilCore.getVirtualFile(element))) return null
-    if (descriptor != null) return descriptor
-
-    return LspServerManager
-      .getServerDescriptors(element)
-      .find { it is DenoLspServerDescriptor }
-      .also {
-        val changed = descriptor != it
-        descriptor = it
-        if (changed) afterUpdatingDescriptor()
-      }
+  private fun getDescriptor(virtualFile: VirtualFile): LspServerDescriptor? {
+    return if (!LspServerManager.isFileAcceptable(virtualFile)) null else getDescriptor()
   }
 
-  private fun getDescriptor(element: PsiElement) = descriptor ?: createDescriptor(element)
-
-  private fun getDescriptor(virtualFile: VirtualFile) = descriptor ?: PsiManager.getInstance(project).findFile(virtualFile)?.let {
-    createDescriptor(it)
+  private fun getDescriptor(): LspServerDescriptor? {
+    return if (DenoSettings.getService(project).isUseDeno()) getDenoDescriptor(project) else null
   }
 
-  private fun <T> withServer(action: LspServer.() -> T): T? = descriptor?.getServer(project)?.action()
+  private fun <T> withServer(action: LspServer.() -> T): T? = getDescriptor()?.getServer(project)?.action()
 
   override val name = "Deno LSP"
 
@@ -104,13 +83,8 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService, D
     }
   }
 
-  override fun openEditor(file: VirtualFile) {
-    openedFiles.add(file)
-  }
-
-  override fun closeLastEditor(file: VirtualFile) {
-    openedFiles.remove(file)
-  }
+  override fun openEditor(file: VirtualFile) {}
+  override fun closeLastEditor(file: VirtualFile) {}
 
   override fun getCompletionMergeStrategy(parameters: CompletionParameters, file: PsiFile, context: PsiElement): CompletionMergeStrategy =
     TypeScriptLanguageServiceUtil.getCompletionMergeStrategy(parameters, file, context)
@@ -153,12 +127,12 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService, D
   }
 
   override fun getNavigationFor(document: Document, sourceElement: PsiElement): Array<PsiElement> =
-    getDescriptor(sourceElement)?.getElementDefinitions(sourceElement)?.toTypedArray() ?: emptyArray()
+    getDescriptor()?.getElementDefinitions(sourceElement)?.toTypedArray() ?: emptyArray()
 
   override fun getSignatureHelp(file: PsiFile, context: CreateParameterInfoContext): Future<Stream<JSFunctionType>?>? = null
 
   fun quickInfo(element: PsiElement): String? {
-    val raw = getDescriptor(element)?.getServer(project)?.invokeSynchronously(HoverMethod.create(element)) ?: return null
+    val raw = getDescriptor()?.getServer(project)?.invokeSynchronously(HoverMethod.create(element)) ?: return null
     LOG.info("Quick info for $element : $raw")
     return raw.substring("<html><body><pre>".length, raw.length - "</pre></body></html>".length)
   }
@@ -167,28 +141,15 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService, D
     completedFuture(quickInfo(element))
 
   override fun restart(recreateToolWindow: Boolean) {
-    val descriptor = descriptor
+    val descriptor = getDescriptor()
     if (!project.isDisposed && descriptor != null) {
       descriptor.restart()
       TypeScriptMessageBus.get(project).changed()
     }
   }
 
-  private fun afterUpdatingDescriptor() {
-    TypeScriptMessageBus.get(project).changed()
-    val instance = DenoTypings.getInstance(project)
-    BackgroundTaskUtil.executeOnPooledThread(this) {
-      if (instance.reload()) {
-        ApplicationManager.getApplication().invokeLater({
-          val service = DenoSettings.getService(project)
-          service.setUseDenoAndReload(service.isUseDeno(), false)
-        }, project.disposed)
-      }
-    }
-  }
-
   override fun highlight(file: PsiFile): CompletableFuture<List<JSAnnotationError>>? {
-    val server = getDescriptor(file)?.getServer(project) ?: return completedFuture(emptyList())
+    val server = getDescriptor()?.getServer(project) ?: return completedFuture(emptyList())
     val virtualFile = file.virtualFile
     return completedFuture(server.getDiagnostics(virtualFile)?.map {
       DenoAnnotationError(it, virtualFile.canonicalPath)

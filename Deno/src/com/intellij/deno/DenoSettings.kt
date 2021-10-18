@@ -3,7 +3,6 @@ package com.intellij.deno
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.deno.service.DenoLspSupportProvider
 import com.intellij.lang.typescript.compiler.TypeScriptService
-import com.intellij.lang.typescript.compiler.languageService.TypeScriptMessageBus
 import com.intellij.lsp.LspServerManager
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.components.PersistentStateComponent
@@ -13,7 +12,6 @@ import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.AdditionalLibraryRootsListener
 import com.intellij.openapi.roots.AdditionalLibraryRootsProvider
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.ThrowableRunnable
 
 class DenoState {
@@ -86,10 +84,6 @@ class DenoSettings(val project: Project) : PersistentStateComponent<DenoState> {
     this.state.denoCache = if (DenoUtil.getDenoCache() == path) "" else path
   }
 
-  fun setUseDenoAndReload(useDeno: Boolean) {
-    setUseDenoAndReload(useDeno, true)
-  }
-
   fun getDenoInit(): String {
     return state.denoInit
   }
@@ -98,7 +92,7 @@ class DenoSettings(val project: Project) : PersistentStateComponent<DenoState> {
     state.denoInit = denoInit
   }
 
-  fun setUseDenoAndReload(useDeno: Boolean, restartService: Boolean) {
+  fun setUseDenoAndReload(useDeno: Boolean) {
     val libraryProvider = AdditionalLibraryRootsProvider.EP_NAME.findExtensionOrFail(DenoLibraryProvider::class.java)
     val oldRoots = libraryProvider.getRootsToWatch(project)
     val denoLspSupportProvider = DenoLspSupportProvider()
@@ -108,8 +102,18 @@ class DenoSettings(val project: Project) : PersistentStateComponent<DenoState> {
 
     WriteAction.run(
       ThrowableRunnable<ConfigurationException> {
-        if (restartService) TypeScriptService.restartServices(project, true)
+        val newRoots = libraryProvider.getRootsToWatch(project)
+        AdditionalLibraryRootsListener.fireAdditionalLibraryChanged(project, null, oldRoots, newRoots, "Deno")
 
+        DaemonCodeAnalyzer.getInstance(project).restart()
+      })
+  }
+
+  fun updateLibraries() {
+    val libraryProvider = AdditionalLibraryRootsProvider.EP_NAME.findExtensionOrFail(DenoLibraryProvider::class.java)
+    val oldRoots = libraryProvider.getRootsToWatch(project)
+    WriteAction.run(
+      ThrowableRunnable<ConfigurationException> {
         val newRoots = libraryProvider.getRootsToWatch(project)
         AdditionalLibraryRootsListener.fireAdditionalLibraryChanged(project, null, oldRoots, newRoots, "Deno")
 
