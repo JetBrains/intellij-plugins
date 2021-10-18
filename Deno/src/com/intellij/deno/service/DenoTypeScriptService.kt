@@ -95,13 +95,13 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService, D
   override fun closeLastEditor(file: VirtualFile) {}
 
   override fun getCompletionMergeStrategy(parameters: CompletionParameters, file: PsiFile, context: PsiElement): CompletionMergeStrategy {
-    //if (JSTokenTypes.STRING_LITERALS.contains(context.node.elementType)) {
-    //  JSFileReferencesUtil.getReferenceModuleText(context.parent)?.let {
-    //    if (JSUrlImportsUtil.startsWithRemoteUrlPrefix(JSStringUtil.unquoteStringLiteralValue(it))) {
-    //      return CompletionMergeStrategy.MERGE
-    //    }
-    //  }
-    //}
+    if (JSTokenTypes.STRING_LITERALS.contains(context.node.elementType)) {
+      JSFileReferencesUtil.getReferenceModuleText(context.parent)?.let {
+        if (JSUrlImportsUtil.startsWithRemoteUrlPrefix(JSStringUtil.unquoteStringLiteralValue(it))) {
+          return CompletionMergeStrategy.MERGE
+        }
+      }
+    }
 
     return TypeScriptLanguageServiceUtil.getCompletionMergeStrategy(parameters, file, context)
   }
