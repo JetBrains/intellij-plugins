@@ -5,7 +5,10 @@ import com.google.gson.JsonParser
 import com.google.gson.JsonPrimitive
 import com.intellij.deno.DenoSettings
 import com.intellij.execution.configurations.GeneralCommandLine
-import com.intellij.lsp.*
+import com.intellij.lsp.LspServerDescriptor
+import com.intellij.lsp.LspServerDescriptorBase
+import com.intellij.lsp.LspServerSupportProvider
+import com.intellij.lsp.SocketModeDescriptor
 import com.intellij.openapi.components.PathMacroManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
@@ -56,8 +59,6 @@ class DenoLspServerDescriptor(project: Project, root: VirtualFile) : LspServerDe
   override fun getSocketModeDescriptor(): SocketModeDescriptor? = null
 
   override fun useGenericCompletion() = false
-
-  override fun useFullTextDocumentSyncKind(): Boolean = true
 
   override fun useGenericHighlighting() = false
 
