@@ -39,6 +39,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
+import com.intellij.psi.util.PsiUtilCore
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletableFuture.completedFuture
 import java.util.concurrent.Future
@@ -66,6 +67,7 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService, D
 
   @Synchronized
   private fun createDescriptor(element: PsiElement): LspServerDescriptor? {
+    if (!LspServerManager.isFileAcceptable(PsiUtilCore.getVirtualFile(element))) return null
     if (descriptor != null) return descriptor
 
     return LspServerManager
