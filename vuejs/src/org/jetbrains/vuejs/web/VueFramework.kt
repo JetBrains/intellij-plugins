@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.web
 import com.intellij.javascript.web.WebFramework
 import com.intellij.javascript.web.lang.html.WebFrameworkHtmlFileType
 import com.intellij.javascript.web.symbols.SymbolKind
+import com.intellij.javascript.web.symbols.WebSymbolNamesProvider
 import com.intellij.javascript.web.symbols.WebSymbolsContainer
 import org.jetbrains.vuejs.VuejsIcons
 import org.jetbrains.vuejs.codeInsight.fromAsset
@@ -19,47 +20,41 @@ class VueFramework : WebFramework() {
   override val standaloneFileType: WebFrameworkHtmlFileType = VueFileType.INSTANCE
   override val htmlFileType: WebFrameworkHtmlFileType = VueFileType.INSTANCE
 
-  override fun getCanonicalNames(namespace: WebSymbolsContainer.Namespace,
-                                 kind: SymbolKind,
-                                 name: String,
-                                 forQuery: Boolean): List<String> =
-    if (namespace == WebSymbolsContainer.Namespace.HTML) {
-      if (forQuery) {
-        when (kind) {
-          KIND_VUE_COMPONENTS ->
-            listOf(name, fromAsset(name, true))
-          KIND_VUE_COMPONENT_PROPS ->
-            listOf(fromAsset(name))
-          else -> emptyList()
-        }
-      }
-      else {
-        when (kind) {
-          KIND_VUE_COMPONENTS ->
-            if (name.contains('-'))
+  override fun getNames(namespace: WebSymbolsContainer.Namespace,
+                        kind: SymbolKind,
+                        name: String,
+                        target: WebSymbolNamesProvider.Target): List<String> =
+    if (namespace == WebSymbolsContainer.Namespace.HTML)
+      when (target) {
+        WebSymbolNamesProvider.Target.NAMES_MAP_QUERY ->
+          when (kind) {
+            KIND_VUE_COMPONENTS ->
+              listOf(name, fromAsset(name, true))
+            KIND_VUE_COMPONENT_PROPS ->
+              listOf(fromAsset(name))
+            else -> emptyList()
+          }
+        WebSymbolNamesProvider.Target.NAMES_MAP_STORAGE ->
+          when (kind) {
+            KIND_VUE_COMPONENTS ->
+              if (name.contains('-'))
+                listOf(name)
+              else
+                listOf(fromAsset(name, true))
+            KIND_VUE_COMPONENT_PROPS ->
+              listOf(fromAsset(name))
+            else -> emptyList()
+          }
+        WebSymbolNamesProvider.Target.CODE_COMPLETION_VARIANTS ->
+          when (kind) {
+            KIND_VUE_COMPONENTS -> if (name.contains('-'))
               listOf(name)
             else
-              listOf(fromAsset(name, true))
-          KIND_VUE_COMPONENT_PROPS ->
-            listOf(fromAsset(name))
-          else -> emptyList()
-        }
+              listOf(name, fromAsset(name))
+            KIND_VUE_COMPONENT_PROPS -> listOf(fromAsset(name))
+            else -> emptyList()
+          }
       }
-
-    }
-    else emptyList()
-
-  override fun getNameVariants(namespace: WebSymbolsContainer.Namespace, kind: SymbolKind, name: String): List<String> =
-    if (namespace == WebSymbolsContainer.Namespace.HTML) {
-      when (kind) {
-        KIND_VUE_COMPONENTS ->  if (name.contains('-'))
-          listOf(name)
-        else
-          listOf(name, fromAsset(name))
-        KIND_VUE_COMPONENT_PROPS -> listOf(fromAsset(name))
-        else -> emptyList()
-      }
-    }
     else emptyList()
 
   companion object {
