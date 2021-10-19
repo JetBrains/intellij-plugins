@@ -15,6 +15,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.components.JBCheckBox;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -86,7 +87,8 @@ public class FlexLauncherDialog extends DialogWrapper {
       .addBrowseFolderListener(null, null, myProject,
                                new FileChooserDescriptor(true, true, false, false, false, false) {
                                  @Override
-                                 public boolean isFileSelectable(final VirtualFile file) {
+                                 public boolean isFileSelectable(final @Nullable VirtualFile file) {
+                                   if (file == null) return false;
                                    return SystemInfo.isMac && file.isDirectory() && "app".equalsIgnoreCase(file.getExtension())
                                           || !file.isDirectory();
                                  }
