@@ -34,6 +34,8 @@ import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.ObjectUtils.notNull;
 import static org.angular2.Angular2DecoratorUtil.INPUTS_PROP;
 import static org.angular2.Angular2DecoratorUtil.OUTPUTS_PROP;
+import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.KIND_NG_DIRECTIVE_INPUTS;
+import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.KIND_NG_DIRECTIVE_OUTPUTS;
 
 public abstract class Angular2MetadataClassBase<Stub extends Angular2MetadataClassStubBase<?>> extends Angular2MetadataElement<Stub> {
   public Angular2MetadataClassBase(@NotNull Stub element) {
@@ -104,13 +106,13 @@ public abstract class Angular2MetadataClassBase<Stub extends Angular2MetadataCla
 
   private Result<Angular2DirectiveProperties> getPropertiesNoCache() {
     Result<Pair<Map<String, String>, Map<String, String>>> mappings = getAllMappings();
-    List<Angular2DirectiveProperty> inputs = collectProperties(mappings.getValue().first);
-    List<Angular2DirectiveProperty> outputs = collectProperties(mappings.getValue().second);
+    List<Angular2DirectiveProperty> inputs = collectProperties(mappings.getValue().first, KIND_NG_DIRECTIVE_INPUTS);
+    List<Angular2DirectiveProperty> outputs = collectProperties(mappings.getValue().second, KIND_NG_DIRECTIVE_OUTPUTS);
     return Result.create(new Angular2DirectiveProperties(inputs, outputs),
                          mappings.getDependencyItems());
   }
 
-  private JSRecordType.PropertySignature getPropertySignature(String fieldName) {
+  protected JSRecordType.PropertySignature getPropertySignature(String fieldName) {
     return doIfNotNull(getTypeScriptClass(), cls -> TypeScriptTypeParser.buildTypeFromClass(cls, false)
       .findPropertySignature(fieldName));
   }
@@ -143,10 +145,10 @@ public abstract class Angular2MetadataClassBase<Stub extends Angular2MetadataCla
     return Result.create(pair(inputs, outputs), cacheDependencies);
   }
 
-  private List<Angular2DirectiveProperty> collectProperties(@NotNull Map<String, String> mappings) {
+  private List<Angular2DirectiveProperty> collectProperties(@NotNull Map<String, String> mappings, @NotNull String kind) {
     List<Angular2DirectiveProperty> result = new ArrayList<>();
     mappings.forEach((String fieldName, String bindingName) -> result.add(new Angular2MetadataDirectiveProperty(
-      () -> getPropertySignature(fieldName), this::getSourceElement, bindingName)));
+      this, fieldName, bindingName, kind)));
     return result;
   }
 

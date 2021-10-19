@@ -5,7 +5,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.util.HtmlUtil;
-import org.angular2.codeInsight.tags.Angular2NgContentDescriptor;
 import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.html.psi.Angular2HtmlEvent.AnimationPhase;
 import org.angular2.lang.html.psi.Angular2HtmlEvent.EventType;
@@ -18,15 +17,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 
 import static com.intellij.openapi.util.Pair.pair;
-import static org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider.NG_CONTENT;
-import static org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider.NG_TEMPLATE;
 import static org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.isTemplateTag;
 import static org.angular2.lang.html.psi.PropertyBindingType.*;
+import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.*;
 
 public final class Angular2AttributeNameParser {
 
   @NonNls
-  private static final Map<String, String> ATTR_TO_PROP_MAPPING = ContainerUtil.newHashMap(
+  public static final Map<String, String> ATTR_TO_PROP_MAPPING = ContainerUtil.newHashMap(
     pair("class", "className"),
     pair("for", "htmlFor"),
     pair("formaction", "formAction"),
@@ -42,11 +40,11 @@ public final class Angular2AttributeNameParser {
   }
 
   public static AttributeInfo parse(@NotNull String name) {
-    return parse(name, NG_TEMPLATE);
+    return parse(name, ELEMENT_NG_TEMPLATE);
   }
 
   public static @NotNull AttributeInfo parse(@NotNull String name, @Nullable XmlTag tag) {
-    return parse(name, tag != null ? tag.getLocalName() : NG_TEMPLATE);
+    return parse(name, tag != null ? tag.getLocalName() : ELEMENT_NG_TEMPLATE);
   }
 
   public static @NotNull AttributeInfo parse(@NotNull String name, @NotNull String tagName) {
@@ -84,7 +82,7 @@ public final class Angular2AttributeNameParser {
     else if (name.startsWith("@")) {
       return new PropertyBindingInfo(name.substring(1), false, false, ANIMATION);
     }
-    else if (name.equals(Angular2NgContentDescriptor.ATTR_SELECT) && tagName.equals(NG_CONTENT)) {
+    else if (name.equals(ATTR_SELECT) && tagName.equals(ELEMENT_NG_CONTENT)) {
       return new AttributeInfo(name, false, Angular2AttributeType.NG_CONTENT_SELECTOR);
     }
     else if (name.startsWith("i18n-")) {

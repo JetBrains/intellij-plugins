@@ -3,9 +3,9 @@ package org.angular2.resharper;
 
 import com.intellij.codeInsight.completion.PrioritizedLookupElement;
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.javascript.web.symbols.WebSymbol;
 import com.intellij.testFramework.TestDataPath;
 import com.intellij.util.containers.ContainerUtil;
-import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -18,8 +18,7 @@ public class Angular2HtmlCodeCompletionTest extends Angular2ReSharperCompletionT
     "test003", // missing [style. support
     "test004", // missing [style. support
     "test007", // differences in standard HTML attributes and missing *directive items
-    "test008", // MathML items in content assist
-    "test009"  // missing [style. support
+    "test008"  // MathML items in content assist
   );
 
   private static final Set<String> HIGH_PRIORITY_ONLY = ContainerUtil.newHashSet(
@@ -53,7 +52,7 @@ public class Angular2HtmlCodeCompletionTest extends Angular2ReSharperCompletionT
   protected boolean shouldSkipItem(@NotNull LookupElement element) {
     if (HIGH_PRIORITY_ONLY.contains(getName())) {
       return !(element instanceof PrioritizedLookupElement)
-             || ((PrioritizedLookupElement<?>)element).getPriority() < Angular2AttributeDescriptor.AttributePriority.HIGH.getValue();
+             || ((PrioritizedLookupElement<?>)element).getPriority() < WebSymbol.Priority.HIGH.getValue();
     }
     if (IGNORED_ELEMENT_ATTRS.contains(element.getLookupString())
         || element.getLookupString().contains("aria-")) {

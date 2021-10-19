@@ -14,27 +14,25 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.lang.javascript.psi.types.JSAnyType;
 import com.intellij.lang.javascript.psi.types.JSCompositeTypeFactory;
 import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
+import com.intellij.model.Pointer;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilCore;
-import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
-import org.angular2.entities.Angular2Directive;
-import org.angular2.entities.Angular2DirectiveProperty;
+import com.intellij.util.containers.JBIterable;
+import org.angular2.entities.*;
 import org.angular2.entities.ivy.Angular2IvyDirective;
 import org.angular2.entities.metadata.psi.Angular2MetadataDirectiveBase;
 import org.angular2.entities.metadata.psi.Angular2MetadataDirectiveProperty;
 import org.angular2.entities.metadata.psi.Angular2MetadataNodeModule;
 import org.angular2.lang.Angular2LangUtil;
+import org.angular2.web.Angular2Symbol;
+import org.angular2.web.Angular2SymbolDelegate;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.BiFunction;
-import java.util.function.Function;
+import java.util.*;
 
 import static com.intellij.psi.util.CachedValueProvider.Result.create;
 import static com.intellij.psi.util.CachedValuesManager.getCachedValue;
@@ -97,15 +95,14 @@ public final class Angular2LibrariesHacks {
   /**
    * Hack for WEB-39722
    */
-  public static @Nullable Function<Angular2DirectiveProperty, Angular2AttributeDescriptor> hackIonicComponentAttributeNames(
-    @NotNull Angular2Directive directive,
-    BiFunction<? super Angular2DirectiveProperty, ? super String, Angular2AttributeDescriptor> oneTimeBindingCreator) {
+  public static @NotNull List<? extends Angular2Symbol> hackIonicComponentAttributeNames(@NotNull Angular2Directive directive) {
     if (!isIonicDirective(directive)) {
-      return null;
+      return Collections.emptyList();
     }
     // Add kebab case version of attribute - Ionic takes these directly from element bypassing Angular
-    return (@NonNls Angular2DirectiveProperty property) -> oneTimeBindingCreator.apply(
-      property, property.getName().replaceAll("([A-Z])", "-$1").toLowerCase(Locale.ENGLISH));
+    return JBIterable.from(directive.getInputs())
+      .map(input -> new IonicComponentAttribute(input))
+      .toList();
   }
 
   private static boolean isIonicDirective(Angular2Directive directive) {
@@ -160,4 +157,56 @@ public final class Angular2LibrariesHacks {
       return create(null, PsiModificationTracker.MODIFICATION_COUNT);
     }), clazz -> clazz.getJSType());
   }
+
+  private static class IonicComponentAttribute extends Angular2SymbolDelegate<Angular2DirectiveProperty> {
+
+    private final String name;
+
+    private IonicComponentAttribute(@NotNull Angular2DirectiveProperty input) {
+      super(input);
+      name = input.getName().replaceAll("([A-Z])", "-$1").toLowerCase(Locale.ENGLISH);
+    }
+
+    @NotNull
+    @Override
+    public Namespace getNamespace() {
+      return Namespace.HTML;
+    }
+
+    @NotNull
+    @Override
+    public String getKind() {
+      return KIND_HTML_ATTRIBUTES;
+    }
+
+    @NotNull
+    @Override
+    public String getName() {
+      return name;
+    }
+
+    @NotNull
+    @Override
+    public Pointer<IonicComponentAttribute> createPointer() {
+      var input = this.getDelegate().createPointer();
+      return () -> {
+        var newInput = input.dereference();
+        return newInput != null ? new IonicComponentAttribute(newInput) : null;
+      };
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      IonicComponentAttribute attr = (IonicComponentAttribute)o;
+      return getDelegate().equals(attr.getDelegate());
+    }
+
+    @Override
+    public int hashCode() {
+      return getDelegate().hashCode();
+    }
+  }
+
 }

@@ -14,8 +14,8 @@ import com.intellij.lang.javascript.psi.stubs.JSPropertyStub;
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
 import com.intellij.lang.javascript.psi.util.JSClassUtils;
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil;
+import com.intellij.model.Pointer;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.StubElement;
@@ -42,11 +42,18 @@ import static com.intellij.util.containers.ContainerUtil.exists;
 import static org.angular2.entities.Angular2EntitiesProvider.withJsonMetadataFallback;
 import static org.angular2.entities.Angular2EntityUtils.*;
 import static org.angular2.entities.ivy.Angular2IvyUtil.getIvyEntity;
+import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.KIND_NG_DIRECTIVE_INPUTS;
+import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.KIND_NG_DIRECTIVE_OUTPUTS;
 
 public class Angular2SourceDirective extends Angular2SourceDeclaration implements Angular2Directive {
 
   public Angular2SourceDirective(@NotNull ES6Decorator decorator, @NotNull JSImplicitElement implicitElement) {
     super(decorator, implicitElement);
+  }
+
+  @Override
+  public @NotNull Pointer<? extends Angular2Directive> createPointer() {
+    return createPointer(Angular2SourceDirective::new);
   }
 
   @Override
@@ -71,13 +78,13 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
         }
         if (value != null) {
           return CachedValueProvider.Result.create(new Angular2DirectiveSelectorImpl(
-            initializer, StringUtil.unquoteString(value), p -> new TextRange(1 + p.second, 1 + p.second + p.first.length())), property);
+            initializer, StringUtil.unquoteString(value), 1), property);
         }
         value = AstLoadingFilter.forceAllowTreeLoading(property.getContainingFile(),
                                                        () -> Angular2DecoratorUtil.getExpressionStringValue(property.getValue()));
       }
-      return CachedValueProvider.Result.create(new Angular2DirectiveSelectorImpl(getDecorator(), value, null),
-                                               getDecorator());
+      return CachedValueProvider.Result.create(
+        new Angular2DirectiveSelectorImpl(getDecorator(), value, null), getDecorator());
     });
   }
 
@@ -128,15 +135,15 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
       .getProperties()
       .forEach(prop -> {
         for (JSAttributeListOwner el : getPropertySources(prop.getMemberSource().getSingleElement())) {
-          processProperty(prop, el, inputMap, Angular2DecoratorUtil.INPUT_DEC, inputs);
-          processProperty(prop, el, outputMap, Angular2DecoratorUtil.OUTPUT_DEC, outputs);
+          processProperty(clazz, prop, el, inputMap, Angular2DecoratorUtil.INPUT_DEC, KIND_NG_DIRECTIVE_INPUTS, inputs);
+          processProperty(clazz, prop, el, outputMap, Angular2DecoratorUtil.OUTPUT_DEC, KIND_NG_DIRECTIVE_OUTPUTS, outputs);
         }
       });
 
     inputMap.values().forEach(
-      input -> inputs.put(input, new Angular2SourceDirectiveVirtualProperty(clazz, input)));
+      input -> inputs.put(input, new Angular2SourceDirectiveVirtualProperty(clazz, input, KIND_NG_DIRECTIVE_INPUTS)));
     outputMap.values().forEach(
-      output -> outputs.put(output, new Angular2SourceDirectiveVirtualProperty(clazz, output)));
+      output -> outputs.put(output, new Angular2SourceDirectiveVirtualProperty(clazz, output, KIND_NG_DIRECTIVE_OUTPUTS)));
 
     Ref<Angular2DirectiveProperties> inheritedProperties = new Ref<>();
     JSClassUtils.processClassesInHierarchy(clazz, false, (aClass, typeSubstitutor, fromImplements) -> {
@@ -193,7 +200,7 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
       .collect(Collectors.toMap(p -> p.first, p -> p.second, (a, b) -> a));
   }
 
-  private static List<JSAttributeListOwner> getPropertySources(PsiElement property) {
+  static List<JSAttributeListOwner> getPropertySources(PsiElement property) {
     if (property instanceof TypeScriptFunction) {
       TypeScriptFunction fun = (TypeScriptFunction)property;
       if (!fun.isSetProperty() && !fun.isGetProperty()) {
@@ -210,10 +217,12 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
     return Collections.emptyList();
   }
 
-  private static void processProperty(@NotNull JSRecordType.PropertySignature property,
+  private static void processProperty(@NotNull TypeScriptClass sourceClass,
+                                      @NotNull JSRecordType.PropertySignature property,
                                       @NotNull JSAttributeListOwner field,
                                       @NotNull Map<String, String> mappings,
                                       @NotNull String decorator,
+                                      @NotNull String kind,
                                       @NotNull Map<String, Angular2DirectiveProperty> result) {
     String bindingName = mappings.remove(property.getMemberName());
     if (bindingName == null && field.getAttributeList() != null) {
@@ -224,7 +233,7 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
         .orElse(null);
     }
     if (bindingName != null) {
-      result.putIfAbsent(bindingName, new Angular2SourceDirectiveProperty(property, bindingName));
+      result.putIfAbsent(bindingName, new Angular2SourceDirectiveProperty(sourceClass, property, kind, bindingName));
     }
   }
 

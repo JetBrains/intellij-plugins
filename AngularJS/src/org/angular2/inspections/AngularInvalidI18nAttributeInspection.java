@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 import java.util.TreeSet;
 
-import static org.angular2.codeInsight.attributes.Angular2I18nAttributesProvider.isI18nCandidate;
+import static org.angular2.web.containers.I18nAttributesContainer.isI18nCandidate;
 
 public class AngularInvalidI18nAttributeInspection extends AngularHtmlLikeTemplateLocalInspectionTool {
 
@@ -51,7 +51,7 @@ public class AngularInvalidI18nAttributeInspection extends AngularHtmlLikeTempla
                                Angular2Bundle.message("angular.inspection.i18n.message.empty"),
                                quickFixes);
       }
-      else if (descriptor.getDeclarations().isEmpty()) {
+      else if (descriptor.hasErrorSymbols()) {
         LocalQuickFix[] quickFixes = StreamEx.of(candidates)
           .sorted((str1, str2) -> -EditDistance.levenshtein(str1, str2, false))
           .limit(2)

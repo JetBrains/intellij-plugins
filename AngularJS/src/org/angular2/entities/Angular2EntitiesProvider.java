@@ -125,7 +125,7 @@ public final class Angular2EntitiesProvider {
     return result;
   }
 
-  public static @NotNull List<Angular2Directive> findDirectives(@NotNull Angular2DirectiveSelectorPsiElement selector) {
+  public static @NotNull List<Angular2Directive> findDirectives(@NotNull Angular2DirectiveSelectorSymbol selector) {
     if (selector.isElementSelector()) {
       return findElementDirectivesCandidates(selector.getProject(), selector.getName());
     }
@@ -135,7 +135,7 @@ public final class Angular2EntitiesProvider {
     return Collections.emptyList();
   }
 
-  public static @Nullable Angular2Component findComponent(@NotNull Angular2DirectiveSelectorPsiElement selector) {
+  public static @Nullable Angular2Component findComponent(@NotNull Angular2DirectiveSelectorSymbol selector) {
     return (Angular2Component)ContainerUtil.find(findDirectives(selector), Angular2Directive::isComponent);
   }
 

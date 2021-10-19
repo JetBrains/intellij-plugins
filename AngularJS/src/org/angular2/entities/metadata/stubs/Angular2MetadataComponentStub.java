@@ -25,9 +25,9 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.angular2.Angular2DecoratorUtil.TEMPLATE_PROP;
-import static org.angular2.codeInsight.tags.Angular2NgContentDescriptor.ATTR_SELECT;
-import static org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider.NG_CONTENT;
 import static org.angular2.lang.metadata.MetadataUtils.readStringPropertyValue;
+import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.ATTR_SELECT;
+import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.ELEMENT_NG_CONTENT;
 
 public class Angular2MetadataComponentStub extends Angular2MetadataDirectiveStubBase<Angular2MetadataComponent> {
 
@@ -49,7 +49,7 @@ public class Angular2MetadataComponentStub extends Angular2MetadataDirectiveStub
     String template;
     if (initializer == null
         || (template = readStringPropertyValue(initializer.findProperty(TEMPLATE_PROP))) == null
-        || !template.contains("<" + NG_CONTENT)) {
+        || !template.contains("<" + ELEMENT_NG_CONTENT)) {
       myNgContentSelectors = Collections.emptyList();
       return;
     }
@@ -61,7 +61,7 @@ public class Angular2MetadataComponentStub extends Angular2MetadataDirectiveStub
         @Override
         public void visitXmlAttribute(XmlAttribute attribute) {
           if (attribute.getName().equals(ATTR_SELECT)
-              && attribute.getParent().getName().equals(NG_CONTENT)) {
+              && attribute.getParent().getName().equals(ELEMENT_NG_CONTENT)) {
             String value = attribute.getValue();
             if (!StringUtil.isEmptyOrSpaces(value)) {
               myNgContentSelectors.add(value);

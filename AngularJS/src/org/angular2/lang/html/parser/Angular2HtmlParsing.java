@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-import static org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider.NG_NON_BINDABLE_ATTR;
+import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.ATTR_NG_NON_BINDABLE;
 import static org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType.*;
 import static org.angular2.lang.html.parser.Angular2HtmlElementTypes.*;
 
@@ -179,7 +179,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
     PsiBuilder.Marker att = mark();
     String tagName = XmlUtil.findLocalNameByQualifiedName(peekTagName());
     String attributeName = getBuilder().getTokenText();
-    if (NG_NON_BINDABLE_ATTR.equals(attributeName)) {
+    if (ATTR_NG_NON_BINDABLE.equals(attributeName)) {
       if (ngNonBindableTags.isEmpty()
           || ngNonBindableTags.peek() != peekTagMarker()) {
         ngNonBindableTags.push(peekTagMarker());

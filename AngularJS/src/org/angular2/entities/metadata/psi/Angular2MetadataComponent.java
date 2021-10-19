@@ -1,10 +1,10 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.entities.metadata.psi;
 
+import com.intellij.model.Pointer;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.html.HtmlFileImpl;
-import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import org.angular2.entities.Angular2Component;
 import org.angular2.entities.Angular2DirectiveKind;
@@ -17,12 +17,19 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
+import static com.intellij.refactoring.suggested.UtilsKt.createSmartPointer;
+
 public final class Angular2MetadataComponent extends Angular2MetadataDirectiveBase<Angular2MetadataComponentStub> implements Angular2Component {
   private final NotNullLazyValue<List<Angular2DirectiveSelector>> myNgContentSelectors = NotNullLazyValue.lazy(() -> {
     return ContainerUtil.map(getStub().getNgContentSelectors(), selector -> {
-      return new Angular2DirectiveSelectorImpl(() -> ObjectUtils.notNull(getTypeScriptClass(), this), selector, null);
+      return new Angular2DirectiveSelectorImpl(this, selector, null);
     });
   });
+
+  @Override
+  public @NotNull Pointer<? extends Angular2Component> createPointer() {
+    return createSmartPointer(this);
+  }
 
   public Angular2MetadataComponent(@NotNull Angular2MetadataComponentStub element) {
     super(element);

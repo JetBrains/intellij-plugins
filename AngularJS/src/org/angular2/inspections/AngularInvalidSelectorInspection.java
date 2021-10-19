@@ -20,8 +20,8 @@ import org.angular2.lang.selector.Angular2DirectiveSimpleSelector;
 import org.jetbrains.annotations.NotNull;
 
 import static org.angular2.Angular2DecoratorUtil.*;
-import static org.angular2.codeInsight.tags.Angular2NgContentDescriptor.ATTR_SELECT;
-import static org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider.NG_CONTENT;
+import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.ATTR_SELECT;
+import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.ELEMENT_NG_CONTENT;
 
 public class AngularInvalidSelectorInspection extends LocalInspectionTool {
 
@@ -33,7 +33,7 @@ public class AngularInvalidSelectorInspection extends LocalInspectionTool {
         public void visitXmlAttribute(XmlAttribute attribute) {
           XmlAttributeValue value;
           if (attribute.getName().equals(ATTR_SELECT)
-              && attribute.getParent().getName().equals(NG_CONTENT)
+              && attribute.getParent().getName().equals(ELEMENT_NG_CONTENT)
               && (value = attribute.getValueElement()) != null) {
             try {
               Angular2DirectiveSimpleSelector.parse(value.getValue());

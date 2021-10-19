@@ -11,6 +11,7 @@ import org.angularjs.AngularTestUtil;
 
 import java.util.Arrays;
 
+import static com.intellij.javascript.web.WebTestUtil.resolveWebSymbolReference;
 import static com.intellij.openapi.util.Pair.pair;
 import static org.angularjs.AngularTestUtil.resolveReference;
 
@@ -61,7 +62,7 @@ public class NgContentSelectorsTest extends Angular2CodeInsightFixtureTestCase {
       pair("<span g<caret>oo", ":not([goo])")
     )) {
       try {
-        assertEquals(test.second, resolveReference(test.first, myFixture).getParent().getText());
+        assertEquals(test.second, resolveWebSymbolReference(myFixture, test.first).getSource().getText());
       }
       catch (AssertionError error) {
         throw new AssertionError("Failed with signature: " + test.first, error);
