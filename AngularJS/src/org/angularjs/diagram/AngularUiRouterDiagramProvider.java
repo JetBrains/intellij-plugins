@@ -244,7 +244,7 @@ final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramOb
       public @NotNull EdgeRealizer getEdgeRealizer(DiagramEdge edge) {
         if (!(edge instanceof AngularUiRouterEdge)) return super.getEdgeRealizer(edge);
         if (myEdgeRealizers.containsKey(edge)) return myEdgeRealizers.get(edge);
-        UmlGraphBuilder builder = (UmlGraphBuilder)graph.getDataProvider(DiagramDataKeys.GRAPH_BUILDER).get(null);
+        UmlGraphBuilder builder = (UmlGraphBuilder)graph.getDataProvider(DiagramDataKeys.GRAPH_BUILDER_OLD).get(null);
         final Edge graphEdge = builder.getEdge(edge);
         final AngularEdgeLayouter.OneEdgeLayouter layouter =
           new AngularEdgeLayouter.OneEdgeLayouter(graphEdge, (AngularUiRouterEdge)edge, graph);
@@ -275,7 +275,7 @@ final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramOb
           return EMPTY_LABELS;
         }
         //if (!myVisibleEdges.contains(umlEdge)) return EMPTY_LABELS;
-        UmlGraphBuilder builder = (UmlGraphBuilder)graph.getDataProvider(DiagramDataKeys.GRAPH_BUILDER).get(null);
+        UmlGraphBuilder builder = (UmlGraphBuilder)graph.getDataProvider(DiagramDataKeys.GRAPH_BUILDER_OLD).get(null);
         final Edge edge = builder.getEdge(umlEdge);
         final EdgeRealizer edgeRealizer = getEdgeRealizer(umlEdge);
         for (int i = 0; i < edgeRealizer.labelCount(); i++) {
@@ -371,13 +371,13 @@ final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramOb
           @Override
           public void componentShown(ComponentEvent e) {
             ApplicationManager.getApplication().invokeLater(() -> {
-              UmlGraphBuilder builder = (UmlGraphBuilder)graph.getDataProvider(DiagramDataKeys.GRAPH_BUILDER).get(null);
+              UmlGraphBuilder builder = (UmlGraphBuilder)graph.getDataProvider(DiagramDataKeys.GRAPH_BUILDER_OLD).get(null);
               builder.getPresentationModel().update();
             });
           }
         });
         ApplicationManager.getApplication().invokeLater(() -> {
-          UmlGraphBuilder builder = (UmlGraphBuilder)graph.getDataProvider(DiagramDataKeys.GRAPH_BUILDER).get(null);
+          UmlGraphBuilder builder = (UmlGraphBuilder)graph.getDataProvider(DiagramDataKeys.GRAPH_BUILDER_OLD).get(null);
           final AngularUiRouterDiagramModel model = (AngularUiRouterDiagramModel)builder.getDataModel();
           final AngularUiRouterNode rootNode = findDataObject(project, model).getRootNode();
           updateBySelection(rootNode);
@@ -386,7 +386,7 @@ final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramOb
 
       private void updateBySelection(DiagramNode node) {
         myVisibleEdges.clear();
-        UmlGraphBuilder builder = (UmlGraphBuilder)graph.getDataProvider(DiagramDataKeys.GRAPH_BUILDER).get(null);
+        UmlGraphBuilder builder = (UmlGraphBuilder)graph.getDataProvider(DiagramDataKeys.GRAPH_BUILDER_OLD).get(null);
         final List<DiagramNode<?>> nodes = new ArrayList<>(GraphSelectionService.getInstance().getSelectedModelNodes(builder));
         if (node != null && !nodes.contains(node)) nodes.add(node);
         DiagramNode selected = null;
