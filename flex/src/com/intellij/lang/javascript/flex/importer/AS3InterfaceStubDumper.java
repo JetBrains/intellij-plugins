@@ -23,6 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+@SuppressWarnings("deprecation")
 final class AS3InterfaceStubDumper extends AS3InterfaceDumper {
   private final LinkedList<StubElement> parents;
   private static final JSAttributeList.AccessType[] ourAccessTypes = JSAttributeList.AccessType.values();
