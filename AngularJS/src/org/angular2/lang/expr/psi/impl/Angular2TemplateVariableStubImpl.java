@@ -16,7 +16,7 @@ public class Angular2TemplateVariableStubImpl extends JSVariableStubBaseImpl<JSV
   public Angular2TemplateVariableStubImpl(JSVariable clazz,
                                           final StubElement parent,
                                           @NotNull JSStubElementType<?, JSVariable> elementType) {
-    super(clazz, parent, elementType);
+    super(clazz, parent, elementType, 0);
   }
 
   public Angular2TemplateVariableStubImpl(final StubInputStream dataStream,
