@@ -40,6 +40,7 @@ import org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeInfo;
 import org.angular2.lang.html.parser.Angular2AttributeType;
 import org.angular2.lang.html.psi.Angular2HtmlEvent;
 import org.angular2.lang.html.psi.PropertyBindingType;
+import org.angular2.web.containers.OneTimeBindingsProvider;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -132,13 +133,13 @@ public final class Angular2FixesFactory {
         case BANANA_BOX_BINDING:
           filter.set(declaration -> declaration instanceof Angular2Directive
                                     && exists(((Angular2Directive)declaration).getInOuts(),
-                                              inout -> info.name.equals(inout.first.getName())));
+                                              inout -> info.name.equals(inout.getName())));
           break;
         case REGULAR:
           filter.set(declaration -> declaration instanceof Angular2Directive
                                     && (exists(((Angular2Directive)declaration).getInputs(),
                                                input -> info.name.equals(input.getName())
-                                                        && Angular2AttributeDescriptor.isOneTimeBindingProperty(input))
+                                                        && OneTimeBindingsProvider.isOneTimeBindingProperty(input))
                                         || exists(((Angular2Directive)declaration).getSelector().getSimpleSelectors(),
                                                   selector -> exists(selector.getAttrNames(), info.name::equals))));
           break;

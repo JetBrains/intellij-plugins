@@ -2,7 +2,6 @@
 package org.angular2.codeInsight.attributes;
 
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.xml.XmlTag;
 import com.intellij.xml.util.HtmlUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -11,12 +10,18 @@ import java.util.*;
 
 public final class DomElementSchemaRegistry {
 
-  public static @NotNull Set<String> getElementProperties(@NotNull XmlTag tag) {
-    String tagName = StringUtil.toLowerCase(tag.getLocalName());
-    if (tag.getNamespace().equals(HtmlUtil.SVG_NAMESPACE)) {
+  public static @NotNull Set<String> getElementProperties(@NotNull String tagNamespace, @NotNull String tagName) {
+    if (tagNamespace.equals(HtmlUtil.SVG_NAMESPACE)) {
       tagName = ":svg:" + tagName; //NON-NLS
     }
-    return SCHEMA.getOrDefault(tagName, DEFAULT_ELEMENT_PROPERTIES);
+    return PROP_SCHEMA.getOrDefault(tagName, DEFAULT_ELEMENT_PROPERTIES);
+  }
+
+  public static @NotNull Set<String> getElementEvents(@NotNull String tagNamespace, @NotNull String tagName) {
+    if (tagNamespace.equals(HtmlUtil.SVG_NAMESPACE)) {
+      tagName = ":svg:" + tagName; //NON-NLS
+    }
+    return EVENT_SCHEMA.getOrDefault(tagName, DEFAULT_ELEMENT_EVENTS);
   }
 
   @NonNls private static final String[] SCHEMA_DEF = new String[]{
@@ -175,39 +180,50 @@ public final class DomElementSchemaRegistry {
     ":svg:cursor^:svg:|"
   };
 
-  private static final Map<String, Set<String>> SCHEMA = new HashMap<>();
+  private static final Map<String, Set<String>> PROP_SCHEMA = new HashMap<>();
+  private static final Map<String, Set<String>> EVENT_SCHEMA = new HashMap<>();
   private static final Set<String> DEFAULT_ELEMENT_PROPERTIES;
+  private static final Set<String> DEFAULT_ELEMENT_EVENTS;
 
   static {
     for (String encodedType : SCHEMA_DEF) {
-      Set<String> type = new HashSet<>();
+      Set<String> props = new HashSet<>();
+      Set<String> events = new HashSet<>();
       List<String> strType_strProperties = StringUtil.split(encodedType, "|", true, false);
-      List<String> properties = StringUtil.split(strType_strProperties.get(1), ",");
+      List<String> data = StringUtil.split(strType_strProperties.get(1), ",");
       List<String> typeNames_superName = StringUtil.split(strType_strProperties.get(0), "^", true, false);
-      StringUtil.split(typeNames_superName.get(0), ",").forEach(tag -> SCHEMA.put(StringUtil.toLowerCase(tag),
-                                                                                  Collections.unmodifiableSet(type)));
-      Set<String> superType = typeNames_superName.size() > 1 ? SCHEMA.get(StringUtil.toLowerCase(typeNames_superName.get(1))) : null;
-      if (superType != null) {
-        type.addAll(superType);
+      StringUtil.split(typeNames_superName.get(0), ",")
+        .forEach(tag -> {
+          PROP_SCHEMA.put(StringUtil.toLowerCase(tag), Collections.unmodifiableSet(props));
+          EVENT_SCHEMA.put(StringUtil.toLowerCase(tag), Collections.unmodifiableSet(events));
+        });
+      Set<String> superTypeProps = typeNames_superName.size() > 1 ? PROP_SCHEMA.get(StringUtil.toLowerCase(typeNames_superName.get(1))) : null;
+      if (superTypeProps != null) {
+        props.addAll(superTypeProps);
       }
-      properties.forEach(property -> {
-        if (!property.isEmpty()) {
-          switch (property.charAt(0)) {
+      Set<String> superTypeEvents = typeNames_superName.size() > 1 ? EVENT_SCHEMA.get(StringUtil.toLowerCase(typeNames_superName.get(1))) : null;
+      if (superTypeEvents != null) {
+        events.addAll(superTypeEvents);
+      }
+      data.forEach(entry -> {
+        if (!entry.isEmpty()) {
+          switch (entry.charAt(0)) {
             case '*':
-              type.add("(" + property.substring(1) + ")");
+              events.add(entry.substring(1));
               break;
             case '!':
             case '#':
             case '%':
-              type.add("[" + property.substring(1) + "]");
+              props.add(entry.substring(1));
               break;
             default:
-              type.add("[" + property + "]");
+              props.add(entry);
           }
         }
       });
     }
     //noinspection HardCodedStringLiteral
-    DEFAULT_ELEMENT_PROPERTIES = SCHEMA.get(StringUtil.toLowerCase("[HTMLElement]"));
+    DEFAULT_ELEMENT_PROPERTIES = PROP_SCHEMA.get(StringUtil.toLowerCase("[HTMLElement]"));
+    DEFAULT_ELEMENT_EVENTS = EVENT_SCHEMA.get(StringUtil.toLowerCase("[HTMLElement]"));
   }
 }

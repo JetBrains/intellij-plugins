@@ -40,9 +40,6 @@
   <depends optional="true" config-file="tslint-support.xml">tslint</depends>
 
   <extensionPoints>
-    <extensionPoint qualifiedName="org.angular2.attributesProvider"
-                    interface="org.angular2.codeInsight.attributes.Angular2AttributesProvider"
-                    dynamic="true"/>
     <!--suppress DeprecatedClassUsageInspection -->
     <extensionPoint qualifiedName="org.angular2.contextProvider"
                     interface="org.angular2.lang.Angular2ContextProvider"
@@ -190,12 +187,18 @@
     <stubIndex implementation="org.angular2.index.Angular2IvyModuleIndex"/>
     <findUsagesHandlerFactory implementation="org.angularjs.findUsages.AngularJSFindUsagesHandlerFactory" order="before JavaScript"/>
     <psi.referenceContributor implementation="org.angular2.codeInsight.refs.Angular2ReferencesContributor"/>
-    <pom.declarationSearcher implementation="org.angular2.codeInsight.refs.Angular2PomDeclarationSearcher"/>
-    <renameInputValidator implementation="org.angular2.refactoring.Angular2RenameInputValidator"/>
+    <psi.symbolReferenceProvider hostElementClass="org.angular2.lang.html.psi.Angular2HtmlNgContentSelector"
+                                 hostLanguage="Angular2Html"
+                                 implementationClass="org.angular2.codeInsight.refs.Angular2SelectorReferencesProvider$NgContentSelectorProvider"
+                                 targetClass="com.intellij.javascript.web.symbols.WebSymbol"/>
+    <psi.symbolReferenceProvider hostElementClass="com.intellij.lang.javascript.psi.JSLiteralExpression"
+                                 hostLanguage="TypeScript"
+                                 implementationClass="org.angular2.codeInsight.refs.Angular2SelectorReferencesProvider$NgDecoratorSelectorProvider"
+                                 targetClass="com.intellij.javascript.web.symbols.WebSymbol"/>
+    <psi.declarationProvider implementation="org.angular2.codeInsight.refs.Angular2SelectorDeclarationsProvider"/>
     <elementDescriptionProvider
       order="first"
       implementation="org.angular2.refactoring.Angular2ElementDescriptionProvider"/>
-    <findUsagesHandlerFactory implementation="org.angular2.findUsages.Angular2FindUsagesHandlerFactory"/>
     <referencesSearch implementation="org.angular2.findUsages.Angular2ReferenceSearcher"/>
     <gotoSymbolContributor implementation="org.angular2.navigation.Angular2GotoSymbolContributor"/>
     <gotoRelatedProvider implementation="org.angular2.navigation.Angular2GotoRelatedProvider"/>
@@ -247,22 +250,27 @@
     <localInspection implementationClass="org.angular2.inspections.AngularUndefinedTagInspection"
                      groupKey="angular.inspection.group.name" enabledByDefault="true" language="HtmlCompatible"
                      level="ERROR" key="angular.inspection.undefined-tag.name" bundle="messages.Angular2Bundle"/>
-    <xml.attributeDescriptorsProvider implementation="org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider"
-                                      order="first"/>
-    <xml.tagNameProvider implementation="org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider"/>
-    <xml.elementDescriptorProvider implementation="org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider" order="last"/>
     <idIndexer filetype="Angular2Html" implementationClass="org.angular2.lang.html.index.Angular2HtmlIdIndexer"/>
     <todoIndexer filetype="Angular2Html" implementationClass="org.angular2.lang.html.index.Angular2HtmlTodoIndexer"/>
     <stubElementTypeHolder class="org.angular2.lang.html.stub.Angular2HtmlStubElementTypes"/>
     <lang.formatter language="Angular2Html" implementationClass="org.angular2.lang.html.Angular2HtmlFormattingModelBuilder"/>
     <gotoDeclarationHandler implementation="org.angular2.editor.Angular2GotoDeclarationHandler" order="first"/>
     <typeDeclarationProvider implementation="org.angular2.editor.Angular2TypeDeclarationProvider" order="first"/>
+    <lang.symbolTypeProvider implementation="org.angular2.editor.Angular2TypeDeclarationProvider"/>
+    <searcher forClass="com.intellij.find.usages.api.UsageSearchParameters"
+              implementationClass="org.angular2.findUsages.Angular2SelectorUsageSearcher"/>
+    <searcher forClass="com.intellij.refactoring.rename.api.RenameUsageSearchParameters"
+              implementationClass="org.angular2.refactoring.Angular2SelectorRenameUsageSearcher"/>
     <html.attributeValueProvider implementation="org.angular2.codeInsight.attributes.Angular2AttributeValueProvider"/>
     <colorSettingsPage implementation="org.angular2.lang.html.highlighting.Angular2ColorsAndFontsPage"/>
     <xml.xmlSuppressionProvider implementation="org.angular2.inspections.Angular2HtmlSuppressionProvider" order="first"/>
     <html.embeddedContentSupport implementation="org.angular2.lang.html.lexer.Angular2HtmlEmbeddedContentSupport"/>
-    <lang.documentationProvider implementationClass="org.angular2.codeInsight.Angular2DocumentationProvider"
-                                language="Angular2Html" order="before html"/>
+
+    <javascript.webTypes enableByDefault="true" source="web-types/angular.web-types.json"/>
+    <javascript.webTypes enableByDefault="true" source="web-types/hammerjs.web-types.json"/>
+    <javascript.web.additionalContextProvider implementation="org.angular2.web.Angular2WebSymbolsAdditionalContextProvider"/>
+    <javascript.web.scopeProvider implementation="org.angular2.web.Angular2WebSymbolsScope$Provider"/>
+    <javascript.web.codeCompletionItemCustomizer implementation="org.angular2.web.Angular2CompletionItemCustomizer"/>
 
     <!-- Angular 2 SVG contributions -->
     <lang.parserDefinition language="Angular2Svg" implementationClass="org.angular2.lang.svg.parser.Angular2SvgParserDefinition"/>
@@ -332,13 +340,6 @@
   </extensions>
 
   <extensions defaultExtensionNs="org.angular2">
-    <attributesProvider implementation="org.angular2.codeInsight.attributes.Angular2BoundHtmlAttributesProvider"/>
-    <attributesProvider implementation="org.angular2.codeInsight.attributes.Angular2ExtendedKeyEventAttributesProvider"/>
-    <attributesProvider implementation="org.angular2.codeInsight.attributes.Angular2NgContentSelectorAttributesProvider"/>
-    <attributesProvider implementation="org.angular2.codeInsight.attributes.Angular2I18nAttributesProvider"/>
-    <attributesProvider implementation="org.angular2.codeInsight.attributes.Angular2HammerJSEventAttributesProvider"/>
-    <attributesProvider implementation="org.angular2.codeInsight.attributes.Angular2BasicAttributesProvider" order="last"/>
-
     <templateScopesProvider implementation="org.angular2.codeInsight.template.Angular2StandardSymbolsScopesProvider"
                             id="standardSymbols"/>
     <templateScopesProvider implementation="org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider"

@@ -67,10 +67,11 @@ final class BindingsTypeResolver {
                                          @NotNull BiFunction<BindingsTypeResolver, String, JSType> resolveMethod) {
     Angular2AttributeDescriptor descriptor = ObjectUtils.tryCast(attribute.getDescriptor(), Angular2AttributeDescriptor.class);
     XmlTag tag = attribute.getParent();
-    if (descriptor == null || tag == null || !infoValidation.test(descriptor.getInfo())) {
+    var info = Angular2AttributeNameParser.parse(attribute.getName(), attribute.getParent());
+    if (descriptor == null || tag == null || !infoValidation.test(info)) {
       return null;
     }
-    return resolveMethod.apply(get(tag), descriptor.getInfo().name);
+    return resolveMethod.apply(get(tag), info.name);
   }
 
   public @Nullable JSType resolveDirectiveEventType(@NotNull String name) {
@@ -79,8 +80,7 @@ final class BindingsTypeResolver {
       Angular2DirectiveProperty property;
       if (myScope.contains(directive)
           && (property = find(directive.getOutputs(), output -> output.getName().equals(name))) != null) {
-        types.add(Angular2LibrariesHacks.hackNgModelChangeType(
-          extractEventVariableType(property.getType()), name));
+        types.add(Angular2LibrariesHacks.hackNgModelChangeType(property.getJsType(), name));
       }
     }
     return processAndMerge(types);
@@ -92,7 +92,7 @@ final class BindingsTypeResolver {
       Angular2DirectiveProperty property;
       if (myScope.contains(directive)
           && (property = find(directive.getInputs(), input -> input.getName().equals(key))) != null) {
-        types.add(property.getType());
+        types.add(property.getJsType());
       }
     }
     return processAndMerge(types);
@@ -189,7 +189,7 @@ final class BindingsTypeResolver {
       directive.getInputs().forEach(property -> {
         JSExpression inputExpression = inputsMap.get(property.getName());
         JSType propertyType;
-        if (inputExpression != null && (propertyType = property.getType()) != null) {
+        if (inputExpression != null && (propertyType = property.getJsType()) != null) {
           JSPsiBasedTypeOfType inputType = new JSPsiBasedTypeOfType(inputExpression, true);
           if (isAnyType(getApparentType(JSTypeWithIncompleteSubstitution.substituteCompletely(inputType)))) {
             // This workaround is needed, because many users expect to have ngForOf working with variable of type `any`.

@@ -26,7 +26,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.intellij.openapi.util.Pair.pair;
-import static org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider.NG_TEMPLATE;
+import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.ELEMENT_NG_TEMPLATE;
 
 public class Angular2DirectiveSimpleSelector {
 
@@ -138,7 +138,7 @@ public class Angular2DirectiveSimpleSelector {
 
   public static Angular2DirectiveSimpleSelector createTemplateBindingsCssSelector(@NotNull Angular2TemplateBindings bindings) {
     Angular2DirectiveSimpleSelector cssSelector = new Angular2DirectiveSimpleSelector();
-    cssSelector.setElement(NG_TEMPLATE);
+    cssSelector.setElement(ELEMENT_NG_TEMPLATE);
     cssSelector.addAttribute(bindings.getTemplateName(), null);
     for (Angular2TemplateBinding binding : bindings.getBindings()) {
       if (!binding.keyIsVar()) {

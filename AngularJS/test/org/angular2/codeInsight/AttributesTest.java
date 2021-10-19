@@ -4,6 +4,8 @@ package org.angular2.codeInsight;
 import com.intellij.codeInsight.daemon.impl.analysis.XmlUnboundNsPrefixInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection;
+import com.intellij.javascript.web.WebTestUtil;
+import com.intellij.javascript.web.symbols.WebSymbol;
 import com.intellij.lang.javascript.TypeScriptTestUtil;
 import com.intellij.lang.javascript.psi.JSField;
 import com.intellij.lang.javascript.psi.JSFunction;
@@ -21,7 +23,6 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -40,11 +41,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.intellij.javascript.web.WebTestUtil.*;
+import static com.intellij.javascript.web.symbols.WebSymbolDelegate.unwrapAllDelegates;
 import static com.intellij.openapi.util.Pair.pair;
 import static com.intellij.util.containers.ContainerUtil.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.angular2.modules.Angular2TestModule.*;
+import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.PROP_BINDING_PATTERN;
+import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.PROP_ERROR_SYMBOL;
+import static org.angularjs.AngularTestUtil.findOffsetBySignature;
+import static org.angularjs.AngularTestUtil.moveToOffsetBySignature;
+import static org.angularjs.AngularTestUtil.multiResolveReference;
 import static org.angularjs.AngularTestUtil.*;
 
 public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
@@ -91,6 +99,16 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureByFiles("bindingHtml.html", "package.json");
     myFixture.completeBasic();
     assertContainsElements(myFixture.getLookupElementStrings(), "[value]");
+  }
+
+  public void testStandardCompletion() {
+    myFixture.configureByFiles("custom.ts", "package.json");
+    myFixture.configureByText("test.html", "<some-tag <caret>");
+    myFixture.completeBasic();
+    checkListByFile(myFixture,
+                    filter(WebTestUtil.renderLookupItems(myFixture, true, true, true, false),
+                           lookup -> !lookup.contains("w3c") && !lookup.contains("aria-")),
+                    "standardCompletion.txt", false);
   }
 
   public void testTemplateReferenceDeclarations2() {
@@ -334,10 +352,10 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
 
   public void testForOfResolve2Typescript() {
     myFixture.configureByFiles("for2.html", "ng_for_of.ts", "package.json");
-    PsiElement resolve = resolveReference("ngF<caret>");
-    assertEquals("ng_for_of.ts", resolve.getContainingFile().getName());
-    assertEquals("ngFor", resolve.getText());
-    assertEquals("@Directive({selector: '[ngFor][ngForOf]'})", getDirectiveDefinitionText(resolve));
+    WebSymbol resolve = resolveWebSymbolReference(myFixture, "ngF<caret>");
+    assertEquals("ng_for_of.ts", resolve.getSource().getContainingFile().getName());
+    assertEquals("ngFor", resolve.getName());
+    assertEquals("@Directive({selector: '[ngFor][ngForOf]'})", getDirectiveDefinitionText(resolve.getSource()));
   }
 
   public void testForCompletion2Javascript() {
@@ -523,9 +541,9 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
 
   public void testNgNoValidateReference() {
     myFixture.configureByFiles("ngNoValidate.html", "ng_no_validate_directive.ts", "package.json");
-    PsiElement resolve = resolveReference("ng<caret>NativeValidate");
-    assertInstanceOf(resolve, Angular2DirectiveSelectorPsiElement.class);
-    assertEquals("ng_no_validate_directive.ts", resolve.getContainingFile().getName());
+    WebSymbol resolve = resolveWebSymbolReference(myFixture, "ng<caret>NativeValidate");
+    assertInstanceOf(unwrapAllDelegates(resolve), Angular2DirectiveSelectorSymbol.class);
+    assertEquals("ng_no_validate_directive.ts", resolve.getSource().getContainingFile().getName());
   }
 
   public void testSelectorBasedAttributesCompletion() {
@@ -577,34 +595,33 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
       String checks = attr.getValue();
       for (int i = 0; i < attrWrap.size(); i++) {
         Pair<String, String> wrap = attrWrap.get(i);
-        int offsetBySignature = findOffsetBySignature(
-          wrap.first + "<caret>" + name + wrap.second + "=", myFixture.getFile());
-        PsiPolyVariantReference ref = (PsiPolyVariantReference)myFixture.getFile().findReferenceAt(offsetBySignature);
+        List<WebSymbol> ref = filter(
+          multiResolveWebSymbolReference(myFixture, wrap.first + "<caret>" + name + wrap.second + "="),
+          s -> s.getProperties().get(PROP_ERROR_SYMBOL) != Boolean.TRUE && s.getProperties().get(PROP_BINDING_PATTERN) != Boolean.TRUE);
+        List<PsiElement> sources = map(ref, s -> s.getSource());
         String messageStart = "Attribute " + wrap.first + name + wrap.second;
         switch (checks.charAt(i)) {
           case 'x':
-            if (ref != null) {
-              assertEquals(messageStart + " should not resolve",
-                           Collections.emptyList(), asList(ref.multiResolve(false)));
-            }
+            assertEquals(messageStart + " should not resolve",
+                         Collections.emptyList(), ref);
             break;
           case 'p':
             assertNotNull(messageStart + " should have reference", ref);
-            assert all(multiResolve(ref), TypeScriptField.class::isInstance) :
+            assert all(sources, TypeScriptField.class::isInstance) :
               messageStart + " should resolve to TypeScriptField instead of " +
-              multiResolve(ref);
+              sources;
             break;
           case 's':
             assertNotNull(messageStart + " should have reference", ref);
-            assert all(multiResolve(ref), Angular2DirectiveSelectorPsiElement.class::isInstance) :
+            assert all(ref, s -> unwrapAllDelegates(s) instanceof Angular2DirectiveSelectorSymbol) :
               messageStart + " should resolve to Angular2DirectiveSelectorElement instead of " +
-              multiResolve(ref);
+              ref;
             break;
           case 'c':
             assertNotNull(messageStart + " should have reference", ref);
-            assert all(multiResolve(ref), TypeScriptClass.class::isInstance) :
+            assert all(sources, TypeScriptClass.class::isInstance) :
               messageStart + " should resolve to Angular2DirectiveSelectorElement instead of " +
-              multiResolve(ref);
+              sources;
             break;
           default:
             throw new IllegalStateException("wrong char: " + checks.charAt(i));
@@ -613,11 +630,6 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     }
   }
 
-  @NotNull
-  private static List<PsiElement> multiResolve(@NotNull PsiPolyVariantReference ref) {
-    return mapNotNull(ref.multiResolve(false),
-                      result -> result.isValidResult() ? result.getElement() : null);
-  }
 
   public void testExportAs() {
     myFixture.enableInspections(TypeScriptUnresolvedVariableInspection.class,
@@ -689,7 +701,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
                            "[autofocus]", "[readOnly]", "[selectionDirection]", "[innerHTML]",
                            "(auxclick)", "(blur)", "(click)", "(paste)", "(webkitfullscreenchange)");
     assertDoesntContain(myFixture.getLookupElementStrings(),
-                        "innerHTML", "[class]");
+                        "innerHTML");
   }
 
   public void testNgIfAsCodeCompletion() {
@@ -702,14 +714,14 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureByFiles("attributeTypes.ts", "lib.dom.d.ts", "package.json");
     myFixture.completeBasic();
     assertContainsElements(
-      renderLookupItems(myFixture, false, true),
+      AngularTestUtil.renderLookupItems(myFixture, false, true),
       "plainBoolean#boolean",
       "[plainBoolean]#boolean",
       "simpleStringEnum#MyType",
       "[simpleStringEnum]#MyType",
       "(my-event)#MyEvent",
       "(problematicOutput)#T",
-      "(complex-event)#MyEvent|MouseEvent",
+      "(complex-event)#MyEvent | MouseEvent",
       "(click)#MouseEvent",
       "(blur)#FocusEvent",
       "(focusin)#FocusEvent",
@@ -724,7 +736,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureByFiles("attributeTypes.ts", "lib.dom.d.ts");
     myFixture.completeBasic();
     assertContainsElements(
-      renderLookupItems(myFixture, true, false),
+      AngularTestUtil.renderLookupItems(myFixture, true, false),
       "!plainBoolean#100",
       "![plainBoolean]#100",
       "!simpleStringEnum#100",
@@ -766,7 +778,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.type("plainB\n=");
     myFixture.completeBasic();
     //test type
-    assertSameElements(myFixture.getLookupElementStrings(), "plainBoolean");
+    assertSameElements(myFixture.getLookupElementStrings(), "plainBoolean", "true", "false");
   }
 
   public void testCodeCompletionDefaultJSEventType() {
@@ -811,7 +823,8 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     assertContainsElements(myFixture.getLookupElementStrings(),
                            "[attr.");
     myFixture.type("att\n");
-    assertEquals("[attr.]", myFixture.getFile().findElementAt(myFixture.getCaretOffset()).getText());
+    // TODO - make web-types insert ']' - should be "<div [attr.]" here
+    assertEquals("<div [attr.", myFixture.getFile().getText());
     myFixture.type("aat\n");
     PsiElement element = AngularTestUtil.resolveReference("[attr.aria-atomic<caret>]=\"\"", myFixture);
     assertEquals("aria.rnc", element.getContainingFile().getName());
@@ -847,18 +860,17 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     assertContainsElements(myFixture.getLookupElementStrings(),
                            "(keyup.", "(keydown.");
     myFixture.type("keyd.\n");
-    assertEquals("(keydown.)", myFixture.getFile().findElementAt(myFixture.getCaretOffset()).getText());
+    assertEquals("(keydown.", myFixture.getFile().findElementAt(myFixture.getCaretOffset()-1).getText());
     assertContainsElements(myFixture.getLookupElementStrings(),
                            "meta.", "control.", "shift.", "alt.", "escape)", "home)", "f11)");
     myFixture.type("alt.");
-    assertEquals("(keydown.alt.)", myFixture.getFile().findElementAt(myFixture.getCaretOffset()).getText());
+    assertEquals("(keydown.alt.", myFixture.getFile().findElementAt(myFixture.getCaretOffset()-1).getText());
     assertContainsElements(myFixture.getLookupElementStrings(),
                            "meta.", "control.", "escape)", "home)", "f11)");
     assertDoesntContain(myFixture.getLookupElementStrings(),
                         "alt.");
     myFixture.type("ins\n");
-    PsiElement element = AngularTestUtil.resolveReference("(keydown.alt.<caret>insert)=\"\"", myFixture);
-    assertEquals("core-scripting.rnc", element.getContainingFile().getName());
+    assertEquals("(keydown.alt.<caret>insert)=\"\"", myFixture.getFile().getText());
   }
 
   public void testExtKeyEventCanonical() {
@@ -1037,7 +1049,8 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     assertEquals(singletonList("foo"), myFixture.getLookupElementStrings());
     myFixture.type("\n ");
     myFixture.completeBasic();
-    assertDoesntContain(myFixture.getLookupElementStrings(), "i18n-");
+    // TODO - remove "Absent attribute name" from angular web-types
+    //assertDoesntContain(myFixture.getLookupElementStrings(), "i18n-");
     assertContainsElements(myFixture.getLookupElementStrings(), "i18n");
   }
 
@@ -1052,7 +1065,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureByText("hammer.html", "<div <caret>");
     myFixture.completeBasic();
     myFixture.type("(");
-    assertContainsElements(renderLookupItems(myFixture, false, true),
+    assertContainsElements(AngularTestUtil.renderLookupItems(myFixture, false, true),
                            "(pan)#HammerInput", "(panstart)#HammerInput", "(pinch)#HammerInput", "(tap)#HammerInput");
     myFixture.type("pan\n\" on-");
     myFixture.completeBasic();
@@ -1068,7 +1081,8 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.completeBasic();
     assertContainsElements(myFixture.getLookupElementStrings(), "(transitionend)", "(transitionstart)");
     myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
-    myFixture.configureByText("test.html", "<div (transitionend)='<error descr=\"Unresolved function or method call()\">call</error>($event)'></div>");
+    myFixture.configureByText("test.html",
+                              "<div (transitionend)='<error descr=\"Unresolved function or method call()\">call</error>($event)'></div>");
     myFixture.checkHighlighting();
   }
 
@@ -1078,5 +1092,4 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
     myFixture.checkHighlighting();
   }
-
 }

@@ -13,9 +13,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider.NG_TEMPLATE;
 import static org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.isTemplateTag;
 import static org.angular2.entities.Angular2EntitiesProvider.findElementDirectivesCandidates;
+import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.ELEMENT_NG_TEMPLATE;
 
 public class Angular2ApplicableDirectivesProvider {
 
@@ -32,7 +32,7 @@ public class Angular2ApplicableDirectivesProvider {
   }
 
   public Angular2ApplicableDirectivesProvider(@NotNull Angular2TemplateBindings bindings) {
-    this(bindings.getProject(), NG_TEMPLATE, false,
+    this(bindings.getProject(), ELEMENT_NG_TEMPLATE, false,
          Angular2DirectiveSimpleSelector.createTemplateBindingsCssSelector(bindings));
   }
 

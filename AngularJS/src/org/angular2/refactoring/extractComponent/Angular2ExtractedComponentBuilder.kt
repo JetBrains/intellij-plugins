@@ -15,7 +15,6 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.util.parents
 import com.intellij.psi.xml.XmlTag
-import org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider
 import org.angular2.codeInsight.template.Angular2StandardSymbolsScopesProvider.`$EVENT`
 import org.angular2.codeInsight.template.Angular2TemplateScopesResolver
 import org.angular2.lang.Angular2Bundle
@@ -28,6 +27,7 @@ import org.angular2.lang.expr.psi.Angular2RecursiveVisitor
 import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes
 import org.angular2.lang.html.parser.Angular2AttributeType
 import org.angular2.lang.html.psi.*
+import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.ELEMENT_NG_CONTENT
 
 
 class Angular2ExtractedComponentBuilder(val sourceFile: PsiFile, val selectionStart: Int, val selectionEnd: Int) {
@@ -126,7 +126,7 @@ class Angular2ExtractedComponentBuilder(val sourceFile: PsiFile, val selectionSt
         }
 
 
-        if (tag.name == Angular2TagDescriptorsProvider.NG_CONTENT) {
+        if (tag.name == ELEMENT_NG_CONTENT) {
           throw Angular2ExtractComponentUnsupportedException(
             Angular2Bundle.message("angular.refactor.extractComponent.unsupported-ng-content"))
         }

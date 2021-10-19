@@ -20,8 +20,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-import static com.intellij.util.ObjectUtils.notNull;
-
 public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2MetadataDirectiveStubBase<?>>
   extends Angular2MetadataDeclaration<Stub>
   implements Angular2Directive {
@@ -33,7 +31,7 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
            : StringUtil.split(exportAsString, ",");
   });
   private final NotNullLazyValue<Angular2DirectiveSelector> mySelector = NotNullLazyValue.lazy(() -> {
-    return new Angular2DirectiveSelectorImpl(() -> notNull(getTypeScriptClass(), this), getStub().getSelector(), null);
+    return new Angular2DirectiveSelectorImpl(this, getStub().getSelector(), null);
   });
   private final NotNullLazyValue<Collection<? extends Angular2DirectiveAttribute>> myAttributes = NotNullLazyValue.lazy(this::buildAttributes);
 
@@ -75,12 +73,11 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
 
   private @NotNull Collection<? extends Angular2DirectiveAttribute> buildAttributes() {
     return EntryStream.of(getStub().getAttributes())
-      .mapKeyValue((name, index) -> new Angular2MetadataDirectiveAttribute(() -> getConstructorParameter(index),
-                                                                           this::getSourceElement, name))
+      .mapKeyValue((name, index) -> new Angular2MetadataDirectiveAttribute(this, index, name))
       .toImmutableList();
   }
 
-  private @Nullable JSParameter getConstructorParameter(@NotNull Integer index) {
+  protected @Nullable JSParameter getConstructorParameter(@NotNull Integer index) {
     TypeScriptClass cls = getTypeScriptClass();
     if (cls == null || index < 0) {
       return null;

@@ -8,7 +8,4 @@
     <psi.fileReferenceHelper implementation="org.angular2.css.refs.Angular2CssFileReferenceHelper"/>
     <psi.referenceContributor implementation="org.angular2.css.refs.Angular2CssReferencesContributor"/>
   </extensions>
-  <extensions defaultExtensionNs="org.angular2">
-    <attributesProvider implementation="org.angular2.css.Angular2CssBoundAttributeProvider"/>
-  </extensions>
 </idea-plugin>

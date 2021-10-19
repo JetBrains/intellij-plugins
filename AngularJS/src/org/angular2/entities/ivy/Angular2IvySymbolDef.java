@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.psi.ecma6.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.stubs.*;
 import com.intellij.lang.typescript.TypeScriptStubElementTypes;
+import com.intellij.model.Pointer;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -23,6 +24,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import static com.intellij.refactoring.suggested.UtilsKt.createSmartPointer;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.ObjectUtils.tryCast;
 import static org.angular2.Angular2DecoratorUtil.*;
@@ -54,6 +56,7 @@ public abstract class Angular2IvySymbolDef {
     }
 
     public abstract Angular2IvyEntity<?> createEntity();
+
   }
 
   public static final class Module extends Entity {
@@ -89,6 +92,14 @@ public abstract class Angular2IvySymbolDef {
 
   public static class Directive extends Entity {
     private Directive(@NotNull Object fieldStubOrPsi) {super(fieldStubOrPsi);}
+
+    public Pointer<? extends Directive> createPointer() {
+      var fieldPtr = createSmartPointer(getField());
+      return () -> {
+        var field = fieldPtr.dereference();
+        return field != null ? new Directive(field) : null;
+      };
+    }
 
     @Override
     public Angular2IvyDirective createEntity() {
@@ -133,6 +144,14 @@ public abstract class Angular2IvySymbolDef {
   public static final class Component extends Directive {
 
     private Component(@NotNull Object fieldStubOrPsi) {super(fieldStubOrPsi);}
+
+    public Pointer<Component> createPointer() {
+      var fieldPtr = createSmartPointer(getField());
+      return () -> {
+        var field = fieldPtr.dereference();
+        return field != null ? new Component(field) : null;
+      };
+    }
 
     @Override
     public Angular2IvyDirective createEntity() {

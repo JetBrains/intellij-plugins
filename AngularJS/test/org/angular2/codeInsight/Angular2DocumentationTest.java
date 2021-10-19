@@ -1,13 +1,9 @@
 package org.angular2.codeInsight;
 
-import com.intellij.codeInsight.documentation.DocumentationManager;
-import com.intellij.lang.documentation.DocumentationProvider;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
-import org.jetbrains.annotations.NotNull;
+
+import static com.intellij.javascript.web.WebTestUtil.checkDocumentationAtCaret;
 
 public class Angular2DocumentationTest extends Angular2CodeInsightFixtureTestCase {
   @Override
@@ -56,34 +52,9 @@ public class Angular2DocumentationTest extends Angular2CodeInsightFixtureTestCas
   }
 
   private void doTest() {
-    doTest("html", true);
-  }
-
-  private void doTest(@NotNull String extension, boolean shouldHaveDoc) {
-    myFixture.configureByFiles(getTestName(true) + "." + extension,
+    myFixture.configureByFiles(getTestName(true) + ".html",
                                "package.json", "deps/list-item.component.ts", "deps/ng_for_of.ts", "deps/ng_if.ts", "deps/dir.ts", "deps/ng_plural.ts");
-
-    Editor editor = myFixture.getEditor();
-    PsiFile file = myFixture.getFile();
-    PsiElement originalElement = file.findElementAt(editor.getCaretModel().getOffset());
-    assertNotNull(originalElement);
-
-    assertDocumentation(DocumentationManager.getInstance(getProject()).findTargetElement(editor, file), originalElement, shouldHaveDoc);
+    checkDocumentationAtCaret(myFixture);
   }
 
-  private void assertDocumentation(@NotNull PsiElement docElement, @NotNull PsiElement context, boolean shouldHaveDoc) {
-    DocumentationProvider documentationProvider = DocumentationManager.getProviderFromElement(context);
-
-    String inlineDoc = documentationProvider.generateDoc(docElement, context);
-    if (shouldHaveDoc) {
-      assertNotNull("inline help is null", inlineDoc);
-    }
-    else {
-      assertNull("inline help is not null", inlineDoc);
-    }
-
-    if (shouldHaveDoc) {
-      assertSameLinesWithFile(getTestDataPath() + "/" + getTestName(true) + ".txt", inlineDoc);
-    }
-  }
 }

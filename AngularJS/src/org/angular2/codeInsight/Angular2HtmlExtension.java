@@ -2,19 +2,16 @@
 package org.angular2.codeInsight;
 
 import com.intellij.javascript.web.WebFramework;
+import com.intellij.javascript.web.codeInsight.html.WebSymbolsXmlExtension;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.impl.source.xml.SchemaPrefix;
-import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.URLUtil;
-import com.intellij.xml.HtmlXmlExtension;
 import com.intellij.xml.util.XmlUtil;
 import org.angular2.Angular2Framework;
 import org.angular2.lang.Angular2LangUtil;
@@ -24,12 +21,11 @@ import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding;
 import org.angular2.lang.html.psi.PropertyBindingType;
 import org.angular2.lang.svg.Angular2SvgLanguage;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.net.URL;
 import java.util.List;
 
-public final class Angular2HtmlExtension extends HtmlXmlExtension {
+public final class Angular2HtmlExtension extends WebSymbolsXmlExtension {
   private static final NotNullLazyValue<String> NG_ENT_LOCATION = NotNullLazyValue.lazy(() -> {
     URL url = Angular2HtmlExtension.class.getResource("/dtd/ngChars.ent");
     return VfsUtilCore.urlToPath(VfsUtilCore.fixURLforIDEA(
@@ -38,7 +34,8 @@ public final class Angular2HtmlExtension extends HtmlXmlExtension {
 
   @Override
   public boolean isAvailable(PsiFile file) {
-    return WebFramework.forFileType(file.getFileType()) == Angular2Framework.getInstance()
+    return file != null
+           && WebFramework.forFileType(file.getFileType()) == Angular2Framework.getInstance()
            && Angular2LangUtil.isAngular2Context(file);
   }
 
@@ -50,6 +47,7 @@ public final class Angular2HtmlExtension extends HtmlXmlExtension {
 
   @Override
   public boolean isRequiredAttributeImplicitlyPresent(XmlTag tag, String attrName) {
+    if (tag == null || attrName == null) return false;
     Ref<Boolean> result = new Ref<>();
     tag.acceptChildren(new Angular2HtmlElementVisitor() {
       @Override
@@ -85,23 +83,5 @@ public final class Angular2HtmlExtension extends HtmlXmlExtension {
     List<XmlFile> result = new SmartList<>(super.getCharEntitiesDTDs(file));
     ContainerUtil.addAllNotNull(result, XmlUtil.findXmlFile(file, NG_ENT_LOCATION.getValue()));
     return result;
-  }
-
-  @Override
-  public SchemaPrefix getPrefixDeclaration(XmlTag context, String namespacePrefix) {
-    if (namespacePrefix != null && (namespacePrefix.startsWith("(") || namespacePrefix.startsWith("["))) {
-      SchemaPrefix attribute = findAttributeSchema(context, namespacePrefix);
-      if (attribute != null) return attribute;
-    }
-    return super.getPrefixDeclaration(context, namespacePrefix);
-  }
-
-  private static @Nullable SchemaPrefix findAttributeSchema(XmlTag context, String namespacePrefix) {
-    for (XmlAttribute attribute : context.getAttributes()) {
-      if (attribute.getName().startsWith(namespacePrefix)) {
-        return new SchemaPrefix(attribute, TextRange.create(1, namespacePrefix.length()), namespacePrefix.substring(1));
-      }
-    }
-    return null;
   }
 }

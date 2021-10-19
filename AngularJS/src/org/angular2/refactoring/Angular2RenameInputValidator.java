@@ -2,11 +2,10 @@
 package org.angular2.refactoring;
 
 import com.intellij.patterns.ElementPattern;
-import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.rename.RenameInputValidator;
 import com.intellij.util.ProcessingContext;
-import org.angular2.entities.Angular2DirectiveSelectorPsiElement;
+import org.angular2.entities.Angular2DirectiveSelectorSymbol;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Pattern;
@@ -18,12 +17,12 @@ public class Angular2RenameInputValidator implements RenameInputValidator {
 
   @Override
   public @NotNull ElementPattern<? extends PsiElement> getPattern() {
-    return PlatformPatterns.psiElement(Angular2DirectiveSelectorPsiElement.class);
+    return null;//PlatformPatterns.psiElement(Angular2DirectiveSelectorSymbol.class);
   }
 
   @Override
   public boolean isInputValid(@NotNull String newName, @NotNull PsiElement element, @NotNull ProcessingContext context) {
-    Angular2DirectiveSelectorPsiElement selector = (Angular2DirectiveSelectorPsiElement)element;
+    Angular2DirectiveSelectorSymbol selector = (Angular2DirectiveSelectorSymbol)element;
     return selector.isElementSelector()
            ? TAG_NAME_PATTERN.matcher(newName).matches()
            : selector.isAttributeSelector()

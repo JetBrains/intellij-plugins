@@ -5,12 +5,15 @@ import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
+import com.intellij.model.Pointer;
 import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import static com.intellij.refactoring.suggested.UtilsKt.createSmartPointer;
 import static org.angular2.Angular2DecoratorUtil.getClassForDecoratorElement;
 
 public abstract class Angular2SourceEntity extends Angular2SourceEntityBase {
@@ -22,6 +25,17 @@ public abstract class Angular2SourceEntity extends Angular2SourceEntityBase {
     super(Objects.requireNonNull(getClassForDecoratorElement(decorator)));
     myDecorator = decorator;
     myImplicitElement = implicitElement;
+  }
+
+  protected <T extends Angular2SourceEntity> Pointer<T> createPointer(
+    @NotNull BiFunction<? super ES6Decorator, ? super JSImplicitElement, T> constructor) {
+    var decoratorPtr = createSmartPointer(myDecorator);
+    var implicitElementPtr = createSmartPointer(myImplicitElement);
+    return () ->{
+      var decorator = decoratorPtr.dereference();
+      var implicitElement = implicitElementPtr.dereference();
+      return decorator != null && implicitElement != null ? constructor.apply(decorator, implicitElement) : null;
+    };
   }
 
   @Override

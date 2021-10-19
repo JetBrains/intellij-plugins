@@ -6,9 +6,6 @@ import com.intellij.psi.css.CssElementDescriptorProvider;
 import com.intellij.psi.css.CssSimpleSelector;
 import com.intellij.psi.css.descriptor.CssPseudoSelectorDescriptor;
 import com.intellij.psi.css.descriptor.CssPseudoSelectorDescriptorStub;
-import com.intellij.util.ArrayUtilRt;
-import com.intellij.xml.XmlElementDescriptor;
-import org.angular2.codeInsight.refs.Angular2SelectorReferencesProvider;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.lang.Angular2LangUtil;
 import org.jetbrains.annotations.NonNls;
@@ -17,7 +14,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Objects;
 import java.util.Set;
 
 public class Angular2CssElementDescriptionProvider extends CssElementDescriptorProvider {
@@ -50,27 +46,7 @@ public class Angular2CssElementDescriptionProvider extends CssElementDescriptorP
   }
 
   @Override
-  public String @NotNull [] getSimpleSelectors(@NotNull PsiElement context) {
-    return ArrayUtilRt.toStringArray(Angular2EntitiesProvider.getAllElementDirectives(context.getProject())
-                                       .keySet());
-  }
-
-  @Override
   public PsiElement @NotNull [] getDeclarationsForSimpleSelector(@NotNull CssSimpleSelector selector) {
-    XmlElementDescriptor descriptor = Angular2SelectorReferencesProvider.getElementDescriptor(
-      selector.getElementName(), selector.getContainingFile());
-    if (descriptor != null) {
-      return new PsiElement[]{descriptor.getDeclaration()};
-    }
-    String elementName = selector.getElementName();
-    return Angular2EntitiesProvider.findElementDirectivesCandidates(
-      selector.getProject(), elementName)
-      .stream()
-      .map(dir -> dir.getSelector().getSimpleSelectorsWithPsi())
-      .flatMap(Collection::stream)
-      .map(sel -> sel.getElement())
-      .filter(Objects::nonNull)
-      .filter(el -> elementName.equals(el.getName()))
-      .toArray(PsiElement[]::new);
+    return PsiElement.EMPTY_ARRAY;
   }
 }

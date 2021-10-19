@@ -24,20 +24,20 @@ public class GotoSymbolTest extends Angular2CodeInsightFixtureTestCase {
   public void testElementSelector() {
     myFixture.configureByFiles("my-table.component.ts", "package.json");
     doTest("app-my-table", true,
-           "app-my-table (MyTableComponent, my-table.component.ts) - ElementDirectiveSelector<app-my-table>");
+           "app-my-table (MyTableComponent, my-table.component.ts) - my-table.component.ts [342]");
   }
 
   public void testAttributeSelector() {
     myFixture.configureByFiles("my-table.component.ts", "package.json");
     doTest("app-my-table", true,
-           "app-my-table (MyTableComponent, my-table.component.ts) - AttributeDirectiveSelector<app-my-table>");
+           "app-my-table (MyTableComponent, my-table.component.ts) - my-table.component.ts [343]");
   }
 
   public void testAttrAndElementSelector() {
     myFixture.configureByFiles("my-table.component.ts", "package.json");
     doTest("app-my-table", true,
-           "app-my-table (MyTableComponent, my-table.component.ts) - AttributeDirectiveSelector<app-my-table>",
-           "app-my-table (MyTableComponent, my-table.component.ts) - ElementDirectiveSelector<app-my-table>");
+           "app-my-table (MyTableComponent, my-table.component.ts) - my-table.component.ts [342]",
+           "app-my-table (MyTableComponent, my-table.component.ts) - my-table.component.ts [355]");
   }
 
   public void testPipe() {
@@ -58,7 +58,7 @@ public class GotoSymbolTest extends Angular2CodeInsightFixtureTestCase {
         final ItemPresentation presentation = ((NavigationItem)o).getPresentation();
         assertNotNull(presentation);
         actual.add(presentation.getPresentableText() + " " + presentation.getLocationString() +
-                   (detailed ? " - " + o.toString() : ""));
+                   (detailed ? " - " + o : ""));
       }
     }
     assertSameElements(actual, expectedItems);

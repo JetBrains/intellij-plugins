@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.entities.ivy;
 
+import com.intellij.model.Pointer;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.containers.ContainerUtil;
@@ -23,6 +24,15 @@ public class Angular2IvyComponent extends Angular2IvyDirective implements Angula
 
   public Angular2IvyComponent(@NotNull Angular2IvySymbolDef.Component entityDef) {
     super(entityDef);
+  }
+
+  @Override
+  public @NotNull Pointer<Angular2IvyComponent> createPointer() {
+    var entityDef = myEntityDef.createPointer();
+    return () -> {
+      var newEntityDef = tryCast(entityDef.dereference(), Angular2IvySymbolDef.Component.class);
+      return newEntityDef != null ? new Angular2IvyComponent(newEntityDef) : null;
+    };
   }
 
   @Override

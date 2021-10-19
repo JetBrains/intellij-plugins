@@ -1,130 +1,140 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight.refs;
 
-import com.intellij.javaee.ExternalResourceManagerEx;
+import com.intellij.javascript.web.codeInsight.WebSymbolReference;
+import com.intellij.javascript.web.symbols.WebSymbol;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
-import com.intellij.psi.*;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.model.Symbol;
+import com.intellij.model.psi.PsiExternalReferenceHost;
+import com.intellij.model.psi.PsiSymbolReference;
+import com.intellij.model.psi.PsiSymbolReferenceHints;
+import com.intellij.model.psi.PsiSymbolReferenceProvider;
+import com.intellij.model.search.SearchRequest;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.xml.XmlDocument;
-import com.intellij.psi.xml.XmlFile;
-import com.intellij.util.AstLoadingFilter;
-import com.intellij.util.ProcessingContext;
 import com.intellij.util.SmartList;
-import com.intellij.xml.Html5SchemaProvider;
-import com.intellij.xml.XmlAttributeDescriptor;
-import com.intellij.xml.XmlElementDescriptor;
-import com.intellij.xml.XmlNSDescriptorEx;
-import com.intellij.xml.util.XmlUtil;
+import com.intellij.util.containers.ContainerUtil;
 import org.angular2.entities.Angular2DirectiveSelector;
 import org.angular2.entities.Angular2DirectiveSelector.SimpleSelectorWithPsi;
-import org.angular2.entities.Angular2DirectiveSelectorPsiElement;
+import org.angular2.entities.Angular2DirectiveSelectorSymbol;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.lang.html.psi.Angular2HtmlNgContentSelector;
+import org.angular2.web.Angular2Symbol;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static com.intellij.util.ObjectUtils.doIfNotNull;
+import static org.angular2.Angular2DecoratorUtil.*;
 
-public class Angular2SelectorReferencesProvider extends PsiReferenceProvider {
+public abstract class Angular2SelectorReferencesProvider implements PsiSymbolReferenceProvider {
+
+  public static class NgContentSelectorProvider extends Angular2SelectorReferencesProvider {
+
+    @Override
+    protected @Nullable Angular2DirectiveSelector getDirectiveSelector(PsiExternalReferenceHost element) {
+      if (element instanceof Angular2HtmlNgContentSelector) {
+        return ((Angular2HtmlNgContentSelector)element).getSelector();
+      }
+      return null;
+    }
+  }
+
+  public static class NgDecoratorSelectorProvider extends Angular2SelectorReferencesProvider {
+
+    @Override
+    protected @Nullable Angular2DirectiveSelector getDirectiveSelector(PsiExternalReferenceHost element) {
+      if (isLiteralInNgDecorator(element, SELECTOR_PROP, COMPONENT_DEC, DIRECTIVE_DEC)) {
+        return doIfNotNull(Angular2EntitiesProvider.getDirective(PsiTreeUtil.getParentOfType(element, ES6Decorator.class)),
+                                        dir -> dir.getSelector());
+      }
+      return null;
+    }
+  }
 
   @Override
-  public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
-    Angular2DirectiveSelector directiveSelector;
-    if (element instanceof Angular2HtmlNgContentSelector) {
-      directiveSelector = ((Angular2HtmlNgContentSelector)element).getSelector();
-    }
-    else {
-      directiveSelector = doIfNotNull(Angular2EntitiesProvider.getDirective(PsiTreeUtil.getParentOfType(element, ES6Decorator.class)),
-                                      dir -> dir.getSelector());
-    }
+  public @NotNull Collection<? extends @NotNull SearchRequest> getSearchRequests(@NotNull Project project,
+                                                                                 @NotNull Symbol target) {
+    return Collections.emptyList();
+  }
+
+  @Override
+  public @NotNull Collection<? extends @NotNull PsiSymbolReference> getReferences(@NotNull PsiExternalReferenceHost element,
+                                                                                  @NotNull PsiSymbolReferenceHints hints) {
+    Angular2DirectiveSelector directiveSelector = getDirectiveSelector(element);
     if (directiveSelector == null) {
-      return PsiReference.EMPTY_ARRAY;
+      return Collections.emptyList();
     }
-    List<PsiReference> result = new SmartList<>();
-    for (SimpleSelectorWithPsi selector : directiveSelector.getSimpleSelectorsWithPsi()) {
-      String elementName = null;
-      if (selector.getElement() != null && selector.getElement().getParent() == element) {
-        result.add(new HtmlElementReference(selector.getElement()));
-        elementName = selector.getElement().getName();
+    List<PsiSymbolReference> result = new SmartList<>();
+    Consumer<Angular2DirectiveSelectorSymbol> add = selector -> {
+      if (!selector.isDeclaration()) {
+        result.add(new HtmlSelectorReference(selector));
       }
-      for (Angular2DirectiveSelectorPsiElement attr : selector.getAttributes()) {
-        if (attr.getParent() == element) {
-          result.add(new HtmlAttributeReference(attr, elementName));
+    };
+    var offsetInTheElement=hints.getOffsetInElement();
+    if (offsetInTheElement >= 0) {
+      for (SimpleSelectorWithPsi selector : directiveSelector.getSimpleSelectorsWithPsi()) {
+        var found = selector.getElementAt(offsetInTheElement);
+        if (found != null) {
+          add.accept(found);
+          return result;
         }
+      }
+      return Collections.emptyList();
+    }
+
+    for (SimpleSelectorWithPsi selector : directiveSelector.getSimpleSelectorsWithPsi()) {
+      if (selector.getElement() != null) {
+        add.accept(selector.getElement());
+      }
+      for (Angular2DirectiveSelectorSymbol attr : selector.getAttributes()) {
+        add.accept(attr);
       }
       for (SimpleSelectorWithPsi notSelector : selector.getNotSelectors()) {
-        for (Angular2DirectiveSelectorPsiElement attr : notSelector.getAttributes()) {
-          if (attr.getParent() == element) {
-            result.add(new HtmlAttributeReference(attr, elementName));
-          }
+        for (Angular2DirectiveSelectorSymbol attr : notSelector.getAttributes()) {
+          add.accept(attr);
         }
       }
     }
-    return result.toArray(PsiReference.EMPTY_ARRAY);
+    return result;
   }
 
-  private static @Nullable XmlNSDescriptorEx getNamespaceDescriptor(@NotNull PsiFile baseFile) {
-    return CachedValuesManager.getCachedValue(baseFile, () -> {
-      String htmlNS = ExternalResourceManagerEx.getInstanceEx().getDefaultHtmlDoctype(baseFile.getProject());
-      if (htmlNS.isEmpty()) {
-        htmlNS = Html5SchemaProvider.getHtml5SchemaLocation();
-      }
-      XmlFile xmlFile = XmlUtil.findNamespace(baseFile, htmlNS);
-      if (xmlFile != null) {
-        final XmlDocument document = AstLoadingFilter.forceAllowTreeLoading(xmlFile, xmlFile::getDocument);
-        if (document != null && document.getMetaData() instanceof XmlNSDescriptorEx) {
-          return CachedValueProvider.Result.create((XmlNSDescriptorEx)document.getMetaData(), xmlFile);
-        }
-      }
-      return CachedValueProvider.Result.create(null, baseFile);
-    });
-  }
+  protected abstract @Nullable Angular2DirectiveSelector getDirectiveSelector(PsiExternalReferenceHost element);
 
-  public static @Nullable XmlElementDescriptor getElementDescriptor(@NotNull String name, @NotNull PsiFile baseFile) {
-    XmlNSDescriptorEx descriptorEx = getNamespaceDescriptor(baseFile);
-    return descriptorEx != null ? descriptorEx.getElementDescriptor(name, XmlUtil.XHTML_URI) : null;
-  }
+  private static final class HtmlSelectorReference implements WebSymbolReference {
 
-  private static final class HtmlElementReference extends PsiReferenceBase<PsiElement> {
+    private final Angular2DirectiveSelectorSymbol mySelectorSymbol;
 
-    private final Angular2DirectiveSelectorPsiElement mySelectorPsiElement;
-
-    private HtmlElementReference(@NotNull Angular2DirectiveSelectorPsiElement element) {
-      super(element.getParent(), element.getTextRangeInParent(), true);
-      mySelectorPsiElement = element;
+    private HtmlSelectorReference(@NotNull Angular2DirectiveSelectorSymbol symbol) {
+      mySelectorSymbol = symbol;
     }
 
     @Override
-    public @Nullable PsiElement resolve() {
-      XmlElementDescriptor descriptor = getElementDescriptor(mySelectorPsiElement.getName(), getElement().getContainingFile());
-      return descriptor != null ? descriptor.getDeclaration() : null;
-    }
-  }
-
-  private static final class HtmlAttributeReference extends PsiPolyVariantReferenceBase<PsiElement> {
-
-    private final String myElementName;
-
-    private HtmlAttributeReference(@NotNull Angular2DirectiveSelectorPsiElement element, @Nullable String elementName) {
-      super(element.getParent(), element.getTextRangeInParent(), true);
-      myElementName = elementName;
+    public @NotNull PsiElement getElement() {
+      return mySelectorSymbol.getSource();
     }
 
     @Override
-    public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
-      XmlElementDescriptor descriptor =
-        myElementName != null ? getElementDescriptor(myElementName, getElement().getContainingFile()) : null;
-      if (descriptor == null) {
-        descriptor = getElementDescriptor("div", getElement().getContainingFile());
+    public @NotNull TextRange getRangeInElement() {
+      return mySelectorSymbol.getTextRangeInSource();
+    }
+
+    @Override
+    public @NotNull Collection<WebSymbol> resolveReference() {
+      var symbols = mySelectorSymbol.getReferencedSymbols();
+      var nonSelectorSymbols = ContainerUtil.filter(symbols, symbol -> !(symbol instanceof Angular2Symbol));
+      if (!nonSelectorSymbols.isEmpty()) {
+        return nonSelectorSymbols;
+      } else {
+        return symbols;
       }
-      XmlAttributeDescriptor attributeDescriptor = descriptor != null ? descriptor.getAttributeDescriptor(getValue(), null) : null;
-      return attributeDescriptor != null
-             ? PsiElementResolveResult.createResults(attributeDescriptor.getDeclarations())
-             : ResolveResult.EMPTY_ARRAY;
     }
   }
+
 }

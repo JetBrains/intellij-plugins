@@ -3,30 +3,35 @@ package org.angular2.entities.metadata.psi;
 import com.intellij.lang.javascript.psi.JSParameter;
 import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.JSTypeOwner;
-import com.intellij.openapi.util.NotNullComputable;
+import com.intellij.model.Pointer;
+import com.intellij.openapi.util.NullableLazyValue;
 import com.intellij.psi.PsiElement;
 import org.angular2.entities.Angular2DirectiveAttribute;
 import org.angular2.entities.Angular2EntityUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Supplier;
+import java.util.Objects;
 
+import static com.intellij.refactoring.suggested.UtilsKt.createSmartPointer;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.ObjectUtils.notNull;
 
 public class Angular2MetadataDirectiveAttribute implements Angular2DirectiveAttribute {
 
-  private final Supplier<? extends JSParameter> myParameterSupplier;
-  private final NotNullComputable<? extends PsiElement> mySourceSupplier;
+  private final Angular2MetadataDirectiveBase<?> myOwner;
+  private final int myIndex;
   private final String myName;
 
-  Angular2MetadataDirectiveAttribute(final @NotNull Supplier<? extends JSParameter> parameterSupplier,
-                                     final @NotNull NotNullComputable<? extends PsiElement> sourceSupplier,
-                                     final @NotNull String name) {
-    myParameterSupplier = parameterSupplier;
-    mySourceSupplier = sourceSupplier;
+  private final NullableLazyValue<JSParameter> myParameter;
+
+  Angular2MetadataDirectiveAttribute(@NotNull Angular2MetadataDirectiveBase<?> owner,
+                                     int index, @NotNull String name) {
+    myOwner = owner;
+    myIndex = index;
     myName = name;
+    myParameter = NullableLazyValue.createValue(
+      () -> myOwner.getConstructorParameter(myIndex));
   }
 
   @Override
@@ -35,17 +40,42 @@ public class Angular2MetadataDirectiveAttribute implements Angular2DirectiveAttr
   }
 
   @Override
-  public @Nullable JSType getType() {
-    return doIfNotNull(myParameterSupplier.get(), JSTypeOwner::getJSType);
+  public @Nullable JSType getJsType() {
+    return doIfNotNull(myParameter.getValue(), JSTypeOwner::getJSType);
   }
 
   @Override
   public @NotNull PsiElement getSourceElement() {
-    return notNull(myParameterSupplier.get(), mySourceSupplier.compute());
+    return notNull(myParameter.getValue(), myOwner::getSourceElement);
   }
 
   @Override
   public String toString() {
     return Angular2EntityUtils.toString(this);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Angular2MetadataDirectiveAttribute attribute = (Angular2MetadataDirectiveAttribute)o;
+    return myIndex == attribute.myIndex && myOwner.equals(attribute.myOwner) && myName.equals(attribute.myName);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(myOwner, myIndex, myName);
+  }
+
+  @NotNull
+  @Override
+  public Pointer<Angular2MetadataDirectiveAttribute> createPointer() {
+    var owner = createSmartPointer(myOwner);
+    var index = myIndex;
+    var name = myName;
+    return () -> {
+      var newOwner = owner.dereference();
+      return newOwner != null ? new Angular2MetadataDirectiveAttribute(newOwner, index, name) : null;
+    };
   }
 }

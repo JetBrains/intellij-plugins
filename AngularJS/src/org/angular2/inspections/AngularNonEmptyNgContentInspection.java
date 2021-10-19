@@ -11,13 +11,13 @@ import org.angular2.inspections.quickfixes.RemoveTagContentQuickFix;
 import org.angular2.lang.Angular2Bundle;
 import org.jetbrains.annotations.NotNull;
 
-import static org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider.NG_CONTENT;
+import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.ELEMENT_NG_CONTENT;
 
 public class AngularNonEmptyNgContentInspection extends AngularHtmlLikeTemplateLocalInspectionTool {
 
   @Override
   protected void visitXmlTag(@NotNull ProblemsHolder holder, @NotNull XmlTag tag) {
-    if (NG_CONTENT.equals(tag.getName())) {
+    if (ELEMENT_NG_CONTENT.equals(tag.getName())) {
       XmlTagChild[] content = tag.getValue().getChildren();
       if (ContainerUtil.find(content, el -> !(el instanceof XmlText)
                                             || !el.getText().trim().isEmpty()) != null) {
