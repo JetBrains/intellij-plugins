@@ -123,6 +123,7 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
     doTest("for");
   }
 
+  // fails because of the fix for https://github.com/dart-lang/sdk/issues/38326
   public void testWithImportPrefix() {
     doTest();
   }
@@ -166,10 +167,10 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
                               "}");
     myFixture.doHighlighting();
     myFixture.completeBasic();
-    myFixture.assertPreferredCompletionItems(0, "AXX.one", "AXX.two", "main", "const", "false", "null", "true",
-                                             "AXB", "AXB.four", "AXB.three", "AXX",
-                                             "AbstractClassInstantiationError", "AbstractClassInstantiationError", "ArgumentError",
-                                             "ArgumentError", "ArgumentError.notNull", "ArgumentError.value", "AssertionError",
+    myFixture.assertPreferredCompletionItems(0, "AXX", "AXX.one", "AXX.two", "const", "true", "false",
+                                             "AXB", "AXB.four", "AXB.three", "null", "main",
+                                             "AbstractClassInstantiationError", "ArgumentError",
+                                             "ArgumentError.notNull", "ArgumentError.value",
                                              "AssertionError", "BidirectionalIterator");
   }
 
