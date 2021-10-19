@@ -7,6 +7,7 @@ import com.intellij.execution.configurations.PathEnvironmentVariableUtil;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.roots.ProjectRootModificationTracker;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
@@ -22,6 +23,7 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.ui.TextFieldWithHistory;
 import com.intellij.ui.TextFieldWithHistoryWithBrowseButton;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.SlowOperations;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.SwingHelper;
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +47,7 @@ public final class PhoneGapUtil {
   @NotNull
   public static TextFieldWithHistoryWithBrowseButton createPhoneGapExecutableTextField(@Nullable Project project) {
     TextFieldWithHistoryWithBrowseButton field = SwingHelper.createTextFieldWithHistoryWithBrowseButton(
-      project, PhoneGapBundle.message("phonegap.conf.executable.name"),
+      project, PhoneGapBundle.message("phonegap.conf.executable.title"),
       FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor(), () -> getDefaultExecutablePaths());
     String executablePath = PhoneGapSettings.getInstance().getExecutablePath();
     setDefaultValue(field, executablePath);
@@ -56,7 +58,7 @@ public final class PhoneGapUtil {
   @NotNull
   public static TextFieldWithHistoryWithBrowseButton createPhoneGapWorkingDirectoryField(@Nullable final Project project) {
     TextFieldWithHistoryWithBrowseButton field = SwingHelper.createTextFieldWithHistoryWithBrowseButton(
-      project, PhoneGapBundle.message("phonegap.conf.work.dir.name"),
+      project, PhoneGapBundle.message("phonegap.conf.work.dir.title"),
       FileChooserDescriptorFactory.createSingleFolderDescriptor(), () -> getDefaultWorkingDirectory(project));
     setDefaultValue(field, PhoneGapSettings.getInstance().getWorkingDirectory(project));
 
@@ -82,7 +84,7 @@ public final class PhoneGapUtil {
   public static List<String> getDefaultWorkingDirectory(@Nullable Project project) {
     List<String> paths = new ArrayList<>();
     if (project == null) return paths;
-    VirtualFile baseDir = project.getBaseDir();
+    VirtualFile baseDir = ProjectUtil.guessProjectDir(project);
     if (baseDir == null) return paths;
 
     if (folderExist(baseDir, FOLDER_PLATFORMS) ||
@@ -92,7 +94,7 @@ public final class PhoneGapUtil {
       ContainerUtil.addIfNotNull(paths, project.getBasePath());
     }
     else {
-      addPaths(paths, getFolders(project));
+      addPaths(paths, SlowOperations.allowSlowOperations(() -> getFolders(project)));
     }
 
     return paths;
