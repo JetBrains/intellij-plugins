@@ -274,12 +274,12 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
             || (DialectDetector.isTypeScript(element)
                 && !JSLibraryUtil.isProbableLibraryFile(element.containingFile.viewProvider.virtualFile))) {
           if (settings.hasTSImportCompletionEffective(element.project)) {
-            builder = builder.withInsertHandlerAdded(VueInsertHandler.INSTANCE)
+            builder = builder.withInsertHandlerAdded(VueInsertHandler.INSTANCE, Priority.LOWEST)
           }
         }
         else {
           if (settings.isUseJavaScriptAutoImport) {
-            builder = builder.withInsertHandlerAdded(VueInsertHandler.INSTANCE)
+            builder = builder.withInsertHandlerAdded(VueInsertHandler.INSTANCE, Priority.LOWEST)
           }
         }
       }
