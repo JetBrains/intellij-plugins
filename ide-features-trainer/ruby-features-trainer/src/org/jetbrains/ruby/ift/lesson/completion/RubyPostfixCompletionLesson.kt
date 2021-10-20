@@ -3,6 +3,7 @@ package org.jetbrains.ruby.ift.lesson.completion
 
 import org.jetbrains.ruby.ift.RubyLessonsBundle
 import training.dsl.LessonContext
+import training.dsl.LessonUtil
 import training.dsl.LessonUtil.checkExpectedStateOfEditor
 import training.dsl.defaultRestoreDelay
 import training.dsl.parseLessonSample
@@ -71,4 +72,9 @@ end
         }
       }
     }
+
+  override val helpLinks: Map<String, String> get() = mapOf(
+    Pair(LessonsBundle.message("postfix.completion.help.link"),
+         "https://www.jetbrains.com/help/${LessonUtil.helpIdeName}/auto-completing-code.html#postfix_completion"),
+  )
 }

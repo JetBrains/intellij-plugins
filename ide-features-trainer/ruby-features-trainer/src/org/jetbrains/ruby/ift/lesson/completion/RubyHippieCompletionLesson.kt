@@ -48,4 +48,9 @@ end
 
   private fun calculateResult(insert: String) =
     StringBuffer(sample.text).insert(sample.startOffset, insert).toString()
+
+  override val helpLinks: Map<String, String> get() = mapOf(
+    Pair(RubyLessonsBundle.message("ruby.hippie.completion.help.link"),
+         "https://www.jetbrains.com/help/ruby/auto-completing-code.html#hippie_completion"),
+  )
 }
