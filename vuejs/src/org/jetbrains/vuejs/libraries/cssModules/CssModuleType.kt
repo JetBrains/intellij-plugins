@@ -1,4 +1,4 @@
-// Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.cssModules
 
 import com.intellij.lang.javascript.JSStringUtil
@@ -83,12 +83,19 @@ class CssModuleType private constructor(val container: PsiElement, source: JSTyp
       result.putValue(it.name, it)
     }
 
-    fun processFunctionArgs(pseudoClass: CssPseudoClass, add: (CssClass) -> Unit) {
+    fun processSelectorsInPseudoClassArgs(pseudoClass: CssPseudoClass, add: (CssClass) -> Unit) {
       PsiTreeUtil.getChildOfType(pseudoClass, CssFunction::class.java)
-        ?.value?.terms
-        ?.mapNotNull { term -> PsiTreeUtil.getChildOfType(term, CssClass::class.java) }
-        ?.forEach {
-          add(it)
+        ?.let { PsiTreeUtil.getChildOfType(it, CssSelectorList::class.java) }
+        ?.let { selectorList ->
+          selectorList.selectors.forEach { selector ->
+            selector.simpleSelectors.forEach { simpleSelector ->
+              simpleSelector.selectorSuffixes.forEach { selectorSuffix ->
+                (selectorSuffix as? CssClass)?.let { cssClass ->
+                  add(cssClass)
+                }
+              }
+            }
+          }
         }
     }
     for (selector in ruleset.selectors) {
@@ -101,7 +108,7 @@ class CssModuleType private constructor(val container: PsiElement, source: JSTyp
               when (suffix.name) {
                 "local" -> {
                   if (suffix.expressionText != null) {
-                    processFunctionArgs(suffix, ::addLocalClass)
+                    processSelectorsInPseudoClassArgs(suffix, ::addLocalClass)
                   }
                   else {
                     globalMode = false
@@ -110,7 +117,7 @@ class CssModuleType private constructor(val container: PsiElement, source: JSTyp
                 "global" -> {
                   if (suffix.expressionText != null) {
                     if (options.exportGlobals) {
-                      processFunctionArgs(suffix, ::addGlobalClass)
+                      processSelectorsInPseudoClassArgs(suffix, ::addGlobalClass)
                     }
                   }
                   else {

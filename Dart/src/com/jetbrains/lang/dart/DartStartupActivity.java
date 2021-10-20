@@ -14,7 +14,6 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.startup.StartupActivity;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -78,18 +77,13 @@ public final class DartStartupActivity implements StartupActivity.Background {
       root == null ? null : ProjectRootManager.getInstance(module.getProject()).getFileIndex().getContentRootForFile(root);
     if (contentRoot == null) return;
 
-    final DartSdk sdk = DartSdk.getDartSdk(module.getProject());
-
     final Collection<String> oldExcludedUrls =
       ContainerUtil.filter(ModuleRootManager.getInstance(module).getExcludeRootUrls(), new Condition<>() {
         final String rootUrl = root.getUrl();
 
         @Override
         public boolean value(final String url) {
-          if (url.equals(rootUrl + "/.dart_tool") && sdk != null && StringUtil.compareVersionNumbers(sdk.getVersion(), "2.0") >= 0) {
-            return true;
-          }
-
+          if (url.equals(rootUrl + "/.dart_tool")) return true;
           if (url.equals(rootUrl + "/.pub")) return true;
           if (url.equals(rootUrl + "/build")) return true;
 
@@ -97,23 +91,18 @@ public final class DartStartupActivity implements StartupActivity.Background {
         }
       });
 
-    final Set<String> newExcludedUrls = collectFolderUrlsToExclude(module, pubspecYamlFile);
+    final Set<String> newExcludedUrls = collectFolderUrlsToExclude(pubspecYamlFile);
 
     if (oldExcludedUrls.size() != newExcludedUrls.size() || !newExcludedUrls.containsAll(oldExcludedUrls)) {
       ModuleRootModificationUtil.updateExcludedFolders(module, contentRoot, oldExcludedUrls, newExcludedUrls);
     }
   }
 
-  private static Set<String> collectFolderUrlsToExclude(@NotNull final Module module,
-                                                        @NotNull final VirtualFile pubspecYamlFile) {
+  private static Set<String> collectFolderUrlsToExclude(@NotNull final VirtualFile pubspecYamlFile) {
     final Set<String> newExcludedPackagesUrls = new HashSet<>();
     final VirtualFile root = pubspecYamlFile.getParent();
 
-    final DartSdk sdk = DartSdk.getDartSdk(module.getProject());
-    if (sdk != null && StringUtil.compareVersionNumbers(sdk.getVersion(), "2.0") >= 0) {
-      newExcludedPackagesUrls.add(root.getUrl() + "/.dart_tool");
-    }
-
+    newExcludedPackagesUrls.add(root.getUrl() + "/.dart_tool");
     newExcludedPackagesUrls.add(root.getUrl() + "/.pub");
     newExcludedPackagesUrls.add(root.getUrl() + "/build");
 

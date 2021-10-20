@@ -33,4 +33,10 @@ public class DartArrayAccessExpressionImpl extends DartClassReferenceImpl implem
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartExpression.class);
   }
 
+  @Override
+  @Nullable
+  public DartTypeArguments getTypeArguments() {
+    return findChildByClass(DartTypeArguments.class);
+  }
+
 }

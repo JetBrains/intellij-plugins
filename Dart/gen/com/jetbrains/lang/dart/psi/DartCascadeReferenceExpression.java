@@ -10,4 +10,7 @@ public interface DartCascadeReferenceExpression extends DartExpression, DartRefe
   @Nullable
   DartExpression getExpression();
 
+  @Nullable
+  DartTypeArguments getTypeArguments();
+
 }

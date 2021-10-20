@@ -28,15 +28,15 @@ public class DartCallExpressionImpl extends DartReferenceImpl implements DartCal
   }
 
   @Override
-  @NotNull
+  @Nullable
   public DartExpression getExpression() {
-    return findNotNullChildByClass(DartExpression.class);
+    return findChildByClass(DartExpression.class);
   }
 
   @Override
-  @Nullable
-  public DartTypeArguments getTypeArguments() {
-    return findChildByClass(DartTypeArguments.class);
+  @NotNull
+  public List<DartTypeArguments> getTypeArgumentsList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartTypeArguments.class);
   }
 
   @Override

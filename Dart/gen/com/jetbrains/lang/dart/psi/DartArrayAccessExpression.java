@@ -10,4 +10,7 @@ public interface DartArrayAccessExpression extends DartExpression, DartReference
   @NotNull
   List<DartExpression> getExpressionList();
 
+  @Nullable
+  DartTypeArguments getTypeArguments();
+
 }

@@ -18,6 +18,7 @@ interface NuxtConfig {
   interface ComponentsDirectoryConfig {
     val path: String
     val prefix: String
+    val pathPrefix: Boolean
     val global: Boolean
     val extensions: Set<String>
     val level: Int

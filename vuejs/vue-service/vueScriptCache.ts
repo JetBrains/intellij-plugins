@@ -13,11 +13,11 @@ export class VueScriptCache {
   }
 
   getScriptKind(fileName: string): ts.ScriptKind {
-    return this.getUpToDateInfo(fileName).kind
+    return this.getUpToDateInfo(fileName)?.kind
   }
 
   getScriptSnapshot(fileName: string): ts.IScriptSnapshot {
-    return this.getUpToDateInfo(fileName).snapshot
+    return this.getUpToDateInfo(fileName)?.snapshot
   }
 
   private getUpToDateInfo(fileName: string): { snapshot: ts.IScriptSnapshot, kind: ts.ScriptKind } {
@@ -30,6 +30,7 @@ export class VueScriptCache {
       }
     }
     const snapshot = this.getHostScriptSnapshot(fileName)
+    if (snapshot === undefined || snapshot === null) return undefined
     const result = this.parseVue(snapshot.getText(0, snapshot.getLength()))
     this.cache.set(fileName, {...result, version: currentVersion})
     return result
@@ -61,14 +62,16 @@ export class VueScriptCache {
                 case "jsx":
                   if (scriptKind == ts_impl.ScriptKind.JS) {
                     scriptKind = ts_impl.ScriptKind.JSX;
-                  } else {
+                  }
+                  else {
                     scriptKind = ts_impl.ScriptKind.TSX;
                   }
                   break;
                 case "ts":
                   if (scriptKind == ts_impl.ScriptKind.JS) {
                     scriptKind = ts_impl.ScriptKind.TS;
-                  } else if (scriptKind == ts_impl.ScriptKind.JSX) {
+                  }
+                  else if (scriptKind == ts_impl.ScriptKind.JSX) {
                     scriptKind = ts_impl.ScriptKind.TSX;
                   }
                   break;
@@ -128,13 +131,14 @@ export class VueScriptCache {
       result = result + "; import __componentDefinition from '*.vue'; export default __componentDefinition;"
 
       // Remove wrapper for imports to work properly
-      if (scriptSetupStartLoc >= 0 ) {
+      if (scriptSetupStartLoc >= 0) {
         result = result.substring(0, scriptSetupStartLoc) + " ".repeat(7) + result.substring(scriptSetupStartLoc + 7)
       }
-      if (scriptSetupEndLoc >= 0 ) {
+      if (scriptSetupEndLoc >= 0) {
         result = result.substring(0, scriptSetupEndLoc) + " ".repeat(5) + result.substring(scriptSetupEndLoc + 5)
       }
-    } else if (hadScriptSetup && hadScriptNormal) {
+    }
+    else if (hadScriptSetup && hadScriptNormal) {
       // Add imports at the end of the file
       result += "\n;"
       const r = /import[^'"]*['"]([^'"]*)['"]/g;

@@ -209,6 +209,7 @@ module Rake
 
         begin
           copy_of_text.encode!('UTF-8') if copy_of_text.respond_to? :encode!
+          copy_of_text.gsub!(/\u001b/, "|0x001b") # escape
           copy_of_text.gsub!(/\u0085/, "|x") # next line
           copy_of_text.gsub!(/\u2028/, "|l") # line separator
           copy_of_text.gsub!(/\u2029/, "|p") # paragraph separator

@@ -21,6 +21,15 @@ b,
 //c
 }</fold>
 
+mixin Mix1{}
+mixin Mix2{a}
+mixin Mix3<fold text='{...}' expand='true'>{a }</fold>
+mixin Mix4<fold text='{...}' expand='true'>{
+a,
+b,
+//c
+}</fold>
+
 extension NumberParsing on String <fold text='{...}' expand='true'>{
   int parseInt() <fold text='{...}' expand='true'>{
     return int.parse(this);

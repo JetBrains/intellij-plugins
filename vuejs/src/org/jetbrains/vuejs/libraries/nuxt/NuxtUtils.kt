@@ -5,11 +5,10 @@ import com.intellij.util.text.SemVer
 
 const val NUXT_PKG = "nuxt"
 const val NUXT_TYPES_PKG = "@nuxt/types"
-const val NUXT_VUE_APP_PKG = "@nuxt/vue-app"
 const val NUXT_CONFIG_PKG = "@nuxt/config"
 
-const val NUXT_CONFIG_FILE = "nuxt.config.js"
-
+val NUXT_CONFIG_NAMES: List<String> = listOf("nuxt.config.js", "nuxt.config.ts")
 
 val NUXT_2_9_0 = SemVer("2.9.0", 2, 9, 0)
 val NUXT_2_13_0 = SemVer("2.13.0", 2, 13, 0)
+val NUXT_2_15_0 = SemVer("2.15.0", 2, 15, 0)

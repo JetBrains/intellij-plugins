@@ -362,4 +362,8 @@
       <add-to-group group-id="IntroduceActionsGroup"/>
     </action>
   </actions>
+
+  <applicationListeners>
+    <listener class="org.angular2.cli.config.AngularConfigFileListener" topic="com.intellij.openapi.vfs.newvfs.BulkFileListener"/>
+  </applicationListeners>
 </idea-plugin>

@@ -14,8 +14,10 @@ public class DartDeclarationRangeHandler implements DeclarationRangeHandler<Dart
   public TextRange getDeclarationRange(@NotNull DartPsiCompositeElement element) {
     // returned range is extended to full line(s) in platform
     if (element instanceof DartCallExpression) {
-      return TextRange.create(element.getTextRange().getStartOffset(),
-                              ((DartCallExpression)element).getExpression().getTextRange().getEndOffset());
+      DartExpression expression = ((DartCallExpression)element).getExpression();
+      if (expression != null) {
+        return TextRange.create(element.getTextRange().getStartOffset(), expression.getTextRange().getEndOffset());
+      }
     }
     if (element instanceof DartNewExpression) {
       DartReferenceExpression lastExpression = ContainerUtil.getLastItem(((DartNewExpression)element).getReferenceExpressionList());
