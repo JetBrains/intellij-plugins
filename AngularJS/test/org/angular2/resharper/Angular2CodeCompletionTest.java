@@ -20,7 +20,8 @@ import static org.angular2.modules.Angular2TestModule.configureLink;
 public class Angular2CodeCompletionTest extends Angular2ReSharperCompletionTestBase {
 
   private static final Set<String> TESTS_TO_SKIP = ContainerUtil.newHashSet(
-    "test004" // improve ngFor completions
+    "test004", // improve ngFor completions
+    "external/test004"
   );
 
   private static final Set<String> HIGH_PRIORITY_ONLY = ContainerUtil.newHashSet(
@@ -29,6 +30,7 @@ public class Angular2CodeCompletionTest extends Angular2ReSharperCompletionTestB
 
   private static final Set<String> CAMEL_CASE_MATCH_ONLY = ContainerUtil.newHashSet(
     "external/test002",
+    "external/test004",
     "external/test006"
   );
 
