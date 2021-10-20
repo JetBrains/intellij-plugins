@@ -3,7 +3,6 @@ package org.jetbrains.ruby.ift.lesson.basic
 
 import training.dsl.LessonSample
 import training.dsl.parseLessonSample
-import training.learn.LessonsBundle
 import training.learn.lesson.general.SurroundAndUnwrapLesson
 
 class RubySurroundAndUnwrapLesson : SurroundAndUnwrapLesson() {
@@ -19,11 +18,4 @@ class RubySurroundAndUnwrapLesson : SurroundAndUnwrapLesson() {
 
   override val surroundItemName: String
     get() = "if...end"
-
-  override val helpLinks: Map<String, String> = mapOf(
-    Pair(LessonsBundle.message("surround.and.unwrap.help.surround.code.fragments"),
-         "https://www.jetbrains.com/help/ruby/generating-code.html#surround_code_with_language_constructs"),
-    Pair(LessonsBundle.message("surround.and.unwrap.help.unwrapping.and.removing.statements"),
-         "https://www.jetbrains.com/help/ruby/generating-code.html#unwrap_statement"),
-  )
 }
