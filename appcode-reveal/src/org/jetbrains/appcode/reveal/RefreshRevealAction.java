@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.appcode.reveal;
 
 import com.intellij.execution.ExecutionException;
@@ -128,7 +128,7 @@ public class RefreshRevealAction extends DumbAwareAction {
 
   @Nullable
   private static String getDeviceName(@NotNull BuildDestination destination) throws ExecutionException {
-    if (XcodeBase.getVersion().is(8) || destination instanceof MacOSBuildDestination) {
+    if (destination instanceof MacOSBuildDestination) {
       // Xcode 8's simulators use the host computer's name
       return ExecUtil.execAndReadLine(new GeneralCommandLine("scutil", "--get", "ComputerName"));
     } else if (destination.isDevice()) {
