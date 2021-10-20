@@ -32,7 +32,7 @@ module Rake
       # Sends msg to runner
       def send_msg(msg)
         @@original_stdout.flush
-        @@original_stdout.puts("\n#{msg}")
+        @@original_stdout.puts("#{msg}")
         @@original_stdout.flush
       end
 

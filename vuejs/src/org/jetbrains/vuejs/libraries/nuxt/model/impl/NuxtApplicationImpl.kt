@@ -2,12 +2,13 @@
 package org.jetbrains.vuejs.libraries.nuxt.model.impl
 
 import com.intellij.ide.util.PropertiesComponent
-import com.intellij.javascript.nodejs.NodeModuleDirectorySearchProcessor
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil
 import com.intellij.javascript.nodejs.PackageJsonData
 import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.ecma6.JSTypedEntity
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptCompileTimeType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterface
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
 import com.intellij.notification.NotificationType
@@ -25,10 +26,7 @@ import com.intellij.util.text.SemVer
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.VUE_NOTIFICATIONS
 import org.jetbrains.vuejs.codeInsight.resolveSymbolFromNodeModule
-import org.jetbrains.vuejs.libraries.nuxt.NUXT_2_9_0
-import org.jetbrains.vuejs.libraries.nuxt.NUXT_CONFIG_PKG
-import org.jetbrains.vuejs.libraries.nuxt.NUXT_PKG
-import org.jetbrains.vuejs.libraries.nuxt.NUXT_TYPES_PKG
+import org.jetbrains.vuejs.libraries.nuxt.*
 import org.jetbrains.vuejs.libraries.nuxt.actions.InstallNuxtTypesAction
 import org.jetbrains.vuejs.libraries.nuxt.model.NuxtApplication
 import org.jetbrains.vuejs.libraries.nuxt.model.NuxtConfig
@@ -42,9 +40,9 @@ class NuxtApplicationImpl(override val configFile: VirtualFile, override val pro
       CachedValuesManager.getCachedValue(file) {
         CachedValueProvider.Result.create(NodeModuleSearchUtil.resolveModule(
           NUXT_PKG, file.virtualFile, emptyList(), false, file.project)
-                                            ?.let { PackageJsonUtil.findChildPackageJsonFile(it.moduleSourceRoot) }
-                                            ?.let { PackageJsonData.getOrCreate(it) }
-                                            ?.version, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
+          ?.let { PackageJsonUtil.findChildPackageJsonFile(it.moduleSourceRoot) }
+          ?.let { PackageJsonData.getOrCreate(it) }
+          ?.version, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
       }
     }
   }
@@ -79,8 +77,14 @@ class NuxtApplicationImpl(override val configFile: VirtualFile, override val pro
     }
 
   override fun getNuxtConfigType(context: PsiElement): JSType? =
-    resolveSymbolFromNodeModule(context, NUXT_TYPES_PKG, "NuxtConfig", TypeScriptTypeAlias::class.java)
-      ?.parsedTypeDeclaration
+    resolveSymbolFromNodeModule(context, NUXT_TYPES_PKG, "NuxtConfig", TypeScriptCompileTimeType::class.java)
+      ?.let {
+        when (it) {
+          is TypeScriptTypeAlias -> it.parsedTypeDeclaration
+          is JSTypedEntity -> it.jsType
+          else -> null
+        }
+      }
     ?: resolveSymbolFromNodeModule(context, NUXT_TYPES_PKG, "Configuration", TypeScriptInterface::class.java)
       ?.jsType
     ?: resolveSymbolFromNodeModule(context, NUXT_CONFIG_PKG, "default", ES6ExportDefaultAssignment::class.java)
@@ -89,7 +93,8 @@ class NuxtApplicationImpl(override val configFile: VirtualFile, override val pro
   override val config: NuxtConfig
     get() = PsiManager.getInstance(project).findFile(configFile)?.let { file ->
       CachedValuesManager.getCachedValue(file) {
-        CachedValueProvider.Result.create(NuxtConfigImpl(file), file, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
+        CachedValueProvider.Result.create(NuxtConfigImpl(file, nuxtVersion?.isGreaterOrEqualThan(NUXT_2_15_0) != false),
+          file, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
       }
     } ?: EmptyNuxtConfig
 

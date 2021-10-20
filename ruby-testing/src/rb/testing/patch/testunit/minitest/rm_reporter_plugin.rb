@@ -184,7 +184,7 @@ module Minitest
 
     def send_service_message(msg)
       io.flush
-      io.puts("\n#{msg}")
+      io.puts("#{msg}")
       io.flush
 
       msg

@@ -43,7 +43,9 @@ public final class DartNameSuggesterUtil {
 
     if (expression instanceof DartCallExpression) {
       final DartExpression callee = ((DartCallExpression)expression).getExpression();
-      text = callee.getText();
+      if (callee != null) {
+        text = callee.getText();
+      }
     }
 
     if (text != null) {

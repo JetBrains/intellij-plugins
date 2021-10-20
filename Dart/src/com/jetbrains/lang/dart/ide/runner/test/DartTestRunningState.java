@@ -160,9 +160,9 @@ public class DartTestRunningState extends DartCommandLineRunningState {
 
   @Override
   protected void setupExePath(@NotNull GeneralCommandLine commandLine, @NotNull DartSdk sdk) {
-    boolean useDartTest = DartPubActionBase.isUseDartTestInsteadOfPubRunTest(sdk);
+    boolean useDartTest = DartPubActionBase.isUseDartRunTestInsteadOfPubRunTest(sdk);
     if (useDartTest) {
-      commandLine.setExePath(DartSdkUtil.getDartExePath(sdk));
+      commandLine.setExePath(FileUtil.toSystemDependentName(DartSdkUtil.getDartExePath(sdk)));
     }
     else {
       commandLine.setExePath(FileUtil.toSystemDependentName(DartSdkUtil.getPubPath(sdk)));
@@ -176,7 +176,7 @@ public class DartTestRunningState extends DartCommandLineRunningState {
 
   @Override
   protected void addVmOption(@NotNull DartSdk sdk, @NotNull GeneralCommandLine commandLine, @NotNull String option) {
-    boolean useDartTest = DartPubActionBase.isUseDartTestInsteadOfPubRunTest(sdk);
+    boolean useDartTest = DartPubActionBase.isUseDartRunTestInsteadOfPubRunTest(sdk);
     if (useDartTest) {
       super.addVmOption(sdk, commandLine, option);
       return;

@@ -106,11 +106,12 @@ public class DartFunctionDescription {
   @Nullable
   public static DartFunctionDescription tryGetDescription(DartCallExpression callExpression) {
     final DartReference expression = (DartReference)callExpression.getExpression();
-    PsiElement target = expression.resolve();
+    PsiElement target = expression != null ? expression.resolve() : null;
     PsiElement targetParent = target == null ? null : target.getParent();
     // If no target, such as "new Test()" or the target is a variable,
     // check if the expression's DartClass defines the "call" method.
-    if (target == null || targetParent instanceof DartVarAccessDeclaration || targetParent instanceof DartGetterDeclaration) {
+    if ((target == null || targetParent instanceof DartVarAccessDeclaration || targetParent instanceof DartGetterDeclaration) &&
+        expression != null) {
       DartClassResolveResult resolveResult = expression.resolveDartClass();
       DartClass dartClass = resolveResult.getDartClass();
       if (dartClass != null) {

@@ -448,7 +448,7 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
 
   fun testScriptSetupComplexImports() {
     myFixture.enableInspections(ES6UnusedImportsInspection())
-    doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_0_0))
+    doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2))
   }
 
   fun testMissingLabelSuppressed() {
@@ -466,6 +466,8 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
     myFixture.enableInspections(CssInvalidPseudoSelectorInspection())
     doTest()
   }
+
+  fun testScriptSetupScopePriority() = doDirTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2))
 
   fun testBindingToDataAttributes() = doTest()
 

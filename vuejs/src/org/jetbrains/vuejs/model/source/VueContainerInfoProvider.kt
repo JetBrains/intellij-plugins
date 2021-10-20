@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.psi.JSRecordType.PropertySignature
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.util.containers.MultiMap
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.EntityContainerInfoProvider.DecoratedContainerInfoProvider
 import org.jetbrains.vuejs.model.source.EntityContainerInfoProvider.InitializedContainerInfoProvider
@@ -21,8 +22,8 @@ interface VueContainerInfoProvider : EntityContainerInfoProvider<VueContainerInf
                             standardProperties: MutableMap<String, PropertySignature>)
     : Collection<PropertySignature> = emptyList()
 
-  data class ComponentsInfo(val local: Map<String, VueComponent>, val global: Map<String, VueComponent>) {
-    fun get(local: Boolean): Map<String, VueComponent> = if (local) this.local else global
+  data class ComponentsInfo(val local: MultiMap<String, VueComponent>, val global: MultiMap<String, VueComponent>) {
+    fun get(local: Boolean): MultiMap<String, VueComponent> = if (local) this.local else global
   }
 
   interface VueContainerInfo {
