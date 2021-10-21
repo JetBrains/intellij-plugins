@@ -11,13 +11,9 @@ open class DenoTestBase : BasePlatformTestCase() {
   override fun setUp() {
     super.setUp()
     val project = myFixture.project
-    before = DenoSettings.getService(project).isUseDeno()
-    DenoSettings.getService(project).setUseDeno(true)
-    //required to update deno libs
-    WriteAction.run<RuntimeException> {
-      ProjectRootManagerEx.getInstanceEx(myFixture.project).makeRootsChange(
-        EmptyRunnable.getInstance(), false, true)
-    }
+    val service = DenoSettings.getService(project)
+    before = service.isUseDeno()
+    service.setUseDenoAndReload(true)
   }
 
   override fun tearDown() {
