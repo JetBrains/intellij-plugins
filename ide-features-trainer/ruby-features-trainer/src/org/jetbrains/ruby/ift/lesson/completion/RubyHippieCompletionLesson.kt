@@ -3,6 +3,7 @@ package org.jetbrains.ruby.ift.lesson.completion
 
 import org.jetbrains.ruby.ift.RubyLessonsBundle
 import training.dsl.LessonContext
+import training.dsl.LessonUtil
 import training.dsl.LessonUtil.restoreIfModifiedOrMoved
 import training.dsl.parseLessonSample
 import training.learn.course.KLesson
@@ -51,6 +52,6 @@ end
 
   override val helpLinks: Map<String, String> get() = mapOf(
     Pair(RubyLessonsBundle.message("ruby.hippie.completion.help.link"),
-         "https://www.jetbrains.com/help/ruby/auto-completing-code.html#hippie_completion"),
+         LessonUtil.getHelpLink("ruby", "auto-completing-code.html#hippie_completion")),
   )
 }
