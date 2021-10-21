@@ -7,6 +7,7 @@ import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.ui.NameSuggestionsField
 import org.jetbrains.ruby.ift.RubyLessonsBundle
 import training.dsl.LessonContext
+import training.dsl.LessonUtil
 import training.dsl.LessonUtil.restoreIfModifiedOrMoved
 import training.dsl.dropMnemonic
 import training.dsl.parseLessonSample
@@ -85,4 +86,9 @@ class RubyRenameLesson
         }
       }
     }
+
+  override val helpLinks: Map<String, String> get() = mapOf(
+    Pair(LessonsBundle.message("rename.help.link"),
+         LessonUtil.getHelpLink("rename-refactorings.html")),
+  )
 }
