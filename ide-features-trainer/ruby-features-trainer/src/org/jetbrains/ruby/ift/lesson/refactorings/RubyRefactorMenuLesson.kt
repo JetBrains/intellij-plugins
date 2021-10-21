@@ -10,6 +10,7 @@ import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.SymbolUtil
 import org.jetbrains.plugins.ruby.ruby.refactoring.pushDown.RubyPushDownHandler
 import org.jetbrains.ruby.ift.RubyLessonsBundle
 import training.dsl.LessonContext
+import training.dsl.LessonUtil
 import training.dsl.LessonUtil.restoreIfModifiedOrMoved
 import training.dsl.defaultRestoreDelay
 import training.dsl.parseLessonSample
@@ -84,4 +85,9 @@ class RubyRefactorMenuLesson
       element.className == RubyPushDownHandler::class.java.name
     } != null
   }
+
+  override val helpLinks: Map<String, String> get() = mapOf(
+    Pair(LessonsBundle.message("refactoring.menu.help.link"),
+         LessonUtil.getHelpLink("refactoring-source-code.html#refactoring_invoke")),
+  )
 }
