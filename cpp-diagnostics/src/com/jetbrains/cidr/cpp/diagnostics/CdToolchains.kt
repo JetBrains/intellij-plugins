@@ -55,16 +55,20 @@ fun processSystemInfo(log: CdIndenter) {
 }
 
 private fun processDevOptions(log: CdIndenter) {
-  fun logOption(option: String, intOption: Boolean = false) =
-    log.put("${option} = ${if (intOption) Registry.intValue(option) else Registry.`is`(option)}")
+  fun logOption(option: String, defaultValue: Boolean) =
+    log.put("${option} = ${Registry.`is`(option, defaultValue)}")
+
+  fun logIntOption(option: String, defaultValue: Int) =
+    log.put("${option} = ${Registry.intValue(option, defaultValue)}")
 
   log.put("Options:")
   log.scope {
-    logOption("clion.remote.use.rsync")
-    logOption("clion.remote.compress.tar")
-    logOption("clion.remote.tar.timeout", true)
-    logOption("clion.remote.resync.system.cache")
-    logOption("clion.remote.upload.external.changes")
+    // Note: keep default values in sync with actual values
+    logOption("clion.remote.use.rsync", defaultValue = true)
+    logOption("clion.remote.compress.tar", defaultValue = true)
+    logIntOption("clion.remote.tar.timeout", defaultValue = 240000)
+    logOption("clion.remote.resync.system.cache", defaultValue = false)
+    logOption("clion.remote.upload.external.changes", defaultValue = true)
   }
 }
 
