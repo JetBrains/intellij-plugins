@@ -1,9 +1,10 @@
 package com.intellij.deno.codeInsight
 
 import com.intellij.deno.DenoTestBase
+import com.intellij.lang.javascript.BaseJSCompletionTestCase
 import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase
 
-class DenoHighlightTest : DenoTestBase() {
+class DenoHighlightCompletionTest : DenoTestBase() {
 
   override fun setUp() {
     super.setUp()
@@ -15,5 +16,11 @@ class DenoHighlightTest : DenoTestBase() {
     myFixture.configureByText("foo.ts", "console.log(Deno)\n" +
                                         "console.log(<error>Deno1</error>)")
     myFixture.testHighlighting()
+  }
+  
+  fun testDenoGlobalCompletion() {
+    myFixture.configureByText("foo.ts","De<caret>")
+    val elements = myFixture.completeBasic()
+    BaseJSCompletionTestCase.checkWeHaveInCompletion(elements, "Deno")
   }
 }

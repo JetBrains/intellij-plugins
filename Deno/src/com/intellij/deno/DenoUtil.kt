@@ -11,7 +11,7 @@ import java.io.File
 object DenoUtil {
   
   fun getDenoTypings(): String {
-    return JSLanguageServiceUtil.getPluginDirectory(this::class.java, "deno-service/node_modules/typescript-deno-plugin/lib").path
+    return JSLanguageServiceUtil.getPluginDirectory(this::class.java, "deno-service/node_modules/typescript-deno-plugin/lib/lib.deno.d.ts").path
   }
 
   fun getDefaultDenoExecutable() = detectDenoPaths().firstOrNull()

@@ -12,6 +12,8 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.progress.util.BackgroundTaskUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VirtualFile
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -68,12 +70,18 @@ class DenoTypings(val project: Project) : Disposable {
     return false
   }
 
-  fun getDenoTypings(): String {
+  private fun getDenoTypings(): String {
     return FileUtil.toSystemIndependentName(getGeneratedDenoTypings())
   }
 
-  fun getBundledTypings(): String {
-    return DenoUtil.getDenoTypings()
+  private fun getBundledTypings(): String {
+    return FileUtil.toSystemIndependentName(DenoUtil.getDenoTypings())
+  }
+  
+  fun getDenoTypingsVirtualFile(): VirtualFile? {
+    val typings = LocalFileSystem.getInstance().findFileByPath(getDenoTypings())
+    if (typings != null && typings.isValid) return typings
+    return LocalFileSystem.getInstance().findFileByPath(getBundledTypings())
   }
 
   private fun getGeneratedDenoTypings() =
