@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.intentions;
 
 import com.intellij.codeInsight.intention.IntentionAction;
@@ -37,7 +37,7 @@ public class ScenarioToOutlineIntention implements IntentionAction {
   @Override
   @NotNull
   public String getFamilyName() {
-    return CucumberBundle.message("intention.family.name.cucumber");
+    return CucumberBundle.message("intention.convert.scenario.to.outline.name");
   }
 
   @Override
