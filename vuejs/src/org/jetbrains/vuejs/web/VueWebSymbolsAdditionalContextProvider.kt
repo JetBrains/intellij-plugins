@@ -7,6 +7,7 @@ import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_EVENTS
 import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_SLOTS
 import com.intellij.javascript.web.symbols.WebSymbol.NameSegment
 import com.intellij.javascript.web.symbols.WebSymbol.Priority
+import com.intellij.javascript.web.symbols.WebSymbolCodeCompletionItemCustomizer.Companion.decorateWithSymbolType
 import com.intellij.javascript.web.symbols.WebSymbolsContainer.Companion.NAMESPACE_HTML
 import com.intellij.javascript.web.symbols.WebSymbolsContainer.Namespace
 import com.intellij.javascript.web.symbols.patterns.RegExpPattern
@@ -87,8 +88,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
           WebSymbol.KIND_HTML_ATTRIBUTES ->
             item.symbol
               ?.takeIf { it.kind == KIND_VUE_COMPONENT_PROPS }
-              ?.jsType?.getTypeText(JSType.TypeTextFormat.PRESENTABLE)
-              ?.let { item.withTypeText(it) }
+              ?.let { item.decorateWithSymbolType(it) }
             ?: item
           else -> item
         }
