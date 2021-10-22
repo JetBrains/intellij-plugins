@@ -1,13 +1,8 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<!--
-  ~ Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-  -->
-
 <idea-plugin>
-
+  <id>Karma</id>
   <name>Karma</name>
   <description><![CDATA[
-  Integration with <a href="http://karma-runner.github.io/">Karma</a>, a spectacular test runner for JavaScript
+  Integration with <a href="https://karma-runner.github.io/">Karma</a>, a spectacular test runner for JavaScript
   ]]></description>
   <vendor>JetBrains</vendor>
   <category>JavaScript Frameworks and Tools</category>
