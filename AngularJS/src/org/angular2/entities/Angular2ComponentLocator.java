@@ -4,6 +4,7 @@ package org.angular2.entities;
 import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.DialectDetector;
+import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil;
@@ -78,11 +79,15 @@ public final class Angular2ComponentLocator {
   private static @NotNull List<TypeScriptClass> resolveComponentsFromSimilarFile(@NotNull PsiFile file) {
     final String name = file.getViewProvider().getVirtualFile().getNameWithoutExtension();
     final PsiDirectory dir = file.getParent();
-    final PsiFile directiveFile = dir != null ? dir.findFile(name + ".ts") : null;
+    if (dir == null) return emptyList();
+    for (String ext : TypeScriptUtil.TYPESCRIPT_EXTENSIONS_WITHOUT_DTS) {
+      final PsiFile directiveFile = dir.findFile(name + ext);
 
-    if (directiveFile != null) {
-      return findComponentClassesInFile(directiveFile, (cls, dec) -> hasFileReference(dec, file));
+      if (directiveFile != null) {
+        return findComponentClassesInFile(directiveFile, (cls, dec) -> hasFileReference(dec, file));
+      }
     }
+    
     return emptyList();
   }
 

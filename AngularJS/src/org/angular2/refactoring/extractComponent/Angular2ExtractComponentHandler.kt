@@ -2,11 +2,13 @@
 package org.angular2.refactoring.extractComponent
 
 import com.intellij.application.options.CodeStyle
+import com.intellij.javascript.JSFileReference
 import com.intellij.lang.ecmascript6.psi.impl.ES6CreateImportUtil
 import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil
 import com.intellij.lang.injection.InjectedLanguageManager
+import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSType
@@ -27,10 +29,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.ActionCallback
-import com.intellij.openapi.util.Conditions
-import com.intellij.openapi.util.NlsContexts
-import com.intellij.openapi.util.Ref
+import com.intellij.openapi.util.*
 import com.intellij.openapi.vfs.ReadonlyStatusHandler
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
@@ -173,8 +172,10 @@ class Angular2ExtractComponentHandler : RefactoringActionHandler {
 
   private fun extractComponentPath(output: List<String>): String? {
     output.forEach { filePath ->
-      if (filePath.endsWith(".ts") && !filePath.endsWith(".spec.ts")) {
-        return filePath
+      val ext = JSFileReference.findExtension(filePath, TypeScriptUtil.TYPESCRIPT_EXTENSIONS)
+      if (ext != null) {
+        val trimmedName = JSFileReference.trimExitingExtension(filePath, ext)
+        if (!trimmedName.endsWith(".spec")) return filePath
       }
     }
     return null
@@ -241,6 +242,7 @@ class Angular2ExtractComponentHandler : RefactoringActionHandler {
     for (attribute in extractedComponent.attributes) {
       val name = attribute.name
       val type = attribute.jsType.getTypeText(JSType.TypeTextFormat.CODE)
+      @Suppress("HardCodedStringLiteral") 
       val texts = when (attribute.attributeType) {
         Angular2AttributeType.PROPERTY_BINDING -> {
           seenInput = true
