@@ -3,6 +3,9 @@ v-bind:#null
 v-model:#null
 v-on:#null
 v-slot:#null
+:is#null
+:key#null
+:ref#null
 :about#null
 :accesskey#null
 :align#null
@@ -21,7 +24,6 @@ v-slot:#null
 :id#null
 :inlist#null
 :inputmode#null
-:is#null
 :itemid#null
 :itemprop#null
 :itemref#null
@@ -43,8 +45,6 @@ v-slot:#null
 :translate#null
 :typeof#null
 :vocab#null
-:key#null
-:ref#null
 xml:base#null
 xml:lang#null
 xml:space#null

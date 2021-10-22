@@ -1,3 +1,6 @@
+is
+key
+ref
 about
 accesskey
 autocapitalize
@@ -17,7 +20,6 @@ hreflang
 id
 inlist
 inputmode
-is
 itemid
 itemprop
 itemref
@@ -45,6 +47,4 @@ type
 typeof
 urn
 vocab
-key
-ref
 slot
