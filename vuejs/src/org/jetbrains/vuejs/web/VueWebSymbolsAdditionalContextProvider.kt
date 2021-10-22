@@ -80,19 +80,19 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
     ?: emptyList()
 
   class VueSymbolsCodeCompletionItemCustomizer : WebSymbolCodeCompletionItemCustomizer {
-    override fun customize(codeCompletionItem: WebSymbolCodeCompletionItem,
-                           namespace: Namespace, kind: SymbolKind): WebSymbolCodeCompletionItem =
-      if (namespace == Namespace.HTML)
+    override fun customize(item: WebSymbolCodeCompletionItem,
+                           framework: FrameworkId?, namespace: Namespace, kind: SymbolKind): WebSymbolCodeCompletionItem =
+      if (namespace == Namespace.HTML && framework == VueFramework.ID)
         when (kind) {
           WebSymbol.KIND_HTML_ATTRIBUTES ->
-            codeCompletionItem.symbol
+            item.symbol
               ?.takeIf { it.kind == KIND_VUE_COMPONENT_PROPS }
               ?.jsType?.getTypeText(JSType.TypeTextFormat.PRESENTABLE)
-              ?.let { codeCompletionItem.withTypeText(it) }
-            ?: codeCompletionItem
-          else -> codeCompletionItem
+              ?.let { item.withTypeText(it) }
+            ?: item
+          else -> item
         }
-      else codeCompletionItem
+      else item
   }
 
   private abstract class VueWrapperBase : WebSymbolsContainer {
