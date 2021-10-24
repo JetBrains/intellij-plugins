@@ -82,7 +82,8 @@ final class AngularUiRouterDiagramModel extends DiagramDataModel<DiagramObject> 
       context.registerNodesBuilder(model);
       myNodes.addAll(model.getAllNodes());
       myEdges.addAll(model.getEdges());
-      ApplicationManager.getApplication().invokeLater(() -> getBuilder().update(true, true));
+      ApplicationManager.getApplication().invokeLater(
+        () -> getBuilder().queryUpdate().withDataReload().withPresentationUpdate().withRelayout().run());
     }
   }
 

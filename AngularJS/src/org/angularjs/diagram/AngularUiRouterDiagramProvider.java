@@ -340,7 +340,7 @@ final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramOb
           final DiagramBuilder builder = getBuilder();
           builder.relayout();
           builder.getView().fitContent();
-          builder.updateView();
+          builder.queryUpdate().run();
           if (!nodes.isEmpty()) {
             final Collection<DiagramNode<?>> objects = builder.getNodeObjects();
             for (DiagramNode<?> object : objects) {
