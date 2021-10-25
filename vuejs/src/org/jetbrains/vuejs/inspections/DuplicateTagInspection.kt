@@ -29,7 +29,8 @@ class DuplicateTagInspection : LocalInspectionTool() {
         if (!templateTag && !scriptTag) return
         val parent = tag.parent as? XmlDocument ?: return
         val isScriptSetup = scriptTag && tag.getAttribute(SETUP_ATTRIBUTE_NAME) != null
-        if (PsiTreeUtil.getChildrenOfType(parent, XmlTag::class.java).any {
+        val xmlTags = PsiTreeUtil.getChildrenOfType(parent, XmlTag::class.java)
+        if (xmlTags != null && xmlTags.any {
             it != tag && ((scriptTag && HtmlUtil.isScriptTag(it) && isScriptSetup == (it.getAttribute(SETUP_ATTRIBUTE_NAME) != null))
                           || (templateTag && it.name == TEMPLATE_TAG_NAME))
           }) {
