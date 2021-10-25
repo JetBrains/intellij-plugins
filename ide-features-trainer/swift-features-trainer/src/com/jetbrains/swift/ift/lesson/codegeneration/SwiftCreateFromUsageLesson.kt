@@ -46,7 +46,7 @@ class CreateFromUsage: UIViewController {
     caret(17, 20)
     task {
       triggers("ShowIntentionActions", "EditorChooseLookupItem")
-      text(SwiftLessonsBundle.message("swift.codegeneration.cfu.create.class", action("ShowIntentionActions")))
+      text(SwiftLessonsBundle.message("swift.codegeneration.cfu.create.class", action("ShowIntentionActions"), LessonUtil.rawEnter()))
     }
     caret(22, 27)
     task {

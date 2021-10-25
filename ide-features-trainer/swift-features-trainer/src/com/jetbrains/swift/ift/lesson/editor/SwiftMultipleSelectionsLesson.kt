@@ -73,7 +73,7 @@ SIX
     caret(29, 1)
     task {
       triggers("EditorToggleColumnMode", "EditorDownWithSelection", "EditorDownWithSelection", "EditorDownWithSelection", "EditorDownWithSelection", "EditorDownWithSelection")
-      text(SwiftLessonsBundle.message("swift.editor.selections.column", action("EditorToggleColumnMode"), code("ONE"), code("SIX")))
+      text(SwiftLessonsBundle.message("swift.editor.selections.column", action("EditorToggleColumnMode"), code("ONE"), code("SIX"), action("EditorDownWithSelection")))
     }
     task {
       triggers("EditorNextWordWithSelection")

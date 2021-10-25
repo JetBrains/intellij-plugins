@@ -4,6 +4,7 @@ import com.intellij.icons.AllIcons
 import com.jetbrains.swift.ift.SwiftLessonsBundle
 import training.dsl.LessonContext
 import training.dsl.LessonSample
+import training.dsl.LessonUtil
 import training.dsl.parseLessonSample
 import training.learn.course.KLesson
 
@@ -38,7 +39,7 @@ class ExtractMethod: UIViewController {
     select(11, 9, 18, 43)
     task {
       triggers("SwiftExtractFunction")
-      text(SwiftLessonsBundle.message("swift.refactoring.extract.function.intro", code("setup"), action("ExtractMethod")))
+      text(SwiftLessonsBundle.message("swift.refactoring.extract.function.intro", code("setup"), action("ExtractMethod"),  LessonUtil.rawEnter()))
     }
     task {
       triggers("\$Undo")
