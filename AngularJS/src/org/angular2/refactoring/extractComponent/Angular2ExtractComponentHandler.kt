@@ -56,7 +56,7 @@ import org.angular2.lang.Angular2LangUtil.OUTPUT_CHANGE_SUFFIX
 import org.angular2.lang.html.parser.Angular2AttributeType
 
 class Angular2ExtractComponentHandler : RefactoringActionHandler {
-  override fun invoke(project: Project, elements: Array<out PsiElement>?, dataContext: DataContext?) {
+  override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext?) {
     // available only in editor
   }
 
