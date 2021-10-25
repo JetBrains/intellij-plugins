@@ -26,7 +26,7 @@ class VueFramework : WebFramework() {
                         target: WebSymbolNamesProvider.Target): List<String> =
     if (namespace == WebSymbolsContainer.Namespace.HTML)
       when (target) {
-        WebSymbolNamesProvider.Target.NAMES_MAP_QUERY ->
+        WebSymbolNamesProvider.Target.NAMES_QUERY ->
           when (kind) {
             KIND_VUE_COMPONENTS ->
               listOf(name, fromAsset(name, true))

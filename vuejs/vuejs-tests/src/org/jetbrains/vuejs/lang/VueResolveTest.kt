@@ -1,10 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang
 
-import com.intellij.javascript.web.assertUnresolvedReference
-import com.intellij.javascript.web.moveToOffsetBySignature
-import com.intellij.javascript.web.renderLookupItems
-import com.intellij.javascript.web.resolveReference
+import com.intellij.javascript.web.*
 import com.intellij.lang.ecmascript6.psi.JSClassExpression
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClassExpression
@@ -104,9 +101,9 @@ class VueResolveTest : BasePlatformTestCase() {
 </script>""")
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)
-    val literal = reference!!.resolve()!!.parent
-    TestCase.assertTrue(literal is JSLiteralExpression)
-    TestCase.assertTrue(literal!!.parent is JSArrayLiteralExpression)
+    val literal = myFixture.webSymbolSourceAtCaret()!!.parent
+    assertInstanceOf(literal, JSLiteralExpression::class.java)
+    assertInstanceOf(literal!!.parent, JSArrayLiteralExpression::class.java)
     TestCase.assertEquals("'pascalCase'", literal.text)
   }
 
@@ -806,13 +803,10 @@ export default {
 </script>
 """)
 
-    val reference = myFixture.getReferenceAtCaretPosition()
-    TestCase.assertNotNull(reference)
-    val literal = reference!!.resolve()!!.parent
-    TestCase.assertNotNull(literal)
-    TestCase.assertTrue(literal is JSLiteralExpression)
+    val literal = myFixture.webSymbolSourceAtCaret()!!.parent
+    assertInstanceOf(literal, JSLiteralExpression::class.java)
     TestCase.assertEquals("'libComponentProp'", literal!!.text)
-    TestCase.assertTrue(literal.parent is JSArrayLiteralExpression)
+    assertInstanceOf(literal.parent, JSArrayLiteralExpression::class.java)
     TestCase.assertEquals("props", (literal.parent.parent as JSProperty).name)
   }
 
@@ -832,13 +826,10 @@ export default {
       </template>
     """.trimIndent())
 
-    val reference = myFixture.getReferenceAtCaretPosition()
-    TestCase.assertNotNull(reference)
-    val property = reference!!.resolve()!!.parent
-    TestCase.assertNotNull(property)
-    TestCase.assertTrue(property is JSProperty)
+    val property = myFixture.webSymbolSourceAtCaret()!!.parent
+    assertInstanceOf(property, JSProperty::class.java)
     TestCase.assertEquals("kuku", (property as JSProperty).name)
-    TestCase.assertTrue(property.parent.parent is JSProperty)
+    assertInstanceOf(property.parent.parent, JSProperty::class.java)
     TestCase.assertEquals("props", (property.parent.parent as JSProperty).name)
   }
 
@@ -850,13 +841,10 @@ export default {
       </template>
     """.trimIndent())
 
-    val reference = myFixture.getReferenceAtCaretPosition()
-    TestCase.assertNotNull(reference)
-    val property = reference!!.resolve()!!.parent
-    TestCase.assertNotNull(property)
-    TestCase.assertTrue(property is JSProperty)
+    val property = myFixture.webSymbolSourceAtCaret()!!.parent
+    assertInstanceOf(property, JSProperty::class.java)
     TestCase.assertEquals("to", (property as JSProperty).name)
-    TestCase.assertTrue(property.parent.parent is JSProperty)
+    assertInstanceOf(property.parent.parent, JSProperty::class.java)
     TestCase.assertEquals("props", (property.parent.parent as JSProperty).name)
   }
 
@@ -884,9 +872,7 @@ export default {
       </template>
 """)
 
-    val reference = myFixture.getReferenceAtCaretPosition()
-    TestCase.assertNotNull(reference)
-    val property = reference!!.resolve()!!.parent
+    val property = myFixture.webSymbolSourceAtCaret()!!.parent
     TestCase.assertNotNull(property)
     TestCase.assertTrue(property is JSProperty)
     TestCase.assertEquals("from", (property as JSProperty).name)
@@ -913,12 +899,10 @@ Vue.component(alias, WiseComp)
   }
 
   private fun doResolveAliasIntoLibraryComponent(compName: String, fileName: String) {
-    val reference = myFixture.getReferenceAtCaretPosition()
-    TestCase.assertNotNull(reference)
-    val target = reference!!.resolve()
+    val target = myFixture.webSymbolSourceAtCaret()
     TestCase.assertNotNull(target)
     TestCase.assertEquals(fileName, target!!.containingFile.name)
-    TestCase.assertTrue(target.parent is JSProperty)
+    assertInstanceOf(target.parent, JSProperty::class.java)
     TestCase.assertEquals(compName, (target as JSImplicitElement).name)
   }
 
@@ -935,13 +919,9 @@ Vue.component('global-comp-literal', {
   <global-comp-literal <caret>inside-global-comp-literal=222></global-comp-literal>
 </template>
 """)
-    val reference = myFixture.getReferenceAtCaretPosition()
-    TestCase.assertNotNull(reference)
-    val element = reference!!.resolve()
-    TestCase.assertNotNull(element)
+    val element = myFixture.webSymbolSourceAtCaret()
     val property = element!!.parent
-    TestCase.assertNotNull(property)
-    TestCase.assertTrue(property is JSProperty)
+    assertInstanceOf(property, JSProperty::class.java)
     TestCase.assertEquals("insideGlobalCompLiteral", (property as JSProperty).name)
     TestCase.assertTrue(property.parent.parent is JSProperty)
     TestCase.assertEquals("props", (property.parent.parent as JSProperty).name)
@@ -964,11 +944,8 @@ Vue.component('global-comp-literal', {
 """)
     myFixture.checkHighlighting()
     myFixture.doHighlighting()
-    val reference = myFixture.getReferenceAtCaretPosition()
-    TestCase.assertNotNull(reference)
-    val literal = reference!!.resolve()!!.parent
-    TestCase.assertNotNull(literal)
-    TestCase.assertTrue(literal is JSLiteralExpression)
+    val literal = myFixture.webSymbolSourceAtCaret()!!.parent
+    assertInstanceOf(literal, JSLiteralExpression::class.java)
     TestCase.assertEquals("oneTwo", (literal as JSLiteralExpression).stringValue)
     TestCase.assertTrue(literal.parent is JSArrayLiteralExpression)
   }
@@ -990,9 +967,7 @@ const props = ['oneTwo']
 </script>
 """)
     myFixture.doHighlighting()
-    val reference = myFixture.getReferenceAtCaretPosition()
-    TestCase.assertNotNull(reference)
-    val literal = reference!!.resolve()!!.parent
+    val literal = myFixture.webSymbolSourceAtCaret()!!.parent
     TestCase.assertNotNull(literal)
     TestCase.assertTrue(literal is JSLiteralExpression)
     TestCase.assertEquals("oneTwo", (literal as JSLiteralExpression).stringValue)
@@ -1024,14 +999,11 @@ const props = ['oneTwo']
 """)
     myFixture.checkHighlighting()
     myFixture.doHighlighting()
-    val reference = myFixture.getReferenceAtCaretPosition()
-    TestCase.assertNotNull(reference)
-    val literal = reference!!.resolve()!!.parent
-    TestCase.assertNotNull(literal)
-    TestCase.assertTrue(literal is JSLiteralExpression)
+    val literal = myFixture.webSymbolSourceAtCaret()!!.parent
+    assertInstanceOf(literal, JSLiteralExpression::class.java)
     TestCase.assertEquals("seeMe", (literal as JSLiteralExpression).stringValue)
     TestCase.assertEquals("compUI.vue", literal.containingFile.name)
-    TestCase.assertTrue(literal.parent is JSArrayLiteralExpression)
+    assertInstanceOf(literal.parent, JSArrayLiteralExpression::class.java)
   }
 
   fun testImportedComponentPropsInCompAttrsObjectRef() {
@@ -1058,9 +1030,7 @@ const props = {seeMe: {}}
 </script>
 """)
     myFixture.checkHighlighting()
-    val reference = myFixture.getReferenceAtCaretPosition()
-    TestCase.assertNotNull(reference)
-    val property = reference!!.resolve()!!.parent
+    val property = myFixture.webSymbolSourceAtCaret()!!.parent
     TestCase.assertNotNull(property)
     TestCase.assertTrue(property is JSProperty)
     TestCase.assertEquals("seeMe", (property as JSProperty).name)
@@ -1092,9 +1062,7 @@ const props = {seeMe: {}}
 </script>
 """)
     myFixture.checkHighlighting()
-    val reference = myFixture.getReferenceAtCaretPosition()
-    TestCase.assertNotNull(reference)
-    val property = reference!!.resolve()!!.parent
+    val property = myFixture.webSymbolSourceAtCaret()!!.parent
     TestCase.assertNotNull(property)
     TestCase.assertTrue(property is JSProperty)
     TestCase.assertTrue(property!!.parent.parent is JSProperty)
@@ -1146,13 +1114,10 @@ const props = {seeMe: {}}
 </script>
 """)
 
-    val reference = myFixture.getReferenceAtCaretPosition()
-    TestCase.assertNotNull(reference)
-    val property = reference!!.resolve()!!.parent
-    TestCase.assertNotNull(property)
-    TestCase.assertTrue(property is JSProperty)
+    val property = myFixture.webSymbolSourceAtCaret()?.parent
+    assertInstanceOf(property, JSProperty::class.java)
     TestCase.assertEquals("mixinProp", (property as JSProperty).name)
-    TestCase.assertTrue(property.parent.parent is JSProperty)
+    assertInstanceOf(property.parent.parent, JSProperty::class.java)
     TestCase.assertEquals("props", (property.parent.parent as JSProperty).name)
     TestCase.assertEquals("MixinWithProp.vue", property.containingFile.name)
   }
@@ -1190,13 +1155,10 @@ const props = {seeMe: {}}
     myFixture.checkHighlighting(true, false, true)
 
     val checkResolve = { propName: String, file: String ->
-      val reference = myFixture.getReferenceAtCaretPosition()
-      TestCase.assertNotNull(reference)
-      val literal = reference!!.resolve()!!.parent
-      TestCase.assertNotNull(literal)
-      TestCase.assertTrue(literal is JSLiteralExpression)
+      val literal = myFixture.webSymbolSourceAtCaret()!!.parent
+      assertInstanceOf(literal, JSLiteralExpression::class.java)
       TestCase.assertEquals(propName, (literal as JSLiteralExpression).stringValue)
-      TestCase.assertTrue(literal.parent.parent is JSProperty)
+      assertInstanceOf(literal.parent.parent, JSProperty::class.java)
       TestCase.assertEquals("props", (literal.parent.parent as JSProperty).name)
       TestCase.assertEquals(file, literal.containingFile.name)
     }
@@ -1261,15 +1223,10 @@ const props = {seeMe: {}}
   }
 
   private fun doTestResolveIntoProperty(name: String) {
-    val reference = myFixture.getReferenceAtCaretPosition()
-    TestCase.assertNotNull(reference)
-    val element = reference!!.resolve()
-    TestCase.assertNotNull(element)
-    val property = element!!.parent
-    TestCase.assertNotNull(property)
-    TestCase.assertTrue(property is JSProperty)
+    val property = myFixture.webSymbolSourceAtCaret()?.parent
+    assertInstanceOf(property, JSProperty::class.java)
     TestCase.assertEquals(name, (property as JSProperty).name)
-    TestCase.assertTrue(property.parent.parent is JSProperty)
+    assertInstanceOf(property.parent.parent, JSProperty::class.java)
     TestCase.assertEquals("props", (property.parent.parent as JSProperty).name)
   }
 
@@ -1351,10 +1308,9 @@ const props = {seeMe: {}}
     myFixture.configureFromTempProjectFile("CustomDirectives.vue")
     val attribute = myFixture.findElementByText("v-focus", XmlAttribute::class.java)
     TestCase.assertNotNull(attribute)
-    myFixture.editor.caretModel.moveToOffset(attribute.textOffset)
-    val reference = myFixture.getReferenceAtCaretPosition()
-    TestCase.assertNotNull(reference)
-    val callExpression = reference!!.resolve()
+    myFixture.editor.caretModel.moveToOffset(attribute.textOffset + 2)
+
+    val callExpression = myFixture.webSymbolSourceAtCaret()
     TestCase.assertNotNull(callExpression)
     // unstub for test
     TestCase.assertNotNull(callExpression!!.text)
@@ -1373,7 +1329,7 @@ const props = {seeMe: {}}
       .forEach {
         val attribute = myFixture.findElementByText(it.first, XmlAttribute::class.java)
         TestCase.assertNotNull(attribute)
-        myFixture.editor.caretModel.moveToOffset(attribute.textOffset)
+        myFixture.editor.caretModel.moveToOffset(attribute.textOffset + 2)
         doTestResolveIntoDirective(it.second, it.third)
       }
   }
@@ -1390,15 +1346,13 @@ const props = {seeMe: {}}
       .forEach {
         val attribute = myFixture.findElementByText(it.first, XmlAttribute::class.java)
         TestCase.assertNotNull(attribute)
-        myFixture.editor.caretModel.moveToOffset(attribute.textOffset)
+        myFixture.editor.caretModel.moveToOffset(attribute.textOffset + 2)
         doTestResolveIntoDirective(it.second, it.third)
       }
   }
 
   private fun doTestResolveIntoDirective(directive: String, fileName: String) {
-    val reference = myFixture.getReferenceAtCaretPosition()
-    TestCase.assertNotNull(reference)
-    val property = reference!!.resolve()
+    val property = myFixture.webSymbolSourceAtCaret()
     TestCase.assertNotNull(directive, property)
     when (property) {
       is JSProperty -> {
@@ -1556,9 +1510,7 @@ Object.keys(obj).forEach(key => {
     myFixture.configureByText("ResolveAliasedObjectMemberComponent.vue",
                               """<template><<caret>alias/></template>""")
 
-    val reference = myFixture.getReferenceAtCaretPosition()
-    TestCase.assertNotNull(reference)
-    val target = reference!!.resolve()
+    val target = myFixture.webSymbolSourceAtCaret()
     TestCase.assertNotNull(target)
     TestCase.assertEquals("lib-comp-for-alias.es6", target!!.containingFile.name)
     TestCase.assertTrue(target.parent is JSProperty)
@@ -1611,9 +1563,7 @@ Object.keys(other).forEach(key => {
 """)
     myFixture.configureByText("ResolveObjectWithSpreadComponentAliased.vue",
                               """<template><<caret>lib-spread-alias/></template>""")
-    val reference = myFixture.getReferenceAtCaretPosition()
-    TestCase.assertNotNull(reference)
-    val target = reference!!.resolve()
+    val target = myFixture.webSymbolSourceAtCaret()
     TestCase.assertNotNull(target)
     TestCase.assertEquals("lib-spread.es6", target!!.containingFile.name)
     TestCase.assertTrue(target.parent is JSProperty)
@@ -1751,9 +1701,9 @@ export default class UsageComponent extends Vue {
 }
 </script>
 """)
-    val target = myFixture.resolveReference("<<caret>LongComponent/>")
+    val target = myFixture.resolveToWebSymbolSource("<<caret>LongComponent/>")
     TestCase.assertEquals("LongComponent.vue", target.containingFile.name)
-    TestCase.assertTrue(target.parent is TypeScriptClassExpression)
+    assertInstanceOf(target.parent, TypeScriptClassExpression::class.java)
   }
 
   fun testLocalComponentsExtendsResolve() {
@@ -1764,21 +1714,16 @@ export default class UsageComponent extends Vue {
   }
 
   private fun doResolveIntoClassComponent(fileName: String, checkType: Boolean = true) {
-    val reference = myFixture.getReferenceAtCaretPosition()
-    TestCase.assertNotNull(reference)
-    val target = reference!!.resolve()
+    val target = myFixture.webSymbolSourceAtCaret()
     TestCase.assertNotNull(target)
     TestCase.assertEquals(fileName, target!!.containingFile.name)
     if (checkType) {
-      TestCase.assertTrue(target.parent is JSClassExpression)
+      assertInstanceOf(target.parent, JSClassExpression::class.java)
     }
   }
 
   private fun doResolveIntoLibraryComponent(compName: String, fileName: String) {
-    val reference = myFixture.getReferenceAtCaretPosition()
-    TestCase.assertNotNull(reference)
-    val target = reference!!.resolve()
-    TestCase.assertNotNull(target)
+    val target = myFixture.webSymbolSourceAtCaret()
     TestCase.assertEquals(fileName, target!!.containingFile.name)
     TestCase.assertTrue(target.parent is JSProperty)
     TestCase.assertEquals(compName, StringUtil.unquoteString((target.parent as JSProperty).value!!.text))
@@ -1826,8 +1771,8 @@ export default class UsageComponent extends Vue {
         export default app;
         const app = { name: 'app', components: { HelloWorld } };
       </script>""")
-    val reference = myFixture.file.findReferenceAt(myFixture.editor.caretModel.offset)
-    TestCase.assertEquals("name: 'HelloWorld'", reference!!.resolve()!!.parent.text)
+    val target = myFixture.webSymbolSourceAtCaret()
+    TestCase.assertEquals("name: 'HelloWorld'", target!!.parent.text)
   }
 
   fun testComponentModelProperty() {
@@ -1846,7 +1791,7 @@ export default class UsageComponent extends Vue {
   }
 
   fun testResolveToUnresolvedComponent() {
-    myFixture.configureByText("a.vue","""
+    myFixture.configureByText("a.vue", """
        <script>
         import Foo from "foo.vue"
         export default {
@@ -1855,7 +1800,7 @@ export default class UsageComponent extends Vue {
       </script>
       <template><Foo></Foo></template>
     """.trimIndent())
-    myFixture.resolveReference("<F<caret>oo>")
+    myFixture.resolveToWebSymbolSource("<F<caret>oo>")
       .parent.text
       .let { TestCase.assertEquals("{ Foo }", it) }
   }
@@ -1906,7 +1851,7 @@ export default class UsageComponent extends Vue {
       .forEach { testCase ->
         TestCase.assertEquals(
           testCase.value,
-          myFixture.resolveReference(testCase.key)
+          myFixture.resolveToWebSymbolSource(testCase.key)
             .let {
               (it as? JSImplicitElement)?.context ?: it
             }.text)
@@ -1946,7 +1891,7 @@ export default class UsageComponent extends Vue {
       val slotWithCaret = slotName.replaceRange(1, 1, "<caret>")
       for (signature in listOf("<$tag><template v-slot:$slotWithCaret",
                                "<$tag><div slot=\"$slotWithCaret\"")) {
-        val element = myFixture.resolveReference(signature)
+        val element = myFixture.resolveToWebSymbolSource(signature)
         assertEquals(signature, slotDeclText, element.text)
       }
     }
@@ -2034,14 +1979,14 @@ export default class UsageComponent extends Vue {
     myFixture.configureByFiles("noScriptSection/test.vue", "noScriptSection/noScriptSection.vue")
     TestCase.assertEquals(
       "noScriptSection.vue",
-      myFixture.resolveReference("<no-script<caret>-section>").containingFile.name)
+      myFixture.resolveToWebSymbolSource("<no-script<caret>-section>").containingFile.name)
   }
 
   fun testLazyLoaded() {
     myFixture.configureByFiles("lazyLoaded/main.vue", "lazyLoaded/index.vue")
     TestCase.assertEquals(
       "index.vue",
-      myFixture.resolveReference("<Hello<caret>World").containingFile.name)
+      myFixture.resolveToWebSymbolSource("<Hello<caret>World").containingFile.name)
   }
 
 }

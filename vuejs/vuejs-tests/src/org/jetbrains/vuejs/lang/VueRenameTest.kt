@@ -26,6 +26,7 @@
 // limitations under the License.
 package org.jetbrains.vuejs.lang
 
+import com.intellij.idea.Bombed
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil
@@ -64,6 +65,7 @@ class VueRenameTest : BasePlatformTestCase() {
     myFixture.checkResultByFile("inlineField_after.vue")
   }
 
+  @Bombed(year = 2021, month = 12, day = 1, user = "piotr.tomiak", description = "Implement WebSymbol based rename")
   fun testComponentNameFromDeclaration() {
     val testName = getTestName(true)
     val testFiles = listOf("1.vue", "2.vue", ".html", ".ts", ".js").map { testName + it }

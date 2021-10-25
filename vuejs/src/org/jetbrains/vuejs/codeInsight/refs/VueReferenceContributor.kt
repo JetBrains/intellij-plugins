@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight.refs
 
+import com.intellij.javascript.web.symbols.PsiSourcedWebSymbol
 import com.intellij.lang.javascript.modules.NodeModuleUtil.NODE_MODULES
 import com.intellij.lang.javascript.psi.util.JSProjectUtil
 import com.intellij.openapi.fileTypes.FileType
@@ -24,30 +25,11 @@ import org.jetbrains.vuejs.model.getAvailableSlots
 class VueReferenceContributor : PsiReferenceContributor() {
 
   override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
-    registrar.registerReferenceProvider(DEPRECATED_SLOT_NAME_ATTR_PATTERN, DEPRECATED_SLOT_REF_PROVIDER)
     registrar.registerReferenceProvider(createSrcAttrValuePattern(STYLE_TAG_NAME), STYLE_REF_PROVIDER)
     registrar.registerReferenceProvider(createSrcAttrValuePattern(TEMPLATE_TAG_NAME), BASIC_REF_PROVIDER)
   }
 
   companion object {
-
-    private val DEPRECATED_SLOT_NAME_ATTR_PATTERN = XmlPatterns.xmlAttributeValue(DEPRECATED_SLOT_ATTRIBUTE)
-
-    private val DEPRECATED_SLOT_REF_PROVIDER = object : PsiReferenceProvider() {
-      override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> {
-        if (element is XmlAttributeValue && element.textLength > 2) {
-          return arrayOf(object : PsiReferenceBase<XmlAttributeValue>(element, TextRange(1, element.textLength - 1), true) {
-            override fun resolve(): PsiElement? {
-              return (element.parent as? XmlAttribute)
-                ?.let { getAvailableSlots(it, false) }
-                ?.find { it.name == this.value }
-                ?.source
-            }
-          })
-        }
-        return PsiReference.EMPTY_ARRAY
-      }
-    }
 
     private val STYLE_REF_PROVIDER = object : PsiReferenceProvider() {
       override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> {

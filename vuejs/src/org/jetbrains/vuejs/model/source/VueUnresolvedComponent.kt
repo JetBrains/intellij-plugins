@@ -1,18 +1,25 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.source
 
+import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier
+import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.types.JSAnyType
 import com.intellij.model.Pointer
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.suggested.createSmartPointer
+import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueEntitiesContainer
 import org.jetbrains.vuejs.model.getDefaultVueComponentInstanceType
 
 class VueUnresolvedComponent(private val context: PsiElement,
-                             override val source: PsiElement?,
+                             private val mySource: PsiElement?,
                              override val defaultName: String?) : VueComponent {
+
+  override val source: PsiElement? by lazy(LazyThreadSafetyMode.NONE) {
+    (mySource as? ES6ImportSpecifier)?.resolveIfImportSpecifier() ?: mySource
+  }
 
   override val parents: List<VueEntitiesContainer> = emptyList()
 

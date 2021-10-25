@@ -76,7 +76,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
       ?.let { VueModelManager.findEnclosingContainer(it) }
       ?.let {
         listOfNotNull(EntityContainerWrapper(element, it),
-          (element as? XmlTag)?.let { tag -> AvailableSlotsContainer(tag) })
+                      (element as? XmlTag)?.let { tag -> AvailableSlotsContainer(tag) })
       }
     ?: emptyList()
 
@@ -230,8 +230,8 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
               container.acceptEntities(object : VueModelVisitor() {
                 override fun visitDirective(name: String, directive: VueDirective, proximity: Proximity): Boolean {
                   result.add(WebSymbolCodeCompletionItem.create(fromAsset(name),
-                    symbol = DirectiveWrapper(name, directive),
-                    priority = priorityOf(proximity)))
+                                                                symbol = DirectiveWrapper(name, directive),
+                                                                priority = priorityOf(proximity)))
                   return true
                 }
               }, VueModelVisitor.Proximity.GLOBAL)
@@ -317,7 +317,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
   }
 
   private abstract class DocumentedItemWrapper<T : VueDocumentedItem>(
-    override val matchedName: String, protected val item: T) : VueWrapperBase(), WebSymbol {
+    override val matchedName: String, protected val item: T) : VueWrapperBase(), PsiSourcedWebSymbol {
 
     override val description: String?
       get() = item.documentation.description
