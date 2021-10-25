@@ -82,7 +82,7 @@ class QuickFixes: NSObject {
     caret(15, 41)
     task {
       triggers("ShowIntentionActions", "ShowIntentionActions")
-      text(SwiftLessonsBundle.message("swift.codegeneration.quickfix.typo.in.string", code("incorrctlySpeled")))
+      text(SwiftLessonsBundle.message("swift.codegeneration.quickfix.typo.in.string", action("ShowIntentionActions"), code("incorrctlySpeled")))
     }
     task {
       triggers("GotoNextError")
