@@ -47,7 +47,7 @@ class VueModuleImportTest : JSImportHighlightingAndCompletionLightTestBase() {
 
   fun testAutoImportFromVueWithJs() {
     JavaScriptFormatterTestBase.setTempSettings(project, JavascriptLanguage.INSTANCE, Consumer<JSCodeStyleSettings> {
-      it.USE_EXPLICIT_JS_EXTENSION = JSCodeStyleSettings.BooleanWithGlobalOption.TRUE
+      it.USE_EXPLICIT_JS_EXTENSION = JSCodeStyleSettings.UseExplicitExtension.TRUE
     })
 
     doTestActionWithCopyDirectory("Insert 'import HelloWorld from \"./src/HelloWorld.vue\"'", "vue", null, null)
