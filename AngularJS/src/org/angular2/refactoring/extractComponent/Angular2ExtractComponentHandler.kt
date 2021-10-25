@@ -174,7 +174,7 @@ class Angular2ExtractComponentHandler : RefactoringActionHandler {
     output.forEach { filePath ->
       val ext = JSFileReference.findExtension(filePath, TypeScriptUtil.TYPESCRIPT_EXTENSIONS)
       if (ext != null) {
-        val trimmedName = JSFileReference.trimExitingExtension(filePath, ext)
+        val trimmedName = JSFileReference.trimExistingExtension(filePath, ext)
         if (!trimmedName.endsWith(".spec")) return filePath
       }
     }

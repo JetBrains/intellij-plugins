@@ -80,7 +80,7 @@ public final class Angular2ComponentLocator {
     final String name = file.getViewProvider().getVirtualFile().getNameWithoutExtension();
     final PsiDirectory dir = file.getParent();
     if (dir == null) return emptyList();
-    for (String ext : TypeScriptUtil.TYPESCRIPT_EXTENSIONS_WITHOUT_DTS) {
+    for (String ext : TypeScriptUtil.TYPESCRIPT_EXTENSIONS_WITHOUT_DECLARATIONS) {
       final PsiFile directiveFile = dir.findFile(name + ext);
 
       if (directiveFile != null) {
