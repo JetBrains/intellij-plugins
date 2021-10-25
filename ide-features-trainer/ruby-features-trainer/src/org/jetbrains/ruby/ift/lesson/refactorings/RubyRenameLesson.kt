@@ -13,6 +13,7 @@ import training.dsl.dropMnemonic
 import training.dsl.parseLessonSample
 import training.learn.LessonsBundle
 import training.learn.course.KLesson
+import training.util.isToStringContains
 import javax.swing.JButton
 
 class RubyRenameLesson
@@ -71,7 +72,7 @@ class RubyRenameLesson
       val confirmRefactoringButton = RefactoringBundle.message("usageView.doAction").dropMnemonic()
       task {
         triggerByUiComponentAndHighlight(highlightInside = false) { button: JButton ->
-          button.text?.contains(confirmRefactoringButton) == true
+          button.text.isToStringContains(confirmRefactoringButton)
         }
       }
 

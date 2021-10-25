@@ -16,6 +16,7 @@ import training.dsl.LessonUtil
 import training.dsl.LessonUtil.highlightBreakpointGutter
 import training.dsl.highlightButtonById
 import training.learn.course.KLesson
+import training.util.isToStringContains
 
 class DebuggingFirstPartLesson
   : KLesson("Debugging Code. Part I", JsDebugLessonsBundle.message("js.debugger.part.1.title")) {
@@ -59,8 +60,7 @@ class DebuggingFirstPartLesson
                                             strong(XDebuggerBundle.message("debugger.session.tab.frames.title")), 
                                             strong(JSDebuggerBundle.message("js.console.node.process.name"))))
           stateCheck {
-            val text = focusOwner.toString()
-            text.contains("Terminal") 
+            focusOwner.isToStringContains("Terminal")
           }
         }
 
@@ -75,7 +75,7 @@ class DebuggingFirstPartLesson
                                             strong(JSDebuggerBundle.message("js.console.debug.name")),
                                             strong(JSDebuggerBundle.message("js.scripts.tab.title"))))
           stateCheck {
-            focusOwner.toString().contains("treeStructure.SimpleTree")
+            focusOwner.isToStringContains("treeStructure.SimpleTree")
           }
         }
         text(JsDebugLessonsBundle.message("js.debugger.part.1.next", strong(JSDebuggerBundle.message("js.scripts.tab.title")),

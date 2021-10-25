@@ -16,6 +16,7 @@ import training.dsl.defaultRestoreDelay
 import training.dsl.parseLessonSample
 import training.learn.LessonsBundle
 import training.learn.course.KLesson
+import training.util.isToStringContains
 
 class RubyRefactorMenuLesson
   : KLesson("Refactoring menu", LessonsBundle.message("refactoring.menu.lesson.name")) {
@@ -42,7 +43,7 @@ class RubyRefactorMenuLesson
         text(RubyLessonsBundle.message("ruby.refactoring.menu.invoke.refactoring.list", action(it)))
         val refactoringMenuTitle = RefactoringBundle.message("refactor.this.title")
         triggerByUiComponentAndHighlight(false, false) { ui: EngravedLabel ->
-          ui.text?.contains(refactoringMenuTitle) == true
+          ui.text.isToStringContains(refactoringMenuTitle)
         }
         restoreIfModifiedOrMoved()
         test { actions(it) }
