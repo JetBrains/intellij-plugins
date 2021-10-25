@@ -186,6 +186,12 @@
 
     <eslint.ruleMappersFactory implementation="org.jetbrains.vuejs.libraries.eslint.VueEslintRuleMappersFactory"/>
 
+    <psi.symbolReferenceProvider hostElementClass="com.intellij.psi.xml.XmlAttributeValue"
+                                 hostLanguage="HtmlCompatible"
+                                 implementationClass="org.jetbrains.vuejs.web.VueDeprecatedSlotAttributeReferenceProvider"
+                                 anyReferenceClass="true"
+                                 targetClass="com.intellij.javascript.web.symbols.WebSymbol"/>
+
     <javascript.web.framework id="vue" implementation="org.jetbrains.vuejs.web.VueFramework"/>
     <javascript.web.context framework="vue"
                             implementation="org.jetbrains.vuejs.context.VueFileContext"

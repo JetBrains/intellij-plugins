@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.findUsages
 
+import com.intellij.javascript.web.findUsages.PsiSourcedWebSymbolRequestResultProcessor
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
@@ -32,6 +33,7 @@ import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueRegularComponent
 import org.jetbrains.vuejs.model.source.VueComponents
+import java.util.*
 
 class VueJSReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters>(true) {
 
@@ -40,16 +42,24 @@ class VueJSReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.
     val elementName = (element as? JSPsiNamedElementBase)?.name
 
     if (elementName != null) {
+      fun alternateNames() =
+        sequenceOf(elementName, fromAsset(elementName),
+                   fromAsset(elementName.removePrefix("v")))
+          .map { it.lowercase(Locale.US) }
+          .distinct()
+          .toList()
+
       // Script setup local vars
       val scriptTag = PsiTreeUtil.getContextOfType(element, XmlTag::class.java, false, PsiFile::class.java)
-      if (scriptTag?.stubSafeGetAttribute (SETUP_ATTRIBUTE_NAME) != null &&
+      if (scriptTag?.stubSafeGetAttribute(SETUP_ATTRIBUTE_NAME) != null &&
           scriptTag.containingFile.virtualFile?.fileType == VueFileType.INSTANCE) {
-        sequenceOf(elementName, fromAsset(elementName)).forEach {
+        alternateNames().forEach {
           queryParameters.optimizer.searchWord(
             it,
             LocalSearchScope(scriptTag.containingFile),
             UsageSearchContext.IN_CODE,
-            false, element)
+            false, element,
+            PsiSourcedWebSymbolRequestResultProcessor(element, true))
         }
         return
       }
@@ -78,19 +88,27 @@ class VueJSReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.
             val collector = SearchRequestCollector(queryParameters.optimizer.searchSession)
             queryParameters.optimizer.searchQuery(
               QuerySearchRequest(ReferencesSearch.search(defaultExport, queryParameters.effectiveSearchScope), collector,
-                false, PairProcessor { reference, _ -> consumer.process(reference) }))
+                                 false, PairProcessor { reference, _ -> consumer.process(reference) }))
           }
         }
 
         val searchTarget = if (element is JSImplicitElement) component.source ?: element else element
-        sequenceOf(elementName, fromAsset(elementName)).forEach {
-          queryParameters.optimizer.searchWord(it, searchScope, false, searchTarget)
+        alternateNames().forEach {
+          queryParameters.optimizer.searchWord(
+            it, searchScope,
+            (UsageSearchContext.IN_CODE + UsageSearchContext.IN_FOREIGN_LANGUAGES + UsageSearchContext.IN_COMMENTS).toShort(),
+            false, searchTarget, PsiSourcedWebSymbolRequestResultProcessor(element, true))
         }
         return
       }
 
       if (queryParameters.effectiveSearchScope != searchScope) {
-        queryParameters.optimizer.searchWord(elementName, searchScope, true, element)
+        alternateNames().forEach {
+          queryParameters.optimizer.searchWord(
+            it, searchScope,
+            (UsageSearchContext.IN_CODE + UsageSearchContext.IN_FOREIGN_LANGUAGES + UsageSearchContext.IN_COMMENTS).toShort(),
+            false, element, PsiSourcedWebSymbolRequestResultProcessor(element, true))
+        }
         return
       }
     }

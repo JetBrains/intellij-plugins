@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.libraries.nuxt
 
 import com.intellij.javascript.web.resolveReference
+import com.intellij.javascript.web.resolveToWebSymbolSource
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.VueTestModule
@@ -16,11 +17,11 @@ class NuxtResolveTest : BasePlatformTestCase() {
     myFixture.configureVueDependencies(VueTestModule.NUXT_2_15_6, VueTestModule.VUE_2_6_10)
     myFixture.copyDirectoryToProject(getTestName(true), ".")
     myFixture.configureFromTempProjectFile("test.vue")
-    myFixture.resolveReference("<H<caret>eaders>")
+    myFixture.resolveToWebSymbolSource("<H<caret>eaders>")
       .let {
         TestCase.assertEquals("level0", it.containingFile.virtualFile.parent.name)
       }
-    myFixture.resolveReference("<F<caret>ooters>")
+    myFixture.resolveToWebSymbolSource("<F<caret>ooters>")
       .let {
         TestCase.assertEquals("deep", it.containingFile.virtualFile.parent.name)
       }
