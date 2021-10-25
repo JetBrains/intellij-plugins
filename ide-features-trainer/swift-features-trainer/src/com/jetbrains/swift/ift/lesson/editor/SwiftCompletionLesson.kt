@@ -41,7 +41,7 @@ class Completion: UIViewController {
     caret(15, 16)
     task {
       triggers("EditorChooseLookupItem")
-      text(SwiftLessonsBundle.message("swift.editor.completion.basic", code(".stf"), LessonUtil.rawEnter(), code("sizeToFit()")))
+      text(SwiftLessonsBundle.message("swift.editor.completion.basic", code("stf"), LessonUtil.rawEnter(), code("sizeToFit()")))
     }
     caret(15, 20)
     text(SwiftLessonsBundle.message("swift.editor.completion.basic.shortcut", action("CodeCompletion")))
