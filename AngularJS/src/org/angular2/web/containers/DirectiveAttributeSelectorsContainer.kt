@@ -114,16 +114,16 @@ class DirectiveAttributeSelectorsContainer(val project: Project) : WebSymbolsCon
               sequenceOf(inOuts, inputs, attributes, outputs)
                 .mapNotNull { it[attrName] }
                 .forEach {
-                  consumer(Angular2DirectiveSymbolWrapper(candidate, it))
+                  consumer(Angular2DirectiveSymbolWrapper.create(candidate, it))
                   added = true
                 }
               if (!added) {
-                consumer(Angular2DirectiveSymbolWrapper(candidate, attr))
+                consumer(Angular2DirectiveSymbolWrapper.create(candidate, attr))
               }
             }
             for (notSelector in selector.notSelectors) {
               for (attr in notSelector.attributes) {
-                consumer(Angular2DirectiveSymbolWrapper(candidate, attr))
+                consumer(Angular2DirectiveSymbolWrapper.create(candidate, attr))
               }
             }
           }
@@ -143,8 +143,8 @@ class DirectiveAttributeSelectorsContainer(val project: Project) : WebSymbolsCon
       private fun createAngular2StructuralDirectiveSymbol(directive: Angular2Directive,
                                                           inputs: HashMap<String, Angular2Symbol>,
                                                           selector: Angular2DirectiveSelectorSymbol): Angular2Symbol =
-        inputs[selector.name]?.let { Angular2StructuralDirectiveSymbol(directive, it, true) }
-        ?: Angular2StructuralDirectiveSymbol(directive, selector, inputs.any { it.key.startsWith(selector.name) })
+        inputs[selector.name]?.let { Angular2StructuralDirectiveSymbol.create(directive, it, true) }
+        ?: Angular2StructuralDirectiveSymbol.create(directive, selector, inputs.any { it.key.startsWith(selector.name) })
     }
 
   }

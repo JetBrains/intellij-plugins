@@ -2,6 +2,7 @@
 package org.angular2.web.containers
 
 import com.intellij.javascript.web.codeInsight.html.attributes.WebSymbolHtmlAttributeInfo
+import com.intellij.javascript.web.symbols.PsiSourcedWebSymbol
 import com.intellij.javascript.web.symbols.*
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.types.*
@@ -9,6 +10,9 @@ import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelations
 import com.intellij.lang.javascript.psi.types.primitives.JSPrimitiveType
 import com.intellij.lang.javascript.psi.types.primitives.JSStringType
 import com.intellij.model.Pointer
+import com.intellij.navigation.NavigationTarget
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
@@ -16,6 +20,7 @@ import com.intellij.util.containers.Stack
 import org.angular2.codeInsight.attributes.Angular2AttributeValueProvider
 import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.KIND_NG_DIRECTIVE_INPUTS
 import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.KIND_NG_DIRECTIVE_ONE_TIME_BINDINGS
+import org.angular2.web.Angular2WebSymbolsScope
 import java.util.concurrent.ConcurrentHashMap
 
 internal class OneTimeBindingsProvider : WebSymbolsContainer {
@@ -61,7 +66,7 @@ internal class OneTimeBindingsProvider : WebSymbolsContainer {
       }
       if (property.virtual) return true
       val type = property.jsType ?: return true
-      val source = property.source ?: return true
+      val source = (property as? PsiSourcedWebSymbol)?.source ?: return true
 
       return CachedValuesManager.getCachedValue(source) {
         CachedValueProvider.Result.create(ConcurrentHashMap<WebSymbol, Boolean>(),
@@ -77,7 +82,10 @@ internal class OneTimeBindingsProvider : WebSymbolsContainer {
         type).transformTypeHierarchy { toApply -> if (toApply is JSPrimitiveType) STRING_TYPE else toApply }
   }
 
-  private class Angular2OneTimeBinding(delegate: WebSymbol) : WebSymbolDelegate<WebSymbol>(delegate) {
+  private class Angular2OneTimeBinding(delegate: WebSymbol) : WebSymbolDelegate<WebSymbol>(delegate), PsiSourcedWebSymbol {
+
+    override val source: PsiElement?
+      get() = (delegate as? PsiSourcedWebSymbol)?.source
 
     override val kind: SymbolKind get() = KIND_NG_DIRECTIVE_ONE_TIME_BINDINGS
 
@@ -85,9 +93,9 @@ internal class OneTimeBindingsProvider : WebSymbolsContainer {
       get() = WebSymbol.Priority.LOW
 
     override val properties: Map<String, Any>
-      get() = super.priority
-                ?.let { super.properties + Pair(PROP_DELEGATE_PRIORITY, it) }
-              ?: super.properties
+      get() = super<WebSymbolDelegate>.priority
+                ?.let { super<WebSymbolDelegate>.properties + Pair(PROP_DELEGATE_PRIORITY, it) }
+              ?: super<WebSymbolDelegate>.properties
 
 
     override val attributeValue: WebSymbol.AttributeValue?
@@ -110,6 +118,12 @@ internal class OneTimeBindingsProvider : WebSymbolsContainer {
         delegate.dereference()?.let { Angular2OneTimeBinding(it) }
       }
     }
+
+    override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
+      super<WebSymbolDelegate>.getNavigationTargets(project)
+
+    override val psiContext: PsiElement?
+      get() = super<WebSymbolDelegate>.psiContext
 
   }
 }

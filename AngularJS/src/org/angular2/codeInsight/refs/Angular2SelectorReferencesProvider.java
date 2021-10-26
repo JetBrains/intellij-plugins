@@ -1,8 +1,8 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight.refs;
 
-import com.intellij.javascript.web.codeInsight.WebSymbolReference;
 import com.intellij.javascript.web.symbols.WebSymbol;
+import com.intellij.javascript.web.symbols.WebSymbolReference;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.model.Symbol;
 import com.intellij.model.psi.PsiExternalReferenceHost;
@@ -52,7 +52,7 @@ public abstract class Angular2SelectorReferencesProvider implements PsiSymbolRef
     protected @Nullable Angular2DirectiveSelector getDirectiveSelector(PsiExternalReferenceHost element) {
       if (isLiteralInNgDecorator(element, SELECTOR_PROP, COMPONENT_DEC, DIRECTIVE_DEC)) {
         return doIfNotNull(Angular2EntitiesProvider.getDirective(PsiTreeUtil.getParentOfType(element, ES6Decorator.class)),
-                                        dir -> dir.getSelector());
+                           dir -> dir.getSelector());
       }
       return null;
     }
@@ -77,7 +77,7 @@ public abstract class Angular2SelectorReferencesProvider implements PsiSymbolRef
         result.add(new HtmlSelectorReference(selector));
       }
     };
-    var offsetInTheElement=hints.getOffsetInElement();
+    var offsetInTheElement = hints.getOffsetInElement();
     if (offsetInTheElement >= 0) {
       for (SimpleSelectorWithPsi selector : directiveSelector.getSimpleSelectorsWithPsi()) {
         var found = selector.getElementAt(offsetInTheElement);
@@ -131,10 +131,10 @@ public abstract class Angular2SelectorReferencesProvider implements PsiSymbolRef
       var nonSelectorSymbols = ContainerUtil.filter(symbols, symbol -> !(symbol instanceof Angular2Symbol));
       if (!nonSelectorSymbols.isEmpty()) {
         return nonSelectorSymbols;
-      } else {
+      }
+      else {
         return symbols;
       }
     }
   }
-
 }

@@ -2,6 +2,7 @@
 package org.angular2.web;
 
 import com.intellij.javascript.nodejs.PackageJsonData;
+import com.intellij.javascript.web.symbols.PsiSourcedWebSymbol;
 import com.intellij.javascript.web.symbols.WebSymbolsContainer;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.openapi.util.Pair;
@@ -25,7 +26,8 @@ public class Angular2SymbolOrigin implements WebSymbolsContainer.Origin {
 
   private @NotNull Pair<String, String> getVersionAndName() {
     if (nameAndVersion == null) {
-      var source = mySymbol.getSource();
+      var source = mySymbol instanceof PsiSourcedWebSymbol
+                   ? ((PsiSourcedWebSymbol)mySymbol).getSource() : null;
       var psiFile = source != null ? source.getContainingFile() : null;
       var virtualFile = psiFile != null ? psiFile.getVirtualFile() : null;
       var pkgJson = virtualFile != null ? PackageJsonUtil.findUpPackageJson(virtualFile) : null;

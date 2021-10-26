@@ -62,7 +62,7 @@ public class NgContentSelectorsTest extends Angular2CodeInsightFixtureTestCase {
       pair("<span g<caret>oo", ":not([goo])")
     )) {
       try {
-        assertEquals(test.second, resolveWebSymbolReference(myFixture, test.first).getSource().getText());
+        assertEquals(test.second, resolveWebSymbolReference(myFixture, test.first).getPsiContext().getText());
       }
       catch (AssertionError error) {
         throw new AssertionError("Failed with signature: " + test.first, error);

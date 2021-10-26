@@ -82,7 +82,12 @@ public class Angular2DirectiveSelectorSymbol implements Angular2Symbol, SearchTa
     return new TypeScriptElementDocumentationTarget(getName(), clazz);
   }
 
+  @Nullable
   @Override
+  public PsiElement getPsiContext() {
+    return myParent.getPsiParent();
+  }
+
   public @NotNull PsiElement getSource() {
     return myParent.getPsiParent();
   }

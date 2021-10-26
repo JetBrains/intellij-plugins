@@ -11,6 +11,7 @@ import com.intellij.testFramework.UsefulTestCase;
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestExecutionPolicy;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -18,6 +19,7 @@ import java.util.List;
 
 import static com.intellij.testFramework.UsefulTestCase.assertInstanceOf;
 import static junit.framework.TestCase.assertEquals;
+import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.PROP_ERROR_SYMBOL;
 
 public final class AngularTestUtil {
 
@@ -68,15 +70,14 @@ public final class AngularTestUtil {
 
   @NotNull
   public static PsiElement resolveReference(@NotNull String signature, @NotNull CodeInsightTestFixture fixture) {
-    return WebTestUtil.resolveReference(fixture,signature);
-  }
-
-  @NotNull
-  public static List<PsiElement> multiResolveReference(@NotNull String signature, @NotNull CodeInsightTestFixture fixture) {
-    return WebTestUtil.multiResolveReference(fixture, signature);
+    return WebTestUtil.resolveReference(fixture, signature);
   }
 
   public static void assertUnresolvedReference(@NotNull String signature, @NotNull CodeInsightTestFixture fixture) {
+    var symbols = WebTestUtil.multiResolveWebSymbolReference(fixture, signature);
+    if (!symbols.isEmpty() && ContainerUtil.and(symbols, s -> s.getProperties().get(PROP_ERROR_SYMBOL) == Boolean.TRUE)) {
+      return;
+    }
     WebTestUtil.assertUnresolvedReference(fixture, signature);
   }
 

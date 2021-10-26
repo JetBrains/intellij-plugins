@@ -29,7 +29,7 @@ internal class DirectiveElementSelectorsContainer(project: Project)
       .filter { (name, list) -> list.isNotEmpty() && name.isNotEmpty() }
       .forEach { (name, list) ->
         list.forEach { directive ->
-          consumer(Angular2DirectiveSymbolWrapper(directive, directive.selector.getSymbolForElement(name)))
+          consumer(Angular2DirectiveSymbolWrapper.create(directive, directive.selector.getSymbolForElement(name)))
         }
       }
     cacheDependencies.add(PsiModificationTracker.MODIFICATION_COUNT)
