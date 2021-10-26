@@ -43,6 +43,8 @@ import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.i18n.OsmorcBundle;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * Inspection which detects non-OSGi dependencies.
@@ -66,8 +68,8 @@ public class NonOsgiMavenDependencyInspection extends XmlSuppressableInspectionT
               String groupId = dependency.getGroupId().getStringValue();
               String artifactId = dependency.getArtifactId().getStringValue();
               String version = dependency.getVersion().getStringValue();
-              File artifactFile = MavenArtifactUtil.getArtifactFile(repo, groupId, artifactId, version, MavenConstants.TYPE_JAR);
-              if (artifactFile.exists() && !CachingBundleInfoProvider.isBundle(artifactFile.getPath())) {
+              Path artifactFile = MavenArtifactUtil.getArtifactNioPath(repo, groupId, artifactId, version, MavenConstants.TYPE_JAR);
+              if (Files.exists(artifactFile) && !CachingBundleInfoProvider.isBundle(artifactFile.toString())) {
                 problemsHolder.registerProblem(tag, OsmorcBundle.message("NonOsgiMavenDependencyInspection.message"));
               }
             }
