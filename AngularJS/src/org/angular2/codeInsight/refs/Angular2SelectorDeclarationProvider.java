@@ -1,10 +1,10 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight.refs;
 
+import com.intellij.javascript.web.symbols.WebSymbol;
+import com.intellij.javascript.web.symbols.WebSymbolDeclaration;
+import com.intellij.javascript.web.symbols.WebSymbolDeclarationProvider;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
-import com.intellij.model.Symbol;
-import com.intellij.model.psi.PsiSymbolDeclaration;
-import com.intellij.model.psi.PsiSymbolDeclarationProvider;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -20,10 +20,10 @@ import java.util.Collections;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static org.angular2.Angular2DecoratorUtil.*;
 
-public class Angular2SelectorDeclarationsProvider implements PsiSymbolDeclarationProvider {
+public class Angular2SelectorDeclarationProvider implements WebSymbolDeclarationProvider {
 
   @Override
-  public @NotNull Collection<? extends @NotNull PsiSymbolDeclaration> getDeclarations(@NotNull PsiElement element, int offsetInElement) {
+  public @NotNull Collection<WebSymbolDeclaration> getDeclarations(@NotNull PsiElement element, int offsetInElement) {
     Angular2DirectiveSelector directiveSelector = null;
     if (element instanceof Angular2HtmlNgContentSelector) {
       directiveSelector = ((Angular2HtmlNgContentSelector)element).getSelector();
@@ -48,7 +48,7 @@ public class Angular2SelectorDeclarationsProvider implements PsiSymbolDeclaratio
     return Collections.emptyList();
   }
 
-  private static class Angular2SelectorDeclaration implements PsiSymbolDeclaration {
+  private static class Angular2SelectorDeclaration implements WebSymbolDeclaration {
 
     private final Angular2DirectiveSelectorSymbol mySymbol;
 
@@ -67,7 +67,7 @@ public class Angular2SelectorDeclarationsProvider implements PsiSymbolDeclaratio
     }
 
     @Override
-    public @NotNull Symbol getSymbol() {
+    public @NotNull WebSymbol getSymbol() {
       return mySymbol;
     }
   }

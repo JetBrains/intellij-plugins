@@ -1,11 +1,14 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.entities.source;
 
+import com.intellij.javascript.web.symbols.impl.PsiElementNavigationTarget;
 import com.intellij.lang.javascript.psi.JSRecordType;
 import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
 import com.intellij.model.Pointer;
+import com.intellij.navigation.NavigationTarget;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.ContainerUtil;
 import org.angular2.entities.Angular2DirectiveProperty;
@@ -13,6 +16,7 @@ import org.angular2.entities.Angular2EntityUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -65,6 +69,11 @@ public class Angular2SourceDirectiveProperty implements Angular2DirectivePropert
 
   @NotNull
   @Override
+  public Collection<NavigationTarget> getNavigationTargets(@NotNull Project project) {
+    return ContainerUtil.map(getSources(), s -> new PsiElementNavigationTarget(s));
+  }
+
+  @NotNull
   public List<PsiElement> getSources() {
     var sources = getPropertySources(mySignature.getMemberSource().getSingleElement());
     var decorated = ContainerUtil.filter(

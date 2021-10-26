@@ -4,6 +4,7 @@ package org.angular2.inspections;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
+import com.intellij.idea.Bombed;
 import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.typescript.inspection.TypeScriptExplicitMemberTypeInspection;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
@@ -83,6 +84,7 @@ public class Angular2TemplateInspectionsTest extends Angular2CodeInsightFixtureT
            "matching-components-with-module.html", "component.ts", "matching-components-module.ts");
   }
 
+  @Bombed(year = 2021, month = 11, day = 15, user = "piotr.tomiak", description = "Recognize attrbiutes with interpolations as property bindings")
   public void testBindings() {
     myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
     doTest(AngularUndefinedBindingInspection.class,
@@ -134,24 +136,24 @@ public class Angular2TemplateInspectionsTest extends Angular2CodeInsightFixtureT
 
   public void testTypeScriptSpecifyTypeNoFix() {
     doTestNoFix("no-specify-type-variable.html",
-                TypeScriptExplicitMemberTypeInspection.class, 
+                TypeScriptExplicitMemberTypeInspection.class,
                 JavaScriptBundle.message("typescript.specify.type.explicitly"));
-  }  
-  
+  }
+
   public void testTypeScriptSpecifyTypeNoFixNgFor() {
-    doTestNoFix("no-specify-type-variable-ng-for.html", 
+    doTestNoFix("no-specify-type-variable-ng-for.html",
                 TypeScriptExplicitMemberTypeInspection.class,
                 JavaScriptBundle.message("typescript.specify.type.explicitly"));
   }
 
   public void testTypeScriptNoIntroduceVariable() {
-    doTestNoFix("no-introduce-variable.html", 
+    doTestNoFix("no-introduce-variable.html",
                 null,
                 JavaScriptBundle.message("javascript.introduce.variable.title.local"));
   }
-  
-  private void doTestNoFix(@NotNull String location, 
-                           @Nullable Class<? extends LocalInspectionTool> inspection, 
+
+  private void doTestNoFix(@NotNull String location,
+                           @Nullable Class<? extends LocalInspectionTool> inspection,
                            @NotNull String quickFixName) {
     if (inspection != null) {
       myFixture.enableInspections(inspection);

@@ -12,6 +12,8 @@ import org.angular2.inspections.AngularUndefinedBindingInspection;
 import org.angular2.inspections.AngularUndefinedTagInspection;
 import org.angularjs.AngularTestUtil;
 
+import static com.intellij.javascript.web.WebTestUtil.webSymbolAtCaret;
+import static com.intellij.javascript.web.WebTestUtil.webSymbolSourceAtCaret;
 import static org.angular2.modules.Angular2TestModule.*;
 
 public class IvyMetadataTest extends Angular2CodeInsightFixtureTestCase {
@@ -40,10 +42,10 @@ public class IvyMetadataTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.checkHighlighting();
     AngularTestUtil.moveToOffsetBySignature("mat-form<caret>-field", myFixture);
     assertEquals("form-field.d.ts",
-                 myFixture.getElementAtCaret().getContainingFile().getName());
+                 webSymbolAtCaret(myFixture).getPsiContext().getContainingFile().getName());
     AngularTestUtil.moveToOffsetBySignature("mat-tab<caret>-group", myFixture);
     assertEquals("tab-group.d.ts",
-                 myFixture.getElementAtCaret().getContainingFile().getName());
+                 webSymbolAtCaret(myFixture).getPsiContext().getContainingFile().getName());
   }
 
 
@@ -59,7 +61,7 @@ public class IvyMetadataTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.checkHighlighting();
     AngularTestUtil.moveToOffsetBySignature("ion-card-<caret>subtitle", myFixture);
     assertEquals("proxies.d.ts",
-                 myFixture.getElementAtCaret().getContainingFile().getName());
+                 webSymbolAtCaret(myFixture).getPsiContext().getContainingFile().getName());
   }
 
   public void testFunctionPropertyMetadata() {
@@ -68,7 +70,7 @@ public class IvyMetadataTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureFromTempProjectFile("template.html");
     myFixture.checkHighlighting();
     assertEquals("my-lib.component.d.ts",
-                 myFixture.getElementAtCaret().getContainingFile().getName());
+                 webSymbolSourceAtCaret(myFixture).getContainingFile().getName());
   }
 
   public void testPriority() {

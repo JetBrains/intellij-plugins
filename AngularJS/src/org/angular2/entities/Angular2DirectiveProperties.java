@@ -1,15 +1,18 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.entities;
 
+import com.intellij.javascript.web.symbols.PsiSourcedWebSymbol;
 import com.intellij.lang.documentation.DocumentationTarget;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.model.Pointer;
 import com.intellij.openapi.util.NotNullLazyValue;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.angular2.entities.impl.TypeScriptElementDocumentationTarget;
 import org.angular2.web.Angular2Symbol;
 import org.angular2.web.Angular2SymbolDelegate;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -65,13 +68,20 @@ public class Angular2DirectiveProperties {
     return myInOuts.getValue();
   }
 
-  private static class InOutDirectiveProperty extends Angular2SymbolDelegate<Angular2DirectiveProperty> {
+  private static class InOutDirectiveProperty extends Angular2SymbolDelegate<Angular2DirectiveProperty>
+    implements PsiSourcedWebSymbol {
 
     private final Angular2DirectiveProperty myOutput;
 
     private InOutDirectiveProperty(@NotNull Angular2DirectiveProperty input, @NotNull Angular2DirectiveProperty output) {
       super(input);
       myOutput = output;
+    }
+
+    @Nullable
+    @Override
+    public PsiElement getSource() {
+      return myOutput.getSource();
     }
 
     @NotNull

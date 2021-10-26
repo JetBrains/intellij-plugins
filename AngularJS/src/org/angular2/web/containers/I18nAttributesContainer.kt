@@ -4,7 +4,6 @@ package org.angular2.web.containers
 import com.intellij.javascript.web.symbols.SymbolKind
 import com.intellij.javascript.web.symbols.WebSymbolsContainer
 import com.intellij.javascript.web.symbols.WebSymbolsNameMatchQueryParams
-import com.intellij.javascript.web.symbols.match
 import com.intellij.model.Pointer
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -14,7 +13,7 @@ import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.containers.Stack
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.html.parser.Angular2AttributeType
-import org.angular2.web.Angular2Symbol
+import org.angular2.web.Angular2PsiSourcedSymbol
 import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.KIND_NG_I18N_ATTRIBUTES
 import org.jetbrains.annotations.NonNls
 
@@ -65,7 +64,7 @@ class I18nAttributesContainer(private val tag: XmlTag) : WebSymbolsContainer {
     }
   }
 
-  private class Angular2I18nAttributeSymbol(private val attribute: XmlAttribute) : Angular2Symbol {
+  private class Angular2I18nAttributeSymbol(private val attribute: XmlAttribute) : Angular2PsiSourcedSymbol {
 
     override val source: PsiElement
       get() = attribute

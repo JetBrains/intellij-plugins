@@ -12,21 +12,22 @@ import org.angular2.web.containers.*
 class Angular2WebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvider {
 
   override fun getAdditionalContext(element: PsiElement?, framework: String?): List<WebSymbolsContainer> =
-    element
-      ?.castSafelyTo<XmlTag>()
-      ?.takeIf { framework == Angular2Framework.ID }
-      ?.let {
-        listOf(
-          OneTimeBindingsProvider(),
-          DirectiveElementSelectorsContainer(it.project),
-          DirectiveAttributeSelectorsContainer(it.project),
-          StandardPropertyAndEventsContainer(it.containingFile),
-          NgContentSelectorsContainer(it),
-          MatchedDirectivesContainer(it),
-          I18nAttributesContainer(it),
-        )
-      }
-    ?: emptyList()
+    if (framework == Angular2Framework.ID && element != null) {
+      listOf(
+        DirectiveElementSelectorsContainer(element.project),
+        DirectiveAttributeSelectorsContainer(element.project),
+      ) + (
+        element.castSafelyTo<XmlTag>()?.let {
+          listOf(
+            OneTimeBindingsProvider(),
+            StandardPropertyAndEventsContainer(it.containingFile),
+            NgContentSelectorsContainer(it),
+            MatchedDirectivesContainer(it),
+            I18nAttributesContainer(it),
+          )
+        } ?: emptyList())
+    }
+    else emptyList()
 
   companion object {
     const val PROP_BINDING_PATTERN = "ng-binding-pattern"

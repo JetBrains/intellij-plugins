@@ -15,13 +15,13 @@ import com.intellij.psi.util.PsiTreeUtil;
 import one.util.streamex.StreamEx;
 import org.angular2.entities.impl.TypeScriptElementDocumentationTarget;
 import org.angular2.lang.types.Angular2TypeUtils;
-import org.angular2.web.Angular2Symbol;
+import org.angular2.web.Angular2PsiSourcedSymbol;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.KIND_NG_DIRECTIVE_OUTPUTS;
 
-public interface Angular2DirectiveProperty extends Angular2Symbol, Angular2Element {
+public interface Angular2DirectiveProperty extends Angular2PsiSourcedSymbol, Angular2Element {
 
   @Override
   @NotNull
@@ -80,7 +80,7 @@ public interface Angular2DirectiveProperty extends Angular2Symbol, Angular2Eleme
     if (clazz != null) {
       return new TypeScriptElementDocumentationTarget(getName(), clazz);
     }
-    return Angular2Symbol.super.getDocumentationTarget();
+    return Angular2PsiSourcedSymbol.super.getDocumentationTarget();
   }
 
   @Nullable

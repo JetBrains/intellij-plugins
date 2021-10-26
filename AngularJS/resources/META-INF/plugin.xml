@@ -195,7 +195,7 @@
                                  hostLanguage="TypeScript"
                                  implementationClass="org.angular2.codeInsight.refs.Angular2SelectorReferencesProvider$NgDecoratorSelectorProvider"
                                  targetClass="com.intellij.javascript.web.symbols.WebSymbol"/>
-    <psi.declarationProvider implementation="org.angular2.codeInsight.refs.Angular2SelectorDeclarationsProvider"/>
+    <javascript.web.declarationProvider implementation="org.angular2.codeInsight.refs.Angular2SelectorDeclarationProvider"/>
     <elementDescriptionProvider
       order="first"
       implementation="org.angular2.refactoring.Angular2ElementDescriptionProvider"/>
@@ -257,10 +257,6 @@
     <gotoDeclarationHandler implementation="org.angular2.editor.Angular2GotoDeclarationHandler" order="first"/>
     <typeDeclarationProvider implementation="org.angular2.editor.Angular2TypeDeclarationProvider" order="first"/>
     <lang.symbolTypeProvider implementation="org.angular2.editor.Angular2TypeDeclarationProvider"/>
-    <searcher forClass="com.intellij.find.usages.api.UsageSearchParameters"
-              implementationClass="org.angular2.findUsages.Angular2SelectorUsageSearcher"/>
-    <searcher forClass="com.intellij.refactoring.rename.api.RenameUsageSearchParameters"
-              implementationClass="org.angular2.refactoring.Angular2SelectorRenameUsageSearcher"/>
     <html.attributeValueProvider implementation="org.angular2.codeInsight.attributes.Angular2AttributeValueProvider"/>
     <colorSettingsPage implementation="org.angular2.lang.html.highlighting.Angular2ColorsAndFontsPage"/>
     <xml.xmlSuppressionProvider implementation="org.angular2.inspections.Angular2HtmlSuppressionProvider" order="first"/>

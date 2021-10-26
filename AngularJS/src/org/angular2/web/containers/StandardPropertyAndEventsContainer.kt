@@ -22,6 +22,7 @@ import org.angular2.Angular2Framework
 import org.angular2.codeInsight.attributes.DomElementSchemaRegistry
 import org.angular2.lang.html.parser.Angular2AttributeNameParser
 import org.angular2.lang.types.Angular2TypeUtils
+import org.angular2.web.Angular2PsiSourcedSymbol
 import org.angular2.web.Angular2Symbol
 import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.EVENT_ATTR_PREFIX
 import java.util.*
@@ -159,7 +160,7 @@ class StandardPropertyAndEventsContainer(private val templateFile: PsiFile) : We
 
   private class Angular2StandardProperty(override val name: String,
                                          override val project: Project,
-                                         override val source: TypeScriptPropertySignature?) : Angular2Symbol {
+                                         override val source: TypeScriptPropertySignature?) : Angular2PsiSourcedSymbol {
 
 
     override fun createPointer(): Pointer<Angular2StandardProperty> {
@@ -199,7 +200,7 @@ class StandardPropertyAndEventsContainer(private val templateFile: PsiFile) : We
                                       override val project: Project,
                                       private val mainSource: TypeScriptPropertySignature?,
                                       private val mapSource: TypeScriptPropertySignature?)
-    : WebSymbolsHtmlAdditionalContextProvider.StandardHtmlSymbol(), Angular2Symbol {
+    : WebSymbolsHtmlAdditionalContextProvider.StandardHtmlSymbol(), Angular2PsiSourcedSymbol {
 
     override val source: PsiElement?
       get() = mainSource ?: mapSource

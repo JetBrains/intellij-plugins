@@ -1,16 +1,45 @@
 package org.angular2.web
 
-import com.intellij.javascript.web.symbols.SymbolKind
-import com.intellij.javascript.web.symbols.WebSymbol
-import com.intellij.javascript.web.symbols.WebSymbolHtmlAttributeValueData
-import com.intellij.javascript.web.symbols.WebSymbolsContainer
+import com.intellij.javascript.web.symbols.*
 import com.intellij.model.Pointer
+import com.intellij.navigation.NavigationTarget
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
+import com.intellij.refactoring.rename.api.RenameTarget
+import com.intellij.refactoring.rename.symbol.RenameableSymbol
 import org.angular2.entities.Angular2Directive
 
-class Angular2StructuralDirectiveSymbol(private val directive: Angular2Directive,
-                                        sourceSymbol: Angular2Symbol,
-                                        private val hasInputsToBind: Boolean) :
+open class Angular2StructuralDirectiveSymbol private constructor(private val directive: Angular2Directive,
+                                                                 sourceSymbol: Angular2Symbol,
+                                                                 private val hasInputsToBind: Boolean) :
   Angular2SymbolDelegate<Angular2Symbol>(sourceSymbol) {
+
+  companion object {
+    @JvmStatic
+    fun create(directive: Angular2Directive,
+               sourceSymbol: Angular2Symbol,
+               hasInputsToBind: Boolean): Angular2StructuralDirectiveSymbol =
+      when (sourceSymbol) {
+        is PsiSourcedWebSymbol ->
+          object : Angular2StructuralDirectiveSymbol(directive, sourceSymbol, hasInputsToBind), PsiSourcedWebSymbol {
+
+            override val source: PsiElement?
+              get() = (delegate as PsiSourcedWebSymbol).source
+
+            override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
+              super<Angular2StructuralDirectiveSymbol>.getNavigationTargets(project)
+
+            override val psiContext: PsiElement?
+              get() = super<Angular2StructuralDirectiveSymbol>.psiContext
+          }
+        is RenameableSymbol, is RenameTarget ->
+          object : Angular2StructuralDirectiveSymbol(directive, sourceSymbol, hasInputsToBind), RenameableSymbol {
+            override val renameTarget: RenameTarget
+              get() = renameTargetFromDelegate()
+          }
+        else -> Angular2StructuralDirectiveSymbol(directive, sourceSymbol, hasInputsToBind)
+      }
+  }
 
   override val attributeValue: WebSymbol.AttributeValue?
     get() = if (!hasInputsToBind)
@@ -36,7 +65,7 @@ class Angular2StructuralDirectiveSymbol(private val directive: Angular2Directive
     return Pointer {
       val directive = directivePtr.dereference() ?: return@Pointer null
       val selector = selectorPtr.dereference() ?: return@Pointer null
-      Angular2StructuralDirectiveSymbol(directive, selector, hasInputsToBind)
+      create(directive, selector, hasInputsToBind)
     }
   }
 

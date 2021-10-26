@@ -4,10 +4,15 @@ package org.angular2.web
 import com.intellij.javascript.web.symbols.*
 import com.intellij.javascript.web.symbols.WebSymbolsContainer.Namespace.JS
 import com.intellij.model.Pointer
+import com.intellij.model.Symbol
+import com.intellij.navigation.NavigationTarget
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
+import com.intellij.refactoring.rename.api.RenameTarget
+import com.intellij.refactoring.rename.symbol.RenameableSymbol
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.castSafelyTo
 import org.angular2.Angular2Framework
@@ -17,7 +22,6 @@ import org.angular2.codeInsight.Angular2DeclarationsScope
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity
 import org.angular2.entities.Angular2Directive
 import org.angular2.lang.expr.psi.Angular2TemplateBindings
-import org.angular2.lang.html.psi.Angular2HtmlTemplateBindings
 import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.KIND_NG_DIRECTIVE_ATTRIBUTES
 import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS
 import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.KIND_NG_DIRECTIVE_ELEMENT_SELECTORS
@@ -64,7 +68,7 @@ class Angular2WebSymbolsScope(private val context: PsiFile) : WebSymbolsScope {
               DeclarationProximity.IN_SCOPE
           }
           DeclarationProximity.values().firstNotNullOfOrNull { proximity ->
-            proximityMap[proximity]?.takeIf { it.isNotEmpty() }?.map { Angular2ScopedSymbol(it, proximity) }
+            proximityMap[proximity]?.takeIf { it.isNotEmpty() }?.map { Angular2ScopedSymbol.create(it, proximity) }
           }
           ?: emptyList()
         }
@@ -134,8 +138,40 @@ class Angular2WebSymbolsScope(private val context: PsiFile) : WebSymbolsScope {
 
   }
 
-  private class Angular2ScopedSymbol(symbol: WebSymbol,
-                                     private val scopeProximity: DeclarationProximity) : WebSymbolDelegate<WebSymbol>(symbol) {
+  private open class Angular2ScopedSymbol private constructor(symbol: WebSymbol,
+                                                              private val scopeProximity: DeclarationProximity)
+    : WebSymbolDelegate<WebSymbol>(symbol) {
+
+    companion object {
+
+      @JvmStatic
+      fun create(symbol: WebSymbol,
+                 scopeProximity: DeclarationProximity): Angular2ScopedSymbol =
+        when (symbol) {
+          is PsiSourcedWebSymbol ->
+            object : Angular2ScopedSymbol(symbol, scopeProximity), PsiSourcedWebSymbol {
+
+              override val source: PsiElement?
+                get() = (delegate as PsiSourcedWebSymbol).source
+
+              override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
+                super<Angular2ScopedSymbol>.getNavigationTargets(project)
+
+              override val psiContext: PsiElement?
+                get() = super<Angular2ScopedSymbol>.psiContext
+
+              override fun isEquivalentTo(symbol: Symbol): Boolean =
+                super<Angular2ScopedSymbol>.isEquivalentTo(symbol)
+            }
+          is RenameableSymbol, is RenameTarget ->
+            object : Angular2ScopedSymbol(symbol, scopeProximity), RenameableSymbol {
+              override val renameTarget: RenameTarget
+                get() = renameTargetFromDelegate()
+            }
+          else -> Angular2ScopedSymbol(symbol, scopeProximity)
+        }
+
+    }
 
     override val priority: WebSymbol.Priority?
       get() = if (scopeProximity == DeclarationProximity.IN_SCOPE || scopeProximity == DeclarationProximity.EXPORTED_BY_PUBLIC_MODULE)
@@ -147,9 +183,12 @@ class Angular2WebSymbolsScope(private val context: PsiFile) : WebSymbolsScope {
       val delegatePtr = delegate.createPointer()
       val scopeProximity = this.scopeProximity
       return Pointer {
-        delegatePtr.dereference()?.let { Angular2ScopedSymbol(it, scopeProximity) }
+        delegatePtr.dereference()?.let { create(it, scopeProximity) }
       }
     }
+
+    override fun isEquivalentTo(symbol: Symbol): Boolean =
+      this == symbol || delegate.isEquivalentTo(symbol)
 
     override fun equals(other: Any?): Boolean =
       other === this

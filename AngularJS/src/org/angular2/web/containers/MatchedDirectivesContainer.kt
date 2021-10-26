@@ -30,7 +30,7 @@ class MatchedDirectivesContainer(tag: XmlTag)
     Angular2ApplicableDirectivesProvider(dataHolder)
       .matched.forEach { directive ->
         collectSymbols(directive) { symbol ->
-          consumer(Angular2DirectiveSymbolWrapper(directive, symbol, WebSymbol.Priority.HIGHEST))
+          consumer(Angular2DirectiveSymbolWrapper.create(directive, symbol, WebSymbol.Priority.HIGHEST))
         }
       }
   }
