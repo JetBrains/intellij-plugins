@@ -38,6 +38,7 @@ this
 true
 typeof
 async
+await
 delete
 undefined
 void

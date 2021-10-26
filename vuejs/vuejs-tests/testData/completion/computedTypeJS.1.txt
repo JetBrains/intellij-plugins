@@ -8,3 +8,4 @@ $parent#Vue
 $watch#() => void
 false#null
 async#null
+await#null
