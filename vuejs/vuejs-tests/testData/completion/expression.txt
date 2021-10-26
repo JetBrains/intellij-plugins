@@ -37,6 +37,7 @@
 !true#null#6
 !typeof#null#6
 !async#null#5
+!await#null#5
 !delete#null#5
 !undefined#null#5
 !void#null#5
