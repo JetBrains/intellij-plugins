@@ -59,8 +59,6 @@ class Angular2AttributeDescriptor(info: WebSymbolHtmlAttributeInfo, tag: XmlTag?
           get() = null
         override val strictEnumValues: Boolean
           get() = false
-        override val valueParser: WebFrameworkAttributeValueParser?
-          get() = null
         override val jsType: JSType?
           get() = null
         override val icon: Icon?

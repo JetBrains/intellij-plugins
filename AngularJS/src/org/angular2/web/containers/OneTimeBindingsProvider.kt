@@ -108,7 +108,7 @@ internal class OneTimeBindingsProvider : WebSymbolsContainer {
                                           JSStringLiteralTypeImpl(name, false, JSTypeSource.EXPLICITLY_DECLARED),
                                           JSStringLiteralTypeImpl("true", false, JSTypeSource.EXPLICITLY_DECLARED),
                                           JSStringLiteralTypeImpl("false", false, JSTypeSource.EXPLICITLY_DECLARED)
-                                        ), null)
+                                        ))
       }
       else null
 
