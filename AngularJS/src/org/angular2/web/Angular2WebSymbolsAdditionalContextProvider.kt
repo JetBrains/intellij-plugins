@@ -4,6 +4,7 @@ package org.angular2.web
 import com.intellij.javascript.web.symbols.WebSymbolsAdditionalContextProvider
 import com.intellij.javascript.web.symbols.WebSymbolsContainer
 import com.intellij.psi.PsiElement
+import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.castSafelyTo
 import org.angular2.Angular2Framework
@@ -17,7 +18,7 @@ class Angular2WebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextP
         DirectiveElementSelectorsContainer(element.project),
         DirectiveAttributeSelectorsContainer(element.project),
       ) + (
-        element.castSafelyTo<XmlTag>()?.let {
+        ((element as? XmlAttribute)?.parent ?: element as? XmlTag)?.let {
           listOf(
             OneTimeBindingsProvider(),
             StandardPropertyAndEventsContainer(it.containingFile),
