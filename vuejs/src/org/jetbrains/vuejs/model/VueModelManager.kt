@@ -212,6 +212,7 @@ class VueModelManager {
       }
 
       val file = getHostFile(context) ?: return null
+      val originalFile = context.containingFile.originalFile
       val name = file.viewProvider.virtualFile.name
       var result: VueSourceEntityDescriptor? = null
 
@@ -237,7 +238,7 @@ class VueModelManager {
         else if (element is XmlAttribute
                  && element.parent?.name == HtmlUtil.TEMPLATE_TAG_NAME
                  && element.valueElement?.references
-                   ?.any { it.resolve()?.containingFile == context.containingFile } == true) {
+                   ?.any { it.resolve()?.containingFile == originalFile } == true) {
           result = getDescriptorFromVueModule(element)
         }
         true

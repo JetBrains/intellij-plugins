@@ -23,6 +23,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.refactoring.suggested.createSmartPointer
@@ -74,9 +75,10 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
     element
       ?.takeIf { framework == VueFramework.ID }
       ?.let { VueModelManager.findEnclosingContainer(it) }
-      ?.let {
-        listOfNotNull(EntityContainerWrapper(element, it),
-                      (element as? XmlTag)?.let { tag -> AvailableSlotsContainer(tag) })
+      ?.let { entitiesContainer ->
+        val tag = (element as? XmlAttribute)?.parent ?: element as? XmlTag
+        listOfNotNull(EntityContainerWrapper(tag ?: element, entitiesContainer),
+                      tag?.let { AvailableSlotsContainer(it) })
       }
     ?: emptyList()
 
