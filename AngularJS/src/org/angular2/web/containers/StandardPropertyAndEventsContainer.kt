@@ -61,8 +61,7 @@ class StandardPropertyAndEventsContainer(private val templateFile: PsiFile) : We
                                                                   templateFile, Pair(tagNamespace, tagName)), WebSymbol {
 
     override fun provides(namespace: WebSymbolsContainer.Namespace, kind: String): Boolean =
-      (namespace == JS && kind == WebSymbol.KIND_JS_PROPERTIES)
-      || (namespace == HTML && kind == WebSymbol.KIND_HTML_EVENTS)
+      namespace == JS && (kind == WebSymbol.KIND_JS_PROPERTIES || kind == WebSymbol.KIND_JS_EVENTS)
 
     override val name: String
       get() = key.second
@@ -228,13 +227,13 @@ class StandardPropertyAndEventsContainer(private val templateFile: PsiFile) : We
       get() = Angular2TypeUtils.extractEventVariableType(mainSource?.jsType) ?: mapSource?.jsType
 
     override val namespace: WebSymbolsContainer.Namespace
-      get() = HTML
+      get() = JS
 
     override val priority: WebSymbol.Priority
       get() = WebSymbol.Priority.NORMAL
 
     override val kind: SymbolKind
-      get() = WebSymbol.KIND_HTML_EVENTS
+      get() = WebSymbol.KIND_JS_EVENTS
 
     override fun equals(other: Any?): Boolean =
       other === this

@@ -130,7 +130,7 @@
               "or": [
                 {
                   "items": [
-                    "/html/events",
+                    "/js/events",
                     "/js/ng-directive-outputs"
                   ],
                   "priority": "high"
