@@ -65,7 +65,8 @@ public interface Angular2DirectiveProperty extends Angular2PsiSourcedSymbol, Ang
   default JSType getJsType() {
     if (getKind().equals(KIND_NG_DIRECTIVE_OUTPUTS)) {
       return Angular2TypeUtils.extractEventVariableType(getRawJsType());
-    } else {
+    }
+    else {
       return getRawJsType();
     }
   }
@@ -88,9 +89,12 @@ public interface Angular2DirectiveProperty extends Angular2PsiSourcedSymbol, Ang
   default AttributeValue getAttributeValue() {
     if (WebSymbolHtmlAttributeInfo.isBooleanType(getJsType())) {
       return new WebSymbolHtmlAttributeValueData(
-        null, null, false, null, null, null
+        null, null, false, null, null
       );
-    }else return null;
+    }
+    else {
+      return null;
+    }
   }
 
   static boolean hasNonPrivateDocComment(@NotNull PsiElement element) {
