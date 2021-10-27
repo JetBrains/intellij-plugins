@@ -136,7 +136,7 @@ public class ActiveBuildConfigurationWidget {
 
       myPanel.setOpaque(false);
       myPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-      myPanel.setBorder(WidgetBorder.INSTANCE);
+      myPanel.setBorder(JBUI.CurrentTheme.StatusBar.Widget.border());
       GridBagConstraints c =
         new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, JBUI.emptyInsets(), 0, 0);
       myPanel.add(myEnabledLabel, c);
