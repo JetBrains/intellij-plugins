@@ -3,8 +3,8 @@ package org.jetbrains.vuejs.web
 
 import com.intellij.javascript.web.symbols.*
 import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_ELEMENTS
-import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_EVENTS
 import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_SLOTS
+import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_JS_EVENTS
 import com.intellij.javascript.web.symbols.WebSymbol.NameSegment
 import com.intellij.javascript.web.symbols.WebSymbol.Priority
 import com.intellij.javascript.web.symbols.WebSymbolCodeCompletionItemCustomizer.Companion.decorateWithSymbolType
@@ -97,7 +97,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
 
   private abstract class VueWrapperBase : WebSymbolsContainer {
 
-    val namespace: Namespace
+    open val namespace: Namespace
       get() = Namespace.HTML
 
   }
@@ -423,12 +423,6 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
             })
             props.mapWithNameFilter(name, params, context) { InputPropWrapper(it, item, this.origin) }
           }
-          KIND_HTML_EVENTS -> {
-            (item as? VueContainer)
-              ?.emits
-              ?.mapWithNameFilter(name, params, context) { EmitCallWrapper(it, item, this.origin) }
-            ?: emptyList()
-          }
           KIND_HTML_SLOTS -> {
             (item as? VueContainer)
               ?.slots
@@ -450,6 +444,12 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
           }
           else -> emptyList()
         }
+      else if (namespace == Namespace.JS && kind == KIND_JS_EVENTS) {
+        (item as? VueContainer)
+          ?.emits
+          ?.mapWithNameFilter(name, params, context) { EmitCallWrapper(it, item, this.origin) }
+        ?: emptyList()
+      }
       else emptyList()
 
     override fun createPointer(): Pointer<ComponentWrapper> {
@@ -509,8 +509,11 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
                                 origin: WebSymbolsContainer.Origin)
     : NamedSymbolWrapper<VueEmitCall>(emitCall, origin = origin, owner = owner) {
 
+    override val namespace: Namespace
+      get() = Namespace.JS
+
     override val kind: SymbolKind
-      get() = KIND_HTML_EVENTS
+      get() = KIND_JS_EVENTS
 
     override val jsType: JSType?
       get() = item.eventJSType

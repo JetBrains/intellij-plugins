@@ -66,8 +66,7 @@
               "name": "scope",
               "deprecated": true,
               "value": {
-                "kind": "expression",
-                "parser": "vue:slot-scope"
+                "kind": "expression"
               }
             }
           ]
@@ -148,10 +147,12 @@
           "virtual": true,
           "value": {
             "kind": "expression",
-            "parser": "vue:expression",
             "type": "any",
             "required": false
           },
+          "exclusive-contributions": [
+            "/html/modifiers"
+          ],
           "pattern": {
             "items": "/html/vue-directives",
             "template": [
@@ -168,7 +169,7 @@
                 "proximity": 5
               },
               {
-                "items": "modifiers",
+                "items": "/html/modifiers",
                 "template": [
                   ".",
                   "#item:modifier"
@@ -186,10 +187,12 @@
           "virtual": true,
           "value": {
             "kind": "expression",
-            "parser": "vue:expression",
             "type": "any",
             "required": false
           },
+          "exclusive-contributions": [
+            "/html/modifiers"
+          ],
           "pattern": {
             "proximity": 10,
             "delegate": "/html/vue-directives/on",
@@ -204,7 +207,7 @@
                 "required": true
               },
               {
-                "items": "modifiers",
+                "items": "/html/modifiers",
                 "template": [
                   ".",
                   "#item:modifier"
@@ -222,10 +225,12 @@
           "virtual": true,
           "value": {
             "kind": "expression",
-            "parser": "vue:expression",
             "type": "any",
             "required": false
           },
+          "exclusive-contributions": [
+            "/html/modifiers"
+          ],
           "pattern": {
             "proximity": 10,
             "delegate": "/html/vue-directives/bind",
@@ -240,7 +245,7 @@
                 ]
               },
               {
-                "items": "modifiers",
+                "items": "/html/modifiers",
                 "template": [
                   ".",
                   "#item:modifier"
@@ -256,8 +261,7 @@
           "deprecated": true,
           "virtual": true,
           "value": {
-            "kind": "expression",
-            "parser": "vue:slot-scope"
+            "kind": "expression"
           }
         },
         {
@@ -404,7 +408,6 @@
           "description": "Render the element or template block multiple times based on the source data. The directive’s value must use the special syntax `alias (in|of)` expression to provide an alias for the current element being iterated on.",
           "doc-url": "https://v1.vuejs.org/api/#v-for",
           "attribute-value": {
-            "parser": "vue:for",
             "type": "void",
             "required": true
           }
@@ -414,7 +417,6 @@
           "description": "Attaches an event listener to the element. The event type is denoted by the argument. The expression can either be a method name or an inline statement, or simply omitted when there are modifiers present.\n\nWhen used on a normal element, it listens to **native DOM events** only. When used on a custom element component, it also listens to **custom events** emitted on that child component.\n\nWhen listening to native DOM events, the method receives the native event as the only argument. If using inline statement, the statement has access to the special `$event` property: `v-on:click=\"handle('ok', $event)\"`.\n\n**1.0.11+** When listening the custom events, inline statements have access to the special `$arguments` property, which is an array of the additional arguments passed to the child components’ `$emit` call.",
           "doc-url": "https://v1.vuejs.org/api/#v-on",
           "attribute-value": {
-            "parser": "vue:on",
             "type": "void",
             "required": true
           },
@@ -425,7 +427,7 @@
             "pattern": {
               "or": [
                 {
-                  "items": "/html/events",
+                  "items": "/js/events",
                   "priority": "normal"
                 },
                 {
@@ -478,110 +480,118 @@
               "description": "Trigger handler at most once."
             }
           ],
-          "events": [
-            {
-              "name": "Mouse button event modifiers",
-              "extension": true,
-              "pattern": {
-                "or": [
-                  "click",
-                  "dblclick",
-                  "mousedown",
-                  "mouseup"
-                ]
-              },
-              "modifiers": [
-                {
-                  "name": "left",
-                  "description": "Only trigger handler for left button mouse events."
+          "js": {
+            "events": [
+              {
+                "name": "Mouse button event modifiers",
+                "extension": true,
+                "pattern": {
+                  "or": [
+                    "click",
+                    "dblclick",
+                    "mousedown",
+                    "mouseup"
+                  ]
                 },
-                {
-                  "name": "right",
-                  "description": "Only trigger handler for right button mouse events."
-                },
-                {
-                  "name": "middle",
-                  "description": "Only trigger handler for middle button mouse events."
+                "html": {
+                  "modifiers": [
+                    {
+                      "name": "left",
+                      "description": "Only trigger handler for left button mouse events."
+                    },
+                    {
+                      "name": "right",
+                      "description": "Only trigger handler for right button mouse events."
+                    },
+                    {
+                      "name": "middle",
+                      "description": "Only trigger handler for middle button mouse events."
+                    }
+                  ]
                 }
-              ]
-            },
-            {
-              "name": "Key event modifiers",
-              "extension": true,
-              "pattern": {
-                "or": [
-                  "keydown",
-                  "keypress",
-                  "keyup"
-                ]
               },
-              "modifiers": [
-                {
-                  "name": "Key alias",
-                  "pattern": {
-                    "or": [
-                      "enter",
-                      "tab",
-                      "delete",
-                      "esc",
-                      "space",
-                      "up",
-                      "down",
-                      "left",
-                      "right"
-                    ]
-                  }
-                }
-              ]
-            },
-            {
-              "name": "System event modifiers",
-              "extension": true,
-              "pattern": {
-                "or": [
-                  "keydown",
-                  "keypress",
-                  "keyup",
-                  "click",
-                  "contextmenu",
-                  "dblclick",
-                  "mousedown",
-                  "mouseenter",
-                  "mouseleave",
-                  "mousemove",
-                  "mouseout",
-                  "mouseover",
-                  "mouseup",
-                  "show",
-                  "drag",
-                  "dragend",
-                  "dragenter",
-                  "dragleave",
-                  "dragover",
-                  "dragstart",
-                  "drop"
-                ]
-              },
-              "modifiers": [
-                {
-                  "name": "System modifier key",
-                  "description": "Triggers mouse or keyboard event listeners only when the modifier key is pressed.",
-                  "pattern": {
-                    "or": [
-                      "ctrl",
-                      "alt",
-                      "shift",
-                      "meta"
-                    ]
-                  }
+              {
+                "name": "Key event modifiers",
+                "extension": true,
+                "pattern": {
+                  "or": [
+                    "keydown",
+                    "keypress",
+                    "keyup"
+                  ]
                 },
-                {
-                  "name": "exact",
-                  "description": "Allows control of the exact combination of system modifiers needed to trigger an event."
+                "html": {
+                  "modifiers": [
+                    {
+                      "name": "Key alias",
+                      "pattern": {
+                        "or": [
+                          "enter",
+                          "tab",
+                          "delete",
+                          "esc",
+                          "space",
+                          "up",
+                          "down",
+                          "left",
+                          "right"
+                        ]
+                      }
+                    }
+                  ]
                 }
-              ]
-            }
-          ]
+              },
+              {
+                "name": "System event modifiers",
+                "extension": true,
+                "pattern": {
+                  "or": [
+                    "keydown",
+                    "keypress",
+                    "keyup",
+                    "click",
+                    "contextmenu",
+                    "dblclick",
+                    "mousedown",
+                    "mouseenter",
+                    "mouseleave",
+                    "mousemove",
+                    "mouseout",
+                    "mouseover",
+                    "mouseup",
+                    "show",
+                    "drag",
+                    "dragend",
+                    "dragenter",
+                    "dragleave",
+                    "dragover",
+                    "dragstart",
+                    "drop"
+                  ]
+                },
+                "html": {
+                  "modifiers": [
+                    {
+                      "name": "System modifier key",
+                      "description": "Triggers mouse or keyboard event listeners only when the modifier key is pressed.",
+                      "pattern": {
+                        "or": [
+                          "ctrl",
+                          "alt",
+                          "shift",
+                          "meta"
+                        ]
+                      }
+                    },
+                    {
+                      "name": "exact",
+                      "description": "Allows control of the exact combination of system modifiers needed to trigger an event."
+                    }
+                  ]
+                }
+              }
+            ]
+          }
         },
         {
           "name": "bind",
@@ -633,7 +643,7 @@
               "items": {
                 "path": "attributes",
                 "filter": "match-with-target-list",
-                "target-list": "/html/events",
+                "target-list": "/js/events",
                 "prefix": "update:"
               }
             }

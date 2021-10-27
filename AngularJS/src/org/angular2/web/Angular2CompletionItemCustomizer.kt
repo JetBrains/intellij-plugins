@@ -49,7 +49,7 @@ class Angular2CompletionItemCustomizer : WebSymbolCodeCompletionItemCustomizer {
 
   companion object {
 
-    val typedKinds = setOf(WebSymbol.KIND_HTML_EVENTS,
+    val typedKinds = setOf(WebSymbol.KIND_JS_EVENTS,
                            WebSymbol.KIND_JS_PROPERTIES,
                            KIND_NG_DIRECTIVE_ATTRIBUTES,
                            KIND_NG_DIRECTIVE_INPUTS,

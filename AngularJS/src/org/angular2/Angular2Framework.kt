@@ -2,26 +2,19 @@
 package org.angular2
 
 import com.intellij.javascript.web.WebFramework
-import com.intellij.javascript.web.codeInsight.html.WebSymbolsHtmlAdditionalContextProvider
 import com.intellij.javascript.web.codeInsight.html.attributes.WebSymbolAttributeDescriptor
+import com.intellij.javascript.web.codeInsight.html.attributes.WebSymbolHtmlAttributeInfo
 import com.intellij.javascript.web.codeInsight.html.elements.WebSymbolElementDescriptor
 import com.intellij.javascript.web.codeInsight.html.elements.WebSymbolHtmlElementInfo
 import com.intellij.javascript.web.lang.html.WebFrameworkHtmlFileType
-import com.intellij.javascript.web.codeInsight.html.attributes.WebSymbolHtmlAttributeInfo
-import com.intellij.javascript.web.symbols.WebSymbolNamesProvider
-import com.intellij.javascript.web.symbols.WebSymbolsContainer
 import com.intellij.psi.xml.XmlTag
 import icons.AngularJSIcons
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
 import org.angular2.codeInsight.tags.Angular2TagDescriptor
 import org.angular2.lang.html.Angular2HtmlFileType
 import org.angular2.lang.svg.Angular2SvgFileType
-
-import javax.swing.*
-import java.util.Collections
-
-import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_EVENTS
 import org.angular2.web.Angular2IgnoredAttributesProvider
+import javax.swing.Icon
 
 class Angular2Framework : WebFramework() {
 
@@ -44,15 +37,6 @@ class Angular2Framework : WebFramework() {
   override fun createHtmlElementDescriptor(info: WebSymbolHtmlElementInfo,
                                            tag: XmlTag): WebSymbolElementDescriptor =
     Angular2TagDescriptor(info, tag)
-
-  override fun getNames(namespace: WebSymbolsContainer.Namespace,
-                        kind: String,
-                        name: String,
-                        target: WebSymbolNamesProvider.Target): List<String> =
-    if (namespace === WebSymbolsContainer.Namespace.HTML && kind == KIND_HTML_EVENTS) {
-      listOf(name)
-    }
-    else emptyList()
 
   override fun getAttributesToIgnoreInCodeCompletion(tag: XmlTag): List<String> =
     Angular2IgnoredAttributesProvider.get(tag)
