@@ -136,7 +136,7 @@
                   "priority": "high"
                 },
                 {
-                  "items": "/html/ng-custom-events",
+                  "items": "/js/ng-custom-events",
                   "priority": "normal"
                 },
                 {
@@ -392,97 +392,6 @@
           ]
         }
       ],
-      "ng-custom-events": [
-        {
-          "name": "Extended key events",
-          "priority": "normal",
-          "pattern": {
-            "template": [
-              "key",
-              {
-                "or": [
-                  "up",
-                  "down"
-                ]
-              },
-              {
-                "items": "key-event-modifiers",
-                "template": [
-                  ".",
-                  "#...",
-                  "#item:key event modifier"
-                ],
-                "priority": "high",
-                "repeat": true,
-                "unique": true,
-                "required": false
-              },
-              {
-                "items": "key-names",
-                "template": [
-                  ".",
-                  "#...",
-                  "#item"
-                ],
-                "repeat": false,
-                "required": true
-              }
-            ]
-          },
-          "key-event-modifiers": [
-            {
-              "name": "alt"
-            },
-            {
-              "name": "control"
-            },
-            {
-              "name": "meta"
-            },
-            {
-              "name": "shift"
-            }
-          ],
-          "key-names": [
-            {
-              "name": "Extended event special key",
-              "pattern": {
-                "or": [
-                  "space",
-                  "dot",
-                  "escape",
-                  "enter",
-                  "tab",
-                  "arrowDown",
-                  "arrowLeft",
-                  "arrowRight",
-                  "arrowUp",
-                  "end",
-                  "home",
-                  "pageDown",
-                  "pageUp",
-                  "backspace",
-                  "delete",
-                  "insert",
-                  "contextMenu",
-                  "help",
-                  "printScreen"
-                ]
-              }
-            },
-            {
-              "name": "Extended event standard key",
-              "priority": "low",
-              "pattern": "f1[1-9]|f20|f[1-9]|[a-z]|[0-9]|[\\`~\\!@#\\$%\\^\\&\\*\\(\\)_+\\-\\[\\]\\{\\}\\|;:,\\?]"
-            }
-          ]
-        },
-        {
-          "name": "Namespaced event",
-          "pattern": ".+:.+",
-          "doc-hide-pattern": true
-        }
-      ],
       "ng-property-bindings": [
         {
           "name": "Class binding",
@@ -621,6 +530,99 @@
               }
             ]
           }
+        }
+      ]
+    },
+    "js": {
+      "ng-custom-events": [
+        {
+          "name": "Extended key events",
+          "priority": "normal",
+          "pattern": {
+            "template": [
+              "key",
+              {
+                "or": [
+                  "up",
+                  "down"
+                ]
+              },
+              {
+                "items": "key-event-modifiers",
+                "template": [
+                  ".",
+                  "#...",
+                  "#item:key event modifier"
+                ],
+                "priority": "high",
+                "repeat": true,
+                "unique": true,
+                "required": false
+              },
+              {
+                "items": "key-names",
+                "template": [
+                  ".",
+                  "#...",
+                  "#item"
+                ],
+                "repeat": false,
+                "required": true
+              }
+            ]
+          },
+          "key-event-modifiers": [
+            {
+              "name": "alt"
+            },
+            {
+              "name": "control"
+            },
+            {
+              "name": "meta"
+            },
+            {
+              "name": "shift"
+            }
+          ],
+          "key-names": [
+            {
+              "name": "Extended event special key",
+              "pattern": {
+                "or": [
+                  "space",
+                  "dot",
+                  "escape",
+                  "enter",
+                  "tab",
+                  "arrowDown",
+                  "arrowLeft",
+                  "arrowRight",
+                  "arrowUp",
+                  "end",
+                  "home",
+                  "pageDown",
+                  "pageUp",
+                  "backspace",
+                  "delete",
+                  "insert",
+                  "contextMenu",
+                  "help",
+                  "printScreen"
+                ]
+              }
+            },
+            {
+              "name": "Extended event standard key",
+              "priority": "low",
+              "pattern": "f1[1-9]|f20|f[1-9]|[a-z]|[0-9]|[\\`~\\!@#\\$%\\^\\&\\*\\(\\)_+\\-\\[\\]\\{\\}\\|;:,\\?]"
+            }
+          ]
+        },
+        {
+          "name": "Namespaced event",
+          "pattern": ".+:.+",
+          "doc-hide-pattern": true
         }
       ]
     }
