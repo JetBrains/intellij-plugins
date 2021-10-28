@@ -11,15 +11,10 @@ import com.intellij.model.Pointer;
 import com.intellij.navigation.NavigationTarget;
 import com.intellij.navigation.TargetPresentation;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.XmlElementFactory;
-import com.intellij.psi.impl.source.html.dtd.HtmlNSDescriptorImpl;
 import com.intellij.psi.search.SearchScope;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.rename.api.RenameTarget;
 import com.intellij.util.containers.ContainerUtil;
@@ -35,8 +30,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import static com.intellij.javascript.web.codeInsight.html.WebSymbolsHtmlAdditionalContextProvider.getHtmlNSDescriptor;
 import static com.intellij.javascript.web.symbols.WebSymbolsUtils.createPsiRangeNavigationItem;
-import static com.intellij.xml.util.XmlUtil.HTML_URI;
 import static org.angular2.Angular2DecoratorUtil.getClassForDecoratorElement;
 import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.KIND_NG_DIRECTIVE_ATTRIBUTE_SELECTORS;
 import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.KIND_NG_DIRECTIVE_ELEMENT_SELECTORS;
@@ -135,7 +130,7 @@ public class Angular2DirectiveSelectorSymbol implements Angular2Symbol, SearchTa
 
   public List<WebSymbol> getReferencedSymbols() {
     var psiElement = getSource();
-    var nsDescriptor = getHtmlNSDescriptor(psiElement);
+    var nsDescriptor = getHtmlNSDescriptor(psiElement.getProject());
     if (nsDescriptor != null) {
       if (isElementSelector()) {
         var elementDescriptor = nsDescriptor.getElementDescriptorByName(getName());
@@ -236,19 +231,6 @@ public class Angular2DirectiveSelectorSymbol implements Angular2Symbol, SearchTa
   @Override
   public SearchScope getMaximalSearchScope() {
     return SearchTarget.super.getMaximalSearchScope();
-  }
-
-  private static @Nullable HtmlNSDescriptorImpl getHtmlNSDescriptor(@NotNull PsiElement context) {
-    Project project = context.getProject();
-    return CachedValuesManager.getManager(project).getCachedValue(project, () -> {
-      var descriptor = XmlElementFactory.getInstance(project)
-        .createTagFromText("<div>")
-        .getNSDescriptor(HTML_URI, true);
-      if (!(descriptor instanceof HtmlNSDescriptorImpl)) {
-        return CachedValueProvider.Result.create(null, ModificationTracker.EVER_CHANGED);
-      }
-      return CachedValueProvider.Result.create((HtmlNSDescriptorImpl)descriptor, descriptor.getDescriptorFile());
-    });
   }
 
   private static class DirectiveSelectorSymbolNavigationTarget implements NavigationTarget {
