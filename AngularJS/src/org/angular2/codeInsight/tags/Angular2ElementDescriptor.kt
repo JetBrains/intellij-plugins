@@ -7,7 +7,7 @@ import com.intellij.psi.xml.XmlTag
 import org.angular2.entities.Angular2Directive
 import org.angular2.web.Angular2DescriptorSymbolsProvider
 
-class Angular2TagDescriptor(info: WebSymbolHtmlElementInfo, tag: XmlTag) : WebSymbolElementDescriptor(info, tag) {
+class Angular2ElementDescriptor(info: WebSymbolHtmlElementInfo, tag: XmlTag) : WebSymbolElementDescriptor(info, tag) {
 
   @get:JvmName("isImplied")
   val implied: Boolean get() = tagInfoProvider.errorSymbols.isEmpty() && tagInfoProvider.nonDirectiveSymbols.isNotEmpty()

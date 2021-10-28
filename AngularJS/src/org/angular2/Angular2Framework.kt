@@ -10,7 +10,7 @@ import com.intellij.javascript.web.lang.html.WebFrameworkHtmlFileType
 import com.intellij.psi.xml.XmlTag
 import icons.AngularJSIcons
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor
-import org.angular2.codeInsight.tags.Angular2TagDescriptor
+import org.angular2.codeInsight.tags.Angular2ElementDescriptor
 import org.angular2.lang.html.Angular2HtmlFileType
 import org.angular2.lang.svg.Angular2SvgFileType
 import org.angular2.web.Angular2IgnoredAttributesProvider
@@ -36,7 +36,7 @@ class Angular2Framework : WebFramework() {
 
   override fun createHtmlElementDescriptor(info: WebSymbolHtmlElementInfo,
                                            tag: XmlTag): WebSymbolElementDescriptor =
-    Angular2TagDescriptor(info, tag)
+    Angular2ElementDescriptor(info, tag)
 
   override fun getAttributesToIgnoreInCodeCompletion(tag: XmlTag): List<String> =
     Angular2IgnoredAttributesProvider.get(tag)

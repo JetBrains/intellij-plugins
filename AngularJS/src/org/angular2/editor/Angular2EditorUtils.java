@@ -6,7 +6,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
-import org.angular2.codeInsight.tags.Angular2TagDescriptor;
+import org.angular2.codeInsight.tags.Angular2ElementDescriptor;
 import org.angular2.entities.Angular2Directive;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,7 +32,7 @@ public final class Angular2EditorUtils {
       }
     }
     else if (element instanceof XmlTag) {
-      Angular2TagDescriptor descriptor = tryCast(((XmlTag)element).getDescriptor(), Angular2TagDescriptor.class);
+      Angular2ElementDescriptor descriptor = tryCast(((XmlTag)element).getDescriptor(), Angular2ElementDescriptor.class);
       if (descriptor != null) {
         directives = descriptor.getSourceDirectives();
       }
