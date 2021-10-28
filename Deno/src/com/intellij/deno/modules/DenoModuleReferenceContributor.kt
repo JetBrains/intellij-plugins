@@ -33,8 +33,10 @@ import com.intellij.psi.PsiReferenceProvider
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiUtilCore
+import com.intellij.util.io.exists
 import java.io.File
 import java.nio.charset.StandardCharsets
+import java.nio.file.Paths
 
 
 class DenoModuleReferenceContributor : JSBaseModuleReferenceContributor() {
@@ -195,11 +197,10 @@ private fun extractImportMapPath(host: PsiElement): String? {
   val parsed = JsonParser.parseString(initString)
   if (!parsed.isJsonObject) return null
   val importMapProperty = parsed.asJsonObject.get("importMap")
-  if (!importMapProperty.isJsonPrimitive) return null
+  if (importMapProperty == null || !importMapProperty.isJsonPrimitive) return null
   val value = importMapProperty.asString ?: return null
-
-  if (File(value).isAbsolute) return value
-
+  if (Paths.get(value).isAbsolute) return value
+  
   val guessProjectDir = host.project.guessProjectDir() ?: return null
   return guessProjectDir.path + "/" + FileUtil.toSystemIndependentName(value)
 }
