@@ -6,7 +6,7 @@ import com.intellij.diagram.actions.DiagramAddElementAction;
 import com.intellij.diagram.extras.DiagramExtras;
 import com.intellij.diagram.settings.DiagramConfigElement;
 import com.intellij.diagram.settings.DiagramConfigGroup;
-import com.intellij.diagram.util.DiagramUtils;
+import com.intellij.diagram.util.DiagramSelectionService;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.uml.utils.DiagramBundle;
@@ -61,7 +61,7 @@ public final class FlashUmlExtras extends DiagramExtras<Object> {
       return null;
     }
 
-    final List<DiagramEdge<?>> edges = DiagramUtils.getSelectedEdges(builder);
+    final List<DiagramEdge<?>> edges = DiagramSelectionService.getInstance().getSelectedEdges(builder);
     if (edges.size() != 1) {
       return null;
     }

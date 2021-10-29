@@ -15,14 +15,11 @@
 package com.intellij.struts2.graph.fileEditor;
 
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.ActionPlaces;
-import com.intellij.openapi.actionSystem.ActionToolbar;
-import com.intellij.openapi.actionSystem.DataProvider;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.graph.GraphManager;
 import com.intellij.openapi.graph.builder.GraphBuilder;
 import com.intellij.openapi.graph.builder.GraphBuilderFactory;
-import com.intellij.openapi.graph.builder.util.GraphViewUtil;
+import com.intellij.openapi.graph.builder.actions.AbstractGraphAction;
 import com.intellij.openapi.graph.services.GraphSelectionService;
 import com.intellij.openapi.graph.view.Graph2D;
 import com.intellij.openapi.graph.view.Graph2DView;
@@ -83,7 +80,7 @@ public class Struts2GraphComponent extends JPanel implements DataProvider, Dispo
     setLayout(new BorderLayout());
 
     ActionToolbar toolbar = ActionManager.getInstance().createActionToolbar(
-      ActionPlaces.TOOLBAR, GraphViewUtil.getCommonToolbarActions(), true);
+      ActionPlaces.TOOLBAR, AbstractGraphAction.getCommonToolbarActions(), true);
     toolbar.setTargetComponent(graphComponent);
 
     add(toolbar.getComponent(), BorderLayout.NORTH);

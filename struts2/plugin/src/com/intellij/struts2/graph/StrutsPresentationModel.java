@@ -16,11 +16,8 @@ package com.intellij.struts2.graph;
 
 import com.intellij.openapi.graph.builder.components.BasicGraphPresentationModel;
 import com.intellij.openapi.graph.builder.renderer.BasicGraphNodeRenderer;
-import com.intellij.openapi.graph.builder.util.GraphViewUtil;
-import com.intellij.openapi.graph.view.EditMode;
-import com.intellij.openapi.graph.view.Graph2D;
-import com.intellij.openapi.graph.view.Graph2DView;
-import com.intellij.openapi.graph.view.NodeRealizer;
+import com.intellij.openapi.graph.services.GraphNodeRealizerService;
+import com.intellij.openapi.graph.view.*;
 import com.intellij.openapi.paths.PathReference;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
@@ -55,7 +52,7 @@ public class StrutsPresentationModel extends BasicGraphPresentationModel<BasicSt
   @Override
   @NotNull
   public NodeRealizer getNodeRealizer(final @Nullable BasicStrutsNode node) {
-    return GraphViewUtil.createNodeRealizer("Struts2NodeRenderer", getRenderer());
+    return GraphNodeRealizerService.getInstance().createGenericNodeRealizer("Struts2NodeRenderer", getRenderer());
   }
 
   private BasicGraphNodeRenderer getRenderer() {
