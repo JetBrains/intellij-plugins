@@ -113,9 +113,7 @@ public class FlexPullUpTest extends MultiFileTestCase {
                                            JSVisibilityUtil.DEFAULT_OPTIONS);
 
     List<String> messages = new ArrayList<>(conflicts.values());
-    for (int i = 0; i < messages.size(); i++) {
-      messages.set(i, messages.get(i).replaceAll("<[^>]+>", ""));
-    }
+    messages.replaceAll(message -> message.replaceAll("<[^>]+>", ""));
     assertSameElements(messages, expectedConflicts);
     if (conflicts.isEmpty()) {
       WriteCommandAction.runWriteCommandAction(getProject(), () -> {
