@@ -5,6 +5,7 @@ import com.intellij.json.JsonLanguage
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.EditorSettings
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
@@ -15,6 +16,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFileFactory
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.util.ui.FormBuilder
+import com.intellij.util.ui.SwingHelper
 import java.awt.BorderLayout
 import javax.swing.JComponent
 import javax.swing.JPanel
@@ -37,6 +39,20 @@ class DenoConfigurable(private val project: Project) : Configurable {
     myDenoCache.text = FileUtil.toSystemDependentName(service.getDenoCache())
     val fakeFile = PsiFileFactory.getInstance(project).createFileFromText("dummy", JsonLanguage.INSTANCE, service.getDenoInit(), true,
       false)
+    SwingHelper.installFileCompletionAndBrowseDialog(
+      project,
+      myDenoPath,
+      DenoBundle.message("deno.name"),
+      FileChooserDescriptorFactory.createSingleFileDescriptor()
+    )
+    
+    SwingHelper.installFileCompletionAndBrowseDialog(
+      project,
+      myDenoCache,
+      DenoBundle.message("deno.cache.title"),
+      FileChooserDescriptorFactory.createSingleFolderDescriptor()
+    )
+    
     val document = PsiDocumentManager.getInstance(project).getDocument(fakeFile)
     mySettingsEditor = TemplateEditorUtil.createEditor(false, document, project)
     val editorSettings: EditorSettings = mySettingsEditor.settings
