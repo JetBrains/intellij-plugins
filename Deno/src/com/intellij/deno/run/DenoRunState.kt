@@ -58,9 +58,10 @@ class DenoRunState(environment: ExecutionEnvironment, runConfiguration: DenoRunC
     if (appFilePath.isNotEmpty()) {
       commandLine.addParameters(appFilePath)
     }
-    
-    if (configuration.applicationArguments.isNotEmpty()) {
-      commandLine.addParameters(ProgramParametersConfigurator.expandMacrosAndParseParameters(configuration.applicationArguments))
+
+    val applicationArguments = configuration.applicationArguments ?: ""
+    if (applicationArguments.isNotEmpty()) {
+      commandLine.addParameters(ProgramParametersConfigurator.expandMacrosAndParseParameters(applicationArguments))
     }
 
     return super.startProcess(commandLine, configurator)
