@@ -116,6 +116,7 @@ public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<BoardI
                               @NotNull VirtualFile baseDir,
                               @NotNull Ref<@NotNull BoardInfo> settings,
                               @NotNull Module module) {
+    super.generateProject(project, baseDir, settings, module);
     StringBuilder pioCmdLineTail = new StringBuilder();
     for (String s : settings.get().getParameters()) {
       pioCmdLineTail.append(' ').append(s);
