@@ -67,6 +67,7 @@ public class DenoRunConfiguration extends DebuggableProcessRunConfigurationBase 
     applicationArguments = newArguments;
   }
   
+  @Nullable
   public String getApplicationArguments() {
     return applicationArguments;
   }
