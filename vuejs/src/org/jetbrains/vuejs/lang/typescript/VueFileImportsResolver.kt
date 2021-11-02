@@ -20,6 +20,7 @@ class VueFileImportsResolver(project: Project,
   TypeScriptFileImportsResolverImpl(project, resolveContext, nodeProcessor, defaultExtensionsWithDot, listOf(VueFileType.INSTANCE)) {
 
   override fun processAllFilesInScope(includeScope: GlobalSearchScope, processor: Processor<in VirtualFile>) {
+    if (includeScope == GlobalSearchScope.EMPTY_SCOPE) return
     StubIndex.getInstance().processElements(
       TypeScriptScriptContentIndex.KEY, TypeScriptScriptContentIndex.DEFAULT_INDEX_KEY, project,
       includeScope, null, JSExecutionScope::class.java) {
