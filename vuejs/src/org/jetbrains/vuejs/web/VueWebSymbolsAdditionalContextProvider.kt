@@ -120,13 +120,12 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
 
     }
 
-    override fun hashCode(): Int = containingFile.hashCode()
+    override fun hashCode(): Int = element.hashCode()
 
     override fun equals(other: Any?): Boolean =
       other is EntityContainerWrapper
-      && other.containingFile == containingFile
+      && other.element == element
       && other.container == container
-      && other.isTopLevelTag == isTopLevelTag
 
     override fun getModificationCount(): Long =
       PsiModificationTracker.SERVICE.getInstance(containingFile.project).modificationCount +
