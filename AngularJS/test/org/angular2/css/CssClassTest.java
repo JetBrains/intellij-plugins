@@ -143,12 +143,12 @@ public class CssClassTest extends Angular2CodeInsightFixtureTestCase {
     assertContainsElements(myFixture.getLookupElementStrings(), "[class.");
     myFixture.type("[class.");
     assertEquals(ContainerUtil.newArrayList(
-      "cli-class",
-      "ext-html-class",
-      "index-html-link-class",
-      "inline-class",
-      "internal-class",
-      "simpleNameClass"),
+      "cli-class]",
+      "ext-html-class]",
+      "index-html-link-class]",
+      "inline-class]",
+      "internal-class]",
+      "simpleNameClass]"),
                  ContainerUtil.sorted(myFixture.getLookupElementStrings()));
     myFixture.type("cli\n");
     assertEquals(AngularTestUtil.findOffsetBySignature("[class.cli-class]=\"<caret>\"", myFixture.getFile()),
