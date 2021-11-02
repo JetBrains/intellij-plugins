@@ -88,40 +88,47 @@
           },
           "ng-binding-pattern": true,
           "pattern": {
+            "delegate": "ng-event-binding-items",
             "or": [
-              {
-                "delegate": "ng-event-binding-items",
-                "template": [
-                  "(",
-                  "#item",
-                  ")"
-                ]
-              },
-              {
-                "delegate": "ng-event-binding-items",
-                "priority": "lowest",
-                "or": [
-                  [
-                    "on-",
-                    "#...",
-                    "#item"
-                  ],
-                  [
-                    "data-",
-                    "#...",
-                    "on-",
-                    "#...",
-                    "#item"
-                  ],
-                  [
-                    "data-",
-                    "#...",
-                    "(",
-                    "#item",
-                    ")"
+              [
+                "(",
+                "#item",
+                ")"
+              ],
+              [
+                {
+                  "priority": "lowest",
+                  "template": [
+                    "on-"
                   ]
-                ]
-              }
+                },
+                "#...",
+                "#item"
+              ],
+              [
+                {
+                  "priority": "lowest",
+                  "template": [
+                    "data-"
+                  ]
+                },
+                "#...",
+                "on-",
+                "#...",
+                "#item"
+              ],
+              [
+                {
+                  "priority": "lowest",
+                  "template": [
+                    "data-"
+                  ]
+                },
+                "#...",
+                "(",
+                "#item",
+                ")"
+              ]
             ]
           },
           "ng-event-binding-items": {
@@ -161,40 +168,47 @@
           "virtual": true,
           "ng-binding-pattern": true,
           "pattern": {
+            "items": "/html/ng-property-bindings",
             "or": [
-              {
-                "items": "/html/ng-property-bindings",
-                "template": [
-                  "[",
-                  "#item",
-                  "]"
-                ]
-              },
-              {
-                "items": "/html/ng-property-bindings",
-                "priority": "lowest",
-                "or": [
-                  [
-                    "bind-",
-                    "#...",
-                    "#item"
-                  ],
-                  [
-                    "data-",
-                    "#...",
-                    "bind-",
-                    "#...",
-                    "#item"
-                  ],
-                  [
-                    "data-",
-                    "#...",
-                    "[",
-                    "#item",
-                    "]"
+              [
+                "[",
+                "#item",
+                "]"
+              ],
+              [
+                {
+                  "priority": "lowest",
+                  "template": [
+                    "bind-"
                   ]
-                ]
-              }
+                },
+                "#...",
+                "#item"
+              ],
+              [
+                {
+                  "priority": "lowest",
+                  "template": [
+                    "data-"
+                  ]
+                },
+                "#...",
+                "bind-",
+                "#...",
+                "#item"
+              ],
+              [
+                {
+                  "priority": "lowest",
+                  "template": [
+                    "data-"
+                  ]
+                },
+                "#...",
+                "[",
+                "#item",
+                "]"
+              ]
             ]
           }
         },
@@ -208,40 +222,47 @@
           },
           "ng-binding-pattern": true,
           "pattern": {
+            "items": "/js/ng-directive-in-outs",
             "or": [
-              {
-                "items": "/js/ng-directive-in-outs",
-                "template": [
-                  "[(",
-                  "#item",
-                  ")]"
-                ]
-              },
-              {
-                "priority": "lowest",
-                "items": "/js/ng-directive-in-outs",
-                "or": [
-                  [
-                    "bindon-",
-                    "#...",
-                    "#item"
-                  ],
-                  [
-                    "data-",
-                    "#...",
-                    "bindon-",
-                    "#...",
-                    "#item"
-                  ],
-                  [
-                    "data-",
-                    "#...",
-                    "[(",
-                    "#item",
-                    ")]"
+              [
+                "[(",
+                "#item",
+                ")]"
+              ],
+              [
+                {
+                  "priority": "lowest",
+                  "template": [
+                    "bindon-"
                   ]
-                ]
-              }
+                },
+                "#...",
+                "#item"
+              ],
+              [
+                {
+                  "priority": "lowest",
+                  "template": [
+                    "data-"
+                  ]
+                },
+                "#...",
+                "bindon-",
+                "#...",
+                "#item"
+              ],
+              [
+                {
+                  "priority": "lowest",
+                  "template": [
+                    "data-"
+                  ]
+                },
+                "#...",
+                "[(",
+                "#item",
+                ")]"
+              ]
             ]
           },
           "js": {
@@ -265,24 +286,23 @@
           },
           "ng-binding-pattern": true,
           "pattern": {
+            "items": "/js/ng-structural-directives",
             "or": [
-              {
-                "items": "/js/ng-structural-directives",
-                "template": [
-                  "*",
-                  "#item:Structural Directive"
-                ]
-              },
-              {
-                "items": "/js/ng-structural-directives",
-                "priority": "lowest",
-                "template": [
-                  "data-",
-                  "#...",
-                  "*",
-                  "#item:Structural Directive"
-                ]
-              }
+              [
+                "*",
+                "#item:Structural Directive"
+              ],
+              [
+                {
+                  "priority": "lowest",
+                  "template": [
+                    "data-"
+                  ]
+                },
+                "#...",
+                "*",
+                "#item:Structural Directive"
+              ]
             ]
           },
           "js": {
@@ -402,10 +422,14 @@
           },
           "ng-binding-pattern": true,
           "pattern": {
-            "priority": "lowest",
             "items": "/css/classes",
             "template": [
-              "class.",
+              {
+                "priority": "lowest",
+                "template": [
+                  "class."
+                ]
+              },
               "#...",
               "#item:CSS Class"
             ]
@@ -431,10 +455,14 @@
           },
           "ng-binding-pattern": true,
           "pattern": {
-            "priority": "lowest",
             "items": "/css/properties",
             "template": [
-              "style.",
+              {
+                "priority": "lowest",
+                "template": [
+                  "style."
+                ]
+              },
               "#...",
               "#item:CSS Property"
             ]
@@ -460,13 +488,17 @@
           },
           "ng-binding-pattern": true,
           "pattern": {
-            "priority": "lowest",
             "items": {
               "path": "/html/attributes",
               "includeVirtual": false
             },
             "template": [
-              "attr.",
+              {
+                "priority": "lowest",
+                "template": [
+                  "attr."
+                ]
+              },
               "#...",
               "#item:HTML Attribute"
             ]

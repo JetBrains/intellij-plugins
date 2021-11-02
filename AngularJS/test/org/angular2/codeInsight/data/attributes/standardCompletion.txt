@@ -44,7 +44,6 @@
 (input)%null#Event#50
 (invalid)%null#Event#50
 (keydown)%null#KeyboardEvent#50
-(keypress)%null#KeyboardEvent#50
 (keyup)%null#KeyboardEvent#50
 (load)%null#Event#50
 (loadeddata)%null#Event#50
@@ -59,7 +58,6 @@
 (mouseout)%null#MouseEvent#50
 (mouseover)%null#MouseEvent#50
 (mouseup)%null#MouseEvent#50
-(mousewheel)%null#null#50
 (mozfullscreenchange)%null#null#50
 (mozfullscreenerror)%null#null#50
 (mozpointerlockchange)%null#null#50
@@ -88,7 +86,6 @@
 (select)%null#Event#50
 (selectionchange)%null#Event#50
 (selectstart)%null#Event#50
-(show)%null#null#50
 (stalled)%null#Event#50
 (submit)%null#Event#50
 (suspend)%null#Event#50
@@ -176,6 +173,9 @@ ngProjectAs%null#null#50
 (keydown.%null#null#10
 (keyup.%null#null#10
 i18n-%null#null#10
+~(keypress)%null#KeyboardEvent#0
+~(mousewheel)%null#null#0
+~(show)%null#null#0
 #%null#null#0
 [attr.%null#null#0
 [class.%null#null#0

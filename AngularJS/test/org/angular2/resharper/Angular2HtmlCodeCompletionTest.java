@@ -4,6 +4,7 @@ package org.angular2.resharper;
 import com.intellij.codeInsight.completion.PrioritizedLookupElement;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.javascript.web.symbols.WebSymbol;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.testFramework.TestDataPath;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -15,10 +16,9 @@ import java.util.Set;
 public class Angular2HtmlCodeCompletionTest extends Angular2ReSharperCompletionTestBase {
 
   private static final Set<String> TESTS_TO_SKIP = ContainerUtil.newHashSet(
-    "test003", // missing [style. support
-    "test004", // missing [style. support
     "test007", // differences in standard HTML attributes and missing *directive items
-    "test008"  // MathML items in content assist
+    "test008",  // MathML items in content assist
+    "test009"  // Priority filter problems
   );
 
   private static final Set<String> HIGH_PRIORITY_ONLY = ContainerUtil.newHashSet(
@@ -44,6 +44,7 @@ public class Angular2HtmlCodeCompletionTest extends Angular2ReSharperCompletionT
 
   @Override
   protected void doSingleTest(@NotNull String testFile, @NotNull String path) throws Exception {
+    Registry.get("ide.completion.variant.limit").setValue(2000, myFixture.getTestRootDisposable());
     myFixture.copyFileToProject("../../package.json", "package.json");
     super.doSingleTest(testFile, path);
   }
@@ -54,8 +55,16 @@ public class Angular2HtmlCodeCompletionTest extends Angular2ReSharperCompletionT
       return !(element instanceof PrioritizedLookupElement)
              || ((PrioritizedLookupElement<?>)element).getPriority() < WebSymbol.Priority.HIGH.getValue();
     }
-    if (IGNORED_ELEMENT_ATTRS.contains(element.getLookupString())
-        || element.getLookupString().contains("aria-")) {
+    var lookupString = element.getLookupString();
+    if (IGNORED_ELEMENT_ATTRS.contains(lookupString)
+        || lookupString.contains("aria-")
+        // CSS props
+        || lookupString.startsWith("-moz-")
+        || lookupString.startsWith("-webkit-")
+        || lookupString.startsWith("-ms-")
+        || lookupString.startsWith("-o-")
+        || lookupString.startsWith("mso-")
+    ) {
       return true;
     }
     return super.shouldSkipItem(element);
