@@ -10,7 +10,9 @@ import org.angular2.cli.AngularCliProjectGenerator
 import org.angularjs.AngularJSProjectGenerator
 
 //no angular.js for new API
-class AngularCLIModuleBuilder : GeneratorNewProjectWizardBuilderAdapter(WebTemplateNewProjectWizard(AngularCliProjectGenerator()))
+class AngularCLIModuleBuilder : GeneratorNewProjectWizardBuilderAdapter(WebTemplateNewProjectWizard(AngularCliProjectGenerator())){
+  override fun getWeight() = WEB_WEIGHT + 10
+}
 
 class AngularAndAngularJSTemplateFactory : JavaScriptNewTemplatesFactoryBase() {
   override fun createTemplates(context: WizardContext?): Array<ProjectTemplate> =
