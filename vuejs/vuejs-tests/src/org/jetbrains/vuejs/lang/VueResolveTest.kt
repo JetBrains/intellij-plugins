@@ -1969,9 +1969,7 @@ export default class UsageComponent extends Vue {
   fun testGotoDeclarationTS() {
     myFixture.configureByFile("gotoDeclarationTS.vue")
     for (check in listOf("base", "watch", "computed", "methods")) {
-      myFixture.moveToOffsetBySignature("fetch<caret>Tracks/*$check*/()")
-      myFixture.performEditorAction("GotoDeclaration")
-      TestCase.assertEquals(check, 554, myFixture.caretOffset)
+      myFixture.checkGotoDeclaration("fetch<caret>Tracks/*$check*/()", 554)
     }
   }
 
@@ -1987,6 +1985,18 @@ export default class UsageComponent extends Vue {
     TestCase.assertEquals(
       "index.vue",
       myFixture.resolveToWebSymbolSource("<Hello<caret>World").containingFile.name)
+  }
+
+  fun testScriptSetupRef() {
+    myFixture.configureByFiles("scriptSetupRef.vue")
+    for (check in listOf(
+      Pair("ref='f<caret>oo2'", 167),
+      Pair("ref='fo<caret>o'", 50),
+      Pair("\$refs.fo<caret>o2 ", 167),
+      Pair("\$refs.fo<caret>o ", 48))) {
+
+      myFixture.checkGotoDeclaration(check.first, check.second)
+    }
   }
 
 }

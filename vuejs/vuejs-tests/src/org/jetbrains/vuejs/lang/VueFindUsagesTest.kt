@@ -28,4 +28,14 @@ class VueFindUsagesTest : BasePlatformTestCase() {
     myFixture.checkUsages("private ba<caret>r", getTestName(true))
   }
 
+  fun testScriptSetupRef() {
+    myFixture.configureByFiles("scriptSetupRef.vue")
+    listOf("ref='f<caret>oo2'", "ref='fo<caret>o'",
+           "\$refs.fo<caret>o2 ", "\$refs.fo<caret>o ",
+           "const fo<caret>o2", "const fo<caret>o3")
+      .forEachIndexed { index, signature ->
+        myFixture.checkUsages(signature, getTestName(true) + "." + index)
+      }
+  }
+
 }

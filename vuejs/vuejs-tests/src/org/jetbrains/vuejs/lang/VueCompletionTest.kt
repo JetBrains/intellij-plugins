@@ -1725,6 +1725,10 @@ export default {
     doLookupTest(VueTestModule.VUE_3_2_2)
   }
 
+  fun testScriptSetupRef() {
+    doLookupTest(VueTestModule.VUE_3_2_2)
+  }
+
   private fun assertDoesntContainVueLifecycleHooks() {
     myFixture.completeBasic()
     assertDoesntContain(myFixture.lookupElementStrings!!, "\$el", "\$options", "\$parent")

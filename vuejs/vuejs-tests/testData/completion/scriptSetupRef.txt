@@ -1,0 +1,2 @@
+!foo2#null#0
+!foo3#null#0

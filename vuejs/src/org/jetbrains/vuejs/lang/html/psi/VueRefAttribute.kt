@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.lang.html.psi
 import com.intellij.lang.javascript.psi.JSTypeOwner
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.pom.PomTarget
+import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlAttribute
 
 interface VueRefAttribute : XmlAttribute {
@@ -12,7 +13,7 @@ interface VueRefAttribute : XmlAttribute {
 
   val containingTagName: String
 
-  val implicitElement: VueRefDeclaration?
+  val implicitElement: JSImplicitElement?
 
   interface VueRefDeclaration : PomTarget, JSImplicitElement, JSTypeOwner
 

@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.lang.html.psi.impl
 import com.intellij.javascript.web.types.WebJSTypesUtil
 import com.intellij.lang.ASTNode
 import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.JSVariable
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.TypeScriptMergedTypeImplicitElement
@@ -25,9 +26,11 @@ import com.intellij.refactoring.suggested.startOffset
 import org.jetbrains.vuejs.codeInsight.ATTR_DIRECTIVE_PREFIX
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueDirectiveKind
 import org.jetbrains.vuejs.codeInsight.resolveLocalComponent
+import org.jetbrains.vuejs.index.processScriptSetupTopLevelDeclarations
 import org.jetbrains.vuejs.lang.html.psi.VueRefAttribute
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueRegularComponent
+import org.jetbrains.vuejs.model.source.VueCompositionInfoHelper
 
 class VueRefAttributeImpl : XmlStubBasedAttributeBase<VueRefAttributeStubImpl>, VueRefAttribute {
 
@@ -45,12 +48,20 @@ class VueRefAttributeImpl : XmlStubBasedAttributeBase<VueRefAttributeStubImpl>, 
   override val containingTagName: String
     get() = stub?.containingTagName ?: parent.name
 
-  override val implicitElement: VueRefAttribute.VueRefDeclaration?
+  override val implicitElement: JSImplicitElement?
     get() = CachedValuesManager.getCachedValue(this) {
       CachedValueProvider.Result(
-        value?.trim()
+        value
+          ?.trim()
           ?.takeIf { it.isNotEmpty() }
-          ?.let { VueRefDeclarationImpl(it, resolveTagType(), this, JSImplicitElement.Type.Property) },
+          ?.let { name ->
+            findScriptSetupVar(name)?.let {
+              VueCompositionInfoHelper.getUnwrappedRefElement(
+                it, VueCompositionInfoHelper.getUnwrapRefType(this))
+            }
+            //?: findSetupVar(name)
+            ?: VueRefDeclarationImpl(name, resolveTagType(), this, JSImplicitElement.Type.Property)
+          },
         PsiModificationTracker.MODIFICATION_COUNT)
     }
 
@@ -63,6 +74,18 @@ class VueRefAttributeImpl : XmlStubBasedAttributeBase<VueRefAttributeStubImpl>, 
               ?.let { JSCompositeTypeFactory.createUnionType(source, it) }
             ?: WebJSTypesUtil.getHtmlElementClassType(source, containingTagName))
       ?.let { if (isList) JSArrayTypeImpl(it, it.source) else it }
+  }
+
+  private fun findScriptSetupVar(refName: String): JSVariable? {
+    var result: JSVariable? = null
+    processScriptSetupTopLevelDeclarations(this) { resolved ->
+      if (resolved is JSVariable && resolved.name == refName) {
+        result = resolved
+        false
+      }
+      else true
+    }
+    return result
   }
 
   private class VueRefDeclarationImpl(name: String, jsType: JSType?, provider: PsiElement, kind: JSImplicitElement.Type)

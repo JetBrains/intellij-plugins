@@ -1,9 +1,7 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.source
 
-import com.intellij.lang.javascript.psi.JSFunctionType
-import com.intellij.lang.javascript.psi.JSRecordType
-import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.*
@@ -12,6 +10,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.castSafelyTo
+import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
 import org.jetbrains.vuejs.codeInsight.resolveSymbolFromNodeModule
 import org.jetbrains.vuejs.index.COMPOSITION_API_MODULE
 import org.jetbrains.vuejs.index.VUE_MODULE
@@ -57,6 +56,17 @@ object VueCompositionInfoHelper {
     }
     else
       JSGenericTypeImpl(substituted.source, unwrapRef.jsType, substituted)
+  }
+
+  fun getUnwrappedRefElement(element: PsiElement?, unwrapRef: TypeScriptTypeAlias?): VueImplicitElement? {
+    val resolved = (element as? JSPsiNamedElementBase)?.resolveIfImportSpecifier()
+    val jsType = (resolved as? JSTypeOwner)?.jsType
+    val name = resolved?.name
+    return if (jsType != null && name != null) {
+      val unwrappedType = unwrapType(jsType, unwrapRef)
+      VueImplicitElement(name, unwrappedType, resolved, JSImplicitElement.Type.Property, true)
+    }
+    else null
   }
 
   private fun substituteRefType(type: JSType, context: JSTypeSubstitutionContextImpl? = null): JSType {
