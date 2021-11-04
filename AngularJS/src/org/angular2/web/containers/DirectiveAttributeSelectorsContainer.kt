@@ -53,7 +53,7 @@ class DirectiveAttributeSelectorsContainer(val project: Project) : WebSymbolsCon
       get() = true
 
     override val origin: WebSymbolsContainer.Origin
-      get() = WebSymbolsContainer.OriginData(Angular2Framework.ID, null)
+      get() = WebSymbolsContainer.OriginData(Angular2Framework.ID)
 
     override val namespace: WebSymbolsContainer.Namespace
       get() = WebSymbolsContainer.Namespace.HTML

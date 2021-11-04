@@ -70,7 +70,7 @@ class StandardPropertyAndEventsContainer(private val templateFile: PsiFile) : We
       get() = true
 
     override val origin: WebSymbolsContainer.Origin
-      get() = WebSymbolsContainer.OriginData(Angular2Framework.ID, null)
+      get() = WebSymbolsContainer.OriginData(Angular2Framework.ID)
 
     override val namespace: WebSymbolsContainer.Namespace
       get() = HTML

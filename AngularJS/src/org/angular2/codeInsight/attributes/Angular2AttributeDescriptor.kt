@@ -36,6 +36,7 @@ class Angular2AttributeDescriptor(info: WebSymbolHtmlAttributeInfo, tag: XmlTag?
     @Deprecated(message = "Deprecated, returns fake descriptor. Use web-types or Web Symbols instead")
     fun create(tag: XmlTag,
                attributeName: String,
+               @Suppress("UNUSED_PARAMETER")
                element: PsiElement): Angular2AttributeDescriptor {
       return Angular2AttributeDescriptor(object: WebSymbolHtmlAttributeInfo{
         override val name: String
@@ -43,7 +44,7 @@ class Angular2AttributeDescriptor(info: WebSymbolHtmlAttributeInfo, tag: XmlTag?
         override val symbol: WebSymbol
           get() = object: WebSymbol {
             override val origin: WebSymbolsContainer.Origin
-              get() = WebSymbolsContainer.OriginData(Angular2Framework.ID, null)
+              get() = WebSymbolsContainer.OriginData(Angular2Framework.ID)
             override val namespace: WebSymbolsContainer.Namespace
               get() = WebSymbolsContainer.Namespace.HTML
             override val kind: SymbolKind
