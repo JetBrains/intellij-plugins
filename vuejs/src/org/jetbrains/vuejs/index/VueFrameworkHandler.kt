@@ -441,6 +441,18 @@ fun resolveLocally(ref: JSReferenceExpression): List<PsiElement> {
 }
 
 @StubSafe
+fun processScriptSetupTopLevelDeclarations(context: PsiElement, consumer: (JSPsiNamedElementBase) -> Boolean) {
+  val module = findModule(context, true) ?: return
+  JSStubBasedPsiTreeUtil.processDeclarationsInScope(module, { element, _ ->
+    val resolved = (element as? JSPsiNamedElementBase)?.resolveIfImportSpecifier()
+    val name = resolved?.name
+    if (name != null) {
+      consumer(resolved)
+    } else true
+  }, false)
+}
+
+@StubSafe
 fun findModule(element: PsiElement?, setup: Boolean): JSEmbeddedContent? =
   element
     ?.let { InjectedLanguageManager.getInstance(element.project) }

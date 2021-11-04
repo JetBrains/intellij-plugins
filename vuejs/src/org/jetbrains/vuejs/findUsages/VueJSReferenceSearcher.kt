@@ -10,18 +10,18 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.util.JSUtils
 import com.intellij.lang.typescript.psi.TypeScriptPsiUtil
 import com.intellij.openapi.application.QueryExecutorBase
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiReference
-import com.intellij.psi.search.LocalSearchScope
-import com.intellij.psi.search.QuerySearchRequest
-import com.intellij.psi.search.SearchRequestCollector
-import com.intellij.psi.search.UsageSearchContext
+import com.intellij.psi.search.*
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.PairProcessor
 import com.intellij.util.Processor
 import com.intellij.util.castSafelyTo
+import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.SETUP_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.findDefaultExport
@@ -30,6 +30,7 @@ import org.jetbrains.vuejs.codeInsight.stubSafeGetAttribute
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.lang.html.psi.VueRefAttribute
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueRegularComponent
 import org.jetbrains.vuejs.model.source.VueComponents
@@ -51,8 +52,9 @@ class VueJSReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.
 
       // Script setup local vars
       val scriptTag = PsiTreeUtil.getContextOfType(element, XmlTag::class.java, false, PsiFile::class.java)
-      if (scriptTag?.stubSafeGetAttribute(SETUP_ATTRIBUTE_NAME) != null &&
-          scriptTag.containingFile.virtualFile?.fileType == VueFileType.INSTANCE) {
+      if (scriptTag?.name == HtmlUtil.SCRIPT_TAG_NAME
+          && scriptTag.stubSafeGetAttribute(SETUP_ATTRIBUTE_NAME) != null
+          && scriptTag.containingFile.virtualFile?.fileType == VueFileType.INSTANCE) {
         alternateNames().forEach {
           queryParameters.optimizer.searchWord(
             it,
@@ -60,6 +62,26 @@ class VueJSReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.
             UsageSearchContext.IN_CODE,
             false, element,
             PsiSourcedWebSymbolRequestResultProcessor(element, true))
+        }
+
+        if (element is JSVariable) {
+          // JSReferenceExpression optimizes in case of JSVariables, so we need to search for our implicit element instead to find
+          // references to `ref` attributes qualified on `$refs` in script setup
+          queryParameters.optimizer.searchWord(elementName, LocalSearchScope(element.containingFile),
+                                               UsageSearchContext.ANY, true, element, object : RequestResultProcessor() {
+            override fun processTextOccurrence(occurence: PsiElement, offsetInElement: Int, consumer: Processor<in PsiReference>): Boolean {
+              val implicitElement = (occurence as? XmlAttributeValue)
+                ?.parent?.castSafelyTo<VueRefAttribute>()
+                ?.implicitElement
+              if (implicitElement != null && implicitElement.context == element) {
+                val collector = queryParameters.optimizer
+                collector.searchWord(elementName, LocalSearchScope(element.containingFile),
+                                                     UsageSearchContext.ANY, true, implicitElement)
+                return PsiSearchHelper.getInstance(element.getProject()).processRequests(collector, consumer)
+              }
+              return true
+            }
+          })
         }
         return
       }

@@ -15,12 +15,15 @@ import com.intellij.psi.util.PsiUtilCore
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.util.ProcessingContext
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeValueCompletionProvider
+import org.jetbrains.vuejs.codeInsight.attributes.VueRefValueCompletionProvider
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 
 class VueCompletionContributor : CompletionContributor() {
   init {
     extend(CompletionType.BASIC, psiElement(XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN),
            VueAttributeValueCompletionProvider())
+    extend(CompletionType.BASIC, psiElement(XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN),
+           VueRefValueCompletionProvider())
     extend(CompletionType.BASIC, psiElement().with(language(VueJSLanguage.INSTANCE)),
            VueJSCompletionProvider())
     extend(CompletionType.BASIC, psiElement().with(language(VueJSLanguage.INSTANCE)),

@@ -1,10 +1,7 @@
 // Copyright 2000-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.types
 
-import com.intellij.lang.javascript.psi.JSRecordType
-import com.intellij.lang.javascript.psi.JSType
-import com.intellij.lang.javascript.psi.JSTypeSubstitutionContext
-import com.intellij.lang.javascript.psi.JSTypeTextBuilder
+import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.util.ProcessingContext
 import org.jetbrains.vuejs.codeInsight.REF_ATTRIBUTE_NAME
@@ -45,8 +42,10 @@ class VueRefsType(source: JSTypeSource,
       (findAttribute(tag, REF_ATTRIBUTE_NAME) as? VueRefAttribute)
         ?.implicitElement
         ?.let {
-          // For multiple elements with the same ref name, the last one is taken by Vue engine
-          members[it.name] = JSRecordTypeImpl.PropertySignatureImpl(it.name, it.jsType, false, true, it)
+          if (it is JSTypeOwner) {
+            // For multiple elements with the same ref name, the last one is taken by Vue engine
+            members[it.name] = JSRecordTypeImpl.PropertySignatureImpl(it.name, it.jsType, false, true, it)
+          }
         }
     }
     getDefaultVueComponentInstanceType(instanceOwner.source)

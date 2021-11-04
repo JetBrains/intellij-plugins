@@ -100,8 +100,8 @@ class VuexFindUsagesTest : BasePlatformTestCase() {
 
   private fun checkUsages(filePath: String, goldFileSuffix: String, vararg signatures: String) {
     val testName = getTestName(true)
+    myFixture.configureFromTempProjectFile(filePath)
     for ((i, signature) in signatures.withIndex()) {
-      myFixture.configureFromTempProjectFile(filePath)
       myFixture.checkUsages(signature, "$testName.$goldFileSuffix${if (signatures.size > 1) ".$i" else ""}")
     }
   }

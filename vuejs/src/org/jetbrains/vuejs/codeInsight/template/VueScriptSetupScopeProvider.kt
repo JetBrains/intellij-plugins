@@ -27,13 +27,8 @@ class VueScriptSetupScopeProvider : VueTemplateScopesProvider() {
       val unwrapRef = VueCompositionInfoHelper.getUnwrapRefType(module)
       JSStubBasedPsiTreeUtil.processDeclarationsInScope(module, { element, _ ->
         val resolved = (element as? JSPsiNamedElementBase)?.resolveIfImportSpecifier()
-        val jsType = (resolved as? JSTypeOwner)?.jsType
-        val name = resolved?.name
-        val elementToConsume = if (jsType != null && name != null) {
-          val unwrappedType = VueCompositionInfoHelper.unwrapType(jsType, unwrapRef)
-          VueImplicitElement(name, unwrappedType, resolved, JSImplicitElement.Type.Property, true)
-        }
-        else (resolved ?: element)
+        val elementToConsume = VueCompositionInfoHelper.getUnwrappedRefElement(resolved, unwrapRef)
+                               ?: resolved ?: element
         consumer.accept(PsiElementResolveResult(elementToConsume, true)).let { true }
       }, false)
     }
