@@ -72,6 +72,7 @@ internal class VueGlobalImpl(override val project: Project, private val packageJ
                    container.filters.values,
                    container.mixins)
           .flatMap { it.asSequence() }
+          .map { if (it is VueContainerDelegate) it.delegate else it }
           .forEach { el -> result.putValue(el, container) }
       }
     return result

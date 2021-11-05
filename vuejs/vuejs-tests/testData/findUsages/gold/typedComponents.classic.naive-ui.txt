@@ -1,0 +1,8 @@
+<typedComponentsClassic.vue:(141,147):(0,6)>	{NAffix}
+<typedComponentsClassic.vue:(231,237):(0,6)>	NAffix
+<typedComponentsClassic.vue:(248,254):(0,6)>	Bar: NAffix
+<typedComponentsClassic.vue:(35,72):(1,8)>	n-affix
+<typedComponentsClassic.vue:(47,72):(1,7)>	NAffix
+<typedComponentsScriptSetup.vue:(131,137):(0,6)>	{NAffix}
+<typedComponentsScriptSetup.vue:(35,56):(1,8)>	n-affix
+<typedComponentsScriptSetup.vue:(47,56):(1,7)>	NAffix

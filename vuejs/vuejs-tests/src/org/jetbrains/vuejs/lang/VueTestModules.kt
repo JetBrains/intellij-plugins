@@ -34,6 +34,8 @@ enum class VueTestModule(val folder: String, vararg packageNames: String) {
   HEADLESS_UI_1_4_1("headlessui", "@headlessui/vue"),
   IVIEW_2_8_0("iview"),
   MINT_UI_2_2_3("mint-ui"),
+  NAIVE_UI_2_19_11_NO_WEB_TYPES("naive-ui/2.19.11-no-web-types", "naive-ui"),
+  NAIVE_UI_2_19_11("naive-ui/2.19.11", "naive-ui"),
   NUXT_2_8_1("nuxt/2.8.1", "nuxt"),
   NUXT_2_9_2("nuxt/2.9.2", "nuxt", "@nuxt/types"),
   NUXT_2_13_2("nuxt/2.13.2", "nuxt", "@nuxt/types"),

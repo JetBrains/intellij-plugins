@@ -29,7 +29,6 @@ class VueTypedComponentFilesIndex : ScalarIndexExtension<Boolean>() {
     var result = false
     JSStubBasedPsiTreeUtil.processDeclarationsInScope(psiFile, { element, _ ->
       if (element is TypeScriptVariable
-          && element.isExported
           && VueTypedEntitiesProvider.isComponentDefinition(element)) {
         result = true
         false
@@ -41,7 +40,7 @@ class VueTypedComponentFilesIndex : ScalarIndexExtension<Boolean>() {
 
   override fun getKeyDescriptor(): KeyDescriptor<Boolean> = BooleanKeyDescriptor()
 
-  override fun getVersion(): Int = 0
+  override fun getVersion(): Int = 1
 
   companion object {
     val VUE_TYPED_COMPONENTS_INDEX = ID.create<Boolean, Void>("VueTypedComponentFilesIndex")

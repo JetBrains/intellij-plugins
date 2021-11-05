@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.lang
 
 import com.intellij.javascript.web.*
+import com.intellij.lang.ecmascript6.psi.ES6Property
 import com.intellij.lang.ecmascript6.psi.JSClassExpression
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClassExpression
@@ -1674,7 +1675,7 @@ export default class UsageComponent extends Vue {
 }
 </script>
 """)
-    doResolveIntoClassComponent("ShortComponent.vue")
+    myFixture.checkGotoDeclaration("<Short<caret>Vue", 107, "ShortComponent.vue")
   }
 
   fun testResolveWithClassComponentTs() {
@@ -1702,8 +1703,9 @@ export default class UsageComponent extends Vue {
 </script>
 """)
     val target = myFixture.resolveToWebSymbolSource("<<caret>LongComponent/>")
-    TestCase.assertEquals("LongComponent.vue", target.containingFile.name)
-    assertInstanceOf(target.parent, TypeScriptClassExpression::class.java)
+    TestCase.assertEquals("ResolveWithClassComponentTs.vue", target.containingFile.name)
+    assertInstanceOf(target, ES6Property::class.java)
+    myFixture.checkGotoDeclaration("<<caret>LongComponent/>", 145, "LongComponent.vue")
   }
 
   fun testLocalComponentsExtendsResolve() {
@@ -1711,15 +1713,6 @@ export default class UsageComponent extends Vue {
     myFixture.type("prop-from-a=\"\"")
     myFixture.editor.caretModel.moveToOffset(myFixture.editor.caretModel.offset - 5)
     doTestResolveIntoProperty("propFromA")
-  }
-
-  private fun doResolveIntoClassComponent(fileName: String, checkType: Boolean = true) {
-    val target = myFixture.webSymbolSourceAtCaret()
-    TestCase.assertNotNull(target)
-    TestCase.assertEquals(fileName, target!!.containingFile.name)
-    if (checkType) {
-      assertInstanceOf(target.parent, JSClassExpression::class.java)
-    }
   }
 
   private fun doResolveIntoLibraryComponent(compName: String, fileName: String) {
@@ -1736,13 +1729,13 @@ export default class UsageComponent extends Vue {
           <<caret>HiddenComponent/>
         </template>
       """)
-    doResolveIntoLibraryComponent("hidden-component", "hidden-component.vue")
+    myFixture.checkGotoDeclaration("<Hidden<caret>Component/>", 33, "hidden-component.vue")
     myFixture.configureByText("ResolveWithRecursiveMixins2.vue", """
         <template>
           <<caret>OneMoreComponent/>
         </template>
       """)
-    doResolveIntoClassComponent("OneMoreComponent.vue", false)
+    myFixture.checkGotoDeclaration("<One<caret>MoreComponent/>", 214, "OneMoreComponent.vue")
   }
 
   fun testCssClassInPug() {
@@ -1771,8 +1764,8 @@ export default class UsageComponent extends Vue {
         export default app;
         const app = { name: 'app', components: { HelloWorld } };
       </script>""")
-    val target = myFixture.webSymbolSourceAtCaret()
-    TestCase.assertEquals("name: 'HelloWorld'", target!!.parent.text)
+    myFixture.checkGotoDeclaration("<Hello<caret>World", 43,
+                                   "HelloWorld.vue")
   }
 
   fun testComponentModelProperty() {
@@ -1975,16 +1968,12 @@ export default class UsageComponent extends Vue {
 
   fun testNoScriptSection() {
     myFixture.configureByFiles("noScriptSection/test.vue", "noScriptSection/noScriptSection.vue")
-    TestCase.assertEquals(
-      "noScriptSection.vue",
-      myFixture.resolveToWebSymbolSource("<no-script<caret>-section>").containingFile.name)
+    myFixture.checkGotoDeclaration("<no-script<caret>-section>", 0, "noScriptSection.vue")
   }
 
   fun testLazyLoaded() {
     myFixture.configureByFiles("lazyLoaded/main.vue", "lazyLoaded/index.vue")
-    TestCase.assertEquals(
-      "index.vue",
-      myFixture.resolveToWebSymbolSource("<Hello<caret>World").containingFile.name)
+    myFixture.checkGotoDeclaration("<Hello<caret>World", 24, "index.vue")
   }
 
   fun testScriptSetupRef() {

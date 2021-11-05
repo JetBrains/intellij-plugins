@@ -38,6 +38,7 @@ import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.getComponentDescriptor
+import org.jetbrains.vuejs.model.source.VueComponents.Companion.getSourceComponentDescriptor
 import org.jetbrains.vuejs.model.typed.VueTypedEntitiesProvider
 
 class VueModelManager {
@@ -91,7 +92,7 @@ class VueModelManager {
         }
         context = superContext
       }
-      return getComponent(getComponentDescriptor(context))
+      return getComponent(getSourceComponentDescriptor(context))
     }
 
     private fun findComponent(templateElement: PsiElement): VueComponent? {
@@ -126,6 +127,7 @@ class VueModelManager {
           getVueIndexData(element)
             ?.descriptorRef
             ?.let { VueComponents.resolveReferenceToVueComponent(context!!, it) }
+            ?.castSafelyTo<VueSourceEntityDescriptor>()
             ?.initializer
             ?.let { return VueSourceEntityDescriptor(it) }
 
@@ -257,6 +259,7 @@ class VueModelManager {
             ?: PsiTreeUtil.getStubChildOfType(script, JSEmbeddedContent::class.java)
           )
             ?.let { getComponentDescriptor(it) }
+            ?.castSafelyTo<VueSourceEntityDescriptor>()
             ?.let { return it }
         }
         if (element.containingFile.originalFile.virtualFile?.fileType == VueFileType.INSTANCE)
@@ -299,11 +302,9 @@ class VueModelManager {
     fun getComponent(element: PsiElement): VueComponent? =
       getComponent(getComponentDescriptor(element) ?: getEnclosingComponentDescriptor(element))
 
-    fun getComponent(descriptor: VueSourceEntityDescriptor?): VueComponent? =
-      if (descriptor?.variable != null)
-        VueTypedEntitiesProvider.getComponent(descriptor.variable)
-      else
-        descriptor?.getCachedValue { descr ->
+    fun getComponent(descriptor: VueEntityDescriptor?): VueComponent? =
+      VueTypedEntitiesProvider.getComponent(descriptor)
+      ?: (descriptor as? VueSourceEntityDescriptor)?.getCachedValue { descr ->
           val declaration = descr.source
           val implicitElement = getComponentImplicitElement(declaration)
           val data = implicitElement
@@ -315,7 +316,7 @@ class VueModelManager {
         }
 
     fun getMixin(mixin: PsiElement): VueMixin? =
-      getMixin(getComponentDescriptor(mixin) ?: getEnclosingComponentDescriptor(mixin))
+      getMixin(getSourceComponentDescriptor(mixin) ?: getEnclosingComponentDescriptor(mixin))
 
     fun getMixin(descriptor: VueSourceEntityDescriptor?): VueMixin? =
       descriptor?.getCachedValue {

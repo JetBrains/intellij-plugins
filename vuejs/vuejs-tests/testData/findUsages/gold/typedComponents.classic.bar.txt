@@ -1,0 +1,1 @@
+<typedComponentsClassic.vue:(66,72):(1,4)>	Bar

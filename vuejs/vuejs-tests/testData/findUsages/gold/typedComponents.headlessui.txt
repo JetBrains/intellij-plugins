@@ -1,0 +1,6 @@
+<typedComponentsClassic.vue:(101,107):(0,6)>	{Dialog}
+<typedComponentsClassic.vue:(202,208):(0,6)>	Dialog
+<typedComponentsClassic.vue:(219,225):(0,6)>	Foo: Dialog
+<typedComponentsScriptSetup.vue:(13,56):(1,7)>	Dialog
+<typedComponentsScriptSetup.vue:(24,56):(1,7)>	dialog
+<typedComponentsScriptSetup.vue:(91,97):(0,6)>	{Dialog}

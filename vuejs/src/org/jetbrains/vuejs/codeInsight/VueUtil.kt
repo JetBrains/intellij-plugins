@@ -219,10 +219,11 @@ fun <T : PsiElement> resolveElementTo(element: PsiElement?, vararg classes: KCla
             if (regularScript != null) {
               queue.add(regularScript)
             }
-            else {
+            else if (classes.any { it == JSEmbeddedContent::class }) {
               @Suppress("UNCHECKED_CAST")
               return cur as T
             }
+            else return null
           }
           else findDefaultExport(cur)?.let { queue.add(it) }
         }
