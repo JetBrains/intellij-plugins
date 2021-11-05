@@ -1729,6 +1729,28 @@ export default {
     doLookupTest(VueTestModule.VUE_3_2_2)
   }
 
+  fun testTypedComponentsImportClassic() {
+    myFixture.configureVueDependencies(VueTestModule.HEADLESS_UI_1_4_1)
+    myFixture.configureByText("text.vue", "<template><Dial<caret></template>")
+    myFixture.completeBasic()
+    myFixture.type('\n')
+    myFixture.checkResultByFile("typedComponentsImportClassic.vue")
+  }
+
+  fun testTypedComponentsImportScriptSetup() {
+    myFixture.configureVueDependencies(VueTestModule.HEADLESS_UI_1_4_1)
+    myFixture.configureByText("text.vue", "<template><Dial<caret></template>\n<script setup>\n</script>")
+    myFixture.completeBasic()
+    myFixture.type('\n')
+    myFixture.checkResultByFile("typedComponentsImportScriptSetup.vue")
+  }
+
+  fun testTypedComponents1() {
+    doLookupTest(VueTestModule.VUE_3_2_2, VueTestModule.HEADLESS_UI_1_4_1, locations = listOf("v-bind:<caret>", "v-on:<caret>")) {
+      !it.startsWith("aria-")
+    }
+  }
+
   private fun assertDoesntContainVueLifecycleHooks() {
     myFixture.completeBasic()
     assertDoesntContain(myFixture.lookupElementStrings!!, "\$el", "\$options", "\$parent")

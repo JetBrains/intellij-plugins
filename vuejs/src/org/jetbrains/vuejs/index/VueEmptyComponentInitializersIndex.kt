@@ -62,16 +62,7 @@ class VueEmptyComponentInitializersIndex : ScalarIndexExtension<Boolean>() {
     val VUE_NO_INITIALIZER_COMPONENTS_INDEX = ID.create<Boolean, Void>("VueNoScriptFilesIndex")
   }
 
-  override fun getKeyDescriptor(): KeyDescriptor<Boolean> = object : KeyDescriptor<Boolean> {
-    override fun getHashCode(value: Boolean): Int = value.hashCode()
-
-    override fun isEqual(val1: Boolean, val2: Boolean): Boolean = val1 == val2
-
-    override fun save(out: DataOutput, value: Boolean) = out.writeBoolean(value)
-
-    override fun read(`in`: DataInput): Boolean = `in`.readBoolean()
-
-  }
+  override fun getKeyDescriptor(): KeyDescriptor<Boolean> = BooleanKeyDescriptor()
 
   override fun dependsOnFileContent(): Boolean = true
 

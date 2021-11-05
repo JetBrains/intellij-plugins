@@ -13,6 +13,7 @@ import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.index.JSSymbolUtil
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptAsExpression
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptVariable
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
@@ -128,9 +129,9 @@ fun es6Unquote(s: String): String {
 }
 
 fun getStringLiteralsFromInitializerArray(holder: PsiElement): List<JSLiteralExpression> {
-  return JSStubBasedPsiTreeUtil.findDescendants<JSLiteralExpression>(holder,
-    TokenSet.create(JSStubElementTypes.LITERAL_EXPRESSION,
-      JSStubElementTypes.STRING_TEMPLATE_EXPRESSION))
+  return JSStubBasedPsiTreeUtil.findDescendants<JSLiteralExpression>(
+    holder, TokenSet.create(JSStubElementTypes.LITERAL_EXPRESSION,
+                            JSStubElementTypes.STRING_TEMPLATE_EXPRESSION))
     .filter {
       val context = it.context
       !it.significantValue.isNullOrBlank() &&
@@ -175,7 +176,7 @@ fun <T : PsiElement> resolveElementTo(element: PsiElement?, vararg classes: KCla
   loop@ while (!queue.isEmpty()) {
     val cur = queue.removeFirst()
     if (visited.add(cur)) {
-      if (cur !is JSEmbeddedContent && classes.any { it.isInstance(cur) }) {
+      if (cur !is JSEmbeddedContent && cur !is JSVariable && classes.any { it.isInstance(cur) }) {
         @Suppress("UNCHECKED_CAST")
         return cur as T
       }
@@ -189,6 +190,13 @@ fun <T : PsiElement> resolveElementTo(element: PsiElement?, vararg classes: KCla
           ( // Try with stub
             when (cur) {
               is JSProperty -> cur.objectLiteralExpressionInitializer ?: cur.tryGetFunctionInitializer()
+              is TypeScriptVariable -> cur.initializerOrStub ?: run {
+                // Typed components from d.ts.
+                if (cur.typeElement != null && classes.any { it.isInstance(cur) })
+                  @Suppress("UNCHECKED_CAST")
+                  return cur as T
+                else null
+              }
               is JSVariable -> cur.initializerOrStub
               else -> null
             }
@@ -204,8 +212,8 @@ fun <T : PsiElement> resolveElementTo(element: PsiElement?, vararg classes: KCla
           .toCollection(queue)
         is JSEmbeddedContent -> {
           if (cur.parent.let { tag ->
-              tag is XmlTag && PsiTreeUtil.getStubChildrenOfTypeAsList(tag,
-                XmlAttribute::class.java).find { it.name == SETUP_ATTRIBUTE_NAME } != null
+              tag is XmlTag && PsiTreeUtil.getStubChildrenOfTypeAsList(tag, XmlAttribute::class.java)
+                .find { it.name == SETUP_ATTRIBUTE_NAME } != null
             }) {
             val regularScript = findModule(cur, false)
             if (regularScript != null) {
@@ -248,12 +256,14 @@ fun collectPropertiesRecursively(element: JSObjectLiteralExpression): List<Pair<
   return result
 }
 
-val XmlTag.stubSafeAttributes: List<XmlAttribute> get() =
-  if (isStubBased(this)) {
-    PsiTreeUtil.getStubChildrenOfTypeAsList(this, XmlAttribute::class.java)
-  } else {
-    this.attributes.filter { isStubBased(it) }
-  }
+val XmlTag.stubSafeAttributes: List<XmlAttribute>
+  get() =
+    if (isStubBased(this)) {
+      PsiTreeUtil.getStubChildrenOfTypeAsList(this, XmlAttribute::class.java)
+    }
+    else {
+      this.attributes.filter { isStubBased(it) }
+    }
 
 fun XmlTag.stubSafeGetAttribute(qname: String): XmlAttribute? =
   stubSafeAttributes.find { it.name == qname }
@@ -295,7 +305,7 @@ private fun getJSTypeFromConstructor(expression: JSExpression): JSType =
     ?.arguments?.getOrNull(0)
     ?.asCompleteType()
   ?: JSApplyNewType(JSTypeofTypeImpl(expression, JSTypeSourceFactory.createTypeSource(expression, false)),
-    JSTypeSourceFactory.createTypeSource(expression.containingFile, false))
+                    JSTypeSourceFactory.createTypeSource(expression.containingFile, false))
 
 fun getRequiredFromPropOptions(expression: JSExpression?): Boolean =
   (expression as? JSObjectLiteralExpression)

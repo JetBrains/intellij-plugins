@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.model
 
 interface VuePlugin : VueEntitiesContainer {
+  val defaultProximity: VueModelVisitor.Proximity
   val moduleName: String?
   val moduleVersion: String?
 }
