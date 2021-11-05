@@ -36,7 +36,7 @@ class VueEmptyComponentInitializersIndex : ScalarIndexExtension<Boolean>() {
             val exportedElement = (ES6PsiUtil.findDefaultExport(module) as? JSExportAssignment)
               ?.stubSafeElement
             if (exportedElement is JSObjectLiteralExpression || exportedElement is JSCallExpression) {
-              VueComponents.getComponentDescriptor(exportedElement)
+              VueComponents.getSourceComponentDescriptor(exportedElement)
                 ?.initializer
                 ?.castSafelyTo<JSObjectLiteralExpression>()
                 ?.properties

@@ -22,7 +22,6 @@ import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptVariable
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil
 import com.intellij.lang.javascript.psi.impl.JSPsiElementFactory
@@ -86,7 +85,10 @@ class VueInsertHandler : XmlTagInsertHandler() {
 
     context.commitDocument()
     val isClass = element.context is JSClassExpression || element.context is ES6Decorator
-    val elementToImport = element.takeIf { it is TypeScriptVariable } ?: importedFile
+    val elementToImport = if (importedFile is XmlFile
+                              || ES6PsiUtil.findDefaultExports(importedFile).any { PsiTreeUtil.isContextAncestor(it, element, false) })
+      importedFile
+    else element
     XmlTagNameSynchronizer.runWithoutCancellingSyncTagsEditing(context.document) {
       InsertHandlerWorker().insertComponentImport(context.file, item.lookupString, elementToImport, context.editor, isClass)
     }
@@ -107,7 +109,8 @@ class VueInsertHandler : XmlTagInsertHandler() {
       val info = if (elementToImport is PsiFile) {
         ES6ImportPsiUtil.CreateImportExportInfo(capitalizedName, capitalizedName, ImportExportType.DEFAULT,
                                                 ES6ImportExportDeclaration.ImportExportPrefixKind.IMPORT)
-      } else {
+      }
+      else {
         ES6ImportPsiUtil.CreateImportExportInfo(null, capitalizedName, ImportExportType.SPECIFIER,
                                                 ES6ImportExportDeclaration.ImportExportPrefixKind.IMPORT)
       }
@@ -120,7 +123,7 @@ class VueInsertHandler : XmlTagInsertHandler() {
 
       val defaultExport = findOrCreateDefaultExport(file, isClass)
       val defaultExportElement = defaultExport.stubSafeElement
-      var obj = VueComponents.getComponentDescriptor(defaultExportElement)?.initializer
+      var obj = VueComponents.getSourceComponentDescriptor(defaultExportElement)?.initializer
 
       if (obj !is JSObjectLiteralExpression) {
         if (defaultExportElement !is JSClass) return
@@ -129,7 +132,7 @@ class VueInsertHandler : XmlTagInsertHandler() {
         val newDecorator = VueComponents.getComponentDecorator(newClass)!!
         val replacedDecorator = decorator.replace(newDecorator)
         forReformat(replacedDecorator)
-        obj = VueComponents.getComponentDescriptor(defaultExportElement)?.initializer
+        obj = VueComponents.getSourceComponentDescriptor(defaultExportElement)?.initializer
       }
 
       val components = componentProperty(obj as? JSObjectLiteralExpression ?: return).value as? JSObjectLiteralExpression ?: return

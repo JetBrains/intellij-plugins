@@ -17,18 +17,17 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.refactoring.suggested.createSmartPointer
 import com.intellij.util.castSafelyTo
+import org.jetbrains.vuejs.codeInsight.resolveElementTo
 import org.jetbrains.vuejs.codeInsight.resolveSymbolFromNodeModule
 import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.INSTANCE_PROPS_PROP
 
-class VueTypedComponent(override val source: TypeScriptVariable) : VueRegularComponent {
+class VueTypedComponent(override val source: PsiElement,
+                        override val defaultName: String) : VueRegularComponent {
 
   override val nameElement: PsiElement?
-    get() = source.nameIdentifier
-
-  override val defaultName: String?
-    get() = source.name
+    get() = null
 
   override val parents: List<VueEntitiesContainer>
     get() = VueGlobalImpl.getParents(this)
@@ -36,7 +35,8 @@ class VueTypedComponent(override val source: TypeScriptVariable) : VueRegularCom
   override val thisType: JSType
     get() = CachedValuesManager.getCachedValue(source) {
       CachedValueProvider.Result.create(
-        source.jsType?.let { JSApplyNewType(it, it.source).substitute().asRecordType() },
+        resolveElementTo(source, TypeScriptVariable::class)?.jsType
+          ?.let { JSApplyNewType(it, it.source).substitute().asRecordType() },
         PsiModificationTracker.MODIFICATION_COUNT)
     } ?: JSAnyType.getWithLanguage(JSTypeSource.SourceLanguage.TS, false)
 
@@ -104,8 +104,10 @@ class VueTypedComponent(override val source: TypeScriptVariable) : VueRegularCom
 
   override fun createPointer(): Pointer<out VueRegularComponent> {
     val sourcePtr = source.createSmartPointer()
+    val defaultName = this.defaultName
     return Pointer {
-      sourcePtr.dereference()?.let { VueTypedComponent(it) }
+      val source = sourcePtr.dereference() ?: return@Pointer null
+      VueTypedComponent(source, defaultName)
     }
   }
 

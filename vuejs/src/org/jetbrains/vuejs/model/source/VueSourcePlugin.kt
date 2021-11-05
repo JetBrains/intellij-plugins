@@ -2,9 +2,12 @@
 package org.jetbrains.vuejs.model.source
 
 import com.intellij.javascript.nodejs.library.NodeModulesDirectoryManager
+import com.intellij.lang.javascript.frameworks.modules.JSExactFileReference
 import com.intellij.lang.javascript.psi.JSFile
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptVariable
+import com.intellij.lang.javascript.psi.types.JSModuleTypeImpl
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.lang.typescript.modules.TypeScriptNodeReference
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.openapi.vfs.VFileProperty
@@ -18,12 +21,13 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.castSafelyTo
 import com.intellij.util.indexing.FileBasedIndex
-import org.jetbrains.vuejs.codeInsight.fromAsset
+import org.jetbrains.vuejs.codeInsight.resolveElementTo
 import org.jetbrains.vuejs.index.BOOTSTRAP_VUE_MODULE
 import org.jetbrains.vuejs.index.SHARDS_VUE_MODULE
 import org.jetbrains.vuejs.index.VUETIFY_MODULE
 import org.jetbrains.vuejs.index.VueTypedComponentFilesIndex
 import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.model.typed.VueTypedComponent
 import org.jetbrains.vuejs.model.typed.VueTypedEntitiesProvider
 
 class VueSourcePlugin constructor(private val project: Project,
@@ -67,7 +71,7 @@ class VueSourcePlugin constructor(private val project: Project,
         }
 
         components =
-          calculateDtsComponents(psiDirectory.project, scope)
+          VueTypedEntitiesProvider.calculateDtsComponents(psiDirectory)
             .takeIf { it.isNotEmpty() }
             ?.let { Pair(VueModelVisitor.Proximity.OUT_OF_SCOPE, it) }
           ?: VueComponentsCalculation.calculateScopeComponents(scope, globalize).map.asSequence()
@@ -92,27 +96,5 @@ class VueSourcePlugin constructor(private val project: Project,
 
   companion object {
     private val PACKAGES_WITH_GLOBAL_COMPONENTS = arrayOf(VUETIFY_MODULE, BOOTSTRAP_VUE_MODULE, SHARDS_VUE_MODULE)
-
-    private fun calculateDtsComponents(project: Project, scope: GlobalSearchScope): Map<String, VueComponent> {
-      val componentsFromDts = mutableMapOf<String, VueComponent>()
-      val psiManager = PsiManager.getInstance(project)
-      FileBasedIndex.getInstance().getFilesWithKey(
-        VueTypedComponentFilesIndex.VUE_TYPED_COMPONENTS_INDEX, setOf(true),
-        { file ->
-          psiManager.findFile(file)?.castSafelyTo<JSFile>()?.let { psiFile ->
-            JSStubBasedPsiTreeUtil.processDeclarationsInScope(psiFile, { element, _ ->
-              (element as? TypeScriptVariable)
-                ?.takeIf { it.isExported }
-                ?.let { VueTypedEntitiesProvider.getComponent(it) }
-                ?.let {
-                  componentsFromDts[fromAsset(it.defaultName!!)] = it
-                }
-              true
-            }, false)
-          }
-          true
-        }, scope)
-      return componentsFromDts
-    }
   }
 }

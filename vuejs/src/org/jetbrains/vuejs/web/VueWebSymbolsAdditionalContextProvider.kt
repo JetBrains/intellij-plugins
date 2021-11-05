@@ -1,6 +1,8 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.web
 
+import com.intellij.codeInsight.navigation.targetPresentation
+import com.intellij.ide.util.EditSourceUtil
 import com.intellij.javascript.web.symbols.*
 import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_ELEMENTS
 import com.intellij.javascript.web.symbols.WebSymbol.Companion.KIND_HTML_SLOTS
@@ -15,11 +17,17 @@ import com.intellij.javascript.web.symbols.patterns.WebSymbolsPattern
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptVariable
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.model.Pointer
+import com.intellij.navigation.EmptyNavigatable
+import com.intellij.navigation.NavigationTarget
+import com.intellij.navigation.TargetPresentation
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.pom.Navigatable
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiModificationTracker
@@ -32,6 +40,7 @@ import com.intellij.util.containers.Stack
 import org.jetbrains.vuejs.codeInsight.detectVueScriptLanguage
 import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
 import org.jetbrains.vuejs.codeInsight.fromAsset
+import org.jetbrains.vuejs.codeInsight.resolveElementTo
 import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.index.findScriptTag
@@ -39,7 +48,10 @@ import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.VueModelDirectiveProperties.Companion.DEFAULT_EVENT
 import org.jetbrains.vuejs.model.VueModelDirectiveProperties.Companion.DEFAULT_PROP
+import org.jetbrains.vuejs.model.source.VueComponents
 import org.jetbrains.vuejs.model.source.VueUnresolvedComponent
+import org.jetbrains.vuejs.model.typed.VueTypedComponent
+import org.jetbrains.vuejs.model.typed.VueTypedEntitiesProvider
 import java.util.*
 
 class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvider {
@@ -262,8 +274,8 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
                                          name: String,
                                          scriptLanguage: String?,
                                          proximity: VueModelVisitor.Proximity): WebSymbolCodeCompletionItem {
-      val element = component.source
       val wrapper = ComponentWrapper(name, component)
+      val element = wrapper.source
       var builder = WebSymbolCodeCompletionItem.create(
         name = name,
         symbol = wrapper,
@@ -396,7 +408,6 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
   private class ComponentWrapper(matchedName: String, component: VueComponent) :
     ScopeElementWrapper<VueComponent>(matchedName, component) {
 
-
     override val kind: SymbolKind
       get() = KIND_VUE_COMPONENTS
 
@@ -405,6 +416,9 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
 
     override val source: PsiElement?
       get() = item.source
+
+    override fun getNavigationTargets(project: Project): Collection<NavigationTarget> =
+      source?.let { listOf(ComponentSourceNavigationTarget(it)) } ?: emptyList()
 
     override fun getSymbols(namespace: Namespace?,
                             kind: String,
@@ -619,6 +633,28 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
 
     override fun createPointer(): Pointer<AnyWrapper> =
       Pointer.hardPointer(this)
+  }
+
+  private class ComponentSourceNavigationTarget(private val myElement: PsiElement) : NavigationTarget {
+
+    override fun isValid(): Boolean = myElement.isValid
+
+    override fun getNavigatable(): Navigatable =
+      (VueComponents.getComponentDescriptor(myElement)?.source ?: myElement).let {
+        it as? Navigatable
+        ?: EditSourceUtil.getDescriptor(it)
+        ?: EmptyNavigatable.INSTANCE
+      }
+
+    override fun getTargetPresentation(): TargetPresentation = targetPresentation(myElement)
+
+    override fun equals(other: Any?): Boolean =
+      this === other ||
+      other is ComponentSourceNavigationTarget
+      && other.myElement == myElement
+
+    override fun hashCode(): Int =
+      myElement.hashCode()
   }
 
 }

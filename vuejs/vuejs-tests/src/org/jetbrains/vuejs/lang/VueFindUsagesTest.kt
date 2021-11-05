@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.lang
 
 import com.intellij.javascript.web.checkUsages
-import com.intellij.javascript.web.moveToOffsetBySignature
+import com.intellij.psi.search.GlobalSearchScopesCore
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class VueFindUsagesTest : BasePlatformTestCase() {
@@ -40,11 +40,21 @@ class VueFindUsagesTest : BasePlatformTestCase() {
   }
 
   fun testTypedComponents() {
-    myFixture.configureVueDependencies(VueTestModule.HEADLESS_UI_1_4_1)
+    myFixture.configureVueDependencies(VueTestModule.HEADLESS_UI_1_4_1, VueTestModule.NAIVE_UI_2_19_11_NO_WEB_TYPES)
     myFixture.configureByFiles("typedComponentsClassic.vue", "typedComponentsScriptSetup.vue")
-    myFixture.configureFromTempProjectFile("node_modules/@headlessui/vue/dist/components/dialog/dialog.d.ts")
-    myFixture.checkUsages("export declare let Dia<caret>log:", getTestName(true))
 
+    myFixture.checkUsages(" Dia<caret>log,", getTestName(true) + ".classic.headlessui")
+    myFixture.checkUsages(" N<caret>Affix,", getTestName(true) + ".classic.naive-ui")
+    myFixture.checkUsages(" Fo<caret>o:", getTestName(true) + ".classic.foo")
+    myFixture.checkUsages(" Ba<caret>r:", getTestName(true) + ".classic.bar")
+
+    myFixture.configureFromTempProjectFile("node_modules/@headlessui/vue/dist/components/dialog/dialog.d.ts")
+    myFixture.checkUsages("export declare let Dia<caret>log:", getTestName(true) + ".headlessui")
+
+    myFixture.configureFromTempProjectFile("node_modules/naive-ui/lib/affix/src/Affix.d.ts")
+    myFixture.checkUsages("declare const _defa<caret>ult:", getTestName(true) + ".naive-ui",
+                          scope = GlobalSearchScopesCore.directoryScope(project, myFixture.tempDirFixture.findOrCreateDir("."),
+                                                                        true))
   }
 
 }
