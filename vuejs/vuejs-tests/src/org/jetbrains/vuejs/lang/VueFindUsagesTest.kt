@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.lang
 
 import com.intellij.javascript.web.checkUsages
+import com.intellij.javascript.web.moveToOffsetBySignature
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class VueFindUsagesTest : BasePlatformTestCase() {
@@ -36,6 +37,14 @@ class VueFindUsagesTest : BasePlatformTestCase() {
       .forEachIndexed { index, signature ->
         myFixture.checkUsages(signature, getTestName(true) + "." + index)
       }
+  }
+
+  fun testTypedComponents() {
+    myFixture.configureVueDependencies(VueTestModule.HEADLESS_UI_1_4_1)
+    myFixture.configureByFiles("typedComponentsClassic.vue", "typedComponentsScriptSetup.vue")
+    myFixture.configureFromTempProjectFile("node_modules/@headlessui/vue/dist/components/dialog/dialog.d.ts")
+    myFixture.checkUsages("export declare let Dia<caret>log:", getTestName(true))
+
   }
 
 }

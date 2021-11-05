@@ -38,6 +38,7 @@ import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.getComponentDescriptor
+import org.jetbrains.vuejs.model.typed.VueTypedEntitiesProvider
 
 class VueModelManager {
 
@@ -299,16 +300,19 @@ class VueModelManager {
       getComponent(getComponentDescriptor(element) ?: getEnclosingComponentDescriptor(element))
 
     fun getComponent(descriptor: VueSourceEntityDescriptor?): VueComponent? =
-      descriptor?.getCachedValue { descr ->
-        val declaration = descr.source
-        val implicitElement = getComponentImplicitElement(declaration)
-        val data = implicitElement
-          ?.let { getVueIndexData(it) }
-          ?.takeIf { it.originalName != JavaScriptBundle.message("element.name.anonymous") }
-        CachedValueProvider.Result.create(VueSourceComponent(implicitElement
-                                                             ?: buildImplicitElement(declaration),
-                                                             descr, data), declaration)
-      }
+      if (descriptor?.variable != null)
+        VueTypedEntitiesProvider.getComponent(descriptor.variable)
+      else
+        descriptor?.getCachedValue { descr ->
+          val declaration = descr.source
+          val implicitElement = getComponentImplicitElement(declaration)
+          val data = implicitElement
+            ?.let { getVueIndexData(it) }
+            ?.takeIf { it.originalName != JavaScriptBundle.message("element.name.anonymous") }
+          CachedValueProvider.Result.create(VueSourceComponent(implicitElement
+                                                               ?: buildImplicitElement(declaration),
+                                                               descr, data), declaration)
+        }
 
     fun getMixin(mixin: PsiElement): VueMixin? =
       getMixin(getComponentDescriptor(mixin) ?: getEnclosingComponentDescriptor(mixin))

@@ -89,7 +89,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
         when (kind) {
           WebSymbol.KIND_HTML_ATTRIBUTES ->
             item.symbol
-              ?.takeIf { it.kind == KIND_VUE_COMPONENT_PROPS }
+              ?.takeIf { it.kind == KIND_VUE_COMPONENT_PROPS || it.kind == KIND_JS_EVENTS }
               ?.let { item.decorateWithSymbolType(it) }
             ?: item
           else -> item
@@ -518,6 +518,9 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
 
     override val jsType: JSType?
       get() = item.eventJSType
+
+    override val priority: Priority?
+      get() = Priority.HIGHEST
 
     override fun createPointer(): Pointer<NamedSymbolWrapper<VueEmitCall>> =
       object : NamedSymbolPointer<VueEmitCall>(this) {
