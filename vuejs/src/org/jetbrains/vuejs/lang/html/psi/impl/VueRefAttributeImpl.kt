@@ -59,7 +59,7 @@ class VueRefAttributeImpl : XmlStubBasedAttributeBase<VueRefAttributeStubImpl>, 
               VueCompositionInfoHelper.getUnwrappedRefElement(
                 it, VueCompositionInfoHelper.getUnwrapRefType(this))
             }
-            //?: findSetupVar(name)
+            //?: findSetupVar(name) // TODO implement support for references from setup() method
             ?: VueRefDeclarationImpl(name, resolveTagType(), this, JSImplicitElement.Type.Property)
           },
         PsiModificationTracker.MODIFICATION_COUNT)
