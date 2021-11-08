@@ -1,0 +1,204 @@
+AppModule: Angular2SourceModule
+  imports:
+    BrowserModule: Angular2IvyModule
+      imports:
+      declarations:
+      exports:
+        ApplicationModule: Angular2IvyModule
+          imports:
+          declarations:
+          exports:
+          all-exported-declarations:
+          scope:
+          scope fully resolved: true
+          exports fully resolved: true
+          declarations fully resolved: true
+        CommonModule: Angular2IvyModule
+          imports:
+          declarations:
+            NgClass: Angular2IvyDirective
+            NgComponentOutlet: Angular2IvyDirective
+            NgForOf: Angular2IvyDirective
+            NgIf: Angular2IvyDirective
+            NgPlural: Angular2IvyDirective
+            NgPluralCase: Angular2IvyDirective
+            NgStyle: Angular2IvyDirective
+            NgSwitch: Angular2IvyDirective
+            NgSwitchCase: Angular2IvyDirective
+            NgSwitchDefault: Angular2IvyDirective
+            NgTemplateOutlet: Angular2IvyDirective
+            async: Angular2IvyPipe
+            currency: Angular2IvyPipe
+            date: Angular2IvyPipe
+            i18nPlural: Angular2IvyPipe
+            i18nSelect: Angular2IvyPipe
+            json: Angular2IvyPipe
+            keyvalue: Angular2IvyPipe
+            lowercase: Angular2IvyPipe
+            number: Angular2IvyPipe
+            percent: Angular2IvyPipe
+            slice: Angular2IvyPipe
+            titlecase: Angular2IvyPipe
+            uppercase: Angular2IvyPipe
+          exports:
+            NgClass: Angular2IvyDirective
+            NgComponentOutlet: Angular2IvyDirective
+            NgForOf: Angular2IvyDirective
+            NgIf: Angular2IvyDirective
+            NgPlural: Angular2IvyDirective
+            NgPluralCase: Angular2IvyDirective
+            NgStyle: Angular2IvyDirective
+            NgSwitch: Angular2IvyDirective
+            NgSwitchCase: Angular2IvyDirective
+            NgSwitchDefault: Angular2IvyDirective
+            NgTemplateOutlet: Angular2IvyDirective
+            async: Angular2IvyPipe
+            currency: Angular2IvyPipe
+            date: Angular2IvyPipe
+            i18nPlural: Angular2IvyPipe
+            i18nSelect: Angular2IvyPipe
+            json: Angular2IvyPipe
+            keyvalue: Angular2IvyPipe
+            lowercase: Angular2IvyPipe
+            number: Angular2IvyPipe
+            percent: Angular2IvyPipe
+            slice: Angular2IvyPipe
+            titlecase: Angular2IvyPipe
+            uppercase: Angular2IvyPipe
+          all-exported-declarations:
+            NgClass: Angular2IvyDirective
+            NgComponentOutlet: Angular2IvyDirective
+            NgForOf: Angular2IvyDirective
+            NgIf: Angular2IvyDirective
+            NgPlural: Angular2IvyDirective
+            NgPluralCase: Angular2IvyDirective
+            NgStyle: Angular2IvyDirective
+            NgSwitch: Angular2IvyDirective
+            NgSwitchCase: Angular2IvyDirective
+            NgSwitchDefault: Angular2IvyDirective
+            NgTemplateOutlet: Angular2IvyDirective
+            async: Angular2IvyPipe
+            currency: Angular2IvyPipe
+            date: Angular2IvyPipe
+            i18nPlural: Angular2IvyPipe
+            i18nSelect: Angular2IvyPipe
+            json: Angular2IvyPipe
+            keyvalue: Angular2IvyPipe
+            lowercase: Angular2IvyPipe
+            number: Angular2IvyPipe
+            percent: Angular2IvyPipe
+            slice: Angular2IvyPipe
+            titlecase: Angular2IvyPipe
+            uppercase: Angular2IvyPipe
+          scope:
+            NgClass: Angular2IvyDirective
+            NgComponentOutlet: Angular2IvyDirective
+            NgForOf: Angular2IvyDirective
+            NgIf: Angular2IvyDirective
+            NgPlural: Angular2IvyDirective
+            NgPluralCase: Angular2IvyDirective
+            NgStyle: Angular2IvyDirective
+            NgSwitch: Angular2IvyDirective
+            NgSwitchCase: Angular2IvyDirective
+            NgSwitchDefault: Angular2IvyDirective
+            NgTemplateOutlet: Angular2IvyDirective
+            async: Angular2IvyPipe
+            currency: Angular2IvyPipe
+            date: Angular2IvyPipe
+            i18nPlural: Angular2IvyPipe
+            i18nSelect: Angular2IvyPipe
+            json: Angular2IvyPipe
+            keyvalue: Angular2IvyPipe
+            lowercase: Angular2IvyPipe
+            number: Angular2IvyPipe
+            percent: Angular2IvyPipe
+            slice: Angular2IvyPipe
+            titlecase: Angular2IvyPipe
+            uppercase: Angular2IvyPipe
+          scope fully resolved: true
+          exports fully resolved: true
+          declarations fully resolved: true
+      all-exported-declarations:
+        NgClass: Angular2IvyDirective
+        NgComponentOutlet: Angular2IvyDirective
+        NgForOf: Angular2IvyDirective
+        NgIf: Angular2IvyDirective
+        NgPlural: Angular2IvyDirective
+        NgPluralCase: Angular2IvyDirective
+        NgStyle: Angular2IvyDirective
+        NgSwitch: Angular2IvyDirective
+        NgSwitchCase: Angular2IvyDirective
+        NgSwitchDefault: Angular2IvyDirective
+        NgTemplateOutlet: Angular2IvyDirective
+        async: Angular2IvyPipe
+        currency: Angular2IvyPipe
+        date: Angular2IvyPipe
+        i18nPlural: Angular2IvyPipe
+        i18nSelect: Angular2IvyPipe
+        json: Angular2IvyPipe
+        keyvalue: Angular2IvyPipe
+        lowercase: Angular2IvyPipe
+        number: Angular2IvyPipe
+        percent: Angular2IvyPipe
+        slice: Angular2IvyPipe
+        titlecase: Angular2IvyPipe
+        uppercase: Angular2IvyPipe
+      scope:
+        NgClass: Angular2IvyDirective
+        NgComponentOutlet: Angular2IvyDirective
+        NgForOf: Angular2IvyDirective
+        NgIf: Angular2IvyDirective
+        NgPlural: Angular2IvyDirective
+        NgPluralCase: Angular2IvyDirective
+        NgStyle: Angular2IvyDirective
+        NgSwitch: Angular2IvyDirective
+        NgSwitchCase: Angular2IvyDirective
+        NgSwitchDefault: Angular2IvyDirective
+        NgTemplateOutlet: Angular2IvyDirective
+        async: Angular2IvyPipe
+        currency: Angular2IvyPipe
+        date: Angular2IvyPipe
+        i18nPlural: Angular2IvyPipe
+        i18nSelect: Angular2IvyPipe
+        json: Angular2IvyPipe
+        keyvalue: Angular2IvyPipe
+        lowercase: Angular2IvyPipe
+        number: Angular2IvyPipe
+        percent: Angular2IvyPipe
+        slice: Angular2IvyPipe
+        titlecase: Angular2IvyPipe
+        uppercase: Angular2IvyPipe
+      scope fully resolved: true
+      exports fully resolved: true
+      declarations fully resolved: true
+  declarations:
+  exports:
+  all-exported-declarations:
+  scope:
+    NgClass: Angular2IvyDirective
+    NgComponentOutlet: Angular2IvyDirective
+    NgForOf: Angular2IvyDirective
+    NgIf: Angular2IvyDirective
+    NgPlural: Angular2IvyDirective
+    NgPluralCase: Angular2IvyDirective
+    NgStyle: Angular2IvyDirective
+    NgSwitch: Angular2IvyDirective
+    NgSwitchCase: Angular2IvyDirective
+    NgSwitchDefault: Angular2IvyDirective
+    NgTemplateOutlet: Angular2IvyDirective
+    async: Angular2IvyPipe
+    currency: Angular2IvyPipe
+    date: Angular2IvyPipe
+    i18nPlural: Angular2IvyPipe
+    i18nSelect: Angular2IvyPipe
+    json: Angular2IvyPipe
+    keyvalue: Angular2IvyPipe
+    lowercase: Angular2IvyPipe
+    number: Angular2IvyPipe
+    percent: Angular2IvyPipe
+    slice: Angular2IvyPipe
+    titlecase: Angular2IvyPipe
+    uppercase: Angular2IvyPipe
+  scope fully resolved: true
+  exports fully resolved: true
+  declarations fully resolved: true
