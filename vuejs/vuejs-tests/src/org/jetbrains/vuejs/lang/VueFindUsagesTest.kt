@@ -40,7 +40,7 @@ class VueFindUsagesTest : BasePlatformTestCase() {
   }
 
   fun testTypedComponents() {
-    myFixture.configureVueDependencies(VueTestModule.HEADLESS_UI_1_4_1, VueTestModule.NAIVE_UI_2_19_11_NO_WEB_TYPES)
+    myFixture.configureVueDependencies(VueTestModule.HEADLESS_UI_1_4_1, VueTestModule.NAIVE_UI_2_19_11)
     myFixture.configureByFiles("typedComponentsClassic.vue", "typedComponentsScriptSetup.vue")
 
     myFixture.checkUsages(" Dia<caret>log,", getTestName(true) + ".classic.headlessui")
