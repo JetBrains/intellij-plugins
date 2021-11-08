@@ -148,7 +148,7 @@ public final class PerforceBaseInfoWorker {
   public Map<String, List<String>> getCachedInfo(P4Connection connection) throws VcsException {
     synchronized (myInfoLock) {
       if (myStop) return null;
-      ConnectionInfo info = myInfos.get(connection);
+      ConnectionInfo info = connection == null ? null : myInfos.get(connection);
       if (info == null) {
         LOG.debug("No info for " + connection + "; infos=" + myInfos);
         return null;
@@ -161,7 +161,7 @@ public final class PerforceBaseInfoWorker {
   public ClientData getCachedClient(P4Connection connection) throws VcsException {
     synchronized (myInfoLock) {
       if (myStop) return null;
-      ConnectionInfo info = myInfos.get(connection);
+      ConnectionInfo info = connection == null ? null : myInfos.get(connection);
       return info == null ? null : info.getClient();
     }
   }
@@ -173,7 +173,7 @@ public final class PerforceBaseInfoWorker {
     synchronized (myInfoLock) {
       if (myStop) return null;
 
-      info = myInfos.get(connection);
+      info = connection == null ? null : myInfos.get(connection);
       dirty = myIsDirty;
       if (!dirty && info != null) {
         return info;

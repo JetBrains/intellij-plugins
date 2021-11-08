@@ -37,7 +37,7 @@ public final class DartClassResolveCache {
   }
 
   @Nullable
-  public DartClassResolveResult get(DartClass dartClass) {
+  public DartClassResolveResult get(@NotNull DartClass dartClass) {
     return myMap.get(dartClass);
   }
 }
