@@ -23,8 +23,8 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.AnnotatedElementsSearch;
-import com.thoughtworks.gauge.GaugeConstants;
 import com.thoughtworks.gauge.GaugeBootstrapService;
+import com.thoughtworks.gauge.GaugeConstants;
 import com.thoughtworks.gauge.Step;
 import com.thoughtworks.gauge.StepValue;
 import com.thoughtworks.gauge.connection.GaugeConnection;
@@ -34,9 +34,12 @@ import com.thoughtworks.gauge.language.psi.impl.ConceptConceptImpl;
 import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
 import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
 import com.thoughtworks.gauge.reference.ReferenceCache;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 
 public final class StepUtil {
   private static final Logger LOG = Logger.getInstance(StepUtil.class);

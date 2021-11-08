@@ -16,7 +16,6 @@
 
 package com.thoughtworks.gauge.properties;
 
-import com.google.common.collect.ImmutableSet;
 import com.intellij.lang.properties.codeInspection.unused.ImplicitPropertyUsageProvider;
 import com.intellij.lang.properties.psi.Property;
 import com.intellij.openapi.module.Module;
@@ -28,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 
 final class GaugeImplicitPropertyUsageProvider implements ImplicitPropertyUsageProvider {
-  private static final Set<String> GAUGE_DEFAULT_PROPERTIES = ImmutableSet.of(
+  private static final Set<String> GAUGE_DEFAULT_PROPERTIES = Set.of(
     "gauge_reports_dir",
     "overwrite_reports",
     "screenshot_on_failure",
@@ -39,7 +38,7 @@ final class GaugeImplicitPropertyUsageProvider implements ImplicitPropertyUsageP
     "allow_multiline_step"
   );
 
-  private static final Set<String> GAUGE_JAVA_PROPERTIES = ImmutableSet.of(
+  private static final Set<String> GAUGE_JAVA_PROPERTIES = Set.of(
     "gauge_java_home",
     "gauge_custom_build_path",
     "gauge_additional_libs",

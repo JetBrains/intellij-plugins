@@ -13,10 +13,8 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package com.thoughtworks.gauge.execution;
 
-import com.google.common.base.Strings;
 import com.intellij.execution.CommonProgramRunConfigurationParameters;
 import com.intellij.execution.Executor;
 import com.intellij.execution.application.ApplicationConfiguration;
@@ -115,15 +113,16 @@ public final class GaugeRunConfiguration extends LocatableConfigurationBase<Gaug
       return;
     }
     String parameters = programParameters.getProgramParameters();
-    if (!Strings.isNullOrEmpty(parameters)) {
+    if (parameters != null && !parameters.isEmpty()) {
       commandLine.addParameters(programParameters.getProgramParameters().split(" "));
     }
     Map<String, String> envs = programParameters.getEnvs();
     if (!envs.isEmpty()) {
       commandLine.withEnvironment(envs);
     }
-    if (!Strings.isNullOrEmpty(programParameters.getWorkingDirectory())) {
-      commandLine.setWorkDirectory(new File(programParameters.getWorkingDirectory()));
+    String workingDirectory = programParameters.getWorkingDirectory();
+    if (workingDirectory != null && !workingDirectory.isEmpty()) {
+      commandLine.setWorkDirectory(new File(workingDirectory));
     }
   }
 
@@ -131,7 +130,7 @@ public final class GaugeRunConfiguration extends LocatableConfigurationBase<Gaug
     if (parallelExec(env)) {
       commandLine.addParameter(GaugeConstants.PARALLEL);
       try {
-        if (!Strings.isNullOrEmpty(parallelNodes)) {
+        if (parallelNodes != null && !parallelNodes.isEmpty()) {
           Integer.parseInt(this.parallelNodes);
           commandLine.addParameters(GaugeConstants.PARALLEL_NODES, parallelNodes);
         }
