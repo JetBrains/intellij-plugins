@@ -158,7 +158,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
                 context = context
               )
                 .map {
-                  WebSymbolMatch(it.name, it.nameSegments, Namespace.HTML, KIND_HTML_ELEMENTS, it.origin)
+                  WebSymbolMatch.create(it.name, it.nameSegments, Namespace.HTML, KIND_HTML_ELEMENTS, it.origin)
                 }
             }
             else emptyList()
@@ -445,7 +445,7 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
             ?: if (!name.isNullOrEmpty()
                    && ((item is VueContainer && item.template == null)
                        || item is VueUnresolvedComponent)) {
-              listOf(WebSymbolMatch(name, listOf(NameSegment(0, name.length)), Namespace.HTML, KIND_HTML_SLOTS, this.origin))
+              listOf(WebSymbolMatch.create(name, listOf(NameSegment(0, name.length)), Namespace.HTML, KIND_HTML_SLOTS, this.origin))
             }
             else emptyList()
           }
