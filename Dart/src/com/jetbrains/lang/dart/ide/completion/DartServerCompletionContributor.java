@@ -605,7 +605,8 @@ public class DartServerCompletionContributor extends CompletionContributor {
       null,
       null,
       null,
-      null);
+      null,
+      0);
   }
 
   private static Icon getBaseImage(Element element) {
