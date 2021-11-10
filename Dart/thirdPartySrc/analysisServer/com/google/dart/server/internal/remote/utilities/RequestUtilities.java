@@ -104,8 +104,13 @@ public class RequestUtilities {
   private static final String METHOD_LIST_POSTFIX_COMPLETION_TEMPLATES = "edit.listPostfixCompletionTemplates";
 
   // Code Completion domain
+  private static final String COMPLETION = "completion";
+  private static final String MAX_RESULTS = "maxResults";
+  private static final String LIBRARY_URI = "libraryUri";
   private static final String METHOD_COMPLETION_GET_SUGGESTION_DETAILS = "completion.getSuggestionDetails";
+  private static final String METHOD_COMPLETION_GET_SUGGESTION_DETAILS2 = "completion.getSuggestionDetails2";
   private static final String METHOD_COMPLETION_GET_SUGGESTIONS = "completion.getSuggestions";
+  private static final String METHOD_COMPLETION_GET_SUGGESTIONS2 = "completion.getSuggestions2";
   private static final String METHOD_COMPLETION_SET_SUBSCRIPTIONS = "completion.setSubscriptions";
 
   // Search domain
@@ -434,6 +439,7 @@ public class RequestUtilities {
    *     "file": FilePath
    *     "id": int
    *     "label": String
+   *     "offset": int
    *   }
    * }
    * </pre>
@@ -445,6 +451,35 @@ public class RequestUtilities {
     params.addProperty(LABEL, label);
     params.addProperty(OFFSET, offset);
     return buildJsonObjectRequest(idValue, METHOD_COMPLETION_GET_SUGGESTION_DETAILS, params);
+  }
+
+  /**
+   * Generate and return a {@value #METHOD_COMPLETION_GET_SUGGESTION_DETAILS2} request.
+   * <p>
+   * <pre>
+   * request: {
+   *   "id": String
+   *   "method": "completion.getSuggestionDetails2"
+   *   "params": {
+   *     "file": FilePath
+   *     "offset": int
+   *     "completion": String
+   *     "libraryUri": String
+   *   }
+   * }
+   * </pre>
+   */
+  public static JsonObject generateCompletionGetSuggestionDetails2(String idValue,
+                                                                   String file,
+                                                                   int offset,
+                                                                   String completion,
+                                                                   String libraryUri) {
+    JsonObject params = new JsonObject();
+    params.addProperty(FILE, file);
+    params.addProperty(OFFSET, offset);
+    params.addProperty(COMPLETION, completion);
+    params.addProperty(LIBRARY_URI, libraryUri);
+    return buildJsonObjectRequest(idValue, METHOD_COMPLETION_GET_SUGGESTION_DETAILS2, params);
   }
 
   /**
@@ -466,6 +501,29 @@ public class RequestUtilities {
     params.addProperty(FILE, file);
     params.addProperty(OFFSET, offset);
     return buildJsonObjectRequest(idValue, METHOD_COMPLETION_GET_SUGGESTIONS, params);
+  }
+
+  /**
+   * Generate and return a {@value #METHOD_COMPLETION_GET_SUGGESTIONS2} request.
+   * <p>
+   * <pre>
+   * request: {
+   *   "id": String
+   *   "method": "completion.getSuggestions2"
+   *   "params": {
+   *     "file": FilePath
+   *     "offset": int
+   *     "maxResults": int
+   *   }
+   * }
+   * </pre>
+   */
+  public static JsonObject generateCompletionGetSuggestions2(String idValue, String file, int offset, int maxResults) {
+    JsonObject params = new JsonObject();
+    params.addProperty(FILE, file);
+    params.addProperty(OFFSET, offset);
+    params.addProperty(MAX_RESULTS, maxResults);
+    return buildJsonObjectRequest(idValue, METHOD_COMPLETION_GET_SUGGESTIONS2, params);
   }
 
   /**
