@@ -121,8 +121,25 @@ public final class DartAnalysisServerService implements Disposable {
   @Nullable private RemoteAnalysisServerImpl myServer;
   @Nullable private StdioServerSocket myServerSocket;
 
-  @NotNull private String myServerVersion = "";
+  /**
+   * This is the Dart SDK version, set with the contents of the version file in the provided Dart SDK directory. This field is set in the
+   * call to {@link #startServer(DartSdk)} and set back to the empty String in {@link #stopServer()}.
+   */
   @NotNull private String mySdkVersion = "";
+
+  /**
+   * This is the Dart Analysis Server protocol version set when the Dart Analysis Server calls back to the client with `server.connected`,
+   * see {@link com.google.dart.server.internal.remote.processor.NotificationServerConnectedProcessor}, and set back to the empty String
+   * in {@link #stopServer()}.
+   */
+  @NotNull private String myServerVersion = "";
+
+  /**
+   * If the client (via the "Registry..." action), passes some other DAS protocol version with "--report-protocol-version=1.33", this field
+   * will be set with the value "1.33", and set back to the empty String in {@link #stopServer()}.
+   */
+  @NotNull private String myOverriddenServerVersion = "";
+
   //private boolean myDoEnableMLBasedCodeCompletion = false;
   @Nullable private String mySdkHome;
 
@@ -726,9 +743,31 @@ public final class DartAnalysisServerService implements Disposable {
     return project.getService(DartAnalysisServerService.class);
   }
 
+  /**
+   * Returns the current Dart SDK version, this value was copied out of the version file located in the Dart SDK directory.
+   */
   @NotNull
   public String getSdkVersion() {
     return mySdkVersion;
+  }
+
+  /**
+   * Returns the {@link #mySdkVersion}, unless the user passed some overridding (for testing purposes), via the "Registry..." action with
+   * some "--report-protocol-version=1.33".
+   */
+  @NotNull
+  public String getServerVersion() {
+    if (!myOverriddenServerVersion.isEmpty()) {
+      return myOverriddenServerVersion;
+    }
+    return myServerVersion;
+  }
+
+  /**
+   * This temporary method is provided to enable the Dart Plugin to use the new DAS completion protocol.
+   */
+  private boolean doUseNewCodeCompletionProtocol() {
+    return myServer != null && StringUtil.compareVersionNumbers(getServerVersion(), "1.33") >= 0;
   }
 
   @NotNull
@@ -1956,8 +1995,17 @@ public final class DartAnalysisServerService implements Disposable {
       //  serverArgsRaw += " --enable-completion-model";
       //}
 
+      List<String> serverArgsRawList = StringUtil.split(serverArgsRaw, " ");
+      String dasProtocolVersionStr = ContainerUtil.find(serverArgsRawList, s -> s.startsWith("--report-protocol-version="));
+      if (dasProtocolVersionStr != null) {
+        String[] dasProtocolVersionStrs = dasProtocolVersionStr.split("=");
+        if (dasProtocolVersionStrs.length == 2 && !dasProtocolVersionStrs[1].isBlank()) {
+          myOverriddenServerVersion = dasProtocolVersionStrs[1];
+        }
+      }
+
       myServerSocket =
-        new StdioServerSocket(runtimePath, StringUtil.split(vmArgsRaw, " "), analysisServerPath, StringUtil.split(serverArgsRaw, " "),
+        new StdioServerSocket(runtimePath, StringUtil.split(vmArgsRaw, " "), analysisServerPath, serverArgsRawList,
                               debugStream);
       myServerSocket.setClientId(getClientId());
       myServerSocket.setClientVersion(getClientVersion());
@@ -2108,6 +2156,9 @@ public final class DartAnalysisServerService implements Disposable {
       myServerSocket = null;
       myServer = null;
       mySdkHome = null;
+      mySdkVersion = "";
+      myServerVersion = "";
+      myOverriddenServerVersion = "";
       myFilePathWithOverlaidContentToTimestamp.clear();
       myVisibleFiles.clear();
       myChangedDocuments.clear();
@@ -2191,6 +2242,8 @@ public final class DartAnalysisServerService implements Disposable {
   @NonNls
   @NotNull
   private String getShortErrorMessage(@NonNls @NotNull String methodName, @Nullable String filePath, @NotNull RequestError error) {
+    // Note: For error reporting, we use the server version (myServerVersion) returned from the server, not the value from
+    // getServerVersion().
     return "Error from " + methodName +
            (filePath == null ? "" : (", file = " + filePath)) +
            ", SDK version = " + mySdkVersion +
