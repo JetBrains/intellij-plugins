@@ -79,7 +79,7 @@ public class NameGeneratorSelector {
   public static ImmutableList<JavaNameGenerator> selectForFile(PbFile file) {
     for (NameGeneratorContributor contributor : NameGeneratorContributor.EP_NAME.getExtensions()) {
       if (contributor.isApplicable(file)) {
-        log.info(
+        log.debug(
           "NameSelector using "
           + contributor.getClass().getName()
           + " for protobuf name generators");
