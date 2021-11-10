@@ -50,7 +50,7 @@ public class P4ConnectionParameters {
   }
 
   public boolean allFieldsDefined() {
-    return myUser != null && myServer != null && myClient != null && myPassword != null && myCharset != null;
+    return myUser != null && myServer != null && myClient != null && myPassword != null;
   }
 
   @Nullable

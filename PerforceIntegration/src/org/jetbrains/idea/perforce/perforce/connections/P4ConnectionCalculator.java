@@ -48,16 +48,17 @@ public class P4ConnectionCalculator {
 
     final List<VirtualFile> detailedVcsMappings = vcsManager.getDetailedVcsMappings(vcs);
 
+    final P4ConnectionParameters setConnectionParameters = runSetOnFile(physicalParameters, new P4ConnectionParameters(), detailedVcsMappings.get(0).getPath());
     final String p4ConfigFileName =
       detailedVcsMappings.isEmpty()
       ? P4ConfigHelper.getP4ConfigFileName()
-      : runSetOnFile(physicalParameters, new P4ConnectionParameters(), detailedVcsMappings.get(0).getPath()).getConfigFileName();
+      : setConnectionParameters.getConfigFileName();
     LOG.debug("Using p4config file name: " + p4ConfigFileName);
 
     final Map<VirtualFile, File> configsMap = p4ConfigFileName == null ? Collections.emptyMap()
                                                                        : fillConfigsMap(detailedVcsMappings, p4ConfigFileName);
     final Map<VirtualFile,P4ConnectionParameters> connectionSettings = new HashMap<>();
-    final P4ConnectionParameters defaultParameters = new P4ConnectionParameters();
+    final P4ConnectionParameters defaultParameters = setConnectionParameters;
 
     ApplicationManager.getApplication().runReadAction(() -> {
       // find files

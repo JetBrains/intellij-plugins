@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author irengrig
@@ -19,9 +20,18 @@ import java.util.Map;
 public class P4ConfigHelper {
   @NonNls public static final String P4_CONFIG = "P4CONFIG";
   @NonNls public static final String P4_IGNORE = "P4IGNORE";
+  private static final List<String> ENV_CONFIGS = List.of(P4ConfigFields.P4PORT.getName(), P4ConfigFields.P4CLIENT.getName(),
+                                                          P4ConfigFields.P4USER.getName(), P4ConfigFields.P4PASSWD.getName(),
+                                                          P4ConfigFields.P4CONFIG.getName());
 
   public static boolean hasP4ConfigSettingInEnvironment() {
     return EnvironmentUtil.getValue(P4_CONFIG) != null;
+  }
+
+  public static String getUnsetP4EnvironmentConfig() {
+    return ENV_CONFIGS.stream()
+      .filter(env -> EnvironmentUtil.getValue(env) == null)
+      .collect(Collectors.joining(","));
   }
 
   public static boolean hasP4IgnoreSettingInEnvironment() {
