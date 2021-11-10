@@ -317,9 +317,21 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
+  public void completion_getSuggestionDetails2(String file, int offset, String completion, String libraryUri, GetSuggestionDetailsConsumer2 consumer) {
+    String requestId = generateUniqueId();
+    sendRequestToServer(requestId, RequestUtilities.generateCompletionGetSuggestionDetails2(requestId, file, offset, completion, libraryUri), consumer);
+  }
+
+  @Override
   public void completion_getSuggestions(String file, int offset, GetSuggestionsConsumer consumer) {
     String id = generateUniqueId();
     sendRequestToServer(id, RequestUtilities.generateCompletionGetSuggestions(id, file, offset), consumer);
+  }
+
+  @Override
+  public void completion_getSuggestions2(String file, int offset, int maxResults, GetSuggestionsConsumer2 consumer) {
+    String id = generateUniqueId();
+    sendRequestToServer(id, RequestUtilities.generateCompletionGetSuggestions2(id, file, offset, maxResults), consumer);
   }
 
   @Override

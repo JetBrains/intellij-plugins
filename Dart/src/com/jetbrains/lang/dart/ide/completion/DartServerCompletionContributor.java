@@ -605,6 +605,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
       null,
       null,
       null,
+      null,
       null);
   }
 
