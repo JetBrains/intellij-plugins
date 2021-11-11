@@ -741,6 +741,9 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     else if (consumer instanceof GetSuggestionsConsumer) {
       new CompletionIdProcessor((GetSuggestionsConsumer)consumer).process(resultObject, requestError);
     }
+    else if (consumer instanceof GetSuggestionsConsumer2) {
+      new CompletionIdProcessor2((GetSuggestionsConsumer2)consumer).process(resultObject, requestError);
+    }
     //
     // Search Domain
     //
