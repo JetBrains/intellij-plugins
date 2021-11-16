@@ -104,7 +104,7 @@
     <lang.foldingBuilder language="Concept"
                          implementationClass="com.thoughtworks.gauge.folding.ConceptFoldingBuilder"/>
 
-    <applicationConfigurable groupId="tools" id="com.thoughtworks.gauge"
+    <applicationConfigurable groupId="tools" id="gauge"
                              key="gauge.inspection.group"
                              instance="com.thoughtworks.gauge.settings.GaugeSettings"/>
     <intentionAction>
