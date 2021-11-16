@@ -7,6 +7,7 @@ import com.intellij.lang.typescript.tsconfig.TypeScriptConfig
 import com.intellij.lang.typescript.tsconfig.TypeScriptFileImportsResolver
 import com.intellij.lang.typescript.tsconfig.TypeScriptImportResolveContext
 import com.intellij.lang.typescript.tsconfig.TypeScriptImportsResolverProvider
+import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
@@ -19,7 +20,7 @@ val defaultExtensionsWithDot = arrayOf(vueExtension)
 
 class VueTypeScriptImportsResolverProvider : TypeScriptImportsResolverProvider {
   override fun isDynamicFile(project: Project, file: VirtualFile): Boolean {
-    if (file.fileType != VueFileType.INSTANCE) return false
+    if (!FileTypeRegistry.getInstance().isFileOfType(file, VueFileType.INSTANCE)) return false
 
     val psiFile = PsiManager.getInstance(project).findFile(file) ?: return false
 

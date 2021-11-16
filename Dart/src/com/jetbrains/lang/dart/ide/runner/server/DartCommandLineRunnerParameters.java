@@ -14,6 +14,7 @@
 package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.execution.configurations.RuntimeConfigurationError;
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.io.FileUtil;
@@ -157,7 +158,7 @@ public class DartCommandLineRunnerParameters implements Cloneable {
       throw new RuntimeConfigurationError(DartBundle.message("dart.file.not.found", FileUtil.toSystemDependentName(myFilePath)));
     }
 
-    if (dartFile.getFileType() != DartFileType.INSTANCE && !dartFile.isDirectory()) {
+    if (!FileTypeRegistry.getInstance().isFileOfType(dartFile, DartFileType.INSTANCE) && !dartFile.isDirectory()) {
       throw new RuntimeConfigurationError(DartBundle.message("not.a.dart.file.or.directory", FileUtil.toSystemDependentName(myFilePath)));
     }
 

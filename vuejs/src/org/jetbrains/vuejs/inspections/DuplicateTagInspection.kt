@@ -5,6 +5,7 @@ import com.intellij.codeInsight.daemon.impl.analysis.RemoveTagIntentionFix
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.XmlElementVisitor
 import com.intellij.psi.util.PsiTreeUtil
@@ -23,7 +24,7 @@ class DuplicateTagInspection : LocalInspectionTool() {
     return object : XmlElementVisitor() {
       override fun visitXmlTag(tag: XmlTag?) {
         if (tag?.language != VueLanguage.INSTANCE
-            || tag.containingFile.originalFile.virtualFile.fileType != VueFileType.INSTANCE) return
+            || !FileTypeRegistry.getInstance().isFileOfType(tag.containingFile.originalFile.virtualFile, VueFileType.INSTANCE)) return
         val templateTag = TEMPLATE_TAG_NAME == tag.name
         val scriptTag = HtmlUtil.isScriptTag(tag)
         if (!templateTag && !scriptTag) return

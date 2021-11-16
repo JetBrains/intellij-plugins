@@ -2,6 +2,7 @@
 package com.jetbrains.lang.dart.ide.runner;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
@@ -51,7 +52,7 @@ public final class DartExecutionHelper {
   @Nullable
   @VisibleForTesting
   public static GlobalSearchScope getScopeOfFilesThatMayAffectExecution(@NotNull Project project, @NotNull VirtualFile file) {
-    if (file.getFileType() != DartFileType.INSTANCE) return null;
+    if (!FileTypeRegistry.getInstance().isFileOfType(file, DartFileType.INSTANCE)) return null;
 
     final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
     if (!fileIndex.isInContent(file)) return null;

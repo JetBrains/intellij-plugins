@@ -9,6 +9,7 @@ import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.RangeMarker;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
@@ -100,7 +101,7 @@ public final class DartCopyPasteProcessor extends CopyPastePostProcessor<DartCop
     if (data == null) return;
 
     final VirtualFile file = FileDocumentManager.getInstance().getFile(editor.getDocument());
-    if (file == null || file.getFileType() != DartFileType.INSTANCE || !DartAnalysisServerService.isLocalAnalyzableFile(file)) return;
+    if (file == null || !FileTypeRegistry.getInstance().isFileOfType(file, DartFileType.INSTANCE) || !DartAnalysisServerService.isLocalAnalyzableFile(file)) return;
 
     if (DartCodeInsightSettings.getInstance().ADD_IMPORTS_ON_PASTE == CodeInsightSettings.NO) return;
 

@@ -6,6 +6,7 @@ import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.Ref;
 import com.intellij.util.Alarm;
@@ -283,7 +284,7 @@ public class VmServiceWrapper implements Disposable {
   public void addBreakpoint(@NotNull String isolateId,
                             @Nullable XSourcePosition position,
                             @NotNull VmServiceConsumers.BreakpointConsumerWrapper consumer) {
-    if (position == null || position.getFile().getFileType() != DartFileType.INSTANCE) {
+    if (position == null || !FileTypeRegistry.getInstance().isFileOfType(position.getFile(), DartFileType.INSTANCE)) {
       consumer.sourcePositionNotApplicable();
       return;
     }

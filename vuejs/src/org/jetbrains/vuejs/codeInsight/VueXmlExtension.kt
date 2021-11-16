@@ -6,6 +6,7 @@ import com.intellij.javascript.web.codeInsight.html.elements.WebSymbolElementDes
 import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
+import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.psi.PsiFile
 import com.intellij.psi.xml.XmlTag
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
@@ -60,7 +61,7 @@ class VueXmlExtension : WebSymbolsXmlExtension() {
 
   private fun isVueComponentTemplateContext(tag: XmlTag) =
     tag.containingFile.let {
-      it.virtualFile.fileType == VueFileType.INSTANCE
+      FileTypeRegistry.getInstance().isFileOfType(it.virtualFile, VueFileType.INSTANCE)
       || VueModelManager.findEnclosingContainer(it) is VueComponent
     }
 

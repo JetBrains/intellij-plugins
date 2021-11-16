@@ -17,6 +17,7 @@ import com.intellij.lang.typescript.compiler.languageService.protocol.commands.F
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.editor.Document
+import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
@@ -143,6 +144,6 @@ class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(proje
     return TypeScriptLanguageServiceFixSet(file.project, cache, file.virtualFile, typescriptResult, textRanges)
   }
 
-  private fun isVueFile(virtualFile: VirtualFile) = virtualFile.fileType == VueFileType.INSTANCE
+  private fun isVueFile(virtualFile: VirtualFile) = FileTypeRegistry.getInstance().isFileOfType(virtualFile, VueFileType.INSTANCE)
 
 }

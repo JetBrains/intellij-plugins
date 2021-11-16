@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.index
 import com.intellij.lang.ecmascript6.index.ES6FileIncludeProvider
 import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil
 import com.intellij.openapi.fileTypes.FileType
+import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.impl.include.FileIncludeInfo
@@ -24,7 +25,7 @@ class VueES6ModuleFileIncludeProvider : FileIncludeProvider() {
   }
 
   override fun acceptFile(file: VirtualFile): Boolean {
-    return file.fileType == VueFileType.INSTANCE
+    return FileTypeRegistry.getInstance().isFileOfType(file, VueFileType.INSTANCE)
   }
 
   override fun registerFileTypesUsedForIndexing(fileTypeSink: Consumer<in FileType>) {

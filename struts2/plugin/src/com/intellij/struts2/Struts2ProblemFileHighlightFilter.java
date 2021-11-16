@@ -17,6 +17,7 @@ package com.intellij.struts2;
 
 import com.intellij.ide.highlighter.XmlFileType;
 import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
@@ -47,7 +48,7 @@ public class Struts2ProblemFileHighlightFilter implements Condition<VirtualFile>
 
   @Override
   public boolean value(final VirtualFile virtualFile) {
-    if (virtualFile.getFileType() != XmlFileType.INSTANCE) {
+    if (!FileTypeRegistry.getInstance().isFileOfType(virtualFile, XmlFileType.INSTANCE)) {
       return false;
     }
 

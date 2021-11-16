@@ -11,6 +11,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.xml.XmlTag
 import com.intellij.javascript.web.context.WebFrameworkContext
 import com.intellij.lang.html.HtmlCompatibleFile
+import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.xml.util.HtmlUtil
@@ -21,7 +22,7 @@ import org.jetbrains.vuejs.lang.html.VueLanguage
 class VueFileContext : WebFrameworkContext {
 
   override fun isEnabled(file: VirtualFile, project: Project): Boolean {
-    return file.fileType == VueFileType.INSTANCE
+    return FileTypeRegistry.getInstance().isFileOfType(file, VueFileType.INSTANCE)
   }
 
   override fun isEnabled(file: PsiFile): Boolean {

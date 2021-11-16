@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.ide.runner.server.webdev;
 
 import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.ide.highlighter.HtmlFileType;
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -48,7 +49,7 @@ public class DartWebdevParameters implements Cloneable {
       throw new RuntimeConfigurationError(DartBundle.message("html.file.not.found", FileUtil.toSystemDependentName(myHtmlFilePath)));
     }
 
-    if (htmlFile.getFileType() != HtmlFileType.INSTANCE) {
+    if (!FileTypeRegistry.getInstance().isFileOfType(htmlFile, HtmlFileType.INSTANCE)) {
       throw new RuntimeConfigurationError(DartBundle.message("not.a.html.file", FileUtil.toSystemDependentName(myHtmlFilePath)));
     }
 

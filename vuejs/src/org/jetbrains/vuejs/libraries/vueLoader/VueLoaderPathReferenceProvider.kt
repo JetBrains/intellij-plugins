@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.libraries.vueLoader
 
 import com.intellij.lang.javascript.psi.resolve.JSModuleReferenceContributor
+import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.paths.PathReference
 import com.intellij.openapi.paths.PathReferenceProviderBase
 import com.intellij.openapi.paths.PsiDynaReference
@@ -91,7 +92,7 @@ class VueLoaderPathReferenceProvider : PathReferenceProviderBase() {
     return psiElement.containingFile
              .let {
                it.language == VueLanguage.INSTANCE
-               && it.originalFile.virtualFile.let { vf -> vf == null || vf.fileType == VueFileType.INSTANCE }
+               && it.originalFile.virtualFile.let { vf -> vf == null || FileTypeRegistry.getInstance().isFileOfType(vf, VueFileType.INSTANCE) }
              }
            && isVueContext(psiElement)
   }
