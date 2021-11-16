@@ -1,0 +1,16 @@
+// Tests when the proto file name clashes with a nested message's name
+// (after converting foo_bar -> FooBar)
+syntax = "proto3";
+package idea.plugin.protoeditor.java.test;
+option java_package = "idea.plugin.protoeditor.java.test";
+
+message NothingHere {
+}
+
+message Foo {
+  message Bar {
+    message ClashingNestedMessage {
+      int32 foo = 1;
+    }
+  }
+}

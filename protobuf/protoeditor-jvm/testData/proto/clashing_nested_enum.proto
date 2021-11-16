@@ -1,0 +1,17 @@
+// Tests when the proto file name clashes with a nested enum's name
+// (after converting foo_bar -> FooBar)
+syntax = "proto3";
+package idea.plugin.protoeditor.java.test;
+option java_package = "idea.plugin.protoeditor.java.test";
+
+message NothingHere {
+}
+
+message Foo {
+  message Bar {
+    enum ClashingNestedEnum {
+      ZERO = 0;
+      ONE = 1;
+    }
+  }
+}

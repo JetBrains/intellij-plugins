@@ -1,0 +1,13 @@
+// Tests when the proto file name clashes with an enum name
+// (after converting foo_bar -> FooBar), with the mutable API
+syntax = "proto3";
+package idea.plugin.protoeditor.java.test;
+option java_package = "idea.plugin.protoeditor.java.test";
+option java_mutable_api = true;
+
+message NothingHere {
+}
+
+message ClashingMessageMutable {
+  int32 foo = 1;
+}

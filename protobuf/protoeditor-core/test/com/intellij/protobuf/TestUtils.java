@@ -45,7 +45,7 @@ public final class TestUtils {
   public static final String TESTDATA_ROOT_PROPERTY = "test.resources.location";
 
   private static final Key<FileResolveProvider> TEST_FILE_RESOLVE_PROVIDER =
-      Key.create("TEST_FILE_RESOLVE_PROVIDER");
+    Key.create("TEST_FILE_RESOLVE_PROVIDER");
 
   /**
    * Attempt to find the full path to a "testdata" or "resources" directory starting from the
@@ -100,20 +100,29 @@ public final class TestUtils {
     return null;
   }
 
+  public static String getTestRootPath(Class<?> cls, Disposable disposable) {
+    String testdataPath = getTestdataPath(cls, disposable);
+    if (testdataPath == null) {
+      return null;
+    }
+    return new File(testdataPath).getParent();
+  }
 
-
+  public static String getTestRootPath(UsefulTestCase test) {
+    return getTestRootPath(test.getClass(), test.getTestRootDisposable());
+  }
 
   public static void addTestFileResolveProvider(Project project, Disposable disposable) {
     addTestFileResolveProvider(project, null, disposable);
   }
 
   public static void addTestFileResolveProvider(
-      Project project, String descriptorPath, @NotNull Disposable disposable) {
+    Project project, String descriptorPath, @NotNull Disposable disposable) {
     FileResolveProvider provider = new LocalRootsFileResolveProvider(descriptorPath);
     // Make sure the test provider comes first, before the "settings" provider.
     project.getExtensionArea()
-        .getExtensionPoint(FileResolveProvider.EP_NAME)
-        .registerExtension(provider, LoadingOrder.readOrder("FIRST, BEFORE settings"), disposable);
+      .getExtensionPoint(FileResolveProvider.EP_NAME)
+      .registerExtension(provider, LoadingOrder.readOrder("FIRST, BEFORE settings"), disposable);
     project.putUserData(TEST_FILE_RESOLVE_PROVIDER, provider);
   }
 
@@ -129,20 +138,21 @@ public final class TestUtils {
 
   public static void registerTestdataFileExtension() {
     ApplicationManager.getApplication()
-        .runWriteAction(
-            () ->
-                FileTypeManager.getInstance()
-                    .associatePattern(PbFileType.INSTANCE, "*.proto.testdata"));
+      .runWriteAction(
+        () ->
+          FileTypeManager.getInstance()
+            .associatePattern(PbFileType.INSTANCE, "*.proto.testdata"));
   }
 
-  public static String makeFileWithSyntaxAndPackage(String syntaxForTest, String packageForTest, String... fileContents) {
+  public static String makeFileWithSyntaxAndPackage(
+    String syntaxForTest, String packageForTest, String... fileContents) {
     return String.join(
-        "\n",
-        Iterables.concat(
-            ImmutableList.of(
-                String.format("syntax = \"%s\";", syntaxForTest),
-                String.format("package %s;", packageForTest)),
-            Arrays.asList(fileContents)));
+      "\n",
+      Iterables.concat(
+        ImmutableList.of(
+          String.format("syntax = \"%s\";", syntaxForTest),
+          String.format("package %s;", packageForTest)),
+        Arrays.asList(fileContents)));
   }
 
   private TestUtils() {}
