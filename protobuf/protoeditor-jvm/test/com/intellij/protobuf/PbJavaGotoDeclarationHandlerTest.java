@@ -76,22 +76,23 @@ public class PbJavaGotoDeclarationHandlerTest extends LightJavaCodeInsightFixtur
   protected void setUp() throws Exception {
     super.setUp();
 
-    myFixture.setTestDataPath(testDataPath());
+    myFixture.setTestDataPath(getTestDataPath());
   }
 
-  private String testDataPath() {
+  @Override
+  public String getTestDataPath() {
     return PathManager.getHomePath() + "/contrib/protobuf/protoeditor-jvm/testData/";
   }
 
-  private String testJarsDirectoryPath() {
-    return testDataPath() + "jars/";
+  private String getTestJarsDirectoryPath() {
+    return getTestDataPath() + "jars/";
   }
 
 
   public void testProto2() {
-    myFixture.copyFileToProject(new File(testDataPath(), "proto/Proto2.proto").getPath(), "protos/Proto2.proto");
+    myFixture.copyFileToProject(new File(getTestDataPath(), "proto/Proto2.proto").getPath(), "protos/Proto2.proto");
     JavaTestData.addGenCodeJar(
-      myFixture.getModule(), testJarsDirectoryPath(), "libProto2Lib-speed.jar", testDisposable);
+      myFixture.getModule(), getTestJarsDirectoryPath(), "libProto2Lib-speed.jar", testDisposable);
     setupProto2BaseClass();
     VirtualFile javaFile =
       JavaTestData.copyJavaProtoUser(myFixture, new File("java", "Proto2User.java"));
@@ -103,9 +104,9 @@ public class PbJavaGotoDeclarationHandlerTest extends LightJavaCodeInsightFixtur
 
   public void testProto2MultipleFiles() {
     myFixture.copyFileToProject(
-      new File(testDataPath(), "proto/Proto2MultipleFiles.proto").getPath(), "protos/Proto2MultipleFiles.proto");
+      new File(getTestDataPath(), "proto/Proto2MultipleFiles.proto").getPath(), "protos/Proto2MultipleFiles.proto");
     JavaTestData.addGenCodeJar(
-      myFixture.getModule(), testJarsDirectoryPath(), "libProto2MultipleFilesLib-speed.jar", testDisposable);
+      myFixture.getModule(), getTestJarsDirectoryPath(), "libProto2MultipleFilesLib-speed.jar", testDisposable);
     setupProto2BaseClass();
     VirtualFile javaFile =
       JavaTestData.copyJavaProtoUser(myFixture, new File("java", "Proto2MultipleFilesUser.java"));
@@ -117,9 +118,9 @@ public class PbJavaGotoDeclarationHandlerTest extends LightJavaCodeInsightFixtur
 
   public void testProto2OuterClass() {
     myFixture.copyFileToProject(
-      new File(testDataPath(), "proto/Proto2OuterClass.proto").getPath(), "protos/Proto2OuterClass.proto");
+      new File(getTestDataPath(), "proto/Proto2OuterClass.proto").getPath(), "protos/Proto2OuterClass.proto");
     JavaTestData.addGenCodeJar(
-      myFixture.getModule(), testJarsDirectoryPath(), "libProto2OuterClassLib-speed.jar", testDisposable);
+      myFixture.getModule(), getTestJarsDirectoryPath(), "libProto2OuterClassLib-speed.jar", testDisposable);
     setupProto2BaseClass();
     VirtualFile javaFile =
       JavaTestData.copyJavaProtoUser(myFixture, new File("java", "Proto2OuterClassUser.java"));
@@ -131,9 +132,9 @@ public class PbJavaGotoDeclarationHandlerTest extends LightJavaCodeInsightFixtur
 
   public void testProtoSyntax3() {
     myFixture.copyFileToProject(
-      new File(testDataPath(), "proto/ProtoSyntax3.proto").getPath(), "protos/ProtoSyntax3.proto");
+      new File(getTestDataPath(), "proto/ProtoSyntax3.proto").getPath(), "protos/ProtoSyntax3.proto");
     JavaTestData.addGenCodeJar(
-      myFixture.getModule(), testJarsDirectoryPath(), "libProtoSyntax3Lib-speed.jar", testDisposable);
+      myFixture.getModule(), getTestJarsDirectoryPath(), "libProtoSyntax3Lib-speed.jar", testDisposable);
     setupProto2BaseClass();
     VirtualFile javaFile =
       JavaTestData.copyJavaProtoUser(myFixture, new File("java", "ProtoSyntax3User.java"));
@@ -145,9 +146,9 @@ public class PbJavaGotoDeclarationHandlerTest extends LightJavaCodeInsightFixtur
 
   public void testProto2Lite() {
     myFixture.copyFileToProject(
-      new File(testDataPath(), "proto/Proto2Lite.proto").getPath(), "protos/Proto2Lite.proto");
+      new File(getTestDataPath(), "proto/Proto2Lite.proto").getPath(), "protos/Proto2Lite.proto");
     JavaTestData.addGenCodeJar(
-      myFixture.getModule(), testJarsDirectoryPath(), "libProto2LiteLib-lite.jar", testDisposable);
+      myFixture.getModule(), getTestJarsDirectoryPath(), "libProto2LiteLib-lite.jar", testDisposable);
     setupProto2LiteBaseClass();
     VirtualFile javaFile =
       JavaTestData.copyJavaProtoUser(myFixture, new File("java", "Proto2LiteUser.java"));
@@ -173,9 +174,9 @@ public class PbJavaGotoDeclarationHandlerTest extends LightJavaCodeInsightFixtur
   }
 
   public void testClashingEnum() {
-    myFixture.copyFileToProject(testDataPath() + "proto/clashing_enum.proto");
+    myFixture.copyFileToProject(getTestDataPath() + "proto/clashing_enum.proto");
     JavaTestData.addGenCodeJar(
-      myFixture.getModule(), testJarsDirectoryPath(), "libClashingEnum-speed.jar", testDisposable);
+      myFixture.getModule(), getTestJarsDirectoryPath(), "libClashingEnum-speed.jar", testDisposable);
     setupProto2BaseClass();
     VirtualFile javaFile =
       JavaTestData.copyJavaProtoUser(myFixture, new File("java", "ClashingEnumUser.java"));
@@ -185,9 +186,9 @@ public class PbJavaGotoDeclarationHandlerTest extends LightJavaCodeInsightFixtur
   }
 
   public void testClashingMessage() {
-    myFixture.copyFileToProject(testDataPath() + "proto/clashing_message.proto");
+    myFixture.copyFileToProject(getTestDataPath() + "proto/clashing_message.proto");
     JavaTestData.addGenCodeJar(
-      myFixture.getModule(), testJarsDirectoryPath(), "libClashingMessage-speed.jar", testDisposable);
+      myFixture.getModule(), getTestJarsDirectoryPath(), "libClashingMessage-speed.jar", testDisposable);
     setupProto2BaseClass();
     VirtualFile javaFile =
       JavaTestData.copyJavaProtoUser(myFixture, new File("java", "ClashingMessageUser.java"));
@@ -197,9 +198,9 @@ public class PbJavaGotoDeclarationHandlerTest extends LightJavaCodeInsightFixtur
   }
 
   public void testClashingNestedEnum() {
-    myFixture.copyFileToProject(testDataPath() + "proto/clashing_nested_enum.proto");
+    myFixture.copyFileToProject(getTestDataPath() + "proto/clashing_nested_enum.proto");
     JavaTestData.addGenCodeJar(
-      myFixture.getModule(), testJarsDirectoryPath(), "libClashingNestedEnum-speed.jar", testDisposable);
+      myFixture.getModule(), getTestJarsDirectoryPath(), "libClashingNestedEnum-speed.jar", testDisposable);
     setupProto2BaseClass();
     VirtualFile javaFile =
       JavaTestData.copyJavaProtoUser(myFixture, new File("java", "ClashingNestedEnumUser.java"));
@@ -209,9 +210,9 @@ public class PbJavaGotoDeclarationHandlerTest extends LightJavaCodeInsightFixtur
   }
 
   public void testClashingNestedMessage() {
-    myFixture.copyFileToProject(testDataPath() + "proto/clashing_nested_message.proto");
+    myFixture.copyFileToProject(getTestDataPath() + "proto/clashing_nested_message.proto");
     JavaTestData.addGenCodeJar(
-      myFixture.getModule(), testJarsDirectoryPath(), "libClashingNestedMessage-speed.jar", testDisposable);
+      myFixture.getModule(), getTestJarsDirectoryPath(), "libClashingNestedMessage-speed.jar", testDisposable);
     setupProto2BaseClass();
     VirtualFile javaFile =
       JavaTestData.copyJavaProtoUser(
@@ -222,9 +223,9 @@ public class PbJavaGotoDeclarationHandlerTest extends LightJavaCodeInsightFixtur
   }
 
   public void testNotClashingField() {
-    myFixture.copyFileToProject(testDataPath() + "proto/not_clashing_field.proto");
+    myFixture.copyFileToProject(getTestDataPath() + "proto/not_clashing_field.proto");
     JavaTestData.addGenCodeJar(
-      myFixture.getModule(), testJarsDirectoryPath(), "libNotClashingField-speed.jar", testDisposable);
+      myFixture.getModule(), getTestJarsDirectoryPath(), "libNotClashingField-speed.jar", testDisposable);
     setupProto2BaseClass();
     VirtualFile javaFile =
       JavaTestData.copyJavaProtoUser(myFixture, new File("java", "NotClashingFieldUser.java"));
