@@ -5,6 +5,7 @@ import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil;
 import com.intellij.lang.javascript.modules.JSModuleNameInfo;
 import com.intellij.lang.javascript.modules.imports.ES6ImportCandidate;
 import com.intellij.lang.javascript.modules.imports.JSImportCandidate;
+import com.intellij.lang.javascript.modules.imports.JSImportCandidateWithExecutor;
 import com.intellij.lang.javascript.modules.imports.JSPlaceElementFilter;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
@@ -75,7 +76,7 @@ public class NgModuleImportAction extends Angular2NgModuleSelectAction {
   }
 
   @Override
-  protected @NotNull List<? extends JSImportCandidate> filterAndSort(@NotNull List<? extends JSImportCandidate> candidates) {
+  protected @NotNull List<? extends JSImportCandidate> filter(@NotNull List<? extends JSImportCandidate> candidates) {
     Collection<? extends JSImportCandidate> elementsFromLibraries = getElementsFromLibraries(candidates);
     Map<JSImportCandidate, JSModuleNameInfo> renderedTexts = new HashMap<>();
     candidates = removeMergedElements(candidates, elementsFromLibraries);
@@ -85,7 +86,7 @@ public class NgModuleImportAction extends Angular2NgModuleSelectAction {
 
   @Override
   protected void runAction(@Nullable Editor editor,
-                           @NotNull JSImportCandidate candidate,
+                           @NotNull JSImportCandidateWithExecutor candidate,
                            @NotNull PsiElement place) {
     JSElement element = candidate.getElement();
     if (element == null) return;
