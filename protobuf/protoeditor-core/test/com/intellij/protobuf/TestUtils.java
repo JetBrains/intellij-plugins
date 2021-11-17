@@ -23,16 +23,13 @@ import com.intellij.openapi.extensions.LoadingOrder;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.protobuf.ide.util.ResourceUtil;
 import com.intellij.protobuf.lang.PbFileType;
 import com.intellij.protobuf.lang.resolve.FileResolveProvider;
 import com.intellij.protobuf.lang.resolve.LocalRootsFileResolveProvider;
-import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -42,74 +39,12 @@ import static org.junit.Assert.assertNotNull;
 public final class TestUtils {
 
   public static final String OPENSOURCE_DESCRIPTOR_PATH = "google/protobuf/descriptor.proto";
-  public static final String TESTDATA_ROOT_PROPERTY = "test.resources.location";
 
   private static final Key<FileResolveProvider> TEST_FILE_RESOLVE_PROVIDER =
     Key.create("TEST_FILE_RESOLVE_PROVIDER");
 
-  /**
-   * Attempt to find the full path to a "testdata" or "resources" directory starting from the
-   * location of the given class. The directory has a blank file named ".testdata" at its root.
-   *
-   * <p>If found, allow VFS root access to the root directory using VfsRootAccess.
-   */
-  public static String getTestdataPath(Class<?> cls, Disposable disposable) {
-    String path = findOverridePath();
-    if (path == null) {
-      path = findTestdataPath(cls);
-    }
-    if (path == null) {
-      return null;
-    }
-    VfsRootAccess.allowRootAccess(disposable, path);
-    return path;
-  }
-
-  public static String getTestdataPath(UsefulTestCase test) {
+  public static String getTestdataPath() {
     return "contrib/protobuf/protoeditor-core/testData/";
-  }
-
-  private static String findOverridePath() {
-    String root = System.getProperties().getProperty(TESTDATA_ROOT_PROPERTY);
-    if (root == null) {
-      return null;
-    }
-    File f = new File(root);
-    if (f.getName().equals(".testdata")) {
-      f = f.getParentFile();
-    }
-    return f.getAbsolutePath() + "/";
-  }
-
-  private static String findTestdataPath(Class<?> cls) {
-    String startingPath = cls.getProtectionDomain().getCodeSource().getLocation().getPath();
-    File current = new File(startingPath);
-    if (!current.exists()) {
-      return null;
-    }
-    while (current != null) {
-      if (new File(current, "testdata/.testdata").isFile()) {
-        return new File(current, "testdata").getPath() + "/";
-      } else if (new File(current, "resources/.testdata").isFile()) {
-        return new File(current, "resources").getPath() + "/";
-      } else if (new File(current, ".testdata").isFile()) {
-        return current.getPath() + "/";
-      }
-      current = current.getParentFile();
-    }
-    return null;
-  }
-
-  public static String getTestRootPath(Class<?> cls, Disposable disposable) {
-    String testdataPath = getTestdataPath(cls, disposable);
-    if (testdataPath == null) {
-      return null;
-    }
-    return new File(testdataPath).getParent();
-  }
-
-  public static String getTestRootPath(UsefulTestCase test) {
-    return getTestRootPath(test.getClass(), test.getTestRootDisposable());
   }
 
   public static void addTestFileResolveProvider(Project project, Disposable disposable) {
@@ -155,5 +90,5 @@ public final class TestUtils {
         Arrays.asList(fileContents)));
   }
 
-  private TestUtils() {}
+  private TestUtils() { }
 }

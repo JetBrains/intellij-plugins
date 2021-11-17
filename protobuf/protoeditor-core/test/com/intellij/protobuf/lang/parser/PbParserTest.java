@@ -18,12 +18,12 @@ package com.intellij.protobuf.lang.parser;
 import com.intellij.lang.LanguageBraceMatching;
 import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.openapi.application.ex.PathManagerEx;
-import com.intellij.testFramework.ParsingTestCase;
 import com.intellij.protobuf.TestUtils;
 import com.intellij.protobuf.ide.editing.ProtoBraceMatcher;
 import com.intellij.protobuf.lang.PbParserDefinition;
 import com.intellij.protobuf.lang.PbTextLanguage;
 import com.intellij.protobuf.lang.PbTextParserDefinition;
+import com.intellij.testFramework.ParsingTestCase;
 
 public class PbParserTest extends ParsingTestCase {
 
@@ -44,7 +44,7 @@ public class PbParserTest extends ParsingTestCase {
 
   @Override
   public String getTestDataPath() {
-    return PathManagerEx.getHomePath(PbParserTest.class) + "/" + TestUtils.getTestdataPath(this);
+    return PathManagerEx.getHomePath(PbParserTest.class) + "/" + TestUtils.getTestdataPath();
   }
 
   /** Test against Unittest.proto from the official protoc release. */

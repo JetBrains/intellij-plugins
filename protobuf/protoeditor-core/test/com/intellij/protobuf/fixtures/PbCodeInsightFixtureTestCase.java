@@ -29,7 +29,7 @@ public abstract class PbCodeInsightFixtureTestCase extends BasePlatformTestCase 
 
   @Override
   protected String getTestDataPath() {
-    return super.getTestDataPath() + TestUtils.getTestdataPath(this);
+    return super.getTestDataPath() + TestUtils.getTestdataPath();
   }
 
   @Override

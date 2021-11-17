@@ -17,10 +17,10 @@ package com.intellij.protobuf.lang.parser;
 
 import com.intellij.lang.LanguageBraceMatching;
 import com.intellij.openapi.application.ex.PathManagerEx;
-import com.intellij.testFramework.ParsingTestCase;
 import com.intellij.protobuf.TestUtils;
 import com.intellij.protobuf.ide.editing.ProtoBraceMatcher;
 import com.intellij.protobuf.lang.PbTextParserDefinition;
+import com.intellij.testFramework.ParsingTestCase;
 
 public class PbTextParserTest extends ParsingTestCase {
 
@@ -36,7 +36,7 @@ public class PbTextParserTest extends ParsingTestCase {
 
   @Override
   public String getTestDataPath() {
-    return PathManagerEx.getHomePath(PbTextParserTest.class) + "/" + TestUtils.getTestdataPath(this);
+    return PathManagerEx.getHomePath(PbTextParserTest.class) + "/" + TestUtils.getTestdataPath();
   }
 
   /** Test against Simple.pb. */
