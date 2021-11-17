@@ -29,6 +29,7 @@ import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +53,7 @@ public final class FileReferenceSetHelper {
    * @return Instance.
    */
   public static FileReferenceSet createRestrictedByFileType(final PsiElement psiElement,
-                                                            final FileType allowedFileType) {
+                                                            @NotNull FileType allowedFileType) {
     return new FileReferenceSet(psiElement) {
 
       @Override
