@@ -1,0 +1,29 @@
+"""Tests usages of python code generated from proto3 syntax w/ API v2.
+
+This is pretty much like the proto2 syntax (except no optional, etc.).
+"""
+
+# EXPECT-NEXT: proto3.proto / <file>
+from python import <caret>proto3_pb2
+from python import proto3_pb2 as Alias
+
+
+class MessageLevelUser(object):
+
+  @staticmethod
+  def constructor():
+    # EXPECT-NEXT: proto3.proto / M1
+    return proto3_pb2.<caret>M1()
+
+  @staticmethod
+  def type():
+    # EXPECT-NEXT: proto3.proto / M1
+    return proto3_pb2.<caret>M1
+
+
+class AliasOfProto(object):
+
+  @staticmethod
+  def constructor():
+    # EXPECT-NEXT: proto3.proto / M1
+    return Alias.<caret>M1()
