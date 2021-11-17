@@ -11,7 +11,8 @@ import training.learn.course.LessonType
 
 class JavaScriptMainLearningCourse : LearningCourseBase(JavascriptLanguage.INSTANCE.id) {
   override fun modules() = listOf(
-    LearningModule(name = JsLessonsBundle.message("js.editor.basics.module.name"),
+    LearningModule(id = "JS.EditorBasics",
+                   name = JsLessonsBundle.message("js.editor.basics.module.name"),
                    description = JsLessonsBundle.message("js.editor.basics.module.description"),
                    primaryLanguage = langSupport,
                    moduleType = LessonType.PROJECT) {
@@ -23,7 +24,8 @@ class JavaScriptMainLearningCourse : LearningCourseBase(JavascriptLanguage.INSTA
         NavigationLesson(),
       )
     },
-    LearningModule(name = JsLessonsBundle.message("js.getting.started.module.name"),
+    LearningModule(id = "JS.Testing",
+                   name = JsLessonsBundle.message("js.getting.started.module.name"),
                    description = JsLessonsBundle.message("js.getting.started.module.description", LessonUtil.productName),
                    primaryLanguage = langSupport,
                    moduleType = LessonType.PROJECT) {

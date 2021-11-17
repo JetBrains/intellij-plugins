@@ -17,7 +17,8 @@ import training.learn.course.LessonType
 
 class SwiftLearningCourse : LearningCourseBase("Swift") {
   override fun modules() = listOf(
-    LearningModule(name = SwiftLessonsBundle.message("swift.editor.module.name"),
+    LearningModule(id = "Swift.Editor",
+                   name = SwiftLessonsBundle.message("swift.editor.module.name"),
                    description = SwiftLessonsBundle.message("swift.editor.module.description"),
                    sampleFileName = "Editor",
                    primaryLanguage = langSupport,
@@ -35,7 +36,8 @@ class SwiftLearningCourse : LearningCourseBase("Swift") {
         SwiftQuickPopupsLesson(),
       )
     },
-    LearningModule(name = SwiftLessonsBundle.message("swift.code.generations.module.name"),
+    LearningModule(id = "Swift.CodeGeneration",
+                   name = SwiftLessonsBundle.message("swift.code.generations.module.name"),
                    description = SwiftLessonsBundle.message("swift.code.generations.module.description"),
                    sampleFileName = "CodeGeneration",
                    primaryLanguage = langSupport,
@@ -47,7 +49,8 @@ class SwiftLearningCourse : LearningCourseBase("Swift") {
         SwiftQuickFixesAndIntentionsLesson(),
       )
     },
-    LearningModule(name = SwiftLessonsBundle.message("swift.navigation.module.name"),
+    LearningModule(id = "Swift.Navigation",
+                   name = SwiftLessonsBundle.message("swift.navigation.module.name"),
                    description = SwiftLessonsBundle.message("swift.navigation.module.description"),
                    sampleFileName = "Navigation",
                    primaryLanguage = langSupport,
@@ -60,7 +63,8 @@ class SwiftLearningCourse : LearningCourseBase("Swift") {
         SwiftSearchLesson(),
       )
     },
-    LearningModule(name = SwiftLessonsBundle.message("swift.refactorings.module.name"),
+    LearningModule(id = "Swift.Refactorings",
+                   name = SwiftLessonsBundle.message("swift.refactorings.module.name"),
                    description = SwiftLessonsBundle.message("swift.refactorings.module.description"),
                    sampleFileName = "Refactorings",
                    primaryLanguage = langSupport,
@@ -73,7 +77,8 @@ class SwiftLearningCourse : LearningCourseBase("Swift") {
         SwiftChangeSignatureLesson(),
       )
     },
-    LearningModule(name = SwiftLessonsBundle.message("swift.run.debug.test.module.name"),
+    LearningModule(id = "Swift.RunDebugTest",
+                   name = SwiftLessonsBundle.message("swift.run.debug.test.module.name"),
                    description = SwiftLessonsBundle.message("swift.run.debug.test.module.description"),
                    sampleFileName = "RunDebugTest",
                    primaryLanguage = langSupport,

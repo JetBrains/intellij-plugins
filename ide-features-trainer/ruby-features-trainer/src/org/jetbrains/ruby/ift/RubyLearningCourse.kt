@@ -34,7 +34,8 @@ class RubyLearningCourse : LearningCourseBase(RubyLanguage.INSTANCE.id) {
   override fun modules() = stableModules() + CourseManager.instance.findCommonModules("Git")
 
   private fun stableModules() = listOf(
-    LearningModule(name = LessonsBundle.message("editor.basics.module.name"),
+    LearningModule(id = "Ruby.EditorBasics",
+                   name = LessonsBundle.message("editor.basics.module.name"),
                    description = LessonsBundle.message("editor.basics.module.description"),
                    primaryLanguage = langSupport,
                    moduleType = LessonType.SCRATCH) {
@@ -51,7 +52,8 @@ class RubyLearningCourse : LearningCourseBase(RubyLanguage.INSTANCE.id) {
         MultipleSelectionHtmlLesson(),
       )
     },
-    LearningModule(name = LessonsBundle.message("code.completion.module.name"),
+    LearningModule(id = "Ruby.CodeCompletion",
+                   name = LessonsBundle.message("code.completion.module.name"),
                    description = LessonsBundle.message("code.completion.module.description"),
                    primaryLanguage = langSupport,
                    moduleType = LessonType.SINGLE_EDITOR) {
@@ -62,7 +64,8 @@ class RubyLearningCourse : LearningCourseBase(RubyLanguage.INSTANCE.id) {
         RubyCompletionWithTabLesson(),
       )
     },
-    LearningModule(name = LessonsBundle.message("refactorings.module.name"),
+    LearningModule(id = "Ruby.Refactorings",
+                   name = LessonsBundle.message("refactorings.module.name"),
                    description = LessonsBundle.message("refactorings.module.description"),
                    primaryLanguage = langSupport,
                    moduleType = LessonType.SINGLE_EDITOR) {
@@ -74,7 +77,8 @@ class RubyLearningCourse : LearningCourseBase(RubyLanguage.INSTANCE.id) {
         ExtractMethodCocktailSortLesson(ls("ExtractMethod.rb.sample")),
       )
     },
-    LearningModule(name = LessonsBundle.message("code.assistance.module.name"),
+    LearningModule(id = "Ruby.CodeAssistance",
+                   name = LessonsBundle.message("code.assistance.module.name"),
                    description = LessonsBundle.message("code.assistance.module.description"),
                    primaryLanguage = langSupport,
                    moduleType = LessonType.SINGLE_EDITOR) {
@@ -87,7 +91,8 @@ class RubyLearningCourse : LearningCourseBase(RubyLanguage.INSTANCE.id) {
         RubyEditorCodingAssistanceLesson(ls("EditorCodingAssistance.rb.sample")),
       )
     },
-    LearningModule(name = LessonsBundle.message("navigation.module.name"),
+    LearningModule(id = "Ruby.Navigation",
+                   name = LessonsBundle.message("navigation.module.name"),
                    description = LessonsBundle.message("navigation.module.description"),
                    primaryLanguage = langSupport,
                    moduleType = LessonType.PROJECT) {
