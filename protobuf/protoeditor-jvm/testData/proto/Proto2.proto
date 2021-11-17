@@ -1,7 +1,3 @@
-// Template to generate test .proto files with different options
-// (e.g., api versions). To be used by build rules that use the
-// "template_action" Bazel extension:
-// https://bazel.io/versions/master/docs/skylark/lib/ctx.html#template_action
 syntax = "proto2";
 
 package com.proto.pack.api_v2;
