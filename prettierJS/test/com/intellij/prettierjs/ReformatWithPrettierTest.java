@@ -147,6 +147,24 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
     });
   }
 
+  public void testIncompleteBlock() {
+    PrettierConfiguration configuration = PrettierConfiguration.getInstance(getProject());
+    boolean origRunOnReformat = configuration.isRunOnReformat();
+    configuration.setRunOnReformat(true);
+    try {
+      String dirName = getTestName(true);
+      myFixture.copyDirectoryToProject(dirName, "");
+      myFixture.configureFromTempProjectFile("toReformat.js");
+      // should be used exactly ACTION_EDITOR_REFORMAT instead of ReformatWithPrettierAction
+      // to check a default formatter behavior combined with Prettier
+      myFixture.performEditorAction(IdeActions.ACTION_EDITOR_REFORMAT);
+      myFixture.checkResultByFile(dirName + "/" + "toReformat_after.js");
+    }
+    finally {
+      configuration.setRunOnReformat(origRunOnReformat);
+    }
+  }
+
   private void configureYarnPrettierPackage(VirtualFile root) {
     PrettierConfiguration configuration = PrettierConfiguration.getInstance(getProject());
     YarnPnpNodePackage yarnPrettierPkg = YarnPnpNodePackage.create(getProject(),
