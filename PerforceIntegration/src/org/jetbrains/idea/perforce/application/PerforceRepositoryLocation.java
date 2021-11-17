@@ -18,14 +18,14 @@ public final class PerforceRepositoryLocation extends DefaultRepositoryLocation 
   private P4Connection myConnection;
   private PerforceClient myClient;
 
-  private PerforceRepositoryLocation(final String URL, @Nullable final P4Connection connection, final @Nullable Project project) {
+  private PerforceRepositoryLocation(@NotNull String URL, @Nullable final P4Connection connection, final @Nullable Project project) {
     super(URL);
     assert (connection != null) || (project != null);
     myConnection = connection;
     myProject = project;
   }
 
-  private PerforceRepositoryLocation(final String URL, final String location, @Nullable final P4Connection connection, final @Nullable Project project) {
+  private PerforceRepositoryLocation(@NotNull String URL, final String location, @Nullable final P4Connection connection, final @Nullable Project project) {
     super(URL, location);
     assert (connection != null) || (project != null);
     myConnection = connection;
