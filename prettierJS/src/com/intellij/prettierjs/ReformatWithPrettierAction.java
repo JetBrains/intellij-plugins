@@ -237,6 +237,9 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     PrettierLanguageService.FormatResult result = performRequestForFile(project, nodePackage, service, file, range);
     if (result != null) {
       int delta = applyFormatResult(project, vFile, result);
+      if (delta < 0 && range.getLength() < Math.abs(delta)) {
+        return TextRange.from(range.getStartOffset(), 0);
+      }
       return range.grown(delta);
     }
     return range;
@@ -345,6 +348,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     int delta = 0;
     if (document != null && StringUtil.isEmpty(result.error) && !result.ignored && !result.unsupported) {
       CharSequence textBefore = document.getCharsSequence();
+      CharSequence immutableCharSequence = document.getImmutableCharSequence();
       LineSeparator newlineSeparator = StringUtil.detectSeparators(result.result);
       String newContent = StringUtil.convertLineSeparators(result.result);
       if (!StringUtil.equals(textBefore, newContent)) {
