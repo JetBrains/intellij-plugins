@@ -8,7 +8,7 @@ public class MethodInSuite2 extends TestSuite {
     public function <warning descr="Test method in suite">testFoo</warning>() {
     }
 
-    public function <warning descr="Method can be static">testBar</warning>() { /*not a test method actually*/
+    public function <warning descr="Method can be made 'static'">testBar</warning>() { /*not a test method actually*/
       new MethodInSuite2();
     }
 }

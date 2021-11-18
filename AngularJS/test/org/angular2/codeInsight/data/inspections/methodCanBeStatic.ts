@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 import {Component, Input, View} from '@angular/core';
 
 @Component({
@@ -11,7 +11,7 @@ export class Home {
         console.log("foobar")
     }
 
-    public <warning descr="Method can be static">unusedMethod</warning>() {
+    public <warning descr="Method can be made 'static'">unusedMethod</warning>() {
         console.log("foobar")
     }
 
@@ -28,7 +28,7 @@ export class Home {
 
     }
 
-    get <warning descr="Method can be static">unused</warning>(): string {
+    get <warning descr="Method can be made 'static'">unused</warning>(): string {
         return "foo"
     }
 }
