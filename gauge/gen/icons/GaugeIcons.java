@@ -10,8 +10,8 @@ import javax.swing.*;
  * DO NOT EDIT IT BY HAND, run "Generate icon classes" configuration instead
  */
 public final class GaugeIcons {
-  private static @NotNull Icon load(@NotNull String path, long cacheKey, int flags) {
+  private static @NotNull Icon load(@NotNull String path, int cacheKey, int flags) {
     return IconManager.getInstance().loadRasterizedIcon(path, GaugeIcons.class.getClassLoader(), cacheKey, flags);
   }
-  /** 16x16 */ public static final @NotNull Icon Gauge = load("icons/gauge.svg", 8741379292461483583L, 2);
+  /** 16x16 */ public static final @NotNull Icon Gauge = load("icons/gauge.svg", -1821069521, 2);
 }
