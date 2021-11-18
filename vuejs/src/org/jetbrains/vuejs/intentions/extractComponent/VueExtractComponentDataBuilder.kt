@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.intentions.extractComponent
 
-import com.intellij.javascript.web.codeInsight.html.refs.WebSymbolTagNameReference
 import com.intellij.lang.ecmascript6.psi.ES6ImportDeclaration
 import com.intellij.lang.ecmascript6.psi.impl.ES6CreateImportUtil
 import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil.ES6_IMPORT_DECLARATION
@@ -22,6 +21,7 @@ import com.intellij.psi.css.CssSelectorSuffix
 import com.intellij.psi.css.impl.CssElementTypes
 import com.intellij.psi.css.inspections.CssUnusedSymbolUtils.getUnusedStyles
 import com.intellij.psi.css.inspections.RemoveUnusedSymbolIntentionAction
+import com.intellij.psi.impl.source.xml.TagNameReference
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
@@ -51,7 +51,7 @@ class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
     val refList: List<RefData> = gatherReferences()
     val map: MutableMap<XmlTag, MutableList<RefData>> = mutableMapOf()
     refList.forEach { refData ->
-      if (refData.ref is WebSymbolTagNameReference) {
+      if (refData.ref is TagNameReference) {
         processVueComponent(refData.ref)
         return@forEach
       }
@@ -71,7 +71,7 @@ class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
     return map
   }
 
-  private fun processVueComponent(ref: WebSymbolTagNameReference) {
+  private fun processVueComponent(ref: TagNameReference) {
     val name = fromAsset(ref.nameElement.text)
     val foundImport = sequenceOf(findModule(scriptTag, false), findModule(scriptTag, true))
                         .filterNotNull()
