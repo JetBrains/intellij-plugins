@@ -732,6 +732,11 @@ public final class DartAnalysisServerService implements Disposable {
   }
 
   @NotNull
+  public String getServerVersion() {
+    return myServerVersion;
+  }
+
+  @NotNull
   public Project getProject() {
     return myProject;
   }
@@ -1482,6 +1487,53 @@ public final class DartAnalysisServerService implements Disposable {
   }
 
   @Nullable
+  public CompletionInfo2 completion_getSuggestions2(@NotNull final VirtualFile file, final int _offset, final int maxResults) {
+    final AnalysisServer server = myServer;
+    if (server == null) {
+      return null;
+    }
+
+    for (DartCompletionTimerExtension extension : DartCompletionTimerExtension.getExtensions()) {
+      extension.dartCompletionStart();
+    }
+
+    final String filePath = FileUtil.toSystemDependentName(file.getPath());
+    final Ref<CompletionInfo2> resultRef = new Ref<>();
+    final CountDownLatch latch = new CountDownLatch(1);
+    final int offset = getOriginalOffset(file, _offset);
+
+    server.completion_getSuggestions2(filePath, offset, maxResults, new GetSuggestionsConsumer2() {
+      @Override
+      public void computedSuggestions(int replacementOffset,
+                                      int replacementLength,
+                                      List<CompletionSuggestion> suggestions,
+                                      List<String> libraryUrisToImport,
+                                      boolean isIncomplete) {
+        resultRef.set(new CompletionInfo2(replacementOffset, replacementLength, suggestions, libraryUrisToImport, isIncomplete));
+        latch.countDown();
+      }
+
+      @Override
+      public void onError(@NotNull final RequestError error) {
+        for (DartCompletionTimerExtension extension : DartCompletionTimerExtension.getExtensions()) {
+          extension.dartCompletionError(StringUtil.notNullize(error.getCode()), StringUtil.notNullize(error.getMessage()),
+                                        StringUtil.notNullize(error.getStackTrace()));
+        }
+        // Not a problem. Happens if a file is outside the project, or server is just not ready yet.
+        latch.countDown();
+      }
+    });
+
+    awaitForLatchCheckingCanceled(server, latch, GET_SUGGESTIONS_TIMEOUT);
+
+    if (latch.getCount() > 0) {
+      logTookTooLongMessage("completion_getSuggestions2", GET_SUGGESTIONS_TIMEOUT, filePath);
+    }
+
+    return resultRef.get();
+  }
+
+  @Nullable
   public FormatResult edit_format(@NotNull final VirtualFile file,
                                   final int _selectionOffset,
                                   final int _selectionLength,
@@ -2108,6 +2160,8 @@ public final class DartAnalysisServerService implements Disposable {
       myServerSocket = null;
       myServer = null;
       mySdkHome = null;
+      mySdkVersion = "";
+      myServerVersion = "";
       myFilePathWithOverlaidContentToTimestamp.clear();
       myVisibleFiles.clear();
       myChangedDocuments.clear();
@@ -2279,6 +2333,26 @@ public final class DartAnalysisServerService implements Disposable {
       this.myIncludedSuggestionRelevanceTags = includedSuggestionRelevanceTags;
       this.isLast = isLast;
       this.myLibraryFilePathSD = libraryFilePathSD;
+    }
+  }
+
+  public static class CompletionInfo2 {
+    @NotNull public final int myReplacementOffset;
+    @NotNull public final int myReplacementLength;
+    @NotNull public final List<CompletionSuggestion> mySuggestions;
+    @NotNull public final List<String> myLibraryUrisToImport;
+    @NotNull public final boolean myIsIncomplete;
+
+    CompletionInfo2(@NotNull final int replacementOffset,
+                    @NotNull final int replacementLength,
+                    @NotNull final List<CompletionSuggestion> suggestions,
+                    @NotNull final List<String> libraryUrisToImport,
+                    @NotNull final boolean isIncomplete) {
+      this.myReplacementOffset = replacementOffset;
+      this.myReplacementLength = replacementLength;
+      this.mySuggestions = suggestions;
+      this.myLibraryUrisToImport = libraryUrisToImport;
+      this.myIsIncomplete = isIncomplete;
     }
   }
 

@@ -99,12 +99,6 @@ public class DartServerCompletionContributor extends CompletionContributor {
 
                if (file == null) return;
 
-               if (FileTypeRegistry.getInstance().isFileOfType(file, HtmlFileType.INSTANCE) &&
-                   PubspecYamlUtil.findPubspecYamlFile(project, file) == null &&
-                   !Registry.is("dart.projects.without.pubspec", false)) {
-                 return;
-               }
-
                final DartSdk sdk = DartSdk.getDartSdk(project);
                if (sdk == null || !DartAnalysisServerService.isDartSdkVersionSufficient(sdk)) return;
 
@@ -112,80 +106,107 @@ public class DartServerCompletionContributor extends CompletionContributor {
                das.updateFilesContent();
 
                final int offset = InjectedLanguageManager.getInstance(project).injectedToHost(originalFile, parameters.getOffset());
-               final String completionId = das.completion_getSuggestions(file, offset);
-               if (completionId == null) return;
 
-               final VirtualFile targetFile = file;
-               das.addCompletions(file, completionId, (replacementOffset, replacementLength, suggestion) -> {
-                 final CompletionResultSet updatedResultSet;
-                 if (uriPrefix != null) {
-                   updatedResultSet = resultSet;
+               if (!das.getServerVersion().isEmpty() && StringUtil.compareVersionNumbers(das.getServerVersion(), "1.33") >= 0) {
+                 final DartAnalysisServerService.CompletionInfo2 completionInfo2 = das.completion_getSuggestions2(file, offset, 100);
+                 if (completionInfo2 == null || completionInfo2.mySuggestions.isEmpty()) {
+                   return;
                  }
-                 else {
-                   final String specialPrefix = getPrefixForSpecialCases(parameters, replacementOffset);
-                   if (specialPrefix != null) {
-                     updatedResultSet = resultSet.withPrefixMatcher(specialPrefix);
-                   }
-                   else {
+
+                 final CompletionResultSet updatedResultSet = resultSet;
+                 List<CompletionSuggestion> suggestions = completionInfo2.mySuggestions;
+
+                 // Add all the completion results that came back from the completion_getSuggestions2 call to this result set reference.
+                 for (CompletionSuggestion suggestion : suggestions) {
+                   updatedResultSet.addElement(createLookupElement(project, suggestion));
+                 }
+
+                 // As the user types additional characters, restart the completion only if we don't already have the complete set of
+                 // completions.
+                 if (completionInfo2.myIsIncomplete) {
+                   updatedResultSet.restartCompletionOnAnyPrefixChange();
+                 }
+
+                 for (DartCompletionTimerExtension extension : DartCompletionTimerExtension.getExtensions()) {
+                   extension.dartCompletionEnd();
+                 }
+               }
+               else {
+                 final String completionId = das.completion_getSuggestions(file, offset);
+                 if (completionId == null) return;
+
+                 final VirtualFile targetFile = file;
+                 das.addCompletions(file, completionId, (replacementOffset, replacementLength, suggestion) -> {
+                   final CompletionResultSet updatedResultSet;
+                   if (uriPrefix != null) {
                      updatedResultSet = resultSet;
                    }
-                 }
-
-                 LookupElementBuilder lookupElement = null;
-
-                 for (DartCompletionExtension extension : DartCompletionExtension.getExtensions()) {
-                   lookupElement = extension.createLookupElement(project, suggestion);
-                   if (lookupElement != null) break;
-                 }
-
-                 if (lookupElement == null) {
-                   lookupElement = createLookupElement(project, suggestion);
-                 }
-
-                 updatedResultSet.addElement(lookupElement);
-               }, (includedSet, includedKinds, includedRelevanceTags, libraryFilePathSD) -> {
-                 if (includedKinds.isEmpty()) {
-                   return;
-                 }
-
-                 final AvailableSuggestionSet suggestionSet = das.getAvailableSuggestionSet(includedSet.getId());
-                 if (suggestionSet == null) {
-                   return;
-                 }
-
-                 Map<String, Map<String, Set<String>>> existingImports = das.getExistingImports(libraryFilePathSD);
-                 for (AvailableSuggestion suggestion : suggestionSet.getItems()) {
-                   final String kind = suggestion.getElement().getKind();
-                   if (!includedKinds.contains(kind)) {
-                     continue;
-                   }
-
-                   Set<String> importedLibraries = new HashSet<>();
-                   if (existingImports != null) {
-                     for (Map.Entry<String, Map<String, Set<String>>> entry : existingImports.entrySet()) {
-                       String importedLibraryUri = entry.getKey();
-                       Map<String, Set<String>> importedLibrary = entry.getValue();
-                       Set<String> names = importedLibrary.get(suggestion.getDeclaringLibraryUri());
-                       if (names != null && names.contains(suggestion.getLabel())) {
-                         importedLibraries.add(importedLibraryUri);
-                       }
+                   else {
+                     final String specialPrefix = getPrefixForSpecialCases(parameters, replacementOffset);
+                     if (specialPrefix != null) {
+                       updatedResultSet = resultSet.withPrefixMatcher(specialPrefix);
+                     }
+                     else {
+                       updatedResultSet = resultSet;
                      }
                    }
 
-                   if (!importedLibraries.isEmpty() && !importedLibraries.contains(suggestionSet.getUri())) {
-                     // If some library exports this label but the current suggestion set does not, we should filter.
-                     continue;
+                   LookupElementBuilder lookupElement = null;
+
+                   for (DartCompletionExtension extension : DartCompletionExtension.getExtensions()) {
+                     lookupElement = extension.createLookupElement(project, suggestion);
+                     if (lookupElement != null) break;
                    }
 
-                   CompletionSuggestion completionSuggestion =
-                     createCompletionSuggestionFromAvailableSuggestion(suggestion, includedSet.getRelevance(), includedRelevanceTags);
-                   String displayUri = includedSet.getDisplayUri() != null ? includedSet.getDisplayUri() : suggestionSet.getUri();
-                   LookupElementBuilder lookupElement =
-                     createLookupElement(project, completionSuggestion, suggestionSet.getId(), targetFile, true, displayUri);
+                   if (lookupElement == null) {
+                     lookupElement = createLookupElement(project, suggestion);
+                   }
 
-                   resultSet.addElement(lookupElement);
-                 }
-               });
+                   updatedResultSet.addElement(lookupElement);
+                 }, (includedSet, includedKinds, includedRelevanceTags, libraryFilePathSD) -> {
+                   if (includedKinds.isEmpty()) {
+                     return;
+                   }
+
+                   final AvailableSuggestionSet suggestionSet = das.getAvailableSuggestionSet(includedSet.getId());
+                   if (suggestionSet == null) {
+                     return;
+                   }
+
+                   Map<String, Map<String, Set<String>>> existingImports = das.getExistingImports(libraryFilePathSD);
+                   for (AvailableSuggestion suggestion : suggestionSet.getItems()) {
+                     final String kind = suggestion.getElement().getKind();
+                     if (!includedKinds.contains(kind)) {
+                       continue;
+                     }
+
+                     Set<String> importedLibraries = new HashSet<>();
+                     if (existingImports != null) {
+                       for (Map.Entry<String, Map<String, Set<String>>> entry : existingImports.entrySet()) {
+                         String importedLibraryUri = entry.getKey();
+                         Map<String, Set<String>> importedLibrary = entry.getValue();
+                         Set<String> names = importedLibrary.get(suggestion.getDeclaringLibraryUri());
+                         if (names != null && names.contains(suggestion.getLabel())) {
+                           importedLibraries.add(importedLibraryUri);
+                         }
+                       }
+                     }
+
+                     if (!importedLibraries.isEmpty() && !importedLibraries.contains(suggestionSet.getUri())) {
+                       // If some library exports this label but the current suggestion set does not, we should filter.
+                       continue;
+                     }
+
+                     CompletionSuggestion completionSuggestion =
+                       createCompletionSuggestionFromAvailableSuggestion(suggestion, includedSet.getRelevance(), includedRelevanceTags);
+                     String displayUri = includedSet.getDisplayUri() != null ? includedSet.getDisplayUri() : suggestionSet.getUri();
+                     LookupElementBuilder lookupElement =
+                       createLookupElement(project, completionSuggestion, suggestionSet.getId(), targetFile, true, displayUri);
+
+                     resultSet.addElement(lookupElement);
+                   }
+                 });
+               }
              }
            });
   }
