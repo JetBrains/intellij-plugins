@@ -20,7 +20,9 @@ import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.NlsSafe;
+import com.intellij.openapi.util.SimpleModificationTracker;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.serviceContainer.NonInjectable;
 import com.intellij.util.xmlb.XmlSerializer;
@@ -52,8 +54,12 @@ public class PbProjectSettings implements PersistentStateComponent<PbProjectSett
   }
 
   public static void notifyUpdated(Project project) {
-    //also consider incrementing some ModificationTracker
+    getInstance(project).state.incModificationCount();
     DaemonCodeAnalyzer.getInstance(project).restart();
+  }
+
+  public static ModificationTracker getModificationTracker(Project project) {
+    return getInstance(project).state;
   }
 
   @Nullable
@@ -191,7 +197,7 @@ public class PbProjectSettings implements PersistentStateComponent<PbProjectSett
    * Persistent state holder.
    * <p>Values must be public to be serialized. The initial values below represent defaults.</p>
    */
-  static class State {
+  static class State extends SimpleModificationTracker {
     public boolean autoConfigEnabled = true;
     public List<ImportPathEntry> importPathEntries = new ArrayList<>();
     @NlsSafe
