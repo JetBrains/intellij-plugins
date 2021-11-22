@@ -19,6 +19,7 @@ package org.jetbrains.idea.perforce.actions;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.OSProcessHandler;
+import com.intellij.ide.impl.TrustedProjects;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
@@ -73,6 +74,11 @@ public class RevisionGraphAction extends DumbAwareAction {
     final Project project = e.getData(CommonDataKeys.PROJECT);
     final VirtualFile virtualFile = e.getData(CommonDataKeys.VIRTUAL_FILE);
     assert project != null && virtualFile != null;
+
+    if (!project.isDefault() && !TrustedProjects.isTrusted(project)) {
+      throw new IllegalStateException("Shouldn't be possible to run a P4 command in the safe mode");
+    }
+
     final P4Connection connection = PerforceConnectionManager.getInstance(project).getConnectionForFile(virtualFile);
     if (connection == null) {
       Messages.showInfoMessage(project, PerforceBundle.message("connection.cannot.determine.settings"), PerforceBundle.message("connection.problem"));
