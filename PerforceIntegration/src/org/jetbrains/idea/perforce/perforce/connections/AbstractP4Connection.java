@@ -18,6 +18,7 @@ package org.jetbrains.idea.perforce.perforce.connections;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.ProcessNotCreatedException;
 import com.intellij.execution.util.ExecUtil;
+import com.intellij.ide.impl.TrustedProjects;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -132,6 +133,11 @@ public abstract class AbstractP4Connection implements P4Connection {
                           ExecResult retVal,
                           StringBuffer inputData) throws Exception {
     ProgressManager.checkCanceled();
+    Project project = perforceSettings.getProject();
+
+    if (!project.isDefault() && !TrustedProjects.isTrusted(project)) {
+      throw new IllegalStateException("Shouldn't be possible to run a P4 command in the safe mode");
+    }
 
     File cwd = getWorkingDirectory();
     GeneralCommandLine cmd = fillCmdLine(perforceSettings, connArgs, p4args);
@@ -139,7 +145,7 @@ public abstract class AbstractP4Connection implements P4Connection {
     setEnvironment(cwd, cmd.getEnvironment());
 
     final CommandDebugInfoWrapper debugInfoWrapper = new CommandDebugInfoWrapper(cmd);
-    final Tracer tracer = new Tracer(perforceSettings.getProject(), p4args.length > 0 ? p4args[0] : "", debugInfoWrapper);
+    final Tracer tracer = new Tracer(project, p4args.length > 0 ? p4args[0] : "", debugInfoWrapper);
 
     debugCmd(cwd, debugInfoWrapper, cmd.getEnvironment());
 
@@ -155,7 +161,7 @@ public abstract class AbstractP4Connection implements P4Connection {
         passInputToProcess(inputData.toString(), proc, perforceSettings);
       }
 
-      worker = new MyInterruptibleProcess(perforceSettings.getProject(), proc, perforceSettings.getServerTimeout());
+      worker = new MyInterruptibleProcess(project, proc, perforceSettings.getServerTimeout());
 
       processWaiter = new PerforceProcessWaiter();
       worker.setOnBeforeInterrupt(processWaiter::cancelListeners);
