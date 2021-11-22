@@ -15,8 +15,8 @@
  */
 package com.intellij.protobuf.ide.settings;
 
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
@@ -48,27 +48,19 @@ public class PbProjectSettings implements PersistentStateComponent<PbProjectSett
   }
 
   public static PbProjectSettings getInstance(Project project) {
-    return ServiceManager.getService(project, PbProjectSettings.class);
+    return project.getService(PbProjectSettings.class);
   }
 
   public static void notifyUpdated(Project project) {
-    // Fire off an event to invalidate caches. Currently, we trigger a "project roots changed" event
-    // which is not totally correct.
-    // TODO(volkman): is there some better way to do this?
-    //if (!project.isDisposed()) {
-    //  ApplicationManager.getApplication()
-    //      .runWriteAction(
-    //          () ->
-    //              ProjectRootManagerEx.getInstanceEx(project)
-    //                  .makeRootsChange(() -> {}, false, true));
-    //}
+    //also consider incrementing some ModificationTracker
+    DaemonCodeAnalyzer.getInstance(project).restart();
   }
 
   @Nullable
   @Override
   public State getState() {
-    // If the settings are auto-configured, just return the default state so that there's no
-    // need to serialize/persist it. It will be modified by auto configuration on restart anyway.
+    // If the settings are autoconfigured, just return the default state so that there's no
+    // need to serialize/persist it. It will be modified by autoconfiguration on restart anyway.
     if (state.autoConfigEnabled) {
       return new State();
     }
