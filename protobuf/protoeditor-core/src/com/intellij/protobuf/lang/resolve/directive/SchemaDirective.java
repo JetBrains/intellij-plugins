@@ -17,15 +17,15 @@ package com.intellij.protobuf.lang.resolve.directive;
 
 import com.google.common.collect.ImmutableList;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.*;
-import com.intellij.psi.util.CachedValueProvider.Result;
-import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.PsiModificationTracker;
+import com.intellij.protobuf.ide.PbCompositeModificationTracker;
 import com.intellij.protobuf.lang.PbTextLanguage;
 import com.intellij.protobuf.lang.psi.PbFile;
 import com.intellij.protobuf.lang.psi.PbMessageType;
 import com.intellij.protobuf.lang.resolve.PbSymbolResolver;
 import com.intellij.protobuf.lang.resolve.directive.SchemaComment.Type;
+import com.intellij.psi.*;
+import com.intellij.psi.util.CachedValueProvider.Result;
+import com.intellij.psi.util.CachedValuesManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -86,7 +86,7 @@ public class SchemaDirective {
   @Nullable
   public static SchemaDirective find(PsiFile file) {
     return CachedValuesManager.getCachedValue(
-        file, () -> Result.create(findNoCache(file), PsiModificationTracker.MODIFICATION_COUNT));
+        file, () -> Result.create(findNoCache(file), PbCompositeModificationTracker.byElement(file)));
   }
 
   private static SchemaDirective findNoCache(PsiFile file) {

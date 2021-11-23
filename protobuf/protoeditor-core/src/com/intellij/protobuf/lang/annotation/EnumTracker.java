@@ -20,13 +20,13 @@ import com.google.common.collect.*;
 import com.intellij.codeInspection.util.InspectionMessage;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.HighlightSeverity;
+import com.intellij.protobuf.ide.PbCompositeModificationTracker;
 import com.intellij.protobuf.lang.PbLangBundle;
 import com.intellij.protobuf.lang.psi.*;
 import com.intellij.protobuf.lang.psi.util.PbPsiUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.util.PsiTreeUtil;
 
 import java.util.*;
@@ -79,7 +79,7 @@ final class EnumTracker {
           EnumTracker tracker = new EnumTracker();
           tracker.trackProblems(enumDefinition);
           return CachedValueProvider.Result.create(
-              tracker, PsiModificationTracker.MODIFICATION_COUNT);
+            tracker, PbCompositeModificationTracker.byElement(enumDefinition));
         });
   }
 

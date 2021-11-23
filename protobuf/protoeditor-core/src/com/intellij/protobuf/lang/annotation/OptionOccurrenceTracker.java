@@ -19,15 +19,15 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.HighlightSeverity;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.CachedValueProvider.Result;
-import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.PsiModificationTracker;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.protobuf.ide.PbCompositeModificationTracker;
 import com.intellij.protobuf.lang.PbLangBundle;
 import com.intellij.protobuf.lang.psi.*;
 import com.intellij.protobuf.lang.psi.util.PbPsiImplUtil;
 import com.intellij.protobuf.lang.psi.util.PbPsiUtil;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.CachedValueProvider.Result;
+import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -66,7 +66,7 @@ public class OptionOccurrenceTracker {
         () -> {
           OptionOccurrenceTracker tracker = new OptionOccurrenceTracker();
           tracker.addAllOccurrences(owner);
-          return Result.create(tracker, PsiModificationTracker.MODIFICATION_COUNT);
+          return Result.create(tracker, PbCompositeModificationTracker.byElement(owner));
         });
   }
 
@@ -91,7 +91,7 @@ public class OptionOccurrenceTracker {
   public static OptionOccurrenceTracker forMessage(PbTextMessage message) {
     return CachedValuesManager.getCachedValue(
         message,
-        () -> Result.create(computeForMessage(message), PsiModificationTracker.MODIFICATION_COUNT));
+        () -> Result.create(computeForMessage(message), PbCompositeModificationTracker.byElement(message)));
   }
 
   private static OptionOccurrenceTracker computeForMessage(PbTextMessage message) {

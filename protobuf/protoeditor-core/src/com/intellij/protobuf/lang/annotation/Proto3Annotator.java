@@ -20,17 +20,17 @@ import com.google.common.collect.Multimap;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.lang.annotation.HighlightSeverity;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.CachedValueProvider.Result;
-import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.PsiModificationTracker;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.util.QualifiedName;
+import com.intellij.protobuf.ide.PbCompositeModificationTracker;
 import com.intellij.protobuf.lang.PbLangBundle;
 import com.intellij.protobuf.lang.descriptor.Descriptor;
 import com.intellij.protobuf.lang.descriptor.DescriptorOptionType;
 import com.intellij.protobuf.lang.psi.*;
 import com.intellij.protobuf.lang.psi.util.PbPsiUtil;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.CachedValueProvider.Result;
+import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.util.QualifiedName;
 import org.jetbrains.annotations.NotNull;
 
 /** Annotations specific to proto3 syntax level. */
@@ -274,7 +274,7 @@ public class Proto3Annotator implements Annotator {
               messageFieldNameMap.put(toLowerWithoutUnderscores(fieldName), field);
             }
           }
-          return Result.create(messageFieldNameMap, PsiModificationTracker.MODIFICATION_COUNT);
+          return Result.create(messageFieldNameMap, PbCompositeModificationTracker.byElement(message));
         });
   }
 

@@ -18,13 +18,13 @@ package com.intellij.protobuf.lang.psi.util;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.protobuf.ide.PbCompositeModificationTracker;
+import com.intellij.protobuf.lang.psi.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.CachedValueProvider.Result;
 import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.QualifiedName;
-import com.intellij.protobuf.lang.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -67,7 +67,7 @@ public final class PbPsiImplUtil {
         element,
         () ->
             Result.create(
-                calculateQualifiedName(element), PsiModificationTracker.MODIFICATION_COUNT));
+              calculateQualifiedName(element), PbCompositeModificationTracker.byElement(element)));
   }
 
   @Nullable
@@ -116,7 +116,7 @@ public final class PbPsiImplUtil {
         () ->
             Result.create(
                 computeSymbolMap(owner, PbSymbol.class),
-                PsiModificationTracker.MODIFICATION_COUNT));
+                PbCompositeModificationTracker.byElement(owner)));
   }
 
   public static ImmutableMultimap<String, PbEnumValue> getCachedEnumValueMap(
@@ -126,7 +126,7 @@ public final class PbPsiImplUtil {
         () ->
             Result.create(
                 computeSymbolMap(owner, PbEnumValue.class),
-                PsiModificationTracker.MODIFICATION_COUNT));
+                PbCompositeModificationTracker.byElement(owner)));
   }
 
   private static <T extends PbSymbol> ImmutableMultimap<String, T> computeSymbolMap(

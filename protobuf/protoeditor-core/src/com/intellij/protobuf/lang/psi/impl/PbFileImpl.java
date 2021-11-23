@@ -22,16 +22,7 @@ import com.google.common.collect.Multimap;
 import com.intellij.extapi.psi.PsiFileBase;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.psi.FileViewProvider;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.ResolveState;
-import com.intellij.psi.scope.PsiScopeProcessor;
-import com.intellij.psi.util.CachedValueProvider.Result;
-import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.PsiModificationTracker;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.util.QualifiedName;
+import com.intellij.protobuf.ide.PbCompositeModificationTracker;
 import com.intellij.protobuf.lang.PbFileType;
 import com.intellij.protobuf.lang.PbLanguage;
 import com.intellij.protobuf.lang.descriptor.Descriptor;
@@ -39,6 +30,15 @@ import com.intellij.protobuf.lang.descriptor.DescriptorOptionType;
 import com.intellij.protobuf.lang.psi.*;
 import com.intellij.protobuf.lang.psi.util.PbPsiImplUtil;
 import com.intellij.protobuf.lang.psi.util.PbPsiUtil;
+import com.intellij.psi.FileViewProvider;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.ResolveState;
+import com.intellij.psi.scope.PsiScopeProcessor;
+import com.intellij.psi.util.CachedValueProvider.Result;
+import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.util.QualifiedName;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -76,8 +76,8 @@ public class PbFileImpl extends PsiFileBase implements PbFile {
         this,
         () ->
             Result.create(
-                PsiTreeUtil.getChildOfType(PbFileImpl.this, PbPackageStatement.class),
-                PsiModificationTracker.MODIFICATION_COUNT));
+              PsiTreeUtil.getChildOfType(PbFileImpl.this, PbPackageStatement.class),
+              PbCompositeModificationTracker.byElement(this)));
   }
 
   @Override
@@ -88,7 +88,7 @@ public class PbFileImpl extends PsiFileBase implements PbFile {
         () ->
             Result.create(
                 PsiTreeUtil.getChildrenOfTypeAsList(PbFileImpl.this, PbImportStatement.class),
-                PsiModificationTracker.MODIFICATION_COUNT));
+                PbCompositeModificationTracker.byElement(this)));
   }
 
   @Override
@@ -219,7 +219,7 @@ public class PbFileImpl extends PsiFileBase implements PbFile {
         this,
         () ->
             Result.create(
-                computeLocalQualifiedSymbolMap(), PsiModificationTracker.MODIFICATION_COUNT));
+                computeLocalQualifiedSymbolMap(), PbCompositeModificationTracker.byElement(this)));
   }
 
   @NotNull
@@ -229,7 +229,7 @@ public class PbFileImpl extends PsiFileBase implements PbFile {
         this,
         () ->
             Result.create(
-                computeExportedQualifiedSymbolMap(), PsiModificationTracker.MODIFICATION_COUNT));
+                computeExportedQualifiedSymbolMap(), PbCompositeModificationTracker.byElement(this)));
   }
 
   @NotNull
@@ -239,7 +239,7 @@ public class PbFileImpl extends PsiFileBase implements PbFile {
         this,
         () ->
             Result.create(
-                computeFullQualifiedSymbolMap(), PsiModificationTracker.MODIFICATION_COUNT));
+                computeFullQualifiedSymbolMap(), PbCompositeModificationTracker.byElement(this)));
   }
 
   private ImmutableMultimap<QualifiedName, PbSymbol> computeLocalQualifiedSymbolMap() {

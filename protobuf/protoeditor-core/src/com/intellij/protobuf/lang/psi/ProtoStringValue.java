@@ -16,10 +16,10 @@
 package com.intellij.protobuf.lang.psi;
 
 import com.intellij.openapi.util.TextRange;
+import com.intellij.protobuf.ide.PbCompositeModificationTracker;
+import com.intellij.protobuf.lang.psi.util.PbPsiImplUtil;
 import com.intellij.psi.util.CachedValueProvider.Result;
 import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.PsiModificationTracker;
-import com.intellij.protobuf.lang.psi.util.PbPsiImplUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -41,7 +41,7 @@ public interface ProtoStringValue extends ProtoLiteral {
           for (ProtoStringPart part : getStringParts()) {
             builder.append(part.getParsedString());
           }
-          return Result.create(builder.toString(), PsiModificationTracker.MODIFICATION_COUNT);
+          return Result.create(builder.toString(), PbCompositeModificationTracker.byElement(this));
         });
   }
 

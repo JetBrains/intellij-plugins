@@ -17,12 +17,12 @@ package com.intellij.protobuf.lang.psi;
 
 import com.google.common.collect.ImmutableList;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.protobuf.ide.PbCompositeModificationTracker;
+import com.intellij.protobuf.lang.psi.util.PbPsiImplUtil;
+import com.intellij.protobuf.lang.util.ProtoString;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.CachedValueProvider.Result;
 import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.PsiModificationTracker;
-import com.intellij.protobuf.lang.psi.util.PbPsiImplUtil;
-import com.intellij.protobuf.lang.util.ProtoString;
 import org.jetbrains.annotations.NotNull;
 
 /** A shared interface implemented by elements that represent a proto-formatted string part. */
@@ -33,7 +33,7 @@ public interface ProtoStringPart extends PsiElement {
     return CachedValuesManager.getCachedValue(
         this,
         () ->
-            Result.create(ProtoString.parse(getText()), PsiModificationTracker.MODIFICATION_COUNT));
+            Result.create(ProtoString.parse(getText()), PbCompositeModificationTracker.byElement(this)));
   }
 
   default boolean isUnterminated() {

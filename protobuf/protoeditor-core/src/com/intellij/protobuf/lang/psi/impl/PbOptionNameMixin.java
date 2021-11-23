@@ -17,12 +17,7 @@ package com.intellij.protobuf.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.util.CachedValueProvider.Result;
-import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.PsiModificationTracker;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.protobuf.ide.PbCompositeModificationTracker;
 import com.intellij.protobuf.lang.descriptor.Descriptor;
 import com.intellij.protobuf.lang.psi.*;
 import com.intellij.protobuf.lang.psi.util.PbPsiImplUtil;
@@ -33,6 +28,11 @@ import com.intellij.protobuf.lang.resolve.PbSymbolResolver;
 import com.intellij.protobuf.lang.resolve.ResolveFilters;
 import com.intellij.protobuf.lang.util.BuiltInType;
 import com.intellij.protobuf.lang.util.ValueTester;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.util.CachedValueProvider.Result;
+import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.Nullable;
 
 abstract class PbOptionNameMixin extends PbElementBase implements PbOptionName {
@@ -88,7 +88,7 @@ abstract class PbOptionNameMixin extends PbElementBase implements PbOptionName {
   public PbMessageType getQualifierType() {
     return CachedValuesManager.getCachedValue(
         this,
-        () -> Result.create(getQualifierTypeNoCache(), PsiModificationTracker.MODIFICATION_COUNT));
+        () -> Result.create(getQualifierTypeNoCache(), PbCompositeModificationTracker.byElement(this)));
   }
 
   @Nullable

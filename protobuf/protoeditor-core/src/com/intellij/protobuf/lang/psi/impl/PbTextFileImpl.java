@@ -18,15 +18,15 @@ package com.intellij.protobuf.lang.psi.impl;
 import com.intellij.extapi.psi.PsiFileBase;
 import com.intellij.lang.Language;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.psi.FileViewProvider;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.PsiModificationTracker;
+import com.intellij.protobuf.ide.PbCompositeModificationTracker;
 import com.intellij.protobuf.lang.PbTextFileType;
 import com.intellij.protobuf.lang.psi.PbTextFile;
 import com.intellij.protobuf.lang.psi.PbTextRootMessage;
 import com.intellij.protobuf.lang.resolve.SchemaInfo;
 import com.intellij.protobuf.lang.resolve.SchemaProvider;
+import com.intellij.psi.FileViewProvider;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -55,7 +55,7 @@ public class PbTextFileImpl extends PsiFileBase implements PbTextFile {
         this,
         () ->
             CachedValueProvider.Result.create(
-                SchemaProvider.forFile(this), PsiModificationTracker.MODIFICATION_COUNT));
+              SchemaProvider.forFile(this), PbCompositeModificationTracker.byElement(this)));
   }
 
   @Override

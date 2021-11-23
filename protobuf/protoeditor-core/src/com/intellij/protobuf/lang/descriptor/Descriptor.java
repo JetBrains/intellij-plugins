@@ -19,13 +19,13 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.protobuf.ide.PbCompositeModificationTracker;
+import com.intellij.protobuf.lang.psi.PbFile;
+import com.intellij.protobuf.lang.resolve.FileResolveProvider;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.CachedValueProvider.Result;
 import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.PsiModificationTracker;
-import com.intellij.protobuf.lang.psi.PbFile;
-import com.intellij.protobuf.lang.resolve.FileResolveProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -83,7 +83,7 @@ public class Descriptor {
         file,
         () ->
             Result.create(
-                Descriptor.locate(file.getProject(), ModuleUtilCore.findModuleForPsiElement(file)),
-                PsiModificationTracker.MODIFICATION_COUNT));
+              Descriptor.locate(file.getProject(), ModuleUtilCore.findModuleForPsiElement(file)),
+              PbCompositeModificationTracker.byElement(file)));
   }
 }
