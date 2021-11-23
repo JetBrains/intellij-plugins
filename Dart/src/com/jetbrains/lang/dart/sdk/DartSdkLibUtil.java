@@ -230,7 +230,7 @@ public final class DartSdkLibUtil {
   @NotNull
   @VisibleForTesting
   public static Disposable enableDartSdkAndReturnUndoingDisposable(@NotNull final Module module) {
-    if (isDartSdkEnabled(module)) return () -> {};
+    if (isDartSdkEnabled(module)) return Disposer.newDisposable();
 
     final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
     try {
@@ -254,7 +254,7 @@ public final class DartSdkLibUtil {
       LOG.error(e);
       if (!modifiableModel.isDisposed()) modifiableModel.dispose();
     }
-    return ()->{};
+    return Disposer.newDisposable();
   }
 
   public static void disableDartSdk(@NotNull final Collection<? extends Module> modules) {
