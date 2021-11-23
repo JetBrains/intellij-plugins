@@ -17,9 +17,9 @@ package com.intellij.protobuf.ide.settings;
 
 import com.intellij.openapi.options.ConfigurableUi;
 import com.intellij.openapi.project.Project;
+import com.intellij.protobuf.ide.PbIdeBundle;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.util.ui.components.BorderLayoutPanel;
-import com.intellij.protobuf.ide.PbIdeBundle;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -28,10 +28,12 @@ import java.awt.*;
 /** The protobuf text format language settings panel. */
 public class PbTextLanguageSettingsForm implements ConfigurableUi<PbTextLanguageSettings> {
 
+  private final Project project;
   private JPanel panel;
   private JCheckBox missingSchemaWarningCheckbox;
 
   PbTextLanguageSettingsForm(Project project) {
+    this.project = project;
     initComponent();
   }
 
@@ -48,6 +50,7 @@ public class PbTextLanguageSettingsForm implements ConfigurableUi<PbTextLanguage
   @Override
   public void apply(@NotNull PbTextLanguageSettings settings) {
     settings.setMissingSchemaWarningEnabled(isMissingSchemaWarningEnabled());
+    PbTextLanguageSettings.notifyUpdated(project);
   }
 
   @NotNull

@@ -15,11 +15,14 @@
  */
 package com.intellij.protobuf.ide.settings;
 
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.ModificationTracker;
+import com.intellij.openapi.util.SimpleModificationTracker;
 import com.intellij.serviceContainer.NonInjectable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,6 +47,15 @@ public class PbTextLanguageSettings
 
   public static PbTextLanguageSettings getInstance(Project project) {
     return ServiceManager.getService(project, PbTextLanguageSettings.class);
+  }
+
+  public static ModificationTracker getModificationTracker(Project project) {
+    return getInstance(project).state;
+  }
+
+  public static void notifyUpdated(Project project) {
+    getInstance(project).state.incModificationCount();
+    DaemonCodeAnalyzer.getInstance(project).restart();
   }
 
   @Nullable
@@ -84,7 +96,7 @@ public class PbTextLanguageSettings
    *
    * <p>Values must be public to be serialized. The initial values below represent defaults.
    */
-  static class State {
+  static class State extends SimpleModificationTracker {
     public boolean missingSchemaWarningEnabled = true;
   }
 }

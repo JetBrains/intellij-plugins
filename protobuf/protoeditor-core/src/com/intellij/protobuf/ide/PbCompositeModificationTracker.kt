@@ -5,7 +5,9 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.protobuf.ide.settings.PbProjectSettings
+import com.intellij.protobuf.ide.settings.PbTextLanguageSettings
 import com.intellij.protobuf.lang.PbLanguage
+import com.intellij.protobuf.lang.PbTextLanguage
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 
@@ -21,7 +23,9 @@ internal class PbCompositeModificationTracker(val project: Project) : Modificati
   private val relatedTrackers: List<ModificationTracker>
     get() = listOf(
       PsiManager.getInstance(project).modificationTracker.forLanguage(PbLanguage.INSTANCE),
-      PbProjectSettings.getModificationTracker(project)
+      PsiManager.getInstance(project).modificationTracker.forLanguage(PbTextLanguage.INSTANCE),
+      PbProjectSettings.getModificationTracker(project),
+      PbTextLanguageSettings.getModificationTracker(project)
     )
 
   override fun getModificationCount(): Long {
