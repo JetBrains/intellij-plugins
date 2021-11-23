@@ -4,7 +4,6 @@ package org.jetbrains.vuejs.lang
 import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.impl.LookupImpl
-import com.intellij.idea.Bombed
 import com.intellij.javascript.web.checkListByFile
 import com.intellij.javascript.web.moveToOffsetBySignature
 import com.intellij.javascript.web.noAutoComplete
@@ -14,6 +13,7 @@ import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.openapi.util.RecursionManager
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.UsefulTestCase
@@ -23,7 +23,6 @@ import com.intellij.testFramework.fixtures.TestLookupElementPresentation
 import com.intellij.util.containers.ContainerUtil
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
-import org.jetbrains.vuejs.codeInsight.toAsset
 
 class VueCompletionTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String = getVueTestDataPath() + "/completion/"
@@ -1599,15 +1598,12 @@ export default class ComponentInsertion extends Vue {
     }
   }
 
-  @Bombed(year = 2022, month = 12, day = 31,
-          description = "This feature needs to be reimplemented after migration to web-types",
-          user = "piotr.tomiak")
   fun testNoDuplicateCompletionProposals() {
     myFixture.configureByFile("noDupedAttrs.vue")
     myFixture.completeBasic()
     UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "v-dir2", "v-on:", "v-bind:")
     UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, "v-dir1", "v-slot", "v-slot:")
-    myFixture.type("v-on:\n")
+    myFixture.type("v-on:")
     UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "click", "dblclick")
     myFixture.type("\n\" :")
     myFixture.completeBasic()
@@ -1881,7 +1877,8 @@ private val VUETIFY_UNRESOLVED_COMPONENTS = setOf(
   "v-toolbar-items",
   "v-toolbar-title"
 )
-private val VUETIFY_UNRESOLVED_COMPONENTS_WITH_PASCAL_CASE: MutableIterable<String> = ContainerUtil.concat(VUETIFY_UNRESOLVED_COMPONENTS,
-                                                                                                           VUETIFY_UNRESOLVED_COMPONENTS.map {
-                                                                                                             toAsset(it).capitalize()
-                                                                                                           })
+private val VUETIFY_UNRESOLVED_COMPONENTS_WITH_PASCAL_CASE: MutableIterable<String> = ContainerUtil.concat(
+  VUETIFY_UNRESOLVED_COMPONENTS,
+  VUETIFY_UNRESOLVED_COMPONENTS.map {
+    StringUtil.capitalize(it)
+  })
