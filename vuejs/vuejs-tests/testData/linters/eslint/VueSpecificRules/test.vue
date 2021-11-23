@@ -9,7 +9,7 @@
 <script>
 import HelloWorld from './components/HelloWorld.vue'
 
-const <warning descr="ESLint: 'a' is assigned a value but never used. (@typescript-eslint/no-unused-vars)">a</warning> = 12
+const <error descr="ESLint: 'a' is assigned a value but never used. (no-unused-vars)">a</error> = 12
 
 export default {
   name: 'App',

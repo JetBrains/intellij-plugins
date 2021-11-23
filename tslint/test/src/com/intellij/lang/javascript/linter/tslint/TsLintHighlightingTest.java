@@ -1,4 +1,4 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.linter.tslint;
 
 import com.intellij.codeInspection.InspectionProfileEntry;
@@ -13,11 +13,10 @@ import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
 import com.intellij.util.LineSeparator;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
+
 import static com.intellij.lang.javascript.linter.tslint.TsLintTestUtil.BASE_TEST_DATA_PATH;
 
-/**
- * @author Irina.Chernushina on 6/4/2015.
- */
 public class TsLintHighlightingTest extends LinterHighlightingTest {
 
   @Override
@@ -36,6 +35,12 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
   @Override
   protected String getPackageName() {
     return TslintUtil.PACKAGE_NAME;
+  }
+
+  @Override
+  protected @NotNull Map<String, String> getGlobalPackageVersionsToInstall() {
+    return Map.of("tslint", "latest",
+                  "typescript", "latest");
   }
 
   public void testOne() {
