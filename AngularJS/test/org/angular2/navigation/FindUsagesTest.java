@@ -2,18 +2,12 @@
 package org.angular2.navigation;
 
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationOrUsageHandler2;
-import com.intellij.injected.editor.EditorWindow;
 import com.intellij.javascript.web.WebTestUtil;
-import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.ex.RangeHighlighterEx;
 import com.intellij.openapi.editor.markup.RangeHighlighter;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 
@@ -70,14 +64,14 @@ public class FindUsagesTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureByFiles("standardSelectors.ts", "package.json");
     AngularTestUtil.moveToOffsetBySignature("\"di<caret>v,", myFixture);
     // Cannot find usages of standard tags and attributes, just check outcome
-    checkGTDUOutcome(GotoDeclarationOrUsageHandler2.GTDUOutcome.GTD);
+    WebTestUtil.checkGTDUOutcome(myFixture, GotoDeclarationOrUsageHandler2.GTDUOutcome.GTD);
   }
 
   public void testComponentStandardAttributeSelector() {
     myFixture.configureByFiles("standardSelectors.ts", "package.json");
     AngularTestUtil.moveToOffsetBySignature(",[cl<caret>ass]", myFixture);
     // Cannot find usages of standard tags and attributes, just check outcome
-    checkGTDUOutcome(GotoDeclarationOrUsageHandler2.GTDUOutcome.GTD);
+    WebTestUtil.checkGTDUOutcome(myFixture, GotoDeclarationOrUsageHandler2.GTDUOutcome.GTD);
   }
 
   public void testSlotComponentElementSelector() {
@@ -97,22 +91,8 @@ public class FindUsagesTest extends Angular2CodeInsightFixtureTestCase {
 
   private void checkUsages(@NotNull String signature,
                            String @NotNull ... usages) {
-    AngularTestUtil.moveToOffsetBySignature(signature, myFixture);
-    checkGTDUOutcome(GotoDeclarationOrUsageHandler2.GTDUOutcome.SU);
+    WebTestUtil.checkGTDUOutcome(myFixture, GotoDeclarationOrUsageHandler2.GTDUOutcome.SU, signature);
     assertEquals(Arrays.asList(usages), WebTestUtil.usagesAtCaret(myFixture) );
-  }
-
-  private void checkGTDUOutcome(@Nullable GotoDeclarationOrUsageHandler2.GTDUOutcome gtduOutcome) {
-    PsiFile file = myFixture.getFile();
-    int offset = myFixture.getCaretOffset();
-    @SuppressWarnings("deprecation")
-    Editor editor = InjectedLanguageUtil.getEditorForInjectedLanguageNoCommit(myFixture.getEditor(), file);
-    if (editor instanceof EditorWindow) {
-      file = ((EditorWindow)editor).getInjectedFile();
-      offset -= InjectedLanguageManager.getInstance(myFixture.getProject()).injectedToHost(file, 0);
-    }
-    assertEquals(gtduOutcome,
-                 GotoDeclarationOrUsageHandler2.testGTDUOutcome(editor, file, offset));
   }
 
 }
