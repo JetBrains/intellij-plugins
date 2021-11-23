@@ -1980,7 +1980,6 @@ export default class UsageComponent extends Vue {
     myFixture.configureByFiles("scriptSetupRef.vue")
     for (check in listOf(
       Pair("ref='f<caret>oo2'", 167),
-      Pair("ref='fo<caret>o'", 50),
       Pair("\$refs.fo<caret>o2 ", 167),
       Pair("\$refs.fo<caret>o ", 48))) {
 
