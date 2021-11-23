@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.protobuf.ide.settings.PbProjectSettings
 import com.intellij.protobuf.ide.settings.PbProjectSettings.ImportPathEntry
+import com.intellij.protobuf.lang.PbLangBundle
 import com.intellij.protobuf.lang.psi.PbFile
 import com.intellij.protobuf.lang.psi.PbImportStatement
 import com.intellij.protobuf.lang.util.PbImportPathResolver
@@ -17,11 +18,11 @@ import com.intellij.util.IncorrectOperationException
 
 class AddImportPathIntention : IntentionAction {
   override fun getText(): String {
-    return "Add import path" //todo extract  to bundle
+    return PbLangBundle.message("intention.add.import.path.title")
   }
 
   override fun getFamilyName(): String {
-    return "Add import path"
+    return PbLangBundle.message("intention.fix.import.problems.familyName")
   }
 
   override fun isAvailable(project: Project,
