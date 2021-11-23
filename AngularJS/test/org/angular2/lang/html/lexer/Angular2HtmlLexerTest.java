@@ -19,7 +19,7 @@ public class Angular2HtmlLexerTest extends LexerTestCase {
 
     // needed for various XML extension points registration
     myFixture = IdeaTestFixtureFactory.getFixtureFactory()
-      .createLightFixtureBuilder(LightProjectDescriptor.EMPTY_PROJECT_DESCRIPTOR).getFixture();
+      .createLightFixtureBuilder(LightProjectDescriptor.EMPTY_PROJECT_DESCRIPTOR, getTestName(false)).getFixture();
     myFixture.setUp();
   }
 

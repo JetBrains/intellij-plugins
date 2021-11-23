@@ -22,7 +22,7 @@ open class VueLexerTest : LexerTestCase() {
 
     // needed for various XML extension points registration
     fixture = IdeaTestFixtureFactory.getFixtureFactory()
-      .createLightFixtureBuilder(LightProjectDescriptor.EMPTY_PROJECT_DESCRIPTOR).fixture
+      .createLightFixtureBuilder(LightProjectDescriptor.EMPTY_PROJECT_DESCRIPTOR, getTestName(false)).fixture
     fixture.setUp()
   }
 
