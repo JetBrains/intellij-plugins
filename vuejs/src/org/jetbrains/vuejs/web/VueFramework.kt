@@ -6,11 +6,13 @@ import com.intellij.javascript.web.lang.html.WebFrameworkHtmlFileType
 import com.intellij.javascript.web.symbols.SymbolKind
 import com.intellij.javascript.web.symbols.WebSymbolNamesProvider
 import com.intellij.javascript.web.symbols.WebSymbolsContainer
+import com.intellij.psi.xml.XmlTag
 import org.jetbrains.vuejs.VuejsIcons
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider.Companion.KIND_VUE_COMPONENTS
 import org.jetbrains.vuejs.web.VueWebSymbolsAdditionalContextProvider.Companion.KIND_VUE_COMPONENT_PROPS
+import java.util.function.Predicate
 import javax.swing.Icon
 
 class VueFramework : WebFramework() {
@@ -56,6 +58,9 @@ class VueFramework : WebFramework() {
           }
       }
     else emptyList()
+
+  override fun getAttributeNameCodeCompletionFilter(tag: XmlTag): Predicate<String> =
+    VueAttributeNameCodeCompletionFilter(tag)
 
   companion object {
     val instance get() = get("vue")

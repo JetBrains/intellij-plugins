@@ -10,14 +10,18 @@ import org.angular2.lang.html.parser.Angular2AttributeType.*
 import org.angular2.lang.html.psi.PropertyBindingType.ATTRIBUTE
 import org.angular2.lang.html.psi.PropertyBindingType.PROPERTY
 import org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.Companion.EVENT_ATTR_PREFIX
+import java.util.function.Predicate
 
-object Angular2IgnoredAttributesProvider {
+class Angular2AttributeNameCodeCompletionFilter(tag: XmlTag): Predicate<String> {
 
-  fun get(tag: XmlTag): List<String> {
-    val result = mutableListOf<String>()
+  private val names = mutableSetOf<String>()
 
+  override fun test(name: String): Boolean =
+    !names.contains(name)
+
+  init {
     WebSymbolsHtmlAdditionalContextProvider.getStandardHtmlAttributeDescriptors(tag)
-      .forEach { if (it.name.startsWith(EVENT_ATTR_PREFIX)) result.add(it.name) }
+      .forEach { if (it.name.startsWith(EVENT_ATTR_PREFIX)) names.add(it.name) }
 
     tag.attributes.asSequence()
       .map { Angular2AttributeNameParser.parse(it.name, tag) }
@@ -37,9 +41,7 @@ object Angular2IgnoredAttributesProvider {
           else -> emptyList()
         }
       }
-      .forEach(result::add)
-
-    return result
+      .forEach(names::add)
   }
 
   private fun buildVariants(name: String,
