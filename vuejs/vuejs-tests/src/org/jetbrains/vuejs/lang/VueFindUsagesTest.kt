@@ -29,7 +29,7 @@ class VueFindUsagesTest : BasePlatformTestCase() {
   }
 
   fun testScriptSetupRef() {
-    myFixture.configureByFiles("scriptSetupRef.vue")
+    myFixture.configureByFiles("scriptSetupRef.vue", "scriptSetupRef2.vue")
     listOf("ref='f<caret>oo2'", "ref='fo<caret>o'",
            "\$refs.fo<caret>o2 ", "\$refs.fo<caret>o ",
            "const fo<caret>o2", "const fo<caret>o3")
