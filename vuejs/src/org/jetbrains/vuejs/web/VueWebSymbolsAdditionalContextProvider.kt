@@ -160,38 +160,34 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
             else emptyList()
           }
           KIND_VUE_COMPONENTS -> {
-            val result = mutableListOf<VueComponent>()
+            val result = mutableListOf<ComponentWrapper>()
             if (params.registry.allowResolve) {
               val normalizedTagName = name?.let { fromAsset(it) }
               container.acceptEntities(object : VueModelProximityVisitor() {
                 override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
                   return acceptSameProximity(proximity, normalizedTagName == null || fromAsset(name) == normalizedTagName) {
                     if (isNotIncorrectlySelfReferred(component)) {
-                      result.add(component)
+                      result.add(ComponentWrapper(name, component))
                     }
                   }
                 }
               }, VueModelVisitor.Proximity.GLOBAL)
             }
-            result.mapNotNull {
-              ComponentWrapper(name ?: it.defaultName ?: return@mapNotNull null, it)
-            }
+            result
           }
           KIND_VUE_DIRECTIVES -> {
-            val directives = mutableListOf<VueDirective>()
+            val directives = mutableListOf<DirectiveWrapper>()
             if (params.registry.allowResolve) {
               val searchName = name?.let { fromAsset(it) }
               container.acceptEntities(object : VueModelProximityVisitor() {
                 override fun visitDirective(name: String, directive: VueDirective, proximity: Proximity): Boolean {
                   return acceptSameProximity(proximity, searchName == null || fromAsset(name) == searchName) {
-                    directives.add(directive)
+                    directives.add(DirectiveWrapper(name, directive))
                   }
                 }
               }, VueModelVisitor.Proximity.GLOBAL)
             }
-            directives.mapNotNull {
-              DirectiveWrapper(name ?: it.defaultName ?: return@mapNotNull null, it)
-            }
+            directives
           }
           else -> emptyList()
         }

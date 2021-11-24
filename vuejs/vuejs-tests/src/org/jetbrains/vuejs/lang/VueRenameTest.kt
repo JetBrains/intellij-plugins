@@ -65,7 +65,7 @@ class VueRenameTest : BasePlatformTestCase() {
     myFixture.checkResultByFile("inlineField_after.vue")
   }
 
-  @Bombed(year = 2021, month = 12, day = 1, user = "piotr.tomiak", description = "Implement WebSymbol based rename")
+  @Bombed(year = 2021, month = 12, day = 10, user = "piotr.tomiak", description = "Propagate component rename over default exports and es6 properties")
   fun testComponentNameFromDeclaration() {
     val testName = getTestName(true)
     val testFiles = listOf("1.vue", "2.vue", ".html", ".ts", ".js").map { testName + it }
@@ -75,6 +75,11 @@ class VueRenameTest : BasePlatformTestCase() {
     testFiles.indices.forEach {
       myFixture.checkResultByFile(testFiles[it], afterFiles.getOrNull(it) ?: testFiles[it], true)
     }
+  }
+
+  fun testComponentNameFromPropertyName() {
+    myFixture.configureByFile("componentNameFromDeclaration1.vue")
+    doTest("AfterComponent")
   }
 
   private fun doTest(newName: String) {
