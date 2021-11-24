@@ -13,7 +13,6 @@ import com.intellij.codeInsight.template.TemplateBuilderFactory;
 import com.intellij.codeInsight.template.TemplateBuilderImpl;
 import com.intellij.codeInsight.template.impl.TextExpression;
 import com.intellij.icons.AllIcons;
-import com.intellij.ide.highlighter.HtmlFileType;
 import com.intellij.injected.editor.VirtualFileWindow;
 import com.intellij.lang.Language;
 import com.intellij.lang.html.HTMLLanguage;
@@ -22,11 +21,9 @@ import com.intellij.lang.xml.XMLLanguage;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
@@ -44,7 +41,6 @@ import com.jetbrains.lang.dart.ide.codeInsight.DartCodeInsightSettings;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
-import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.NotNull;
@@ -99,12 +95,6 @@ public class DartServerCompletionContributor extends CompletionContributor {
 
                if (file == null) return;
 
-               if (FileTypeRegistry.getInstance().isFileOfType(file, HtmlFileType.INSTANCE) &&
-                   PubspecYamlUtil.findPubspecYamlFile(project, file) == null &&
-                   !Registry.is("dart.projects.without.pubspec", false)) {
-                 return;
-               }
-
                final DartSdk sdk = DartSdk.getDartSdk(project);
                if (sdk == null || !DartAnalysisServerService.isDartSdkVersionSufficient(sdk)) return;
 
@@ -112,6 +102,12 @@ public class DartServerCompletionContributor extends CompletionContributor {
                das.updateFilesContent();
 
                final int offset = InjectedLanguageManager.getInstance(project).injectedToHost(originalFile, parameters.getOffset());
+
+               if (!das.getServerVersion().isEmpty() && StringUtil.compareVersionNumbers(das.getServerVersion(), "1.33") >= 0) {
+                 handleCompletion2(project, resultSet, file, offset);
+                 return;
+               }
+
                final String completionId = das.completion_getSuggestions(file, offset);
                if (completionId == null) return;
 
@@ -188,6 +184,32 @@ public class DartServerCompletionContributor extends CompletionContributor {
                });
              }
            });
+  }
+
+  private static void handleCompletion2(@NotNull Project project,
+                                        @NotNull CompletionResultSet resultSet,
+                                        @NotNull VirtualFile file,
+                                        int offset) {
+    DartAnalysisServerService das = DartAnalysisServerService.getInstance(project);
+
+    DartAnalysisServerService.CompletionInfo2 completionInfo2 = das.completion_getSuggestions2(file, offset, 100);
+    if (completionInfo2 == null || completionInfo2.mySuggestions.isEmpty()) {
+      return;
+    }
+
+    CompletionResultSet updatedResultSet = resultSet;
+    List<CompletionSuggestion> suggestions = completionInfo2.mySuggestions;
+
+    // Add all the completion results that came back from the completion_getSuggestions2 call to this result set reference.
+    for (CompletionSuggestion suggestion : suggestions) {
+      updatedResultSet.addElement(createLookupElement(project, suggestion));
+    }
+
+    // As the user types additional characters, restart the completion only if we don't already have the complete set of
+    // completions.
+    if (completionInfo2.myIsIncomplete) {
+      updatedResultSet.restartCompletionOnAnyPrefixChange();
+    }
   }
 
   private static boolean isRightAfterBadIdentifier(@NotNull CharSequence text, int offset) {
