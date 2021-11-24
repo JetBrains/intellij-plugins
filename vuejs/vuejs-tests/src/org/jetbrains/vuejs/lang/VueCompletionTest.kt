@@ -23,6 +23,7 @@ import com.intellij.testFramework.fixtures.TestLookupElementPresentation
 import com.intellij.util.containers.ContainerUtil
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
+import org.jetbrains.vuejs.codeInsight.toAsset
 
 class VueCompletionTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String = getVueTestDataPath() + "/completion/"
@@ -1880,5 +1881,5 @@ private val VUETIFY_UNRESOLVED_COMPONENTS = setOf(
 private val VUETIFY_UNRESOLVED_COMPONENTS_WITH_PASCAL_CASE: MutableIterable<String> = ContainerUtil.concat(
   VUETIFY_UNRESOLVED_COMPONENTS,
   VUETIFY_UNRESOLVED_COMPONENTS.map {
-    StringUtil.capitalize(it)
+    StringUtil.capitalize(toAsset(it))
   })

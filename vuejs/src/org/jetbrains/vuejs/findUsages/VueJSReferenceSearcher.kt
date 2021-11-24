@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.findUsages
 
 import com.intellij.javascript.web.findUsages.PsiSourcedWebSymbolRequestResultProcessor
+import com.intellij.lang.ecmascript6.psi.ES6Property
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
@@ -76,7 +77,7 @@ class VueJSReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.
               if (implicitElement != null && implicitElement.context == element) {
                 val collector = queryParameters.optimizer
                 collector.searchWord(elementName, LocalSearchScope(element.containingFile),
-                                                     UsageSearchContext.ANY, true, implicitElement)
+                                     UsageSearchContext.ANY, true, implicitElement)
                 return PsiSearchHelper.getInstance(element.getProject()).processRequests(collector, consumer)
               }
               return true
@@ -107,10 +108,20 @@ class VueJSReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.
         // Add search for default export if present
         if (element is JSImplicitElement) {
           findDefaultExport(findModule(component.source?.containingFile, false))?.let { defaultExport ->
-            val collector = SearchRequestCollector(queryParameters.optimizer.searchSession)
-            queryParameters.optimizer.searchQuery(
+            val optimizer = queryParameters.optimizer
+            val collector = SearchRequestCollector(optimizer.searchSession)
+            optimizer.searchQuery(
               QuerySearchRequest(ReferencesSearch.search(defaultExport, queryParameters.effectiveSearchScope), collector,
-                                 false, PairProcessor { reference, _ -> consumer.process(reference) }))
+                                 false, PairProcessor { reference, _ ->
+                if (reference is JSReferenceExpression && reference.parent.let { it is ES6Property && it.isShorthanded }) {
+                  val innerCollector = SearchRequestCollector(optimizer.searchSession)
+                  optimizer.searchQuery(QuerySearchRequest(ReferencesSearch.search(reference.parent, LocalSearchScope(reference.containingFile)),
+                                                           innerCollector, false,
+                                                           PairProcessor { propRef, _ -> consumer.process(propRef)}))
+                  if (!PsiSearchHelper.getInstance(element.getProject()).processRequests(optimizer, consumer)) return@PairProcessor false
+                }
+                consumer.process(reference)
+              }))
           }
         }
 
