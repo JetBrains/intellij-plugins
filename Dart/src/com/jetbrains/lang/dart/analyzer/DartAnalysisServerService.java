@@ -732,6 +732,11 @@ public final class DartAnalysisServerService implements Disposable {
   }
 
   @NotNull
+  public String getServerVersion() {
+    return myServerVersion;
+  }
+
+  @NotNull
   public Project getProject() {
     return myProject;
   }
@@ -1482,6 +1487,62 @@ public final class DartAnalysisServerService implements Disposable {
   }
 
   @Nullable
+  public CompletionInfo2 completion_getSuggestions2(@NotNull final VirtualFile file, final int _offset, final int maxResults) {
+    final AnalysisServer server = myServer;
+    if (server == null) {
+      return null;
+    }
+
+    for (DartCompletionTimerExtension extension : DartCompletionTimerExtension.getExtensions()) {
+      extension.dartCompletionStart();
+    }
+
+    final String filePath = FileUtil.toSystemDependentName(file.getPath());
+    final Ref<CompletionInfo2> resultRef = new Ref<>();
+    final CountDownLatch latch = new CountDownLatch(1);
+    final int offset = getOriginalOffset(file, _offset);
+
+    server.completion_getSuggestions2(filePath, offset, maxResults, new GetSuggestionsConsumer2() {
+      @Override
+      public void computedSuggestions(int replacementOffset,
+                                      int replacementLength,
+                                      List<CompletionSuggestion> suggestions,
+                                      List<String> libraryUrisToImport,
+                                      boolean isIncomplete) {
+        resultRef.set(new CompletionInfo2(replacementOffset, replacementLength, suggestions, libraryUrisToImport, isIncomplete));
+        latch.countDown();
+
+        for (DartCompletionTimerExtension extension : DartCompletionTimerExtension.getExtensions()) {
+          extension.dartCompletionEnd();
+        }
+      }
+
+      @Override
+      public void onError(@NotNull final RequestError error) {
+        // Not a problem. Happens if a file is outside the project, or server is just not ready yet.
+        latch.countDown();
+
+        for (DartCompletionTimerExtension extension : DartCompletionTimerExtension.getExtensions()) {
+          extension.dartCompletionError(StringUtil.notNullize(error.getCode()), StringUtil.notNullize(error.getMessage()),
+                                        StringUtil.notNullize(error.getStackTrace()));
+        }
+      }
+    });
+
+    awaitForLatchCheckingCanceled(server, latch, GET_SUGGESTIONS_TIMEOUT);
+
+    if (latch.getCount() > 0) {
+      logTookTooLongMessage("completion_getSuggestions2", GET_SUGGESTIONS_TIMEOUT, filePath);
+
+      for (DartCompletionTimerExtension extension : DartCompletionTimerExtension.getExtensions()) {
+        extension.dartCompletionEnd();
+      }
+    }
+
+    return resultRef.get();
+  }
+
+  @Nullable
   public FormatResult edit_format(@NotNull final VirtualFile file,
                                   final int _selectionOffset,
                                   final int _selectionLength,
@@ -2108,6 +2169,8 @@ public final class DartAnalysisServerService implements Disposable {
       myServerSocket = null;
       myServer = null;
       mySdkHome = null;
+      mySdkVersion = "";
+      myServerVersion = "";
       myFilePathWithOverlaidContentToTimestamp.clear();
       myVisibleFiles.clear();
       myChangedDocuments.clear();
@@ -2279,6 +2342,26 @@ public final class DartAnalysisServerService implements Disposable {
       this.myIncludedSuggestionRelevanceTags = includedSuggestionRelevanceTags;
       this.isLast = isLast;
       this.myLibraryFilePathSD = libraryFilePathSD;
+    }
+  }
+
+  public static class CompletionInfo2 {
+    public final int myReplacementOffset;
+    public final int myReplacementLength;
+    public final @NotNull List<CompletionSuggestion> mySuggestions;
+    public final @NotNull List<String> myLibraryUrisToImport;
+    public final boolean myIsIncomplete;
+
+    CompletionInfo2(int replacementOffset,
+                    int replacementLength,
+                    @NotNull List<CompletionSuggestion> suggestions,
+                    @NotNull List<String> libraryUrisToImport,
+                    boolean isIncomplete) {
+      myReplacementOffset = replacementOffset;
+      myReplacementLength = replacementLength;
+      mySuggestions = suggestions;
+      myLibraryUrisToImport = libraryUrisToImport;
+      myIsIncomplete = isIncomplete;
     }
   }
 
