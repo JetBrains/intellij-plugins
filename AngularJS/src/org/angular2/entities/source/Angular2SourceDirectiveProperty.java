@@ -1,13 +1,13 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.entities.source;
 
-import com.intellij.javascript.web.symbols.impl.PsiElementNavigationTarget;
 import com.intellij.lang.javascript.psi.JSRecordType;
 import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
 import com.intellij.model.Pointer;
 import com.intellij.navigation.NavigationTarget;
+import com.intellij.navigation.SymbolNavigationService;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.ContainerUtil;
@@ -70,7 +70,8 @@ public class Angular2SourceDirectiveProperty implements Angular2DirectivePropert
   @NotNull
   @Override
   public Collection<NavigationTarget> getNavigationTargets(@NotNull Project project) {
-    return ContainerUtil.map(getSources(), s -> new PsiElementNavigationTarget(s));
+    var sns = SymbolNavigationService.getInstance();
+    return ContainerUtil.map(getSources(), s -> sns.psiElementNavigationTarget(s));
   }
 
   @NotNull
