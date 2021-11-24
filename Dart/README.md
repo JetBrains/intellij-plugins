@@ -20,7 +20,7 @@ How to set up IntelliJ IDEA project for developing Dart Plugin.
 Prerequisites:
 - Git command line client
 - The latest IntelliJ IDEA Ultimate installed. Ensure the following installed plugins are enabled:
-  Git, Java Internationalization, IntelliLang, JUnit, Plugin DevKit, Properties, UI Designer.
+  Git, Kotlin, Java Internationalization, IntelliLang, JUnit, Plugin DevKit, Properties, UI Designer.
   Additionally install 'Dart', 'Grammar-Kit' and 'Polymer & Web Components' plugins:
   start IntelliJ IDEA, on Welcome screen click Plugins.
   Find plugins and install them. Restart IDE.
@@ -43,10 +43,10 @@ Prerequisites:
    
 4. Open File | Project Structure | Modules | `[+]` | Import Module, select intellij-plugins/Dart/Dart-community.iml.
    In the same Project Structure dialog open the Dependencies tab of the `intellij.idea.community.main` module
-   (`intellij` > `idea` > `community` > `main`), click `[+]` at the bottom (Mac) or right (Win/Linux) to add a module
+   (`intellij` > `idea` > `community` > `main`), click `[+]` and add a module
    dependency on the `Dart-community` module.
 
-5. Open Settings (Preferences) | Version Control and make sure that intellij-plugins is configured as a 3rd Git root.
+5. Open Settings (Preferences) | Version Control | Directory Mappings and add `intellij-plugins` as a 3rd Git root if it's not already there.
 
 6. The project is ready to use. There are 2 preconfigured run configurations for Dart plugin developers:
    - `IDEA` - to start IntelliJ IDEA + Dart Plugin from sources,
@@ -59,7 +59,7 @@ Prerequisites:
    - repeat the same with Working directory field - it must point to intellij-community/bin
 
 8. [Optional] To enable internal developer actions add "idea.is.internal=true"
-   to the [idea.properties](https://www.jetbrains.com/help/idea/tuning-the-ide.html#configure-platform-properties) file. The menu actions Tools ->
+   to the idea.properties file (Help -> Edit Custom Properties...). The menu actions Tools ->
    View PSI Structure... as well as the Tools -> Internal Actions should be
    visible after restarting.
 
