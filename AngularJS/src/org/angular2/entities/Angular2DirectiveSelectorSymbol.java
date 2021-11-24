@@ -242,8 +242,12 @@ public class Angular2DirectiveSelectorSymbol implements Angular2Symbol, SearchTa
     }
 
     @Override
-    public boolean isValid() {
-      return mySymbol.getSource().isValid();
+    public final @NotNull Pointer<? extends NavigationTarget> createPointer() {
+      return Pointer.delegatingPointer(
+        mySymbol.createPointer(),
+        DirectiveSelectorSymbolNavigationTarget.class,
+        DirectiveSelectorSymbolNavigationTarget::new
+      );
     }
 
     @Override

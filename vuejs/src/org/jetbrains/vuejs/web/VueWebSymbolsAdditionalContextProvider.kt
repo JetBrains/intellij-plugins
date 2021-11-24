@@ -17,7 +17,6 @@ import com.intellij.javascript.web.symbols.patterns.WebSymbolsPattern
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.lang.javascript.psi.JSType
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptVariable
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.model.Pointer
@@ -40,7 +39,6 @@ import com.intellij.util.containers.Stack
 import org.jetbrains.vuejs.codeInsight.detectVueScriptLanguage
 import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
 import org.jetbrains.vuejs.codeInsight.fromAsset
-import org.jetbrains.vuejs.codeInsight.resolveElementTo
 import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.index.findScriptTag
@@ -50,8 +48,6 @@ import org.jetbrains.vuejs.model.VueModelDirectiveProperties.Companion.DEFAULT_E
 import org.jetbrains.vuejs.model.VueModelDirectiveProperties.Companion.DEFAULT_PROP
 import org.jetbrains.vuejs.model.source.VueComponents
 import org.jetbrains.vuejs.model.source.VueUnresolvedComponent
-import org.jetbrains.vuejs.model.typed.VueTypedComponent
-import org.jetbrains.vuejs.model.typed.VueTypedEntitiesProvider
 import java.util.*
 
 class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvider {
@@ -637,7 +633,9 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
 
   private class ComponentSourceNavigationTarget(private val myElement: PsiElement) : NavigationTarget {
 
-    override fun isValid(): Boolean = myElement.isValid
+    override fun createPointer(): Pointer<out NavigationTarget> = Pointer.delegatingPointer(
+      myElement.createSmartPointer(), ComponentSourceNavigationTarget::class.java, ::ComponentSourceNavigationTarget
+    )
 
     override fun getNavigatable(): Navigatable =
       (VueComponents.getComponentDescriptor(myElement)?.source ?: myElement).let {
