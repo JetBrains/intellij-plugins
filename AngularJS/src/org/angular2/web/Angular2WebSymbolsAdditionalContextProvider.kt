@@ -6,27 +6,32 @@ import com.intellij.javascript.web.symbols.WebSymbolsContainer
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
-import com.intellij.util.castSafelyTo
 import org.angular2.Angular2Framework
+import org.angular2.lang.html.parser.Angular2AttributeNameParser
+import org.angular2.lang.html.parser.Angular2AttributeType
+import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding
 import org.angular2.web.containers.*
 
 class Angular2WebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvider {
 
   override fun getAdditionalContext(element: PsiElement?, framework: String?): List<WebSymbolsContainer> =
     if (framework == Angular2Framework.ID && element != null) {
-      listOf(
-        DirectiveElementSelectorsContainer(element.project),
-        DirectiveAttributeSelectorsContainer(element.project),
-      ) + (
-        ((element as? XmlAttribute)?.parent ?: element as? XmlTag)?.let {
-          listOf(
-            OneTimeBindingsProvider(),
-            StandardPropertyAndEventsContainer(it.containingFile),
-            NgContentSelectorsContainer(it),
-            MatchedDirectivesContainer(it),
-            I18nAttributesContainer(it),
-          )
-        } ?: emptyList())
+      val result = mutableListOf(DirectiveElementSelectorsContainer(element.project),
+                                 DirectiveAttributeSelectorsContainer(element.project))
+      ((element as? XmlAttribute)?.parent ?: element as? XmlTag)?.let {
+        result.addAll(listOf(
+          OneTimeBindingsProvider(),
+          StandardPropertyAndEventsContainer(it.containingFile),
+          NgContentSelectorsContainer(it),
+          MatchedDirectivesContainer(it),
+          I18nAttributesContainer(it),
+        ))
+      }
+      if (element is Angular2HtmlPropertyBinding
+          && Angular2AttributeNameParser.parse(element.name).type == Angular2AttributeType.REGULAR) {
+        result.add(AttributeWithInterpolationsContainer)
+      }
+      result
     }
     else emptyList()
 
