@@ -49,4 +49,6 @@ class Duplicate: UIViewController {
       text(SwiftLessonsBundle.message("swift.editor.duplicate.several.lines", action("EditorDuplicate")))
     }
   }
+
+  override val suitableTips = listOf("CtrlD")
 }

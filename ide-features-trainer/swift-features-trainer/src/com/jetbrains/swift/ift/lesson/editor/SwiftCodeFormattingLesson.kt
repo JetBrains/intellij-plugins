@@ -50,4 +50,6 @@ class Format: UIViewController {
       text(SwiftLessonsBundle.message("swift.editor.format.reformat.whole.file", action("ReformatCode"), action("EditorEscape"), action("ReformatCode")))
     }
   }
+
+  override val suitableTips = listOf("LayoutCode")
 }

@@ -71,4 +71,6 @@ class DebugExample: UIViewController {
 
 
   }
+
+  override val suitableTips = listOf("tips_go_RunToCursor", "EvaluateExpression")
 }

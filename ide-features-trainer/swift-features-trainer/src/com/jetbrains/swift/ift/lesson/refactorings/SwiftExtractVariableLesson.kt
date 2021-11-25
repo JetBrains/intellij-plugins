@@ -44,4 +44,6 @@ class ExtractVariable: UIViewController {
         SwiftLessonsBundle.message("swift.refactoring.extract.variable.exec.again", action("IntroduceVariable"), code("CGRect"), code("frame")))
     }
   }
+
+  override val suitableTips = listOf("IntroduceVariable")
 }

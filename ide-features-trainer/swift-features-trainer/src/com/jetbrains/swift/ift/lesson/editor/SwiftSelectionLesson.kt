@@ -58,4 +58,6 @@ class Select: UIViewController {
       text(SwiftLessonsBundle.message("swift.editor.selection.all", action("\$SelectAll")))
     }
   }
+
+  override val suitableTips = listOf("smart_selection")
 }

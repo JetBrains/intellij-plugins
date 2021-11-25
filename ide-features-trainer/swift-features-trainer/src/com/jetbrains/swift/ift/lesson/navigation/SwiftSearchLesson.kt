@@ -70,4 +70,6 @@ class AnotherTest: Test {
       text(SwiftLessonsBundle.message("swift.navigation.search.action", action("GotoAction")))
     }
   }
+
+  override val suitableTips = listOf("find-usages", "HighlightUsagesInFile", "FindInPath", "FindReplaceToggle", "GoToAction")
 }

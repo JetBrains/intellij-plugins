@@ -46,4 +46,6 @@ class Delete: UIViewController {
       text(SwiftLessonsBundle.message("swift.editor.delete.undo", action("\$Undo")))
     }
   }
+
+  override val suitableTips = listOf("DeleteLine")
 }

@@ -42,4 +42,6 @@ class ExtractClosure: UIViewController {
       text(SwiftLessonsBundle.message("swift.refactoring.extract.closure.exec", action("Refactorings.QuickListPopupAction")))
     }
   }
+
+  override val suitableTips = listOf("ExtractClosure")
 }

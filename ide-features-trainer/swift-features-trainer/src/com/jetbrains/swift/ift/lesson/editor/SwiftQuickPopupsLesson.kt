@@ -55,4 +55,6 @@ class Duplicate: UIViewController {
       text(SwiftLessonsBundle.message("swift.editor.popups.impl", action("QuickImplementations")))
     }
   }
+
+  override val suitableTips = listOf("parameter-info", "ExternalJavaDoc", "CtrlShiftIForLookup")
 }

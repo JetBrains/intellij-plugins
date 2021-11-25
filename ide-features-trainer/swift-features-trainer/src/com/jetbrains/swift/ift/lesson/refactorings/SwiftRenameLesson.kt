@@ -54,4 +54,6 @@ class Rename: UIViewController {
       text(SwiftLessonsBundle.message("swift.refactoring.rename.check", action("FindUsages")))
     }
   }
+
+  override val suitableTips = listOf("Rename")
 }

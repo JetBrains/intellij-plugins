@@ -90,4 +90,7 @@ class AppCode: JetBrainsIDE {}""".trimIndent())
       text(SwiftLessonsBundle.message("swift.navigation.code.switcher", action("Switcher")))
     }
   }
+
+  override val suitableTips = listOf("GoToClass", "CamelPrefixesInNavigationPopups", "GoToSymbol",
+                                     "GoToDeclaration", "recent-files", "Switcher")
 }

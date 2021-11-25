@@ -44,4 +44,6 @@ class IDE {
 
 
   }
+
+  override val suitableTips = listOf("GenerateEqualsHash", "Generate", "GenerateDescription")
 }

@@ -71,4 +71,6 @@ class Completion: UIViewController {
     }
     text(SwiftLessonsBundle.message("swift.editor.completion.go.next", LessonUtil.rawEnter()))
   }
+
+  override val suitableTips = listOf("CodeCompletionNoShift", "CodeCompletion", "SmartTypeCompletion", "CamelHumpsInCodeCompletion")
 }

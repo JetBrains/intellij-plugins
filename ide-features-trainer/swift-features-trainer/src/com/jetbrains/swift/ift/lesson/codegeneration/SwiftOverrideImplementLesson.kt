@@ -52,4 +52,6 @@ class OverrideImplement: UIViewController, UITableViewDataSource {
 
 
   }
+
+  override val suitableTips = listOf("OverrideImplementMethods")
 }

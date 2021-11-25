@@ -172,4 +172,6 @@ class Navigation: UITableViewController {
     }
     text(SwiftLessonsBundle.message("swift.navigation.windows.vcs.window"))
   }
+
+  override val suitableTips = listOf("StructureToolWindow")
 }

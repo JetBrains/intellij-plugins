@@ -124,4 +124,6 @@ class Navigation: UITableViewController {
       text(SwiftLessonsBundle.message("swift.navigation.todo.change.bookmark", action("BookmarksView.Rename"), LessonUtil.rawEnter()))
     }
   }
+
+  override val suitableTips = listOf("PreviewTODO", "FavoritesToolWindow1", "FavoritesToolWindow2")
 }

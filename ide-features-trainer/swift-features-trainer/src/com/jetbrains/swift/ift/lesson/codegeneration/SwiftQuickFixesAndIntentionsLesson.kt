@@ -106,4 +106,6 @@ class QuickFixes: NSObject {
       text(SwiftLessonsBundle.message("swift.codegeneration.quickfix.explicit.type", action("ShowIntentionActions"), code("fileManager")))
     }
   }
+
+  override val suitableTips = listOf("QuickFix", "ContextActions")
 }

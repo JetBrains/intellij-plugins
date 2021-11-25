@@ -104,4 +104,6 @@ class TestExample: UIViewController {
     }
     text(SwiftLessonsBundle.message("swift.rdt.test.more"))
   }
+
+  override val suitableTips = listOf("RunTests")
 }

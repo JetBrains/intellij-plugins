@@ -62,4 +62,6 @@ class Comment: UIViewController {
       text(SwiftLessonsBundle.message("swift.editor.comment.block", action("EditorSelectWord"), code("frame: CGRect.zero"), action("CommentByBlockComment")))
     }
   }
+
+  override val suitableTips = listOf("comments")
 }

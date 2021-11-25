@@ -52,4 +52,6 @@ class RunExample: UIViewController {
       text(SwiftLessonsBundle.message("swift.rdt.run.final", action("Stop")))
     }
   }
+
+  override val suitableTips = listOf("SelectRunDebugConfiguration")
 }

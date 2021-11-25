@@ -88,4 +88,6 @@ SIX
       text(SwiftLessonsBundle.message("swift.editor.selections.reformat", action("EditorEscape"), action("ReformatCode")))
     }
   }
+
+  override val suitableTips = listOf("Multiselection1", "Multiselection2")
 }

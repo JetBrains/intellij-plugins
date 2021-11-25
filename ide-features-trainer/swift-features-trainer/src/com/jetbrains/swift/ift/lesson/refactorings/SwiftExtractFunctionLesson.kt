@@ -54,4 +54,6 @@ class ExtractMethod: UIViewController {
       text(SwiftLessonsBundle.message("swift.refactoring.extract.function.exec.again", action("ExtractMethod")))
     }
   }
+
+  override val suitableTips = listOf("ExtractMethod")
 }

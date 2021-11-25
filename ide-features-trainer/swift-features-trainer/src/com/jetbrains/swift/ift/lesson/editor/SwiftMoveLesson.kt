@@ -46,4 +46,6 @@ class Move: UIViewController {
       text(SwiftLessonsBundle.message("swift.editor.move.line.up", action("MoveLineUp"), code("header")))
     }
   }
+
+  override val suitableTips = listOf("MoveUpDown")
 }

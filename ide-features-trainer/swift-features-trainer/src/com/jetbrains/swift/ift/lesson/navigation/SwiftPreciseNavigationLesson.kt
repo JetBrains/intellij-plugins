@@ -80,4 +80,6 @@ class PreciseNavigationController : UIViewController {
       text(SwiftLessonsBundle.message("swift.navigation.precise.jump.line", action("GotoLine")))
     }
   }
+
+  override val suitableTips = listOf("JumpToLastEdit", "GotoNextError", "GotoNextError")
 }

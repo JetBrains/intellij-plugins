@@ -59,4 +59,6 @@ class CreateFromUsage: UIViewController {
       text(SwiftLessonsBundle.message("swift.codegeneration.cfu.create.empty.init"))
     }
   }
+
+  override val suitableTips = listOf("GenerateFromUsage")
 }

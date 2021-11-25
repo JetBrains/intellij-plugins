@@ -53,4 +53,6 @@ class ChangeSignature: UIViewController {
       text(SwiftLessonsBundle.message("swift.refactoring.change.signature.final", icon(AllIcons.General.ArrowUp), icon(AllIcons.General.ArrowDown)))
     }
   }
+
+  override val suitableTips = listOf("ChangeSignature")
 }
