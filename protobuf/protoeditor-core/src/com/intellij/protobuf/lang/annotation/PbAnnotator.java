@@ -26,7 +26,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.protobuf.ide.highlighter.PbSyntaxHighlighter;
 import com.intellij.protobuf.lang.PbLangBundle;
 import com.intellij.protobuf.lang.annotation.OptionOccurrenceTracker.Occurrence;
-import com.intellij.protobuf.lang.intentions.AddImportPathIntention;
+import com.intellij.protobuf.lang.intentions.PbAddImportPathIntention;
 import com.intellij.protobuf.lang.psi.*;
 import com.intellij.protobuf.lang.psi.PbField.CanonicalFieldLabel;
 import com.intellij.protobuf.lang.psi.util.PbPsiImplUtil;
@@ -603,7 +603,7 @@ public class PbAnnotator implements Annotator {
         holder.newAnnotation(HighlightSeverity.ERROR, PbLangBundle.message("cannot.resolve.import", path))
             .range(range)
             .highlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL)
-            .withFix(new AddImportPathIntention())
+            .withFix(new PbAddImportPathIntention())
             .create();
     }
   }
