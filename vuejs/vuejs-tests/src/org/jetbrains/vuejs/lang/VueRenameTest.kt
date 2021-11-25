@@ -65,7 +65,6 @@ class VueRenameTest : BasePlatformTestCase() {
     myFixture.checkResultByFile("inlineField_after.vue")
   }
 
-  @Bombed(year = 2021, month = 12, day = 10, user = "piotr.tomiak", description = "Propagate component rename over default exports and es6 properties")
   fun testComponentNameFromDeclaration() {
     val testName = getTestName(true)
     val testFiles = listOf("1.vue", "2.vue", ".html", ".ts", ".js").map { testName + it }
