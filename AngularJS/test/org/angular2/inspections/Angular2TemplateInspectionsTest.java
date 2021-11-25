@@ -4,7 +4,6 @@ package org.angular2.inspections;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
-import com.intellij.idea.Bombed;
 import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.typescript.inspection.TypeScriptExplicitMemberTypeInspection;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
@@ -84,7 +83,6 @@ public class Angular2TemplateInspectionsTest extends Angular2CodeInsightFixtureT
            "matching-components-with-module.html", "component.ts", "matching-components-module.ts");
   }
 
-  @Bombed(year = 2021, month = 11, day = 15, user = "piotr.tomiak", description = "Recognize attrbiutes with interpolations as property bindings")
   public void testBindings() {
     myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
     doTest(AngularUndefinedBindingInspection.class,
