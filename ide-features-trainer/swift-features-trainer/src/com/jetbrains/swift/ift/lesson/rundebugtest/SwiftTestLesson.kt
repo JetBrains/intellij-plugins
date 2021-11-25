@@ -4,6 +4,7 @@ import com.intellij.icons.AllIcons
 import com.jetbrains.swift.ift.SwiftLessonsBundle
 import training.dsl.LessonContext
 import training.dsl.LessonSample
+import training.dsl.LessonUtil
 import training.dsl.parseLessonSample
 import training.learn.course.KLesson
 
@@ -106,4 +107,11 @@ class TestExample: UIViewController {
   }
 
   override val suitableTips = listOf("RunTests")
+
+  override val helpLinks: Map<String, String> get() = mapOf(
+    Pair(SwiftLessonsBundle.message("swift.rdt.test.help.link.1"),
+         LessonUtil.getHelpLink("create-tests.html")),
+    Pair(SwiftLessonsBundle.message("swift.rdt.test.help.link.2"),
+         LessonUtil.getHelpLink("unit-testing-in-appcode.html")),
+  )
 }

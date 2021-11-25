@@ -4,6 +4,7 @@ import com.intellij.icons.AllIcons
 import com.jetbrains.swift.ift.SwiftLessonsBundle
 import training.dsl.LessonContext
 import training.dsl.LessonSample
+import training.dsl.LessonUtil
 import training.dsl.parseLessonSample
 import training.learn.course.KLesson
 
@@ -174,4 +175,9 @@ class Navigation: UITableViewController {
   }
 
   override val suitableTips = listOf("StructureToolWindow")
+
+  override val helpLinks: Map<String, String> get() = mapOf(
+    Pair(SwiftLessonsBundle.message("swift.navigation.windows.help.link"),
+         LessonUtil.getHelpLink("guided-tour-around-the-user-interface.html")),
+  )
 }

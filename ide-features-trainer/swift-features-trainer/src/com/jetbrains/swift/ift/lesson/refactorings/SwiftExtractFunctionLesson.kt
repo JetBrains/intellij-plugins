@@ -56,4 +56,9 @@ class ExtractMethod: UIViewController {
   }
 
   override val suitableTips = listOf("ExtractMethod")
+
+  override val helpLinks: Map<String, String> get() = mapOf(
+    Pair(SwiftLessonsBundle.message("swift.refactoring.extract.function.help.link"),
+         LessonUtil.getHelpLink("extract-method.html")),
+  )
 }

@@ -3,6 +3,7 @@ package com.jetbrains.swift.ift.lesson.editor
 import com.jetbrains.swift.ift.SwiftLessonsBundle
 import training.dsl.LessonContext
 import training.dsl.LessonSample
+import training.dsl.LessonUtil
 import training.dsl.parseLessonSample
 import training.learn.course.KLesson
 
@@ -68,4 +69,9 @@ class FoldingDemo {
       text(SwiftLessonsBundle.message("swift.editor.folding.block", action("CollapseBlock")))
     }
   }
+
+  override val helpLinks: Map<String, String> get() = mapOf(
+    Pair(SwiftLessonsBundle.message("swift.editor.folding.help.link"),
+         LessonUtil.getHelpLink("working-with-source-code.html#code_folding")),
+  )
 }

@@ -108,4 +108,11 @@ class QuickFixes: NSObject {
   }
 
   override val suitableTips = listOf("QuickFix", "ContextActions")
+
+  override val helpLinks: Map<String, String> get() = mapOf(
+    Pair(SwiftLessonsBundle.message("swift.codegeneration.quickfix.help.link.1"),
+         LessonUtil.getHelpLink("intention-actions.html")),
+    Pair(SwiftLessonsBundle.message("swift.codegeneration.quickfix.help.link.2"),
+         LessonUtil.getHelpLink("resolving-problems.html")),
+  )
 }

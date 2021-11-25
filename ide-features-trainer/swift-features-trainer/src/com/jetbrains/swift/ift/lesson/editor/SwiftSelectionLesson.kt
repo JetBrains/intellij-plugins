@@ -3,6 +3,7 @@ package com.jetbrains.swift.ift.lesson.editor
 import com.jetbrains.swift.ift.SwiftLessonsBundle
 import training.dsl.LessonContext
 import training.dsl.LessonSample
+import training.dsl.LessonUtil
 import training.dsl.parseLessonSample
 import training.learn.course.KLesson
 
@@ -60,4 +61,9 @@ class Select: UIViewController {
   }
 
   override val suitableTips = listOf("smart_selection")
+
+  override val helpLinks: Map<String, String> get() = mapOf(
+    Pair(SwiftLessonsBundle.message("swift.editor.selection.help.link"),
+         LessonUtil.getHelpLink("working-with-source-code.html#editor_code_selection")),
+  )
 }

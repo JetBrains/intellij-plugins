@@ -93,4 +93,9 @@ class AppCode: JetBrainsIDE {}""".trimIndent())
 
   override val suitableTips = listOf("GoToClass", "CamelPrefixesInNavigationPopups", "GoToSymbol",
                                      "GoToDeclaration", "recent-files", "Switcher")
+
+  override val helpLinks: Map<String, String> get() = mapOf(
+    Pair(SwiftLessonsBundle.message("swift.navigation.code.help.link"),
+         LessonUtil.getHelpLink("navigating-through-the-source-code.html")),
+  )
 }

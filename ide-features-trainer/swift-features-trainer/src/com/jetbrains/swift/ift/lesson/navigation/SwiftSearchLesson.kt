@@ -3,6 +3,7 @@ package com.jetbrains.swift.ift.lesson.navigation
 import com.jetbrains.swift.ift.SwiftLessonsBundle
 import training.dsl.LessonContext
 import training.dsl.LessonSample
+import training.dsl.LessonUtil
 import training.dsl.parseLessonSample
 import training.learn.course.KLesson
 
@@ -72,4 +73,11 @@ class AnotherTest: Test {
   }
 
   override val suitableTips = listOf("find-usages", "HighlightUsagesInFile", "FindInPath", "FindReplaceToggle", "GoToAction")
+
+  override val helpLinks: Map<String, String> get() = mapOf(
+    Pair(SwiftLessonsBundle.message("swift.navigation.search.help.link.1"),
+         LessonUtil.getHelpLink("finding-and-replacing-text-in-file.html")),
+    Pair(SwiftLessonsBundle.message("swift.navigation.search.help.link.2"),
+         LessonUtil.getHelpLink("finding-and-replacing-text-in-project.html")),
+  )
 }

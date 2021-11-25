@@ -54,4 +54,11 @@ class OverrideImplement: UIViewController, UITableViewDataSource {
   }
 
   override val suitableTips = listOf("OverrideImplementMethods")
+
+  override val helpLinks: Map<String, String> get() = mapOf(
+    Pair(SwiftLessonsBundle.message("swift.codegeneration.overrideimplement.help.link.1"),
+         LessonUtil.getHelpLink("generating-code.html#override_method")),
+    Pair(SwiftLessonsBundle.message("swift.codegeneration.overrideimplement.help.link.2"),
+         LessonUtil.getHelpLink("generating-code.html#implement_methods")),
+  )
 }

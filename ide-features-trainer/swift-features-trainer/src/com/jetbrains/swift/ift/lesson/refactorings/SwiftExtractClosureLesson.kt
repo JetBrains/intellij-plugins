@@ -3,6 +3,7 @@ package com.jetbrains.swift.ift.lesson.refactorings
 import com.jetbrains.swift.ift.SwiftLessonsBundle
 import training.dsl.LessonContext
 import training.dsl.LessonSample
+import training.dsl.LessonUtil
 import training.dsl.parseLessonSample
 import training.learn.course.KLesson
 
@@ -44,4 +45,9 @@ class ExtractClosure: UIViewController {
   }
 
   override val suitableTips = listOf("ExtractClosure")
+
+  override val helpLinks: Map<String, String> get() = mapOf(
+    Pair(SwiftLessonsBundle.message("swift.refactoring.extract.closure.help.link"),
+         LessonUtil.getHelpLink("extract-closure.html")),
+  )
 }

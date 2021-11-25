@@ -3,6 +3,7 @@ package com.jetbrains.swift.ift.lesson.editor
 import com.jetbrains.swift.ift.SwiftLessonsBundle
 import training.dsl.LessonContext
 import training.dsl.LessonSample
+import training.dsl.LessonUtil
 import training.dsl.parseLessonSample
 import training.learn.course.KLesson
 
@@ -48,4 +49,9 @@ class Delete: UIViewController {
   }
 
   override val suitableTips = listOf("DeleteLine")
+
+  override val helpLinks: Map<String, String> get() = mapOf(
+    Pair(SwiftLessonsBundle.message("swift.editor.delete.help.link"),
+         LessonUtil.getHelpLink("working-with-source-code.html#editor_lines_code_blocks")),
+  )
 }

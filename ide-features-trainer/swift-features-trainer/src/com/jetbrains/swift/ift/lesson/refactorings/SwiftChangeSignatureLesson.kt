@@ -4,6 +4,7 @@ import com.intellij.icons.AllIcons
 import com.jetbrains.swift.ift.SwiftLessonsBundle
 import training.dsl.LessonContext
 import training.dsl.LessonSample
+import training.dsl.LessonUtil
 import training.dsl.parseLessonSample
 import training.learn.course.KLesson
 
@@ -55,4 +56,9 @@ class ChangeSignature: UIViewController {
   }
 
   override val suitableTips = listOf("ChangeSignature")
+
+  override val helpLinks: Map<String, String> get() = mapOf(
+    Pair(SwiftLessonsBundle.message("swift.refactoring.change.signature.help.link"),
+         LessonUtil.getHelpLink("change-signature.html")),
+  )
 }
