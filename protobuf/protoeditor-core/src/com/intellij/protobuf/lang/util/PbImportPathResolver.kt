@@ -17,7 +17,7 @@ import java.nio.file.Paths
 internal object PbImportPathResolver {
   private const val MAX_LOCATION_LENGTH = 100
 
-  fun findSuitableImportPaths(importStatement: String, editedFile: VirtualFile, project: Project): List<ImportPathData> {
+  fun findSuitableImportPaths(importStatement: String, editedFile: VirtualFile, project: Project): Sequence<ImportPathData> {
     val relativeProtoPath = FileUtil.toSystemIndependentName(importStatement)
     return DumbService.getInstance(project).runReadActionInSmartMode(Computable {
       FileTypeIndex.getFiles(PbFileType.INSTANCE, GlobalSearchScope.projectScope(project))
@@ -29,7 +29,6 @@ internal object PbImportPathResolver {
         .distinct()
         .mapNotNull { VfsUtil.findFile(Paths.get(it), false) }
         .map { ImportPathData(it, editedFile, shortenPath(it, project), importStatement) }
-        .toList()
     })
   }
 
