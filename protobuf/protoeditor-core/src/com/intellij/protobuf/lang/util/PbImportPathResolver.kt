@@ -28,7 +28,7 @@ internal object PbImportPathResolver {
         .filter { it.isNotBlank() }
         .distinct()
         .mapNotNull { VfsUtil.findFile(Paths.get(it), false) }
-        .map { ImportPathData(it, editedFile, shortenPath(it, project)) }
+        .map { ImportPathData(it, editedFile, shortenPath(it, project), importStatement) }
         .toList()
     })
   }
@@ -51,5 +51,6 @@ internal object PbImportPathResolver {
 internal data class ImportPathData(
   val effectiveImportVirtualFile: VirtualFile,
   val originalPbVirtualFile: VirtualFile,
-  @NlsSafe val presentablePath: String
+  @NlsSafe val presentablePath: String,
+  @NlsSafe val originalImportStatement: String
 )

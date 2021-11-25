@@ -56,7 +56,7 @@ internal object PbUiUtils {
       override fun isAutoSelectionEnabled() = false
       override fun hasSubstep(selectedValue: ImportPathData?) = false
       override fun getTextFor(value: ImportPathData) = value.presentablePath
-      override fun getIconFor(value: ImportPathData) = AllIcons.ObjectBrowser.AbbreviatePackageNames
+      override fun getIconFor(value: ImportPathData) = AllIcons.Actions.ModuleDirectory
     }
   }
 
@@ -64,11 +64,14 @@ internal object PbUiUtils {
     return object : ColoredListCellRenderer<ImportPathData>() {
 
       override fun customizeCellRenderer(list: JList<out ImportPathData>,
-                                         value: ImportPathData?,
+                                         value: ImportPathData,
                                          index: Int,
                                          selected: Boolean,
                                          hasFocus: Boolean) {
-        if (value != null) append(value.presentablePath, SimpleTextAttributes.REGULAR_ATTRIBUTES)
+        append(value.presentablePath, SimpleTextAttributes.REGULAR_ATTRIBUTES)
+        append("/", SimpleTextAttributes.GRAYED_ATTRIBUTES)
+        append(value.originalImportStatement, SimpleTextAttributes.GRAYED_ATTRIBUTES)
+        icon = AllIcons.Actions.ModuleDirectory
       }
     }
   }
