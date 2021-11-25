@@ -134,13 +134,15 @@ final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramOb
         }
         sb.append("<font style=\"color:#ff0000;\">");
         if (!errors.isEmpty()) {
-          sb.append('\n').append(AngularJSBundle.icuMessage("angularjs.ui.router.diagram.node.tooltip.errors", errors.size())).append(":\n");
+          sb.append('\n').append(AngularJSBundle.icuMessage("angularjs.ui.router.diagram.node.tooltip.errors", errors.size()))
+            .append(":\n");
           for (String error : errors) {
             sb.append(error).append('\n');
           }
         }
         if (!warnings.isEmpty()) {
-          sb.append('\n').append(AngularJSBundle.icuMessage("angularjs.ui.router.diagram.node.tooltip.warnings", errors.size())).append(":\n");
+          sb.append('\n').append(AngularJSBundle.icuMessage("angularjs.ui.router.diagram.node.tooltip.warnings", errors.size()))
+            .append(":\n");
           for (String warning : warnings) {
             sb.append(warning).append('\n');
           }
@@ -418,7 +420,9 @@ final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramOb
         }
         for (DiagramEdge edge : builder.getEdgeObjects()) {
           if (!(edge instanceof AngularUiRouterEdge)) continue;
-          if (getSettings().isShowEdgeLabels() && selected != null && (selected.equals(edge.getSource()) || selected.equals(edge.getTarget()))) {
+          if (getSettings().isShowEdgeLabels() &&
+              selected != null &&
+              (selected.equals(edge.getSource()) || selected.equals(edge.getTarget()))) {
             myVisibleEdges.add((AngularUiRouterEdge)edge);
             graph.setLabelText(builder.getEdge(edge), ((AngularUiRouterEdge)edge).getLabel());
           }
@@ -465,7 +469,9 @@ final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramOb
       }
 
       @Override
-      public @Nullable Object getData(@NotNull String dataId, @NotNull List<DiagramNode<DiagramObject>> list, @NotNull DiagramBuilder builder) {
+      public @Nullable Object getData(@NotNull String dataId,
+                                      @NotNull List<DiagramNode<DiagramObject>> list,
+                                      @NotNull DiagramBuilder builder) {
         if (CommonDataKeys.PSI_ELEMENT.is(dataId) && list.size() == 1) {
           final SmartPsiElementPointer target = list.get(0).getIdentifyingElement().getNavigationTarget();
           return target == null ? null : target.getElement();
@@ -508,11 +514,13 @@ final class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramOb
       }
 
       @Override
-      public @NotNull JComponent createNodeComponent(@NotNull DiagramNode<DiagramObject> node,
-                                                     @NotNull DiagramBuilder builder,
-                                                     @NotNull Point basePoint,
-                                                     @NotNull JPanel wrapper) {
-        final DiagramNodeContainer container = new DiagramNodeContainer(node, builder, basePoint);
+      public @NotNull JComponent createNodeComponent(
+        @NotNull DiagramNode<DiagramObject> node,
+        @NotNull DiagramBuilder builder,
+        @NotNull NodeRealizer nodeRealizer,
+        @NotNull JPanel wrapper
+      ) {
+        final DiagramNodeContainer container = new DiagramNodeContainer(node, builder, nodeRealizer);
         if (!GraphExportService.getInstance().isPrintMode()) {
           if (!node.getIdentifyingElement().getErrors().isEmpty()) {
             container.setBorder(ERROR_BORDER);
