@@ -29,6 +29,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 import static com.intellij.javascript.web.codeInsight.html.WebSymbolsHtmlAdditionalContextProvider.getHtmlNSDescriptor;
 import static com.intellij.javascript.web.symbols.WebSymbolsUtils.createPsiRangeNavigationItem;
@@ -37,6 +38,9 @@ import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.KIND_
 import static org.angular2.web.Angular2WebSymbolsAdditionalContextProvider.KIND_NG_DIRECTIVE_ELEMENT_SELECTORS;
 
 public class Angular2DirectiveSelectorSymbol implements Angular2Symbol, SearchTarget, RenameTarget {
+
+  private static final Pattern TAG_NAME_PATTERN = Pattern.compile("[a-zA-Z][a-zA-Z0-9-]*");
+  private static final Pattern ATTRIBUTE_NAME_PATTERN = Pattern.compile("[^\\p{Space}\"'>/=\\p{Cntrl}]+");
 
   private final Angular2DirectiveSelectorImpl myParent;
   private final TextRange myRange;
@@ -231,6 +235,15 @@ public class Angular2DirectiveSelectorSymbol implements Angular2Symbol, SearchTa
   @Override
   public SearchScope getMaximalSearchScope() {
     return SearchTarget.super.getMaximalSearchScope();
+  }
+
+  @Nullable
+  @Override
+  public String validateName(@NotNull String name) {
+    if (myIsElement) {
+      return TAG_NAME_PATTERN.matcher(name).matches() ? null : name +" is not a valid HTML element name.";
+    }
+    return ATTRIBUTE_NAME_PATTERN.matcher(name).matches() ? null : name + " is not a valid HTML attribute name.";
   }
 
   private static class DirectiveSelectorSymbolNavigationTarget implements NavigationTarget {
