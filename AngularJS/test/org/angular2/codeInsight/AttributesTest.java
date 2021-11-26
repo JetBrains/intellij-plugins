@@ -996,11 +996,10 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     assertContainsElements(myFixture.getLookupElementStrings(), asList("*ngIf", "*ngTemplateOutlet"));
   }
 
-  @Bombed(year = 2021, month = 11, day = 15, user = "piotr.tomiak", description = "Add filtering of HTML attributes in case of exclusive contributions filter.")
   public void testNgContentCompletion() {
     myFixture.configureByFiles("ng-content-completion.html", "package.json");
     myFixture.completeBasic();
-    assertEquals(singletonList("select"), myFixture.getLookupElementStrings());
+    assertEquals(newArrayList("select","xml:base", "xml:lang", "xml:space"), myFixture.getLookupElementStrings());
   }
 
   public void testNgContentInspection() {
