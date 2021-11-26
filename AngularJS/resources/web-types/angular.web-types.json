@@ -5,6 +5,13 @@
   "version": "2.0.0",
   "description-markup": "markdown",
   "default-icon": "icons/angular2.svg",
+  "framework-config": {
+    "enable-when": {
+      "node-packages": [
+        "@angular/core"
+      ]
+    }
+  },
   "contributions": {
     "html": {
       "elements": [

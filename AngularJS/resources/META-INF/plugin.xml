@@ -126,8 +126,6 @@
 
     <!-- Angular 2 contributions -->
     <javascript.web.framework id="angular" implementation="org.angular2.Angular2Framework"/>
-    <javascript.web.context framework="angular" implementation="org.angular2.lang.Angular2NodePackageContext"
-                            id="angular.nodePackage"/>
     <javascript.web.context framework="angular" implementation="org.angular2.lang.Angular2LegacyContext"
                             id="angular.legacy" order="last"/>
 
