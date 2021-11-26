@@ -32,7 +32,7 @@ function stripExitCodeInfo(buffer) {
 
 function runWithConfig(config) {
   var options = {
-    hostname: config.hostname,
+    hostname: config.hostname || '127.0.0.1',
     path: config.urlRoot + 'run',
     port: config.port,
     method: 'POST',
