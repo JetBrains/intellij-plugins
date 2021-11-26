@@ -4,6 +4,7 @@ import com.intellij.icons.AllIcons
 import com.jetbrains.swift.ift.SwiftLessonsBundle
 import training.dsl.LessonContext
 import training.dsl.LessonSample
+import training.dsl.LessonUtil
 import training.dsl.parseLessonSample
 import training.learn.course.KLesson
 
@@ -115,16 +116,12 @@ class Navigation: UITableViewController {
       text(SwiftLessonsBundle.message("swift.navigation.todo.bookmark", action("ToggleBookmark")))
     }
     task {
-      triggers("ShowBookmarks")
-      text(SwiftLessonsBundle.message("swift.navigation.todo.all.bookmarks", action("ShowBookmarks")))
+      triggers("ActivateBookmarksToolWindow")
+      text(SwiftLessonsBundle.message("swift.navigation.todo.all.bookmarks", action("ActivateBookmarksToolWindow")))
     }
     task {
-      triggers("com.intellij.ide.bookmarks.actions.EditBookmarkDescriptionAction")
-      text(SwiftLessonsBundle.message("swift.navigation.todo.change.bookmark", action("EditorSplitLine")))
-    }
-    task {
-      triggers("ActivateFavoritesToolWindow")
-      text(SwiftLessonsBundle.message("swift.navigation.todo.favorites", action("EditorEscape"), action("ActivateFavoritesToolWindow")))
+      triggers("BookmarksView.Rename")
+      text(SwiftLessonsBundle.message("swift.navigation.todo.change.bookmark", action("BookmarksView.Rename"), LessonUtil.rawEnter()))
     }
   }
 }
