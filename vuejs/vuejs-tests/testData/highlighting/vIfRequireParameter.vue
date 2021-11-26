@@ -1,1 +1,1 @@
-<template><div <warning descr="Wrong attribute value">v-if</warning>></div></template>
+<template><div <warning descr="v-if requires value">v-if</warning>></div></template>

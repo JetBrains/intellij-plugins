@@ -1,6 +1,6 @@
 <template>
   <div>
-    <A foo <warning descr="Wrong attribute value">bar</warning> unknown></A>
+    <A foo <warning descr="bar requires value">bar</warning> unknown></A>
   </div>
 </template>
 

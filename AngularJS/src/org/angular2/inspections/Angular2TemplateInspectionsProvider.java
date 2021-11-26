@@ -4,6 +4,7 @@ package org.angular2.inspections;
 import com.intellij.codeInspection.InspectionToolProvider;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
+import com.intellij.codeInspection.htmlInspections.HtmlUnknownBooleanAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
 import com.intellij.lang.javascript.inspections.*;
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection;
@@ -43,6 +44,7 @@ public class Angular2TemplateInspectionsProvider implements InspectionToolProvid
 
       HtmlUnknownAttributeInspection.class,
       HtmlUnknownTagInspection.class,
+      HtmlUnknownBooleanAttributeInspection.class
     };
   }
 }
