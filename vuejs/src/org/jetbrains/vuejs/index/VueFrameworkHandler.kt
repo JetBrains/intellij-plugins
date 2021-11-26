@@ -6,10 +6,12 @@ import com.intellij.lang.ecmascript6.ES6StubElementTypes
 import com.intellij.lang.ecmascript6.psi.*
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.*
+import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler
 import com.intellij.lang.javascript.index.JSSymbolUtil
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptVariable
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator
@@ -19,6 +21,7 @@ import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.openapi.util.Condition
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
@@ -42,15 +45,11 @@ import org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes
 import org.jetbrains.vuejs.libraries.componentDecorator.isComponentDecorator
 import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.isDefineComponentOrVueExtendCall
+import org.jetbrains.vuejs.model.typed.VueTypedEntitiesProvider
 import org.jetbrains.vuejs.types.VueCompositionPropsTypeProvider
 
 class VueFrameworkHandler : FrameworkIndexingHandler() {
-  // 1 here we are just mapping the constants, no lifecycle needed
-  // 2 not lazy structure -> no synchronization needed
-  // what to do, indexing is done on background thread, component initialization on EDT
-  // either we synchronize (but then every access would have penalty)
-  // or we are using the static structure
-  // here there are only 6 indexes...
+
   private val VUE_INDEXES = mapOf(
     record(VueComponentsIndex.KEY),
     record(VueExtendsBindingIndex.KEY),
@@ -71,6 +70,8 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     fun <T : PsiElement> record(key: StubIndexKey<String, T>): Pair<String, StubIndexKey<String, T>> {
       return Pair(VueIndexBase.createJSKey(key), key)
     }
+
+    public const val TYPED_COMPONENT_MARKER = "Vue Typed Component"
 
     private const val REQUIRE = "require"
 
@@ -122,8 +123,15 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 
   override fun findModule(result: PsiElement): PsiElement? = findModule(result, true) ?: findModule(result, false)
 
-  override fun interestedProperties(): Array<String> = INTERESTING_PROPERTIES
+  override fun getMarkers(elementToIndex: PsiElement): List<String> =
+    if (elementToIndex is TypeScriptVariable
+        && TypeScriptUtil.isDefinitionFile(elementToIndex.containingFile)
+        && VueTypedEntitiesProvider.isComponentDefinition(elementToIndex))
+      listOf(TYPED_COMPONENT_MARKER)
+    else
+      emptyList()
 
+  override fun interestedProperties(): Array<String> = INTERESTING_PROPERTIES
   override fun processProperty(name: String?, property: JSProperty, out: JSElementIndexingData): Boolean {
     if (MIXINS_PROP == name && property.value is JSArrayLiteralExpression) {
       (property.value as JSArrayLiteralExpression).expressions

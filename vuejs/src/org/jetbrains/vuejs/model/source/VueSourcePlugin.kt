@@ -2,32 +2,20 @@
 package org.jetbrains.vuejs.model.source
 
 import com.intellij.javascript.nodejs.library.NodeModulesDirectoryManager
-import com.intellij.lang.javascript.frameworks.modules.JSExactFileReference
-import com.intellij.lang.javascript.psi.JSFile
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptVariable
-import com.intellij.lang.javascript.psi.types.JSModuleTypeImpl
-import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
-import com.intellij.lang.typescript.modules.TypeScriptNodeReference
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.openapi.vfs.VFileProperty
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiManager
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScopesCore
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.util.castSafelyTo
-import com.intellij.util.indexing.FileBasedIndex
-import org.jetbrains.vuejs.codeInsight.resolveElementTo
 import org.jetbrains.vuejs.index.BOOTSTRAP_VUE_MODULE
 import org.jetbrains.vuejs.index.SHARDS_VUE_MODULE
 import org.jetbrains.vuejs.index.VUETIFY_MODULE
-import org.jetbrains.vuejs.index.VueTypedComponentFilesIndex
 import org.jetbrains.vuejs.model.*
-import org.jetbrains.vuejs.model.typed.VueTypedComponent
 import org.jetbrains.vuejs.model.typed.VueTypedEntitiesProvider
 
 class VueSourcePlugin constructor(private val project: Project,
