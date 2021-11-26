@@ -6,30 +6,33 @@ import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.protobuf.lang.PbFileType
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
-import java.nio.file.Paths
 
 internal object PbImportPathResolver {
   private const val MAX_LOCATION_LENGTH = 100
 
   fun findSuitableImportPaths(importStatement: String, editedFile: VirtualFile, project: Project): Sequence<ImportPathData> {
-    val relativeProtoPath = FileUtil.toSystemIndependentName(importStatement)
+    val relativeImportPath = FileUtil.toSystemIndependentName(importStatement)
     return DumbService.getInstance(project).runReadActionInSmartMode(Computable {
       FileTypeIndex.getFiles(PbFileType.INSTANCE, GlobalSearchScope.projectScope(project))
         .asSequence()
-        .map { FileUtil.toSystemIndependentName(it.path) }
-        .filter { it.endsWith(relativeProtoPath) }
-        .map { it.removeSuffix(relativeProtoPath).removeSuffix("/") }
-        .filter { it.isNotBlank() }
-        .distinct()
-        .mapNotNull { VfsUtil.findFile(Paths.get(it), false) }
-        .map { ImportPathData(it, editedFile, shortenPath(it, project), importStatement) }
+        .mapNotNull { findEffectiveImportPath(relativeImportPath, it) }
+        .map { ImportPathData(editedFile, importStatement, it.url, shortenPath(it, project)) }
     })
+  }
+
+  private fun findEffectiveImportPath(relativeImportPath: String, protoFileCandidate: VirtualFile): VirtualFile? {
+    val absoluteImportPath = FileUtil.toSystemIndependentName(protoFileCandidate.url).takeIf { it.endsWith(relativeImportPath) }
+                             ?: return null
+    val effectiveImportPathUrl = absoluteImportPath.removeSuffix(relativeImportPath).removeSuffix("/")
+
+    // one can not simply call VfsUtil.findFile with effectiveUrl arg since unit test TempFileSystem will not handle such request correctly
+    return generateSequence(protoFileCandidate, VirtualFile::getParent)
+      .firstOrNull { FileUtil.toSystemIndependentName(it.url) == effectiveImportPathUrl }
   }
 
   private fun shortenPath(virtualFile: VirtualFile, project: Project): String {
@@ -48,8 +51,8 @@ internal object PbImportPathResolver {
 }
 
 internal data class ImportPathData(
-  val effectiveImportVirtualFile: VirtualFile,
   val originalPbVirtualFile: VirtualFile,
-  @NlsSafe val presentablePath: String,
-  @NlsSafe val originalImportStatement: String
+  @NlsSafe val originalImportStatement: String,
+  val effectiveImportPathUrl: String,
+  @NlsSafe val presentablePath: String
 )

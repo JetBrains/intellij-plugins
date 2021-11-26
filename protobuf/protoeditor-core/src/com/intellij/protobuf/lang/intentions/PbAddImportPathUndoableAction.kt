@@ -9,7 +9,7 @@ import com.intellij.protobuf.lang.util.ImportPathData
 
 internal class PbAddImportPathUndoableAction(pathToAdd: ImportPathData, private val project: Project) : UndoableAction {
   private val currentDocumentReference = DocumentReferenceManager.getInstance().create(pathToAdd.originalPbVirtualFile)
-  private val importPath = PbProjectSettings.ImportPathEntry(pathToAdd.effectiveImportVirtualFile.url, "")
+  private val importPath = PbProjectSettings.ImportPathEntry(pathToAdd.effectiveImportPathUrl, "")
 
   override fun undo() {
     if (project.isDisposed) return

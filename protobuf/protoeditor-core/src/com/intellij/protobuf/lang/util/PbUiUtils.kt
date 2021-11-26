@@ -22,8 +22,9 @@ internal object PbUiUtils {
     PsiDocumentManager.getInstance(project).commitAllDocuments()
 
     if (variants.isEmpty()) return
-    if (variants.size == 1) {
-      variants.single().invokeAction(project)
+    val theOnlyPossibleImportPath = variants.filterIsInstance<PbImportIntentionVariant.AddImportPathToSettings>().singleOrNull()
+    if (theOnlyPossibleImportPath != null) {
+      theOnlyPossibleImportPath.invokeAction(project)
       return
     }
 
