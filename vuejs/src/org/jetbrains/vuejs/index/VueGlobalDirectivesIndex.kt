@@ -4,10 +4,10 @@ package org.jetbrains.vuejs.index
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider
 import com.intellij.psi.stubs.StubIndexKey
 
-class VueGlobalDirectivesIndex : VueIndexBase<JSImplicitElementProvider>(KEY, JS_KEY) {
+class VueGlobalDirectivesIndex : VueIndexBase<JSImplicitElementProvider>(KEY) {
   companion object {
     val KEY: StubIndexKey<String, JSImplicitElementProvider> =
-      StubIndexKey.createIndexKey<String, JSImplicitElementProvider>("vue.global.directives.index")
+      StubIndexKey.createIndexKey("vue.global.directives.index")
     val JS_KEY: String = createJSKey(KEY)
   }
 }

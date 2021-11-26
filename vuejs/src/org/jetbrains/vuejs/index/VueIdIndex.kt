@@ -4,10 +4,10 @@ package org.jetbrains.vuejs.index
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubIndexKey
 
-class VueIdIndex : VueIndexBase<PsiElement>(KEY, JS_KEY) {
+class VueIdIndex : VueIndexBase<PsiElement>(KEY) {
   companion object {
     val KEY: StubIndexKey<String, PsiElement> =
-      StubIndexKey.createIndexKey<String, PsiElement>("vue.id.index")
+      StubIndexKey.createIndexKey("vue.id.index")
 
     val JS_KEY: String = createJSKey(KEY)
   }

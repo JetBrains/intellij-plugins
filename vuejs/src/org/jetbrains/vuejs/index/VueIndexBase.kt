@@ -5,12 +5,11 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StringStubIndexExtension
 import com.intellij.psi.stubs.StubIndexKey
 
-abstract class VueIndexBase<T : PsiElement>(private val key: StubIndexKey<String, T>,
-                                            jsKey: String) : StringStubIndexExtension<T>() {
+abstract class VueIndexBase<T : PsiElement>(private val key: StubIndexKey<String, T>) : StringStubIndexExtension<T>() {
   private val VERSION = 25
 
   companion object {
-    fun createJSKey(key: StubIndexKey<String, *>): String =
+    fun createJSKey(key: StubIndexKey<*, *>): String =
       key.name.split(".").joinToString("") { it.subSequence(0, 1) }
   }
 

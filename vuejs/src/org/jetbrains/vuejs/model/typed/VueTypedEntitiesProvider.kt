@@ -6,19 +6,17 @@ import com.intellij.lang.javascript.psi.JSFile
 import com.intellij.lang.javascript.psi.JSPsiNamedElementBase
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptSingleType
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptVariable
+import com.intellij.lang.javascript.psi.stubs.JSFrameworkMarkersIndex
 import com.intellij.lang.javascript.psi.types.JSModuleTypeImpl
-import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.typescript.modules.TypeScriptNodeReference
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.search.GlobalSearchScopesCore
 import com.intellij.util.castSafelyTo
-import com.intellij.util.indexing.FileBasedIndex
 import org.jetbrains.vuejs.codeInsight.resolveElementTo
 import org.jetbrains.vuejs.codeInsight.resolveIfImportSpecifier
-import org.jetbrains.vuejs.index.VueTypedComponentFilesIndex
+import org.jetbrains.vuejs.index.VueFrameworkHandler
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.source.VueEntityDescriptor
 
@@ -52,23 +50,10 @@ object VueTypedEntitiesProvider {
 
   fun calculateDtsComponents(moduleDir: PsiDirectory): Map<String, VueComponent> {
     val componentsFromDts = mutableMapOf<String, VueComponent>()
-    val psiManager = PsiManager.getInstance(moduleDir.project)
-    val componentDefs = mutableSetOf<TypeScriptVariable>()
-    FileBasedIndex.getInstance().getFilesWithKey(
-      VueTypedComponentFilesIndex.VUE_TYPED_COMPONENTS_INDEX, setOf(true),
-      { file ->
-        psiManager.findFile(file)?.castSafelyTo<JSFile>()?.let { psiFile ->
-          JSStubBasedPsiTreeUtil.processDeclarationsInScope(psiFile, { element, _ ->
-            (element as? TypeScriptVariable)
-              ?.takeIf { VueTypedEntitiesProvider.isComponentDefinition(it) }
-              ?.let {
-                componentDefs.add(it)
-              }
-            true
-          }, false)
-        }
-        true
-      }, GlobalSearchScopesCore.directoryScope(moduleDir, true))
+    val componentDefs = JSFrameworkMarkersIndex.getElements(
+      VueFrameworkHandler.TYPED_COMPONENT_MARKER, TypeScriptVariable::class.java, moduleDir.project,
+      GlobalSearchScopesCore.directoryScope(moduleDir, true)
+    ).toSet()
     if (componentDefs.isEmpty()) return emptyMap()
 
     val searchProcessor = TypeScriptNodeReference.TypeScriptNodeModuleDirectorySearchProcessor()
