@@ -8,7 +8,7 @@
     </div>
     <div slot="name"></div>
     <div slot-scope="propName"></div>
-    <div slot <warning descr="Wrong attribute value">slot-scope</warning>></div>
+    <div slot <warning descr="slot-scope requires value">slot-scope</warning>></div>
     <div <warning descr="Attribute scope is not allowed here">scope</warning>="foo"></div>
     <template scope="foo"></template>
   </div>

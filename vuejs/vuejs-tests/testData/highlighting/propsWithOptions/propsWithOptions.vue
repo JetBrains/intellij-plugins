@@ -9,16 +9,16 @@
        dec_bool2
        dec_bool3
        dec_bool4
-       <warning descr="Wrong attribute value">dec_string1</warning>
-       <warning descr="Wrong attribute value">dec_string2</warning>
-       <warning descr="Wrong attribute value">model_string1</warning>
+       <warning descr="dec_string1 requires value">dec_string1</warning>
+       <warning descr="dec_string2 requires value">dec_string2</warning>
+       <warning descr="model_string1 requires value">model_string1</warning>
        randomProp
        reg_bool1
        reg_bool2
        reg_bool3
        reg_bool4
        synced_bool1
-       <warning descr="Wrong attribute value">synced_string1</warning>
+       <warning descr="synced_string1 requires value">synced_string1</warning>
   ></foo>
 </template>
 <script>

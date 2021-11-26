@@ -543,8 +543,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testI18NAttr() {
-    myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
-                                AngularUndefinedBindingInspection.class);
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
     myFixture.configureByFiles("i18n.html", "package.json");
     myFixture.checkHighlighting(true, false, true);
   }

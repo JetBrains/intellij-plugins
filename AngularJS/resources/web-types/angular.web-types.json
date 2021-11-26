@@ -1,28 +1,36 @@
 {
   "$schema": "../../../../plugins/JavaScriptLanguage/web-platform/web-types-gen/resources/web-types.json",
-  "name": "angular-core",
+  "name": "@angular/core",
   "framework": "angular",
   "version": "2.0.0",
-  "default-icon": "../icons/angular2.svg",
+  "description-markup": "markdown",
+  "default-icon": "icons/angular2.svg",
   "contributions": {
     "html": {
       "elements": [
         {
-          "name": "ng-container"
+          "name": "ng-container",
+          "description": "The `<ng-container> can be used to hold directives without creating an HTML element.",
+          "doc-url": "https://angular.io/api/core/ng-container"
         },
         {
           "name": "ng-content",
+          "description": "The `<ng-content>` element specifies where to project content inside a component template.",
+          "doc-url": "https://angular.io/api/core/ng-content",
           "exclusive-contributions": [
             "/html/attributes"
           ],
           "attributes": [
             {
+              "description": "Only select elements from the projected content that match the given through attribute value CSS selector",
               "name": "select"
             }
           ]
         },
         {
-          "name": "ng-template"
+          "name": "ng-template",
+          "doc-url": "https://angular.io/api/core/ng-template",
+          "description": "With `<ng-template>`, you can define template content that is only being rendered by Angular when you, whether directly or indirectly, specifically instruct it to do so, allowing you to have full control over how and when the content is displayed."
         },
         {
           "name": "Template tag extensions",
@@ -61,20 +69,39 @@
       "attributes": [
         {
           "name": "i18n",
-          "priority": "high"
+          "description": "Use the `i18n` attribute to mark element text for translation.",
+          "doc-url": "https://angular.io/guide/i18n-common-prepare",
+          "priority": "high",
+          "value": {
+            "required": false
+          }
         },
         {
           "name": "ngNonBindable",
-          "priority": "high"
+          "description": "`ngNonBindable` deactivates interpolation, directives, and bindings within the HTML text and children of the host element. Host element bindings and directives are not affected.",
+          "doc-url": "https://angular.io/guide/attribute-directives#deactivating-angular-processing-with-ngnonbindable",
+          "priority": "high",
+          "value": {
+            "kind": "no-value"
+          }
         },
         {
           "name": "ngProjectAs",
-          "priority": "high"
+          "description": "Project content as a different element. Attribute value is a selector, which is going to be used instead of actual element contents for slot selection.",
+          "doc-url": "https://angular.io/guide/content-projection#projecting-content-in-more-complex-environments",
+          "priority": "high",
+          "value": {
+            "required": true,
+            "type": "string"
+          }
         },
         {
           "name": "Angular directive attribute selector",
           "ng-binding-pattern": true,
           "priority": "lowest",
+          "value": {
+            "required": false
+          },
           "pattern": {
             "items": "/js/ng-directive-attribute-selectors"
           }
@@ -386,6 +413,8 @@
         },
         {
           "name": "i18n attribute translation",
+          "description": "Use the `i18n-*` attribute to mark attribute text strings for translation.",
+          "doc-url": "https://angular.io/guide/i18n-common-prepare",
           "virtual": true,
           "ng-binding-pattern": true,
           "pattern": {
