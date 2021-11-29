@@ -107,7 +107,7 @@ public final class ProjectSettingsConfiguratorManager implements Disposable {
                 // write-safe context, regardless of what context we were invoked from.
                 ApplicationManager.getApplication()
                     .invokeLater(
-                        () -> PbProjectSettings.notifyUpdated(project), ModalityState.NON_MODAL);
+                        () -> PbProjectSettings.notifyUpdated(project), ModalityState.NON_MODAL, project.getDisposed());
               }
             });
   }
