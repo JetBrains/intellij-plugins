@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.css.inspections.invalid.CssInvalidPseudoSelectorInspection;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
+import org.angular2.inspections.Angular2TemplateInspectionsProvider;
 import org.angular2.inspections.AngularUndefinedBindingInspection;
 import org.angularjs.AngularTestUtil;
 
@@ -152,5 +153,12 @@ public class TagsTest extends Angular2CodeInsightFixtureTestCase {
         .getPath();
       assertTrue(filePath + " should have " + i, filePath.endsWith("/app" + i + "/app/test.component.ts"));
     }
+  }
+
+  public void testSelfClosedTags() {
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.copyDirectoryToProject("selfClosedTags", ".");
+    myFixture.configureFromTempProjectFile("app.component.html");
+    myFixture.checkHighlighting();
   }
 }

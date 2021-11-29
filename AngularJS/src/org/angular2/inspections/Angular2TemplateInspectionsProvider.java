@@ -11,6 +11,7 @@ import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInsp
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection;
 import com.intellij.lang.typescript.inspections.TypeScriptValidateJSTypesInspection;
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection;
+import com.intellij.xml.util.CheckEmptyTagInspection;
 import com.sixrr.inspectjs.validity.ThisExpressionReferencesGlobalObjectJSInspection;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,7 +45,9 @@ public class Angular2TemplateInspectionsProvider implements InspectionToolProvid
 
       HtmlUnknownAttributeInspection.class,
       HtmlUnknownTagInspection.class,
-      HtmlUnknownBooleanAttributeInspection.class
+      HtmlUnknownBooleanAttributeInspection.class,
+
+      CheckEmptyTagInspection.class
     };
   }
 }

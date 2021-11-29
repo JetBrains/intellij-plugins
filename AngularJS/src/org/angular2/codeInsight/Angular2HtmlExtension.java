@@ -2,7 +2,10 @@
 package org.angular2.codeInsight;
 
 import com.intellij.javascript.web.WebFramework;
+import com.intellij.javascript.web.codeInsight.html.WebSymbolsHtmlAdditionalContextProvider;
 import com.intellij.javascript.web.codeInsight.html.WebSymbolsXmlExtension;
+import com.intellij.javascript.web.codeInsight.html.elements.WebSymbolElementDescriptor;
+import com.intellij.javascript.web.symbols.WebSymbolsUtils;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -12,6 +15,7 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.URLUtil;
+import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.util.XmlUtil;
 import org.angular2.Angular2Framework;
 import org.angular2.lang.Angular2LangUtil;
@@ -41,8 +45,15 @@ public final class Angular2HtmlExtension extends WebSymbolsXmlExtension {
 
   @Override
   public boolean isSelfClosingTagAllowed(@NotNull XmlTag tag) {
-    return tag.getLanguage().is(Angular2SvgLanguage.INSTANCE)
-           || super.isSelfClosingTagAllowed(tag);
+    if (tag.getLanguage().is(Angular2SvgLanguage.INSTANCE)) return true;
+    XmlElementDescriptor descriptor = tag.getDescriptor();
+    if (descriptor instanceof WebSymbolElementDescriptor) {
+      boolean hasStandardSymbol = ContainerUtil.or(
+        () -> WebSymbolsUtils.unwrapMatchedSymbols(((WebSymbolElementDescriptor)descriptor).getSymbol()).iterator(),
+        it -> it instanceof WebSymbolsHtmlAdditionalContextProvider.StandardHtmlSymbol);
+      if (!hasStandardSymbol) return true;
+    }
+    return super.isSelfClosingTagAllowed(tag);
   }
 
   @Override
