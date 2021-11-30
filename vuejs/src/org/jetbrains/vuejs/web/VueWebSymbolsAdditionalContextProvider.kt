@@ -21,6 +21,7 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.model.Pointer
 import com.intellij.navigation.EmptyNavigatable
+import com.intellij.navigation.NavigationRequest
 import com.intellij.navigation.NavigationTarget
 import com.intellij.navigation.TargetPresentation
 import com.intellij.openapi.project.Project
@@ -641,6 +642,10 @@ class VueWebSymbolsAdditionalContextProvider : WebSymbolsAdditionalContextProvid
       }
 
     override fun getTargetPresentation(): TargetPresentation = targetPresentation(myElement)
+
+    override fun navigationRequest(): NavigationRequest? {
+      return navigatable.navigationRequest()
+    }
 
     override fun equals(other: Any?): Boolean =
       this === other ||

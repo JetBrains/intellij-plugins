@@ -8,6 +8,7 @@ import com.intellij.javascript.web.symbols.WebSymbol;
 import com.intellij.lang.documentation.DocumentationTarget;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.model.Pointer;
+import com.intellij.navigation.NavigationRequest;
 import com.intellij.navigation.NavigationTarget;
 import com.intellij.navigation.TargetPresentation;
 import com.intellij.openapi.project.Project;
@@ -271,6 +272,11 @@ public class Angular2DirectiveSelectorSymbol implements Angular2Symbol, SearchTa
     @Override
     public @NotNull TargetPresentation getTargetPresentation() {
       return mySymbol.getPresentation();
+    }
+
+    @Override
+    public @Nullable NavigationRequest navigationRequest() {
+      return getNavigatable().navigationRequest();
     }
   }
 }
