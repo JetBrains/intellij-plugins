@@ -3,22 +3,20 @@ package com.intellij.lang.javascript.flex
 import com.intellij.application.options.editor.AutoImportOptionsProvider
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.application.ApplicationBundle
-import com.intellij.openapi.options.DslConfigurableBase
-import com.intellij.openapi.ui.DialogPanel
-import com.intellij.ui.ContextHelpLabel
-import com.intellij.ui.layout.*
+import com.intellij.openapi.options.UiDslUnnamedConfigurable
+import com.intellij.ui.dsl.builder.Panel
+import com.intellij.ui.dsl.builder.RightGap
+import com.intellij.ui.dsl.builder.bindSelected
 
-class ActionScriptAutoImportOptionsProvider : DslConfigurableBase(), AutoImportOptionsProvider {
+class ActionScriptAutoImportOptionsProvider : UiDslUnnamedConfigurable.Simple(), AutoImportOptionsProvider {
 
-  override fun createPanel(): DialogPanel {
-    return panel {
-      titledRow("ActionScript") {
-        row {
-          cell {
-            checkBox(ApplicationBundle.message("checkbox.add.unambiguous.imports.on.the.fly"), ::addUnambiguousImportsOnTheFly)
-            component(ContextHelpLabel.create(ApplicationBundle.message("help.add.unambiguous.imports")))
-          }
-        }
+  override fun Panel.createContent() {
+    group("ActionScript") {
+      row {
+        checkBox(ApplicationBundle.message("checkbox.add.unambiguous.imports.on.the.fly"))
+          .bindSelected(::addUnambiguousImportsOnTheFly)
+          .gap(RightGap.SMALL)
+        contextHelp(ApplicationBundle.message("help.add.unambiguous.imports"))
       }
     }
   }
