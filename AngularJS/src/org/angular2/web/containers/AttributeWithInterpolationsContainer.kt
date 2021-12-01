@@ -51,7 +51,7 @@ object AttributeWithInterpolationsContainer : WebSymbolsContainer {
           null, false, true,
           WebSymbol.Priority.HIGHEST, null, false, false,
           PropertiesProvider)
-      }, defaultDisplayName = null, ItemPattern(null))
+      }, false, defaultDisplayName = null, ItemPattern(null))
 
   }
 
@@ -59,6 +59,7 @@ object AttributeWithInterpolationsContainer : WebSymbolsContainer {
     override val delegate: WebSymbol? get() = null
 
     override fun codeCompletion(name: String,
+                                position: Int,
                                 contextStack: Stack<WebSymbolsContainer>,
                                 registry: WebSymbolsRegistry): List<WebSymbolCodeCompletionItem> =
       emptyList()
