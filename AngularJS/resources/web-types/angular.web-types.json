@@ -191,7 +191,7 @@
             {
               "name": "Unknown event",
               "priority": "low",
-              "pattern": ".+",
+              "pattern": "(?!key(down|up)\\.).+",
               "doc-hide-pattern": true,
               "ng-error-symbol": true
             }
@@ -608,11 +608,10 @@
           "priority": "normal",
           "pattern": {
             "template": [
-              "key",
               {
                 "or": [
-                  "up",
-                  "down"
+                  "keyup",
+                  "keydown"
                 ]
               },
               {
@@ -632,7 +631,7 @@
                 "template": [
                   ".",
                   "#...",
-                  "#item"
+                  "#item:key name"
                 ],
                 "repeat": false,
                 "required": true

@@ -3,3 +3,16 @@
 <div (keydown.meta.a)=""></div>
 <some-tag (keyup.control.a)=""></some-tag>
 <div <weak_warning descr="Event keypress.control.a is not emitted by any applicable directives nor by div element">(keypress.control.a)</weak_warning>=""></div>
+
+<div (keydown.alt<warning descr="Missing name"></warning>)="$event"></div>
+<div (keydown.arrowRight)="$event"></div>
+<div (keydown.enter)="$event"></div>
+<div (keydown.<warning descr="Unrecognized key name">enter.enter</warning>)="$event"></div>
+<div (keydown.shift.enter)="$event"></div>
+<div (keydown.shift.<warning descr="Unrecognized key name">foo</warning>)="$event"></div>
+<div (keydown.shift.a)="$event"></div>
+<div (keydown.f1)="$event"></div>
+<div (keydown.shift.f1)="$event"></div>
+<div (keydown.alt.arrowRight)="$event"></div>
+<div (keyup.<warning descr="Unrecognized key name">foo</warning>)="$event"></div>
+<div (keyup.a)="$event"></div>
