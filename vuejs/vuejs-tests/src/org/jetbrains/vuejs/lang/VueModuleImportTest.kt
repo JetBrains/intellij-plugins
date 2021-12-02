@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang
 
+import com.intellij.lang.javascript.JSTestOption
 import com.intellij.lang.javascript.JSTestOptions
 import com.intellij.lang.javascript.JavaScriptFormatterTestBase
 import com.intellij.lang.javascript.JavascriptLanguage
@@ -75,5 +76,10 @@ class VueModuleImportTest : JSImportHighlightingAndCompletionLightTestBase() {
 
   fun testReExportWIthJs() {
     doTestWithCopyDirectory(1, true, "ts")
+  }
+  
+  @JSTestOptions(JSTestOption.WithSymbolNames)
+  fun testCustomComponentHighlighting() {
+    doTestWithCopyDirectory()
   }
 }
