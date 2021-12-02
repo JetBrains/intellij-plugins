@@ -244,8 +244,10 @@ option (opt) = {
 
   // Colons are required for non-message repeated fields
   string: ["foo", "bar"]
+  string /*skipped comment and whitespace*/ : ["foo", "bar"]
   string<error descr="Expected ':' after non-message field name"> </error> ["foo", "bar"]
   enum: [FOO, BAR]
+  enum /*skipped comment and whitespace*/ : [FOO, BAR]
   enum<error descr="Expected ':' after non-message field name"> </error> [FOO, BAR]
 
   // Not required for message repeated fields

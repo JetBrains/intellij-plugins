@@ -203,7 +203,7 @@ public class PbTextAnnotator implements Annotator {
       // The grammar permits value list fields without a colon since it does not have the field type
       // context.
       if (!(name.getDeclaredNamedType() instanceof PbMessageType)) {
-        PsiElement next = name.getNextSibling();
+        PsiElement next = PsiTreeUtil.skipWhitespacesAndCommentsForward(name);
         if (next == null || !":".equals(next.getText())) {
           TextRange range = TextRange.from(name.getTextOffset() + name.getTextLength(), 1);
           holder.newAnnotation(HighlightSeverity.ERROR, PbLangBundle.message("expected.colon.after.non.message.field"))
