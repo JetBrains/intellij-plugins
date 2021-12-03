@@ -78,7 +78,7 @@ public class BundleReference extends PsiReferenceBase<HeaderValuePart> implement
           if (module != null) {
             final Ref<PsiElement> result = Ref.create();
             final String refText = text.replaceAll("\\s", "");
-            final BundleManifestCache cache = BundleManifestCache.getInstance(module.getProject());
+            BundleManifestCache cache = BundleManifestCache.getInstance();
             ModuleRootManager manager = ModuleRootManager.getInstance(module);
 
             manager.orderEntries().forEachModule(module1 -> {

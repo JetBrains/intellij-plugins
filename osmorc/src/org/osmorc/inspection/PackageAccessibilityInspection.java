@@ -140,13 +140,13 @@ public class PackageAccessibilityInspection extends AbstractBaseJavaLocalInspect
       return null;
     }
 
-    BundleManifest importer = BundleManifestCache.getInstance(targetClass.getProject()).getManifest(requestorModule);
+    BundleManifest importer = BundleManifestCache.getInstance().getManifest(requestorModule);
     if (importer != null && (importer.isPrivatePackage(packageName) || importer.getExportedPackage(packageName) != null)) {
       return null;
     }
 
     // rejects non-exported classes (manifest missing, or a package isn't listed as exported)
-    BundleManifest exporter = BundleManifestCache.getInstance(targetClass.getProject()).getManifest(targetClass);
+    BundleManifest exporter = BundleManifestCache.getInstance().getManifest(targetClass);
     if (exporter == null || exporter.getBundleSymbolicName() == null) {
       return Problem.weak(message("PackageAccessibilityInspection.non.osgi", packageName));
     }

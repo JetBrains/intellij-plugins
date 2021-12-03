@@ -59,7 +59,7 @@ public class UnregisteredActivatorInspection extends AbstractOsgiVisitor {
           for (PsiClass psiClass : ((PsiClassOwner)file).getClasses()) {
             String className = psiClass.getQualifiedName();
             if (OsgiPsiUtil.isActivator(psiClass) && className != null) {
-              BundleManifest manifest = BundleManifestCache.getInstance(psiClass.getProject()).getManifest(facet.getModule());
+              BundleManifest manifest = BundleManifestCache.getInstance().getManifest(facet.getModule());
               if (manifest != null && !className.equals(manifest.getBundleActivator())) {
                 LocalQuickFix[] fixes = LocalQuickFix.EMPTY_ARRAY;
 
