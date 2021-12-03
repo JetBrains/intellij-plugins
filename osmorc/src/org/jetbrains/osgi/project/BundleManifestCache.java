@@ -9,20 +9,17 @@ import com.intellij.openapi.roots.JdkOrderEntry;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.UserDataHolderEx;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.InvalidVirtualFileAccessException;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileSystemItem;
-import com.intellij.psi.PsiManager;
+import com.intellij.psi.*;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
-import com.intellij.util.ObjectUtils;
 import com.intellij.util.SmartList;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.lang.manifest.psi.ManifestFile;
@@ -34,12 +31,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.jar.Attributes;
-import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 public class BundleManifestCache {
@@ -47,13 +40,7 @@ public class BundleManifestCache {
     return project.getService(BundleManifestCache.class);
   }
 
-  private final Project myProject;
-  private final Map<Object, CachedValue<BundleManifest>> myCache;
-
-  public BundleManifestCache(@NotNull Project project) {
-    myProject = project;
-    myCache = Collections.synchronizedMap(ContainerUtil.createSoftMap());
-  }
+  private static final Key<CachedValue<BundleManifest>> MANIFEST_CACHE_KEY = Key.create("osgi.bundle.manifest.cache");
 
   @Nullable
   public BundleManifest getManifest(@NotNull PsiClass psiClass) {
@@ -65,7 +52,7 @@ public class BundleManifestCache {
   public BundleManifest getManifest(@NotNull PsiFileSystemItem item) {
     VirtualFile file = item.getVirtualFile();
     if (file != null) {
-      ProjectFileIndex index = ProjectFileIndex.getInstance(myProject);
+      ProjectFileIndex index = ProjectFileIndex.getInstance(item.getProject());
       List<OrderEntry> entries = index.getOrderEntriesForFile(file);
       if (entries.size() == 1 && entries.get(0) instanceof JdkOrderEntry) {
         return new JdkBundleManifest();
@@ -78,7 +65,7 @@ public class BundleManifestCache {
 
       VirtualFile libRoot = index.getClassRootForFile(file);
       if (libRoot != null) {
-        return getManifest(libRoot);
+        return getManifest(libRoot, item.getManager());
       }
     }
 
@@ -90,63 +77,73 @@ public class BundleManifestCache {
     OsmorcFacet facet = OsmorcFacet.getInstance(module);
     if (facet == null) return null;
 
-    CachedValue<BundleManifest> value = myCache.computeIfAbsent(facet, k -> CachedValuesManager.getManager(myProject).createCachedValue(() -> {
-      OsmorcFacetConfiguration configuration = facet.getConfiguration();
-      BundleManifest manifest = null;
-      List<Object> dependencies = new SmartList<>(configuration);
+    CachedValue<BundleManifest> value = facet.getUserData(MANIFEST_CACHE_KEY);
 
-      switch (configuration.getManifestGenerationMode()) {
-        case Manually: {
-          PsiFile manifestFile = findInModuleRoots(facet.getModule(), configuration.getManifestLocation());
-          if (manifestFile instanceof ManifestFile) {
-            manifest = readManifest((ManifestFile)manifestFile);
-            dependencies.add(manifestFile);
+    if (value == null) {
+      value = facet.putUserDataIfAbsent(MANIFEST_CACHE_KEY, CachedValuesManager.getManager(module.getProject()).createCachedValue(() -> {
+        OsmorcFacetConfiguration configuration = facet.getConfiguration();
+        BundleManifest manifest = null;
+        List<Object> dependencies = new SmartList<>(configuration);
+
+        switch (configuration.getManifestGenerationMode()) {
+          case Manually: {
+            PsiFile manifestFile = findInModuleRoots(facet.getModule(), configuration.getManifestLocation());
+            if (manifestFile instanceof ManifestFile) {
+              manifest = readManifest((ManifestFile)manifestFile);
+              dependencies.add(manifestFile);
+            }
+            else {
+              dependencies.add(PsiModificationTracker.MODIFICATION_COUNT);
+            }
+            break;
           }
-          else {
-            dependencies.add(PsiModificationTracker.MODIFICATION_COUNT);
+
+          case OsmorcControlled: {
+            Map<String, String> map = new HashMap<>(configuration.getAdditionalPropertiesAsMap());
+            map.put(Constants.BUNDLE_SYMBOLICNAME, configuration.getBundleSymbolicName());
+            map.put(Constants.BUNDLE_VERSION, configuration.getBundleVersion());
+            map.put(Constants.BUNDLE_ACTIVATOR, configuration.getBundleActivator());
+            manifest = new BundleManifest(map);
+            break;
           }
-          break;
+
+          case Bnd: {
+            PsiFile bndFile = findInModuleRoots(facet.getModule(), configuration.getBndFileLocation());
+            if (bndFile != null) {
+              manifest = readProperties(bndFile);
+              dependencies.add(bndFile);
+            }
+            else {
+              dependencies.add(PsiModificationTracker.MODIFICATION_COUNT);
+            }
+            break;
+          }
+
+          case Bundlor:
+            break; // not supported
         }
 
-        case OsmorcControlled: {
-          Map<String, String> map = new HashMap<>(configuration.getAdditionalPropertiesAsMap());
-          map.put(Constants.BUNDLE_SYMBOLICNAME, configuration.getBundleSymbolicName());
-          map.put(Constants.BUNDLE_VERSION, configuration.getBundleVersion());
-          map.put(Constants.BUNDLE_ACTIVATOR, configuration.getBundleActivator());
-          manifest = new BundleManifest(map);
-          break;
-        }
-
-        case Bnd: {
-          PsiFile bndFile = findInModuleRoots(facet.getModule(), configuration.getBndFileLocation());
-          if (bndFile != null) {
-            manifest = readProperties(bndFile);
-            dependencies.add(bndFile);
-          }
-          else {
-            dependencies.add(PsiModificationTracker.MODIFICATION_COUNT);
-          }
-          break;
-        }
-
-        case Bundlor:
-          break; // not supported
-      }
-
-      return CachedValueProvider.Result.create(manifest, dependencies);
-    }, false));
+        return CachedValueProvider.Result.create(manifest, dependencies);
+      }, false));
+    }
 
     return value.getValue();
   }
 
   @Nullable
-  public BundleManifest getManifest(@NotNull VirtualFile libRoot) {
-    CachedValue<BundleManifest> value = myCache.computeIfAbsent(libRoot, k -> CachedValuesManager.getManager(myProject).createCachedValue(() -> {
-      VirtualFile manifestFile = libRoot.findFileByRelativePath(JarFile.MANIFEST_NAME);
-      PsiFile psiFile = manifestFile != null ? PsiManager.getInstance(myProject).findFile(manifestFile) : null;
-      BundleManifest manifest = psiFile instanceof ManifestFile ? readManifest((ManifestFile)psiFile) : null;
-      return CachedValueProvider.Result.createSingleDependency(manifest, ObjectUtils.notNull(psiFile, libRoot));
-    }, false));
+  public BundleManifest getManifest(@NotNull VirtualFile libRoot, @NotNull PsiManager manager) {
+    PsiDirectory psiRoot = manager.findDirectory(libRoot);
+    if (psiRoot == null) return null;
+
+    CachedValue<BundleManifest> value = libRoot.getUserData(MANIFEST_CACHE_KEY);
+    if (value == null) {
+      value = ((UserDataHolderEx)psiRoot).putUserDataIfAbsent(MANIFEST_CACHE_KEY, CachedValuesManager.getManager(manager.getProject()).createCachedValue(() -> {
+        PsiDirectory metaInfDir = psiRoot.findSubdirectory("META-INF");
+        PsiFile psiFile = metaInfDir != null ? metaInfDir.findFile("MANIFEST.MF") : null;
+        BundleManifest manifest = psiFile instanceof ManifestFile ? readManifest((ManifestFile)psiFile) : null;
+        return CachedValueProvider.Result.createSingleDependency(manifest, Objects.requireNonNullElse(psiFile, libRoot));
+      }, false));
+    }
     return value.getValue();
   }
 

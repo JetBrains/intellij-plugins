@@ -93,7 +93,7 @@ public class BundleReference extends PsiReferenceBase<HeaderValuePart> implement
 
             manager.orderEntries().forEachLibrary(library -> {
               for (VirtualFile libRoot : library.getFiles(OrderRootType.CLASSES)) {
-                BundleManifest manifest = cache.getManifest(libRoot);
+                BundleManifest manifest = cache.getManifest(libRoot, refElement.getManager());
                 if (manifest != null && refText.equals(manifest.getBundleSymbolicName())) {
                   result.set(getTarget(manifest));
                   return false;
