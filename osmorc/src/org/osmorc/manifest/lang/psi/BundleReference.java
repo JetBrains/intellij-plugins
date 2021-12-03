@@ -54,15 +54,13 @@ public class BundleReference extends PsiReferenceBase<HeaderValuePart> implement
     super(element);
   }
 
-  @Nullable
   @Override
-  public PsiElement resolve() {
+  public @Nullable PsiElement resolve() {
     return ResolveCache.getInstance(myElement.getProject()).resolveWithCaching(this, RESOLVER, false, false);
   }
 
-  @NotNull
   @Override
-  public String getUnresolvedMessagePattern() {
+  public @NotNull String getUnresolvedMessagePattern() {
     return OsmorcBundle.message("cannot.resolve.bundle", getCanonicalText());
   }
 
@@ -70,14 +68,14 @@ public class BundleReference extends PsiReferenceBase<HeaderValuePart> implement
     new ResolveCache.AbstractResolver<>() {
       @Override
       public PsiElement resolve(@NotNull BundleReference reference, boolean incompleteCode) {
-        final String text = reference.getCanonicalText();
-        final HeaderValuePart refElement = reference.getElement();
+        String text = reference.getCanonicalText();
+        HeaderValuePart refElement = reference.getElement();
 
         if (!StringUtil.isEmptyOrSpaces(text) && refElement.isValid()) {
           Module module = ModuleUtilCore.findModuleForPsiElement(refElement);
           if (module != null) {
-            final Ref<PsiElement> result = Ref.create();
-            final String refText = text.replaceAll("\\s", "");
+            Ref<PsiElement> result = Ref.create();
+            String refText = text.replaceAll("\\s", "");
             BundleManifestCache cache = BundleManifestCache.getInstance();
             ModuleRootManager manager = ModuleRootManager.getInstance(module);
 

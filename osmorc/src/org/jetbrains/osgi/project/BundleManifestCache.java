@@ -42,14 +42,12 @@ public class BundleManifestCache {
 
   private static final Key<CachedValue<BundleManifest>> MANIFEST_CACHE_KEY = Key.create("osgi.bundle.manifest.cache");
 
-  @Nullable
-  public BundleManifest getManifest(@NotNull PsiClass psiClass) {
+  public @Nullable BundleManifest getManifest(@NotNull PsiClass psiClass) {
     PsiFile classOwner = psiClass.getContainingFile();
     return classOwner != null ? getManifest(classOwner) : null;
   }
 
-  @Nullable
-  public BundleManifest getManifest(@NotNull PsiFileSystemItem item) {
+  public @Nullable BundleManifest getManifest(@NotNull PsiFileSystemItem item) {
     VirtualFile file = item.getVirtualFile();
     if (file != null) {
       ProjectFileIndex index = ProjectFileIndex.getInstance(item.getProject());
@@ -72,8 +70,7 @@ public class BundleManifestCache {
     return null;
   }
 
-  @Nullable
-  public BundleManifest getManifest(@NotNull Module module) {
+  public @Nullable BundleManifest getManifest(@NotNull Module module) {
     OsmorcFacet facet = OsmorcFacet.getInstance(module);
     if (facet == null) return null;
 
@@ -130,8 +127,7 @@ public class BundleManifestCache {
     return value.getValue();
   }
 
-  @Nullable
-  public BundleManifest getManifest(@NotNull VirtualFile libRoot, @NotNull PsiManager manager) {
+  public @Nullable BundleManifest getManifest(@NotNull VirtualFile libRoot, @NotNull PsiManager manager) {
     PsiDirectory psiRoot = manager.findDirectory(libRoot);
     if (psiRoot == null) return null;
 
@@ -175,17 +171,17 @@ public class BundleManifestCache {
     return null;
   }
 
-  private static BundleManifest readProperties(PsiFile propertiesFile) {
+  private static BundleManifest readProperties(PsiFile propertyFile) {
     try {
       UTF8Properties properties = new UTF8Properties();
-      properties.load(new StringReader(propertiesFile.getText()));
+      properties.load(new StringReader(propertyFile.getText()));
       Map<String, String> map = new HashMap<>();
       for (Object key : properties.keySet()) {
         String name = key.toString();
         map.put(name, properties.getProperty(name));
       }
       if (map.get(Constants.BUNDLE_SYMBOLICNAME) == null) {
-        VirtualFile file = propertiesFile.getVirtualFile();
+        VirtualFile file = propertyFile.getVirtualFile();
         if (file != null) {
           if (!BndProjectImporter.BND_FILE.equals(file.getName())) {
             map.put(Constants.BUNDLE_SYMBOLICNAME, FileUtilRt.getNameWithoutExtension(file.getName()));
@@ -195,7 +191,7 @@ public class BundleManifestCache {
           }
         }
       }
-      return new BundleManifest(map, propertiesFile);
+      return new BundleManifest(map, propertyFile);
     }
     catch (IOException ignored) { }
     catch (InvalidVirtualFileAccessException ignored) { }
