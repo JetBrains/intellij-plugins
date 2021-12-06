@@ -916,6 +916,13 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.checkHighlighting(true, false, true);
   }
 
+  public void testAnimationCallbacks() {
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.configureByFiles("animationCallbacks.html", "animationCallbacks.ts", "package.json");
+    myFixture.checkHighlighting();
+
+  }
+
   public void testAttributeNameMapping() {
     myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
                                 AngularUndefinedBindingInspection.class);
