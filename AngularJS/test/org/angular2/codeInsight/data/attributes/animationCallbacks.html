@@ -1,0 +1,7 @@
+<div [@openClose]="isOpen ? 'open' : 'closed'"
+     <weak_warning descr="Event openClose is not emitted by any applicable directives nor by div element">(openClose)</weak_warning>="onAnimationEvent($event)"
+     (openClose:start)="onAnimationEvent($event)"
+     <weak_warning descr="Event openClose.start is not emitted by any applicable directives nor by div element">(openClose.start)</weak_warning>="onAnimationEvent($event)"
+     (@openClose.start)="onAnimationEvent($event)"
+     (@openClose.done)="onAnimationEvent($event)">
+</div>
