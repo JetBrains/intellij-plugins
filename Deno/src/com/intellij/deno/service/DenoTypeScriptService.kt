@@ -13,10 +13,10 @@ import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.JSStringUtil
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.completion.JSInsertHandler
-import com.intellij.lang.javascript.dialects.TypeScriptLanguageDialect
 import com.intellij.lang.javascript.frameworks.modules.JSUrlImportsUtil
 import com.intellij.lang.javascript.integration.JSAnnotationError
 import com.intellij.lang.javascript.integration.JSAnnotationError.*
+import com.intellij.lang.javascript.library.JSCorePredefinedLibrariesProvider
 import com.intellij.lang.javascript.psi.JSFunctionType
 import com.intellij.lang.javascript.service.JSLanguageService
 import com.intellij.lang.javascript.service.JSLanguageServiceProvider
@@ -40,7 +40,6 @@ import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -192,7 +191,12 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService, D
 
   override fun canHighlight(file: PsiFile) = DialectDetector.isTypeScript(file)
 
-  override fun isAcceptable(file: VirtualFile) = DialectDetector.getLanguageDialect(file, project) is TypeScriptLanguageDialect
+  override fun isAcceptable(file: VirtualFile) =
+    TypeScriptLanguageServiceUtil.ACCEPTABLE_TS_FILE.value(file) &&
+    !JSCorePredefinedLibrariesProvider.isCoreLibraryFile(file) &&
+    !DenoTypings.getInstance(project).isDenoTypings(file)
+
+
   override fun dispose() {}
 }
 
