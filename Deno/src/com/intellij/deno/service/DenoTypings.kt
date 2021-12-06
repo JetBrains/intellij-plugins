@@ -78,6 +78,11 @@ class DenoTypings(val project: Project) : Disposable {
     return FileUtil.toSystemIndependentName(DenoUtil.getDenoTypings())
   }
   
+  public fun isDenoTypings(virtualFile: VirtualFile): Boolean {
+    val path = virtualFile.path
+    return path == getDenoTypings() || path == getGeneratedDenoTypings()
+  } 
+  
   fun getDenoTypingsVirtualFile(): VirtualFile? {
     val typings = LocalFileSystem.getInstance().findFileByPath(getDenoTypings())
     if (typings != null && typings.isValid) return typings
