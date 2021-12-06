@@ -29,6 +29,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.protobuf.ide.PbIdeBundle;
+import com.intellij.protobuf.ide.actions.PbExportSettingsAsCliCommandAction;
 import com.intellij.protobuf.ide.settings.PbProjectSettings.ImportPathEntry;
 import com.intellij.protobuf.lang.resolve.FileResolveProvider;
 import com.intellij.ui.*;
@@ -54,7 +55,6 @@ import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /** The protobuf language settings panel. */
 public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings> {
@@ -202,17 +202,14 @@ public class PbLanguageSettingsForm implements ConfigurableUi<PbProjectSettings>
         (button) ->
             importPathTable.editCellAt(
                 importPathTable.getSelectedRow(), importPathTable.getSelectedColumn()));
+    decorator.addExtraAction(new PbExportSettingsAsCliCommandAction());
 
     panel.add(decorator.createPanel(), BorderLayout.CENTER);
     return panel;
   }
 
   private List<ImportPathEntry> getImportPathEntries() {
-    return importPathModel
-        .getItems()
-        .stream()
-        .map(ImportPath::toEntry)
-        .collect(Collectors.toList());
+    return ContainerUtil.map(importPathModel.getItems(), ImportPath::toEntry);
   }
 
   private String getDescriptorPath() {
