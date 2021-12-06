@@ -323,6 +323,7 @@
                     </constraints>
                     <properties>
                       <text resource-bundle="messages/PerforceBundle" key="checkbox.configure.perforce.use.p4config"/>
+                      <toolTipText resource-bundle="messages/PerforceBundle" key="checkbox.configure.perforce.use.p4config.tooltip"/>
                     </properties>
                   </component>
                   <component id="5c9f7" class="com.intellij.ui.components.JBLabel" binding="myP4ConfigWarningLabel">

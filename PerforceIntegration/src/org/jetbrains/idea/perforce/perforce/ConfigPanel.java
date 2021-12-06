@@ -200,8 +200,13 @@ public class ConfigPanel {
       hideProjectSpecificControls();
     }
 
-    myP4ConfigWarningLabel.setVisible(!P4ConfigHelper.hasP4ConfigSettingInEnvironment());
-    RelativeFont.SMALL.install(myP4ConfigWarningLabel);
+
+    String unsetEnv = P4ConfigHelper.getUnsetP4EnvironmentConfig();
+    if (!unsetEnv.isEmpty()) {
+      myP4ConfigWarningLabel.setText(PerforceBundle.message("radio.no.p4config.env", unsetEnv));
+      myP4ConfigWarningLabel.setVisible(true);
+      RelativeFont.SMALL.install(myP4ConfigWarningLabel);
+    }
 
     myP4IgnoreWarningLabel.setVisible(!P4ConfigHelper.hasP4IgnoreSettingInEnvironment());
     RelativeFont.SMALL.install(myP4IgnoreWarningLabel);

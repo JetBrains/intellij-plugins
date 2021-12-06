@@ -110,16 +110,19 @@ public class P4ConfigConnectionDiagnoseDialog extends DialogWrapper {
         addGenericErrors(fileNode, parameters);
         continue;
       }
-      boolean someErrors =  addGenericErrors(fileNode, parameters);
+      boolean someErrors = addGenericErrors(fileNode, parameters);
       someErrors |= addRootError(Objects.requireNonNull(myMultipleConnections.getConnection(root)), fileNode);
-      if (! someErrors) {
+      if (!someErrors) {
         addNode(fileNode, new BaseNode(CommonBundle.message("button.ok"), NodeType.ok));
       }
-      ++ i;
+      ++i;
     }
 
     String envP4Config = P4ConfigHelper.getP4ConfigFileName();
-    addNode(myRoot, new BaseNode(PerforceBundle.message("connection.env", (envP4Config == null ? "undefined" : envP4Config)), NodeType.info));
+    if (envP4Config != null) {
+      addNode(myRoot,
+              new BaseNode(PerforceBundle.message("connection.env", envP4Config), NodeType.info));
+    }
 
     // common errors
     addGenericErrors(myRoot, defaultParameters);
@@ -127,7 +130,10 @@ public class P4ConfigConnectionDiagnoseDialog extends DialogWrapper {
       if (p4ConfigNames.isEmpty()) {
         ContainerUtil.addIfNotNull(p4ConfigNames, envP4Config);
       }
-      addNode(myRoot, new BaseNode(PerforceBundle.message("connection.config.file", StringUtil.join(p4ConfigNames, ", ")), NodeType.info));
+      if (!p4ConfigNames.isEmpty()) {
+        addNode(myRoot,
+                new BaseNode(PerforceBundle.message("connection.config.file", StringUtil.join(p4ConfigNames, ", ")), NodeType.info));
+      }
     }
 
     model.nodeStructureChanged(myRoot);
@@ -220,17 +226,30 @@ public class P4ConfigConnectionDiagnoseDialog extends DialogWrapper {
     final Map<String, ConfigLine> dataPresentation = getDataPresentation(parameters, defaultParameters, configDir == null);
     if (dataPresentation.isEmpty()) {
       addNode(fileNode, new ErrorNode(PerforceBundle.message("connection.no.params")));
+      return false;
     } else {
       for (ConfigLine line : dataPresentation.values()) {
         addNode(fileNode, new BaseNode(line, NodeType.configLine));
       }
 
-      if (parameters.getUser() == null && defaultParameters.getUser() == null) {
-        addNode(fileNode, new ErrorNode(PerforceBundle.message("connection.params.not.enough")));
-        return false;
+      boolean requiredParametersDefined = true;
+
+      if (parameters.getServer() == null && defaultParameters.getServer() == null) {
+        addNode(fileNode, new ErrorNode(PerforceBundle.message("error.server.unknown.env")));
+        requiredParametersDefined = false;
       }
+
+      if (parameters.getUser() == null && defaultParameters.getUser() == null) {
+        addNode(fileNode, new ErrorNode(PerforceBundle.message("error.user.unknown.env")));
+        requiredParametersDefined = false;
+      }
+
+      if (parameters.getClient() == null && defaultParameters.getClient() == null) {
+        addNode(fileNode, new ErrorNode(PerforceBundle.message("error.client.unknown.env")));
+        requiredParametersDefined = false;
+      }
+      return requiredParametersDefined;
     }
-    return true;
   }
 
   public static Map<String, ConfigLine> getDataPresentation(final P4ConnectionParameters p,
@@ -240,7 +259,7 @@ public class P4ConfigConnectionDiagnoseDialog extends DialogWrapper {
     if (noConfig) {
       putParametersIntoTheMap(d, result, "");
     } else {
-      putParametersIntoTheMap(d, result, "default");
+      putParametersIntoTheMap(d, result, "enviro");
       putParametersIntoTheMap(p, result, "config");
     }
     return result;

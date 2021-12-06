@@ -59,9 +59,6 @@ public final class PerforceInfoAndClient {
   private static Map<String, List<String>> calcInfoMap(@NotNull P4Connection connection, @NotNull PerforceRunner runner) throws VcsException {
     final Map<String, List<String>> infoMap = runner.getInfo(connection);
     if (infoMap.containsKey(PerforceRunner.CLIENT_UNKNOWN)) {
-      if (connection instanceof P4ParametersConnection && ((P4ParametersConnection)connection).getParameters().getConfigFileName() == null) {
-        throw new VcsException(PerforceBundle.message("error.client.unknown.p4config.environment.variable.is.undefined"));
-      }
       throw new VcsException(PerforceBundle.message("error.client.unknown"));
     }
     // the following fields change on every invocation, and changes in these fields should not cause the
