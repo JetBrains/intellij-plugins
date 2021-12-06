@@ -690,6 +690,11 @@
           "name": "Namespaced event",
           "pattern": ".+:.+",
           "doc-hide-pattern": true
+        },
+        {
+          "name": "Animation callback",
+          "pattern": "@.+",
+          "doc-hide-pattern": true
         }
       ]
     }
