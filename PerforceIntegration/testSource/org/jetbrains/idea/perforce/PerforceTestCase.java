@@ -531,7 +531,20 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
         }
       },
       () -> Disposer.dispose(myTestRootDisposable),
-      () -> disposeFixtures(),
+      () -> {
+        Ref<Exception> eRef = Ref.create();
+        ApplicationManager.getApplication().invokeAndWait(() -> {
+          try {
+            tearDownProject();
+          }
+          catch (Exception e) {
+            eRef.set(e);
+          }
+        });
+        if (!eRef.isNull()) {
+          throw eRef.get();
+        }
+      },
       () -> {
         long start = System.currentTimeMillis();
         while (myP4dProcess != null && myP4dProcess.isAlive() && System.currentTimeMillis() - start < 10_000) {
@@ -540,27 +553,14 @@ public abstract class PerforceTestCase extends AbstractJunitVcsTestCase {
         if (myP4dProcess != null && myP4dProcess.isAlive()) {
           throw new AssertionError("Perforce server still alive!");
         }
+      },
+      () -> {
+        if (myTempDirFixture != null) {
+          myTempDirFixture.tearDown();
+          myTempDirFixture = null;
+        }
       }
     );
-  }
-
-  private void disposeFixtures() throws Exception {
-    final Exception[] exc = new Exception[1];
-    ApplicationManager.getApplication().invokeAndWait(() -> {
-      try {
-        tearDownProject();
-      }
-      catch (Exception e) {
-        exc[0] = e;
-      }
-    });
-    if (myTempDirFixture != null) {
-      myTempDirFixture.tearDown();
-      myTempDirFixture = null;
-    }
-    if (exc[0] != null) {
-      throw exc[0];
-    }
   }
 
   protected ProcessOutput runP4(String[] commandLine, @Nullable String stdin) {
