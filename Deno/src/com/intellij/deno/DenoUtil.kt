@@ -1,17 +1,28 @@
 package com.intellij.deno
 
 import com.intellij.execution.configurations.PathEnvironmentVariableUtil
+import com.intellij.json.psi.JsonFile
+import com.intellij.json.psi.JsonObject
+import com.intellij.json.psi.JsonStringLiteral
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
+import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.SystemInfoRt
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.io.FileUtilRt
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiManager
 import com.intellij.util.SystemProperties
 import java.io.File
 
 object DenoUtil {
+  private val urlKey = Key.create<String?>("deno.file.url")
   
   fun getDenoTypings(): String {
-    return JSLanguageServiceUtil.getPluginDirectory(this::class.java, "deno-service/node_modules/typescript-deno-plugin/lib/lib.deno.d.ts").path
+    return JSLanguageServiceUtil.getPluginDirectory(this::class.java,
+                                                    "deno-service/node_modules/typescript-deno-plugin/lib/lib.deno.d.ts").path
   }
 
   fun getDefaultDenoExecutable() = detectDenoPaths().firstOrNull()
@@ -30,10 +41,10 @@ object DenoUtil {
     return if (File(path).exists()) listOf(path) else emptyList()
   }
 
-  fun getDenoCache(): String { 
+  fun getDenoCache(): String {
     return FileUtil.toSystemIndependentName(getDenoCacheInner())
   }
-  
+
   private fun getDenoCacheInner(): String {
     val denoDir = System.getenv("DENO_DIR")
     if (denoDir != null) {
@@ -56,5 +67,40 @@ object DenoUtil {
       return "$dir/deno"
     }
     return "$userHome/.deno"
+  }
+
+  @NlsSafe
+  fun getOwnUrlForFile(place: PsiElement, virtualFile: VirtualFile): String? {
+    return getOwnUrlForFile(place.manager, virtualFile)
+  }
+  
+  @NlsSafe
+  fun getOwnUrlForFile(psiManager: PsiManager, virtualFile: VirtualFile): String? {
+    val userData = virtualFile.getUserData(urlKey)
+    if (userData != null) return userData
+
+    val metadata = virtualFile.parent.findChild(virtualFile.name + ".metadata.json")
+    if (metadata == null) return null
+    val metaDataPsi = psiManager.findFile(metadata)
+    if (metaDataPsi !is JsonFile) return null
+    val values = metaDataPsi.allTopLevelValues
+    for (topLevelValue in values) {
+      val property = (topLevelValue as? JsonObject)?.findProperty("url") ?: continue
+      val url = (property.value as? JsonStringLiteral)?.value
+      if (url != null) {
+        virtualFile.putUserData(urlKey, url)
+        return url
+      }
+    }
+
+    return null
+  }
+
+  fun isDenoCacheFile(file: VirtualFile): Boolean {
+    val sequence = file.nameSequence
+    val ext = FileUtilRt.getExtension(sequence)
+    if (ext.isNotEmpty() || sequence.length != 64) return false
+    val path = file.path
+    return path.contains("/deps/")
   }
 }
