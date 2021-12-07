@@ -6,6 +6,7 @@ import com.intellij.codeInsight.completion.PrioritizedLookupElement
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.deno.DenoSettings
+import com.intellij.deno.DenoUtil.getOwnUrlForFile
 import com.intellij.javascript.JSModuleBaseReference
 import com.intellij.json.psi.JsonFile
 import com.intellij.json.psi.JsonObject
@@ -21,7 +22,6 @@ import com.intellij.lang.javascript.modules.imports.JSImportDescriptor
 import com.intellij.lang.javascript.modules.imports.JSSimpleImportDescriptor
 import com.intellij.openapi.components.PathMacroManager
 import com.intellij.openapi.project.guessProjectDir
-import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.component1
 import com.intellij.openapi.util.component2
@@ -33,8 +33,6 @@ import com.intellij.psi.PsiReferenceProvider
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiUtilCore
-import com.intellij.util.io.exists
-import java.io.File
 import java.nio.charset.StandardCharsets
 import java.nio.file.Paths
 
@@ -136,8 +134,6 @@ class DenoModuleReferenceContributor : JSBaseModuleReferenceContributor() {
   }
 }
 
-private val urlKey = Key.create<String?>("deno.file.url")
-
 private fun resolveAsImportMap(unquotedRefText: String, host: PsiElement, offset: Int): Array<PsiReference> {
   val (substitutions, importMapFile) = readImportMap(host) ?: return emptyArray()
   if (substitutions.isEmpty()) return emptyArray()
@@ -222,27 +218,6 @@ fun resolveAsUrl(urlText: String,
   return arrayOf(JSExactFileReference(host, range, listOf(url), null))
 }
 
-
-private fun getOwnUrlForFile(place: PsiElement, virtualFile: VirtualFile): String? {
-  val userData = virtualFile.getUserData(urlKey)
-  if (userData != null) return userData
-
-  val metadata = virtualFile.parent.findChild(virtualFile.name + ".metadata.json")
-  if (metadata == null) return null
-  val metaDataPsi = place.manager.findFile(metadata)
-  if (metaDataPsi !is JsonFile) return null
-  val values = metaDataPsi.allTopLevelValues
-  for (topLevelValue in values) {
-    val property = (topLevelValue as? JsonObject)?.findProperty("url") ?: continue
-    val url = (property.value as? JsonStringLiteral)?.value
-    if (url != null) {
-      virtualFile.putUserData(urlKey, url)
-      return url
-    }
-  }
-
-  return null
-}
 
 fun resolveAsDenoLibFile(url: String,
                          host: PsiElement,
