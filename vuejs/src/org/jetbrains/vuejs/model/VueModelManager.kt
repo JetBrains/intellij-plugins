@@ -18,6 +18,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.StubBasedPsiElement
+import com.intellij.psi.css.CssElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.util.CachedValueProvider
@@ -97,7 +98,7 @@ class VueModelManager {
 
     private fun findComponent(templateElement: PsiElement): VueComponent? {
       val baseElement: PsiElement? =
-        if (templateElement is JSElement && templateElement.containingFile is XmlFile) {
+        if ((templateElement is JSElement || templateElement is CssElement) && templateElement.containingFile is XmlFile) {
           PsiTreeUtil.getParentOfType(templateElement, XmlElement::class.java)
         }
         else {

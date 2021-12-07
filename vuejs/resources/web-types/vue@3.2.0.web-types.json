@@ -983,6 +983,15 @@
           }
         }
       ]
+    },
+    "css": {
+      "functions": [
+        {
+          "name": "v-bind",
+          "description": "Use `v-bind` to links CSS values to dynamic Vue component state. The syntax works with `<script setup>`, and supports JavaScript expressions, which must be wrapped in quotes.\n\nThe actual value will be compiled into a hashed CSS custom property, so the CSS is still static.",
+          "doc-url": "https://v3.vuejs.org/api/sfc-style.html#state-driven-dynamic-css"
+        }
+      ]
     }
   }
 }

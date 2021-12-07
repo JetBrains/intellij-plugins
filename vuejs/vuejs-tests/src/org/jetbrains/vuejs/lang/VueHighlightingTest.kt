@@ -492,6 +492,16 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
     doTest(addNodeModules = listOf(VueTestModule.NAIVE_UI_2_19_11, VueTestModule.HEADLESS_UI_1_4_1, VueTestModule.VUE_3_2_2))
   }
 
+  fun testCssVBind() {
+    myFixture.enableInspections(CssInvalidFunctionInspection::class.java)
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_2_2))
+  }
+
+  fun testCssVBindVue31() {
+    myFixture.enableInspections(CssInvalidFunctionInspection::class.java)
+    doTest(addNodeModules = listOf(VueTestModule.VUE_3_1_0))
+  }
+
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {

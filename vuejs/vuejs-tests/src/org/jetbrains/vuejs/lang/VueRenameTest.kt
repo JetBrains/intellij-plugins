@@ -81,6 +81,10 @@ class VueRenameTest : BasePlatformTestCase() {
     doTest("AfterComponent")
   }
 
+  fun testCssVBind() {
+    doTest("newColor")
+  }
+
   private fun doTest(newName: String) {
     myFixture.configureByFile(getTestName(true) + ".vue")
     myFixture.renameElementAtCaret(newName)
