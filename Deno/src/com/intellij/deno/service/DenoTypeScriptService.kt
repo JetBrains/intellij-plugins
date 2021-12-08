@@ -27,6 +27,7 @@ import com.intellij.lang.typescript.compiler.TypeScriptService.CompletionEntry
 import com.intellij.lang.typescript.compiler.TypeScriptService.CompletionMergeStrategy
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceUtil
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptMessageBus
+import com.intellij.lang.typescript.library.TypeScriptLibraryProvider
 import com.intellij.lsp.LspServer
 import com.intellij.lsp.LspServerDescriptor
 import com.intellij.lsp.LspServerManager
@@ -194,9 +195,9 @@ class DenoTypeScriptService(private val project: Project) : TypeScriptService, D
   override fun isAcceptable(file: VirtualFile) =
     TypeScriptLanguageServiceUtil.ACCEPTABLE_TS_FILE.value(file) &&
     !JSCorePredefinedLibrariesProvider.isCoreLibraryFile(file) &&
-    !DenoTypings.getInstance(project).isDenoTypings(file)
-
-
+    !DenoTypings.getInstance(project).isDenoTypings(file) &&
+    !TypeScriptLibraryProvider.isLibraryOrBundledLibraryFile(project, file)
+  
   override fun dispose() {}
 }
 
