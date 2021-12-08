@@ -34,13 +34,13 @@ internal class BundledProtoResourcesMigrationPostStartupActivity : StartupActivi
   }
 
   private fun findBundledInJarProtoPath(oldSettings: List<PbProjectSettings.ImportPathEntry>): PbProjectSettings.ImportPathEntry? {
-    val bundledProto = bundledProtoUrl
-    if (bundledProto == null) {
-      thisLogger().debug("Unable to detect old style bundled protos path. Abort migration.")
+    val protoInJarPath = bundledProtoUrl?.toURI()?.path
+    if (protoInJarPath == null) {
+      thisLogger().warn("Unable to detect old style bundled protos path. Abort migration.")
       return null
     }
 
-    val protoVfsUrl = VfsUtilCore.pathToUrl(bundledProto.toURI().path)
+    val protoVfsUrl = VfsUtilCore.pathToUrl(protoInJarPath)
     return oldSettings.firstOrNull { it.location == protoVfsUrl }
   }
 
