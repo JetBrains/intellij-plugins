@@ -259,7 +259,7 @@ public class P4ConfigConnectionDiagnoseDialog extends DialogWrapper {
     if (noConfig) {
       putParametersIntoTheMap(d, result, "");
     } else {
-      putParametersIntoTheMap(d, result, "enviro");
+      putParametersIntoTheMap(d, result, "environment");
       putParametersIntoTheMap(p, result, "config");
     }
     return result;

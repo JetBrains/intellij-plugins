@@ -223,8 +223,8 @@ public class P4ConnectionCalculator {
             // all variables end up in parameters
             setField(fieldType, value, parameters);
 
-            // the ones defined in environment also get into default parameters to be shared between connections
-            if (envIdx >= 0) {
+            // the ones defined in enviro or env vars also get into default parameters to be shared between connections
+            if (configIdx < 0) {
               setField(fieldType, value, defaultParameters);
             }
           }
