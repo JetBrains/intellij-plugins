@@ -16,6 +16,9 @@
 package com.intellij.protobuf.ide.settings;
 
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.fileEditor.impl.LoadTextUtil;
 import com.intellij.openapi.module.EmptyModuleType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -23,6 +26,7 @@ import com.intellij.openapi.project.ex.ProjectManagerEx;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -31,10 +35,13 @@ import com.intellij.testFramework.HeavyPlatformTestCase;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 
 import static com.intellij.protobuf.TestUtils.notNull;
 
-/** Unit tests for {@link DefaultConfigurator}. */
+/**
+ * Unit tests for {@link DefaultConfigurator}.
+ */
 public class DefaultConfiguratorTest extends HeavyPlatformTestCase {
 
   @Override
@@ -44,6 +51,12 @@ public class DefaultConfiguratorTest extends HeavyPlatformTestCase {
 
   @Override
   public void tearDown() throws Exception {
+    try {
+      FileUtil.delete(Paths.get(PathManager.getSystemPath(), "protoeditor"));
+    }
+    catch (Exception exception) {
+      Logger.getInstance(DefaultConfiguratorTest.class).warn(exception);
+    }
     super.tearDown();
   }
 
@@ -98,7 +111,7 @@ public class DefaultConfiguratorTest extends HeavyPlatformTestCase {
         new ImportPathEntry(VfsUtil.pathToUrl(module1Root1Src1.getPath()), ""),
         new ImportPathEntry(VfsUtil.pathToUrl(module1Root1Src2.getPath()), ""),
         new ImportPathEntry(VfsUtil.pathToUrl(module2Root1Src1.getPath()), ""),
-        DefaultConfigurator.getBuiltInIncludeEntry());
+        new DefaultConfigurator().getBuiltInIncludeEntry());
 
     ProjectManagerEx.getInstanceEx().forceCloseProject(project);
   }
@@ -110,15 +123,17 @@ public class DefaultConfiguratorTest extends HeavyPlatformTestCase {
   }
 
   public void testBuiltInDescriptor() throws IOException {
-    ImportPathEntry includeEntry = DefaultConfigurator.getBuiltInIncludeEntry();
+    ImportPathEntry includeEntry = new DefaultConfigurator().getBuiltInIncludeEntry();
     assertNotNull(includeEntry);
     assertEquals("", includeEntry.getPrefix());
     VirtualFile descriptorDir =
-        VirtualFileManager.getInstance().findFileByUrl(includeEntry.getLocation());
+      VirtualFileManager.getInstance().findFileByUrl(includeEntry.getLocation());
     assertNotNull(descriptorDir);
-    VirtualFile descriptorFile = descriptorDir.findFileByRelativePath("google/protobuf/descriptor.proto");
-    assertNotNull(descriptorFile);
-    String text = VfsUtil.loadText(descriptorFile);
+
+    File extractedDescriptor = Paths.get(descriptorDir.getPath(), "google/protobuf/descriptor.proto").toFile();
+    assertTrue(extractedDescriptor.exists());
+    VirtualFile file = VfsUtil.findFileByIoFile(extractedDescriptor, true);
+    String text = LoadTextUtil.loadText(file).toString();
     // Simple check to make sure it's a descriptor.
     assertTrue(text.contains("FileOptions"));
   }
