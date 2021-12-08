@@ -8,6 +8,7 @@ import com.intellij.execution.util.ScriptFileUtil
 import com.intellij.javascript.debugger.execution.DebuggableProcessRunConfigurationBase
 import com.intellij.lang.javascript.JavaScriptFileType
 import com.intellij.lang.javascript.TypeScriptFileType
+import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.text.StringUtil
@@ -48,6 +49,11 @@ class DenoRunConfigurationProducer : LazyRunConfigurationProducer<DenoRunConfigu
       }
     }
     configuration.inputPath = virtualFile.path
+    val nameWithoutExt = virtualFile.nameWithoutExtension
+    if (nameWithoutExt.endsWith(".test") || nameWithoutExt.endsWith("_test") || nameWithoutExt == "test") {
+      configuration.programParameters = "test"
+    }
+
     configuration.setGeneratedName()
 
     return true
@@ -55,7 +61,7 @@ class DenoRunConfigurationProducer : LazyRunConfigurationProducer<DenoRunConfigu
 
   private fun isAcceptableFileType(virtualFile: VirtualFile): Boolean {
     val fileType = virtualFile.fileType
-    return fileType == TypeScriptFileType.INSTANCE || fileType == JavaScriptFileType.INSTANCE
+    return TypeScriptUtil.isTypeScriptFile(virtualFile) || fileType == JavaScriptFileType.INSTANCE
   }
 
   private fun checkDeno(configuration: DenoRunConfiguration): Boolean {
