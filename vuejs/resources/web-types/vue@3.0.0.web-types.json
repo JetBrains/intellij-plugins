@@ -966,6 +966,55 @@
           }
         }
       ]
+    },
+    "css": {
+      "pseudo-classes": [
+        {
+          "name": "deep",
+          "doc-url": "https://github.com/vuejs/rfcs/blob/master/active-rfcs/0023-scoped-styles-changes.md#deep-selectors",
+          "arguments": true,
+          "description": "Make a rule that targets child components."
+        },
+        {
+          "name": "slotted",
+          "doc-url": "https://github.com/vuejs/rfcs/blob/master/active-rfcs/0023-scoped-styles-changes.md#targeting--avoiding-slot-content",
+          "arguments": true,
+          "description": "In v3 child scoped styles are **not** affecting slot content by default. To explicitly target slot content, the `::v-slotted()` (shorthand: `:slotted()`) pseudo element can be used."
+        },
+        {
+          "name": "global",
+          "doc-url": "https://github.com/vuejs/rfcs/blob/master/active-rfcs/0023-scoped-styles-changes.md#one-off-global-rules",
+          "arguments": true,
+          "description": "Use `::v-global()` (shorthand: `:global()`) pseudo element to make a one-off global rule within scoped `<style>` block."
+        }
+      ],
+      "pseudo-elements": [
+        {
+          "name": "v-deep",
+          "doc-url": "https://github.com/vuejs/rfcs/blob/master/active-rfcs/0023-scoped-styles-changes.md#deep-selectors",
+          "arguments": false,
+          "deprecated": true,
+          "description": "Make a rule that targets child components.\n\n**Note: usage without arguments is deprecated since Vue 3.0.**"
+        },
+        {
+          "name": "v-deep",
+          "doc-url": "https://github.com/vuejs/rfcs/blob/master/active-rfcs/0023-scoped-styles-changes.md#deep-selectors",
+          "arguments": true,
+          "description": "Make a rule that targets child components."
+        },
+        {
+          "name": "v-slotted",
+          "doc-url": "https://github.com/vuejs/rfcs/blob/master/active-rfcs/0023-scoped-styles-changes.md#targeting--avoiding-slot-content",
+          "arguments": true,
+          "description": "In v3 child scoped styles are **not** affecting slot content by default. To explicitly target slot content, the `::v-slotted()` (shorthand: `:slotted()`) pseudo element can be used."
+        },
+        {
+          "name": "v-global",
+          "doc-url": "https://github.com/vuejs/rfcs/blob/master/active-rfcs/0023-scoped-styles-changes.md#one-off-global-rules",
+          "arguments": true,
+          "description": "Use `::v-global()` (shorthand: `:global()`) pseudo element to make a one-off global rule within scoped `<style>` block."
+        }
+      ]
     }
   }
 }
