@@ -103,5 +103,8 @@
     <extensionPoint qualifiedName="org.jetbrains.plugins.cucumber.steps.cucumberJvmExtensionPoint"
                     interface="org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint"
                     dynamic="true"/>
+    <extensionPoint qualifiedName="org.jetbrains.plugins.cucumber.injector.injectorExtensionPoint"
+                    interface="org.jetbrains.plugins.cucumber.injector.GherkinInjectorExtensionPoint"
+                    dynamic="true"/>
   </extensionPoints>
 </idea-plugin>
