@@ -170,6 +170,7 @@ i18n%null#null#50
 my-customer%null#null#50
 ngNonBindable%null#null#50
 ngProjectAs%null#null#50
+(@%null#null#10
 (keydown.%null#null#10
 (keyup.%null#null#10
 i18n-%null#null#10
